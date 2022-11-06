@@ -17,12 +17,27 @@
 			Default = Address_0x77
 		}
 
-		public enum DeviceMode
+        /// <summary>
+        /// BMP085 device mode
+        /// </summary>
+        public enum DeviceMode
 		{
-			UltraLowPower = 0,
-			Standard = 1,
-			HighResolution = 2,
-			UltraHighResolution = 3
-		}
+            /// <summary>
+            /// Ultra low power mode
+            /// </summary>
+            UltraLowPower = 0,
+            /// <summary>
+            /// Standard / normal mode
+            /// </summary>
+            Standard = 1,
+            /// <summary>
+            /// High resolution mode
+            /// </summary>
+            HighResolution = 2,
+            /// <summary>
+            /// Ultra high resolution mode
+            /// </summary>
+            UltraHighResolution = 3
+        }
 	}
 }

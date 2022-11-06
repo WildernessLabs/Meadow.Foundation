@@ -50,6 +50,9 @@ namespace Meadow.Foundation.Displays
             Initialize();
         }
 
+        /// <summary>
+        /// Initalize the display
+        /// </summary>
         protected override void Initialize()
         {
             if(resetPort != null)
@@ -185,6 +188,13 @@ namespace Meadow.Foundation.Displays
             dataCommandPort.State = (Data);
         }
 
+        /// <summary>
+        /// Set the address window to update the display
+        /// </summary>
+        /// <param name="x0">X0</param>
+        /// <param name="y0">Y0</param>
+        /// <param name="x1">X1</param>
+        /// <param name="y1">Y1</param>
         protected override void SetAddressWindow(int x0, int y0, int x1, int y1)
         {
             SendCommand((byte)LcdCommand.CASET);  // column addr set

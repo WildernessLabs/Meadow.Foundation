@@ -48,19 +48,10 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             ms5611 = new Ms5611I2c(i2cBus, address, resolution);
         }
 
-        /*
         /// <summary>
-        /// Connect to the Ms5611 using SPI (PS must be pulled low)
+        /// Raise events for subcribers and notify of value changes
         /// </summary>
-        /// <param name="spi"></param>
-        /// <param name="chipSelect"></param>
-        /// <param name="resolution"></param>
-        public Ms5611(ISpiBus spi, IPin chipSelect, Resolution resolution = Resolution.OSR_1024)
-        {
-            ms5611 = new Ms5611Spi(spi, chipSelect, resolution);
-        }
-        */
-
+        /// <param name="changeResult">The updated sensor data</param>
         protected override void RaiseEventsAndNotify(IChangeResult<(Units.Temperature? Temperature, Pressure? Pressure)> changeResult)
         {
             if (changeResult.New.Temperature is { } temp)
@@ -74,6 +65,10 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             base.RaiseEventsAndNotify(changeResult);
         }
 
+        /// <summary>
+        /// Reads data from the sensor
+        /// </summary>
+        /// <returns>The latest sensor reading</returns>
         protected override async Task<(Units.Temperature? Temperature, Pressure? Pressure)> ReadSensor()
         {
             return await Task.Run(() => {

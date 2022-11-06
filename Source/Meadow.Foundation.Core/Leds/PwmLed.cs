@@ -13,13 +13,16 @@ namespace Meadow.Foundation.Leds
     /// </summary>
     public class PwmLed : IPwmLed, IDisposable
     {
-        private Task? animationTask;
-        private CancellationTokenSource? cancellationTokenSource;
-        private bool createdPwm = false;
+        Task? animationTask;
+        CancellationTokenSource? cancellationTokenSource;
+        readonly bool createdPwm = false;
 
-        private float maximumPwmDuty = 1;
-        private bool inverted;
+        float maximumPwmDuty = 1;
+        bool inverted;
 
+        /// <summary>
+        /// Is the object disposed
+        /// </summary>
         public bool IsDisposed { get; private set; }
 
         /// <summary>
@@ -72,7 +75,7 @@ namespace Meadow.Foundation.Leds
         public Voltage ForwardVoltage { get; protected set; }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:Meadow.Foundation.Leds.PwmLed"/> class.
+        /// Initializes a new instance PwmLed class
         /// </summary>
         /// <param name="device">IO Device</param>
         /// <param name="pin">Pin</param>
@@ -87,10 +90,10 @@ namespace Meadow.Foundation.Leds
             Voltage forwardVoltage, 
             CircuitTerminationType terminationType = CircuitTerminationType.CommonGround)
         {
-            var pwm = device.CreatePwmPort(pin, new Frequency(100, Frequency.UnitType.Hertz));
+            Port = device.CreatePwmPort(pin, new Frequency(100, Frequency.UnitType.Hertz));
             createdPwm = true; // signal that we created it, so we should dispose of it
-            pwm.DutyCycle = 0;
-            Initialize(pwm, forwardVoltage, terminationType);
+            Port.DutyCycle = 0;
+            Initialize(forwardVoltage, terminationType);
         }
 
         /// <summary>
@@ -106,15 +109,14 @@ namespace Meadow.Foundation.Leds
             Voltage forwardVoltage,
             CircuitTerminationType terminationType = CircuitTerminationType.CommonGround)
         {
-            Initialize(pwmPort, forwardVoltage, terminationType);
+            Port = pwmPort;
+            Initialize(forwardVoltage, terminationType);
         }
 
         private void Initialize(
-            IPwmPort pwmPort,
             Voltage forwardVoltage,
             CircuitTerminationType terminationType = CircuitTerminationType.CommonGround)
-        {
-            // validate and persist forward voltage
+        {   
             if (forwardVoltage < new Voltage(0) || forwardVoltage > new Voltage(3.3))
             {
                 throw new ArgumentOutOfRangeException(nameof(forwardVoltage), "error, forward voltage must be between 0, and 3.3");
@@ -122,15 +124,18 @@ namespace Meadow.Foundation.Leds
 
             ForwardVoltage = forwardVoltage;
 
-            inverted = (terminationType == CircuitTerminationType.High);
+            inverted = terminationType == CircuitTerminationType.High;
 
             maximumPwmDuty = Helpers.CalculateMaximumDutyCycle(forwardVoltage);
 
-            Port = pwmPort;
             Port.Inverted = inverted;
             Port.Start();
         }
 
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        /// <param name="disposing">Is disposing</param>
         protected virtual void Dispose(bool disposing)
         {
             if (!IsDisposed)
@@ -138,13 +143,15 @@ namespace Meadow.Foundation.Leds
                 if (disposing && createdPwm)
                 {
                     Port.Dispose();
-
                 }
 
                 IsDisposed = true;
             }
         }
 
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
         public void Dispose()
         {
             Dispose(disposing: true);

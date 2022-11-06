@@ -35,17 +35,49 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         public IPixelBuffer PixelBuffer => imageBuffer;
 
+        /// <summary>
+        /// The data command port
+        /// </summary>
         protected IDigitalOutputPort dataCommandPort;
+
+        /// <summary>
+        /// The reset port
+        /// </summary>
         protected IDigitalOutputPort resetPort;
+
+        /// <summary>
+        /// The chip select port
+        /// </summary>
         protected IDigitalOutputPort chipSelectPort;
+
+        /// <summary>
+        /// The spi peripheral for the display
+        /// </summary>
         protected ISpiPeripheral spiDisplay;
 
+        /// <summary>
+        /// The offscreen image buffer
+        /// </summary>
         protected IPixelBuffer imageBuffer;
+
+        /// <summary>
+        /// The read buffer
+        /// </summary>
         protected Memory<byte> readBuffer;
 
+        /// <summary>
+        /// Data convience bool
+        /// </summary>
         protected const bool Data = true;
+
+        /// <summary>
+        /// Command convenience bool
+        /// </summary>
         protected const bool Command = false;
 
+        /// <summary>
+        /// Initalize the display
+        /// </summary>
         protected abstract void Initialize();
 
         /// <summary>
@@ -112,6 +144,13 @@ namespace Meadow.Foundation.Displays
             return false;
         }
 
+        /// <summary>
+        /// Create an offscreen buffer for the display
+        /// </summary>
+        /// <param name="mode">The color type</param>
+        /// <param name="width">The width in pixels</param>
+        /// <param name="height">The height in pixels</param>
+        /// <exception cref="ArgumentException">Throws an exception if the color mode isn't supported</exception>
         protected void CreateBuffer(ColorType mode, int width, int height)
         {
             if (IsColorModeSupported(mode) == false)
@@ -135,6 +174,13 @@ namespace Meadow.Foundation.Displays
             readBuffer = new byte[imageBuffer.ByteCount];
         }
 
+        /// <summary>
+        /// Set addrees window for display updates
+        /// </summary>
+        /// <param name="x0">X start in pixels</param>
+        /// <param name="y0">Y start in pixels</param>
+        /// <param name="x1">X end in pixels</param>
+        /// <param name="y1">Y end in pixels</param>
         protected abstract void SetAddressWindow(int x0, int y0, int x1, int y1);
 
         /// <summary>
@@ -163,6 +209,12 @@ namespace Meadow.Foundation.Displays
             }
         }
 
+        /// <summary>
+        /// Write a buffer to the display offscreen buffer
+        /// </summary>
+        /// <param name="x">The x position in pixels to write the buffer</param>
+        /// <param name="y">The y position in pixels to write the buffer</param>
+        /// <param name="buffer">The buffer to write</param>
         public void WriteBuffer(int x, int y, IPixelBuffer buffer)
         {
             imageBuffer.WriteBuffer(x, y, buffer);
@@ -214,6 +266,14 @@ namespace Meadow.Foundation.Displays
             PixelBuffer.InvertPixel(x, y);
         }
 
+        /// <summary>
+        /// Fill with a color
+        /// </summary>
+        /// <param name="x">X start position in pixels</param>
+        /// <param name="y">Y start position in pixels</param>
+        /// <param name="width">Width in pixels</param>
+        /// <param name="height">Height in pixels</param>
+        /// <param name="color">The fill color</param>
         public void Fill(int x, int y, int width, int height, Color color)
         {
             imageBuffer.Fill(x, y, width, height, color);

@@ -30,8 +30,10 @@ namespace Meadow.Foundation.Sensors.Switches
         /// <summary>
         /// Creates a new DipSwitch connected to the specified switchPins, with the InterruptMode and ResisterMode specified by the type parameters.
         /// </summary>
-        /// <param name="device"></param>
-        /// <param name="switchPins"></param>
+        /// <param name="device">The device connected to the switch</param>
+        /// <param name="switchPins">An array of pins for each switch</param>
+        /// <param name="interruptMode">The interrupt mode for all pins</param>
+        /// <param name="resistorMode">The resistor mode for all pins</param>
         public DipSwitch(IDigitalInputController device, IPin[] switchPins, InterruptMode interruptMode, ResistorMode resistorMode)
             : this(device, switchPins, interruptMode, resistorMode, TimeSpan.FromMilliseconds(20), TimeSpan.Zero)
         { }

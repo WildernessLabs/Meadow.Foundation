@@ -3,8 +3,9 @@ using Meadow.Hardware;
 
 namespace Meadow.Foundation.ICs.IOExpanders
 {
-    //128 LED driver
-    //39 key input
+    /// <summary>
+    /// Represents an Ht16k33 128 led driver and 39 key scanner
+    /// </summary>
     public partial class Ht16k33
     {
         /// <summary>
@@ -12,11 +13,15 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         private readonly II2cPeripheral i2cPeripheral;
 
-        //display buffer for 16x8 LEDs
-        private Memory<byte> displayBuffer = new byte[16];
+        /// <summary>
+        /// Display buffer for 16x8 LEDs 
+        /// </summary>
+        readonly Memory<byte> displayBuffer = new byte[16];
 
-        //key buffer for 39 keys
-        private byte[] keyBuffer = new byte[6];
+        /// <summary>
+        /// Key buffer for 39 keys 
+        /// </summary>
+        readonly byte[] keyBuffer = new byte[6];
 
         /// <summary>
         /// Create a new HT16K33 object using the default parameters
@@ -27,15 +32,11 @@ namespace Meadow.Foundation.ICs.IOExpanders
         {
             i2cPeripheral = new I2cPeripheral(i2cBus, address);
 
-            InitHT16K33();
+            Initialize();
         }
 
-        void InitHT16K33()
+        void Initialize()
         {
-            //   SetIsAwake(true);
-            //   SetDisplayOn(true);
-            //   SetBlinkRate(BlinkRate.Off);
-
             i2cPeripheral.Write(0x21);
 
             i2cPeripheral.Write(0x81);
@@ -44,6 +45,10 @@ namespace Meadow.Foundation.ICs.IOExpanders
             ClearDisplay();
         }
 
+        /// <summary>
+        /// Set controller to awake / asleep
+        /// </summary>
+        /// <param name="awake">Awake if true</param>
         public void SetIsAwake(bool awake)
         {
             byte value = (byte)((byte)Register.HT16K33_SS | (byte)(awake ? 1 : 0));
@@ -51,6 +56,10 @@ namespace Meadow.Foundation.ICs.IOExpanders
             i2cPeripheral.Write(value);
         }
 
+        /// <summary>
+        /// Set display on or off
+        /// </summary>
+        /// <param name="isOn">On if true</param>
         public void SetDisplayOn(bool isOn)
         {
             byte value = (byte)((byte)Register.HT16K33_DSP | (byte)(isOn ? 1 : 0));
@@ -58,6 +67,10 @@ namespace Meadow.Foundation.ICs.IOExpanders
             i2cPeripheral.Write(value);
         }
 
+        /// <summary>
+        /// Set display blink rate
+        /// </summary>
+        /// <param name="blinkRate">The blink rate as a byte</param>
         public void SetBlinkRate(BlinkRate blinkRate)
         {
             byte value = (byte)((byte)Register.HT16K33_DSP | (byte)blinkRate);
@@ -65,6 +78,10 @@ namespace Meadow.Foundation.ICs.IOExpanders
             i2cPeripheral.Write(value);
         }
 
+        /// <summary>
+        /// Set display brightness
+        /// </summary>
+        /// <param name="brightness">The brightness</param>
         public void SetBrightness(Brightness brightness)
         {
             byte value = (byte)((byte)Register.HT16K33_DIM | (byte)brightness);
@@ -72,6 +89,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
             i2cPeripheral.Write(value);
         }
 
+        /// <summary>
+        /// Clear the display
+        /// </summary>
         public void ClearDisplay()
         {
             for (int i = 0; i < displayBuffer.Length; i++)
@@ -80,11 +100,20 @@ namespace Meadow.Foundation.ICs.IOExpanders
             UpdateDisplay();
         }
 
+        /// <summary>
+        /// Refresh the display
+        /// </summary>
         public void UpdateDisplay()
         {
             i2cPeripheral.WriteRegister(0x0, displayBuffer.Span);
         }
 
+        /// <summary>
+        /// Set an individual led on or off
+        /// </summary>
+        /// <param name="ledIndex">The led index</param>
+        /// <param name="ledOn">True for on</param>
+        /// <exception cref="IndexOutOfRangeException">Throws if the index is out of range</exception>
         public void SetLed(byte ledIndex, bool ledOn)
         {
             if (ledIndex > 127)
@@ -104,6 +133,10 @@ namespace Meadow.Foundation.ICs.IOExpanders
             }
         }
 
+        /// <summary>
+        /// Toggle an led on or off
+        /// </summary>
+        /// <param name="ledIndex">The led index</param>
         public void ToggleLed(byte ledIndex)
         {
             var index = ledIndex / 8;
@@ -111,12 +144,15 @@ namespace Meadow.Foundation.ICs.IOExpanders
             displayBuffer.Span[index] = (displayBuffer.Span[index] ^= (byte)(1 << ledIndex % 8));
         }
 
+        /// <summary>
+        /// Is led at index on
+        /// </summary>
+        /// <param name="ledIndex">The led index</param>
+        /// <returns>True if on</returns>
         public bool IsLedOn(int ledIndex)
         {
-            //need to do some bit math here
             var index = ledIndex / 8;
 
-            //untested
             return displayBuffer.Span[index] >> ledIndex != 0;
         }
     }

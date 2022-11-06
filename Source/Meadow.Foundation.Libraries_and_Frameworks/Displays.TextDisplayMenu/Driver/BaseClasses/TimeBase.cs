@@ -2,15 +2,29 @@ using System;
 
 namespace Meadow.Foundation.Displays.TextDisplayMenu.InputTypes
 {
+    /// <summary>
+    /// A base time input type
+    /// </summary>
     public abstract class TimeBase : InputBase
     {
         int[] timeParts;
         byte position = 0;
 
+        /// <summary>
+        /// The time mode
+        /// </summary>
         protected TimeMode timeMode;
+
+        /// <summary>
+        /// Raised if the input value changes
+        /// </summary>
 
         public override event ValueChangedHandler ValueChanged;
 
+        /// <summary>
+        /// Create a new TimeBase object
+        /// </summary>
+        /// <param name="timeMode">The time mode</param>
         public TimeBase(TimeMode timeMode)
         {
             this.timeMode = timeMode;
@@ -49,8 +63,17 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu.InputTypes
         /// </summary>
         public enum TimeMode
         {
+            /// <summary>
+            /// Hours, minutes, seconds
+            /// </summary>
             HH_MM_SS,
+            /// <summary>
+            /// Hours, minutes 
+            /// </summary>
             HH_MM,
+            /// <summary>
+            /// Minutes, seconds
+            /// </summary>
             MM_SS
         }
 
@@ -77,6 +100,10 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu.InputTypes
             UpdateInputLine(TimeDisplay);
         }
 
+        /// <summary>
+        /// Send a Previous input to the item
+        /// </summary>
+        /// <returns>true</returns>
         public override bool Previous()
         {
             int max = 0;
@@ -98,7 +125,10 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu.InputTypes
             return true;
         }
 
-
+        /// <summary>
+        /// Send a Next input to the item
+        /// </summary>
+        /// <returns>true</returns>
         public override bool Next()
         {
             int min = 0;
@@ -108,6 +138,10 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu.InputTypes
             return true;
         }
 
+        /// <summary>
+        /// Send a Select input to the item
+        /// </summary>
+        /// <returns>true</returns>
         public override bool Select()
         {
             if (position < timeParts.Length - 1)
@@ -137,6 +171,10 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu.InputTypes
             return true;
         }
 
+        /// <summary>
+        /// Parse a value for the item
+        /// </summary>
+        /// <param name="value">The TimeSpan value as an object</param>
         protected override void ParseValue(object value)
         {
             if (value == null || value.ToString() == string.Empty) return;

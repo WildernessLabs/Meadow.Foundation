@@ -5,28 +5,30 @@ using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Servos
 {
+    /// <summary>
+    /// Represents an angular servo base class
+    /// </summary>
     public abstract class AngularServoBase : ServoBase, IAngularServo
     {
         /// <summary>
-        /// Returns the current angle.
+        /// The current angle
         /// </summary>
         public Angle? Angle { get; protected set; }
 
         /// <summary>
-        /// Instantiates a new Servo on the specified PWM Pin with the specified config.
+        /// Instantiates a new Servo on the specified PWM Pin with the specified config
         /// </summary>
-        /// <param name="pwm"></param>
-        /// <param name="config"></param>
-        public AngularServoBase(IPwmPort pwm, ServoConfig config)
-            : base(pwm, config)
-        {
-        }
+        /// <param name="pwmPort">The PWM port</param>
+        /// <param name="config">The servo configuration</param>
+        public AngularServoBase(IPwmPort pwmPort, ServoConfig config)
+            : base(pwmPort, config)
+        { }
 
         /// <summary>
-        /// Rotates the servo to a given angle.
+        /// Rotates the servo to a given angle
         /// </summary>
-        /// <param name="angle">The angle to rotate to.</param>
-        /// <param name="stopAfterMotion">When <b>true</b> the PWM will stop after motion is complete.</param>
+        /// <param name="angle">The angle to rotate to</param>
+        /// <param name="stopAfterMotion">When true the PWM will stop after motion is complete</param>
         public async Task RotateTo(Angle angle, bool stopAfterMotion = false)
         {
             if (!PwmPort.State)
@@ -34,24 +36,19 @@ namespace Meadow.Foundation.Servos
                 PwmPort.Start();
             }
 
-            // angle check
             if (angle < Config.MinimumAngle || angle > Config.MaximumAngle)
             {
                 throw new ArgumentOutOfRangeException(nameof(angle), "Angle must be within servo configuration tolerance.");
             }
 
-            // calculate the appropriate pulse duration for the angle
             float pulseDuration = CalculatePulseDuration(angle);
             
-            // send our pulse to the servo to make it move
             SendCommandPulse(pulseDuration);
 
-            // wait for completion
             var rotationRequired = Math.Abs((Angle.HasValue ? Angle.Value.Degrees : 360) - angle.Degrees);
             var delay = (int)(8 * rotationRequired); // estimating 8ms / degree
             await Task.Delay(delay);
 
-            // update the state
             Angle = angle;
 
             if (stopAfterMotion)
@@ -60,14 +57,12 @@ namespace Meadow.Foundation.Servos
             }
         }
 
+        /// <summary>
+        /// Calculate the pulse duration for an angle
+        /// </summary>
+        /// <param name="angle">The angle</param>
+        /// <returns>The pulse duration as as float</returns>
         protected float CalculatePulseDuration(Angle angle)
-        {
-            // offset + (angle percent * duration length)
-            return Config.MinimumPulseDuration + (float)((angle.Degrees / Config.MaximumAngle.Degrees) * (Config.MaximumPulseDuration - Config.MinimumPulseDuration));
-            // sample calcs:
-            // 0 degrees time = 1000 + ( (0 / 180) * 1000 ) = 1,000 microseconds
-            // 90 degrees time = 1000 + ( (90 / 180) * 1000 ) = 1,500 microseconds
-            // 180 degrees time = 1000 + ( (180 / 180) * 1000 ) = 2,000 microseconds
-        }
+            => Config.MinimumPulseDuration + (float)(angle.Degrees / Config.MaximumAngle.Degrees * (Config.MaximumPulseDuration - Config.MinimumPulseDuration));
     }
 }

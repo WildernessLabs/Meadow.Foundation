@@ -6,6 +6,12 @@ namespace Meadow.Foundation.Sensors.Distance
 {
     public partial class MaxBotix
     {
+        /// <summary>
+        /// Creates a new MaxBotix object communicating over I2C
+        /// </summary>
+        /// <param name="i2cBus">The I2C bus</param>
+        /// <param name="sensor">The distance sensor type</param>
+        /// <param name="address">The I2C address</param>
         public MaxBotix(II2cBus i2cBus, SensorType sensor, byte address = (byte)Addresses.Default)
             :base(i2cBus, address)
         {

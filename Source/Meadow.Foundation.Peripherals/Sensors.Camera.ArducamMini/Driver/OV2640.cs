@@ -1,6 +1,6 @@
 ﻿namespace Meadow.Foundation.Sensors.Camera
 {
-    public struct SensorReg
+    struct SensorReg
     {
         public byte Address;
         public byte Value;
@@ -12,7 +12,7 @@
         }
     }
 
-	public static class InitSettings
+	static class InitSettings
 	{
 		public static SensorReg[] QVGA =
 		{

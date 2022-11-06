@@ -6,8 +6,21 @@ using Meadow.Hardware;
 
 namespace Meadow.Foundation.Sensors.Motion
 {
-    public class Qmc5883 :  Hmc5883
+    /// <summary>
+    /// Represents the  QMC5883L multi-chip three-axis magnetic sensor
+    /// </summary>
+    public class Qmc5883 : Hmc5883
     {
+        /// <summary>
+        /// Create a new Qmc5883 object
+        /// </summary>
+        /// <param name="i2cBus">The I2C bus</param>
+        /// <param name="address">The I2C address</param>
+        /// <param name="gain">Gain</param>
+        /// <param name="measuringMode">Measuring mode</param>
+        /// <param name="outputRate">Output rate</param>
+        /// <param name="samplesAmount">Samples amount</param>
+        /// <param name="measurementConfig">Measurement configuration</param>
         public Qmc5883(II2cBus i2cBus, byte address = (byte)Addresses.Qmc5883,
             GainLevels gain = GainLevels.Gain1090,
             MeasuringModes measuringMode = MeasuringModes.Continuous,
@@ -19,6 +32,9 @@ namespace Meadow.Foundation.Sensors.Motion
             Initialize();
         }
 
+        /// <summary>
+        /// Initalize the sensor
+        /// </summary>
         override protected void Initialize()
         {
             Peripheral.WriteRegister(0x0B, 0x01);
@@ -33,6 +49,10 @@ namespace Meadow.Foundation.Sensors.Motion
             Peripheral.WriteRegister(0x09, 0x0D);
         }
 
+        /// <summary>
+        /// Reads data from the sensor
+        /// </summary>
+        /// <returns>The latest sensor reading</returns>
         protected override Task<Vector> ReadSensor()
         {
             return Task.Run(() => {

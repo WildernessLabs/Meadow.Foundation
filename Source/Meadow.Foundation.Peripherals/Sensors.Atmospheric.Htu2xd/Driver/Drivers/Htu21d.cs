@@ -42,6 +42,10 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             SetResolution(SensorResolution.TEMP11_HUM11);
         }
 
+        /// <summary>
+        /// Reads data from the sensor
+        /// </summary>
+        /// <returns>The latest sensor reading</returns>
         protected override async Task<(Units.Temperature? Temperature, RelativeHumidity? Humidity)> ReadSensor()
         {
             (Units.Temperature Temperature, RelativeHumidity Humidity) conditions;

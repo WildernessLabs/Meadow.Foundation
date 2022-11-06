@@ -47,6 +47,9 @@ namespace Meadow.Foundation.Displays
         {
         }
 
+        /// <summary>
+        /// Initalize the display
+        /// </summary>
         protected override void Initialize()
         {
             Reset();
@@ -136,19 +139,31 @@ namespace Meadow.Foundation.Displays
             }
         }
 
-        public override void SetFrameMemory(byte[] image_buffer)
+        /// <summary>
+        /// Set frame buffer memory of display (full screen)
+        /// </summary>
+        /// <param name="buffer">The image buffer</param>
+        public override void SetFrameMemory(byte[] buffer)
         {
-            SetFrameMemory(image_buffer, 0, 0, (int)Width, (int)Height);
+            SetFrameMemory(buffer, 0, 0, Width, Height);
         }
 
+        /// <summary>
+        /// Set frame buffer memory of display
+        /// </summary>
+        /// <param name="buffer">buffer</param>
+        /// <param name="x">x location</param>
+        /// <param name="y">y location</param>
+        /// <param name="width">width in pixels</param>
+        /// <param name="height">height in pixels</param>
         public override void SetFrameMemory(byte[] buffer, int x, int y, int width, int height)
         {
             //hack for now - we need to update the code to copy properly from the entire buffer
             //code expects the buffer to be the exact size we need
             x = 0;
             y = 0;
-            width = (int)base.Width;
-            height = (int)base.Height;
+            width = Width;
+            height = Height;
 
             if (buffer != null)
             {
@@ -209,12 +224,19 @@ namespace Meadow.Foundation.Displays
             WaitUntilIdle();
         }
 
+        /// <summary>
+        /// Display data from the display controller SRAM
+        /// </summary>
         public override void DisplayFrame()
         {
             SendCommand(CommandIL91874V03.DISPLAY_REFRESH);
             WaitUntilIdle();
         }
 
+        /// <summary>
+        /// Clears the SRAM on the display controller
+        /// Doesn't update the display
+        /// </summary>
         public void ClearFrame()
         {
             SendCommand(CommandIL91874V03.DATA_START_TRANSMISSION_1);
@@ -235,12 +257,12 @@ namespace Meadow.Foundation.Displays
             DelayMs(2);
         }
 
-        protected void SendCommand(CommandIL91874V03 command)
+        internal void SendCommand(CommandIL91874V03 command)
         {
             SendCommand((byte)command);
         }
 
-        protected enum CommandIL91874V03 : byte
+        internal enum CommandIL91874V03 : byte
         {
             PANEL_SETTING = 0x00,
             POWER_SETTING = 0x01,
@@ -281,9 +303,7 @@ namespace Meadow.Foundation.Displays
             READ_OTP_DATA = 0xA2,
         }
 
-        
-
-        protected static byte[] lut_vcom_dc = {
+        static byte[] lut_vcom_dc = {
             0x00, 0x00,
             0x00, 0x0F, 0x0F, 0x00, 0x00, 0x05,
             0x00, 0x32, 0x32, 0x00, 0x00, 0x02,
@@ -295,7 +315,7 @@ namespace Meadow.Foundation.Displays
         };
 
         //R21H
-        protected static byte[] lut_ww = {
+        static byte[] lut_ww = {
             0x50, 0x0F, 0x0F, 0x00, 0x00, 0x05,
             0x60, 0x32, 0x32, 0x00, 0x00, 0x02,
             0xA0, 0x0F, 0x0F, 0x00, 0x00, 0x05,
@@ -306,7 +326,7 @@ namespace Meadow.Foundation.Displays
         };
 
         //R22H    r
-        protected static byte[] lut_bw =
+        static byte[] lut_bw =
         {
             0x50, 0x0F, 0x0F, 0x00, 0x00, 0x05,
             0x60, 0x32, 0x32, 0x00, 0x00, 0x02,
@@ -318,7 +338,7 @@ namespace Meadow.Foundation.Displays
         };
 
         //R24H    b
-        protected static byte[] lut_bb =
+        static byte[] lut_bb =
         {
             0xA0, 0x0F, 0x0F, 0x00, 0x00, 0x05,
             0x60, 0x32, 0x32, 0x00, 0x00, 0x02,
@@ -330,7 +350,7 @@ namespace Meadow.Foundation.Displays
         };
 
         //R23H    w
-        protected static byte[] lut_wb =
+        static byte[] lut_wb =
         {
             0xA0, 0x0F, 0x0F, 0x00, 0x00, 0x05,
             0x60, 0x32, 0x32, 0x00, 0x00, 0x02,

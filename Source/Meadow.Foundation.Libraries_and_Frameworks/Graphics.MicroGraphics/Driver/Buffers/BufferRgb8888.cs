@@ -12,20 +12,45 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// </summary>
         public override ColorType ColorMode => ColorType.Format32bppRgba8888;
 
+        /// <summary>
+        /// Create a new BufferRgb888 object
+        /// </summary>
+        /// <param name="width">The width in pixels</param>
+        /// <param name="height">The height in pixels</param>
+        /// <param name="buffer">The backing buffer</param>
         public BufferRgb8888(int width, int height, byte[] buffer) : base(width, height, buffer) { }
 
+        /// <summary>
+        /// Create a new BufferRgb888 object
+        /// </summary>
+        /// <param name="width">The width in pixels</param>
+        /// <param name="height">The height in pixels</param>
         public BufferRgb8888(int width, int height) : base(width, height) { }
 
+        /// <summary>
+        /// Create a new BufferRgb888 object
+        /// </summary>
         public BufferRgb8888() : base() { }
 
+        /// <summary>
+        /// Get the pixel color
+        /// </summary>
+        /// <param name="x">The X pixel position</param>
+        /// <param name="y">The Y pixel position</param>
+        /// <returns>The pixel color as an 8888 32bpp value</returns>
         public int GetPixelInt(int x, int y)
         {
             //get current color
             var index = ((y * Width) + x) * 4;
 
-            return (int)(Buffer[index] << 24 | Buffer[++index] << 16 | Buffer[++index] << 8 | Buffer[++index]);
+            return (Buffer[index] << 24 | Buffer[++index] << 16 | Buffer[++index] << 8 | Buffer[++index]);
         }
-
+        /// <summary>
+        /// Get the pixel color
+        /// </summary>
+        /// <param name="x">The X pixel position</param>
+        /// <param name="y">The Y pixel position</param>
+        /// <returns>The pixel color</returns>
         public override Color GetPixel(int x, int y)
         {
             var index = ((y * Width) + x) * 4;
@@ -39,6 +64,12 @@ namespace Meadow.Foundation.Graphics.Buffers
             return new Color(r, g, b, a);
         }
 
+        /// <summary>
+        /// Set the pixel color
+        /// </summary>
+        /// <param name="x">X pixel position</param>
+        /// <param name="y">Y pixel position</param>
+        /// <param name="color">The pixel color</param>
         public override void SetPixel(int x, int y, Color color)
         {
             var index = ((y * Width) + x) * 4;
@@ -49,6 +80,10 @@ namespace Meadow.Foundation.Graphics.Buffers
             Buffer[index + 3] = color.A;
         }
 
+        /// <summary>
+        /// Fill with a color
+        /// </summary>
+        /// <param name="color">The fill color</param>
         public override void Fill(Color color)
         {
             // split the color in to two byte values
@@ -68,6 +103,15 @@ namespace Meadow.Foundation.Graphics.Buffers
             Array.Copy(Buffer, 0, Buffer, copyLength, Buffer.Length - copyLength);
         }
 
+        /// <summary>
+        /// Fill with a color
+        /// </summary>
+        /// <param name="x">X start position in pixels</param>
+        /// <param name="y">Y start position in pixels</param>
+        /// <param name="width">Width in pixels</param>
+        /// <param name="height">Height in pixels</param>
+        /// <param name="color">The fill color</param>
+        /// <exception cref="ArgumentOutOfRangeException">Throws an exception if fill area is beyond the buffer bounds</exception>
         public override void Fill(int x, int y, int width, int height, Color color)
         {
             if (x < 0 || x + width > Width ||

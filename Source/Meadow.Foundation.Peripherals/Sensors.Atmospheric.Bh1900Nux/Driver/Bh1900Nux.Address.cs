@@ -2,23 +2,56 @@
 {
     public partial class Bh1900Nux
     {
+        /// <summary>
+        /// Fault queue 
+        /// </summary>
         public enum FaultQueue
         {
+            /// <summary>
+            /// One (1)
+            /// </summary>
             One = 0,
+            /// <summary>
+            /// Two (2)
+            /// </summary>
             Two = 1,
+            /// <summary>
+            /// Four (4)
+            /// </summary>
             Four = 2,
+            /// <summary>
+            /// Six (6)
+            /// </summary>
             Six = 3,
         }
 
+        /// <summary>
+        /// Polarity
+        /// </summary>
         public enum Polarity
         {
+            /// <summary>
+            /// Active low
+            /// </summary>
             ActiveLow = 0,
+            /// <summary>
+            /// Active high
+            /// </summary>
             ActiveHigh = 1,
         }
 
-        public enum Mode
+        /// <summary>
+        /// Sampling mode
+        /// </summary>
+        public enum MeasurementModes
         {
+            /// <summary>
+            /// Continuous
+            /// </summary>
             Continuous = 0,
+            /// <summary>
+            /// Single reading
+            /// </summary>
             Single = 1
         }
 

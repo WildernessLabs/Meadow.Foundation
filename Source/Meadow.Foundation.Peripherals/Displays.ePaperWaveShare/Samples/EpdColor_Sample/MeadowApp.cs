@@ -129,7 +129,9 @@ namespace Displays.ePaper.EpdColor_Sample
                     chipSelectPin: Device.Pins.D03,
                     dcPin: Device.Pins.D02,
                     resetPin: Device.Pins.D01,
-                    busyPin: Device.Pins.D00)
+                    busyPin: Device.Pins.D00),
+
+                _ => null
             };
 
             return display;

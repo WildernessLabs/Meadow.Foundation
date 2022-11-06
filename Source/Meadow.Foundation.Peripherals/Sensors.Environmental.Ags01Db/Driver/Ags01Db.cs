@@ -10,21 +10,31 @@ namespace Meadow.Foundation.Sensors.Environmental
     /// Pinout (left to right, label side down): VDD, SDA, GND, SCL
     /// Note: requires pullup resistors on SDA/SCL
     /// </summary>
-    public partial class Ags01Db : ByteCommsSensorBase<Units.Concentration>
+    public partial class Ags01Db : ByteCommsSensorBase<Concentration>
     {
-        private const byte CRC_POLYNOMIAL = 0x31;
-        private const byte CRC_INIT = 0xFF;
+        const byte CRC_POLYNOMIAL = 0x31;
+        const byte CRC_INIT = 0xFF;
 
-        private const byte ASG_DATA_MSB = 0x00;
-        private const byte ASG_DATA_LSB = 0x02;
-        private const byte ASG_VERSION_MSB = 0x0A;
-        private const byte ASG_VERSION_LSB = 0x01;
+        const byte ASG_DATA_MSB = 0x00;
+        const byte ASG_DATA_LSB = 0x02;
+        const byte ASG_VERSION_MSB = 0x0A;
+        const byte ASG_VERSION_LSB = 0x01;
 
-        public event EventHandler<IChangeResult<Units.Concentration>> ConcentrationUpdated = delegate { };
+        /// <summary>
+        /// Raised when the concentration changes
+        /// </summary>
+        public event EventHandler<IChangeResult<Concentration>> ConcentrationUpdated = delegate { };
 
+        /// <summary>
+        /// The current concentration value
+        /// </summary>
         public Concentration? Concentration { get; private set; }
 
-
+        /// <summary>
+        /// Create a new Ags01Db object
+        /// </summary>
+        /// <param name="i2cBus">The I2C bus</param>
+        /// <param name="address">The I2C address</param>
         public Ags01Db(II2cBus i2cBus, byte address = (byte)Addresses.Default)
             : base(i2cBus, address, readBufferSize: 3, writeBufferSize: 3)
         {
@@ -75,7 +85,11 @@ namespace Meadow.Foundation.Sensors.Environmental
             return ReadBuffer.Span[0];
         }
 
-        protected void RaiseChangedAndNotify(IChangeResult<Units.Concentration> changeResult)
+        /// <summary>
+        /// Raise change events for subscribers
+        /// </summary>
+        /// <param name="changeResult">The change result with the current sensor data</param>
+        protected void RaiseChangedAndNotify(IChangeResult<Concentration> changeResult)
         {
             ConcentrationUpdated?.Invoke(this, changeResult);
             base.RaiseEventsAndNotify(changeResult);

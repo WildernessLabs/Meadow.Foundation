@@ -68,15 +68,39 @@ namespace Meadow.Foundation.Displays
             Initialize();
         }
 
+        /// <summary>
+        /// The ST7735 display type
+        /// </summary>
         public enum DisplayType
         {
+            /// <summary>
+            /// ST7735R
+            /// </summary>
             ST7735R,
+            /// <summary>
+            /// Green tab
+            /// </summary>
             ST7735R_GreenTab,
+            /// <summary>
+            /// Black tab
+            /// </summary>
             ST7735R_BlackTab,
+            /// <summary>
+            /// 128x128 resolution
+            /// </summary>
             ST7735R_128x128,
+            /// <summary>
+            /// 144x144 resolution
+            /// </summary>
             ST7735R_144x144,
+            /// <summary>
+            /// 80x160 resolution
+            /// </summary>
             ST7735R_80x160,
-            ST7735B, //done
+            /// <summary>
+            /// ST7735B
+            /// </summary>
+            ST7735B,
         }
 
         const byte SWRESET = 0x01;
@@ -115,6 +139,9 @@ namespace Meadow.Foundation.Displays
             SendData(data);
         }
 
+        /// <summary>
+        /// Initalize the display
+        /// </summary>
         protected override void Initialize()
         {
             if (resetPort != null)
@@ -357,6 +384,13 @@ namespace Meadow.Foundation.Displays
             Thread.Sleep(10);
         }
 
+        /// <summary>
+        /// Set addrees window for display updates
+        /// </summary>
+        /// <param name="x0">X start in pixels</param>
+        /// <param name="y0">Y start in pixels</param>
+        /// <param name="x1">X end in pixels</param>
+        /// <param name="y1">Y end in pixels</param>
         protected override void SetAddressWindow(int x0, int y0, int x1, int y1)
         {
             x0 += xOffset;

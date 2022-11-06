@@ -43,10 +43,8 @@ namespace MeadowApp
                         Thread.Sleep(500);
                     }
                 }
-                a4988.Direction = (a4988.Direction == RotationDirection.Clockwise) ? RotationDirection.Counterclockwise : RotationDirection.Clockwise;
+                a4988.Direction = (a4988.Direction == RotationDirection.Clockwise) ? RotationDirection.CounterClockwise : RotationDirection.Clockwise;
             }
-
-            return base.Run();
         }
 
         //<!=SNOP=>

@@ -2,7 +2,7 @@
 {
     public partial class BBQ10Keyboard
     {
-        public enum Registers: byte
+        enum Registers : byte
         {
             VER = 0x01, // fw version
             CFG = 0x02, // config

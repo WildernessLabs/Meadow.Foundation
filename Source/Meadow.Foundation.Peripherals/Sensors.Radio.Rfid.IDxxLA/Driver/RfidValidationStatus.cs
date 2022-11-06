@@ -1,5 +1,8 @@
 ﻿namespace Meadow.Foundation.Sensors.Radio.Rfid
 {
+    /// <summary>
+    /// RFID validation statuses
+    /// </summary>
     public enum RfidValidationStatus
     {
         /// <summary>

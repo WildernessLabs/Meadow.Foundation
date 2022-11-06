@@ -1,17 +1,24 @@
-﻿using System;
-namespace Meadow.Foundation.Sensors.Motion
+﻿namespace Meadow.Foundation.Sensors.Motion
 {
     public partial class Hmc5883
     {
         /// <summary>
-        /// Measurement configuration.
+        /// Measurement configuration
         /// </summary>
         public enum MeasurementConfigurations : byte
         {
+            /// <summary>
+            /// Normal
+            /// </summary>
             Normal = 0b_0000_0000,
-            PositiveBiasConfiguration = 0b_0000_0001,
+            /// <summary>
+            /// Positive bias
+            /// </summary>
+            PositiveBias = 0b_0000_0001,
+            /// <summary>
+            /// Negative bias
+            /// </summary>
             NegativeBias = 0b_0000_0010
         }
-
     }
 }

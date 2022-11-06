@@ -4,33 +4,39 @@ using System.Collections.Generic;
 
 namespace Meadow.Foundation.RTCs
 {
+    /// <summary>
+    /// Represents a DS1307 real-time clock
+    /// </summary>
     public partial class Ds1307
     {
-        private const int OriginYear = 1980;
+        const int OriginYear = 1980;
 
-        private II2cBus i2cBus;
+        readonly II2cBus i2cBus;
 
-        public Ds1307(II2cBus bus)
+        /// <summary>
+        /// Create a new Ds1307 object
+        /// </summary>
+        /// <param name="i2cBus">The I2C bus</param>
+        public Ds1307(II2cBus i2cBus)
         {
-            i2cBus = bus;
+            this.i2cBus = i2cBus;
         }
 
         /// <summary>
-        /// Stops or starts the clock oscillator.  Stopping the oscillator decreases power consumption (and stops the clock)
+        /// Stops or starts the clock oscillator
+        /// Stopping the oscillator decreases power consumption (and stops the clock)
         /// </summary>
         public bool IsRunning
         {
             get
-            {
-                // read 1 byte starting from 0x00
+            {   // read 1 byte starting from 0x00
                 var reg = new byte[1];
                 i2cBus.Write((byte)Address.Default, new byte[] { 0 });
                 i2cBus.Read((byte)Address.Default, reg);
                 return (reg[0] & (1 << 7)) != 0;
             }
             set
-            {
-                // read the seconds register
+            {   // read the seconds register
                 var reg = new byte[1];
                 i2cBus.Write((byte)Address.Default, new byte[] { 0 });
                 i2cBus.Read((byte)Address.Default, reg);
@@ -52,19 +58,26 @@ namespace Meadow.Foundation.RTCs
             }
         }
 
+        /// <summary>
+        /// Get the time from the real-time clock
+        /// </summary>
+        /// <returns></returns>
         public DateTime GetTime()
         {
-            // read 7 bytes starting from 0x00
             var data = new byte[7];
             i2cBus.Write((byte)Address.Default, new byte[] { 0 });
             i2cBus.Read((byte)Address.Default, data);
             return FromRTCTime(data);
         }
 
+        /// <summary>
+        /// Set the time on the real-time clock
+        /// </summary>
+        /// <param name="time">The new time</param>
         public void SetTime(DateTime time)
         {
             var data = new List<byte>();
-            data.Add(0); // target start register offset
+            data.Add(0); 
             data.AddRange(ToRTCTime(time));
 
             i2cBus.Write((byte)Address.Default, data.ToArray());
@@ -75,10 +88,8 @@ namespace Meadow.Foundation.RTCs
         /// </summary>
         /// <param name="offset">Offset to the start of the read (0-55)</param>
         /// <param name="count">The number of bytes to read</param>
-        /// <returns></returns>
         public byte[] ReadRAM(int offset, int count)
         {
-            // RAM starts at register offset 8
             var data = new byte[count];            
             i2cBus.Write((byte)Address.Default, new byte[] { (byte)(0x08 + offset) });
             i2cBus.Read((byte)Address.Default, data);
@@ -86,7 +97,8 @@ namespace Meadow.Foundation.RTCs
         }
 
         /// <summary>
-        /// The DS1307 has 56 bytes of battery-backed RAM.  Use this method to Write to that memory
+        /// The DS1307 has 56 bytes of battery-backed RAM
+        /// Use this method to Write to that memory
         /// </summary>
         /// <param name="offset"></param>
         /// <param name="data"></param>
@@ -99,6 +111,11 @@ namespace Meadow.Foundation.RTCs
             i2cBus.Write((byte)Address.Default, d.ToArray());
         }
 
+        /// <summary>
+        /// Square wave output
+        /// </summary>
+        /// <param name="freq">The frequency</param>
+        /// <exception cref="NotSupportedException">Throw if invalid frequency is selected</exception>
         public void SquareWaveOutput(SquareWaveFrequency freq)
         {
             byte registerData;
@@ -131,17 +148,17 @@ namespace Meadow.Foundation.RTCs
             i2cBus.Write((byte)Address.Default, new byte[] { 0x07, registerData }); //register and value
         }
 
-        private static byte ToBCD(ushort i)
+        static byte ToBCD(ushort i)
         {
             return (byte)((i % 10) + ((i / 10) * 0x10));
         }
 
-        private static ushort FromBCD(byte bcd)
+        static ushort FromBCD(byte bcd)
         {
             return (ushort)(((bcd) & 0x0F) + (((bcd) >> 4) * 10));
         }
 
-        private static byte[] ToRTCTime(DateTime dt)
+        static byte[] ToRTCTime(DateTime dt)
         {
             var data = new byte[7];
             data[0] = ToBCD((ushort)dt.Second);
@@ -152,14 +169,12 @@ namespace Meadow.Foundation.RTCs
             data[5] = ToBCD((ushort)dt.Month);
             data[6] = ToBCD((ushort)(dt.Year - OriginYear));
             return data;
-
         }
 
-        private static DateTime FromRTCTime(byte[] rtcData)
+        static DateTime FromRTCTime(byte[] rtcData)
         {
             try
-            {
-                // is the RTC in 12- or 24-hour mode?
+            {   // is the RTC in 12- or 24-hour mode?
                 byte hour = rtcData[2];
 
                 if ((hour & 0x40) != 0)

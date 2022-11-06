@@ -131,9 +131,11 @@ namespace Meadow.Foundation.Web.Maple
             Initialize();
         }
 
+        /// <summary>
+        /// Initalize
+        /// </summary>
         protected void Initialize()
         {
-
         }
 
         /// <summary>

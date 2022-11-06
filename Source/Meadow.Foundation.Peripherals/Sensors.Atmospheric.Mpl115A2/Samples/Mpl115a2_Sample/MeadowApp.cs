@@ -10,7 +10,7 @@ namespace MeadowApp
     {
         //<!=SNIP=>
 
-        Mpl115a2 sensor;
+        Mpl115a2? sensor;
 
         public override Task Initialize()
         {
@@ -46,6 +46,8 @@ namespace MeadowApp
 
         public override async Task Run()
         {
+            if (sensor == null) { return; }
+
             var conditions = await sensor.Read();
             Console.WriteLine($"Temperature: {conditions.Temperature?.Celsius}°C, Pressure: {conditions.Pressure?.Pascal}Pa");
 

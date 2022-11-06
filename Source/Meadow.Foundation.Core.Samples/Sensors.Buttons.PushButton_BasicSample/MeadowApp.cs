@@ -24,14 +24,12 @@ namespace MeadowApp
         {
             Console.WriteLine("Initialize...");
 
-            //==== onboard RGB LED
             onboardLed = new RgbPwmLed(device: Device,
                 redPwmPin: Device.Pins.OnboardLedRed,
                 greenPwmPin: Device.Pins.OnboardLedGreen,
                 bluePwmPin: Device.Pins.OnboardLedBlue,
                 CommonType.CommonAnode);
 
-            //===== Push Button
             // intialize the push button
             pushButton = new PushButton(
                 Device,

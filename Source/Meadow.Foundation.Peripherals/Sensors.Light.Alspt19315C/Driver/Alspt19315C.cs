@@ -6,28 +6,37 @@ using Meadow.Units;
 
 namespace Meadow.Foundation.Sensors.Light
 {
+    /// <summary>
+    /// Represents an Alspt19315C analog light sensor
+    /// </summary>
     public class Alspt19315C : SensorBase<Voltage>
     {
-        //==== internals
         /// <summary>
-        /// Analog port connected to the sensor.
+        /// Analog port connected to the sensor
         /// </summary>
         private readonly IAnalogInputPort AnalogInputPort;
 
-        //==== Properties
+        /// <summary>
+        /// The current voltage reading of the sensor
+        /// </summary>
         public Voltage Voltage { get; protected set; }
 
-        //==== constructors
-
         /// <summary>
-        /// Create a new light sensor object using a static reference voltage.
+        /// Create a new light sensor object using a static reference voltage
         /// </summary>
-        /// <param name="pin">AnalogChannel connected to the sensor.</param>
+        /// <param name="device">The device connected to the sensor</param>
+        /// <param name="pin">The analog pin</param>
+        /// <param name="sampleCount">The sample count</param>
+        /// <param name="sampleInterval">The sample interval</param>
+        /// <param name="voltage">The peak voltage</param>
         public Alspt19315C(IAnalogInputController device, IPin pin, int sampleCount = 5, TimeSpan? sampleInterval = null, Voltage? voltage = null)
             : this(device.CreateAnalogInputPort(pin, sampleCount, sampleInterval ?? TimeSpan.FromMilliseconds(40), voltage ?? new Voltage(3.3)))
-        {
-        }
+        { }
 
+        /// <summary>
+        /// Create a new light sensor object using a static reference voltage
+        /// </summary>
+        /// <param name="port"></param>
         public Alspt19315C(IAnalogInputPort port)
         {
             AnalogInputPort = port;
@@ -53,8 +62,6 @@ namespace Meadow.Foundation.Sensors.Light
                 )
            );
         }
-
-        //==== methods
 
         /// <summary>
         /// Starts continuously sampling the sensor.

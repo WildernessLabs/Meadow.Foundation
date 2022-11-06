@@ -4,7 +4,7 @@ using Meadow.Foundation.Audio.Mp3;
 using System;
 using System.Threading.Tasks;
 
-namespace MeadowApp
+namespace Audio.Mp3.Yx5300_Sample
 {
     public class MeadowApp : App<F7FeatherV2>
     {

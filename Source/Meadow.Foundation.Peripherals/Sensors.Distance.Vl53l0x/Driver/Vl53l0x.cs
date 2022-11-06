@@ -82,7 +82,7 @@ namespace Meadow.Foundation.Sensors.Distance
         {
             if (shutdownPin != null)
             {
-                device.CreateDigitalOutputPort(shutdownPin, true);
+                shutdownPort = device.CreateDigitalOutputPort(shutdownPin, true);
             }
             Initialize().Wait();
         }
@@ -248,6 +248,9 @@ namespace Meadow.Foundation.Sensors.Distance
             Peripheral.WriteRegister((byte)Register.SystemSequenceConfig, 0xE8);
         }
 
+        /// <summary>
+        /// Tell the sensor to take a measurement
+        /// </summary>
         public void MeasureDistance()
         {
             _ = ReadSensor();
@@ -313,6 +316,11 @@ namespace Meadow.Foundation.Sensors.Distance
             }
         }
 
+        /// <summary>
+        /// Get the spad info
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         protected Tuple<int, bool> GetSpadInfo()
         {
             Peripheral.WriteRegister(0x80, 0x01);
@@ -359,6 +367,11 @@ namespace Meadow.Foundation.Sensors.Distance
             return new Tuple<int, bool>(count, is_aperture);
         }
 
+        /// <summary>
+        /// perform a sensor self calibration
+        /// </summary>
+        /// <param name="vhvInitByte">The VHV init byte</param>
+        /// <exception cref="Exception"></exception>
         protected void PerformSingleRefCalibration(byte vhvInitByte)
         {
             Peripheral.WriteRegister((byte)Register.RangeStart, (byte)(0x01 | vhvInitByte & 0xFF));
@@ -379,20 +392,20 @@ namespace Meadow.Foundation.Sensors.Distance
             Peripheral.WriteRegister((byte)Register.RangeStart, 0x00);
         }
 
-        protected byte Read(byte address)
+        byte Read(byte address)
         {
             var result = Peripheral.ReadRegister(address);
             return result;
         }
 
-        protected int Read16(byte address)
+        int Read16(byte address)
         {
             //var result = Peripheral.ReadRegisters(address, 2);
             Peripheral.ReadRegister(address, ReadBuffer.Span[0..2]);
             return (ReadBuffer.Span[0] << 8) | ReadBuffer.Span[1];
         }
 
-        protected async Task<int> GetRawRangeData()
+        async Task<int> GetRawRangeData()
         {
             Peripheral.WriteRegister(0x80, 0x01);
             Peripheral.WriteRegister(0xFF, 0x01);
@@ -433,6 +446,9 @@ namespace Meadow.Foundation.Sensors.Distance
             return range_mm;
         }
 
+        /// <summary>
+        /// Shut down/power down the sensor
+        /// </summary>
         public void ShutDown()
         {
             shutdownPort.State = true;

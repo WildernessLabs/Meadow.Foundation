@@ -45,6 +45,9 @@ namespace Meadow.Foundation.Displays
         {
         }
 
+        /// <summary>
+        /// Initalize the display
+        /// </summary>
         protected override void Initialize()
         {
             Reset();
@@ -74,7 +77,7 @@ namespace Meadow.Foundation.Displays
             SendData(LUT_Full_Update);
         }
 
-        public static readonly byte[] LUT_Full_Update =
+        static readonly byte[] LUT_Full_Update =
         {
             0x02, 0x02, 0x01, 0x11, 0x12, 0x12, 0x22, 0x22,
             0x66, 0x69, 0x69, 0x59, 0x58, 0x99, 0x99, 0x88,
@@ -82,12 +85,13 @@ namespace Meadow.Foundation.Displays
             0x35, 0x51, 0x51, 0x19, 0x01, 0x00
         };
 
-        public static readonly byte[] LUT_Partial_Update =
+        /*
+        static readonly byte[] LUT_Partial_Update =
         {
             0x10, 0x18, 0x18, 0x08, 0x18, 0x18, 0x08, 0x00,
             0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
             0x00, 0x00, 0x00, 0x00, 0x13, 0x14, 0x44, 0x12,
             0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-        };
+        };*/
     }
 }

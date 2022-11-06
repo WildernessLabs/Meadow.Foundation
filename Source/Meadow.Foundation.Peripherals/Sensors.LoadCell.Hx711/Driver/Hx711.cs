@@ -10,20 +10,8 @@ namespace Meadow.Foundation.Sensors.LoadCell
     /// <summary>
     /// 24-Bit Dual-Channel ADC For Bridge Sensors
     /// </summary>
-    public class Hx711 : SamplingSensorBase<Mass>, IMassSensor, IDisposable
+    public partial class Hx711 : SamplingSensorBase<Mass>, IMassSensor, IDisposable
     {
-        //==== events
-        public event EventHandler<IChangeResult<Mass>> MassUpdated = delegate { };
-
-        //==== internals
-        // TODO: move into `Hx711.AdcGainOptions.cs` and rename
-        public enum AdcGain
-        {
-            Gain128 = 1,
-            Gain32 = 2,
-            Gain64 = 3,
-        }
-
         private const uint GPIO_BASE = 0x40020000;
         private const uint IDR_OFFSET = 0x10;
         private const uint BSSR_OFFSET = 0x18;
@@ -40,18 +28,49 @@ namespace Meadow.Foundation.Sensors.LoadCell
 
         private IDigitalOutputPort SCK { get; }
         private IDigitalInputPort DOUT { get; }
-        //private object SyncRoot { get; } = new object();
 
-        //==== properties
+        /// <summary>
+        /// Is the peripheral disposed
+        /// </summary>
         public bool IsDisposed { get; private set; }
+
+        /// <summary>
+        /// Is the peripheral sleeping
+        /// </summary>
         public bool IsSleeping { get; private set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
         public AdcGain Gain { get; private set; } = AdcGain.Gain128;
+
+        /// <summary>
+        /// Gets/Sets Tare value
+        /// </summary>
         public uint TareValue { get; set; } = 0;
+
+        /// <summary>
+        /// Mass changed event
+        /// </summary>
+        public event EventHandler<IChangeResult<Mass>> MassUpdated = delegate { };
+
+        /// <summary>
+        /// Gets default sample period (1 Second)
+        /// </summary>
+        public TimeSpan DefaultSamplePeriod { get; } = TimeSpan.FromSeconds(1);
+
+        /// <summary>
+        /// The last read Mass
+        /// </summary>
+        public Mass? Mass { get; private set; }
 
         /// <summary>
         /// Creates an instance of the Hx711 Driver class
         /// </summary>
-        /// <param name="bus"></param>
+        /// <param name="device">Digital Input Output Controller to create digital input and output ports</param>
+        /// <param name="sck">Serial clock pin</param>
+        /// <param name="dout">Digital output pin</param>
+        /// <param name="tareValue">Tare value threshold</param>
         public Hx711(IDigitalInputOutputController device, IPin sck, IPin dout, uint? tareValue = null)
         {
             SCK = device.CreateDigitalOutputPort(sck);
@@ -76,7 +95,9 @@ namespace Meadow.Foundation.Sensors.LoadCell
         /// <summary>
         /// Creates an instance of the Hx711 Driver class
         /// </summary>
-        /// <param name="bus"></param>
+        /// <param name="sck"></param>
+        /// <param name="dout"></param>
+        /// <param name="tareValue"></param>
         public Hx711(IDigitalOutputPort sck, IDigitalInputPort dout, uint? tareValue = null)
         {
             SCK = sck;
@@ -141,7 +162,7 @@ namespace Meadow.Foundation.Sensors.LoadCell
         }
 
         /// <summary>
-        /// Calculates the calibration factor of the load cell.  Call this method with a known weight on the sensor, and then use the returned value in a call to <see cref="SetCalibrationFactor(int, Weight)"/> before using the sensor.
+        /// Calculates the calibration factor of the load cell.  Call this method with a known weight on the sensor, and then use the returned value in a call to <see cref="SetCalibrationFactor(int, Mass)"/> before using the sensor.
         /// </summary>
         /// <returns></returns>
         public int CalculateCalibrationFactor()
@@ -278,13 +299,6 @@ namespace Meadow.Foundation.Sensors.LoadCell
             return count;
         }
 
-        public TimeSpan DefaultSamplePeriod { get; } = TimeSpan.FromSeconds(1);
-
-        /// <summary>
-        /// The last read Mass.
-        /// </summary>
-        public Mass? Mass { get; private set; }
-
         /// <summary>
         /// Inheritance-safe way to raise events and notify observers.
         /// </summary>
@@ -303,6 +317,10 @@ namespace Meadow.Foundation.Sensors.LoadCell
             }
         }
 
+        /// <summary>
+        /// Dispose managed resources
+        /// </summary>
+        /// <param name="disposing">Is disposing</param>
         protected virtual void Dispose(bool disposing)
         {
             if (_createdPorts)

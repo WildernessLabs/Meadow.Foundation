@@ -1,9 +1,8 @@
-﻿using System;
-namespace Meadow.Foundation.Sensors.Motion
+﻿namespace Meadow.Foundation.Sensors.Motion
 {
     public partial class Apds9960
     {
-        public static class BitFields
+        static class BitFields
         {
             /* Bit fields */
             public const byte APDS9960_PON = 0b00000001;

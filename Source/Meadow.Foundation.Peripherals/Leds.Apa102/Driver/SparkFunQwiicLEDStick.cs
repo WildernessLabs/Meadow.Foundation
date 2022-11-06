@@ -3,36 +3,50 @@ using System;
 
 namespace Meadow.Foundation.Leds
 {
+    /// <summary>
+    /// Represents a SparkFunQwiicLEDStick that uses APA102 leds
+    /// </summary>
     public partial class SparkFunQwiicLEDStick : I2cPeripheral, IApa102
     {
-        private float _brightness;
-        private byte[][] _buffer;
-
+        /// <summary>
+        /// Enable or disable autowrite to update the LEDs as they're set
+        /// </summary>
         public bool AutoWrite { get; set; }
 
-        private const int ArrayLength = 10;
+        float brightness;
+        byte[][] buffer;
 
-        public SparkFunQwiicLEDStick(II2cBus bus,
+        const int ArrayLength = 10;
+
+        /// <summary>
+        /// Creates a new SparkFunQwiicLEDStick object
+        /// </summary>
+        /// <param name="i2cbus">The I2C bus</param>
+        /// <param name="address">The I2C address</param>
+        public SparkFunQwiicLEDStick(II2cBus i2cbus,
             byte address = (byte)Addresses.Default)
-            : base(bus, address, 1, 16)
+            : base(i2cbus, address, 1, 16)
         {
             Initialize();
         }
 
+        /// <summary>
+        /// The led brightness (0-1)
+        /// </summary>
         public float Brightness
         {
-            get => _brightness;
+            get => brightness;
             set
             {
                 if (value == Brightness) return;
 
-                if (value < 0) { _brightness = 0; }
-                else if (value > 1f) { _brightness = 1f; }
-                else { _brightness = value; }
+                if (value < 0) { brightness = 0; }
+                else if (value > 1f) { brightness = 1f; }
+                else { brightness = value; }
             }
         }
 
-        private void Initialize()
+        void Initialize()
         {
             SetLength(ArrayLength);
             Brightness = 1f;
@@ -41,18 +55,17 @@ namespace Meadow.Foundation.Leds
             Clear();
         }
 
-        private byte ConvertBrightness(float b)
-        {
-            // the internal brightness is 0-31, so scale from the float interface property
+        byte ConvertBrightness(float b)
+        {   // the internal brightness is 0-31, so scale from the float interface property
             var result = (byte)(b * 31f);
             if (result < 0) return 0;
             if (result > 31) return 31;
             return result;
         }
 
-        private void SetLength(byte length)
+        void SetLength(byte length)
         {
-            _buffer = new byte[4][]
+            buffer = new byte[4][]
             {
                 new byte[length],
                 new byte[length],
@@ -66,17 +79,18 @@ namespace Meadow.Foundation.Leds
         /// <summary>
         /// Sets all LEDs to a given color
         /// </summary>
-        /// <param name="color"></param>
+        /// <param name="color">The led color</param>
+        /// <param name="brightness">The led brightness (0-1)</param>
         public void All(Color color, float brightness = 1f)
         {
             var bright = ConvertBrightness(brightness);
 
             for (byte b = 0; b < ArrayLength; b++)
             {
-                _buffer[0][b] = color.R;
-                _buffer[1][b] = color.G;
-                _buffer[2][b] = color.B;
-                _buffer[3][b] = bright;
+                buffer[0][b] = color.R;
+                buffer[1][b] = color.G;
+                buffer[2][b] = color.B;
+                buffer[3][b] = bright;
             }
 
             WriteRegister((byte)Register.AllColor, new byte[] { color.R, color.G, color.B });
@@ -131,15 +145,15 @@ namespace Meadow.Foundation.Leds
             var setColor = false;
             var setBrightness = false;
 
-            if (_buffer[0][index] != rgb[0]) setColor = true;
-            if (_buffer[1][index] != rgb[1]) setColor = true;
-            if (_buffer[2][index] != rgb[2]) setColor = true;
-            if (_buffer[3][index] != requestedBrightness) setBrightness = true;
+            if (buffer[0][index] != rgb[0]) setColor = true;
+            if (buffer[1][index] != rgb[1]) setColor = true;
+            if (buffer[2][index] != rgb[2]) setColor = true;
+            if (buffer[3][index] != requestedBrightness) setBrightness = true;
 
-            _buffer[0][index] = rgb[0];
-            _buffer[1][index] = rgb[1];
-            _buffer[2][index] = rgb[2];
-            _buffer[3][index] = requestedBrightness;
+            buffer[0][index] = rgb[0];
+            buffer[1][index] = rgb[1];
+            buffer[2][index] = rgb[2];
+            buffer[3][index] = requestedBrightness;
 
             if (AutoWrite)
             {
@@ -172,41 +186,40 @@ namespace Meadow.Foundation.Leds
             TransmitData();
         }
 
-        private void TransmitData()
+        void TransmitData()
         {
             // RED
-            var r = new byte[_buffer[0].Length + 3];
+            var r = new byte[buffer[0].Length + 3];
             r[0] = (byte)Register.RedArray;
-            r[1] = (byte)(_buffer[0].Length);
+            r[1] = (byte)(buffer[0].Length);
             r[2] = 0;
-            Array.Copy(_buffer[0], 0, r, 3, _buffer[0].Length);
+            Array.Copy(buffer[0], 0, r, 3, buffer[0].Length);
             base.Write(r);
 
             //// GREEN
-            var g = new byte[_buffer[1].Length + 3];
+            var g = new byte[buffer[1].Length + 3];
             g[0] = (byte)Register.GreenArray;
-            g[1] = (byte)(_buffer[1].Length);
+            g[1] = (byte)(buffer[1].Length);
             g[2] = 0;
-            Array.Copy(_buffer[1], 0, g, 3, _buffer[1].Length);
+            Array.Copy(buffer[1], 0, g, 3, buffer[1].Length);
             base.Write(g);
 
             // BLUE
-            var b = new byte[_buffer[2].Length + 3];
+            var b = new byte[buffer[2].Length + 3];
             b[0] = (byte)Register.BlueArray;
-            b[1] = (byte)(_buffer[2].Length);
+            b[1] = (byte)(buffer[2].Length);
             b[2] = 0;
-            Array.Copy(_buffer[2], 0, b, 3, _buffer[2].Length);
+            Array.Copy(buffer[2], 0, b, 3, buffer[2].Length);
             base.Write(b);
 
             WriteBrightnessArray();
         }
 
-        private void WriteBrightnessArray()
-        {
-            // TODO: this could be improved - need to track current brightness and only write on change
+        void WriteBrightnessArray()
+        {   // TODO: this could be improved - need to track current brightness and only write on change
             for (byte b = 0; b < ArrayLength; b++)
             {
-                base.WriteRegister((byte)Register.SingleBrightness, new byte[] { b, _buffer[3][b] });
+                base.WriteRegister((byte)Register.SingleBrightness, new byte[] { b, buffer[3][b] });
             }
         }
 
@@ -215,10 +228,10 @@ namespace Meadow.Foundation.Leds
         /// </summary>
         public void Clear(bool update = false)
         {
-            Array.Clear(_buffer[0], 0, _buffer[0].Length);
-            Array.Clear(_buffer[1], 0, _buffer[0].Length);
-            Array.Clear(_buffer[2], 0, _buffer[0].Length);
-            Array.Clear(_buffer[3], 0, _buffer[0].Length);
+            Array.Clear(buffer[0], 0, buffer[0].Length);
+            Array.Clear(buffer[1], 0, buffer[0].Length);
+            Array.Clear(buffer[2], 0, buffer[0].Length);
+            Array.Clear(buffer[3], 0, buffer[0].Length);
 
             base.Write((byte)Register.AllOff);
         }

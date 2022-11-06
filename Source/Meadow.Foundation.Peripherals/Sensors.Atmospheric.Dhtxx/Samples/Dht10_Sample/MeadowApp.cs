@@ -9,7 +9,7 @@ namespace Dht10_Sample
 {
     public class MeadowApp : App<F7FeatherV2>
     {
-        Dht10 dht10;
+        Dht10? dht10;
 
         public override Task Initialize()
         {
@@ -49,6 +49,11 @@ namespace Dht10_Sample
 
         public override async Task Run()
         {
+            if(dht10 == null)
+            {
+                return;
+            }
+
             var conditions = await dht10.Read();
             Console.WriteLine("Initial Readings:");
             Console.WriteLine($"  Temperature: {conditions.Temperature?.Celsius:N2}C");
