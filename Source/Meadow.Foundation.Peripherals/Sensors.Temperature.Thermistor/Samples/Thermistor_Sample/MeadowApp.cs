@@ -5,7 +5,7 @@ using Meadow.Units;
 using System;
 using System.Threading.Tasks;
 
-namespace Sensors.Temperature.Thermistor
+namespace Sensors.Temperature.Thermistor_Sample
 {
     public class MeadowApp : App<F7FeatherV2>
     {
