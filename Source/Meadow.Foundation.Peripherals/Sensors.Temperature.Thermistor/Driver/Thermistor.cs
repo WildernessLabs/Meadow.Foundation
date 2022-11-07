@@ -1,4 +1,4 @@
-﻿using Meadow.Hardware;
+using Meadow.Hardware;
 using Meadow.Peripherals.Sensors;
 using Meadow.Units;
 using System;
@@ -11,9 +11,9 @@ namespace Meadow.Foundation.Sensors.Temperature
     /// <remarks>
     /// Typical wiring
     /// 
-    /// 3.3V >-----[ 10k R ]---+-------------< Analog_in
+    /// 3.3V >-----[ 10k R ]---+-------------&lt; Analog_in
     ///                        |
-    ///                        +---[ TM ]--- < GND
+    ///                        +---[ TM ]--- &lt; GND
     /// </remarks>
     public abstract class Thermistor : SamplingSensorBase<Units.Temperature>, ITemperatureSensor
     {
