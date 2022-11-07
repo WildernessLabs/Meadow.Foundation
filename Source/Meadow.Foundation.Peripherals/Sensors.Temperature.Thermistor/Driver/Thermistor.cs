@@ -11,9 +11,11 @@ namespace Meadow.Foundation.Sensors.Temperature
     /// <remarks>
     /// Typical wiring
     /// 
+    /// <![CDATA[
     /// 3.3V >-----[ 10k R ]---+-------------< Analog_in
     ///                        |
     ///                        +---[ TM ]--- < GND
+    /// ]]>
     /// </remarks>
     public abstract class Thermistor : SamplingSensorBase<Units.Temperature>, ITemperatureSensor
     {
