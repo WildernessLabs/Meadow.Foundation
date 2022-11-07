@@ -1,29 +1,22 @@
 ﻿using Meadow.Hardware;
 using Meadow.Peripherals.Sensors;
+using Meadow.Units;
 using System;
-using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Temperature
 {
     /// <summary>
     /// Thermistor temperature sensor object
     /// </summary>
-    public partial class Thermistor<T> : SamplingSensorBase<Units.Temperature>, ITemperatureSensor
-        where T : class, IThermistorType, new()
+    public abstract class Thermistor : SamplingSensorBase<Units.Temperature>, ITemperatureSensor
     {
-        private T parameters;
-        private IAnalogInputPort analogInput;
+        protected IAnalogInputPort AnalogInput { get; }
+        public abstract Resistance ThermistorResistanceAt25C { get; }
+        public virtual Units.Temperature NominalTemperature => new Units.Temperature(25, Units.Temperature.UnitType.Celsius);
 
-        public Thermistor(IAnalogInputPort input)
+        protected Thermistor(IAnalogInputPort analogInput)
         {
-            parameters = Activator.CreateInstance<T>();
-            analogInput = input;
-        }
-
-        public Thermistor(IAnalogInputPort input, T parameters)
-        {
-            this.parameters = parameters;
-            analogInput = input;
+            this.AnalogInput = analogInput;
         }
 
         /// <summary>
@@ -32,11 +25,5 @@ namespace Meadow.Foundation.Sensors.Temperature
         public Units.Temperature? Temperature { get; protected set; }
 
         public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated;
-
-        protected override async Task<Units.Temperature> ReadSensor()
-        {
-            Temperature = await parameters.CalculateTemperature(analogInput);
-            return Temperature.Value;
-        }
     }
 }

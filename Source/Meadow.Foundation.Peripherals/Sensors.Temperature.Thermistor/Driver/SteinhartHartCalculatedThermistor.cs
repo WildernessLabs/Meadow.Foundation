@@ -5,16 +5,49 @@ using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Temperature
 {
-    public abstract class SteinhartHartCalculatedThermistor : ThermistorTypeBase
+    public class SteinhartHartCalculatedThermistor : Thermistor
     {
-        public abstract double BetaCoefficient { get; }
-        public abstract Resistance SeriesResistance { get; }
+        public const double DefaultBetaCoefficient = 3950d;
 
-        public override async Task<Units.Temperature> CalculateTemperature(IAnalogInputPort analog)
+        public double BetaCoefficient { get; } = DefaultBetaCoefficient;
+        public Resistance SeriesResistance { get; }
+        public override Resistance ThermistorResistanceAt25C { get; }
+
+        public SteinhartHartCalculatedThermistor(IAnalogInputPort analog, Resistance nominalResistanceAt25C)
+            : base(analog)
         {
-            var voltageReading = await analog.Read();
+            ThermistorResistanceAt25C = nominalResistanceAt25C;
+            SeriesResistance = nominalResistanceAt25C;
+        }
 
-            var analogMax = 0xffff >> analog.Channel.Precision;
+        public SteinhartHartCalculatedThermistor(IAnalogInputPort analog, Resistance nominalResistanceAt25C, Resistance seriesResisance)
+            : base(analog)
+        {
+            ThermistorResistanceAt25C = nominalResistanceAt25C;
+            SeriesResistance = seriesResisance;
+        }
+
+        public SteinhartHartCalculatedThermistor(IAnalogInputPort analog, Resistance nominalResistanceAt25C, Resistance seriesResisance, double betaCoefficient)
+            : base(analog)
+        {
+            ThermistorResistanceAt25C = nominalResistanceAt25C;
+            SeriesResistance = seriesResisance;
+            BetaCoefficient = betaCoefficient;
+        }
+
+        public SteinhartHartCalculatedThermistor(IAnalogInputPort analog, Resistance nominalResistanceAt25C, double betaCoefficient)
+            : base(analog)
+        {
+            ThermistorResistanceAt25C = nominalResistanceAt25C;
+            SeriesResistance = nominalResistanceAt25C;
+            BetaCoefficient = betaCoefficient;
+        }
+
+        protected override async Task<Units.Temperature> ReadSensor()
+        {
+            var voltageReading = await AnalogInput.Read();
+
+            var analogMax = 0xffff >> AnalogInput.Channel.Precision;
             var measuredResistance = SeriesResistance.Ohms / (analogMax / voltageReading.Volts - 1);
 
             double steinhart;

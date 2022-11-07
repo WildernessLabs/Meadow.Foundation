@@ -1,6 +1,7 @@
 ﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Temperature;
+using Meadow.Units;
 using System;
 using System.Threading.Tasks;
 
@@ -13,15 +14,15 @@ namespace Sensors.Temperature.Thermistor
     {
         //<!=SNIP=>
 
-        private Thermistor<Type10k> thermistor;
+        private SteinhartHartCalculatedThermistor thermistor;
 
         public override Task Initialize()
         {
             Console.WriteLine("Initialize...");
 
-            thermistor = new Thermistor<Type10k>(Device.CreateAnalogInputPort(Device.Pins.A00));
+            thermistor = new SteinhartHartCalculatedThermistor(Device.CreateAnalogInputPort(Device.Pins.A00), new Resistance(10, Meadow.Units.Resistance.UnitType.Kiloohms));
 
-            var consumer = Thermistor<Type10k>.CreateObserver(
+            var consumer = SteinhartHartCalculatedThermistor.CreateObserver(
                 handler: result =>
                 {
                     Console.WriteLine($"Temperature New Value {result.New.Celsius}C");
