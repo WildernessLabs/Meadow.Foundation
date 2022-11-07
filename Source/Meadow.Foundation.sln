@@ -1181,6 +1181,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MQTTnet", "..\..\MQTTnet\So
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Light.AnalogLightSensor_Sample", "Meadow.Foundation.Core.Samples\Sensors.Light.AnalogLightSensor_Sample\Sensors.Light.AnalogLightSensor_Sample.csproj", "{5A2538C7-D110-4DFB-A77B-C328CDDF7848}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sensors.Temperature.Thermistor", "Sensors.Temperature.Thermistor", "{FF251CAE-8D0B-45E2-BAA4-FE2991D527F7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Temperature.Thermistor", "Meadow.Foundation.Peripherals\Sensors.Temperature.Thermistor\Driver\Sensors.Temperature.Thermistor.csproj", "{CB8A3C9C-C1EA-4877-ABFC-76DF58FA7BA6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{2637750E-FF22-4AFF-882D-D80C3A6D1D5B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Thermistor_Sample", "Meadow.Foundation.Peripherals\Sensors.Temperature.Thermistor\Samples\Thermistor_Sample\Thermistor_Sample.csproj", "{5787131C-A3BC-4BB4-BC05-C792AF28A118}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -2747,6 +2755,18 @@ Global
 		{5A2538C7-D110-4DFB-A77B-C328CDDF7848}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5A2538C7-D110-4DFB-A77B-C328CDDF7848}.Release|Any CPU.Build.0 = Release|Any CPU
 		{5A2538C7-D110-4DFB-A77B-C328CDDF7848}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{CB8A3C9C-C1EA-4877-ABFC-76DF58FA7BA6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CB8A3C9C-C1EA-4877-ABFC-76DF58FA7BA6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CB8A3C9C-C1EA-4877-ABFC-76DF58FA7BA6}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{CB8A3C9C-C1EA-4877-ABFC-76DF58FA7BA6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CB8A3C9C-C1EA-4877-ABFC-76DF58FA7BA6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CB8A3C9C-C1EA-4877-ABFC-76DF58FA7BA6}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{5787131C-A3BC-4BB4-BC05-C792AF28A118}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5787131C-A3BC-4BB4-BC05-C792AF28A118}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5787131C-A3BC-4BB4-BC05-C792AF28A118}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{5787131C-A3BC-4BB4-BC05-C792AF28A118}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5787131C-A3BC-4BB4-BC05-C792AF28A118}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5787131C-A3BC-4BB4-BC05-C792AF28A118}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -3333,6 +3353,10 @@ Global
 		{831C87F3-4925-4311-83A4-C07CE4CD109E} = {4657A98F-6D05-48EB-864D-E3D0DCA658C5}
 		{810BF526-53F8-4DFB-A32A-A67CB5FFF785} = {65C50059-6C22-43E9-88DE-AD73F7F108C8}
 		{5A2538C7-D110-4DFB-A77B-C328CDDF7848} = {7EBB4434-F29C-4316-BEDC-F28F07CE4AC8}
+		{FF251CAE-8D0B-45E2-BAA4-FE2991D527F7} = {DBC6C89D-A932-4F99-9382-7405A0045988}
+		{CB8A3C9C-C1EA-4877-ABFC-76DF58FA7BA6} = {FF251CAE-8D0B-45E2-BAA4-FE2991D527F7}
+		{2637750E-FF22-4AFF-882D-D80C3A6D1D5B} = {FF251CAE-8D0B-45E2-BAA4-FE2991D527F7}
+		{5787131C-A3BC-4BB4-BC05-C792AF28A118} = {2637750E-FF22-4AFF-882D-D80C3A6D1D5B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}
