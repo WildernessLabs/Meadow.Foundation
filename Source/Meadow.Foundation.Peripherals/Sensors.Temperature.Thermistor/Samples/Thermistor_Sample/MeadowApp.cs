@@ -7,9 +7,6 @@ using System.Threading.Tasks;
 
 namespace Sensors.Temperature.Thermistor
 {
-    // TODO: This sample needs a rewrite. See the other atmospheric samples for
-    // an example of the sample pattern.
-
     public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
@@ -25,8 +22,8 @@ namespace Sensors.Temperature.Thermistor
             var consumer = SteinhartHartCalculatedThermistor.CreateObserver(
                 handler: result =>
                 {
-                    Console.WriteLine($"Temperature New Value {result.New.Celsius}C");
-                    Console.WriteLine($"Temperature Old Value {result.Old?.Celsius}C");
+                    Console.WriteLine($"Temperature New Value {result.New.Fahrenheit:N1}F/{result.New.Celsius:N1}C");
+                    Console.WriteLine($"Temperature Old Value {result.Old?.Fahrenheit:N1}F/{result.Old?.Celsius:N1}C");
                 },
                 filter: null
             );
@@ -34,7 +31,7 @@ namespace Sensors.Temperature.Thermistor
 
             thermistor.TemperatureUpdated += (object sender, IChangeResult<Meadow.Units.Temperature> e) =>
             {
-                Console.WriteLine($"Temperature Updated: {e.New.Celsius:N2}C");
+                Console.WriteLine($"Temperature Updated: {e.New.Fahrenheit:N1}F/{e.New.Celsius:N1}C");
             };
 
             return Task.CompletedTask;
@@ -43,7 +40,7 @@ namespace Sensors.Temperature.Thermistor
         public override async Task Run()
         {
             var temp = await thermistor.Read();
-            Console.WriteLine($"Current temperature: {temp.Celsius} C");
+            Console.WriteLine($"Current temperature: {temp.Fahrenheit:N1}F/{temp.Celsius:N1}C");
 
             thermistor.StartUpdating(TimeSpan.FromSeconds(1));
         }
