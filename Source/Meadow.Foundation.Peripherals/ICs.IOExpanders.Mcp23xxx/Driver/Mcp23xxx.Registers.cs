@@ -1,5 +1,4 @@
-﻿using System;
-namespace Meadow.Foundation.ICs.IOExpanders
+﻿namespace Meadow.Foundation.ICs.IOExpanders
 {
     public partial class Mcp23xxx
     {
@@ -25,7 +24,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// If a bit is set, the corresponding GPIO register bit will
             /// reflect the inverted value on the pin.
             /// </remarks>
-            public const byte InputPolarity = 0x01; //IPOL
+            public const byte IPOL_InputPolarity = 0x01; //IPOL
 
             /// <summary>
             /// GPINTEN. The GPINTEN register controls the interrupt-on-change
@@ -36,7 +35,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// interrupt-on-change. The DEFVAL and INTCON registers must also
             /// be configured if any pins are enabled for interrupt-on-change.
             /// </remarks>
-            public const byte InterruptOnChange = 0x02; //GPINTEN
+            public const byte GPINTEN_InterruptOnChange = 0x02; //GPINTEN
 
             /// <summary>
             /// DEFVAL. The default comparison value is configured in the DEFVAL
@@ -44,7 +43,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// the DEFVAL register, an opposite value on the associated pin
             /// will cause an interrupt to occur.
             /// </summary>
-            public const byte DefaultComparisonValue = 0x03; //DEFVAL
+            public const byte DEFVAL_DefaultComparisonValue = 0x03; //DEFVAL
 
             /// <summary>
             /// INTCON. 
@@ -56,7 +55,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// in the DEFVAL register. If a bit value is clear, the
             /// corresponding I/O pin is compared against the previous value.
             /// </remarks>
-            public const byte InterruptControl = 0x04; //INTCON
+            public const byte INTCON_InterruptControl = 0x04; //INTCON
 
             /// <summary>
             /// IOCON
