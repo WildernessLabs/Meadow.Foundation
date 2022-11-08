@@ -14,7 +14,7 @@
             /// When a bit is set, the corresponding pin becomes an input. When
             /// a bit is clear, the corresponding pin becomes an output.
             /// </remarks>
-            public const byte IODirection = 0x00; //IODIR
+            public const byte IODIR_IODirection = 0x00; //IODIR
 
             /// <summary>
             /// IPOL. The IPOL register allows the user to configure the
@@ -80,7 +80,7 @@
             /// the INT pin. This bit is functional only when the ODR bit is
             /// cleared, configuring the INT pin as active push-pull.
             /// </remarks>
-            public const byte IOConfiguration = 0x05; //IOCON
+            public const byte IOCON_IOConfiguration = 0x05; //IOCON
 
             /// <summary>
             /// GPPU. 
@@ -91,7 +91,7 @@
             /// an input, the corresponding port pin is internally pulled up
             /// with a 100kΩ resistor.
             /// </remarks>
-            public const byte PullupResistorConfiguration = 0x06; //GPPU
+            public const byte GPPU_PullupResistorConfiguration = 0x06; //GPPU
 
             /// <summary>
             /// INTF
@@ -110,7 +110,7 @@
             /// the interrupt another pin changes, which would normally cause an
             /// interrupt, it will be reflected in INTF, but not INTCAP.
             /// </remarks>
-            public const byte InterruptFlag = 0x07; //INTF
+            public const byte INTF_InterruptFlag = 0x07; //INTF
 
             /// <summary>
             /// INTCAP
@@ -121,7 +121,7 @@
             /// only when an interrupt occurs. The register will remain unchanged
             /// until the interrupt is cleared via a read of INTCAP or GPIO.
             /// </remarks>
-            public const byte InterruptCapture = 0x08; //INTCAP
+            public const byte INTCAP_InterruptCapture = 0x08; //INTCAP
 
             /// <summary>
             /// GPIO. The GPIO module contains the data port (GPIO), internal
