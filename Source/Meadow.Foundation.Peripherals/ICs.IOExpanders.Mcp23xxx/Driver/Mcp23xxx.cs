@@ -3,6 +3,7 @@ using Meadow.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using static Meadow.Foundation.ICs.IOExpanders.Mcp23xxx;
 
 namespace Meadow.Foundation.ICs.IOExpanders
 {
@@ -269,12 +270,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
         {
             if (IsValidPin(pin))
             {
-                var portBank = GetPortBankForPin(pin);
-                byte bitIndex = (byte)(((byte)pin.Key) % 8);
-
                 if (resistorMode == ResistorMode.InternalPullDown)
                 {
-                    throw new Exception("Pull-down resistor mode is not supported.");
+                    throw new Exception("Pull-down resistor mode is not supported");
                 }
 
                 ConfigureMcpInputPort(pin, resistorMode == ResistorMode.InternalPullUp, interruptMode);
@@ -283,38 +281,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 {
                     DebounceDuration = debounceDuration,
                 };
-
-                if (interruptPort == null)
-                {   //no interrupts so we'll pull the state 
-                    port.UpdateState = (pin) => ReadPort(pin);
-                    // INTEN = 0
-                    ClearRegisterBit(MapRegister(Registers.GPINTEN_InterruptOnChange, portBank), bitIndex);
-                }
-                else
-                {
-                    switch (port.InterruptMode)
-                    {
-                        case InterruptMode.EdgeRising:
-                            // INTCON = 1
-                            // DEFVAL = 0
-                            SetRegisterBit(MapRegister(Registers.INTCON_InterruptControl, portBank), bitIndex);
-                            ClearRegisterBit(MapRegister(Registers.DEFVAL_DefaultComparisonValue, portBank), bitIndex);
-                            break;
-                        case InterruptMode.EdgeFalling:
-                            // INTCON = 1
-                            // DEFVAL = 1
-                            SetRegisterBit(MapRegister(Registers.INTCON_InterruptControl, portBank), bitIndex);
-                            SetRegisterBit(MapRegister(Registers.DEFVAL_DefaultComparisonValue, portBank), bitIndex);
-                            break;
-                        case InterruptMode.EdgeBoth:
-                            // INTCON = 0
-                            ClearRegisterBit(MapRegister(Registers.INTCON_InterruptControl, portBank), bitIndex);
-                            break;
-                    }
-
-                    // GPINTEN = 1
-                    SetRegisterBit(MapRegister(Registers.GPINTEN_InterruptOnChange, portBank), bitIndex);
-                }
 
                 inputPorts.Add(pin, port);
                 return port;
@@ -394,20 +360,20 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 SetPortDirection(pin, PortDirectionType.Input);
 
                 var bank = GetPortBankForPin(pin);
+                byte bitIndex = (byte)(((byte)pin.Key) % 8);
 
                 var gppu = mcpDevice.ReadRegister(MapRegister(Registers.GPPU_PullupResistorConfiguration, bank));
-
-                byte bitIndex = (byte)(((byte)pin.Key) % 8);
                 gppu = BitHelpers.SetBit(gppu, bitIndex, enablePullUp);
                 mcpDevice.WriteRegister(MapRegister(Registers.GPPU_PullupResistorConfiguration, bank), gppu);
 
                 if (interruptMode != InterruptMode.None)
                 {   // we don't set DEFVAL or INTCON because we want interrupts raised for both directions
                     // interrupt on change (raise an interrupt on the interrupt pin on state change)
-                    byte gpinten = mcpDevice.ReadRegister(MapRegister(Registers.GPINTEN_InterruptOnChange, bank));
-
-                    gpinten = BitHelpers.SetBit(gpinten, bitIndex, true);
-                    mcpDevice.WriteRegister(MapRegister(Registers.GPINTEN_InterruptOnChange, bank), gpinten);
+                    SetRegisterBit(MapRegister(Registers.GPINTEN_InterruptOnChange, bank), bitIndex);
+                }
+                else
+                {
+                    ClearRegisterBit(MapRegister(Registers.GPINTEN_InterruptOnChange, bank), bitIndex);
                 }
             }
             else
