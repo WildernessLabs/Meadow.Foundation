@@ -182,7 +182,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <summary>
         /// The current gas resistance
         /// </summary>
-        public Resistance? GetResistance => Conditions.GasResistance;
+        public Resistance? GasResistance => Conditions.GasResistance;
 
         readonly Configuration configuration;
 
