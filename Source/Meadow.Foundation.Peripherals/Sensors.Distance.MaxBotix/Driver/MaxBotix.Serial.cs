@@ -1,4 +1,5 @@
-﻿using Meadow.Devices;
+﻿using System;
+using Meadow.Devices;
 using Meadow.Hardware;
 using Meadow.Units;
 
@@ -32,7 +33,7 @@ namespace Meadow.Foundation.Sensors.Distance
         }
 
         private void SerialMessagePort_MessageReceived(object sender, SerialMessageData e)
-        { 
+        {
             //R###\n //cm
             //R####\n //mm
             //R####\n //cm
@@ -43,8 +44,18 @@ namespace Meadow.Foundation.Sensors.Distance
             { return; }
 
             //it'll throw an exception if it's wrong
+
             //strip the leading R
-            var value = double.Parse(message.Substring(1));
+            string cleaned = message.Substring(1);
+
+            // get index of space
+            var spaceIndex = message.FirstIndexOf(new char[] { ' ' });
+            if (spaceIndex > 0)
+            {
+                cleaned = cleaned.Substring(0, spaceIndex);
+            }
+
+            var value = double.Parse(cleaned);
 
             //need to get this per sensor
             Length.UnitType units = GetUnitsForSensor(sensorType);
