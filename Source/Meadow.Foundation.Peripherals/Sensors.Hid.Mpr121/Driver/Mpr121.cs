@@ -6,6 +6,9 @@ using static Meadow.Foundation.Sensors.Hid.Mpr121;
 
 namespace Meadow.Foundation.Sensors.Hid
 {
+    /// <summary>
+    /// Represents the MPR121 12-Key Capacitive Touch Sensor
+    /// </summary>
     public partial class Mpr121
     {
         private readonly II2cPeripheral i2cPeripheral;

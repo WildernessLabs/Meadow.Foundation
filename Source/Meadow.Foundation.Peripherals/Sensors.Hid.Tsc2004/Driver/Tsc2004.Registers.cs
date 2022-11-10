@@ -2,7 +2,7 @@
 {
     public partial class Tsc2004
     {
-        public enum Registers : byte
+        enum Registers : byte
         {
              READ       = 0x01,
              PND0       = 0x02,

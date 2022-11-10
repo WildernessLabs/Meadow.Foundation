@@ -74,9 +74,18 @@
             OLED72x40,
         }
 
+        /// <summary>
+        /// The display connection type
+        /// </summary>
         public enum ConnectionType
         {
+            /// <summary>
+            /// SPI
+            /// </summary>
             SPI,
+            /// <summary>
+            /// I2C
+            /// </summary>
             I2C,
         }
     }

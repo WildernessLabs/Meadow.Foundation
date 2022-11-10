@@ -13,20 +13,17 @@ namespace Meadow.Foundation.Sensors.Motion
     /// </summary>
     public partial class Hmc5883 : ByteCommsSensorBase<Vector>
     {
-        //==== events
         /// <summary>
         /// Event to be raised when the compass changes
         /// </summary>
         public event EventHandler<IChangeResult<Vector>> DirectionUpdated = delegate { };
 
-        //==== internals
-        protected byte measuringMode;
-        protected byte outputRate;
-        protected byte gain;
-        protected byte sampleAmount;
-        protected byte measurementConfig;
+        internal byte measuringMode;
+        internal byte outputRate;
+        internal byte gain;
+        internal byte sampleAmount;
+        internal byte measurementConfig;
 
-        //==== Properties
         /// <summary>
         /// HMC5883L Direction as a Vector
         /// </summary>
@@ -42,6 +39,16 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
         public Statuses DeviceStatus => GetStatus();
 
+        /// <summary>
+        /// Create a new Hmc5883 object
+        /// </summary>
+        /// <param name="i2cBus">The I2C bus</param>
+        /// <param name="address">The I2C address</param>
+        /// <param name="gain">Gain</param>
+        /// <param name="measuringMode">Measuring mode</param>
+        /// <param name="outputRate">Output rate</param>
+        /// <param name="samplesAmount">Samples amount</param>
+        /// <param name="measurementConfig">Measurement configuration</param>
         public Hmc5883(II2cBus i2cBus, byte address = (byte)Addresses.Default,
             GainLevels gain = GainLevels.Gain1090,
             MeasuringModes measuringMode = MeasuringModes.Continuous,
@@ -54,13 +61,15 @@ namespace Meadow.Foundation.Sensors.Motion
             this.gain = (byte)gain;
             this.measuringMode = (byte)measuringMode;
             this.outputRate = (byte)outputRate;
-            sampleAmount = (byte)samplesAmount;
+            this.sampleAmount = (byte)samplesAmount;
             this.measurementConfig = (byte)measurementConfig;
 
             Initialize();
         }
 
-
+        /// <summary>
+        /// Initalize the sensor
+        /// </summary>
         protected virtual void Initialize()
         {
             byte configA = (byte)(sampleAmount | (outputRate << 2) | measurementConfig);
@@ -71,12 +80,20 @@ namespace Meadow.Foundation.Sensors.Motion
             Peripheral.WriteRegister(Registers.HMC_MODE_REG_ADDR, measuringMode);
         }
 
+        /// <summary>
+        /// Raise events for subcribers and notify of value changes
+        /// </summary>
+        /// <param name="changeResult">The updated sensor data</param>
         protected override void RaiseEventsAndNotify(IChangeResult<Vector> changeResult)
         {
             this.DirectionUpdated?.Invoke(this, changeResult);
             base.RaiseEventsAndNotify(changeResult);
         }
 
+        /// <summary>
+        /// Reads data from the sensor
+        /// </summary>
+        /// <returns>The latest sensor reading</returns>
         protected override Task<Vector> ReadSensor()
         {
             return Task.Run(() =>

@@ -1,6 +1,8 @@
 ﻿namespace Meadow.Foundation.ICs.IOExpanders
 {
-
+    /// <summary>
+    /// SerialWombat base class
+    /// </summary>
     public partial class SerialWombatBase
     {
         /// <summary>
@@ -22,10 +24,22 @@
             Default = Address_0x6b
         }
 
+        /// <summary>
+        /// Flash register 18 for device info
+        /// </summary>
         public enum FlashRegister18
         {
+            /// <summary>
+            /// Device ID
+            /// </summary>
             DeviceID = 0xFF0000,
+            /// <summary>
+            /// Device revision
+            /// </summary>
             DeviceRevision = 0xFF0002,
+            /// <summary>
+            /// Device UUID
+            /// </summary>
             DeviceUuid = 0x801600
         }
 

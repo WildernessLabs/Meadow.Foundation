@@ -103,6 +103,7 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// Initialize a TM1637
         /// </summary>
+        /// <param name="device">The device connected to the display</param>
         /// <param name="pinClock">The clock pin</param>
         /// <param name="pinData">The data pin</param>
         public Tm1637(IMeadowDevice device, IPin pinClock, IPin pinData)

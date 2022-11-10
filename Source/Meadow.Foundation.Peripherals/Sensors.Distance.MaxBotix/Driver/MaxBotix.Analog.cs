@@ -8,8 +8,13 @@ namespace Meadow.Foundation.Sensors.Distance
 {
     public partial class MaxBotix
     {
-        IAnalogInputPort analogInputPort;
+        readonly IAnalogInputPort analogInputPort;
 
+        /// <summary>
+        /// Creates a new MaxBotix object communicating over analog
+        /// </summary>
+        /// <param name="analogIntputPort">The port for the analog input pin</param>
+        /// <param name="sensor">The distance sensor type</param>
         public MaxBotix(IAnalogInputPort analogIntputPort, SensorType sensor)
         {
             analogInputPort = analogIntputPort;
@@ -20,6 +25,15 @@ namespace Meadow.Foundation.Sensors.Distance
             AnalogInitialize();
         }
 
+        /// <summary>
+        /// Creates a new MaxBotix object communicating over analog
+        /// </summary>
+        /// <param name="sensor">The distance sensor type</param>
+        /// <param name="device">The device connected to the sensor</param>
+        /// <param name="analogInputPin">The analog input pin</param>
+        /// <param name="sampleCount">The sample count for reading</param>
+        /// <param name="sampleInterval">The sample interval</param>
+        /// <param name="voltage">The reference voltage</param>
         public MaxBotix(SensorType sensor, 
             IMeadowDevice device, 
             IPin analogInputPin, 
@@ -27,8 +41,7 @@ namespace Meadow.Foundation.Sensors.Distance
             TimeSpan? sampleInterval = null, 
             Voltage? voltage = null) :
             this(device.CreateAnalogInputPort(analogInputPin, sampleCount, sampleInterval ?? TimeSpan.FromMilliseconds(40), voltage ?? new Voltage(3.3)), sensor)
-        {
-        }
+        { }
 
         void AnalogInitialize()
         {

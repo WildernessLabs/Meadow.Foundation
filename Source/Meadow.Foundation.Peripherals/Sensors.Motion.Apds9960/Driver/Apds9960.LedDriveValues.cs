@@ -1,9 +1,8 @@
-﻿using System;
-namespace Meadow.Foundation.Sensors.Motion
+﻿namespace Meadow.Foundation.Sensors.Motion
 {
     public partial class Apds9960
     {
-        public static class LedDriveLevels
+        static class LedDriveLevels
         {
             /* LED Drive values */
             public const byte LED_DRIVE_100MA = 0;

@@ -16,15 +16,22 @@ namespace Meadow.Foundation.Sensors.Radio.Rfid
     /// </remarks>
     public class IDxxLA : IRfidReader
     {
+        /// <summary>
+        /// The baud rate (9600)
+        /// </summary>
         public const int BaudRate = 9600;
+
+        /// <summary>
+        /// Data bits (7)
+        /// </summary>
         public const int DataBits = 7;
 
-        public ISerialMessagePort SerialPort { get; }
+        ISerialMessagePort SerialPort { get; }
 
-        private const byte StartToken = 2;
-        private const byte EndToken = 3;
+        const byte StartToken = 2;
+        const byte EndToken = 3;
 
-        private readonly IList<IObserver<byte[]>> _observers = new List<IObserver<byte[]>>();
+        readonly IList<IObserver<byte[]>> _observers = new List<IObserver<byte[]>>();
 
         /// <inheritdoc />
         public event RfidReadEventHandler RfidRead = delegate { };

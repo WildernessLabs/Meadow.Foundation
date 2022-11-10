@@ -3,10 +3,13 @@ namespace Meadow.Foundation.ICs.IOExpanders
 {
     public partial class Mcp23xxx
     {
+        /// <summary>
+        /// Mcp23xxx registers class
+        /// </summary>
         public static class Registers
         {
             /// <summary>
-            /// IODIR. Controls the direction of the data I/O.
+            /// IODIR Controls the direction of the data I/O
             /// </summary>
             /// <remarks>
             /// When a bit is set, the corresponding pin becomes an input. When

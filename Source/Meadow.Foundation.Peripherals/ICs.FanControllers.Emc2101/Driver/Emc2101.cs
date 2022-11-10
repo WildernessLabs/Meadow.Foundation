@@ -193,6 +193,10 @@ namespace Meadow.Foundation.ICs.FanControllers
             base.RaiseEventsAndNotify(changeResult);
         }
 
+        /// <summary>
+        /// Reads data from the sensor
+        /// </summary>
+        /// <returns>The latest sensor reading</returns>
         protected override Task<(Temperature? InternalTemperature, Temperature? ExternalTemperature, AngularVelocity? FanSpeed)> ReadSensor()
         {
             return Task.Run(() =>

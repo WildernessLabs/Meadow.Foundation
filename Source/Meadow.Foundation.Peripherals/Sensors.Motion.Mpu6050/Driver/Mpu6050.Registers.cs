@@ -3,7 +3,7 @@ namespace Meadow.Foundation.Sensors.Motion
 {
     public partial class Mpu6050
     {
-        protected static class Registers
+        static class Registers
         {
             public const byte CONFIG = 0x1a;
             public const byte GYRO_CONFIG = 0x1b;

@@ -22,9 +22,21 @@
         /// </summary>
         public enum DeviceType
         {
+            /// <summary>
+            /// Tcs34721
+            /// </summary>
             Tcs34721 = 0x44,
+            /// <summary>
+            /// Tcs34725
+            /// </summary>
             Tcs34725 = 0x44,
+            /// <summary>
+            /// Tcs34723
+            /// </summary>
             Tcs34723 = 0x4D,
+            /// <summary>
+            /// Tcs34727
+            /// </summary>
             Tcs34727 = 0x4D
         }
 
@@ -33,13 +45,25 @@
         /// </summary>
         public enum GainType
         {
+            /// <summary>
+            /// 1x gain
+            /// </summary>
             Gain1X = 0x00,
+            /// <summary>
+            /// 4x gain
+            /// </summary>
             Gain4X = 0x01,
+            /// <summary>
+            /// 16x gain
+            /// </summary>
             Gain16X = 0x02,
+            /// <summary>
+            /// 60x gain
+            /// </summary>
             Gain60X = 0x03,
         }
 
-        protected enum Registers
+        enum Registers
         {
             ENABLE = 0x00,
             // RGBC interrupt enable.  When asserted, permits RGBC interrupts to be generated.
@@ -96,56 +120,73 @@
 
         /// <summary>
         /// This enum allows to select how many cycles cill be done measuring before
-        /// raising an interupt.
+        /// raising an interupt
         /// </summary>
         public enum InterruptState
         {
-            /// <summary>Every RGBC cycle generates an interrupt</summary>
+            /// <summary>
+            /// Every RGBC cycle generates an interrupt
+            /// </summary>
             All = 0b0000,
-
-            /// <summary>1 clear channel value outside of threshold range</summary>
+            /// <summary>
+            /// 1 clear channel value outside of threshold range
+            /// </summary>
             Percistence01Cycle = 0b0001,
-
-            /// <summary>2 clear channel consecutive values out of range</summary>
+            /// <summary>
+            /// 2 clear channel consecutive values out of range
+            /// </summary>
             Percistence02Cycle = 0b0010,
-
-            /// <summary>3 clear channel consecutive values out of range</summary>
+            /// <summary>
+            /// 3 clear channel consecutive values out of range
+            /// </summary>
             Percistence03Cycle = 0b0011,
-
-            /// <summary>5 clear channel consecutive values out of range</summary>
+            /// <summary>
+            /// 5 clear channel consecutive values out of range
+            /// </summary>
             Percistence05Cycle = 0b0100,
-
-            /// <summary>10 clear channel consecutive values out of range</summary>
+            /// <summary>
+            /// 10 clear channel consecutive values out of range
+            /// </summary>
             Percistence10Cycle = 0b0101,
-
-            /// <summary>15 clear channel consecutive values out of range</summary>
+            /// <summary>
+            /// 15 clear channel consecutive values out of range
+            /// </summary>
             Percistence15Cycle = 0b0110,
-
-            /// <summary>20 clear channel consecutive values out of range</summary>
+            /// <summary>
+            /// 20 clear channel consecutive values out of range
+            /// </summary>
             Percistence20Cycle = 0b0111,
-
-            /// <summary>25 clear channel consecutive values out of range</summary>
+            /// <summary>
+            /// 25 clear channel consecutive values out of range
+            /// </summary>
             Percistence25Cycle = 0b1000,
-
-            /// <summary>30 clear channel consecutive values out of range</summary>
+            /// <summary>
+            /// 30 clear channel consecutive values out of range
+            /// </summary>
             Percistence30Cycle = 0b1001,
-
-            /// <summary>35 clear channel consecutive values out of range</summary>
+            /// <summary>
+            /// 35 clear channel consecutive values out of range
+            /// </summary>
             Percistence35Cycle = 0b1010,
-
-            /// <summary>40 clear channel consecutive values out of range</summary>
+            /// <summary>
+            /// 40 clear channel consecutive values out of range
+            /// </summary>
             Percistence40Cycle = 0b1011,
-
-            /// <summary>45 clear channel consecutive values out of range</summary>
+            /// <summary>
+            /// 45 clear channel consecutive values out of range
+            /// </summary>
             Percistence45Cycle = 0b1100,
-
-            /// <summary>50 clear channel consecutive values out of range</summary>
+            /// <summary>
+            /// 50 clear channel consecutive values out of range
+            /// </summary>
             Percistence50Cycle = 0b1101,
-
-            /// <summary>55 clear channel consecutive values out of range</summary>
+            /// <summary>
+            /// 55 clear channel consecutive values out of range
+            /// </summary>
             Percistence55Cycle = 0b1110,
-
-            /// <summary>60 clear channel consecutive values out of range</summary>
+            /// <summary>
+            /// 60 clear channel consecutive values out of range
+            /// </summary>
             Percistence60Cycle = 0b1111,
         }
     }

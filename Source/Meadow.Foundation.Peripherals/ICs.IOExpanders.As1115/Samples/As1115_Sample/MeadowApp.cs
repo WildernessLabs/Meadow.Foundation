@@ -48,13 +48,15 @@ namespace ICs.IOExpanders.As1115_Sample
             Console.WriteLine($"{e.Button} pressed");
         }
 
-        public override async Task Run()
+        public override Task Run()
         {
             graphics.Clear();
             graphics.DrawLine(0, 0, 7, 7, true);
             graphics.DrawLine(0, 7, 7, 0, true);
 
             graphics.Show();
+
+            return base.Run();
         }
 
         //<!=SNOP=>

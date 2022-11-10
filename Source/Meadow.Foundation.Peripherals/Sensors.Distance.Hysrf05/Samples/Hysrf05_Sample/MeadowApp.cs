@@ -33,8 +33,6 @@ namespace Sensors.Distance.HYSRF05_Sample
                 hYSRF05.MeasureDistance();
                 Thread.Sleep(500);
             }
-
-            return Task.CompletedTask;
         }
 
         private void HYSRF05_DistanceUpdated(object sender, IChangeResult<Meadow.Units.Length> e)

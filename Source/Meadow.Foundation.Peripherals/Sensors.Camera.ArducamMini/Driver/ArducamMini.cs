@@ -8,15 +8,19 @@ namespace Meadow.Foundation.Sensors.Camera
 {
     //https://www.arducam.com/docs/spi-cameras-for-arduino/hardware/arducam-shield-mini-2mp-plus/
 
+    /// <summary>
+    /// Represents an Arducam Mini camera
+    /// </summary>
     public partial class ArducamMini
     {
-        public int DEFAULT_SPEED = 8000; // in khz
-
         readonly II2cPeripheral i2cDevice;
         readonly ISpiPeripheral spiDevice;
         readonly IDigitalOutputPort chipSelectPort;
         readonly Memory<byte> readBuffer = new byte[1];
 
+        /// <summary>
+        /// Create a new ArducamMini object
+        /// </summary>
         public ArducamMini(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, II2cBus i2cBus, byte address = (byte)Addresses.Default)
         {
             i2cDevice = new I2cPeripheral(i2cBus, address);
@@ -28,12 +32,12 @@ namespace Meadow.Foundation.Sensors.Camera
             Initialize();
         }
 
-        protected void WriteSpiRegister(byte address, byte value)
+        void WriteSpiRegister(byte address, byte value)
         {
             spiDevice.WriteRegister((byte)(address | 0x80), value);
         } 
 
-        protected void WriteI2cRegisters(SensorReg[] regs)
+        void WriteI2cRegisters(SensorReg[] regs)
         {
             for (int i = 0; i < regs.Length; i++)
             {
@@ -52,7 +56,7 @@ namespace Meadow.Foundation.Sensors.Camera
             i2cDevice.WriteRegister(address, value);
         }
 
-        private void Initialize()
+        void Initialize()
         {
             Console.WriteLine("Initialize");
 
@@ -62,8 +66,6 @@ namespace Meadow.Foundation.Sensors.Camera
 
             //non jpeg
             WriteI2cRegisters(InitSettings.QVGA);
-            return;
-
 
             Console.WriteLine("OV2640_JPEG_INIT...");
             WriteI2cRegisters(InitSettings.JPEG_INIT);
@@ -98,6 +100,10 @@ namespace Meadow.Foundation.Sensors.Camera
             return true;
         }
 
+        /// <summary>
+        /// Read the FIFO buffer length
+        /// </summary>
+        /// <returns>The buffer length as an int</returns>
         public int ReadFifoLength()
         {
             var len1 = spiDevice.ReadRegister(FIFO_SIZE1);
@@ -108,6 +114,10 @@ namespace Meadow.Foundation.Sensors.Camera
             return length;
         }
 
+        /// <summary>
+        /// Read a single byte from the FIFO buffer
+        /// </summary>
+        /// <returns>The data</returns>
         public byte ReadFifo()
         {
             return spiDevice.ReadRegister(SINGLE_FIFO_READ);
@@ -120,6 +130,10 @@ namespace Meadow.Foundation.Sensors.Camera
             return buffer;  
         }
 
+        /// <summary>
+        /// Get the camera image data
+        /// </summary>
+        /// <returns>The image data as a byte array</returns>
         public byte[] GetImageData()
         {
             Console.WriteLine("GetImageData");
@@ -149,6 +163,10 @@ namespace Meadow.Foundation.Sensors.Camera
             return ms.ToArray();
         }
 
+        /// <summary>
+        /// Is there image data available
+        /// </summary>
+        /// <returns>True is image is available</returns>
         public bool IsPhotoAvaliable()
         {
             var value = GetBit(ARDUCHIP_TRIG, CAP_DONE_MASK);

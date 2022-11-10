@@ -12,8 +12,13 @@ namespace Meadow.Foundation.Sensors.Camera
     /// </summary>
     public partial class Vc0706 : ICamera
     {
+        /// <summary>
+        /// The camera serial number
+        /// </summary>
+        public byte SerialNumber { get; private set; }
+        
         readonly ISerialPort serialPort;
-        readonly byte serialNumber;
+        
         readonly byte[] cameraBuffer = new byte[CAMERABUFFSIZE + 1];
 
         byte bufferLength;
@@ -553,7 +558,7 @@ namespace Meadow.Foundation.Sensors.Camera
 
         void SendCommand(byte cmd, byte[] args = null, byte argn = 0)
         {
-            serialPort.Write(new byte[] { 0x56, serialNumber, cmd });
+            serialPort.Write(new byte[] { 0x56, SerialNumber, cmd });
 
             for (byte i = 0; i < argn; i++)
             {
@@ -586,7 +591,7 @@ namespace Meadow.Foundation.Sensors.Camera
 
         bool VerifyResponse(byte command)
         {
-            if ((cameraBuffer[0] != 0x76) || (cameraBuffer[1] != serialNumber) ||
+            if ((cameraBuffer[0] != 0x76) || (cameraBuffer[1] != SerialNumber) ||
                 (cameraBuffer[2] != command) || (cameraBuffer[3] != 0x0))
             {
                 return false;

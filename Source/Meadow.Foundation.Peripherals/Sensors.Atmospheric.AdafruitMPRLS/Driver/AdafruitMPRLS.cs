@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections;
-using System.Threading;
-using System.Threading.Tasks;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
 using Meadow.Peripherals.Sensors;
 using Meadow.Units;
 using Meadow.Utilities;
+using System;
+using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Atmospheric
 {
@@ -16,17 +14,19 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     /// </summary>
     public partial class AdafruitMPRLS : ByteCommsSensorBase<(Pressure? Pressure, Pressure? RawPsiMeasurement)>, IBarometricPressureSensor
     {
-        //==== events
-        public event EventHandler<IChangeResult<Pressure>> PressureUpdated = delegate { };
-
-        //==== internals
         //Defined in section 6.6.1 of the datasheet.
         private readonly byte[] mprlsMeasurementCommand = { 0xAA, 0x00, 0x00 };
 
-        private int psiMin => 0;
-        private int psiMax => 25;
+        private const int MINIMUM_PSI = 0;
+        private const int MAXIMUM_PSI = 25;
 
-        //==== properties
+        /// <summary>
+        /// Raised when a new reading has been made. Events will only be raised
+        /// while the driver is updating. To start, call the `StartUpdating()`
+        /// method.
+        /// </summary>
+        public event EventHandler<IChangeResult<Pressure>> PressureUpdated = delegate { };
+
         /// <summary>
         /// Set by the sensor, to tell us it has power.
         /// </summary>
@@ -43,15 +43,32 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         public bool HasMemoryIntegrityFailed { get; set; }
 
         /// <summary>
-        /// 
+        /// Returns the current raw pressure value in pounds per square inch (PSI)
         /// </summary>
         public Pressure? RawPsiMeasurement => Conditions.RawPsiMeasurement;
 
+        /// <summary>
+        /// Returns the current pressure reading
+        /// </summary>
         public Pressure? Pressure => Conditions.Pressure;
 
-        //Tells us that the sensor has reached its pressure limit.
+        /// <summary>
+        /// Indicates the sensor has reached its pressure limit.
+        /// </summary>
         public bool InternalMathSaturated { get; set; }
 
+        /// <summary>
+        /// Represents an Adafruit MPRLS Ported Pressure Sensor
+        /// </summary>
+        /// <param name="i2cbus">I2Cbus connected to the sensor</param>
+        public AdafruitMPRLS(II2cBus i2cbus)
+            : base(i2cbus, (byte)Addresses.Default)
+        { }
+
+        /// <summary>
+        /// Notify subscribers of PressureUpdated event handler
+        /// </summary>
+        /// <param name="changeResult"></param>
         protected override void RaiseEventsAndNotify(IChangeResult<(Pressure? Pressure, Pressure? RawPsiMeasurement)> changeResult)
         {
             if (changeResult.New.Pressure is { } pressure)
@@ -61,11 +78,10 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             base.RaiseEventsAndNotify(changeResult);
         }
 
-        public AdafruitMPRLS(II2cBus i2cbus, int psiMin = 0, int psiMax = 25)
-            : base(i2cbus, (byte)Addresses.Default)
-        {
-        }
-
+        /// <summary>
+        /// Convenience method to get the current Pressure. For frequent reads, use
+        /// StartSampling() and StopSampling() in conjunction with the SampleBuffer.
+        /// </summary>
         protected override async Task<(Pressure? Pressure, Pressure? RawPsiMeasurement)> ReadSensor()
         {
             return await Task.Run(async () =>
@@ -105,17 +121,11 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 Peripheral.Read(ReadBuffer.Span[0..4]);
 
                 var rawPSIMeasurement = (ReadBuffer.Span[1] << 16) | (ReadBuffer.Span[2] << 8) | ReadBuffer.Span[3];
-                //Console.WriteLine(RawPSIMeasurement);
 
                 //From Section 8.0 of the datasheet.
-                var calculatedPSIMeasurement = (rawPSIMeasurement - 1677722) * (psiMax - psiMin);
-                //Console.WriteLine(CalculatedPSIMeasurement);
-
+                var calculatedPSIMeasurement = (rawPSIMeasurement - 1677722) * (MAXIMUM_PSI - MINIMUM_PSI);
                 calculatedPSIMeasurement /= 15099494 - 1677722;
-                //Console.WriteLine(CalculatedPSIMeasurement);
-
-                calculatedPSIMeasurement += psiMin;
-                //Console.WriteLine(CalculatedPSIMeasurement);
+                calculatedPSIMeasurement += MINIMUM_PSI;
 
                 (Pressure? Pressure, Pressure? RawPsiMeasurement) conditions;
 
@@ -124,7 +134,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
                 return conditions;
             });
-
         }
     }
 }

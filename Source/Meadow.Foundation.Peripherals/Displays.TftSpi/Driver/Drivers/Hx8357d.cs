@@ -54,11 +54,19 @@ namespace Meadow.Foundation.Displays
             SetRotation(Rotation.Normal);
         }
 
+        /// <summary>
+        /// Check if a color mode is supported by the display
+        /// </summary>
+        /// <param name="mode">The color mode</param>
+        /// <returns>True if supported</returns>
         public override bool IsColorModeSupported(ColorType mode)
         {
             return mode == ColorType.Format16bppRgb565;
         }
 
+        /// <summary>
+        /// Initalize the display
+        /// </summary>
         protected override void Initialize()
         {
             SendCommand(HX8357_SWRESET);
@@ -166,6 +174,13 @@ namespace Meadow.Foundation.Displays
             Thread.Sleep(50);
         }
 
+        /// <summary>
+        /// Set addrees window for display updates
+        /// </summary>
+        /// <param name="x0">X start in pixels</param>
+        /// <param name="y0">Y start in pixels</param>
+        /// <param name="x1">X end in pixels</param>
+        /// <param name="y1">Y end in pixels</param>
         protected override void SetAddressWindow(int x0, int y0, int x1, int y1)
         {
             SendCommand((byte)LcdCommand.CASET);  // column addr set
@@ -185,6 +200,10 @@ namespace Meadow.Foundation.Displays
             SendCommand((byte)LcdCommand.RAMWR);  // write to RAM
         }
 
+        /// <summary>
+        /// Set the display rotation
+        /// </summary>
+        /// <param name="rotation">The rotation value</param>
         public void SetRotation(Rotation rotation)
         {
             SendCommand(Register.MADCTL);
@@ -206,40 +225,31 @@ namespace Meadow.Foundation.Displays
             }
         }
 
-        protected const byte HX8357_NOP = 0x00;
-        protected const byte HX8357_SWRESET = 0x01;
-        protected const byte HX8357_RDDID = 0x04;
-        protected const byte HX8357_RDDST = 0x09;
-
-        protected const byte HX8357_RDPOWMODE = 0x0A;
-        protected const byte HX8357_RDMADCTL = 0x0B;
-        protected const byte HX8357_RDCOLMOD = 0x0C;
-        protected const byte HX8357_RDDIM = 0x0D;
-        protected const byte HX8357_RDDSDR = 0x0F;
-
-        protected const byte HX8357_SLPIN = 0x10;
-        protected const byte HX8357_SLPOUT = 0x11;
-
-        protected const byte HX8357_INVOFF = 0x20;
-        protected const byte HX8357_INVON = 0x21;
-        protected const byte HX8357_DISPOFF = 0x28;
-        protected const byte HX8357_DISPON = 0x29;
-
-        protected const byte HX8357_TEON = 0x35;
-        protected const byte HX8357_TEARLINE = 0x44;
-
-        protected const byte HX8357_SETOSC = 0xB0;
-        protected const byte HX8357_SETPWR1 = 0xB1;
-        protected const byte HX8357_SETRGB = 0xB3;
-        protected const byte HX8357D_SETCOM = 0xB6;
-
-        protected const byte HX8357D_SETCYC = 0xB4;
-        protected const byte HX8357D_SETC = 0xB9;
-
-        protected const byte HX8357D_SETSTBA = 0xC0;
-
-        protected const byte HX8357_SETPANEL = 0xCC;
-
-        protected const byte HX8357D_SETGAMMA = 0xE0;
+        internal const byte HX8357_NOP = 0x00;
+        internal const byte HX8357_SWRESET = 0x01;
+        internal const byte HX8357_RDDID = 0x04;
+        internal const byte HX8357_RDDST = 0x09;
+        internal const byte HX8357_RDPOWMODE = 0x0A;
+        internal const byte HX8357_RDMADCTL = 0x0B;
+        internal const byte HX8357_RDCOLMOD = 0x0C;
+        internal const byte HX8357_RDDIM = 0x0D;
+        internal const byte HX8357_RDDSDR = 0x0F;
+        internal const byte HX8357_SLPIN = 0x10;
+        internal const byte HX8357_SLPOUT = 0x11;
+        internal const byte HX8357_INVOFF = 0x20;
+        internal const byte HX8357_INVON = 0x21;
+        internal const byte HX8357_DISPOFF = 0x28;
+        internal const byte HX8357_DISPON = 0x29;
+        internal const byte HX8357_TEON = 0x35;
+        internal const byte HX8357_TEARLINE = 0x44;
+        internal const byte HX8357_SETOSC = 0xB0;
+        internal const byte HX8357_SETPWR1 = 0xB1;
+        internal const byte HX8357_SETRGB = 0xB3;
+        internal const byte HX8357D_SETCOM = 0xB6;
+        internal const byte HX8357D_SETCYC = 0xB4;
+        internal const byte HX8357D_SETC = 0xB9;
+        internal const byte HX8357D_SETSTBA = 0xC0;
+        internal const byte HX8357_SETPANEL = 0xCC;
+        internal const byte HX8357D_SETGAMMA = 0xE0;
     }
 }

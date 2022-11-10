@@ -18,18 +18,18 @@ namespace Meadow.Foundation.Sensors.Light
             ILightSensor//, IColorSensor
     {
         // TODO: missing event for ColorUpdated
-        //==== events
+        /// <summary>
+        /// Raised when the luminosity value changes
+        /// </summary>
         public event EventHandler<IChangeResult<Illuminance>> LuminosityUpdated = delegate { };
 
-        //==== internals
         private byte integrationTimeByte;
         private double integrationTime;
         private bool isLongTime;
         private GainType gain;
 
-        //==== properties
         /// <summary>
-        /// 
+        /// Current luminosiy value
         /// </summary>
         public Illuminance? Illuminance => Conditions.AmbientLight;
 
@@ -80,15 +80,16 @@ namespace Meadow.Foundation.Sensors.Light
             }
         }
 
-        //==== ctors
-
         /// <summary>
-        /// Create a new instance of the Tcs3472x class with the specified I2C address.
+        /// Create a new instance of the Tcs3472x class with the specified I2C address
         /// </summary>
         /// <remarks>
-        /// By default the sensor will be set to low gain.
-        /// <remarks>
-        /// <param name="i2cBus">I2C bus.</param>
+        /// By default the sensor will be set to low gain
+        /// </remarks>
+        /// <param name="i2cBus">I2C bus</param>
+        /// <param name="address">I2C address</param>
+        /// <param name="integrationTime">The integration time</param>
+        /// <param name="gain">The sensor gain</param>
         public Tcs3472x(
             II2cBus i2cBus, byte address = (byte)Addresses.Default,
             double integrationTime = 0.700, GainType gain = GainType.Gain60X)
@@ -109,14 +110,15 @@ namespace Meadow.Foundation.Sensors.Light
             PowerOn();
         }
 
-        //==== internal methods
-
+        /// <summary>
+        /// Reads data from the sensor
+        /// </summary>
+        /// <returns>The latest sensor reading</returns>
         protected override Task<(Illuminance? AmbientLight, Color? Color, bool Valid)> ReadSensor()
         {
             return Task.Run(async () =>
             {
                 (Illuminance? AmbientLight, Color? Color, bool Valid) conditions;
-
 
                 // To have a new reading, you need to wait for integration time to happen
                 // If you don't wait, then you'll read the previous value
@@ -150,6 +152,10 @@ namespace Meadow.Foundation.Sensors.Light
             });
         }
 
+        /// <summary>
+        /// Raise events for subcribers and notify of value changes
+        /// </summary>
+        /// <param name="changeResult">The updated sensor data</param>
         protected override void RaiseEventsAndNotify(IChangeResult<(Illuminance? AmbientLight, Color? Color, bool Valid)> changeResult)
         {
             if (changeResult.New.AmbientLight is { } ambient)
@@ -249,7 +255,7 @@ namespace Meadow.Foundation.Sensors.Light
         }
 
 
-        protected ushort I2cRead16(Registers reg)
+        ushort I2cRead16(Registers reg)
         {
             return Peripheral.ReadRegisterAsUShort((byte)(Registers.COMMAND_BIT | reg), ByteOrder.BigEndian);
         }

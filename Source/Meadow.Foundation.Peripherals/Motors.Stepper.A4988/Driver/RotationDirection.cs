@@ -1,9 +1,17 @@
 ﻿namespace Meadow.Foundation.Motors.Stepper
 {
+    /// <summary>
+    /// Stepper motor direction
+    /// </summary>
     public enum RotationDirection
     {
+        /// <summary>
+        /// Clockwise
+        /// </summary>
         Clockwise,
-        Counterclockwise,
-        Anticlockwise = Counterclockwise // for the Queen's English!
+        /// <summary>
+        /// Counter-clockwise
+        /// </summary>
+        CounterClockwise,
     }
 }

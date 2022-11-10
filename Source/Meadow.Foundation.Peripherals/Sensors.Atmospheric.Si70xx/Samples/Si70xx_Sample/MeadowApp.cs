@@ -10,7 +10,7 @@ namespace BasicSensors.Atmospheric.SI7021_Sample
     {
         //<!=SNIP=>
 
-        Si70xx sensor;
+        Si70xx? sensor;
 
         public override Task Initialize()
         {
@@ -50,6 +50,8 @@ namespace BasicSensors.Atmospheric.SI7021_Sample
 
         public override async Task Run()
         {
+            if(sensor == null) { return; }
+
             var result = await sensor.Read();
             Console.WriteLine("Initial Readings:");
             Console.WriteLine($"  Temperature: {result.Temperature?.Celsius:F1}C");

@@ -36,7 +36,7 @@ namespace Meadow.Foundation.Sensors.Hid
         /// <summary>
         /// Sampling cancellation token source
         /// </summary>
-        protected CancellationTokenSource? SamplingTokenSource { get; set; }
+        protected CancellationTokenSource SamplingTokenSource { get; set; }
 
         /// <summary>
         /// Are we actively reading data from the extension controller
@@ -75,6 +75,10 @@ namespace Meadow.Foundation.Sensors.Hid
             i2cPeripheral.Read(readBuffer[..6]);
         }
 
+        /// <summary>
+        /// Gets the device ID
+        /// </summary>
+        /// <returns>The ID as a byte</returns>
         public byte[] GetIdentification()
         {
             i2cPeripheral.Write(0xFA);

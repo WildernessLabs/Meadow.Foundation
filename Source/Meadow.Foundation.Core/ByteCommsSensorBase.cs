@@ -6,35 +6,31 @@ namespace Meadow.Foundation
     /// <summary>
     /// ByteCommsSensorBase abstract class 
     /// </summary>
-    /// <typeparam name="UNIT"></typeparam>
+    /// <typeparam name="UNIT">The unit type</typeparam>
     public abstract class ByteCommsSensorBase<UNIT> :
         SamplingSensorBase<UNIT>, IDisposable where UNIT : struct
     {
-        //==== events
-
-        //==== internals
         /// <summary>
         /// Peripheral object, i.e. an I2CPeripheral or SpiPeripheral
         /// </summary>
         protected IByteCommunications? Peripheral { get; set; }
 
-        //==== properties
         /// <summary>
-        /// 
+        /// The read buffer
         /// </summary>
         protected Memory<byte> ReadBuffer { get; private set; }
+
         /// <summary>
-        /// 
+        /// The write buffer
         /// </summary>
         protected Memory<byte> WriteBuffer { get; private set; }
 
-        //==== ctors
         /// <summary>
-        /// 
+        /// Creates a new ByteCommsSensorBase object
         /// </summary>
-        /// <param name="i2cBus"></param>
-        /// <param name="address"></param>
-        /// <param name="readBufferSize"></param>
+        /// <param name="i2cBus">The I2C bus</param>
+        /// <param name="address">The I2C address</param>
+        /// <param name="readBufferSize">Read buffer size in bytes</param>
         /// <param name="writeBufferSize"></param>
         protected ByteCommsSensorBase(
             II2cBus i2cBus, byte address,
@@ -80,8 +76,8 @@ namespace Meadow.Foundation
         /// <param name="writeBufferSize"></param>
         protected virtual void Init(int readBufferSize = 8, int writeBufferSize = 8)
         {
-            this.ReadBuffer = new byte[readBufferSize];
-            this.WriteBuffer = new byte[writeBufferSize];
+            ReadBuffer = new byte[readBufferSize];
+            WriteBuffer = new byte[writeBufferSize];
         }
 
         /// <summary>

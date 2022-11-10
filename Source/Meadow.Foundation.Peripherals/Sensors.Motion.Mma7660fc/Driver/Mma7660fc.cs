@@ -21,7 +21,14 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
         public Acceleration3D? Acceleration3D => Conditions;
 
+        /// <summary>
+        /// Get the current direction value
+        /// </summary>
         public DirectionType Direction { get; set; } = DirectionType.Unknown;
+
+        /// <summary>
+        /// Get the current orientation
+        /// </summary>
         public OrientationType Orientation { get; set; } = OrientationType.Unknown;
 
         /// <summary>

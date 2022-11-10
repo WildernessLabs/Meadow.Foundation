@@ -16,7 +16,7 @@ namespace ICs.IOExpanders.Mcp23x08_Input_Sample
     {
         Mcp23008 mcp;
 
-        public override async Task Initialize()
+        public override Task Initialize()
         {
             Console.WriteLine("Initializing...");
 
@@ -26,8 +26,10 @@ namespace ICs.IOExpanders.Mcp23x08_Input_Sample
             // create a new mcp with all the address pins pulled low - address 0x20 (32)
             mcp = new Mcp23008(Device.CreateI2cBus(), (byte)Addresses.Address_0x20, interruptPort);
 
-        //    IDigitalOutputPort chipSelectPort = Device.CreateDigitalOutputPort(Device.Pins.D01);
-        //    mcp = new Mcp23s08(Device.CreateSpiBus(), chipSelectPort, interruptPort);
+            //    IDigitalOutputPort chipSelectPort = Device.CreateDigitalOutputPort(Device.Pins.D01);
+            //    mcp = new Mcp23s08(Device.CreateSpiBus(), chipSelectPort, interruptPort);
+
+            return base.Initialize();
         }
         
         public override Task Run()

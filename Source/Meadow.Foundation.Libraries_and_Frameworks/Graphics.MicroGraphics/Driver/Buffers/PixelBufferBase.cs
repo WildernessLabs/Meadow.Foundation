@@ -58,8 +58,17 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// </summary>
         public byte[] Buffer { get; protected set; }
 
+
+        /// <summary>
+        /// Create a new PixelBufferBase object
+        /// </summary>
         public PixelBufferBase() { }
 
+        /// <summary>
+        /// Create a new PixelBufferBase object
+        /// </summary>
+        /// <param name="width">Width in pixels</param>
+        /// <param name="height">Height in pixels</param>
         public PixelBufferBase(int width, int height)
         {
             Width = width;
@@ -67,6 +76,12 @@ namespace Meadow.Foundation.Graphics.Buffers
             InitializeBuffer();
         }
 
+        /// <summary>
+        /// Create a new PixelBufferBase object
+        /// </summary>
+        /// <param name="width">Width in pixels</param>
+        /// <param name="height">Height in pixels</param>
+        /// <param name="buffer">The buffer to hold the pixel data</param>
         public PixelBufferBase(int width, int height, byte[] buffer)
         {
             Width = width;

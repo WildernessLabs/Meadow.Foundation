@@ -1,23 +1,33 @@
 ﻿using System;
-using Meadow.Devices;
 using Meadow.Hardware;
 using Meadow.Units;
 
 namespace Meadow.Foundation.Sensors.Distance
 {
+    
     public partial class MaxBotix
     {
+        //The baud rate is 9600, 8 bits, no parity, with one stop bit
         readonly ISerialMessagePort serialMessagePort;
 
         static readonly byte[] suffixDelimiter = { 13 }; //ASCII return
         static readonly int portSpeed = 9600; //this is fixed for MaxBotix
 
-        //The baud rate is 9600, 8 bits, no parity, with one stop bit
+        /// <summary>
+        /// Creates a new MaxBotix object communicating over serial
+        /// </summary>
+        /// <param name="device">The device conected to the sensor</param>
+        /// <param name="serialPort">The serial port</param>
+        /// <param name="sensor">The distance sensor type</param>
         public MaxBotix(IMeadowDevice device, SerialPortName serialPort, SensorType sensor)
             : this(device.CreateSerialMessagePort(serialPort, suffixDelimiter, false, baudRate: portSpeed), sensor)
-        {
-        }
+        { }
 
+        /// <summary>
+        /// Creates a new MaxBotix object communicating over serial
+        /// </summary>
+        /// <param name="serialMessage">The serial message port</param>
+        /// <param name="sensor">The distance sensor type</param>
         public MaxBotix(ISerialMessagePort serialMessage, SensorType sensor)
         {
             serialMessagePort = serialMessage;
@@ -28,7 +38,7 @@ namespace Meadow.Foundation.Sensors.Distance
         }
 
         Length ReadSensorSerial()
-        {   //I think we'll just cache it for serial
+        {   
             return Distance.Value;
         }
 
@@ -43,8 +53,6 @@ namespace Meadow.Foundation.Sensors.Distance
             if (message[0] != 'R')
             { return; }
 
-            //it'll throw an exception if it's wrong
-
             //strip the leading R
             string cleaned = message.Substring(1);
 
@@ -57,18 +65,15 @@ namespace Meadow.Foundation.Sensors.Distance
 
             var value = double.Parse(cleaned);
 
-            //need to get this per sensor
             Length.UnitType units = GetUnitsForSensor(sensorType);
 
-            // create a new change result from the new value
             ChangeResult<Length> changeResult = new ChangeResult<Length>()
             {
                 New = new Length(value, units),
                 Old = Distance,
             };
-            // save state
+           
             Distance = changeResult.New;
-            // notify
             RaiseEventsAndNotify(changeResult);
         }
     }
