@@ -1,6 +1,7 @@
 ﻿using Meadow.Hardware;
 using Meadow.Peripherals.Sensors.Buttons;
 using System;
+using System.Net.NetworkInformation;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -119,7 +120,7 @@ namespace Meadow.Foundation.Sensors.Buttons
         /// <param name="inputPin"></param>
         /// <param name="resistorMode"></param>
         public PushButton(IDigitalInputController device, IPin inputPin, ResistorMode resistorMode = ResistorMode.InternalPullUp)
-            : this(device.CreateDigitalInputPort(inputPin, InterruptMode.EdgeBoth, resistorMode, DefaultDebounceDuration, DefaultGlitchDuration))
+            : this(CreateInputPort(device, inputPin, resistorMode))
         {  
             shouldDisposeInput = true;
         }
@@ -140,11 +141,6 @@ namespace Meadow.Foundation.Sensors.Buttons
             }
             else
             {   //if we don't have full interrupts, fall back to polling
-                //Re set the resistor mode if Interrupt mode is none - ToDo - known issue
-                if ((DigitalIn.InterruptMode == InterruptMode.None && resistorMode == ResistorMode.InternalPullUp) ||
-                    (DigitalIn.InterruptMode == InterruptMode.None && resistorMode == ResistorMode.InternalPullDown))
-                { DigitalIn.Resistor = resistorMode; }
-
                 ctsPolling = new CancellationTokenSource();
 
                 bool currentState = DigitalIn.State;
@@ -162,6 +158,17 @@ namespace Meadow.Foundation.Sensors.Buttons
                     }
                 });
             }
+        }
+
+        /// <summary>
+        /// Create a digital input port for a pin
+        /// This will dynamically set the interupt mode based on the pin capabilities 
+        /// </summary>
+        protected static IDigitalInputPort CreateInputPort(IDigitalInputController device, IPin inputPin, ResistorMode resistorMode = ResistorMode.InternalPullUp)
+        {
+            var interruptMode = inputPin.Supports<IDigitalChannelInfo>(c => c.InterruptCapable) ? InterruptMode.EdgeBoth : InterruptMode.None;
+
+            return device.CreateDigitalInputPort(inputPin, interruptMode, resistorMode, DefaultDebounceDuration, DefaultGlitchDuration);
         }
 
         void DigitalInChanged(object sender, DigitalPortResult result)
