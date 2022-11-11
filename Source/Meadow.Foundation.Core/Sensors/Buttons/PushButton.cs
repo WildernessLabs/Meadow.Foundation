@@ -87,6 +87,12 @@ namespace Meadow.Foundation.Sensors.Buttons
         public event EventHandler LongClicked = delegate { };
 
         /// <summary>
+        /// The PushButton was created with an input port without interrupts
+        /// If true, the object is polling to update state and may impact performance
+        /// </summary>
+        public bool IsPolling { get; protected set; } = false;
+
+        /// <summary>
         /// Returns the current raw state of the switch
         /// </summary>
         protected bool rawState => (DigitalIn != null) && !DigitalIn.State;
@@ -134,12 +140,13 @@ namespace Meadow.Foundation.Sensors.Buttons
 
             LongClickedThreshold = DefaultLongPressThreshold;
 
-            if (DigitalIn.InterruptMode == InterruptMode.EdgeBoth)
+            if (DigitalIn.InterruptMode != InterruptMode.None)
             {
                 DigitalIn.Changed += DigitalInChanged;
             }
             else
-            {   //if we don't have full interrupts, fall back to polling
+            {
+                IsPolling = true;
                 ctsPolling = new CancellationTokenSource();
 
                 bool currentState = DigitalIn.State;
