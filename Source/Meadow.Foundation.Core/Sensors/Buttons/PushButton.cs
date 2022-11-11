@@ -1,6 +1,7 @@
 ﻿using Meadow.Hardware;
 using Meadow.Peripherals.Sensors.Buttons;
 using System;
+using System.Net.NetworkInformation;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -173,6 +174,11 @@ namespace Meadow.Foundation.Sensors.Buttons
         protected static IDigitalInputPort CreateInputPort(IDigitalInputController device, IPin inputPin, ResistorMode resistorMode = ResistorMode.InternalPullUp)
         {
             var interruptMode = inputPin.Supports<IDigitalChannelInfo>(c => c.InterruptCapable) ? InterruptMode.EdgeBoth : InterruptMode.None;
+          
+            if(interruptMode == InterruptMode.None)
+            {
+                Console.WriteLine("Warning: Pin doesn't support interrupts, PushButton will use polling");
+            }
             return device.CreateDigitalInputPort(inputPin, interruptMode, resistorMode, DefaultDebounceDuration, DefaultGlitchDuration);
         }
 
