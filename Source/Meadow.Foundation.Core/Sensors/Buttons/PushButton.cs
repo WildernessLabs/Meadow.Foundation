@@ -52,7 +52,7 @@ namespace Meadow.Foundation.Sensors.Buttons
             get
             {
                 bool currentState = DigitalIn?.Resistor == ResistorMode.InternalPullDown;
-                return state == currentState;
+                return rawState == currentState;
             }
         }
 
@@ -89,7 +89,7 @@ namespace Meadow.Foundation.Sensors.Buttons
         /// <summary>
         /// Returns the current raw state of the switch
         /// </summary>
-        protected bool state => (DigitalIn != null) && !DigitalIn.State;
+        protected bool rawState => (DigitalIn != null) && !DigitalIn.State;
 
         /// <summary>
         /// Maximum DateTime value when the button was just pushed
@@ -99,7 +99,7 @@ namespace Meadow.Foundation.Sensors.Buttons
         /// <summary>
         /// The button port resistor mode
         /// </summary>
-        protected ResistorMode resistorMode;
+        protected ResistorMode resistorMode => DigitalIn.Resistor;
 
         /// <summary>
         /// Cancellation token source to disable button polling on dispose
@@ -130,8 +130,6 @@ namespace Meadow.Foundation.Sensors.Buttons
         /// <param name="inputPort"></param>
         public PushButton(IDigitalInputPort inputPort)
         {
-            resistorMode = inputPort.Resistor;
-
             DigitalIn = inputPort;
 
             LongClickedThreshold = DefaultLongPressThreshold;
@@ -142,6 +140,11 @@ namespace Meadow.Foundation.Sensors.Buttons
             }
             else
             {   //if we don't have full interrupts, fall back to polling
+                //Re set the resistor mode if Interrupt mode is none - ToDo - known issue
+                if ((DigitalIn.InterruptMode == InterruptMode.None && resistorMode == ResistorMode.InternalPullUp) ||
+                    (DigitalIn.InterruptMode == InterruptMode.None && resistorMode == ResistorMode.InternalPullDown))
+                { DigitalIn.Resistor = resistorMode; }
+
                 ctsPolling = new CancellationTokenSource();
 
                 bool currentState = DigitalIn.State;
@@ -163,7 +166,7 @@ namespace Meadow.Foundation.Sensors.Buttons
 
         void DigitalInChanged(object sender, DigitalPortResult result)
         {
-            UpdateEvents(state);
+            UpdateEvents(rawState);
         }
 
         void UpdateEvents(bool state)
