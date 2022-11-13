@@ -3,6 +3,9 @@ namespace Meadow.Foundation.Motors
 {
 	public partial class Tb67h420ftg
 	{
+		/// <summary>
+		/// H-bridge mode
+		/// </summary>
 		public enum HBridgeMode
 		{
 			/// <summary>

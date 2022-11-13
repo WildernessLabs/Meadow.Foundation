@@ -2,6 +2,9 @@
 
 namespace Meadow.Foundation.Servos
 {
+    /// <summary>
+    /// Servo base class
+    /// </summary>
     public abstract class ServoBase : IServo
     {
         /// <summary>
@@ -14,22 +17,30 @@ namespace Meadow.Foundation.Servos
         /// </summary>
         public ServoConfig Config { get; protected set; }
 
-        protected ServoBase(IPwmPort pwm, ServoConfig config)
+        /// <summary>
+        /// Create a new ServoBase object
+        /// </summary>
+        /// <param name="pwmPort">PWM port</param>
+        /// <param name="config">Servo configuration</param>
+        protected ServoBase(IPwmPort pwmPort, ServoConfig config)
         {
             Config = config;
 
-            PwmPort = pwm;
+            PwmPort = pwmPort;
             PwmPort.Frequency = config.Frequency;
             PwmPort.DutyCycle = 0;
         }
 
+        /// <summary>
+        /// Stop the servo
+        /// </summary>
         public virtual void Stop()
         {
             PwmPort.Stop();
         }
 
         /// <summary>
-        /// Note that this calculation expects a pulse duration in _microseconds_.
+        /// Note that this calculation expects a pulse duration in microseconds
         /// </summary>
         /// <param name="pulseDuration">Microseconds</param>
         /// <returns></returns>
@@ -39,6 +50,10 @@ namespace Meadow.Foundation.Servos
             return pulseDuration / ((1.0f / (float)Config.Frequency.Hertz) * 1000000f);
         }
 
+        /// <summary>
+        /// Send a command pulse
+        /// </summary>
+        /// <param name="pulseDuration">The pulse duration</param>
         protected virtual void SendCommandPulse(float pulseDuration)
         {
             PwmPort.DutyCycle = CalculateDutyCycle(pulseDuration);

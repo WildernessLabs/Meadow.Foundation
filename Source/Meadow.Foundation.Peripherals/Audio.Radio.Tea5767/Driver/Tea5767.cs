@@ -425,6 +425,9 @@ namespace Meadow.Foundation.Audio.Radio
             TransmitData();
         }
 
+        /// <summary>
+        /// Turn soft mute off if enabled
+        /// </summary>
         public void SetSoftMuteOff()
         {
             writeBuffer.Span[(byte)Command.FOURTH_DATA] &= 247;

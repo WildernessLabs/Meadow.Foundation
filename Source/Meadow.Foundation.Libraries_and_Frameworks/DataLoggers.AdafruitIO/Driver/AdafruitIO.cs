@@ -25,45 +25,43 @@ namespace Meadow.Foundation.DataLoggers
     /// Single value to a feed in a named group
     /// POST http://io.adafruit.com/api/v2/{UserName}/feeds/{Group}.{FeedKey}/data
     /// where Group is an AdafruitIO group key and FeedKey is the key for the feed in that group. 
-    /// 
-    /// TODO: As of beta 4.0 HttpClient does not support SSL so you can not use https:
-
+    /// </example>
     public class AdafruitIO
     {
         /// <summary>
-        /// Adafruit account profile username.
-        /// This name identifies the Adafruit IO user account that the feed belongs to.
+        /// Adafruit account profile username
+        /// This name identifies the Adafruit IO user account that the feed belongs to
         /// </summary>
         public string UserName { get; set; }
 
         /// <summary>
-        /// Get or set the AdafruitIO AIO key.  This key allows this class to identify itself 
+        /// Get or set the AdafruitIO AIO key. This key allows this class to identify itself 
         /// with AdafruitIO and log data with the service.
         /// </summary>
         public string IOKey { get; set; }
 
         /// <summary>
-        /// URI of the AdafruitIO api.
+        /// URI of the AdafruitIO api
         /// </summary>
         public string URI { get; set; }
 
         /// <summary>
         /// Adafruit feed group
-        /// This identifies the Adafruit feed group that will accessed.
+        /// This identifies the Adafruit feed group that will accessed
         /// </summary>
         public string Group { get; set; }
 
         /// <summary>
-        /// Create a new AdafruitIO object.
+        /// Create a new AdafruitIO object
         /// </summary>
-        /// <param name="UserName">Adafruit username</param>
-        /// <param name="IOkey">Write key</param>
-        /// <paran name="Group">group</paran>
-        public AdafruitIO(string UserName, string IOkey, string Group = null)
+        /// <param name="userName">Adafruit username</param>
+        /// <param name="iokey">Write key</param>
+        /// <param name="group">group</param>
+        public AdafruitIO(string userName, string iokey, string group = null)
         {
-            this.Group = Group;
-            this.UserName = UserName;
-            this.IOKey = IOkey;
+            Group = group;
+            UserName = userName;
+            IOKey = iokey;
             URI = "http://io.adafruit.com/api/v2/";     //2020-11-22 - https is not implemented in B4.0
         }
 

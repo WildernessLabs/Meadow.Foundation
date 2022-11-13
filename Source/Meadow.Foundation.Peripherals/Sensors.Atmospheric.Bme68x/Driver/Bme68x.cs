@@ -182,7 +182,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <summary>
         /// The current gas resistance
         /// </summary>
-        public Resistance? GetResistance => Conditions.GasResistance;
+        public Resistance? GasResistance => Conditions.GasResistance;
 
         readonly Configuration configuration;
 
@@ -358,6 +358,10 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             return TimeSpan.FromMilliseconds(Math.Ceiling(measDuration));
         }
 
+        /// <summary>
+        /// Raise events for subcribers and notify of value changes
+        /// </summary>
+        /// <param name="changeResult">The updated sensor data</param>
         protected override void RaiseEventsAndNotify(IChangeResult<(Units.Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure, Resistance? GasResistance)> changeResult)
         {
             if (changeResult.New.Temperature is { } temp) {
@@ -376,6 +380,10 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             base.RaiseEventsAndNotify(changeResult);
         }
 
+        /// <summary>
+        /// Reads data from the sensor
+        /// </summary>
+        /// <returns>The latest sensor reading</returns>
         protected override async Task<(Units.Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure, Resistance? GasResistance)> ReadSensor()
         {
             configuration.TemperatureOversample = TemperatureOversampleMode;

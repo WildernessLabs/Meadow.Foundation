@@ -6,7 +6,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         /// Register of HMC5883L
         /// </summary>
-        public static class Registers
+        static class Registers
         {
             public const byte HMC_CONFIG_REG_A_ADDR = 0x00;
             public const byte HMC_CONFIG_REG_B_ADDR = 0x01;

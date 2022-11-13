@@ -91,6 +91,15 @@ namespace Meadow.Foundation.Displays
             SendData(0x0A);
         }
 
+        /// <summary>
+        /// Set partial window for display updates
+        /// </summary>
+        /// <param name="bufferBlack">The buffer with black pixel data</param>
+        /// <param name="bufferColor">The buffer with color pixel data</param>
+        /// <param name="x">The x start position in pixels</param>
+        /// <param name="y">The y stary position in pixels</param>
+        /// <param name="width">The width to update in pixels</param>
+        /// <param name="height">The height to update in pixels</param>
         protected void SetPartialWindow(byte[] bufferBlack, byte[] bufferColor, int x, int y, int width, int height)
         {
             SendCommand(Command.PARTIAL_IN);
@@ -144,6 +153,14 @@ namespace Meadow.Foundation.Displays
             SendCommand(Command.PARTIAL_OUT);
         }
 
+        /// <summary>
+        /// Set partial window for display updates
+        /// </summary>
+        /// <param name="bufferBlack">The buffer with black pixel data</param>
+        /// <param name="x">The x start position in pixels</param>
+        /// <param name="y">The y stary position in pixels</param>
+        /// <param name="width">The width to update in pixels</param>
+        /// <param name="height">The height to update in pixels</param>
         protected void SetPartialWindowBlack(byte[] bufferBlack, int x, int y, int width, int height)
         {
             SendCommand(Command.PARTIAL_IN);
@@ -177,6 +194,14 @@ namespace Meadow.Foundation.Displays
             SendCommand(Command.PARTIAL_OUT);
         }
 
+        /// <summary>
+        /// Set partial window for display updates
+        /// </summary>
+        /// <param name="bufferColor">The buffer with color pixel data</param>
+        /// <param name="x">The x start position in pixels</param>
+        /// <param name="y">The y stary position in pixels</param>
+        /// <param name="width">The width to update in pixels</param>
+        /// <param name="height">The height to update in pixels</param>
         protected void SetPartialWindowColor(byte[] bufferColor, int x, int y, int width, int height)
         {
             SendCommand(Command.PARTIAL_IN);
@@ -210,6 +235,13 @@ namespace Meadow.Foundation.Displays
             SendData((byte)Command.PARTIAL_OUT);
         }
 
+        /// <summary>
+        /// Update a region of the display from the offscreen buffer
+        /// </summary>
+        /// <param name="left">Left bounds in pixels</param>
+        /// <param name="top">Top bounds in pixels</param>
+        /// <param name="right">Right bounds in pixels</param>
+        /// <param name="bottom">Bottom bounds in pixels</param>
         public override void Show(int left, int top, int right, int bottom)
         {
             SetPartialWindow(imageBuffer.BlackBuffer, imageBuffer.ColorBuffer,
@@ -218,12 +250,18 @@ namespace Meadow.Foundation.Displays
             DisplayFrame();
         }
 
+        /// <summary>
+        /// Update the display from the offscreen buffer
+        /// </summary>
         public override void Show()
         {
             DisplayFrame(imageBuffer.BlackBuffer, imageBuffer.ColorBuffer);
         }
 
-        //clear the frame data from the SRAM, this doesn't update the display
+        /// <summary>
+        /// Clears the SRAM on the display controller
+        /// Doesn't update the display
+        /// </summary>
         protected void ClearFrame()
         {
             SendCommand(Command.DATA_START_TRANSMISSION_1);
@@ -266,12 +304,18 @@ namespace Meadow.Foundation.Displays
             DisplayFrame();
         }
 
+        /// <summary>
+        /// Display data from the display controller SRAM
+        /// </summary>
         public void DisplayFrame()
         {
             SendCommand(Command.DISPLAY_REFRESH);
             WaitUntilIdle();
         }
 
+        /// <summary>
+        /// Set the sensor to sleep state
+        /// </summary>
         protected virtual void Sleep()
         {
             SendCommand(Command.POWER_OFF);

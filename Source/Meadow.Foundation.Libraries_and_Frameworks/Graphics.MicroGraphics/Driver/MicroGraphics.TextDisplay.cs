@@ -5,6 +5,11 @@ namespace Meadow.Foundation.Graphics
 {
     public partial class MicroGraphics : ITextDisplay
     {
+        /// <summary>
+        /// Write text to the display
+        /// </summary>
+        /// <param name="text">The text</param>
+        /// <exception cref="Exception">Throws if no font is set</exception>
         public void Write(string text)
         {
             if (CurrentFont == null)
@@ -18,6 +23,13 @@ namespace Meadow.Foundation.Graphics
                 Color.White);
         }
 
+        /// <summary>
+        /// Write a line of text
+        /// </summary>
+        /// <param name="text">The text</param>
+        /// <param name="lineNumber">The line to write</param>
+        /// <param name="showCursor">True to show the cursor</param>
+        /// <exception cref="Exception">Throws if no font is set</exception>
         public void WriteLine(string text, byte lineNumber, bool showCursor = false)
         {
             if (CurrentFont == null)
@@ -40,11 +52,18 @@ namespace Meadow.Foundation.Graphics
                 currentFont.Width, currentFont.Height);
         }
 
+        /// <summary>
+        /// Clear all lines of text
+        /// </summary>
         public void ClearLines()
         {
-            Clear(false); //for now
+            Clear(false);
         }
 
+        /// <summary>
+        /// Clear a single line of text
+        /// </summary>
+        /// <param name="lineNumber">The line to clear</param>
         public void ClearLine(byte lineNumber)
         {
             DrawRectangle(0, CurrentFont.Height * lineNumber * DisplayConfig.FontScale,
@@ -53,17 +72,25 @@ namespace Meadow.Foundation.Graphics
                 false, true);
         }
 
+        /// <summary>
+        /// The current cursor column relative to text/font
+        /// </summary>
         public byte CursorColumn { get; private set; } = 0;
+
+        /// <summary>
+        /// The current cursor line relative to the text
+        /// </summary>
         public byte CursorLine { get; private set; } = 0;
+
+        /// <summary>
+        /// Set the cursor position relative to the text
+        /// </summary>
+        /// <param name="column">The text column</param>
+        /// <param name="line">The line column</param>
         public void SetCursorPosition(byte column, byte line)
         {
             CursorColumn = column;
             CursorLine = line;
-        }
-
-        public void SaveCustomCharacter(byte[] characterMap, byte address)
-        {
-            //  throw new NotImplementedException();
         }
     }
 }

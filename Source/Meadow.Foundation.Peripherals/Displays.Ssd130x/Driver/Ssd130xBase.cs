@@ -36,13 +36,39 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         protected ISpiPeripheral spiPeripheral;
 
+        /// <summary>
+        /// The data command port
+        /// </summary>
         protected IDigitalOutputPort dataCommandPort;
+
+        /// <summary>
+        /// The reset port
+        /// </summary>
         protected IDigitalOutputPort resetPort;
+
+        /// <summary>
+        /// The chip select port
+        /// </summary>
         protected IDigitalOutputPort chipSelectPort;
+
+        /// <summary>
+        /// The connection type (I2C or SPI)
+        /// </summary>
         protected ConnectionType connectionType;
+
+        /// <summary>
+        /// Helper bool for the data command port
+        /// </summary>
         protected const bool Data = true;
+
+        /// <summary>
+        /// Helper bool for the data command port
+        /// </summary>
         protected const bool Command = false;
 
+        /// <summary>
+        /// The display page size in bytes
+        /// </summary>
         protected const int PAGE_SIZE = 16;
 
         /// <summary>
@@ -54,8 +80,20 @@ namespace Meadow.Foundation.Displays
         /// Buffer holding the pixels in the display
         /// </summary>
         protected Buffer1bpp imageBuffer;
+
+        /// <summary>
+        /// Read buffer
+        /// </summary>
         protected byte[] readBuffer;
+
+        /// <summary>
+        /// Display command buffer
+        /// </summary>
         protected Memory<byte> commandBuffer;
+
+        /// <summary>
+        /// Page buffer to hold one page of data
+        /// </summary>
         protected byte[] pageBuffer;
 
         /// <summary>
@@ -175,7 +213,6 @@ namespace Meadow.Foundation.Displays
             {
                 dataCommandPort.State = Data;
                 spiPeripheral.Bus.Exchange(chipSelectPort, imageBuffer.Buffer, readBuffer);
-               // spiPeripheral.Write(imageBuffer.Buffer); //happy path
             }
             else//  I2C
             {   //  Send the buffer page by page
@@ -192,6 +229,13 @@ namespace Meadow.Foundation.Displays
             }
         }
 
+        /// <summary>
+        /// Copy a region of the display buffer to the screen
+        /// </summary>
+        /// <param name="left">The left position in pixels</param>
+        /// <param name="top">The top position in pixels</param>
+        /// <param name="right">The right position in pixels</param>
+        /// <param name="bottom">The bottom position in pixels</param>
         public void Show(int left, int top, int right, int bottom)
         {
             Show();
@@ -303,6 +347,11 @@ namespace Meadow.Foundation.Displays
             SendCommand(0x2e);
         }
 
+        /// <summary>
+        /// Fill the display with a normalized color 
+        /// </summary>
+        /// <param name="color">The color used to fill the display, will normalize to black/off or white/on</param>
+        /// <param name="updateDisplay">If true, update the display, if false, only update the offscreen buffer</param>
         public virtual void Fill(Color color, bool updateDisplay = false)
         {
             imageBuffer.Clear(color.Color1bpp);
@@ -313,11 +362,25 @@ namespace Meadow.Foundation.Displays
             }
         }
 
+        /// <summary>
+        /// Fill the display with a normalized color
+        /// </summary>
+        /// <param name="x">The start x position in pixels</param>
+        /// <param name="y">The start y position in pixels</param>
+        /// <param name="width">The width to fill in pixels</param>
+        /// <param name="height">The height to fill in pixels</param>
+        /// <param name="color">The color, will normalize to black/off or white/on</param>
         public virtual void Fill(int x, int y, int width, int height, Color color)
         {
             imageBuffer.Fill(x, y, width, height, color);
         }
 
+        /// <summary>
+        /// Write a buffer to the display 
+        /// </summary>
+        /// <param name="x">The x start position in pixels</param>
+        /// <param name="y">The y start position in pixels</param>
+        /// <param name="displayBuffer">The buffer to write/copy to the display</param>
         public virtual void WriteBuffer(int x, int y, IPixelBuffer displayBuffer)
         {
             imageBuffer.WriteBuffer(x, y, displayBuffer);

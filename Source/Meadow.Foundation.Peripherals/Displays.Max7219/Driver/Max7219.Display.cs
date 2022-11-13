@@ -24,6 +24,9 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         public int Height => 8 * DigitRows; //each digit takes 8 bits so multiply by 8
 
+        /// <summary>
+        /// The offscreen buffer used for the display
+        /// </summary>
         public IPixelBuffer PixelBuffer => this;
 
         /// <summary>

@@ -1,5 +1,8 @@
 ﻿namespace Meadow.Foundation.Sensors.Gnss
 {
+    /// <summary>
+    /// GNSS Commands struct
+    /// </summary>
     public struct Commands
     {
         // TODO: consider changing the naming convention of these to CONST case
@@ -151,9 +154,13 @@
         /// </summary>
         public const string PMTK_LOCUS_ERASE_FLASH = "$PMTK184,1*22";
 
-        // If flash is full, log will overwrite old data with new logs
+        /// <summary>
+        /// If flash is full, log will overwrite old data with new logs
+        /// </summary>
         public const bool LOCUS_OVERLAP = false;
-        // If flash is full, logging will stop
+        /// <summary>
+        /// If flash is full, logging will stop
+        /// </summary>
         public const bool LOCUS_FULLSTOP = true;
 
         /// <summary>

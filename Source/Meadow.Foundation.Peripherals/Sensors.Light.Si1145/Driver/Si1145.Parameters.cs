@@ -3,7 +3,7 @@ namespace Meadow.Foundation.Sensors.Light
 {
     public partial class Si1145
     {
-        protected static class Parameters
+        internal static class Parameters
         {
             /* Parameters */
             public static readonly byte PARAM_I2CADDR = 0x00;

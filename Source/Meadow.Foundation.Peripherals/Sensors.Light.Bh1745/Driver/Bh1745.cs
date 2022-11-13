@@ -20,16 +20,25 @@ namespace Meadow.Foundation.Sensors.Light
     // 0xFF to the four registers starting at 0x62 to force the LEDs on. With
     // the default settings in these registers, the LEDS will be off.
 
+    /// <summary>
+    /// Represents a BH1745 Luminance and Colour Sensor
+    /// </summary>
     public partial class Bh1745
         : ByteCommsSensorBase<(Illuminance? AmbientLight, Color? Color, bool Valid)>, ILightSensor
     {
+        /// <summary>
+        /// Raised when the luminosity changes
+        /// </summary>
         public event EventHandler<IChangeResult<Illuminance>> LuminosityUpdated = delegate { };
 
         /// <summary>
-        /// 
+        /// The current Illuminance value
         /// </summary>
         public Illuminance? Illuminance => Conditions.AmbientLight;
         
+        /// <summary>
+        /// Interrupt reset status
+        /// </summary>
         public InterruptStatus InterruptReset
         {
             get
@@ -51,7 +60,7 @@ namespace Meadow.Foundation.Sensors.Light
         }
 
         /// <summary>
-        /// Gets or sets the currently set measurement time.
+        /// Gets or sets the currently set measurement time
         /// </summary>
         public MeasurementTimeType MeasurementTime
         {
@@ -68,7 +77,7 @@ namespace Meadow.Foundation.Sensors.Light
                 measurementTime = value;
             }
         }
-        protected MeasurementTimeType measurementTime;
+        MeasurementTimeType measurementTime;
 
         /// <summary>
         /// Is the sensor actively measuring
@@ -84,7 +93,7 @@ namespace Meadow.Foundation.Sensors.Light
                 isMeasurementActive = value;
             }
         }
-        protected bool isMeasurementActive;
+        bool isMeasurementActive;
 
         /// <summary>
         /// Gets or sets the ADC gain of the sensor
@@ -104,7 +113,7 @@ namespace Meadow.Foundation.Sensors.Light
                 this.adcGain = value;
             }
         }
-        protected AdcGainTypes adcGain;
+        AdcGainTypes adcGain;
 
         /// <summary>
         /// Is the interrupt active
@@ -137,7 +146,7 @@ namespace Meadow.Foundation.Sensors.Light
                 latchBehavior = value;
             }
         }
-        protected LatchBehaviorTypes latchBehavior;
+        LatchBehaviorTypes latchBehavior;
 
         /// <summary>
         /// Gets or sets the source channel that triggers the interrupt
@@ -154,7 +163,7 @@ namespace Meadow.Foundation.Sensors.Light
                 interruptSource = value;
             }
         }
-        protected InterruptChannels interruptSource;
+        InterruptChannels interruptSource;
 
         /// <summary>
         /// Gets or sets whether the interrupt pin is enabled
@@ -170,7 +179,7 @@ namespace Meadow.Foundation.Sensors.Light
                 isInterruptEnabled = value;
             }
         }
-        protected bool isInterruptEnabled;
+        bool isInterruptEnabled;
 
         /// <summary>
         /// Gets or sets the persistence function of the interrupt
@@ -190,7 +199,7 @@ namespace Meadow.Foundation.Sensors.Light
                 interruptPersistence = value;
             }
         }
-        protected InterruptTypes interruptPersistence;
+        InterruptTypes interruptPersistence;
 
         /// <summary>
         /// Gets or sets the lower interrupt threshold
@@ -204,7 +213,7 @@ namespace Meadow.Foundation.Sensors.Light
                 lowerInterruptThreshold = value;
             }
         }
-        protected ushort lowerInterruptThreshold;
+        ushort lowerInterruptThreshold;
 
         /// <summary>
         /// Gets or sets the upper interrupt threshold
@@ -218,14 +227,12 @@ namespace Meadow.Foundation.Sensors.Light
                 upperInterruptThreshold = value;
             }
         }
-        protected ushort upperInterruptThreshold;
+        ushort upperInterruptThreshold;
 
         /// <summary>
         /// Gets or sets the channel compensation multipliers which are used to scale the channel measurements
         /// </summary>
         public ChannelMultipliers CompensationMultipliers { get; set; }
-
-        //==== ctors
 
         /// <summary>
         /// Create a new BH17545 color sensor object
@@ -244,8 +251,10 @@ namespace Meadow.Foundation.Sensors.Light
             Reset();
         }
 
-        //==== internal methods
-
+        /// <summary>
+        /// Reads data from the sensor
+        /// </summary>
+        /// <returns>The latest sensor reading</returns>
         protected override Task<(Illuminance? AmbientLight, Color? Color, bool Valid)> ReadSensor()
         {
             return Task.Run(() =>
@@ -282,6 +291,10 @@ namespace Meadow.Foundation.Sensors.Light
             });
         }
 
+        /// <summary>
+        /// Raise events for subcribers and notify of value changes
+        /// </summary>
+        /// <param name="changeResult">The updated sensor data</param>
         protected override void RaiseEventsAndNotify(IChangeResult<(Illuminance? AmbientLight, Color? Color, bool Valid)> changeResult)
         {
             if (changeResult.New.AmbientLight is { } ambient)

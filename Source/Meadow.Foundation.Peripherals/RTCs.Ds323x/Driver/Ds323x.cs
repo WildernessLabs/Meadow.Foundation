@@ -4,12 +4,15 @@ using System;
 
 namespace Meadow.Foundation.RTCs
 {
+    /// <summary>
+    /// DS323X real-time clock
+    /// </summary>
     public partial class Ds323x : IDisposable
     {
         /// <summary>
-        /// Register addresses in the sensor.
+        /// Register addresses in the sensor
         /// </summary>
-        protected static class Registers
+        static class Registers
         {
             public static readonly byte Seconds = 0x00;
             public static readonly byte Minutes = 0x01;
@@ -38,52 +41,54 @@ namespace Meadow.Foundation.RTCs
         private const int DATE_TIME_REGISTERS_SIZE = 0x07;
 
         /// <summary>
-        /// Bit mask to turn Alarm1 on.
+        /// Bit mask to turn Alarm1 on
         /// </summary>
         private const byte ALARM1_ENABLE = 0x01;
 
         /// <summary>
-        /// Bit mask to turn Alarm1 off.
+        /// Bit mask to turn Alarm1 off
         /// </summary>
         private const byte ALARM1_DISABLE = 0xfe;
 
         /// <summary>
-        /// Bit mask to turn Alarm2 on.
+        /// Bit mask to turn Alarm2 on
         /// </summary>
         private const byte ALARM2_ENABLE = 0x02;
 
         /// <summary>
-        /// Bit mask to turn Alarm2 off.
+        /// Bit mask to turn Alarm2 off
         /// </summary>
         private const byte ALARM2_DISABLE = 0xfd;
 
         /// <summary>
-        /// Interrupt flag for Alarm1.
+        /// Interrupt flag for Alarm1
         /// </summary>
         private const byte ALARM1_INTERRUPT_FLAG = 0x01;
 
         /// <summary>
-        /// Bit mask to clear the Alarm1 interrupt.
+        /// Bit mask to clear the Alarm1 interrupt
         /// </summary>
         private const byte ALARM1_INTERRUPT_OFF = 0xfe;
 
         /// <summary>
-        /// Interrupt flag for the Alarm2 interrupt.
+        /// Interrupt flag for the Alarm2 interrupt
         /// </summary>
         private const byte ALARM2_INTERRUPT_FLAG = 0x02;
 
         /// <summary>
-        /// Bit mask to clear the Alarm2 interrupt.
+        /// Bit mask to clear the Alarm2 interrupt
         /// </summary>
-        private const byte ALARM2_INTERRUPT_OFF = 0xfd;
+        const byte ALARM2_INTERRUPT_OFF = 0xfd;
 
-        private AlarmRaised _alarm1Delegate;
-        private AlarmRaised _alarm2Delegate;
-        private bool _interruptCreatedInternally;
+        AlarmRaised alarm1Delegate;
+        AlarmRaised alarm2Delegate;
+        bool interruptCreatedInternally;
 
-        protected Memory<byte> readBuffer;
+        Memory<byte> readBuffer;
 
-
+        /// <summary>
+        /// Create a new Ds323x object
+        /// </summary>
         protected Ds323x(I2cPeripheral peripheral, IDigitalInputController device, IPin interruptPin)
         {
             ds323x = peripheral;
@@ -91,7 +96,7 @@ namespace Meadow.Foundation.RTCs
             if (interruptPin != null)
             {
                 var interruptPort = device.CreateDigitalInputPort(interruptPin, InterruptMode.EdgeFalling, ResistorMode.InternalPullUp, TimeSpan.FromMilliseconds(10), TimeSpan.FromMilliseconds(10));
-                _interruptCreatedInternally = true;
+                interruptCreatedInternally = true;
 
                 Initialize(interruptPort);
             }
@@ -99,6 +104,9 @@ namespace Meadow.Foundation.RTCs
             readBuffer = new byte[0x12];
         }
 
+        /// <summary>
+        /// Create a new Ds323x object
+        /// </summary>
         protected Ds323x(I2cPeripheral peripheral, IDigitalInputPort interruptPort)
         {
             ds323x = peripheral;
@@ -106,9 +114,12 @@ namespace Meadow.Foundation.RTCs
             Initialize(interruptPort);
         }
 
+        /// <summary>
+        /// Dispose
+        /// </summary>
         public void Dispose()
         {
-            if (_interruptCreatedInternally)
+            if (interruptCreatedInternally)
             {
                 InterruptPort?.Dispose();
                 InterruptPort = null;
@@ -133,16 +144,16 @@ namespace Meadow.Foundation.RTCs
                 InterruptPort.Changed += (s, cr) =>
                 {
                     //Alarm interrupt has been raised, work out which one and raise the necessary event.
-                    if ((_alarm1Delegate != null) || (_alarm2Delegate != null))
+                    if ((alarm1Delegate != null) || (alarm2Delegate != null))
                     {
                         var alarm = WhichAlarm;
-                        if (((alarm == Alarm.Alarm1Raised) || (alarm == Alarm.BothAlarmsRaised)) && (_alarm1Delegate != null))
+                        if (((alarm == Alarm.Alarm1Raised) || (alarm == Alarm.BothAlarmsRaised)) && (alarm1Delegate != null))
                         {
-                            _alarm1Delegate(this);
+                            alarm1Delegate(this);
                         }
-                        if (((alarm == Alarm.Alarm2Raised) || (alarm == Alarm.BothAlarmsRaised)) && (_alarm2Delegate != null))
+                        if (((alarm == Alarm.Alarm2Raised) || (alarm == Alarm.BothAlarmsRaised)) && (alarm2Delegate != null))
                         {
-                            _alarm2Delegate(this);
+                            alarm2Delegate(this);
                         }
                     }
                 };
@@ -165,9 +176,9 @@ namespace Meadow.Foundation.RTCs
                 {
                     throw new DeviceConfigurationException("Alarm events require creating the Component with an Interrupt Port");
                 }
-                _alarm1Delegate += value;
+                alarm1Delegate += value;
             }
-            remove => _alarm1Delegate -= value;
+            remove => alarm1Delegate -= value;
         }
 
         /// <summary>
@@ -181,9 +192,9 @@ namespace Meadow.Foundation.RTCs
                 {
                     throw new DeviceConfigurationException("Alarm events require creating the Component with an Interrupt Port");
                 }
-                _alarm2Delegate += value;
+                alarm2Delegate += value;
             }
-            remove => _alarm2Delegate -= value;
+            remove => alarm2Delegate -= value;
         }
 
         /// <summary>

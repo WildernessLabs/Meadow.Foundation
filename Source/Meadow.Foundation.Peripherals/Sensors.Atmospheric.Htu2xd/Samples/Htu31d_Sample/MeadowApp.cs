@@ -10,7 +10,7 @@ namespace MeadowApp
     {
         //<!=SNIP=>
 
-        Htu31d sensor;
+        Htu31d? sensor;
 
         public override Task Initialize()
         {
@@ -50,6 +50,8 @@ namespace MeadowApp
 
         public override async Task Run()
         {
+            if (sensor == null) { return; }
+
             var result = await sensor.Read();
             Console.WriteLine("Initial Readings:");
             Console.WriteLine($"  Temperature: {result.Temperature?.Celsius:F1}C");

@@ -6,13 +6,13 @@ using Meadow.Units;
 using System;
 using System.Threading.Tasks;
 
-namespace MeadowApp
+namespace Sensors.Hid.AnalogJoystick_Sample
 {
     public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
 
-        AnalogJoystick joystick;
+        AnalogJoystick? joystick;
 
         public override Task Initialize()
         {
@@ -25,10 +25,13 @@ namespace MeadowApp
             _ = joystick?.SetCenterPosition(); //fire and forget
 
             //==== Classic Events
-            joystick.Updated += JoystickUpdated;
+            if (joystick != null)
+            {
+                joystick.Updated += JoystickUpdated;
+            }
 
             //==== IObservable
-            joystick.StartUpdating(TimeSpan.FromMilliseconds(20));
+            joystick?.StartUpdating(TimeSpan.FromMilliseconds(20));
 
             return Task.CompletedTask;
         }
@@ -36,7 +39,7 @@ namespace MeadowApp
         void JoystickUpdated(object sender, IChangeResult<AnalogJoystickPosition> e)
         {
             Console.WriteLine($"Horizontal: {e.New.Horizontal:n2}, Vertical: {e.New.Vertical:n2}");
-            Console.WriteLine($"Digital position: {joystick.DigitalPosition}");
+            Console.WriteLine($"Digital position: {joystick?.DigitalPosition}");
         }
 
         //<!=SNOP=>

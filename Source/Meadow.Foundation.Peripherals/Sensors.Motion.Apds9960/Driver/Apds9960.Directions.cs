@@ -3,17 +3,43 @@ namespace Meadow.Foundation.Sensors.Motion
 {
     public partial class Apds9960
     {
-        /* Direction definitions */
+        /// <summary>
+        /// Gesture directions and distance
+        /// </summary>
         public enum Direction
         {
+            /// <summary>
+            /// No direction detected
+            /// </summary>
             NONE,
+            /// <summary>
+            /// Left
+            /// </summary>
             LEFT,
+            /// <summary>
+            /// Right
+            /// </summary>
             RIGHT,
+            /// <summary>
+            /// Up
+            /// </summary>
             UP,
+            /// <summary>
+            /// Down
+            /// </summary>
             DOWN,
+            /// <summary>
+            /// Near
+            /// </summary>
             NEAR,
+            /// <summary>
+            /// Far
+            /// </summary>
             FAR,
-            ALL //huh?
+            /// <summary>
+            /// All
+            /// </summary>
+            ALL
         };
     }
 }

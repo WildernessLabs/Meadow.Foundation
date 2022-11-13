@@ -41,12 +41,21 @@ namespace Meadow.Foundation.Displays
             IDigitalInputPort busyPort,
             int width, int height) :
             base(spiBus, chipSelectPort, dataCommandPort, resetPort, busyPort, width, height)
-        {
-        }
+        { }
 
+        /// <summary>
+        /// Does the display invert data for black pixels
+        /// </summary>
         protected override bool IsBlackInverted => false;
+
+        /// <summary>
+        /// Does the display invert data for color pixels
+        /// </summary>
         protected override bool IsColorInverted => false;
 
+        /// <summary>
+        /// Initalize the display
+        /// </summary>
         protected override void Initialize()
         {
             Reset();
@@ -81,6 +90,9 @@ namespace Meadow.Foundation.Displays
             SetLutRed();
         }
 
+        /// <summary>
+        /// Display data from the display controller SRAM
+        /// </summary>
         protected void DisplayFrame()
         {
             byte temp;
@@ -123,7 +135,10 @@ namespace Meadow.Foundation.Displays
             WaitUntilIdle();
         }
 
-        protected void SetLutBlack()
+        /// <summary>
+        /// Set the black lookup table (LUT)
+        /// </summary>
+        void SetLutBlack()
         {
             SendCommand(0x20);         //g vcom
             SendData(lut_vcom0);
@@ -135,7 +150,10 @@ namespace Meadow.Foundation.Displays
             SendData(lut_g1);
         }
 
-        protected void SetLutRed()
+        /// <summary>
+        /// Set the red lookup table (LUT)
+        /// </summary>
+        void SetLutRed()
         {
             SendCommand(0x25);
             SendData(lut_vcom1);
@@ -145,6 +163,9 @@ namespace Meadow.Foundation.Displays
             SendData(lut_red1);
         }
 
+        /// <summary>
+        /// Set the display to sleep state
+        /// </summary>
         protected void Sleep()
         {
             SendCommand(Command.VCOM_AND_DATA_INTERVAL_SETTING);
@@ -160,11 +181,21 @@ namespace Meadow.Foundation.Displays
             SendCommand(Command.POWER_OFF);         //power off
         }
 
+        /// <summary>
+        /// Update the display from the offscreen buffer
+        /// </summary>
         public override void Show()
         {
             DisplayFrame();
         }
 
+        /// <summary>
+        /// Update a region of the display from the offscreen buffer
+        /// </summary>
+        /// <param name="left">Left bounds in pixels</param>
+        /// <param name="top">Top bounds in pixels</param>
+        /// <param name="right">Right bounds in pixels</param>
+        /// <param name="bottom">Bottom bounds in pixels</param>
         public override void Show(int left, int top, int right, int bottom)
         {
             DisplayFrame();
@@ -194,11 +225,12 @@ namespace Meadow.Foundation.Displays
             0x0F, 0x83, 0x43, 0x0C, 0x06, 0x0A, 0x04
         };
 
+        /*
         readonly byte[] lut_g2 =
         {
             0x8E, 0x94, 0x01, 0x8A, 0x06, 0x04, 0x8A, 0x4A,
             0x0F, 0x83, 0x43, 0x0C, 0x06, 0x0A, 0x04
-        };
+        };*/
 
         readonly byte[] lut_vcom1 =
         {

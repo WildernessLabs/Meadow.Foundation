@@ -3,7 +3,7 @@ namespace Meadow.Foundation.Sensors.Motion
 {
     public partial class Apds9960
     {
-        public static class Registers
+        static class Registers
         {
             /* APDS-9960 register addresses */
             public const byte APDS9960_ENABLE = 0x80;

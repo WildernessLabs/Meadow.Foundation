@@ -1,8 +1,18 @@
 ﻿namespace Meadow.Foundation.ICs.IOExpanders
 {
+    /// <summary>
+    /// TcaAddressTable class to calcuate I2C addresses
+    /// </summary>
     public static class TcaAddressTable
     {
+        /// <summary>
+        /// Minimum/owest address
+        /// </summary>
         public static byte MinAddress = 0x70;
+
+        /// <summary>
+        /// Maximum/highest address
+        /// </summary>
         public static byte MaxAddress = 0x77;
 
         /// <summary>

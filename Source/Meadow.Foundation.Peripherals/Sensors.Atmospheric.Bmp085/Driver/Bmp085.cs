@@ -8,23 +8,28 @@ using Meadow.Units;
 namespace Meadow.Foundation.Sensors.Atmospheric
 {
     /// <summary>
-    /// Bosch BMP085 digital pressure and temperature sensor.
+    /// Bosch BMP085 digital pressure and temperature sensor
     /// </summary>
     public partial class Bmp085 :
         ByteCommsSensorBase<(Units.Temperature? Temperature, Pressure? Pressure)>,
         ITemperatureSensor, IBarometricPressureSensor
     {
-        //==== Events
+        /// <summary>
+        /// Raised when the temperature value changes
+        /// </summary>
         public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
+     
+        /// <summary>
+        /// Raised when the pressure value changes
+        /// </summary>
         public event EventHandler<IChangeResult<Pressure>> PressureUpdated = delegate { };
 
-        //==== Internals
         // Oversampling for measurements.  Please see the datasheet for this sensor for more information.
-        private byte oversamplingSetting;
+        byte oversamplingSetting;
 
         // These wait times correspond to the oversampling settings.  
         // Please see the datasheet for this sensor for more information.
-        private readonly byte[] pressureWaitTime = { 5, 8, 14, 26 };
+        readonly byte[] pressureWaitTime = { 5, 8, 14, 26 };
 
         // Calibration data backing stores
         private short _ac1;
@@ -39,8 +44,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         private short _mc;
         private short _md;
 
-
-        //==== properties
         /// <summary>
         /// Last value read from the Pressure sensor.
         /// </summary>
@@ -51,22 +54,25 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         public Pressure? Pressure => Conditions.Pressure;
 
-        public static int DEFAULT_SPEED = 40000; // BMP085 clock rate
-
         /// <summary>
-        /// Provide a mechanism for reading the temperature and humidity from
-        /// a Bmp085 temperature / humidity sensor.
+        /// Create a new BMP085 object
         /// </summary>
+        /// <param name="i2cBus">The I2C bus</param>
+        /// <param name="address">The I2C address</param>
+        /// <param name="deviceMode">The device mode</param>
         public Bmp085(II2cBus i2cBus, byte address = (byte)Addresses.Default,
             DeviceMode deviceMode = DeviceMode.Standard)
                 : base(i2cBus, address)
         {
             oversamplingSetting = (byte)deviceMode;
 
-            // Get calibration data that will be used for future measurement taking.
             GetCalibrationData();
         }
 
+        /// <summary>
+        /// Raise events for subcribers and notify of value changes
+        /// </summary>
+        /// <param name="changeResult">The updated sensor data</param>
         protected override void RaiseEventsAndNotify(IChangeResult<(Units.Temperature? Temperature, Pressure? Pressure)> changeResult)
         {
             if (changeResult.New.Temperature is { } temp)
@@ -147,7 +153,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             //Peripheral.WriteBytes(new byte[] { 0xF4, 0x2E });
             WriteBuffer.Span[0] = 0xf4;
             WriteBuffer.Span[1] = 0x2e;
-            Peripheral.Write(WriteBuffer.Span[0..2]);
+            Peripheral?.Write(WriteBuffer.Span[0..2]);
 
             // Required as per datasheet.
             Thread.Sleep(5);
@@ -156,13 +162,13 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             // TODO: Delete after validating
             //Peripheral.WriteBytes(new byte[] { 0xF6 });
             WriteBuffer.Span[0] = 0xf6;
-            Peripheral.Write(WriteBuffer.Span[0]);
+            Peripheral?.Write(WriteBuffer.Span[0]);
 
             // get MSB and LSB result
             // TODO: Delete after validating
             //byte[] data = new byte[2];
             //data = Peripheral.ReadBytes(2);
-            Peripheral.Read(ReadBuffer.Span[0..2]);
+            Peripheral?.Read(ReadBuffer.Span[0..2]);
 
             return ((ReadBuffer.Span[0] << 8) | ReadBuffer.Span[1]);
         }
@@ -182,7 +188,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             // TODO: delete after validating
             //byte[] data = new byte[3];
             //data = Peripheral.ReadRegisters(0xF6, 3);
-            Peripheral.ReadRegister(0xf6, ReadBuffer.Span[0..3]);
+            Peripheral?.ReadRegister(0xf6, ReadBuffer.Span[0..3]);
 
             return ((ReadBuffer.Span[0] << 16) | (ReadBuffer.Span[1] << 8) | (ReadBuffer.Span[2])) >> (8 - oversamplingSetting);
         }
@@ -214,7 +220,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             // TODO: delete after validating
             //byte[] data = new byte[2];
             //data = Peripheral.ReadRegisters(address, 2);
-            Peripheral.ReadRegister(address, ReadBuffer.Span[0..2]);
+            Peripheral?.ReadRegister(address, ReadBuffer.Span[0..2]);
 
             return (short)((ReadBuffer.Span[0] << 8) | ReadBuffer.Span[1]);
         }

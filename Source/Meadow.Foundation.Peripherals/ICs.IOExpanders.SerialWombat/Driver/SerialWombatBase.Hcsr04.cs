@@ -7,20 +7,30 @@ namespace Meadow.Foundation.ICs.IOExpanders
 {
     public abstract partial class SerialWombatBase
     {
+        /// <summary>
+        /// Represents a HCSR04 distance sensor connected to a Serial Wombat
+        /// </summary>
         public class Hcsr04 : Sensors.Distance.Hcsr04, IDisposable
         {
-            public static TimeSpan DefaultReadPeriod = TimeSpan.FromMilliseconds(250);
+            /// <summary>
+            /// The default sensor read period
+            /// </summary>
+            public static TimeSpan DefaultReadPeriod => TimeSpan.FromMilliseconds(250);
 
-            private SerialWombatBase controller;
-            private bool disposed;
-            private TimeSpan readPeriod;
-            private IPin echoPin;
+            readonly SerialWombatBase controller;
+            readonly IPin echoPin;
+            bool disposed;
 
+            /// <summary>
+            /// Create a new Hcsr04 object
+            /// </summary>
             public Hcsr04(SerialWombatBase controller, IPin trigger, IPin echo)
                 : this(controller, trigger, echo, DefaultReadPeriod)
-            {
-            }
+            { }
 
+            /// <summary>
+            /// Create a new Hcsr04 object
+            /// </summary>
             public Hcsr04(SerialWombatBase controller, IPin trigger, IPin echo, TimeSpan readPeriod)
             {
                 this.controller = controller;
@@ -40,6 +50,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 }
             }
 
+            /// <summary>
+            /// Start a distance measurement
+            /// </summary>
             public override void MeasureDistance()
             {
                 ReadPulses();
@@ -51,7 +64,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
                 var d = controller.ReadPublicData(echoPin);
 
-                controller.Logger.Debug($"d: {d}");
+                controller?.Logger?.Debug($"d: {d}");
 
                 var newDistance = new Length(d, Length.UnitType.Millimeters);
                 base.RaiseEventsAndNotify(new ChangeResult<Length>(newDistance, oldDistance));
@@ -59,6 +72,10 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 Distance = newDistance;
             }
 
+            /// <summary>
+            /// Dispose
+            /// </summary>
+            /// <param name="disposing">True if disposing</param>
             protected virtual void Dispose(bool disposing)
             {
                 if (!disposed)
@@ -72,6 +89,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 }
             }
 
+            /// <summary>
+            /// Dispose
+            /// </summary>
             public void Dispose()
             {
                 Dispose(disposing: true);

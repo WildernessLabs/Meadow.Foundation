@@ -10,54 +10,115 @@ namespace Meadow.Foundation.Sensors.Light
     // TODO: This sensor has an interr
 
     /// <summary>
-    /// Driver for the TSL2591 light-to-digital converter.
+    /// Driver for the TSL2591 light-to-digital converter
     /// </summary>
     public partial class Tsl2591 :
         ByteCommsSensorBase<(Illuminance? FullSpectrum, Illuminance? Infrared, Illuminance? VisibleLight, Illuminance? Integrated)>,
         ILightSensor,
         IDisposable
     {
-        //==== events
+        /// <summary>
+        /// Raised when Full Spectrum Illuminance value changes
+        /// </summary>
         public event EventHandler<IChangeResult<Illuminance>> FullSpectrumUpdated = delegate { };
-        public event EventHandler<IChangeResult<Illuminance>> InfraredUpdated = delegate { };
-        public event EventHandler<IChangeResult<Illuminance>> VisibleLightUpdated = delegate { };
-        public event EventHandler<IChangeResult<Illuminance>> LuminosityUpdated = delegate { };
 
-        //==== internals
-        private IntegrationTimes _integrationTime;
-        private GainFactor _gain;
+        /// <summary>
+        /// Raised when Infrared Illuminance value changes
+        /// </summary>
+        public event EventHandler<IChangeResult<Illuminance>> InfraredUpdated = delegate { };
+
+        /// <summary>
+        /// Raised when Visible Light value changes
+        /// </summary>
+        public event EventHandler<IChangeResult<Illuminance>> VisibleLightUpdated = delegate { };
+
+        /// <summary>
+        /// Raised when Luminosity value changes
+        /// </summary>
+        public event EventHandler<IChangeResult<Illuminance>> LuminosityUpdated = delegate { };
 
 
         /// <summary>
-        /// Full spectrum luminosity (visible and infrared light combined).
+        /// Sensor package ID
+        /// </summary>
+        public int PackageID => Peripheral.ReadRegister((byte)(Register.PackageID | Register.Command));
+
+        /// <summary>
+        /// Sensor device ID
+        /// </summary>
+        public int DeviceID => Peripheral.ReadRegister((byte)(Register.DeviceID | Register.Command));
+
+        /// <summary>
+        /// Gain of the sensor
+        /// </summary>
+        public GainFactor Gain
+        {
+            get => gainFactor;
+            set
+            {
+                PowerOff();
+                gainFactor = value;
+                Peripheral.WriteRegister((byte)(Register.Command | Register.Config), (byte)((byte)integrationTime | (byte)gainFactor));
+                PowerOn();
+            }
+        }
+
+        /// <summary>
+        /// Integration time for the sensor
+        /// </summary>
+        public IntegrationTimes IntegrationTime
+        {
+            get => integrationTime;
+            set
+            {
+                PowerOff();
+                integrationTime = value;
+                Peripheral.WriteRegister((byte)(Register.Command | Register.Config), (byte)((byte)integrationTime | (byte)gainFactor));
+                PowerOn();
+            }
+        }
+
+        IntegrationTimes integrationTime;
+        GainFactor gainFactor;
+
+        /// <summary>
+        /// Full spectrum luminosity (visible and infrared light combined)
         /// </summary>
         public Illuminance? FullSpectrumLuminosity => Conditions.FullSpectrum;
 
         /// <summary>
-        /// Infrared light luminosity.
+        /// Infrared light luminosity
         /// </summary>
         public Illuminance? InfraredLuminosity => Conditions.Infrared;
 
         /// <summary>
-        /// Visible light luminosity.
+        /// Visible light luminosity
         /// </summary>
         public Illuminance? VisibleLightLuminosity => Conditions.VisibleLight;
 
         /// <summary>
-        /// Visible lux.
+        /// Visible lux
         /// </summary>
         public Illuminance? Illuminance => Conditions.Integrated;
 
-        public Tsl2591(II2cBus bus,
-            byte address = (byte)Addresses.Default,
-            int updateIntervalMs = 1000)
-            : base(bus, address, updateIntervalMs)
+        /// <summary>
+        /// Create a new Tsl2591 object
+        /// </summary>
+        /// <param name="i2cBus">The I2C bus</param>
+        /// <param name="address">The I2C address</param>
+        public Tsl2591(II2cBus i2cBus,
+            byte address = (byte)Addresses.Default)
+            : base(i2cBus, address)
         {
             Gain = GainFactor.Medium;
             IntegrationTime = IntegrationTimes.Time_100Ms;
             PowerOn();
         }
 
+        /// <summary>
+        /// Reads data from the sensor
+        /// </summary>
+        /// <returns>The latest sensor reading</returns>
         protected override async Task<(Illuminance? FullSpectrum, Illuminance? Infrared, Illuminance? VisibleLight, Illuminance? Integrated)> ReadSensor()
         {
             (Illuminance FullSpectrum, Illuminance Infrared, Illuminance VisibleLight, Illuminance Integrated) conditions;
@@ -88,6 +149,10 @@ namespace Meadow.Foundation.Sensors.Light
             });
         }
 
+        /// <summary>
+        /// Raise events for subcribers and notify of value changes
+        /// </summary>
+        /// <param name="changeResult">The updated sensor data</param>
         protected override void RaiseEventsAndNotify(IChangeResult<(Illuminance? FullSpectrum, Illuminance? Infrared, Illuminance? VisibleLight, Illuminance? Integrated)> changeResult)
         {
             if (changeResult.New.FullSpectrum is { } ill)
@@ -110,61 +175,27 @@ namespace Meadow.Foundation.Sensors.Light
             base.RaiseEventsAndNotify(changeResult);
         }
 
+        /// <summary>
+        /// Power the sensor on
+        /// </summary>
         public void PowerOn()
         {
             Peripheral.WriteRegister((byte)(Register.Enable | Register.Command), 3);
         }
 
+        /// <summary>
+        /// Power the sensor off
+        /// </summary>
         public void PowerOff()
         {
             Peripheral.WriteRegister((byte)(Register.Enable | Register.Command), 0);
         }
 
-        public int PackageID
-        {
-            get => Peripheral.ReadRegister((byte)(Register.PackageID | Register.Command));
-        }
-
-        public int DeviceID
-        {
-            get => Peripheral.ReadRegister((byte)(Register.DeviceID | Register.Command));
-        }
-
         /// <summary>
-        /// Gain of the sensor.
-        /// </summary>
-        public GainFactor Gain
-        {
-            get { return (_gain); }
-            set
-            {
-                PowerOff();
-                _gain = value;
-                Peripheral.WriteRegister((byte)(Register.Command | Register.Config), (byte)((byte)_integrationTime | (byte)_gain));
-                PowerOn();
-            }
-        }
-
-        /// <summary>
-        /// Integration time for the sensor.
-        /// </summary>
-        public IntegrationTimes IntegrationTime
-        {
-            get { return (_integrationTime); }
-            set
-            {
-                PowerOff();
-                _integrationTime = value;
-                Peripheral.WriteRegister((byte)(Register.Command | Register.Config), (byte)((byte)_integrationTime | (byte)_gain));
-                PowerOn();
-            }
-        }
-
-        /// <summary>
-        /// Convert the integration time into milliseconds.
+        /// Convert the integration time into milliseconds
         /// </summary>
         /// <param name="integrationTime">Integration time</param>
-        /// <returns>Integration time in milliseconds.</returns>
+        /// <returns>Integration time in milliseconds</returns>
         private double IntegrationTimeInMilliseconds(IntegrationTimes integrationTime)
         {
             double it = 100;            // Default value, 100ms.
@@ -190,14 +221,14 @@ namespace Meadow.Foundation.Sensors.Light
                     break;
             }
 
-            return (it);
+            return it;
         }
 
         /// <summary>
-        /// Multiplication factor for the sensor reading.
+        /// Multiplication factor for the sensor reading
         /// </summary>
         /// <param name="gain">Gain level to be translated.</param>
-        /// <returns>Multiplication factor for the specified gain.</returns>
+        /// <returns>Multiplication factor for the specified gain</returns>
         private double GainMultiplier(GainFactor gain)
         {
             double g = 1.0;             // Default gain = 1.
@@ -217,7 +248,7 @@ namespace Meadow.Foundation.Sensors.Light
                     break;
 
             }
-            return (g);
+            return g;
         }
     }
 }

@@ -44,9 +44,12 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <param name="i2cBus">I2cBus (0-1000 KHz).</param>
         public Sht31d(II2cBus i2cBus, byte address = (byte)Addresses.Default)
             : base(i2cBus, address, readBufferSize: 6, writeBufferSize: 2)
-        {
-        }
+        { }
 
+        /// <summary>
+        /// Raise events for subcribers and notify of value changes
+        /// </summary>
+        /// <param name="changeResult">The updated sensor data</param>
         protected override void RaiseEventsAndNotify(IChangeResult<(Units.Temperature? Temperature, RelativeHumidity? Humidity)> changeResult)
         {
             if (changeResult.New.Temperature is { } temp)
@@ -71,7 +74,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             WriteBuffer.Span[0] = 0x2c;
             WriteBuffer.Span[1] = 0x06;
 
-            Peripheral.Exchange(WriteBuffer.Span, ReadBuffer.Span);
+            Peripheral?.Exchange(WriteBuffer.Span, ReadBuffer.Span);
 
             var humidity = (100 * (float)((ReadBuffer.Span[3] << 8) + ReadBuffer.Span[4])) / 65535;
             var tempC = ((175 * (float)((ReadBuffer.Span[0] << 8) + ReadBuffer.Span[1])) / 65535) - 45;

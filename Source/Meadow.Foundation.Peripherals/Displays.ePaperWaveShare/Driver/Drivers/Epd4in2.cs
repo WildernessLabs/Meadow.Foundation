@@ -38,6 +38,9 @@ namespace Meadow.Foundation.Displays.ePaper
             base(spiBus, chipSelectPort, dataCommandPort, resetPort, busyPort, 400, 300)
         { }
 
+        /// <summary>
+        /// Initialize the display driver
+        /// </summary>
         protected override void Initialize()
         {
             Reset();
@@ -147,6 +150,9 @@ namespace Meadow.Foundation.Displays.ePaper
             }
         }
 
+        /// <summary>
+        /// Reset the display
+        /// </summary>
         protected override void Reset()
         {
             resetPort.State = false;
@@ -163,6 +169,14 @@ namespace Meadow.Foundation.Displays.ePaper
             DelayMs(20);
         }
 
+        /// <summary>
+        /// Set partial address window to update display
+        /// </summary>
+        /// <param name="buffer">The interal display buffer</param>
+        /// <param name="x">X start position in pixels</param>
+        /// <param name="y">Y start position in pixels</param>
+        /// <param name="width">Width in pixels</param>
+        /// <param name="height">Height in pixels</param>
         protected void SetPartialWindow(byte[] buffer, int x, int y, int width, int height)
         {
             SendCommand(PARTIAL_IN);
@@ -284,7 +298,7 @@ namespace Meadow.Foundation.Displays.ePaper
         /// Send a refresh command to the display 
         /// Does not transfer new data
         /// </summary>
-        public void DisplayFrame()
+        public override void DisplayFrame()
         {
             SendCommand(DISPLAY_REFRESH);
             DelayMs(100);
@@ -294,7 +308,7 @@ namespace Meadow.Foundation.Displays.ePaper
         /// <summary>
         /// Set the device to low power mode
         /// </summary>
-        protected virtual void Sleep()
+        protected override void Sleep()
         {
             SendCommand(VCOM_AND_DATA_INTERVAL_SETTING);
             SendData(0x17);                       //border floating    
@@ -316,7 +330,7 @@ namespace Meadow.Foundation.Displays.ePaper
             SendData(0xA5);
         }
 
-        byte[] lut_vcom0 = {
+        readonly byte[] lut_vcom0 = {
               0x00, 0x08, 0x08, 0x00, 0x00, 0x02,
               0x00, 0x0F, 0x0F, 0x00, 0x00, 0x01,
               0x00, 0x08, 0x08, 0x00, 0x00, 0x02,
@@ -327,7 +341,7 @@ namespace Meadow.Foundation.Displays.ePaper
               0x00, 0x00,
         };
 
-        byte[] lut_ww = {
+        readonly byte[] lut_ww = {
               0x50, 0x08, 0x08, 0x00, 0x00, 0x02,
               0x90, 0x0F, 0x0F, 0x00, 0x00, 0x01,
               0xA0, 0x08, 0x08, 0x00, 0x00, 0x02,
@@ -337,7 +351,7 @@ namespace Meadow.Foundation.Displays.ePaper
               0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
         };
 
-        byte[] lut_bw = {
+        readonly byte[] lut_bw = {
               0x50, 0x08, 0x08, 0x00, 0x00, 0x02,
               0x90, 0x0F, 0x0F, 0x00, 0x00, 0x01,
               0xA0, 0x08, 0x08, 0x00, 0x00, 0x02,
@@ -347,7 +361,7 @@ namespace Meadow.Foundation.Displays.ePaper
               0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
         };
 
-        byte[] lut_bb = {
+        readonly byte[] lut_bb = {
               0xA0, 0x08, 0x08, 0x00, 0x00, 0x02,
               0x90, 0x0F, 0x0F, 0x00, 0x00, 0x01,
               0x50, 0x08, 0x08, 0x00, 0x00, 0x02,
@@ -357,7 +371,7 @@ namespace Meadow.Foundation.Displays.ePaper
               0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
         };
 
-        byte[] lut_wb = {
+        readonly byte[] lut_wb = {
               0x20, 0x08, 0x08, 0x00, 0x00, 0x02,
               0x90, 0x0F, 0x0F, 0x00, 0x00, 0x01,
               0x10, 0x08, 0x08, 0x00, 0x00, 0x02,
@@ -370,40 +384,40 @@ namespace Meadow.Foundation.Displays.ePaper
         readonly byte PANEL_SETTING = 0x00;
         readonly byte POWER_SETTING                              = 0x01;
         readonly byte POWER_OFF                                  = 0x02;
-        readonly byte POWER_OFF_SEQUENCE_SETTING                 = 0x03;
-        readonly byte POWER_ON                                   = 0x04;
-        readonly byte POWER_ON_MEASURE                           = 0x05;
-        readonly byte BOOSTER_SOFT_START                         = 0x06;
+        //readonly byte POWER_OFF_SEQUENCE_SETTING                 = 0x03;
+        //readonly byte POWER_ON                                   = 0x04;
+        //readonly byte POWER_ON_MEASURE                           = 0x05;
+        //readonly byte BOOSTER_SOFT_START                         = 0x06;
         readonly byte DEEP_SLEEP                                 = 0x07;
         readonly byte DATA_START_TRANSMISSION_1                  = 0x10;
-        readonly byte DATA_STOP                                  = 0x11;
+        //readonly byte DATA_STOP                                  = 0x11;
         readonly byte DISPLAY_REFRESH                            = 0x12;
         readonly byte DATA_START_TRANSMISSION_2                  = 0x13;
-        readonly byte LUT_FOR_VCOM                               = 0x20; 
-        readonly byte LUT_WHITE_TO_WHITE                         = 0x21;
-        readonly byte LUT_BLACK_TO_WHITE                         = 0x22;
-        readonly byte LUT_WHITE_TO_BLACK                         = 0x23;
-        readonly byte LUT_BLACK_TO_BLACK                         = 0x24;
-        readonly byte PLL_CONTROL                                = 0x30;
-        readonly byte TEMPERATURE_SENSOR_COMMAND                 = 0x40;
-        readonly byte TEMPERATURE_SENSOR_SELECTION               = 0x41;
-        readonly byte TEMPERATURE_SENSOR_WRITE                   = 0x42;
-        readonly byte TEMPERATURE_SENSOR_READ                    = 0x43;
+        //readonly byte LUT_FOR_VCOM                               = 0x20; 
+        //readonly byte LUT_WHITE_TO_WHITE                         = 0x21;
+        //readonly byte LUT_BLACK_TO_WHITE                         = 0x22;
+        //readonly byte LUT_WHITE_TO_BLACK                         = 0x23;
+        //readonly byte LUT_BLACK_TO_BLACK                         = 0x24;
+        //readonly byte PLL_CONTROL                                = 0x30;
+        //readonly byte TEMPERATURE_SENSOR_COMMAND                 = 0x40;
+        //readonly byte TEMPERATURE_SENSOR_SELECTION               = 0x41;
+        //readonly byte TEMPERATURE_SENSOR_WRITE                   = 0x42;
+        //readonly byte TEMPERATURE_SENSOR_READ                    = 0x43;
         readonly byte VCOM_AND_DATA_INTERVAL_SETTING             = 0x50;
-        readonly byte LOW_POWER_DETECTION                        = 0x51;
-        readonly byte TCON_SETTING                               = 0x60;
+        //readonly byte LOW_POWER_DETECTION                        = 0x51;
+        //readonly byte TCON_SETTING                               = 0x60;
         readonly byte RESOLUTION_SETTING                         = 0x61;
-        readonly byte GSST_SETTING                               = 0x65;
-        readonly byte GET_STATUS                                 = 0x71;
-        readonly byte AUTO_MEASUREMENT_VCOM                      = 0x80;
-        readonly byte READ_VCOM_VALUE                            = 0x81;
+        //readonly byte GSST_SETTING                               = 0x65;
+        //readonly byte GET_STATUS                                 = 0x71;
+        //readonly byte AUTO_MEASUREMENT_VCOM                      = 0x80;
+        //readonly byte READ_VCOM_VALUE                            = 0x81;
         readonly byte VCM_DC_SETTING                             = 0x82;
         readonly byte PARTIAL_WINDOW                             = 0x90;
         readonly byte PARTIAL_IN                                 = 0x91;
         readonly byte PARTIAL_OUT                                = 0x92;
-        readonly byte PROGRAM_MODE                               = 0xA0;
-        readonly byte ACTIVE_PROGRAMMING                         = 0xA1;
-        readonly byte READ_OTP                                   = 0xA2;
-        readonly byte POWER_SAVING                               = 0xE3;
+        //readonly byte PROGRAM_MODE                               = 0xA0;
+        //readonly byte ACTIVE_PROGRAMMING                         = 0xA1;
+        //readonly byte READ_OTP                                   = 0xA2;
+        //readonly byte POWER_SAVING                               = 0xE3;
     }
 }

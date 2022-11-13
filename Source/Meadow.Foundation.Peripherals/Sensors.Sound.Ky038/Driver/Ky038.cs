@@ -5,18 +5,30 @@ using System.Threading;
 
 namespace Meadow.Foundation.Sensors.Sound
 {
-    //WIP
+   /// <summary>
+   /// Represents a KY038 sound sensor - WIP
+   /// </summary>
    public class Ky038
     {
-        protected IAnalogInputPort analogPort;
-        protected IDigitalInputPort digitalInputPort;
+        IAnalogInputPort analogPort;
+        IDigitalInputPort digitalInputPort;
 
-        public Ky038(IMeadowDevice device, IPin A0, IPin D0) : 
-            this (device.CreateAnalogInputPort(A0, 5, TimeSpan.FromMilliseconds(50), new Units.Voltage(3.3)), 
-                device.CreateDigitalInputPort(D0))
-        {
-        }
+        /// <summary>
+        /// Create a new Ky038 object
+        /// </summary>
+        /// <param name="device">The device connected to the sensor</param>
+        /// <param name="pinA0">A0 pin</param>
+        /// <param name="pinD0">D0 pin</param>
+        public Ky038(IMeadowDevice device, IPin pinA0, IPin pinD0) : 
+            this (device.CreateAnalogInputPort(pinA0, 5, TimeSpan.FromMilliseconds(50), new Units.Voltage(3.3)), 
+                device.CreateDigitalInputPort(pinD0))
+        { }
 
+        /// <summary>
+        /// Create a new Ky038 object
+        /// </summary>
+        /// <param name="analogPort">The port for the to A0 pin</param>
+        /// <param name="digitalInputPort">The port for the to D0 pin</param>
         public Ky038(IAnalogInputPort analogPort, IDigitalInputPort digitalInputPort)
         {
             this.analogPort = analogPort;
@@ -33,7 +45,7 @@ namespace Meadow.Foundation.Sensors.Sound
             }
         }
 
-        private void DigitalInputPort_Changed(object sender, DigitalPortResult e)
+        void DigitalInputPort_Changed(object sender, DigitalPortResult e)
         {
            
         }

@@ -2,17 +2,29 @@ using System;
 
 namespace Meadow.Foundation.Displays.TextDisplayMenu.InputTypes
 {
+    /// <summary>
+    /// Represents a base Numeric input type
+    /// </summary>
     public abstract class NumericBase : InputBase
     {
         readonly byte scale = 0;
         int[] numberParts;
         
         int position = 0;
-        int max = 0;
-        int min = 0;
+        readonly int max = 0;
+        readonly int min = 0;
 
+        /// <summary>
+        /// Raised when the numeric value changes
+        /// </summary>
         public override event ValueChangedHandler ValueChanged;
 
+        /// <summary>
+        /// Create a new NumericBase object
+        /// </summary>
+        /// <param name="min">The minimum int value</param>
+        /// <param name="max">The maximum int value</param>
+        /// <param name="scale">The scale or step size between values</param>
         public NumericBase(int min, int max, byte scale)
         {
             this.max = max;
@@ -37,6 +49,12 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu.InputTypes
             }
         }
 
+        /// <summary>
+        /// Get the input
+        /// </summary>
+        /// <param name="itemID">The item id</param>
+        /// <param name="currentValue">The current value</param>
+        /// <exception cref="InvalidOperationException">Throws if not initialized</exception>
         public override void GetInput(string itemID, object currentValue)
         {
             if (!isInitialized)
@@ -53,10 +71,12 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu.InputTypes
             UpdateInputLine(NumericDisplay);
         }
 
-        //Up
+        /// <summary>
+        /// Send a Previous input to the item
+        /// </summary>
+        /// <returns>true</returns>
         public override bool Previous()
         {
-            Console.WriteLine("Next");
             if (position == 0)
             {
                 if (numberParts[position] < max) { numberParts[position]++; }
@@ -71,10 +91,12 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu.InputTypes
             return true;
         }
 
-        //Down
+        /// <summary>
+        /// Send a Next input to the item
+        /// </summary>
+        /// <returns>true</returns>
         public override bool Next()
         {
-            Console.WriteLine("Previous");
             if (position == 0)
             {
                 if (numberParts[position] > min) { numberParts[position]--; }
@@ -88,6 +110,10 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu.InputTypes
             return true;
         }
 
+        /// <summary>
+        /// Send a Select input to the item
+        /// </summary>
+        /// <returns>true</returns>
         public override bool Select()
         {
             if (position < numberParts.Length - 1)
@@ -101,6 +127,10 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu.InputTypes
             return true;
         }
 
+        /// <summary>
+        /// Parse a value for the item
+        /// </summary>
+        /// <param name="value">The string value as an object</param>
         protected override void ParseValue(object value)
         {
             if (value == null || value.ToString() == string.Empty)

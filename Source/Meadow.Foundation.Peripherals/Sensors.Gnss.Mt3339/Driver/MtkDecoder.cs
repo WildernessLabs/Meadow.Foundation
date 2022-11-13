@@ -4,28 +4,30 @@ using Meadow.Peripherals.Sensors.Location.Gnss;
 
 namespace Meadow.Foundation.Sensors.Gnss
 {
+    /// <summary>
+    /// Represents an MTK decoder
+    /// </summary>
     public class MtkDecoder : INmeaDecoder
     {
+        /// <summary>
+        /// Event raised when a message is received 
+        /// </summary>
         public event EventHandler<string> MessageReceived = delegate { };
 
         /// <summary>
         /// Friendly name for the MTK messages.
         /// </summary>
-        public string Name {
-            get => "MediaTek";
-        }
+        public string Name => "MediaTek";
 
         /// <summary>
         /// Prefix for the GLL (Geographic position Latitude / Longitude) decoder.
         /// </summary>
-        public string Prefix {
-            get => "MTK";
-        }
+        public string Prefix  => "MTK";
 
         /// <summary>
         /// Process the data from a RMC
         /// </summary>
-        /// <param name="data">String array of the message components for a RMC message.</param>
+        /// <param name="sentence">String array of the message components for a RMC message.</param>
         public void Process(NmeaSentence sentence)
         {
             // get the packet type (command number)

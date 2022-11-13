@@ -8,9 +8,11 @@ namespace Meadow.Foundation.Motors
         /// </summary>
 		public class MotorOvercurrentEventArgs : EventArgs
 		{
-			public MotorOvercurrentEventArgs()
-			{
-			}
+            /// <summary>
+			/// Create a new MotorOvercurrentEventArgs object
+			/// </summary>
+            public MotorOvercurrentEventArgs()
+			{ }
 		}
 	}
 }

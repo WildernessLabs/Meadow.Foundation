@@ -42,28 +42,30 @@
             Slow = 8, //0.5hz
         }
 
+        /// <summary>
+        /// Display brightness
+        /// </summary>
         public enum Brightness : byte
         {
-            _0,
-            _1,
-            _2,
-            _3,
-            _4,
-            _5,
-            _6,
-            _7,
-            _8,
-            _9,
-            _10,
-            _11,
-            _12,
-            _13,
-            _14,
-            _15,
+            /// <summary>
+            /// 0 off
+            /// </summary>
             Off = 0,
+            /// <summary>
+            /// Low brightness
+            /// </summary>
             Low = 4,
+            /// <summary>
+            /// Medium brightness
+            /// </summary>
             Medium = 8,
+            /// <summary>
+            /// High brightness
+            /// </summary>
             High = 12,
+            /// <summary>
+            /// Maximum brightness
+            /// </summary>
             Maximum = 15,
         }
 

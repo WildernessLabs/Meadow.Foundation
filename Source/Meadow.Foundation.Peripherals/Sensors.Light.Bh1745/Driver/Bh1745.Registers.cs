@@ -3,7 +3,7 @@ namespace Meadow.Foundation.Sensors.Light
 {
     public partial class Bh1745
     {
-        protected static class Registers
+        internal static class Registers
         {
             public const byte SYSTEM_CONTROL = 0x40;
             public const byte MODE_CONTROL1 = 0x41;

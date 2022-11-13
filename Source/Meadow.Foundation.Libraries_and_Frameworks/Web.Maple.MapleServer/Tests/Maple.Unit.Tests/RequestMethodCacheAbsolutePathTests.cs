@@ -59,8 +59,6 @@ namespace Maple.Unit.Tests
 
             cache.AddType(typeof(AbsolutePathHandler));
 
-            var p = "hello";
-
             var m = typeof(AbsolutePathHandler).GetMethod("MethodWithStringParamEnd");
             var info = cache.Match("GET", $"/foo/bar/baz/bad", out object param);
 

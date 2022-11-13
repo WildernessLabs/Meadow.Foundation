@@ -3,15 +3,26 @@ using System;
 
 namespace Meadow.Foundation.Transceivers
 {
+    /// <summary>
+    /// Represents the Semech SX127x Low Power Long Range Transceivers 
+    /// </summary>
     public class SX127x : SpiPeripheral
     {
         private const byte REG_VERSION = 0x42;
 
-        public SX127x(ISpiBus bus, IDigitalOutputPort chipSelect) 
-            : base(bus, chipSelect)
-        {
-        }
+        /// <summary>
+        /// Creates a new SX127x object
+        /// </summary>
+        /// <param name="i2cbus">I2C bus</param>
+        /// <param name="chipSelectPort">The port for the chip select pin</param>
+        public SX127x(ISpiBus i2cbus, IDigitalOutputPort chipSelectPort) 
+            : base(i2cbus, chipSelectPort)
+        { }
 
+        /// <summary>
+        /// Get the hardware version
+        /// </summary>
+        /// <returns>The version as a byte</returns>
         public byte GetVersion()
         {
             try

@@ -2,8 +2,14 @@
 
 namespace Meadow.Foundation.Sensors.Gnss
 {
+    /// <summary>
+    /// Lookup struct for packet types
+    /// </summary>
     public static class Lookups
     {
+        /// <summary>
+        /// Collection of known packet types
+        /// </summary>
         public static Dictionary<string, string> KnownPacketTypes { get; } = new Dictionary<string, string>();
 
         static Lookups()

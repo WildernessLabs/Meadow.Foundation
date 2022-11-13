@@ -25,7 +25,6 @@ namespace ElectronicSpeedController_Sample
         {
             Console.WriteLine("Initialize...");
 
-            //==== rotary encoder
             rotary = new RotaryEncoderWithButton(Device, Device.Pins.D07, Device.Pins.D08, Device.Pins.D06);
             rotary.Rotated += RotaryRotated;
             rotary.Clicked += (s, e) => {
@@ -33,7 +32,6 @@ namespace ElectronicSpeedController_Sample
                 esc.Arm();
             }; ;
 
-            //==== Electronic Speed Controller
             esc = new ElectronicSpeedController(Device, Device.Pins.D02, frequency);
 
             Console.WriteLine("Hardware initialized.");

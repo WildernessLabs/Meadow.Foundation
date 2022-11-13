@@ -61,10 +61,6 @@ namespace Meadow.Foundation.DataLoggers
         /// <summary>
         /// Post the specified data to ThingSpeak
         /// </summary>
-        /// <remarks>
-        /// The data should be URL encoded in the format:
-        /// field1=10.2&field2=15
-        /// </remarks>
         /// <param name="data">Data to send</param>
         /// <returns>Record number for the reading(s) just added</returns>
         private int PostData(string data)

@@ -7,15 +7,18 @@ namespace Meadow.Foundation.Motors
 {
     public partial class Tb67h420ftg
     {
+        /// <summary>
+        /// Represents a Tb67h420ftg controlled motor
+        /// </summary>
         public class Motor : HBridgeMotor
         {
             /// <summary>
-            /// Raised when the motors is over current.
+            /// Raised when the motors is over current
             /// </summary>
             public event EventHandler<MotorOvercurrentEventArgs> MotorOvercurrentFault = delegate { };
 
-            protected Tb67h420ftg driver;
-            protected IDigitalInputPort? fault;
+            Tb67h420ftg driver;
+            IDigitalInputPort? fault;
 
             internal Motor(
                 Tb67h420ftg driver, IPwmPort in1, IPwmPort in2,
@@ -25,20 +28,20 @@ namespace Meadow.Foundation.Motors
                 this.driver = driver;
                 this.fault = fault;
 
-                Init();
+                Initialize();
             }
 
-            protected void Init() {
-                // wire up the fault event, if the LOx port is configured.
-                if (fault != null) {
-                    fault.Changed += (object sender, DigitalPortResult e) => {
-                        this.RaiseMotorOvercurrentFault();
-                    };
+            void Initialize() 
+            {   // wire up the fault event, if the LOx port is configured.
+                if (fault != null) 
+                {
+                    fault.Changed += (object sender, DigitalPortResult e) => 
+                        RaiseMotorOvercurrentFault();
                 }
             }
 
             /// <summary>
-            /// Raises the MotorOvercurrentFault event.
+            /// Raises the MotorOvercurrentFault event
             /// </summary>
             protected void RaiseMotorOvercurrentFault()
             {

@@ -16,7 +16,7 @@ namespace ICs.IOExpanders.Mcp23x17_Input_Sample
     {
         Mcp23017 mcp;
 
-        public override async Task Initialize()
+        public override Task Initialize()
         {
             Console.WriteLine("Initializing...");
 
@@ -28,8 +28,10 @@ namespace ICs.IOExpanders.Mcp23x17_Input_Sample
 
             mcp.InputChanged += Mcp_InputChanged;
 
-        //    IDigitalOutputPort chipSelectPort = Device.CreateDigitalOutputPort(Device.Pins.D01);
-        //    mcp = new Mcp23s17(Device.CreateSpiBus(), chipSelectPort, interruptPort);
+            //    IDigitalOutputPort chipSelectPort = Device.CreateDigitalOutputPort(Device.Pins.D01);
+            //    mcp = new Mcp23s17(Device.CreateSpiBus(), chipSelectPort, interruptPort);
+
+            return base.Initialize();
         }
 
         private void Mcp_InputChanged(object sender, IOExpanderInputChangedEventArgs e)
