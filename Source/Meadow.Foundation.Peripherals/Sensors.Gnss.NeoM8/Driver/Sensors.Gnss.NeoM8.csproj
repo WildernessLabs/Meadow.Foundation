@@ -7,5 +7,6 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
     <ProjectReference Include="..\..\..\Meadow.Foundation.Libraries_and_Frameworks\Sensors.Location.Gnss.NmeaProcessor\Driver\Sensors.Location.Gnss.NmeaProcessor.csproj" />
+    <ProjectReference Include="..\..\Sensors.Gnss.Mt3339\Driver\Sensors.Gnss.Mt3339.csproj" />
   </ItemGroup>
 </Project>
