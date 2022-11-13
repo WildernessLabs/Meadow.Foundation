@@ -1,5 +1,4 @@
-﻿using System;
-namespace Meadow.Foundation.ICs.IOExpanders
+﻿namespace Meadow.Foundation.ICs.IOExpanders
 {
     public partial class Mcp23xxx
     {
@@ -15,7 +14,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// When a bit is set, the corresponding pin becomes an input. When
             /// a bit is clear, the corresponding pin becomes an output.
             /// </remarks>
-            public const byte IODirection = 0x00; //IODIR
+            public const byte IODIR_IODirection = 0x00; //IODIR
 
             /// <summary>
             /// IPOL. The IPOL register allows the user to configure the
@@ -25,7 +24,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// If a bit is set, the corresponding GPIO register bit will
             /// reflect the inverted value on the pin.
             /// </remarks>
-            public const byte InputPolarity = 0x01; //IPOL
+            public const byte IPOL_InputPolarity = 0x01; //IPOL
 
             /// <summary>
             /// GPINTEN. The GPINTEN register controls the interrupt-on-change
@@ -36,7 +35,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// interrupt-on-change. The DEFVAL and INTCON registers must also
             /// be configured if any pins are enabled for interrupt-on-change.
             /// </remarks>
-            public const byte InterruptOnChange = 0x02; //GPINTEN
+            public const byte GPINTEN_InterruptOnChange = 0x02; //GPINTEN
 
             /// <summary>
             /// DEFVAL. The default comparison value is configured in the DEFVAL
@@ -44,7 +43,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// the DEFVAL register, an opposite value on the associated pin
             /// will cause an interrupt to occur.
             /// </summary>
-            public const byte DefaultComparisonValue = 0x03; //DEFVAL
+            public const byte DEFVAL_DefaultComparisonValue = 0x03; //DEFVAL
 
             /// <summary>
             /// INTCON. 
@@ -56,7 +55,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// in the DEFVAL register. If a bit value is clear, the
             /// corresponding I/O pin is compared against the previous value.
             /// </remarks>
-            public const byte InterruptControl = 0x04; //INTCON
+            public const byte INTCON_InterruptControl = 0x04; //INTCON
 
             /// <summary>
             /// IOCON
@@ -81,7 +80,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// the INT pin. This bit is functional only when the ODR bit is
             /// cleared, configuring the INT pin as active push-pull.
             /// </remarks>
-            public const byte IOConfiguration = 0x05; //IOCON
+            public const byte IOCON_IOConfiguration = 0x05; //IOCON
 
             /// <summary>
             /// GPPU. 
@@ -92,7 +91,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// an input, the corresponding port pin is internally pulled up
             /// with a 100kΩ resistor.
             /// </remarks>
-            public const byte PullupResistorConfiguration = 0x06; //GPPU
+            public const byte GPPU_PullupResistorConfiguration = 0x06; //GPPU
 
             /// <summary>
             /// INTF
@@ -111,7 +110,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// the interrupt another pin changes, which would normally cause an
             /// interrupt, it will be reflected in INTF, but not INTCAP.
             /// </remarks>
-            public const byte InterruptFlag = 0x07; //INTF
+            public const byte INTF_InterruptFlag = 0x07; //INTF
 
             /// <summary>
             /// INTCAP
@@ -122,7 +121,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// only when an interrupt occurs. The register will remain unchanged
             /// until the interrupt is cleared via a read of INTCAP or GPIO.
             /// </remarks>
-            public const byte InterruptCapture = 0x08; //INTCAP
+            public const byte INTCAP_InterruptCapture = 0x08; //INTCAP
 
             /// <summary>
             /// GPIO. The GPIO module contains the data port (GPIO), internal
