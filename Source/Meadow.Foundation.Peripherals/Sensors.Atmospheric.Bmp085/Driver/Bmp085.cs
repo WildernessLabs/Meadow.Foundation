@@ -226,7 +226,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         }
 
         async Task<Units.Temperature> ISamplingSensor<Units.Temperature>.Read()
-    => (await Read()).Temperature.Value;
+            => (await Read()).Temperature.Value;
 
         async Task<Pressure> ISamplingSensor<Pressure>.Read()
             => (await Read()).Pressure.Value;

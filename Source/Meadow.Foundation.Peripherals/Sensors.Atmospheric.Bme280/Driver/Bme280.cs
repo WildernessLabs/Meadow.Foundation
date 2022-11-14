@@ -439,6 +439,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
             base.StartUpdating(updateInterval);
         }
+
         async Task<Units.Temperature> ISamplingSensor<Units.Temperature>.Read()
             => (await Read()).Temperature.Value;
 
