@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Meadow.Peripherals.Sensors;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -10,7 +10,7 @@ namespace Meadow.Foundation
     /// </summary>
     /// <typeparam name="UNIT"></typeparam>
     public abstract class SamplingSensorBase<UNIT>
-        : SensorBase<UNIT>
+        : SensorBase<UNIT>, ISamplingSensor<UNIT>
         where UNIT : struct
     {
         /// <summary>

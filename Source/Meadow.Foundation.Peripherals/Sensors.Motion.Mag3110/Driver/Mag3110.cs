@@ -1,5 +1,6 @@
 ﻿using Meadow.Hardware;
 using Meadow.Peripherals.Sensors;
+using Meadow.Peripherals.Sensors.Motion;
 using Meadow.Units;
 using System;
 using System.Threading.Tasks;
@@ -17,7 +18,7 @@ namespace Meadow.Foundation.Sensors.Motion
     /// </summary>
     public partial class Mag3110 :
         ByteCommsSensorBase<(MagneticField3D? MagneticField3D, Units.Temperature? Temperature)>,
-        ITemperatureSensor
+        ITemperatureSensor, IMagetometer
     {
         /// <summary>
         /// Raised when the magnetic field value changes
@@ -218,5 +219,11 @@ namespace Meadow.Foundation.Sensors.Motion
                 OnReadingComplete(readings);
             }*/
         }
+
+        async Task<Units.Temperature> ISamplingSensor<Units.Temperature>.Read()
+            => (await Read()).Temperature.Value;
+
+        async Task<MagneticField3D> ISamplingSensor<MagneticField3D>.Read()
+            => (await Read()).MagneticField3D.Value;
     }
 }

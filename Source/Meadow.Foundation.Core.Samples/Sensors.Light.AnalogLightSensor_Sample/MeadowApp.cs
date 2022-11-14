@@ -54,7 +54,7 @@ namespace Sensors.Light.AnalogLightSensor_Sample
         protected async Task ReadIlluminance()
         {
             var illuminance = await analogLightSensor.Read();
-            Console.WriteLine($"Initial lux: {illuminance.Lux:N2} lux");
+            Console.WriteLine($"Initial lux: {illuminance.Value.Lux:N2} lux");
         }
 
         //<!=SNOP=>

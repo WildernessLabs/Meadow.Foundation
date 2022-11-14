@@ -214,5 +214,11 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             //Request a write to user register
             Peripheral?.WriteRegister((byte)Register.USER_REG_1, register); //Write the new resolution bits
         }
+
+        async Task<Units.Temperature> ISamplingSensor<Units.Temperature>.Read()
+            => (await Read()).Temperature.Value;
+
+        async Task<RelativeHumidity> ISamplingSensor<RelativeHumidity>.Read()
+            => (await Read()).Humidity.Value;
     }
 }

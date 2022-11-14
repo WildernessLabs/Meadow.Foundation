@@ -50,7 +50,7 @@ namespace Sensors.Moisture.FC28_Sample
             var moisture = await fc28.Read();
             Console.WriteLine($"Moisture Value { moisture}");
 
-            fc28.StartUpdating();
+            fc28.StartUpdating(TimeSpan.FromMilliseconds(5000));
         }
 
         //<!=SNOP=>

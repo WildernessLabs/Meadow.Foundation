@@ -556,5 +556,11 @@ namespace Meadow.Foundation.Sensors.Motion
 
             DebugInformation.DisplayRegisters(Registers.X_AXIS_8BITS, ReadBuffer.Span[2..].ToArray());
         }
+
+        async Task<Acceleration3D> ISamplingSensor<Acceleration3D>.Read()
+            => (await Read()).Acceleration3D.Value;
+
+        async Task<Units.Temperature> ISamplingSensor<Units.Temperature>.Read()
+            => (await Read()).Temperature.Value;
     }
 }

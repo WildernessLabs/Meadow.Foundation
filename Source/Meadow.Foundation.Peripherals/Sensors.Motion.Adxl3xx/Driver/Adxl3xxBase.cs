@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Meadow.Foundation.Spatial;
 using Meadow.Hardware;
+using Meadow.Peripherals.Sensors;
 using Meadow.Peripherals.Sensors.Motion;
 using Meadow.Units;
 

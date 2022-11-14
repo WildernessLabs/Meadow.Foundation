@@ -463,5 +463,14 @@ namespace Meadow.Foundation.Sensors.Motion
 
             Console.WriteLine("== /REGISTERS =======================================================================");
         }
+
+        async Task<AngularVelocity3D> ISamplingSensor<AngularVelocity3D>.Read()
+            => (await Read()).AngularVelocity3D.Value;
+
+        async Task<Acceleration3D> ISamplingSensor<Acceleration3D>.Read()
+            => (await Read()).Acceleration3D.Value;
+
+        async Task<Units.Temperature> ISamplingSensor<Units.Temperature>.Read()
+            => (await Read()).Temperature.Value;
     }
 }

@@ -149,5 +149,11 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
             return Task.FromResult(conditions);
         }
+
+        async Task<Units.Temperature> ISamplingSensor<Units.Temperature>.Read()
+            => (await Read()).Temperature.Value;
+
+        async Task<RelativeHumidity> ISamplingSensor<RelativeHumidity>.Read()
+            => (await Read()).Humidity.Value;
     }
 }

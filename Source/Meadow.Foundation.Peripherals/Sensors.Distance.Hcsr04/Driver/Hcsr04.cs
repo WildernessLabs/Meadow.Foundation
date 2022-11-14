@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace Meadow.Foundation.Sensors.Distance
 {
     /// <summary>
-    /// HCSR04 Distance Sensor
+    /// HCSR04 Distance Sensor - driver not complete
     /// </summary>
     public class Hcsr04 : SensorBase<Length>, IRangeFinder
     {
@@ -141,6 +141,17 @@ namespace Meadow.Foundation.Sensors.Distance
         {
             DistanceUpdated?.Invoke(this, changeResult);
             base.RaiseEventsAndNotify(changeResult);
+        }
+
+        public void StartUpdating(TimeSpan? updateInterval = null)
+        {
+            //ToDo
+            throw new NotImplementedException();
+        }
+
+        public void StopUpdating()
+        {
+            throw new NotImplementedException();
         }
     }
 }

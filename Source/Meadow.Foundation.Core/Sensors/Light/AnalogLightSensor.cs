@@ -92,21 +92,22 @@ namespace Meadow.Foundation.Sensors.Light
                 )
            );
         }
-        
+
+        /// <summary>
+        /// Convenience method to get the current sensor readings. For frequent reads, use
+        /// StartSampling() and StopSampling() in conjunction with the SampleBuffer.
+        /// </summary>
+        public async Task<Illuminance?> Read()
+            => new Illuminance?(await ReadSensor());
+
         /// <summary>
         /// Convenience method to get the current luminance. For frequent reads, use
         /// StartSampling() and StopSampling() in conjunction with the SampleBuffer.
         /// </summary>
         protected override async Task<Illuminance> ReadSensor()
         {
-            // read the voltage
             Voltage voltage = await AnalogInputPort.Read();
-
-            // convert and save to our temp property for later retreival
-            illuminance = VoltageToLuminance(voltage);
-
-            // return
-            return illuminance;
+            return illuminance = VoltageToLuminance(voltage);
         }
 
         /// <summary>

@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Meadow.Hardware;
+using Meadow.Peripherals.Sensors;
 using Meadow.Peripherals.Sensors.Light;
 using Meadow.Units;
 
@@ -254,10 +255,12 @@ namespace Meadow.Foundation.Sensors.Light
             return ((Registers)(status & (byte)Registers.STATUS_AVALID) == Registers.STATUS_AVALID);
         }
 
-
         ushort I2cRead16(Registers reg)
         {
             return Peripheral.ReadRegisterAsUShort((byte)(Registers.COMMAND_BIT | reg), ByteOrder.BigEndian);
         }
+
+        async Task<Illuminance> ISamplingSensor<Illuminance>.Read()
+            => (await Read()).AmbientLight.Value;
     }
 }
