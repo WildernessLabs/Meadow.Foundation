@@ -10,7 +10,7 @@ namespace Meadow.Foundation.Sensors.Buttons
     /// Represents a momentary push button with two states
     /// </summary>
     public class PushButton : IButton, IDisposable
-    { 
+    {
         /// <summary>
         /// Default Debounce used on the PushButton Input if an InputPort is auto-created
         /// </summary>
@@ -114,7 +114,7 @@ namespace Meadow.Foundation.Sensors.Buttons
         /// <param name="resistorMode">The resistor mode</param>
         public PushButton(IDigitalInputController device, IPin inputPin, ResistorMode resistorMode = ResistorMode.InternalPullUp)
             : this(CreateInputPort(device, inputPin, resistorMode))
-        {  
+        {
             shouldDisposeInput = true;
         }
 
@@ -141,10 +141,10 @@ namespace Meadow.Foundation.Sensors.Buttons
                 ctsPolling = new CancellationTokenSource();
 
                 bool currentState = DigitalIn.State;
-               
+
                 _ = Task.Run(async () =>
                 {
-                    while(!ctsPolling.Token.IsCancellationRequested)
+                    while (!ctsPolling.Token.IsCancellationRequested)
                     {
                         if (currentState != DigitalIn.State)
                         {
@@ -164,8 +164,8 @@ namespace Meadow.Foundation.Sensors.Buttons
         protected static IDigitalInputPort CreateInputPort(IDigitalInputController device, IPin inputPin, ResistorMode resistorMode = ResistorMode.InternalPullUp)
         {
             var interruptMode = inputPin.Supports<IDigitalChannelInfo>(c => c.InterruptCapable) ? InterruptMode.EdgeBoth : InterruptMode.None;
-          
-            if(interruptMode == InterruptMode.None)
+
+            if (interruptMode == InterruptMode.None)
             {
                 Console.WriteLine("Warning: Pin doesn't support interrupts, PushButton will use polling");
             }
@@ -258,3 +258,4 @@ namespace Meadow.Foundation.Sensors.Buttons
             ctsPolling?.Cancel();
         }
     }
+}
