@@ -211,5 +211,11 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             data |= 0x04;
             Peripheral?.WriteRegister(Registers.Control1, data);
         }
+
+        async Task<Units.Temperature> ISamplingSensor<Units.Temperature>.Read()
+            => (await Read()).Temperature.Value;
+
+        async Task<Pressure> ISamplingSensor<Pressure>.Read()
+            => (await Read()).Pressure.Value;
     }
 }

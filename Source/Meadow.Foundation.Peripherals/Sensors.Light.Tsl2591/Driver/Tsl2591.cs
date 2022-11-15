@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Meadow.Hardware;
+using Meadow.Peripherals.Sensors;
 using Meadow.Peripherals.Sensors.Light;
 using Meadow.Units;
 using IU = Meadow.Units.Illuminance.UnitType;
@@ -14,8 +15,7 @@ namespace Meadow.Foundation.Sensors.Light
     /// </summary>
     public partial class Tsl2591 :
         ByteCommsSensorBase<(Illuminance? FullSpectrum, Illuminance? Infrared, Illuminance? VisibleLight, Illuminance? Integrated)>,
-        ILightSensor,
-        IDisposable
+        ILightSensor, IDisposable
     {
         /// <summary>
         /// Raised when Full Spectrum Illuminance value changes
@@ -250,5 +250,8 @@ namespace Meadow.Foundation.Sensors.Light
             }
             return g;
         }
+
+        async Task<Illuminance> ISamplingSensor<Illuminance>.Read()
+            => (await Read()).FullSpectrum.Value;
     }
 }

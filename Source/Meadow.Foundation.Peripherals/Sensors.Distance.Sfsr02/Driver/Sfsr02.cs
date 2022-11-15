@@ -8,7 +8,7 @@ using Meadow.Units;
 namespace Meadow.Foundation.Sensors.Distance
 {
     /// <summary>
-    /// Sfsr02 Distance Sensor
+    /// Sfsr02 Distance Sensor- driver not complete
     /// </summary>
     public class Sfsr02: SensorBase<Length>, IRangeFinder
     {
@@ -135,6 +135,17 @@ namespace Meadow.Foundation.Sensors.Distance
         {
             DistanceUpdated?.Invoke(this, changeResult);
             base.RaiseEventsAndNotify(changeResult);
+        }
+
+        public void StartUpdating(TimeSpan? updateInterval = null)
+        {
+            //ToDo
+            throw new NotImplementedException();
+        }
+
+        public void StopUpdating()
+        {
+            throw new NotImplementedException();
         }
     }
 }

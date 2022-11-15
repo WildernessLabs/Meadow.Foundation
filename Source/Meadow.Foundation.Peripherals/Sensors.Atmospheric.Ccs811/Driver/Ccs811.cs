@@ -185,5 +185,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
             base.RaiseEventsAndNotify(changeResult);
         }
+
+        async Task<Concentration> ISamplingSensor<Concentration>.Read()
+            => (await Read()).Voc.Value;
     }
 }

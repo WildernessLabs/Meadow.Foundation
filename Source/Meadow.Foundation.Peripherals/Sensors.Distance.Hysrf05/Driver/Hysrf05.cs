@@ -8,7 +8,7 @@ using Meadow.Units;
 namespace Meadow.Foundation.Sensors.Distance
 {
     /// <summary>
-    /// HYSRF05 Distance Sensor
+    /// HYSRF05 Distance Sensor- driver not complete
     /// </summary>
     public class Hysrf05: SensorBase<Length>, IRangeFinder
     {
@@ -139,6 +139,17 @@ namespace Meadow.Foundation.Sensors.Distance
         {
             DistanceUpdated?.Invoke(this, changeResult);
             base.RaiseEventsAndNotify(changeResult);
+        }
+
+        public void StartUpdating(TimeSpan? updateInterval = null)
+        {
+            //ToDo
+            throw new NotImplementedException();
+        }
+
+        public void StopUpdating()
+        {
+            throw new NotImplementedException();
         }
     }
 }

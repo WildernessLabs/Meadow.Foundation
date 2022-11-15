@@ -99,7 +99,7 @@ namespace Meadow.Foundation.Sensors.Weather
         /// wait between readings. This value influences how often `*Updated`
         /// events are raised and `IObservable` consumers are notified.
         /// The default is 5 seconds.</param>
-        public void StartUpdating(TimeSpan updateInterval)
+        public void StartUpdating(TimeSpan? updateInterval)
         {
             // thread safety
             lock (samplingLock) 

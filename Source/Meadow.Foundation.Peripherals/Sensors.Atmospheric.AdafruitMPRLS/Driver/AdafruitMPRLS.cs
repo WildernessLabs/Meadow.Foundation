@@ -135,5 +135,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 return conditions;
             });
         }
+
+        async Task<Pressure> ISamplingSensor<Pressure>.Read()
+            => (await ReadSensor()).Pressure.Value;
     }
 }
