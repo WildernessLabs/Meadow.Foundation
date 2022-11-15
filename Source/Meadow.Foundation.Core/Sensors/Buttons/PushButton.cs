@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Meadow.Foundation.Sensors.Buttons
 {
     /// <summary>
-    /// A simple push button. 
+    /// Represents a momentary push button with two states
     /// </summary>
     public class PushButton : IButton, IDisposable
     { 
@@ -44,17 +44,10 @@ namespace Meadow.Foundation.Sensors.Buttons
         public TimeSpan ButtonPollingInterval { get; set; } = TimeSpan.FromMilliseconds(100);
 
         /// <summary>
-        /// Returns the sanitized state of the switch. If the switch 
-        /// is pressed, returns true, otherwise false.
+        /// Returns the sanitized state of the button
+        /// If pressed, return true, otherwise false
         /// </summary>
-        public bool State
-        {
-            get
-            {
-                bool currentState = DigitalIn?.Resistor == ResistorMode.InternalPullDown;
-                return rawState == currentState;
-            }
-        }
+        public bool State => GetNormalizedState(DigitalIn.State);
 
         /// <summary>
         /// The minimum duration for a long press
@@ -67,38 +60,33 @@ namespace Meadow.Foundation.Sensors.Buttons
         protected IDigitalInputPort DigitalIn { get; set; }
 
         /// <summary>
-        /// Raised when a press starts (the button is pushed down - circuit is closed)
+        /// Raised when a press starts
         /// </summary>
         public event EventHandler PressStarted = delegate { };
 
         /// <summary>
-        /// Raised when a press ends (the button is released - circuit is opened)
+        /// Raised when a press ends
         /// </summary>
         public event EventHandler PressEnded = delegate { };
 
         /// <summary>
-        /// Raised when the button circuit is re-opened after it has been closed (at the end of a press)
+        /// Raised when the button is released after a press
         /// </summary>
         public event EventHandler Clicked = delegate { };
 
         /// <summary>
-        /// Raised when the button is pressed for LongClickedThreshold or longer
+        /// Raised when the button is pressed for LongClickedThreshold or longer and then releases
         /// </summary>
         public event EventHandler LongClicked = delegate { };
 
         /// <summary>
         /// The PushButton was created with an input port without interrupts
-        /// If true, the object is polling to update state and may impact performance
+        /// If true, the object is polling to update state (may impact performance)
         /// </summary>
         public bool IsPolling { get; protected set; } = false;
 
         /// <summary>
-        /// Returns the current raw state of the switch
-        /// </summary>
-        protected bool rawState => (DigitalIn != null) && !DigitalIn.State;
-
-        /// <summary>
-        /// Maximum DateTime value when the button was just pushed
+        /// The date/time when the last button press occurred and the button hasn't been released
         /// </summary>
         protected DateTime buttonPressStart = DateTime.MaxValue;
 
@@ -121,9 +109,9 @@ namespace Meadow.Foundation.Sensors.Buttons
         /// <summary>
         /// Creates PushButton with a digital input pin connected on a IIOdevice, specifying if its using an Internal or External PullUp/PullDown resistor.
         /// </summary>
-        /// <param name="device"></param>
-        /// <param name="inputPin"></param>
-        /// <param name="resistorMode"></param>
+        /// <param name="device">The device connected to the button</param>
+        /// <param name="inputPin">The pin used to create the button port</param>
+        /// <param name="resistorMode">The resistor mode</param>
         public PushButton(IDigitalInputController device, IPin inputPin, ResistorMode resistorMode = ResistorMode.InternalPullUp)
             : this(CreateInputPort(device, inputPin, resistorMode))
         {  
@@ -146,6 +134,9 @@ namespace Meadow.Foundation.Sensors.Buttons
             }
             else
             {
+                //ToDo remove resistor mode hack for RC2
+                Console.WriteLine($"Resistor mode hack {resistorMode}");
+                DigitalIn.Resistor = resistorMode;
                 IsPolling = true;
                 ctsPolling = new CancellationTokenSource();
 
@@ -183,13 +174,22 @@ namespace Meadow.Foundation.Sensors.Buttons
 
         void DigitalInChanged(object sender, DigitalPortResult result)
         {
-            UpdateEvents(rawState);
+            UpdateEvents(result.New.State);
+        }
+
+        /// <summary>
+        /// Returns the sanitized state of the button
+        /// Inverts the state when using a pullup resistor
+        /// </summary>
+        bool GetNormalizedState(bool state)
+        {
+            return (resistorMode == ResistorMode.InternalPullUp ||
+                    resistorMode == ResistorMode.ExternalPullUp) ? !state : state;
         }
 
         void UpdateEvents(bool state)
         {
-            state = (resistorMode == ResistorMode.InternalPullUp ||
-              resistorMode == ResistorMode.ExternalPullUp) ? !state : state;
+            Console.WriteLine($"State: {state}, mode: {resistorMode}");
 
             if (state)
             {
@@ -199,7 +199,6 @@ namespace Meadow.Foundation.Sensors.Buttons
             else
             {
                 TimeSpan pressDuration = DateTime.Now - buttonPressStart;
-
                 buttonPressStart = DateTime.MaxValue;
 
                 if (LongClickedThreshold > TimeSpan.Zero && pressDuration > LongClickedThreshold)
@@ -259,4 +258,3 @@ namespace Meadow.Foundation.Sensors.Buttons
             ctsPolling?.Cancel();
         }
     }
-}
