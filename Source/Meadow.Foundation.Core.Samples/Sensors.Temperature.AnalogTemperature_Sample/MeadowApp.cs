@@ -57,7 +57,7 @@ namespace Sensors.Temperature.AnalogTemperature_Sample
         protected async Task ReadTemp()
         {
             var temperature = await analogTemperature.Read();
-            Console.WriteLine($"Initial temp: {temperature.Value.Celsius:N2}C");
+            Console.WriteLine($"Initial temp: {temperature.Celsius:N2}C");
         }
 
         //<!=SNOP=>
