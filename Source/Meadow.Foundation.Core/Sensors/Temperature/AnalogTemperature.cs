@@ -199,13 +199,6 @@ namespace Meadow.Foundation.Sensors.Temperature
         }
 
         /// <summary>
-        /// Convenience method to get the current sensor readings. For frequent reads, use
-        /// StartSampling() and StopSampling() in conjunction with the SampleBuffer.
-        /// </summary>
-        public async Task<Units.Temperature?> Read()
-            => new Units.Temperature?(await ReadSensor());
-
-        /// <summary>
         /// Convenience method to get the current temperature. For frequent reads, use
         /// StartSampling() and StopSampling() in conjunction with the SampleBuffer.
         /// </summary>

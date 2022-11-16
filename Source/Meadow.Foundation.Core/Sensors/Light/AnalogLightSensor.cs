@@ -94,13 +94,6 @@ namespace Meadow.Foundation.Sensors.Light
         }
 
         /// <summary>
-        /// Convenience method to get the current sensor readings. For frequent reads, use
-        /// StartSampling() and StopSampling() in conjunction with the SampleBuffer.
-        /// </summary>
-        public async Task<Illuminance?> Read()
-            => new Illuminance?(await ReadSensor());
-
-        /// <summary>
         /// Convenience method to get the current luminance. For frequent reads, use
         /// StartSampling() and StopSampling() in conjunction with the SampleBuffer.
         /// </summary>
