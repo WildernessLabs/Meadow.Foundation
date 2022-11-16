@@ -18,7 +18,7 @@ namespace Meadow.Foundation.Sensors.Motion
     /// </summary>
     public partial class Mag3110 :
         ByteCommsSensorBase<(MagneticField3D? MagneticField3D, Units.Temperature? Temperature)>,
-        ITemperatureSensor, IMagetometer
+        ITemperatureSensor, IMagnetometer
     {
         /// <summary>
         /// Raised when the magnetic field value changes
