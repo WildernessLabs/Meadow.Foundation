@@ -24,21 +24,40 @@
     }
 
     /// <summary>
-    /// Horizontal text alignment when drawing
+    /// Horizontal alignment for visual elements
     /// </summary>
-    public enum TextAlignment
+    public enum HorizontalAlignment
     {
         /// <summary>
-        /// Left aligned
+        /// Left aligned, drawing starts at X horizontally
         /// </summary>
         Left,
         /// <summary>
-        /// Horizontally centered
+        /// Horizontally centered, X is horizonally centered 
         /// </summary>
         Center,
         /// <summary>
-        /// Right aligned
+        /// Right aligned, drawing ends at X horizontally
         /// </summary>
         Right
+    }
+
+    /// <summary>
+    /// Vertical alignment for visual elements
+    /// </summary>
+    public enum VerticalAlignment
+    {
+        /// <summary>
+        /// Top aligned, drawing starts at Y vertically
+        /// </summary>
+        Top,
+        /// <summary>
+        /// Horizontally centered, Y is vertically centered 
+        /// </summary>
+        Center,
+        /// <summary>
+        /// Bottom aligned, drawing ends at Y vertically
+        /// </summary>
+        Bottom
     }
 }
