@@ -135,7 +135,6 @@ namespace Meadow.Foundation.Sensors.Buttons
             else
             {
                 //ToDo remove resistor mode hack for RC2
-                Console.WriteLine($"Resistor mode hack {resistorMode}");
                 DigitalIn.Resistor = resistorMode;
                 IsPolling = true;
                 ctsPolling = new CancellationTokenSource();
@@ -174,7 +173,7 @@ namespace Meadow.Foundation.Sensors.Buttons
 
         void DigitalInChanged(object sender, DigitalPortResult result)
         {
-            UpdateEvents(result.New.State);
+            UpdateEvents(GetNormalizedState(result.New.State));
         }
 
         /// <summary>
@@ -189,8 +188,6 @@ namespace Meadow.Foundation.Sensors.Buttons
 
         void UpdateEvents(bool state)
         {
-            Console.WriteLine($"State: {state}, mode: {resistorMode}");
-
             if (state)
             {
                 buttonPressStart = DateTime.Now;
