@@ -141,12 +141,18 @@ namespace Meadow.Foundation.Sensors.Distance
             base.RaiseEventsAndNotify(changeResult);
         }
 
+        /// <summary>
+        /// Starts continuously sampling the sensor
+        /// </summary>
         public void StartUpdating(TimeSpan? updateInterval = null)
         {
             //ToDo
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Stops sampling the sensor
+        /// </summary>
         public void StopUpdating()
         {
             throw new NotImplementedException();

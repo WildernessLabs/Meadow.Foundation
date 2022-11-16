@@ -109,7 +109,14 @@ namespace Meadow.Foundation.Sensors.Moisture
         /// </summary>
         public void StartUpdating(TimeSpan? updateInterval)
         {
-            UpdateInterval = updateInterval.Value;
+            if(updateInterval == null)
+            {
+                UpdateInterval = TimeSpan.FromSeconds(5);
+            }
+            else
+            {
+                UpdateInterval = updateInterval.Value;
+            }
 
             lock (samplingLock) 
             {
