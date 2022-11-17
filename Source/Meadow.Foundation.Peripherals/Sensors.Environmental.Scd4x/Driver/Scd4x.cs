@@ -53,8 +53,7 @@ namespace Meadow.Foundation.Sensors.Environmental
         public Scd4x(II2cBus i2cBus, byte address = (byte)Addresses.Default)
             : base(i2cBus, address, readBufferSize: 9, writeBufferSize: 9)
         {
-            var crc = GetCrc(0xBE, 0xEF);
-            Console.WriteLine($"CRC {crc} should be 0x92");
+            StopPeriodicUpdates();
         }
 
         /// <summary>
@@ -72,6 +71,14 @@ namespace Meadow.Foundation.Sensors.Environmental
         public void PersistSettings()
         {
             SendCommand(Commands.PersistSettings);
+        }
+
+        /// <summary>
+        /// Device factory reset and clear all saved settings
+        /// </summary>
+        public void PerformFactoryReset()
+        {
+            SendCommand(Commands.PerformFactoryReset);
         }
 
         /// <summary>
@@ -145,19 +152,28 @@ namespace Meadow.Foundation.Sensors.Environmental
             SendCommand(Commands.StartPeriodicMeasurement);
         }
 
+        void StartLowPowerPeriodicUpdates()
+        {
+            SendCommand(Commands.StartLowPowerPeriodicMeasurement);
+        }
+
         void StopPeriodicUpdates()
         {
-            SendCommand(Commands.StartPeriodicMeasurement);
+            SendCommand(Commands.StopPeriodicMeasurement);
             Thread.Sleep(500);
         }
 
         /// <summary>
         /// Starts updating the sensor on the updateInterval frequency specified
         /// The sensor updates every 5 seconds, its recommended to choose an interval of 5s or more
+        /// If the update interval is 30 seconds or longer, the sensor will update in low power mode
         /// </summary>
         public override void StartUpdating(TimeSpan? updateInterval = null)
         {
-            StartPeriodicUpdates();
+            if (updateInterval != null && updateInterval.Value.TotalSeconds >= 30)
+                StartLowPowerPeriodicUpdates();
+            else
+                StartPeriodicUpdates();
             base.StartUpdating(updateInterval);
         }
 
