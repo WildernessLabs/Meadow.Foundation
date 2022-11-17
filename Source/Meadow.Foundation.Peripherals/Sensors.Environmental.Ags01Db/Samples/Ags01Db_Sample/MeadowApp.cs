@@ -11,7 +11,7 @@ namespace Sensors.Environmental.Ags01Db_Sample
     {
         //<!=SNIP=>
 
-         ags10Db;
+        Ags01Db ags10Db;
 
         public override Task Initialize()
         {

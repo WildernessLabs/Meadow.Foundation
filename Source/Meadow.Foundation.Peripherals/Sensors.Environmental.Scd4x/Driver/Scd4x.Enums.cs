@@ -41,7 +41,7 @@
 
             //Low power
             StartLowPowerPeriodicMeasurement      = 0x21ac,
-            GetDataReadySTATUS                    = 0xe4b8, // execution time: 1ms
+            GetDataReadyStatus                    = 0xe4b8, // execution time: 1ms
 
             //Advanced features
             PersistSettings                       = 0x3615, // execution time: 800ms

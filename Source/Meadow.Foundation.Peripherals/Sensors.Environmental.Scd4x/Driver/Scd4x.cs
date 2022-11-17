@@ -51,19 +51,18 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// <param name="i2cBus">The I2C bus</param>
         /// <param name="address">The I2C address</param>
         public Scd4x(II2cBus i2cBus, byte address = (byte)Addresses.Default)
-            : base(i2cBus, address, readBufferSize: 9, writeBufferSize: 3)
+            : base(i2cBus, address, readBufferSize: 9, writeBufferSize: 9)
         {
-            WriteCommand(Commands.StartPeriodicMeasurement);
         }
 
         void StartPeriodicUpdates()
         {
-            WriteCommand(Commands.StartPeriodicMeasurement);
+            SendCommand(Commands.StartPeriodicMeasurement);
         }
 
         void StopPeriodicUpdates()
         {
-            WriteCommand(Commands.StartPeriodicMeasurement);
+            SendCommand(Commands.StartPeriodicMeasurement);
         }
 
         /// <summary>
@@ -71,7 +70,9 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// </summary>
         public override void StartUpdating(TimeSpan? updateInterval = null)
         {
+            Console.WriteLine("StartUpdating");
             StartPeriodicUpdates();
+            Console.WriteLine("StartUpdating");
             base.StartUpdating(updateInterval);
         }
 
@@ -84,14 +85,13 @@ namespace Meadow.Foundation.Sensors.Environmental
             base.StopUpdating();
         }
 
-        byte[] GetDataForCommand(Commands command)
+        void SendCommand(Commands command)
         {
-            return BitConverter.GetBytes((ushort)command);
-        }
+            var data = new byte[2];
+            data[0] = (byte)((ushort)command >> 8);
+            data[1] = (byte)(ushort)command;
 
-        void WriteCommand(Commands command)
-        {
-            Peripheral.Write(GetDataForCommand(command));
+            Peripheral.Write(data);
         }
 
         /// <summary>
@@ -104,9 +104,15 @@ namespace Meadow.Foundation.Sensors.Environmental
             {
                 (Concentration Concentration, Units.Temperature Temperature, RelativeHumidity Humidity) conditions;
 
-                WriteCommand(Commands.ReadMeasurement);
+                SendCommand(Commands.ReadMeasurement);
+                Console.WriteLine("here");
                 Thread.Sleep(1);
-                Peripheral.Read(ReadBuffer.Span);
+                Console.WriteLine("here");
+                //Peripheral.Read(ReadBuffer.Span[0..9]);
+
+                byte[] data = new byte[9];
+                Peripheral.Read(data);
+                Console.WriteLine("a");
 
                 int value = ReadBuffer.Span[0] << 8 | ReadBuffer.Span[1];
                 conditions.Concentration = new Concentration(value, Units.Concentration.UnitType.PartsPerMillion);

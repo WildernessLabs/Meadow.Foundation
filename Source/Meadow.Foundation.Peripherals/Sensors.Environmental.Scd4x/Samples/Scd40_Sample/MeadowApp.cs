@@ -19,8 +19,11 @@ namespace Sensors.Environmental.Scd40_Sample
             Console.WriteLine("Initializing...");
 
             var i2cBus = Device.CreateI2cBus();
+
             sensor = new Scd4x(i2cBus);
-            
+
+            Console.WriteLine("Sensor created...");
+
             var consumer = Scd4x.CreateObserver(
                 handler: result =>
                 {
@@ -47,6 +50,7 @@ namespace Sensors.Environmental.Scd40_Sample
             {
                 sensor.Updated += (sender, result) =>
                 {
+                    Console.WriteLine($"  Concentration: {result.New.Concentration?.PartsPerMillion:N2}ppm");
                     Console.WriteLine($"  Temperature: {result.New.Temperature?.Celsius:N2}C");
                     Console.WriteLine($"  Relative Humidity: {result.New.Humidity:N2}%");
                 };
@@ -54,7 +58,7 @@ namespace Sensors.Environmental.Scd40_Sample
 
             sensor?.StartUpdating(TimeSpan.FromSeconds(2));
 
-            ReadConditions().Wait();
+            //ReadConditions().Wait();
 
             return base.Initialize();
         }
