@@ -1,6 +1,6 @@
 ﻿namespace Meadow.Foundation.Sensors.Environmental
 {
-    public partial class Scd4x
+    partial class Scd4x
     {
         /// <summary>
         /// Valid I2C addresses for the sensor

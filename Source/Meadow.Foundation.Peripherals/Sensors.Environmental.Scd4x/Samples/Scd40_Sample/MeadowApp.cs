@@ -20,11 +20,17 @@ namespace Sensors.Environmental.Scd40_Sample
 
             var i2cBus = Device.CreateI2cBus(Meadow.Hardware.I2cBusSpeed.Standard);
 
-            sensor = new Scd4x(i2cBus);
-
-            var serialNum = sensor.GetSerialNumber();
-
-            Console.WriteLine(BitConverter.ToString(serialNum));
+            try
+            {
+                sensor = new Scd40(i2cBus);
+                var serialNum = sensor.GetSerialNumber();
+                Console.WriteLine($"Serial: {BitConverter.ToString(serialNum)}");
+            }
+            catch
+            {
+                Console.WriteLine("Sensor initialization failed - you may need to power cycle the sensor between deploys");
+                return Task.CompletedTask;
+            }
 
             var consumer = Scd4x.CreateObserver(
                 handler: result =>
@@ -33,7 +39,6 @@ namespace Sensors.Environmental.Scd40_Sample
                 },
                 filter: result =>
                 {
-                    //c# 8 pattern match syntax. checks for !null and assigns var.
                     if (result.Old?.Temperature is { } oldTemp &&
                         result.Old?.Humidity is { } oldHumidity &&
                         result.New.Temperature is { } newTemp &&
@@ -52,15 +57,15 @@ namespace Sensors.Environmental.Scd40_Sample
             {
                 sensor.Updated += (sender, result) =>
                 {
-                    Console.WriteLine($"  Concentration: {result.New.Concentration?.PartsPerMillion:N2}ppm");
-                    Console.WriteLine($"  Temperature: {result.New.Temperature?.Celsius:N2}C");
-                    Console.WriteLine($"  Relative Humidity: {result.New.Humidity:N2}%");
+                    Console.WriteLine($"  Concentration: {result.New.Concentration?.PartsPerMillion:N0}ppm");
+                    Console.WriteLine($"  Temperature: {result.New.Temperature?.Celsius:N1}C");
+                    Console.WriteLine($"  Relative Humidity: {result.New.Humidity:N0}%");
                 };
             }
 
             sensor?.StartUpdating(TimeSpan.FromSeconds(2));
 
-            //ReadConditions().Wait();
+            ReadConditions().Wait();
 
             return base.Initialize();
         }
@@ -72,9 +77,9 @@ namespace Sensors.Environmental.Scd40_Sample
             var (Concentration, Temperature, Humidity) = await sensor.Read();
 
             Console.WriteLine("Initial Readings:");
-            Console.WriteLine($"  Concentration: {Concentration?.PartsPerMillion:N2}ppm");
-            Console.WriteLine($"  Temperature: {Temperature?.Celsius:N2}C");
-            Console.WriteLine($"  Relative Humidity: {Humidity?.Percent:N2}%");
+            Console.WriteLine($"  Concentration: {Concentration?.PartsPerMillion:N0}ppm");
+            Console.WriteLine($"  Temperature: {Temperature?.Celsius:N1}C");
+            Console.WriteLine($"  Relative Humidity: {Humidity?.Percent:N0}%");
         }
 
         //<!=SNOP=>

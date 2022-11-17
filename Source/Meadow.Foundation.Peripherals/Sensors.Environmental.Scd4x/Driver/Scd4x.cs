@@ -9,9 +9,9 @@ using Meadow.Units;
 namespace Meadow.Foundation.Sensors.Environmental
 {
     /// <summary>
-    /// Represents an Scd4x C02 sensoe
+    /// Represents an Scd4x C02 sensor
     /// </summary>
-    public partial class Scd4x : ByteCommsSensorBase<(Concentration? Concentration, 
+    public abstract partial class Scd4x : ByteCommsSensorBase<(Concentration? Concentration, 
                                                       Units.Temperature? Temperature,
                                                         RelativeHumidity? Humidity)>,
         ITemperatureSensor, IHumiditySensor
@@ -54,6 +54,15 @@ namespace Meadow.Foundation.Sensors.Environmental
         public Scd4x(II2cBus i2cBus, byte address = (byte)Addresses.Default)
             : base(i2cBus, address, readBufferSize: 9, writeBufferSize: 9)
         {
+        }
+
+        /// <summary>
+        /// Re-initialize the sensor
+        /// </summary>
+        public Task ReInitialize()
+        {
+            SendCommand(Commands.ReInit);
+            return Task.Delay(1000);
         }
 
         /// <summary>
@@ -162,11 +171,11 @@ namespace Meadow.Foundation.Sensors.Environmental
                 conditions.Concentration = new Concentration(value, Units.Concentration.UnitType.PartsPerMillion);
 
                 value = ReadBuffer.Span[3] << 8 | ReadBuffer.Span[4];
-                double temperature = -45 + value * 175 / 65536;
+                double temperature = -45 + value * 175 / 65536.0;
                 conditions.Temperature = new Units.Temperature(temperature, Units.Temperature.UnitType.Celsius);
 
                 value = ReadBuffer.Span[6] << 8 | ReadBuffer.Span[8];
-                double humidiy = 100 * value / 65536;
+                double humidiy = 100 * value / 65536.0;
                 conditions.Humidity = new RelativeHumidity(humidiy, RelativeHumidity.UnitType.Percent);
 
                 return conditions;
