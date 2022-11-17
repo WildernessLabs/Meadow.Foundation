@@ -32,6 +32,9 @@ namespace Sensors.Environmental.Scd40_Sample
                 return Task.CompletedTask;
             }
 
+            //sensor.SetTemperatureOffset(new Temperature(1));
+            //Console.WriteLine(sensor.GetTemperatureOffSet());
+
             var consumer = Scd4x.CreateObserver(
                 handler: result =>
                 {
@@ -63,7 +66,7 @@ namespace Sensors.Environmental.Scd40_Sample
                 };
             }
 
-            sensor?.StartUpdating(TimeSpan.FromSeconds(2));
+            sensor?.StartUpdating(TimeSpan.FromSeconds(6));
 
             ReadConditions().Wait();
 

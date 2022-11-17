@@ -1,5 +1,4 @@
 using System;
-using System.Data;
 using System.Threading;
 using System.Threading.Tasks;
 using Meadow.Hardware;
@@ -54,6 +53,8 @@ namespace Meadow.Foundation.Sensors.Environmental
         public Scd4x(II2cBus i2cBus, byte address = (byte)Addresses.Default)
             : base(i2cBus, address, readBufferSize: 9, writeBufferSize: 9)
         {
+            var crc = GetCrc(0xBE, 0xEF);
+            Console.WriteLine($"CRC {crc} should be 0x92");
         }
 
         /// <summary>
@@ -97,6 +98,34 @@ namespace Meadow.Foundation.Sensors.Environmental
             return ret;
         }
 
+        /// <summary>
+        /// Set the sensor temperature offset reading
+        /// </summary>
+        /// <param name="tempOffset">The amount to offset</param>
+        void SetTemperatureOffset(Units.Temperature tempOffset)
+        {
+            ushort offset = (ushort)(tempOffset.Celsius * 65536.0 / 175.0);
+
+            ReadBuffer.Span[0] = (byte)(offset >> 8);
+            ReadBuffer.Span[1] = (byte)(offset & 0xFF);
+            ReadBuffer.Span[2] = GetCrc(ReadBuffer.Span[0], ReadBuffer.Span[1]);
+
+            SendCommand(Commands.SetTemperatureOffset);
+            Thread.Sleep(1);
+            Peripheral.Write(ReadBuffer.Span[0..2]);
+        }
+
+        /// <summary>
+        /// Get the temperature offset
+        /// </summary>
+        Units.Temperature GetTemperatureOffSet()
+        {
+            SendCommand(Commands.GetTemperatureOffset);
+            Thread.Sleep(1);
+            Peripheral.Read(ReadBuffer.Span[0..3]);
+            return CalcTemperature(ReadBuffer.Span[0], ReadBuffer.Span[1]);
+        }
+
         bool IsDataReady()
         {
             SendCommand(Commands.GetDataReadyStatus);
@@ -119,10 +148,12 @@ namespace Meadow.Foundation.Sensors.Environmental
         void StopPeriodicUpdates()
         {
             SendCommand(Commands.StartPeriodicMeasurement);
+            Thread.Sleep(500);
         }
 
         /// <summary>
         /// Starts updating the sensor on the updateInterval frequency specified
+        /// The sensor updates every 5 seconds, its recommended to choose an interval of 5s or more
         /// </summary>
         public override void StartUpdating(TimeSpan? updateInterval = null)
         {
@@ -132,6 +163,8 @@ namespace Meadow.Foundation.Sensors.Environmental
 
         /// <summary>
         /// Stop updating the sensor
+        /// The sensor will not respond to commands for 500ms 
+        /// The call will delay the calling thread for 500ms
         /// </summary>
         public override void StopUpdating()
         {
@@ -170,9 +203,7 @@ namespace Meadow.Foundation.Sensors.Environmental
                 int value = ReadBuffer.Span[0] << 8 | ReadBuffer.Span[1];
                 conditions.Concentration = new Concentration(value, Units.Concentration.UnitType.PartsPerMillion);
 
-                value = ReadBuffer.Span[3] << 8 | ReadBuffer.Span[4];
-                double temperature = -45 + value * 175 / 65536.0;
-                conditions.Temperature = new Units.Temperature(temperature, Units.Temperature.UnitType.Celsius);
+                conditions.Temperature = CalcTemperature(ReadBuffer.Span[3], ReadBuffer.Span[4]);
 
                 value = ReadBuffer.Span[6] << 8 | ReadBuffer.Span[8];
                 double humidiy = 100 * value / 65536.0;
@@ -180,6 +211,13 @@ namespace Meadow.Foundation.Sensors.Environmental
 
                 return conditions;
             });
+        }
+
+        Units.Temperature CalcTemperature(byte valueHigh, byte valueLow)
+        {
+            int value = valueHigh << 8 | valueLow;
+            double temperature = -45 + value * 175 / 65536.0;
+            return new Units.Temperature(temperature, Units.Temperature.UnitType.Celsius);
         }
 
         /// <summary>
@@ -201,6 +239,28 @@ namespace Meadow.Foundation.Sensors.Environmental
                 ConcentrationUpdated?.Invoke(this, new ChangeResult<Concentration>(concentration, changeResult.Old?.Concentration));
             }
             base.RaiseEventsAndNotify(changeResult);
+        }
+
+        byte GetCrc(byte value1, byte value2)
+        {
+            static byte CrcCalc(byte crc, byte value)
+            {
+                crc ^= value;
+                for (byte crcBit = 8; crcBit > 0; --crcBit)
+                {
+                    if ((crc & 0x80) > 0)
+                    {
+                        crc = (byte)((crc << 1) ^ 0x31);
+                    }
+                    else
+                    {
+                        crc <<= 1;
+                    }
+                }
+                return crc;
+            }
+
+            return CrcCalc(CrcCalc(0xFF, value1), value2);
         }
 
         async Task<Units.Temperature> ISamplingSensor<Units.Temperature>.Read()
