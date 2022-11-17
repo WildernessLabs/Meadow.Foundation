@@ -66,6 +66,15 @@ namespace Meadow.Foundation.Sensors.Environmental
         }
 
         /// <summary>
+        /// Forced recalibration allows recalibration using a CO2 reference value. 
+        /// </summary>
+        public Task PerformForcedRecalibration()
+        {
+            SendCommand(Commands.PerformForcedCalibration);
+            return Task.Delay(400);
+        }
+
+        /// <summary>
         /// Persist settings
         /// </summary>
         public void PersistSettings()
