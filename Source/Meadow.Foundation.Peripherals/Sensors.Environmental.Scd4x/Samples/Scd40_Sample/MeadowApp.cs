@@ -18,9 +18,13 @@ namespace Sensors.Environmental.Scd40_Sample
         {
             Console.WriteLine("Initializing...");
 
-            var i2cBus = Device.CreateI2cBus();
+            var i2cBus = Device.CreateI2cBus(Meadow.Hardware.I2cBusSpeed.Standard);
 
             sensor = new Scd4x(i2cBus);
+
+            Thread.Sleep(2000);
+
+            sensor.GetSerialNumber();
 
             Console.WriteLine("Sensor created...");
 

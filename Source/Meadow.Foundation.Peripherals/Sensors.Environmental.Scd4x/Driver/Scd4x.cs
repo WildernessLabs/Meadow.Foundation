@@ -55,6 +55,31 @@ namespace Meadow.Foundation.Sensors.Environmental
         {
         }
 
+        /// <summary>
+        /// Persist settings
+        /// </summary>
+        public void PersistSettings()
+        {
+            SendCommand(Commands.PersistSettings);
+        }
+
+        /// <summary>
+        /// Get Serial Number from the device
+        /// </summary>
+        /// <returns></returns>
+        public double GetSerialNumber()
+        {
+            Console.WriteLine("Get serial number");
+            SendCommand(Commands.GetSerialNumber);
+            Thread.Sleep(1);
+
+            var data = new byte[9];
+            Peripheral.Read(data);
+
+            Console.WriteLine("Got serial number");
+            return 0;
+        }
+
         void StartPeriodicUpdates()
         {
             SendCommand(Commands.StartPeriodicMeasurement);
