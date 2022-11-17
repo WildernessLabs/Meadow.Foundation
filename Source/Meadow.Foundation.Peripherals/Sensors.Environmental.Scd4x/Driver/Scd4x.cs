@@ -1,4 +1,5 @@
 using System;
+using System.Data;
 using System.Threading;
 using System.Threading.Tasks;
 using Meadow.Hardware;
@@ -66,18 +67,39 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// <summary>
         /// Get Serial Number from the device
         /// </summary>
-        /// <returns></returns>
-        public double GetSerialNumber()
+        /// <returns>a 48bit (6 byte) serial number as a byte array</returns>
+        public byte[] GetSerialNumber()
         {
-            Console.WriteLine("Get serial number");
             SendCommand(Commands.GetSerialNumber);
             Thread.Sleep(1);
 
             var data = new byte[9];
             Peripheral.Read(data);
 
-            Console.WriteLine("Got serial number");
-            return 0;
+            var ret = new byte[6];
+
+            ret[0] = data[0];
+            ret[1] = data[1];
+            ret[2] = data[3];
+            ret[3] = data[4];
+            ret[4] = data[6];
+            ret[5] = data[7];
+
+            return ret;
+        }
+
+        bool IsDataReady()
+        {
+            SendCommand(Commands.GetDataReadyStatus);
+            Thread.Sleep(1);
+            var data = new byte[3];
+            Peripheral.Read(data);
+
+            if (data[1] == 0 && (data[0] & 0x07) == 0)
+            {
+                return false;
+            }
+            return true;
         }
 
         void StartPeriodicUpdates()
@@ -95,9 +117,7 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// </summary>
         public override void StartUpdating(TimeSpan? updateInterval = null)
         {
-            Console.WriteLine("StartUpdating");
             StartPeriodicUpdates();
-            Console.WriteLine("StartUpdating");
             base.StartUpdating(updateInterval);
         }
 
@@ -126,18 +146,17 @@ namespace Meadow.Foundation.Sensors.Environmental
         protected override async Task<(Concentration? Concentration, Units.Temperature? Temperature, RelativeHumidity? Humidity)> ReadSensor()
         {
             return await Task.Run(() =>
-            {
+            { 
+                while(IsDataReady() == false)
+                {
+                    Thread.Sleep(500);
+                }
+
                 (Concentration Concentration, Units.Temperature Temperature, RelativeHumidity Humidity) conditions;
 
                 SendCommand(Commands.ReadMeasurement);
-                Console.WriteLine("here");
                 Thread.Sleep(1);
-                Console.WriteLine("here");
-                //Peripheral.Read(ReadBuffer.Span[0..9]);
-
-                byte[] data = new byte[9];
-                Peripheral.Read(data);
-                Console.WriteLine("a");
+                Peripheral.Read(ReadBuffer.Span[0..9]);
 
                 int value = ReadBuffer.Span[0] << 8 | ReadBuffer.Span[1];
                 conditions.Concentration = new Concentration(value, Units.Concentration.UnitType.PartsPerMillion);

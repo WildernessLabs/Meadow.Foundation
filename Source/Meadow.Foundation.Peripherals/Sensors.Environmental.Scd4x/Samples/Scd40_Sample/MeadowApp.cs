@@ -22,11 +22,9 @@ namespace Sensors.Environmental.Scd40_Sample
 
             sensor = new Scd4x(i2cBus);
 
-            Thread.Sleep(2000);
+            var serialNum = sensor.GetSerialNumber();
 
-            sensor.GetSerialNumber();
-
-            Console.WriteLine("Sensor created...");
+            Console.WriteLine(BitConverter.ToString(serialNum));
 
             var consumer = Scd4x.CreateObserver(
                 handler: result =>
