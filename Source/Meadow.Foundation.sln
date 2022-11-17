@@ -1167,6 +1167,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{94B3
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Scd40_Sample", "Meadow.Foundation.Peripherals\Sensors.Environmental.Scd4x\Samples\Scd40_Sample\Scd40_Sample.csproj", "{06FA32D2-FAA0-4E0D-93F4-A42BFBF6DD68}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Scd41_Sample", "Meadow.Foundation.Peripherals\Sensors.Environmental.Scd4x\Samples\Scd41_Sample\Scd41_Sample.csproj", "{54190390-0EDF-4EBD-8D75-DB7A9C78FBCA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -2725,6 +2727,12 @@ Global
 		{06FA32D2-FAA0-4E0D-93F4-A42BFBF6DD68}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{06FA32D2-FAA0-4E0D-93F4-A42BFBF6DD68}.Release|Any CPU.Build.0 = Release|Any CPU
 		{06FA32D2-FAA0-4E0D-93F4-A42BFBF6DD68}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{54190390-0EDF-4EBD-8D75-DB7A9C78FBCA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{54190390-0EDF-4EBD-8D75-DB7A9C78FBCA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{54190390-0EDF-4EBD-8D75-DB7A9C78FBCA}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{54190390-0EDF-4EBD-8D75-DB7A9C78FBCA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{54190390-0EDF-4EBD-8D75-DB7A9C78FBCA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{54190390-0EDF-4EBD-8D75-DB7A9C78FBCA}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -3304,6 +3312,7 @@ Global
 		{FAD15B5F-1912-44BF-AF96-1EB496683E87} = {B3B151AE-7C26-4313-AA47-61397791BA92}
 		{94B3A671-D329-47FF-8635-6A3CF8238DFE} = {B3B151AE-7C26-4313-AA47-61397791BA92}
 		{06FA32D2-FAA0-4E0D-93F4-A42BFBF6DD68} = {94B3A671-D329-47FF-8635-6A3CF8238DFE}
+		{54190390-0EDF-4EBD-8D75-DB7A9C78FBCA} = {94B3A671-D329-47FF-8635-6A3CF8238DFE}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}

@@ -10,7 +10,7 @@ namespace Sensors.Environmental.Scd40_Sample
     {
         //<!=SNIP=>
 
-        Scd40 sensor;
+        Scd41 sensor;
 
         public override Task Initialize()
         {
@@ -20,7 +20,7 @@ namespace Sensors.Environmental.Scd40_Sample
 
             try
             {
-                sensor = new Scd40(i2cBus);
+                sensor = new Scd41(i2cBus);
                 var serialNum = sensor.GetSerialNumber();
                 Console.WriteLine($"Serial: {BitConverter.ToString(serialNum)}");
             }
