@@ -5,13 +5,13 @@ using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Environmental;
 
-namespace MeadowApp
+namespace Sensors.Environmental.Ags01Db_Sample
 {
     public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
 
-        Ags01Db ags10Db;
+         ags10Db;
 
         public override Task Initialize()
         {
