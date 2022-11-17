@@ -12,7 +12,7 @@
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow.Foundation, Mma7660fc, Accelerometer, Motion</PackageTags>
     <Version>0.1.7</Version>
-    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Mma7660fc I2C 3-axis accelerometer</Description>
   </PropertyGroup>
   <ItemGroup>
