@@ -17,8 +17,9 @@ namespace ICs.IOExpanders.Mcp23018_Sample
         public override Task Initialize()
         {
             IDigitalInputPort interruptPort = Device.CreateDigitalInputPort(Device.Pins.D00, InterruptMode.EdgeRising);
-       
-            mcp = new Mcp23018(Device.CreateI2cBus(), 0x20, interruptPort);
+            IDigitalOutputPort resetPort = Device.CreateDigitalOutputPort(Device.Pins.D01);
+
+            mcp = new Mcp23018(Device.CreateI2cBus(), 0x20, interruptPort, resetPort);
 
             return base.Initialize();
         }
