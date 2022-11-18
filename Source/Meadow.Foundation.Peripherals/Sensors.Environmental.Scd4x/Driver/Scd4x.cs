@@ -8,10 +8,10 @@ using Meadow.Units;
 namespace Meadow.Foundation.Sensors.Environmental
 {
     /// <summary>
-    /// Represents an Scd4x C02 sensor
+    /// Base class for SCD4x series of C02 sensors
     /// </summary>
     public abstract partial class Scd4x : ByteCommsSensorBase<(Concentration? Concentration, 
-                                                      Units.Temperature? Temperature,
+                                                        Units.Temperature? Temperature,
                                                         RelativeHumidity? Humidity)>,
         ITemperatureSensor, IHumiditySensor
     {
@@ -31,7 +31,7 @@ namespace Meadow.Foundation.Sensors.Environmental
         public event EventHandler<IChangeResult<RelativeHumidity>> HumidityUpdated = delegate { };
 
         /// <summary>
-        /// The current concentration value
+        /// The current C02 concentration value
         /// </summary>
         public Concentration? Concentration { get; private set; }
 
@@ -41,19 +41,23 @@ namespace Meadow.Foundation.Sensors.Environmental
         public Units.Temperature? Temperature => Conditions.Temperature;
 
         /// <summary>
-        /// The current humidity, in percent relative humidity
+        /// The current humidity
         /// </summary>
         public RelativeHumidity? Humidity => Conditions.Humidity;
 
         /// <summary>
         /// Create a new Scd4x object
         /// </summary>
+        /// <remarks>
+        /// The constructor sends the stop periodic updates method otherwise 
+        /// the sensor may not respond to new commands
+        /// </remarks>
         /// <param name="i2cBus">The I2C bus</param>
         /// <param name="address">The I2C address</param>
         public Scd4x(II2cBus i2cBus, byte address = (byte)Addresses.Default)
             : base(i2cBus, address, readBufferSize: 9, writeBufferSize: 9)
         {
-            StopPeriodicUpdates();
+            StopPeriodicUpdates().Wait();
         }
 
         /// <summary>
@@ -66,7 +70,7 @@ namespace Meadow.Foundation.Sensors.Environmental
         }
 
         /// <summary>
-        /// Forced recalibration allows recalibration using a CO2 reference value. 
+        /// Forced recalibration allows recalibration using an external CO2 reference
         /// </summary>
         public Task PerformForcedRecalibration()
         {
@@ -75,7 +79,7 @@ namespace Meadow.Foundation.Sensors.Environmental
         }
 
         /// <summary>
-        /// Persist settings
+        /// Persist settings to EEPROM
         /// </summary>
         public void PersistSettings()
         {
@@ -113,36 +117,13 @@ namespace Meadow.Foundation.Sensors.Environmental
 
             return ret;
         }
-
+                
         /// <summary>
-        /// Set the sensor temperature offset reading
+        /// Is there sensor measurement data ready
+        /// Sensor returns data ~5 seconds in normal operation and ~30 seconds in low power mode
         /// </summary>
-        /// <param name="tempOffset">The amount to offset</param>
-        void SetTemperatureOffset(Units.Temperature tempOffset)
-        {
-            ushort offset = (ushort)(tempOffset.Celsius * 65536.0 / 175.0);
-
-            ReadBuffer.Span[0] = (byte)(offset >> 8);
-            ReadBuffer.Span[1] = (byte)(offset & 0xFF);
-            ReadBuffer.Span[2] = GetCrc(ReadBuffer.Span[0], ReadBuffer.Span[1]);
-
-            SendCommand(Commands.SetTemperatureOffset);
-            Thread.Sleep(1);
-            Peripheral.Write(ReadBuffer.Span[0..2]);
-        }
-
-        /// <summary>
-        /// Get the temperature offset
-        /// </summary>
-        Units.Temperature GetTemperatureOffSet()
-        {
-            SendCommand(Commands.GetTemperatureOffset);
-            Thread.Sleep(1);
-            Peripheral.Read(ReadBuffer.Span[0..3]);
-            return CalcTemperature(ReadBuffer.Span[0], ReadBuffer.Span[1]);
-        }
-
-        bool IsDataReady()
+        /// <returns>True if ready</returns>
+        protected bool IsDataReady()
         {
             SendCommand(Commands.GetDataReadyStatus);
             Thread.Sleep(1);
@@ -156,33 +137,31 @@ namespace Meadow.Foundation.Sensors.Environmental
             return true;
         }
 
-        void StartPeriodicUpdates()
-        {
-            SendCommand(Commands.StartPeriodicMeasurement);
-        }
-
-        void StartLowPowerPeriodicUpdates()
-        {
-            SendCommand(Commands.StartLowPowerPeriodicMeasurement);
-        }
-
-        void StopPeriodicUpdates()
+        /// <summary>
+        /// Stop the sensor from sampling
+        /// The sensor will not respond to commands for 500ms
+        /// </summary>
+        Task StopPeriodicUpdates()
         {
             SendCommand(Commands.StopPeriodicMeasurement);
-            Thread.Sleep(500);
+            return Task.Delay(500);
         }
 
         /// <summary>
         /// Starts updating the sensor on the updateInterval frequency specified
-        /// The sensor updates every 5 seconds, its recommended to choose an interval of 5s or more
-        /// If the update interval is 30 seconds or longer, the sensor will update in low power mode
+        /// The sensor updates every 5 seconds, its recommended to choose an interval of 5s or longer
+        /// If the update interval is 30 seconds or longer, the sensor will run in low power mode
         /// </summary>
         public override void StartUpdating(TimeSpan? updateInterval = null)
         {
             if (updateInterval != null && updateInterval.Value.TotalSeconds >= 30)
-                StartLowPowerPeriodicUpdates();
+            {
+                SendCommand(Commands.StartLowPowerPeriodicMeasurement);
+            }
             else
-                StartPeriodicUpdates();
+            {
+                SendCommand(Commands.StartPeriodicMeasurement);
+            }
             base.StartUpdating(updateInterval);
         }
 
@@ -193,7 +172,7 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// </summary>
         public override void StopUpdating()
         {
-            StopPeriodicUpdates();
+            _ = StopPeriodicUpdates();
             base.StopUpdating();
         }
 

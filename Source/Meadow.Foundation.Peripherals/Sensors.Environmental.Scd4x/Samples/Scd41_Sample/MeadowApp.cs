@@ -18,17 +18,9 @@ namespace Sensors.Environmental.Scd40_Sample
 
             var i2cBus = Device.CreateI2cBus(Meadow.Hardware.I2cBusSpeed.Standard);
 
-            try
-            {
-                sensor = new Scd41(i2cBus);
-                var serialNum = sensor.GetSerialNumber();
-                Console.WriteLine($"Serial: {BitConverter.ToString(serialNum)}");
-            }
-            catch
-            {
-                Console.WriteLine("Sensor initialization failed - you may need to power cycle the sensor between deploys");
-                return Task.CompletedTask;
-            }
+            sensor = new Scd41(i2cBus);
+            var serialNum = sensor.GetSerialNumber();
+            Console.WriteLine($"Serial: {BitConverter.ToString(serialNum)}");
 
             var consumer = Scd4x.CreateObserver(
                 handler: result =>
@@ -63,21 +55,7 @@ namespace Sensors.Environmental.Scd40_Sample
 
             sensor?.StartUpdating(TimeSpan.FromSeconds(6));
 
-            ReadConditions().Wait();
-
             return base.Initialize();
-        }
-
-        async Task ReadConditions()
-        {
-            if (sensor == null) { return; }
-
-            var (Concentration, Temperature, Humidity) = await sensor.Read();
-
-            Console.WriteLine("Initial Readings:");
-            Console.WriteLine($"  Concentration: {Concentration?.PartsPerMillion:N0}ppm");
-            Console.WriteLine($"  Temperature: {Temperature?.Celsius:N1}C");
-            Console.WriteLine($"  Relative Humidity: {Humidity?.Percent:N0}%");
         }
 
         //<!=SNOP=>

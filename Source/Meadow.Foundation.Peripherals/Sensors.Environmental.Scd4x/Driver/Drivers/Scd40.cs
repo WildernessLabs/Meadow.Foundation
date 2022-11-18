@@ -3,7 +3,7 @@
 namespace Meadow.Foundation.Sensors.Environmental
 {
     /// <summary>
-    /// Represents an Scd40 C02 sensor
+    /// Represents an SCD40 C02 sensor
     /// </summary>
     public class Scd40 : Scd4x
     {
@@ -14,7 +14,6 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// <param name="address">The I2C address</param>
         public Scd40(II2cBus i2cBus, byte address = 98)
             : base(i2cBus, address)
-        {
-        }
+        { }
     }
 }

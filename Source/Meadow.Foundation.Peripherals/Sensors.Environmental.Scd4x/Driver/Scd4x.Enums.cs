@@ -20,7 +20,7 @@
         /// <summary>
         /// Sdc4x commands
         /// </summary>
-        public enum Commands : ushort
+        enum Commands : ushort
         {
             //Basic Commands
             StartPeriodicMeasurement              = 0x21b1,
