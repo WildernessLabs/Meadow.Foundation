@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Meadow.Hardware;
 using Meadow.Peripherals.Sensors;
+using Meadow.Peripherals.Sensors.Environmental;
 using Meadow.Units;
 
 namespace Meadow.Foundation.Sensors.Environmental
@@ -13,7 +14,7 @@ namespace Meadow.Foundation.Sensors.Environmental
     public abstract partial class Scd4x : ByteCommsSensorBase<(Concentration? Concentration, 
                                                         Units.Temperature? Temperature,
                                                         RelativeHumidity? Humidity)>,
-        ITemperatureSensor, IHumiditySensor
+        ITemperatureSensor, IHumiditySensor, IConcentrationSensor
     {
         /// <summary>
         /// Raised when the concentration changes
@@ -33,7 +34,7 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// <summary>
         /// The current C02 concentration value
         /// </summary>
-        public Concentration? Concentration { get; private set; }
+        public Concentration? Concentration => Conditions.Concentration;
 
         /// <summary>
         /// The current temperature
@@ -272,5 +273,8 @@ namespace Meadow.Foundation.Sensors.Environmental
 
         async Task<RelativeHumidity> ISamplingSensor<RelativeHumidity>.Read()
             => (await Read()).Humidity.Value;
+
+        async Task<Concentration> ISamplingSensor<Concentration>.Read()
+            => (await Read()).Concentration.Value;
     }
 }
