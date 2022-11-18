@@ -1106,6 +1106,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{DC8844DD-3E56-4C6E-8353-85D14004042E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NeoM8_Sample", "Meadow.Foundation.Peripherals\Sensors.Gnss.NeoM8\Samples\NeoM8_Sample\NeoM8_Sample.csproj", "{C08B6F18-0B02-41B7-8070-92E9A1F65B21}"
+EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sensors.Environmental.Scd4x", "Sensors.Environmental.Scd4x", "{B3B151AE-7C26-4313-AA47-61397791BA92}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Environmental.Scd4x", "Meadow.Foundation.Peripherals\Sensors.Environmental.Scd4x\Driver\Sensors.Environmental.Scd4x.csproj", "{FAD15B5F-1912-44BF-AF96-1EB496683E87}"
