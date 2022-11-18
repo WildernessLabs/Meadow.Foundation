@@ -31,12 +31,9 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
         /// </summary>
         private int _totalSentences = -1;
 
-        //private int _totalNumberOfSatellites = 0;
-
         /// <summary>
         /// List of satellites.
         /// </summary>
-        //protected List<Satellite> _satelliteList;// = new Satellites();
         protected Satellite[] _satellites;
 
         /// <summary>

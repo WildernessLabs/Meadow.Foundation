@@ -17,20 +17,12 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
         /// <summary>
         /// Prefix for the GLL (Geographic position Latitude / Longitude) decoder.
         /// </summary>
-        public string Prefix
-        {
-            get => "GLL";
-        }
-
-        //public bool DebugMode { get; set; } = true;
+        public string Prefix => "GLL";
 
         /// <summary>
         /// Friendly name for the GLL messages.
         /// </summary>
-        public string Name
-        {
-            get => "GLL - Global Postioning System Fix Data";
-        }
+        public string Name => "GLL - Global Postioning System Fix Data";
 
         /// <summary>
         /// Process the data from a GLL message.
