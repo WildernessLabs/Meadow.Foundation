@@ -941,9 +941,12 @@ namespace Meadow.Foundation.Graphics
         /// <param name="y">Ordinate of the location of the text</param>
         /// <param name="text">Text to display</param>
         /// <param name="scaleFactor">Scalefactor used to calculate the size</param>
-        /// <param name="alignment">Left, Center or right aligned text</param>
+        /// <param name="alignmentH">Horizontal alignment: Left, Center or right aligned text</param>
+        /// <param name="alignmentV">Vertical alignment: Top, Center or bottom aligned text</param>
         public void DrawText(int x, int y, string text,
-            ScaleFactor scaleFactor = ScaleFactor.X1, TextAlignment alignment = TextAlignment.Left)
+            ScaleFactor scaleFactor = ScaleFactor.X1,
+            HorizontalAlignment alignmentH = HorizontalAlignment.Left,
+            VerticalAlignment alignmentV = VerticalAlignment.Top)
         {
             if (CurrentFont == null)
             {
@@ -952,13 +955,22 @@ namespace Meadow.Foundation.Graphics
 
             byte[] bitMap = GetBytesForTextBitmap(text);
 
-            if (alignment == TextAlignment.Center)
+            if (alignmentH == HorizontalAlignment.Center)
             {
                 x -= MeasureText(text, scaleFactor).Width / 2;
             }
-            else if (alignment == TextAlignment.Right)
+            else if (alignmentH == HorizontalAlignment.Right)
             {
                 x -= MeasureText(text, scaleFactor).Width;
+            }
+
+            if (alignmentV == VerticalAlignment.Center)
+            {
+                y -= MeasureText(text, scaleFactor).Height / 2;
+            }
+            else if (alignmentV == VerticalAlignment.Bottom)
+            {
+                y -= MeasureText(text, scaleFactor).Height;
             }
 
             DrawBitmap(x, y, bitMap.Length / CurrentFont.Height * 8, CurrentFont.Height, bitMap, scaleFactor);
@@ -1035,27 +1047,15 @@ namespace Meadow.Foundation.Graphics
         /// <param name="text">Text to display</param>
         /// <param name="color">Color of the text</param>
         /// <param name="scaleFactor">Scalefactor used to calculate the size</param>
-        /// <param name="alignment">Left, Center or right aligned text</param>
+        /// <param name="alignmentH">Horizontal alignment: Left, Center or right aligned text</param>
+        /// <param name="alignmentV">Vertical alignment: Top, Center or bottom aligned text</param>
         public void DrawText(int x, int y, string text, Color color,
-            ScaleFactor scaleFactor = ScaleFactor.X1, TextAlignment alignment = TextAlignment.Left)
+            ScaleFactor scaleFactor = ScaleFactor.X1, 
+            HorizontalAlignment alignmentH = HorizontalAlignment.Left, 
+            VerticalAlignment alignmentV = VerticalAlignment.Top)
         {
-            if (CurrentFont == null)
-            {
-                throw new Exception("CurrentFont must be set before calling DrawText.");
-            }
-
-            if (alignment == TextAlignment.Center)
-            {
-                x -= MeasureText(text, scaleFactor).Width / 2;
-            }
-            else if (alignment == TextAlignment.Right)
-            {
-                x -= MeasureText(text, scaleFactor).Width;
-            }
-
-            byte[] bitmap = GetBytesForTextBitmap(text);
-
-            DrawBitmap(x, y, bitmap.Length / CurrentFont.Height * 8, CurrentFont.Height, bitmap, color, scaleFactor);
+            PenColor = color;
+            DrawText(x, y, text, scaleFactor, alignmentH, alignmentV);
         }
 
         private byte[] GetBytesForTextBitmap(string text)

@@ -115,6 +115,10 @@ namespace Meadow.Foundation.Sensors.Weather
         /// </summary>
         protected override Task<Length> ReadSensor()
         {
+            if(IsSampling == false)
+            {
+                throw new Exception("You must call StartUpdating before SwitchingRainGauge can track rain depth");
+            }
             return Task.FromResult(RainDepth);
         }
     }

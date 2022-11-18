@@ -1,4 +1,5 @@
 ﻿using Meadow.Hardware;
+using Meadow.Peripherals.Sensors;
 using Meadow.Peripherals.Sensors.Light;
 using Meadow.Units;
 using System;
@@ -369,5 +370,7 @@ namespace Meadow.Foundation.Sensors.Light
         /// <returns></returns>
         protected ushort ReadClearDataRegister() => Peripheral.ReadRegisterAsUShort(Registers.CLEAR_DATA);
 
+        async Task<Illuminance> ISamplingSensor<Illuminance>.Read()
+            => (await Read()).AmbientLight.Value;
     }
 }
