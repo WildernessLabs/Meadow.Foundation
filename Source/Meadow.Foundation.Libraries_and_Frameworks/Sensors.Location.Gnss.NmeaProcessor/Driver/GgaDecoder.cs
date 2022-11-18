@@ -17,16 +17,12 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
         /// <summary>
         /// Prefix for the GGA decoder.
         /// </summary>
-        public string Prefix {
-            get { return "GGA"; }
-        }
+        public string Prefix => "GGA";
 
         /// <summary>
         /// Friendly name for the GGA messages.
         /// </summary>
-        public string Name {
-            get { return "Global Postioning System Fix Data"; }
-        }
+        public string Name => "Global Postioning System Fix Data"; 
 
         /// <summary>
         /// Process the data from a GGA message
