@@ -1,6 +1,6 @@
 ﻿namespace Meadow.Foundation.Sensors.Gnss
 {
-    public static class Commands
+    static class Commands
     {
         /// <summary>
         /// All data

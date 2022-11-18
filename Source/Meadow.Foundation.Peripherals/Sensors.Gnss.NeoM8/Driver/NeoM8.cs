@@ -61,7 +61,7 @@ namespace Meadow.Foundation.Sensors.Gnss
         /// <summary>
         /// Create a new NEOM8 object
         /// </summary>
-        protected NeoM8(ISerialMessagePort serialPort, IDigitalOutputPort reset, IDigitalInputPort? pps = null)
+        protected NeoM8(ISerialMessagePort serialPort, IDigitalOutputPort reset, IDigitalInputPort pps = null)
         {
             this.serialPort = serialPort;
             ResetPort = reset;
