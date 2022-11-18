@@ -8,7 +8,7 @@
 	<AssemblyName>NeoM8</AssemblyName>
 	<Company>Wilderness Labs, Inc</Company>
 	<PackageProjectUrl>http://developer.wildernesslabs.co/Meadow/Meadow.Foundation/</PackageProjectUrl>
-	<PackageId>Meadow.Foundation.Sensors.Gnss.Mt3339</PackageId>
+	<PackageId>Meadow.Foundation.Sensors.Gnss.NeoM8</PackageId>
 	<RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
 	<PackageTags>Meadow.Foundation,NEOM8,NEO,NEO-M8,GPS,GNSS</PackageTags>
 	<Version>0.1.0</Version>

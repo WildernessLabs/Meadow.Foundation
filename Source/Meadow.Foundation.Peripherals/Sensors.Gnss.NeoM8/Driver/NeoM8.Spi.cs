@@ -33,10 +33,6 @@ namespace Meadow.Foundation.Sensors.Gnss
 
             while (true)
             {
-                //ushort length = spiPeripheral.ReadRegisterAsUShort(0xFD, ByteOrder.LittleEndian);
-
-                //spiPeripheral.ReadRegister((byte)Registers.BytesAvailableHigh) << 8 | spiPeripheral.ReadRegister((byte)Registers.BytesAvailableLow);
-
                 data = spiPeripheral.ReadRegister((byte)Registers.DataStream);
 
                 if(data == 255)

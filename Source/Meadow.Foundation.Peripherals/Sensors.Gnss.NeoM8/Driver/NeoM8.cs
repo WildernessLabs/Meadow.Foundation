@@ -92,7 +92,7 @@ namespace Meadow.Foundation.Sensors.Gnss
 
             Reset().Wait();
 
-            Resolver.Log.Debug("Finish NeoM8 initialization.");
+            Resolver.Log.Debug("Finish NeoM8 initialization");
         }
 
         /// <summary>
@@ -112,14 +112,13 @@ namespace Meadow.Foundation.Sensors.Gnss
         {
             if (serialPort.IsOpen)
             {
-                Resolver.Log.Debug("serial port already open.");
+                Resolver.Log.Debug("serial port already open");
                 return;
             }
 
-            // open the serial connection
-            Resolver.Log.Debug("opening serial port.");
+            Resolver.Log.Debug("opening serial port");
             serialPort.Open();
-            Resolver.Log.Debug("serial port opened.");
+            Resolver.Log.Debug("serial port opened");
 
             Resolver.Log.Debug("Requesting NMEA data");
             serialPort.Write(Encoding.ASCII.GetBytes(Commands.PMTK_SET_NMEA_OUTPUT_ALLDATA));
@@ -134,7 +133,6 @@ namespace Meadow.Foundation.Sensors.Gnss
 
             Resolver.Log.Debug("Add decoders");
 
-            // GGA
             var ggaDecoder = new GgaDecoder();
             Resolver.Log.Debug("Created GGA");
             nmeaProcessor.RegisterDecoder(ggaDecoder);
