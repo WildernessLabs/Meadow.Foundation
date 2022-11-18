@@ -10,7 +10,12 @@ namespace Meadow.Foundation.Sensors.Gnss
 
         byte[] buffer;
 
-        public NeoM8(ISpiBus spiBus, IDigitalOutputPort chipSelectPort)
+        /// <summary>
+        /// ToDo - private until SPI is working
+        /// </summary>
+        /// <param name="spiBus"></param>
+        /// <param name="chipSelectPort"></param>
+        private NeoM8(ISpiBus spiBus, IDigitalOutputPort chipSelectPort)
         {
             spiPeripheral = new SpiPeripheral(spiBus, chipSelectPort);
             SpiTest();

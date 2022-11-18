@@ -2,7 +2,10 @@
 {
     public partial class NeoM8
     {
-        public enum Registers : byte
+        /// <summary>
+        /// NeoM8 SPI registers
+        /// </summary>
+        enum Registers : byte
         {
             BytesAvailableHigh,
             BytesAvailableLow,

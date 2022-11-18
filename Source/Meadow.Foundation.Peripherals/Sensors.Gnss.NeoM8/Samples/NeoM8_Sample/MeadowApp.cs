@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Threading;
 using System.Threading.Tasks;
 using Meadow;
 using Meadow.Devices;
-using Meadow.Foundation;
-using Meadow.Foundation.Leds;
 using Meadow.Foundation.Sensors.Gnss;
 using Meadow.Peripherals.Sensors.Location.Gnss;
 
-namespace MeadowApp
+namespace Sensors.Gnss.NeoM8_Sample
 {
     public class MeadowApp : App<F7CoreComputeV2>
     {
@@ -20,7 +17,7 @@ namespace MeadowApp
         {
             Console.WriteLine("Initializing ...");
 
-            gps = new NeoM8(Device, Device.SerialPortNames.Com4);
+            gps = new NeoM8(Device, Device.SerialPortNames.Com4, Device.Pins.D09, Device.Pins.D11);
 
             gps.GgaReceived += (object sender, GnssPositionInfo location) =>
             {
