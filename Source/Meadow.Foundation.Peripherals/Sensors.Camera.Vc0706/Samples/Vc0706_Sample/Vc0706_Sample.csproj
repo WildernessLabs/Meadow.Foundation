@@ -18,4 +18,9 @@
     <ProjectReference Include="..\..\Driver\Sensors.Camera.Vc0706.csproj" />
     <ProjectReference Include="..\..\..\..\..\..\Meadow.Core\Source\Meadow.F7\Meadow.F7.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <None Update="meadow.config.yaml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>
