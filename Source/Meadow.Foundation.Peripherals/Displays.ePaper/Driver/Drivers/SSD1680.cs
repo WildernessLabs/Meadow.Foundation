@@ -62,6 +62,8 @@ namespace Meadow.Foundation.Displays
             DelayMs(100);
 
             WaitUntilIdle();
+            SendCommand(0x12);  // SWRESET
+            WaitUntilIdle();
 
             SendCommand(SSD1680_DRIVER_CONTROL);
             SendData(0xF9);
@@ -89,7 +91,7 @@ namespace Meadow.Foundation.Displays
             SendData(0x05);
 
             SendCommand(SSD1680_TEMP_CONTROL); 
-            SendData(0x05);
+            SendData(0x80);
 
             SendCommand(SSD1680_DISP_CTRL1);
             SendData(0x80);
