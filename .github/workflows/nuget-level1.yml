@@ -22,12 +22,14 @@ jobs:
         packageId: Meadow.Foundation.DataLoggers.SensorReading
         path: Source/Meadow.Foundation.Libraries_and_Frameworks/DataLoggers.SensorReading/Driver/DataLoggers.SensorReading.csproj
         version: ${{ env.version }}
+        token: ${{ env.token }}
 
     - uses: ./.github/actions/build-library
       with:
         packageId: Meadow.Foundation.DataLoggers.ThingSpeak
         path: Source/Meadow.Foundation.Libraries_and_Frameworks/DataLoggers.ThingSpeak/Driver/DataLoggers.ThingSpeak.csproj
         version: ${{ env.version }}
+        token: ${{ env.token }}
 
     - uses: ./.github/actions/build-library
       with:
@@ -41,3 +43,4 @@ jobs:
         packageId: Meadow.Foundation.Sensors.Location.Gnss.NmeaProcessor
         path: Source/Meadow.Foundation.Libraries_and_Frameworks/Sensors.Location.Gnss.NmeaProcessor/Driver/Sensors.Location.Gnss.NmeaProcessor.csproj
         version: ${{ env.version }}
+        token: ${{ env.token }}
