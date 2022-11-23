@@ -16,10 +16,10 @@ runs:
   steps:
     - name: Build the library/driver
       shell: bash
-      run: dotnet build -c ${{ inputs.path }} /p:Version=${{ inputs.version }}
+      run: dotnet build -c Release ${{ inputs.path }} /p:Version=${{ inputs.version }}
     - name: Package the library/driver
       shell: bash
-      run: dotnet pack -c ${{ inputs.path }} /p:Version=${{ inputs.version }} --output .
+      run: dotnet pack -c Release ${{ inputs.path }} /p:Version=${{ inputs.version }} --output .
     - name: Push the library/driver to NuGet
       shell: bash
       run: dotnet nuget push ${{ inputs.packageId }}.${{ inputs.version }}.nupkg -s https://api.nuget.org/v3/index.json -k ${{ inputs.token }}
