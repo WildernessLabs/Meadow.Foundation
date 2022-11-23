@@ -11,16 +11,17 @@ namespace Meadow.Foundation.Sensors.Light
     // cause that pin to fire, then the sensor measures the time of flight.
     // it's basically a completely different sensor.
 
+    /// <summary>
+    /// Represents a SiLabs Proximity, UV, and ambient light sensor
+    /// </summary>
     public partial class Si1145
         : ByteCommsSensorBase<(Illuminance? VisibleLight, double? UltravioletIndex, Illuminance? Infrared)>
     {
         /// <summary>
-        /// Create a new SI1145 sensor object.
+        /// Create a new SI1145 sensor object
         /// </summary>
-        /// <param name="address">Address of the chip on the I2C bus (default to 0x60).</param>
-        /// <param name="i2cBus">I2cBus (default to 400 KHz).</param>
-        public Si1145(II2cBus i2cBus)
-            : base(i2cBus, (byte)Addresses.Default)
+        /// <param name="i2cBus">I2cBus (default to 400 KHz)</param>
+        public Si1145(II2cBus i2cBus) : base(i2cBus, (byte)Addresses.Default)
         {
             if (Peripheral.ReadRegister(Registers.REG_PARTID) != 0x45)
             {
@@ -29,6 +30,10 @@ namespace Meadow.Foundation.Sensors.Light
             Initialize();
         }
 
+        /// <summary>
+        /// Read data from the sensor
+        /// </summary>
+        /// <returns>Returns visible, ultraviolet index and ifrared data</returns>
         protected async override Task<(Illuminance? VisibleLight, double? UltravioletIndex, Illuminance? Infrared)> ReadSensor()
         {
             return await Task.Run(() =>

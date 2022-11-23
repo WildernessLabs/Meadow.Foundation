@@ -13,9 +13,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         /// <param name="i2cBus">The I2C bus connected to the wombat</param>
         /// <param name="address">The I2C address</param>
+        /// <param name="logger">Meadow logger (optional)</param>
         public Sw18AB(II2cBus i2cBus, Address address = SerialWombatBase.Address.Default, Logger? logger = null)
             : base(i2cBus, address, logger)
-        {
-        }
+        { }
     }
 }

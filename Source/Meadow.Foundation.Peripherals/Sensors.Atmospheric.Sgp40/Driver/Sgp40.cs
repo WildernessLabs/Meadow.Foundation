@@ -38,16 +38,19 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             Initialize();
         }
 
+        /// <summary>
+        /// Initalize the sensor
+        /// </summary>
         protected void Initialize()
         {
             // write buffer for initialization commands only can be two bytes.
             Span<byte> tx = WriteBuffer.Span[0..2];
 
-            Peripheral.Write(sgp4x_get_serial_number);
+            Peripheral?.Write(sgp4x_get_serial_number);
 
             Thread.Sleep(1); // per the data sheet
 
-            Peripheral.Read(ReadBuffer.Span[0..9]);
+            Peripheral?.Read(ReadBuffer.Span[0..9]);
 
             var bytes = ReadBuffer.ToArray();
 
@@ -60,31 +63,35 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <returns>true on sucessful test, otherwise false</returns>
         public bool RunSelfTest()
         {
-            Peripheral.Write(sgp40_execute_self_test);
+            Peripheral?.Write(sgp40_execute_self_test);
 
             Thread.Sleep(325); // test requires 320ms to complete
 
-            Peripheral.Read(ReadBuffer.Span[0..3]);
+            Peripheral?.Read(ReadBuffer.Span[0..3]);
 
             return ReadBuffer.Span[0..1][0] == 0xd4;
         }
 
+        /// <summary>
+        /// Reads data from the sensor
+        /// </summary>
+        /// <returns>The latest sensor reading</returns>
         protected async override Task<int> ReadSensor()
         {
             return await Task.Run(() =>
             {
                 if(_compensationData != null)
                 {
-                    Peripheral.Write(_compensationData);
+                    Peripheral?.Write(_compensationData);
                 }
                 else
                 {
-                    Peripheral.Write(sgp40_measure_raw_signal_uncompensated);
+                    Peripheral?.Write(sgp40_measure_raw_signal_uncompensated);
                 }
 
                 Thread.Sleep(30); // per the data sheet
 
-                Peripheral.Read(ReadBuffer.Span[0..3]);
+                Peripheral?.Read(ReadBuffer.Span[0..3]);
 
                 var data = ReadBuffer.Span[0..3].ToArray();
 
@@ -108,10 +115,15 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         public void TurnHeaterOff()
         {
-            Peripheral.Write(sgp4x_turn_heater_off);
+            Peripheral?.Write(sgp4x_turn_heater_off);
         }
 
-        public void SetCompensationData(RelativeHumidity humidity, Meadow.Units.Temperature temperature)
+        /// <summary>
+        /// Set the compensation data
+        /// </summary>
+        /// <param name="humidity">Humidity compensation</param>
+        /// <param name="temperature">Temperature compensation</param>
+        public void SetCompensationData(RelativeHumidity humidity, Units.Temperature temperature)
         {
             _compensationData = new byte[8];
 
@@ -128,6 +140,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             _compensationData[7] = Crc(t);
         }
 
+        /// <summary>
+        /// Clear the compensation data
+        /// </summary>
         public void ClearCompensationData()
         {
             _compensationData = null;

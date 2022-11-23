@@ -13,14 +13,27 @@ namespace Meadow.Foundation.ICs.IOExpanders
     {
         private II2cBus _bus; // TODO: add uart support
         private WombatVersion _version = null!;
-        private WombatInfo _info;
+        private WombatInfo? _info;
         private Guid? _uuid;
 
+        /// <summary>
+        /// The I2C address
+        /// </summary>
         public Address _address { get; }
 
+        /// <summary>
+        /// The sync root object
+        /// </summary>
         protected object SyncRoot { get; } = new object();
-        protected Logger Logger { get; }
 
+        /// <summary>
+        /// Logger object
+        /// </summary>
+        protected Logger? Logger { get; }
+
+        /// <summary>
+        /// Create SerialWombatBase object
+        /// </summary>
         protected SerialWombatBase(II2cBus bus, Address address = SerialWombatBase.Address.Default, Logger? logger = null)
         {
             _bus = bus;
@@ -28,13 +41,22 @@ namespace Meadow.Foundation.ICs.IOExpanders
             Logger = logger;
         }
 
+        /// <summary>
+        /// The pins
+        /// </summary>
         public PinDefinitions Pins { get; } = new PinDefinitions();
 
+        /// <summary>
+        /// Send a packet of data
+        /// </summary>
         protected void SendPacket(Span<byte> tx, Span<byte> rx)
         {
             _bus.Exchange((byte)_address, tx, rx);
         }
 
+        /// <summary>
+        /// The version
+        /// </summary>
         public WombatVersion Version
         {
             get
@@ -52,10 +74,13 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
                     }
                 }
-                return _version;
+                return _version ?? new WombatVersion("0");
             }
         }
 
+        /// <summary>
+        /// Serial Wombat info
+        /// </summary>
         public WombatInfo Info
         {
             get
@@ -74,10 +99,13 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
                     }
                 }
-                return _info;
+                return _info ?? new WombatInfo(0, 0);
             }
         }
 
+        /// <summary>
+        /// Serial Wombat GUID
+        /// </summary>
         public Guid Uuid
         {
             get
@@ -104,6 +132,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
             }
         }
 
+        /// <summary>
+        /// Send a command
+        /// </summary>
         protected byte[] SendCommand(in Span<byte> command)
         {
             lock (SyncRoot)
@@ -120,16 +151,31 @@ namespace Meadow.Foundation.ICs.IOExpanders
             }
         }
 
+        /// <summary>
+        /// Read public data from a pin
+        /// </summary>
+        /// <param name="pin">The serial wombat pin to read</param>
+        /// <returns>The data as a ushort</returns>
         protected ushort ReadPublicData(SwPin pin)
         {
             return ReadPublicData((byte)pin);
         }
 
+        /// <summary>
+        /// Read public data from a pin
+        /// </summary>
+        /// <param name="pin">The pin to read</param>
+        /// <returns>The data as a ushort</returns>
         protected ushort ReadPublicData(IPin pin)
         {
             return ReadPublicData((byte)pin.Key);
         }
 
+        /// <summary>
+        /// Read public data from a pin
+        /// </summary>
+        /// <param name="pin">The pin to read as a byte ID</param>
+        /// <returns>The data as a ushort</returns>
         protected ushort ReadPublicData(byte pin)
         {
             var command = Commands.ReadPublicData;
@@ -138,11 +184,17 @@ namespace Meadow.Foundation.ICs.IOExpanders
             return (ushort)(response[2] | (response[3] << 8));
         }
 
+        /// <summary>
+        /// Write public data to a pin
+        /// </summary>
         protected ushort WritePublicData(SwPin pin, ushort data)
         {
             return WritePublicData((byte)pin, data);
         }
 
+        /// <summary>
+        /// Write public data to a pin
+        /// </summary>
         protected ushort WritePublicData(byte pin, ushort data)
         {
             var command = Commands.WritePublicData;
@@ -153,11 +205,17 @@ namespace Meadow.Foundation.ICs.IOExpanders
             return (ushort)(response[2] | response[3] << 8);
         }
 
+        /// <summary>
+        /// Read data from flash
+        /// </summary>
         protected uint ReadFlash(FlashRegister18 register)
         {
             return ReadFlash((uint)register);
         }
 
+        /// <summary>
+        /// Read data from flash
+        /// </summary>
         protected uint ReadFlash(uint address)
         {
             var command = Commands.ReadFlash;
@@ -169,6 +227,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
             return (uint)(response[4] | response[5] << 8 | response[6] << 16 | response[7] << 24);
         }
 
+        /// <summary>
+        /// Configure the state and type for a pin
+        /// </summary>
         protected void ConfigureOutputPin(byte pin, bool state, OutputType type = OutputType.PushPull)
         {
             var command = Commands.SetPinMode0;
@@ -182,6 +243,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
             SendCommand(command);
         }
 
+        /// <summary>
+        /// Configure the resistor mode for a pin
+        /// </summary>
         protected void ConfigureInputPin(byte pin, ResistorMode mode)
         {
             var command = Commands.SetPinMode0;
@@ -195,6 +259,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
             SendCommand(command);
         }
 
+        /// <summary>
+        /// Configure the PWM parameters for a PWM pin
+        /// </summary>
         protected void ConfigurePwm(byte pin, float dutyCycle, bool inverted)
         {
             // dutyCycle A value from 0 to 65535 representing duty cycle
@@ -211,6 +278,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
             SendCommand(command);
         }
 
+        /// <summary>
+        /// Configure the PWM duty cycle for a PWM pin
+        /// </summary>
         protected void ConfigurePwmDutyCycle(byte pin, float dutyCycle)
         {
             var duty = (ushort)(dutyCycle * 65535);
@@ -226,12 +296,18 @@ namespace Meadow.Foundation.ICs.IOExpanders
             SendCommand(command);
         }
 
+        /// <summary>
+        /// Configure the frequency cycle for a PWM pin
+        /// </summary>
         protected void ConfigurePwm(byte pin, Frequency frequency)
         {
             uint periodUs = (uint)(1000000 / frequency.Hertz);
             ConfigurePwm(pin, periodUs);
         }
 
+        /// <summary>
+        /// Configure the period cycle for a PWM pin
+        /// </summary>
         protected void ConfigurePwm(byte pin, uint periodMicroseconds)
         {
             var command = Commands.SetPinModeHW0;
@@ -245,6 +321,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
             SendCommand(command);
         }
 
+        /// <summary>
+        /// Configure an analog input pin
+        /// </summary>
         protected void ConfigureAnalogInput(byte pin, ushort sampleCount = 64, ushort iirFilterConstant = 0xff80)
         {
             var command = Commands.SetPinMode0;
@@ -268,6 +347,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
             SendCommand(command);
         }
 
+        /// <summary>
+        /// Configure an ultrasonic pin
+        /// </summary>
         protected void ConfigureUltrasonicSensor(IPin trigger, IPin echo, bool autoTrigger = true)
         {
             var command = Commands.SetPinMode0;
@@ -281,6 +363,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
             SendCommand(command);
         }
 
+        /// <summary>
+        /// Read pulses from an ultrasonic sensor
+        /// </summary>
         protected ushort ReadUltrasonicSensorPulses(IPin echo)
         {
             var command = Commands.SetPinMode2;
@@ -291,6 +376,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
             return (ushort)((response[5] << 8) | response[6]);
         }
 
+        /// <summary>
+        /// Manually trigger an ultra sonic sensor
+        /// </summary>
         protected void ManualTriggerUltrasonicSensor(IPin echo)
         {
             var command = Commands.SetPinMode1;
@@ -303,23 +391,35 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
         //-----------------------------------------------------------------------
 
+        /// <summary>
+        /// Get supply voltage
+        /// </summary>
         public Voltage GetSupplyVoltage()
         {
             var count = ReadPublicData(SwPin.Voltage);
             return new Voltage(0x4000000 / (double)count, Voltage.UnitType.Millivolts);
         }
 
+        /// <summary>
+        /// Get Temperature
+        /// </summary>
         public Temperature GetTemperature()
         {
             var d = ReadPublicData(SwPin.Temperature);
             return new Temperature(d / 100d, Temperature.UnitType.Celsius);
         }
 
+        /// <summary>
+        /// Create a digital output port for a pin
+        /// </summary>
         public IDigitalOutputPort CreateDigitalOutputPort(IPin pin, bool initialState = false, OutputType outputType = OutputType.PushPull)
         {
             return new DigitalOutputPort(this, pin, initialState, outputType);
         }
 
+        /// <summary>
+        /// Create a digital input port for a pin
+        /// </summary>
         public IDigitalInputPort CreateDigitalInputPort(IPin pin, InterruptMode interruptMode = InterruptMode.None, ResistorMode resistorMode = ResistorMode.Disabled)
         {
             // if (debounceDuration != TimeSpan.Zero) throw new NotSupportedException("Debounce not supported");
@@ -328,6 +428,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
             return new DigitalInputPort(this, pin, interruptMode, resistorMode);
         }
 
+        /// <summary>
+        /// Create a digital input port for a pin
+        /// </summary>
         public IDigitalInputPort CreateDigitalInputPort(IPin pin, InterruptMode interruptMode, ResistorMode resistorMode, TimeSpan debounceDuration, TimeSpan glitchDuration)
         {
             // if (debounceDuration != TimeSpan.Zero) throw new NotSupportedException("Debounce not supported");
@@ -336,6 +439,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
             return new DigitalInputPort(this, pin, interruptMode, resistorMode);
         }
 
+        /// <summary>
+        /// Create a PWM port for a pin
+        /// </summary>
         public IPwmPort CreatePwmPort(IPin pin, Frequency frequency, float dutyCycle = 0.5F, bool invert = false)
         {
             var channel = pin.SupportedChannels.OfType<IPwmChannelInfo>().FirstOrDefault();
@@ -345,11 +451,17 @@ namespace Meadow.Foundation.ICs.IOExpanders
             return new PwmPort(this, pin, channel);
         }
 
+        /// <summary>
+        /// Create an analog input port for a pin
+        /// </summary>
         public IAnalogInputPort CreateAnalogInputPort(IPin pin, int sampleCount = 64)
         {
             return CreateAnalogInputPort((IPin)pin, sampleCount, TimeSpan.FromSeconds(1), new Voltage(0));
         }
 
+        /// <summary>
+        /// Create an analog input port for a pin
+        /// </summary>
         public IAnalogInputPort CreateAnalogInputPort(IPin pin, int sampleCount, TimeSpan sampleInterval, Voltage voltageReference)
         {
             var channel = pin.SupportedChannels.OfType<IAnalogChannelInfo>().FirstOrDefault();
@@ -359,19 +471,37 @@ namespace Meadow.Foundation.ICs.IOExpanders
             return new AnalogInputPort(this, pin, channel, sampleCount);
         }
 
+        /// <summary>
+        /// Create a ditance sensor for a pin
+        /// </summary>
         public IRangeFinder CreateDistanceSensor(IPin trigger, IPin echo)
         {
             return CreateDistanceSensor(trigger, echo, Hcsr04.DefaultReadPeriod);
         }
 
+        /// <summary>
+        /// Create a ditance sensor for a pin
+        /// </summary>
         public IRangeFinder CreateDistanceSensor(IPin trigger, IPin echo, TimeSpan readPeriod)
         {
             return new Hcsr04(this, trigger, echo, readPeriod);
         }
 
+        /// <summary>
+        /// Create a servo for a pin
+        /// </summary>
         public IServo CreateServo(IPin pin)
         {
             return new Servo(pin);
+        }
+
+        internal static IDigitalChannelInfo GetChannelInfoForPin(IPin pin)
+        {
+            if (pin == null || pin.SupportedChannels == null || pin.SupportedChannels.Count < 1)
+            {
+                return new DigitalChannelInfo("unknown");
+            }
+            return (IDigitalChannelInfo)pin.SupportedChannels[0];
         }
     }
 }

@@ -16,20 +16,18 @@ namespace ICs.IOExpanders.Mcp23x17_Input_Sample
     {
         Mcp23017 mcp;
 
-        public override async Task Initialize()
+        public override Task Initialize()
         {
             Console.WriteLine("Initializing...");
 
-            //we only want to be notified as it goes high 
-            IDigitalInputPort interruptPort = Device.CreateDigitalInputPort(Device.Pins.D04, InterruptMode.EdgeBoth, ResistorMode.InternalPullDown, TimeSpan.FromMilliseconds(50), TimeSpan.FromMilliseconds(1));
+            IDigitalInputPort interruptPort = Device.CreateDigitalInputPort(Device.Pins.D00, InterruptMode.EdgeBoth, ResistorMode.InternalPullDown);
+            IDigitalOutputPort resetPort = Device.CreateDigitalOutputPort(Device.Pins.D01);
 
-            // create a new mcp with all the address pins pulled low - address 0x20 (32)
-            mcp = new Mcp23017(Device.CreateI2cBus(), (byte)Addresses.Address_0x20, interruptPort);
+            mcp = new Mcp23017(Device.CreateI2cBus(), (byte)Addresses.Address_0x20, interruptPort, resetPort);
 
             mcp.InputChanged += Mcp_InputChanged;
 
-        //    IDigitalOutputPort chipSelectPort = Device.CreateDigitalOutputPort(Device.Pins.D01);
-        //    mcp = new Mcp23s17(Device.CreateSpiBus(), chipSelectPort, interruptPort);
+            return base.Initialize();
         }
 
         private void Mcp_InputChanged(object sender, IOExpanderInputChangedEventArgs e)

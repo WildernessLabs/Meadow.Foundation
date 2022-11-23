@@ -18,69 +18,78 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         ITemperatureSensor, IHumiditySensor
     {
         /// <summary>
+        /// Raised when the temperature value changes
         /// </summary>
         public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
+        
+        /// <summary>
+        /// Raised when the humidity value changes
+        /// </summary>
         public event EventHandler<IChangeResult<RelativeHumidity>> HumidityUpdated = delegate { };
 
-        public int DEFAULT_SPEED = 400;
+        /// <summary>
+        /// Default SPI bus speed
+        /// </summary>
+        public static Frequency DEFAULT_SPEED = new Frequency(400, Frequency.UnitType.Kilohertz);
 
         /// <summary>
-        /// The temperature, from the last reading.
+        /// The temperature, from the last reading
         /// </summary>
         public Units.Temperature? Temperature => Conditions.Temperature;
 
         /// <summary>
-        /// The humidity, in percent relative humidity, from the last reading..
+        /// The humidity, in percent relative humidity, from the last reading
         /// </summary>
         public RelativeHumidity? Humidity => Conditions.Humidity;
 
         /// <summary>
-        /// Serial number of the device.
+        /// Serial number of the device
         /// </summary>
         public ulong SerialNumber { get; private set; }
 
         /// <summary>
-        /// Device type as extracted from the serial number.
+        /// Device type as extracted from the serial number
         /// </summary>
         public DeviceType SensorType { get; private set; }
 
         /// <summary>
-        /// Firmware revision of the sensor.
+        /// Firmware revision of the sensor
         /// </summary>
         public byte FirmwareRevision { get; private set; }
 
         /// <summary>
-        /// Create a new SI7021 temperature and humidity sensor.
+        /// Create a new SI7021 temperature and humidity sensor
         /// </summary>
-        /// <param name="address">Sensor address (default to 0x40).</param>
-        /// <param name="i2cBus">I2CBus.</param>
+        /// <param name="i2cBus">I2CBus</param>
+        /// <param name="address">I2C address (default to 0x40)</param>
         public Si70xx(II2cBus i2cBus, byte address = (byte)Address.Default)
             : base(i2cBus, address, 8, 3)
         {
             Initialize();
         }
-
+        /// <summary>
+        /// Reset the sensor
+        /// </summary>
         protected void Reset()
         {
-            Peripheral.Write(CMD_RESET);
+            Peripheral?.Write(CMD_RESET);
             Thread.Sleep(100);
         }
 
+        /// <summary>
+        /// Initalize the sensor
+        /// </summary>
         protected void Initialize()
         {
-            // write buffer for initialization commands only can be two bytes.
             Span<byte> tx = WriteBuffer.Span[0..2];
 
             Reset();
 
-            //
-            //  Get the device ID.
             SerialNumber = 0;
 
-            // this device is...interesting.  Most registers are 1-byte addressing, but a few are 2-bytes?
             tx[0] = READ_ID_PART1;
             tx[1] = READ_ID_PART2;
-            Peripheral.Exchange(tx, ReadBuffer.Span);
+            Peripheral?.Exchange(tx, ReadBuffer.Span);
             for (var index = 0; index < 4; index++)
             {
                 SerialNumber <<= 8;
@@ -89,7 +98,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
             tx[0] = READ_2ND_ID_PART1;
             tx[1] = READ_2ND_ID_PART2;
-            Peripheral.Exchange(tx, ReadBuffer.Span);
+            Peripheral?.Exchange(tx, ReadBuffer.Span);
 
             SerialNumber <<= 8;
             SerialNumber += ReadBuffer.Span[0];
@@ -111,16 +120,19 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             SetResolution(SensorResolution.TEMP11_HUM11);
         }
 
+        /// <summary>
+        /// Reads data from the sensor
+        /// </summary>
+        /// <returns>The latest sensor reading</returns>
         protected async override Task<(Units.Temperature? Temperature, RelativeHumidity? Humidity)> ReadSensor()
         {
             (Units.Temperature Temperature, RelativeHumidity Humidity) conditions;
 
             return await Task.Run(() =>
             {
-                // ---- HUMIDITY
-                Peripheral.Write(HUMDITY_MEASURE_NOHOLD);
+                Peripheral?.Write(HUMDITY_MEASURE_NOHOLD);
                 Thread.Sleep(25); // Maximum conversion time is 12ms (page 5 of the datasheet).
-                Peripheral.Read(ReadBuffer.Span); // 2 data bytes plus a checksum (we ignore the checksum here)
+                Peripheral?.Read(ReadBuffer.Span); // 2 data bytes plus a checksum (we ignore the checksum here)
                 var humidityReading = (ushort)((ReadBuffer.Span[0] << 8) + ReadBuffer.Span[1]);
                 conditions.Humidity = new RelativeHumidity(((125 * (float)humidityReading) / 65536) - 6, HU.Percent);
                 if (conditions.Humidity < new RelativeHumidity(0, HU.Percent))
@@ -135,10 +147,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                     }
                 }
 
-                // ---- TEMPERATURE
-                Peripheral.Write(TEMPERATURE_MEASURE_NOHOLD);
+                Peripheral?.Write(TEMPERATURE_MEASURE_NOHOLD);
                 Thread.Sleep(25); // Maximum conversion time is 12ms (page 5 of the datasheet).
-                Peripheral.Read(ReadBuffer.Span); // 2 data bytes plus a checksum (we ignore the checksum here)
+                Peripheral?.Read(ReadBuffer.Span); // 2 data bytes plus a checksum (we ignore the checksum here)
                 var temperatureReading = (short)((ReadBuffer.Span[0] << 8) + ReadBuffer.Span[1]);
                 conditions.Temperature = new Units.Temperature((float)(((175.72 * temperatureReading) / 65536) - 46.85), TU.Celsius);
 
@@ -165,36 +176,34 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         }
 
         /// <summary>
-        /// Turn the heater on or off.
+        /// Turn the heater on or off
         /// </summary>
         /// <param name="onOrOff">Heater status, true = turn heater on, false = turn heater off.</param>
         public void Heater(bool onOrOff)
         {
-            var register = Peripheral.ReadRegister((byte)Register.USER_REG_1);
+            var register = Peripheral?.ReadRegister((byte)Register.USER_REG_1) ?? 0;
             register &= 0xfd;
 
             if (onOrOff)
             {
                 register |= 0x02;
             }
-            Peripheral.WriteRegister((byte)Register.USER_REG_1, register);
+            Peripheral?.WriteRegister((byte)Register.USER_REG_1, register);
         }
 
-        //Set sensor resolution
-        /*******************************************************************************************/
-        //Sets the sensor resolution to one of four levels
-        //Page 12:
-        // 0/0 = 12bit RH, 14bit Temp
-        // 0/1 = 8bit RH, 12bit Temp
-        // 1/0 = 10bit RH, 13bit Temp
-        // 1/1 = 11bit RH, 11bit Temp
-        //Power on default is 0/0
+        /// <summary>
+        /// Sets the sensor resolution to one of four levels
+        /// Page 12:
+        /// 0/0 = 12bit RH, 14bit Temp
+        /// 0/1 = 8bit RH, 12bit Temp
+        /// 1/0 = 10bit RH, 13bit Temp
+        /// 1/1 = 11bit RH, 11bit Temp
+        ///Power on default is 0/0
+        /// </summary>
+        /// <param name="resolution">The resolution to set</param>
         void SetResolution(SensorResolution resolution)
         {
-            var register = Peripheral.ReadRegister((byte)Register.USER_REG_1);
-            //userRegister &= 0b01111110; //Turn off the resolution bits
-            //resolution &= 0b10000001; //Turn off all other bits but resolution bits
-            //userRegister |= resolution; //Mask in the requested resolution bits
+            var register = Peripheral?.ReadRegister((byte)Register.USER_REG_1) ?? 0;
 
             var res = (byte)resolution;
 
@@ -203,7 +212,13 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             register |= res; //Mask in the requested resolution bits
 
             //Request a write to user register
-            Peripheral.WriteRegister((byte)Register.USER_REG_1, register); //Write the new resolution bits
+            Peripheral?.WriteRegister((byte)Register.USER_REG_1, register); //Write the new resolution bits
         }
+
+        async Task<Units.Temperature> ISamplingSensor<Units.Temperature>.Read()
+            => (await Read()).Temperature.Value;
+
+        async Task<RelativeHumidity> ISamplingSensor<RelativeHumidity>.Read()
+            => (await Read()).Humidity.Value;
     }
 }

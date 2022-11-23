@@ -1,29 +1,63 @@
 ﻿namespace Meadow.Foundation.Graphics
 {
+    /// <summary>
+    /// Text scale factor when drawing text
+    /// </summary>
     public enum ScaleFactor : int
     {
+        /// <summary>
+        /// 1X / normal scaling
+        /// </summary>
         X1 = 1,
+        /// <summary>
+        /// 2X / double scaling
+        /// </summary>
         X2 = 2,
+        /// <summary>
+        /// 3X / triple scaling
+        /// </summary>
         X3 = 3,
+        /// <summary>
+        /// 4x / quadruple scaling
+        /// </summary>
         X4 = 4,
     }
 
-    public enum TextAlignment
+    /// <summary>
+    /// Horizontal alignment for visual elements
+    /// </summary>
+    public enum HorizontalAlignment
     {
+        /// <summary>
+        /// Left aligned, drawing starts at X horizontally
+        /// </summary>
         Left,
+        /// <summary>
+        /// Horizontally centered, X is horizonally centered 
+        /// </summary>
         Center,
+        /// <summary>
+        /// Right aligned, drawing ends at X horizontally
+        /// </summary>
         Right
     }
 
     /// <summary>
-    /// Mode for copying 1 bit bitmaps
+    /// Vertical alignment for visual elements
     /// </summary>
-    public enum BitmapMode
+    public enum VerticalAlignment
     {
-        And,
-        Or,
-        XOr,
-        Copy
-    };
-    
+        /// <summary>
+        /// Top aligned, drawing starts at Y vertically
+        /// </summary>
+        Top,
+        /// <summary>
+        /// Horizontally centered, Y is vertically centered 
+        /// </summary>
+        Center,
+        /// <summary>
+        /// Bottom aligned, drawing ends at Y vertically
+        /// </summary>
+        Bottom
+    }
 }

@@ -30,6 +30,11 @@ namespace Meadow.Foundation.Sensors.Weather
         public TimeSpan NoWindTimeout { get; set; } = TimeSpan.FromSeconds(4);
 
         /// <summary>
+        /// Time to capture samples for a one time Read if IsSampling is false
+        /// </summary>
+        public TimeSpan OneTimeReadDuration { get; set; } = TimeSpan.FromSeconds(1);
+
+        /// <summary>
         /// Number of samples to take for a reading
         /// </summary>
         public int SampleCount
@@ -78,11 +83,11 @@ namespace Meadow.Foundation.Sensors.Weather
             samples = new Queue<DigitalPortResult>();
         }
 
-        protected void SubscribeToInputPortEvents() => inputPort.Changed += HandleInputPortChange;
+        void SubscribeToInputPortEvents() => inputPort.Changed += HandleInputPortChange;
 
-        protected void UnsubscribeToInputPortEvents() => inputPort.Changed -= HandleInputPortChange;
+        void UnsubscribeToInputPortEvents() => inputPort.Changed -= HandleInputPortChange;
 
-        protected void HandleInputPortChange(object sender, DigitalPortResult result)
+        void HandleInputPortChange(object sender, DigitalPortResult result)
         {
             if (!running) { return; }
 
@@ -94,6 +99,10 @@ namespace Meadow.Foundation.Sensors.Weather
             }
         }
 
+        /// <summary>
+        /// Raise events for subcribers and notify of value changes
+        /// </summary>
+        /// <param name="changeResult">The updated sensor data</param>
         protected override void RaiseEventsAndNotify(IChangeResult<Speed> changeResult)
         {
             WindSpeedUpdated?.Invoke(this, changeResult);
@@ -133,8 +142,19 @@ namespace Meadow.Foundation.Sensors.Weather
             running = false;
         }
 
-        protected override Task<Speed> ReadSensor()
+        /// <summary>
+        /// Reads data from the sensor
+        /// </summary>
+        /// <returns>The latest sensor reading</returns>
+        protected override async Task<Speed> ReadSensor()
         {
+            if(IsSampling == false)
+            {
+                StartUpdating();
+                await Task.Delay(OneTimeReadDuration);
+                StopUpdating();
+            }
+
             if(samples?.Count > 0 && (DateTime.Now - samples?.Peek().New.Time > NoWindTimeout))
             {   //we've exceeded the no wind interval time 
                 samples?.Clear(); //will force a zero reading
@@ -156,11 +176,11 @@ namespace Meadow.Foundation.Sensors.Weather
                 // average the speeds
                 float oversampledSpeed = speedSum / (samples.Count -1);
 
-                return Task.FromResult(new Speed(oversampledSpeed, SU.KilometersPerHour));
+                return new Speed(oversampledSpeed, SU.KilometersPerHour);
             }
 
             //otherwise return 0 speed
-            return Task.FromResult(new Speed(0));
+            return new Speed(0);
         }
 
         /// <summary>

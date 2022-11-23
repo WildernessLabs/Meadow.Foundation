@@ -1,9 +1,8 @@
-﻿using System;
-namespace Meadow.Foundation.Sensors.Motion
+﻿namespace Meadow.Foundation.Sensors.Motion
 {
     public partial class Apds9960
     {
-        public static class GestureWaitTimeValues
+        static class GestureWaitTimeValues
         {
             /* Gesture wait time values */
             public const byte GWTIME_0MS = 0;

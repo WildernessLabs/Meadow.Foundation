@@ -1,10 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Meadow.Foundation.Sensors.Camera
 {
+    /// <summary>
+    /// MLX90640 configuration
+    /// </summary>
     public class Mlx90640Config
     {
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
         public short KVdd { get; internal set; }
         public short Vdd25 { get; internal set; }
         public float KvPTAT { get; internal set; }
@@ -38,6 +41,6 @@ namespace Meadow.Foundation.Sensors.Camera
         public bool OutlierPixelHasAdjacentOutlierPixel { get; internal set; }
 
         public bool BrokenPixelHasAdjacentOutlierPixel { get; internal set; }
-
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
     }
 }

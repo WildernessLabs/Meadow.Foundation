@@ -16,8 +16,13 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         ITemperatureSensor, IHumiditySensor
     {
         /// <summary>
+        /// Raised when the temperature value changes
         /// </summary>
         public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
+        
+        /// <summary>
+        /// Raised when the humidity value changes
+        /// </summary>
         public event EventHandler<IChangeResult<RelativeHumidity>> HumidityUpdated = delegate { };
 
         /// <summary>
@@ -63,12 +68,12 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             (Units.Temperature Temperature, RelativeHumidity Humidity) conditions;
 
             // send a start signal on the I2C bus to notify the sensor to read.
-            Peripheral.Write(0);
+            Peripheral?.Write(0);
             // Sensor takes 35ms to make a valid reading.
             await Task.Delay(40);
 
             // read data from the sensor
-            Peripheral.Read(base.ReadBuffer.Span);
+            Peripheral?.Read(base.ReadBuffer.Span);
             //
             //  Data format:
             //
@@ -77,9 +82,11 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             //  Byte 2: T13 T12 T11 T10 T9  T8  T7 T6
             //  Byte 4: T5  T4  T3  T2  T1  T0  XX XX
             //
-            if ((ReadBuffer.Span[0] & 0xc0) != 0) {
+            if ((ReadBuffer.Span[0] & 0xc0) != 0) 
+            {
                 throw new Exception("Status indicates readings are invalid.");
             }
+
             var reading = ((ReadBuffer.Span[0] << 8) | ReadBuffer.Span[1]) & 0x3fff;
             conditions.Humidity = new RelativeHumidity(((float)reading / 16383) * 100);
             reading = ((ReadBuffer.Span[2] << 8) | ReadBuffer.Span[3]) >> 2;
@@ -87,5 +94,11 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
             return conditions;
         }
+
+        async Task<Units.Temperature> ISamplingSensor<Units.Temperature>.Read()
+            => (await Read()).Temperature.Value;
+
+        async Task<RelativeHumidity> ISamplingSensor<RelativeHumidity>.Read()
+            => (await Read()).Humidity.Value;
     }
 }

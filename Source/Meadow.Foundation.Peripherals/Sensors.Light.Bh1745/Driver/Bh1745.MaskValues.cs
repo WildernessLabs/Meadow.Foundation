@@ -3,7 +3,7 @@ namespace Meadow.Foundation.Sensors.Light
 {
     public partial class Bh1745
     {
-        protected static class MaskValues
+        internal static class MaskValues
         {
             public const byte PART_ID = 0x3F;
             public const byte SW_RESET = 0x80;

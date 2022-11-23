@@ -54,6 +54,9 @@ namespace Meadow.Foundation.Displays
             SetRotation(Rotation.Normal);
         }
 
+        /// <summary>
+        /// Initalize the display
+        /// </summary>
         protected override void Initialize()
         {
             SendCommand(0x11); // Sleep out, also SW reset
@@ -117,6 +120,13 @@ namespace Meadow.Foundation.Displays
             Thread.Sleep(150);
         }
 
+        /// <summary>
+        /// Set addrees window for display updates
+        /// </summary>
+        /// <param name="x0">X start in pixels</param>
+        /// <param name="y0">Y start in pixels</param>
+        /// <param name="x1">X end in pixels</param>
+        /// <param name="y1">Y end in pixels</param>
         protected override void SetAddressWindow(int x0, int y0, int x1, int y1)
         {
             SendCommand((byte)LcdCommand.CASET);  // column addr set
@@ -136,6 +146,10 @@ namespace Meadow.Foundation.Displays
             SendCommand((byte)LcdCommand.RAMWR);  // write to RAM
         }
 
+        /// <summary>
+        /// Set the display rotation
+        /// </summary>
+        /// <param name="rotation">The rotation value</param>
         public void SetRotation(Rotation rotation)
         {
             SendCommand(Register.MADCTL);

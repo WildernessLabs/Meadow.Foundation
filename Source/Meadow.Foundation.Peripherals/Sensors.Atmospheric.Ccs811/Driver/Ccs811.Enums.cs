@@ -47,6 +47,9 @@
             APP_START = 0xF4,
         }
 
+        /// <summary>
+        /// Measurement mode
+        /// </summary>
         public enum MeasurementMode
         {
             /// <summary>
@@ -69,7 +72,6 @@
             /// Constant power mode, sensor measurement every 250ms
             /// </summary>
             ConstantPower250ms = 4 << 4
-
         }
     }
 }

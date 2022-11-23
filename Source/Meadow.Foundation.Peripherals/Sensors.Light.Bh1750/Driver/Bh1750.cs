@@ -131,6 +131,10 @@ namespace Meadow.Foundation.Sensors.Light
             Peripheral.Write((byte)((byte)Commands.MeasurementTimeLow | (val & 0b_0001_1111)));
         }
 
+        /// <summary>
+        /// Raise events for subcribers and notify of value changes
+        /// </summary>
+        /// <param name="changeResult">The updated sensor data</param>
         protected override void RaiseEventsAndNotify(IChangeResult<Illuminance> changeResult)
         {
             this.LuminosityUpdated?.Invoke(this, changeResult);

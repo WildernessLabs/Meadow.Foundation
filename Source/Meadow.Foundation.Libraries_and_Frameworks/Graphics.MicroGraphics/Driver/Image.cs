@@ -5,26 +5,52 @@ using System.Linq;
 
 namespace Meadow.Foundation.Graphics
 {
+    /// <summary>
+    /// Represents an Image object 
+    /// </summary>
     public partial class Image
     {
+        /// <summary>
+        /// The image pixel data
+        /// </summary>
         public IPixelBuffer DisplayBuffer { get; private set; }
 
+        /// <summary>
+        /// The image width in pixels
+        /// </summary>
         public int Width => DisplayBuffer.Width;
+
+        /// <summary>
+        /// The image height in pixels
+        /// </summary>
         public int Height => DisplayBuffer.Height;
 
+        /// <summary>
+        /// The image bits per pixel
+        /// </summary>
         public int BitsPerPixel { get; protected set; }
 
+        /// <summary>
+        /// Load an image from a file
+        /// </summary>
+        /// <param name="path">The file path</param>
+        /// <returns>A new image object</returns>
+        /// <exception cref="FileNotFoundException">Throws if the image file cannot be found</exception>
         public static Image LoadFromFile(string path)
         {
             var fi = new FileInfo(path);
             if (!fi.Exists) throw new FileNotFoundException();
 
-            using (var reader = fi.OpenRead())
-            {
-                return new Image(reader);
-            }
+            using var reader = fi.OpenRead();
+            return new Image(reader);
         }
 
+        /// <summary>
+        /// Load an image from a resource
+        /// </summary>
+        /// <param name="name">The resource name</param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException">Throws if the resource cannot be found</exception>
         public static Image LoadFromResource(string name)
         {
             // time to go hunting based on most likely
@@ -41,12 +67,11 @@ namespace Meadow.Foundation.Graphics
                 return new Image(System.Reflection.Assembly.GetCallingAssembly().GetManifestResourceStream(found2));
             }
 
-            throw new FileNotFoundException("Requested resource not found");
+            throw new ArgumentException("Requested resource not found");
         }
 
         private Image(Stream source)
-        {
-            // determine type
+        {   // determine type
             var buffer = new byte[2];
 
             var header = source.Read(buffer, 0, 2);

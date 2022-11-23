@@ -24,24 +24,27 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
     public class NmeaSentenceProcessor
     {
         /// <summary>
-        /// NMEA decoders available to the GPS.
+        /// NMEA decoders available to the GPS
         /// </summary>
         private readonly Dictionary<string, INmeaDecoder/*<IGnssResult>*/> decoders = new Dictionary<string, INmeaDecoder/*<IGnssResult>*/>();
 
+        // ToDo - remove this
+        /// <summary>
+        /// Enable / disable debug mode
+        /// </summary>
         public bool DebugMode { get; set; } = false;
 
         /// <summary>
-        /// Creates a new instance of the NmeaSentenceProcessor. 
+        /// Creates a new instance of the NmeaSentenceProcessor
         /// </summary>
         public NmeaSentenceProcessor()
-        {
-        }
+        { }
 
         /// <summary>
-        /// Add a new NMEA decoder to the GPS.
+        /// Add a new NMEA decoder to the GPS
         /// </summary>
-        /// <param name="decoder">NMEA decoder.</param>
-        public void RegisterDecoder(INmeaDecoder/*<IGnssResult>*/ decoder)
+        /// <param name="decoder">NMEA decoder</param>
+        public void RegisterDecoder(INmeaDecoder decoder)
         {
             Console.WriteLine($"Registering decoder: {decoder.Prefix}");
             if (decoders.ContainsKey(decoder.Prefix)) {
@@ -51,35 +54,37 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
         }
 
         /// <summary>
-        /// GPS message ready for processing.
+        /// GPS message ready for processing
         /// </summary>
         /// <remarks>
-        /// Unknown message types will be discarded.
+        /// Unknown message types will be discarded
         /// </remarks>
-        /// <param name="line">GPS text for processing.</param>
+        /// <param name="line">GPS text for processing</param>
         public void ProcessNmeaMessage(string line)
         {
             if (DebugMode) { Console.WriteLine("NmeaSentenceProcessor.ProcessNmeaMessage"); }
 
-            // create a NmeaSentence from the sentence string
             NmeaSentence sentence;
-            try {
+            try 
+            {
                 sentence = NmeaSentence.From(line);
-            } catch (Exception e) {
+            } 
+            catch (Exception e) 
+            {
                 if (DebugMode) { Console.WriteLine($"Could not parse message. {e.Message}"); }
                 return;
             }
 
-            //Console.WriteLine($"Sentence parsed: {sentence.ToString()}");
-
             INmeaDecoder decoder;
-            if (decoders.ContainsKey(sentence.Prefix)) {
+            if (decoders.ContainsKey(sentence.Prefix)) 
+            {
                 decoder = decoders[sentence.Prefix];
                 if (decoder != null) {
                     if (DebugMode) { Console.WriteLine($"Found appropriate decoder:{decoder.Prefix}"); }
                     decoder.Process(sentence);
                 }
-            } else {
+            } else 
+            {
                 if (DebugMode) { Console.WriteLine($"Could not find appropriate decoder for {sentence.Prefix}"); }
             }
         }

@@ -40,7 +40,7 @@ namespace Sensors.Temperature.MLX90640_Sample
             sensor.SetResolution(Mlx90640.Resolution.EighteenBit);
             Console.WriteLine($"Current resolution: {sensor.GetResolution()}");
 
-            sensor.SetRefreshRate(Mlx90640.RefreshRate.TwoHZ);
+            sensor.SetRefreshRate(Mlx90640.RefreshRate._2hz);
             Console.WriteLine($"Current frame rate: {sensor.GetRefreshRate()}");
 
             Console.WriteLine($"Broken Pixels: {sensor.Config.BrokenPixels.Count}");
@@ -91,8 +91,6 @@ namespace Sensors.Temperature.MLX90640_Sample
                     Console.WriteLine();
                 }
             }
-
-            return Task.CompletedTask;
         }
 
         //<!=SNOP=>

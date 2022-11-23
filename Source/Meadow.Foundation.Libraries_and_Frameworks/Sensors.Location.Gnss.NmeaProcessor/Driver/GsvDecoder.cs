@@ -15,13 +15,9 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
     /// </remarks>
     public class GsvDecoder : INmeaDecoder
     {
-        // Note this is commented out so we don't pay the (trivial) price of the if() check. :)
-        //protected bool DebugMode { get; set; } = false;
-
         /// <summary>
         /// Event raised when valid GSV data is received.
         /// </summary>
-        //public event EventHandler<Satellite[]> SatellitesInViewReceived = delegate { };
         public event EventHandler<SatellitesInView> SatellitesInViewReceived = delegate { };
 
         /// <summary>
@@ -35,12 +31,9 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
         /// </summary>
         private int _totalSentences = -1;
 
-        //private int _totalNumberOfSatellites = 0;
-
         /// <summary>
         /// List of satellites.
         /// </summary>
-        //protected List<Satellite> _satelliteList;// = new Satellites();
         protected Satellite[] _satellites;
 
         /// <summary>
@@ -55,34 +48,27 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
         /// The lines of text from the GPS start with text such as $GPGGA, $GPGLL, $GPGSA etc.  The prefix
         /// is the start of the line (i.e. $GPCGA).
         /// </remarks>
-        public string Prefix {
-            get => "GSV";
-        }
+        public string Prefix => "GSV";
+        
 
         /// <summary>
         /// Get the friendly (human readable) name for the decoder.
         /// </summary>
-        public string Name {
-            get => "Satellites in view";
-        }
-
+        public string Name => "Satellites in view";
+        
         /// <summary>
         /// Process the message from the GPS.
         /// </summary>
-        /// <param name="data">String array of the elements of the message.</param>
+        /// <param name="sentence">String array of the elements of the message.</param>
         /// https://gpsd.gitlab.io/gpsd/NMEA.html#_gsv_satellites_in_view
         public void Process(NmeaSentence sentence)
         {
-            //if (DebugMode) { Console.WriteLine($"GSV Parser, currentSentence:{_currentSentence}, totalSentences:{_totalSentences}"); }
-
             // Sentence number, 1-9 of this GSV message within current sentence group
             int thisSentenceNumber;
             if (!int.TryParse(sentence.DataElements[1], out thisSentenceNumber)) {
                 //if (DebugMode) { Console.WriteLine("Could not parse sentence number"); }
                 return;
             }
-
-            //if (DebugMode) { Console.WriteLine($"thisSentenceNumber:{thisSentenceNumber}"); }
 
             // if it's the first time we've gotten a sentence in this sequence
             if (_currentSentence == 0) {
@@ -110,12 +96,11 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
 
                     // start our index
                     _currentSatelliteIndex = 0;
-
-                    //if (DebugMode) { Console.WriteLine($"Total number of sentences: {_totalSentences}"); }
                 }
             }
             // make sure we're getting these in order (BryanC note: i'm not sure this is necessary)
-            if (thisSentenceNumber == _currentSentence) {
+            if (thisSentenceNumber == _currentSentence) 
+            {
                 _currentSentence++;
 
                 int id, elevation, azimuth, signalToNoiseRatio;
@@ -124,35 +109,26 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
                 // for each satellite within the sentence
                 int currentSatIndex = 0;
                 int numberOfSatsInSentence = (sentence.DataElements.Count - 3) / 4;
-                //if (DebugMode) { Console.WriteLine($"# of satellites in this sentence: {numberOfSatsInSentence}"); }
+               
                 for ( var currentSatellite = 0; currentSatellite < numberOfSatsInSentence; currentSatellite++) {
-                    //if (DebugMode) { Console.WriteLine($"About to parse out satellite: {currentSatellite}"); }
-                    // calculate index (for each satellite)
+               
                     currentSatIndex = (currentSatellite * 4) + 3;
-
-                    //if (DebugMode) { Console.WriteLine($"Satellite index in sentence: {currentSatIndex}"); }
 
                     sat = new Satellite();
 
                     if (int.TryParse(sentence.DataElements[currentSatIndex + 0], out id)) {
                         sat.ID = id;
-                        //Console.WriteLine($"Sat ID: {sat.ID}");
                     }
                     if (int.TryParse(sentence.DataElements[currentSatIndex + 1], out elevation)) {
                         sat.Elevation = elevation;
-                        //Console.WriteLine($"Sat Elevation: {sat.Elevation}");
                     }
                     if (int.TryParse(sentence.DataElements[currentSatIndex + 2], out azimuth)) {
                         sat.Azimuth = azimuth;
-                        //Console.WriteLine($"Sat Azimuth: {sat.Azimuth}");
                     }
                     if (int.TryParse(sentence.DataElements[currentSatIndex + 3], out signalToNoiseRatio)) {
                         sat.SignalTolNoiseRatio = signalToNoiseRatio;
-                        //Console.WriteLine($"Sat SignalTolNoiseRatio: {sat.SignalTolNoiseRatio}");
                     }
 
-                    //if (DebugMode) { Console.WriteLine($"Adding satellite: {currentSatellite}, total satellite index: {_currentSatelliteIndex}"); }
-                    //this._satelliteList.Add(sat);
 
                     _satellites[_currentSatelliteIndex] = sat;
 
@@ -166,25 +142,19 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
                     }
                 }
 
-                // if we got them all
                 if (_currentSatelliteIndex == _satellites.Length) {
 
-                    //if (DebugMode) { Console.WriteLine("Done with satellites in this sentence."); }
                     SatellitesInViewReceived(this, new SatellitesInView(_satellites) { TalkerID = sentence.TalkerID });
                     CleanUp();
                 }
-            } else {
-                //if (DebugMode) { Console.WriteLine($"Why are we here?"); }
-                //
-                //  If the application gets here then there is a problem with
-                //  the sequencing of the sentences.  Throw away the data received
-                //  so far and reset to pick up a new sequence of sentences.
-                //
+            }
+            else
+            {
                 CleanUp();
             }
         }
 
-        protected void CleanUp()
+        void CleanUp()
         {
             _currentSentence = 0;
             _totalSentences = -1;

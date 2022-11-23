@@ -33,6 +33,9 @@ namespace Meadow.Foundation.Sensors.Radio.Rfid.Serial.Helpers
         /// </summary>
         public ISerialPort SerialPort { get; }
 
+        /// <summary>
+        /// Dispose
+        /// </summary>
         public void Dispose()
         {
             Stop();
@@ -84,6 +87,9 @@ namespace Meadow.Foundation.Sensors.Radio.Rfid.Serial.Helpers
         }
     }
 
+    /// <summary>
+    /// Polled Serial Data Recived Event Args class
+    /// </summary>
     public class PolledSerialDataReceivedEventArgs : EventArgs
     {
         /// <summary>
@@ -93,5 +99,10 @@ namespace Meadow.Foundation.Sensors.Radio.Rfid.Serial.Helpers
         public ISerialPort SerialPort { get; set; }
     }
 
+    /// <summary>
+    /// DataReceivedEventHandler
+    /// </summary>
+    /// <param name="sender">Sender object</param>
+    /// <param name="e">PolledSerialDataReceivedEventArgs event args</param>
     public delegate void DataReceivedEventHandler(object sender, PolledSerialDataReceivedEventArgs e);
 }

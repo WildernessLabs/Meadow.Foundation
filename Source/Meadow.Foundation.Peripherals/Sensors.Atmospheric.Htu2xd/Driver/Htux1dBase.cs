@@ -2,6 +2,7 @@
 using Meadow.Peripherals.Sensors;
 using Meadow.Units;
 using System;
+using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Atmospheric
 {
@@ -24,7 +25,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     /// Abstract HTDx1D base class for HTU21D and HTU31D
     /// </summary>
     public abstract class Htux1dBase :
-        ByteCommsSensorBase<(Meadow.Units.Temperature? Temperature, RelativeHumidity? Humidity)>,
+        ByteCommsSensorBase<(Units.Temperature? Temperature, RelativeHumidity? Humidity)>,
         ITemperatureSensor, IHumiditySensor
     {
         /// <summary>
@@ -84,5 +85,11 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             }
             base.RaiseEventsAndNotify(changeResult);
         }
+
+        async Task<Units.Temperature> ISamplingSensor<Units.Temperature>.Read()
+            => (await Read()).Temperature.Value;
+
+        async Task<RelativeHumidity> ISamplingSensor<RelativeHumidity>.Read()
+            => (await Read()).Humidity.Value;
     }
 }

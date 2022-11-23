@@ -98,7 +98,6 @@ namespace Meadow.Foundation.Sensors.Hid
         /// wait between readings. This value influences how often `*Updated`
         /// events are raised and `IObservable` consumers are notified.
         /// </param>
-        /// </summart>
         public void StartUpdating(TimeSpan? updateInterval)
         {
             // thread safety

@@ -10,7 +10,7 @@ namespace Sensors.Atmospheric.Bmp085_Sample
     {
         //<!=SNIP=>
 
-        Bmp085 sensor;
+        Bmp085? sensor;
 
         public override Task Initialize()
         {
@@ -47,6 +47,8 @@ namespace Sensors.Atmospheric.Bmp085_Sample
 
         public override async Task Run()
         {
+            if(sensor == null) { return; }
+
             var conditions = await sensor.Read();
             Console.WriteLine($"Temperature: {conditions.Temperature?.Celsius}°C, Pressure: {conditions.Pressure?.Pascal}Pa");
 

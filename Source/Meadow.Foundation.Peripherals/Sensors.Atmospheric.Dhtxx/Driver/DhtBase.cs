@@ -15,7 +15,14 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         ByteCommsSensorBase<(Units.Temperature? Temperature, RelativeHumidity? Humidity)>,
         ITemperatureSensor, IHumiditySensor
     {
+        /// <summary>
+        /// Raised when the temperature value changes
+        /// </summary>
         public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
+
+        /// <summary>
+        /// Raised when the humidity value changes
+        /// </summary>
         public event EventHandler<IChangeResult<RelativeHumidity>> HumidityUpdated = delegate { };
 
         private readonly BusType protocol;
@@ -32,14 +39,15 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         public RelativeHumidity? Humidity => Conditions.Humidity;
 
         /// <summary>
-        /// How last read went, <c>true</c> for success, <c>false</c> for failure
+        /// How last read went, true for success, false for failure
         /// </summary>
         public bool WasLastReadSuccessful { get; internal set; }
 
         /// <summary>
         /// Create a DHT sensor through I2C (Only DHT12)
         /// </summary>
-        /// <param name="i2cDevice">The I2C device used for communication.</param>
+        /// <param name="i2cBus">The I2C bus connected to the sensor</param>
+        /// <param name="address">The I2C address</param>
         public DhtBase(II2cBus i2cBus, byte address = (byte)Addresses.Default)
             : base(i2cBus, address, writeBufferSize: 8, readBufferSize: 6)
         {
@@ -77,8 +85,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         internal virtual void ReadDataI2c()
         {
-            Peripheral.Write(0x00);
-            Peripheral.Read(ReadBuffer.Span[0..5]);
+            Peripheral?.Write(0x00);
+            Peripheral?.Read(ReadBuffer.Span[0..5]);
 
             lastMeasurement = Environment.TickCount;
 
@@ -104,6 +112,10 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <returns>Temperature</returns>
         internal abstract float GetTemperature();
 
+        /// <summary>
+        /// Raise events for subcribers and notify of value changes
+        /// </summary>
+        /// <param name="changeResult">The updated sensor data</param>
         protected override void RaiseEventsAndNotify(IChangeResult<(Units.Temperature? Temperature, RelativeHumidity? Humidity)> changeResult)
         {
             if (changeResult.New.Temperature is { } temp) {
@@ -115,6 +127,10 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             base.RaiseEventsAndNotify(changeResult);
         }
 
+        /// <summary>
+        /// Reads data from the sensor
+        /// </summary>
+        /// <returns>The latest sensor reading</returns>
         protected override Task<(Units.Temperature? Temperature, RelativeHumidity? Humidity)> ReadSensor()
         {
             (Units.Temperature? Temperature, RelativeHumidity? Humidity) conditions;
@@ -133,5 +149,11 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
             return Task.FromResult(conditions);
         }
+
+        async Task<Units.Temperature> ISamplingSensor<Units.Temperature>.Read()
+            => (await Read()).Temperature.Value;
+
+        async Task<RelativeHumidity> ISamplingSensor<RelativeHumidity>.Read()
+            => (await Read()).Humidity.Value;
     }
 }

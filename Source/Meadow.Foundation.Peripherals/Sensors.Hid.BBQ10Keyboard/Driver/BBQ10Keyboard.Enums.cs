@@ -2,11 +2,26 @@
 {
     public partial class BBQ10Keyboard
     {
+        /// <summary>
+        /// The keyboard key state
+        /// </summary>
         public enum KeyState
         {
+            /// <summary>
+            /// Idle
+            /// </summary>
             StateIdle = 0,
+            /// <summary>
+            /// Pressed
+            /// </summary>
             StatePress,
+            /// <summary>
+            /// Long Pressed
+            /// </summary>
             StateLongPress,
+            /// <summary>
+            /// Released
+            /// </summary>
             StateRelease
         }
 

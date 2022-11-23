@@ -249,12 +249,12 @@ namespace Displays.Tft.ST7789_Sample
             graphics.Clear();
 
             graphics.DrawText(120, 0, "Left aligned", Color.Blue);
-            graphics.DrawText(120, 16, "Center aligned", Color.Green, ScaleFactor.X1, TextAlignment.Center);
-            graphics.DrawText(120, 32, "Right aligned", Color.Red, ScaleFactor.X1, TextAlignment.Right);
+            graphics.DrawText(120, 16, "Center aligned", Color.Green, ScaleFactor.X1, HorizontalAlignment.Center);
+            graphics.DrawText(120, 32, "Right aligned", Color.Red, ScaleFactor.X1, HorizontalAlignment.Right);
 
             graphics.DrawText(120, 64, "Left aligned", Color.Blue, ScaleFactor.X2);
-            graphics.DrawText(120, 96, "Center aligned", Color.Green, ScaleFactor.X2, TextAlignment.Center);
-            graphics.DrawText(120, 128, "Right aligned", Color.Red, ScaleFactor.X2, TextAlignment.Right);
+            graphics.DrawText(120, 96, "Center aligned", Color.Green, ScaleFactor.X2, HorizontalAlignment.Center);
+            graphics.DrawText(120, 128, "Right aligned", Color.Red, ScaleFactor.X2, HorizontalAlignment.Right);
 
             graphics.Show();
         }

@@ -41,10 +41,9 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         public bool IsDisplayInverted { get; private set; } = false;
 
-        protected IDigitalOutputPort dataCommandPort;
-        protected IDigitalOutputPort resetPort;
-        protected IDigitalOutputPort chipSelectPort;
-        protected ISpiPeripheral spiPeripheral;
+        readonly IDigitalOutputPort dataCommandPort;
+        readonly IDigitalOutputPort resetPort;
+        readonly ISpiPeripheral spiPeripheral;
 
         /// <summary>
         /// Buffer to hold display data
@@ -86,7 +85,6 @@ namespace Meadow.Foundation.Displays
             resetPort.State = true;
 
             this.dataCommandPort = dataCommandPort;
-            this.chipSelectPort = chipSelectPort;
             this.resetPort = resetPort;
 
             spiPeripheral = new SpiPeripheral(spiBus, chipSelectPort);
@@ -166,11 +164,22 @@ namespace Meadow.Foundation.Displays
             DrawPixel(x, y, color.Color1bpp);
         }
 
+        /// <summary>
+        /// Update the display
+        /// </summary>
         public void Show()
         {
             spiPeripheral.Write(imageBuffer.Buffer);
         }
 
+        /// <summary>
+        /// Update a region of the display 
+        /// Currently always does a full screen update for this display
+        /// </summary>
+        /// <param name="left">The left position in pixels</param>
+        /// <param name="top">The top position in pixels</param>
+        /// <param name="right">The right position in pixels</param>
+        /// <param name="bottom">The bottom position in pixels</param>
         public void Show(int left, int top, int right, int bottom)
         {   //ToDo implement partial screen updates for PCD8544
             Show();
@@ -190,18 +199,37 @@ namespace Meadow.Foundation.Displays
             dataCommandPort.State = true;
         }
 
-        public void Fill(Color clearColor, bool updateDisplay = false)
+        /// <summary>
+        /// Fill with color 
+        /// </summary>
+        /// <param name="fillColor">color - converted to on/off</param>
+        /// <param name="updateDisplay">should refresh display</param>
+        public void Fill(Color fillColor, bool updateDisplay = false)
         {
-            imageBuffer.Clear(clearColor.Color1bpp);
+            imageBuffer.Clear(fillColor.Color1bpp);
 
             if(updateDisplay) { Show(); }
         }
 
-        public void Fill(int x, int y, int width, int height, Color color)
+        /// <summary>
+        /// Fill region with color
+        /// </summary>
+        /// <param name="x">x position</param>
+        /// <param name="y">y position</param>
+        /// <param name="width">width of region</param>
+        /// <param name="height">height of region</param>
+        /// <param name="fillColor">color - converted to on/off</param>
+        public void Fill(int x, int y, int width, int height, Color fillColor)
         {
-            imageBuffer.Fill(x, y, width, height, color);
+            imageBuffer.Fill(x, y, width, height, fillColor);
         }
 
+        /// <summary>
+        /// Draw buffer at location
+        /// </summary>
+        /// <param name="x">x position in pixels</param>
+        /// <param name="y">y position in pixels</param>
+        /// <param name="displayBuffer">buffer to draw</param>
         public void WriteBuffer(int x, int y, IPixelBuffer displayBuffer)
         {
             imageBuffer.WriteBuffer(x, y, displayBuffer);

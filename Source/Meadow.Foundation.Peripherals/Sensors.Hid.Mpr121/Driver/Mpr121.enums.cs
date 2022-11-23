@@ -4,7 +4,7 @@ namespace Meadow.Foundation.Sensors.Hid
     public partial class Mpr121
     {
         /// <summary>
-        /// Valid addresses for the sensor.
+        /// Valid addresses for the sensor
         /// </summary>
         public enum Addresses : byte
         {
@@ -23,20 +23,59 @@ namespace Meadow.Foundation.Sensors.Hid
         /// </summary>
         public enum Channels
         {
+            /// <summary>
+            /// Channel 0
+            /// </summary>
             Channel00 = 0,
+            /// <summary>
+            /// Channel 1
+            /// </summary>
             Channel01,
+            /// <summary>
+            /// Channel 2
+            /// </summary>
             Channel02,
+            /// <summary>
+            /// Channel 3
+            /// </summary>
             Channel03,
+            /// <summary>
+            /// Channel 4
+            /// </summary>
             Channel04,
+            /// <summary>
+            /// Channel 5
+            /// </summary>
             Channel05,
+            /// <summary>
+            /// Channel 6
+            /// </summary>
             Channel06,
+            /// <summary>
+            /// Channel 7
+            /// </summary>
             Channel07,
+            /// <summary>
+            /// Channel 8
+            /// </summary>
             Channel08,
+            /// <summary>
+            /// Channel 9 
+            /// </summary>
             Channel09,
+            /// <summary>
+            /// Channel 10
+            /// </summary>
             Channel10,
+            /// <summary>
+            /// Channel 11
+            /// </summary>
             Channel11
         }
 
+        /// <summary>
+        /// MPR121 Configuration class
+        /// </summary>
         public class Mpr121Configuration
         {
             /// <summary>

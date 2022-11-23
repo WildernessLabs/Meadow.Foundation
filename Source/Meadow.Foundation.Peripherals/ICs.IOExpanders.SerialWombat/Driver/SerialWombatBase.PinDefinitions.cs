@@ -6,17 +6,32 @@ namespace Meadow.Foundation.ICs.IOExpanders
 {
     public abstract partial class SerialWombatBase
     {
+        /// <summary>
+        /// Serial Wombat pin definition class
+        /// </summary>
         public class PinDefinitions : IPinDefinitions
         {
+            /// <summary>
+            /// Analog-digital converter precision
+            /// </summary>
             public const int ADCPrecisionBits = 12;
 
+            /// <summary>
+            /// Collection of pins
+            /// </summary>
             public IList<IPin> AllPins { get; } = new List<IPin>();
 
+            /// <summary>
+            /// Create a new PinDefinitions object
+            /// </summary>
             public PinDefinitions()
             {
                 InitAllPins();
             }
 
+            /// <summary>
+            /// Pin WP0
+            /// </summary>
             public readonly IPin WP0 = new Pin(
                 "WP0",
                 (byte)0x00,
@@ -27,6 +42,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 }
             );
 
+            /// <summary>
+            /// Pin WP1
+            /// </summary>
             public readonly IPin WP1 = new Pin(
                 "WP1",
                 (byte)0x01,
@@ -37,6 +55,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 }
             );
 
+            /// <summary>
+            /// Pin WP2
+            /// </summary>
             public readonly IPin WP2 = new Pin(
                 "WP2",
                 (byte)0x02,
@@ -47,6 +68,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 }
             );
 
+            /// <summary>
+            /// Pin WP5
+            /// </summary>
             public readonly IPin WP5 = new Pin(
                 "WP5",
                 (byte)0x05,
@@ -55,6 +79,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 }
             );
 
+            /// <summary>
+            /// Pin WP6
+            /// </summary>
             public readonly IPin WP6 = new Pin(
                 "WP6",
                 (byte)0x06,
@@ -63,6 +90,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 }
             );
 
+            /// <summary>
+            /// Pin WP7
+            /// </summary>
             public readonly IPin WP7 = new Pin(
                 "WP7",
                 (byte)0x07,
@@ -72,6 +102,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 }
             );
 
+            /// <summary>
+            /// Pin WP8
+            /// </summary>
             public readonly IPin WP8 = new Pin(
                 "WP8",
                 (byte)0x08,
@@ -80,6 +113,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 }
             );
 
+            /// <summary>
+            /// Pin WP9
+            /// </summary>
             public readonly IPin WP9 = new Pin(
                 "WP9",
                 (byte)0x09,
@@ -89,6 +125,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 }
             );
 
+            /// <summary>
+            /// Pin WP10
+            /// </summary>
             public readonly IPin WP10 = new Pin(
                 "WP10",
                 (byte)0x0a,
@@ -98,6 +137,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 }
             );
 
+            /// <summary>
+            /// Pin WP11
+            /// </summary>
             public readonly IPin WP11 = new Pin(
                 "WP11",
                 (byte)0x0b,
@@ -107,6 +149,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 }
             );
 
+            /// <summary>
+            /// Pin WP12
+            /// </summary>
             public readonly IPin WP12 = new Pin(
                 "WP12",
                 (byte)0x0c,
@@ -116,6 +161,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 }
             );
 
+            /// <summary>
+            /// Pin WP13
+            /// </summary>
             public readonly IPin WP13 = new Pin(
                 "WP13",
                 (byte)0x0d,
@@ -125,6 +173,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 }
             );
 
+            /// <summary>
+            /// Pin WP14
+            /// </summary>
             public readonly IPin WP14 = new Pin(
                 "WP14",
                 (byte)0x0e,
@@ -134,6 +185,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 }
             );
 
+            /// <summary>
+            /// Pin WP15
+            /// </summary>
             public readonly IPin WP15 = new Pin(
                 "WP15",
                 (byte)0x0f,
@@ -143,6 +197,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 }
             );
 
+            /// <summary>
+            /// Pin WP16
+            /// </summary>
             public readonly IPin WP16 = new Pin(
                 "WP16",
                 (byte)0x10,
@@ -153,6 +210,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 }
             );
 
+            /// <summary>
+            /// Pin WP17
+            /// </summary>
             public readonly IPin WP17 = new Pin(
                 "WP17",
                 (byte)0x11,
@@ -163,6 +223,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 }
             );
 
+            /// <summary>
+            /// Pin WP18
+            /// </summary>
             public readonly IPin WP18 = new Pin(
                 "WP18",
                 (byte)0x12,
@@ -173,6 +236,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 }
             );
 
+            /// <summary>
+            /// Pin WP19
+            /// </summary>
             public readonly IPin WP19 = new Pin(
                 "WP19",
                 (byte)0x13,
@@ -183,6 +249,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 }
             );
 
+            /// <summary>
+            /// Pin Initialize all serial wombat pins
+            /// </summary>
             protected void InitAllPins()
             {
                 // add all our pins to the collection
@@ -206,6 +275,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 AllPins.Add(this.WP19);
             }
 
+            /// <summary>
+            /// Get Enumerator
+            /// </summary>
             public IEnumerator<IPin> GetEnumerator() => AllPins.GetEnumerator();
 
             IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();

@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Threading;
-using Meadow.Devices;
 using Meadow.Hardware;
 using Meadow.Utilities;
 
@@ -16,6 +14,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
     /// </remarks>
     public partial class x74595 : IDigitalOutputController
     {
+        /// <summary>
+        /// The pin definitions
+        /// </summary>
         public PinDefinitions Pins { get; } = new PinDefinitions();
 
         /// <summary>
@@ -41,10 +42,12 @@ namespace Meadow.Foundation.ICs.IOExpanders
         }
 
         /// <summary>
-        /// Constructor a ShiftRegister 74595 object.
+        /// Creates a new ShiftRegister 74595 object
         /// </summary>
+        /// <param name="device">The device conneced to the shift register</param>
         /// <param name="pins">Number of pins in the shift register (should be a multiple of 8 pins).</param>
         /// <param name="spiBus">SpiBus object</param>
+        /// <param name="pinChipSelect">The chip select pin</param>
         public x74595(IMeadowDevice device, ISpiBus spiBus, IPin pinChipSelect, int pins = 8)
         {
            // if ((pins > 0) && ((pins % 8) == 0))
@@ -64,10 +67,11 @@ namespace Meadow.Foundation.ICs.IOExpanders
         }
 
         /// <summary>
-        /// Creates a new DigitalOutputPort using the specified pin and initial state.
+        /// Creates a new DigitalOutputPort using the specified pin and initial state
         /// </summary>
-        /// <param name="pin">The pin number to create the port on.</param>
-        /// <param name="initialState">Whether the pin is initially high or low.</param>
+        /// <param name="pin">The pin number to create the port on</param>
+        /// <param name="initialState">Whether the pin is initially high or low</param>
+        /// <param name="outputType">The port output type</param>
         /// <returns></returns>
         public IDigitalOutputPort CreateDigitalOutputPort(IPin pin, bool initialState, OutputType outputType)
         {
@@ -80,6 +84,10 @@ namespace Meadow.Foundation.ICs.IOExpanders
             throw new Exception("Pin is out of range");
         }
 
+        /// <summary>
+        /// Clear the shift register buffer
+        /// </summary>
+        /// <param name="update">If true, send changes to the shift register</param>
         public void Clear(bool update = true)
         {
             latchData = new byte[numberOfChips];
@@ -117,6 +125,11 @@ namespace Meadow.Foundation.ICs.IOExpanders
             return Pins.AllPins.Contains(pin);
         }
 
+        /// <summary>
+        /// Get pin from name
+        /// </summary>
+        /// <param name="pinName">The pin name</param>
+        /// <returns>An IPin object</returns>
         public IPin GetPin(string pinName)
         {
             return Pins.AllPins.FirstOrDefault(p => p.Name == pinName || p.Key.ToString() == p.Name);

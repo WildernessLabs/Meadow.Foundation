@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Meadow.Foundation.Sensors.Atmospheric
+﻿namespace Meadow.Foundation.Sensors.Atmospheric
 {
     public partial class Si70xx
     {
@@ -50,10 +48,25 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         public enum DeviceType
         {
+            /// <summary>
+            /// Unknown device
+            /// </summary>
             Unknown = 0x00,
+            /// <summary>
+            /// SI7013
+            /// </summary>
             Si7013 = 0x0d,
+            /// <summary>
+            /// SI7020
+            /// </summary>
             Si7020 = 0x14,
+            /// <summary>
+            /// SI7021
+            /// </summary>
             Si7021 = 0x15,
+            /// <summary>
+            /// Engineering sample
+            /// </summary>
             EngineeringSample = 0xff
         }
 
@@ -62,10 +75,21 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         public enum SensorResolution : byte
         {
-            // DEV NOTE: if this is confusing, it's because the resolution bits are D7 and D0 in the register (they are not together)
+            /// <summary>
+            /// Temperature 14 bits, Humidity 12 bits
+            /// </summary>
             TEMP14_HUM12 = 0x00,
+            /// <summary>
+            /// Temperature 12 bits, Humidity 8 bits
+            /// </summary>
             TEMP12_HUM8 = 0x01,
+            /// <summary>
+            /// Temperature 13 bits, Humidity 10 bits
+            /// </summary>
             TEMP13_HUM10 = 0x80,
+            /// <summary>
+            /// Temperature 11 bits, Humidity 11 bits
+            /// </summary>
             TEMP11_HUM11 = 0x81,
         }
     }

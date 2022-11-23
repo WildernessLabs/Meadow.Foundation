@@ -34,17 +34,16 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// SPI peripheral object
         /// </summary>
-        protected ISpiPeripheral spiPerihperal;
+        ISpiPeripheral spiPerihperal;
 
-        protected IDigitalOutputPort dataCommandPort;
-        protected IDigitalOutputPort resetPort;
-        protected IDigitalOutputPort chipSelectPort;
+        IDigitalOutputPort dataCommandPort;
+        IDigitalOutputPort resetPort;
 
-        protected const bool Data = true;
-        protected const bool Command = false;
+        const bool Data = true;
+        const bool Command = false;
 
-        protected Buffer1bpp imageBuffer;
-        protected byte[] pageBuffer;
+        Buffer1bpp imageBuffer;
+        byte[] pageBuffer;
 
         /// <summary>
         /// Create a new ST7565 object
@@ -79,7 +78,6 @@ namespace Meadow.Foundation.Displays
             int width = 128, int height = 64)
         {
             this.dataCommandPort = dataCommandPort;
-            this.chipSelectPort = chipSelectPort;
             this.resetPort = resetPort;
 
             spiPerihperal = new SpiPeripheral(spiBus, chipSelectPort);
@@ -105,6 +103,9 @@ namespace Meadow.Foundation.Displays
             }
         }
 
+        /// <summary>
+        /// Set display into power saving mode
+        /// </summary>
         public void PowerSaveMode()
         {
             SendCommand(DisplayCommand.DisplayOff);
@@ -140,15 +141,14 @@ namespace Meadow.Foundation.Displays
             SendCommand(DisplayCommand.AllPixelsOff);
         }
 
-        public const uint ContrastHigh = 34;
-        public const uint ContrastMedium = 24;
-        public const uint ContrastLow = 15;
-
-        // 0-63
-        public void SetContrast(uint contrast)
+        /// <summary>
+        /// Set the display contrast 
+        /// </summary>
+        /// <param name="contrast">The contrast value (0-63)</param>
+        public void SetContrast(byte contrast)
         {
             SendCommand(DisplayCommand.ContrastRegister);
-            SendCommand((byte)((int)(DisplayCommand.ContrastValue) | (contrast & 0x3f)));
+            SendCommand((byte)((int)DisplayCommand.ContrastValue | (contrast & 0x3f)));
         }
 
         /// <summary>
@@ -175,8 +175,8 @@ namespace Meadow.Foundation.Displays
             spiPerihperal.Write(commands);
         }
 
-        protected const int StartColumnOffset = 0; // 1;
-        protected const int PageSize = 128;
+        const int StartColumnOffset = 0;
+        const int PageSize = 128;
 
         /// <summary>
         /// Send the internal pixel buffer to display
@@ -197,6 +197,13 @@ namespace Meadow.Foundation.Displays
             }
         }
 
+        /// <summary>
+        /// Update a region of the display from the offscreen buffer
+        /// </summary>
+        /// <param name="left">Left bounds in pixels</param>
+        /// <param name="top">Top bounds in pixels</param>
+        /// <param name="right">Right bounds in pixels</param>
+        /// <param name="bottom">Bottom bounds in pixels</param>
         public void Show(int left, int top, int right, int bottom)
         {
             const int pageHeight = 8;
@@ -327,6 +334,11 @@ namespace Meadow.Foundation.Displays
             SendCommand(0x2e);
         }
 
+        /// <summary>
+        /// Fill display buffer with a color
+        /// </summary>
+        /// <param name="clearColor">The fill color</param>
+        /// <param name="updateDisplay">If true, update display</param>
         public void Fill(Color clearColor, bool updateDisplay = false)
         {
             imageBuffer.Clear(clearColor.Color1bpp);
@@ -334,11 +346,25 @@ namespace Meadow.Foundation.Displays
             if (updateDisplay) Show();
         }
 
+        /// <summary>
+        /// Fill with a color
+        /// </summary>
+        /// <param name="x">X start position in pixels</param>
+        /// <param name="y">Y start position in pixels</param>
+        /// <param name="width">Width in pixels</param>
+        /// <param name="height">Height in pixels</param>
+        /// <param name="color">The fill color</param>
         public void Fill(int x, int y, int width, int height, Color color)
         {
             imageBuffer.Fill(x, y, width, height, color);
         }
 
+        /// <summary>
+        /// Write a buffer to the display offscreen buffer
+        /// </summary>
+        /// <param name="x">The x position in pixels to write the buffer</param>
+        /// <param name="y">The y position in pixels to write the buffer</param>
+        /// <param name="displayBuffer">The buffer to write</param>
         public void WriteBuffer(int x, int y, IPixelBuffer displayBuffer)
         {
             imageBuffer.WriteBuffer(x, y, displayBuffer);

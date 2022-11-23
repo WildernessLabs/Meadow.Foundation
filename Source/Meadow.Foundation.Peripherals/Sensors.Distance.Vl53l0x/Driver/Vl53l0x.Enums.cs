@@ -20,14 +20,7 @@
             Default = Address_0x29
         }
 
-        public enum UnitType
-        {
-            mm,
-            cm,
-            inches
-        }
-
-        protected enum Register:byte
+        enum Register : byte
         {
             RangeStart = 0x00,
             SystemThreahHigh = 0x0C,
@@ -89,7 +82,7 @@
             AlgoPhasecalConfigTimeout = 0x30,
         }
 
-        public enum VcselPeriodRange : int
+        enum VcselPeriodRange : int
         {
             Pri = 0,
             Final = 1,

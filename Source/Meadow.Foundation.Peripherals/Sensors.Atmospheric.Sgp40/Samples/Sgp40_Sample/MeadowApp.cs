@@ -10,11 +10,7 @@ namespace BasicSensors.Atmospheric.SI7021_Sample
     {
         //<!=SNIP=>
 
-        Sgp40 sensor;
-
-        public MeadowApp()
-        {
-        }
+        Sgp40? sensor;
 
         public override Task Initialize()
         {
@@ -58,11 +54,13 @@ namespace BasicSensors.Atmospheric.SI7021_Sample
         {
             await ReadConditions();
 
-            sensor.StartUpdating(TimeSpan.FromSeconds(1));
+            sensor?.StartUpdating(TimeSpan.FromSeconds(1));
         }
 
         async Task ReadConditions()
         {
+            if(sensor == null) { return; }
+
             var result = await sensor.Read();
             Resolver.Log.Info("Initial Readings:");
             Resolver.Log.Info($"  Temperature: {result}");

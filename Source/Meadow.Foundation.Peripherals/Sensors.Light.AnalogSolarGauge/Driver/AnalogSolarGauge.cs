@@ -9,19 +9,26 @@ using VU = Meadow.Units.Voltage.UnitType;
 namespace Meadow.Foundation.Sensors.Light
 {
     /// <summary>
-    /// Driver to measure solar panel input. 
+    /// Driver to measure solar panel input
     /// </summary>
     public class AnalogSolarGauge : SensorBase<float>,
-        ISolarIntensityGauge, ISensor
+        ISolarIntensityGauge
     {
-        //==== events
+        /// <summary>
+        /// Raised when the solar intensity changes
+        /// </summary>
         public event EventHandler<IChangeResult<float>> SolarIntensityUpdated = delegate { };
 
-        //==== internals
-        protected IAnalogInputPort analogInputPort;
+        IAnalogInputPort analogInputPort;
 
-        //==== properties
+        /// <summary>
+        /// Minimum voltage reference
+        /// </summary>
         public Voltage MinVoltageReference { get; protected set; } = new Voltage(0, VU.Volts);
+
+        /// <summary>
+        /// Maximum voltage reference
+        /// </summary>
         public Voltage MaxVoltageReference { get; protected set; } = new Voltage(3.3, VU.Volts);
 
         /// <summary>
@@ -33,17 +40,15 @@ namespace Meadow.Foundation.Sensors.Light
         /// <summary>
         /// Creates a new instance of an analog solar intensity driver.
         /// </summary>
-        /// <param name="device">The `IAnalogInputController` to create the port on.</param>
-        /// <param name="analogPin">Analog pin the temperature sensor is connected to.</param>
-        /// <param name="minVoltageReference">The minimum voltage expected when the solar panel isn't receiving light. Default is 0.</param>
-        /// <param name="maxVoltageReference">The maxmimu voltage expected when the solar panel is in full sun. Default is 3.3V.</param>
+        /// <param name="device">The `IAnalogInputController` to create the port on</param>
+        /// <param name="analogPin">Analog pin the temperature sensor is connected to</param>
+        /// <param name="minVoltageReference">The minimum voltage expected when the solar panel isn't receiving light - Default is 0</param>
+        /// <param name="maxVoltageReference">The maxmimu voltage expected when the solar panel is in full sun. Default is 3.3V</param>
         /// <param name="updateInterval">The time to wait
         /// between sets of sample readings. This value determines how often
-        /// `Changed` events are raised and `IObservable` consumers are notified.</param>
-        /// <param name="sampleCount">How many samples to take during a given
-        /// reading. These are automatically averaged to reduce noise.</param>
-        /// <param name="sampleInterval">The time,
-        /// to wait in between samples during a reading.</param>
+        /// `Changed` events are raised and `IObservable` consumers are notified</param>
+        /// <param name="sampleCount">How many samples to take during a given reading. These are automatically averaged to reduce noise</param>
+        /// <param name="sampleInterval">The time to wait in between samples during a reading</param>
         public AnalogSolarGauge(
             IAnalogInputController device, 
             IPin analogPin,
@@ -71,15 +76,18 @@ namespace Meadow.Foundation.Sensors.Light
             IAnalogInputPort analogIn,
             Voltage? minVoltageReference = null, Voltage? maxVoltageReference = null)
         {
-            if (minVoltageReference is { } minV) { this.MinVoltageReference = minV; }
-            if (maxVoltageReference is { } maxV) { this.MaxVoltageReference = maxV; }
+            if (minVoltageReference is { } minV) { MinVoltageReference = minV; }
+            if (maxVoltageReference is { } maxV) { MaxVoltageReference = maxV; }
 
             // TODO: input port validation if any (is it constructed all right?)
-            this.analogInputPort = analogIn;
-            Init();
+            analogInputPort = analogIn;
+            Initialize();
         }
 
-        protected void Init()
+        /// <summary>
+        /// Initialize the sensor
+        /// </summary>
+        protected void Initialize()
         {
             // wire up our analog input observer
             var observer = IAnalogInputPort.CreateObserver(
@@ -98,6 +106,10 @@ namespace Meadow.Foundation.Sensors.Light
             analogInputPort.Subscribe(observer);
         }
 
+        /// <summary>
+        /// Reads data from the sensor
+        /// </summary>
+        /// <returns>The latest sensor reading</returns>
         protected override async Task<float> ReadSensor()
         {
             // read the voltage
@@ -136,6 +148,10 @@ namespace Meadow.Foundation.Sensors.Light
             analogInputPort.StopUpdating();
         }
 
+        /// <summary>
+        /// Raise events for subcribers and notify of value changes
+        /// </summary>
+        /// <param name="changeResult">The updated sensor data</param>
         protected override void RaiseEventsAndNotify(IChangeResult<float> changeResult)
         {
             this.SolarIntensityUpdated?.Invoke(this, changeResult);

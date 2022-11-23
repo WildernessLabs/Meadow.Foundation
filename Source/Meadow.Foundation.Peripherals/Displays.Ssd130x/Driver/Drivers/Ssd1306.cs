@@ -21,8 +21,7 @@ namespace Meadow.Foundation.Displays
             DisplayType displayType = DisplayType.OLED128x64):
             this(spiBus, device.CreateDigitalOutputPort(chipSelectPin, false), device.CreateDigitalOutputPort(dcPin, true),
                 device.CreateDigitalOutputPort(resetPin, false), displayType)
-        {
-        }
+        { }
 
         /// <summary>
         /// Create a new Ssd1306 display object
@@ -70,7 +69,7 @@ namespace Meadow.Foundation.Displays
 
         private void InitSSD1306(DisplayType displayType)
         {
-            int width = 0, height = 0, xOffset, yOffset;
+            int width = 0, height = 0; //, xOffset, yOffset;
 
             switch (displayType)
             {
@@ -82,8 +81,8 @@ namespace Meadow.Foundation.Displays
                 case DisplayType.OLED64x48:
                     width = 128;
                     height = 64;
-                    xOffset = 32;
-                    yOffset = 16;
+                    //xOffset = 32;
+                    //yOffset = 16;
                     SendCommands(Oled128x64SetupSequence);
                     break;
                 case DisplayType.OLED72x40:

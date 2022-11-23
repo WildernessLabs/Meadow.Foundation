@@ -3,7 +3,7 @@ namespace Meadow.Foundation.Sensors.Motion
 {
     public partial class Apds9960
     {
-        public static class OperatingModes
+        static class OperatingModes
         {
             /* Acceptable parameters for setMode */
             public const byte POWER = 0;

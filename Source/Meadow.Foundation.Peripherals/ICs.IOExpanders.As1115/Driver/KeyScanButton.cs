@@ -3,10 +3,19 @@ using System;
 
 namespace Meadow.Foundation.ICs.IOExpanders
 {
+    /// <summary>
+    /// Represents a AS1115 key scan button
+    /// </summary>
     public class KeyScanButton : IButton
     {
+        /// <summary>
+        /// Get or set the long click threshold
+        /// </summary>
         public TimeSpan LongClickedThreshold { get; set; }
 
+        /// <summary>
+        /// Get current button state
+        /// </summary>
         public bool State { get; private set; }
 
         /// <summary>

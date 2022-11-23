@@ -2,16 +2,24 @@
 
 namespace Meadow.Foundation.Displays.TextDisplayMenu.InputTypes
 {
+    /// <summary>
+    /// Text display menu Date input type
+    /// </summary>
     public class Date : InputBase
     {
         int[] dateParts;
         byte position = 0;
 
+        /// <summary>
+        /// Raised when the date value changes
+        /// </summary>
         public override event ValueChangedHandler ValueChanged;
 
+        /// <summary>
+        /// Create a new Date input object
+        /// </summary>
         public Date()
-        {
-        }
+        { }
 
         string DateDisplay
         {
@@ -52,6 +60,10 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu.InputTypes
             UpdateInputLine(DateDisplay);
         }
 
+        /// <summary>
+        /// Send a Previous input to the item
+        /// </summary>
+        /// <returns>true</returns>
         public override bool Previous()
         {
             int max;
@@ -75,7 +87,10 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu.InputTypes
             return true;
         }
 
-
+        /// <summary>
+        /// Send a Next input to the item
+        /// </summary>
+        /// <returns>true</returns>
         public override bool Next()
         {
             int min = 0;
@@ -85,6 +100,10 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu.InputTypes
             return true;
         }
 
+        /// <summary>
+        /// Send a Select input to the item
+        /// </summary>
+        /// <returns>true</returns>
         public override bool Select()
         {
             if (position < dateParts.Length - 1)
@@ -101,6 +120,10 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu.InputTypes
             return true;
         }
 
+        /// <summary>
+        /// Parse the current value
+        /// </summary>
+        /// <param name="value">The value to parse as a string</param>
         protected override void ParseValue(object value)
         {
             if (value == null || value.ToString() == string.Empty) return;

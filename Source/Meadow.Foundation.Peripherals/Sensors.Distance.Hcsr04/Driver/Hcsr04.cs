@@ -8,11 +8,10 @@ using System.Threading.Tasks;
 namespace Meadow.Foundation.Sensors.Distance
 {
     /// <summary>
-    /// HCSR04 Distance Sensor
+    /// HCSR04 Distance Sensor - driver not complete
     /// </summary>
     public class Hcsr04 : SensorBase<Length>, IRangeFinder
     {
-
         /// <summary>
         /// Raised when an received a rebound trigger signal
         /// </summary>
@@ -34,42 +33,45 @@ namespace Meadow.Foundation.Sensors.Distance
         public double MaximumDistance => 400;
 
         /// <summary>
-        /// Trigger Pin.
+        /// Port for trigger Pin
         /// </summary>
         protected IDigitalOutputPort triggerPort;
 
         /// <summary>
-        /// Echo Pin.
+        /// Port for echo Pin
         /// </summary>
         protected IDigitalInputPort echoPort;
 
-        protected long tickStart;
+        long tickStart;
 
         /// <summary>
         /// Create a new HCSR04 object with an IO Device
         /// </summary>
-        /// <param name="triggerPin"></param>
-        /// <param name="echoPin"></param>
+        /// <param name="device">The device conneced to the sensor</param>
+        /// <param name="triggerPin">The trigger pin</param>
+        /// <param name="echoPin">The echo pin</param>
         public Hcsr04(IDigitalInputOutputController device, IPin triggerPin, IPin echoPin) :
             this(device.CreateDigitalOutputPort(triggerPin, false),
                   device.CreateDigitalInputPort(echoPin, InterruptMode.EdgeBoth))
         { }
 
         /// <summary>
+        /// Create a new HCSR04 object
+        /// </summary>
+        protected Hcsr04()
+        { }
+
+        /// <summary>
         /// Create a new HCSR04 object 
         /// </summary>
-        /// <param name="triggerPort"></param>
-        /// <param name="echoPort"></param>
+        /// <param name="triggerPort">The port for the trigger pin</param>
+        /// <param name="echoPort">The port for the echo pin</param>
         public Hcsr04(IDigitalOutputPort triggerPort, IDigitalInputPort echoPort)
         {
             this.triggerPort = triggerPort;
 
             this.echoPort = echoPort;
             this.echoPort.Changed += OnEchoPortChanged;
-        }
-
-        protected Hcsr04()
-        {
         }
 
         /// <summary>
@@ -121,16 +123,41 @@ namespace Meadow.Foundation.Sensors.Distance
             RaiseEventsAndNotify(result);
         }
 
+        /// <summary>
+        /// Reads data from the sensor
+        /// </summary>
+        /// <returns>The latest sensor reading</returns>
         protected override Task<Length> ReadSensor()
         {
             // TODO:
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Raise events for subcribers and notify of value changes
+        /// </summary>
+        /// <param name="changeResult">The updated sensor data</param>
         protected override void RaiseEventsAndNotify(IChangeResult<Length> changeResult)
         {
             DistanceUpdated?.Invoke(this, changeResult);
             base.RaiseEventsAndNotify(changeResult);
+        }
+
+        /// <summary>
+        /// Starts continuously sampling the sensor
+        /// </summary>
+        public void StartUpdating(TimeSpan? updateInterval = null)
+        {
+            //ToDo
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Stops sampling the sensor
+        /// </summary>
+        public void StopUpdating()
+        {
+            throw new NotImplementedException();
         }
     }
 }

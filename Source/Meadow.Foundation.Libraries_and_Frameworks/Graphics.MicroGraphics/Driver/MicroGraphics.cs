@@ -91,6 +91,7 @@ namespace Meadow.Foundation.Graphics
         /// Create a new MicroGraphics instance from a pixel buffer instance
         /// </summary>
         /// <param name="pixelBuffer">The pixel buffer</param>
+        /// <param name="initializeBuffer">Initialize the offscreen buffer if true</param>
         public MicroGraphics(PixelBufferBase pixelBuffer, bool initializeBuffer)
         {
             this.pixelBuffer = pixelBuffer;
@@ -119,9 +120,9 @@ namespace Meadow.Foundation.Graphics
         /// <summary>
         /// Draw a single pixel 
         /// </summary>
-        /// <param name="x">x location </param>
+        /// <param name="x">x location</param>
         /// <param name="y">y location</param>
-        /// <param name="enabled">Turn the pixel on (true) or off (false)>/param>
+        /// <param name="enabled">Turn the pixel on (true) or off (false)</param>
         public void DrawPixel(int x, int y, bool enabled)
         {
             DrawPixel(x, y, enabled ? display.EnabledColor : display.DisabledColor);
@@ -132,7 +133,7 @@ namespace Meadow.Foundation.Graphics
         /// </summary>
         /// <param name="x">x location </param>
         /// <param name="y">y location</param>
-        /// <param name="color">Color of pixel>/param>
+        /// <param name="color">Color of pixel</param>
         public virtual void DrawPixel(int x, int y, Color color)
         {
             PenColor = color;
@@ -205,9 +206,9 @@ namespace Meadow.Foundation.Graphics
         /// </summary>
         /// <param name="x">Abscissa of the starting point of the line</param>
         /// <param name="y">Ordinate of the starting point of the line</param>
-        /// <param name="length">Length of line>/param>
+        /// <param name="length">Length of line</param>
         /// <param name="angle">Angle in radians</param>
-        /// <param name="enabled">Turn the pixel on (true) or off (false)>/param>
+        /// <param name="enabled">Turn the pixel on (true) or off (false)</param>
         public void DrawLine(int x, int y, int length, float angle, bool enabled)
         {
             DrawLine(x, y, length, angle, enabled ? display.EnabledColor : display.DisabledColor);
@@ -323,10 +324,10 @@ namespace Meadow.Foundation.Graphics
         /// <summary>
         /// Draw a horizontal line.
         /// </summary>
-        /// <param name="x">Abscissa of the starting point of the line>/param>
-        /// <param name="y">Ordinate of the starting point of the line>/param>
-        /// <param name="length">Length of the line to draw>/param>
-        /// <param name="enabled">Turn the pixel on (true) or off (false)>/param>
+        /// <param name="x">Abscissa of the starting point of the line</param>
+        /// <param name="y">Ordinate of the starting point of the line</param>
+        /// <param name="length">Length of the line to draw</param>
+        /// <param name="enabled">Turn the pixel on (true) or off (false)</param>
         public void DrawHorizontalLine(int x, int y, int length, bool enabled)
         {
             DrawHorizontalLine(x, y, length, enabled ? display.EnabledColor : display.DisabledColor);
@@ -335,10 +336,10 @@ namespace Meadow.Foundation.Graphics
         /// <summary>
         /// Draw a horizontal line.
         /// </summary>
-        /// <param name="x">Abscissa of the starting point of the line>/param>
-        /// <param name="y">Ordinate of the starting point of the line>/param>
-        /// <param name="length">Length of the line to draw>/param>
-        /// <param name="color">The color of the line>/param>
+        /// <param name="x">Abscissa of the starting point of the line</param>
+        /// <param name="y">Ordinate of the starting point of the line</param>
+        /// <param name="length">Length of the line to draw</param>
+        /// <param name="color">The color of the line</param>
         public void DrawHorizontalLine(int x, int y, int length, Color color)
         {
             PenColor = color;
@@ -372,10 +373,10 @@ namespace Meadow.Foundation.Graphics
         /// <summary>
         /// Draw a vertical line.
         /// </summary>
-        /// <param name="x">Abscissa of the starting point of the line>/param>
-        /// <param name="y">Ordinate of the starting point of the line>/param>
-        /// <param name="length">Length of the line to draw>/param>
-        /// <param name="enabled">Show the line when (true) or off (false)>/param>
+        /// <param name="x">Abscissa of the starting point of the line</param>
+        /// <param name="y">Ordinate of the starting point of the line</param>
+        /// <param name="length">Length of the line to draw</param>
+        /// <param name="enabled">Show the line when (true) or off (false)</param>
         public void DrawVerticalLine(int x, int y, int length, bool enabled)
         {
             DrawVerticalLine(x, y, length, enabled ? display.EnabledColor : display.DisabledColor);
@@ -384,10 +385,10 @@ namespace Meadow.Foundation.Graphics
         /// <summary>
         /// Draw a vertical line.
         /// </summary>
-        /// <param name="x">Abscissa of the starting point of the line>/param>
-        /// <param name="y">Ordinate of the starting point of the line>/param>
-        /// <param name="length">Length of the line to draw>/param>
-        /// <param name="color">The color of the line>/param>
+        /// <param name="x">Abscissa of the starting point of the line</param>
+        /// <param name="y">Ordinate of the starting point of the line</param>
+        /// <param name="length">Length of the line to draw</param>
+        /// <param name="color">The color of the line</param>
         public void DrawVerticalLine(int x, int y, int length, Color color)
         {
             PenColor = color;
@@ -568,10 +569,10 @@ namespace Meadow.Foundation.Graphics
         /// A C# implementation can be found here:
         /// https://rosettacode.org/wiki/Bitmap/Midpoint_circle_algorithm#C.23
         /// </remarks>
-        /// <param name="centerX">Abscissa of the centre point of the circle>/param>
-        /// <param name="centerY">Ordinate of the centre point of the circle>/param>
-        /// <param name="radius">Radius of the circle>/param>
-        /// <param name="enabled">Show the circle when true>/param>
+        /// <param name="centerX">Abscissa of the centre point of the circle</param>
+        /// <param name="centerY">Ordinate of the centre point of the circle</param>
+        /// <param name="radius">Radius of the circle</param>
+        /// <param name="enabled">Show the circle when true</param>
         /// <param name="filled">Draw a filled circle?</param>
         /// <param name="centerBetweenPixels">Set center between pixels</param>
         public void DrawCircle(int centerX, int centerY, int radius, bool enabled = true, bool filled = false, bool centerBetweenPixels = false)
@@ -590,11 +591,12 @@ namespace Meadow.Foundation.Graphics
         /// A C# implementation can be found here:
         /// https://rosettacode.org/wiki/Bitmap/Midpoint_circle_algorithm#C.23
         /// </remarks>
-        /// <param name="centerX">Abscissa of the centre point of the circle>/param>
-        /// <param name="centerY">Ordinate of the centre point of the circle>/param>
-        /// <param name="radius">Radius of the circle>/param>
-        /// <param name="color">The color of the circle>/param>
+        /// <param name="centerX">Abscissa of the centre point of the circle</param>
+        /// <param name="centerY">Ordinate of the centre point of the circle</param>
+        /// <param name="radius">Radius of the circle</param>
+        /// <param name="color">The color of the circle</param>
         /// <param name="filled">Draw a filled circle?</param>
+        /// <param name="centerBetweenPixels">If true, the center of the circle is between the assigned pixel and the next pixel, false it's directly on the center pixel</param>
         public void DrawCircle(int centerX, int centerY, int radius, Color color, bool filled = false, bool centerBetweenPixels = false)
         {
             PenColor = color;
@@ -914,7 +916,7 @@ namespace Meadow.Foundation.Graphics
         /// <summary>
         /// Get the size in pixels of a string using the current font
         /// </summary>
-        /// <param name="text">The string to measure>/param>
+        /// <param name="text">The string to measure</param>
         /// <param name="scaleFactor">Scalefactor used to calculate the size</param>
         public Size MeasureText(string text, ScaleFactor scaleFactor = ScaleFactor.X1)
         {
@@ -939,9 +941,12 @@ namespace Meadow.Foundation.Graphics
         /// <param name="y">Ordinate of the location of the text</param>
         /// <param name="text">Text to display</param>
         /// <param name="scaleFactor">Scalefactor used to calculate the size</param>
-        /// <param name="alignment">Left, Center or right aligned text</param>
+        /// <param name="alignmentH">Horizontal alignment: Left, Center or right aligned text</param>
+        /// <param name="alignmentV">Vertical alignment: Top, Center or bottom aligned text</param>
         public void DrawText(int x, int y, string text,
-            ScaleFactor scaleFactor = ScaleFactor.X1, TextAlignment alignment = TextAlignment.Left)
+            ScaleFactor scaleFactor = ScaleFactor.X1,
+            HorizontalAlignment alignmentH = HorizontalAlignment.Left,
+            VerticalAlignment alignmentV = VerticalAlignment.Top)
         {
             if (CurrentFont == null)
             {
@@ -950,13 +955,22 @@ namespace Meadow.Foundation.Graphics
 
             byte[] bitMap = GetBytesForTextBitmap(text);
 
-            if (alignment == TextAlignment.Center)
+            if (alignmentH == HorizontalAlignment.Center)
             {
                 x -= MeasureText(text, scaleFactor).Width / 2;
             }
-            else if (alignment == TextAlignment.Right)
+            else if (alignmentH == HorizontalAlignment.Right)
             {
                 x -= MeasureText(text, scaleFactor).Width;
+            }
+
+            if (alignmentV == VerticalAlignment.Center)
+            {
+                y -= MeasureText(text, scaleFactor).Height / 2;
+            }
+            else if (alignmentV == VerticalAlignment.Bottom)
+            {
+                y -= MeasureText(text, scaleFactor).Height;
             }
 
             DrawBitmap(x, y, bitMap.Length / CurrentFont.Height * 8, CurrentFont.Height, bitMap, scaleFactor);
@@ -1033,27 +1047,15 @@ namespace Meadow.Foundation.Graphics
         /// <param name="text">Text to display</param>
         /// <param name="color">Color of the text</param>
         /// <param name="scaleFactor">Scalefactor used to calculate the size</param>
-        /// <param name="alignment">Left, Center or right aligned text</param>
+        /// <param name="alignmentH">Horizontal alignment: Left, Center or right aligned text</param>
+        /// <param name="alignmentV">Vertical alignment: Top, Center or bottom aligned text</param>
         public void DrawText(int x, int y, string text, Color color,
-            ScaleFactor scaleFactor = ScaleFactor.X1, TextAlignment alignment = TextAlignment.Left)
+            ScaleFactor scaleFactor = ScaleFactor.X1, 
+            HorizontalAlignment alignmentH = HorizontalAlignment.Left, 
+            VerticalAlignment alignmentV = VerticalAlignment.Top)
         {
-            if (CurrentFont == null)
-            {
-                throw new Exception("CurrentFont must be set before calling DrawText.");
-            }
-
-            if (alignment == TextAlignment.Center)
-            {
-                x -= MeasureText(text, scaleFactor).Width / 2;
-            }
-            else if (alignment == TextAlignment.Right)
-            {
-                x -= MeasureText(text, scaleFactor).Width;
-            }
-
-            byte[] bitmap = GetBytesForTextBitmap(text);
-
-            DrawBitmap(x, y, bitmap.Length / CurrentFont.Height * 8, CurrentFont.Height, bitmap, color, scaleFactor);
+            PenColor = color;
+            DrawText(x, y, text, scaleFactor, alignmentH, alignmentV);
         }
 
         private byte[] GetBytesForTextBitmap(string text)

@@ -81,6 +81,10 @@
             colorBuffer.Clear(true);
         }
 
+        /// <summary>
+        /// Fill with a color
+        /// </summary>
+        /// <param name="color">The fill color</param>
         public void Fill(Color color)
         {
             for (int x = 0; x < Width; x++)
@@ -111,6 +115,14 @@
             }*/
         }
 
+        /// <summary>
+        /// Fill with a color
+        /// </summary>
+        /// <param name="originX">X start position in pixels</param>
+        /// <param name="originY">Y start position in pixels</param>
+        /// <param name="width">Width in pixels</param>
+        /// <param name="height">Height in pixels</param>
+        /// <param name="color">The fill color</param>
         public void Fill(int originX, int originY, int width, int height, Color color)
         {
             for(int x = 0; x < width; x++)
@@ -122,11 +134,23 @@
             }
         }
 
+        /// <summary>
+        /// Get the pixel color
+        /// </summary>
+        /// <param name="x">The X pixel position</param>
+        /// <param name="y">The Y pixel position</param>
+        /// <returns>The pixel color</returns>
         public Color GetPixel(int x, int y)
         {
             throw new System.NotImplementedException();
         }
 
+        /// <summary>
+        /// Invert the pixel
+        /// Not currently supported
+        /// </summary>
+        /// <param name="x">x position of pixel</param>
+        /// <param name="y">y position of pixel</param>
         public void InvertPixel(int x, int y)
         {
             throw new System.NotImplementedException();
@@ -199,9 +223,15 @@
             }
         }
 
-        public void WriteBuffer(int originX, int originY, IPixelBuffer buffer)
+        /// <summary>
+        /// Write a buffer to the buffer
+        /// </summary>
+        /// <param name="x">The x position in pixels to write the buffer</param>
+        /// <param name="y">The y position in pixels to write the buffer</param>
+        /// <param name="buffer">The buffer to write</param>
+        public void WriteBuffer(int x, int y, IPixelBuffer buffer)
         {
-            blackBuffer.WriteBuffer(originX, originY, buffer);
+            blackBuffer.WriteBuffer(x, y, buffer);
         }
 
         PixelState GetStateFromColor(Color color)

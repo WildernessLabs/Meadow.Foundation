@@ -1,6 +1,4 @@
-﻿#nullable enable
-
-using System;
+﻿using System;
 using Meadow.Peripherals.Sensors.Location;
 
 namespace Meadow.Foundation.Sensors.Location.Gnss
@@ -22,29 +20,36 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
             var month = 1;
             var year = 2000;
             double d = 0;
-            if (date != null) {
-                if (double.TryParse(date, out d)) {
+
+            if (date != null) 
+            {
+                if (double.TryParse(date, out d))
+                {
                     day = (int)(d / 10000);
                     month = (int)((d - (day * 10000)) / 100);
                     year = 2000 + ((int)d - (day * 10000) - (month * 100));
-                } else {
-                    //throw new ArgumentException("Unable to decode the date");
+                } 
+                else 
+                {
                     return null;
                 }
             }
-            //
+        
             int hour;
             int minute;
             int second;
             int milliseconds;
             double t = 0;
-            if (double.TryParse(time, out t)) {
+
+            if (double.TryParse(time, out t)) 
+            {
                 hour = (int)(t / 10000);
                 minute = (int)((t - (hour * 10000)) / 100);
                 second = (int)(t - (hour * 10000) - (minute * 100));
                 milliseconds = (int)(t - (int)t) * 100;
-            } else {
-                //throw new ArgumentException("Unable to decode the time");
+            } 
+            else 
+            {
                 return null;
             }
             return new DateTime(year, month, day, hour, minute, second, milliseconds);
@@ -65,29 +70,20 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
             if (decimal.TryParse(location, out loc)) {
                 position.Degrees = (int)(loc / 100);
                 position.Minutes = loc - (position.Degrees * 100);
-                switch (direction.ToLower()) {
-                    case "n":
-                        position.Direction = CardinalDirection.North;
-                        break;
-                    case "s":
-                        position.Direction = CardinalDirection.South;
-                        break;
-                    case "e":
-                        position.Direction = CardinalDirection.East;
-                        break;
-                    case "w":
-                        position.Direction = CardinalDirection.West;
-                        break;
-                    default:
-                        position.Direction = CardinalDirection.Unknown;
-                        break;
-                }
-            } else {
-                //Console.WriteLine($"Could not parse DegreesMinutes; location:'{location}', direction:'{direction}'");
+                position.Direction = direction.ToLower() switch
+                {
+                    "n" => CardinalDirection.North,
+                    "s" => CardinalDirection.South,
+                    "e" => CardinalDirection.East,
+                    "w" => CardinalDirection.West,
+                    _ => CardinalDirection.Unknown,
+                };
+            } 
+            else 
+            {
                 return null;
             }
             return position;
         }
-
     }
 }

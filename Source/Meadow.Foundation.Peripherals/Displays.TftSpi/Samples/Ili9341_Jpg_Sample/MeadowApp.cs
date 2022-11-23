@@ -237,8 +237,6 @@ namespace Displays.TftSpi.Ili9341_Jpg_Sample
 
                 TestDisplay();
             }
-
-            return base.Run();
         }
     }
 }

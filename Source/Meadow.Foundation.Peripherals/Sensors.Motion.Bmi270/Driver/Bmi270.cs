@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Accelerometers
 {
+    /// <summary>
+    /// Represents a BMI270 interial measurement unit (IMU) 
+    /// </summary>
     public partial class Bmi270 :
         ByteCommsSensorBase<(Acceleration3D? Acceleration3D, AngularVelocity3D? AngularVelocity3D, Units.Temperature? Temperature)>
     {
@@ -141,6 +144,10 @@ namespace Meadow.Foundation.Sensors.Accelerometers
             i2cPeripheral.WriteRegister(GYR_RANGE, (byte)angRange);
         }
 
+        /// <summary>
+        /// Raise events for subcribers and notify of value changes
+        /// </summary>
+        /// <param name="changeResult">The updated sensor data</param>
         protected override void RaiseEventsAndNotify(IChangeResult<(Acceleration3D? Acceleration3D, AngularVelocity3D? AngularVelocity3D, Units.Temperature? Temperature)> changeResult)
         {
             if (changeResult.New.AngularVelocity3D is { } angular)
@@ -158,6 +165,10 @@ namespace Meadow.Foundation.Sensors.Accelerometers
             base.RaiseEventsAndNotify(changeResult);
         }
 
+        /// <summary>
+        /// Reads data from the sensor
+        /// </summary>
+        /// <returns>The latest sensor reading</returns>
         protected override Task<(Acceleration3D? Acceleration3D, AngularVelocity3D? AngularVelocity3D, Units.Temperature? Temperature)> ReadSensor()
         {
             return Task.Run(() =>

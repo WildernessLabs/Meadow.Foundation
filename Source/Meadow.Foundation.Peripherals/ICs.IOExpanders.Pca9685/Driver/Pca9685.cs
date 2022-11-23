@@ -15,36 +15,42 @@ namespace Meadow.Foundation.ICs.IOExpanders
         private readonly Frequency frequency;
 
         //# Registers/etc.
-        protected const byte Mode1 = 0x00;
-        protected const byte Mode2 = 0x01;
-        protected const byte SubAdr1 = 0x02;
-        protected const byte SubAdr2 = 0x03;
-        protected const byte SubAdr3 = 0x04;
-        protected const byte PreScale = 0xFE;
-        protected const byte Led0OnL = 0x06;
-        protected const byte Led0OnH = 0x07;
-        protected const byte Led0OffL = 0x08;
-        protected const byte Led0OffH = 0x09;
-        protected const byte AllLedOnL = 0xFA;
-        protected const byte AllLedOnH = 0xFB;
-        protected const byte AllLedOffL = 0xFC;
-        protected const byte AllLedOffH = 0xFD;
+        const byte Mode1 = 0x00;
+        const byte Mode2 = 0x01;
+        const byte SubAdr1 = 0x02;
+        const byte SubAdr2 = 0x03;
+        const byte SubAdr3 = 0x04;
+        const byte PreScale = 0xFE;
+        const byte Led0OnL = 0x06;
+        const byte Led0OnH = 0x07;
+        const byte Led0OffL = 0x08;
+        const byte Led0OffH = 0x09;
+        const byte AllLedOnL = 0xFA;
+        const byte AllLedOnH = 0xFB;
+        const byte AllLedOffL = 0xFC;
+        const byte AllLedOffH = 0xFD;
 
         //# Bits
-        protected const byte restart = 0x80;
-        protected const byte sleep = 0x10;
-        protected const byte allCall = 0x01;
-        protected const byte invert = 0x10;
-        protected const byte outDrv = 0x04;
-        protected const byte mode1AI = 0x21;
+        const byte restart = 0x80;
+        const byte sleep = 0x10;
+        const byte allCall = 0x01;
+        const byte invert = 0x10;
+        const byte outDrv = 0x04;
+        const byte mode1AI = 0x21;
 
         /// <summary>
         /// The I2C bus connected to the pca9685
         /// </summary>
-        public II2cBus i2CBus { get; protected set; }
+        protected II2cBus i2CBus { get; set; }
 
         readonly byte address;
 
+        /// <summary>
+        /// Create a new Pca9685 object
+        /// </summary>
+        /// <param name="i2cBus">The I2C bus connected to the peripheral</param>
+        /// <param name="frequency">The frequency</param>
+        /// <param name="address">The I2C address</param>
         public Pca9685(II2cBus i2cBus, Frequency frequency, byte address = (byte)Addresses.Default)
         {
             i2CBus = i2cBus;
@@ -53,11 +59,14 @@ namespace Meadow.Foundation.ICs.IOExpanders
             this.frequency = frequency;
         }
 
+        /// <summary>
+        /// Create a new Pca9685 object
+        /// </summary>
+        /// <param name="i2cBus">The I2C bus connected to the peripheral</param>
+        /// <param name="address">The I2C address</param>
         public Pca9685(II2cBus i2cBus, byte address = (byte)Addresses.Default)
         : this(i2cBus, new Frequency(IPwmOutputController.DefaultPwmFrequency, Frequency.UnitType.Hertz), address)
-        {
-
-        }
+        { }
 
         /// <summary>
         /// Initializes the PCA9685 IC
@@ -121,8 +130,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// Set the values for specified output pin.
         /// </summary>
         /// <param name="pin">The pwm Pin</param>
-        /// <param name="on">LED{X}_ON_L & LED{X}_ON_H registier value</param>
-        /// <param name="off">LED{X}_OFF_L  & LED{X}_OFF_H registier value</param>
+        /// <param name="on">LED{X}_ON_L and LED{X}_ON_H registier value</param>
+        /// <param name="off">LED{X}_OFF_L and LED{X}_OFF_H registier value</param>
         /// <remarks>On parameter is an inverted pwm signal</remarks>
         public virtual void SetPwm(byte pin, int on, int off)
         {
@@ -144,21 +153,21 @@ namespace Meadow.Foundation.ICs.IOExpanders
             Write((byte)(Led0OnL + (4 * pin)), (byte)(on & 0xFF), (byte)(on >> 8), (byte)(off & 0xFF), (byte)(off >> 8));
         }
 
-        protected virtual void Write(byte register, byte ledXOnL, byte ledXOnH, byte ledXOffL, byte ledXOffH)
+        void Write(byte register, byte ledXOnL, byte ledXOnH, byte ledXOffL, byte ledXOffH)
         {
             i2CBus.Write(address, new byte[] { register, ledXOnL, ledXOnH, ledXOffL, ledXOffH });
         }
 
-        protected virtual void Write(byte register, byte value)
+        void Write(byte register, byte value)
         {
             i2cPeripheral.WriteRegister(register, value);
         }
 
-        protected virtual void SetFrequency(Frequency frequency)
+        void SetFrequency(Frequency frequency)
         {
             double prescaleval = 25000000.0;  //  # 25MHz
-            prescaleval = prescaleval / 4096.0;       //# 12-bit
-            prescaleval = prescaleval / frequency.Hertz;
+            prescaleval /= 4096.0;       //# 12-bit
+            prescaleval /= frequency.Hertz;
             prescaleval -= 1.0;
 
             double prescale = Math.Floor(prescaleval + 0.5);
