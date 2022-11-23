@@ -20,112 +20,112 @@ jobs:
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.DataLoggers.AdafruitIO
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Libraries_and_Frameworks\DataLoggers.AdafruitIO\Driver\DataLoggers.AdafruitIO.csproj
+        path: Source/Meadow.Foundation.Libraries_and_Frameworks/DataLoggers.AdafruitIO/Driver/DataLoggers.AdafruitIO.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.Displays.TextDisplayMenu
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Libraries_and_Frameworks\Displays.TextDisplayMenu\Driver\Displays.TextDisplayMenu.csproj
+        path: Source/Meadow.Foundation.Libraries_and_Frameworks/Displays.TextDisplayMenu/Driver/Displays.TextDisplayMenu.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.Displays.ePaper
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\Displays.ePaper\Driver\Displays.ePaper.csproj
+        path: Source/Meadow.Foundation.Peripherals/Displays.ePaper/Driver/Displays.ePaper.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.Displays.ePaperWaveShare
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\Displays.ePaperWaveShare\Driver\Displays.ePaperWaveShare.csproj
+        path: Source/Meadow.Foundation.Peripherals/Displays.ePaperWaveShare/Driver/Displays.ePaperWaveShare.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.Displays.Led.FourDigitSevenSegment
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\Displays.Led.FourDigitSevenSegment\Driver\Displays.Led.FourDigitSevenSegment.csproj
+        path: Source/Meadow.Foundation.Peripherals/Displays.Led.FourDigitSevenSegment/Driver/Displays.Led.FourDigitSevenSegment.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.Displays.Pcd8544
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\Displays.Pcd8544\Driver\Displays.Pcd8544.csproj
+        path: Source/Meadow.Foundation.Peripherals/Displays.Pcd8544/Driver/Displays.Pcd8544.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.Displays.Ssd130x
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\Displays.Ssd130x\Driver\Displays.Ssd130x.csproj
+        path: Source/Meadow.Foundation.Peripherals/Displays.Ssd130x/Driver/Displays.Ssd130x.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.Displays.Ssd1327
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\Displays.Ssd1327\Driver\Displays.Ssd1327.csproj
+        path: Source/Meadow.Foundation.Peripherals/Displays.Ssd1327/Driver/Displays.Ssd1327.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.Displays.St7565
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\Displays.St7565\Driver\Displays.St7565.csproj
+        path: Source/Meadow.Foundation.Peripherals/Displays.St7565/Driver/Displays.St7565.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.Displays.TftSpi
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\Displays.TftSpi\Driver\Displays.TftSpi.csproj
+        path: Source/Meadow.Foundation.Peripherals/Displays.TftSpi/Driver/Displays.TftSpi.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.Displays.Tm1637
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\Displays.Tm1637\Driver\Displays.Tm1637.csproj
+        path: Source/Meadow.Foundation.Peripherals/Displays.Tm1637/Driver/Displays.Tm1637.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.ICs.IOExpanders.As1115
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\ICs.IOExpanders.As1115\Driver\ICs.IOExpanders.As1115.csproj
+        path: Source/Meadow.Foundation.Peripherals/ICs.IOExpanders.As1115/Driver/ICs.IOExpanders.As1115.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.ICs.IOExpanders.SerialWombat
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\ICs.IOExpanders.SerialWombat\Driver\ICs.IOExpanders.SerialWombat.csproj
+        path: Source/Meadow.Foundation.Peripherals/ICs.IOExpanders.SerialWombat/Driver/ICs.IOExpanders.SerialWombat.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.Sensors.Gnss.Mt3339
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\Sensors.Gnss.Mt3339\Driver\Sensors.Gnss.Mt3339.csproj
+        path: Source/Meadow.Foundation.Peripherals/Sensors.Gnss.Mt3339/Driver/Sensors.Gnss.Mt3339.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.Sensors.Gnss.NeoM8
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\Sensors.Gnss.NeoM8\Driver\Sensors.Gnss.NeoM8.csproj
+        path: Source/Meadow.Foundation.Peripherals/Sensors.Gnss.NeoM8/Driver/Sensors.Gnss.NeoM8.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.Sensors.Hid.Tsc2004
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\Sensors.Hid.Tsc2004\Driver\Sensors.Hid.Tsc2004.csproj
+        path: Source/Meadow.Foundation.Peripherals/Sensors.Hid.Tsc2004/Driver/Sensors.Hid.Tsc2004.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
