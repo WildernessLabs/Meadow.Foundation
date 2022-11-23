@@ -1,0 +1,24 @@
+name: Meadow.Foundation.Core NuGet Package Creation
+
+on:
+  push:
+    tags:
+    - "v[0-9]+.[0-9]+.[0-9]"
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Set VERSION variable from tag
+      run: echo "VERSION=${GITHUB_REF/refs\/tags\/v/}" >> $GITHUB_ENV
+      
+    - name: Build Meadow.Foundation.Core
+      run: dotnet build -c Release Source/Meadow.Foundation.Core/Meadow.Foundation.Core.csproj /p:Version=${VERSION}
+    - name: Package Meadow.Foundation.Core
+      run: dotnet pack -c Release Source/Meadow.Foundation.Core/Meadow.Foundation.Core.csproj /p:Version=${VERSION} --output .
+    - name: Push Meadow.Foundation.Core to NuGet
+      run: dotnet nuget push Meadow.Foundation.${VERSION}.nupkg -s https://api.nuget.org/v3/index.json -k ${NUGET_TOKEN}
+      env:
+        NUGET_TOKEN: ${{ secrets.NUGET_TOKEN }}
