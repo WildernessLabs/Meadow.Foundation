@@ -32,7 +32,7 @@ jobs:
     - uses: ./.github/actions/build-library
       with:
         packageId: Meadow.Foundation.Displays.MicroGraphics
-        path: Meadow.Foundation/Source/Meadow.Foundation.Libraries_and_Frameworks/Graphics.MicroGraphics/Driver/Graphics.MicroGraphics.csproj
+        path: /home/runner/work/Meadow.Foundation/Meadow.Foundation/Source/Meadow.Foundation.Libraries_and_Frameworks/Graphics.MicroGraphics/Driver/Graphics.MicroGraphics.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
