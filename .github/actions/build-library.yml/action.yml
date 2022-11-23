@@ -1,0 +1,21 @@
+name: build-library
+description: Builds and publishes M.F. libraries and drivers
+
+inputs:
+  packageId:
+    required: true
+  path:
+    required: true
+  version:
+    required: true
+
+runs:
+  steps:
+    - name: Build the library/driver
+      run: dotnet build -c ${{ inputs.path }} /p:Version=${{ inputs.version }}
+    - name: Package the library/driver
+      run: dotnet pack -c ${{ inputs.path }} /p:Version=${{ inputs.version }} --output .
+    - name: Push the library/driver to NuGet
+      run: dotnet nuget push ${{ inputs.packageId }}.${{ inputs.version }}.nupkg -s https://api.nuget.org/v3/index.json -k ${NUGET_TOKEN}
+      env:
+        NUGET_TOKEN: ${{ secrets.NUGET_TOKEN }}
