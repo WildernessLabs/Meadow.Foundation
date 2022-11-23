@@ -23,8 +23,8 @@
     <LangVersion>8.0</LangVersion>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
-    <ProjectReference Include="..\..\..\Meadow.Foundation.Libraries_and_Frameworks\Sensors.Location.Gnss.NmeaProcessor\Driver\Sensors.Location.Gnss.NmeaProcessor.csproj" />
+    <PackageReference Include="Meadow.Foundation" Version="0.*" />
+    <PackageReference Include="Meadow.Foundation.Sensors.Location.Gnss.NmeaProcessor" Version="0.*" />
     <None Include="..\..\..\icon.png" Pack="true" PackagePath="" />
   </ItemGroup>
 </Project>
