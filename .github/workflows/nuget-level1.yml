@@ -1,0 +1,43 @@
+name: Level1 Package Creation
+
+on:
+  workflow_dispatch:
+
+env:
+  version: '0.89.1'
+  token: ${{ secrets.NUGET_TOKEN }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Set VERSION variable from env.version
+      run: echo "VERSION=${{ env.version }}" >> $GITHUB_ENV
+      
+    - uses: ./.github/actions/build-library
+      with:
+        packageId: Meadow.Foundation.DataLoggers.SensorReading
+        path: Source/Meadow.Foundation.Libraries_and_Frameworks/DataLoggers.SensorReading/Driver/DataLoggers.SensorReading.csproj
+        version: ${{ env.version }}
+
+    - uses: ./.github/actions/build-library
+      with:
+        packageId: Meadow.Foundation.DataLoggers.ThingSpeak
+        path: Source/Meadow.Foundation.Libraries_and_Frameworks/DataLoggers.ThingSpeak/Driver/DataLoggers.ThingSpeak.csproj
+        version: ${{ env.version }}
+
+    - uses: ./.github/actions/build-library
+      with:
+        packageId: Meadow.Foundation.Displays.MicroGraphics
+        path: Source/Meadow.Foundation.Libraries_and_Frameworks/Graphics.MicroGraphics/Driver/Graphics.MicroGraphics.csproj
+        version: ${{ env.version }}
+        token: ${{ env.token }}
+
+    - uses: ./.github/actions/build-library
+      with:
+        packageId: Meadow.Foundation.Sensors.Location.Gnss.NmeaProcessor
+        path: Source/Meadow.Foundation.Libraries_and_Frameworks/Sensors.Location.Gnss.NmeaProcessor/Driver/Sensors.Location.Gnss.NmeaProcessor.csproj
+        version: ${{ env.version }}
