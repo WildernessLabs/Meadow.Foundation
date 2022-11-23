@@ -12,6 +12,7 @@ inputs:
     required: true
 
 runs:
+  using: "composite"
   steps:
     - name: Build the library/driver
       shell: bash
