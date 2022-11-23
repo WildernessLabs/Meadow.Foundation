@@ -16,8 +16,8 @@
     <LangVersion>8.0</LangVersion>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.F7" Version="0.*" />
-    <PackageReference Include="Meadow.Foundation.Sensors.Atmospheric.Sgp40" Version="0.*" />
+    <ProjectReference Include="..\..\..\..\..\..\Meadow.Core\source\Meadow.F7\Meadow.F7.csproj" />
+    <ProjectReference Include="..\..\Driver\Sensors.Atmospheric.Sgp40.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Update="meadow.config.yaml">
