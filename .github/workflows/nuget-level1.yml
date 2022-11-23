@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
 env:
-  version: '0.89.2'
+  version: '0.90.0'
   token: ${{ secrets.NUGET_TOKEN }}
 
 jobs:
@@ -20,630 +20,630 @@ jobs:
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.DataLoggers.SensorReading
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Libraries_and_Frameworks\DataLoggers.SensorReading\Driver\DataLoggers.SensorReading.csproj
+        path: Source/Meadow.Foundation.Libraries_and_Frameworks/DataLoggers.SensorReading/Driver/DataLoggers.SensorReading.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.DataLoggers.ThingSpeak
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Libraries_and_Frameworks\DataLoggers.ThingSpeak\Driver\DataLoggers.ThingSpeak.csproj
+        path: Source/Meadow.Foundation.Libraries_and_Frameworks/DataLoggers.ThingSpeak/Driver/DataLoggers.ThingSpeak.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.Displays.MicroGraphics
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Libraries_and_Frameworks\Graphics.MicroGraphics\Driver\Graphics.MicroGraphics.csproj
+        path: Source/Meadow.Foundation.Libraries_and_Frameworks/Graphics.MicroGraphics/Driver/Graphics.MicroGraphics.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.Sensors.Location.Gnss.NmeaProcessor
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Libraries_and_Frameworks\Sensors.Location.Gnss.NmeaProcessor\Driver\Sensors.Location.Gnss.NmeaProcessor.csproj
+        path: Source/Meadow.Foundation.Libraries_and_Frameworks/Sensors.Location.Gnss.NmeaProcessor/Driver/Sensors.Location.Gnss.NmeaProcessor.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.Audio.Mp3.Yx5300
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\Audio.Mp3.Yx5300\Driver\Audio.Mp3.Yx5300.csproj
+        path: Source/Meadow.Foundation.Peripherals/Audio.Mp3.Yx5300/Driver/Audio.Mp3.Yx5300.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.Audio.Radio.Tea5767
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\Audio.Radio.Tea5767\Driver\Audio.Radio.Tea5767.csproj
+        path: Source/Meadow.Foundation.Peripherals/Audio.Radio.Tea5767/Driver/Audio.Radio.Tea5767.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.Displays.Lcd.CharacterDisplay
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\Displays.Lcd.CharacterDisplay\Driver\Displays.Lcd.CharacterDisplay.csproj
+        path: Source/Meadow.Foundation.Peripherals/Displays.Lcd.CharacterDisplay/Driver/Displays.Lcd.CharacterDisplay.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.Displays.Led.SevenSegment
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\Displays.Led.SevenSegment\Driver\Displays.Led.SevenSegment.csproj
+        path: Source/Meadow.Foundation.Peripherals/Displays.Led.SevenSegment/Driver/Displays.Led.SevenSegment.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.Displays.Max7219
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\Displays.Max7219\Driver\Displays.Max7219.csproj
+        path: Source/Meadow.Foundation.Peripherals/Displays.Max7219/Driver/Displays.Max7219.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.ICs.ADC.Ads1x15
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\ICs.ADC.Ads1x15\Driver\ICs.ADC.Ads1x15.csproj
+        path: Source/Meadow.Foundation.Peripherals/ICs.ADC.Ads1x15/Driver/ICs.ADC.Ads1x15.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.ICs.EEPROM.At24Cxx
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\ICs.EEPROM.At24Cxx\Driver\ICs.EEPROM.At24Cxx.csproj
+        path: Source/Meadow.Foundation.Peripherals/ICs.EEPROM.At24Cxx/Driver/ICs.EEPROM.At24Cxx.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.ICs.FanControllers.Emc2101
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\ICs.FanControllers.Emc2101\Driver\ICs.FanControllers.Emc2101.csproj
+        path: Source/Meadow.Foundation.Peripherals/ICs.FanControllers.Emc2101/Driver/ICs.FanControllers.Emc2101.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.ICs.IOExpanders.AnalogMux
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\ICs.IOExpanders.AnalogMux\Driver\ICs.IOExpanders.AnalogMux.csproj
+        path: Source/Meadow.Foundation.Peripherals/ICs.IOExpanders.AnalogMux/Driver/ICs.IOExpanders.AnalogMux.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.ICs.IOExpanders.Ds3502
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\ICs.IOExpanders.Ds3502\Driver\ICs.IOExpanders.Ds3502.csproj
+        path: Source/Meadow.Foundation.Peripherals/ICs.IOExpanders.Ds3502/Driver/ICs.IOExpanders.Ds3502.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.ICs.IOExpanders.Ht16k33
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\ICs.IOExpanders.Ht16k33\Driver\ICs.IOExpanders.Ht16k33.csproj
+        path: Source/Meadow.Foundation.Peripherals/ICs.IOExpanders.Ht16k33/Driver/ICs.IOExpanders.Ht16k33.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.ICs.IOExpanders.Is31fl3731
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\ICs.IOExpanders.Is31fl3731\Driver\ICs.IOExpanders.Is31fl3731.csproj
+        path: Source/Meadow.Foundation.Peripherals/ICs.IOExpanders.Is31fl3731/Driver/ICs.IOExpanders.Is31fl3731.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.ICs.IOExpanders.Mcp23xxx
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\ICs.IOExpanders.Mcp23xxx\Driver\ICs.IOExpanders.Mcp23xxx.csproj
+        path: Source/Meadow.Foundation.Peripherals/ICs.IOExpanders.Mcp23xxx/Driver/ICs.IOExpanders.Mcp23xxx.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.ICs.IOExpanders.Pca9685
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\ICs.IOExpanders.Pca9685\Driver\ICs.IOExpanders.Pca9685.csproj
+        path: Source/Meadow.Foundation.Peripherals/ICs.IOExpanders.Pca9685/Driver/ICs.IOExpanders.Pca9685.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.ICs.IOExpanders.Tca9548a
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\ICs.IOExpanders.TCA9548A\Driver\ICs.IOExpanders.Tca9548a.csproj
+        path: Source/Meadow.Foundation.Peripherals/ICs.IOExpanders.TCA9548A/Driver/ICs.IOExpanders.Tca9548a.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.ICs.IOExpanders.x74595
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\ICs.IOExpanders.x74595\Driver\ICs.IOExpanders.x74595.csproj
+        path: Source/Meadow.Foundation.Peripherals/ICs.IOExpanders.x74595/Driver/ICs.IOExpanders.x74595.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.Leds.Apa102
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\Leds.Apa102\Driver\Leds.Apa102.csproj
+        path: Source/Meadow.Foundation.Peripherals/Leds.Apa102/Driver/Leds.Apa102.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.Leds.Pca9633
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\Leds.Pca9633\Driver\Leds.Pca9633.csproj
+        path: Source/Meadow.Foundation.Peripherals/Leds.Pca9633/Driver/Leds.Pca9633.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.Motors.ElectronicSpeedController
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\Motors.ElectronicSpeedController\Driver\Motors.ElectronicSpeedController.csproj
+        path: Source/Meadow.Foundation.Peripherals/Motors.ElectronicSpeedController/Driver/Motors.ElectronicSpeedController.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.Motors.Stepper.A4988
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\Motors.Stepper.A4988\Driver\Motors.Stepper.A4988.csproj
+        path: Source/Meadow.Foundation.Peripherals/Motors.Stepper.A4988/Driver/Motors.Stepper.A4988.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.Motors.Stepper.Uln2003
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\Motors.Stepper.Uln2003\Driver\Motors.Stepper.Uln2003.csproj
+        path: Source/Meadow.Foundation.Peripherals/Motors.Stepper.Uln2003/Driver/Motors.Stepper.Uln2003.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.Motors.Tb67h420ftg
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\Motors.Tb67h420ftg\Driver\Motors.Tb67h420ftg.csproj
+        path: Source/Meadow.Foundation.Peripherals/Motors.Tb67h420ftg/Driver/Motors.Tb67h420ftg.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.RTCs.Ds1307
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\RTCs.Ds1307\Driver\RTCs.Ds1307.csproj
+        path: Source/Meadow.Foundation.Peripherals/RTCs.Ds1307/Driver/RTCs.Ds1307.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.RTCs.Ds323x
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\RTCs.Ds323x\Driver\RTCs.Ds323x.csproj
+        path: Source/Meadow.Foundation.Peripherals/RTCs.Ds323x/Driver/RTCs.Ds323x.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.Sensors.Atmospheric.AdafruitMPRLS
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\Sensors.Atmospheric.AdafruitMPRLS\Driver\Sensors.Atmospheric.AdafruitMPRLS.csproj
+        path: Source/Meadow.Foundation.Peripherals/Sensors.Atmospheric.AdafruitMPRLS/Driver/Sensors.Atmospheric.AdafruitMPRLS.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.Sensors.Atmospheric.Bh1900Nux
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\Sensors.Atmospheric.Bh1900Nux\Driver\Sensors.Atmospheric.Bh1900Nux.csproj
+        path: Source/Meadow.Foundation.Peripherals/Sensors.Atmospheric.Bh1900Nux/Driver/Sensors.Atmospheric.Bh1900Nux.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.Sensors.Atmospheric.Bme280
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\Sensors.Atmospheric.Bme280\Driver\Sensors.Atmospheric.Bme280.csproj
+        path: Source/Meadow.Foundation.Peripherals/Sensors.Atmospheric.Bme280/Driver/Sensors.Atmospheric.Bme280.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.Sensors.Atmospheric.Bme68x
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\Sensors.Atmospheric.Bme68x\Driver\Sensors.Atmospheric.Bme68x.csproj
+        path: Source/Meadow.Foundation.Peripherals/Sensors.Atmospheric.Bme68x/Driver/Sensors.Atmospheric.Bme68x.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.Sensors.Atmospheric.Bmp085
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\Sensors.Atmospheric.Bmp085\Driver\Sensors.Atmospheric.Bmp085.csproj
+        path: Source/Meadow.Foundation.Peripherals/Sensors.Atmospheric.Bmp085/Driver/Sensors.Atmospheric.Bmp085.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.Sensors.Atmospheric.Bmp180
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\Sensors.Atmospheric.Bmp180\Driver\Sensors.Atmospheric.Bmp180.csproj
+        path: Source/Meadow.Foundation.Peripherals/Sensors.Atmospheric.Bmp180/Driver/Sensors.Atmospheric.Bmp180.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.Sensors.Atmospheric.Ccs811
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\Sensors.Atmospheric.Ccs811\Driver\Sensors.Atmospheric.Ccs811.csproj
+        path: Source/Meadow.Foundation.Peripherals/Sensors.Atmospheric.Ccs811/Driver/Sensors.Atmospheric.Ccs811.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.Sensors.Atmospheric.Dhtxx
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\Sensors.Atmospheric.Dhtxx\Driver\Sensors.Atmospheric.Dhtxx.csproj
+        path: Source/Meadow.Foundation.Peripherals/Sensors.Atmospheric.Dhtxx/Driver/Sensors.Atmospheric.Dhtxx.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.Sensors.Atmospheric.Hih6130
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\Sensors.Atmospheric.Hih6130\Driver\Sensors.Atmospheric.Hih6130.csproj
+        path: Source/Meadow.Foundation.Peripherals/Sensors.Atmospheric.Hih6130/Driver/Sensors.Atmospheric.Hih6130.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.Sensors.Atmospheric.Htux1d
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\Sensors.Atmospheric.Htu2xd\Driver\Sensors.Atmospheric.Htux1d.csproj
+        path: Source/Meadow.Foundation.Peripherals/Sensors.Atmospheric.Htu2xd/Driver/Sensors.Atmospheric.Htux1d.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.Sensors.Atmospheric.Mpl3115a2
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\Sensors.Atmospheric.Mpl3115a2\Driver\Sensors.Atmospheric.Mpl3115a2.csproj
+        path: Source/Meadow.Foundation.Peripherals/Sensors.Atmospheric.Mpl3115a2/Driver/Sensors.Atmospheric.Mpl3115a2.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.Sensors.Atmospheric.Ms5611
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\Sensors.Atmospheric.Ms5611\Driver\Sensors.Atmospheric.Ms5611.csproj
+        path: Source/Meadow.Foundation.Peripherals/Sensors.Atmospheric.Ms5611/Driver/Sensors.Atmospheric.Ms5611.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.Sensors.Atmospheric.Sgp40
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\Sensors.Atmospheric.Sgp40\Driver\Sensors.Atmospheric.Sgp40.csproj
+        path: Source/Meadow.Foundation.Peripherals/Sensors.Atmospheric.Sgp40/Driver/Sensors.Atmospheric.Sgp40.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.Sensors.Atmospheric.Sht31D
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\Sensors.Atmospheric.Sht31D\Driver\Sensors.Atmospheric.Sht31d.csproj
+        path: Source/Meadow.Foundation.Peripherals/Sensors.Atmospheric.Sht31D/Driver/Sensors.Atmospheric.Sht31d.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.Sensors.Atmospheric.Sht4x
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\Sensors.Atmospheric.Sht4x\Driver\Sensors.Atmospheric.Sht4x.csproj
+        path: Source/Meadow.Foundation.Peripherals/Sensors.Atmospheric.Sht4x/Driver/Sensors.Atmospheric.Sht4x.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.Sensors.Atmospheric.Si70xx
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\Sensors.Atmospheric.Si70xx\Driver\Sensors.Atmospheric.Si70xx.csproj
+        path: Source/Meadow.Foundation.Peripherals/Sensors.Atmospheric.Si70xx/Driver/Sensors.Atmospheric.Si70xx.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.Sensors.Atmospheric.Th02
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\Sensors.Atmospheric.Th02\Driver\Sensors.Atmospheric.Th02.csproj
+        path: Source/Meadow.Foundation.Peripherals/Sensors.Atmospheric.Th02/Driver/Sensors.Atmospheric.Th02.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.Sensors.Camera.Mlx90640
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\Sensors.Camera.Mlx90640\Driver\Sensors.Camera.Mlx90640.csproj
+        path: Source/Meadow.Foundation.Peripherals/Sensors.Camera.Mlx90640/Driver/Sensors.Camera.Mlx90640.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.Sensors.Camera.Vc0706
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\Sensors.Camera.Vc0706\Driver\Sensors.Camera.Vc0706.csproj
+        path: Source/Meadow.Foundation.Peripherals/Sensors.Camera.Vc0706/Driver/Sensors.Camera.Vc0706.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.Sensors.Distance.Hcsr04
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\Sensors.Distance.Hcsr04\Driver\Sensors.Distance.Hcsr04.csproj
+        path: Source/Meadow.Foundation.Peripherals/Sensors.Distance.Hcsr04/Driver/Sensors.Distance.Hcsr04.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.Sensors.Distance.MaxBotix
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\Sensors.Distance.MaxBotix\Driver\Sensors.Distance.MaxBotix.csproj
+        path: Source/Meadow.Foundation.Peripherals/Sensors.Distance.MaxBotix/Driver/Sensors.Distance.MaxBotix.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.Sensors.Distance.Vl53l0x
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\Sensors.Distance.Vl53l0x\Driver\Sensors.Distance.Vl53l0x.csproj
+        path: Source/Meadow.Foundation.Peripherals/Sensors.Distance.Vl53l0x/Driver/Sensors.Distance.Vl53l0x.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.Sensors.Environmental.Ags01Db
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\Sensors.Environmental.Ags01Db\Driver\Sensors.Environmental.Ags01Db.csproj
+        path: Source/Meadow.Foundation.Peripherals/Sensors.Environmental.Ags01Db/Driver/Sensors.Environmental.Ags01Db.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.Sensors.Environmental.SCD4x
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\Sensors.Environmental.Scd4x\Driver\Sensors.Environmental.Scd4x.csproj
+        path: Source/Meadow.Foundation.Peripherals/Sensors.Environmental.Scd4x/Driver/Sensors.Environmental.Scd4x.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.Sensors.Hid.As5013
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\Sensors.Hid.As5013\Driver\Sensors.Hid.As5013.csproj
+        path: Source/Meadow.Foundation.Peripherals/Sensors.Hid.As5013/Driver/Sensors.Hid.As5013.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.Sensors.Hid.Bbq10Keyboard
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\Sensors.Hid.BBQ10Keyboard\Driver\Sensors.Hid.Bbq10Keyboard.csproj
+        path: Source/Meadow.Foundation.Peripherals/Sensors.Hid.BBQ10Keyboard/Driver/Sensors.Hid.Bbq10Keyboard.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.Sensors.Hid.Mpr121
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\Sensors.Hid.Mpr121\Driver\Sensors.Hid.Mpr121.csproj
+        path: Source/Meadow.Foundation.Peripherals/Sensors.Hid.Mpr121/Driver/Sensors.Hid.Mpr121.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.Sensors.Hid.WiiExtensionControllers
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\Sensors.Hid.WiiExtensionControllers\Driver\Sensors.Hid.WiiExtensionControllers.csproj
+        path: Source/Meadow.Foundation.Peripherals/Sensors.Hid.WiiExtensionControllers/Driver/Sensors.Hid.WiiExtensionControllers.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.Sensors.Light.Alspt19315C
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\Sensors.Light.Alspt19315C\Driver\Sensors.Light.Alspt19315C.csproj
+        path: Source/Meadow.Foundation.Peripherals/Sensors.Light.Alspt19315C/Driver/Sensors.Light.Alspt19315C.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.Sensors.Light.AnalogSolarIntensityGauge
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\Sensors.Light.AnalogSolarGauge\Driver\Sensors.Light.AnalogSolarGauge.csproj
+        path: Source/Meadow.Foundation.Peripherals/Sensors.Light.AnalogSolarGauge/Driver/Sensors.Light.AnalogSolarGauge.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.Sensors.Light.Bh1745
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\Sensors.Light.Bh1745\Driver\Sensors.Light.Bh1745.csproj
+        path: Source/Meadow.Foundation.Peripherals/Sensors.Light.Bh1745/Driver/Sensors.Light.Bh1745.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.Sensors.Light.Bh1750
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\Sensors.Light.Bh1750\Driver\Sensors.Light.Bh1750.csproj
+        path: Source/Meadow.Foundation.Peripherals/Sensors.Light.Bh1750/Driver/Sensors.Light.Bh1750.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.Sensors.Light.Max44009
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\Sensors.Light.Max44009\Driver\Sensors.Light.Max44009.csproj
+        path: Source/Meadow.Foundation.Peripherals/Sensors.Light.Max44009/Driver/Sensors.Light.Max44009.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.Sensors.Light.Si1145
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\Sensors.Light.Si1145\Driver\Sensors.Light.Si1145.csproj
+        path: Source/Meadow.Foundation.Peripherals/Sensors.Light.Si1145/Driver/Sensors.Light.Si1145.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.Sensors.Light.Temt6000
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\Sensors.Light.Temt6000\Driver\Sensors.Light.Temt6000.csproj
+        path: Source/Meadow.Foundation.Peripherals/Sensors.Light.Temt6000/Driver/Sensors.Light.Temt6000.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.Sensors.Light.Tsl2591
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\Sensors.Light.Tsl2591\Driver\Sensors.Light.Tsl2591.csproj
+        path: Source/Meadow.Foundation.Peripherals/Sensors.Light.Tsl2591/Driver/Sensors.Light.Tsl2591.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.Sensors.Light.Veml7700
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\Sensors.Light.Veml7700\Driver\Sensors.Light.Veml7700.csproj
+        path: Source/Meadow.Foundation.Peripherals/Sensors.Light.Veml7700/Driver/Sensors.Light.Veml7700.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.Sensors.LoadCell.Hx711
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\Sensors.LoadCell.Hx711\Driver\Sensors.LoadCell.Hx711.csproj
+        path: Source/Meadow.Foundation.Peripherals/Sensors.LoadCell.Hx711/Driver/Sensors.LoadCell.Hx711.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.Sensors.LoadCell.Nau7802
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\Sensors.LoadCell.Nau7802\Driver\Sensors.LoadCell.Nau7802.csproj
+        path: Source/Meadow.Foundation.Peripherals/Sensors.LoadCell.Nau7802/Driver/Sensors.LoadCell.Nau7802.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.Sensors.Moisture.Capacitive
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\Sensors.Moisture.Capacitive\Driver\Sensors.Moisture.Capacitive.csproj
+        path: Source/Meadow.Foundation.Peripherals/Sensors.Moisture.Capacitive/Driver/Sensors.Moisture.Capacitive.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.Sensors.Moisture.Fc28
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\Sensors.Moisture.Fc28\Driver\Sensors.Moisture.Fc28.csproj
+        path: Source/Meadow.Foundation.Peripherals/Sensors.Moisture.Fc28/Driver/Sensors.Moisture.Fc28.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.Sensors.Motion.Adxl3xx
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\Sensors.Motion.Adxl3xx\Driver\Sensors.Motion.Adxl3xx.csproj
+        path: Source/Meadow.Foundation.Peripherals/Sensors.Motion.Adxl3xx/Driver/Sensors.Motion.Adxl3xx.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.Sensors.Motion.Apds9960
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\Sensors.Motion.Apds9960\Driver\Sensors.Motion.Apds9960.csproj
+        path: Source/Meadow.Foundation.Peripherals/Sensors.Motion.Apds9960/Driver/Sensors.Motion.Apds9960.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.Sensors.Motion.Bmi270
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\Sensors.Motion.Bmi270\Driver\Sensors.Motion.Bmi270.csproj
+        path: Source/Meadow.Foundation.Peripherals/Sensors.Motion.Bmi270/Driver/Sensors.Motion.Bmi270.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.Sensors.Motion.Bno055
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\Sensors.Motion.Bno055\Driver\Sensors.Motion.Bno055.csproj
+        path: Source/Meadow.Foundation.Peripherals/Sensors.Motion.Bno055/Driver/Sensors.Motion.Bno055.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.Sensors.Motion.Hcsens0040
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\Sensors.Motion.Hcsens0040\Driver\Sensors.Motion.Hcsens0040.csproj
+        path: Source/Meadow.Foundation.Peripherals/Sensors.Motion.Hcsens0040/Driver/Sensors.Motion.Hcsens0040.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.Sensors.Motion.Hmc5883
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\Sensors.Motion.Hmc5883\Driver\Sensors.Motion.Hmc5883.csproj
+        path: Source/Meadow.Foundation.Peripherals/Sensors.Motion.Hmc5883/Driver/Sensors.Motion.Hmc5883.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.Sensors.Motion.Mag3110
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\Sensors.Motion.Mag3110\Driver\Sensors.Motion.Mag3110.csproj
+        path: Source/Meadow.Foundation.Peripherals/Sensors.Motion.Mag3110/Driver/Sensors.Motion.Mag3110.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.Sensors.Motion.Mma7660fc
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\Sensors.Motion.Mma7660fc\Driver\Sensors.Motion.Mma7660fc.csproj
+        path: Source/Meadow.Foundation.Peripherals/Sensors.Motion.Mma7660fc/Driver/Sensors.Motion.Mma7660fc.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.Sensors.Motion.Mpu6050
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\Sensors.Motion.Mpu6050\Driver\Sensors.Motion.Mpu6050.csproj
+        path: Source/Meadow.Foundation.Peripherals/Sensors.Motion.Mpu6050/Driver/Sensors.Motion.Mpu6050.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.Sensors.Motion.ParallaxPir
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\Sensors.Motion.ParallaxPir\Driver\Sensors.Motion.ParallaxPir.csproj
+        path: Source/Meadow.Foundation.Peripherals/Sensors.Motion.ParallaxPir/Driver/Sensors.Motion.ParallaxPir.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.Sensors.Power.Ina260
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\Sensors.Power.Ina260\Driver\Sensors.Power.Ina260.csproj
+        path: Source/Meadow.Foundation.Peripherals/Sensors.Power.Ina260/Driver/Sensors.Power.Ina260.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.Sensors.Radio.Rfid.IDxxLA
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\Sensors.Radio.Rfid.IDxxLA\Driver\Sensors.Radio.Rfid.IDxxLA.csproj
+        path: Source/Meadow.Foundation.Peripherals/Sensors.Radio.Rfid.IDxxLA/Driver/Sensors.Radio.Rfid.IDxxLA.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.Sensors.Sound.Ky038
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\Sensors.Sound.Ky038\Driver\Sensors.Sound.Ky038.csproj
+        path: Source/Meadow.Foundation.Peripherals/Sensors.Sound.Ky038/Driver/Sensors.Sound.Ky038.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.Sensors.Temperature.Lm75
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\Sensors.Temperature.Lm75\Driver\Sensors.Temperature.Lm75.csproj
+        path: Source/Meadow.Foundation.Peripherals/Sensors.Temperature.Lm75/Driver/Sensors.Temperature.Lm75.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.Sensors.Temperature.Mcp9808
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\Sensors.Temperature.Mcp9808\Driver\Sensors.Temperature.Mcp9808.csproj
+        path: Source/Meadow.Foundation.Peripherals/Sensors.Temperature.Mcp9808/Driver/Sensors.Temperature.Mcp9808.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.Sensors.Temperature.Thermistor
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\Sensors.Temperature.Thermistor\Driver\Sensors.Temperature.Thermistor.csproj
+        path: Source/Meadow.Foundation.Peripherals/Sensors.Temperature.Thermistor/Driver/Sensors.Temperature.Thermistor.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.Sensors.Temperature.Tmp102
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\Sensors.Temperature.Tmp102\Driver\Sensors.Temperature.Tmp102.csproj
+        path: Source/Meadow.Foundation.Peripherals/Sensors.Temperature.Tmp102/Driver/Sensors.Temperature.Tmp102.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.Sensors.Weather.SwitchingAnemometer
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\Sensors.Weather.SwitchingAnemometer\Driver\Sensors.Weather.SwitchingAnemometer.csproj
+        path: Source/Meadow.Foundation.Peripherals/Sensors.Weather.SwitchingAnemometer/Driver/Sensors.Weather.SwitchingAnemometer.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.Sensors.Weather.SwitchingRainGauge
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\Sensors.Weather.SwitchingRainGauge\Driver\Sensors.Weather.SwitchingRainGauge.csproj
+        path: Source/Meadow.Foundation.Peripherals/Sensors.Weather.SwitchingRainGauge/Driver/Sensors.Weather.SwitchingRainGauge.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.Sensors.Weather.WindVane
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\Sensors.Weather.WindVane\Driver\Sensors.Weather.WindVane.csproj
+        path: Source/Meadow.Foundation.Peripherals/Sensors.Weather.WindVane/Driver/Sensors.Weather.WindVane.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.Servos.ServoCore
-        path: c:\WL\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\Servos.ServoCore\Driver\Servos.ServoCore.csproj
+        path: Source/Meadow.Foundation.Peripherals/Servos.ServoCore/Driver/Servos.ServoCore.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
