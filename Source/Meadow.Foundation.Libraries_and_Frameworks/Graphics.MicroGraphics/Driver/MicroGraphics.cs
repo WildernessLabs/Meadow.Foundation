@@ -1,6 +1,7 @@
 ﻿using Meadow.Foundation.Graphics.Buffers;
 using Meadow.Peripherals.Displays;
 using System;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Meadow.Foundation.Graphics
 {
@@ -955,25 +956,29 @@ namespace Meadow.Foundation.Graphics
 
             byte[] bitMap = GetBytesForTextBitmap(text);
 
-            if (alignmentH == HorizontalAlignment.Center)
-            {
-                x -= MeasureText(text, scaleFactor).Width / 2;
-            }
-            else if (alignmentH == HorizontalAlignment.Right)
-            {
-                x -= MeasureText(text, scaleFactor).Width;
-            }
-
-            if (alignmentV == VerticalAlignment.Center)
-            {
-                y -= MeasureText(text, scaleFactor).Height / 2;
-            }
-            else if (alignmentV == VerticalAlignment.Bottom)
-            {
-                y -= MeasureText(text, scaleFactor).Height;
-            }
+            x = GetXForAlignment(x, MeasureText(text, scaleFactor).Width, alignmentH);
+            y = GetYForAlignment(y, MeasureText(text, scaleFactor).Height, alignmentV);
 
             DrawBitmap(x, y, bitMap.Length / CurrentFont.Height * 8, CurrentFont.Height, bitMap, scaleFactor);
+        }
+
+        /// <summary>
+        /// Draw a buffer onto the display buffer at the given location
+        /// For best performance, source buffer should be the same color depth as the target display
+        /// </summary>
+        /// <param name="x">x location of target to draw buffer</param>
+        /// <param name="y">x location of target to draw buffer</param>
+        /// <param name="buffer">the source buffer to write to the display buffer</param>
+        /// <param name="alignmentH">Horizontal alignment: Left, Center or right align the buffer to the x location</param>
+        /// <param name="alignmentV">Vertical alignment: Top, Center or bottom align the buffer to the y location</param>
+        public void DrawBuffer(int x, int y, IPixelBuffer buffer,
+            HorizontalAlignment alignmentH = HorizontalAlignment.Left,
+            VerticalAlignment alignmentV = VerticalAlignment.Top)
+        {
+            x = GetXForAlignment(x, buffer.Width, alignmentH);
+            y = GetYForAlignment(y, buffer.Height, alignmentV);
+
+            DrawBuffer(x, y, buffer);
         }
 
         /// <summary>
@@ -1035,6 +1040,24 @@ namespace Meadow.Foundation.Graphics
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// Draw an Image onto the display buffer at the specified location
+        /// </summary>
+        /// <param name="x">x location of target to draw buffer</param>
+        /// <param name="y">x location of target to draw buffer</param>
+        /// <param name="image">the source image to write to the display buffer</param>
+        /// <param name="alignmentH">Horizontal alignment: Left, Center or right align the image to the x location</param>
+        /// <param name="alignmentV">Vertical alignment: Top, Center or bottom align the image to the y location</param>
+        public void DrawImage(int x, int y, Image image,
+            HorizontalAlignment alignmentH = HorizontalAlignment.Left,
+            VerticalAlignment alignmentV = VerticalAlignment.Top)
+        {
+            x = GetXForAlignment(x, image.Width, alignmentH);
+            y = GetYForAlignment(y, image.Height, alignmentV);
+
+            DrawImage(x, y, image);
         }
 
         /// <summary>
@@ -1407,6 +1430,32 @@ namespace Meadow.Foundation.Graphics
                     pixelBuffer.Fill(GetXForRotation(x, y), GetYForRotation(x, y) - width + 1, height, width, color);
                     break;
             }
+        }
+
+        int GetXForAlignment(int x, int width, HorizontalAlignment alignmentH)
+        {
+            if (alignmentH == HorizontalAlignment.Center)
+            {
+                x -= width / 2;
+            }
+            else if (alignmentH == HorizontalAlignment.Right)
+            {
+                x -= width;
+            }
+            return x;
+        }
+
+        int GetYForAlignment(int y, int height, VerticalAlignment alignmentV)
+        {
+            if (alignmentV == VerticalAlignment.Center)
+            {
+                y -= height / 2;
+            }
+            else if (alignmentV == VerticalAlignment.Bottom)
+            {
+                y -= height;
+            }
+            return y;
         }
     }
 }
