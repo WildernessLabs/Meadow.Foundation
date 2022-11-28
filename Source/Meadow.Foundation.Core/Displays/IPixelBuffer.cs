@@ -97,5 +97,17 @@
         /// Clears the buffer (writes 0s to the byte array)
         /// </summary>
         void Clear();
+
+        /// <summary>
+        /// Clears a region of the buffer (writes 0s to the byte array)
+        /// </summary>
+        /// <param name="originX">The X coord to start</param>
+        /// <param name="originY">The Y coord to start</param>
+        /// <param name="width">The width of the region to clear</param>
+        /// <param name="height">The height of the region to clear</param>
+        void Clear(int originX, int originY, int width, int height)
+        {
+            Fill(originX, originY, width, height, Color.Black);
+        }
     }
 }

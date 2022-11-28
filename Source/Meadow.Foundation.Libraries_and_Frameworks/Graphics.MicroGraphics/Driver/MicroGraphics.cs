@@ -1272,6 +1272,24 @@ namespace Meadow.Foundation.Graphics
         }
 
         /// <summary>
+        /// Clear a region of the display pixel buffer
+        /// </summary>
+        /// <param name="originX">The X coord to start</param>
+        /// <param name="originY">The Y coord to start</param>
+        /// <param name="width">The width of the region to clear</param>
+        /// <param name="height">The height of the region to clear</param>
+        /// <param name="updateDisplay">Update the display immediately when true</param>
+        public virtual void Clear(int originX, int originY, int width, int height, bool updateDisplay = false)
+        {
+            pixelBuffer.Fill(originX, originY, width, height, display.DisabledColor);
+
+            if (updateDisplay)
+            {
+                Show();
+            }
+        }
+
+        /// <summary>
         /// Clear the pixel buffer to a color
         /// </summary>
         /// <param name="updateDisplay">Update the display immediately when true</param>
