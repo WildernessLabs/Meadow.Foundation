@@ -38,8 +38,8 @@ namespace Meadow.Foundation.Sensors.Distance
         }
 
         Length ReadSensorSerial()
-        {   
-            return Distance.Value;
+        {
+            return Distance != null ? Distance.Value : new Length(0);
         }
 
         private void SerialMessagePort_MessageReceived(object sender, SerialMessageData e)
