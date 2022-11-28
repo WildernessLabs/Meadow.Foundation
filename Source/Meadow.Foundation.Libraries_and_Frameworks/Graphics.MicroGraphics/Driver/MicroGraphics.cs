@@ -990,6 +990,11 @@ namespace Meadow.Foundation.Graphics
         /// <param name="buffer">the source buffer to write to the display buffer</param>
         public void DrawBuffer(int x, int y, IPixelBuffer buffer)
         {
+            if(x >= Width || y >= Height || x + buffer.Width < 0 || y + buffer.Height < 0)
+            {   //nothing to do 
+                return;
+            }
+
             int xStartIndex = 0;
             int yStartIndex = 0;
             int widthToDraw = buffer.Width;
@@ -1016,7 +1021,7 @@ namespace Meadow.Foundation.Graphics
                     isInBounds = false;
                 }
 
-                if (x + buffer.Height > Height)
+                if (y + buffer.Height > Height)
                 {
                     heightToDraw = Height - y;
                     isInBounds = false;
