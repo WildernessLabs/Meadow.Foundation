@@ -1053,12 +1053,7 @@ namespace Meadow.Foundation.Graphics
         public void DrawImage(int x, int y, Image image,
             HorizontalAlignment alignmentH = HorizontalAlignment.Left,
             VerticalAlignment alignmentV = VerticalAlignment.Top)
-        {
-            x = GetXForAlignment(x, image.Width, alignmentH);
-            y = GetYForAlignment(y, image.Height, alignmentV);
-
-            DrawImage(x, y, image);
-        }
+            => DrawBuffer(x, y, image.DisplayBuffer, alignmentH, alignmentV);
 
         /// <summary>
         /// Draw an Image onto the display buffer at the specified location
@@ -1067,18 +1062,14 @@ namespace Meadow.Foundation.Graphics
         /// <param name="y">x location of target to draw buffer</param>
         /// <param name="image">the source image to write to the display buffer</param>
         public void DrawImage(int x, int y, Image image)
-        {
-            DrawBuffer(x, y, image.DisplayBuffer);
-        }
+            => DrawBuffer(x, y, image.DisplayBuffer);
 
         /// <summary>
         /// Draw an Image onto the display buffer at (0, 0)
         /// </summary>
         /// <param name="image">the source image to write to the display buffer</param>
         public void DrawImage(Image image)
-        {
-            DrawImage(0, 0, image);
-        }
+            => DrawImage(0, 0, image);
 
         /// <summary>
         /// Draw a text message on the display using the current font
