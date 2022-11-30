@@ -1,6 +1,7 @@
 ﻿using Meadow.Foundation.Graphics.Buffers;
 using Meadow.Peripherals.Displays;
 using System;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Meadow.Foundation.Graphics
 {
@@ -955,23 +956,8 @@ namespace Meadow.Foundation.Graphics
 
             byte[] bitMap = GetBytesForTextBitmap(text);
 
-            if (alignmentH == HorizontalAlignment.Center)
-            {
-                x -= MeasureText(text, scaleFactor).Width / 2;
-            }
-            else if (alignmentH == HorizontalAlignment.Right)
-            {
-                x -= MeasureText(text, scaleFactor).Width;
-            }
-
-            if (alignmentV == VerticalAlignment.Center)
-            {
-                y -= MeasureText(text, scaleFactor).Height / 2;
-            }
-            else if (alignmentV == VerticalAlignment.Bottom)
-            {
-                y -= MeasureText(text, scaleFactor).Height;
-            }
+            x = GetXForAlignment(x, MeasureText(text, scaleFactor).Width, alignmentH);
+            y = GetYForAlignment(y, MeasureText(text, scaleFactor).Height, alignmentV);
 
             DrawBitmap(x, y, bitMap.Length / CurrentFont.Height * 8, CurrentFont.Height, bitMap, scaleFactor);
         }
@@ -983,28 +969,75 @@ namespace Meadow.Foundation.Graphics
         /// <param name="x">x location of target to draw buffer</param>
         /// <param name="y">x location of target to draw buffer</param>
         /// <param name="buffer">the source buffer to write to the display buffer</param>
-        /// /// <param name="rotateBufferForDisplay">rotate the buffer if the display is rotated - maybe be slower</param>
-        public void DrawBuffer(int x, int y, IPixelBuffer buffer, bool rotateBufferForDisplay = true)
+        /// <param name="alignmentH">Horizontal alignment: Left, Center or right align the buffer to the x location</param>
+        /// <param name="alignmentV">Vertical alignment: Top, Center or bottom align the buffer to the y location</param>
+        public void DrawBuffer(int x, int y, IPixelBuffer buffer,
+            HorizontalAlignment alignmentH = HorizontalAlignment.Left,
+            VerticalAlignment alignmentV = VerticalAlignment.Top)
         {
+            x = GetXForAlignment(x, buffer.Width, alignmentH);
+            y = GetYForAlignment(y, buffer.Height, alignmentV);
+
+            DrawBuffer(x, y, buffer);
+        }
+
+        /// <summary>
+        /// Draw a buffer onto the display buffer at the given location
+        /// For best performance, source buffer should be the same color depth as the target display
+        /// </summary>
+        /// <param name="x">x location of target to draw buffer</param>
+        /// <param name="y">x location of target to draw buffer</param>
+        /// <param name="buffer">the source buffer to write to the display buffer</param>
+        public void DrawBuffer(int x, int y, IPixelBuffer buffer)
+        {
+            if(x >= Width || y >= Height || x + buffer.Width < 0 || y + buffer.Height < 0)
+            {   //nothing to do 
+                return;
+            }
+
+            int xStartIndex = 0;
+            int yStartIndex = 0;
+            int widthToDraw = buffer.Width;
+            int heightToDraw = buffer.Height;
+
+            bool isInBounds = true;
+
             if (IgnoreOutOfBoundsPixels)
             {
-                if (x < 0 || y < 0 || x + buffer.Width > Width || y + buffer.Height > Height)
+                if (x < 0) 
+                { 
+                    xStartIndex = 0 - x;
+                    isInBounds = false;
+                }
+                if (y < 0) 
+                { 
+                    yStartIndex = 0 - x;
+                    isInBounds = false;
+                }
+
+                if(x + buffer.Width > Width)
                 {
-                    return;
+                    widthToDraw = Width - x;
+                    isInBounds = false;
+                }
+
+                if (y + buffer.Height > Height)
+                {
+                    heightToDraw = Height - y;
+                    isInBounds = false;
                 }
             }
 
             //fast and happy path
-            if (Rotation == RotationType.Default)
+            if (Rotation == RotationType.Default && isInBounds)
             {
                 pixelBuffer.WriteBuffer(x, y, buffer);
             }
-            //rotate buffer if the display is rotated (slow)
-            else if (rotateBufferForDisplay) //loop over every pixel
+            else  //loop over every pixel
             {
-                for (int i = 0; i < buffer.Width; i++)
+                for (int i = xStartIndex; i < widthToDraw; i++)
                 {
-                    for (int j = 0; j < buffer.Height; j++)
+                    for (int j = yStartIndex; j < heightToDraw; j++)
                     {
                         pixelBuffer.SetPixel(GetXForRotation(x + i, y + j),
                             GetYForRotation(x + i, y + j),
@@ -1012,32 +1045,36 @@ namespace Meadow.Foundation.Graphics
                     }
                 }
             }
-            //don't rotate buffer with the display (fast)
-            else
-            {
-                pixelBuffer.WriteBuffer(GetXForRotation(x, y), GetYForRotation(x, y), buffer);
-            }
         }
 
         /// <summary>
         /// Draw an Image onto the display buffer at the specified location
         /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <param name="image"></param>
+        /// <param name="x">x location of target to draw buffer</param>
+        /// <param name="y">x location of target to draw buffer</param>
+        /// <param name="image">the source image to write to the display buffer</param>
+        /// <param name="alignmentH">Horizontal alignment: Left, Center or right align the image to the x location</param>
+        /// <param name="alignmentV">Vertical alignment: Top, Center or bottom align the image to the y location</param>
+        public void DrawImage(int x, int y, Image image,
+            HorizontalAlignment alignmentH = HorizontalAlignment.Left,
+            VerticalAlignment alignmentV = VerticalAlignment.Top)
+            => DrawBuffer(x, y, image.DisplayBuffer, alignmentH, alignmentV);
+
+        /// <summary>
+        /// Draw an Image onto the display buffer at the specified location
+        /// </summary>
+        /// <param name="x">x location of target to draw buffer</param>
+        /// <param name="y">x location of target to draw buffer</param>
+        /// <param name="image">the source image to write to the display buffer</param>
         public void DrawImage(int x, int y, Image image)
-        {
-            DrawBuffer(x, y, image.DisplayBuffer);
-        }
+            => DrawBuffer(x, y, image.DisplayBuffer);
 
         /// <summary>
         /// Draw an Image onto the display buffer at (0, 0)
         /// </summary>
-        /// <param name="image"></param>
+        /// <param name="image">the source image to write to the display buffer</param>
         public void DrawImage(Image image)
-        {
-            DrawImage(0, 0, image);
-        }
+            => DrawImage(0, 0, image);
 
         /// <summary>
         /// Draw a text message on the display using the current font
@@ -1235,6 +1272,24 @@ namespace Meadow.Foundation.Graphics
         }
 
         /// <summary>
+        /// Clear a region of the display pixel buffer
+        /// </summary>
+        /// <param name="originX">The X coord to start</param>
+        /// <param name="originY">The Y coord to start</param>
+        /// <param name="width">The width of the region to clear</param>
+        /// <param name="height">The height of the region to clear</param>
+        /// <param name="updateDisplay">Update the display immediately when true</param>
+        public virtual void Clear(int originX, int originY, int width, int height, bool updateDisplay = false)
+        {
+            pixelBuffer.Fill(originX, originY, width, height, display.DisabledColor);
+
+            if (updateDisplay)
+            {
+                Show();
+            }
+        }
+
+        /// <summary>
         /// Clear the pixel buffer to a color
         /// </summary>
         /// <param name="updateDisplay">Update the display immediately when true</param>
@@ -1389,6 +1444,32 @@ namespace Meadow.Foundation.Graphics
                     pixelBuffer.Fill(GetXForRotation(x, y), GetYForRotation(x, y) - width + 1, height, width, color);
                     break;
             }
+        }
+
+        int GetXForAlignment(int x, int width, HorizontalAlignment alignmentH)
+        {
+            if (alignmentH == HorizontalAlignment.Center)
+            {
+                x -= width / 2;
+            }
+            else if (alignmentH == HorizontalAlignment.Right)
+            {
+                x -= width;
+            }
+            return x;
+        }
+
+        int GetYForAlignment(int y, int height, VerticalAlignment alignmentV)
+        {
+            if (alignmentV == VerticalAlignment.Center)
+            {
+                y -= height / 2;
+            }
+            else if (alignmentV == VerticalAlignment.Bottom)
+            {
+                y -= height;
+            }
+            return y;
         }
     }
 }
