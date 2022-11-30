@@ -35,8 +35,17 @@ namespace Meadow.Foundation.Sensors.Environmental
         public Ens160(II2cBus i2cBus, byte address = (byte)Addresses.Default)
             : base(i2cBus, address, readBufferSize: 9, writeBufferSize: 9)
         {
-            Console.WriteLine(Peripheral.ReadRegister(0x00));
+            //perfect 96 & 1
+            Console.WriteLine(Peripheral.ReadRegister(0x00)); 
             Console.WriteLine(Peripheral.ReadRegister(0x01));
+        }
+        
+        /// <summary>
+        /// Set the sensor operating mode
+        /// </summary>
+        public void SetOperatingMode()
+        {
+
         }
 
         /// <summary>

@@ -23,6 +23,26 @@
             Default = Address_0x52
         }
 
+        public enum OperatingMode : byte
+        {
+            /// <summary>
+            /// Reset the sensor
+            /// </summary>
+            Reset = 0xF0,
+            /// <summary>
+            /// Deep sleep - low power standby mode
+            /// </summary>
+            DeepSleep = 0x00,
+            /// <summary>
+            /// Idle - low power mode
+            /// </summary>
+            Idle = 0x01,
+            /// <summary>
+            /// Standard gas sensing mode
+            /// </summary>
+            Standard = 0x02,
+        }
+
         /// <summary>
         /// Ens160 commands
         /// </summary>
