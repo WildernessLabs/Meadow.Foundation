@@ -23,6 +23,9 @@
             Default = Address_0x52
         }
 
+        /// <summary>
+        /// Sensor operating mode
+        /// </summary>
         public enum OperatingMode : byte
         {
             /// <summary>
@@ -44,65 +47,82 @@
         }
 
         /// <summary>
+        /// AQI Rating
+        /// </summary>
+        public enum AirQuality
+        {
+            /// <summary>
+            /// Heavily contaminated indoor air / Ventilation required
+            /// eCO2 / CO2 over 1500
+            /// </summary>
+            Bad,
+            /// <summary>
+            /// Contaminated indoor air / Ventilation recommended
+            /// eCO2 / CO2 1000-1500
+            /// </summary>
+            Poor,
+            /// <summary>
+            /// Optional ventilation
+            /// eCO2 / CO2 800-1000
+            /// </summary>
+            Fair = 0x03,
+            /// <summary>
+            /// Average
+            /// eCO2 / CO2 600-800
+            /// </summary>
+            Good = 0x02,
+            /// <summary>
+            /// Target
+            /// eCO2 / CO2 0-600
+            /// </summary>
+            Excellent = 0x01,
+        }
+
+        /// <summary>
         /// Ens160 commands
         /// </summary>
-        enum Registers : ushort
+        enum Commands : byte
         {
-            REG_PART_ID         = 0x00,		// 2 byte register
-            REG_OPMODE			= 0x10,
-            REG_CONFIG			= 0x11,
-            REG_COMMAND			= 0x12,
-            REG_TEMP_IN			= 0x13,
-            REG_RH_IN			= 0x15,
-            REG_DATA_STATUS		= 0x20,
-            REG_DATA_AQI		= 0x21,
-            REG_DATA_TVOC		= 0x22,
-            REG_DATA_ECO2		= 0x24,			
-            REG_DATA_BL			= 0x28,
-            REG_DATA_T			= 0x30,
-            REG_DATA_RH			= 0x32,
-            REG_DATA_MISR		= 0x38,
-            REG_GPR_WRITE_0		= 0x40,
-            REG_GPR_WRITE_1     = 0x41,
-            REG_GPR_WRITE_2		= 0x42,
-            REG_GPR_WRITE_3		= 0x43,
-            REG_GPR_WRITE_4		= 0x44,
-            REG_GPR_WRITE_5		= 0x45,
-            REG_GPR_WRITE_6		= 0x46,
-            REG_GPR_WRITE_7		= 0x47,
-            REG_GPR_READ_0		= 0x48,
-            REG_GPR_READ_4      = 0x48 + 4,
-            REG_GPR_READ_6      = 0x48 + 6,
-            REG_GPR_READ_7      = 0x48 + 6,
+            NOP = 0x00,
+            CLRGPR = 0xCC,
+            GET_APPVER = 0x0E,
+        }
 
-            //ENS160 data register fields
-            COMMAND_NOP			= 0x00,
-            COMMAND_CLRGPR		= 0xCC,
-            COMMAND_GET_APPVER	= 0x0E, 
-            COMMAND_SETTH		= 0x02,
-            COMMAND_SETSEQ		= 0xC2,
-
-            OPMODE_RESET		= 0xF0,
-            OPMODE_DEP_SLEEP    = 0x00,
-            OPMODE_IDLE			= 0x01,
-            OPMODE_STD			= 0x02,
-            OPMODE_INTERMEDIATE	= 0x03,	
-            OPMODE_CUSTOM		= 0xC0,
-            OPMODE_D0			= 0xD0,
-            OPMODE_D1			= 0xD1,
-            OPMODE_BOOTLOADER	= 0xB0,
-
-            BL_CMD_START		= 0x02,
-            BL_CMD_ERASE_APP	= 0x04,
-            BL_CMD_ERASE_BLINE	= 0x06,
-            BL_CMD_WRITE		= 0x08,
-            BL_CMD_VERIFY		= 0x0A,
-            BL_CMD_GET_BLVER	= 0x0C,
-            BL_CMD_GET_APPVER	= 0x0E,
-            BL_CMD_EXITBL		= 0x12,
-
-            SEQ_ACK_NOTCOMPLETE	= 0x80,
-            SEQ_ACK_COMPLETE	= 0xC0,
+        /// <summary>
+        /// Ens160 commands
+        /// </summary>
+        enum Registers : byte
+        {
+            PART_ID         = 0x00,		// 2 byte register
+            OPMODE			= 0x10,
+            CONFIG			= 0x11,
+            COMMAND			= 0x12,
+            TEMP_IN			= 0x13,
+            RH_IN			= 0x15,
+            DATA_STATUS		= 0x20,
+            DATA_AQI		= 0x21,
+            DATA_TVOC		= 0x22,
+            DATA_ETOH       = 0x22,
+            DATA_ECO2		= 0x24,			
+            DATA_T			= 0x30,
+            DATA_RH			= 0x32,
+            DATA_MISR		= 0x38,
+            GPR_WRITE_0		= 0x40,
+            GPR_WRITE_1     = 0x41,
+            GPR_WRITE_2		= 0x42,
+            GPR_WRITE_3		= 0x43,
+            GPR_WRITE_4		= 0x44,
+            GPR_WRITE_5		= 0x45,
+            GPR_WRITE_6		= 0x46,
+            GPR_WRITE_7		= 0x47,
+            GPR_READ_0		= 0x48,
+            GPR_READ_1      = 0x49,
+            GPR_READ_2      = 0x4A,
+            GPR_READ_3      = 0x4B,
+            GPR_READ_4      = 0x4C,
+            GPR_READ_5      = 0x4D,
+            GPR_READ_6      = 0x4E,
+            GPR_READ_7      = 0x4F,
         }
     }
 }
