@@ -9,7 +9,7 @@ using Meadow.Utilities;
 namespace Meadow.Foundation.Sensors.Environmental
 {
     /// <summary>
-    /// Represnts an ENS160 Digital Metal-Oxide Multi-Gas Sensor
+    /// Represents an ENS160 Digital Metal-Oxide Multi-Gas Sensor
     /// </summary>
     public partial class Ens160 : 
         ByteCommsSensorBase<(Concentration? CO2Concentration, 
