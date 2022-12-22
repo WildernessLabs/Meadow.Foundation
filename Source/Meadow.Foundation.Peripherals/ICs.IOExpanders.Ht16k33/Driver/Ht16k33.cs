@@ -30,7 +30,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <param name="i2cBus">I2C bus instance</param>
         public Ht16k33(II2cBus i2cBus, byte address = (byte)Addresses.Default)
         {
-            i2cPeripheral = new I2cPeripheral(i2cBus, address);
+            i2cPeripheral = new I2cPeripheral(i2cBus, address, 8, 17);
 
             Initialize();
         }
