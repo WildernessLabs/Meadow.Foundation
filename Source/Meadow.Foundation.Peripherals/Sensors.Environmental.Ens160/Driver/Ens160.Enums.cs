@@ -49,31 +49,39 @@
         /// <summary>
         /// AQI Rating
         /// </summary>
-        public enum AirQuality
+        /// <remarks>
+        /// The AQI-UBA17 air quality index is derived from a guideline by the German Federal Environmental 
+        /// Agency based on a TVOC sum signal.Although a local, German guideline, it is referenced and adopted
+        /// by many countries and organizations.
+        /// </remarks>
+        public enum UBAAirQualityIndex
         {
             /// <summary>
-            /// Heavily contaminated indoor air / Ventilation required
-            /// eCO2 / CO2 over 1500
+            /// Situation not acceptable
+            /// Use only if unavoidable 
+            /// Intensified ventilation recommended
             /// </summary>
-            Bad,
+            Unhealthy = 0x05,
             /// <summary>
-            /// Contaminated indoor air / Ventilation recommended
-            /// eCO2 / CO2 1000-1500
+            /// Major objections
+            /// Intensified ventilation recommended
+            /// Search for sources
             /// </summary>
-            Poor,
+            Poor = 0x04,
             /// <summary>
-            /// Optional ventilation
-            /// eCO2 / CO2 800-1000
+            /// Some objections
+            /// Increased ventilation recommended
+            /// Search for sources
             /// </summary>
-            Fair = 0x03,
+            Moderate = 0x03,
             /// <summary>
-            /// Average
-            /// eCO2 / CO2 600-800
+            /// No relevant objections
+            /// Sufficient ventilation recommended
             /// </summary>
             Good = 0x02,
             /// <summary>
+            /// No objections
             /// Target
-            /// eCO2 / CO2 0-600
             /// </summary>
             Excellent = 0x01,
         }

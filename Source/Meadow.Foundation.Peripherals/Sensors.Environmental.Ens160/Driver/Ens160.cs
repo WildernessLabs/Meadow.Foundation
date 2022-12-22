@@ -11,7 +11,10 @@ namespace Meadow.Foundation.Sensors.Environmental
     /// <summary>
     /// Represnts an ENS160 Digital Metal-Oxide Multi-Gas Sensor
     /// </summary>
-    public partial class Ens160 : ByteCommsSensorBase<(Concentration? CO2Concentration, Concentration? EthanolConcentration)>, 
+    public partial class Ens160 : 
+        ByteCommsSensorBase<(Concentration? CO2Concentration, 
+                             Concentration? EthanolConcentration, 
+                             Concentration? TVOCConcentration)>, 
         IConcentrationSensor
     {
         /// <summary>
@@ -30,6 +33,11 @@ namespace Meadow.Foundation.Sensors.Environmental
         public event EventHandler<IChangeResult<Concentration>> EthanolConcentrationUpdated = delegate { };
 
         /// <summary>
+        /// Raised when the Total Volatile Organic Compounds (TVOC) concentration changes
+        /// </summary>
+        public event EventHandler<IChangeResult<Concentration>> TVOCConcentrationUpdated = delegate { };
+
+        /// <summary>
         /// The current C02 concentration value
         /// </summary>
         public Concentration? Concentration => Conditions.CO2Concentration;
@@ -40,11 +48,14 @@ namespace Meadow.Foundation.Sensors.Environmental
         public Concentration? CO2Concentration => Conditions.CO2Concentration;
 
         /// <summary>
-        /// The current C02 concentration value
+        /// The current ethanol concentration value
         /// </summary>
         public Concentration? EthanolConcentration => Conditions.EthanolConcentration;
 
-
+        /// <summary>
+        /// The current Total Volatile Organic Compounds (TVOC) concentration value
+        /// </summary>
+        public Concentration? TVOCConcentration => Conditions.TVOCConcentration;
 
         /// <summary>
         /// The current device operating mode
@@ -75,7 +86,6 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// <summary>
         /// Initialize the sensor
         /// </summary>
-        /// <returns></returns>
         protected async Task Initialize()
         {
             Peripheral.WriteRegister((byte)Registers.COMMAND, (byte)Commands.NOP);
@@ -83,7 +93,6 @@ namespace Meadow.Foundation.Sensors.Environmental
 
             await Task.Delay(10);
             await Reset();
-
         }
 
         /// <summary>
@@ -154,13 +163,13 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// <summary>
         /// Get the air quality index (AQI)
         /// </summary>
-        public AirQuality GetAirQualityIndex()
+        public UBAAirQualityIndex GetAirQualityIndex()
         {
             var value = Peripheral.ReadRegister((byte)Registers.DATA_AQI);
 
             var aqi = value >> 5;
 
-            return (AirQuality)aqi;
+            return (UBAAirQualityIndex)aqi;
         }
 
         bool IsNewDataAvailable()
@@ -177,9 +186,10 @@ namespace Meadow.Foundation.Sensors.Environmental
             return BitHelpers.GetBitValue(value, 0x03);
         }
 
-        ushort GetTotalVolotileOrganicCompounds()
+        Concentration GetTotalVolotileOrganicCompounds()
         {
-            return Peripheral.ReadRegisterAsUShort((byte)Registers.DATA_TVOC);
+            var con = Peripheral.ReadRegisterAsUShort((byte)Registers.DATA_TVOC);
+            return new Concentration(con, Units.Concentration.UnitType.PartsPerBillion);
         }
 
         Concentration GetCO2Concentration()
@@ -236,14 +246,17 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// Get Scdx40 C02 Gas Concentration and
         /// Update the Concentration property
         /// </summary>
-        protected override async Task<(Concentration? CO2Concentration, Concentration? EthanolConcentration)> ReadSensor()
+        protected override async Task<(Concentration? CO2Concentration, 
+                                       Concentration? EthanolConcentration,
+                                       Concentration? TVOCConcentration)> ReadSensor()
         {
             return await Task.Run(() =>
             {
-                (Concentration? CO2Concentration, Concentration? EthanolConcentration) conditions;
+                (Concentration? CO2Concentration, Concentration? EthanolConcentration, Concentration? TVOCConcentration) conditions;
 
                 conditions.CO2Concentration = GetCO2Concentration();
                 conditions.EthanolConcentration = GetEthanolConcentration();
+                conditions.TVOCConcentration = GetTotalVolotileOrganicCompounds();
 
                 return conditions;
             });
@@ -253,7 +266,7 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// Raise change events for subscribers
         /// </summary>
         /// <param name="changeResult">The change result with the current sensor data</param>
-        protected void RaiseChangedAndNotify(IChangeResult<(Concentration? CO2Concentration, Concentration? EthanolConcentration)> changeResult)
+        protected void RaiseChangedAndNotify(IChangeResult<(Concentration? CO2Concentration, Concentration? EthanolConcentration, Concentration? TVOCConcentration)> changeResult)
         {
             if (changeResult.New.CO2Concentration is { } concentration)
             {
@@ -263,6 +276,10 @@ namespace Meadow.Foundation.Sensors.Environmental
             if (changeResult.New.EthanolConcentration is { } ethConcentration)
             {
                 EthanolConcentrationUpdated?.Invoke(this, new ChangeResult<Concentration>(ethConcentration, changeResult.Old?.CO2Concentration));
+            }
+            if (changeResult.New.TVOCConcentration is { } tvocConcentration)
+            {
+                TVOCConcentrationUpdated?.Invoke(this, new ChangeResult<Concentration>(tvocConcentration, changeResult.Old?.CO2Concentration));
             }
 
             base.RaiseEventsAndNotify(changeResult);

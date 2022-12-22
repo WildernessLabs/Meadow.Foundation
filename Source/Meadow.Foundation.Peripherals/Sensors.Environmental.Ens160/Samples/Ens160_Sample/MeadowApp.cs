@@ -45,6 +45,8 @@ namespace Sensors.Environmental.Ens160_Sample
                 {
                     Console.WriteLine($"  CO2 Concentration: {result.New.CO2Concentration?.PartsPerMillion:N0}ppm");
                     Console.WriteLine($"  Ethanol Concentraion: {result.New.EthanolConcentration?.PartsPerBillion:N0}ppb");
+                    Console.WriteLine($"  TVOC Concentraion: {result.New.TVOCConcentration?.PartsPerBillion:N0}ppb");
+                    Console.WriteLine($"  AQI: {sensor.GetAirQualityIndex()}");    
                 };
             }
 
