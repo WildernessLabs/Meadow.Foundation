@@ -31,8 +31,8 @@ namespace Leds.PwmLed_Sample
                 new PwmLed(Device.CreatePwmPort(Device.Pins.D02, new Frequency(100, Frequency.UnitType.Hertz)), TypicalForwardVoltage.Blue),
                 new PwmLed(Device.CreatePwmPort(Device.Pins.D03, new Frequency(100, Frequency.UnitType.Hertz)), TypicalForwardVoltage.Blue),
                 new PwmLed(Device.CreatePwmPort(Device.Pins.D04, new Frequency(100, Frequency.UnitType.Hertz)), TypicalForwardVoltage.Blue),
-                new PwmLed(Device.CreatePwmPort(Device.Pins.D05, new Frequency(100, Frequency.UnitType.Hertz)), TypicalForwardVoltage.Blue),
-                new PwmLed(Device.CreatePwmPort(Device.Pins.D06, new Frequency(100, Frequency.UnitType.Hertz)), TypicalForwardVoltage.Blue), // This pin throws an exception as PWM Port
+                //new PwmLed(Device.CreatePwmPort(Device.Pins.D05, new Frequency(100, Frequency.UnitType.Hertz)), TypicalForwardVoltage.Blue),
+                //new PwmLed(Device.CreatePwmPort(Device.Pins.D06, new Frequency(100, Frequency.UnitType.Hertz)), TypicalForwardVoltage.Blue), // This pin throws an exception as PWM Port
                 new PwmLed(Device.CreatePwmPort(Device.Pins.D07, new Frequency(100, Frequency.UnitType.Hertz)), TypicalForwardVoltage.Blue),
                 new PwmLed(Device.CreatePwmPort(Device.Pins.D08, new Frequency(100, Frequency.UnitType.Hertz)), TypicalForwardVoltage.Blue),
                 new PwmLed(Device.CreatePwmPort(Device.Pins.D09, new Frequency(100, Frequency.UnitType.Hertz)), TypicalForwardVoltage.Blue),
@@ -50,8 +50,6 @@ namespace Leds.PwmLed_Sample
         public override async Task Run()
         {
             Console.WriteLine("TestPwmLeds...");
-
-            pwmLeds[0].Brightness = 2;
 
             while (true)
             {
