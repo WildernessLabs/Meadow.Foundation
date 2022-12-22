@@ -22,23 +22,25 @@ namespace Sensors.Buttons.PushButton_Sample
         {
             Console.WriteLine("Initializing...");
 
+            led = new RgbPwmLed(
+                Device,
+                Device.Pins.OnboardLedRed,
+                Device.Pins.OnboardLedGreen,
+                Device.Pins.OnboardLedBlue);
+            led.SetColor(Color.Red);
+
             //TestAllResistorTypes();
             TestMultiplePorts();
 
             Console.WriteLine("PushButton(s) ready!!!");
+
+            led.SetColor(Color.Green);
 
             return Task.CompletedTask;
         }
 
         void TestAllResistorTypes()
         {
-            led = new RgbPwmLed(
-                Device,
-                Device.Pins.D12,
-                Device.Pins.D11,
-                Device.Pins.D10);
-            led.SetColor(Color.Red);
-
             pushButtons = new List<PushButton>();
 
             var inputInternalPullUp = Device.CreateDigitalInputPort(
@@ -91,29 +93,34 @@ namespace Sensors.Buttons.PushButton_Sample
             // Important note: You can only use on Push Button per Group Set (GSXX)
             pushButtons = new List<PushButton>
             {
-                new PushButton(Device, Device.Pins.D06),         // <- GS00
+                new PushButton(Device, Device.Pins.A03),         // <- GS00
+                //new PushButton(Device, Device.Pins.A05),         // <- GS00
 
-                new PushButton(Device, Device.Pins.D09),         // <- GS01
+                new PushButton(Device, Device.Pins.A04),         // <- GS01
 
-                new PushButton(Device, Device.Pins.D14),         // <- GS03
+                new PushButton(Device, Device.Pins.A02),         // <- GS03
  
-                new PushButton(Device, Device.Pins.A00),         // <- GS04
+                //new PushButton(Device, Device.Pins.A00),         // <- GS04
+                new PushButton(Device, Device.Pins.D05),         // <- GS04
 
-                new PushButton(Device, Device.Pins.COPI),        // <- GS05
+                new PushButton(Device, Device.Pins.A01),         // <- GS05
+                //new PushButton(Device, Device.Pins.COPI),        // <- GS05
 
-                new PushButton(Device, Device.Pins.D02),         // <- GS06
+                new PushButton(Device, Device.Pins.D08),         // <- GS06
+                //new PushButton(Device, Device.Pins.D09),         // <- GS06
 
-                new PushButton(Device, Device.Pins.D05),         // <- GS07
+                new PushButton(Device, Device.Pins.D07),         // <- GS07
+                //new PushButton(Device, Device.Pins.D10),         // <- GS07
 
                 new PushButton(Device, Device.Pins.D03),         // <- GS08
 
                 new PushButton(Device, Device.Pins.D00),         // <- GS09
+                //new PushButton(Device, Device.Pins.D04),         // <- GS09
                 
-                new PushButton(Device, Device.Pins.SCK),         // <- GS10
+                new PushButton(Device, Device.Pins.CIPO),         // <- GS11
 
-                new PushButton(Device, Device.Pins.CIPO),        // <- GS11
-                
                 new PushButton(Device, Device.Pins.D01),         // <- GS13
+                //new PushButton(Device, Device.Pins.D06),         // <- GS13
 
                 new PushButton(Device, Device.Pins.D12),         // <- GS14
 
