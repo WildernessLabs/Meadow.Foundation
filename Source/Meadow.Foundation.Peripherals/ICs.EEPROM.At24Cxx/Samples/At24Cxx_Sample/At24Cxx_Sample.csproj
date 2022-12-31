@@ -10,7 +10,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Meadow.F7" Version="0.*" />
-    <PackageReference Include="Meadow.Foundation.ICs.EEPROM.At24Cxx" Version="0.*" />
+    <ProjectReference Include="..\..\Driver\ICs.EEPROM.At24Cxx.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Update="meadow.config.yaml">

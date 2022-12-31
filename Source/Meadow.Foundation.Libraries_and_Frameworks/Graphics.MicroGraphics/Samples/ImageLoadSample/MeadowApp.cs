@@ -34,9 +34,9 @@ namespace Meadow.Foundation.Graphics
             var display = new St7789(
                 device: Device,
                 spiBus: spiBus,
-                chipSelectPin: Device.Pins.D15,
-                dcPin: Device.Pins.D11,
-                resetPin: Device.Pins.D14,
+                chipSelectPin: Device.Pins.A03,
+                dcPin: Device.Pins.A04,
+                resetPin: Device.Pins.A05,
                 width: 240, height: 240, colorMode: ColorType.Format16bppRgb565)
             {
             };
@@ -52,43 +52,54 @@ namespace Meadow.Foundation.Graphics
 
         public override Task Run()
         {
+            var delay = TimeSpan.FromMilliseconds(1000);
+
             graphics.Clear();
             graphics.CurrentFont = new Font12x20();
 
             graphics.DrawText(5, 200, "starting...", Color.White);
             graphics.Show();
-            Thread.Sleep(2000);
+            Thread.Sleep(delay);
+
+            int x = 0;
+            int y = 0;
 
             while (true)
             {
-                DrawImageFromFile(8);
-                Thread.Sleep(2000);
-                DrawImageFromResource(8);
-                Thread.Sleep(2000);
-                DrawImageFromFile(24);
-                Thread.Sleep(2000);
-                DrawImageFromResource(24);
-                Thread.Sleep(2000);
+                DrawImageFromFile(8, x, y);
+                Thread.Sleep(delay);
+                DrawImageFromResource(8, x, y);
+                Thread.Sleep(delay);
+                DrawImageFromFile(24, x, y);
+                Thread.Sleep(delay);
+                DrawImageFromResource(24, x, y);
+                Thread.Sleep(delay);
+
+                x += 1;
+                y += 1;
+
+                if (x > 260) x = -20;
+                if (y > 260) y = -20;
             }
         }
 
-        private void DrawImageFromFile(int depth)
+        private void DrawImageFromFile(int depth, int x = 0, int y = 0)
         {
             Console.WriteLine("Showing file...");
             var filePath = Path.Combine(MeadowOS.FileSystem.UserFileSystemRoot, $"wl{depth}.bmp");
             var image = Image.LoadFromFile(filePath);
             graphics.Clear();
-            graphics.DrawImage(image);
+            graphics.DrawImage(x, y, image);
             graphics.DrawText(5, 200, $"{depth}bpp file", Color.White);
             graphics.Show();
         }
 
-        private void DrawImageFromResource(int depth)
+        private void DrawImageFromResource(int depth, int x = 0, int y = 0)
         {
             Console.WriteLine("Showing resource...");
             var image = Image.LoadFromResource($"wl{depth}_res.bmp");
             graphics.Clear();
-            graphics.DrawImage(image);
+            graphics.DrawImage(x, y, image);
             graphics.DrawText(5, 200, $"{depth}bpp resource", Color.White);
             graphics.Show();
         }

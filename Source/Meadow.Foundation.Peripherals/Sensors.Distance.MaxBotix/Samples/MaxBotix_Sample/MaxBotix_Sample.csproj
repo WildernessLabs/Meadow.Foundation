@@ -7,7 +7,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Meadow.F7" Version="0.*" />
-    <PackageReference Include="Meadow.Foundation.Sensors.Distance.MaxBotix" Version="0.*" />
+    <ProjectReference Include="..\..\Driver\Sensors.Distance.MaxBotix.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Update="meadow.config.yaml">

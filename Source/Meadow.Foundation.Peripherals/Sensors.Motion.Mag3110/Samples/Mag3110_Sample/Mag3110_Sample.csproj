@@ -10,7 +10,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Meadow.F7" Version="0.*" />
-    <PackageReference Include="Meadow.Foundation.Sensors.Motion.Mag3110" Version="0.*" />
+    <ProjectReference Include="..\..\Driver\Sensors.Motion.Mag3110.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Update="meadow.config.yaml">

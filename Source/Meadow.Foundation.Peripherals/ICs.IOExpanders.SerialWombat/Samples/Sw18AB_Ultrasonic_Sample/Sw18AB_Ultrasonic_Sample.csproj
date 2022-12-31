@@ -18,7 +18,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Meadow.F7" Version="0.*" />
-    <PackageReference Include="Meadow.Foundation.ICs.IOExpanders.SerialWombat" Version="0.*" />
+    <ProjectReference Include="..\..\Driver\ICs.IOExpanders.SerialWombat.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Update="meadow.config.yaml">

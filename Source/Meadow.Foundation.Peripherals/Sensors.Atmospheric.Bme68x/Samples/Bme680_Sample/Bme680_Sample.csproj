@@ -14,7 +14,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Meadow.F7" Version="0.*" />
-    <PackageReference Include="Meadow.Foundation.Sensors.Atmospheric.Bme68x" Version="0.*" />
+    <ProjectReference Include="..\..\Driver\Sensors.Atmospheric.Bme68x.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Update="meadow.config.yaml">

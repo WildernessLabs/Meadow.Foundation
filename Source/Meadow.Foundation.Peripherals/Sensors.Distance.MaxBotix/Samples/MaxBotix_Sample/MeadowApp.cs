@@ -51,7 +51,7 @@ namespace MaxBotix_Sample
             var distance = await maxBotix.Read();
             Console.WriteLine($"Distance is: {distance.Centimeters}cm");
 
-            maxBotix.StartUpdating(new TimeSpan(0, 0, 1));
+            maxBotix.StartUpdating(TimeSpan.FromSeconds(1));
         }
 
         private void MaxBotix_DistanceUpdated(object sender, IChangeResult<Length> e)

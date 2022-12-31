@@ -292,6 +292,16 @@ namespace Meadow.Foundation
             return base.Equals(obj);
         }
 
+        /// <summary>
+        /// Compare two color structs for equality
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns>true if equals</returns>
+        public readonly bool Equals(Color other)
+        {
+            return EqualsInner(this, other);
+        }
+
         static bool EqualsInner(Color color1, Color color2)
         {
              return color1.R == color2.R && color1.G == color2.G && color1.B == color2.B && color1.A == color2.A;
