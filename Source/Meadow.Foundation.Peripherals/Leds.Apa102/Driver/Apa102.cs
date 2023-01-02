@@ -43,14 +43,15 @@ namespace Meadow.Foundation.Leds
         public int NumberOfLeds => numberOfLeds;
 
         /// <summary>
-        /// Brightness 
+        /// Brightness used for LEDs
+        /// Default is 0.5
         /// </summary>
         public float Brightness
         {
             get => brightness;
             set => brightness = Math.Clamp(brightness, 0.0f, 1.0f);
         }
-        float brightness;
+        float brightness = 0.5f;
 
         /// <summary>
         /// Creates a new APA102 object
