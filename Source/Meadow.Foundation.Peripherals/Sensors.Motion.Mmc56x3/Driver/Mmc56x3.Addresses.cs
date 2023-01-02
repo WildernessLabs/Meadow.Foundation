@@ -1,6 +1,6 @@
 ﻿namespace Meadow.Foundation.Sensors.Motion
 {
-    public partial class Mmcc56x3
+    public partial class Mmc56x3
     {
         /// <summary>
         /// Valid addresses for the sensor

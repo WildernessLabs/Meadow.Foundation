@@ -10,9 +10,9 @@ using System.Threading.Tasks;
 namespace Meadow.Foundation.Sensors.Motion
 {
     /// <summary>
-    /// Represents the Mmcc56x3 Three-Axis, Digital Magnetometer
+    /// Represents the Mmc56x3 Three-Axis, Digital Magnetometer
     /// </summary>
-    public partial class Mmcc56x3 :
+    public partial class Mmc56x3 :
         ByteCommsSensorBase<(MagneticField3D? MagneticField3D, Units.Temperature? Temperature)>,
         ITemperatureSensor, IMagnetometer
     {
@@ -51,7 +51,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <param name="interruptPin">Interrupt pin used to detect end of conversions</param>
         /// <param name="address">Address of the MAG3110 (default = 0x0e)</param>
         /// <param name="speed">Speed of the I2C bus (default = 400 KHz)</param>        
-        public Mmcc56x3(IMeadowDevice device, II2cBus i2cBus, IPin interruptPin = null, byte address = (byte)Addresses.Default, ushort speed = 400) :
+        public Mmc56x3(IMeadowDevice device, II2cBus i2cBus, IPin interruptPin = null, byte address = (byte)Addresses.Default, ushort speed = 400) :
                 this(i2cBus, device.CreateDigitalInputPort(interruptPin, InterruptMode.EdgeRising, ResistorMode.Disabled), address)
         { }
 
@@ -61,7 +61,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <param name="interruptPort">Interrupt port used to detect end of conversions</param>
         /// <param name="address">Address of the MAG3110 (default = 0x0e)</param>
         /// <param name="i2cBus">I2C bus object - default = 400 KHz)</param>        
-        public Mmcc56x3(II2cBus i2cBus, IDigitalInputPort interruptPort = null, byte address = (byte)Addresses.Default)
+        public Mmc56x3(II2cBus i2cBus, IDigitalInputPort interruptPort = null, byte address = (byte)Addresses.Default)
             : base(i2cBus, address, 10, 8)
         {
             var deviceID = Peripheral.ReadRegister(Registers.WHO_AM_I);

@@ -1109,13 +1109,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ens160_Sample", "Meadow.Fou
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meadow.Logging", "..\..\Meadow.Logging\Source\Meadow.Logging\lib\Meadow.Logging.csproj", "{EB956E43-A4BE-4F79-AF92-D725604DBE76}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sensors.Motion.Mmcc56x3", "Sensors.Motion.Mmcc56x3", "{ECA644FF-D647-4CA1-80F0-7C730D57130E}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sensors.Motion.Mmc56x3", "Sensors.Motion.Mmc56x3", "{ECA644FF-D647-4CA1-80F0-7C730D57130E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{2674E933-02F5-4DBD-B14B-08001D49EDB4}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Motion.Mmcc56x3", "Meadow.Foundation.Peripherals\Sensors.Motion.Mmcc56x3\Driver\Sensors.Motion.Mmcc56x3.csproj", "{BA56F3F0-5113-462E-97D9-6E76BDD6CBBF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Motion.Mmc56x3", "Meadow.Foundation.Peripherals\Sensors.Motion.Mmc56x3\Driver\Sensors.Motion.Mmc56x3.csproj", "{BA56F3F0-5113-462E-97D9-6E76BDD6CBBF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mmcc56x3_Sample", "Meadow.Foundation.Peripherals\Sensors.Motion.Mmcc56x3\Samples\Mmcc56x3_Sample\Mmcc56x3_Sample.csproj", "{10BD048E-0768-4791-A34B-F94CD9A4D5B0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mmc56x3_Sample", "Meadow.Foundation.Peripherals\Sensors.Motion.Mmc56x3\Samples\Mmc56x3_Sample\Mmc56x3_Sample.csproj", "{10BD048E-0768-4791-A34B-F94CD9A4D5B0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
