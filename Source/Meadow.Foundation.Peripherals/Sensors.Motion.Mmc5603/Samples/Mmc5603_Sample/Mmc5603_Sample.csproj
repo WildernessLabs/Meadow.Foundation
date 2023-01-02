@@ -10,7 +10,7 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\..\..\Meadow.Core\source\Meadow.F7\Meadow.F7.csproj" />
-    <ProjectReference Include="..\..\Driver\Sensors.Motion.Mmcc56x3.csproj" />
+    <ProjectReference Include="..\..\Driver\Sensors.Motion.Mmc5603.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Update="meadow.config.yaml">

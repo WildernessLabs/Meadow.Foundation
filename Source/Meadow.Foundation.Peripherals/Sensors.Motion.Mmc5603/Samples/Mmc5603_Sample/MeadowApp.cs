@@ -6,19 +6,19 @@ using MU = Meadow.Units.MagneticField.UnitType;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Motion;
 
-namespace MeadowApp
+namespace Sensors.Motion.Mmc5603_Sample
 {
     public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
 
-        Mmcc56x3 sensor;
+        Mmc5603 sensor;
 
         public override Task Initialize()
         {
             Console.WriteLine("Initialize...");
 
-            sensor = new Mmcc56x3(Device.CreateI2cBus());
+            sensor = new Mmc5603(Device.CreateI2cBus());
 
             // classical .NET events can  be used
             sensor.Updated += (sender, result) => {
@@ -30,7 +30,7 @@ namespace MeadowApp
             };
 
             // Example that uses an IObservable subscription to only be notified when the filter is satisfied
-            var consumer = Mmcc56x3.CreateObserver(
+            var consumer = Mmc5603.CreateObserver(
                 handler: result => Console.WriteLine($"Observer: [x] changed by threshold; new [x]: X:{result.New.MagneticField3D?.X.MicroTesla:N2}, old: X:{result.Old?.MagneticField3D?.X.MicroTesla:N2}"),
                 // only notify if there's a greater than 1 micro tesla on the Y axis
                 filter: result => {
@@ -46,7 +46,12 @@ namespace MeadowApp
 
         public async override Task Run()
         {
+            Resolver.Log.Loglevel = Meadow.Logging.LogLevel.Trace;
+
+            //Read from sensor
             var result = await sensor.Read();
+
+            //output initial readings text to console
             Console.WriteLine("Initial Readings:");
             Console.WriteLine($"Mangetic field: [X:{result.MagneticField3D?.X.MicroTesla:N2}," +
                 $"Y:{result.MagneticField3D?.Y.MicroTesla:N2}," +
@@ -55,6 +60,8 @@ namespace MeadowApp
             Console.WriteLine($"Temp: {result.Temperature?.Celsius:N2}C");
 
             sensor.StartUpdating(TimeSpan.FromMilliseconds(500));
+
+            //await Task.Delay(15000);
         }
 
         //<!=SNOP=>

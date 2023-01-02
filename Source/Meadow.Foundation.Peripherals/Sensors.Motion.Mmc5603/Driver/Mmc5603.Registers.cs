@@ -1,11 +1,11 @@
 ﻿namespace Meadow.Foundation.Sensors.Motion
 {
-    public partial class Mmc56x3
+    public partial class Mmc5603
     {
         /// <summary>
-        /// Register addresses in the sensor
+        /// Register addresses for the MMC5603
         /// </summary>
-        private static class Registers
+        static class Registers
         {
             public const byte WHO_AM_I = 0x39;
             public const byte CONTROL_0 = 0x1B;

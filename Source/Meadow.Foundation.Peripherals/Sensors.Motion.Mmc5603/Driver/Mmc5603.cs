@@ -10,9 +10,9 @@ using System.Threading.Tasks;
 namespace Meadow.Foundation.Sensors.Motion
 {
     /// <summary>
-    /// Represents the Mmc56x3 Three-Axis, Digital Magnetometer
+    /// Represents the Mmc5603 Three-Axis, Digital Magnetometer
     /// </summary>
-    public partial class Mmc56x3 :
+    public partial class Mmc5603 :
         ByteCommsSensorBase<(MagneticField3D? MagneticField3D, Units.Temperature? Temperature)>,
         ITemperatureSensor, IMagnetometer
     {
@@ -41,27 +41,21 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
         public Units.Temperature? Temperature => Conditions.Temperature;
 
-        public bool ContinuousModeEnabled => (Peripheral.ReadRegister(Registers.CONTROL_2) & 0x10) == 1;
+        /// <summary>
+        /// Get/set continuous sensor reading mode
+        /// </summary>
+        public bool ContinuousModeEnabled
+        {
+            get => (Peripheral.ReadRegister(Registers.CONTROL_2) & 0x10) == 1;
+            set => SetContinuousMode(value);
+        }
 
         /// <summary>
-        /// Create a new Mmcc56x3 object using the default parameters for the component.
+        /// Create a new Mmcc5603 object using the default parameters for the component
         /// </summary>
-        /// <param name="device">IO Device</param>
-        /// <param name="i2cBus">The I2C bus</param>
-        /// <param name="interruptPin">Interrupt pin used to detect end of conversions</param>
-        /// <param name="address">Address of the MAG3110 (default = 0x0e)</param>
-        /// <param name="speed">Speed of the I2C bus (default = 400 KHz)</param>        
-        public Mmc56x3(IMeadowDevice device, II2cBus i2cBus, IPin interruptPin = null, byte address = (byte)Addresses.Default, ushort speed = 400) :
-                this(i2cBus, device.CreateDigitalInputPort(interruptPin, InterruptMode.EdgeRising, ResistorMode.Disabled), address)
-        { }
-
-        /// <summary>
-        /// Create a new Mmcc56x3 object using the default parameters for the component
-        /// </summary>
-        /// <param name="interruptPort">Interrupt port used to detect end of conversions</param>
         /// <param name="address">Address of the MAG3110 (default = 0x0e)</param>
         /// <param name="i2cBus">I2C bus object - default = 400 KHz)</param>        
-        public Mmc56x3(II2cBus i2cBus, IDigitalInputPort interruptPort = null, byte address = (byte)Addresses.Default)
+        public Mmc5603(II2cBus i2cBus, byte address = (byte)Addresses.Default)
             : base(i2cBus, address, 10, 8)
         {
             var deviceID = Peripheral.ReadRegister(Registers.WHO_AM_I);
@@ -83,9 +77,9 @@ namespace Meadow.Foundation.Sensors.Motion
             Thread.Sleep(20);
             SetRegisterBit(Registers.CONTROL_0, 3, true);
             Thread.Sleep(1);
-            SetRegisterBit(Registers.CONTROL_1, 4, true);
+            SetRegisterBit(Registers.CONTROL_0, 4, true);
             Thread.Sleep(1);
-            SetContinuousMode(true);
+            SetContinuousMode(false);
         }
 
         void SetRegisterBit(byte register, byte bitIndex, bool enabled = true)
@@ -137,13 +131,12 @@ namespace Meadow.Foundation.Sensors.Motion
 
                 if (ContinuousModeEnabled == false)
                 {
-                    SetRegisterBit(Registers.CONTROL_0, 1, true);
-                    SetRegisterBit(Registers.CONTROL_0, 2, true);
-                }
-
-                //while(IsMagDataReady() == false)
-                {
-                    await Task.Delay(5);
+                    SetRegisterBit(Registers.CONTROL_0, 0, true);
+                                        
+                    while (IsMagDataReady() == false)
+                    {
+                        await Task.Delay(5);
+                    }
                 }
 
                 Peripheral.ReadRegister(Registers.OUT_X_L, ReadBuffer.Span[0..9]);
@@ -164,9 +157,14 @@ namespace Meadow.Foundation.Sensors.Motion
                     new MagneticField(z * 0.00625, MagneticField.UnitType.MicroTesla)
                     );
 
-                //while (IsTemperatureDataReady() == false)
+                if (ContinuousModeEnabled == false)
                 {
-                    await Task.Delay(5);
+                    SetRegisterBit(Registers.CONTROL_0, 1, true);
+
+                    while (IsTemperatureDataReady() == false)
+                    {
+                        await Task.Delay(5);
+                    }
                 }
 
                 conditions.Temperature = new Units.Temperature((sbyte)Peripheral.ReadRegister(Registers.TEMPERATURE) * 0.8 - 75, Units.Temperature.UnitType.Celsius);
@@ -178,6 +176,7 @@ namespace Meadow.Foundation.Sensors.Motion
         bool IsTemperatureDataReady()
         {
             var value = Peripheral.ReadRegister(Registers.STATUS);
+            Console.WriteLine($"{value}");
             return BitHelpers.GetBitValue(value, 7);
         }
 
