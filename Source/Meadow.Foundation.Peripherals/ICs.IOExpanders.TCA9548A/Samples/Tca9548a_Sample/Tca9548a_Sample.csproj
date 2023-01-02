@@ -11,7 +11,7 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\ICs.IOExpanders.Mcp23xxx\Driver\ICs.IOExpanders.Mcp23xxx.csproj" />
-    <PackageReference Include="Meadow.F7" Version="0.*" />
+    <ProjectReference Include="..\..\..\..\..\..\Meadow.Core\Source\Meadow.F7\Meadow.F7.csproj" />
     <ProjectReference Include="..\..\Driver\ICs.IOExpanders.Tca9548a.csproj" />
   </ItemGroup>
   <ItemGroup>
