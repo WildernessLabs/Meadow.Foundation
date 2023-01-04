@@ -131,11 +131,10 @@ namespace Meadow.Foundation.Sensors.Motion
 
                 if (ContinuousModeEnabled == false)
                 {
-                    SetRegisterBit(Registers.CONTROL_0, 0, true);
-                                        
-                    while (IsMagDataReady() == false)
+                    if (IsMagDataReady() == false)
                     {
-                        await Task.Delay(5);
+                        SetRegisterBit(Registers.CONTROL_0, 0, true);
+                        await Task.Delay(10);
                     }
                 }
 
@@ -159,11 +158,10 @@ namespace Meadow.Foundation.Sensors.Motion
 
                 if (ContinuousModeEnabled == false)
                 {
-                    SetRegisterBit(Registers.CONTROL_0, 1, true);
-
-                    while (IsTemperatureDataReady() == false)
+                    if (IsTemperatureDataReady() == false)
                     {
-                        await Task.Delay(5);
+                        SetRegisterBit(Registers.CONTROL_0, 1, true);
+                        await Task.Delay(10);
                     }
                 }
 
@@ -176,7 +174,6 @@ namespace Meadow.Foundation.Sensors.Motion
         bool IsTemperatureDataReady()
         {
             var value = Peripheral.ReadRegister(Registers.STATUS);
-            Console.WriteLine($"{value}");
             return BitHelpers.GetBitValue(value, 7);
         }
 
