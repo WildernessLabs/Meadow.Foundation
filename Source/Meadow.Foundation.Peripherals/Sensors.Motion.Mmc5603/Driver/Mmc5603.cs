@@ -13,8 +13,7 @@ namespace Meadow.Foundation.Sensors.Motion
     /// Represents the Mmc5603 Three-Axis, Digital Magnetometer
     /// </summary>
     public partial class Mmc5603 :
-        ByteCommsSensorBase<(MagneticField3D? MagneticField3D, Units.Temperature? Temperature)>,
-        ITemperatureSensor, IMagnetometer
+        ByteCommsSensorBase<MagneticField3D>, IMagnetometer
     {
         /// <summary>
         /// Raised when the magnetic field value changes
@@ -34,12 +33,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         /// The current magnetic field value
         /// </summary>
-        public MagneticField3D? MagneticField3d => Conditions.MagneticField3D;
-
-        /// <summary>
-        /// Current emperature of the die
-        /// </summary>
-        public Units.Temperature? Temperature => Conditions.Temperature;
+        public MagneticField3D? MagneticField3d => Conditions;
 
         /// <summary>
         /// Get/set continuous sensor reading mode
@@ -106,15 +100,11 @@ namespace Meadow.Foundation.Sensors.Motion
         /// Raise events for subcribers and notify of value changes
         /// </summary>
         /// <param name="changeResult">The updated sensor data</param>
-        protected override void RaiseEventsAndNotify(IChangeResult<(MagneticField3D? MagneticField3D, Units.Temperature? Temperature)> changeResult)
+        protected override void RaiseEventsAndNotify(IChangeResult<MagneticField3D> changeResult)
         {
-            if (changeResult.New.MagneticField3D is { } mag)
+            if (changeResult is { } mag)
             {
-                MagneticField3dUpdated?.Invoke(this, new ChangeResult<MagneticField3D>(mag, changeResult.Old?.MagneticField3D));
-            }
-            if (changeResult.New.Temperature is { } temp)
-            {
-                TemperatureUpdated?.Invoke(this, new ChangeResult<Units.Temperature>(temp, changeResult.Old?.Temperature));
+                MagneticField3dUpdated?.Invoke(this, new ChangeResult<MagneticField3D>(mag.New, changeResult.Old));
             }
             base.RaiseEventsAndNotify(changeResult);
         }
@@ -123,11 +113,11 @@ namespace Meadow.Foundation.Sensors.Motion
         /// Reads data from the sensor
         /// </summary>
         /// <returns>The latest sensor reading</returns>
-        protected override Task<(MagneticField3D? MagneticField3D, Units.Temperature? Temperature)> ReadSensor()
+        protected override Task<MagneticField3D> ReadSensor()
         {
             return Task.Run(async () =>
             {
-                (MagneticField3D? MagneticField3D, Units.Temperature? Temperature) conditions;
+                MagneticField3D conditions;
 
                 if (ContinuousModeEnabled == false)
                 {
@@ -138,11 +128,11 @@ namespace Meadow.Foundation.Sensors.Motion
                     }
                 }
 
-                Peripheral.ReadRegister(Registers.OUT_X_L, ReadBuffer.Span[0..9]);
+                Peripheral.ReadRegister(Registers.OUT_X_L, ReadBuffer.Span[0..9]); //9 bytes
 
-                int x = (ReadBuffer.Span[0] << 12 | ReadBuffer.Span[4] << 4 | ReadBuffer.Span[6] >> 4);
-                int y = (ReadBuffer.Span[2] << 12 | ReadBuffer.Span[3] << 4 | ReadBuffer.Span[7] >> 4);
-                int z = (ReadBuffer.Span[4] << 12 | ReadBuffer.Span[5] << 4 | ReadBuffer.Span[8] >> 4);
+                int x = (int)((uint)(ReadBuffer.Span[0] << 12) | (uint)(ReadBuffer.Span[1] << 4) | (uint)(ReadBuffer.Span[6] >> 4));
+                int y = (int)((uint)(ReadBuffer.Span[2] << 12) | (uint)(ReadBuffer.Span[3] << 4) | (uint)(ReadBuffer.Span[7] >> 4));
+                int z = (int)((uint)(ReadBuffer.Span[4] << 12) | (uint)(ReadBuffer.Span[5] << 4) | (uint)(ReadBuffer.Span[8] >> 4));
 
                 int offset = 1 << 19;
 
@@ -150,25 +140,35 @@ namespace Meadow.Foundation.Sensors.Motion
                 y -= offset;
                 z -= offset;
 
-                conditions.MagneticField3D = new MagneticField3D(
+                conditions = new MagneticField3D(
                     new MagneticField(x * 0.00625, MagneticField.UnitType.MicroTesla),
                     new MagneticField(y * 0.00625, MagneticField.UnitType.MicroTesla),
                     new MagneticField(z * 0.00625, MagneticField.UnitType.MicroTesla)
                     );
 
-                if (ContinuousModeEnabled == false)
-                {
-                    if (IsTemperatureDataReady() == false)
-                    {
-                        SetRegisterBit(Registers.CONTROL_0, 1, true);
-                        await Task.Delay(10);
-                    }
-                }
-
-                conditions.Temperature = new Units.Temperature((sbyte)Peripheral.ReadRegister(Registers.TEMPERATURE) * 0.8 - 75, Units.Temperature.UnitType.Celsius);
-
                 return conditions;
             });
+        }
+
+        /// <summary>
+        /// Read the sensor temperurature
+        /// Doesn't work in continuous mode
+        /// </summary>
+        /// <returns></returns>
+        public async Task<Units.Temperature> GetTemperature()
+        {
+            if(ContinuousModeEnabled)
+            {
+                throw new Exception("Cannot read temperature while continous sampling mode is enabled");
+            }
+
+            if(IsTemperatureDataReady() == false)
+            {
+                SetRegisterBit(Registers.CONTROL_0, 0, true);
+                await Task.Delay(10);
+            }
+
+            return new Units.Temperature((sbyte)Peripheral.ReadRegister(Registers.TEMPERATURE) * 0.8 - 75, Units.Temperature.UnitType.Celsius);
         }
 
         bool IsTemperatureDataReady()
@@ -182,11 +182,5 @@ namespace Meadow.Foundation.Sensors.Motion
             var value = Peripheral.ReadRegister(Registers.STATUS);
             return BitHelpers.GetBitValue(value, 6);
         }
-
-        async Task<Units.Temperature> ISamplingSensor<Units.Temperature>.Read()
-            => (await Read()).Temperature.Value;
-
-        async Task<MagneticField3D> ISamplingSensor<MagneticField3D>.Read()
-            => (await Read()).MagneticField3D.Value;
     }
 }
