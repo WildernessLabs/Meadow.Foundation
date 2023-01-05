@@ -9,7 +9,7 @@ namespace Meadow.Foundation.ICs.ADC
     /// <summary>
     /// Encapsulation for ADCs based upon the Ads1x1x family of chips.
     /// </summary>
-    public abstract partial class Ads1x15 : SamplingSensorBase<Units.Voltage>
+    public abstract partial class Ads1x15 : PollingSensorBase<Units.Voltage>
     {
         private readonly II2cPeripheral i2cPeripheral;
         private ushort config;

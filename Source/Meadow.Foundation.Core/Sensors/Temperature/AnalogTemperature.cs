@@ -6,9 +6,6 @@ using Meadow.Units;
 
 namespace Meadow.Foundation.Sensors.Temperature
 {
-    // TODO: consider creating an AnalogSensorBase. there are a number of these
-    // analog sensors.
-
     /// <summary>
     /// Provide the ability to read the temperature from the following sensors:
     /// - TMP35 / 36 / 37
@@ -33,7 +30,7 @@ namespace Meadow.Foundation.Sensors.Temperature
     /// TMP37                   500                     20                
     /// TMP236                  887.5                   19.5                    
     /// </remarks>
-    public partial class AnalogTemperature : SensorBase<Units.Temperature>, ITemperatureSensor
+    public partial class AnalogTemperature : SamplingSensorBase<Units.Temperature>, ITemperatureSensor
     {
         /// <summary>
         /// Raised when the value of the reading changes.
@@ -105,14 +102,13 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// <summary>
         /// Creates a new instance of the AnalogTemperature class.
         /// </summary>
-        /// <param name="device">The `IAnalogInputController` to create the port on.</param>
-        /// <param name="analogPin">Analog pin the temperature sensor is connected to.</param>
-        /// <param name="sensorType">Type of sensor attached to the analog port.</param>
-        /// <param name="calibration">Calibration for the analog temperature sensor. Only used if sensorType is set to Custom.</param>
+        /// <param name="device">The `IAnalogInputController` to create the port on</param>
+        /// <param name="analogPin">Analog pin the temperature sensor is connected to</param>
+        /// <param name="sensorType">Type of sensor attached to the analog port</param>
+        /// <param name="calibration">Calibration for the analog temperature sensor - used if sensorType is set to Custom</param>
         /// <param name="sampleCount">How many samples to take during a given
-        /// reading. These are automatically averaged to reduce noise.</param>
-        /// <param name="sampleInterval">The time,
-        /// to wait in between samples during a reading.</param>
+        /// reading. These are automatically averaged to reduce noise</param>
+        /// <param name="sampleInterval">The time between sample readings</param>
         public AnalogTemperature(
             IAnalogInputController device, IPin analogPin,
             KnownSensorType sensorType, Calibration? calibration = null,
@@ -229,8 +225,9 @@ namespace Meadow.Foundation.Sensors.Temperature
         public void StartUpdating(TimeSpan? updateInterval)
         {
             // thread safety
-            lock (samplingLock) {
-                if (IsSampling) return;
+            lock (samplingLock) 
+            {
+                if (IsSampling) { return; }
                 IsSampling = true;
                 AnalogInputPort.StartUpdating(updateInterval);
             }
@@ -243,7 +240,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         {
             lock (samplingLock) 
             {
-                if (!IsSampling) return;
+                if (!IsSampling) { return; }
                 IsSampling = false;
                 AnalogInputPort.StopUpdating();
             }

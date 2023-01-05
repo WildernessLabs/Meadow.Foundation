@@ -10,7 +10,7 @@ namespace Meadow.Foundation.Sensors.LoadCell
     /// <summary>
     /// 24-Bit Dual-Channel ADC For Bridge Sensors
     /// </summary>
-    public partial class Hx711 : SamplingSensorBase<Mass>, IMassSensor, IDisposable
+    public partial class Hx711 : PollingSensorBase<Mass>, IMassSensor, IDisposable
     {
         private const uint GPIO_BASE = 0x40020000;
         private const uint IDR_OFFSET = 0x10;

@@ -12,7 +12,7 @@ namespace Meadow.Foundation.Sensors.Motion
     /// <summary>
     /// Base class for ADXL335, ADXL337, and ADXL377 triple axis accelerometers
     /// </summary>
-    public abstract class Adxl3xxBase : SamplingSensorBase<Acceleration3D>, IAccelerometer
+    public abstract class Adxl3xxBase : PollingSensorBase<Acceleration3D>, IAccelerometer
     {
         /// <summary>
         /// Raised when the acceleration value changes

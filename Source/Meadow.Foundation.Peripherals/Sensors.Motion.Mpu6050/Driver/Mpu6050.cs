@@ -172,13 +172,13 @@ namespace Meadow.Foundation.Sensors.Motion
             }
         }
 
-        async Task<AngularVelocity3D> ISamplingSensor<AngularVelocity3D>.Read()
+        async Task<AngularVelocity3D> ISensor<AngularVelocity3D>.Read()
             => (await Read()).AngularVelocity3D.Value;
 
-        async Task<Acceleration3D> ISamplingSensor<Acceleration3D>.Read()
+        async Task<Acceleration3D> ISensor<Acceleration3D>.Read()
             => (await Read()).Acceleration3D.Value;
 
-        async Task<Units.Temperature> ISamplingSensor<Units.Temperature>.Read()
+        async Task<Units.Temperature> ISensor<Units.Temperature>.Read()
             => (await Read()).Temperature.Value;
 
     }

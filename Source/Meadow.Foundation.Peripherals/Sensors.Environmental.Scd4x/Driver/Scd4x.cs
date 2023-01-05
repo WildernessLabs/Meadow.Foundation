@@ -268,13 +268,13 @@ namespace Meadow.Foundation.Sensors.Environmental
             return CrcCalc(CrcCalc(0xFF, value1), value2);
         }
 
-        async Task<Units.Temperature> ISamplingSensor<Units.Temperature>.Read()
+        async Task<Units.Temperature> ISensor<Units.Temperature>.Read()
             => (await Read()).Temperature.Value;
 
-        async Task<RelativeHumidity> ISamplingSensor<RelativeHumidity>.Read()
+        async Task<RelativeHumidity> ISensor<RelativeHumidity>.Read()
             => (await Read()).Humidity.Value;
 
-        async Task<Concentration> ISamplingSensor<Concentration>.Read()
+        async Task<Concentration> ISensor<Concentration>.Read()
             => (await Read()).Concentration.Value;
     }
 }

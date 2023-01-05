@@ -1,15 +1,15 @@
 ﻿using Meadow.Hardware;
-using Meadow.Peripherals.Sensors;
 using Meadow.Peripherals.Switches;
 using System;
+using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Switches
 {
     /// <summary>
     /// Represents a simple, two position, Single-Pole-Dual-Throw (SPDT) switch that closes a circuit 
-    /// to either ground/common or high depending on position.    
+    /// to either ground/common or high depending on position  
     /// </summary>
-    public class SpdtSwitch : ISwitch, ISensor
+    public class SpdtSwitch : ISwitch
     {
         /// <summary>
         /// Describes whether or not the switch circuit is closed/connected (IsOn = true), or open (IsOn = false).
@@ -73,5 +73,10 @@ namespace Meadow.Foundation.Sensors.Switches
         {
             IsOn = DigitalIn.State;
         }
+
+        /// <summary>
+        /// Convenience method to get the current sensor reading
+        /// </summary>
+        public Task<bool> Read() => Task.FromResult(IsOn);
     }
 }

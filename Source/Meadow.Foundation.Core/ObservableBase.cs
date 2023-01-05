@@ -13,13 +13,11 @@ namespace Meadow.Foundation
     public abstract class ObservableBase<UNIT> : IObservable<IChangeResult<UNIT>>
         where UNIT : struct
     {
-        //==== internals
         /// <summary>
         /// Subscribed observers
         /// </summary>
         protected List<IObserver<IChangeResult<UNIT>>> observers { get; set; } = new List<IObserver<IChangeResult<UNIT>>>();
 
-        //==== Observable stuff
         /// <summary>
         /// Notify observers of a change
         /// </summary>

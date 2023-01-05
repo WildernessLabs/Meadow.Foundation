@@ -9,7 +9,7 @@ namespace Meadow.Foundation.Sensors.Light
     /// <summary>
     /// Represents an Alspt19315C analog light sensor
     /// </summary>
-    public class Alspt19315C : SensorBase<Voltage>
+    public class Alspt19315C : SamplingSensorBase<Voltage>
     {
         /// <summary>
         /// Analog port connected to the sensor

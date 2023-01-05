@@ -11,7 +11,7 @@ namespace Meadow.Foundation.Sensors.Hid
     /// for analog joysticks
     /// </summary>
     public partial class As5013 
-        : SensorBase<AnalogJoystickPosition>, IAnalogJoystick
+        : SamplingSensorBase<AnalogJoystickPosition>, IAnalogJoystick
     {
         /// <summary>
         /// Event if interrupt port is provided for interrupt pin

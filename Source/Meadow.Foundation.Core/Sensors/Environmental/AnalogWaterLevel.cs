@@ -9,7 +9,7 @@ namespace Meadow.Foundation.Sensors.Environmental
     /// Represents an analog water level sensor
     /// </summary>
     public partial class AnalogWaterLevel
-        : SensorBase<float>
+        : SamplingSensorBase<float>
     {
         /// <summary>
         /// AnalogInputPort connected to temperature sensor
@@ -87,13 +87,10 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// </summary>
         protected override async Task<float> ReadSensor()
         {
-            // read the voltage
             Voltage voltage = await AnalogInputPort.Read();
 
-            // convert and save to our temp property for later retreival
             WaterLevel = VoltageToWaterLevel(voltage);
 
-            // return
             return WaterLevel;
         }
 
