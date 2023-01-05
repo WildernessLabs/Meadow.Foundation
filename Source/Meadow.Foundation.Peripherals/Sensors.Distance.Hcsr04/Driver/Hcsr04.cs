@@ -146,7 +146,7 @@ namespace Meadow.Foundation.Sensors.Distance
         /// <summary>
         /// Starts continuously sampling the sensor
         /// </summary>
-        public void StartUpdating(TimeSpan? updateInterval = null)
+        public override void StartUpdating(TimeSpan? updateInterval = null)
         {
             //ToDo
             throw new NotImplementedException();
@@ -155,7 +155,7 @@ namespace Meadow.Foundation.Sensors.Distance
         /// <summary>
         /// Stops sampling the sensor
         /// </summary>
-        public void StopUpdating()
+        public override void StopUpdating()
         {
             throw new NotImplementedException();
         }

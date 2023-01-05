@@ -221,10 +221,9 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// <param name="updateInterval">A `TimeSpan` that specifies how long to
         /// wait between readings. This value influences how often `*Updated`
         /// events are raised and `IObservable` consumers are notified.
-        /// The default is 5 seconds.</param>
-        public void StartUpdating(TimeSpan? updateInterval)
+        ///</param>
+        public override void StartUpdating(TimeSpan? updateInterval)
         {
-            // thread safety
             lock (samplingLock) 
             {
                 if (IsSampling) { return; }
@@ -234,9 +233,9 @@ namespace Meadow.Foundation.Sensors.Temperature
         }
 
         /// <summary>
-        /// Stops sampling the temperature.
+        /// Stops sampling the temperature
         /// </summary>
-        public void StopUpdating()
+        public override void StopUpdating()
         {
             lock (samplingLock) 
             {
@@ -257,10 +256,10 @@ namespace Meadow.Foundation.Sensors.Temperature
         }
 
         /// <summary>
-        /// Converts voltage to temperature in Celcius
+        /// Converts voltage to Temperature
         /// </summary>
         /// <param name="voltage"></param>
-        /// <returns>temperature in celcius</returns>
+        /// <returns>temperature at a Temperature struct</returns>
         protected Units.Temperature VoltageToTemperature(Voltage voltage)
         {
             return new Units.Temperature(SensorCalibration.SampleReading +

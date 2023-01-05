@@ -109,7 +109,7 @@ namespace Meadow.Foundation.Sensors.Light
         /// wait between readings. This value influences how often `*Updated`
         /// events are raised and `IObservable` consumers are notified.
         /// The default is 5 seconds.</param>
-        public void StartUpdating(TimeSpan? updateInterval)
+        public override void StartUpdating(TimeSpan? updateInterval)
         {
             AnalogInputPort.StartUpdating(updateInterval);
         }
@@ -117,7 +117,7 @@ namespace Meadow.Foundation.Sensors.Light
         /// <summary>
         /// Stops sampling the temperature.
         /// </summary>
-        public void StopUpdating()
+        public override void StopUpdating()
         {
             AnalogInputPort.StopUpdating();
         }

@@ -98,10 +98,9 @@ namespace Meadow.Foundation.Sensors.Weather
         /// <param name="updateInterval">A `TimeSpan` that specifies how long to
         /// wait between readings. This value influences how often `*Updated`
         /// events are raised and `IObservable` consumers are notified.
-        /// The default is 5 seconds.</param>
-        public void StartUpdating(TimeSpan? updateInterval)
+        /// </param>
+        public override void StartUpdating(TimeSpan? updateInterval)
         {
-            // thread safety
             lock (samplingLock) 
             {
                 if (IsSampling) { return; }
@@ -114,7 +113,7 @@ namespace Meadow.Foundation.Sensors.Weather
         /// <summary>
         /// Stops sampling the sensor
         /// </summary>
-        public void StopUpdating()
+        public override void StopUpdating()
         {
             lock (samplingLock) 
             {
@@ -131,9 +130,8 @@ namespace Meadow.Foundation.Sensors.Weather
         /// </summary>
         /// <returns>A float value that's an average value of all the samples taken</returns>
         protected override async Task<Azimuth> ReadSensor()
-        {   // read the voltage
+        {  
             Voltage voltage = await inputPort.Read();
-            // get the azimuth
             return LookupWindDirection(voltage);
         }
 
@@ -148,7 +146,6 @@ namespace Meadow.Foundation.Sensors.Weather
                 Old = WindAzimuth,
                 New = windAzimuth
             };
-            // save state
             WindAzimuth = windAzimuth;
             base.RaiseEventsAndNotify(windChangeResult);
         }
@@ -163,14 +160,12 @@ namespace Meadow.Foundation.Sensors.Weather
         {
             Tuple<Azimuth, Voltage> closestFit = null;
 
-            // loop through each azimuth lookup and compute the difference
-            // between the measured voltage and the voltage for that azimumth
+
             Voltage difference;
             foreach (var a in AzimuthVoltages)
             {
                 difference = (a.Key - voltage).Abs();
-                // if the closest fit hasn't been set or is further than the
-                // computed voltage difference, then we've found a better fit.
+ 
                 if (closestFit == null || closestFit.Item2 > difference)
                 {
                     closestFit = new Tuple<Azimuth, Voltage>(a.Value, difference);

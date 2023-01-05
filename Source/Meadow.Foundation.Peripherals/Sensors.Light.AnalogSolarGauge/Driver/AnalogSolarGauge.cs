@@ -125,7 +125,7 @@ namespace Meadow.Foundation.Sensors.Light
         }
 
         /// <summary>
-        /// Starts continuously sampling the sensor.
+        /// Starts continuously sampling the sensor
         ///
         /// This method also starts raising `SolarIntensityUpdated` events and IObservable
         /// subscribers getting notified. Use the `readIntervalDuration` parameter
@@ -134,16 +134,16 @@ namespace Meadow.Foundation.Sensors.Light
         /// <param name="updateInterval">A `TimeSpan` that specifies how long to
         /// wait between readings. This value influences how often `*Updated`
         /// events are raised and `IObservable` consumers are notified.
-        /// The default is 5 seconds.</param>
-        public void StartUpdating(TimeSpan updateInterval)
+        ///  </param>
+        public override void StartUpdating(TimeSpan? updateInterval)
         {
             analogInputPort.StartUpdating(updateInterval);
         }
 
         /// <summary>
-        /// Stops sampling the solar intensity.
+        /// Stops sampling the solar intensity
         /// </summary>
-        public void StopUpdating()
+        public override void StopUpdating()
         {
             analogInputPort.StopUpdating();
         }

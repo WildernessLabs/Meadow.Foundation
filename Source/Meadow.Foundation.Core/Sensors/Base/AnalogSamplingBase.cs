@@ -68,7 +68,7 @@ namespace Meadow.Foundation.Sensors.Base
         /// wait between readings. This value influences how often `*Updated`
         /// events are raised and `IObservable` consumers are notified.
         /// The default is 5 seconds.</param>
-        public void StartUpdating(TimeSpan? updateInterval)
+        public override void StartUpdating(TimeSpan? updateInterval)
         {
             lock (samplingLock)
             {
@@ -79,9 +79,9 @@ namespace Meadow.Foundation.Sensors.Base
         }
 
         /// <summary>
-        /// Stops sampling the temperature.
+        /// Stops sampling the sensor
         /// </summary>
-        public void StopUpdating()
+        public override void StopUpdating()
         {
             lock (samplingLock)
             {
@@ -92,10 +92,9 @@ namespace Meadow.Foundation.Sensors.Base
         }
 
         /// <summary>
-        /// Convenience method to get the current temperature. For frequent reads, use
-        /// StartSampling() and StopSampling() in conjunction with the SampleBuffer.
+        /// Convenience method to get the current voltage
         /// </summary>
-        /// <returns>A float value that's ann average value of all the samples taken.</returns>
+        /// <returns>A float value that represents the current voltage</returns>
         protected override async Task<Voltage> ReadSensor()
         {
             Voltage = await AnalogInputPort.Read();

@@ -24,7 +24,7 @@ namespace Meadow.Foundation
         /// wait between readings. This value influences how often `*Updated`
         /// events are raised and `IObservable` consumers are notified.
         /// The default is 5 seconds.</param>
-        public virtual void StartUpdating(TimeSpan? updateInterval = null)
+        public override void StartUpdating(TimeSpan? updateInterval = null)
         {
             lock (samplingLock) 
             {
@@ -68,7 +68,7 @@ namespace Meadow.Foundation
         /// <summary>
         /// Stops sampling the sensor
         /// </summary>
-        public virtual void StopUpdating()
+        public override void StopUpdating()
         {
             lock (samplingLock) 
             {

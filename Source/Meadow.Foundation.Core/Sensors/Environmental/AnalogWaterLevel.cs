@@ -95,7 +95,7 @@ namespace Meadow.Foundation.Sensors.Environmental
         }
 
         /// <summary>
-        /// Starts continuously sampling the sensor.
+        /// Starts continuously sampling the sensor
         ///
         /// This method also starts raising `Changed` events and IObservable
         /// subscribers getting notified. Use the `readIntervalDuration` parameter
@@ -104,16 +104,16 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// <param name="updateInterval">A `TimeSpan` that specifies how long to
         /// wait between readings. This value influences how often `*Updated`
         /// events are raised and `IObservable` consumers are notified.
-        /// The default is 5 seconds.</param>
-        public void StartUpdating(TimeSpan? updateInterval)
+        /// </param>
+        public override void StartUpdating(TimeSpan? updateInterval)
         {
             AnalogInputPort.StartUpdating(updateInterval);
         }
 
         /// <summary>
-        /// Stops sampling the temperature.
+        /// Stops sampling the water level
         /// </summary>
-        public void StopUpdating()
+        public override void StopUpdating()
         {
             AnalogInputPort.StopUpdating();
         }

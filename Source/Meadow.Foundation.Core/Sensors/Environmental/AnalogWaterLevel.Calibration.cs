@@ -6,7 +6,7 @@ namespace Meadow.Foundation.Sensors.Environmental
     public partial class AnalogWaterLevel
     {
         /// <summary>
-        /// Calibration class for AnalogWaterLevel. 
+        /// Calibration class for AnalogWaterLevel
         /// </summary>
         public class Calibration
         {

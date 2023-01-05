@@ -107,7 +107,7 @@ namespace Meadow.Foundation.Sensors.Moisture
         /// <summary>
         /// Starts continuously sampling the sensor
         /// </summary>
-        public void StartUpdating(TimeSpan? updateInterval)
+        public override void StartUpdating(TimeSpan? updateInterval)
         {
             if(updateInterval == null)
             {
@@ -155,7 +155,7 @@ namespace Meadow.Foundation.Sensors.Moisture
         /// <summary>
         /// Stops sampling the sensor
         /// </summary>
-        public void StopUpdating()
+        public override void StopUpdating()
         {
             lock (samplingLock) 
             {

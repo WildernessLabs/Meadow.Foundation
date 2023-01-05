@@ -95,15 +95,15 @@ namespace Meadow.Foundation.Sensors.Moisture
         /// <summary>
         /// Starts continuously sampling the sensor
         /// </summary>
-        public void StartUpdating(TimeSpan? updateInterval)
+        public override void StartUpdating(TimeSpan? updateInterval)
         {
             AnalogInputPort.StartUpdating(updateInterval);
         }
 
         /// <summary>
-        /// Stops sampling the sensor.
+        /// Stops sampling the sensor
         /// </summary>
-        public void StopUpdating()
+        public override void StopUpdating()
         {
             AnalogInputPort.StopUpdating();
         }

@@ -10,7 +10,7 @@ namespace Meadow.Foundation
     /// having their updates consumed by observers that can optionally use filters
     /// </summary>
     /// <typeparam name="UNIT"></typeparam>
-    public abstract class SamplingSensorBase<UNIT> : ObservableBase<UNIT>, ISensor<UNIT>
+    public abstract class SamplingSensorBase<UNIT> : ObservableBase<UNIT>, ISamplingSensor<UNIT>
         where UNIT : struct
     {
         /// <summary>
@@ -72,5 +72,17 @@ namespace Meadow.Foundation
             Conditions = await ReadSensor();
             return Conditions;
         }
+
+        /// <summary>
+        /// Starts updating the sensor on the updateInterval frequency specified
+        /// </summary>
+        /// <param name="updateInterval">A TimeSpan that specifies how long to
+        /// wait between readings</param>
+        public abstract void StartUpdating(TimeSpan? updateInterval = null);
+
+        /// <summary>
+        /// Stops sampling the sensor
+        /// </summary>
+        public abstract void StopUpdating();
     }
 }
