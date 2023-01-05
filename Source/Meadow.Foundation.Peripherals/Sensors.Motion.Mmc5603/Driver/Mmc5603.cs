@@ -1,5 +1,4 @@
 ﻿using Meadow.Hardware;
-using Meadow.Peripherals.Sensors;
 using Meadow.Peripherals.Sensors.Motion;
 using Meadow.Units;
 using Meadow.Utilities;
@@ -109,11 +108,23 @@ namespace Meadow.Foundation.Sensors.Motion
             base.RaiseEventsAndNotify(changeResult);
         }
 
-        /// <summary>
-        /// Reads data from the sensor
-        /// </summary>
-        /// <returns>The latest sensor reading</returns>
-        protected override Task<MagneticField3D> ReadSensor()
+        Task TriggerMagneticFieldReading()
+        {
+            SetRegisterBit(Registers.CONTROL_0, 0, true);
+            return Task.Delay(10);
+        }
+        
+        Task TriggerTemperatureReading()
+        {
+            SetRegisterBit(Registers.CONTROL_0, 1, true);
+            return Task.Delay(10);
+        }
+
+    /// <summary>
+    /// Reads data from the sensor
+    /// </summary>
+    /// <returns>The latest sensor reading</returns>
+    protected override Task<MagneticField3D> ReadSensor()
         {
             return Task.Run(async () =>
             {
@@ -121,10 +132,9 @@ namespace Meadow.Foundation.Sensors.Motion
 
                 if (ContinuousModeEnabled == false)
                 {
-                    if (IsMagDataReady() == false)
+                    if (IsMagneticDataReady() == false)
                     {
-                        SetRegisterBit(Registers.CONTROL_0, 0, true);
-                        await Task.Delay(10);
+                        await TriggerMagneticFieldReading();
                     }
                 }
 
@@ -151,11 +161,11 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         /// <summary>
-        /// Read the sensor temperurature
+        /// Read the sensor temperature
         /// Doesn't work in continuous mode
         /// </summary>
         /// <returns></returns>
-        public async Task<Units.Temperature> GetTemperature()
+        public async Task<Units.Temperature> ReadTemperature()
         {
             if(ContinuousModeEnabled)
             {
@@ -164,8 +174,7 @@ namespace Meadow.Foundation.Sensors.Motion
 
             if(IsTemperatureDataReady() == false)
             {
-                SetRegisterBit(Registers.CONTROL_0, 0, true);
-                await Task.Delay(10);
+                await TriggerTemperatureReading();
             }
 
             return new Units.Temperature((sbyte)Peripheral.ReadRegister(Registers.TEMPERATURE) * 0.8 - 75, Units.Temperature.UnitType.Celsius);
@@ -177,7 +186,7 @@ namespace Meadow.Foundation.Sensors.Motion
             return BitHelpers.GetBitValue(value, 7);
         }
 
-        bool IsMagDataReady()
+        bool IsMagneticDataReady()
         {
             var value = Peripheral.ReadRegister(Registers.STATUS);
             return BitHelpers.GetBitValue(value, 6);
