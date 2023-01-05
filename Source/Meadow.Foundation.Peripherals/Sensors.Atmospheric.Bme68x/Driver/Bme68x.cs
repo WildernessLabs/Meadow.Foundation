@@ -17,7 +17,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     /// Represents the Bosch BME68x Temperature, Pressure and Humidity Sensor
     /// </summary>
     public abstract partial class Bme68x:
-        SamplingSensorBase<(Units.Temperature? Temperature, 
+        PollingSensorBase<(Units.Temperature? Temperature, 
                             RelativeHumidity? Humidity, 
                             Pressure? Pressure, 
                             Resistance? GasResistance)>,
@@ -583,13 +583,13 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             return durationValue;
         }
 
-        async Task<Units.Temperature> ISamplingSensor<Units.Temperature>.Read()
+        async Task<Units.Temperature> ISensor<Units.Temperature>.Read()
             => (await Read()).Temperature.Value;
 
-        async Task<RelativeHumidity> ISamplingSensor<RelativeHumidity>.Read()
+        async Task<RelativeHumidity> ISensor<RelativeHumidity>.Read()
             => (await Read()).Humidity.Value;
 
-        async Task<Pressure> ISamplingSensor<Pressure>.Read()
+        async Task<Pressure> ISensor<Pressure>.Read()
             => (await Read()).Pressure.Value;
     }
 }

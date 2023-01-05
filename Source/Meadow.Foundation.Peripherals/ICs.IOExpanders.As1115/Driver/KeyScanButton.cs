@@ -1,5 +1,6 @@
 ﻿using Meadow.Peripherals.Sensors.Buttons;
 using System;
+using System.Threading.Tasks;
 
 namespace Meadow.Foundation.ICs.IOExpanders
 {
@@ -113,5 +114,10 @@ namespace Meadow.Foundation.ICs.IOExpanders
         {
             LongClicked?.Invoke(this, new EventArgs());
         }
+
+        /// <summary>
+        /// Convenience method to get the current sensor reading
+        /// </summary>
+        public Task<bool> Read() => Task.FromResult(State);
     }
 }

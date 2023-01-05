@@ -8,7 +8,7 @@ namespace Meadow.Foundation.Sensors.Weather
     /// <summary>
     /// Represents a simple switching rain gauge
     /// </summary>
-    public partial class SwitchingRainGauge : SensorBase<Length>
+    public partial class SwitchingRainGauge : SamplingSensorBase<Length>
     {
         readonly IDigitalInputPort rainGaugePort;
 

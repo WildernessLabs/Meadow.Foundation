@@ -220,10 +220,10 @@ namespace Meadow.Foundation.Sensors.Motion
             }*/
         }
 
-        async Task<Units.Temperature> ISamplingSensor<Units.Temperature>.Read()
+        async Task<Units.Temperature> ISensor<Units.Temperature>.Read()
             => (await Read()).Temperature.Value;
 
-        async Task<MagneticField3D> ISamplingSensor<MagneticField3D>.Read()
+        async Task<MagneticField3D> ISensor<MagneticField3D>.Read()
             => (await Read()).MagneticField3D.Value;
     }
 }

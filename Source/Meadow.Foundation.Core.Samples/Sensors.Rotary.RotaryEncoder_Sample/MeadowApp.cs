@@ -33,16 +33,6 @@ namespace Sensors.Rotary.RotaryEncoder_Sample
             //==== Classic Events
             rotaryEncoder.Rotated += RotaryEncoder_Rotated;
 
-            //==== IObservable
-            var observer = RotaryEncoder.CreateObserver(
-                handler: result => { Console.WriteLine("Observer triggered, rotation has switched!"); },
-                // only notify if the rotation has switched (a little contrived, but a fun use of filtering)
-                filter: result => result.Old != null && result.New != result.Old.Value
-                // for all events, pass null or return true for filter:
-                //filter: null
-            );
-            rotaryEncoder.Subscribe(observer);
-
             Console.WriteLine("Hardware initialization complete.");
 
             return Task.CompletedTask;

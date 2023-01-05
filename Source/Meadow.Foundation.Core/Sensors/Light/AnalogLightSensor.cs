@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Meadow.Foundation.Sensors.Base;
 using Meadow.Hardware;
 using Meadow.Peripherals.Sensors.Light;
 using Meadow.Units;
@@ -10,7 +11,7 @@ namespace Meadow.Foundation.Sensors.Light
     /// Represents an analog light sensor
     /// </summary>
     public partial class AnalogLightSensor
-        : SensorBase<Illuminance>, ILightSensor
+        : SamplingSensorBase<Illuminance>, ILightSensor
     {
         /// <summary>
         /// Analog port connected to sensor
@@ -39,9 +40,6 @@ namespace Meadow.Foundation.Sensors.Light
         /// <param name="device">The `IAnalogInputController` to create the port on.</param>
         /// <param name="analogPin">Analog pin the sensor is connected to.</param>
         /// <param name="calibration">Calibration for the analog sensor.</param> 
-        /// <param name="updateInterval">The time, in milliseconds, to wait
-        /// between sets of sample readings. This value determines how often
-        /// `Changed` events are raised and `IObservable` consumers are notified.</param>
         /// <param name="sampleCount">How many samples to take during a given
         /// reading. These are automatically averaged to reduce noise.</param>
         /// <param name="sampleInterval">The time, in milliseconds,
@@ -50,12 +48,9 @@ namespace Meadow.Foundation.Sensors.Light
             IAnalogInputController device,
             IPin analogPin,
             Calibration? calibration = null,
-            TimeSpan? updateInterval = null,
             int sampleCount = 5, TimeSpan? sampleInterval = null)
                 : this(device.CreateAnalogInputPort(analogPin, sampleCount, sampleInterval ?? new TimeSpan(0, 0, 40), new Voltage(3.3)), calibration)
-        {
-            base.UpdateInterval = updateInterval ?? new TimeSpan(0, 0, 10);
-        }
+        { }
 
         /// <summary>
         /// New instance of the AnalogLightSensor class.

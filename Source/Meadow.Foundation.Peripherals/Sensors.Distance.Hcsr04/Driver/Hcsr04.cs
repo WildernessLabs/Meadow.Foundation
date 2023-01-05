@@ -10,7 +10,7 @@ namespace Meadow.Foundation.Sensors.Distance
     /// <summary>
     /// HCSR04 Distance Sensor - driver not complete
     /// </summary>
-    public class Hcsr04 : SensorBase<Length>, IRangeFinder
+    public class Hcsr04 : SamplingSensorBase<Length>, IRangeFinder
     {
         /// <summary>
         /// Raised when an received a rebound trigger signal

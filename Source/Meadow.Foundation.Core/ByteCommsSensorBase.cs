@@ -8,7 +8,7 @@ namespace Meadow.Foundation
     /// </summary>
     /// <typeparam name="UNIT">The unit type</typeparam>
     public abstract class ByteCommsSensorBase<UNIT> :
-        SamplingSensorBase<UNIT>, IDisposable where UNIT : struct
+        PollingSensorBase<UNIT>, IDisposable where UNIT : struct
     {
         /// <summary>
         /// Peripheral object, i.e. an I2CPeripheral or SpiPeripheral

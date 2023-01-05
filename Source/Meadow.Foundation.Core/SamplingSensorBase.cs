@@ -6,82 +6,71 @@ using System.Threading.Tasks;
 namespace Meadow.Foundation
 {
     /// <summary>
-    /// Base class that represents a sampling sensor to support the observable pattern
+    /// Base class for sensors and other updating classes that want to support
+    /// having their updates consumed by observers that can optionally use filters
     /// </summary>
     /// <typeparam name="UNIT"></typeparam>
-    public abstract class SamplingSensorBase<UNIT>
-        : SensorBase<UNIT>, ISamplingSensor<UNIT>
+    public abstract class SamplingSensorBase<UNIT> : ObservableBase<UNIT>, ISensor<UNIT>
         where UNIT : struct
     {
         /// <summary>
-        /// Starts updating the sensor on the updateInterval frequency specified.
-        ///
-        /// This method also starts raising `Updated` events and notifying
-        /// IObservable subscribers. Use the `updateInterval` parameter
-        /// to specify how often events and notifications are raised/sent.
+        /// Lock for sampling
         /// </summary>
-        /// <param name="updateInterval">A `TimeSpan` that specifies how long to
+        protected object samplingLock = new object();
+
+        /// <summary>
+        /// Event handler for updated values
+        /// </summary>
+        public event EventHandler<IChangeResult<UNIT>> Updated = delegate { };
+
+        /// <summary>
+        /// Sampling cancellation token source
+        /// </summary>
+        protected CancellationTokenSource? SamplingTokenSource { get; set; }
+
+        /// <summary>
+        /// The last read conditions
+        /// </summary>
+        public UNIT Conditions { get; protected set; }
+
+        /// <summary>
+        /// Gets a value indicating whether the sensor is currently in a sampling
+        /// loop. Call StartSampling() to spin up the sampling process.
+        /// </summary>
+        /// <value><c>true</c> if sampling; otherwise, <c>false</c>.</value>
+        public bool IsSampling { get; protected set; } = false;
+
+        /// <summary>
+        /// A `TimeSpan` that specifies how long to
         /// wait between readings. This value influences how often `*Updated`
         /// events are raised and `IObservable` consumers are notified.
-        /// The default is 5 seconds.</param>
-        public virtual void StartUpdating(TimeSpan? updateInterval = null)
+        /// </summary>
+        public virtual TimeSpan UpdateInterval { get; protected set; } = TimeSpan.FromSeconds(5);
+
+        /// <summary>
+        /// Read value from sensor
+        /// </summary>
+        /// <returns>unitized value</returns>
+        protected abstract Task<UNIT> ReadSensor();
+
+        /// <summary>
+        /// Notify observers
+        /// </summary>
+        /// <param name="changeResult">provides new and old values</param>
+        protected virtual void RaiseEventsAndNotify(IChangeResult<UNIT> changeResult)
         {
-            // thread safety
-            lock (samplingLock) {
-                if (IsSampling) return;
-
-                IsSampling = true;
-
-                // if an update interval has been passed in, override the default
-                if(updateInterval is { } ui) { base.UpdateInterval = ui; }
-
-                base.SamplingTokenSource = new CancellationTokenSource();
-                CancellationToken ct = SamplingTokenSource.Token;
-
-                UNIT oldConditions;
-                ChangeResult<UNIT> result;
-
-                Task.Factory.StartNew(async () => {
-                    while (true) {
-                        // cleanup
-                        if (ct.IsCancellationRequested) {
-                            // do task clean up here
-                            observers.ForEach(x => x.OnCompleted());
-                            IsSampling = false;
-                            break;
-                        }
-                        // capture history
-                        oldConditions = Conditions;
-
-                        // read
-                        Conditions = await Read();
-
-                        // build a new result with the old and new conditions
-                        result = new ChangeResult<UNIT>(Conditions, oldConditions);
-
-                        // let everyone know
-                        RaiseEventsAndNotify(result);
-
-                        // sleep for the appropriate interval
-                        await Task.Delay(UpdateInterval);
-                    }
-                }, SamplingTokenSource.Token);
-            }
+            Updated.Invoke(this, changeResult);
+            NotifyObservers(changeResult);
         }
 
         /// <summary>
-        /// Stops sampling the sensor.
+        /// Convenience method to get the current sensor readings. For frequent reads, use
+        /// StartSampling() and StopSampling() in conjunction with the SampleBuffer.
         /// </summary>
-        public virtual void StopUpdating()
+        public virtual async Task<UNIT> Read()
         {
-            lock (samplingLock) {
-                if (!IsSampling) return;
-
-                SamplingTokenSource?.Cancel();
-
-                // state muh-cheen
-                IsSampling = false;
-            }
+            Conditions = await ReadSensor();
+            return Conditions;
         }
     }
 }

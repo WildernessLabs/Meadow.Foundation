@@ -370,7 +370,7 @@ namespace Meadow.Foundation.Sensors.Light
         /// <returns></returns>
         protected ushort ReadClearDataRegister() => Peripheral.ReadRegisterAsUShort(Registers.CLEAR_DATA);
 
-        async Task<Illuminance> ISamplingSensor<Illuminance>.Read()
+        async Task<Illuminance> ISensor<Illuminance>.Read()
             => (await Read()).AmbientLight.Value;
     }
 }

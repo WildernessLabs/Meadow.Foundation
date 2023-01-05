@@ -18,7 +18,7 @@ namespace Meadow.Foundation.Sensors.Weather
     /// 4.7kΩ / 1kΩ, as can be found in the SparkFun weather shield, or Wilderness
     /// Labs Clima Pro board.
     /// </summary>
-    public partial class WindVane : SensorBase<Azimuth>, IWindVane
+    public partial class WindVane : SamplingSensorBase<Azimuth>, IWindVane
     {
         /// <summary>
         /// The last recorded azimuth of the wind

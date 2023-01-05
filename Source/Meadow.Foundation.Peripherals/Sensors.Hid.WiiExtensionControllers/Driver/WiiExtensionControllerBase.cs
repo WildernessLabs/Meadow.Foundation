@@ -10,7 +10,7 @@ namespace Meadow.Foundation.Sensors.Hid
     /// Abstract base class that represents 
     /// Nintendo Wiimote I2C extension controllers 
     /// </summary>
-    public abstract partial class WiiExtensionControllerBase : ISensor
+    public abstract partial class WiiExtensionControllerBase
     {
         /// <summary>
         /// Default I2C bus speed (400kHz)

@@ -2,6 +2,7 @@
 using Meadow.Peripherals.Sensors;
 using Meadow.Peripherals.Switches;
 using System;
+using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Switches
 {
@@ -12,7 +13,7 @@ namespace Meadow.Foundation.Sensors.Switches
     /// Use the SwitchCircuitTerminationType to specify whether the other side of the switch
     /// terminates to ground or high.
     /// </summary>
-    public class SpstSwitch : ISwitch, ISensor
+    public class SpstSwitch : ISwitch
     {
         /// <summary>
         /// Describes whether or not the switch circuit is closed/connected (IsOn = true), or open (IsOn = false).
@@ -76,5 +77,10 @@ namespace Meadow.Foundation.Sensors.Switches
         {
             IsOn = DigitalIn.State;
         }
+
+        /// <summary>
+        /// Convenience method to get the current sensor reading
+        /// </summary>
+        public Task<bool> Read() => Task.FromResult(IsOn);
     }
 }

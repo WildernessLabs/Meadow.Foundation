@@ -254,5 +254,10 @@ namespace Meadow.Foundation.Sensors.Buttons
 
             ctsPolling?.Cancel();
         }
+
+        /// <summary>
+        /// Convenience method to get the current sensor reading
+        /// </summary>
+        public Task<bool> Read() => Task.FromResult(State);
     }
 }

@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 namespace Meadow.Foundation.Sensors.Base
 {
     /// <summary>
-    /// Represents an AnalogObservableBase sensor
+    /// Represents an AnalogSamplingBase sensor
     /// </summary>
-    public abstract class AnalogObservableBase : SensorBase<Voltage>
+    public abstract class AnalogSamplingBase : SamplingSensorBase<Voltage>
     {
         /// <summary>
         /// Analog port connected to the sensor
@@ -25,10 +25,10 @@ namespace Meadow.Foundation.Sensors.Base
         /// </summary>
         /// <param name="device">Meadow device</param>
         /// <param name="pin">AnalogChannel connected to the sensor.</param>
-        /// <param name="sampleCount">number of sample to average for a reading</param>
-        /// <param name="sampleInterval">time between intervals</param>
-        /// <param name="voltage">max voltage of analog port</param>
-        public AnalogObservableBase(IAnalogInputController device, IPin pin, int sampleCount = 5, TimeSpan? sampleInterval = null, Voltage? voltage = null)
+        /// <param name="sampleCount">Number of sample to average for a reading</param>
+        /// <param name="sampleInterval">Time between intervals</param>
+        /// <param name="voltage">Max voltage of analog port</param>
+        public AnalogSamplingBase(IAnalogInputController device, IPin pin, int sampleCount = 5, TimeSpan? sampleInterval = null, Voltage? voltage = null)
             : this(device.CreateAnalogInputPort(pin, sampleCount, sampleInterval ?? TimeSpan.FromMilliseconds(40), voltage ?? new Voltage(3.3)))
         { }
 
@@ -36,28 +36,21 @@ namespace Meadow.Foundation.Sensors.Base
         /// Creates a new AnalogObservableBase driver
         /// </summary>
         /// <param name="port">analog input port</param>
-        public AnalogObservableBase(IAnalogInputPort port)
+        public AnalogSamplingBase(IAnalogInputPort port)
         {
             AnalogInputPort = port;
 
-            // wire up our observable
-            // have to convert from voltage to temp units for our consumers
-            // this is where the magic is: this allows us to extend the IObservable
-            // pattern through the sensor driver
             AnalogInputPort.Subscribe
             (
                 IAnalogInputPort.CreateObserver(
                     result =>
                     {
-                        // create a new change result from the new value
                         ChangeResult<Voltage> changeResult = new ChangeResult<Voltage>()
                         {
                             New = result.New,
                             Old = Voltage
                         };
-                        // save state
                         Voltage = changeResult.New;
-                        // notify
                         RaiseEventsAndNotify(changeResult);
                     }
                 )
@@ -77,7 +70,6 @@ namespace Meadow.Foundation.Sensors.Base
         /// The default is 5 seconds.</param>
         public void StartUpdating(TimeSpan? updateInterval)
         {
-            // thread safety
             lock (samplingLock)
             {
                 if (IsSampling) return;
@@ -106,7 +98,6 @@ namespace Meadow.Foundation.Sensors.Base
         /// <returns>A float value that's ann average value of all the samples taken.</returns>
         protected override async Task<Voltage> ReadSensor()
         {
-            // read the voltage
             Voltage = await AnalogInputPort.Read();
             return Voltage;
         }

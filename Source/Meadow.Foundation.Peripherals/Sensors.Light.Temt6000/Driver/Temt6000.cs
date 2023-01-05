@@ -8,12 +8,12 @@ namespace Meadow.Foundation.Sensors.Light
     /// <summary>
     /// Represents a Temt6000 light sensor
     /// </summary>
-    public class Temt6000 : AnalogObservableBase
+    public class Temt6000 : AnalogSamplingBase
     {
         /// <summary>
         /// Creates a new Temt6000 object
         /// </summary>
-        /// <param name="device">The device conenced to the sensor</param>
+        /// <param name="device">The device connected to the sensor</param>
         /// <param name="pin">The analog pin</param>
         /// <param name="sampleCount">The sample count</param>
         /// <param name="sampleInterval">The sample interval</param>

@@ -12,7 +12,7 @@ namespace Meadow.Foundation.Sensors.Hid
     /// 2-axis analog joystick
     /// </summary>
     public partial class AnalogJoystick
-        : SensorBase<AnalogJoystickPosition>, IAnalogJoystick
+        : SamplingSensorBase<AnalogJoystickPosition>, IAnalogJoystick
     {
         /// <summary>
         /// Number of samples used to calculate position

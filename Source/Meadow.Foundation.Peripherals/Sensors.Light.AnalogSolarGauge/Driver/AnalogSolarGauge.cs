@@ -11,7 +11,7 @@ namespace Meadow.Foundation.Sensors.Light
     /// <summary>
     /// Driver to measure solar panel input
     /// </summary>
-    public class AnalogSolarGauge : SensorBase<float>,
+    public class AnalogSolarGauge : SamplingSensorBase<float>,
         ISolarIntensityGauge
     {
         /// <summary>
