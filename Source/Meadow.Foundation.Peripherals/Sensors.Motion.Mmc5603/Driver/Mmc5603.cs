@@ -20,16 +20,6 @@ namespace Meadow.Foundation.Sensors.Motion
         public event EventHandler<IChangeResult<MagneticField3D>> MagneticField3dUpdated = delegate { };
 
         /// <summary>
-        /// Raised when the temperature value changes
-        /// </summary>
-        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
-
-        /// <summary>
-        /// Interrupt port used to detect then end of a conversion
-        /// </summary>
-        protected readonly IDigitalInputPort interruptPort;
-
-        /// <summary>
         /// The current magnetic field value
         /// </summary>
         public MagneticField3D? MagneticField3d => Conditions;
@@ -44,10 +34,10 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         /// <summary>
-        /// Create a new Mmcc5603 object using the default parameters for the component
+        /// Create a new Mmc5603 object using the default parameters for the component
         /// </summary>
-        /// <param name="address">Address of the MAG3110 (default = 0x0e)</param>
-        /// <param name="i2cBus">I2C bus object - default = 400 KHz)</param>        
+        /// <param name="address">Address of the Mmc5603</param>
+        /// <param name="i2cBus">I2C bus object - default = 400 KHz</param>        
         public Mmc5603(II2cBus i2cBus, byte address = (byte)Addresses.Default)
             : base(i2cBus, address, 10, 8)
         {
