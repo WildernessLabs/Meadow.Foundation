@@ -1,5 +1,4 @@
-﻿using Meadow.Devices;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
 using Meadow.Peripherals.Displays;
 using System;
 using System.Threading;
@@ -9,7 +8,7 @@ namespace Meadow.Foundation.Displays.Lcd
     /// <summary>
     /// Represents a GPIO character display
     /// </summary>
-    public class GpioCharacterDisplay : ICharacterDisplay
+    public class GpioCharacterDisplay : ICharacterDisplay, IDisposable
     {
         private byte LCD_LINE_1 = 0x80; // # LCD RAM address for the 1st line
         private byte LCD_LINE_2 = 0xC0; // # LCD RAM address for the 2nd line
@@ -35,9 +34,20 @@ namespace Meadow.Foundation.Displays.Lcd
         static object _lock = new object();
 
         /// <summary>
+        /// Track if we created the input port in the PushButton instance (true)
+        /// or was it passed in via the ctor (false)
+        /// </summary>
+        protected bool ShouldDisposePort = false;
+
+        /// <summary>
         /// The text display menu configuration
         /// </summary>
         public TextDisplayConfig DisplayConfig { get; protected set; }
+
+        /// <summary>
+        /// Is the object disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
 
         /// <summary>
         /// Create a new GpioCharacterDisplay
@@ -68,7 +78,9 @@ namespace Meadow.Foundation.Displays.Lcd
                 device.CreateDigitalOutputPort(pinD6),
                 device.CreateDigitalOutputPort(pinD7),
                 rows, columns)
-        { }
+        {
+            ShouldDisposePort = true;
+        }
 
         /// <summary>
         /// Create a new GpioCharacterDisplay object
@@ -134,7 +146,9 @@ namespace Meadow.Foundation.Displays.Lcd
                 device.CreateDigitalOutputPort(pinD6),
                 device.CreateDigitalOutputPort(pinD7),
                 rows, columns)
-        { }
+        {
+            ShouldDisposePort = true;
+        }
 
         /// <summary>
         /// Create a new GpioCharacterDisplay object
@@ -173,8 +187,8 @@ namespace Meadow.Foundation.Displays.Lcd
 
         private void Initialize()
         {
-            SendByte(0x33, LCD_INSTRUCTION); // 110011 Initialise
-            SendByte(0x32, LCD_INSTRUCTION); // 110010 Initialise
+            SendByte(0x33, LCD_INSTRUCTION); // 110011 Initialize
+            SendByte(0x32, LCD_INSTRUCTION); // 110010 Initialize
             SendByte(0x06, LCD_INSTRUCTION); // 000110 Cursor move direction
             SendByte(0x0C, LCD_INSTRUCTION); // 001100 Display On,Cursor Off, Blink Off
             SendByte(0x28, LCD_INSTRUCTION); // 101000 Data length, number of lines, font size
@@ -324,7 +338,6 @@ namespace Meadow.Foundation.Displays.Lcd
             }
         }
 
-    
         /// <summary>
         /// Set the displa conrtast
         /// </summary>
@@ -363,5 +376,37 @@ namespace Meadow.Foundation.Displays.Lcd
         public void Show()
         {   //can safely ignore
         }   //required for ITextDisplayMenu
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        /// <param name="disposing">Is disposing</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && ShouldDisposePort)
+                {
+                    if (LCD_V0 != null) { LCD_V0.Dispose(); }
+                    LCD_E.Dispose();
+                    LCD_RS.Dispose();
+                    LCD_D4.Dispose();
+                    LCD_D5.Dispose();
+                    LCD_D6.Dispose();
+                    LCD_D7.Dispose();
+                }
+
+                IsDisposed = true;
+            }
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
     }
 }

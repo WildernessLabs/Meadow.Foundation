@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Meadow.Devices;
 using Meadow.Hardware;
 
 namespace Meadow.Foundation.Audio.Mp3
@@ -9,9 +8,38 @@ namespace Meadow.Foundation.Audio.Mp3
     /// <summary>
     /// Represents a Yx5300 serial MP3 player
     /// </summary>
-    public partial class Yx5300
+    public partial class Yx5300 : IDisposable
     {
-        readonly ISerialPort serialPort;
+        /// <summary>
+        /// Gets the port that is driving the Yx5300
+        /// </summary>
+        protected ISerialPort SerialPort { get; set; }
+
+        /// <summary>
+        /// Track if we created the input port in the PushButton instance (true)
+        /// or was it passed in via the ctor (false)
+        /// </summary>
+        protected bool ShouldDisposePort = false;
+
+        /// <summary>
+        /// Is the object disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
+
+        /// <summary>
+        /// Create a YX5300 mp3 player object
+        /// </summary>
+        /// <param name="device">Meadow device</param>
+        /// <param name="serialPortName">Name of serial port connected to YX5300</param>
+        public Yx5300(
+            IMeadowDevice device, 
+            SerialPortName serialPortName)
+            : this(
+                device.CreateSerialPort(
+                serialPortName))
+        { 
+            ShouldDisposePort = true;
+        }
 
         /// <summary>
         /// Create a YX5300 mp3 player object
@@ -19,7 +47,7 @@ namespace Meadow.Foundation.Audio.Mp3
         /// <param name="serialPort"></param>
         protected Yx5300(ISerialPort serialPort)
         {
-            this.serialPort = serialPort;
+            this.SerialPort = serialPort;
 
             serialPort.Open();
 
@@ -33,16 +61,6 @@ namespace Meadow.Foundation.Audio.Mp3
         }
 
         /// <summary>
-        /// Create a YX5300 mp3 player object
-        /// </summary>
-        /// <param name="device">Meadow device</param>
-        /// <param name="serialPortName">Name of serial port connected to YX5300</param>
-        public Yx5300(IMeadowDevice device, SerialPortName serialPortName)
-            : this(device.CreateSerialPort(
-                serialPortName))
-        { }
-
-        /// <summary>
         /// Reset the YX5300 hardware
         /// </summary>
         public void Reset()
@@ -53,7 +71,6 @@ namespace Meadow.Foundation.Audio.Mp3
         /// <summary>
         /// Set the power state to sleep
         /// </summary>
-
         public void Sleep()
         {
             SendCommand(Commands.Sleep);
@@ -62,7 +79,6 @@ namespace Meadow.Foundation.Audio.Mp3
         /// <summary>
         /// Set the power state to normal operations
         /// </summary>
-
         public void WakeUp()
         {
             SendCommand(Commands.Wake);
@@ -98,7 +114,6 @@ namespace Meadow.Foundation.Audio.Mp3
         /// Get audio volume (0-30)
         /// </summary>
         /// <returns></returns>
-
         public async Task<byte> GetVolume()
         {
             return (await SendCommandAndReadResponse(Commands.GetVolume)).Item2;
@@ -136,7 +151,6 @@ namespace Meadow.Foundation.Audio.Mp3
         /// Get status of YX5300
         /// </summary>
         /// <returns>PlayStatus enum</returns>
-
         public async Task<PlayStatus> GetStatus()
         {
             return (PlayStatus)(await SendCommandAndReadResponse(Commands.GetStatus)).Item2;
@@ -240,7 +254,7 @@ namespace Meadow.Foundation.Audio.Mp3
             sendBuffer[6] = data2;    // DATA2 datal
             sendBuffer[7] = 0xEF;    // End byte
 
-            serialPort.Write(sendBuffer);
+            SerialPort.Write(sendBuffer);
         }
 
         private byte[] ReadResponse()
@@ -251,14 +265,14 @@ namespace Meadow.Foundation.Audio.Mp3
 
             do
             {
-                if (serialPort.BytesToRead == 0)
+                if (SerialPort.BytesToRead == 0)
                 {
                     Console.WriteLine("No data available");
                     Thread.Sleep(50);
                     break;
                 }
 
-                value = (byte)serialPort.ReadByte();
+                value = (byte)SerialPort.ReadByte();
 
                 if (value == 0x7E) //new response
                 {
@@ -274,6 +288,32 @@ namespace Meadow.Foundation.Audio.Mp3
         Tuple<Responses, byte> ParseResponse(byte[] data)
         {
             return new Tuple<Responses, byte>((Responses)(data[3]), data[6]);
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        /// <param name="disposing">Is disposing</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && ShouldDisposePort)
+                {
+                    SerialPort.Dispose();
+                }
+
+                IsDisposed = true;
+            }
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }
