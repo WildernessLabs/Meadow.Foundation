@@ -35,7 +35,7 @@ namespace Meadow.Foundation.Sensors.Buttons
         /// Track if we created the input port in the PushButton instance (true)
         /// or was it passed in via the ctor (false)
         /// </summary>
-        protected bool shouldDisposePort = false;
+        protected bool ShouldDisposePort = false;
 
         /// <summary>
         /// Default Debounce used on the PushButton Input if an InputPort is auto-created
@@ -118,9 +118,9 @@ namespace Meadow.Foundation.Sensors.Buttons
         /// <param name="inputPin">The pin used to create the button port</param>
         /// <param name="resistorMode">The resistor mode</param>
         public PushButton(IDigitalInputController device, IPin inputPin, ResistorMode resistorMode = ResistorMode.InternalPullUp)
-            : this(CreateInputPort(device, inputPin, resistorMode))
+            : this (CreateInputPort(device, inputPin, resistorMode))
         {
-            shouldDisposePort = true;
+            ShouldDisposePort = true;
         }
 
         /// <summary>
@@ -260,7 +260,7 @@ namespace Meadow.Foundation.Sensors.Buttons
         {
             if (!IsDisposed)
             {
-                if (disposing && shouldDisposePort)
+                if (disposing && ShouldDisposePort)
                 {
                     DigitalIn.Dispose();
 

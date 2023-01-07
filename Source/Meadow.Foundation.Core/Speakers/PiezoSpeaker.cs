@@ -9,34 +9,57 @@ namespace Meadow.Foundation.Audio
     /// <summary>
     /// Represents a 2 pin piezo-electric speaker capable of generating tones
     /// </summary>
-    public class PiezoSpeaker : IToneGenerator
+    public class PiezoSpeaker : IToneGenerator, IDisposable
     {
-        /// <summary>
-        /// Gets the port that is driving the Piezo Speaker
-        /// </summary>
-        protected IPwmPort Port { get; set; }
-
         private bool isPlaying = false;
 
         /// <summary>
-        /// Create a new PiezoSpeaker instance
+        /// Gets the port that is driving the Piezo Speaker
         /// </summary>
-        /// <param name="device">IPwmOutputController to create PWM port</param>
-        /// <param name="pin">PWM Pin connected to the PiezoSpeaker</param>
-        /// <param name="frequency">PWM frequency</param>
-        /// <param name="dutyCycle">Duty cycle</param>
-        public PiezoSpeaker(IPwmOutputController device, IPin pin, Frequency frequency, float dutyCycle = 0) :
-            this (device.CreatePwmPort(pin, frequency, dutyCycle)) 
-        { }
+        protected IPwmPort PwmPort { get; set; }
+
+        /// <summary>
+        /// Track if we created the input port in the PushButton instance (true)
+        /// or was it passed in via the ctor (false)
+        /// </summary>
+        protected bool ShouldDisposePort = false;
+
+        /// <summary>
+        /// Is the peripheral disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
 
         /// <summary>
         /// Create a new PiezoSpeaker instance
         /// </summary>
         /// <param name="device">IPwmOutputController to create PWM port</param>
-        /// <param name="pin">PWM Pin connected to the PiezoSpeaker</param>
-        public PiezoSpeaker(IPwmOutputController device, IPin pin) :
-            this(device.CreatePwmPort(pin, new Frequency(100, Frequency.UnitType.Hertz), 0))
-        { }
+        /// <param name="pwmPin">PWM Pin connected to the PiezoSpeaker</param>
+        /// <param name="frequency">PWM frequency</param>
+        /// <param name="dutyCycle">Duty cycle</param>
+        public PiezoSpeaker(
+            IPwmOutputController device, 
+            IPin pwmPin, 
+            Frequency frequency, 
+            float dutyCycle = 0) 
+            : this (
+                device.CreatePwmPort(pwmPin, frequency, dutyCycle)) 
+        {
+            ShouldDisposePort = true;
+        }
+
+        /// <summary>
+        /// Create a new PiezoSpeaker instance
+        /// </summary>
+        /// <param name="device">IPwmOutputController to create PWM port</param>
+        /// <param name="pwmPin">PWM Pin connected to the PiezoSpeaker</param>
+        public PiezoSpeaker(
+            IPwmOutputController device, 
+            IPin pwmPin)
+            : this (
+                device.CreatePwmPort(pwmPin, new Frequency(100, Frequency.UnitType.Hertz), 0))
+        {
+            ShouldDisposePort = true;
+        }
 
         /// <summary>
         /// Create a new PiezoSpeaker instance
@@ -44,8 +67,8 @@ namespace Meadow.Foundation.Audio
         /// <param name="port"></param>
         public PiezoSpeaker(IPwmPort port)
         {
-            Port = port;
-            Port.Start();
+            PwmPort = port;
+            PwmPort.Start();
         }
 
         /// <summary>
@@ -73,13 +96,13 @@ namespace Meadow.Foundation.Audio
             {
                 isPlaying = true;
 
-                Port.Frequency = frequency;
-                Port.DutyCycle = 0.5f;
+                PwmPort.Frequency = frequency;
+                PwmPort.DutyCycle = 0.5f;
 
                 if (duration.TotalMilliseconds > 0)
                 {
                     await Task.Delay(duration);
-                    Port.DutyCycle = 0f;
+                    PwmPort.DutyCycle = 0f;
                 }
 
                 isPlaying = false;
@@ -91,7 +114,33 @@ namespace Meadow.Foundation.Audio
         /// </summary>
         public void StopTone()
         {
-            Port.DutyCycle = 0f;
+            PwmPort.DutyCycle = 0f;
+        }
+
+        /// <summary>
+        /// Dispose peripheral
+        /// </summary>
+        /// <param name="disposing"></param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && ShouldDisposePort)
+                {
+                    PwmPort.Dispose();
+                }
+
+                IsDisposed = true;
+            }
+        }
+
+        /// <summary>
+        /// Dispose Peripheral
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }

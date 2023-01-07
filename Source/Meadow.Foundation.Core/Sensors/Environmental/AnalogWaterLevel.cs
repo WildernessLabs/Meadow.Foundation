@@ -9,12 +9,18 @@ namespace Meadow.Foundation.Sensors.Environmental
     /// Represents an analog water level sensor
     /// </summary>
     public partial class AnalogWaterLevel
-        : SamplingSensorBase<float>
+        : SamplingSensorBase<float>, IDisposable
     {
         /// <summary>
         /// AnalogInputPort connected to temperature sensor
         /// </summary>
         protected IAnalogInputPort AnalogInputPort { get; }
+
+        /// <summary>
+        /// Track if we created the input port in the PushButton instance (true)
+        /// or was it passed in via the ctor (false)
+        /// </summary>
+        protected bool ShouldDisposePort = false;
 
         /// <summary>
         /// Calibration of water level
@@ -25,6 +31,11 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// Water level
         /// </summary>
         public float WaterLevel { get; protected set; }
+
+        /// <summary>
+        /// Is the peripheral disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
 
         /// <summary>
         /// New instance of the AnalogWaterLevel class.
@@ -40,7 +51,9 @@ namespace Meadow.Foundation.Sensors.Environmental
             IPin analogPin,
             Calibration? calibration = null,
             TimeSpan? updateInterval = null)
-                : this(device.CreateAnalogInputPort(analogPin, 5, TimeSpan.FromMilliseconds(40), new Voltage(3.3, Voltage.UnitType.Volts)), calibration)
+            : this (
+                device.CreateAnalogInputPort(analogPin, 5, TimeSpan.FromMilliseconds(40), new Voltage(3.3, Voltage.UnitType.Volts)), 
+                calibration)
         {
             base.UpdateInterval = updateInterval ?? TimeSpan.FromSeconds(1000);
         }
@@ -50,21 +63,21 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// </summary>
         /// <param name="analogInputPort">Analog port the sensor is connected to.</param>
         /// <param name="calibration">Calibration for the analog sensor.</param>
-        public AnalogWaterLevel(IAnalogInputPort analogInputPort,
-                                 Calibration? calibration = null)
+        public AnalogWaterLevel(
+            IAnalogInputPort analogInputPort,
+            Calibration? calibration = null)
         {
             AnalogInputPort = analogInputPort;
 
-            //
-            //  If the calibration object is null use the defaults for TMP35.
-            //
+            //  If the calibration object is null use the defaults
             LevelCalibration = calibration ?? new Calibration();
 
             // wire up our observable
             AnalogInputPort.Subscribe
             (
                 IAnalogInputPort.CreateObserver(
-                    h => {
+                    h => 
+                    {
                         // capture the old water leve.
                         var oldWaterLevel = WaterLevel;
                         //var oldWaterLevel = VoltageToWaterLevel(h.Old);
@@ -123,7 +136,6 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// calibration values.
         /// </summary>
         /// <param name="voltage"></param>
-        /// <returns></returns>
         protected float VoltageToWaterLevel(Voltage voltage)
         {
             if(voltage <= LevelCalibration.VoltsAtZero)
@@ -131,6 +143,32 @@ namespace Meadow.Foundation.Sensors.Environmental
                 return 0;
             }
             return (float)((voltage.Volts - LevelCalibration.VoltsAtZero.Volts) / LevelCalibration.VoltsPerCentimeter.Volts);
+        }
+
+        /// <summary>
+        /// Dispose peripheral
+        /// </summary>
+        /// <param name="disposing"></param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && ShouldDisposePort)
+                {
+                    AnalogInputPort.Dispose();
+                }
+
+                IsDisposed = true;
+            }
+        }
+
+        /// <summary>
+        /// Dispose Peripheral
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }

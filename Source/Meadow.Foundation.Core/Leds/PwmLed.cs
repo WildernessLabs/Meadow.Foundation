@@ -28,7 +28,7 @@ namespace Meadow.Foundation.Leds
         /// Track if we created the input port in the PushButton instance (true)
         /// or was it passed in via the ctor (false)
         /// </summary>
-        protected bool shouldDisposePorts = false;
+        protected bool ShouldDisposePorts = false;
 
         /// <summary>
         /// Gets the brightness of the LED, controlled by a PWM signal, and limited by the 
@@ -96,7 +96,7 @@ namespace Meadow.Foundation.Leds
             CircuitTerminationType terminationType = CircuitTerminationType.CommonGround)
         {
             Port = device.CreatePwmPort(pin, new Frequency(100, Frequency.UnitType.Hertz));
-            shouldDisposePorts = true;
+            ShouldDisposePorts = true;
             Port.DutyCycle = 0;
             Initialize(forwardVoltage, terminationType);
         }
@@ -360,7 +360,7 @@ namespace Meadow.Foundation.Leds
         {
             if (!IsDisposed)
             {
-                if (disposing && shouldDisposePorts)
+                if (disposing && ShouldDisposePorts)
                 {
                     Port.Dispose();
                 }

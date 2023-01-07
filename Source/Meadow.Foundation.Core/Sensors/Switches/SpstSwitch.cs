@@ -1,5 +1,4 @@
 ﻿using Meadow.Hardware;
-using Meadow.Peripherals.Sensors;
 using Meadow.Peripherals.Switches;
 using System;
 using System.Threading.Tasks;
@@ -13,8 +12,19 @@ namespace Meadow.Foundation.Sensors.Switches
     /// Use the SwitchCircuitTerminationType to specify whether the other side of the switch
     /// terminates to ground or high.
     /// </summary>
-    public class SpstSwitch : ISwitch
+    public class SpstSwitch : ISwitch, IDisposable
     {
+        /// <summary>
+        /// Returns the DigitalInputPort.
+        /// </summary>
+        protected IDigitalInputPort DigitalIn { get; set; }
+
+        /// <summary>
+        /// Track if we created the input port in the PushButton instance (true)
+        /// or was it passed in via the ctor (false)
+        /// </summary>
+        protected bool ShouldDisposePort = false;
+
         /// <summary>
         /// Describes whether or not the switch circuit is closed/connected (IsOn = true), or open (IsOn = false).
         /// </summary>
@@ -30,9 +40,9 @@ namespace Meadow.Foundation.Sensors.Switches
         public event EventHandler Changed = delegate { };
 
         /// <summary>
-        /// Returns the DigitalInputPort.
+        /// Is the peripheral disposed
         /// </summary>
-        protected IDigitalInputPort DigitalIn { get; set; }
+        public bool IsDisposed { get; private set; }
 
         /// <summary>
         /// Instantiates a new SpstSwitch object connected to the specified digital pin, and with the specified CircuitTerminationType in the type parameter.
@@ -41,9 +51,17 @@ namespace Meadow.Foundation.Sensors.Switches
         /// <param name="pin"></param>
         /// <param name="interruptMode"></param>
         /// <param name="resistorMode"></param>
-        public SpstSwitch(IDigitalInputController device, IPin pin, InterruptMode interruptMode, ResistorMode resistorMode) :
-            this(device.CreateDigitalInputPort(pin, interruptMode, resistorMode, TimeSpan.FromMilliseconds(20), TimeSpan.Zero))
-        { }
+        public SpstSwitch(
+            IDigitalInputController device, 
+            IPin pin, 
+            InterruptMode interruptMode, 
+            ResistorMode resistorMode) 
+            : this (
+                device.CreateDigitalInputPort(pin, interruptMode, resistorMode, TimeSpan.FromMilliseconds(20), 
+                TimeSpan.Zero))
+        {
+            ShouldDisposePort = true;
+        }
 
         /// <summary>
         /// Instantiates a new SpstSwitch object connected to the specified digital pin, and with the specified CircuitTerminationType in the type parameter.
@@ -54,9 +72,18 @@ namespace Meadow.Foundation.Sensors.Switches
         /// <param name="resistorMode"></param>
         /// <param name="debounceDuration"></param>
         /// <param name="glitchFilterCycleCount"></param>
-        public SpstSwitch(IDigitalInputController device, IPin pin, InterruptMode interruptMode, ResistorMode resistorMode, TimeSpan debounceDuration, TimeSpan glitchFilterCycleCount) :
-            this(device.CreateDigitalInputPort(pin, interruptMode, resistorMode, debounceDuration, glitchFilterCycleCount))
-        { }
+        public SpstSwitch(
+            IDigitalInputController device, 
+            IPin pin, 
+            InterruptMode interruptMode, 
+            ResistorMode resistorMode, 
+            TimeSpan debounceDuration, 
+            TimeSpan glitchFilterCycleCount) 
+            : this (
+                device.CreateDigitalInputPort(pin, interruptMode, resistorMode, debounceDuration, glitchFilterCycleCount))
+        {
+            ShouldDisposePort = true;
+        }
 
         /// <summary>
         /// Creates a SpstSwitch on a especified interrupt port
@@ -82,5 +109,31 @@ namespace Meadow.Foundation.Sensors.Switches
         /// Convenience method to get the current sensor reading
         /// </summary>
         public Task<bool> Read() => Task.FromResult(IsOn);
+
+        /// <summary>
+        /// Dispose peripheral
+        /// </summary>
+        /// <param name="disposing"></param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && ShouldDisposePort)
+                {
+                    DigitalIn.Dispose();
+                }
+
+                IsDisposed = true;
+            }
+        }
+
+        /// <summary>
+        /// Dispose Peripheral
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
     }
 }

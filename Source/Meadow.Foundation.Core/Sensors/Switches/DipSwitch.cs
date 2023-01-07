@@ -34,8 +34,18 @@ namespace Meadow.Foundation.Sensors.Switches
         /// <param name="switchPins">An array of pins for each switch</param>
         /// <param name="interruptMode">The interrupt mode for all pins</param>
         /// <param name="resistorMode">The resistor mode for all pins</param>
-        public DipSwitch(IDigitalInputController device, IPin[] switchPins, InterruptMode interruptMode, ResistorMode resistorMode)
-            : this(device, switchPins, interruptMode, resistorMode, TimeSpan.FromMilliseconds(20), TimeSpan.Zero)
+        public DipSwitch(
+            IDigitalInputController device, 
+            IPin[] switchPins, 
+            InterruptMode interruptMode, 
+            ResistorMode resistorMode)
+            : this (
+                  device, 
+                  switchPins, 
+                  interruptMode, 
+                  resistorMode, 
+                  TimeSpan.FromMilliseconds(20), 
+                  TimeSpan.Zero)
         { }
 
         /// <summary>
@@ -47,7 +57,13 @@ namespace Meadow.Foundation.Sensors.Switches
         /// <param name="resistorMode"></param>
         /// <param name="debounceDuration"></param>
         /// <param name="glitchFilterCycleCount"></param>
-        public DipSwitch(IDigitalInputController device, IPin[] switchPins, InterruptMode interruptMode, ResistorMode resistorMode, TimeSpan debounceDuration, TimeSpan glitchFilterCycleCount)
+        public DipSwitch(
+            IDigitalInputController device, 
+            IPin[] switchPins, 
+            InterruptMode interruptMode, 
+            ResistorMode resistorMode, 
+            TimeSpan debounceDuration, 
+            TimeSpan glitchFilterCycleCount)
         {
             Switches = new ISwitch[switchPins.Length];
 

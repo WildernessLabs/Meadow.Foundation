@@ -7,12 +7,9 @@ namespace Meadow.Foundation.Sensors.Rotary
     /// <summary>
     /// Digital rotary encoder that uses two-bit Gray Code to encode rotation.
     /// </summary>
-    public class RotaryEncoder : IRotaryEncoder
+    public class RotaryEncoder : IRotaryEncoder, IDisposable
     {
-        /// <summary>
-        /// Raised when the rotary encoder is rotated and returns a RotaryTurnedEventArgs object which describes the direction of rotation.
-        /// </summary>
-        public event EventHandler<RotaryChangeResult> Rotated = delegate { };
+        private int dynamicOffset = 0;
 
         /// <summary>
         /// Returns the pin connected to the A-phase output on the rotary encoder.
@@ -25,14 +22,20 @@ namespace Meadow.Foundation.Sensors.Rotary
         protected IDigitalInputPort BPhasePort { get; }
 
         /// <summary>
+        /// Track if we created the input port in the PushButton instance (true)
+        /// or was it passed in via the ctor (false)
+        /// </summary>
+        protected bool ShouldDisposePort = false;
+
+        /// <summary>
+        /// Raised when the rotary encoder is rotated and returns a RotaryTurnedEventArgs object which describes the direction of rotation.
+        /// </summary>
+        public event EventHandler<RotaryChangeResult> Rotated = delegate { };
+
+        /// <summary>
         /// Gets the last direction of rotation
         /// </summary>
         public RotationDirection? LastDirectionOfRotation { get; protected set; }
-
-        /// <summary>
-        /// Contains the previous offset used to find direction information
-        /// </summary>
-        private int dynamicOffset = 0;
 
         /// <summary>
         /// The rotary encoder has 2 inputs, called A and B. Because of its design
@@ -58,15 +61,26 @@ namespace Meadow.Foundation.Sensors.Rotary
                                                 0, 1, -1, 0 };
 
         /// <summary>
+        /// Is the object disposed
+        /// </summary>
+        public bool IsDisposed { get; protected set; }
+
+        /// <summary>
         /// Instantiate a new RotaryEncoder on the specified pins.
         /// </summary>
         /// <param name="device"></param>
         /// <param name="aPhasePin"></param>
         /// <param name="bPhasePin"></param>
-        public RotaryEncoder(IDigitalInputController device, IPin aPhasePin, IPin bPhasePin) :
-            this(device.CreateDigitalInputPort(aPhasePin, InterruptMode.EdgeBoth, ResistorMode.InternalPullDown, TimeSpan.Zero, TimeSpan.FromMilliseconds(0.1)),
-                 device.CreateDigitalInputPort(bPhasePin, InterruptMode.EdgeBoth, ResistorMode.InternalPullDown, TimeSpan.Zero, TimeSpan.FromMilliseconds(0.1)))
-        { }
+        public RotaryEncoder(
+            IDigitalInputController device,
+            IPin aPhasePin, 
+            IPin bPhasePin) :
+            this(
+                device.CreateDigitalInputPort(aPhasePin, InterruptMode.EdgeBoth, ResistorMode.InternalPullDown, TimeSpan.Zero, TimeSpan.FromMilliseconds(0.1)),
+                device.CreateDigitalInputPort(bPhasePin, InterruptMode.EdgeBoth, ResistorMode.InternalPullDown, TimeSpan.Zero, TimeSpan.FromMilliseconds(0.1)))
+        { 
+            ShouldDisposePort = true;
+        }
 
         /// <summary>
         /// Instantiate a new RotaryEncoder on the specified ports
@@ -137,6 +151,33 @@ namespace Meadow.Foundation.Sensors.Rotary
         private void RaiseRotatedAndNotify(RotaryChangeResult result)
         {
             Rotated?.Invoke(this, result);
+        }
+
+        /// <summary>
+        /// Dispose of the peripheral
+        /// </summary>
+        /// <param name="disposing">Is disposing</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && ShouldDisposePort)
+                {
+                    APhasePort.Dispose();
+                    BPhasePort.Dispose();
+                }
+
+                IsDisposed = true;
+            }
+        }
+
+        /// <summary>
+        /// Dispose of the peripheral
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }

@@ -44,7 +44,7 @@ namespace Meadow.Foundation.Leds
         /// Track if we created the input port in the PushButton instance (true)
         /// or was it passed in via the ctor (false)
         /// </summary>
-        protected bool shouldDisposePorts = false;
+        protected bool ShouldDisposePorts = false;
 
         /// <summary>
         /// Maximum forward voltage (3.3 Volts)
@@ -125,7 +125,7 @@ namespace Meadow.Foundation.Leds
                 device.CreatePwmPort(bluePwmPin, FREQUENCY_DEFAULT),
                 commonType)
         {
-            shouldDisposePorts = true;
+            ShouldDisposePorts = true;
         }
 
         /// <summary>
@@ -189,7 +189,7 @@ namespace Meadow.Foundation.Leds
                 blueLedForwardVoltage,
                 commonType)
         {
-            shouldDisposePorts = true;
+            ShouldDisposePorts = true;
         }
 
         /// <summary>
@@ -514,7 +514,7 @@ namespace Meadow.Foundation.Leds
         /// <param name="disposing"></param>
         protected virtual void Dispose(bool disposing)
         {
-            if (disposing && shouldDisposePorts)
+            if (disposing && ShouldDisposePorts)
             {
                 RedPwm.Dispose();
                 GreenPwm.Dispose();

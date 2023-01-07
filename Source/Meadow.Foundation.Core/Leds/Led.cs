@@ -24,7 +24,7 @@ namespace Meadow.Foundation.Leds
         /// Track if we created the input port in the PushButton instance (true)
         /// or was it passed in via the ctor (false)
         /// </summary>
-        protected bool shouldDisposePort = false;
+        protected bool ShouldDisposePort = false;
 
         /// <summary>
         /// Gets or sets a value indicating whether this <see cref="T:Meadow.Foundation.Leds.Led"/> is on.
@@ -54,7 +54,7 @@ namespace Meadow.Foundation.Leds
         public Led(IDigitalOutputController device, IPin pin) :
             this(device.CreateDigitalOutputPort(pin, false))
         {
-            shouldDisposePort = true;
+            ShouldDisposePort = true;
         }
 
         /// <summary>
@@ -143,7 +143,7 @@ namespace Meadow.Foundation.Leds
         {
             if (!IsDisposed)
             {
-                if (disposing && shouldDisposePort)
+                if (disposing && ShouldDisposePort)
                 {
                     Port.Dispose();
                 }

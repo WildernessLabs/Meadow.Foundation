@@ -9,7 +9,7 @@ namespace Meadow.Foundation.Sensors.Rotary
     /// <summary>
     /// Digital rotary encoder that uses two-bit Gray Code to encode rotation and has an integrated push button
     /// </summary>
-    public class RotaryEncoderWithButton : RotaryEncoder, IRotaryEncoderWithButton
+    public class RotaryEncoderWithButton : RotaryEncoder, IRotaryEncoderWithButton, IDisposable
     {
         /// <summary>
         /// Returns the PushButton that represents the integrated button
@@ -58,9 +58,19 @@ namespace Meadow.Foundation.Sensors.Rotary
         /// <param name="bPhasePin"></param>
         /// <param name="buttonPin"></param>
         /// <param name="buttonResistorMode"></param>
-        public RotaryEncoderWithButton(IDigitalInputController device, IPin aPhasePin, IPin bPhasePin, IPin buttonPin, ResistorMode buttonResistorMode = ResistorMode.InternalPullDown)
-            : base(device, aPhasePin, bPhasePin)
+        public RotaryEncoderWithButton(
+            IDigitalInputController device, 
+            IPin aPhasePin, 
+            IPin bPhasePin, 
+            IPin buttonPin, 
+            ResistorMode buttonResistorMode = ResistorMode.InternalPullDown)
+            : base(
+                device, 
+                aPhasePin, 
+                bPhasePin)
         {
+            ShouldDisposePort = true;
+
             Button = new PushButton(device, buttonPin, buttonResistorMode);
 
             Button.Clicked += ButtonClicked;
@@ -108,5 +118,33 @@ namespace Meadow.Foundation.Sensors.Rotary
         /// Convenience method to get the current sensor reading
         /// </summary>
         public Task<bool> Read() => Button.Read();
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        /// <param name="disposing">Is disposing</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && ShouldDisposePort)
+                {
+                    APhasePort.Dispose();
+                    BPhasePort.Dispose();
+                    Button.Dispose();
+                }
+
+                IsDisposed = true;
+            }
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
     }
 }

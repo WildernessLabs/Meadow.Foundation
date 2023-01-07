@@ -19,7 +19,7 @@ namespace Meadow.Foundation.Sensors.Base
         /// Track if we created the input port in the PushButton instance (true)
         /// or was it passed in via the ctor (false)
         /// </summary>
-        protected bool shouldDisposePorts = false;
+        protected bool ShouldDisposePorts = false;
 
         /// <summary>
         /// Current voltage
@@ -42,7 +42,7 @@ namespace Meadow.Foundation.Sensors.Base
         public AnalogSamplingBase(IAnalogInputController device, IPin pin, int sampleCount = 5, TimeSpan? sampleInterval = null, Voltage? voltage = null)
             : this(device.CreateAnalogInputPort(pin, sampleCount, sampleInterval ?? TimeSpan.FromMilliseconds(40), voltage ?? new Voltage(3.3)))
         {
-            shouldDisposePorts = true;
+            ShouldDisposePorts = true;
         }
 
         /// <summary>
@@ -122,7 +122,7 @@ namespace Meadow.Foundation.Sensors.Base
         {
             if (!IsDisposed)
             {
-                if (disposing && shouldDisposePorts)
+                if (disposing && ShouldDisposePorts)
                 {
                     AnalogInputPort.Dispose();
                 }

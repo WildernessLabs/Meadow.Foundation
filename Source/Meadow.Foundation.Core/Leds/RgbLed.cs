@@ -33,7 +33,7 @@ namespace Meadow.Foundation.Leds
         /// Track if we created the input port in the PushButton instance (true)
         /// or was it passed in via the ctor (false)
         /// </summary>
-        protected bool shouldDisposePorts = false;
+        protected bool ShouldDisposePorts = false;
 
         /// <summary>
         /// Get the color the LED has been set to.
@@ -84,7 +84,7 @@ namespace Meadow.Foundation.Leds
                 device.CreateDigitalOutputPort(bluePin),
                 commonType) 
         {
-            shouldDisposePorts = true;
+            ShouldDisposePorts = true;
         }
 
         /// <summary>
@@ -238,7 +238,7 @@ namespace Meadow.Foundation.Leds
         {
             if (!IsDisposed)
             {
-                if (disposing && shouldDisposePorts)
+                if (disposing && ShouldDisposePorts)
                 {
                     RedPort.Dispose();
                     BluePort.Dispose();

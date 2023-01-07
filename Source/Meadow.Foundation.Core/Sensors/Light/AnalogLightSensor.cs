@@ -11,12 +11,18 @@ namespace Meadow.Foundation.Sensors.Light
     /// Represents an analog light sensor
     /// </summary>
     public partial class AnalogLightSensor
-        : SamplingSensorBase<Illuminance>, ILightSensor
+        : SamplingSensorBase<Illuminance>, ILightSensor, IDisposable
     {
         /// <summary>
         /// Analog port connected to sensor
         /// </summary>
         protected IAnalogInputPort AnalogInputPort { get; }
+
+        /// <summary>
+        /// Track if we created the input port in the PushButton instance (true)
+        /// or was it passed in via the ctor (false)
+        /// </summary>
+        protected bool ShouldDisposePort = false;
 
         /// <summary>
         /// Raised when the value of the reading changes.
@@ -35,6 +41,11 @@ namespace Meadow.Foundation.Sensors.Light
         private Illuminance illuminance;
 
         /// <summary>
+        /// Is the peripheral disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
+
+        /// <summary>
         /// New instance of the AnalogLightSensor class.
         /// </summary>
         /// <param name="device">The `IAnalogInputController` to create the port on.</param>
@@ -48,8 +59,11 @@ namespace Meadow.Foundation.Sensors.Light
             IAnalogInputController device,
             IPin analogPin,
             Calibration? calibration = null,
-            int sampleCount = 5, TimeSpan? sampleInterval = null)
-                : this(device.CreateAnalogInputPort(analogPin, sampleCount, sampleInterval ?? new TimeSpan(0, 0, 40), new Voltage(3.3)), calibration)
+            int sampleCount = 5, 
+            TimeSpan? sampleInterval = null)
+                : this (
+                    device.CreateAnalogInputPort(analogPin, sampleCount, sampleInterval ?? new TimeSpan(0, 0, 40), new Voltage(3.3)), 
+                    calibration)
         { }
 
         /// <summary>
@@ -57,14 +71,11 @@ namespace Meadow.Foundation.Sensors.Light
         /// </summary>
         /// <param name="analogInputPort">Analog port the sensor is connected to.</param>
         /// <param name="calibration">Calibration for the analog sensor.</param> 
-        public AnalogLightSensor(IAnalogInputPort analogInputPort,
-                                 Calibration? calibration = null)
+        public AnalogLightSensor(IAnalogInputPort analogInputPort, Calibration? calibration = null)
         {
             AnalogInputPort = analogInputPort;
 
-            //
-            //  If the calibration object is null use the defaults for TMP35.
-            //
+            // If the calibration object is null use the defaults for TMP35.
             LuminanceCalibration = calibration ?? new Calibration();
 
             // wire up our observable
@@ -85,7 +96,7 @@ namespace Meadow.Foundation.Sensors.Light
                         );
                     }
                 )
-           );
+            );
         }
 
         /// <summary>
@@ -145,6 +156,32 @@ namespace Meadow.Foundation.Sensors.Light
                 return new Illuminance(0);
             }
             return new Illuminance((voltage.Volts - LuminanceCalibration.VoltsAtZero.Volts) / LuminanceCalibration.VoltsPerLuminance.Volts);
+        }
+
+        /// <summary>
+        /// Dispose peripheral
+        /// </summary>
+        /// <param name="disposing"></param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && ShouldDisposePort)
+                {
+                    AnalogInputPort.Dispose();
+                }
+
+                IsDisposed = true;
+            }
+        }
+
+        /// <summary>
+        /// Dispose Peripheral
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }

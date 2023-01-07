@@ -12,7 +12,7 @@ namespace Meadow.Foundation.Sensors.Hid
     /// 2-axis analog joystick
     /// </summary>
     public partial class AnalogJoystick
-        : SamplingSensorBase<AnalogJoystickPosition>, IAnalogJoystick
+        : SamplingSensorBase<AnalogJoystickPosition>, IAnalogJoystick, IDisposable
     {
         /// <summary>
         /// Number of samples used to calculate position
@@ -33,6 +33,12 @@ namespace Meadow.Foundation.Sensors.Hid
         /// Analog port connected to vertical joystick pin
         /// </summary>
         protected IAnalogInputPort VerticalInputPort { get; set; }
+
+        /// <summary>
+        /// Track if we created the input port in the PushButton instance (true)
+        /// or was it passed in via the ctor (false)
+        /// </summary>
+        protected bool ShouldDisposePorts = false;
 
         /// <summary>
         /// Is the horizontal / x-axis inverted 
@@ -60,6 +66,11 @@ namespace Meadow.Foundation.Sensors.Hid
         public JoystickCalibration Calibration { get; protected set; }
 
         /// <summary>
+        /// Is the peripheral disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
+
+        /// <summary>
         /// Creates a 2-axis analog joystick
         /// </summary>
         /// <param name="device">The `IAnalogInputController` to create the port on.</param>
@@ -78,7 +89,9 @@ namespace Meadow.Foundation.Sensors.Hid
                     calibration, 
                     sampleCount: 5, 
                     TimeSpan.FromMilliseconds(40))
-        { }
+        { 
+            ShouldDisposePorts = true;
+        }
 
         /// <summary>
         /// Creates a 2-axis analog joystick
@@ -99,10 +112,12 @@ namespace Meadow.Foundation.Sensors.Hid
             int sampleCount,
             TimeSpan sampleInterval)
                 : this(
-                      device.CreateAnalogInputPort(horizontalPin, sampleCount, sampleInterval, new Voltage(3.3, VU.Volts)),
-                      device.CreateAnalogInputPort(verticalPin, sampleCount, sampleInterval, new Voltage(3.3, VU.Volts)),
-                      calibration)
-        { }
+                    device.CreateAnalogInputPort(horizontalPin, sampleCount, sampleInterval, new Voltage(3.3, VU.Volts)),
+                    device.CreateAnalogInputPort(verticalPin, sampleCount, sampleInterval, new Voltage(3.3, VU.Volts)),
+                    calibration)
+        {
+            ShouldDisposePorts = true;
+        }
 
         /// <summary>
         /// Creates a 2-axis analog joystick
@@ -375,6 +390,33 @@ namespace Meadow.Foundation.Sensors.Hid
             }
 
             return (float)normalized;
+        }
+
+        /// <summary>
+        /// Dispose peripheral
+        /// </summary>
+        /// <param name="disposing"></param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && ShouldDisposePorts)
+                {
+                    HorizontalInputPort.Dispose();
+                    VerticalInputPort.Dispose();
+                }
+
+                IsDisposed = true;
+            }
+        }
+
+        /// <summary>
+        /// Dispose Peripheral
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }

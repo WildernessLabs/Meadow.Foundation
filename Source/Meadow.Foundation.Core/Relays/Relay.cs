@@ -18,7 +18,7 @@ namespace Meadow.Foundation.Relays
         /// Track if we created the input port in the PushButton instance (true)
         /// or was it passed in via the ctor (false)
         /// </summary>
-        protected bool shouldDisposePort = false;
+        protected bool ShouldDisposePort = false;
 
         /// <summary>
         /// Returns type of relay.
@@ -57,7 +57,7 @@ namespace Meadow.Foundation.Relays
             RelayType type = RelayType.NormallyOpen) :
             this (device.CreateDigitalOutputPort(pin), type) 
         {
-            shouldDisposePort = true;
+            ShouldDisposePort = true;
         }
 
         /// <summary>
@@ -92,7 +92,7 @@ namespace Meadow.Foundation.Relays
         {
             if (!IsDisposed)
             {
-                if (disposing && shouldDisposePort)
+                if (disposing && ShouldDisposePort)
                 {
                     DigitalOut.Dispose();
                 }

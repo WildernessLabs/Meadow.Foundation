@@ -31,7 +31,7 @@ namespace Meadow.Foundation.Motors
         /// Track if we created the input port in the PushButton instance (true)
         /// or was it passed in via the ctor (false)
         /// </summary>
-        protected bool shouldDisposePorts = false;
+        protected bool ShouldDisposePorts = false;
 
         /// <summary>
         /// When true, the wheels spin "freely"
@@ -111,7 +111,7 @@ namespace Meadow.Foundation.Motors
                 device.CreateDigitalOutputPort(enablePin),
                 FREQUENCY_DEFAULT)
         {
-            shouldDisposePorts = true;
+            ShouldDisposePorts = true;
         }
 
         /// <summary>
@@ -134,7 +134,7 @@ namespace Meadow.Foundation.Motors
                 device.CreateDigitalOutputPort(enablePin),
                 pwmFrequency)
         {
-            shouldDisposePorts = true;
+            ShouldDisposePorts = true;
         }
 
         /// <summary>
@@ -184,7 +184,7 @@ namespace Meadow.Foundation.Motors
         /// <param name="disposing"></param>
         protected virtual void Dispose(bool disposing)
         {
-            if (disposing && shouldDisposePorts)
+            if (disposing && ShouldDisposePorts)
             {
                 motorLeftPwm.Dispose();
                 motorRightPwm.Dispose();

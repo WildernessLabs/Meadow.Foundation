@@ -30,17 +30,19 @@ namespace Meadow.Foundation.Sensors.Temperature
     /// TMP37                   500                     20                
     /// TMP236                  887.5                   19.5                    
     /// </remarks>
-    public partial class AnalogTemperature : SamplingSensorBase<Units.Temperature>, ITemperatureSensor
+    public partial class AnalogTemperature 
+        : SamplingSensorBase<Units.Temperature>, ITemperatureSensor, IDisposable
     {
-        /// <summary>
-        /// Raised when the value of the reading changes.
-        /// </summary>
-        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
-
         ///<Summary>
         /// AnalogInputPort connected to temperature sensor
         ///</Summary>
         protected IAnalogInputPort AnalogInputPort { get; }
+
+        /// <summary>
+        /// Track if we created the input port in the PushButton instance (true)
+        /// or was it passed in via the ctor (false)
+        /// </summary>
+        protected bool ShouldDisposePort = false;
 
         /// <summary>
         /// Type of temperature sensor.
@@ -85,6 +87,11 @@ namespace Meadow.Foundation.Sensors.Temperature
             LM50,
         }
 
+        /// <summary>
+        /// Raised when the value of the reading changes.
+        /// </summary>
+        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
+
         ///<Summary>
         /// SensorCalibration property for temperature sensor
         ///</Summary>
@@ -100,6 +107,11 @@ namespace Meadow.Foundation.Sensors.Temperature
         public Units.Temperature? Temperature { get; protected set; }
 
         /// <summary>
+        /// Is the peripheral disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
+
+        /// <summary>
         /// Creates a new instance of the AnalogTemperature class.
         /// </summary>
         /// <param name="device">The `IAnalogInputController` to create the port on</param>
@@ -110,12 +122,18 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// reading. These are automatically averaged to reduce noise</param>
         /// <param name="sampleInterval">The time between sample readings</param>
         public AnalogTemperature(
-            IAnalogInputController device, IPin analogPin,
-            KnownSensorType sensorType, Calibration? calibration = null,
-            int sampleCount = 5, TimeSpan? sampleInterval = null)
-                : this(device.CreateAnalogInputPort(analogPin, sampleCount, sampleInterval ?? TimeSpan.FromMilliseconds(40), new Voltage(3.3, Voltage.UnitType.Volts)),
-                      sensorType, calibration)
-        { }
+            IAnalogInputController device, 
+            IPin analogPin,
+            KnownSensorType sensorType, 
+            Calibration? calibration = null,
+            int sampleCount = 5, 
+            TimeSpan? sampleInterval = null)
+                : this (
+                    device.CreateAnalogInputPort(analogPin, sampleCount, sampleInterval ?? TimeSpan.FromMilliseconds(40), new Voltage(3.3, Voltage.UnitType.Volts)),
+                    sensorType, calibration)
+        { 
+            ShouldDisposePort = true;
+        }
 
         /// <summary>
         /// Creates a new instance of the AnalogTemperature class.
@@ -123,9 +141,10 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// <param name="analogInputPort">The `IAnalogInputPort` connected to the sensor.</param>
         /// <param name="sensorType">Type of sensor attached to the analog port.</param>
         /// <param name="calibration">Calibration for the analog temperature sensor. Only used if sensorType is set to Custom.</param>
-        public AnalogTemperature(IAnalogInputPort analogInputPort,
-                                 KnownSensorType sensorType,
-                                 Calibration? calibration = null)
+        public AnalogTemperature(
+            IAnalogInputPort analogInputPort,
+            KnownSensorType sensorType,
+            Calibration? calibration = null)
         {
             AnalogInputPort = analogInputPort;
 
@@ -179,7 +198,8 @@ namespace Meadow.Foundation.Sensors.Temperature
             AnalogInputPort.Subscribe
             (
                 IAnalogInputPort.CreateObserver(
-                    result => {
+                    result => 
+                    {
                         // create a new change result from the new value
                         ChangeResult<Units.Temperature> changeResult = new ChangeResult<Units.Temperature>() {
                             New = VoltageToTemperature(result.New),
@@ -265,6 +285,32 @@ namespace Meadow.Foundation.Sensors.Temperature
             return new Units.Temperature(SensorCalibration.SampleReading +
                 (voltage.Millivolts - SensorCalibration.MillivoltsAtSampleReading) / SensorCalibration.MillivoltsPerDegreeCentigrade,
                 Units.Temperature.UnitType.Celsius);
+        }
+
+        /// <summary>
+        /// Dispose peripheral
+        /// </summary>
+        /// <param name="disposing"></param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && ShouldDisposePort)
+                {
+                    AnalogInputPort.Dispose();
+                }
+
+                IsDisposed = true;
+            }
+        }
+
+        /// <summary>
+        /// Dispose Peripheral
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }
