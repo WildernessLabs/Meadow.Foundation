@@ -9,7 +9,7 @@ namespace Meadow.Foundation.Leds
     /// <summary>
     /// Represents a simple LED
     /// </summary>
-    public class Led : ILed
+    public class Led : ILed, IDisposable
     {
         private Task? animationTask;
         private CancellationTokenSource? cancellationTokenSource;
@@ -19,6 +19,12 @@ namespace Meadow.Foundation.Leds
         /// </summary>
         /// <value>The port</value>
         protected IDigitalOutputPort Port { get; set; }
+
+        /// <summary>
+        /// Track if we created the input port in the PushButton instance (true)
+        /// or was it passed in via the ctor (false)
+        /// </summary>
+        protected bool shouldDisposePort = false;
 
         /// <summary>
         /// Gets or sets a value indicating whether this <see cref="T:Meadow.Foundation.Leds.Led"/> is on.
@@ -36,13 +42,20 @@ namespace Meadow.Foundation.Leds
         bool isOn;
 
         /// <summary>
+        /// Is the object disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
+
+        /// <summary>
         /// Creates a LED through a pin directly from the Digital IO of the board
         /// </summary>
         /// <param name="device">IDigitalOutputController to instantiate output port</param>
         /// <param name="pin"></param>
         public Led(IDigitalOutputController device, IPin pin) :
             this(device.CreateDigitalOutputPort(pin, false))
-        { }
+        {
+            shouldDisposePort = true;
+        }
 
         /// <summary>
         /// Creates a LED through a DigitalOutPutPort from an IO Expander
@@ -51,15 +64,6 @@ namespace Meadow.Foundation.Leds
         public Led(IDigitalOutputPort port)
         {
             Port = port;
-        }
-
-        /// <summary>
-        /// Stops the LED when its blinking and/or turns it off.
-        /// </summary>
-        public void Stop()
-        {
-            cancellationTokenSource?.Cancel();
-            IsOn = false;
         }
 
         /// <summary>
@@ -120,6 +124,41 @@ namespace Meadow.Foundation.Leds
             }
 
             Port.State = IsOn;
+        }
+
+        /// <summary>
+        /// Stops the LED when its blinking and/or turns it off.
+        /// </summary>
+        public void Stop()
+        {
+            cancellationTokenSource?.Cancel();
+            IsOn = false;
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        /// <param name="disposing">Is disposing</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && shouldDisposePort)
+                {
+                    Port.Dispose();
+                }
+
+                IsDisposed = true;
+            }
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }

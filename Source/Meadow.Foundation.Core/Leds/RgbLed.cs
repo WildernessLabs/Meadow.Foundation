@@ -9,15 +9,10 @@ namespace Meadow.Foundation.Leds
     /// <summary>
     /// Represents an RGB LED
     /// </summary>
-    public partial class RgbLed : IRgbLed
+    public partial class RgbLed : IRgbLed, IDisposable
     {
         private Task? animationTask;
         private CancellationTokenSource? cancellationTokenSource;
-
-        /// <summary>
-        /// Get the color the LED has been set to.
-        /// </summary>
-        public RgbLedColors Color { get; protected set; } = RgbLedColors.White;
 
         /// <summary>
         /// Get the red LED port
@@ -33,6 +28,17 @@ namespace Meadow.Foundation.Leds
         /// Get the blue LED port
         /// </summary>
         protected IDigitalOutputPort BluePort { get; set; }
+
+        /// <summary>
+        /// Track if we created the input port in the PushButton instance (true)
+        /// or was it passed in via the ctor (false)
+        /// </summary>
+        protected bool shouldDisposePorts = false;
+
+        /// <summary>
+        /// Get the color the LED has been set to.
+        /// </summary>
+        public RgbLedColors Color { get; protected set; } = RgbLedColors.White;
 
         /// <summary>
         /// Is the LED using a common cathode
@@ -54,6 +60,11 @@ namespace Meadow.Foundation.Leds
         bool isOn;
 
         /// <summary>
+        /// Is the peripheral disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="T:Meadow.Foundation.Leds.RgbLed"/> class.
         /// </summary>
         /// <param name="device">IO Device</param>
@@ -71,7 +82,10 @@ namespace Meadow.Foundation.Leds
                 device.CreateDigitalOutputPort(redPin),
                 device.CreateDigitalOutputPort(greenPin),
                 device.CreateDigitalOutputPort(bluePin),
-                commonType) { }
+                commonType) 
+        {
+            shouldDisposePorts = true;
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="T:Meadow.Foundation.Leds.RgbLed"/> class.
@@ -90,15 +104,6 @@ namespace Meadow.Foundation.Leds
             GreenPort = greenPort;
             BluePort = bluePort;
             Common = commonType;
-        }
-
-        /// <summary>
-        /// Stops any running animations.
-        /// </summary>
-        public void Stop()
-        {
-            cancellationTokenSource?.Cancel();
-            IsOn = false;
         }
 
         /// <summary>
@@ -214,6 +219,43 @@ namespace Meadow.Foundation.Leds
                 SetColor(RgbLedColors.Black);
                 await Task.Delay(offDuration);
             }
+        }
+
+        /// <summary>
+        /// Stops any running animations.
+        /// </summary>
+        public void Stop()
+        {
+            cancellationTokenSource?.Cancel();
+            IsOn = false;
+        }
+
+        /// <summary>
+        /// Dispose peripheral
+        /// </summary>
+        /// <param name="disposing"></param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && shouldDisposePorts)
+                {
+                    RedPort.Dispose();
+                    BluePort.Dispose();
+                    GreenPort.Dispose();
+                }
+
+                IsDisposed = true;
+            }
+        }
+
+        /// <summary>
+        /// Dispose Peripheral
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }

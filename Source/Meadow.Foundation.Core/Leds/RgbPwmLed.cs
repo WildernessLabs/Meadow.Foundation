@@ -14,16 +14,37 @@ namespace Meadow.Foundation.Leds
     /// RGB LED can express millions of colors, as opposed to the 8 colors that can be expressed
     /// via binary digital output.  
     /// </summary>
-    public class RgbPwmLed
+    public class RgbPwmLed : IDisposable
     {
         private Task? animationTask = null;
         private CancellationTokenSource? cancellationTokenSource = null;
 
-        static readonly Frequency DefaultFrequency = new Frequency(200, Frequency.UnitType.Hertz);
-        readonly float DEFAULT_DUTY_CYCLE = 0f;
-        readonly double maxRedDutyCycle = 1;
-        readonly double maxGreenDutyCycle = 1;
-        readonly double maxBlueDutyCycle = 1;
+        static readonly Frequency FREQUENCY_DEFAULT = new Frequency(200, Frequency.UnitType.Hertz);
+        readonly double DUTY_CYCLE_DEFAULT = 0f;
+        readonly double DUTY_CYCLE_MAX_RED = 1;
+        readonly double DUTY_CYCLE_MAX_GREEN = 1;
+        readonly double DUTY_CYCLE_MAX_BLUE = 1;
+
+        /// <summary>
+        /// Get the red LED port
+        /// </summary>
+        protected IPwmPort RedPwm { get; set; }
+
+        /// <summary>
+        /// Get the blue LED port
+        /// </summary>
+        protected IPwmPort BluePwm { get; set; }
+
+        /// <summary>
+        /// Get the green LED port
+        /// </summary>
+        protected IPwmPort GreenPwm { get; set; }
+
+        /// <summary>
+        /// Track if we created the input port in the PushButton instance (true)
+        /// or was it passed in via the ctor (false)
+        /// </summary>
+        protected bool shouldDisposePorts = false;
 
         /// <summary>
         /// Maximum forward voltage (3.3 Volts)
@@ -43,7 +64,7 @@ namespace Meadow.Foundation.Leds
             get => isOn;
             set
             {
-                SetColor(Color, value? 1 : 0);
+                SetColor(Color, value ? 1 : 0);
                 isOn = value;
             }
         }
@@ -58,21 +79,6 @@ namespace Meadow.Foundation.Leds
         /// The brightness value assigned to the LED relative to Color
         /// </summary>
         public float Brightness { get; protected set; } = 1f;
-
-        /// <summary>
-        /// Get the red LED port
-        /// </summary>
-        protected IPwmPort RedPwm { get; set; }
-
-        /// <summary>
-        /// Get the blue LED port
-        /// </summary>
-        protected IPwmPort BluePwm { get; set; }
-
-        /// <summary>
-        /// Get the green LED port
-        /// </summary>
-        protected IPwmPort GreenPwm { get; set; }
 
         /// <summary>
         /// Gets the common type
@@ -93,6 +99,34 @@ namespace Meadow.Foundation.Leds
         /// Get the blue LED forward voltage
         /// </summary>
         public Voltage BlueForwardVoltage { get; protected set; }
+
+        /// <summary>
+        /// Is the peripheral disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
+
+        /// <summary>
+        /// Create instance of RgbPwmLed
+        /// </summary>
+        /// <param name="device"></param>
+        /// <param name="redPwmPin"></param>
+        /// <param name="greenPwmPin"></param>
+        /// <param name="bluePwmPin"></param>
+        /// <param name="commonType"></param>
+        public RgbPwmLed(
+            IPwmOutputController device,
+            IPin redPwmPin,
+            IPin greenPwmPin,
+            IPin bluePwmPin,
+            CommonType commonType = CommonType.CommonCathode) :
+            this(
+                device.CreatePwmPort(redPwmPin, FREQUENCY_DEFAULT),
+                device.CreatePwmPort(greenPwmPin, FREQUENCY_DEFAULT),
+                device.CreatePwmPort(bluePwmPin, FREQUENCY_DEFAULT),
+                commonType)
+        {
+            shouldDisposePorts = true;
+        }
 
         /// <summary>
         /// Create instance of RgbPwmLed
@@ -118,33 +152,12 @@ namespace Meadow.Foundation.Leds
             Common = commonType;
 
             // calculate and set maximum PWM duty cycles
-            maxRedDutyCycle = Helpers.CalculateMaximumDutyCycle(RedForwardVoltage);
-            maxGreenDutyCycle = Helpers.CalculateMaximumDutyCycle(GreenForwardVoltage);
-            maxBlueDutyCycle = Helpers.CalculateMaximumDutyCycle(BlueForwardVoltage);
+            DUTY_CYCLE_MAX_RED = Helpers.CalculateMaximumDutyCycle(RedForwardVoltage);
+            DUTY_CYCLE_MAX_GREEN = Helpers.CalculateMaximumDutyCycle(GreenForwardVoltage);
+            DUTY_CYCLE_MAX_BLUE = Helpers.CalculateMaximumDutyCycle(BlueForwardVoltage);
 
             ResetPwms();
         }
-
-        /// <summary>
-        /// Create instance of RgbPwmLed
-        /// </summary>
-        /// <param name="device"></param>
-        /// <param name="redPwmPin"></param>
-        /// <param name="greenPwmPin"></param>
-        /// <param name="bluePwmPin"></param>
-        /// <param name="commonType"></param>
-        public RgbPwmLed(
-            IPwmOutputController device,
-            IPin redPwmPin,
-            IPin greenPwmPin,
-            IPin bluePwmPin,
-            CommonType commonType = CommonType.CommonCathode) :
-            this(
-                device.CreatePwmPort(redPwmPin, DefaultFrequency),
-                device.CreatePwmPort(greenPwmPin, DefaultFrequency),
-                device.CreatePwmPort(bluePwmPin, DefaultFrequency),
-                commonType)
-        { }
 
         /// <summary>
         /// Instantiates a RgbPwmLed object with the especified IO device, connected
@@ -168,14 +181,16 @@ namespace Meadow.Foundation.Leds
             Voltage blueLedForwardVoltage,
             CommonType commonType = CommonType.CommonCathode) :
             this(
-                device.CreatePwmPort(redPwmPin, DefaultFrequency),
-                device.CreatePwmPort(greenPwmPin, DefaultFrequency),
-                device.CreatePwmPort(bluePwmPin, DefaultFrequency),
+                device.CreatePwmPort(redPwmPin, FREQUENCY_DEFAULT),
+                device.CreatePwmPort(greenPwmPin, FREQUENCY_DEFAULT),
+                device.CreatePwmPort(bluePwmPin, FREQUENCY_DEFAULT),
                 redLedForwardVoltage, 
                 greenLedForwardVoltage, 
                 blueLedForwardVoltage,
                 commonType)
-        { }
+        {
+            shouldDisposePorts = true;
+        }
 
         /// <summary>
         /// 
@@ -226,9 +241,9 @@ namespace Meadow.Foundation.Leds
             BluePwm = bluePwm;
 
             // calculate and set maximum PWM duty cycles
-            maxRedDutyCycle = Helpers.CalculateMaximumDutyCycle(RedForwardVoltage);
-            maxGreenDutyCycle = Helpers.CalculateMaximumDutyCycle(GreenForwardVoltage);
-            maxBlueDutyCycle = Helpers.CalculateMaximumDutyCycle(BlueForwardVoltage);
+            DUTY_CYCLE_MAX_RED = Helpers.CalculateMaximumDutyCycle(RedForwardVoltage);
+            DUTY_CYCLE_MAX_GREEN = Helpers.CalculateMaximumDutyCycle(GreenForwardVoltage);
+            DUTY_CYCLE_MAX_BLUE = Helpers.CalculateMaximumDutyCycle(BlueForwardVoltage);
 
             ResetPwms();
         }
@@ -238,8 +253,8 @@ namespace Meadow.Foundation.Leds
         /// </summary>
         protected void ResetPwms()
         {
-            RedPwm.Frequency = GreenPwm.Frequency = BluePwm.Frequency = DefaultFrequency;
-            RedPwm.DutyCycle = GreenPwm.DutyCycle = BluePwm.DutyCycle = DEFAULT_DUTY_CYCLE;
+            RedPwm.Frequency = GreenPwm.Frequency = BluePwm.Frequency = FREQUENCY_DEFAULT;
+            RedPwm.DutyCycle = GreenPwm.DutyCycle = BluePwm.DutyCycle = (float) DUTY_CYCLE_DEFAULT;
             // invert the PWM signal if it common anode
             RedPwm.Inverted = GreenPwm.Inverted = BluePwm.Inverted
                 = (Common == CommonType.CommonAnode);
@@ -262,18 +277,9 @@ namespace Meadow.Foundation.Leds
             Color = color;
             Brightness = brightness;
 
-            RedPwm.DutyCycle = (float)(Color.R / 255.0 * maxRedDutyCycle * brightness);
-            GreenPwm.DutyCycle = (float)(Color.G / 255.0 * maxGreenDutyCycle * brightness);
-            BluePwm.DutyCycle = (float)(Color.B / 255.0 * maxBlueDutyCycle * brightness);
-        }
-
-        /// <summary>
-        /// Stops any running animations.
-        /// </summary>
-        public void Stop()
-        {
-            cancellationTokenSource?.Cancel();
-            IsOn = false;
+            RedPwm.DutyCycle = (float)(Color.R / 255.0 * DUTY_CYCLE_MAX_RED * brightness);
+            GreenPwm.DutyCycle = (float)(Color.G / 255.0 * DUTY_CYCLE_MAX_GREEN * brightness);
+            BluePwm.DutyCycle = (float)(Color.B / 255.0 * DUTY_CYCLE_MAX_BLUE * brightness);
         }
 
         /// <summary>
@@ -491,6 +497,40 @@ namespace Meadow.Foundation.Leds
 
                 await Task.Delay(intervalTime);
             }
+        }
+
+        /// <summary>
+        /// Stops any running animations.
+        /// </summary>
+        public void Stop()
+        {
+            cancellationTokenSource?.Cancel();
+            IsOn = false;
+        }
+
+        /// <summary>
+        /// Dispose peripheral
+        /// </summary>
+        /// <param name="disposing"></param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing && shouldDisposePorts)
+            {
+                RedPwm.Dispose();
+                GreenPwm.Dispose();
+                BluePwm.Dispose();
+                
+                IsDisposed = true;
+            }
+        }
+
+        /// <summary>
+        /// Dispose Peripheral
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }

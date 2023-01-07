@@ -15,15 +15,20 @@ namespace Meadow.Foundation.Leds
     {
         Task? animationTask;
         CancellationTokenSource? cancellationTokenSource;
-        readonly bool createdPwm = false;
 
         float maximumPwmDuty = 1;
         bool inverted;
 
         /// <summary>
-        /// Is the object disposed
+        /// Gets the PwmPort
         /// </summary>
-        public bool IsDisposed { get; private set; }
+        protected IPwmPort Port { get; set; }
+
+        /// <summary>
+        /// Track if we created the input port in the PushButton instance (true)
+        /// or was it passed in via the ctor (false)
+        /// </summary>
+        protected bool shouldDisposePorts = false;
 
         /// <summary>
         /// Gets the brightness of the LED, controlled by a PWM signal, and limited by the 
@@ -65,14 +70,14 @@ namespace Meadow.Foundation.Leds
         bool isOn;
 
         /// <summary>
-        /// Gets the PwmPort
-        /// </summary>
-        protected IPwmPort Port { get; set; }
-
-        /// <summary>
         /// Gets the forward voltage value
         /// </summary>
         public Voltage ForwardVoltage { get; protected set; }
+
+        /// <summary>
+        /// Is the object disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
 
         /// <summary>
         /// Initializes a new instance PwmLed class
@@ -91,7 +96,7 @@ namespace Meadow.Foundation.Leds
             CircuitTerminationType terminationType = CircuitTerminationType.CommonGround)
         {
             Port = device.CreatePwmPort(pin, new Frequency(100, Frequency.UnitType.Hertz));
-            createdPwm = true; // signal that we created it, so we should dispose of it
+            shouldDisposePorts = true;
             Port.DutyCycle = 0;
             Initialize(forwardVoltage, terminationType);
         }
@@ -130,54 +135,6 @@ namespace Meadow.Foundation.Leds
 
             Port.Inverted = inverted;
             Port.Start();
-        }
-
-        /// <summary>
-        /// Dispose of the object
-        /// </summary>
-        /// <param name="disposing">Is disposing</param>
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!IsDisposed)
-            {
-                if (disposing && createdPwm)
-                {
-                    Port.Dispose();
-                }
-
-                IsDisposed = true;
-            }
-        }
-
-        /// <summary>
-        /// Dispose of the object
-        /// </summary>
-        public void Dispose()
-        {
-            Dispose(disposing: true);
-            GC.SuppressFinalize(this);
-        }
-
-        /// <summary>
-        /// Sets the LED to a specific brightness.
-        /// </summary>
-        /// <param name="brightness">Valid values are from 0 to 1, inclusive</param>
-        [Obsolete("Use Brightness property instead")]
-        public void SetBrightness(float brightness)
-        {
-            if (brightness < 0 || brightness > 1) 
-            {
-                throw new ArgumentOutOfRangeException(nameof(brightness), "brightness must be between 0 and 1, inclusive.");
-            }
-
-            _brightness = brightness;
-
-            Port.DutyCycle = maximumPwmDuty * Brightness;
-
-            if (!Port.State)
-            {
-                Port.Start();
-            }
         }
 
         /// <summary>
@@ -393,6 +350,32 @@ namespace Meadow.Foundation.Leds
         {
             cancellationTokenSource?.Cancel();
             IsOn = false;
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        /// <param name="disposing">Is disposing</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && shouldDisposePorts)
+                {
+                    Port.Dispose();
+                }
+
+                IsDisposed = true;
+            }
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }

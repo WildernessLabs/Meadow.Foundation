@@ -8,7 +8,7 @@ namespace Meadow.Foundation.Sensors.Base
     /// <summary>
     /// Represents an AnalogSamplingBase sensor
     /// </summary>
-    public abstract class AnalogSamplingBase : SamplingSensorBase<Voltage>
+    public abstract class AnalogSamplingBase : SamplingSensorBase<Voltage>, IDisposable
     {
         /// <summary>
         /// Analog port connected to the sensor
@@ -16,9 +16,20 @@ namespace Meadow.Foundation.Sensors.Base
         private readonly IAnalogInputPort AnalogInputPort;
 
         /// <summary>
+        /// Track if we created the input port in the PushButton instance (true)
+        /// or was it passed in via the ctor (false)
+        /// </summary>
+        protected bool shouldDisposePorts = false;
+
+        /// <summary>
         /// Current voltage
         /// </summary>
         public Voltage Voltage { get; protected set; }
+
+        /// <summary>
+        /// Is the peripheral disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
 
         /// <summary>
         /// Creates a new AnalogObservableBase driver
@@ -30,7 +41,9 @@ namespace Meadow.Foundation.Sensors.Base
         /// <param name="voltage">Max voltage of analog port</param>
         public AnalogSamplingBase(IAnalogInputController device, IPin pin, int sampleCount = 5, TimeSpan? sampleInterval = null, Voltage? voltage = null)
             : this(device.CreateAnalogInputPort(pin, sampleCount, sampleInterval ?? TimeSpan.FromMilliseconds(40), voltage ?? new Voltage(3.3)))
-        { }
+        {
+            shouldDisposePorts = true;
+        }
 
         /// <summary>
         /// Creates a new AnalogObservableBase driver
@@ -99,6 +112,32 @@ namespace Meadow.Foundation.Sensors.Base
         {
             Voltage = await AnalogInputPort.Read();
             return Voltage;
+        }
+
+        /// <summary>
+        /// Dispose peripheral
+        /// </summary>
+        /// <param name="disposing"></param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && shouldDisposePorts)
+                {
+                    AnalogInputPort.Dispose();
+                }
+
+                IsDisposed = true;
+            }
+        }
+
+        /// <summary>
+        /// Dispose Peripheral
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }

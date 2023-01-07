@@ -12,6 +12,32 @@ namespace Meadow.Foundation.Sensors.Buttons
     public class PushButton : IButton, IDisposable
     {
         /// <summary>
+        /// Returns digital input port
+        /// </summary>
+        protected IDigitalInputPort DigitalIn { get; set; }
+
+        /// <summary>
+        /// The date/time when the last button press occurred and the button hasn't been released
+        /// </summary>
+        protected DateTime buttonPressStart = DateTime.MaxValue;
+
+        /// <summary>
+        /// The button port resistor mode
+        /// </summary>
+        protected ResistorMode resistorMode => DigitalIn.Resistor;
+
+        /// <summary>
+        /// Cancellation token source to disable button polling on dispose
+        /// </summary>
+        protected CancellationTokenSource? ctsPolling;
+
+        /// <summary>
+        /// Track if we created the input port in the PushButton instance (true)
+        /// or was it passed in via the ctor (false)
+        /// </summary>
+        protected bool shouldDisposePort = false;
+
+        /// <summary>
         /// Default Debounce used on the PushButton Input if an InputPort is auto-created
         /// </summary>
         public static readonly TimeSpan DefaultDebounceDuration = TimeSpan.FromMilliseconds(50);
@@ -55,11 +81,6 @@ namespace Meadow.Foundation.Sensors.Buttons
         public TimeSpan LongClickedThreshold { get; set; } = TimeSpan.Zero;
 
         /// <summary>
-        /// Returns digital input port
-        /// </summary>
-        protected IDigitalInputPort DigitalIn { get; set; }
-
-        /// <summary>
         /// Raised when a press starts
         /// </summary>
         public event EventHandler PressStarted = delegate { };
@@ -86,25 +107,9 @@ namespace Meadow.Foundation.Sensors.Buttons
         public bool IsPolling { get; protected set; } = false;
 
         /// <summary>
-        /// The date/time when the last button press occurred and the button hasn't been released
+        /// Is the peripheral disposed
         /// </summary>
-        protected DateTime buttonPressStart = DateTime.MaxValue;
-
-        /// <summary>
-        /// The button port resistor mode
-        /// </summary>
-        protected ResistorMode resistorMode => DigitalIn.Resistor;
-
-        /// <summary>
-        /// Cancellation token source to disable button polling on dispose
-        /// </summary>
-        protected CancellationTokenSource? ctsPolling;
-
-        /// <summary>
-        /// Track if we created the input port in the PushButton instance (true)
-        /// or was it passed in via the ctor (false)
-        /// </summary>
-        protected bool shouldDisposeInput = false;
+        public bool IsDisposed { get; private set; }
 
         /// <summary>
         /// Creates PushButton with a digital input pin connected on a IIOdevice, specifying if its using an Internal or External PullUp/PullDown resistor.
@@ -115,7 +120,7 @@ namespace Meadow.Foundation.Sensors.Buttons
         public PushButton(IDigitalInputController device, IPin inputPin, ResistorMode resistorMode = ResistorMode.InternalPullUp)
             : this(CreateInputPort(device, inputPin, resistorMode))
         {
-            shouldDisposeInput = true;
+            shouldDisposePort = true;
         }
 
         /// <summary>
@@ -243,21 +248,36 @@ namespace Meadow.Foundation.Sensors.Buttons
         }
 
         /// <summary>
-        /// Disposes the Digital Input resources
-        /// </summary>
-        public void Dispose()
-        {
-            if (shouldDisposeInput)
-            {
-                DigitalIn.Dispose();
-            }
-
-            ctsPolling?.Cancel();
-        }
-
-        /// <summary>
         /// Convenience method to get the current sensor reading
         /// </summary>
         public Task<bool> Read() => Task.FromResult(State);
+
+        /// <summary>
+        /// Dispose peripheral
+        /// </summary>
+        /// <param name="disposing"></param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && shouldDisposePort)
+                {
+                    DigitalIn.Dispose();
+
+                    ctsPolling?.Cancel();
+                }
+
+                IsDisposed = true;
+            }
+        }
+
+        /// <summary>
+        /// Dispose Peripheral
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
     }
 }

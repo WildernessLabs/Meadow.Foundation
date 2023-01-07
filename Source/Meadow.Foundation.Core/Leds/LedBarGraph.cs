@@ -8,7 +8,7 @@ namespace Meadow.Foundation.Leds
     /// <summary>
     /// Represents an LED bar graph composed on multiple LEDs
     /// </summary>
-    public class LedBarGraph
+    public class LedBarGraph : IDisposable
     {
         private Task? animationTask;
         private CancellationTokenSource? cancellationTokenSource;
@@ -32,6 +32,11 @@ namespace Meadow.Foundation.Leds
             set => SetPercentage(percentage = value);
         }
         float percentage;
+
+        /// <summary>
+        /// Is the peripheral disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
 
         /// <summary>
         /// Create an LedBarGraph instance from an array of IPins
@@ -238,6 +243,32 @@ namespace Meadow.Foundation.Leds
             }
 
             leds[index].Stop();
+        }
+
+        /// <summary>
+        /// Dispose peripheral
+        /// </summary>
+        /// <param name="disposing"></param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                foreach (var led in leds)
+                {
+                    led.Dispose();
+                }
+
+                IsDisposed = true;
+            }
+        }
+
+        /// <summary>
+        /// Dispose peripheral
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }
