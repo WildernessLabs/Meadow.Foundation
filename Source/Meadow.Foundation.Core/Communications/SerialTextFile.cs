@@ -124,11 +124,11 @@ namespace Meadow.Foundation.Communications
         /// </summary>
         public void Open()
         {
-            //Console.WriteLine("SerialTextFile: Open");
+            //Resolver.Log.Info("SerialTextFile: Open");
 
             if (!serialPort.IsOpen)
             {
-                //Console.WriteLine("SerialTextFile: _serialPort.Open");
+                //Resolver.Log.Info("SerialTextFile: _serialPort.Open");
                 serialPort.Open();
             }
         }
@@ -169,7 +169,7 @@ namespace Meadow.Foundation.Communications
             {
                 int amount = serialPort.Read(staticBuffer, 0, MAXIMUM_BUFFER_SIZE);
 
-                //Console.WriteLine($"Data amount: {amount}");
+                //Resolver.Log.Info($"Data amount: {amount}");
 
                 if (amount > 0)
                 {
@@ -186,7 +186,7 @@ namespace Meadow.Foundation.Communications
                     buffer = buffer.Substring(eolMarkerPosition + 2);
                     eolMarkerPosition = buffer.IndexOf(LINE_END);
 
-                    // Console.WriteLine($"Line: {line}");
+                    // Resolver.Log.Info($"Line: {line}");
 
                     OnLineReceived?.Invoke(this, line);
                 }
