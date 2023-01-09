@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+﻿using System;
 using Meadow.Hardware;
 
 namespace Meadow.Foundation.Motors
@@ -16,9 +16,18 @@ namespace Meadow.Foundation.Motors
     /// 4. Optionally, per some ESCs, arm, by calling the `Arm()` method, which
     /// will drop the power below 0.0;
     /// </summary>
-    public class ElectronicSpeedController
+    public class ElectronicSpeedController : IDisposable
     {
-        IPwmPort pwmPort;
+        /// <summary>
+        /// Gets the PwmPort
+        /// </summary>
+        protected IPwmPort pwmPort { get; set; }
+
+        /// <summary>
+        /// Track if we created the input port in the PushButton instance (true)
+        /// or was it passed in via the ctor (false)
+        /// </summary>
+        protected bool ShouldDisposePorts = false;
 
         /// <summary>
         /// The pulse duration, in milliseconds, neccessary to "arm" the ESC.
@@ -52,6 +61,11 @@ namespace Meadow.Foundation.Motors
         public Units.Frequency Frequency => pwmPort.Frequency;
 
         /// <summary>
+        /// Is the object disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
+
+        /// <summary>
         /// Initializes an electronic speed controller on the specified device 
         /// pin, at the specified frequency.
         /// </summary>
@@ -60,8 +74,14 @@ namespace Meadow.Foundation.Motors
         /// <param name="frequency">Frequency of the PWM signal. All ESCs should
         /// support 50Hz, but some support much higher. Increase for finer grained
         /// control of speed in time.</param>
-        public ElectronicSpeedController(IPwmOutputController device, IPin pwmPin, Units.Frequency frequency) :
-            this(device.CreatePwmPort(pwmPin, frequency)) { }
+        public ElectronicSpeedController(
+            IPwmOutputController device, 
+            IPin pwmPin, 
+            Units.Frequency frequency) 
+            : this (device.CreatePwmPort(pwmPin, frequency)) 
+        { 
+            ShouldDisposePorts = true;
+        }
 
         /// <summary>
         /// Initializes an electronic speed controller on the specified device 
@@ -108,6 +128,32 @@ namespace Meadow.Foundation.Motors
             // power band is between 1ms -> 2ms pulse durations.
             // so 10% power = 1.1ms, 100% power = 2ms.
             return (power) + 1f;
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        /// <param name="disposing">Is disposing</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && ShouldDisposePorts)
+                {
+                    pwmPort.Dispose();
+                }
+
+                IsDisposed = true;
+            }
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }

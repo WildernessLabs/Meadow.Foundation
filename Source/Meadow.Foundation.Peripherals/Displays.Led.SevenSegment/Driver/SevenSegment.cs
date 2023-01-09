@@ -6,7 +6,7 @@ namespace Meadow.Foundation.Displays.Led
     /// <summary>
     /// Seven Segment Display
     /// </summary>
-    public class SevenSegment
+    public class SevenSegment : IDisposable
     {
         /// <summary>
         /// Valid Characters to display
@@ -120,6 +120,17 @@ namespace Meadow.Foundation.Displays.Led
         };
 
         /// <summary>
+        /// Track if we created the input port in the PushButton instance (true)
+        /// or was it passed in via the ctor (false)
+        /// </summary>
+        protected bool ShouldDisposePort = false;
+
+        /// <summary>
+        /// Is the object disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
+
+        /// <summary>
         /// Creates a SevenSegment connected to the especified IPins to a IODevice
         /// </summary>
         /// <param name="device">The Meadow device</param>
@@ -147,7 +158,10 @@ namespace Meadow.Foundation.Displays.Led
                  device.CreateDigitalOutputPort(pinF),
                  device.CreateDigitalOutputPort(pinG),
                  device.CreateDigitalOutputPort(pinDecimal),
-                 isCommonCathode) { }
+                 isCommonCathode) 
+        {
+            ShouldDisposePort = true;
+        }
 
         /// <summary>
         /// Creates a SevenSegment connected to the especified IDigitalOutputPorts
@@ -220,6 +234,39 @@ namespace Meadow.Foundation.Displays.Led
                 throw new ArgumentOutOfRangeException();
 
             SetDisplay(charType, showDecimal);
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        /// <param name="disposing">Is disposing</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && ShouldDisposePort)
+                {
+                    portA.Dispose();
+                    portB.Dispose();
+                    portC.Dispose();
+                    portD.Dispose();
+                    portE.Dispose();
+                    portF.Dispose();
+                    portG.Dispose();
+                    portDecimal.Dispose();
+                }
+
+                IsDisposed = true;
+            }
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }
