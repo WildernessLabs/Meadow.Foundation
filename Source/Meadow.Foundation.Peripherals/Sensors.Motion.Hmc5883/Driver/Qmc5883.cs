@@ -64,7 +64,7 @@ namespace Meadow.Foundation.Sensors.Motion
 
                 var v = new Vector(X, Y, Z);
 
-                Console.WriteLine($"{X}, {Y}, {Z} : {DirectionToHeading(v)}");
+                Resolver.Log.Info($"{X}, {Y}, {Z} : {DirectionToHeading(v)}");
 
                 return v;
             });

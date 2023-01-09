@@ -46,7 +46,7 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
         /// <param name="decoder">NMEA decoder</param>
         public void RegisterDecoder(INmeaDecoder decoder)
         {
-            Console.WriteLine($"Registering decoder: {decoder.Prefix}");
+            Resolver.Log.Info($"Registering decoder: {decoder.Prefix}");
             if (decoders.ContainsKey(decoder.Prefix)) {
                 throw new Exception(decoder.Prefix + " already registered.");
             }
@@ -62,7 +62,7 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
         /// <param name="line">GPS text for processing</param>
         public void ProcessNmeaMessage(string line)
         {
-            if (DebugMode) { Console.WriteLine("NmeaSentenceProcessor.ProcessNmeaMessage"); }
+            if (DebugMode) { Resolver.Log.Info("NmeaSentenceProcessor.ProcessNmeaMessage"); }
 
             NmeaSentence sentence;
             try 
@@ -71,7 +71,7 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
             } 
             catch (Exception e) 
             {
-                if (DebugMode) { Console.WriteLine($"Could not parse message. {e.Message}"); }
+                if (DebugMode) { Resolver.Log.Warn($"Could not parse message. {e.Message}"); }
                 return;
             }
 
@@ -80,12 +80,12 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
             {
                 decoder = decoders[sentence.Prefix];
                 if (decoder != null) {
-                    if (DebugMode) { Console.WriteLine($"Found appropriate decoder:{decoder.Prefix}"); }
+                    if (DebugMode) { Resolver.Log.Info($"Found appropriate decoder:{decoder.Prefix}"); }
                     decoder.Process(sentence);
                 }
             } else 
             {
-                if (DebugMode) { Console.WriteLine($"Could not find appropriate decoder for {sentence.Prefix}"); }
+                if (DebugMode) { Resolver.Log.Warn($"Could not find appropriate decoder for {sentence.Prefix}"); }
             }
         }
     }

@@ -57,7 +57,7 @@ namespace Displays.Ssd130x.Ssd1309_3DCube_Sample
 
         void CreateSpiDisplay()
         {
-            Console.WriteLine("Create Display with SPI...");
+            Resolver.Log.Info("Create Display with SPI...");
 
             var config = new Meadow.Hardware.SpiClockConfiguration(new Frequency(12000, Frequency.UnitType.Kilohertz), Meadow.Hardware.SpiClockConfiguration.Mode.Mode0);
 
@@ -75,7 +75,7 @@ namespace Displays.Ssd130x.Ssd1309_3DCube_Sample
 
         void CreateI2CDisplay()
         {
-            Console.WriteLine("Create Display with I2C...");
+            Resolver.Log.Info("Create Display with I2C...");
 
             display = new Ssd1309
             (
@@ -92,7 +92,7 @@ namespace Displays.Ssd130x.Ssd1309_3DCube_Sample
             int angle = 0;
             while (true)
             {
-                Console.WriteLine("Draw 3DCube frame");
+                Resolver.Log.Info("Draw 3DCube frame");
                 graphics.Clear();
 
                 angle++;
@@ -203,7 +203,7 @@ namespace Displays.Ssd130x.Ssd1309_3DCube_Sample
         {
             /*   display.Clear(true);
 
-               Console.WriteLine("Create Graphics Library");
+               Resolver.Log.Info("Create Graphics Library");
                TestDisplayGraphicsAPI();
                Thread.Sleep(500); */
 

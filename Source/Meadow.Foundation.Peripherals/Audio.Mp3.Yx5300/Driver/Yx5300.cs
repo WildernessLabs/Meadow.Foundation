@@ -253,7 +253,7 @@ namespace Meadow.Foundation.Audio.Mp3
             {
                 if (serialPort.BytesToRead == 0)
                 {
-                    Console.WriteLine("No data available");
+                    Resolver.Log.Info("No data available");
                     Thread.Sleep(50);
                     break;
                 }

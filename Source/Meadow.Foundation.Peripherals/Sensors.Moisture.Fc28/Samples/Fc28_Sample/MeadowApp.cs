@@ -16,7 +16,7 @@ namespace Sensors.Moisture.FC28_Sample
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initialize...");
+            Resolver.Log.Info("Initialize...");
 
             fc28 = new Fc28(
                 Device.CreateAnalogInputPort(Device.Pins.A01, 5, TimeSpan.FromMilliseconds(40), new Voltage(3.3, Voltage.UnitType.Volts)),
@@ -29,7 +29,7 @@ namespace Sensors.Moisture.FC28_Sample
                 handler: result => {
                     // the first time through, old will be null.
                     string oldValue = (result.Old is { } old) ? $"{old:n2}" : "n/a"; // C# 8 pattern matching
-                    Console.WriteLine($"Subscribed - " +
+                    Resolver.Log.Info($"Subscribed - " +
                         $"new: {result.New}, " +
                         $"old: {oldValue}");
                 },
@@ -39,7 +39,7 @@ namespace Sensors.Moisture.FC28_Sample
 
             fc28.HumidityUpdated += (object sender, IChangeResult<double> e) =>
             {
-                Console.WriteLine($"Moisture Updated: {e.New}");
+                Resolver.Log.Info($"Moisture Updated: {e.New}");
             };
 
             return Task.CompletedTask;
@@ -48,7 +48,7 @@ namespace Sensors.Moisture.FC28_Sample
         public async override Task Run()
         {
             var moisture = await fc28.Read();
-            Console.WriteLine($"Moisture Value { moisture}");
+            Resolver.Log.Info($"Moisture Value { moisture}");
 
             fc28.StartUpdating(TimeSpan.FromMilliseconds(5000));
         }

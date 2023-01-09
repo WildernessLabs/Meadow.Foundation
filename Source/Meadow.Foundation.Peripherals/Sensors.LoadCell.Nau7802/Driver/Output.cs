@@ -8,13 +8,13 @@ namespace Meadow.Foundation.Sensors.LoadCell
         [Conditional("DEBUG")]
         public static void WriteLine(string message)
         {
-            Console.WriteLine(message);
+            Resolver.Log.Info(message);
         }
 
         [Conditional("DEBUG")]
         public static void WriteLineIf(bool condition, string message)
         {
-            if (condition) Console.WriteLine(message);
+            if (condition) Resolver.Log.Info(message);
         }
     }
 }

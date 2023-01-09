@@ -14,7 +14,7 @@ namespace NesClassicController_Sample
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initialize...");
+            Resolver.Log.Info("Initialize...");
 
             var i2cBus = Device.CreateI2cBus(NesClassicController.DefaultSpeed);
 
@@ -24,16 +24,16 @@ namespace NesClassicController_Sample
             nesController.Update();
 
             //check the state of a button
-            Console.WriteLine("X Button is " + (nesController.AButton.State == true ? "pressed" : "not pressed"));
+            Resolver.Log.Info("X Button is " + (nesController.AButton.State == true ? "pressed" : "not pressed"));
 
             //.NET events
-            nesController.AButton.Clicked += (s, e) => Console.WriteLine("A button clicked");
-            nesController.BButton.Clicked += (s, e) => Console.WriteLine("B button clicked");
+            nesController.AButton.Clicked += (s, e) => Resolver.Log.Info("A button clicked");
+            nesController.BButton.Clicked += (s, e) => Resolver.Log.Info("B button clicked");
 
-            nesController.StartButton.Clicked += (s, e) => Console.WriteLine("+ button clicked");
-            nesController.SelectButton.Clicked += (s, e) => Console.WriteLine("- button clicked");
+            nesController.StartButton.Clicked += (s, e) => Resolver.Log.Info("+ button clicked");
+            nesController.SelectButton.Clicked += (s, e) => Resolver.Log.Info("- button clicked");
 
-            nesController.DPad.Updated += (s, e) => Console.WriteLine($"DPad {e.New}");
+            nesController.DPad.Updated += (s, e) => Resolver.Log.Info($"DPad {e.New}");
 
             return Task.CompletedTask;
         }

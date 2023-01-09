@@ -16,7 +16,7 @@ namespace Motor.HBridgeMotor_Sample
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initializing...");
+            Resolver.Log.Info("Initializing...");
 
             motor1 = new HBridgeMotor
             (
@@ -30,7 +30,7 @@ namespace Motor.HBridgeMotor_Sample
 
         public override async Task Run()
         {
-            Console.WriteLine("TestMotor...");
+            Resolver.Log.Info("TestMotor...");
 
             while (true)
             {

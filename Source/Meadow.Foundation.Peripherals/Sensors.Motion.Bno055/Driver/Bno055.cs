@@ -453,7 +453,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
 	    public void DisplayRegisters()
         {
-            Console.WriteLine("== REGISTERS ========================================================================");
+            Resolver.Log.Info("== REGISTERS ========================================================================");
 
             int length = 0x6A;
             byte[] buffer = new byte[length];
@@ -461,7 +461,7 @@ namespace Meadow.Foundation.Sensors.Motion
             Peripheral.ReadRegister(Registers.ChipID, buffer);
             DebugInformation.DisplayRegisters(0x00, buffer);
 
-            Console.WriteLine("== /REGISTERS =======================================================================");
+            Resolver.Log.Info("== /REGISTERS =======================================================================");
         }
 
         async Task<AngularVelocity3D> ISensor<AngularVelocity3D>.Read()

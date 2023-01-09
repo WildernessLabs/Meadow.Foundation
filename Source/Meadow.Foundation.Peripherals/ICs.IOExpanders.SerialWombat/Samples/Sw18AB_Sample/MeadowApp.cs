@@ -16,7 +16,7 @@ namespace ICs.IOExpanders.Sw18AB_Sample
         private IDigitalInputPort digitalInputPort;
         public override Task Initialize()
         {
-            Console.WriteLine("Initialize...");
+            Resolver.Log.Info("Initialize...");
 
             try
             {
@@ -26,7 +26,7 @@ namespace ICs.IOExpanders.Sw18AB_Sample
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"error: {ex.Message}");
+                Resolver.Log.Error($"error: {ex.Message}");
             }
 
             return Task.CompletedTask;

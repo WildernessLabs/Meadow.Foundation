@@ -33,7 +33,7 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
             // make sure all fields are present
             for (var index = 0; index <= 7; index++) {
                 if (string.IsNullOrEmpty(sentence.DataElements[index])) {
-                    //Console.WriteLine("Not all elements present");
+                    //Resolver.Log.Warn("Not all elements present");
                     // TODO: should we throw an exception and have callers wrap in a try/catch?
                     // problem today is that it just quietly returns
                     return;

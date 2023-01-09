@@ -18,7 +18,7 @@ namespace Leds.APA102_Sample
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initialize...");
+            Resolver.Log.Info("Initialize...");
             apa102 = new Apa102(Device.CreateSpiBus(Apa102.DefaultSpiBusSpeed), numberOfLeds, Apa102.PixelOrder.BGR);
 
             return base.Initialize();
@@ -63,7 +63,7 @@ namespace Leds.APA102_Sample
         /// <param name="color"></param>
         void SetColor(Color color, float brightness)
         {
-            Console.WriteLine($"SetColor(color:{color}");
+            Resolver.Log.Info($"SetColor(color:{color}");
 
             for (int i = 0; i < apa102.NumberOfLeds; i++) 
             {
@@ -78,7 +78,7 @@ namespace Leds.APA102_Sample
         /// <param name="color"></param>
         void Pulse(Color color, int numberOfPulses)
         {
-            Console.WriteLine("Pulse");
+            Resolver.Log.Info("Pulse");
 
             float minBrightness = 0.05f;
             float brightness = minBrightness;
@@ -147,7 +147,7 @@ namespace Leds.APA102_Sample
 
         void Start()
         {
-            Console.WriteLine("Run...");
+            Resolver.Log.Info("Run...");
             apa102.Clear();
             apa102.Show();
             Thread.Sleep(2000);

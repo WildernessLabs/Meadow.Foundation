@@ -137,7 +137,7 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu
         protected void ShowCurrentPage()
         {
             if (!IsEnabled) {
-                Console.WriteLine("Render not enabled");
+                Resolver.Log.Warn("Render not enabled");
                 return;
             }
 
@@ -188,7 +188,7 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu
         {
             if(item == null)
             {
-                Console.WriteLine("GetItemText: item is null");
+                Resolver.Log.Warn("GetItemText: item is null");
                 return "no item";
             }
 

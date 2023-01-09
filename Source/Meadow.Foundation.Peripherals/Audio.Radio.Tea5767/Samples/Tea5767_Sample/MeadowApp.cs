@@ -15,7 +15,7 @@ namespace Audio.Radio.Tea5767_Sample
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initializing...");
+            Resolver.Log.Info("Initializing...");
             
             radio = new Tea5767(Device.CreateI2cBus());
 
@@ -31,7 +31,7 @@ namespace Audio.Radio.Tea5767_Sample
 
                 radio.SearchNextSilent();
 
-                Console.WriteLine($"Current frequency: {radio.GetFrequency()}");
+                Resolver.Log.Info($"Current frequency: {radio.GetFrequency()}");
             }
 
             //set a known station

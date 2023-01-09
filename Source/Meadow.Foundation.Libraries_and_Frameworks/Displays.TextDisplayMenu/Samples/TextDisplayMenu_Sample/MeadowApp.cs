@@ -26,7 +26,7 @@ namespace MeadowApp
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initialize...");
+            Resolver.Log.Info("Initialize...");
 
             var config = new SpiClockConfiguration(Ssd1309.DefaultSpiBusSpeed, Ssd1309.DefaultSpiClockMode);
 
@@ -41,7 +41,7 @@ namespace MeadowApp
                 resetPin: Device.Pins.D00
             );
 
-            Console.WriteLine("Create MicroGraphics...");
+            Resolver.Log.Info("Create MicroGraphics...");
 
             var gl = new MicroGraphics(ssd1309)
             {
@@ -52,15 +52,15 @@ namespace MeadowApp
             gl.DrawText(0, 0, "Loading Menu");
             gl.Show();
 
-            Console.WriteLine("Load menu data...");
+            Resolver.Log.Info("Load menu data...");
 
             var menuData = LoadResource("menu.json");
 
-            Console.WriteLine($"Data length: {menuData.Length}...");
+            Resolver.Log.Info($"Data length: {menuData.Length}...");
 
-            Console.WriteLine("Create buttons...");
+            Resolver.Log.Info("Create buttons...");
 
-            Console.WriteLine("Create menu...");
+            Resolver.Log.Info("Create menu...");
 
             menu = new Menu(ssd1309 as ITextDisplay, menuData, false);
 
@@ -73,7 +73,7 @@ namespace MeadowApp
             previous = new PushButton(Device, Device.Pins.D12);
             previous.Clicked += (s, e) => { menu.Previous(); };
 
-            Console.WriteLine("Enable menu...");
+            Resolver.Log.Info("Enable menu...");
 
             menu.Enable();
 

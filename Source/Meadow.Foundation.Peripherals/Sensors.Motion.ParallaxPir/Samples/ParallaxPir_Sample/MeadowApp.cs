@@ -15,12 +15,12 @@ namespace Sensors.Motion.ParallaxPir_Sample
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initialize...");
+            Resolver.Log.Info("Initialize...");
             
             parallaxPir = new ParallaxPir(Device.CreateDigitalInputPort(Device.Pins.D05, InterruptMode.EdgeBoth, ResistorMode.Disabled));
 
-            parallaxPir.OnMotionStart += (sender)=> Console.WriteLine($"Motion start  {DateTime.Now}");
-            parallaxPir.OnMotionEnd += (sender) => Console.WriteLine($"Motion end  {DateTime.Now}");
+            parallaxPir.OnMotionStart += (sender)=> Resolver.Log.Info($"Motion start  {DateTime.Now}");
+            parallaxPir.OnMotionEnd += (sender) => Resolver.Log.Info($"Motion end  {DateTime.Now}");
 
             return Task.CompletedTask;
         }

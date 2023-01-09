@@ -23,9 +23,9 @@ namespace Meadow.Foundation.Sensors.Gnss
 
         void SpiTest()
         {
-            Console.WriteLine("Create buffer");
+            Resolver.Log.Info("Create buffer");
             buffer = new byte[65535];
-            Console.WriteLine("Buffer created");
+            Resolver.Log.Info("Buffer created");
 
             byte data;
 
@@ -39,12 +39,12 @@ namespace Meadow.Foundation.Sensors.Gnss
                 {
                     if(length > 0)
                     {
-                        Console.WriteLine($"Read {length} bytes total");
+                        Resolver.Log.Info($"Read {length} bytes total");
                         length = 0;
                     }
                     else
                     {
-                        Console.WriteLine($"No data {length = 0}");
+                        Resolver.Log.Info($"No data {length = 0}");
                     }
                     Thread.Sleep(1000);
                 }
@@ -53,7 +53,7 @@ namespace Meadow.Foundation.Sensors.Gnss
                     buffer[length++] = data;
                     if(length % 100 == 0)
                     {
-                        Console.WriteLine($"Read {length} bytes ...");
+                        Resolver.Log.Info($"Read {length} bytes ...");
                     }
                 }
             }

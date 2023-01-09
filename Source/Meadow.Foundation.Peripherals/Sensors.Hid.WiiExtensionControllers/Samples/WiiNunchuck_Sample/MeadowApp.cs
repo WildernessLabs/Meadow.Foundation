@@ -14,25 +14,25 @@ namespace WiiNunchuck_Sample
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initialize...");
+            Resolver.Log.Info("Initialize...");
 
             nunchuck = new WiiNunchuck(Device.CreateI2cBus(WiiNunchuck.DefaultSpeed));
 
             nunchuck.GetIdentification();
 
-            Console.WriteLine("Update");
+            Resolver.Log.Info("Update");
 
             //onetime update - could be used in a game loop
             nunchuck.Update();
 
             //check the state of a button
-            Console.WriteLine("C Button is " + (nunchuck.CButton.State == true ? "pressed" : "not pressed"));
+            Resolver.Log.Info("C Button is " + (nunchuck.CButton.State == true ? "pressed" : "not pressed"));
 
             //.NET events
-            nunchuck.CButton.Clicked += (s, e) => Console.WriteLine("C button clicked");
-            nunchuck.ZButton.Clicked += (s, e) => Console.WriteLine("Z button clicked");
+            nunchuck.CButton.Clicked += (s, e) => Resolver.Log.Info("C button clicked");
+            nunchuck.ZButton.Clicked += (s, e) => Resolver.Log.Info("Z button clicked");
 
-            nunchuck.AnalogStick.Updated += (s, e) => Console.WriteLine($"Analog Stick {e.New.Horizontal}, {e.New.Vertical}");
+            nunchuck.AnalogStick.Updated += (s, e) => Resolver.Log.Info($"Analog Stick {e.New.Horizontal}, {e.New.Vertical}");
 
             return Task.CompletedTask;
         }

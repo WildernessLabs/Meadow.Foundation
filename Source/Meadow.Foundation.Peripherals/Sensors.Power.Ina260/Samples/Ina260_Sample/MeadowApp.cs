@@ -14,17 +14,17 @@ namespace MeadowApp
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initialize...");
+            Resolver.Log.Info("Initialize...");
 
             var bus = Device.CreateI2cBus();
             ina260 = new Ina260(bus);
 
-            Console.WriteLine($"-- INA260 Sample App ---");
-            Console.WriteLine($"Manufacturer: {ina260.ManufacturerID}");
-            Console.WriteLine($"Die: {ina260.DieID}");
+            Resolver.Log.Info($"-- INA260 Sample App ---");
+            Resolver.Log.Info($"Manufacturer: {ina260.ManufacturerID}");
+            Resolver.Log.Info($"Die: {ina260.DieID}");
             ina260.Updated += (s, v) =>
             {
-                Console.WriteLine($"{v.New.Item2}V @ {v.New.Item3}A");
+                Resolver.Log.Info($"{v.New.Item2}V @ {v.New.Item3}A");
             };
 
             return Task.CompletedTask;

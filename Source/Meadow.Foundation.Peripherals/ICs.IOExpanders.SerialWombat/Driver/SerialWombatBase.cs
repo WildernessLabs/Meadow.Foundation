@@ -70,7 +70,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine($"{ex.Message}");
+                        Resolver.Log.Error($"{ex.Message}");
 
                     }
                 }
@@ -95,7 +95,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine($"{ex.Message}");
+                        Resolver.Log.Error($"{ex.Message}");
 
                     }
                 }

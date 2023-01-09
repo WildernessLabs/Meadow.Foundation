@@ -12,7 +12,7 @@ namespace Bbq10Keyboard_Sample
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initialize...");
+            Resolver.Log.Info("Initialize...");
 
             var i2cBus = Device.CreateI2cBus(0);
             keyboard = new BBQ10Keyboard(Device, i2cBus, Device.Pins.D10);
@@ -25,7 +25,7 @@ namespace Bbq10Keyboard_Sample
         {
             if (e.KeyState == BBQ10Keyboard.KeyState.StatePress)
             {
-                Console.WriteLine($"{e.AsciiValue}, {(byte)e.AsciiValue}, pressed");
+                Resolver.Log.Info($"{e.AsciiValue}, {(byte)e.AsciiValue}, pressed");
             }
         }
     }

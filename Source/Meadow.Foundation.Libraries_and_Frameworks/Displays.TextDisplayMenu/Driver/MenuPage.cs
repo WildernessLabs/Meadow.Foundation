@@ -17,7 +17,7 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu
             set {
                 if (value > MenuItems.Count - 1 || value < 0)
                 {
-                    Console.WriteLine("Attempting to set a scroll position outside of item range: " + value.ToString());
+                    Resolver.Log.Warn("Attempting to set a scroll position outside of item range: " + value.ToString());
                 }
                 scrollPosition = value;
             }

@@ -14,14 +14,14 @@ namespace MeadowApp
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initialize...");
+            Resolver.Log.Info("Initialize...");
 
             // configure our sensor
             sensor = new Alspt19315C(Device, Device.Pins.A03);
 
             //==== IObservable Pattern with an optional notification filter
             var consumer = Alspt19315C.CreateObserver(
-                handler: result => Console.WriteLine($"Observer filter satisfied: {result.New.Volts:N2}V, old: {result.Old?.Volts:N2}V"),
+                handler: result => Resolver.Log.Info($"Observer filter satisfied: {result.New.Volts:N2}V, old: {result.Old?.Volts:N2}V"),
           
                 // only notify if the change is greater than 0.5V
                 filter: result => {
@@ -35,7 +35,7 @@ namespace MeadowApp
 
             //==== Classic Events Pattern
             sensor.Updated += (sender, result) => {
-                Console.WriteLine($"Voltage Changed, new: {result.New.Volts:N2}V, old: {result.Old?.Volts:N2}V");
+                Resolver.Log.Info($"Voltage Changed, new: {result.New.Volts:N2}V, old: {result.Old?.Volts:N2}V");
             };
 
             return Task.CompletedTask;
@@ -44,7 +44,7 @@ namespace MeadowApp
         public override async Task Run()
         {
             var result = await sensor.Read();
-            Console.WriteLine($"Initial temp: {result.Volts:N2}V");
+            Resolver.Log.Info($"Initial temp: {result.Volts:N2}V");
 
             sensor.StartUpdating(TimeSpan.FromMilliseconds(1000));
         }

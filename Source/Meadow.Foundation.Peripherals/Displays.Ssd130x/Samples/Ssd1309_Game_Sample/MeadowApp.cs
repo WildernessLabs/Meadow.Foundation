@@ -27,9 +27,9 @@ namespace Displays.Ssd130x.Ssd1309_Game_Sample
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initialize...");
+            Resolver.Log.Info("Initialize...");
 
-            Console.WriteLine("Create Display with SPI...");
+            Resolver.Log.Info("Create Display with SPI...");
 
             var config = new SpiClockConfiguration(new Frequency(12000, Frequency.UnitType.Kilohertz), SpiClockConfiguration.Mode.Mode0);
 
@@ -44,7 +44,7 @@ namespace Displays.Ssd130x.Ssd1309_Game_Sample
                 resetPin: Device.Pins.D00
             );
 
-            Console.WriteLine("Create Graphics Library...");
+            Resolver.Log.Info("Create Graphics Library...");
 
             graphics = new MicroGraphics(display);
             graphics.Rotation = RotationType._270Degrees;
@@ -54,7 +54,7 @@ namespace Displays.Ssd130x.Ssd1309_Game_Sample
             graphics.DrawText(0, 0, "Hello");
             graphics.Show();
 
-            Console.WriteLine("Create buttons...");
+            Resolver.Log.Info("Create buttons...");
 
             portLeft = Device.CreateDigitalInputPort(Device.Pins.D12, InterruptMode.EdgeFalling, ResistorMode.InternalPullDown);
             portUp = Device.CreateDigitalInputPort(Device.Pins.D13, InterruptMode.EdgeFalling, ResistorMode.InternalPullDown);
@@ -76,14 +76,14 @@ namespace Displays.Ssd130x.Ssd1309_Game_Sample
                  btnDown.Clicked += BtnDown_Clicked;
                  btnRight.Clicked += BtnRight_Clicked;  */
 
-            Console.WriteLine("Initialize complete");
+            Resolver.Log.Info("Initialize complete");
 
             return base.Initialize();
         }
 
         void StartBreakoutLoop()
         {
-            Console.WriteLine("Start breakout");
+            Resolver.Log.Info("Start breakout");
 
             while (true)
             {

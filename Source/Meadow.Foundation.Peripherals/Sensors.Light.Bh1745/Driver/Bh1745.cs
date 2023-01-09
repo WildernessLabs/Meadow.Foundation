@@ -311,7 +311,7 @@ namespace Meadow.Foundation.Sensors.Light
         /// </summary>
         protected void Reset()
         {
-            Console.WriteLine("Reset");
+            Resolver.Log.Info("Reset");
 
             var status = Peripheral.ReadRegister(Registers.SYSTEM_CONTROL);
             status = (byte)((status & ~MaskValues.SW_RESET) | 0x01 << 7);

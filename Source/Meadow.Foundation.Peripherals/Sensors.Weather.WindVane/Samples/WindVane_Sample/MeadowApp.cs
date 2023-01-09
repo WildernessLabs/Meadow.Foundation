@@ -15,17 +15,17 @@ namespace MeadowApp
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initialize...");
+            Resolver.Log.Info("Initialize...");
 
             // initialize the wind vane driver
             windVane = new WindVane(Device, Device.Pins.A00);
 
             //==== Classic event example:
-            windVane.Updated += (sender, result) => Console.WriteLine($"Updated event {result.New.DecimalDegrees}");
+            windVane.Updated += (sender, result) => Resolver.Log.Info($"Updated event {result.New.DecimalDegrees}");
 
             //==== IObservable Pattern
             var observer = WindVane.CreateObserver(
-                handler: result => Console.WriteLine($"Wind Direction: {result.New.Compass16PointCardinalName}"),
+                handler: result => Resolver.Log.Info($"Wind Direction: {result.New.Compass16PointCardinalName}"),
                 filter: null
             );
             windVane.Subscribe(observer);
@@ -37,7 +37,7 @@ namespace MeadowApp
         {
             // get initial reading, just to test the API
             Azimuth azi = await windVane.Read();
-            Console.WriteLine($"Initial azimuth: {azi.Compass16PointCardinalName}");
+            Resolver.Log.Info($"Initial azimuth: {azi.Compass16PointCardinalName}");
 
             // start updating
             windVane.StartUpdating(TimeSpan.FromSeconds(1));
