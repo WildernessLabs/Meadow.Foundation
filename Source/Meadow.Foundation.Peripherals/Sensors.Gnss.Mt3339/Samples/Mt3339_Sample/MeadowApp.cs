@@ -21,25 +21,25 @@ namespace Sensors.Gnss.Mt3339_Sample
 
             gps.GgaReceived += (object sender, GnssPositionInfo location) => {
                 Resolver.Log.Info("*********************************************");
-                Resolver.Log.Info(location);
+                Resolver.Log.Info(location.ToString());
                 Resolver.Log.Info("*********************************************");
             };
             // GLL
             gps.GllReceived += (object sender, GnssPositionInfo location) => {
                 Resolver.Log.Info("*********************************************");
-                Resolver.Log.Info(location);
+                Resolver.Log.Info(location.ToString());
                 Resolver.Log.Info("*********************************************");
             };
             // GSA
             gps.GsaReceived += (object sender, ActiveSatellites activeSatellites) => {
                 Resolver.Log.Info("*********************************************");
-                Resolver.Log.Info(activeSatellites);
+                Resolver.Log.Info(activeSatellites.ToString());
                 Resolver.Log.Info("*********************************************");
             };
             // RMC (recommended minimum)
             gps.RmcReceived += (object sender, GnssPositionInfo positionCourseAndTime) => {
                 Resolver.Log.Info("*********************************************");
-                Resolver.Log.Info(positionCourseAndTime);
+                Resolver.Log.Info(positionCourseAndTime.ToString());
                 Resolver.Log.Info("*********************************************");
 
             };

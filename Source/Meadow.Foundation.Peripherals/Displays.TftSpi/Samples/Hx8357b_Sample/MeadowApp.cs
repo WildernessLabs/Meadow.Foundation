@@ -111,7 +111,7 @@ namespace Displays.Tft.Hx8357b_Sample
 
             sw.Stop();
 
-            Resolver.Log.Info("Elapsed={0}", sw.Elapsed);
+            Resolver.Log.Info($"Elapsed={sw.Elapsed}");
         }
 
         void InvertTest()

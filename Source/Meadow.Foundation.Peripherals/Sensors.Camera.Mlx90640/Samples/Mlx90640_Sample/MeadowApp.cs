@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Meadow;
@@ -57,11 +58,12 @@ namespace Sensors.Temperature.MLX90640_Sample
 
                 frame = sensor.ReadRawData();
 
-                Resolver.Log.Info();
+                Resolver.Log.Info("");
 
                 //Print out each value
                 for (byte h = 0; h < 24; h++)
                 {
+                    StringBuilder logLine = new StringBuilder();
                     for (byte w = 0; w < 32; w++)
                     {
                         float t = frame[h * 32 + w];
@@ -69,7 +71,7 @@ namespace Sensors.Temperature.MLX90640_Sample
                         if (!showTempArrayAsAsciiArt)
                         {
                             //Write the Temp value
-                            Console.Write($"{t:0},");
+                            logLine.Append($"{t:0},");
                         }
                         else
                         {
@@ -84,11 +86,11 @@ namespace Sensors.Temperature.MLX90640_Sample
                             else if (t < 91) c = '%';
                             else if (t < 95) c = '#';
                             else if (t < 98.6) c = '$';
-                            Console.Write(c);
+                            logLine.Append(c);
                         }
                     }
 
-                    Resolver.Log.Info();
+                    Resolver.Log.Info(logLine.ToString());
                 }
             }
         }

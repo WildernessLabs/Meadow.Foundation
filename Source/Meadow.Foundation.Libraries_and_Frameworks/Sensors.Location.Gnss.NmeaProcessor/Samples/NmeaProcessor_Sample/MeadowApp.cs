@@ -47,7 +47,7 @@ namespace Sensors.Location.Gnss.NmeaProcessor_Sample
             nmeaProcessor.RegisterDecoder(ggaDecoder);
             ggaDecoder.PositionReceived += (object sender, GnssPositionInfo location) => {
                 Resolver.Log.Info("*********************************************");
-                Resolver.Log.Info(location);
+                Resolver.Log.Info(location.ToString());
                 Resolver.Log.Info("*********************************************");
             };
 
@@ -56,7 +56,7 @@ namespace Sensors.Location.Gnss.NmeaProcessor_Sample
             nmeaProcessor.RegisterDecoder(gllDecoder);
             gllDecoder.GeographicLatitudeLongitudeReceived += (object sender, GnssPositionInfo location) => {
                 Resolver.Log.Info("*********************************************");
-                Resolver.Log.Info(location);
+                Resolver.Log.Info(location.ToString());
                 Resolver.Log.Info("*********************************************");
             };
 
@@ -65,7 +65,7 @@ namespace Sensors.Location.Gnss.NmeaProcessor_Sample
             nmeaProcessor.RegisterDecoder(gsaDecoder);
             gsaDecoder.ActiveSatellitesReceived += (object sender, ActiveSatellites activeSatellites) => {
                 Resolver.Log.Info("*********************************************");
-                Resolver.Log.Info(activeSatellites);
+                Resolver.Log.Info(activeSatellites.ToString());
                 Resolver.Log.Info("*********************************************");
             };
 
@@ -74,7 +74,7 @@ namespace Sensors.Location.Gnss.NmeaProcessor_Sample
             nmeaProcessor.RegisterDecoder(rmcDecoder);
             rmcDecoder.PositionCourseAndTimeReceived += (object sender, GnssPositionInfo positionCourseAndTime) => {
                 Resolver.Log.Info("*********************************************");
-                Resolver.Log.Info(positionCourseAndTime);
+                Resolver.Log.Info(positionCourseAndTime.ToString());
                 Resolver.Log.Info("*********************************************");
 
             };

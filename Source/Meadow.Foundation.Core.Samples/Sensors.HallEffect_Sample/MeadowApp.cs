@@ -15,7 +15,7 @@ namespace Sensors.HallEffect_Sample
 
         public override Task Initialize()
         {
-            Console.Write("Initializing...");
+            Resolver.Log.Info("Initializing...");
 
             hallSensor = new LinearHallEffectTachometer(
                 inputPort: Device.CreateDigitalInputPort(Device.Pins.D02, Meadow.Hardware.InterruptMode.EdgeRising, Meadow.Hardware.ResistorMode.InternalPullUp, TimeSpan.Zero, TimeSpan.FromMilliseconds(1)),

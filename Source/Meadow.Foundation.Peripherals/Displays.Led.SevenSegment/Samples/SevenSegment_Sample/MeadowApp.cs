@@ -54,7 +54,7 @@ namespace Displays.Led.SevenSegment_Sample
                 {
                     if (character != SevenSegment.CharacterType.count)
                     {
-                        Resolver.Log.Info("Character: {0}", character.ToString());
+                        Resolver.Log.Info($"Character: {character.ToString()}");
                         sevenSegment.SetDisplay(character, showDecimal);
                     }
 

@@ -55,7 +55,7 @@ namespace RTCs.DS1307_Sample
 
             Resolver.Log.Info($" Writing to RTC RAM   : {BitConverter.ToString(data)}");
             rtc.WriteRAM(0, data);
-            Console.Write($" Reading from RTC RAM : ");
+            Resolver.Log.Info($" Reading from RTC RAM : ");
             data = rtc.ReadRAM(0, 56);
             Resolver.Log.Info(BitConverter.ToString(data));
 

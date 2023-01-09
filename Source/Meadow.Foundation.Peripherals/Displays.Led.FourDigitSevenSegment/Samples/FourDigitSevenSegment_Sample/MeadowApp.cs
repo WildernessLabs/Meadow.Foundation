@@ -15,7 +15,7 @@ namespace Displays.Led.SevenSegment_Sample
 
         public override Task Initialize()
         {
-            Console.Write("Initializing...");
+            Resolver.Log.Info("Initializing...");
 
             sevenSegment = new FourDigitSevenSegment
             (

@@ -50,11 +50,11 @@ namespace Sensors.Rotary.RotaryEncoderWithButton_Sample
             {
                 case RotationDirection.Clockwise:
                     value++;
-                    Resolver.Log.Info("/\\ Value = {0} CW", value);
+                    Resolver.Log.Info($"/\\ Value = {value} CW");
                     break;
                 case RotationDirection.CounterClockwise:
                     value--;
-                    Resolver.Log.Info("\\/ Value = {0} CCW", value);
+                    Resolver.Log.Info($"\\/ Value = {value} CCW");
                     break;
             }
         }
