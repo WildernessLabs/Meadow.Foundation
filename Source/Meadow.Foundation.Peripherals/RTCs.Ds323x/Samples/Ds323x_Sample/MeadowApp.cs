@@ -14,7 +14,7 @@ namespace RTCs.Ds323x_Sample
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initialize...");
+            Resolver.Log.Info("Initialize...");
 
             sensor = new Ds3231(Device, Device.CreateI2cBus(), Device.Pins.D06);
             sensor.OnAlarm1Raised += Sensor_OnAlarm1Raised;
@@ -26,8 +26,8 @@ namespace RTCs.Ds323x_Sample
         {
             sensor.CurrentDateTime = new DateTime(2020, 1, 1);
 
-            Console.WriteLine($"Current time: {sensor.CurrentDateTime}");
-            Console.WriteLine($"Temperature: {sensor.Temperature}");
+            Resolver.Log.Info($"Current time: {sensor.CurrentDateTime}");
+            Resolver.Log.Info($"Temperature: {sensor.Temperature}");
 
             sensor.ClearInterrupt(Ds323x.Alarm.BothAlarmsRaised);
 
@@ -43,7 +43,7 @@ namespace RTCs.Ds323x_Sample
         private void Sensor_OnAlarm1Raised(object sender)
         {
             var rtc = (Ds3231)sender;
-            Console.WriteLine("Alarm 1 has been activated: " + rtc.CurrentDateTime.ToString("dd MMM yyyy HH:mm:ss"));
+            Resolver.Log.Info("Alarm 1 has been activated: " + rtc.CurrentDateTime.ToString("dd MMM yyyy HH:mm:ss"));
             rtc.ClearInterrupt(Ds323x.Alarm.Alarm1Raised);
         }
 

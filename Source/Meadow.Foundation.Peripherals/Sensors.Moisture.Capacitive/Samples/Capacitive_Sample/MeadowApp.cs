@@ -15,7 +15,7 @@ namespace Sensors.Moisture.Capacitive_Sample
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initialize...");
+            Resolver.Log.Info("Initialize...");
 
             capacitive = new Capacitive(
                 analogInputPort: Device.CreateAnalogInputPort(Device.Pins.A00, 5, TimeSpan.FromMilliseconds(40), new Voltage(3.3, Voltage.UnitType.Volts)),
@@ -27,7 +27,7 @@ namespace Sensors.Moisture.Capacitive_Sample
             var consumer = Capacitive.CreateObserver(
                 handler: result => {
                     string oldValue = (result.Old is { } old) ? $"{old:n2}" : "n/a"; // C# 8 pattern matching
-                    Console.WriteLine($"Subscribed - " +
+                    Resolver.Log.Info($"Subscribed - " +
                         $"new: {result.New}, " +
                         $"old: {oldValue}");
                 },
@@ -39,7 +39,7 @@ namespace Sensors.Moisture.Capacitive_Sample
             capacitive.HumidityUpdated += (sender, result) =>
             {   
                 string oldValue = (result.Old is { } old) ? $"{old:n2}" : "n/a"; // C# 8 pattern matching
-                Console.WriteLine($"Updated - New: {result.New}, Old: {oldValue}");
+                Resolver.Log.Info($"Updated - New: {result.New}, Old: {oldValue}");
             };
 
             return Task.CompletedTask;
@@ -48,7 +48,7 @@ namespace Sensors.Moisture.Capacitive_Sample
         public async override Task Run()
         {
             var moisture = await capacitive.Read();
-            Console.WriteLine($"Moisture New Value {moisture}");
+            Resolver.Log.Info($"Moisture New Value {moisture}");
 
             capacitive.StartUpdating(TimeSpan.FromSeconds(3));
         }

@@ -15,7 +15,7 @@ namespace MeadowApp
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initialize...");
+            Resolver.Log.Info("Initialize...");
 
             display = new Max7219(Device, Device.CreateSpiBus(), Device.Pins.D01, 1, Max7219.Max7219Mode.Character);
 
@@ -38,7 +38,7 @@ namespace MeadowApp
 
         void TestDigitalMode()
         {
-            Console.WriteLine("Digital test");
+            Resolver.Log.Info("Digital test");
 
             display.SetMode(Max7219.Max7219Mode.Digital);
             //control indivial LEDs - for 8x8 matrix configurations - use the Meadow graphics library

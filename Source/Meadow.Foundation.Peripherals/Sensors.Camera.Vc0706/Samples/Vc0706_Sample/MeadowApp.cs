@@ -15,7 +15,7 @@ namespace Sensors.Camera.Vc0706_Sample
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initialize...");
+            Resolver.Log.Info("Initialize...");
 
             camera = new Vc0706(Device, Device.SerialPortNames.Com4, 38400);
 
@@ -26,7 +26,7 @@ namespace Sensors.Camera.Vc0706_Sample
         {
             if (!camera.SetCaptureResolution(Vc0706.ImageResolution._160x120))
             {
-                Console.WriteLine("Set resolution failed");
+                Resolver.Log.Info("Set resolution failed");
             }
 
             _ = TakePicture();
@@ -36,14 +36,14 @@ namespace Sensors.Camera.Vc0706_Sample
 
         async Task TakePicture()
         {
-            Console.WriteLine($"Image size is {camera.GetCaptureResolution()}");
+            Resolver.Log.Info($"Image size is {camera.GetCaptureResolution()}");
 
             camera.CapturePhoto();
 
             using var jpegStream = await camera.GetPhotoStream();
 
             var jpeg = new JpegImage(jpegStream);
-            Console.WriteLine($"Image decoded - width:{jpeg.Width}, height:{jpeg.Height}");
+            Resolver.Log.Info($"Image decoded - width:{jpeg.Width}, height:{jpeg.Height}");
         }
 
         //<!=SNOP=>

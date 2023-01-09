@@ -14,7 +14,7 @@ namespace Sensors.Environmental.Ens160_Sample
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initializing...");
+            Resolver.Log.Info("Initializing...");
 
             var i2cBus = Device.CreateI2cBus(Meadow.Hardware.I2cBusSpeed.Standard);
       
@@ -24,7 +24,7 @@ namespace Sensors.Environmental.Ens160_Sample
             var consumer = Ens160.CreateObserver(
                 handler: result =>
                 {
-                    Console.WriteLine($"Observer: C02 concentration changed by threshold; new: {result.New.CO2Concentration?.PartsPerMillion:N0}ppm");
+                    Resolver.Log.Info($"Observer: C02 concentration changed by threshold; new: {result.New.CO2Concentration?.PartsPerMillion:N0}ppm");
                 },
                 filter: result =>
                 {
@@ -43,10 +43,10 @@ namespace Sensors.Environmental.Ens160_Sample
             {
                 sensor.Updated += (sender, result) =>
                 {
-                    Console.WriteLine($"  CO2 Concentration: {result.New.CO2Concentration?.PartsPerMillion:N0}ppm");
-                    Console.WriteLine($"  Ethanol Concentraion: {result.New.EthanolConcentration?.PartsPerBillion:N0}ppb");
-                    Console.WriteLine($"  TVOC Concentraion: {result.New.TVOCConcentration?.PartsPerBillion:N0}ppb");
-                    Console.WriteLine($"  AQI: {sensor.GetAirQualityIndex()}");    
+                    Resolver.Log.Info($"  CO2 Concentration: {result.New.CO2Concentration?.PartsPerMillion:N0}ppm");
+                    Resolver.Log.Info($"  Ethanol Concentraion: {result.New.EthanolConcentration?.PartsPerBillion:N0}ppb");
+                    Resolver.Log.Info($"  TVOC Concentraion: {result.New.TVOCConcentration?.PartsPerBillion:N0}ppb");
+                    Resolver.Log.Info($"  AQI: {sensor.GetAirQualityIndex()}");    
                 };
             }
 

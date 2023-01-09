@@ -14,7 +14,7 @@ namespace WiiClassicControllerPro_Sample
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initialize...");
+            Resolver.Log.Info("Initialize...");
 
             var i2cBus = Device.CreateI2cBus(WiiClassicControllerPro.DefaultSpeed);
 
@@ -25,27 +25,27 @@ namespace WiiClassicControllerPro_Sample
             classicControllerPro.Update();
 
             //check the state of a button
-            Console.WriteLine("X Button is " + (classicControllerPro.XButton.State == true ? "pressed" : "not pressed"));
+            Resolver.Log.Info("X Button is " + (classicControllerPro.XButton.State == true ? "pressed" : "not pressed"));
 
             //.NET events
-            classicControllerPro.AButton.Clicked += (s, e) => Console.WriteLine("A button clicked");
-            classicControllerPro.BButton.Clicked += (s, e) => Console.WriteLine("B button clicked");
-            classicControllerPro.XButton.Clicked += (s, e) => Console.WriteLine("X button clicked");
-            classicControllerPro.YButton.Clicked += (s, e) => Console.WriteLine("Y button clicked");
+            classicControllerPro.AButton.Clicked += (s, e) => Resolver.Log.Info("A button clicked");
+            classicControllerPro.BButton.Clicked += (s, e) => Resolver.Log.Info("B button clicked");
+            classicControllerPro.XButton.Clicked += (s, e) => Resolver.Log.Info("X button clicked");
+            classicControllerPro.YButton.Clicked += (s, e) => Resolver.Log.Info("Y button clicked");
 
-            classicControllerPro.LButton.Clicked += (s, e) => Console.WriteLine("L button clicked");
-            classicControllerPro.RButton.Clicked += (s, e) => Console.WriteLine("R button clicked");
-            classicControllerPro.ZLButton.Clicked += (s, e) => Console.WriteLine("ZL button clicked");
-            classicControllerPro.ZRButton.Clicked += (s, e) => Console.WriteLine("ZR button clicked");
+            classicControllerPro.LButton.Clicked += (s, e) => Resolver.Log.Info("L button clicked");
+            classicControllerPro.RButton.Clicked += (s, e) => Resolver.Log.Info("R button clicked");
+            classicControllerPro.ZLButton.Clicked += (s, e) => Resolver.Log.Info("ZL button clicked");
+            classicControllerPro.ZRButton.Clicked += (s, e) => Resolver.Log.Info("ZR button clicked");
 
-            classicControllerPro.PlusButton.Clicked += (s, e) => Console.WriteLine("+ button clicked");
-            classicControllerPro.MinusButton.Clicked += (s, e) => Console.WriteLine("- button clicked");
-            classicControllerPro.HomeButton.Clicked += (s, e) => Console.WriteLine("Home button clicked");
+            classicControllerPro.PlusButton.Clicked += (s, e) => Resolver.Log.Info("+ button clicked");
+            classicControllerPro.MinusButton.Clicked += (s, e) => Resolver.Log.Info("- button clicked");
+            classicControllerPro.HomeButton.Clicked += (s, e) => Resolver.Log.Info("Home button clicked");
 
-            classicControllerPro.DPad.Updated += (s, e) => Console.WriteLine($"DPad {e.New}");
+            classicControllerPro.DPad.Updated += (s, e) => Resolver.Log.Info($"DPad {e.New}");
 
-            classicControllerPro.LeftAnalogStick.Updated += (s, e) => Console.WriteLine($"Left Analog Stick {e.New.Horizontal}, {e.New.Vertical}");
-            classicControllerPro.RightAnalogStick.Updated += (s, e) => Console.WriteLine($"Right Analog Stick {e.New.Horizontal}, {e.New.Vertical}");
+            classicControllerPro.LeftAnalogStick.Updated += (s, e) => Resolver.Log.Info($"Left Analog Stick {e.New.Horizontal}, {e.New.Vertical}");
+            classicControllerPro.RightAnalogStick.Updated += (s, e) => Resolver.Log.Info($"Right Analog Stick {e.New.Horizontal}, {e.New.Vertical}");
 
             return Task.CompletedTask;
         }

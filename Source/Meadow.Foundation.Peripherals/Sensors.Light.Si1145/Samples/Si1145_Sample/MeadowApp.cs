@@ -14,13 +14,13 @@ namespace MeadowApp
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initialize...");
+            Resolver.Log.Info("Initialize...");
 
             sensor = new Si1145(Device.CreateI2cBus());
 
             // Example that uses an IObservable subscription to only be notified when the filter is satisfied
             var consumer = Si1145.CreateObserver(
-                handler: result => Console.WriteLine($"Observer: filter satisifed: {result.New.VisibleLight?.Lux:N2}Lux, old: {result.Old?.VisibleLight?.Lux:N2}Lux"),
+                handler: result => Resolver.Log.Info($"Observer: filter satisifed: {result.New.VisibleLight?.Lux:N2}Lux, old: {result.Old?.VisibleLight?.Lux:N2}Lux"),
            
                 // only notify if the visible light changes by 100 lux (put your hand over the sensor to trigger)
                 filter: result => {
@@ -35,9 +35,9 @@ namespace MeadowApp
 
             // classical .NET events can also be used:
             sensor.Updated += (sender, result) => {
-                Console.WriteLine($" Visible Light: {result.New.VisibleLight?.Lux:N2}Lux");
-                Console.WriteLine($" Infrared Light: {result.New.Infrared?.Lux:N2}Lux");
-                Console.WriteLine($" UV Index: {result.New.UltravioletIndex:N2}Lux");
+                Resolver.Log.Info($" Visible Light: {result.New.VisibleLight?.Lux:N2}Lux");
+                Resolver.Log.Info($" Infrared Light: {result.New.Infrared?.Lux:N2}Lux");
+                Resolver.Log.Info($" UV Index: {result.New.UltravioletIndex:N2}Lux");
             };
 
             return Task.CompletedTask;
@@ -47,10 +47,10 @@ namespace MeadowApp
         {
             var (VisibleLight, UltravioletIndex, Infrared) = await sensor.Read();
 
-            Console.WriteLine("Initial Readings:");
-            Console.WriteLine($" Visible Light: {VisibleLight?.Lux:N2}Lux");
-            Console.WriteLine($" Infrared Light: {Infrared?.Lux:N2}Lux");
-            Console.WriteLine($" UV Index: {UltravioletIndex:N2}Lux");
+            Resolver.Log.Info("Initial Readings:");
+            Resolver.Log.Info($" Visible Light: {VisibleLight?.Lux:N2}Lux");
+            Resolver.Log.Info($" Infrared Light: {Infrared?.Lux:N2}Lux");
+            Resolver.Log.Info($" UV Index: {UltravioletIndex:N2}Lux");
 
             sensor.StartUpdating(TimeSpan.FromSeconds(1));
         }

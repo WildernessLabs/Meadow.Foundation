@@ -84,7 +84,7 @@ namespace Meadow.Foundation.Sensors.Hid
             i2cPeripheral.Write(0xFA);
             i2cPeripheral.Read(readBuffer[..6]);
 
-            Console.WriteLine(BitConverter.ToString(readBuffer[..6].ToArray()));
+            Resolver.Log.Info(BitConverter.ToString(readBuffer[..6].ToArray()));
 
             return readBuffer[..6].ToArray();
         }

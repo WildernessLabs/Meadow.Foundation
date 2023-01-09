@@ -32,10 +32,10 @@ namespace Meadow.Foundation.Sensors.Gnss
         {
             // get the packet type (command number)
             var packetType = sentence.DataElements[0];
-            Console.WriteLine($"Packet Type:{packetType}, {Lookups.KnownPacketTypes[packetType]}");
+            Resolver.Log.Info($"Packet Type:{packetType}, {Lookups.KnownPacketTypes[packetType]}");
 
             for (int i = 0; i < sentence.DataElements.Count; i++) {
-                Console.WriteLine($"index [{i}], value{sentence.DataElements[i]}");
+                Resolver.Log.Info($"index [{i}], value{sentence.DataElements[i]}");
             }
         }
     }

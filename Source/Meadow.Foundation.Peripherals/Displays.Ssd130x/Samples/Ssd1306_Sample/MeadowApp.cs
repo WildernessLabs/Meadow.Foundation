@@ -27,7 +27,7 @@ namespace Displays.Ssd130x.Ssd1306_Sample
 
         void CreateSpiDisplay()
         {
-            Console.WriteLine("Create Display with SPI...");
+            Resolver.Log.Info("Create Display with SPI...");
 
             display = new Ssd1306
             (
@@ -42,7 +42,7 @@ namespace Displays.Ssd130x.Ssd1306_Sample
 
         void CreateI2CDisplay()
         {
-            Console.WriteLine("Create Display with I2C...");
+            Resolver.Log.Info("Create Display with I2C...");
 
             display = new Ssd1306
             (
@@ -68,7 +68,7 @@ namespace Displays.Ssd130x.Ssd1306_Sample
 
         void AdditionalTests()
         {
-            Console.WriteLine("Fill display");
+            Resolver.Log.Info("Fill display");
             for (int x = 0; x < display.Width; x++)
             {
                 for (int y = 0; y < display.Height; y++)
@@ -80,7 +80,7 @@ namespace Displays.Ssd130x.Ssd1306_Sample
             display.Show();
             Thread.Sleep(2000);
 
-            Console.WriteLine("Test Inversion");
+            Resolver.Log.Info("Test Inversion");
             for (int x = 0; x < 64; x++)
             {
                 for (int y = 0; y < 12; y++)
@@ -91,7 +91,7 @@ namespace Displays.Ssd130x.Ssd1306_Sample
             display.Show();
             Thread.Sleep(3000);
 
-            Console.WriteLine("Check offsets");
+            Resolver.Log.Info("Check offsets");
 
             graphics.Clear();
             graphics.DrawRectangle(0, 0, (int)display.Width, (int)display.Height, true, false);
@@ -102,7 +102,7 @@ namespace Displays.Ssd130x.Ssd1306_Sample
             for (int x = 0; x < display.Width; x++)
             {
 
-                Console.WriteLine($"X: {x}");
+                Resolver.Log.Info($"X: {x}");
                 graphics.Clear();
 
                 graphics.DrawLine(x, 0, x, (int)display.Height - 1, true);
@@ -114,7 +114,7 @@ namespace Displays.Ssd130x.Ssd1306_Sample
 
             for (int y = 0; y < display.Height; y++)
             {
-                Console.WriteLine($"Y: {y}");
+                Resolver.Log.Info($"Y: {y}");
                 graphics.Clear();
 
                 graphics.DrawLine(0, y, (int)display.Width - 1, y, true);

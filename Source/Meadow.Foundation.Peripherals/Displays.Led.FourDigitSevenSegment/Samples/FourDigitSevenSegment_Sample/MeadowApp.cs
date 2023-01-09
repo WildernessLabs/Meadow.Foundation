@@ -48,7 +48,7 @@ namespace Displays.Led.SevenSegment_Sample
 
         protected void Test() 
         {
-            Console.WriteLine("Test...");
+            Resolver.Log.Info("Test...");
 
             int number = 0;
 

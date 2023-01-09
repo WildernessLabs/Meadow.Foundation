@@ -16,7 +16,7 @@ namespace Displays.TftSpi.St7735_Sample
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initializing ...");
+            Resolver.Log.Info("Initializing ...");
 
             var spiBus = Device.CreateSpiBus(St7735.DefaultSpiBusSpeed);
 

@@ -16,7 +16,7 @@ namespace Sensors.Rotary.RotaryEncoder_Sample
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initializing Hardware...");
+            Resolver.Log.Info("Initializing Hardware...");
 
             // Note: on the rotary encoder in the hack kit, the pinout is as
             // follows:
@@ -33,7 +33,7 @@ namespace Sensors.Rotary.RotaryEncoder_Sample
             //==== Classic Events
             rotaryEncoder.Rotated += RotaryEncoder_Rotated;
 
-            Console.WriteLine("Hardware initialization complete.");
+            Resolver.Log.Info("Hardware initialization complete.");
 
             return Task.CompletedTask;
         }
@@ -44,11 +44,11 @@ namespace Sensors.Rotary.RotaryEncoder_Sample
             {
                 case RotationDirection.Clockwise:
                     value++;
-                    Console.WriteLine("/\\ Value = {0} CW", value);
+                    Resolver.Log.Info("/\\ Value = {0} CW", value);
                     break;
                 case RotationDirection.CounterClockwise:
                     value--;
-                    Console.WriteLine("\\/ Value = {0} CCW", value);
+                    Resolver.Log.Info("\\/ Value = {0} CCW", value);
                     break;
             }
         }

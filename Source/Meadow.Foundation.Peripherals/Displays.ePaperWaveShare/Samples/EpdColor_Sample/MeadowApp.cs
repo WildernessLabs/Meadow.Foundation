@@ -29,11 +29,11 @@ namespace Displays.ePaper.EpdColor_Sample
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initialize ...");
+            Resolver.Log.Info("Initialize ...");
 
             var displayType = EpdColorDisplay.Epd4in2bV2;
 
-            Console.WriteLine($"{displayType} selected - change displayType to select a different display");
+            Resolver.Log.Info($"{displayType} selected - change displayType to select a different display");
 
             var display = GetDisplay(displayType);
 
@@ -47,7 +47,7 @@ namespace Displays.ePaper.EpdColor_Sample
 
         public override Task Run()
         {
-            Console.WriteLine("Run");
+            Resolver.Log.Info("Run");
 
             for (int i = 0; i < 100; i++)
             {
@@ -65,7 +65,7 @@ namespace Displays.ePaper.EpdColor_Sample
 
             graphics.Show();
 
-            Console.WriteLine("Run complete");
+            Resolver.Log.Info("Run complete");
 
             return Task.CompletedTask;
         }

@@ -20,12 +20,12 @@ namespace Displays.Tft.Hx8357d_Sample
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initializing ...");
+            Resolver.Log.Info("Initializing ...");
 
             var config = new SpiClockConfiguration(new Frequency(12000, Frequency.UnitType.Kilohertz), SpiClockConfiguration.Mode.Mode0);
             var spiBus = Device.CreateSpiBus(Device.Pins.SCK, Device.Pins.MOSI, Device.Pins.MISO, config);
 
-            Console.WriteLine("Create display driver instance");
+            Resolver.Log.Info("Create display driver instance");
 
             var display = new Hx8357d(device: Device, spiBus: spiBus,
                 chipSelectPin: Device.Pins.D02,
@@ -33,7 +33,7 @@ namespace Displays.Tft.Hx8357d_Sample
                 resetPin: Device.Pins.D00,
                 width: 320, height: 480);
 
-            Console.WriteLine("Create graphics lib");
+            Resolver.Log.Info("Create graphics lib");
 
             graphics = new MicroGraphics(display);
             graphics.IgnoreOutOfBoundsPixels = true;
@@ -114,7 +114,7 @@ namespace Displays.Tft.Hx8357d_Sample
 
             sw.Stop();
 
-            Console.WriteLine("Elapsed={0}", sw.Elapsed);
+            Resolver.Log.Info("Elapsed={0}", sw.Elapsed);
         }
 
         void InvertTest()
@@ -154,7 +154,7 @@ namespace Displays.Tft.Hx8357d_Sample
 
         void OverviewScreen()
         {
-            Console.WriteLine("Show overview");
+            Resolver.Log.Info("Show overview");
 
             graphics.CurrentFont = new Font12x16();
             graphics.Clear();
@@ -177,7 +177,7 @@ namespace Displays.Tft.Hx8357d_Sample
 
             graphics.Show();
 
-            Console.WriteLine("Show overview complete");
+            Resolver.Log.Info("Show overview complete");
         }
 
         void PolarLineTest()
@@ -367,7 +367,7 @@ namespace Displays.Tft.Hx8357d_Sample
 
             graphics.Show();
 
-            Console.WriteLine("Show complete");
+            Resolver.Log.Info("Show complete");
         }
     }
 }

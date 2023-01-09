@@ -18,7 +18,7 @@ namespace ICs.IOExpanders.Mcp23x08_Input_Sample
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initializing...");
+            Resolver.Log.Info("Initializing...");
 
             
             IDigitalInputPort interruptPort = Device.CreateDigitalInputPort(Device.Pins.D00, InterruptMode.EdgeBoth, ResistorMode.InternalPullDown);
@@ -52,7 +52,7 @@ namespace ICs.IOExpanders.Mcp23x08_Input_Sample
                     bitsString.Append((bool)bit ? "1":"0");
                 }
 
-                Console.WriteLine($"Port Values, raw:{mask:X}, bits: { bitsString}");
+                Resolver.Log.Info($"Port Values, raw:{mask:X}, bits: { bitsString}");
 
                 Thread.Sleep(100);
             }
@@ -83,10 +83,10 @@ namespace ICs.IOExpanders.Mcp23x08_Input_Sample
 
                 foreach (var inputPort in inputPorts) 
                 {
-                    //Console.WriteLine($"InputPort {inputPort.Pin.Name} Read: {inputPort.State}");
+                    //Resolver.Log.Info($"InputPort {inputPort.Pin.Name} Read: {inputPort.State}");
                     output += $"{(inputPort.State ? 1 : 0)}";
                 }
-                Console.WriteLine(output);
+                Resolver.Log.Info(output);
                 await Task.Delay(500);
             }
 
@@ -99,7 +99,7 @@ namespace ICs.IOExpanders.Mcp23x08_Input_Sample
 
         void TestInterrupts()
         {
-            Console.WriteLine($"Test Interrupts");
+            Resolver.Log.Info($"Test Interrupts");
 
             var debounceTime = TimeSpan.FromMilliseconds(50);
 
@@ -112,14 +112,14 @@ namespace ICs.IOExpanders.Mcp23x08_Input_Sample
             var inputPort06 = mcp.CreateDigitalInputPort(mcp.Pins.GP6, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp, debounceTime);
             var inputPort07 = mcp.CreateDigitalInputPort(mcp.Pins.GP7, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp, debounceTime);
 
-            inputPort00.Changed += (s, e) => Console.WriteLine($"Port 0 interrupt {e.New.State}");
-            inputPort01.Changed += (s, e) => Console.WriteLine($"Port 1 interrupt {e.New.State}");
-            inputPort02.Changed += (s, e) => Console.WriteLine($"Port 2 interrupt {e.New.State}");
-            inputPort03.Changed += (s, e) => Console.WriteLine($"Port 3 interrupt {e.New.State}");
-            inputPort04.Changed += (s, e) => Console.WriteLine($"Port 4 interrupt {e.New.State}");
-            inputPort05.Changed += (s, e) => Console.WriteLine($"Port 5 interrupt {e.New.State}");
-            inputPort06.Changed += (s, e) => Console.WriteLine($"Port 6 interrupt {e.New.State}");
-            inputPort07.Changed += (s, e) => Console.WriteLine($"Port 7 interrupt {e.New.State}");
+            inputPort00.Changed += (s, e) => Resolver.Log.Info($"Port 0 interrupt {e.New.State}");
+            inputPort01.Changed += (s, e) => Resolver.Log.Info($"Port 1 interrupt {e.New.State}");
+            inputPort02.Changed += (s, e) => Resolver.Log.Info($"Port 2 interrupt {e.New.State}");
+            inputPort03.Changed += (s, e) => Resolver.Log.Info($"Port 3 interrupt {e.New.State}");
+            inputPort04.Changed += (s, e) => Resolver.Log.Info($"Port 4 interrupt {e.New.State}");
+            inputPort05.Changed += (s, e) => Resolver.Log.Info($"Port 5 interrupt {e.New.State}");
+            inputPort06.Changed += (s, e) => Resolver.Log.Info($"Port 6 interrupt {e.New.State}");
+            inputPort07.Changed += (s, e) => Resolver.Log.Info($"Port 7 interrupt {e.New.State}");
         }
     }
 }

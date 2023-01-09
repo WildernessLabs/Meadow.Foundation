@@ -14,7 +14,7 @@ namespace Audio.Mp3.Yx5300_Sample
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initialize...");
+            Resolver.Log.Info("Initialize...");
 
             mp3Player = new Yx5300(Device, Device.SerialPortNames.Com4);
 
@@ -26,10 +26,10 @@ namespace Audio.Mp3.Yx5300_Sample
             mp3Player.SetVolume(15);
 
             var status = await mp3Player.GetStatus();
-            Console.WriteLine($"Status: {status}");
+            Resolver.Log.Info($"Status: {status}");
 
             var count = await mp3Player.GetNumberOfTracksInFolder(0);
-            Console.WriteLine($"Number of tracks: {count}");
+            Resolver.Log.Info($"Number of tracks: {count}");
 
             mp3Player.Play();
 

@@ -15,7 +15,7 @@ namespace MeadowApp
 
         public override Task Initialize()
         {
-            Console.WriteLine("Init...");
+            Resolver.Log.Info("Init...");
 
             display = new Max7219(
                 Device, Device.CreateSpiBus(Max7219.DefaultSpiBusSpeed),
@@ -28,13 +28,13 @@ namespace MeadowApp
                 IgnoreOutOfBoundsPixels = true,
             };
 
-            Console.WriteLine($"Display W: {display.Width}, H: {display.Height}");
+            Resolver.Log.Info($"Display W: {display.Width}, H: {display.Height}");
 
             graphics.Rotation = RotationType._90Degrees;
 
-            Console.WriteLine($"Graphics W: {graphics.Width}, H: {graphics.Height}");
+            Resolver.Log.Info($"Graphics W: {graphics.Width}, H: {graphics.Height}");
 
-            Console.WriteLine("Max7219 instantiated");
+            Resolver.Log.Info("Max7219 instantiated");
 
             graphics.Clear();
             graphics.DrawRectangle(0, 0, graphics.Width, graphics.Height);
@@ -65,9 +65,9 @@ namespace MeadowApp
 
         void DrawPixels()
         {
-            Console.WriteLine("Clear");
+            Resolver.Log.Info("Clear");
             display.Clear();
-            Console.WriteLine("Draw");
+            Resolver.Log.Info("Draw");
             for (int i = 0; i < 8; i++)
             {
                 display.DrawPixel(i, i, true);
@@ -80,10 +80,10 @@ namespace MeadowApp
             graphics.CurrentFont = new Font4x8();
 
             //Graphics Lib
-            Console.WriteLine("Clear");
+            Resolver.Log.Info("Clear");
             graphics.Clear();
             graphics.DrawText(0, 1, "MEADOWF7");
-            Console.WriteLine("Show");
+            Resolver.Log.Info("Show");
             graphics.Show();
         }
 

@@ -14,7 +14,7 @@ namespace Sensors.Motion.Adxl345_Sample
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initialize...");
+            Resolver.Log.Info("Initialize...");
 
             sensor = new Adxl345(Device.CreateI2cBus());
             sensor.SetPowerState(false, false, true, false, Adxl345.Frequencies.TwoHz);
@@ -22,7 +22,7 @@ namespace Sensors.Motion.Adxl345_Sample
             // classical .NET events can also be used:
             sensor.Updated += (sender, result) =>
             {
-                Console.WriteLine($"Accel: [X:{result.New.X.MetersPerSecondSquared:N2}," +
+                Resolver.Log.Info($"Accel: [X:{result.New.X.MetersPerSecondSquared:N2}," +
                     $"Y:{result.New.Y.MetersPerSecondSquared:N2}," +
                     $"Z:{result.New.Z.MetersPerSecondSquared:N2} (m/s^2)]");
             };
@@ -33,8 +33,8 @@ namespace Sensors.Motion.Adxl345_Sample
         public async override Task Run()
         {
             var result = await sensor.Read();
-            Console.WriteLine("Initial Readings:");
-            Console.WriteLine($"Accel: [X:{result.X.MetersPerSecondSquared:N2}," +
+            Resolver.Log.Info("Initial Readings:");
+            Resolver.Log.Info($"Accel: [X:{result.X.MetersPerSecondSquared:N2}," +
                 $"Y:{result.Y.MetersPerSecondSquared:N2}," +
                 $"Z:{result.Z.MetersPerSecondSquared:N2} (m/s^2)]");
 

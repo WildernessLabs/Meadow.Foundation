@@ -94,17 +94,17 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         private void ShowDebugInfo()
         {
             var ver = Peripheral?.ReadRegister((byte)Register.HW_VERSION);
-            Console.WriteLine($"hardware version A = 0x{ver:x2}");
+            Resolver.Log.Info($"hardware version A = 0x{ver:x2}");
 
             var fwb = Peripheral?.ReadRegister((byte)Register.FW_BOOT_VERSION);
-            Console.WriteLine($"FWB version = 0x{fwb:x4}");
+            Resolver.Log.Info($"FWB version = 0x{fwb:x4}");
 
             var fwa = Peripheral?.ReadRegister((byte)Register.FW_APP_VERSION);
-            Console.WriteLine($"FWA version = 0x{fwa:x4}");
+            Resolver.Log.Info($"FWA version = 0x{fwa:x4}");
 
             // read status
             var status = Peripheral?.ReadRegister((byte)Register.STATUS);
-            Console.WriteLine($"status = 0x{status:x2}");
+            Resolver.Log.Info($"status = 0x{status:x2}");
         }
 
         /// <summary>

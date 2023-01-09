@@ -40,7 +40,7 @@ namespace Meadow.Foundation.Sensors.Sound
 
             while (true)
             {
-                Console.WriteLine($"Analog: {analogPort.Voltage}");
+                Resolver.Log.Info($"Analog: {analogPort.Voltage}");
                 Thread.Sleep(250);
             }
         }

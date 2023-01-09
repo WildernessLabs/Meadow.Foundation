@@ -24,14 +24,14 @@ namespace Sensors.HallEffect_Sample
                 rpmChangeNotificationThreshold: 1);
             hallSensor.RPMsChanged += HallSensorRPMsChanged;
 
-            Console.WriteLine("done");
+            Resolver.Log.Info("done");
 
             return Task.CompletedTask;
         }
 
         void HallSensorRPMsChanged(object sender, ChangeResult<float> e)
         {
-            Console.WriteLine($"RPM: {e.New}");
+            Resolver.Log.Info($"RPM: {e.New}");
         }
 
         //<!=SNOP=>

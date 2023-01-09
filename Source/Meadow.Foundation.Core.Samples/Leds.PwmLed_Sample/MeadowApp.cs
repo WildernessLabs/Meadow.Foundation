@@ -17,7 +17,7 @@ namespace Leds.PwmLed_Sample
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initializing...");
+            Resolver.Log.Info("Initializing...");
 
             var onRgbLed = new RgbLed(
                 device: Device,
@@ -49,11 +49,11 @@ namespace Leds.PwmLed_Sample
 
         public override async Task Run()
         {
-            Console.WriteLine("TestPwmLeds...");
+            Resolver.Log.Info("TestPwmLeds...");
 
             while (true)
             {
-                Console.WriteLine("Turning on and off each led for 1 second");
+                Resolver.Log.Info("Turning on and off each led for 1 second");
                 foreach (var pwmLed in pwmLeds)
                 {
                     pwmLed.IsOn = true;
@@ -63,7 +63,7 @@ namespace Leds.PwmLed_Sample
 
                 await Task.Delay(1000);
 
-                Console.WriteLine("Blinking the LED for a bit.");
+                Resolver.Log.Info("Blinking the LED for a bit.");
                 foreach (var pwmLed in pwmLeds)
                 {
                     pwmLed.StartBlink();
@@ -73,7 +73,7 @@ namespace Leds.PwmLed_Sample
 
                 await Task.Delay(1000);
 
-                Console.WriteLine("Blinking the LED for a bit.");
+                Resolver.Log.Info("Blinking the LED for a bit.");
                 foreach (var pwmLed in pwmLeds)
                 {
                     pwmLed.StartBlink(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1));
@@ -83,7 +83,7 @@ namespace Leds.PwmLed_Sample
 
                 await Task.Delay(1000);
 
-                Console.WriteLine("Pulsing the LED for a bit.");
+                Resolver.Log.Info("Pulsing the LED for a bit.");
                 foreach (var pwmLed in pwmLeds)
                 {
                     pwmLed.StartPulse();
@@ -93,7 +93,7 @@ namespace Leds.PwmLed_Sample
 
                 await Task.Delay(1000);
 
-                Console.WriteLine("Pulsing the LED for a bit.");
+                Resolver.Log.Info("Pulsing the LED for a bit.");
                 foreach (var pwmLed in pwmLeds)
                 {
                     pwmLed.StartPulse();
@@ -103,7 +103,7 @@ namespace Leds.PwmLed_Sample
 
                 await Task.Delay(1000);
 
-                Console.WriteLine("Set brightness the LED for a bit.");
+                Resolver.Log.Info("Set brightness the LED for a bit.");
                 foreach (var pwmLed in pwmLeds)
                 {
                     pwmLed.Brightness = 0.25f;

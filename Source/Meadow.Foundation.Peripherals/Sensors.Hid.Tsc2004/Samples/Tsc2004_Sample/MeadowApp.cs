@@ -17,7 +17,7 @@ namespace Bbq10Keyboard_Sample
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initialize...");
+            Resolver.Log.Info("Initialize...");
 
             var i2cBus = Device.CreateI2cBus(I2cBusSpeed.Fast, 0);
 
@@ -46,7 +46,7 @@ namespace Bbq10Keyboard_Sample
                     if (touchScreen.IsTouched())
                     {
                         pt = touchScreen.GetPoint();
-                        Console.WriteLine($"Location: X:{pt.X}, Y:{pt.Y}, Z:{pt.Z}");
+                        Resolver.Log.Info($"Location: X:{pt.X}, Y:{pt.Y}, Z:{pt.Z}");
                     }
 
                     Thread.Sleep(0);

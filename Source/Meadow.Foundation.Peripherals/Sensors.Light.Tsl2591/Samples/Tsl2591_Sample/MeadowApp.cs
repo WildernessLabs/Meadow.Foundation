@@ -14,7 +14,7 @@ namespace Sensors.Light.Tsl2591_Sample
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initialize...");
+            Resolver.Log.Info("Initialize...");
 
             // configure our sensor on the I2C Bus
             var i2c = Device.CreateI2cBus();
@@ -22,7 +22,7 @@ namespace Sensors.Light.Tsl2591_Sample
 
             // Example that uses an IObservable subscription to only be notified when the filter is satisfied
             var consumer = Tsl2591.CreateObserver(
-                handler: result => Console.WriteLine($"Observer: filter satisifed: {result.New.VisibleLight?.Lux:N2}Lux, old: {result.Old?.VisibleLight?.Lux:N2}Lux"),
+                handler: result => Resolver.Log.Info($"Observer: filter satisifed: {result.New.VisibleLight?.Lux:N2}Lux, old: {result.Old?.VisibleLight?.Lux:N2}Lux"),
                 // only notify if the visible light changes by 100 lux (put your hand over the sensor to trigger)
                 filter: result => {
                     if (result.Old is { } old) { //c# 8 pattern match syntax. checks for !null and assigns var.
@@ -35,10 +35,10 @@ namespace Sensors.Light.Tsl2591_Sample
 
             // classical .NET events can also be used:
             sensor.Updated += (sender, result) => {
-                Console.WriteLine($"  Full Spectrum Light: {result.New.FullSpectrum?.Lux:N2}Lux");
-                Console.WriteLine($"  Infrared Light: {result.New.Infrared?.Lux:N2}Lux");
-                Console.WriteLine($"  Visible Light: {result.New.VisibleLight?.Lux:N2}Lux");
-                Console.WriteLine($"  Integrated Light: {result.New.Integrated?.Lux:N2}Lux");
+                Resolver.Log.Info($"  Full Spectrum Light: {result.New.FullSpectrum?.Lux:N2}Lux");
+                Resolver.Log.Info($"  Infrared Light: {result.New.Infrared?.Lux:N2}Lux");
+                Resolver.Log.Info($"  Visible Light: {result.New.VisibleLight?.Lux:N2}Lux");
+                Resolver.Log.Info($"  Integrated Light: {result.New.Integrated?.Lux:N2}Lux");
             };
 
             return Task.CompletedTask;
@@ -47,11 +47,11 @@ namespace Sensors.Light.Tsl2591_Sample
         public override async Task Run()
         {
             var result = await sensor.Read();
-            Console.WriteLine("Initial Readings:");
-            Console.WriteLine($"  Full Spectrum Light: {result.FullSpectrum?.Lux:N2}Lux");
-            Console.WriteLine($"  Infrared Light: {result.Infrared?.Lux:N2}Lux");
-            Console.WriteLine($"  Visible Light: {result.VisibleLight?.Lux:N2}Lux");
-            Console.WriteLine($"  Integrated Light: {result.Integrated?.Lux:N2}Lux");
+            Resolver.Log.Info("Initial Readings:");
+            Resolver.Log.Info($"  Full Spectrum Light: {result.FullSpectrum?.Lux:N2}Lux");
+            Resolver.Log.Info($"  Infrared Light: {result.Infrared?.Lux:N2}Lux");
+            Resolver.Log.Info($"  Visible Light: {result.VisibleLight?.Lux:N2}Lux");
+            Resolver.Log.Info($"  Integrated Light: {result.Integrated?.Lux:N2}Lux");
 
             sensor.StartUpdating(TimeSpan.FromSeconds(1));
         }

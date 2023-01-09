@@ -17,12 +17,12 @@ namespace Leds.Apa102_Display_Sample
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initialize...");
+            Resolver.Log.Info("Initialize...");
 
             display = new Apa102(Device.CreateSpiBus(Apa102.DefaultSpiBusSpeed), 32, 8, Apa102.PixelOrder.BGR);
             canvas = new MicroGraphics(display);
 
-            Console.WriteLine("Hardware intitialized.");
+            Resolver.Log.Info("Hardware intitialized.");
 
             return base.Initialize();
         }

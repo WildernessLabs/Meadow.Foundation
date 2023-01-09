@@ -28,9 +28,9 @@ namespace MeadowApp
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initialize...");
+            Resolver.Log.Info("Initialize...");
 
-            Console.WriteLine("Create Display with SPI...");
+            Resolver.Log.Info("Create Display with SPI...");
 
             var config = new SpiClockConfiguration(Ssd1309.DefaultSpiBusSpeed, Ssd1309.DefaultSpiClockMode);
 
@@ -45,7 +45,7 @@ namespace MeadowApp
                 resetPin: Device.Pins.D00
             );
 
-            Console.WriteLine("Create MicroGraphics...");
+            Resolver.Log.Info("Create MicroGraphics...");
 
             graphics = new MicroGraphics(ssd1309)
             {
@@ -58,7 +58,7 @@ namespace MeadowApp
 
             CreateMenu(graphics);
 
-            Console.WriteLine("Create buttons...");
+            Resolver.Log.Info("Create buttons...");
 
             up = new PushButton(Device, Device.Pins.D09, ResistorMode.InternalPullDown);
             up.Clicked += Up_Clicked;
@@ -84,7 +84,7 @@ namespace MeadowApp
 
         private void Right_Clicked(object sender, EventArgs e)
         {
-            Console.WriteLine("Right_Clicked");
+            Resolver.Log.Info("Right_Clicked");
             if (menu.IsEnabled)
             {
                 menu.Select();
@@ -93,7 +93,7 @@ namespace MeadowApp
 
         private void Left_Clicked(object sender, EventArgs e)
         {
-            Console.WriteLine("Left_Clicked");
+            Resolver.Log.Info("Left_Clicked");
             if (menu.IsEnabled == false)
             {
                 playGame = false;
@@ -111,7 +111,7 @@ namespace MeadowApp
         bool playGame = false;
         async Task StartGame(string command)
         {
-            Console.WriteLine($"******** {command}");
+            Resolver.Log.Info($"******** {command}");
 
             playGame = true;
             int count = 0;
@@ -137,7 +137,7 @@ namespace MeadowApp
 
         void EnableMenu()
         {
-            Console.WriteLine("Enable menu...");
+            Resolver.Log.Info("Enable menu...");
 
             menu?.Enable();
         }
@@ -149,13 +149,13 @@ namespace MeadowApp
 
         void CreateMenu(ITextDisplay display)
         {
-            Console.WriteLine("Load menu data...");
+            Resolver.Log.Info("Load menu data...");
 
             var menuData = LoadResource("menu.json");
 
-            Console.WriteLine($"Data length: {menuData.Length}...");
+            Resolver.Log.Info($"Data length: {menuData.Length}...");
 
-            Console.WriteLine("Create menu...");
+            Resolver.Log.Info("Create menu...");
 
             menu = new Menu(display, menuData, false);
 
@@ -164,7 +164,7 @@ namespace MeadowApp
 
         private void Menu_Selected(object sender, MenuSelectedEventArgs e)
         {
-            Console.WriteLine($"******** Selected: {e.Command}");
+            Resolver.Log.Info($"******** Selected: {e.Command}");
 
             DisableMenu();
 

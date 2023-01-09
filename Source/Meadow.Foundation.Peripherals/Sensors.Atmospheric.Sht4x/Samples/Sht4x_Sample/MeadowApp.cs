@@ -14,14 +14,14 @@ namespace BasicSensors.Atmospheric.Sht4x_Sample
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initializing...");
+            Resolver.Log.Info("Initializing...");
 
             sensor = new Sht4x(Device.CreateI2cBus());
 
             var consumer = Sht4x.CreateObserver(
                 handler: result =>
                 {
-                    Console.WriteLine($"Observer: Temp changed by threshold; new temp: {result.New.Temperature?.Celsius:N2}C, old: {result.Old?.Temperature?.Celsius:N2}C");
+                    Resolver.Log.Info($"Observer: Temp changed by threshold; new temp: {result.New.Temperature?.Celsius:N2}C, old: {result.Old?.Temperature?.Celsius:N2}C");
                 },
                 filter: result =>
                 {
@@ -41,8 +41,8 @@ namespace BasicSensors.Atmospheric.Sht4x_Sample
 
             sensor.Updated += (sender, result) =>
             {
-                Console.WriteLine($"  Temperature: {result.New.Temperature?.Celsius:N2}C");
-                Console.WriteLine($"  Relative Humidity: {result.New.Humidity:N2}%");
+                Resolver.Log.Info($"  Temperature: {result.New.Temperature?.Celsius:N2}C");
+                Resolver.Log.Info($"  Relative Humidity: {result.New.Humidity:N2}%");
             };
 
             return Task.CompletedTask;
@@ -51,9 +51,9 @@ namespace BasicSensors.Atmospheric.Sht4x_Sample
         public override async Task Run()
         {
             var conditions = await sensor.Read();
-            Console.WriteLine("Initial Readings:");
-            Console.WriteLine($"  Temperature: {conditions.Temperature?.Celsius:N2}C");
-            Console.WriteLine($"  Relative Humidity: {conditions.Humidity?.Percent:N2}%");
+            Resolver.Log.Info("Initial Readings:");
+            Resolver.Log.Info($"  Temperature: {conditions.Temperature?.Celsius:N2}C");
+            Resolver.Log.Info($"  Relative Humidity: {conditions.Humidity?.Percent:N2}%");
 
             sensor.StartUpdating(TimeSpan.FromSeconds(1));
         }

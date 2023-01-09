@@ -37,7 +37,7 @@ namespace Displays.Tft.ST7789_Sample
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initializing ...");
+            Resolver.Log.Info("Initializing ...");
 
             var config = new SpiClockConfiguration(new Frequency(48000, Frequency.UnitType.Kilohertz), SpiClockConfiguration.Mode.Mode3);
             var spiBus = Device.CreateSpiBus(Device.Pins.SCK, Device.Pins.MOSI, Device.Pins.MISO, config);
@@ -134,7 +134,7 @@ namespace Displays.Tft.ST7789_Sample
                 Thread.Sleep(sleepDuration);
 
                 stopwatch.Stop();
-                Console.WriteLine($"Total time: {stopwatch.ElapsedMilliseconds}ms");
+                Resolver.Log.Info($"Total time: {stopwatch.ElapsedMilliseconds}ms");
             }
         }
 
@@ -162,8 +162,8 @@ namespace Displays.Tft.ST7789_Sample
 
             sw.Stop();
 
-            Console.WriteLine($"Elapsed: {sw.Elapsed}s");
-            Console.WriteLine($"fps: {10.0/sw.Elapsed.TotalSeconds}");
+            Resolver.Log.Info($"Elapsed: {sw.Elapsed}s");
+            Resolver.Log.Info($"fps: {10.0/sw.Elapsed.TotalSeconds}");
 
             Thread.Sleep(1000);
         }
@@ -296,7 +296,7 @@ namespace Displays.Tft.ST7789_Sample
 
         void LineTest()
         {
-            Console.WriteLine("Horizonal lines");
+            Resolver.Log.Info("Horizonal lines");
 
             graphics.Clear();
 
@@ -309,7 +309,7 @@ namespace Displays.Tft.ST7789_Sample
             Thread.Sleep(1500);
 
             graphics.Clear();
-            Console.WriteLine("Horizonal lines (negative)");
+            Resolver.Log.Info("Horizonal lines (negative)");
             for (int i = 1; i < 10; i++)
             {
                 graphics.Stroke = i;
@@ -319,7 +319,7 @@ namespace Displays.Tft.ST7789_Sample
             Thread.Sleep(1500);
             graphics.Clear();
 
-            Console.WriteLine("Vertical lines");
+            Resolver.Log.Info("Vertical lines");
 
             graphics.Clear();
 
@@ -332,7 +332,7 @@ namespace Displays.Tft.ST7789_Sample
             Thread.Sleep(1500);
             graphics.Clear();
 
-            Console.WriteLine("Vertical lines (negative)");
+            Resolver.Log.Info("Vertical lines (negative)");
             for (int i = 1; i < 10; i++)
             {
                 graphics.Stroke = i;
@@ -533,7 +533,7 @@ namespace Displays.Tft.ST7789_Sample
 
             graphics.Show();
 
-            Console.WriteLine("Show complete");
+            Resolver.Log.Info("Show complete");
         }
     }
 }

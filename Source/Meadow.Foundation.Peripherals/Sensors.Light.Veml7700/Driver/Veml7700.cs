@@ -82,7 +82,7 @@ namespace Meadow.Foundation.Sensors.Light
                 {
                     _outOfRange = false;
 
-                    // Console.WriteLine($"{DataSource} DATA A: 0x{data:x4}");
+                    // Resolver.Log.Info($"{DataSource} DATA A: 0x{data:x4}");
 
                     if (data > DATA_CEILING)
                     { // Too bright!
@@ -246,7 +246,7 @@ namespace Meadow.Foundation.Sensors.Light
             WriteRegister(Registers.AlsConf0, cfg);
             config = cfg;
 
-            // Console.WriteLine($"Gain is {gain}");
+            // Resolver.Log.Info($"Gain is {gain}");
 
             await Task.Delay(5);
         }
@@ -283,7 +283,7 @@ namespace Meadow.Foundation.Sensors.Light
             WriteRegister(Registers.AlsConf0, cfg);
             config = cfg;
 
-            // Console.WriteLine($"Integration Time is {it}");
+            // Resolver.Log.Info($"Integration Time is {it}");
 
             await Task.Delay(5);
         }

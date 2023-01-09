@@ -14,7 +14,7 @@ namespace MaxBotix_Sample
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initialize...");
+            Resolver.Log.Info("Initialize...");
 
             //Analog
             // maxBotix = new MaxBotix(Device, Device.Pins.A00, MaxBotix.SensorType.HR10Meter);
@@ -28,7 +28,7 @@ namespace MaxBotix_Sample
             var consumer = MaxBotix.CreateObserver(
                 handler: result =>
                 {
-                    Console.WriteLine($"Observer: Distance changed by threshold; new distance: {result.New.Centimeters:N2}cm, old: {result.Old?.Centimeters:N2}cm");
+                    Resolver.Log.Info($"Observer: Distance changed by threshold; new distance: {result.New.Centimeters:N2}cm, old: {result.Old?.Centimeters:N2}cm");
                 },
                 filter: result =>
                 {
@@ -49,14 +49,14 @@ namespace MaxBotix_Sample
         public override async Task Run()
         {
             var distance = await maxBotix.Read();
-            Console.WriteLine($"Distance is: {distance.Centimeters}cm");
+            Resolver.Log.Info($"Distance is: {distance.Centimeters}cm");
 
             maxBotix.StartUpdating(TimeSpan.FromSeconds(1));
         }
 
         private void MaxBotix_DistanceUpdated(object sender, IChangeResult<Length> e)
         {
-            Console.WriteLine($"Length: {e.New.Centimeters}cm");
+            Resolver.Log.Info($"Length: {e.New.Centimeters}cm");
         }
     }
 }

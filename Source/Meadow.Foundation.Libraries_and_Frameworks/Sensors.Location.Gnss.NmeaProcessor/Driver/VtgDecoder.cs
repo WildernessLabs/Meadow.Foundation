@@ -35,7 +35,7 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
         /// <param name="sentence">String array of the message components for a VTG message.</param>
         public void Process(NmeaSentence sentence)
         {
-            //Console.WriteLine($"VTGDecoder.Process");
+            //Resolver.Log.Info($"VTGDecoder.Process");
 
             var course = new CourseOverGround();
 
@@ -57,7 +57,7 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
             if (decimal.TryParse(sentence.DataElements[6], out kph)) {
                 course.Kph = kph;
             }
-            //Console.WriteLine($"VTG process finished: trueHeading:{course.TrueHeading}, magneticHeading:{course.MagneticHeading}, knots:{course.Knots}, kph:{course.Kph}");
+            //Resolver.Log.Info($"VTG process finished: trueHeading:{course.TrueHeading}, magneticHeading:{course.MagneticHeading}, knots:{course.Knots}, kph:{course.Kph}");
             CourseAndVelocityReceived(this, course);
         }
 
