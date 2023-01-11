@@ -88,7 +88,7 @@ namespace Meadow.Foundation.Sensors.Gnss
         {
             serialPort.MessageReceived += SerialPort_MessageReceived;
             InitDecoders();
-            Console.WriteLine("Finish Mt3339 initialization.");
+            Resolver.Log.Info("Finish Mt3339 initialization.");
         }
 
         /// <summary>

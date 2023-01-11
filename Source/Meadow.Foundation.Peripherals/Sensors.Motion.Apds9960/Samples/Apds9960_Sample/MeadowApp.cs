@@ -14,7 +14,7 @@ namespace BasicSensors.Motion.Apds9960_Sample
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initialize...");
+            Resolver.Log.Info("Initialize...");
 
             // configure our sensor on the I2C Bus
             var i2c = Device.CreateI2cBus();
@@ -23,8 +23,8 @@ namespace BasicSensors.Motion.Apds9960_Sample
             // classical .NET events can also be used:
             sensor.Updated += (sender, result) =>
             {
-                Console.WriteLine($"  Ambient Light: {result.New.AmbientLight?.Lux:N2}Lux");
-                Console.WriteLine($"  Color: {result.New.Color:N2}Lux");
+                Resolver.Log.Info($"  Ambient Light: {result.New.AmbientLight?.Lux:N2}Lux");
+                Resolver.Log.Info($"  Color: {result.New.Color:N2}Lux");
             };
 
             sensor.EnableLightSensor(false);
@@ -35,9 +35,9 @@ namespace BasicSensors.Motion.Apds9960_Sample
         public async override Task Run()
         {
             var (Color, AmbientLight) = await sensor.Read();
-            Console.WriteLine("Initial Readings:");
-            Console.WriteLine($"  Ambient Light: {AmbientLight?.Lux:N2}Lux");
-            Console.WriteLine($"  Color: {Color:N2}Lux");
+            Resolver.Log.Info("Initial Readings:");
+            Resolver.Log.Info($"  Ambient Light: {AmbientLight?.Lux:N2}Lux");
+            Resolver.Log.Info($"  Color: {Color:N2}Lux");
 
             sensor.StartUpdating(TimeSpan.FromSeconds(1));
         }

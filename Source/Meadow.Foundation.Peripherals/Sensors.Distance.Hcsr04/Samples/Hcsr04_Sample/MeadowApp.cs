@@ -17,7 +17,7 @@ namespace Sensors.Distance.HCSR04_Sample
 
         public override Task Initialize()
         {
-            Console.WriteLine($"Hello HC-SR04 sample");
+            Resolver.Log.Info($"Hello HC-SR04 sample");
 
             hCSR04 = new Hcsr04(
                 device: Device, 
@@ -40,7 +40,7 @@ namespace Sensors.Distance.HCSR04_Sample
 
         private void HCSR04_DistanceUpdated(object sender, IChangeResult<Meadow.Units.Length> e)
         {
-            Console.WriteLine($"Distance (cm): {e.New.Centimeters}");
+            Resolver.Log.Info($"Distance (cm): {e.New.Centimeters}");
         }
 
         //<!=SNOP=>

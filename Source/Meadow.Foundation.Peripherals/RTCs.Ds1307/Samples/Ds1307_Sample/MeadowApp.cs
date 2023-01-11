@@ -14,7 +14,7 @@ namespace RTCs.DS1307_Sample
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initializing...");
+            Resolver.Log.Info("Initializing...");
 
             rtc = new Ds1307(Device.CreateI2cBus());
 
@@ -26,23 +26,23 @@ namespace RTCs.DS1307_Sample
             var dateTime = new DateTime();
             var running = rtc.IsRunning;
 
-            Console.WriteLine($"{(running ? "is running" : "is not running")}");
+            Resolver.Log.Info($"{(running ? "is running" : "is not running")}");
 
             if (!running)
             {
-                Console.WriteLine(" Starting RTC...");
+                Resolver.Log.Info(" Starting RTC...");
                 rtc.IsRunning = true;
             }
 
             dateTime = rtc.GetTime();
-            Console.WriteLine($" RTC current time is: {dateTime.ToString("MM/dd/yy HH:mm:ss")}");
+            Resolver.Log.Info($" RTC current time is: {dateTime.ToString("MM/dd/yy HH:mm:ss")}");
 
-            Console.WriteLine($" Setting RTC to : {dateTime.ToString("MM/dd/yy HH:mm:ss")}");
+            Resolver.Log.Info($" Setting RTC to : {dateTime.ToString("MM/dd/yy HH:mm:ss")}");
             dateTime = new DateTime(2030, 2, 15);
             rtc.SetTime(dateTime);
 
             dateTime = rtc.GetTime();
-            Console.WriteLine($" RTC current time is: {dateTime.ToString("MM/dd/yy HH:mm:ss")}");
+            Resolver.Log.Info($" RTC current time is: {dateTime.ToString("MM/dd/yy HH:mm:ss")}");
 
             var rand = new Random();
 
@@ -53,11 +53,11 @@ namespace RTCs.DS1307_Sample
                 data[i] = (byte)rand.Next(256);
             }
 
-            Console.WriteLine($" Writing to RTC RAM   : {BitConverter.ToString(data)}");
+            Resolver.Log.Info($" Writing to RTC RAM   : {BitConverter.ToString(data)}");
             rtc.WriteRAM(0, data);
-            Console.Write($" Reading from RTC RAM : ");
+            Resolver.Log.Info($" Reading from RTC RAM : ");
             data = rtc.ReadRAM(0, 56);
-            Console.WriteLine(BitConverter.ToString(data));
+            Resolver.Log.Info(BitConverter.ToString(data));
 
             return base.Run();
         }

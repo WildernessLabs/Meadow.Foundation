@@ -14,7 +14,7 @@ namespace Sensors.Atmospheric.BME280_Sample
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initializing...");
+            Resolver.Log.Info("Initializing...");
 
             //CreateSpiSensor();
             CreateI2CSensor();
@@ -22,7 +22,7 @@ namespace Sensors.Atmospheric.BME280_Sample
             var consumer = Bme280.CreateObserver(
                 handler: result =>
                 {
-                    Console.WriteLine($"Observer: Temp changed by threshold; new temp: {result.New.Temperature?.Celsius:N2}C, old: {result.Old?.Temperature?.Celsius:N2}C");
+                    Resolver.Log.Info($"Observer: Temp changed by threshold; new temp: {result.New.Temperature?.Celsius:N2}C, old: {result.Old?.Temperature?.Celsius:N2}C");
                 },
                 filter: result =>
                 {
@@ -41,9 +41,9 @@ namespace Sensors.Atmospheric.BME280_Sample
             sensor.Subscribe(consumer);
 
             sensor.Updated += (sender, result) => {
-                Console.WriteLine($"  Temperature: {result.New.Temperature?.Celsius:N2}C");
-                Console.WriteLine($"  Relative Humidity: {result.New.Humidity:N2}%");
-                Console.WriteLine($"  Pressure: {result.New.Pressure?.Millibar:N2}mbar ({result.New.Pressure?.Pascal:N2}Pa)");
+                Resolver.Log.Info($"  Temperature: {result.New.Temperature?.Celsius:N2}C");
+                Resolver.Log.Info($"  Relative Humidity: {result.New.Humidity:N2}%");
+                Resolver.Log.Info($"  Pressure: {result.New.Pressure?.Millibar:N2}mbar ({result.New.Pressure?.Pascal:N2}Pa)");
             };
 
             return Task.CompletedTask;
@@ -52,17 +52,17 @@ namespace Sensors.Atmospheric.BME280_Sample
         public override async Task Run()
         {
             var conditions = await sensor.Read();
-            Console.WriteLine("Initial Readings:");
-            Console.WriteLine($"  Temperature: {conditions.Temperature?.Celsius:N2}C");
-            Console.WriteLine($"  Pressure: {conditions.Pressure?.Bar:N2}hPa");
-            Console.WriteLine($"  Relative Humidity: {conditions.Humidity?.Percent:N2}%");
+            Resolver.Log.Info("Initial Readings:");
+            Resolver.Log.Info($"  Temperature: {conditions.Temperature?.Celsius:N2}C");
+            Resolver.Log.Info($"  Pressure: {conditions.Pressure?.Bar:N2}hPa");
+            Resolver.Log.Info($"  Relative Humidity: {conditions.Humidity?.Percent:N2}%");
 
             sensor.StartUpdating(TimeSpan.FromSeconds(1));
         }
 
         void CreateSpiSensor()
         {
-            Console.WriteLine("Create BME280 sensor with SPI...");
+            Resolver.Log.Info("Create BME280 sensor with SPI...");
 
             var spi = Device.CreateSpiBus();
             sensor = new Bme280(spi, Device.CreateDigitalOutputPort(Device.Pins.D00));
@@ -70,7 +70,7 @@ namespace Sensors.Atmospheric.BME280_Sample
 
         void CreateI2CSensor()
         {
-            Console.WriteLine("Create BME280 sensor with I2C...");
+            Resolver.Log.Info("Create BME280 sensor with I2C...");
 
             var i2c = Device.CreateI2cBus();
             sensor = new Bme280(i2c, (byte)Bme280.Addresses.Default); // SDA pulled up

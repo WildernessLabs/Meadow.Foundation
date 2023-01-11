@@ -14,7 +14,7 @@ namespace SnesClassicController_Sample
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initialize...");
+            Resolver.Log.Info("Initialize...");
         
             var i2cBus = Device.CreateI2cBus(SnesClassicController.DefaultSpeed);
 
@@ -24,21 +24,21 @@ namespace SnesClassicController_Sample
             snesController.Update();
 
             //check the state of a button
-            Console.WriteLine("X Button is " + (snesController.XButton.State == true ? "pressed" : "not pressed"));
+            Resolver.Log.Info("X Button is " + (snesController.XButton.State == true ? "pressed" : "not pressed"));
 
             //.NET events
-            snesController.AButton.Clicked += (s, e) => Console.WriteLine("A button clicked");
-            snesController.BButton.Clicked += (s, e) => Console.WriteLine("B button clicked");
-            snesController.XButton.Clicked += (s, e) => Console.WriteLine("X button clicked");
-            snesController.YButton.Clicked += (s, e) => Console.WriteLine("Y button clicked");
+            snesController.AButton.Clicked += (s, e) => Resolver.Log.Info("A button clicked");
+            snesController.BButton.Clicked += (s, e) => Resolver.Log.Info("B button clicked");
+            snesController.XButton.Clicked += (s, e) => Resolver.Log.Info("X button clicked");
+            snesController.YButton.Clicked += (s, e) => Resolver.Log.Info("Y button clicked");
 
-            snesController.LButton.Clicked += (s, e) => Console.WriteLine("L button clicked");
-            snesController.RButton.Clicked += (s, e) => Console.WriteLine("R button clicked");
+            snesController.LButton.Clicked += (s, e) => Resolver.Log.Info("L button clicked");
+            snesController.RButton.Clicked += (s, e) => Resolver.Log.Info("R button clicked");
 
-            snesController.StartButton.Clicked += (s, e) => Console.WriteLine("+ button clicked");
-            snesController.SelectButton.Clicked += (s, e) => Console.WriteLine("- button clicked");
+            snesController.StartButton.Clicked += (s, e) => Resolver.Log.Info("+ button clicked");
+            snesController.SelectButton.Clicked += (s, e) => Resolver.Log.Info("- button clicked");
 
-            snesController.DPad.Updated += (s, e) => Console.WriteLine($"DPad {e.New}");
+            snesController.DPad.Updated += (s, e) => Resolver.Log.Info($"DPad {e.New}");
 
             return Task.CompletedTask;
         }

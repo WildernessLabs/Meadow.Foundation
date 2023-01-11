@@ -20,7 +20,7 @@ namespace Displays.TftSpi.Ili9341_Jpg_Sample
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initializing...");
+            Resolver.Log.Info("Initializing...");
 
             var spiBus = Device.CreateSpiBus(Ili9341.DefaultSpiBusSpeed);
 
@@ -42,18 +42,18 @@ namespace Displays.TftSpi.Ili9341_Jpg_Sample
 
         void JpegTest()
         {
-            Console.WriteLine("Jpeg Test");
+            Resolver.Log.Info("Jpeg Test");
 
             var jpgData = LoadResource("meadow.jpg");
 
-            Console.WriteLine($"Loaded {jpgData.Length} bytes, decoding jpeg ...");
+            Resolver.Log.Info($"Loaded {jpgData.Length} bytes, decoding jpeg ...");
 
             var decoder = new JpegDecoder();
             var jpg = decoder.DecodeJpeg(jpgData);
 
-            Console.WriteLine($"Jpeg decoded is {jpg.Length} bytes");
-            Console.WriteLine($"Width {decoder.Width}");
-            Console.WriteLine($"Height {decoder.Height}");
+            Resolver.Log.Info($"Jpeg decoded is {jpg.Length} bytes");
+            Resolver.Log.Info($"Width {decoder.Width}");
+            Resolver.Log.Info($"Height {decoder.Height}");
 
             var jpgImage = new BufferRgb888(decoder.Width, decoder.Height, jpg);
 
@@ -65,7 +65,7 @@ namespace Displays.TftSpi.Ili9341_Jpg_Sample
 
             display.WriteBuffer(x, y, jpgImage);
 
-            Console.WriteLine("Jpeg show");
+            Resolver.Log.Info("Jpeg show");
 
             display.Show();
         }
@@ -189,7 +189,7 @@ namespace Displays.TftSpi.Ili9341_Jpg_Sample
             //force a collection
             GC.Collect();
 
-            Console.WriteLine("Draw");
+            Resolver.Log.Info("Draw");
 
             for (int i = 0; i < 30; i++)
             {

@@ -42,7 +42,7 @@ namespace Meadow.Foundation.Motors
             get => power;
             set {
                 //if (!armed) {
-                //    Console.WriteLine("not armed.");
+                //    Resolver.Log.Info("not armed.");
                 //    return;
                 //}
                 if(value < 0) { value = 0; }
@@ -124,7 +124,7 @@ namespace Meadow.Foundation.Motors
         /// <returns>A pulse duration in milliseconds for the given power.</returns>
         protected float CalculatePulseDuration(float power)
         {
-            //Console.WriteLine($"CalculatePulseDuration(power:{power:n1}) = {power * 1000} + 1000f");
+            //Resolver.Log.Info($"CalculatePulseDuration(power:{power:n1}) = {power * 1000} + 1000f");
             // power band is between 1ms -> 2ms pulse durations.
             // so 10% power = 1.1ms, 100% power = 2ms.
             return (power) + 1f;

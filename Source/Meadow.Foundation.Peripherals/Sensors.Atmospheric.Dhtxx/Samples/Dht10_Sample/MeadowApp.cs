@@ -13,14 +13,14 @@ namespace Dht10_Sample
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initialize...");
+            Resolver.Log.Info("Initialize...");
 
             dht10 = new Dht10(Device.CreateI2cBus());
 
             var consumer = Dht10.CreateObserver(
                 handler: result =>
                 {
-                    Console.WriteLine($"Observer: Temp changed by threshold; new temp: {result.New.Temperature?.Celsius:N2}C, old: {result.Old?.Temperature?.Celsius:N2}C");
+                    Resolver.Log.Info($"Observer: Temp changed by threshold; new temp: {result.New.Temperature?.Celsius:N2}C, old: {result.Old?.Temperature?.Celsius:N2}C");
                 },
                 filter: result =>
                 {
@@ -40,8 +40,8 @@ namespace Dht10_Sample
 
             dht10.Updated += (object sender, IChangeResult<(Temperature? Temperature, RelativeHumidity? Humidity)> e) =>
             {
-                Console.WriteLine($"  Temperature: {e.New.Temperature?.Celsius:N2}C");
-                Console.WriteLine($"  Relative Humidity: {e.New.Humidity:N2}%");
+                Resolver.Log.Info($"  Temperature: {e.New.Temperature?.Celsius:N2}C");
+                Resolver.Log.Info($"  Relative Humidity: {e.New.Humidity:N2}%");
             };
 
             return Task.CompletedTask;
@@ -55,9 +55,9 @@ namespace Dht10_Sample
             }
 
             var conditions = await dht10.Read();
-            Console.WriteLine("Initial Readings:");
-            Console.WriteLine($"  Temperature: {conditions.Temperature?.Celsius:N2}C");
-            Console.WriteLine($"  Relative Humidity: {conditions.Humidity?.Percent:N2}%");
+            Resolver.Log.Info("Initial Readings:");
+            Resolver.Log.Info($"  Temperature: {conditions.Temperature?.Celsius:N2}C");
+            Resolver.Log.Info($"  Relative Humidity: {conditions.Humidity?.Percent:N2}%");
 
             dht10.StartUpdating(TimeSpan.FromSeconds(1));
         }

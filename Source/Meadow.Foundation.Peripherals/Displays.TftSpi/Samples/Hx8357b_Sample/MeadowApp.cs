@@ -20,12 +20,12 @@ namespace Displays.Tft.Hx8357b_Sample
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initializing ...");
+            Resolver.Log.Info("Initializing ...");
 
             var config = new SpiClockConfiguration(new Frequency(12000, Frequency.UnitType.Kilohertz), SpiClockConfiguration.Mode.Mode0);
             var spiBus = Device.CreateSpiBus(Device.Pins.SCK, Device.Pins.MOSI, Device.Pins.MISO, config);
 
-            Console.WriteLine("Create display driver instance");
+            Resolver.Log.Info("Create display driver instance");
 
             var display = new Hx8357b(
                 device: Device,
@@ -111,7 +111,7 @@ namespace Displays.Tft.Hx8357b_Sample
 
             sw.Stop();
 
-            Console.WriteLine("Elapsed={0}", sw.Elapsed);
+            Resolver.Log.Info($"Elapsed={sw.Elapsed}");
         }
 
         void InvertTest()
@@ -151,7 +151,7 @@ namespace Displays.Tft.Hx8357b_Sample
 
         void OverviewScreen()
         {
-            Console.WriteLine("Show overview");
+            Resolver.Log.Info("Show overview");
 
             graphics.CurrentFont = new Font12x16();
             graphics.Clear();
@@ -174,7 +174,7 @@ namespace Displays.Tft.Hx8357b_Sample
 
             graphics.Show();
 
-            Console.WriteLine("Show overview complete");
+            Resolver.Log.Info("Show overview complete");
         }
 
         void PolarLineTest()
@@ -364,7 +364,7 @@ namespace Displays.Tft.Hx8357b_Sample
 
             graphics.Show();
 
-            Console.WriteLine("Show complete");
+            Resolver.Log.Info("Show complete");
         }
     }
 }

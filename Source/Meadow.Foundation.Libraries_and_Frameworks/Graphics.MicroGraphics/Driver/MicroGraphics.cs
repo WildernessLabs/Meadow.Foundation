@@ -1,6 +1,7 @@
 ﻿using Meadow.Foundation.Graphics.Buffers;
 using Meadow.Peripherals.Displays;
 using System;
+using System.Threading.Tasks;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace Meadow.Foundation.Graphics
@@ -76,6 +77,21 @@ namespace Meadow.Foundation.Graphics
         /// Text display configuration for use with text display menu
         /// </summary>
         public TextDisplayConfig DisplayConfig { get; private set; } = new TextDisplayConfig();
+
+        /// <summary>
+        /// Optional enforced deplay between updates when calling ShowBuffered
+        /// </summary>
+        public TimeSpan DelayBetweenFrames { get; set; } = TimeSpan.Zero;
+
+        object _lock = new object();
+
+        bool isUpdating = false;
+        bool isUpdateRequested = false;
+
+        /// <summary>
+        /// Time of last display update when callng ShowBuffered
+        /// </summary>
+        DateTime lastUpdated;
 
         /// <summary>
         /// Create a new MicroGraphics instance from a display perihperal driver instance
@@ -1225,9 +1241,65 @@ namespace Meadow.Foundation.Graphics
         }
 
         /// <summary>
-        /// Show changes on the display
+        /// Update the display target from the buffer (thread safe)
         /// </summary>
         public virtual void Show()
+        {
+            lock (_lock)
+            {
+                if (isUpdating)
+                {
+                    return;
+                }
+
+                isUpdating = true;
+            }
+
+            display.Show();
+
+            isUpdating = false;
+        }
+
+        /// <summary>
+        /// Update the display target from the buffer (thread safe) while respecting MinimumTimeBetweenUpdates
+        /// </summary>
+        public virtual async Task ShowBuffered()
+        {
+            lock (_lock)
+            {
+                if (isUpdating)
+                {
+                    isUpdateRequested = true;
+                    return;
+                }
+            }
+
+            isUpdating = true;
+
+            var timeSinceLastUpdate = DateTime.Now - lastUpdated;
+
+            if (timeSinceLastUpdate < DelayBetweenFrames)
+            {
+                await Task.Delay(DelayBetweenFrames - timeSinceLastUpdate);
+            }
+
+            await Task.Run(()=> display.Show());
+            lastUpdated = DateTime.Now;
+
+            if (isUpdateRequested)
+            {
+                isUpdateRequested = false;
+                await Task.Delay(DelayBetweenFrames);
+                await ShowBuffered();
+            }
+
+            isUpdating = false;
+        }
+
+        /// <summary>
+        /// Update the display target from the buffer (not thread safe)
+        /// </summary>
+        public virtual void ShowUnsafe()
         {
             display.Show();
         }
@@ -1236,7 +1308,7 @@ namespace Meadow.Foundation.Graphics
         /// Update a region of the display
         /// Note: not all displays support partial updates
         /// </summary>
-        public virtual void Show(int left, int top, int right, int bottom)
+        public virtual void ShowUnsafe(int left, int top, int right, int bottom)
         {
             display.Show(left, top, right, bottom);
         }
@@ -1245,9 +1317,30 @@ namespace Meadow.Foundation.Graphics
         /// Update a region of the display
         /// Note: not all displays support partial updates
         /// </summary>
+        public virtual void Show(int left, int top, int right, int bottom)
+        {
+            lock (_lock)
+            {
+                if (isUpdating)
+                {
+                    return;
+                }
+
+                isUpdating = true;
+            }
+
+            display.Show(left, top, right, bottom);
+
+            isUpdating = false;
+        }
+
+        /// <summary>
+        /// Update a region of the display
+        /// Note: not all displays support partial updates
+        /// </summary>
         public virtual void Show(Rect rect)
         {
-            display.Show(rect.Left, rect.Top, rect.Right, rect.Bottom);
+            Show(rect.Left, rect.Top, rect.Right, rect.Bottom);
         }
 
         /// <summary>

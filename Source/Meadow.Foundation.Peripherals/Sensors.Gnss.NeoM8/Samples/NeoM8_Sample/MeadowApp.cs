@@ -15,51 +15,51 @@ namespace Sensors.Gnss.NeoM8_Sample
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initializing ...");
+            Resolver.Log.Info("Initializing ...");
 
             gps = new NeoM8(Device, Device.SerialPortNames.Com4, Device.Pins.D09, Device.Pins.D11);
 
             gps.GgaReceived += (object sender, GnssPositionInfo location) =>
             {
-                Console.WriteLine("*********************************************");
-                Console.WriteLine(location);
-                Console.WriteLine("*********************************************");
+                Resolver.Log.Info("*********************************************");
+                Resolver.Log.Info(location.ToString());
+                Resolver.Log.Info("*********************************************");
             };
             // GLL
             gps.GllReceived += (object sender, GnssPositionInfo location) =>
             {
-                Console.WriteLine("*********************************************");
-                Console.WriteLine(location);
-                Console.WriteLine("*********************************************");
+                Resolver.Log.Info("*********************************************");
+                Resolver.Log.Info(location.ToString());
+                Resolver.Log.Info("*********************************************");
             };
             // GSA
             gps.GsaReceived += (object sender, ActiveSatellites activeSatellites) =>
             {
-                Console.WriteLine("*********************************************");
-                Console.WriteLine(activeSatellites);
-                Console.WriteLine("*********************************************");
+                Resolver.Log.Info("*********************************************");
+                Resolver.Log.Info(activeSatellites.ToString());
+                Resolver.Log.Info("*********************************************");
             };
             // RMC (recommended minimum)
             gps.RmcReceived += (object sender, GnssPositionInfo positionCourseAndTime) =>
             {
-                Console.WriteLine("*********************************************");
-                Console.WriteLine(positionCourseAndTime);
-                Console.WriteLine("*********************************************");
+                Resolver.Log.Info("*********************************************");
+                Resolver.Log.Info(positionCourseAndTime.ToString());
+                Resolver.Log.Info("*********************************************");
 
             };
             // VTG (course made good)
             gps.VtgReceived += (object sender, CourseOverGround courseAndVelocity) =>
             {
-                Console.WriteLine("*********************************************");
-                Console.WriteLine($"{courseAndVelocity}");
-                Console.WriteLine("*********************************************");
+                Resolver.Log.Info("*********************************************");
+                Resolver.Log.Info($"{courseAndVelocity}");
+                Resolver.Log.Info("*********************************************");
             };
             // GSV (satellites in view)
             gps.GsvReceived += (object sender, SatellitesInView satellites) =>
             {
-                Console.WriteLine("*********************************************");
-                Console.WriteLine($"{satellites}");
-                Console.WriteLine("*********************************************");
+                Resolver.Log.Info("*********************************************");
+                Resolver.Log.Info($"{satellites}");
+                Resolver.Log.Info("*********************************************");
             };
 
             return Task.CompletedTask;

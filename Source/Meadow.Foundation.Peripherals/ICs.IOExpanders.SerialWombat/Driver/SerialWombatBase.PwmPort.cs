@@ -30,7 +30,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 IPwmChannelInfo channel)
                 : base(pin, channel, DefaultFrequency)
             {
-                Console.WriteLine($"+pwmPort: {channel}");
+                Resolver.Log.Info($"+pwmPort: {channel}");
                 _controller = controller;
                 Inverted = channel.InverseLogic;
                 Frequency = DefaultFrequency;

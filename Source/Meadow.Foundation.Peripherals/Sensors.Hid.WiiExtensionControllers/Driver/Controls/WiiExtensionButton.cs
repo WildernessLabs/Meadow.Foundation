@@ -60,7 +60,7 @@ namespace Meadow.Foundation.Sensors.Hid
                 }
                 else
                 {
-                //    Console.WriteLine($"{state} {State}");
+                //    Resolver.Log.Info($"{state} {State}");
 
                     RaiseClicked();
                 }

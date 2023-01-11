@@ -238,7 +238,7 @@ namespace Meadow.Foundation.Sensors.LoadCell
         /// </summary>
         public void SetCalibrationFactor(int factor, Mass knownValue)
         {
-            Console.WriteLine($"SetCalibrationFactor: knownValue.Grams: {knownValue.Grams:N1}");
+            Resolver.Log.Info($"SetCalibrationFactor: knownValue.Grams: {knownValue.Grams:N1}");
             _gramsPerAdcUnit = knownValue.Grams / (double)factor;
         }
 
@@ -297,7 +297,7 @@ namespace Meadow.Foundation.Sensors.LoadCell
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"NAU7802 event handler threw: {ex.Message}");
+                Resolver.Log.Info($"NAU7802 event handler threw: {ex.Message}");
                 throw;
             }
         }

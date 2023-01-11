@@ -98,7 +98,7 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         protected void Initialize()
         {
-            Console.WriteLine("Initialize");
+            Resolver.Log.Info("Initialize");
 
             dataCommandPort.State = CommandState;
 

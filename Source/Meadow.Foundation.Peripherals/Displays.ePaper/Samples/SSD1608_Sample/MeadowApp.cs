@@ -15,7 +15,7 @@ namespace Displays.ePaper.SSD1608_Sample
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initialize...");
+            Resolver.Log.Info("Initialize...");
 
             var display = new Ssd1608(device: Device,
                 spiBus: Device.CreateSpiBus(),

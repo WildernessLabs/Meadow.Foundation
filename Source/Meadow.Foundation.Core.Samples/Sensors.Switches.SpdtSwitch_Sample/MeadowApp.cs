@@ -15,15 +15,15 @@ namespace Sensors.Switches.SpdtSwitch_Sample
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initializing...");
+            Resolver.Log.Info("Initializing...");
 
             spdtSwitch = new SpdtSwitch(Device.CreateDigitalInputPort(Device.Pins.D15, InterruptMode.EdgeBoth, ResistorMode.InternalPullDown));
             spdtSwitch.Changed += (s, e) =>
             {
-                Console.WriteLine(spdtSwitch.IsOn ? "Switch is on" : "Switch is off");
+                Resolver.Log.Info(spdtSwitch.IsOn ? "Switch is on" : "Switch is off");
             };
 
-            Console.WriteLine("SpdtSwitch ready...");
+            Resolver.Log.Info("SpdtSwitch ready...");
 
             return Task.CompletedTask;
         }

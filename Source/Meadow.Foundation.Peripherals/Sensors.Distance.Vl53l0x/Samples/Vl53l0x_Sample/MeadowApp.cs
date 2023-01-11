@@ -17,7 +17,7 @@ namespace Sensors.Distance.Vl53l0x_Sample
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initializing hardware...");
+            Resolver.Log.Info("Initializing hardware...");
 
             var i2cBus = Device.CreateI2cBus(I2cBusSpeed.FastPlus);
             sensor = new Vl53l0x(Device, i2cBus, (byte)Vl53l0x.Addresses.Default);
@@ -40,11 +40,11 @@ namespace Sensors.Distance.Vl53l0x_Sample
 
             if (result.New < new Length(0, LU.Millimeters))
             { 
-                Console.WriteLine("out of range.");
+                Resolver.Log.Info("out of range.");
             }
             else 
             {
-                Console.WriteLine($"{result.New.Millimeters}mm / {result.New.Inches:n3}\"");
+                Resolver.Log.Info($"{result.New.Millimeters}mm / {result.New.Inches:n3}\"");
             }
         }
 
@@ -52,7 +52,7 @@ namespace Sensors.Distance.Vl53l0x_Sample
 
         void InitializeWithShutdownPin()
         {
-            Console.WriteLine("Initialize...");
+            Resolver.Log.Info("Initialize...");
             var i2cBus = Device.CreateI2cBus(I2cBusSpeed.FastPlus);
             sensor = new Vl53l0x(Device, i2cBus, Device.Pins.D05, 250);
         }

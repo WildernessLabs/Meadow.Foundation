@@ -17,12 +17,12 @@ namespace Displays.Tft.Ili9488_Sample
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initializing ...");
+            Resolver.Log.Info("Initializing ...");
 
             var config = new SpiClockConfiguration(new Frequency(12000, Frequency.UnitType.Kilohertz), SpiClockConfiguration.Mode.Mode0);
             var spiBus = Device.CreateSpiBus(Device.Pins.SCK, Device.Pins.MOSI, Device.Pins.MISO, config);
 
-            Console.WriteLine("Create display driver instance");
+            Resolver.Log.Info("Create display driver instance");
 
             var display = new Ili9488
             (
@@ -44,7 +44,7 @@ namespace Displays.Tft.Ili9488_Sample
 
         public override Task Run()
         {
-            Console.WriteLine("Run");
+            Resolver.Log.Info("Run");
 
             graphics.Clear();
 

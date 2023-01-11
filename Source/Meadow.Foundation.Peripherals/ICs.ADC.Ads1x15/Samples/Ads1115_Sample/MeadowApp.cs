@@ -14,7 +14,7 @@ namespace Ads1115_Sample
 
         public override async Task Initialize()
         {
-            Console.WriteLine("Initialize...");
+            Resolver.Log.Info("Initialize...");
 
             adc = new Ads1115(
                 Device.CreateI2cBus(Meadow.Hardware.I2cBusSpeed.FastPlus),
@@ -28,7 +28,7 @@ namespace Ads1115_Sample
             var observer = Ads1115.CreateObserver(
                 handler: result =>
                 {
-                    Console.WriteLine($"Observer: Voltage changed by threshold; new temp: {result.New.Volts:N2}C, old: {result.Old?.Volts:N2}C");
+                    Resolver.Log.Info($"Observer: Voltage changed by threshold; new temp: {result.New.Volts:N2}C, old: {result.Old?.Volts:N2}C");
                 },
                 filter: result =>
                 {
@@ -46,7 +46,7 @@ namespace Ads1115_Sample
 
             adc.Updated += (sender, result) => 
             {
-                Console.WriteLine($"  Voltage: {result.New.Volts:N2}V");
+                Resolver.Log.Info($"  Voltage: {result.New.Volts:N2}V");
             };
 
             await adc.Read();
@@ -76,7 +76,7 @@ namespace Ads1115_Sample
             var end = Environment.TickCount;
 
             var mean = sum / (double)totalSamples;
-            Console.WriteLine($"{totalSamples} reads in {end - start} ticks gave a raw mean of {mean:0.00}");
+            Resolver.Log.Info($"{totalSamples} reads in {end - start} ticks gave a raw mean of {mean:0.00}");
         }
 
         async Task TakeMeasurements()
@@ -88,11 +88,11 @@ namespace Ads1115_Sample
                 try
                 {
                     var value = await adc.Read();
-                    Console.WriteLine($"ADC Reading {++i}: {value.Volts}V");
+                    Resolver.Log.Info($"ADC Reading {++i}: {value.Volts}V");
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(ex.ToString());
+                    Resolver.Log.Error(ex.ToString());
                 }
                 await Task.Delay(5000);
             }

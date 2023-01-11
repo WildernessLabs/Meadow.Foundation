@@ -81,7 +81,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         {
             if (currentPage != GetPageForRegister(register))
             {
-                Console.WriteLine($"Switching page for register {register}");
+                Resolver.Log.Info($"Switching page for register {register}");
                 //swap the page
                 currentPage = (currentPage == SpiRegisterPage.Page0) ? SpiRegisterPage.Page1 : SpiRegisterPage.Page0;
                 //write the page to the status register

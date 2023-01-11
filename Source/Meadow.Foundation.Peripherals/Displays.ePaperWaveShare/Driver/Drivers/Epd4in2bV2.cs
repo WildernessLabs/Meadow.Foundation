@@ -69,7 +69,7 @@ namespace Meadow.Foundation.Displays.ePaper
         /// </summary>
         protected override void Reset()
         {
-            Console.WriteLine("Reset");
+            Resolver.Log.Info("Reset");
 
             resetPort.State = true;
             DelayMs(200);
@@ -247,7 +247,7 @@ namespace Meadow.Foundation.Displays.ePaper
 
         void DisplayFrame(byte[] blackBuffer, byte[] colorBuffer)
         {
-            Console.WriteLine($"Display frame - width {Width}, height {Height}");
+            Resolver.Log.Info($"Display frame - width {Width}, height {Height}");
 
             SendCommand(Command.DATA_START_TRANSMISSION_1);
             Thread.Sleep(2);

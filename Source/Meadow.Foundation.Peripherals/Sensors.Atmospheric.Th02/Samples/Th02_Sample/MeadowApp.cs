@@ -14,14 +14,14 @@ namespace Sensors.Atmospheric.Th02_Sample
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initializing...");
+            Resolver.Log.Info("Initializing...");
 
             sensor = new Th02(Device.CreateI2cBus());
 
             var consumer = Th02.CreateObserver(
                 handler: result =>
                 {
-                    Console.WriteLine($"Observer: Temp changed by threshold; new temp: {result.New.Temperature?.Celsius:N2}C, old: {result.Old?.Temperature?.Celsius:N2}C");
+                    Resolver.Log.Info($"Observer: Temp changed by threshold; new temp: {result.New.Temperature?.Celsius:N2}C, old: {result.Old?.Temperature?.Celsius:N2}C");
                 },
                 filter: result =>
                 {
@@ -38,8 +38,8 @@ namespace Sensors.Atmospheric.Th02_Sample
 
             sensor.Updated += (sender, result) =>
             {
-                Console.WriteLine($"  Temperature: {result.New.Temperature?.Celsius:N2}C");
-                Console.WriteLine($"  Relative Humidity: {result.New.Humidity?.Percent:N2}%");
+                Resolver.Log.Info($"  Temperature: {result.New.Temperature?.Celsius:N2}C");
+                Resolver.Log.Info($"  Relative Humidity: {result.New.Humidity?.Percent:N2}%");
             };
 
             return Task.CompletedTask;
@@ -48,7 +48,7 @@ namespace Sensors.Atmospheric.Th02_Sample
         public override async Task Run()
         {
             var conditions = await sensor.Read();
-            Console.WriteLine($"Temperature: {conditions.Temperature?.Celsius}°C, Relative Humidity: {conditions.Humidity?.Percent}%");
+            Resolver.Log.Info($"Temperature: {conditions.Temperature?.Celsius}°C, Relative Humidity: {conditions.Humidity?.Percent}%");
 
             sensor.StartUpdating(TimeSpan.FromSeconds(1));
         }

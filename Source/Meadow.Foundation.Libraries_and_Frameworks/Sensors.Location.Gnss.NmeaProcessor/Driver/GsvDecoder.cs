@@ -66,7 +66,7 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
             // Sentence number, 1-9 of this GSV message within current sentence group
             int thisSentenceNumber;
             if (!int.TryParse(sentence.DataElements[1], out thisSentenceNumber)) {
-                //if (DebugMode) { Console.WriteLine("Could not parse sentence number"); }
+                //if (DebugMode) { Resolver.Log.Warn("Could not parse sentence number"); }
                 return;
             }
 
@@ -82,7 +82,7 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
                     int totalNumberOfSatellites;
                     if (!int.TryParse(sentence.DataElements[2], out totalNumberOfSatellites)) {
                         //
-                        //if (DebugMode) { Console.WriteLine("Could not parse total number of satellites, bailing out."); }
+                        //if (DebugMode) { Resolver.Log.Warn("Could not parse total number of satellites, bailing out."); }
                         CleanUp();
                         return;
                     }

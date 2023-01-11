@@ -158,7 +158,7 @@ namespace Meadow.Foundation.Sensors.LoadCell
         public void Tare()
         {
             TareValue = ReadADC();
-            Console.WriteLine($"Tare base = {TareValue}");
+            Resolver.Log.Info($"Tare base = {TareValue}");
         }
 
         /// <summary>
@@ -312,7 +312,7 @@ namespace Meadow.Foundation.Sensors.LoadCell
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"HX711 event handler threw: {ex.Message}");
+                Resolver.Log.Info($"HX711 event handler threw: {ex.Message}");
                 throw;
             }
         }
