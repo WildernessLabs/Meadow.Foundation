@@ -72,30 +72,32 @@ namespace Meadow.Foundation.Sensors.Environmental
                     throw new ArgumentException($"Measurements record expects 8 values, received {data.Length}");
                 }
 
-                float value = float.IsNormal(data[(int)Measurement.DO]) ? data[(int)Measurement.DO] : 0;
+                float value = Normalize(data[(int)Measurement.DO]);
                 DissolvedOxygen = new ConcentrationInWater(value, ConcentrationInWater.UnitType.MilligramsPerLiter);
 
-                value = float.IsNormal(data[(int)Measurement.Turbidity]) ? data[(int)Measurement.Turbidity] : 0;
+                value = Normalize(data[(int)Measurement.Turbidity]);
                 Turbidity = new Turbidity(value);
 
-                value = float.IsNormal(data[(int)Measurement.CT]) ? data[(int)Measurement.CT] : 0;
+                value = Normalize(data[(int)Measurement.CT]);
                 ElectricalConductivity = new Conductivity(value, Conductivity.UnitType.MilliSiemensPerCentimeter);
 
-                value = float.IsNormal(data[(int)Measurement.pH]) ? data[(int)Measurement.pH] : 0;
+                value = Normalize(data[(int)Measurement.pH]);
                 PH = new PotentialHydrogen(value);
 
-                value = float.IsNormal(data[(int)Measurement.Orp]) ? data[(int)Measurement.Orp] : 0;
+                value = Normalize(data[(int)Measurement.Orp]);
                 OxidationReductionPotential = new Voltage(value, Voltage.UnitType.Volts);
 
-                value = float.IsNormal(data[(int)Measurement.Chl]) ? data[(int)Measurement.Chl] : 0;
+                value = Normalize(data[(int)Measurement.Chl]);
                 Chlorophyl = new ConcentrationInWater(value, ConcentrationInWater.UnitType.MicrogramsPerLiter);
 
-                value = float.IsNormal(data[(int)Measurement.BGA]) ? data[(int)Measurement.BGA] : 0;
+                value = Normalize(data[(int)Measurement.BGA]);
                 BlueGreenAlgae = new ConcentrationInWater(value, ConcentrationInWater.UnitType.MilligramsPerLiter);
 
-                value = float.IsNormal(data[(int)Measurement.Temp]) ? data[(int)Measurement.Temp] : 0;
+                value = Normalize(data[(int)Measurement.Temp]);
                 Temperature = new Units.Temperature(value, Units.Temperature.UnitType.Celsius);
             }
+
+            static float Normalize(float value) => float.IsNormal(value) ? value : 0;
 
             public override string ToString()
             {

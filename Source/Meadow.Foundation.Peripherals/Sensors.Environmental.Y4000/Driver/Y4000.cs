@@ -136,11 +136,21 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// Get the device ISDN number
         /// </summary>
         /// <returns></returns>
-        public async Task<ushort[]> GetISDN()
+        public async Task<byte> GetISDN()
         {
             var data = await modbusClient.ReadHoldingRegisters(0xFF, Registers.ISDN.Offset, Registers.ISDN.Length);
 
-            return data;
+            return (byte)(data[0] >> 8);
+        }
+
+        /// <summary>
+        /// Get the current supply voltage
+        /// </summary>
+        /// <returns></returns>
+        public async Task<Voltage> GetSupplyVoltage()
+        {
+            var voltage = await modbusClient.ReadHoldingRegistersFloat(ModbusAddress, Registers.SupplyVoltage.Offset, Registers.SupplyVoltage.Length / 2);
+            return new Voltage(voltage[0], Voltage.UnitType.Volts);
         }
 
         /// <summary>
@@ -165,7 +175,7 @@ namespace Meadow.Foundation.Sensors.Environmental
         }
 
         /// <summary>
-        /// Get the brush or wiper intervarl
+        /// Get the brush or wiper interval
         /// </summary>
         /// <returns></returns>
         public async Task<TimeSpan> GetBrushInterval()
@@ -173,6 +183,55 @@ namespace Meadow.Foundation.Sensors.Environmental
             var value = await modbusClient.ReadHoldingRegisters(ModbusAddress, Registers.BrushInterval.Offset, Registers.BrushInterval.Length);
             return TimeSpan.FromMinutes(value[0]);
         }
+
+        /// <summary>
+        /// Set the brush or wiper interval (normalized to minutes)
+        /// </summary>
+        public Task SetBrushInterval(TimeSpan interval)
+        {
+            ushort minutes = (ushort)interval.TotalMinutes;
+            return modbusClient.WriteHoldingRegister(ModbusAddress, Registers.BrushInterval.Offset, minutes);
+        }
+
+        /// <summary>
+        /// Start the brush or wiper
+        /// </summary>
+        /// <returns></returns>
+        public Task StartBrush()
+        {
+            return modbusClient.WriteHoldingRegister(ModbusAddress, Registers.StartBrush.Offset, 0);
+        }
+
+        /// <summary>
+        /// Read the error flag from the sensor
+        /// </summary>
+        /// <returns></returns>
+        public async Task<ushort> GetErrorFlag()
+        {
+            var data = await modbusClient.ReadHoldingRegisters(ModbusAddress, Registers.ErrorCode.Offset, 2);
+            return data[0];
+        }
+
+        /* Waiting for support in the ModBus library 
+        public Task SetTime(DateTime time)
+        {
+            byte second = (byte)time.Second;
+            byte minute = (byte)time.Minute;
+            byte hour = (byte)time.Hour;
+            byte day = (byte)time.Day;
+            byte month = (byte)time.Month;
+            //0
+            byte year = (byte)time.Year;
+            //0
+
+            var data = new ushort[4];
+            data[0] = (ushort)(minute | (second << 8));
+            data[1] = (ushort)(day | (hour << 8));
+            data[2] = (ushort)(month << 8);
+            data[3] = (ushort)(year << 8);
+
+            return modbusClient.WriteHoldingRegisters(ModbusAddress, Registers.BrushInterval.Offset, data);
+        }*/
 
         /// <summary>
         /// Reads data from the sensor
