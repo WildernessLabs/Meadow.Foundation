@@ -14,8 +14,53 @@ namespace Meadow.Foundation.Sensors.Environmental
     /// for dissolved oxygen, conductivity, turbidity, pH, chlorophyll, 
     /// blue green algae, oil-in-water and temperature
     /// </summary>
-    public partial class Y4000 //: PollingSensorBase<(Temperature? temperature, Concentration? concentration)>
+    public partial class Y4000 : PollingSensorBase<(ConcentrationInWater? DisolvedOxygen,
+                                                    ConcentrationInWater? Chlorophyl, 
+                                                    ConcentrationInWater? BlueGreenAlgae,
+                                                    Conductivity? ElectricalConductivity,
+                                                    PotentialHydrogen? PH,
+                                                    Turbidity? Turbidity,
+                                                    Units.Temperature? Temperature,
+                                                    Voltage? OxidationReductionPotential)>
     {
+
+        /// <summary>
+        /// The current Disolved Oxygen concentration
+        /// </summary>
+        public ConcentrationInWater? DisolvedOxygen => Conditions.DisolvedOxygen;
+
+        /// <summary>
+        /// The current Chlorophyl concentration
+        /// </summary>
+        public ConcentrationInWater? Chlorophyl => Conditions.Chlorophyl;
+
+        /// <summary>
+        /// The current Blue Green Algae concentration
+        /// </summary>
+        public ConcentrationInWater? BlueGreenAlgae => Conditions.BlueGreenAlgae;
+
+        /// <summary>
+        /// The current Electrical Conductivity
+        /// </summary>
+        public Conductivity? ElectricalConductivity => Conditions.ElectricalConductivity;
+
+        /// <summary>
+        /// The current Potential Hydrogen (pH)
+        /// </summary>
+        public PotentialHydrogen? PH => Conditions.PH;
+
+        /// <summary>
+        /// The current Turbidity
+        /// </summary>
+        public Turbidity? Turbidity => Conditions.Turbidity;
+
+        /// <summary>
+        /// The current Oxidation Reduction Potential (redux)
+        /// </summary>
+        public Voltage? OxidationReductionPotential => Conditions.OxidationReductionPotential;
+
+
+
         readonly IModbusBusClient modbusClient;
 
         /// <summary>
@@ -80,45 +125,44 @@ namespace Meadow.Foundation.Sensors.Environmental
             return data;
         }
 
-        public async Task<Measurements> GetMeasurements()
-        {
-            Console.WriteLine("GetData");
-
-            var values = await modbusClient.ReadHoldingRegistersFloat(ModbusAddress, Registers.Data.Offset, Registers.Data.Length / 2);
-
-            return new Measurements(values);
-        }
-
         public async Task<TimeSpan> GetBrushInterval()
         {
             var value = await modbusClient.ReadHoldingRegisters(ModbusAddress, Registers.BrushInterval.Offset, Registers.BrushInterval.Length);
             return TimeSpan.FromMinutes(value[0]);
         }
 
-        //31: sign
-        //30..23: exponent (8 bit exponent)
-        //22..0: fraction (23 bit fraction)
-        public double ConvertUShortsToDouble(ushort high, ushort low)
+        protected override async Task<(ConcentrationInWater? DisolvedOxygen, 
+            ConcentrationInWater? Chlorophyl, 
+            ConcentrationInWater? BlueGreenAlgae, 
+            Conductivity? ElectricalConductivity, 
+            PotentialHydrogen? PH, 
+            Turbidity? Turbidity, 
+            Units.Temperature? Temperature, 
+            Voltage? OxidationReductionPotential)> 
+            ReadSensor()
         {
-            // Combine the high and low values into a single uint
-            uint input = (uint)(((high & 0x00FF) << 24) | 
-                                ((high & 0xFF00) << 8) | 
-                                 (low & 0x00FF) << 8 | 
-                                  low >> 8);
+            (ConcentrationInWater? DisolvedOxygen,
+            ConcentrationInWater? Chlorophyl,
+            ConcentrationInWater? BlueGreenAlgae,
+            Conductivity? ElectricalConductivity,
+            PotentialHydrogen? PH,
+            Turbidity? Turbidity,
+            Units.Temperature? Temperature,
+            Voltage? OxidationReductionPotential) conditions;
 
-          //  var input = ((uint)high << 16) | low;
-            // Get the sign bit
-            uint signBit = (input >> 31) & 1;
-            int sign = 1 - (int)(2 * signBit);
-            // Get the exponent bits
-            var exponentBits = ((input >> 23) & 0xFF);
-            var exponent = exponentBits - 127;
-            // Get the fraction
-            var fractionBits = (input & 0x7FFFFF);
-            var fraction = 1.0 + fractionBits / Math.Pow(2, 23);
+            var values = await modbusClient.ReadHoldingRegistersFloat(ModbusAddress, Registers.Data.Offset, Registers.Data.Length / 2);
+            var measurements = new Measurements(values);
 
-            // get the value
-            return sign * fraction * Math.Pow(2, exponent);
+            conditions.BlueGreenAlgae = measurements.BlueGreenAlgae;
+            conditions.Chlorophyl = measurements.Chlorophyl;
+            conditions.DisolvedOxygen = measurements.DissolvedOxygen;
+            conditions.ElectricalConductivity = measurements.ElectricalConductivity;
+            conditions.OxidationReductionPotential = measurements.OxidationReductionPotential;
+            conditions.PH = measurements.PH;
+            conditions.Temperature = measurements.Temperature;
+            conditions.Turbidity = measurements.Turbidity;
+
+            return conditions;
         }
     }
 }
