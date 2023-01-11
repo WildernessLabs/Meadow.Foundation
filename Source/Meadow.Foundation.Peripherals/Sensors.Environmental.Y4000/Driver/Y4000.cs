@@ -1,14 +1,11 @@
 ﻿using Meadow.Hardware;
 using Meadow.Modbus;
-using Meadow.Foundation;
 using Meadow.Units;
 using System.Threading.Tasks;
 using System;
 
 namespace Meadow.Foundation.Sensors.Environmental
 {
-    // https://github.com/EnviroDIY/YosemitechModbus/
-
     /// <summary>
     /// Represents a Yosemitech Y4000 Multiparameter Sonde water quality sensor 
     /// for dissolved oxygen, conductivity, turbidity, pH, chlorophyll, 
@@ -23,6 +20,45 @@ namespace Meadow.Foundation.Sensors.Environmental
                                                     Units.Temperature? Temperature,
                                                     Voltage? OxidationReductionPotential)>
     {
+        /// <summary>
+        /// Raised when the DisolvedOxygen value changes
+        /// </summary>
+        public event EventHandler<IChangeResult<ConcentrationInWater>> DisolvedOxygenUpdated = delegate { };
+
+        /// <summary>
+        /// Raised when the Chlorophyl value changes
+        /// </summary>
+        public event EventHandler<IChangeResult<ConcentrationInWater>> ChlorophylUpdated = delegate { };
+
+        /// <summary>
+        /// Raised when the BlueGreenAlgae value changes
+        /// </summary>
+        public event EventHandler<IChangeResult<ConcentrationInWater>> BlueGreenAlgaeUpdated = delegate { };
+
+        /// <summary>
+        /// Raised when the ElectricalConductivity value changes
+        /// </summary>
+        public event EventHandler<IChangeResult<Conductivity>> ElectricalConductivityUpdated = delegate { };
+
+        /// <summary>
+        /// Raised when the PotentialHydrogen (pH) value changes
+        /// </summary>
+        public event EventHandler<IChangeResult<PotentialHydrogen>> PHUpdated = delegate { };
+
+        /// <summary>
+        /// Raised when the Turbidity value changes
+        /// </summary>
+        public event EventHandler<IChangeResult<Turbidity>> TurbidityUpdated = delegate { };
+
+        /// <summary>
+        /// Raised when the Temperature value changes
+        /// </summary>
+        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
+
+        /// <summary>
+        /// Raised when the OxidationReductionPotential (redux) value changes
+        /// </summary>
+        public event EventHandler<IChangeResult<Voltage>> OxidationReductionPotentialUpdated = delegate { };
 
         /// <summary>
         /// The current Disolved Oxygen concentration
@@ -131,6 +167,10 @@ namespace Meadow.Foundation.Sensors.Environmental
             return TimeSpan.FromMinutes(value[0]);
         }
 
+        /// <summary>
+        /// Reads data from the sensor
+        /// </summary>
+        /// <returns>The latest sensor reading</returns>
         protected override async Task<(ConcentrationInWater? DisolvedOxygen, 
             ConcentrationInWater? Chlorophyl, 
             ConcentrationInWater? BlueGreenAlgae, 
@@ -164,5 +204,25 @@ namespace Meadow.Foundation.Sensors.Environmental
 
             return conditions;
         }
+
+        /// <summary>
+        /// Raise events for subcribers and notify of value changes
+        /// </summary>
+        /// <param name="changeResult">The updated sensor data</param>
+        protected override void RaiseEventsAndNotify(
+             IChangeResult<
+             (ConcentrationInWater? DisolvedOxygen,
+             ConcentrationInWater? Chlorophyl,
+             ConcentrationInWater? BlueGreenAlgae,
+             Conductivity? ElectricalConductivity,
+             PotentialHydrogen? PH,
+             Turbidity? Turbidity,
+             Units.Temperature? Temperature,
+             Voltage? OxidationReductionPotential)
+             > changeResult)
+         {
+
+                base.RaiseEventsAndNotify(changeResult);
+         }
     }
 }
