@@ -3,6 +3,7 @@ using Meadow.Modbus;
 using Meadow.Units;
 using System.Threading.Tasks;
 using System;
+using System.Net;
 
 namespace Meadow.Foundation.Sensors.Environmental
 {
@@ -102,12 +103,18 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// </summary>
         readonly ISerialPort serialPort;
 
-        readonly byte ModbusAddress = 0x01;
+        /// <summary>
+        /// The current modbus address
+        /// </summary>
+        public byte ModbusAddress { get; private set; } = 0x01;
 
         /// <summary>
         /// Creates a new Y4000 object
         /// </summary>
-        public Y4000(IMeadowDevice device, SerialPortName serialPortName, IPin? enablePin = null)
+        public Y4000(IMeadowDevice device, 
+            SerialPortName serialPortName, 
+            byte modbusAddress = 0x01, 
+            IPin? enablePin = null)
         {   
             serialPort = device.CreateSerialPort(serialPortName, 9600, 8, Parity.None, StopBits.One);
             serialPort.WriteTimeout = serialPort.ReadTimeout = TimeSpan.FromSeconds(5);
@@ -121,6 +128,8 @@ namespace Meadow.Foundation.Sensors.Environmental
             {
                 modbusClient = new ModbusRtuClient(serialPort);
             }
+
+            ModbusAddress = modbusAddress;
         }
 
         /// <summary>
@@ -141,6 +150,28 @@ namespace Meadow.Foundation.Sensors.Environmental
             var data = await modbusClient.ReadHoldingRegisters(0xFF, Registers.ISDN.Offset, Registers.ISDN.Length);
 
             return (byte)(data[0] >> 8);
+        }
+
+        /// <summary>
+        /// Set the ISDN (address) of the sensor
+        /// </summary>
+        /// <param name="modbusAddress">The address</param>
+        /// <returns></returns>
+        public async Task SetISDN(byte modbusAddress)
+        {
+            if(ModbusAddress == modbusAddress) { return; }
+            
+            try
+            {
+                await modbusClient.WriteHoldingRegisters(ModbusAddress, 
+                    Registers.ISDN.Offset, 
+                    new ushort[] { (ushort)(modbusAddress << 8) });
+            }
+            catch
+            { 
+            }
+            
+            ModbusAddress = modbusAddress;
         }
 
         /// <summary>
