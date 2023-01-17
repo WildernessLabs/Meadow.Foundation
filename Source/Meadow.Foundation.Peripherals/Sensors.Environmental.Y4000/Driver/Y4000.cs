@@ -13,7 +13,7 @@ namespace Meadow.Foundation.Sensors.Environmental
     /// blue green algae, chlorophyl, and temperature
     /// </summary>
     public partial class Y4000 : PollingSensorBase<(ConcentrationInWater? DisolvedOxygen,
-                                                    ConcentrationInWater? Chlorophyl, 
+                                                    ConcentrationInWater? Chlorophyl,
                                                     ConcentrationInWater? BlueGreenAlgae,
                                                     Conductivity? ElectricalConductivity,
                                                     PotentialHydrogen? PH,
@@ -111,16 +111,17 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// <summary>
         /// Creates a new Y4000 object
         /// </summary>
-        public Y4000(IMeadowDevice device, 
-            SerialPortName serialPortName, 
-            byte modbusAddress = 0x01, 
+        public Y4000(IMeadowDevice device,
+            SerialPortName serialPortName,
+            byte modbusAddress = 0x01,
             IPin? enablePin = null)
-        {   
+        {
             serialPort = device.CreateSerialPort(serialPortName, 9600, 8, Parity.None, StopBits.One);
             serialPort.WriteTimeout = serialPort.ReadTimeout = TimeSpan.FromSeconds(5);
 
             if (enablePin != null)
             {
+                Console.WriteLine("Create enable pin");
                 var enablePort = device.CreateDigitalOutputPort(enablePin, false);
                 modbusClient = new ModbusRtuClient(serialPort, enablePort);
             }
@@ -142,9 +143,10 @@ namespace Meadow.Foundation.Sensors.Environmental
         }
 
         /// <summary>
-        /// Get the device ISDN number
+        /// Get the device ISDN (address) of the sensor
+        /// Note this is a broadcast event so all Y4000 devices on the bus will respond
         /// </summary>
-        /// <returns></returns>
+        /// <returns>The address as a byte</returns>
         public async Task<byte> GetISDN()
         {
             var data = await modbusClient.ReadHoldingRegisters(0xFF, Registers.ISDN.Offset, Registers.ISDN.Length);
@@ -159,18 +161,12 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// <returns></returns>
         public async Task SetISDN(byte modbusAddress)
         {
-            if(ModbusAddress == modbusAddress) { return; }
-            
-            try
-            {
-                await modbusClient.WriteHoldingRegisters(ModbusAddress, 
-                    Registers.ISDN.Offset, 
-                    new ushort[] { (ushort)(modbusAddress << 8) });
-            }
-            catch
-            { 
-            }
-            
+            if (ModbusAddress == modbusAddress) { return; }
+
+            await modbusClient.WriteHoldingRegisters(ModbusAddress,
+                Registers.ISDN.Offset,
+                new ushort[] { (ushort)(modbusAddress << 8) });
+
             ModbusAddress = modbusAddress;
         }
 
@@ -243,26 +239,46 @@ namespace Meadow.Foundation.Sensors.Environmental
             return data[0];
         }
 
-        /* Waiting for support in the ModBus library 
-        public Task SetTime(DateTime time)
+        /*
+         * Get and Set time work but Get returns bad values
+         * Leaving code here for future investigation
+         */ 
+        /// <summary>
+        /// Set the time on the device
+        /// Stores: year, month, day, hour, minute and second
+        /// </summary>
+        /// <param name="time"></param>
+        /// <returns></returns>
+        Task SetTime(DateTime time)
         {
-            byte second = (byte)time.Second;
-            byte minute = (byte)time.Minute;
-            byte hour = (byte)time.Hour;
-            byte day = (byte)time.Day;
-            byte month = (byte)time.Month;
+            byte second = 0x17;// (byte)time.Second;
+            byte minute = 0x05;//(byte)time.Minute;
+            byte hour = 0x13;//(byte)time.Hour;
+            byte day = 0x26;//(byte)time.Day;
+            byte month = 0x04;//(byte)time.Month;
             //0
-            byte year = (byte)time.Year;
+            byte year = 0x16; // (byte)time.Year;
             //0
 
             var data = new ushort[4];
             data[0] = (ushort)(minute | (second << 8));
             data[1] = (ushort)(day | (hour << 8));
-            data[2] = (ushort)(month << 8);
-            data[3] = (ushort)(year << 8);
+            data[2] = (ushort)(month << 8 | 0x00);
+            data[3] = (ushort)(year << 8 | 0x00);
 
-            return modbusClient.WriteHoldingRegisters(ModbusAddress, Registers.BrushInterval.Offset, data);
-        }*/
+            return modbusClient.WriteHoldingRegisters(ModbusAddress, Registers.Time.Offset, data);
+        }
+
+        /// <summary>
+        /// Get the time stored on the sensor
+        /// </summary>
+        /// <returns></returns>
+        async Task<DateTime> GetTime()
+        {
+            var values = await modbusClient.ReadHoldingRegisters(ModbusAddress, Registers.Time.Offset, 4);
+
+            return DateTime.MinValue;
+        }
 
         /// <summary>
         /// Reads data from the sensor
