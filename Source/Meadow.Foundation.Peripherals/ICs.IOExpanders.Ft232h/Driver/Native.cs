@@ -3,8 +3,60 @@ using System.Runtime.InteropServices;
 
 namespace Meadow.Foundation.ICs.IOExpanders
 {
-    internal static class Native
+    internal static partial class Native
     {
+        public static bool CheckStatus(Native.FT_STATUS status)
+        {
+            if (status == Native.FT_STATUS.FT_OK)
+            {
+                return true;
+            }
+
+            throw new Exception($"Native error: {status}");
+        }
+
+        public enum FT_DEVICE_TYPE
+        {
+            FT_DEVICE_BM,
+            FT_DEVICE_AM,
+            FT_DEVICE_100AX,
+            FT_DEVICE_UNKNOWN,
+            FT_DEVICE_2232C,
+            FT_DEVICE_232R,
+            FT_DEVICE_2232H,
+            FT_DEVICE_4232H,
+            FT_DEVICE_232H,
+            FT_DEVICE_X_SERIES,
+            FT_DEVICE_4222H_0,
+            FT_DEVICE_4222H_1_2,
+            FT_DEVICE_4222H_3,
+            FT_DEVICE_4222_PROG,
+            FT_DEVICE_900,
+            FT_DEVICE_930,
+            FT_DEVICE_UMFTPD3A,
+            FT_DEVICE_2233HP,
+            FT_DEVICE_4233HP,
+            FT_DEVICE_2232HP,
+            FT_DEVICE_4232HP,
+            FT_DEVICE_233HP,
+            FT_DEVICE_232HP,
+            FT_DEVICE_2232HA,
+            FT_DEVICE_4232HA,
+        }
+
+        public enum FT_DRIVER_TYPE
+        {
+            FT_DRIVER_TYPE_D2XX = 0,
+            FT_DRIVER_TYPE_VCP = 1
+        }
+
+        [Flags]
+        public enum FT_FLAGS
+        {
+            FT_FLAGS_OPENED = 1,
+            FT_FLAGS_HISPEED = 2
+        }
+
         public enum FT_STATUS
         {
             FT_OK,
@@ -44,8 +96,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
 		        FT_HANDLE ftHandle;
 	        } FT_DEVICE_LIST_INFO_NODE;
             */
-            public uint Flags;
-            public uint Type;
+            public FT_FLAGS Flags;
+            public FT_DEVICE_TYPE Type;
             public uint ID;
             public uint LocId;
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 16)]
@@ -55,33 +107,61 @@ namespace Meadow.Foundation.ICs.IOExpanders
             public IntPtr ftHandle;
         }
 
-        public class Functions
+        public struct I2CChannelConfig
         {
-            private const string MPSSE_LIB = "libmpsse";
+            /*
+                typedef struct ChannelConfig_t
+                {
+	                I2C_CLOCKRATE	ClockRate; 
+	                UCHAR			LatencyTimer; // Valid range is 2 � 255
 
-            // FTDIMPSSE_API void Init_libMPSSE(void);
-            [DllImport(MPSSE_LIB, CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
-            public static extern void Init_libMPSSE();
+                    DWORD Options;	
+	                /** This member provides a way to enable/disable features
+	                specific to the protocol that are implemented in the chip
+	                BIT0		: 3PhaseDataClocking - Setting this bit will turn on 3 phase data clocking for a
+			                FT2232H dual hi-speed device or FT4232H quad hi-speed device. Three phase
+			                data clocking, ensures the data is valid on both edges of a clock
+	                BIT1		: Loopback
+	                BIT2		: Clock stretching
+	                BIT3 -BIT31		: Reserved
+                } ChannelConfig;            
+            */
+            public Ft232h.I2CClockRate ClockRate;
+            public byte LatencyTimer;
+            public uint Options;
+        }
 
-            // FTDIMPSSE_API void Cleanup_libMPSSE(void);
-            [DllImport(MPSSE_LIB, CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
-            public static extern void Cleanup_libMPSSE();
-
-            // === I2C ===
-
-            // FTDIMPSSE_API FT_STATUS I2C_GetNumChannels(DWORD *numChannels);
-            [DllImport(MPSSE_LIB, CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
-            public static extern FT_STATUS I2C_GetNumChannels(out int numChannels);
-
-            // FTDIMPSSE_API FT_STATUS I2C_GetChannelInfo(DWORD index, FT_DEVICE_LIST_INFO_NODE* chanInfo);
-            [DllImport(MPSSE_LIB, CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
-            public static extern FT_STATUS I2C_GetChannelInfo(int index, out FT_DEVICE_LIST_INFO_NODE chanInfo);
-
-            // === SPI ===
-
-            // FTDIMPSSE_API FT_STATUS SPI_GetNumChannels(DWORD *numChannels);
-            [DllImport(MPSSE_LIB, CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
-            public static extern FT_STATUS SPI_GetNumChannels(out int numChannels);
+        public struct SpiChannelConfig
+        {
+            /*
+            DWORD	ClockRate; /* SPI clock rate, value should be <= 30000000
+	        UCHAR	LatencyTimer; /* value in milliseconds, maximum value should be <= 255
+	        DWORD	configOptions;	/* This member provides a way to enable/disable features
+	        specific to the protocol that are implemented in the chip
+	        BIT1-0=CPOL-CPHA:	00 - MODE0 - data captured on rising edge, propagated on falling
+ 						        01 - MODE1 - data captured on falling edge, propagated on rising
+ 						        10 - MODE2 - data captured on falling edge, propagated on rising
+ 						        11 - MODE3 - data captured on rising edge, propagated on falling
+	        BIT4-BIT2: 000 - A/B/C/D_DBUS3=ChipSelect
+			         : 001 - A/B/C/D_DBUS4=ChipSelect
+ 			         : 010 - A/B/C/D_DBUS5=ChipSelect
+ 			         : 011 - A/B/C/D_DBUS6=ChipSelect
+ 			         : 100 - A/B/C/D_DBUS7=ChipSelect
+ 	        BIT5: ChipSelect is active high if this bit is 0
+	        BIT6 -BIT31		: Reserved
+	
+	        DWORD		Pin;/* BIT7   -BIT0:   Initial direction of the pins	
+					        /* BIT15 -BIT8:   Initial values of the pins		
+					        /* BIT23 -BIT16: Final direction of the pins		
+					        /* BIT31 -BIT24: Final values of the pins		
+	        USHORT		currentPinState;/* BIT7   -BIT0:   Current direction of the pins	
+								        /* BIT15 -BIT8:   Current values of the pins	
+            */
+            public uint ClockRate;
+            public byte LatencyTimer;
+            public Ft232h.SpiConfigOption Options;
+            public uint Pin;
+            public ushort CurrentPinState;
         }
     }
 }

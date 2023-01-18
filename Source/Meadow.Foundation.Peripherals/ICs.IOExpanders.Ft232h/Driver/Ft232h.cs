@@ -33,33 +33,57 @@ namespace Meadow.Foundation.ICs.IOExpanders
             }
         }
 
-        public void EnumI2CBus()
+        public I2cChannel[] GetI2CChannels()
         {
-            if (CheckStatus(Native.Functions.I2C_GetNumChannels(out int channels)))
-            {
-                Console.WriteLine($"{channels} I2C Channels");
+            I2cChannel[] result;
 
-                for (var c = 0; c < channels; c++)
+            if (Native.CheckStatus(Native.Functions.I2C_GetNumChannels(out int channels)))
+            {
+                result = new I2cChannel[channels];
+                if (channels > 0)
                 {
-                    if (CheckStatus(Native.Functions.I2C_GetChannelInfo(c, out Native.FT_DEVICE_LIST_INFO_NODE info)))
+                    for (var c = 0; c < channels; c++)
                     {
-                        Console.WriteLine($"Serial #:       {info.SerialNumber}");
-                        Console.WriteLine($"Description #:  {info.Description}");
+                        if (Native.CheckStatus(Native.Functions.I2C_GetChannelInfo(c, out Native.FT_DEVICE_LIST_INFO_NODE info)))
+                        {
+                            result[c] = new I2cChannel(c, info);
+                        }
                     }
                 }
             }
-        }
-
-        private bool CheckStatus(Native.FT_STATUS status)
-        {
-            if (status == Native.FT_STATUS.FT_OK)
+            else
             {
-                return true;
+                result = new I2cChannel[0];
             }
 
-            throw new Exception($"Native error: {status}");
+            return result;
         }
 
+        public SpiChannel[] GetSpiChannels()
+        {
+            SpiChannel[] result;
+
+            if (Native.CheckStatus(Native.Functions.SPI_GetNumChannels(out int channels)))
+            {
+                result = new SpiChannel[channels];
+                if (channels > 0)
+                {
+                    for (var c = 0; c < channels; c++)
+                    {
+                        if (Native.CheckStatus(Native.Functions.SPI_GetChannelInfo(c, out Native.FT_DEVICE_LIST_INFO_NODE info)))
+                        {
+                            result[c] = new SpiChannel(c, info);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                result = new SpiChannel[0];
+            }
+
+            return result;
+        }
 
         ~Ft232h()
         {
