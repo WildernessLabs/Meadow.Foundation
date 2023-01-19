@@ -17,12 +17,7 @@ namespace Meadow.Foundation.Sensors.Gnss
         /// Optional null data value 
         /// Value will be removed from data before being added to the buffer
         /// </summary>
-        public byte NullDataValue { get; protected set; } = 0xFF;
-
-        /// <summary>
-        /// Enable the null data value filter
-        /// </summary>
-        public bool FilterNullDataValue { get; set; } = true;
+        public byte? NullDataValue { get; set; }
 
         /// <summary>
         /// Raised when a message, as defined in the constructor, arrives.
@@ -87,16 +82,20 @@ namespace Meadow.Foundation.Sensors.Gnss
             {
                 AddDataAndFilterIgnoreValue(data);
 
-                if(messageMode == SerialMessageMode.PrefixDelimited)
+                if (messageMode == SerialMessageMode.PrefixDelimited)
+                {
                     ProcessPrefixDelimited();
+                }
                 else
+                {
                     ProcessSuffixDelimited();
+                }
             }
         }
 
         void AddDataAndFilterIgnoreValue(byte[] data)
         {
-            if(FilterNullDataValue)
+            if(NullDataValue != null)
             {
                 for(int i = 0; i < data.Length; i++)
                 {
@@ -137,7 +136,6 @@ namespace Meadow.Foundation.Sensors.Gnss
                 }
                 else
                 {
-                    // if tossing away, throw away first part
                     for (int i = 0; i < messageDelimiterTokens.Length; i++)
                     {
                         readBuffer.Remove();

@@ -41,7 +41,7 @@ namespace Meadow.Foundation.Sensors.Gnss
 
         async Task StartUpdatingSpi()
         { 
-            byte[] data = new byte[128];
+            byte[] data = new byte[128]; //TODO make consts
 
             await Task.Run(() =>
             {
@@ -50,7 +50,7 @@ namespace Meadow.Foundation.Sensors.Gnss
                     spiPeripheral.Read(data);
                     messageBuffer.AddData(data);
 
-                    Thread.Sleep(200);
+                    Thread.Sleep(200); //TODO make consts
                 }
             });
         }
