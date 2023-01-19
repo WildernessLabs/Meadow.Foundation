@@ -17,7 +17,11 @@ namespace Sensors.Gnss.NeoM8_Sample
         {
             Resolver.Log.Info("Initializing ...");
 
-            gps = new NeoM8(Device, Device.SerialPortNames.Com4, Device.Pins.D09, Device.Pins.D11);
+            //SPI
+            gps = new NeoM8(Device.CreateSpiBus(), Device.CreateDigitalOutputPort(Device.Pins.D14));
+
+            //Serial
+            //gps = new NeoM8(Device, Device.SerialPortNames.Com4, Device.Pins.D09, Device.Pins.D11);
 
             gps.GgaReceived += (object sender, GnssPositionInfo location) =>
             {
