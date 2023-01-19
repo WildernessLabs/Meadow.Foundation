@@ -7,7 +7,7 @@ using Meadow.Peripherals.Sensors.Location.Gnss;
 
 namespace Sensors.Gnss.NeoM8_Sample
 {
-    public class MeadowApp : App<F7FeatherV2>
+    public class MeadowApp : App<F7FeatherV1>
     {
         //<!=SNIP=>
 
