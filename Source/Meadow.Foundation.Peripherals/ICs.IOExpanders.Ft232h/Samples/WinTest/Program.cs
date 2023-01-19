@@ -5,6 +5,7 @@ Console.WriteLine("HELLO FROM THE WILDERNESS FT232H DRIVER!");
 
 var ft232 = new Ft232h();
 
+/*
 var i2cChannels = ft232.GetI2CChannels();
 Console.WriteLine($"{i2cChannels.Length} I2C CHANNELS");
 foreach (var c in i2cChannels)
@@ -20,6 +21,7 @@ foreach (var c in spiChannels)
     Console.WriteLine($"Serial #:       {c.SerialNumber}");
     Console.WriteLine($"Description #:  {c.Description}");
 }
+*/
 
 Console.ReadKey();
 

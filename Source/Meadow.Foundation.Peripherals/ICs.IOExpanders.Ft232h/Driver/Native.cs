@@ -126,7 +126,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
 	                BIT3 -BIT31		: Reserved
                 } ChannelConfig;            
             */
-            public Ft232h.I2CClockRate ClockRate;
+            public I2CClockRate ClockRate;
             public byte LatencyTimer;
             public uint Options;
         }
