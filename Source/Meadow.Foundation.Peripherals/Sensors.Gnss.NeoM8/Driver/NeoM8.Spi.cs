@@ -1,6 +1,8 @@
 ﻿using Meadow.Hardware;
 using System;
+using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Gnss
 {
@@ -8,55 +10,49 @@ namespace Meadow.Foundation.Sensors.Gnss
     {
         readonly ISpiPeripheral spiPeripheral;
 
-        byte[] buffer;
+        SerialMessageBuffer messageBuffer;
 
         /// <summary>
-        /// ToDo - private until SPI is working
+        /// Create a new NEOM8 object using SPI
         /// </summary>
-        /// <param name="spiBus"></param>
-        /// <param name="chipSelectPort"></param>
-        private NeoM8(ISpiBus spiBus, IDigitalOutputPort chipSelectPort)
+        public NeoM8(ISpiBus spiBus, IDigitalOutputPort chipSelectPort, IDigitalOutputPort resetPort = null)
         {
+            ResetPort = resetPort;
             spiPeripheral = new SpiPeripheral(spiBus, chipSelectPort);
-            SpiTest();
+
+            messageBuffer = new SerialMessageBuffer(suffixDelimiter: Encoding.ASCII.GetBytes("\r\n"),
+                                                    preserveDelimiter: true,
+                                                    readBufferSize: 512);
+
+            _ = InitializeSpi();
         }
 
-        void SpiTest()
+        //ToDo cancellation for sleep aware 
+        async Task InitializeSpi()
         {
-            Resolver.Log.Info("Create buffer");
-            buffer = new byte[65535];
-            Resolver.Log.Info("Buffer created");
+            messageBuffer.MessageReceived += MessageReceived;
 
-            byte data;
+            InitDecoders();
 
-            int length = 0;
+            await Reset();
 
-            while (true)
+            Resolver.Log.Debug("Finish NeoM8 SPI initialization");
+        }
+
+        async Task StartUpdatingSpi()
+        { 
+            byte[] data = new byte[128];
+
+            await Task.Run(() =>
             {
-                data = spiPeripheral.ReadRegister((byte)Registers.DataStream);
+                while (true)
+                {
+                    spiPeripheral.Read(data);
+                    messageBuffer.AddData(data);
 
-                if(data == 255)
-                {
-                    if(length > 0)
-                    {
-                        Resolver.Log.Info($"Read {length} bytes total");
-                        length = 0;
-                    }
-                    else
-                    {
-                        Resolver.Log.Info($"No data {length = 0}");
-                    }
-                    Thread.Sleep(1000);
+                    Thread.Sleep(200);
                 }
-                else
-                {
-                    buffer[length++] = data;
-                    if(length % 100 == 0)
-                    {
-                        Resolver.Log.Info($"Read {length} bytes ...");
-                    }
-                }
-            }
+            });
         }
     }
 }
