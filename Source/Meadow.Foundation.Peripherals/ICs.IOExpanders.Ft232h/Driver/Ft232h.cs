@@ -13,8 +13,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
     {
         private bool _isDisposed;
         private static int _instanceCount = 0;
-        private Dictionary<int, Ft232I2cBus> _i2cBusses = new Dictionary<int, Ft232I2cBus>();
-        private Dictionary<int, Ft232SpiBus> _spiBusses = new Dictionary<int, Ft232SpiBus>();
+        private Dictionary<int, Ft232I2cBus> _i2cBuses = new Dictionary<int, Ft232I2cBus>();
+        private Dictionary<int, Ft232SpiBus> _spiBuses = new Dictionary<int, Ft232SpiBus>();
 
         static Ft232h()
         {
@@ -27,7 +27,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
         public Ft232h()
         {
-            EnumerateBusses();
+            EnumerateBuses();
         }
 
         /// <summary>
@@ -35,13 +35,13 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         public PinDefinitions Pins { get; } = new PinDefinitions()
 
-        ; private void EnumerateBusses()
+        ; private void EnumerateBuses()
         {
-            _i2cBusses = GetI2CBusses();
-            _spiBusses = GetSpiBusses();
+            _i2cBuses = GetI2CBuses();
+            _spiBuses = GetSpiBuses();
         }
 
-        private Dictionary<int, Ft232I2cBus> GetI2CBusses()
+        private Dictionary<int, Ft232I2cBus> GetI2CBuses()
         {
             Dictionary<int, Ft232I2cBus> result = new Dictionary<int, Ft232I2cBus>();
 
@@ -62,7 +62,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             return result;
         }
 
-        private Dictionary<int, Ft232SpiBus> GetSpiBusses()
+        private Dictionary<int, Ft232SpiBus> GetSpiBuses()
         {
             Dictionary<int, Ft232SpiBus> result = new Dictionary<int, Ft232SpiBus>();
 
@@ -110,9 +110,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
         private II2cBus CreateI2cBus(int busNumber, I2CClockRate clock)
         {
-            if (!_i2cBusses.ContainsKey(busNumber)) throw new ArgumentOutOfRangeException(nameof(busNumber));
+            if (!_i2cBuses.ContainsKey(busNumber)) throw new ArgumentOutOfRangeException(nameof(busNumber));
 
-            var bus = _i2cBusses[busNumber];
+            var bus = _i2cBuses[busNumber];
             if (!bus.IsOpen)
             {
                 bus.Open(clock);
@@ -134,9 +134,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
         public ISpiBus CreateSpiBus(int busNumber = 0, uint clockRate = Ft232SpiBus.DefaultClockRate, SpiConfigOption opts = SpiConfigOption.MODE0 | SpiConfigOption.CS_DBUS3 | SpiConfigOption.CS_ACTIVELOW)
         {
-            if (!_spiBusses.ContainsKey(busNumber)) throw new ArgumentOutOfRangeException(nameof(busNumber));
+            if (!_spiBuses.ContainsKey(busNumber)) throw new ArgumentOutOfRangeException(nameof(busNumber));
 
-            var bus = _spiBusses[busNumber];
+            var bus = _spiBuses[busNumber];
             if (!bus.IsOpen)
             {
                 bus.Open(opts, clockRate);
@@ -163,7 +163,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         {
             if (!_isDisposed)
             {
-                foreach (var bus in _i2cBusses)
+                foreach (var bus in _i2cBuses)
                 {
                     bus.Value?.Dispose();
                 }
