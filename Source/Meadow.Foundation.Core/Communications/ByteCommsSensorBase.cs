@@ -87,7 +87,7 @@ namespace Meadow.Foundation
 
         protected virtual void Dispose(bool disposing)
         {
-            if(disposing)
+            if (disposing)
             {
                 base.StopUpdating();
             }
