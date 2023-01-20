@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using System.Threading;
-using Meadow.Devices;
 using Meadow.Hardware;
 
 namespace Meadow.Foundation.Displays
