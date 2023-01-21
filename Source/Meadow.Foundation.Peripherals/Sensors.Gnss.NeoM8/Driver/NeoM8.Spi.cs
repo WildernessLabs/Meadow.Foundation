@@ -1,5 +1,4 @@
 ﻿using Meadow.Hardware;
-using System;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -9,8 +8,11 @@ namespace Meadow.Foundation.Sensors.Gnss
     public partial class NeoM8
     {
         readonly ISpiPeripheral spiPeripheral;
+        readonly SerialMessageBuffer messageBuffer;
 
-        SerialMessageBuffer messageBuffer;
+        const byte NULL_VALUE = 0xFF;
+        const byte BUFFER_SIZE = 128;
+        const byte SPI_SLEEP_MS = 200;
 
         /// <summary>
         /// Create a new NEOM8 object using SPI
@@ -41,7 +43,21 @@ namespace Meadow.Foundation.Sensors.Gnss
 
         async Task StartUpdatingSpi()
         { 
-            byte[] data = new byte[128]; //TODO make consts
+            byte[] data = new byte[BUFFER_SIZE];
+
+            bool HasMoreData(byte[] data)
+            {
+                bool hasNullValue = false;
+                for(int i = 1; i < data.Length; i++)
+                {
+                    if (data[i] == NULL_VALUE) { hasNullValue = true; }
+                    if (data[i - 1] == NULL_VALUE && data[i] != NULL_VALUE)
+                    {
+                        return true;
+                    }
+                }
+                return !hasNullValue;
+            }
 
             await Task.Run(() =>
             {
@@ -50,7 +66,10 @@ namespace Meadow.Foundation.Sensors.Gnss
                     spiPeripheral.Read(data);
                     messageBuffer.AddData(data);
 
-                    Thread.Sleep(200); //TODO make consts
+                    if(HasMoreData(data) == false)
+                    {
+                        Thread.Sleep(SPI_SLEEP_MS);
+                    }
                 }
             });
         }
