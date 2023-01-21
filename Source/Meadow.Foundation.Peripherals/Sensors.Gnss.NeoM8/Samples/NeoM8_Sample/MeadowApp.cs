@@ -7,7 +7,7 @@ using Meadow.Peripherals.Sensors.Location.Gnss;
 
 namespace Sensors.Gnss.NeoM8_Sample
 {
-    public class MeadowApp : App<F7FeatherV2>
+    public class MeadowApp : App<F7FeatherV1>
     {
         //<!=SNIP=>
 
@@ -17,33 +17,37 @@ namespace Sensors.Gnss.NeoM8_Sample
         {
             Resolver.Log.Info("Initializing ...");
 
-            gps = new NeoM8(Device, Device.SerialPortNames.Com4, Device.Pins.D09, Device.Pins.D11);
+            //SPI
+            gps = new NeoM8(Device.CreateSpiBus(), Device.CreateDigitalOutputPort(Device.Pins.D14));
+
+            //Serial
+            //gps = new NeoM8(Device, Device.SerialPortNames.Com4, Device.Pins.D09, Device.Pins.D11);
 
             gps.GgaReceived += (object sender, GnssPositionInfo location) =>
             {
                 Resolver.Log.Info("*********************************************");
-                Resolver.Log.Info(location.ToString());
+                Resolver.Log.Info($"{location}");
                 Resolver.Log.Info("*********************************************");
             };
             // GLL
             gps.GllReceived += (object sender, GnssPositionInfo location) =>
             {
                 Resolver.Log.Info("*********************************************");
-                Resolver.Log.Info(location.ToString());
+                Resolver.Log.Info($"{location}");
                 Resolver.Log.Info("*********************************************");
             };
             // GSA
             gps.GsaReceived += (object sender, ActiveSatellites activeSatellites) =>
             {
                 Resolver.Log.Info("*********************************************");
-                Resolver.Log.Info(activeSatellites.ToString());
+                Resolver.Log.Info($"{activeSatellites}");
                 Resolver.Log.Info("*********************************************");
             };
             // RMC (recommended minimum)
             gps.RmcReceived += (object sender, GnssPositionInfo positionCourseAndTime) =>
             {
                 Resolver.Log.Info("*********************************************");
-                Resolver.Log.Info(positionCourseAndTime.ToString());
+                Resolver.Log.Info($"{positionCourseAndTime}");
                 Resolver.Log.Info("*********************************************");
 
             };

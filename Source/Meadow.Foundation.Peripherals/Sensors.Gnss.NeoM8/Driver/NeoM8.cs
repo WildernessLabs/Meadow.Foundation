@@ -61,13 +61,13 @@ namespace Meadow.Foundation.Sensors.Gnss
         /// <summary>
         /// Create a new NEOM8 object
         /// </summary>
-        protected NeoM8(ISerialMessagePort serialPort, IDigitalOutputPort reset, IDigitalInputPort pps = null)
+        protected NeoM8(ISerialMessagePort serialPort, IDigitalOutputPort resetPort = null, IDigitalInputPort ppsPort = null)
         {
             this.serialPort = serialPort;
-            ResetPort = reset;
-            PulsePerSecondPort = pps;
+            ResetPort = resetPort;
+            PulsePerSecondPort = ppsPort;
 
-            Initialize();
+            InitializeSerial();
         }
 
         /// <summary>
@@ -79,20 +79,22 @@ namespace Meadow.Foundation.Sensors.Gnss
         /// <param name="ppsPin">The pulse per second pin</param>
         public NeoM8(IMeadowDevice device, SerialPortName serialPortName, IPin resetPin, IPin ppsPin = null)
             : this(device.CreateSerialMessagePort(
-                serialPortName, suffixDelimiter: Encoding.ASCII.GetBytes("\r\n"),
-                preserveDelimiter: true, readBufferSize: 512),
+                serialPortName, 
+                suffixDelimiter: Encoding.ASCII.GetBytes("\r\n"),
+                preserveDelimiter: true, 
+                readBufferSize: 512),
                 device.CreateDigitalOutputPort(resetPin, true),
                 device.CreateDigitalInputPort(ppsPin, InterruptMode.EdgeRising, ResistorMode.InternalPullDown))
         { }
 
-        void Initialize()
+        void InitializeSerial()
         {
-            serialPort.MessageReceived += SerialPort_MessageReceived;
+            serialPort.MessageReceived += MessageReceived;
             InitDecoders();
 
             Reset().Wait();
 
-            Resolver.Log.Debug("Finish NeoM8 initialization");
+            Resolver.Log.Debug("Finish NeoM8 Serial initialization");
         }
 
         /// <summary>
@@ -100,15 +102,30 @@ namespace Meadow.Foundation.Sensors.Gnss
         /// </summary>
         public async Task Reset()
         {
-            ResetPort.State = false;
-            await Task.Delay(TimeSpan.FromMilliseconds(10));
-            ResetPort.State = true;
+            if(ResetPort != null)
+            {
+                ResetPort.State = false;
+                await Task.Delay(TimeSpan.FromMilliseconds(10));
+                ResetPort.State = true;
+            }
         }
 
         /// <summary>
         /// Start updating
         /// </summary>
         public void StartUpdating()
+        {
+            if (serialPort == null)
+            {
+                _ = StartUpdatingSpi();
+            }
+            else
+            {
+                StartUpdatingSerial();
+            }
+        }
+
+        void StartUpdatingSerial()
         {
             if (serialPort.IsOpen)
             {
@@ -177,7 +194,7 @@ namespace Meadow.Foundation.Sensors.Gnss
             };
         }
 
-        void SerialPort_MessageReceived(object sender, SerialMessageData e)
+        void MessageReceived(object sender, SerialMessageData e)
         {
             string msg = e.GetMessageString(Encoding.ASCII);
 
