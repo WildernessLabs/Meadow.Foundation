@@ -8,7 +8,7 @@ namespace Meadow.Foundation.Sensors.Gnss
     public partial class NeoM8
     {
         readonly ISpiPeripheral spiPeripheral;
-        readonly SerialMessageBuffer messageBuffer;
+        readonly SerialMessageProcessor messageProcessor;
 
         const byte NULL_VALUE = 0xFF;
         const byte BUFFER_SIZE = 128;
@@ -22,7 +22,7 @@ namespace Meadow.Foundation.Sensors.Gnss
             ResetPort = resetPort;
             spiPeripheral = new SpiPeripheral(spiBus, chipSelectPort);
 
-            messageBuffer = new SerialMessageBuffer(suffixDelimiter: Encoding.ASCII.GetBytes("\r\n"),
+            messageProcessor = new SerialMessageProcessor(suffixDelimiter: Encoding.ASCII.GetBytes("\r\n"),
                                                     preserveDelimiter: true,
                                                     readBufferSize: 512);
 
@@ -32,7 +32,7 @@ namespace Meadow.Foundation.Sensors.Gnss
         //ToDo cancellation for sleep aware 
         async Task InitializeSpi()
         {
-            messageBuffer.MessageReceived += MessageReceived;
+            messageProcessor.MessageReceived += MessageReceived;
 
             InitDecoders();
 
@@ -64,7 +64,7 @@ namespace Meadow.Foundation.Sensors.Gnss
                 while (true)
                 {
                     spiPeripheral.Read(data);
-                    messageBuffer.AddData(data);
+                    messageProcessor.Process(data);
 
                     if(HasMoreData(data) == false)
                     {
