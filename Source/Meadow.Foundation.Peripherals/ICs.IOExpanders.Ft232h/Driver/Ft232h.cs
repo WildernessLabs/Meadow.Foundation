@@ -2,6 +2,7 @@
 using Meadow.Units;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 
 namespace Meadow.Foundation.ICs.IOExpanders
@@ -129,6 +130,11 @@ namespace Meadow.Foundation.ICs.IOExpanders
             return bus;
         }
 
+        public ISpiBus CreateSpiBus()
+        {
+            return CreateSpiBus(0, DefaultClockConfiguration);
+        }
+
         public ISpiBus CreateSpiBus(IPin clock, IPin mosi, IPin miso, SpiClockConfiguration config)
         {
             if (!clock.Supports<ISpiChannelInfo>(c => c.LineTypes.HasFlag(SpiLineType.Clock)))
@@ -173,19 +179,58 @@ namespace Meadow.Foundation.ICs.IOExpanders
             return bus;
         }
 
+        public IDigitalInputPort CreateDigitalInputPort(IPin pin)
+        {
+            return CreateDigitalInputPort(pin, InterruptMode.None, ResistorMode.Disabled, TimeSpan.Zero, TimeSpan.Zero);
+        }
+
+        private bool _spiBusAutoCreated = false;
+
         public IDigitalInputPort CreateDigitalInputPort(IPin pin, InterruptMode interruptMode, ResistorMode resistorMode, TimeSpan debounceDuration, TimeSpan glitchDuration)
         {
-            throw new NotImplementedException();
+            if (interruptMode != InterruptMode.None)
+            {
+                throw new NotSupportedException("The FT232 does not support interrupts");
+            }
+
+            // MPSSE requires a bus, it can be either I2C or SPI, but that bus must be created before you can use GPIO
+            // if no bus is yet open, we'll default to a SPI bus.
+            // If this is created before an I2C comms bus, we need to let the caller know to create the comms bus first
+
+            if (_activeBus == null)
+            {
+                var bus = CreateSpiBus(0, DefaultClockConfiguration);
+                _spiBusAutoCreated = true;
+                _activeBus = bus as IFt232Bus;
+            }
+
+            // TODO: do we need to set the direction make (see outpuuts) or are they defaulted to input?
+
+            var info = pin.SupportedChannels?.FirstOrDefault(c => c is IDigitalChannelInfo) as IDigitalChannelInfo;
+            return new Ft232DigitalInputPort(pin, info, _activeBus);
         }
 
         public IDigitalOutputPort CreateDigitalOutputPort(IPin pin, bool initialState = false, OutputType initialOutputType = OutputType.PushPull)
         {
-            throw new NotImplementedException();
-        }
+            // MPSSE requires a bus, it can be either I2C or SPI, but that bus must be created before you can use GPIO
+            // if no bus is yet open, we'll default to a SPI bus.
+            // If this is created before an I2C comms bus, we need to let the caller know to create the comms bus first
 
-        public IDigitalInputPort CreateDigitalInputPort(IPin pin)
-        {
-            return CreateDigitalInputPort(pin, InterruptMode.None, ResistorMode.Disabled, TimeSpan.Zero, TimeSpan.Zero);
+            if (_activeBus == null)
+            {
+                var bus = CreateSpiBus(0, DefaultClockConfiguration);
+                _spiBusAutoCreated = true;
+                _activeBus = bus as IFt232Bus;
+            }
+
+            // update the global mask to make this an output
+            _activeBus.GpioDirectionMask |= (byte)(1 << (byte)pin.Key);
+
+            // update the direction
+            Native.Functions.FT_WriteGPIO(_activeBus.Handle, _activeBus.GpioDirectionMask, 0);
+
+            var info = pin.SupportedChannels?.FirstOrDefault(c => c is IDigitalChannelInfo) as IDigitalChannelInfo;
+            return new Ft232DigitalOutputPort(pin, info, initialState, initialOutputType, _activeBus);
         }
 
         protected virtual void Dispose(bool disposing)

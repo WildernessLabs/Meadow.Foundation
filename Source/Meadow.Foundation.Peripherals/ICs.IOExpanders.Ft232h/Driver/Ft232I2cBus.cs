@@ -6,11 +6,6 @@ using static Meadow.Foundation.ICs.IOExpanders.Native;
 
 namespace Meadow.Foundation.ICs.IOExpanders
 {
-    internal interface IFt232Bus
-    {
-        public IntPtr Handle { get; }
-    }
-
     public sealed class Ft232I2cBus : IFt232Bus, II2cBus, IDisposable
     {
         private const byte DefaultLatencyTimer = 10;
@@ -19,6 +14,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
         private bool _isDisposed;
 
         public IntPtr Handle { get; private set; }
+        public byte GpioDirectionMask { get; set; }
+        public byte GpioState { get; set; }
         internal bool IsOpen { get; private set; } = false;
         internal int ChannelNumber { get; }
         private FT_DEVICE_LIST_INFO_NODE InfoNode { get; }

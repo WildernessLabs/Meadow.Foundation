@@ -18,6 +18,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
         private SpiChannelConfig _channelConfig;
 
         public IntPtr Handle { get; private set; }
+        public byte GpioDirectionMask { get; set; }
+        public byte GpioState { get; set; }
         internal bool IsOpen { get; private set; } = false;
         internal int ChannelNumber { get; }
         private FT_DEVICE_LIST_INFO_NODE InfoNode { get; }

@@ -74,56 +74,56 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
             public readonly IPin C0 = new Pin(
                 "C0",
-                (byte)0x00,
+                (byte)(1 << 0),
                 new List<IChannelInfo> {
                     new DigitalChannelInfo("C0", interruptCapable: false, pullUpCapable: false, pullDownCapable: false)
                 });
 
             public readonly IPin C1 = new Pin(
                 "C1",
-                (byte)0x00,
+                (byte)(1 << 1),
                 new List<IChannelInfo> {
                     new DigitalChannelInfo("C1", interruptCapable: false, pullUpCapable: false, pullDownCapable: false)
                 });
 
             public readonly IPin C2 = new Pin(
                 "C2",
-                (byte)0x00,
+                (byte)(1 << 2),
                 new List<IChannelInfo> {
                     new DigitalChannelInfo("C2", interruptCapable: false, pullUpCapable: false, pullDownCapable: false)
                 });
 
             public readonly IPin C3 = new Pin(
                 "C3",
-                (byte)0x00,
+                (byte)(1 << 3),
                 new List<IChannelInfo> {
                     new DigitalChannelInfo("C3", interruptCapable: false, pullUpCapable: false, pullDownCapable: false)
                 });
 
             public readonly IPin C4 = new Pin(
                 "C4",
-                (byte)0x00,
+                (byte)(1 << 4),
                 new List<IChannelInfo> {
                     new DigitalChannelInfo("C4", interruptCapable: false, pullUpCapable: false, pullDownCapable: false)
                 });
 
             public readonly IPin C5 = new Pin(
                 "C5",
-                (byte)0x00,
+                (byte)(1 << 5),
                 new List<IChannelInfo> {
                     new DigitalChannelInfo("C5", interruptCapable: false, pullUpCapable: false, pullDownCapable: false)
                 });
 
             public readonly IPin C6 = new Pin(
                 "C6",
-                (byte)0x00,
+                (byte)(1 << 6),
                 new List<IChannelInfo> {
                     new DigitalChannelInfo("C6", interruptCapable: false, pullUpCapable: false, pullDownCapable: false)
                 });
 
             public readonly IPin C7 = new Pin(
                 "C7",
-                (byte)0x00,
+                (byte)(1 << 7),
                 new List<IChannelInfo> {
                     new DigitalChannelInfo("C7", interruptCapable: false, pullUpCapable: false, pullDownCapable: false)
                 });
