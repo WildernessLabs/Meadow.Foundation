@@ -1,6 +1,4 @@
-﻿using System;
-using System.Threading;
-using Meadow.Devices;
+﻿using System.Threading;
 using Meadow.Hardware;
 
 namespace Meadow.Foundation.Communications

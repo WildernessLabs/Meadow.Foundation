@@ -1,5 +1,4 @@
-﻿using Meadow.Devices;
-using Meadow.Foundation.Helpers;
+﻿using Meadow.Foundation.Helpers;
 using Meadow.Hardware;
 using Meadow.Peripherals.Sensors.Motion;
 using Meadow.Units;
