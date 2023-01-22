@@ -15,6 +15,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         private static int _instanceCount = 0;
         private Dictionary<int, Ft232I2cBus> _i2cBuses = new Dictionary<int, Ft232I2cBus>();
         private Dictionary<int, Ft232SpiBus> _spiBuses = new Dictionary<int, Ft232SpiBus>();
+        private IFt232Bus? _activeBus = null;
 
         static Ft232h()
         {
@@ -110,6 +111,11 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
         private II2cBus CreateI2cBus(int busNumber, I2CClockRate clock)
         {
+            if (_activeBus != null)
+            {
+                throw new InvalidOperationException("The FT232 allows only one bus to be active at a time.");
+            }
+
             if (!_i2cBuses.ContainsKey(busNumber)) throw new ArgumentOutOfRangeException(nameof(busNumber));
 
             var bus = _i2cBuses[busNumber];
@@ -117,30 +123,53 @@ namespace Meadow.Foundation.ICs.IOExpanders
             {
                 bus.Open(clock);
             }
+
+            _activeBus = bus;
+
             return bus;
         }
 
         public ISpiBus CreateSpiBus(IPin clock, IPin mosi, IPin miso, SpiClockConfiguration config)
         {
+            if (!clock.Supports<ISpiChannelInfo>(c => c.LineTypes.HasFlag(SpiLineType.Clock)))
+            {
+                throw new ArgumentException("Invalid Clock line");
+            }
+
             // TODO: map the pins to the bus number
-            return CreateSpiBus(0);
+            return CreateSpiBus(0, config);
         }
 
         public ISpiBus CreateSpiBus(IPin clock, IPin mosi, IPin miso, Frequency speed)
         {
             // TODO: map the pins to the bus number
-            return CreateSpiBus(0);
+            var config = new SpiClockConfiguration(speed);
+            return CreateSpiBus(0, config);
         }
 
-        public ISpiBus CreateSpiBus(int busNumber = 0, uint clockRate = Ft232SpiBus.DefaultClockRate, SpiConfigOption opts = SpiConfigOption.MODE0 | SpiConfigOption.CS_DBUS3 | SpiConfigOption.CS_ACTIVELOW)
+        public static SpiClockConfiguration DefaultClockConfiguration
         {
+            get => new SpiClockConfiguration(
+                 new Frequency(Ft232SpiBus.DefaultClockRate, Frequency.UnitType.Hertz));
+        }
+
+        private ISpiBus CreateSpiBus(int busNumber, SpiClockConfiguration config)
+        {
+            if (_activeBus != null)
+            {
+                throw new InvalidOperationException("The FT232 allows only one bus to be active at a time.");
+            }
+
             if (!_spiBuses.ContainsKey(busNumber)) throw new ArgumentOutOfRangeException(nameof(busNumber));
 
             var bus = _spiBuses[busNumber];
             if (!bus.IsOpen)
             {
-                bus.Open(opts, clockRate);
+                bus.Open(config);
             }
+
+            _activeBus = bus;
+
             return bus;
         }
 

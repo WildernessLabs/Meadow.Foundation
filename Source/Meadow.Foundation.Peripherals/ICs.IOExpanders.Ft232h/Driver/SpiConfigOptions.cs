@@ -5,7 +5,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
     public partial class Ft232h
     {
         [Flags]
-        public enum SpiConfigOption
+        public enum SpiConfigOptions
         {
             MODE0 = 0x00000000,
             MODE1 = 0x00000001,
