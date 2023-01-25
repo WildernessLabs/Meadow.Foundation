@@ -10,6 +10,10 @@
         /// </summary>
         Default = 0,
         /// <summary>
+        /// Default or normal orientation
+        /// </summary>
+        Normal = Default,
+        /// <summary>
         /// Rotated 90 degrees clockwise
         /// </summary>
         _90Degrees = 90,

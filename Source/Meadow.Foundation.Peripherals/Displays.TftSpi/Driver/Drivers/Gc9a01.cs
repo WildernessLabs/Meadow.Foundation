@@ -26,7 +26,7 @@ namespace Meadow.Foundation.Displays
         {
             Initialize();
 
-            SetRotation(Rotation.Normal);
+            SetRotation(RotationType.Normal);
         }
 
         /// <summary>
@@ -44,7 +44,7 @@ namespace Meadow.Foundation.Displays
         {
             Initialize();
 
-            SetRotation(Rotation.Normal);
+            SetRotation(RotationType.Normal);
         }
             
         /// <summary>
@@ -326,22 +326,22 @@ namespace Meadow.Foundation.Displays
         /// Set the rotation of the display
         /// </summary>
         /// <param name="rotation">The rotation</param>
-        public void SetRotation(Rotation rotation)
+        public void SetRotation(RotationType rotation)
         {
-            SendCommand(GC9A01_MADCTL);
+            SendCommand(Register.MADCTL);
 
             switch (rotation)
             {
-                case Rotation.Normal:
+                case RotationType.Normal:
                     SendData((byte)Register.MADCTL_MX | (byte)Register.MADCTL_MY | (byte)Register.MADCTL_BGR);
                     break;
-                case Rotation.Rotate_90:
+                case RotationType._90Degrees:
                     SendData((byte)Register.MADCTL_MY | (byte)Register.MADCTL_MV | (byte)Register.MADCTL_BGR);
                     break;
-                case Rotation.Rotate_180:
+                case RotationType._180Degrees:
                     SendData((byte)Register.MADCTL_BGR);
                     break;
-                case Rotation.Rotate_270:
+                case RotationType._270Degrees:
                     SendData((byte)Register.MADCTL_MX | (byte)Register.MADCTL_MV | (byte)Register.MADCTL_BGR);
                     break;
             }
@@ -366,8 +366,6 @@ namespace Meadow.Foundation.Displays
         const byte GC9A01_DISPON = 0x29;
 
         const byte GC9A01_PTLAR = 0x30;
-        const byte GC9A01_COLMOD = 0x3A;
-        const byte GC9A01_MADCTL = 0x36;
 
         const byte GC9A01_RDID1 = 0xDA;
         const byte GC9A01_RDID2 = 0xDB;

@@ -26,7 +26,7 @@ namespace Meadow.Foundation.Displays
         {
             Initialize();
 
-            SetRotation(Rotation.Normal);
+            SetRotation(RotationType.Normal);
         }
 
         /// <summary>
@@ -46,7 +46,7 @@ namespace Meadow.Foundation.Displays
         {
             Initialize();
 
-            SetRotation(Rotation.Normal);
+            SetRotation(RotationType.Normal);
         }
 
         /// <summary>

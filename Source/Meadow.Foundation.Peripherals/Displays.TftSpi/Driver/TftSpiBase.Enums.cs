@@ -29,29 +29,6 @@
         };
 
         /// <summary>
-        /// The display rotation
-        /// </summary>
-        public enum Rotation
-        {
-            /// <summary>
-            /// Normal / default rotation
-            /// </summary>
-            Normal, //zero
-            /// <summary>
-            /// Rotate 90 degrees
-            /// </summary>
-            Rotate_90,
-            /// <summary>
-            /// Rotate 180 degrees
-            /// </summary>
-            Rotate_180,
-            /// <summary>
-            /// Rotate 270 degrees
-            /// </summary>
-            Rotate_270,
-        }
-
-        /// <summary>
         /// Display registers
         /// </summary>
         protected enum Register : byte
@@ -59,7 +36,7 @@
             /// <summary>
             /// NO_OP
             /// </summary>
-            NO_OP = 0x0,
+            NO_OP = 0x00,
             /// <summary>
             /// MADCTL
             /// </summary>
@@ -87,7 +64,7 @@
             /// <summary>
             /// MADCTL_BGR
             /// </summary>
-            MADCTL_BGR = 0X08,
+            MADCTL_BGR = 0x08,
             /// <summary>
             /// MADCTL_MH
             /// </summary>

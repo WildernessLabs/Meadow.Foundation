@@ -169,28 +169,28 @@ namespace Meadow.Foundation.Displays
         /// Set the display rotation
         /// </summary>
         /// <param name="rotation">The rotation value</param>
-        public void SetRotation(Rotation rotation)
+        public void SetRotation(RotationType rotation)
         {
             SendCommand(Register.MADCTL);
 
             switch (rotation)
             {
-                case Rotation.Normal:
+                case RotationType.Normal:
                     SendData((byte)Register.MADCTL_MX | (byte)Register.MADCTL_MY | (byte)Register.MADCTL_RGB);
                     xOffset = columnStart;
                     yOffset = rowStart;
                     break;
-                case Rotation.Rotate_90:
+                case RotationType._90Degrees:
                     SendData((byte)Register.MADCTL_MY | (byte)Register.MADCTL_MV | (byte)Register.MADCTL_RGB);
                     xOffset = rowStart;
                     yOffset = columnStart2;
                     break;
-                case Rotation.Rotate_180:
+                case RotationType._180Degrees:
                     SendData((byte)Register.MADCTL_RGB);
                     xOffset = columnStart2;
                     yOffset = rowStart2;
                     break;
-                case Rotation.Rotate_270:
+                case RotationType._270Degrees:
                     SendData((byte)Register.MADCTL_MX | (byte)Register.MADCTL_MV | (byte)Register.MADCTL_RGB);
                     xOffset = rowStart2;
                     yOffset = columnStart;
