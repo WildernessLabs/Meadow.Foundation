@@ -19,7 +19,7 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         public override ColorType DefautColorMode => ColorType.Format12bppRgb444;
 
-        private DisplayType displayType;
+        private readonly St7735DisplayType displayType;
 
         private byte xOffset;
         private byte yOffset;
@@ -38,7 +38,7 @@ namespace Meadow.Foundation.Displays
         /// <param name="colorMode">The color mode to use for the display buffer</param>
         public St7735(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
             int width, int height,
-            DisplayType displayType = DisplayType.ST7735R, ColorType colorMode = ColorType.Format12bppRgb444)
+            St7735DisplayType displayType = St7735DisplayType.ST7735R, ColorType colorMode = ColorType.Format12bppRgb444)
             : base(device, spiBus, chipSelectPin, dcPin, resetPin, width, height, colorMode)
         {
             this.displayType = displayType;
@@ -59,7 +59,7 @@ namespace Meadow.Foundation.Displays
         /// <param name="colorMode">The color mode to use for the display buffer</param>
         public St7735(ISpiBus spiBus, IDigitalOutputPort chipSelectPort,
                 IDigitalOutputPort dataCommandPort, IDigitalOutputPort resetPort,
-                int width, int height, DisplayType displayType = DisplayType.ST7735R, ColorType colorMode = ColorType.Format12bppRgb444) :
+                int width, int height, St7735DisplayType displayType = St7735DisplayType.ST7735R, ColorType colorMode = ColorType.Format12bppRgb444) :
             base(spiBus, chipSelectPort, dataCommandPort, resetPort, width, height, colorMode)
         {
             this.displayType = displayType;
@@ -70,7 +70,7 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// The ST7735 display type
         /// </summary>
-        public enum DisplayType
+        public enum St7735DisplayType
         {
             /// <summary>
             /// ST7735R
@@ -146,7 +146,7 @@ namespace Meadow.Foundation.Displays
 
             xOffset = yOffset = 0;
 
-            if (displayType == DisplayType.ST7735B)
+            if (displayType == St7735DisplayType.ST7735B)
             {
                 Init7735B();
                 SetAddressWindow(0, 0, (Width - 1), (Height - 1));
@@ -155,19 +155,19 @@ namespace Meadow.Foundation.Displays
 
             CommonInit();
 
-            if (displayType == DisplayType.ST7735R_GreenTab)
+            if (displayType == St7735DisplayType.ST7735R_GreenTab)
                 Init7735RGreen();
-            else if (displayType == DisplayType.ST7735R_144x144)
+            else if (displayType == St7735DisplayType.ST7735R_144x144)
                 Init7735RGreen144x144();
-            else if (displayType == DisplayType.ST7735R_80x160)
+            else if (displayType == St7735DisplayType.ST7735R_80x160)
                 Init7735RGreen80x160();
             else
                 Init7735RRed();
 
             Init7735REnd();
 
-            if (displayType == DisplayType.ST7735R_80x160 ||
-                displayType == DisplayType.ST7735R_BlackTab)
+            if (displayType == St7735DisplayType.ST7735R_80x160 ||
+                displayType == St7735DisplayType.ST7735R_BlackTab)
             {
                 SendCommand((byte)Register.MADCTL, new byte[] { 0xC0 });
                 SendCommand(Register.INVOFF);
