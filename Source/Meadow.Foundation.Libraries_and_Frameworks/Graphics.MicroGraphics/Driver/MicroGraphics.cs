@@ -46,12 +46,26 @@ namespace Meadow.Foundation.Graphics
         /// <summary>
         /// Current color mode
         /// </summary>
-        public ColorType ColorMode => pixelBuffer.ColorMode;
+        public ColorMode ColorMode => pixelBuffer.ColorMode;
 
         /// <summary>
         /// Current rotation used for drawing pixels to the display
         /// </summary>
-        public RotationType Rotation { get; set; } = RotationType.Default;
+        public RotationType Rotation
+        { 
+            get
+            {
+                if(display is IRotatableDisplay {} d) { return d.Rotation; }
+                return _rotation;
+            }
+            set
+            {
+                if (display is IRotatableDisplay {} d) { d.SetRotation(value); }
+                else { _rotation = value; }
+            }
+        }
+
+        RotationType _rotation = RotationType.Default;
 
         /// <summary>
         /// Stroke / line thickness when drawing lines or shape outlines

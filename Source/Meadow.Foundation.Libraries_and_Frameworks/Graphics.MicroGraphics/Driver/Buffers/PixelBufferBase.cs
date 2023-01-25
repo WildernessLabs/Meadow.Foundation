@@ -20,7 +20,7 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// <summary>
         /// Color mode of the buffer
         /// </summary>
-        public virtual ColorType ColorMode { get; protected set; }
+        public virtual ColorMode ColorMode { get; protected set; }
 
         /// <summary>
         /// Bitdepth of display as an integer
@@ -31,17 +31,17 @@ namespace Meadow.Foundation.Graphics.Buffers
             {
                 return ColorMode switch
                 {
-                    ColorType.Format1bpp => 1,
-                    ColorType.Format2bpp => 2,
-                    ColorType.Format4bppGray => 4,
-                    ColorType.Format8bppGray => 8,
-                    ColorType.Format8bppRgb332 => 8,
-                    ColorType.Format12bppRgb444 => 12,
-                    ColorType.Format16bppRgb555 => 15,
-                    ColorType.Format16bppRgb565 => 16,
-                    ColorType.Format18bppRgb666 => 18,
-                    ColorType.Format24bppRgb888 => 24,
-                    ColorType.Format32bppRgba8888 => 32,
+                    ColorMode.Format1bpp => 1,
+                    ColorMode.Format2bpp => 2,
+                    ColorMode.Format4bppGray => 4,
+                    ColorMode.Format8bppGray => 8,
+                    ColorMode.Format8bppRgb332 => 8,
+                    ColorMode.Format12bppRgb444 => 12,
+                    ColorMode.Format16bppRgb555 => 15,
+                    ColorMode.Format16bppRgb565 => 16,
+                    ColorMode.Format18bppRgb666 => 18,
+                    ColorMode.Format24bppRgb888 => 24,
+                    ColorMode.Format32bppRgba8888 => 32,
                     _ => throw new NotImplementedException($"Unknown or unsupported ColorMode: {ColorMode}"),
                 };
             }

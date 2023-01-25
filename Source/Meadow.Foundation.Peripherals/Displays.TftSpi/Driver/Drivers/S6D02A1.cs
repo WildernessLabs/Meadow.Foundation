@@ -6,12 +6,17 @@ namespace Meadow.Foundation.Displays
     /// <summary>
     /// Represents a Samsung S6D02A1 TFT color display
     /// </summary>
-    public class S6D02A1 : TftSpiBase
+    public class S6D02A1 : TftSpiBase, IRotatableDisplay
     {
         /// <summary>
         /// The default display color mode
         /// </summary>
-        public override ColorType DefautColorMode => ColorType.Format12bppRgb444;
+        public override ColorMode DefautColorMode => ColorMode.Format12bppRgb444;
+
+        /// <summary>
+        /// The color modes supported by the display
+        /// </summary>
+        public override ColorMode SupportedColorModes => ColorMode.Format16bppRgb565 | ColorMode.Format12bppRgb444;
 
         /// <summary>
         /// Create a new S6D02A1 color display object
@@ -25,7 +30,7 @@ namespace Meadow.Foundation.Displays
         /// <param name="height">Height of display in pixels</param>
         /// <param name="colorMode">The color mode to use for the display buffer</param>
         public S6D02A1(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
-            int width = 128, int height = 160, ColorType colorMode = ColorType.Format12bppRgb444)
+            int width = 128, int height = 160, ColorMode colorMode = ColorMode.Format12bppRgb444)
             : base(device, spiBus, chipSelectPin, dcPin, resetPin, width, height, colorMode)
         {
             Initialize();
@@ -43,7 +48,7 @@ namespace Meadow.Foundation.Displays
         /// <param name="colorMode">The color mode to use for the display buffer</param>
         public S6D02A1(ISpiBus spiBus, IDigitalOutputPort chipSelectPort,
                 IDigitalOutputPort dataCommandPort, IDigitalOutputPort resetPort,
-                int width = 128, int height = 160, ColorType colorMode = ColorType.Format12bppRgb444) :
+                int width = 128, int height = 160, ColorMode colorMode = ColorMode.Format12bppRgb444) :
             base(spiBus, chipSelectPort, dataCommandPort, resetPort, width, height, colorMode)
         {
             Initialize();
@@ -105,7 +110,7 @@ namespace Meadow.Foundation.Displays
             SendCommand(0x35, new byte[] { 0x00 }); // Tearing effect line on
          
             SendCommand((byte)Register.COLOR_MODE);
-            if (ColorMode == ColorType.Format16bppRgb565)
+            if (ColorMode == ColorMode.Format16bppRgb565)
                 SendData(0x05); //16 bit RGB565
             else
                 SendData(0x33); //12 bit RGB444

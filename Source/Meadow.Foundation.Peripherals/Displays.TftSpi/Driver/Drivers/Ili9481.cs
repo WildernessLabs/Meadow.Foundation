@@ -6,12 +6,17 @@ namespace Meadow.Foundation.Displays
     /// <summary>
     /// Represents a Ili9481 TFT color display
     /// </summary>
-    public class Ili9481 : TftSpiBase
+    public class Ili9481 : TftSpiBase, IRotatableDisplay
     {
         /// <summary>
         /// The default display color mode
         /// </summary>
-        public override ColorType DefautColorMode => ColorType.Format12bppRgb444;
+        public override ColorMode DefautColorMode => ColorMode.Format12bppRgb444;
+
+        /// <summary>
+        /// The color modes supported by the display
+        /// </summary>
+        public override ColorMode SupportedColorModes => ColorMode.Format16bppRgb565 | ColorMode.Format12bppRgb444;
 
         /// <summary>
         /// Create a new Ili9341 color display object
@@ -25,7 +30,7 @@ namespace Meadow.Foundation.Displays
         /// <param name="height">Height of display in pixels</param>
         /// <param name="colorMode">The color mode to use for the display buffer</param>
         public Ili9481(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
-            int width = 320, int height = 480, ColorType colorMode = ColorType.Format12bppRgb444) 
+            int width = 320, int height = 480, ColorMode colorMode = ColorMode.Format12bppRgb444) 
             : base(device, spiBus, chipSelectPin, dcPin, resetPin, width, height, colorMode)
         {
             Initialize();
@@ -45,7 +50,7 @@ namespace Meadow.Foundation.Displays
         /// <param name="colorMode">The color mode to use for the display buffer</param>
         public Ili9481(ISpiBus spiBus, IDigitalOutputPort chipSelectPort,
                 IDigitalOutputPort dataCommandPort, IDigitalOutputPort resetPort,
-                int width = 320, int height = 480, ColorType colorMode = ColorType.Format12bppRgb444) :
+                int width = 320, int height = 480, ColorMode colorMode = ColorMode.Format12bppRgb444) :
             base(spiBus, chipSelectPort, dataCommandPort, resetPort, width, height, colorMode)
         {
             Initialize();
@@ -103,7 +108,7 @@ namespace Meadow.Foundation.Displays
             SendData(0x0A);
 
             SendCommand(Register.COLOR_MODE);
-            if (ColorMode == ColorType.Format16bppRgb565)
+            if (ColorMode == ColorMode.Format16bppRgb565)
             {
                 SendData(0x55);
             }
@@ -167,16 +172,16 @@ namespace Meadow.Foundation.Displays
             switch (rotation)
             {
                 case RotationType.Normal:
-                    SendData((byte)Register.MADCTL_SS | (byte)Register.MADCTL_BGR);
+                    SendData((byte)(Register.MADCTL_SS | Register.MADCTL_BGR));
                     break;
                 case RotationType._90Degrees:
-                    SendData((byte)Register.MADCTL_MV | (byte)Register.MADCTL_BGR);
+                    SendData((byte)(Register.MADCTL_MV | Register.MADCTL_BGR));
                     break;
                 case RotationType._180Degrees:
-                    SendData((byte)Register.MADCTL_BGR | (byte)Register.MADCTL_GS);
+                    SendData((byte)(Register.MADCTL_BGR | Register.MADCTL_GS));
                     break;
                 case RotationType._270Degrees:
-                    SendData((byte)Register.MADCTL_MV | (byte)Register.MADCTL_BGR | (byte)Register.MADCTL_SS | (byte)Register.MADCTL_GS);
+                    SendData((byte)(Register.MADCTL_MV | Register.MADCTL_BGR | Register.MADCTL_SS | Register.MADCTL_GS));
                     break;
             }
         }

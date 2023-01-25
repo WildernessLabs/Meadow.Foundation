@@ -12,7 +12,12 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// The default display color mode
         /// </summary>
-        public override ColorType DefautColorMode => ColorType.Format16bppRgb565;
+        public override ColorMode DefautColorMode => ColorMode.Format16bppRgb565;
+
+        /// <summary>
+        /// The color modes supported by the display
+        /// </summary>
+        public override ColorMode SupportedColorModes => ColorMode.Format16bppRgb565;
 
         /// <summary>
         /// Create a new Ssd1331 color display object
@@ -26,7 +31,7 @@ namespace Meadow.Foundation.Displays
         /// <param name="height">Height of display in pixels</param>
         public Ssd1331(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
            int width = 96, int height = 64) 
-            : base(device, spiBus, chipSelectPin, dcPin, resetPin, width, height, ColorType.Format16bppRgb565)
+            : base(device, spiBus, chipSelectPin, dcPin, resetPin, width, height, ColorMode.Format16bppRgb565)
         {
             Initialize();
         }
@@ -43,7 +48,7 @@ namespace Meadow.Foundation.Displays
         public Ssd1331(ISpiBus spiBus, IDigitalOutputPort chipSelectPort,
                 IDigitalOutputPort dataCommandPort, IDigitalOutputPort resetPort,
                 int width = 96, int height = 64) :
-            base(spiBus, chipSelectPort, dataCommandPort, resetPort, width, height, ColorType.Format16bppRgb565)
+            base(spiBus, chipSelectPort, dataCommandPort, resetPort, width, height, ColorMode.Format16bppRgb565)
         {
             Initialize();
         }
@@ -119,20 +124,6 @@ namespace Meadow.Foundation.Displays
             SetAddressWindow(0, 0, (Width - 1), (Height - 1));
 
             dataCommandPort.State = Data;
-        }
-
-        /// <summary>
-        /// Is the color mode supported by the display
-        /// </summary>
-        /// <param name="mode">The color mode</param>
-        /// <returns>True if supported</returns>
-        public override bool IsColorModeSupported(ColorType mode)
-        {
-            if (mode == ColorType.Format16bppRgb565)
-            {
-                return true;
-            }
-            return false;
         }
 
         /// <summary>

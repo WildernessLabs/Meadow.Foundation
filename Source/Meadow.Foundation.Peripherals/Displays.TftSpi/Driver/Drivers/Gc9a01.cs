@@ -6,12 +6,17 @@ namespace Meadow.Foundation.Displays
     /// <summary>
     /// Represents a Gc9a01 TFT color display
     /// </summary>
-    public class Gc9a01 : TftSpiBase
+    public class Gc9a01 : TftSpiBase, IRotatableDisplay
     {
         /// <summary>
         /// The display default color mode
         /// </summary>
-        public override ColorType DefautColorMode => ColorType.Format16bppRgb565;
+        public override ColorMode DefautColorMode => ColorMode.Format16bppRgb565;
+
+        /// <summary>
+        /// The color modes supported by the display
+        /// </summary>
+        public override ColorMode SupportedColorModes => ColorMode.Format16bppRgb565;
 
         /// <summary>
         /// Create a new Gc9a01 color display object
@@ -22,7 +27,7 @@ namespace Meadow.Foundation.Displays
         /// <param name="dcPin">Data command pin</param>
         /// <param name="resetPin">Reset pin</param>
         public Gc9a01(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin) :
-            base(device, spiBus, chipSelectPin, dcPin, resetPin, 240, 240, ColorType.Format16bppRgb565)
+            base(device, spiBus, chipSelectPin, dcPin, resetPin, 240, 240, ColorMode.Format16bppRgb565)
         {
             Initialize();
 
@@ -40,7 +45,7 @@ namespace Meadow.Foundation.Displays
             IDigitalOutputPort chipSelectPort,
             IDigitalOutputPort dataCommandPort,
             IDigitalOutputPort resetPort) :
-            base(spiBus, chipSelectPort, dataCommandPort, resetPort, 240, 240, ColorType.Format16bppRgb565)
+            base(spiBus, chipSelectPort, dataCommandPort, resetPort, 240, 240, ColorMode.Format16bppRgb565)
         {
             Initialize();
 
@@ -281,21 +286,7 @@ namespace Meadow.Foundation.Displays
             SendCommand(Register.DISPON);
             DelayMs(20);
         }
-
-        /// <summary>
-        /// Is a color mode supported by the display
-        /// </summary>
-        /// <param name="mode">The color mode</param>
-        /// <returns>true if supported</returns>
-        public override bool IsColorModeSupported(ColorType mode)
-        {
-            if (mode == ColorType.Format16bppRgb565)
-            {
-                return true;
-            }
-            return false;
-        }
-
+        
         /// <summary>
         /// Set address window to update
         /// </summary>
@@ -330,19 +321,19 @@ namespace Meadow.Foundation.Displays
         {
             SendCommand(Register.MADCTL);
 
-            switch (rotation)
+            switch (Rotation = rotation)
             {
                 case RotationType.Normal:
-                    SendData((byte)Register.MADCTL_MX | (byte)Register.MADCTL_MY | (byte)Register.MADCTL_BGR);
+                    SendData((byte)(Register.MADCTL_MX | Register.MADCTL_MY | Register.MADCTL_BGR));
                     break;
                 case RotationType._90Degrees:
-                    SendData((byte)Register.MADCTL_MY | (byte)Register.MADCTL_MV | (byte)Register.MADCTL_BGR);
+                    SendData((byte)(Register.MADCTL_MY | Register.MADCTL_MV | Register.MADCTL_BGR));
                     break;
                 case RotationType._180Degrees:
                     SendData((byte)Register.MADCTL_BGR);
                     break;
                 case RotationType._270Degrees:
-                    SendData((byte)Register.MADCTL_MX | (byte)Register.MADCTL_MV | (byte)Register.MADCTL_BGR);
+                    SendData((byte)(Register.MADCTL_MX | Register.MADCTL_MV | Register.MADCTL_BGR));
                     break;
             }
         }
