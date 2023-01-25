@@ -112,13 +112,13 @@ namespace Meadow.Foundation.Displays
                 SendData(0x53);
             }
 
-            SendCommand((byte)LcdCommand.CASET);
+            SendCommand(LcdCommand.CASET);
             SendData(0x00);
             SendData(0x00);
             SendData(0x01);
             SendData(0x3F);
 
-            SendCommand((byte)LcdCommand.RASET);
+            SendCommand(LcdCommand.RASET);
             SendData(0x00);
             SendData(0x00);
             SendData(0x01);
@@ -139,21 +139,21 @@ namespace Meadow.Foundation.Displays
         /// <param name="y1">Y end in pixels</param>
         protected override void SetAddressWindow(int x0, int y0, int x1, int y1)
         {
-            SendCommand((byte)LcdCommand.CASET);  // column addr set
+            SendCommand(LcdCommand.CASET);  // column addr set
             dataCommandPort.State = Data;
             Write((byte)(x0 >> 8));
             Write((byte)(x0 & 0xff));   // XSTART 
             Write((byte)(x1 >> 8));
             Write((byte)(x1 & 0xff));   // XEND
 
-            SendCommand((byte)LcdCommand.RASET);  // row addr set
+            SendCommand(LcdCommand.RASET);  // row addr set
             dataCommandPort.State = Data;
             Write((byte)(y0 >> 8));
             Write((byte)(y0 & 0xff));    // YSTART
             Write((byte)(y1 >> 8));
             Write((byte)(y1 & 0xff));    // YEND
 
-            SendCommand((byte)LcdCommand.RAMWR);  // write to RAM
+            SendCommand(LcdCommand.RAMWR);  // write to RAM
         }
 
         /// <summary>

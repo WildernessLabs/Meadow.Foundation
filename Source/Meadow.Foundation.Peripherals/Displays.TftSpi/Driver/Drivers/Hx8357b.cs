@@ -99,12 +99,12 @@ namespace Meadow.Foundation.Displays
             SendData(0xC0);
             SendCommand(Register.COLOR_MODE);
             SendData(0x55);
-            SendCommand((byte)LcdCommand.RASET);
+            SendCommand(LcdCommand.RASET);
             SendData(0x00);
             SendData(0x00);
             SendData(0x01);
             SendData(0xDF);
-            SendCommand((byte)LcdCommand.CASET);
+            SendCommand(LcdCommand.CASET);
             SendData(0x00);
             SendData(0x00);
             SendData(0x01);

@@ -365,6 +365,16 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// Send a command to the display
         /// </summary>
+        /// <param name="command">The command to send as an LcdCommand</param>
+        protected void SendCommand(LcdCommand command)
+        {
+            dataCommandPort.State = Command;
+            Write((byte)command);
+        }
+
+        /// <summary>
+        /// Send a command to the display
+        /// </summary>
         /// <param name="command">The command to send as a byte</param>
         protected void SendCommand(byte command)
         {

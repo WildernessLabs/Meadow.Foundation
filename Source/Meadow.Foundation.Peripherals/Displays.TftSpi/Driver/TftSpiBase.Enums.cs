@@ -8,7 +8,7 @@
         /// <summary>
         /// TFT SPI commands
         /// </summary>
-        protected enum LcdCommand
+        protected enum LcdCommand : byte
         {
             /// <summary>
             /// CASET
