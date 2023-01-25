@@ -277,7 +277,7 @@ namespace Meadow.Foundation.Displays
             SendCommand(Register.INVON);
 
             SendCommand(Register.SLPOUT);
-            DelayMs(GC9A01_SLPOUT_DELAY);
+            DelayMs(120);
             SendCommand(Register.DISPON);
             DelayMs(20);
         }
@@ -346,7 +346,5 @@ namespace Meadow.Foundation.Displays
                     break;
             }
         }
-
-        const byte GC9A01_SLPOUT_DELAY = 120; // delay ms wait for sleep out finish
     }
 }

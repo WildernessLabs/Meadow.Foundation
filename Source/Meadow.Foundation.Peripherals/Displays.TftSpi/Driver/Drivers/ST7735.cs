@@ -105,7 +105,6 @@ namespace Meadow.Foundation.Displays
 
         const byte RDDID = 0x04;
         const byte RDDST = 0x09;
-        const byte PTLON = 0x12;
         const byte FRMCTR1 = 0xB1;
         const byte FRMCTR2 = 0xB2;
         const byte FRMCTR3 = 0xB3;
@@ -116,12 +115,8 @@ namespace Meadow.Foundation.Displays
         const byte PWCTR3 = 0xC2;
         const byte PWCTR4 = 0xC3;
         const byte PWCTR5 = 0xC4;
-        const byte VMCTR1 = 0xC5;
-        const byte RDID1 = 0xDA;
-        const byte RDID2 = 0xDB;
-        const byte RDID3 = 0xDC;
-        const byte RDID4 = 0xDD;
         const byte PWCTR6 = 0xFC;
+        const byte VMCTR1 = 0xC5;
         const byte GMCTRP1 = 0xE0;
         const byte GMCTRN1 = 0xE1;
 

@@ -46,6 +46,10 @@
             /// </summary>
             SLPOUT = 0x11,
             /// <summary>
+            /// Partial mode on
+            /// </summary>
+            PTLON = 0x12,
+            /// <summary>
             /// Normal display
             /// </summary>
             NORON = 0x13,

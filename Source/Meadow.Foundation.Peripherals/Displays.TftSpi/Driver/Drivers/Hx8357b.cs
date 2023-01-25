@@ -74,13 +74,11 @@ namespace Meadow.Foundation.Displays
             SendData(0x0c); // 6.8mhz
             SendCommand(RegisterHX8357B.SETPANELRELATED);
             SendData(0x01); // BGR
-            // SendData(0xEA);
-            // seq_undefined1, 3 args
+
             SendData(0x03);
             SendData(0x00);
             SendData(0x00);
-            // SendData(0xEB);
-            // undef2, 4 args
+
             SendData(0x40);
             SendData(0x54);
             SendData(0x26);
@@ -134,10 +132,6 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         protected enum RegisterHX8357B : byte
         {
-            /// <summary>
-            /// Partial mode on
-            /// </summary>
-            PTLON = 0x12, 
             /// <summary>
             /// Unknown
             /// </summary>
