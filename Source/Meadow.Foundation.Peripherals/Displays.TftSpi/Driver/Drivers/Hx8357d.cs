@@ -9,12 +9,12 @@ namespace Meadow.Foundation.Displays
     public class Hx8357d : TftSpiBase, IRotatableDisplay
     {
         /// <summary>
-        /// The display default color type
+        /// The display default color mode
         /// </summary>
         public override ColorMode DefautColorMode => ColorMode.Format16bppRgb565;
 
         /// <summary>
-        /// The color types supported by the display
+        /// The color modes supported by the display
         /// </summary>
         public override ColorMode SupportedColorModes => ColorMode.Format16bppRgb565;
 

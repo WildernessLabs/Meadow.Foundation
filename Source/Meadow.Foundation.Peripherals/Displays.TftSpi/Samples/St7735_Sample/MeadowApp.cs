@@ -29,7 +29,7 @@ namespace Displays.TftSpi.St7735_Sample
                 resetPin: Device.Pins.D00,
                 width: 128,
                 height: 160,
-                St7735.St7735DisplayType.ST7735R);
+                St7735.DisplayType.ST7735R);
 
             graphics = new MicroGraphics(display);
 

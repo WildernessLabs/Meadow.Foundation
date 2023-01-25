@@ -20,7 +20,7 @@ namespace Meadow.Foundation.Displays
         public override ColorMode DefautColorMode => ColorMode.Format16bppRgb565;
 
         /// <summary>
-        /// The color types supported by the display
+        /// The color modes supported by the display
         /// </summary>
         public override ColorMode SupportedColorModes => ColorMode.Format16bppRgb565 | ColorMode.Format12bppRgb444;
 

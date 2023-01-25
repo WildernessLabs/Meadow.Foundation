@@ -16,7 +16,7 @@ namespace Meadow.Foundation.Displays
         public ColorMode ColorMode => imageBuffer.ColorMode;
 
         /// <summary>
-        /// The color types supported by the display
+        /// The color modes supported by the display
         /// </summary>
         public abstract ColorMode SupportedColorModes { get; }
 
@@ -162,7 +162,7 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// Create an offscreen buffer for the display
         /// </summary>
-        /// <param name="mode">The color type</param>
+        /// <param name="mode">The color mode</param>
         /// <param name="width">The width in pixels</param>
         /// <param name="height">The height in pixels</param>
         /// <exception cref="ArgumentException">Throws an exception if the color mode isn't supported</exception>
@@ -170,7 +170,7 @@ namespace Meadow.Foundation.Displays
         {
             if (IsColorTypeSupported(colorType) == false)
             {
-                throw new ArgumentException($"Color type {colorType} not supported");
+                throw new ArgumentException($"color mode {colorType} not supported");
             }
 
             if (colorType == ColorMode.Format24bppRgb888)
