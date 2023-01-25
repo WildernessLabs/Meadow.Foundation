@@ -20,8 +20,11 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         public override ColorType DefautColorMode => ColorType.Format16bppRgb565;
 
-        private byte xOffset;
-        private byte yOffset;
+        private byte rowStart, rowStart2;
+        private byte columnStart, columnStart2;
+
+        private byte xOffset = 0;
+        private byte yOffset = 0;
 
         /// <summary>
         /// Create a new St7789 color display object
@@ -78,14 +81,21 @@ namespace Meadow.Foundation.Displays
                 Thread.Sleep(150); //Not sure if this is needed but can't hurt
             }
 
-            if (Width == 135)
+            if (Width == 135) //135x240 
             {   //unknown if this is consistant across all displays with this res
-                xOffset = 52;
-                yOffset = 40;
+                rowStart = rowStart2 = 40;
+                columnStart = 53;
+                columnStart2 = 52; 
             }
-            else
+            else if(Width == 240 && Height == 240)
             {
-                xOffset = yOffset = 0;
+                rowStart = 80;
+                rowStart2 = columnStart = columnStart2 = 0;
+            }
+            else //1.47", 1.59", 1.9", 2.0" .... 320x240 etc.
+            {
+                rowStart = rowStart2 = (byte)((320 - Width) / 2);
+                columnStart = columnStart2 = (byte)((240 - Width) / 2);
             }
             
             SendCommand(SWRESET);
@@ -167,15 +177,23 @@ namespace Meadow.Foundation.Displays
             {
                 case Rotation.Normal:
                     SendData((byte)Register.MADCTL_MX | (byte)Register.MADCTL_MY | (byte)Register.MADCTL_RGB);
+                    xOffset = columnStart;
+                    yOffset = rowStart;
                     break;
                 case Rotation.Rotate_90:
                     SendData((byte)Register.MADCTL_MY | (byte)Register.MADCTL_MV | (byte)Register.MADCTL_RGB);
+                    xOffset = rowStart;
+                    yOffset = columnStart2;
                     break;
                 case Rotation.Rotate_180:
                     SendData((byte)Register.MADCTL_RGB);
+                    xOffset = columnStart2;
+                    yOffset = rowStart2;
                     break;
                 case Rotation.Rotate_270:
                     SendData((byte)Register.MADCTL_MX | (byte)Register.MADCTL_MV | (byte)Register.MADCTL_RGB);
+                    xOffset = rowStart2;
+                    yOffset = columnStart;
                     break;
             }
         }
