@@ -12,7 +12,12 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// Color mode of display - 1bpp
         /// </summary>
-        public ColorType ColorMode => ColorType.Format1bpp;
+        public ColorMode ColorMode => ColorMode.Format1bpp;
+
+        /// <summary>
+        /// The Color mode supported by the display
+        /// </summary>
+        public ColorMode SupportedColorModes => ColorMode.Format1bpp;
 
         /// <summary>
         /// Width of array of displays in pixels

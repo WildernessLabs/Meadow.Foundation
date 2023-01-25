@@ -6,12 +6,18 @@ namespace Meadow.Foundation.Displays
     /// <summary>
     /// Represents a Ili9488 TFT color display
     /// </summary>
-    public class Ili9488 : TftSpiBase
+    public class Ili9488 : TftSpiBase, IRotatableDisplay
     {
         /// <summary>
         /// The default display color mode
         /// </summary>
-        public override ColorType DefautColorMode => ColorType.Format24bppRgb888;
+        public override ColorMode DefautColorMode => ColorMode.Format24bppRgb888;
+
+        /// <summary>
+        /// The color types supported by the display
+        /// </summary>
+        public override ColorMode SupportedColorModes => ColorMode.Format24bppRgb888;
+
 
         /// <summary>
         /// Create a new Ili9488 display object
@@ -25,7 +31,7 @@ namespace Meadow.Foundation.Displays
         /// <param name="height">Height of display in pixels</param>
         public Ili9488(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
             int width = 320, int height = 480) 
-            : base(device, spiBus, chipSelectPin, dcPin, resetPin, width, height, ColorType.Format24bppRgb888)
+            : base(device, spiBus, chipSelectPin, dcPin, resetPin, width, height, ColorMode.Format24bppRgb888)
         {
             Initialize();
 
@@ -44,21 +50,11 @@ namespace Meadow.Foundation.Displays
         public Ili9488(ISpiBus spiBus, IDigitalOutputPort chipSelectPort,
                 IDigitalOutputPort dataCommandPort, IDigitalOutputPort resetPort,
                 int width = 320, int height = 480) :
-            base(spiBus, chipSelectPort, dataCommandPort, resetPort, width, height, ColorType.Format24bppRgb888)
+            base(spiBus, chipSelectPort, dataCommandPort, resetPort, width, height, ColorMode.Format24bppRgb888)
         {
             Initialize();
 
             SetRotation(RotationType.Normal);
-        }
-
-        /// <summary>
-        /// Is the color mode supported by the display
-        /// </summary>
-        /// <param name="mode">The color mode</param>
-        /// <returns>True if supported</returns>
-        public override bool IsColorModeSupported(ColorType mode)
-        {
-            return mode == ColorType.Format24bppRgb888;
         }
 
         /// <summary>

@@ -7,7 +7,7 @@ namespace Meadow.Foundation.Displays
     /// <summary>
     /// Represents a St7789 TFT color display
     /// </summary>
-    public class St7789 : TftSpiBase
+    public class St7789 : TftSpiBase, IRotatableDisplay
     {
         /// <summary>
         /// The default SPI bus frequency
@@ -17,7 +17,12 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// The default display color mode
         /// </summary>
-        public override ColorType DefautColorMode => ColorType.Format16bppRgb565;
+        public override ColorMode DefautColorMode => ColorMode.Format16bppRgb565;
+
+        /// <summary>
+        /// The color types supported by the display
+        /// </summary>
+        public override ColorMode SupportedColorModes => ColorMode.Format16bppRgb565 | ColorMode.Format12bppRgb444;
 
         private byte rowStart, rowStart2;
         private byte columnStart, columnStart2;
@@ -37,7 +42,7 @@ namespace Meadow.Foundation.Displays
         /// <param name="height">Height of display in pixels</param>
         /// <param name="colorMode">The color mode to use for the display buffer</param>
         public St7789(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
-            int width, int height, ColorType colorMode = ColorType.Format12bppRgb444) 
+            int width, int height, ColorMode colorMode = ColorMode.Format12bppRgb444) 
             : base(device, spiBus, chipSelectPin, dcPin, resetPin, width, height, colorMode)
         {
             Initialize();
@@ -55,7 +60,7 @@ namespace Meadow.Foundation.Displays
         /// <param name="colorMode">The color mode to use for the display buffer</param>
         public St7789(ISpiBus spiBus, IDigitalOutputPort chipSelectPort,
                 IDigitalOutputPort dataCommandPort, IDigitalOutputPort resetPort,
-                int width, int height, ColorType colorMode = ColorType.Format12bppRgb444) :
+                int width, int height, ColorMode colorMode = ColorMode.Format12bppRgb444) :
             base(spiBus, chipSelectPort, dataCommandPort, resetPort, width, height, colorMode)
         {
             Initialize();
@@ -103,7 +108,7 @@ namespace Meadow.Foundation.Displays
             DelayMs(500);
 
             SendCommand(Register.COLOR_MODE);  // set color mode - 16 bit color (x55), 12 bit color (x53), 18 bit color (x56)
-            if (ColorMode == ColorType.Format16bppRgb565)
+            if (ColorMode == ColorMode.Format16bppRgb565)
                 SendData(0x55);  // 16-bit color RGB565
             else
                 SendData(0x53); //12-bit color RGB444

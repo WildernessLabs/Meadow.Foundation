@@ -6,12 +6,17 @@ namespace Meadow.Foundation.Displays
     /// <summary>
     /// Represents a Hx8357d TFT color display
     /// </summary>
-    public class Hx8357d : TftSpiBase
+    public class Hx8357d : TftSpiBase, IRotatableDisplay
     {
         /// <summary>
-        /// The default display color mode
+        /// The display default color type
         /// </summary>
-        public override ColorType DefautColorMode => ColorType.Format16bppRgb565;
+        public override ColorMode DefautColorMode => ColorMode.Format16bppRgb565;
+
+        /// <summary>
+        /// The color types supported by the display
+        /// </summary>
+        public override ColorMode SupportedColorModes => ColorMode.Format16bppRgb565;
 
         /// <summary>
         /// Create a new Hx8357d color display object
@@ -25,7 +30,7 @@ namespace Meadow.Foundation.Displays
         /// <param name="height">Height of display in pixels</param>
         /// <param name="colorMode">The color mode to use for the display buffer</param>
         public Hx8357d(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
-            int width = 320, int height = 480, ColorType colorMode = ColorType.Format16bppRgb565)
+            int width = 320, int height = 480, ColorMode colorMode = ColorMode.Format16bppRgb565)
             : base(device, spiBus, chipSelectPin, dcPin, resetPin, width, height, colorMode)
         {
             Initialize();
@@ -45,22 +50,12 @@ namespace Meadow.Foundation.Displays
         /// <param name="colorMode">The color mode to use for the display buffer</param>
         public Hx8357d(ISpiBus spiBus, IDigitalOutputPort chipSelectPort,
                 IDigitalOutputPort dataCommandPort, IDigitalOutputPort resetPort,
-                int width = 320, int height = 480, ColorType colorMode = ColorType.Format16bppRgb565) :
+                int width = 320, int height = 480, ColorMode colorMode = ColorMode.Format16bppRgb565) :
             base(spiBus, chipSelectPort, dataCommandPort, resetPort, width, height, colorMode)
         {
             Initialize();
 
             SetRotation(RotationType.Normal);
-        }
-
-        /// <summary>
-        /// Check if a color mode is supported by the display
-        /// </summary>
-        /// <param name="mode">The color mode</param>
-        /// <returns>True if supported</returns>
-        public override bool IsColorModeSupported(ColorType mode)
-        {
-            return mode == ColorType.Format16bppRgb565;
         }
 
         /// <summary>

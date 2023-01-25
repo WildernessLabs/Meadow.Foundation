@@ -6,12 +6,17 @@ namespace Meadow.Foundation.Displays
     /// <summary>
     /// Represents a Rm68140 TFT color display
     /// </summary>
-    public class Rm68140 : TftSpiBase
+    public class Rm68140 : TftSpiBase, IRotatableDisplay
     {
         /// <summary>
         /// The default display color mode
         /// </summary>
-        public override ColorType DefautColorMode => ColorType.Format12bppRgb444;
+        public override ColorMode DefautColorMode => ColorMode.Format12bppRgb444;
+
+        /// <summary>
+        /// The color types supported by the display
+        /// </summary>
+        public override ColorMode SupportedColorModes => ColorMode.Format16bppRgb565 | ColorMode.Format12bppRgb444;
 
         /// <summary>
         /// Create a new Rm68140 color display object
@@ -25,7 +30,7 @@ namespace Meadow.Foundation.Displays
         /// <param name="height">Height of display in pixels</param>
         /// <param name="colorMode">The color mode to use for the display buffer</param>
         public Rm68140(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
-            int width = 320, int height = 480, ColorType colorMode = ColorType.Format12bppRgb444) 
+            int width = 320, int height = 480, ColorMode colorMode = ColorMode.Format12bppRgb444) 
             : base(device, spiBus, chipSelectPin, dcPin, resetPin, width, height, colorMode)
         {
             Initialize();
@@ -45,7 +50,7 @@ namespace Meadow.Foundation.Displays
         /// <param name="colorMode">The color mode to use for the display buffer</param>
         public Rm68140(ISpiBus spiBus, IDigitalOutputPort chipSelectPort,
                 IDigitalOutputPort dataCommandPort, IDigitalOutputPort resetPort,
-                int width = 320, int height = 480, ColorType colorMode = ColorType.Format12bppRgb444) :
+                int width = 320, int height = 480, ColorMode colorMode = ColorMode.Format12bppRgb444) :
             base(spiBus, chipSelectPort, dataCommandPort, resetPort, width, height, colorMode)
         {
             Initialize();
@@ -103,7 +108,7 @@ namespace Meadow.Foundation.Displays
             SendData(0x0A);
 
             SendCommand((byte)Register.COLOR_MODE);
-            if (ColorMode == ColorType.Format16bppRgb565)
+            if (ColorMode == ColorMode.Format16bppRgb565)
                 SendData(0x55); //16 bit RGB565
             else
                 SendData(0x53); //12 bit RGB444

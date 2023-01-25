@@ -17,7 +17,12 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// The default display color mode
         /// </summary>
-        public override ColorType DefautColorMode => ColorType.Format12bppRgb444;
+        public override ColorMode DefautColorMode => ColorMode.Format12bppRgb444;
+
+        /// <summary>
+        /// The color types supported by the display
+        /// </summary>
+        public override ColorMode SupportedColorModes => ColorMode.Format16bppRgb565 | ColorMode.Format12bppRgb444;
 
         private readonly St7735DisplayType displayType;
 
@@ -38,7 +43,7 @@ namespace Meadow.Foundation.Displays
         /// <param name="colorMode">The color mode to use for the display buffer</param>
         public St7735(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
             int width, int height,
-            St7735DisplayType displayType = St7735DisplayType.ST7735R, ColorType colorMode = ColorType.Format12bppRgb444)
+            St7735DisplayType displayType = St7735DisplayType.ST7735R, ColorMode colorMode = ColorMode.Format12bppRgb444)
             : base(device, spiBus, chipSelectPin, dcPin, resetPin, width, height, colorMode)
         {
             this.displayType = displayType;
@@ -59,7 +64,7 @@ namespace Meadow.Foundation.Displays
         /// <param name="colorMode">The color mode to use for the display buffer</param>
         public St7735(ISpiBus spiBus, IDigitalOutputPort chipSelectPort,
                 IDigitalOutputPort dataCommandPort, IDigitalOutputPort resetPort,
-                int width, int height, St7735DisplayType displayType = St7735DisplayType.ST7735R, ColorType colorMode = ColorType.Format12bppRgb444) :
+                int width, int height, St7735DisplayType displayType = St7735DisplayType.ST7735R, ColorMode colorMode = ColorMode.Format12bppRgb444) :
             base(spiBus, chipSelectPort, dataCommandPort, resetPort, width, height, colorMode)
         {
             this.displayType = displayType;
@@ -230,7 +235,7 @@ namespace Meadow.Foundation.Displays
             SendData(0xC8);  // row address/col address, bottom to top refresh
 
             SendCommand(Register.COLOR_MODE);  // set color mode
-            if (ColorMode == ColorType.Format16bppRgb565)
+            if (ColorMode == ColorMode.Format16bppRgb565)
                 SendData(0x05);  // 16-bit color RGB565
             else
                 SendData(0x03); //12-bit color RGB444
@@ -244,7 +249,7 @@ namespace Meadow.Foundation.Displays
             DelayMs(150);
 
             SendCommand(Register.COLOR_MODE);  // set color mode
-            if (ColorMode == ColorType.Format16bppRgb565)
+            if (ColorMode == ColorMode.Format16bppRgb565)
                 SendData(0x05);  // 16-bit color RGB565
             else
                 SendData(0x03); //12-bit color RGB444
