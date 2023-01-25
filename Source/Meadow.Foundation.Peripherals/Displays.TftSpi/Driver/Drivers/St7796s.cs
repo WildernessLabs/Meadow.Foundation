@@ -1,5 +1,4 @@
-﻿using System.Threading;
-using Meadow.Foundation.Graphics;
+﻿using Meadow.Foundation.Graphics;
 using Meadow.Hardware;
 
 namespace Meadow.Foundation.Displays
@@ -31,7 +30,7 @@ namespace Meadow.Foundation.Displays
         {
             Initialize();
 
-            SetRotation(Rotation.Normal);
+            SetRotation(RotationType.Normal);
         }
 
         /// <summary>
@@ -57,13 +56,13 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         protected override void Initialize()
         {
-			Thread.Sleep(120);
+			DelayMs(120);
 
-			SendCommand(0x01); //Software reset
-			Thread.Sleep(120);
+			SendCommand(Register.SWRESET); //Software reset
+			DelayMs(120);
 
-			SendCommand(0x11); //Sleep exit                                            
-			Thread.Sleep(120);
+			SendCommand(Register.SLPOUT); //Sleep exit                                            
+			DelayMs(120);
 
 			SendCommand(0xF0); //Command Set control                                 
 			SendData(0xC3);    //Enable extension command 2 partI
@@ -71,10 +70,10 @@ namespace Meadow.Foundation.Displays
 			SendCommand(0xF0); //Command Set control                                 
 			SendData(0x96);    //Enable extension command 2 partII
 
-			SendCommand(0x36); //Memory Data Access Control MX, MY, RGB mode                                    
+			SendCommand(Register.MADCTL); //Memory Data Access Control MX, MY, RGB mode                                    
 			SendData(0x48);    //X-Mirror, Top-Left to right-Buttom, RGB  
 
-			SendCommand((byte)Register.COLOR_MODE);  // set color mode
+			SendCommand(Register.COLOR_MODE);  // set color mode
 			if (ColorMode == ColorType.Format16bppRgb565)
 				SendData(0x05);  // 16-bit color RGB565
 			else
@@ -107,7 +106,7 @@ namespace Meadow.Foundation.Displays
 			SendCommand(0xC5); //VCOM Control
 			SendData(0x18);    //VCOM=0.9
 
-			Thread.Sleep(120);
+			DelayMs(120);
 
 			//ST7796 Gamma Sequence
 			SendCommand(0xE0); //Gamma"+"                                             
@@ -142,7 +141,7 @@ namespace Meadow.Foundation.Displays
 			SendData(0x17);
 			SendData(0x1B);
 
-			Thread.Sleep(120);
+			DelayMs(120);
 
 			SendCommand(0xF0); //Command Set control                                 
 			SendData(0x3C);    //Disable extension command 2 partI
@@ -150,7 +149,7 @@ namespace Meadow.Foundation.Displays
 			SendCommand(0xF0); //Command Set control                                 
 			SendData(0x69);    //Disable extension command 2 partII
 
-			Thread.Sleep(120);
+			DelayMs(120);
 
 			SendCommand(0x29); //Display on
 		}
@@ -164,43 +163,43 @@ namespace Meadow.Foundation.Displays
         /// <param name="y1">Y end in pixels</param>
         protected override void SetAddressWindow(int x0, int y0, int x1, int y1)
 		{
-			SendCommand((byte)LcdCommand.CASET);  // column addr set
+			SendCommand(LcdCommand.CASET);  // column addr set
 			dataCommandPort.State = Data;
 			Write((byte)(x0 >> 8));
 			Write((byte)(x0 & 0xff));   // XSTART 
 			Write((byte)(x1 >> 8));
 			Write((byte)(x1 & 0xff));   // XEND
 
-			SendCommand((byte)LcdCommand.RASET);  // row addr set
+			SendCommand(LcdCommand.RASET);  // row addr set
 			dataCommandPort.State = Data;
 			Write((byte)(y0 >> 8));
 			Write((byte)(y0 & 0xff));    // YSTART
 			Write((byte)(y1 >> 8));
 			Write((byte)(y1 & 0xff));    // YEND
 
-			SendCommand((byte)LcdCommand.RAMWR);  // write to RAM
+			SendCommand(LcdCommand.RAMWR);  // write to RAM
 		}
 
         /// <summary>
         /// Set the display rotation
         /// </summary>
         /// <param name="rotation">The rotation value</param>
-        public void SetRotation(Rotation rotation)
+        public void SetRotation(RotationType rotation)
         {
             SendCommand((byte)Register.MADCTL);
 
             switch (rotation)
             {
-                case Rotation.Normal:
+                case RotationType.Normal:
                     SendData((byte)Register.MADCTL_MX | (byte)Register.MADCTL_BGR);
                     break;
-                case Rotation.Rotate_90:
+                case RotationType._90Degrees:
                     SendData((byte)Register.MADCTL_MV | (byte)Register.MADCTL_BGR);
                     break;
-                case Rotation.Rotate_180:
+                case RotationType._180Degrees:
                     SendData((byte)Register.MADCTL_BGR | (byte)Register.MADCTL_MY);
                     break;
-                case Rotation.Rotate_270:
+                case RotationType._270Degrees:
                     SendData((byte)Register.MADCTL_BGR | (byte)Register.MADCTL_MV | (byte)Register.MADCTL_MX | (byte)Register.MADCTL_MY);
                     break;
             }

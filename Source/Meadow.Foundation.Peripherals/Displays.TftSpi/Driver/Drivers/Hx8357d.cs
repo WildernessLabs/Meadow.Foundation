@@ -1,5 +1,4 @@
-﻿using System.Threading;
-using Meadow.Foundation.Graphics;
+﻿using Meadow.Foundation.Graphics;
 using Meadow.Hardware;
 
 namespace Meadow.Foundation.Displays
@@ -31,7 +30,7 @@ namespace Meadow.Foundation.Displays
         {
             Initialize();
 
-            SetRotation(Rotation.Normal);
+            SetRotation(RotationType.Normal);
         }
 
         /// <summary>
@@ -51,7 +50,7 @@ namespace Meadow.Foundation.Displays
         {
             Initialize();
 
-            SetRotation(Rotation.Normal);
+            SetRotation(RotationType.Normal);
         }
 
         /// <summary>
@@ -69,13 +68,13 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         protected override void Initialize()
         {
-            SendCommand(HX8357_SWRESET);
-            Thread.Sleep(10);   
+            SendCommand(Register.SWRESET);
+            DelayMs(10);   
             SendCommand(HX8357D_SETC);
             SendData(0xFF);
             SendData(0x83);
             SendData(0x57);
-            Thread.Sleep(300);
+            DelayMs(300);
 
             // setRGB which also enables SDO
             SendCommand(HX8357_SETRGB);
@@ -167,11 +166,11 @@ namespace Meadow.Foundation.Displays
             SendData(0x00);
             SendData(0x02);
 
-            SendCommand(HX8357_SLPOUT);  //Exit Sleep
-            Thread.Sleep(150);
+            SendCommand(Register.SLPOUT);  //Exit Sleep
+            DelayMs(150);
 
-            SendCommand(HX8357_DISPON);  // display on
-            Thread.Sleep(50);
+            SendCommand(Register.DISPON);  // display on
+            DelayMs(50);
         }
 
         /// <summary>
@@ -183,50 +182,48 @@ namespace Meadow.Foundation.Displays
         /// <param name="y1">Y end in pixels</param>
         protected override void SetAddressWindow(int x0, int y0, int x1, int y1)
         {
-            SendCommand((byte)LcdCommand.CASET);  // column addr set
+            SendCommand(LcdCommand.CASET);  // column addr set
             dataCommandPort.State = Data;
             Write((byte)(x0 >> 8));
             Write((byte)(x0 & 0xff));   // XSTART 
             Write((byte)(x1 >> 8));
             Write((byte)(x1 & 0xff));   // XEND
 
-            SendCommand((byte)LcdCommand.RASET);  // row addr set
+            SendCommand(LcdCommand.RASET);  // row addr set
             dataCommandPort.State = Data;
             Write((byte)(y0 >> 8));
             Write((byte)(y0 & 0xff));    // YSTART
             Write((byte)(y1 >> 8));
             Write((byte)(y1 & 0xff));    // YEND
 
-            SendCommand((byte)LcdCommand.RAMWR);  // write to RAM
+            SendCommand(LcdCommand.RAMWR);  // write to RAM
         }
 
         /// <summary>
         /// Set the display rotation
         /// </summary>
         /// <param name="rotation">The rotation value</param>
-        public void SetRotation(Rotation rotation)
+        public void SetRotation(RotationType rotation)
         {
             SendCommand(Register.MADCTL);
 
             switch (rotation)
             {
-                case Rotation.Normal:
+                case RotationType.Normal:
                     SendData((byte)(Register.MADCTL_MX | Register.MADCTL_MY | Register.MADCTL_RGB));
                     break;
-                case Rotation.Rotate_90:
+                case RotationType._90Degrees:
                     SendData((byte)(Register.MADCTL_MY | Register.MADCTL_MV | Register.MADCTL_RGB));
                     break;
-                case Rotation.Rotate_180:
+                case RotationType._180Degrees:
                     SendData((byte)(Register.MADCTL_RGB));
                     break;
-                case Rotation.Rotate_270:
+                case RotationType._270Degrees:
                     SendData((byte)(Register.MADCTL_MX | Register.MADCTL_MV | Register.MADCTL_RGB));
                     break;
             }
         }
 
-        internal const byte HX8357_NOP = 0x00;
-        internal const byte HX8357_SWRESET = 0x01;
         internal const byte HX8357_RDDID = 0x04;
         internal const byte HX8357_RDDST = 0x09;
         internal const byte HX8357_RDPOWMODE = 0x0A;
@@ -234,12 +231,6 @@ namespace Meadow.Foundation.Displays
         internal const byte HX8357_RDCOLMOD = 0x0C;
         internal const byte HX8357_RDDIM = 0x0D;
         internal const byte HX8357_RDDSDR = 0x0F;
-        internal const byte HX8357_SLPIN = 0x10;
-        internal const byte HX8357_SLPOUT = 0x11;
-        internal const byte HX8357_INVOFF = 0x20;
-        internal const byte HX8357_INVON = 0x21;
-        internal const byte HX8357_DISPOFF = 0x28;
-        internal const byte HX8357_DISPON = 0x29;
         internal const byte HX8357_TEON = 0x35;
         internal const byte HX8357_TEARLINE = 0x44;
         internal const byte HX8357_SETOSC = 0xB0;

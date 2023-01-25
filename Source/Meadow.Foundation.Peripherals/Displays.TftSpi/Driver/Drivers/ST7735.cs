@@ -1,7 +1,6 @@
 ﻿using Meadow.Foundation.Graphics;
 using Meadow.Hardware;
 using Meadow.Units;
-using System.Threading;
 
 namespace Meadow.Foundation.Displays
 {
@@ -20,7 +19,7 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         public override ColorType DefautColorMode => ColorType.Format12bppRgb444;
 
-        private DisplayType displayType;
+        private readonly St7735DisplayType displayType;
 
         private byte xOffset;
         private byte yOffset;
@@ -39,7 +38,7 @@ namespace Meadow.Foundation.Displays
         /// <param name="colorMode">The color mode to use for the display buffer</param>
         public St7735(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
             int width, int height,
-            DisplayType displayType = DisplayType.ST7735R, ColorType colorMode = ColorType.Format12bppRgb444)
+            St7735DisplayType displayType = St7735DisplayType.ST7735R, ColorType colorMode = ColorType.Format12bppRgb444)
             : base(device, spiBus, chipSelectPin, dcPin, resetPin, width, height, colorMode)
         {
             this.displayType = displayType;
@@ -60,7 +59,7 @@ namespace Meadow.Foundation.Displays
         /// <param name="colorMode">The color mode to use for the display buffer</param>
         public St7735(ISpiBus spiBus, IDigitalOutputPort chipSelectPort,
                 IDigitalOutputPort dataCommandPort, IDigitalOutputPort resetPort,
-                int width, int height, DisplayType displayType = DisplayType.ST7735R, ColorType colorMode = ColorType.Format12bppRgb444) :
+                int width, int height, St7735DisplayType displayType = St7735DisplayType.ST7735R, ColorType colorMode = ColorType.Format12bppRgb444) :
             base(spiBus, chipSelectPort, dataCommandPort, resetPort, width, height, colorMode)
         {
             this.displayType = displayType;
@@ -71,7 +70,7 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// The ST7735 display type
         /// </summary>
-        public enum DisplayType
+        public enum St7735DisplayType
         {
             /// <summary>
             /// ST7735R
@@ -103,17 +102,8 @@ namespace Meadow.Foundation.Displays
             ST7735B,
         }
 
-        const byte SWRESET = 0x01;
         const byte RDDID = 0x04;
         const byte RDDST = 0x09;
-        const byte SLPIN = 0x10;
-        const byte SLPOUT = 0x11;
-        const byte PTLON = 0x12;
-        const byte NORON = 0x13;
-        const byte INVOFF = 0x20;
-        const byte INVON = 0x21;
-        const byte DISPOFF = 0x28;
-        const byte DISPON = 0x29;
         const byte FRMCTR1 = 0xB1;
         const byte FRMCTR2 = 0xB2;
         const byte FRMCTR3 = 0xB3;
@@ -124,12 +114,8 @@ namespace Meadow.Foundation.Displays
         const byte PWCTR3 = 0xC2;
         const byte PWCTR4 = 0xC3;
         const byte PWCTR5 = 0xC4;
-        const byte VMCTR1 = 0xC5;
-        const byte RDID1 = 0xDA;
-        const byte RDID2 = 0xDB;
-        const byte RDID3 = 0xDC;
-        const byte RDID4 = 0xDD;
         const byte PWCTR6 = 0xFC;
+        const byte VMCTR1 = 0xC5;
         const byte GMCTRP1 = 0xE0;
         const byte GMCTRN1 = 0xE1;
 
@@ -147,20 +133,20 @@ namespace Meadow.Foundation.Displays
             if (resetPort != null)
             {
                 resetPort.State = true;
-                Thread.Sleep(50);
+                DelayMs(50);
                 resetPort.State = false;
-                Thread.Sleep(50);
+                DelayMs(50);
                 resetPort.State = true;
-                Thread.Sleep(50);
+                DelayMs(50);
             }
             else
             {
-                Thread.Sleep(150); //Not sure if this is needed but can't hurt
+                DelayMs(150); //Not sure if this is needed but can't hurt
             }
 
             xOffset = yOffset = 0;
 
-            if (displayType == DisplayType.ST7735B)
+            if (displayType == St7735DisplayType.ST7735B)
             {
                 Init7735B();
                 SetAddressWindow(0, 0, (Width - 1), (Height - 1));
@@ -169,22 +155,22 @@ namespace Meadow.Foundation.Displays
 
             CommonInit();
 
-            if (displayType == DisplayType.ST7735R_GreenTab)
+            if (displayType == St7735DisplayType.ST7735R_GreenTab)
                 Init7735RGreen();
-            else if (displayType == DisplayType.ST7735R_144x144)
+            else if (displayType == St7735DisplayType.ST7735R_144x144)
                 Init7735RGreen144x144();
-            else if (displayType == DisplayType.ST7735R_80x160)
+            else if (displayType == St7735DisplayType.ST7735R_80x160)
                 Init7735RGreen80x160();
             else
                 Init7735RRed();
 
             Init7735REnd();
 
-            if (displayType == DisplayType.ST7735R_80x160 ||
-                displayType == DisplayType.ST7735R_BlackTab)
+            if (displayType == St7735DisplayType.ST7735R_80x160 ||
+                displayType == St7735DisplayType.ST7735R_BlackTab)
             {
                 SendCommand((byte)Register.MADCTL, new byte[] { 0xC0 });
-                SendCommand(INVOFF);
+                SendCommand(Register.INVOFF);
             }
 
             SetAddressWindow(0, 0, (Width - 1), (Height - 1));
@@ -194,11 +180,11 @@ namespace Meadow.Foundation.Displays
 
         private void CommonInit()
         {
-            SendCommand(SWRESET);
+            SendCommand(Register.SWRESET);
             DelayMs(150);
-            SendCommand(SLPOUT);
+            SendCommand(Register.SLPOUT);
             DelayMs(150);
-            SendCommand(FRMCTR1);  // frame rate control - normal mode
+            SendCommand(Register.FRMCTR1);  // frame rate control - normal mode
             SendData(new byte[] { 0x01, 0x2C, 0x2D });// frame rate = fosc / (1 x 2 + 40) * (LINE + 2C + 2D)
 
             SendCommand(FRMCTR2);  // frame rate control - idle mode
@@ -252,9 +238,9 @@ namespace Meadow.Foundation.Displays
 
         private void Init7735B()
         {
-            SendCommand(SWRESET);
+            SendCommand(Register.SWRESET);
             DelayMs(150);
-            SendCommand(SLPOUT);
+            SendCommand(Register.SLPOUT);
             DelayMs(150);
 
             SendCommand(Register.COLOR_MODE);  // set color mode
@@ -263,7 +249,7 @@ namespace Meadow.Foundation.Displays
             else
                 SendData(0x03); //12-bit color RGB444
 
-            SendCommand(FRMCTR1);  // frame rate control - normal mode
+            SendCommand(Register.FRMCTR1);  // frame rate control - normal mode
             SendData(new byte[] { 0x00, 0x06, 0x03, 10 });// frame rate = fosc / (1 x 2 + 40) * (LINE + 2C + 2D)
 
             SendCommand(Register.MADCTL);  // memory access control (directions)
@@ -309,22 +295,22 @@ namespace Meadow.Foundation.Displays
                 0x1B, 0x1A, 0x24, 0x2B, 0x06, 0x06, 0x02, 0x0F,
             });
 
-            SendCommand((byte)LcdCommand.CASET);
+            SendCommand(LcdCommand.CASET);
             SendData(new byte[]
             {
                 0x00, 0x02,             //     XSTART = 2
                 0x00, 0x81,             //     XEND = 129
             });
 
-            SendCommand((byte)LcdCommand.RASET);
+            SendCommand(LcdCommand.RASET);
             SendData(new byte[]
             {
                 0x00, 0x02,             //     XSTART = 1
                 0x00, 0x81,             //     XEND = 160
             });
 
-            SendCommand(NORON);
-            SendCommand(DISPON);
+            SendCommand(Register.NORON);
+            SendCommand(Register.DISPON);
 
             DelayMs(500);
         }
@@ -378,10 +364,10 @@ namespace Meadow.Foundation.Displays
                 0x2E, 0x2E, 0x37, 0x3F, 0x00, 0x00, 0x02, 0x10,
             });
 
-            SendCommand(NORON);
-            Thread.Sleep(50);
-            SendCommand(DISPON);
-            Thread.Sleep(10);
+            SendCommand(Register.NORON);
+            DelayMs(50);
+            SendCommand(Register.DISPON);
+            DelayMs(10);
         }
 
         /// <summary>
@@ -399,21 +385,21 @@ namespace Meadow.Foundation.Displays
             x1 += xOffset;
             y1 += yOffset;
 
-            SendCommand((byte)LcdCommand.CASET);  // column addr set
+            SendCommand(LcdCommand.CASET);  // column addr set
             dataCommandPort.State = Data;
             Write((byte)(x0 >> 8));
             Write((byte)(x0 & 0xff));   // XSTART 
             Write((byte)(x1 >> 8));
             Write((byte)(x1 & 0xff));   // XEND
 
-            SendCommand((byte)LcdCommand.RASET);  // row addr set
+            SendCommand(LcdCommand.RASET);  // row addr set
             dataCommandPort.State = Data;
             Write((byte)(y0 >> 8));
             Write((byte)(y0 & 0xff));   // YSTART 
             Write((byte)(y1 >> 8));
             Write((byte)(y1 & 0xff));   // YEND
 
-            SendCommand((byte)LcdCommand.RAMWR);  // write to RAM
+            SendCommand(LcdCommand.RAMWR);  // write to RAM
         }
     }
 }

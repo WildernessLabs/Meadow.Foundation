@@ -1,6 +1,5 @@
 ﻿using Meadow.Foundation.Graphics;
 using Meadow.Hardware;
-using System.Threading;
 
 namespace Meadow.Foundation.Displays
 {
@@ -58,15 +57,15 @@ namespace Meadow.Foundation.Displays
             if (resetPort != null)
             {
                 resetPort.State = true;
-                Thread.Sleep(50);
+                DelayMs(50);
                 resetPort.State = false;
-                Thread.Sleep(50);
+                DelayMs(50);
                 resetPort.State = true;
-                Thread.Sleep(50);
+                DelayMs(50);
             }
             else
             {
-                Thread.Sleep(150); //Not sure if this is needed but can't hurt
+                DelayMs(150); //Not sure if this is needed but can't hurt
             }
 
             SendCommand(CMD_DISPLAYOFF);   // 0xAE
@@ -154,16 +153,7 @@ namespace Meadow.Foundation.Displays
             SendCommand((byte)y1);
         }
 
-        // Timing Delays
-        //static int DELAYS_HWFILL = 3;
-        //static int DELAYS_HWLINE = 1;
-
         // SSD1331 Commands
-        //static byte CMD_DRAWLINE        = 0x21;
-        //static byte CMD_DRAWRECT 		= 0x22;
-        //static byte CMD_FILL 			= 0x26;
-        //static byte CMD_SETCOLUMN 		= 0x15;
-        //static byte CMD_SETROW    		= 0x75;
         static byte CMD_CONTRASTA = 0x81;
         static byte CMD_CONTRASTB = 0x82;
         static byte CMD_CONTRASTC = 0x83;
@@ -172,9 +162,6 @@ namespace Meadow.Foundation.Displays
         static byte CMD_STARTLINE = 0xA1;
         static byte CMD_DISPLAYOFFSET = 0xA2;
         static byte CMD_NORMALDISPLAY = 0xA4;
-        //static byte CMD_DISPLAYALLON  	= 0xA5;
-        //static byte CMD_DISPLAYALLOFF 	= 0xA6;
-        //static byte CMD_INVERTDISPLAY 	= 0xA7;
         static byte CMD_SETMULTIPLEX = 0xA8;
         static byte CMD_SETMASTER = 0xAD;
         static byte CMD_DISPLAYOFF = 0xAE;
@@ -184,7 +171,6 @@ namespace Meadow.Foundation.Displays
         static byte CMD_CLOCKDIV = 0xB3;
         static byte CMD_PRECHARGEA = 0x8A;
         static byte CMD_PRECHARGEB = 0x8B;
-        //static byte CMD_PRECHARGEC 		= 0x8C;
         static byte CMD_PRECHARGELEVEL = 0xBB;
         static byte CMD_VCOMH = 0xBE;
     }

@@ -1,7 +1,6 @@
 ﻿using Meadow.Foundation.Graphics;
 using Meadow.Hardware;
 using Meadow.Units;
-using System.Threading;
 
 namespace Meadow.Foundation.Displays
 {
@@ -70,15 +69,15 @@ namespace Meadow.Foundation.Displays
             if (resetPort != null)
             {
                 resetPort.State = true;
-                Thread.Sleep(50);
+                DelayMs(50);
                 resetPort.State = false;
-                Thread.Sleep(50);
+                DelayMs(50);
                 resetPort.State = true;
-                Thread.Sleep(50);
+                DelayMs(50);
             }
             else
             {
-                Thread.Sleep(150); //Not sure if this is needed but can't hurt
+                DelayMs(150); //Not sure if this is needed but can't hurt
             }
 
             if (Width == 135) //135x240 
@@ -98,9 +97,9 @@ namespace Meadow.Foundation.Displays
                 columnStart = columnStart2 = (byte)((240 - Width) / 2);
             }
             
-            SendCommand(SWRESET);
+            SendCommand(Register.SWRESET);
             DelayMs(150);
-            SendCommand(SLPOUT);
+            SendCommand(Register.SLPOUT);
             DelayMs(500);
 
             SendCommand(Register.COLOR_MODE);  // set color mode - 16 bit color (x55), 12 bit color (x53), 18 bit color (x56)
@@ -114,18 +113,17 @@ namespace Meadow.Foundation.Displays
             SendCommand(Register.MADCTL);
             SendData(0x00); //some variants use 0x08
 
-            SendCommand((byte)LcdCommand.CASET);
-
+            SendCommand(LcdCommand.CASET);
             SendData(new byte[] { 0, 0, 0, (byte)Width });
 
-            SendCommand((byte)LcdCommand.RASET);
+            SendCommand(LcdCommand.RASET);
             SendData(new byte[] { 0, 0, (byte)(Height >> 8), (byte)(Height & 0xFF) });
 
-            SendCommand(INVON); //inversion on
+            SendCommand(Register.INVON); //inversion on
             DelayMs(10);
-            SendCommand(NORON); //normal display
+            SendCommand(Register.NORON); //normal display
             DelayMs(10);
-            SendCommand(DISPON); //display on
+            SendCommand(Register.DISPON); //display on
             DelayMs(500);
 
             SetAddressWindow(0, 0, (Width - 1), (Height - 1));
@@ -148,60 +146,54 @@ namespace Meadow.Foundation.Displays
             x1 += xOffset;
             y1 += yOffset;
 
-            SendCommand((byte)LcdCommand.CASET);  // column addr set
+            SendCommand(LcdCommand.CASET);  // column addr set
             dataCommandPort.State = Data;
             Write((byte)(x0 >> 8));
             Write((byte)(x0 & 0xff));   // XSTART 
             Write((byte)(x1 >> 8));
             Write((byte)(x1 & 0xff));   // XEND
 
-            SendCommand((byte)LcdCommand.RASET);  // row addr set
+            SendCommand(LcdCommand.RASET);  // row addr set
             dataCommandPort.State = Data;
             Write((byte)(y0 >> 8));
             Write((byte)(y0 & 0xff));    // YSTART
             Write((byte)(y1 >> 8));
             Write((byte)(y1 & 0xff));    // YEND
 
-            SendCommand((byte)LcdCommand.RAMWR);  // write to RAM
+            SendCommand(LcdCommand.RAMWR);  // write to RAM
         }
 
         /// <summary>
         /// Set the display rotation
         /// </summary>
         /// <param name="rotation">The rotation value</param>
-        public void SetRotation(Rotation rotation)
+        public void SetRotation(RotationType rotation)
         {
             SendCommand(Register.MADCTL);
 
             switch (rotation)
             {
-                case Rotation.Normal:
+                case RotationType.Normal:
                     SendData((byte)Register.MADCTL_MX | (byte)Register.MADCTL_MY | (byte)Register.MADCTL_RGB);
                     xOffset = columnStart;
                     yOffset = rowStart;
                     break;
-                case Rotation.Rotate_90:
+                case RotationType._90Degrees:
                     SendData((byte)Register.MADCTL_MY | (byte)Register.MADCTL_MV | (byte)Register.MADCTL_RGB);
                     xOffset = rowStart;
                     yOffset = columnStart2;
                     break;
-                case Rotation.Rotate_180:
+                case RotationType._180Degrees:
                     SendData((byte)Register.MADCTL_RGB);
                     xOffset = columnStart2;
                     yOffset = rowStart2;
                     break;
-                case Rotation.Rotate_270:
+                case RotationType._270Degrees:
                     SendData((byte)Register.MADCTL_MX | (byte)Register.MADCTL_MV | (byte)Register.MADCTL_RGB);
                     xOffset = rowStart2;
                     yOffset = columnStart;
                     break;
             }
         }
-
-        static byte SWRESET = 0x01;
-        static byte SLPOUT = 0x11;
-        static byte NORON = 0x13;
-        static byte INVON = 0x21;
-        static byte DISPON = 0x29;
     }
 }

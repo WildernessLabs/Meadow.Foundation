@@ -1,6 +1,5 @@
 ﻿using Meadow.Foundation.Graphics;
 using Meadow.Hardware;
-using System.Threading;
 
 namespace Meadow.Foundation.Displays
 {
@@ -58,15 +57,15 @@ namespace Meadow.Foundation.Displays
             if (resetPort != null)
             {
                 resetPort.State = true;
-                Thread.Sleep(50);
+                DelayMs(50);
                 resetPort.State = false;
-                Thread.Sleep(50);
+                DelayMs(50);
                 resetPort.State = true;
-                Thread.Sleep(50);
+                DelayMs(50);
             }
             else
             {
-                Thread.Sleep(150); //Not sure if this is needed but can't hurt
+                DelayMs(150); //Not sure if this is needed but can't hurt
             }
 
             SendCommand(0xf0, new byte[] { 0x5a, 0x5a });             // Excommand2
@@ -83,23 +82,23 @@ namespace Meadow.Foundation.Displays
             SendCommand(0xf7, new byte[] { 0xc8, 0x20, 0x00, 0x00 });  // Interface control
             SendCommand(0xf3, new byte[] { 0x00, 0x00 });              // Power sequence control
             SendCommand(0x11, null);                 // Wake
-            Thread.Sleep(150);
+            DelayMs(150);
             SendCommand(0xf3, new byte[] { 0x00, 0x01 });  // Power sequence control
-            Thread.Sleep(50);
+            DelayMs(50);
             SendCommand(0xf3, new byte[] { 0x00, 0x03 });  // Power sequence control
-            Thread.Sleep(50);
+            DelayMs(50);
             SendCommand(0xf3, new byte[] { 0x00, 0x07 });  // Power sequence control
-            Thread.Sleep(50);
+            DelayMs(50);
             SendCommand(0xf3, new byte[] { 0x00, 0x0f });  // Power sequence control
-            Thread.Sleep(150);
+            DelayMs(150);
             SendCommand(0xf4, new byte[] { 0x00, 0x04, 0x00, 0x00, 0x00, 0x3f, 0x3f, 0x07, 0x00, 0x3C, 0x36, 0x00, 0x3C, 0x36, 0x00 });    // Power control
-            Thread.Sleep(50);
+            DelayMs(50);
             SendCommand(0xf3, new byte[] { 0x00, 0x1f });   // Power sequence control
-            Thread.Sleep(50);
+            DelayMs(50);
             SendCommand(0xf3, new byte[] { 0x00, 0x7f });   // Power sequence control
-            Thread.Sleep(50);
+            DelayMs(50);
             SendCommand(0xf3, new byte[] { 0x00, 0xff });   // Power sequence control
-            Thread.Sleep(50);
+            DelayMs(50);
             SendCommand(0xfd, new byte[] { 0x00, 0x00, 0x00, 0x17, 0x10, 0x00, 0x00, 0x01, 0x00, 0x16, 0x16 });                           // Analog parameter control
             SendCommand(0xf4, new byte[] { 0x00, 0x09, 0x00, 0x00, 0x00, 0x3f, 0x3f, 0x07, 0x00, 0x3C, 0x36, 0x00, 0x3C, 0x36, 0x00 });   // Power control
             SendCommand(0x36, new byte[] { 0xC8 }); // Memory access data control
@@ -111,7 +110,7 @@ namespace Meadow.Foundation.Displays
             else
                 SendData(0x33); //12 bit RGB444
 
-            Thread.Sleep(150);
+            DelayMs(150);
             SendCommand(0x29, null);                // Display on
             SendCommand(0x2c, null);				// Memory write
 
@@ -129,14 +128,14 @@ namespace Meadow.Foundation.Displays
         /// <param name="y1">Y end in pixels</param>
         protected override void SetAddressWindow(int x0, int y0, int x1, int y1)
         {
-            SendCommand((byte)LcdCommand.CASET);  // column addr set
+            SendCommand(LcdCommand.CASET);  // column addr set
             dataCommandPort.State = (Data);
             Write((byte)(x0 >> 8));
             Write((byte)(x0 & 0xff));   // XSTART 
             Write((byte)(x1 >> 8));
             Write((byte)(x1 & 0xff));   // XEND
 
-            SendCommand((byte)LcdCommand.RASET);  // row addr set
+            SendCommand(LcdCommand.RASET);  // row addr set
             dataCommandPort.State = (Data);
             Write((byte)(y0 >> 8));
             Write((byte)(y0 & 0xff));    // YSTART
@@ -151,22 +150,22 @@ namespace Meadow.Foundation.Displays
         /// Set the display rotation
         /// </summary>
         /// <param name="rotation">The rotation value</param>
-        public void SetRotation(Rotation rotation)
+        public void SetRotation(RotationType rotation)
         {
             SendCommand((byte)Register.MADCTL);
 
             switch (rotation)
             {
-                case Rotation.Normal:
+                case RotationType.Normal:
                     SendData((byte)Register.MADCTL_MX | (byte)Register.MADCTL_MY | (byte)Register.MADCTL_BGR);
                     break;
-                case Rotation.Rotate_90:
+                case RotationType._90Degrees:
                     SendData((byte)Register.MADCTL_MY | (byte)Register.MADCTL_MV | (byte)Register.MADCTL_BGR);
                     break;
-                case Rotation.Rotate_180:
+                case RotationType._180Degrees:
                     SendData((byte)Register.MADCTL_BGR);
                     break;
-                case Rotation.Rotate_270:
+                case RotationType._270Degrees:
                     SendData((byte)Register.MADCTL_MX | (byte)Register.MADCTL_MV | (byte)Register.MADCTL_BGR);
                     break;
             }
