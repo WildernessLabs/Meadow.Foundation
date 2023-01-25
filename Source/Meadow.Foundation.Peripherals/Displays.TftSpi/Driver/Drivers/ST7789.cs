@@ -98,9 +98,9 @@ namespace Meadow.Foundation.Displays
                 columnStart = columnStart2 = (byte)((240 - Width) / 2);
             }
             
-            SendCommand(SWRESET);
+            SendCommand(Register.SWRESET);
             DelayMs(150);
-            SendCommand(SLPOUT);
+            SendCommand(Register.SLPOUT);
             DelayMs(500);
 
             SendCommand(Register.COLOR_MODE);  // set color mode - 16 bit color (x55), 12 bit color (x53), 18 bit color (x56)
@@ -121,11 +121,11 @@ namespace Meadow.Foundation.Displays
             SendCommand((byte)LcdCommand.RASET);
             SendData(new byte[] { 0, 0, (byte)(Height >> 8), (byte)(Height & 0xFF) });
 
-            SendCommand(INVON); //inversion on
+            SendCommand(Register.INVON); //inversion on
             DelayMs(10);
-            SendCommand(NORON); //normal display
+            SendCommand(Register.NORON); //normal display
             DelayMs(10);
-            SendCommand(DISPON); //display on
+            SendCommand(Register.DISPON); //display on
             DelayMs(500);
 
             SetAddressWindow(0, 0, (Width - 1), (Height - 1));
@@ -197,11 +197,5 @@ namespace Meadow.Foundation.Displays
                     break;
             }
         }
-
-        static byte SWRESET = 0x01;
-        static byte SLPOUT = 0x11;
-        static byte NORON = 0x13;
-        static byte INVON = 0x21;
-        static byte DISPON = 0x29;
     }
 }

@@ -114,9 +114,9 @@ namespace Meadow.Foundation.Displays
             SendData(0x3F);
             SendCommand(RegisterHX8357B.SETDISPMODE);
             SendData(0x00); // CPU (DBI) and internal oscillation ??
-            SendCommand(HX8357_SLPOUT);
+            SendCommand(Register.SLPOUT);
             Thread.Sleep(120);
-            SendCommand(HX8357_DISPON);
+            SendCommand(Register.DISPON);
             Thread.Sleep(10);
         }
 
@@ -138,10 +138,6 @@ namespace Meadow.Foundation.Displays
             /// Partial mode on
             /// </summary>
             PTLON = 0x12, 
-            /// <summary>
-            /// Normal mode
-            /// </summary>
-            NORON = 0x13,
             /// <summary>
             /// Unknown
             /// </summary>

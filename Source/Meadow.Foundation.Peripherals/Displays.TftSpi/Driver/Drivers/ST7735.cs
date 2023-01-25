@@ -103,17 +103,9 @@ namespace Meadow.Foundation.Displays
             ST7735B,
         }
 
-        const byte SWRESET = 0x01;
         const byte RDDID = 0x04;
         const byte RDDST = 0x09;
-        const byte SLPIN = 0x10;
-        const byte SLPOUT = 0x11;
         const byte PTLON = 0x12;
-        const byte NORON = 0x13;
-        const byte INVOFF = 0x20;
-        const byte INVON = 0x21;
-        const byte DISPOFF = 0x28;
-        const byte DISPON = 0x29;
         const byte FRMCTR1 = 0xB1;
         const byte FRMCTR2 = 0xB2;
         const byte FRMCTR3 = 0xB3;
@@ -184,7 +176,7 @@ namespace Meadow.Foundation.Displays
                 displayType == DisplayType.ST7735R_BlackTab)
             {
                 SendCommand((byte)Register.MADCTL, new byte[] { 0xC0 });
-                SendCommand(INVOFF);
+                SendCommand(Register.INVOFF);
             }
 
             SetAddressWindow(0, 0, (Width - 1), (Height - 1));
@@ -194,11 +186,11 @@ namespace Meadow.Foundation.Displays
 
         private void CommonInit()
         {
-            SendCommand(SWRESET);
+            SendCommand(Register.SWRESET);
             DelayMs(150);
-            SendCommand(SLPOUT);
+            SendCommand(Register.SLPOUT);
             DelayMs(150);
-            SendCommand(FRMCTR1);  // frame rate control - normal mode
+            SendCommand(Register.FRMCTR1);  // frame rate control - normal mode
             SendData(new byte[] { 0x01, 0x2C, 0x2D });// frame rate = fosc / (1 x 2 + 40) * (LINE + 2C + 2D)
 
             SendCommand(FRMCTR2);  // frame rate control - idle mode
@@ -252,9 +244,9 @@ namespace Meadow.Foundation.Displays
 
         private void Init7735B()
         {
-            SendCommand(SWRESET);
+            SendCommand(Register.SWRESET);
             DelayMs(150);
-            SendCommand(SLPOUT);
+            SendCommand(Register.SLPOUT);
             DelayMs(150);
 
             SendCommand(Register.COLOR_MODE);  // set color mode
@@ -263,7 +255,7 @@ namespace Meadow.Foundation.Displays
             else
                 SendData(0x03); //12-bit color RGB444
 
-            SendCommand(FRMCTR1);  // frame rate control - normal mode
+            SendCommand(Register.FRMCTR1);  // frame rate control - normal mode
             SendData(new byte[] { 0x00, 0x06, 0x03, 10 });// frame rate = fosc / (1 x 2 + 40) * (LINE + 2C + 2D)
 
             SendCommand(Register.MADCTL);  // memory access control (directions)
@@ -323,8 +315,8 @@ namespace Meadow.Foundation.Displays
                 0x00, 0x81,             //     XEND = 160
             });
 
-            SendCommand(NORON);
-            SendCommand(DISPON);
+            SendCommand(Register.NORON);
+            SendCommand(Register.DISPON);
 
             DelayMs(500);
         }
@@ -378,9 +370,9 @@ namespace Meadow.Foundation.Displays
                 0x2E, 0x2E, 0x37, 0x3F, 0x00, 0x00, 0x02, 0x10,
             });
 
-            SendCommand(NORON);
+            SendCommand(Register.NORON);
             Thread.Sleep(50);
-            SendCommand(DISPON);
+            SendCommand(Register.DISPON);
             Thread.Sleep(10);
         }
 

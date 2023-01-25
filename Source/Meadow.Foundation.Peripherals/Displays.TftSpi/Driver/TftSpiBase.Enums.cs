@@ -38,6 +38,34 @@
             /// </summary>
             NO_OP = 0x00,
             /// <summary>
+            /// Software reset
+            /// </summary>
+            SWRESET = 0x01,
+            /// <summary>
+            /// Exit sleep
+            /// </summary>
+            SLPOUT = 0x11,
+            /// <summary>
+            /// Normal display
+            /// </summary>
+            NORON = 0x13,
+            /// <summary>
+            /// Invert display off
+            /// </summary>
+            INVOFF = 0x20,
+            /// <summary>
+            /// Invert display on
+            /// </summary>
+            INVON = 0x21,
+            /// <summary>
+            /// Display off
+            /// </summary>
+            DISOFF = 0x28,
+            /// <summary>
+            /// Display on
+            /// </summary>
+            DISPON = 0x29,
+            /// <summary>
             /// MADCTL
             /// </summary>
             MADCTL = 0x36,
@@ -81,6 +109,10 @@
             /// COLOR_MODE
             /// </summary>
             COLOR_MODE = 0x3A,
+            /// <summary>
+            /// Frame rate control (for some displays)
+            /// </summary>
+            FRMCTR1 = 0xB1,
         }
     }
 }

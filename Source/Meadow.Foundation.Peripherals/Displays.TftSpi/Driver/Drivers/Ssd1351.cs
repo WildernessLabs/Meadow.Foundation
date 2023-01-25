@@ -169,7 +169,11 @@ namespace Meadow.Foundation.Displays
             SendCommand(CMD_WRITERAM);
         }
 
-        private void InvertDisplay (bool invert)
+        /// <summary>
+        /// Invert the display
+        /// </summary>
+        /// <param name="invert"></param>
+        public void InvertDisplay (bool invert)
         {
             SendCommand(invert ? CMD_INVERTDISPLAY : CMD_NORMALDISPLAY);
         }
@@ -177,34 +181,22 @@ namespace Meadow.Foundation.Displays
         static byte CMD_SETCOLUMN      = 0x15;
         static byte CMD_SETROW         = 0x75;
         static byte CMD_WRITERAM       = 0x5C;
-        //static byte CMD_READRAM        = 0x5D;
         static byte CMD_SETREMAP       = 0xA0;
-        //static byte CMD_STARTLINE      = 0xA1;
         static byte CMD_DISPLAYOFFSET  = 0xA2;
-        //static byte CMD_DISPLAYALLOFF  = 0xA4;
-        //static byte CMD_DISPLAYALLON   = 0xA5;
         static byte CMD_NORMALDISPLAY  = 0xA6;
         static byte CMD_INVERTDISPLAY  = 0xA7;
         static byte CMD_FUNCTIONSELECT = 0xAB;
         static byte CMD_DISPLAYOFF     = 0xAE;
         static byte CMD_DISPLAYON      = 0xAF;
         static byte CMD_PRECHARGE      = 0xB1;
-        //static byte CMD_DISPLAYENHANCE = 0xB2;
         static byte CMD_CLOCKDIV       = 0xB3;
         static byte CMD_SETVSL         = 0xB4;
         static byte CMD_SETGPIO        = 0xB5;
         static byte CMD_PRECHARGE2     = 0xB6;
-        //static byte CMD_SETGRAY        = 0xB8;
-        //static byte CMD_USELUT         = 0xB9;
-        //static byte CMD_PRECHARGELEVEL = 0xBB;
         static byte CMD_VCOMH          = 0xBE;
         static byte CMD_CONTRASTABC    = 0xC1;
         static byte CMD_CONTRASTMASTER = 0xC7;
         static byte CMD_MUXRATIO       = 0xCA;
         static byte CMD_COMMANDLOCK    = 0xFD;
-        //static byte CMD_HORIZSCROLL    = 0x96;
-        //static byte CMD_STOPSCROLL     = 0x9E;
-        //static byte CMD_STARTSCROLL    = 0x9F;
-
     }
 }

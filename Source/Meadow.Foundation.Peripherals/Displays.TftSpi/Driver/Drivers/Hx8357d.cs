@@ -69,7 +69,7 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         protected override void Initialize()
         {
-            SendCommand(HX8357_SWRESET);
+            SendCommand(Register.SWRESET);
             Thread.Sleep(10);   
             SendCommand(HX8357D_SETC);
             SendData(0xFF);
@@ -167,10 +167,10 @@ namespace Meadow.Foundation.Displays
             SendData(0x00);
             SendData(0x02);
 
-            SendCommand(HX8357_SLPOUT);  //Exit Sleep
+            SendCommand(Register.SLPOUT);  //Exit Sleep
             Thread.Sleep(150);
 
-            SendCommand(HX8357_DISPON);  // display on
+            SendCommand(Register.DISPON);  // display on
             Thread.Sleep(50);
         }
 
@@ -225,8 +225,6 @@ namespace Meadow.Foundation.Displays
             }
         }
 
-        internal const byte HX8357_NOP = 0x00;
-        internal const byte HX8357_SWRESET = 0x01;
         internal const byte HX8357_RDDID = 0x04;
         internal const byte HX8357_RDDST = 0x09;
         internal const byte HX8357_RDPOWMODE = 0x0A;
@@ -234,12 +232,6 @@ namespace Meadow.Foundation.Displays
         internal const byte HX8357_RDCOLMOD = 0x0C;
         internal const byte HX8357_RDDIM = 0x0D;
         internal const byte HX8357_RDDSDR = 0x0F;
-        internal const byte HX8357_SLPIN = 0x10;
-        internal const byte HX8357_SLPOUT = 0x11;
-        internal const byte HX8357_INVOFF = 0x20;
-        internal const byte HX8357_INVON = 0x21;
-        internal const byte HX8357_DISPOFF = 0x28;
-        internal const byte HX8357_DISPON = 0x29;
         internal const byte HX8357_TEON = 0x35;
         internal const byte HX8357_TEARLINE = 0x44;
         internal const byte HX8357_SETOSC = 0xB0;

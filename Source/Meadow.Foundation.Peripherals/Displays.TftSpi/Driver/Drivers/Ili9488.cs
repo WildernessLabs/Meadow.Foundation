@@ -152,10 +152,10 @@ namespace Meadow.Foundation.Displays
             SendCommand(0xB7); // Entry Mode Set
             SendData(0xC6);
 
-            SendCommand(TFT_SLPOUT);  //Exit Sleep
+            SendCommand(Register.SLPOUT);  //Exit Sleep
             Thread.Sleep(120);
 
-            SendCommand(TFT_DISPON);  //Display on
+            SendCommand(Register.DISPON);  //Display on
             Thread.Sleep(25);
         }
 
@@ -209,14 +209,5 @@ namespace Meadow.Foundation.Displays
                     break;
             }
         }
-
-        const byte TFT_NOP = 0x00;
-        const byte TFT_SWRST = 0x01;
-        const byte TFT_SLPIN = 0x10;
-        const byte TFT_SLPOUT = 0x11;
-        const byte TFT_INVOFF = 0x20;
-        const byte TFT_INVON = 0x21;
-        const byte TFT_DISPOFF = 0x28;
-        const byte TFT_DISPON = 0x29;
     }
 }

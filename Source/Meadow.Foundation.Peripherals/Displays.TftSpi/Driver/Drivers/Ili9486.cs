@@ -150,7 +150,7 @@ namespace Meadow.Foundation.Displays
         /// Set the display rotation
         /// </summary>
         /// <param name="rotation">The rotation value</param>
-        public new void SetRotation(RotationType rotation)
+        public void SetRotation(RotationType rotation)
         {
             SendCommand(Register.MADCTL);
 
@@ -170,14 +170,5 @@ namespace Meadow.Foundation.Displays
                     break;
             }
         }
-
-        const byte TFT_NOP = 0x00;
-        const byte TFT_SWRST = 0x01;
-        const byte TFT_SLPIN = 0x10;
-        const byte TFT_SLPOUT = 0x11;
-        const byte TFT_INVOFF = 0x20;
-        const byte TFT_INVON = 0x21;
-        const byte TFT_DISPOFF = 0x28;
-        const byte TFT_DISPON = 0x29;
     }
 }

@@ -274,11 +274,11 @@ namespace Meadow.Foundation.Displays
 
             SendCommand(0x35);
 
-            SendCommand(GC9A01_INVON);
+            SendCommand(Register.INVON);
 
-            SendCommand(GC9A01_SLPOUT);
+            SendCommand(Register.SLPOUT);
             DelayMs(GC9A01_SLPOUT_DELAY);
-            SendCommand(GC9A01_DISPON);
+            SendCommand(Register.DISPON);
             DelayMs(20);
         }
 
@@ -347,29 +347,6 @@ namespace Meadow.Foundation.Displays
             }
         }
 
-        const byte GC9A01_RST_DELAY = 100;    // delay ms wait for reset finish
-        const byte GC9A01_SLPIN_DELAY = 120;  // delay ms wait for sleep in finish
         const byte GC9A01_SLPOUT_DELAY = 120; // delay ms wait for sleep out finish
-
-        const byte GC9A01_SWRESET = 0x01;
-        const byte GC9A01_RDDID = 0x04;
-        const byte GC9A01_RDDST = 0x09;
-
-        const byte GC9A01_SLPIN = 0x10;
-        const byte GC9A01_SLPOUT = 0x11;
-        const byte GC9A01_PTLON = 0x12;
-        const byte GC9A01_NORON = 0x13;
-
-        const byte GC9A01_INVOFF = 0x20;
-        const byte GC9A01_INVON = 0x21;
-        const byte GC9A01_DISPOFF = 0x28;
-        const byte GC9A01_DISPON = 0x29;
-
-        const byte GC9A01_PTLAR = 0x30;
-
-        const byte GC9A01_RDID1 = 0xDA;
-        const byte GC9A01_RDID2 = 0xDB;
-        const byte GC9A01_RDID3 = 0xDC;
-        const byte GC9A01_RDID4 = 0xDD;
     }
 }
