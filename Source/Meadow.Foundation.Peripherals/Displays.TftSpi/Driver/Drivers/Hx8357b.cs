@@ -1,6 +1,5 @@
 ﻿using Meadow.Foundation.Graphics;
 using Meadow.Hardware;
-using System.Threading;
 
 namespace Meadow.Foundation.Displays
 {
@@ -113,9 +112,9 @@ namespace Meadow.Foundation.Displays
             SendCommand(RegisterHX8357B.SETDISPMODE);
             SendData(0x00); // CPU (DBI) and internal oscillation ??
             SendCommand(Register.SLPOUT);
-            Thread.Sleep(120);
+            DelayMs(120);
             SendCommand(Register.DISPON);
-            Thread.Sleep(10);
+            DelayMs(10);
         }
 
         /// <summary>

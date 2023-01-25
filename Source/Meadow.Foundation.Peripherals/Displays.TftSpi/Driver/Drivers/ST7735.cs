@@ -1,7 +1,6 @@
 ﻿using Meadow.Foundation.Graphics;
 using Meadow.Hardware;
 using Meadow.Units;
-using System.Threading;
 
 namespace Meadow.Foundation.Displays
 {
@@ -134,15 +133,15 @@ namespace Meadow.Foundation.Displays
             if (resetPort != null)
             {
                 resetPort.State = true;
-                Thread.Sleep(50);
+                DelayMs(50);
                 resetPort.State = false;
-                Thread.Sleep(50);
+                DelayMs(50);
                 resetPort.State = true;
-                Thread.Sleep(50);
+                DelayMs(50);
             }
             else
             {
-                Thread.Sleep(150); //Not sure if this is needed but can't hurt
+                DelayMs(150); //Not sure if this is needed but can't hurt
             }
 
             xOffset = yOffset = 0;
@@ -366,9 +365,9 @@ namespace Meadow.Foundation.Displays
             });
 
             SendCommand(Register.NORON);
-            Thread.Sleep(50);
+            DelayMs(50);
             SendCommand(Register.DISPON);
-            Thread.Sleep(10);
+            DelayMs(10);
         }
 
         /// <summary>

@@ -1,5 +1,4 @@
-﻿using System.Threading;
-using Meadow.Foundation.Graphics;
+﻿using Meadow.Foundation.Graphics;
 using Meadow.Hardware;
 
 namespace Meadow.Foundation.Displays
@@ -153,10 +152,10 @@ namespace Meadow.Foundation.Displays
             SendData(0xC6);
 
             SendCommand(Register.SLPOUT);  //Exit Sleep
-            Thread.Sleep(120);
+            DelayMs(120);
 
             SendCommand(Register.DISPON);  //Display on
-            Thread.Sleep(25);
+            DelayMs(25);
         }
 
         /// <summary>

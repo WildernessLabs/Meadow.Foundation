@@ -1,5 +1,4 @@
-﻿using System.Threading;
-using Meadow.Foundation.Graphics;
+﻿using Meadow.Foundation.Graphics;
 using Meadow.Hardware;
 
 namespace Meadow.Foundation.Displays
@@ -57,13 +56,13 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         protected override void Initialize()
         {
-			Thread.Sleep(120);
+			DelayMs(120);
 
-			SendCommand(0x01); //Software reset
-			Thread.Sleep(120);
+			SendCommand(Register.SWRESET); //Software reset
+			DelayMs(120);
 
-			SendCommand(0x11); //Sleep exit                                            
-			Thread.Sleep(120);
+			SendCommand(Register.SLPOUT); //Sleep exit                                            
+			DelayMs(120);
 
 			SendCommand(0xF0); //Command Set control                                 
 			SendData(0xC3);    //Enable extension command 2 partI
@@ -71,10 +70,10 @@ namespace Meadow.Foundation.Displays
 			SendCommand(0xF0); //Command Set control                                 
 			SendData(0x96);    //Enable extension command 2 partII
 
-			SendCommand(0x36); //Memory Data Access Control MX, MY, RGB mode                                    
+			SendCommand(Register.MADCTL); //Memory Data Access Control MX, MY, RGB mode                                    
 			SendData(0x48);    //X-Mirror, Top-Left to right-Buttom, RGB  
 
-			SendCommand((byte)Register.COLOR_MODE);  // set color mode
+			SendCommand(Register.COLOR_MODE);  // set color mode
 			if (ColorMode == ColorType.Format16bppRgb565)
 				SendData(0x05);  // 16-bit color RGB565
 			else
@@ -107,7 +106,7 @@ namespace Meadow.Foundation.Displays
 			SendCommand(0xC5); //VCOM Control
 			SendData(0x18);    //VCOM=0.9
 
-			Thread.Sleep(120);
+			DelayMs(120);
 
 			//ST7796 Gamma Sequence
 			SendCommand(0xE0); //Gamma"+"                                             
@@ -142,7 +141,7 @@ namespace Meadow.Foundation.Displays
 			SendData(0x17);
 			SendData(0x1B);
 
-			Thread.Sleep(120);
+			DelayMs(120);
 
 			SendCommand(0xF0); //Command Set control                                 
 			SendData(0x3C);    //Disable extension command 2 partI
@@ -150,7 +149,7 @@ namespace Meadow.Foundation.Displays
 			SendCommand(0xF0); //Command Set control                                 
 			SendData(0x69);    //Disable extension command 2 partII
 
-			Thread.Sleep(120);
+			DelayMs(120);
 
 			SendCommand(0x29); //Display on
 		}

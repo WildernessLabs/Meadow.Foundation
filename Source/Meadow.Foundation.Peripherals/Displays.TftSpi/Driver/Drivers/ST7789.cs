@@ -1,7 +1,6 @@
 ﻿using Meadow.Foundation.Graphics;
 using Meadow.Hardware;
 using Meadow.Units;
-using System.Threading;
 
 namespace Meadow.Foundation.Displays
 {
@@ -70,15 +69,15 @@ namespace Meadow.Foundation.Displays
             if (resetPort != null)
             {
                 resetPort.State = true;
-                Thread.Sleep(50);
+                DelayMs(50);
                 resetPort.State = false;
-                Thread.Sleep(50);
+                DelayMs(50);
                 resetPort.State = true;
-                Thread.Sleep(50);
+                DelayMs(50);
             }
             else
             {
-                Thread.Sleep(150); //Not sure if this is needed but can't hurt
+                DelayMs(150); //Not sure if this is needed but can't hurt
             }
 
             if (Width == 135) //135x240 
@@ -115,7 +114,6 @@ namespace Meadow.Foundation.Displays
             SendData(0x00); //some variants use 0x08
 
             SendCommand((byte)LcdCommand.CASET);
-
             SendData(new byte[] { 0, 0, 0, (byte)Width });
 
             SendCommand((byte)LcdCommand.RASET);

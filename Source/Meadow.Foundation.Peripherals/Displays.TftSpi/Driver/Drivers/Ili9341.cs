@@ -1,5 +1,4 @@
-﻿using System.Threading;
-using Meadow.Foundation.Graphics;
+﻿using Meadow.Foundation.Graphics;
 using Meadow.Hardware;
 using Meadow.Units;
 
@@ -64,15 +63,15 @@ namespace Meadow.Foundation.Displays
             if (resetPort != null)
             {
                 resetPort.State = true;
-                Thread.Sleep(50);
+                DelayMs(50);
                 resetPort.State = false;
-                Thread.Sleep(50);
+                DelayMs(50);
                 resetPort.State = true;
-                Thread.Sleep(50);
+                DelayMs(50);
             }
             else
             {
-                Thread.Sleep(150); //Not sure if this is needed but can't hurt
+                DelayMs(150); //Not sure if this is needed but can't hurt
             }
 
             SendCommand(0xEF, new byte[] { 0x03, 0x80, 0x02 });
@@ -104,7 +103,7 @@ namespace Meadow.Foundation.Displays
             SendCommand(ILI9341_GMCTRP1, new byte[] { 0x0F, 0x31, 0x2B, 0x0C, 0x0E, 0x08, 0x4E, 0xF1, 0x37, 0x07, 0x10, 0x03, 0x0E, 0x09, 0x00 });
             SendCommand(ILI9341_GMCTRN1, new byte[] { 0x00, 0x0E, 0x14, 0x03, 0x11, 0x07, 0x31, 0xC1, 0x48, 0x08, 0x0F, 0x0C, 0x31, 0x36, 0x0F });
             SendCommand(Register.SLPOUT);
-            Thread.Sleep(120);
+            DelayMs(120);
             SendCommand(Register.DISPON);
 
             SetAddressWindow(0, 0, Width - 1,  Height - 1);

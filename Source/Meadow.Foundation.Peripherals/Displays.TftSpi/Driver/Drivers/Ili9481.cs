@@ -1,5 +1,4 @@
-﻿using System.Threading;
-using Meadow.Foundation.Graphics;
+﻿using Meadow.Foundation.Graphics;
 using Meadow.Hardware;
 
 namespace Meadow.Foundation.Displays
@@ -60,7 +59,7 @@ namespace Meadow.Foundation.Displays
         protected override void Initialize()
         {
             SendCommand(Register.SLPOUT);
-            Thread.Sleep(20);
+            DelayMs(20);
 
             SendCommand(0xD0);
             SendData(0x07);
@@ -125,10 +124,10 @@ namespace Meadow.Foundation.Displays
             SendData(0x01);
             SendData(0xDF);
 
-            Thread.Sleep(120);
+            DelayMs(120);
             SendCommand(Register.DISPON);
 
-            Thread.Sleep(25);
+            DelayMs(25);
         }
 
         /// <summary>

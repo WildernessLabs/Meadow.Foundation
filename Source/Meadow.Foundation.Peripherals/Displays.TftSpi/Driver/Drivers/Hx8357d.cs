@@ -1,5 +1,4 @@
-﻿using System.Threading;
-using Meadow.Foundation.Graphics;
+﻿using Meadow.Foundation.Graphics;
 using Meadow.Hardware;
 
 namespace Meadow.Foundation.Displays
@@ -70,12 +69,12 @@ namespace Meadow.Foundation.Displays
         protected override void Initialize()
         {
             SendCommand(Register.SWRESET);
-            Thread.Sleep(10);   
+            DelayMs(10);   
             SendCommand(HX8357D_SETC);
             SendData(0xFF);
             SendData(0x83);
             SendData(0x57);
-            Thread.Sleep(300);
+            DelayMs(300);
 
             // setRGB which also enables SDO
             SendCommand(HX8357_SETRGB);
@@ -168,10 +167,10 @@ namespace Meadow.Foundation.Displays
             SendData(0x02);
 
             SendCommand(Register.SLPOUT);  //Exit Sleep
-            Thread.Sleep(150);
+            DelayMs(150);
 
             SendCommand(Register.DISPON);  // display on
-            Thread.Sleep(50);
+            DelayMs(50);
         }
 
         /// <summary>

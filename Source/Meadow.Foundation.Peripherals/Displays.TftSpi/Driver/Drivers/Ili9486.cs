@@ -1,5 +1,4 @@
-﻿using System.Threading;
-using Meadow.Foundation.Graphics;
+﻿using Meadow.Foundation.Graphics;
 using Meadow.Hardware;
 
 namespace Meadow.Foundation.Displays
@@ -59,8 +58,8 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         protected override void Initialize()
         {
-            SendCommand(0x11); // Sleep out, also SW reset
-            Thread.Sleep(120);
+            SendCommand(Register.SLPOUT); // Sleep out, also SW reset
+            DelayMs(120);
 
             SendCommand(Register.COLOR_MODE);
             if (ColorMode == ColorType.Format16bppRgb565)
@@ -111,13 +110,13 @@ namespace Meadow.Foundation.Displays
             SendData(0x20);
             SendData(0x00);
 
-            SendCommand(0x20);                     // display inversion OFF
+            SendCommand(Register.INVOFF);                     // display inversion OFF
 
-            SendCommand(0x36);
+            SendCommand(Register.MADCTL);
             SendData(0x48);
 
             SendCommand(0x29);                     // display on
-            Thread.Sleep(150);
+            DelayMs(150);
         }
 
         /// <summary>
