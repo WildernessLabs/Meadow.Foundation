@@ -1,5 +1,4 @@
-﻿using System.Threading;
-using Meadow.Foundation.Graphics;
+﻿using Meadow.Foundation.Graphics;
 using Meadow.Hardware;
 
 namespace Meadow.Foundation.Displays
@@ -7,12 +6,17 @@ namespace Meadow.Foundation.Displays
     /// <summary>
     /// Represents a Rm68140 TFT color display
     /// </summary>
-    public class Rm68140 : TftSpiBase
+    public class Rm68140 : TftSpiBase, IRotatableDisplay
     {
         /// <summary>
         /// The default display color mode
         /// </summary>
-        public override ColorType DefautColorMode => ColorType.Format12bppRgb444;
+        public override ColorMode DefautColorMode => ColorMode.Format12bppRgb444;
+
+        /// <summary>
+        /// The color modes supported by the display
+        /// </summary>
+        public override ColorMode SupportedColorModes => ColorMode.Format16bppRgb565 | ColorMode.Format12bppRgb444;
 
         /// <summary>
         /// Create a new Rm68140 color display object
@@ -26,12 +30,12 @@ namespace Meadow.Foundation.Displays
         /// <param name="height">Height of display in pixels</param>
         /// <param name="colorMode">The color mode to use for the display buffer</param>
         public Rm68140(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
-            int width = 320, int height = 480, ColorType colorMode = ColorType.Format12bppRgb444) 
+            int width = 320, int height = 480, ColorMode colorMode = ColorMode.Format12bppRgb444) 
             : base(device, spiBus, chipSelectPin, dcPin, resetPin, width, height, colorMode)
         {
             Initialize();
 
-            SetRotation(Rotation.Normal);
+            SetRotation(RotationType.Normal);
         }
 
         /// <summary>
@@ -46,12 +50,12 @@ namespace Meadow.Foundation.Displays
         /// <param name="colorMode">The color mode to use for the display buffer</param>
         public Rm68140(ISpiBus spiBus, IDigitalOutputPort chipSelectPort,
                 IDigitalOutputPort dataCommandPort, IDigitalOutputPort resetPort,
-                int width = 320, int height = 480, ColorType colorMode = ColorType.Format12bppRgb444) :
+                int width = 320, int height = 480, ColorMode colorMode = ColorMode.Format12bppRgb444) :
             base(spiBus, chipSelectPort, dataCommandPort, resetPort, width, height, colorMode)
         {
             Initialize();
 
-            SetRotation(Rotation.Normal);
+            SetRotation(RotationType.Normal);
         }
 
         /// <summary>
@@ -59,8 +63,8 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         protected override void Initialize()
         {
-            SendCommand(TFT_SLPOUT);
-            Thread.Sleep(20);
+            SendCommand(Register.SLPOUT);
+            DelayMs(20);
 
             SendCommand(0xD0);
             SendData(0x07);
@@ -104,26 +108,26 @@ namespace Meadow.Foundation.Displays
             SendData(0x0A);
 
             SendCommand((byte)Register.COLOR_MODE);
-            if (ColorMode == ColorType.Format16bppRgb565)
+            if (ColorMode == ColorMode.Format16bppRgb565)
                 SendData(0x55); //16 bit RGB565
             else
                 SendData(0x53); //12 bit RGB444
 
-            SendCommand((byte)LcdCommand.CASET);
+            SendCommand(LcdCommand.CASET);
             SendData(0x00);
             SendData(0x00);
             SendData(0x01);
             SendData(0x3F);
 
-            SendCommand((byte)LcdCommand.RASET);
+            SendCommand(LcdCommand.RASET);
             SendData(0x00);
             SendData(0x00);
             SendData(0x01);
             SendData(0xDF);
 
-            Thread.Sleep(120);
-            SendCommand(TFT_DISPON);
-            Thread.Sleep(25);
+            DelayMs(120);
+            SendCommand(Register.DISPON);
+            DelayMs(25);
         }
 
         /// <summary>
@@ -135,55 +139,55 @@ namespace Meadow.Foundation.Displays
         /// <param name="y1">Y end in pixels</param>
         protected override void SetAddressWindow(int x0, int y0, int x1, int y1)
         {
-            SendCommand((byte)LcdCommand.CASET);  // column addr set
+            SendCommand(LcdCommand.CASET);  // column addr set
             dataCommandPort.State = Data;
             Write((byte)(x0 >> 8));
             Write((byte)(x0 & 0xff));   // XSTART 
             Write((byte)(x1 >> 8));
             Write((byte)(x1 & 0xff));   // XEND
 
-            SendCommand((byte)LcdCommand.RASET);  // row addr set
+            SendCommand(LcdCommand.RASET);  // row addr set
             dataCommandPort.State = Data;
             Write((byte)(y0 >> 8));
             Write((byte)(y0 & 0xff));    // YSTART
             Write((byte)(y1 >> 8));
             Write((byte)(y1 & 0xff));    // YEND
 
-            SendCommand((byte)LcdCommand.RAMWR);  // write to RAM
+            SendCommand(LcdCommand.RAMWR);  // write to RAM
         }
 
         /// <summary>
         /// Set the display rotation
         /// </summary>
         /// <param name="rotation">The rotation value</param>
-        public void SetRotation(Rotation rotation)
+        public void SetRotation(RotationType rotation)
         {
             SendCommand((byte)Register.MADCTL);
 
             switch (rotation)
             {
-                case Rotation.Normal:
+                case RotationType.Normal:
                     SendData((byte)Register.MADCTL_BGR);
                     SendCommand(0xB6);
                     SendData(0);
                     SendData(0x22);
                     SendData(0x3B);
                     break;
-                case Rotation.Rotate_90:
+                case RotationType._90Degrees:
                     SendData((byte)Register.MADCTL_MV | (byte)Register.MADCTL_BGR);
                     SendCommand(0xB6);
                     SendData(0);
                     SendData(0x02);
                     SendData(0x3B);
                     break;
-                case Rotation.Rotate_180:
+                case RotationType._180Degrees:
                     SendData((byte)Register.MADCTL_BGR);
                     SendCommand(0xB6);
                     SendData(0);
                     SendData(0x42);
                     SendData(0x3B);
                     break;
-                case Rotation.Rotate_270:
+                case RotationType._270Degrees:
                     SendData((byte)Register.MADCTL_MV | (byte)Register.MADCTL_BGR);
                     SendCommand(0xB6);
                     SendData(0);
@@ -192,14 +196,5 @@ namespace Meadow.Foundation.Displays
                     break;
             }
         }
-
-        const byte TFT_NOP = 0x00;
-        const byte TFT_SWRST = 0x01;
-        const byte TFT_SLPIN = 0x10;
-        const byte TFT_SLPOUT = 0x11;
-        const byte TFT_INVOFF = 0x20;
-        const byte TFT_INVON = 0x21;
-        const byte TFT_DISPOFF = 0x28;
-        const byte TFT_DISPON = 0x29;
     }
 }

@@ -8,7 +8,7 @@
         /// <summary>
         /// TFT SPI commands
         /// </summary>
-        protected enum LcdCommand
+        protected enum LcdCommand : byte
         {
             /// <summary>
             /// CASET
@@ -29,29 +29,6 @@
         };
 
         /// <summary>
-        /// The display rotation
-        /// </summary>
-        public enum Rotation
-        {
-            /// <summary>
-            /// Normal / default rotation
-            /// </summary>
-            Normal, //zero
-            /// <summary>
-            /// Rotate 90 degrees
-            /// </summary>
-            Rotate_90,
-            /// <summary>
-            /// Rotate 180 degrees
-            /// </summary>
-            Rotate_180,
-            /// <summary>
-            /// Rotate 270 degrees
-            /// </summary>
-            Rotate_270,
-        }
-
-        /// <summary>
         /// Display registers
         /// </summary>
         protected enum Register : byte
@@ -59,7 +36,39 @@
             /// <summary>
             /// NO_OP
             /// </summary>
-            NO_OP = 0x0,
+            NO_OP = 0x00,
+            /// <summary>
+            /// Software reset
+            /// </summary>
+            SWRESET = 0x01,
+            /// <summary>
+            /// Exit sleep
+            /// </summary>
+            SLPOUT = 0x11,
+            /// <summary>
+            /// Partial mode on
+            /// </summary>
+            PTLON = 0x12,
+            /// <summary>
+            /// Normal display
+            /// </summary>
+            NORON = 0x13,
+            /// <summary>
+            /// Invert display off
+            /// </summary>
+            INVOFF = 0x20,
+            /// <summary>
+            /// Invert display on
+            /// </summary>
+            INVON = 0x21,
+            /// <summary>
+            /// Display off
+            /// </summary>
+            DISOFF = 0x28,
+            /// <summary>
+            /// Display on
+            /// </summary>
+            DISPON = 0x29,
             /// <summary>
             /// MADCTL
             /// </summary>
@@ -87,7 +96,7 @@
             /// <summary>
             /// MADCTL_BGR
             /// </summary>
-            MADCTL_BGR = 0X08,
+            MADCTL_BGR = 0x08,
             /// <summary>
             /// MADCTL_MH
             /// </summary>
@@ -104,6 +113,10 @@
             /// COLOR_MODE
             /// </summary>
             COLOR_MODE = 0x3A,
+            /// <summary>
+            /// Frame rate control (for some displays)
+            /// </summary>
+            FRMCTR1 = 0xB1,
         }
     }
 }

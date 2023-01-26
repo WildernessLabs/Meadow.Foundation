@@ -8,9 +8,23 @@ namespace Meadow.Foundation.Graphics
     public interface IGraphicsDisplay
     {
         /// <summary>
-        /// The ColorType for the current display
+        /// The currently set color mode for the display
         /// </summary>
-        public ColorType ColorMode { get; }
+        public ColorMode ColorMode { get; }
+
+        /// <summary>
+        /// The Color mode supported by the display
+        /// </summary>
+        public ColorMode SupportedColorModes { get; }
+
+        /// <summary>
+        /// Is the color mode supported on this display
+        /// </summary>
+        /// <param name="mode">The color mode</param>
+        public bool IsColorTypeSupported(ColorMode mode)
+        {
+            return (SupportedColorModes | mode) != 0;
+        }
 
         /// <summary>
         /// Width of the display in pixels

@@ -37,7 +37,7 @@ namespace Meadow.Foundation.Graphics
                 chipSelectPin: Device.Pins.A03,
                 dcPin: Device.Pins.A04,
                 resetPin: Device.Pins.A05,
-                width: 240, height: 240, colorMode: ColorType.Format16bppRgb565)
+                width: 240, height: 240, colorMode: ColorMode.Format16bppRgb565)
             {
             };
 

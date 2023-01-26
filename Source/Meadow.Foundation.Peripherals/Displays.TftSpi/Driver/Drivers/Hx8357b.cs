@@ -1,6 +1,5 @@
 ﻿using Meadow.Foundation.Graphics;
 using Meadow.Hardware;
-using System.Threading;
 
 namespace Meadow.Foundation.Displays
 {
@@ -21,12 +20,12 @@ namespace Meadow.Foundation.Displays
         /// <param name="height">Height of display in pixels</param>
         /// <param name="colorMode">The color mode to use for the display buffer</param>
         public Hx8357b(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
-            int width = 320, int height = 480, ColorType colorMode = ColorType.Format16bppRgb565)
+            int width = 320, int height = 480, ColorMode colorMode = ColorMode.Format16bppRgb565)
             : base(device, spiBus, chipSelectPin, dcPin, resetPin, width, height, colorMode)
         {
             Initialize();
 
-            SetRotation(Rotation.Normal);
+            SetRotation(RotationType.Normal);
         }
 
         /// <summary>
@@ -41,12 +40,12 @@ namespace Meadow.Foundation.Displays
         /// <param name="colorMode">The color mode to use for the display buffer</param>
         public Hx8357b(ISpiBus spiBus, IDigitalOutputPort chipSelectPort,
                 IDigitalOutputPort dataCommandPort, IDigitalOutputPort resetPort,
-                int width = 320, int height = 480, ColorType colorMode = ColorType.Format16bppRgb565) :
+                int width = 320, int height = 480, ColorMode colorMode = ColorMode.Format16bppRgb565) :
             base(spiBus, chipSelectPort, dataCommandPort, resetPort, width, height, colorMode)
         {
             Initialize();
 
-            SetRotation(Rotation.Normal);
+            SetRotation(RotationType.Normal);
         }
 
         /// <summary>
@@ -74,13 +73,11 @@ namespace Meadow.Foundation.Displays
             SendData(0x0c); // 6.8mhz
             SendCommand(RegisterHX8357B.SETPANELRELATED);
             SendData(0x01); // BGR
-            // SendData(0xEA);
-            // seq_undefined1, 3 args
+
             SendData(0x03);
             SendData(0x00);
             SendData(0x00);
-            // SendData(0xEB);
-            // undef2, 4 args
+
             SendData(0x40);
             SendData(0x54);
             SendData(0x26);
@@ -102,22 +99,22 @@ namespace Meadow.Foundation.Displays
             SendData(0xC0);
             SendCommand(Register.COLOR_MODE);
             SendData(0x55);
-            SendCommand((byte)LcdCommand.RASET);
+            SendCommand(LcdCommand.RASET);
             SendData(0x00);
             SendData(0x00);
             SendData(0x01);
             SendData(0xDF);
-            SendCommand((byte)LcdCommand.CASET);
+            SendCommand(LcdCommand.CASET);
             SendData(0x00);
             SendData(0x00);
             SendData(0x01);
             SendData(0x3F);
             SendCommand(RegisterHX8357B.SETDISPMODE);
             SendData(0x00); // CPU (DBI) and internal oscillation ??
-            SendCommand(HX8357_SLPOUT);
-            Thread.Sleep(120);
-            SendCommand(HX8357_DISPON);
-            Thread.Sleep(10);
+            SendCommand(Register.SLPOUT);
+            DelayMs(120);
+            SendCommand(Register.DISPON);
+            DelayMs(10);
         }
 
         /// <summary>
@@ -134,14 +131,6 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         protected enum RegisterHX8357B : byte
         {
-            /// <summary>
-            /// Partial mode on
-            /// </summary>
-            PTLON = 0x12, 
-            /// <summary>
-            /// Normal mode
-            /// </summary>
-            NORON = 0x13,
             /// <summary>
             /// Unknown
             /// </summary>
