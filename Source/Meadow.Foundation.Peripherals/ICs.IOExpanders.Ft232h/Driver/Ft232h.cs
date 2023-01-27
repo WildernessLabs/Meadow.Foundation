@@ -117,6 +117,11 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 throw new InvalidOperationException("The FT232 allows only one bus to be active at a time.");
             }
 
+            if (_i2cBuses.Count == 0)
+            {
+                throw new InvalidOperationException("No I2C Busses found! Is the FT232 properly connected?");
+            }
+
             if (!_i2cBuses.ContainsKey(busNumber)) throw new ArgumentOutOfRangeException(nameof(busNumber));
 
             var bus = _i2cBuses[busNumber];
@@ -164,6 +169,11 @@ namespace Meadow.Foundation.ICs.IOExpanders
             if (_activeBus != null)
             {
                 throw new InvalidOperationException("The FT232 allows only one bus to be active at a time.");
+            }
+
+            if (_spiBuses.Count == 0)
+            {
+                throw new InvalidOperationException("No SPI Busses found! Is the FT232 properly connected?");
             }
 
             if (!_spiBuses.ContainsKey(busNumber)) throw new ArgumentOutOfRangeException(nameof(busNumber));
@@ -224,7 +234,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             }
 
             // update the global mask to make this an output
-            _activeBus.GpioDirectionMask |= (byte)(1 << (byte)pin.Key);
+            _activeBus.GpioDirectionMask |= (byte)((byte)pin.Key);
 
             // update the direction
             Native.Functions.FT_WriteGPIO(_activeBus.Handle, _activeBus.GpioDirectionMask, 0);

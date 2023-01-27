@@ -29,14 +29,15 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
                 if (value)
                 {
-                    s |= (byte)(1 << (byte)Pin.Key);
+                    s |= (byte)((byte)Pin.Key);
                 }
                 else
                 {
-                    s &= (byte)~(1 << (byte)Pin.Key);
+                    s &= (byte)~((byte)Pin.Key);
                 }
 
-                Native.Functions.FT_WriteGPIO(_bus.Handle, _bus.GpioDirectionMask, s);
+                var result = Native.Functions.FT_WriteGPIO(_bus.Handle, _bus.GpioDirectionMask, s);
+                Native.CheckStatus(result);
 
                 _bus.GpioState = s;
                 _state = value;

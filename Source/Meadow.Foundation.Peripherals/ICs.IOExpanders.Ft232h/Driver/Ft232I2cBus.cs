@@ -1,6 +1,7 @@
 ﻿using Meadow.Hardware;
 using Meadow.Units;
 using System;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using static Meadow.Foundation.ICs.IOExpanders.Native;
 
@@ -92,10 +93,13 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 peripheralAddress,
                 readBuffer.Length,
                 MemoryMarshal.GetReference(readBuffer),
-                out _,
+                out int transferred,
+                //I2CTransferOptions.FAST_TRANSFER
                 I2CTransferOptions.START_BIT | I2CTransferOptions.STOP_BIT | I2CTransferOptions.NACK_LAST_BYTE
+                //                I2CTransferOptions.START_BIT | I2CTransferOptions.STOP_BIT | I2CTransferOptions.FAST_TRANSFER | I2CTransferOptions.NACK_LAST_BYTE
                 );
 
+            Debug.WriteLine($"transferred: {transferred}");
             CheckStatus(status);
         }
 
@@ -106,11 +110,14 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 peripheralAddress,
                 writeBuffer.Length,
                 MemoryMarshal.GetReference(writeBuffer),
-                out _,
-                I2CTransferOptions.START_BIT | I2CTransferOptions.STOP_BIT | I2CTransferOptions.BREAK_ON_NACK
+                out int transferred,
+                //                                I2CTransferOptions.FAST_TRANSFER
+                I2CTransferOptions.START_BIT | I2CTransferOptions.BREAK_ON_NACK
+                //                I2CTransferOptions.START_BIT | I2CTransferOptions.STOP_BIT | I2CTransferOptions.FAST_TRANSFER | I2CTransferOptions.BREAK_ON_NACK
                 );
 
-            CheckStatus(status);
+            Debug.WriteLine($"transferred: {transferred}");
+            //            CheckStatus(status);
         }
     }
 }
