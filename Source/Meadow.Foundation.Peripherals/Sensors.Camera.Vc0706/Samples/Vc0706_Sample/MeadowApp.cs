@@ -17,7 +17,7 @@ namespace Sensors.Camera.Vc0706_Sample
         {
             Resolver.Log.Info("Initialize...");
 
-            camera = new Vc0706(Device, Device.SerialPortNames.Com4, 38400);
+            camera = new Vc0706(Device, Device.PlatformOS.GetSerialPortName("COM4"), 38400);
 
             return Task.CompletedTask;
         }

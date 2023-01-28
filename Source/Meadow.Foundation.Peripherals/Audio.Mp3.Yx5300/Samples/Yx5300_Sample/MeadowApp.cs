@@ -16,7 +16,7 @@ namespace Audio.Mp3.Yx5300_Sample
         {
             Resolver.Log.Info("Initialize...");
 
-            mp3Player = new Yx5300(Device, Device.SerialPortNames.Com4);
+            mp3Player = new Yx5300(Device, Device.PlatformOS.GetSerialPortName("COM4"));
 
             return Task.CompletedTask;
         }
