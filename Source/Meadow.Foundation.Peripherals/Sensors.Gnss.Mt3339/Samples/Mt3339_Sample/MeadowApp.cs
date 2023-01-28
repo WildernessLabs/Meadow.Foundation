@@ -17,7 +17,7 @@ namespace Sensors.Gnss.Mt3339_Sample
         {
             Resolver.Log.Info("Initializing ...");
 
-            gps = new Mt3339(Device, Device.SerialPortNames.Com4);
+            gps = new Mt3339(Device, Device.PlatformOS.GetSerialPortName("COM4"));
 
             gps.GgaReceived += (object sender, GnssPositionInfo location) => {
                 Resolver.Log.Info("*********************************************");
