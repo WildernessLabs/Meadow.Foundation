@@ -15,7 +15,7 @@ namespace Meadow.Foundation.Sensors.Radio.Rfid.IDxxLA_Sample
         {
             Resolver.Log.Info("Initialize...");
 
-            rfidReader = new IDxxLA(Device, Device.SerialPortNames.Com1);
+            rfidReader = new IDxxLA(Device, Device.PlatformOS.GetSerialPortName("COM1"));
 
             // subscribe to event
             rfidReader.RfidRead += RfidReaderOnTagRead;
