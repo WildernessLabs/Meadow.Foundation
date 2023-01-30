@@ -159,7 +159,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             */
             public uint ClockRate;
             public byte LatencyTimer;
-            public Ft232h.SpiConfigOption Options;
+            public Ft232h.SpiConfigOptions Options;
             public uint Pin;
             public ushort CurrentPinState;
         }

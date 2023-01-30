@@ -2,6 +2,7 @@
 using Meadow.Units;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 
 namespace Meadow.Foundation.ICs.IOExpanders
@@ -15,6 +16,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         private static int _instanceCount = 0;
         private Dictionary<int, Ft232I2cBus> _i2cBuses = new Dictionary<int, Ft232I2cBus>();
         private Dictionary<int, Ft232SpiBus> _spiBuses = new Dictionary<int, Ft232SpiBus>();
+        private IFt232Bus? _activeBus = null;
 
         static Ft232h()
         {
@@ -88,20 +90,20 @@ namespace Meadow.Foundation.ICs.IOExpanders
             return CreateI2cBus(busNumber, I2CClockRate.Standard);
         }
 
-        public II2cBus CreateI2cBus(int busNumber, Frequency frequency)
+        public II2cBus CreateI2cBus(int busNumber, I2cBusSpeed busSpeed)
         {
             // TODO: convert frequency
             return CreateI2cBus(busNumber, I2CClockRate.Standard);
         }
 
-        public II2cBus CreateI2cBus(IPin[] pins, Frequency frequency)
+        public II2cBus CreateI2cBus(IPin[] pins, I2cBusSpeed busSpeed)
         {
             // TODO: map the pins to the bus number
             // TODO: convert frequency
             return CreateI2cBus(0, I2CClockRate.Standard);
         }
 
-        public II2cBus CreateI2cBus(IPin clock, IPin data, Frequency frequency)
+        public II2cBus CreateI2cBus(IPin clock, IPin data, I2cBusSpeed busSpeed)
         {
             // TODO: map the pins to the bus number
             // TODO: convert frequency
@@ -110,6 +112,16 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
         private II2cBus CreateI2cBus(int busNumber, I2CClockRate clock)
         {
+            if (_activeBus != null)
+            {
+                throw new InvalidOperationException("The FT232 allows only one bus to be active at a time.");
+            }
+
+            if (_i2cBuses.Count == 0)
+            {
+                throw new InvalidOperationException("No I2C Busses found! Is the FT232 properly connected?");
+            }
+
             if (!_i2cBuses.ContainsKey(busNumber)) throw new ArgumentOutOfRangeException(nameof(busNumber));
 
             var bus = _i2cBuses[busNumber];
@@ -117,46 +129,118 @@ namespace Meadow.Foundation.ICs.IOExpanders
             {
                 bus.Open(clock);
             }
+
+            _activeBus = bus;
+
             return bus;
+        }
+
+        public ISpiBus CreateSpiBus()
+        {
+            return CreateSpiBus(0, DefaultClockConfiguration);
         }
 
         public ISpiBus CreateSpiBus(IPin clock, IPin mosi, IPin miso, SpiClockConfiguration config)
         {
+            if (!clock.Supports<ISpiChannelInfo>(c => c.LineTypes.HasFlag(SpiLineType.Clock)))
+            {
+                throw new ArgumentException("Invalid Clock line");
+            }
+
             // TODO: map the pins to the bus number
-            return CreateSpiBus(0);
+            return CreateSpiBus(0, config);
         }
 
         public ISpiBus CreateSpiBus(IPin clock, IPin mosi, IPin miso, Frequency speed)
         {
             // TODO: map the pins to the bus number
-            return CreateSpiBus(0);
+            var config = new SpiClockConfiguration(speed);
+            return CreateSpiBus(0, config);
         }
 
-        public ISpiBus CreateSpiBus(int busNumber = 0, uint clockRate = Ft232SpiBus.DefaultClockRate, SpiConfigOption opts = SpiConfigOption.MODE0 | SpiConfigOption.CS_DBUS3 | SpiConfigOption.CS_ACTIVELOW)
+        public static SpiClockConfiguration DefaultClockConfiguration
         {
+            get => new SpiClockConfiguration(
+                 new Frequency(Ft232SpiBus.DefaultClockRate, Frequency.UnitType.Hertz));
+        }
+
+        private ISpiBus CreateSpiBus(int busNumber, SpiClockConfiguration config)
+        {
+            if (_activeBus != null)
+            {
+                throw new InvalidOperationException("The FT232 allows only one bus to be active at a time.");
+            }
+
+            if (_spiBuses.Count == 0)
+            {
+                throw new InvalidOperationException("No SPI Busses found! Is the FT232 properly connected?");
+            }
+
             if (!_spiBuses.ContainsKey(busNumber)) throw new ArgumentOutOfRangeException(nameof(busNumber));
 
             var bus = _spiBuses[busNumber];
             if (!bus.IsOpen)
             {
-                bus.Open(opts, clockRate);
+                bus.Open(config);
             }
+
+            _activeBus = bus;
+
             return bus;
-        }
-
-        public IDigitalInputPort CreateDigitalInputPort(IPin pin, InterruptMode interruptMode, ResistorMode resistorMode, TimeSpan debounceDuration, TimeSpan glitchDuration)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IDigitalOutputPort CreateDigitalOutputPort(IPin pin, bool initialState = false, OutputType initialOutputType = OutputType.PushPull)
-        {
-            throw new NotImplementedException();
         }
 
         public IDigitalInputPort CreateDigitalInputPort(IPin pin)
         {
             return CreateDigitalInputPort(pin, InterruptMode.None, ResistorMode.Disabled, TimeSpan.Zero, TimeSpan.Zero);
+        }
+
+        private bool _spiBusAutoCreated = false;
+
+        public IDigitalInputPort CreateDigitalInputPort(IPin pin, InterruptMode interruptMode, ResistorMode resistorMode, TimeSpan debounceDuration, TimeSpan glitchDuration)
+        {
+            if (interruptMode != InterruptMode.None)
+            {
+                throw new NotSupportedException("The FT232 does not support interrupts");
+            }
+
+            // MPSSE requires a bus, it can be either I2C or SPI, but that bus must be created before you can use GPIO
+            // if no bus is yet open, we'll default to a SPI bus.
+            // If this is created before an I2C comms bus, we need to let the caller know to create the comms bus first
+
+            if (_activeBus == null)
+            {
+                var bus = CreateSpiBus(0, DefaultClockConfiguration);
+                _spiBusAutoCreated = true;
+                _activeBus = bus as IFt232Bus;
+            }
+
+            // TODO: do we need to set the direction make (see outpuuts) or are they defaulted to input?
+
+            var info = pin.SupportedChannels?.FirstOrDefault(c => c is IDigitalChannelInfo) as IDigitalChannelInfo;
+            return new Ft232DigitalInputPort(pin, info, _activeBus);
+        }
+
+        public IDigitalOutputPort CreateDigitalOutputPort(IPin pin, bool initialState = false, OutputType initialOutputType = OutputType.PushPull)
+        {
+            // MPSSE requires a bus, it can be either I2C or SPI, but that bus must be created before you can use GPIO
+            // if no bus is yet open, we'll default to a SPI bus.
+            // If this is created before an I2C comms bus, we need to let the caller know to create the comms bus first
+
+            if (_activeBus == null)
+            {
+                var bus = CreateSpiBus(0, DefaultClockConfiguration);
+                _spiBusAutoCreated = true;
+                _activeBus = bus as IFt232Bus;
+            }
+
+            // update the global mask to make this an output
+            _activeBus.GpioDirectionMask |= (byte)((byte)pin.Key);
+
+            // update the direction
+            Native.Functions.FT_WriteGPIO(_activeBus.Handle, _activeBus.GpioDirectionMask, 0);
+
+            var info = pin.SupportedChannels?.FirstOrDefault(c => c is IDigitalChannelInfo) as IDigitalChannelInfo;
+            return new Ft232DigitalOutputPort(pin, info, initialState, initialOutputType, _activeBus);
         }
 
         protected virtual void Dispose(bool disposing)

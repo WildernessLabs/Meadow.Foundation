@@ -1,22 +1,23 @@
 ﻿using Meadow.Hardware;
-using Meadow.Units;
 using System;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using static Meadow.Foundation.ICs.IOExpanders.Native;
 
 namespace Meadow.Foundation.ICs.IOExpanders
 {
-    public sealed class Ft232I2cBus : II2cBus, IDisposable
+    public sealed class Ft232I2cBus : IFt232Bus, II2cBus, IDisposable
     {
         private const byte DefaultLatencyTimer = 10;
         private const int DefaultChannelOptions = 0;
 
         private bool _isDisposed;
 
+        public IntPtr Handle { get; private set; }
+        public byte GpioDirectionMask { get; set; }
+        public byte GpioState { get; set; }
         internal bool IsOpen { get; private set; } = false;
-
-        public int ChannelNumber { get; }
-        private IntPtr Handle { get; set; }
+        internal int ChannelNumber { get; }
         private FT_DEVICE_LIST_INFO_NODE InfoNode { get; }
 
         internal Ft232I2cBus(int channelNumber, FT_DEVICE_LIST_INFO_NODE info)
@@ -25,7 +26,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             InfoNode = info;
         }
 
-        public Frequency Frequency { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public I2cBusSpeed BusSpeed { get; set; }
 
         private void Dispose(bool disposing)
         {
@@ -86,34 +87,36 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
         public void Read(byte peripheralAddress, Span<byte> readBuffer)
         {
-            uint transferred;
-
             var status = Functions.I2C_DeviceRead(
                 Handle,
                 peripheralAddress,
                 readBuffer.Length,
                 MemoryMarshal.GetReference(readBuffer),
-                out transferred,
-                I2CTransferOptions.START_BIT | I2CTransferOptions.STOP_BIT | I2CTransferOptions.NACK_LAST_BYTE
+                out int transferred,
+                I2CTransferOptions.FAST_TRANSFER | I2CTransferOptions.FAST_TRANSFER_BYTES
+                //I2CTransferOptions.START_BIT | I2CTransferOptions.STOP_BIT | I2CTransferOptions.NACK_LAST_BYTE
+                //                I2CTransferOptions.START_BIT | I2CTransferOptions.STOP_BIT | I2CTransferOptions.FAST_TRANSFER | I2CTransferOptions.NACK_LAST_BYTE
                 );
 
+            Debug.WriteLine($"transferred: {transferred}");
             CheckStatus(status);
         }
 
         public void Write(byte peripheralAddress, Span<byte> writeBuffer)
         {
-            uint transferred;
-
             var status = Functions.I2C_DeviceWrite(
                 Handle,
                 peripheralAddress,
                 writeBuffer.Length,
                 MemoryMarshal.GetReference(writeBuffer),
-                out transferred,
-                I2CTransferOptions.START_BIT | I2CTransferOptions.STOP_BIT | I2CTransferOptions.BREAK_ON_NACK
+                out int transferred,
+                                I2CTransferOptions.FAST_TRANSFER | I2CTransferOptions.FAST_TRANSFER_BYTES
+                //I2CTransferOptions.START_BIT | I2CTransferOptions.BREAK_ON_NACK
+                //I2CTransferOptions.START_BIT | I2CTransferOptions.STOP_BIT | I2CTransferOptions.NACK_LAST_BYTE
                 );
 
-            CheckStatus(status);
+            Debug.WriteLine($"transferred: {transferred}");
+            //            CheckStatus(status);
         }
     }
 }

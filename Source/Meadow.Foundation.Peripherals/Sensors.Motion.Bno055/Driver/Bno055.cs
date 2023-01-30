@@ -216,7 +216,7 @@ namespace Meadow.Foundation.Sensors.Motion
                         (OperatingMode == OperatingModes.NINE_DEGREES_OF_FREEDOM) ||
                         (OperatingMode == OperatingModes.INERTIAL_MEASUREMENT_UNIT) ||
                         (OperatingMode == OperatingModes.NINE_DEGREES_OF_FREEDOM));
-            
+
         /// <summary>
         /// Get the system calibration status.
         /// </summary>
@@ -235,7 +235,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         /// Get the magnetometer status.
         /// </summary>
-        public bool IsMagnetometerCalibrated => (Peripheral.ReadRegister(Registers.CalibrationStatus) & 0x03) != 0; 
+        public bool IsMagnetometerCalibrated => (Peripheral.ReadRegister(Registers.CalibrationStatus) & 0x03) != 0;
 
         /// <summary>
         /// Is the system fully calibrated?
@@ -265,9 +265,11 @@ namespace Meadow.Foundation.Sensors.Motion
         public Bno055(II2cBus i2cBus, byte address)
             : base(i2cBus, address, readBufferSize: 256)
         {
-            if (Peripheral.ReadRegister(Registers.ChipID) != 0xa0)
+            var id = Peripheral.ReadRegister(Registers.ChipID);
+
+            if (id != 0xa0)
             {
-                throw new Exception("Sensor ID should be 0xa0.");
+                throw new Exception($"Sensor ID should be 0xa0 (it returned 0x{id:x2}).");
             }
         }
 

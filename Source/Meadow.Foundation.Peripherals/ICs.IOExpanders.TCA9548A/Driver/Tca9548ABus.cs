@@ -1,5 +1,4 @@
 ﻿using Meadow.Hardware;
-using Meadow.Units;
 using System;
 
 namespace Meadow.Foundation.ICs.IOExpanders
@@ -15,15 +14,14 @@ namespace Meadow.Foundation.ICs.IOExpanders
         internal Tca9548aBus(Tca9548a tca9548A, int frequency, byte busIndex)
         {
             _tca9548a = tca9548A;
-            Frequency = frequency;
+            BusSpeed = I2cBusSpeed.Standard;
             _busIndex = busIndex;
         }
 
         /// <summary>
         /// I2C bus frequency
         /// </summary>
-        public int Frequency { get; set; }
-        Frequency II2cBus.Frequency { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public I2cBusSpeed BusSpeed { get; set; }
 
         /// <summary>
         /// Write data to the bus
@@ -129,11 +127,11 @@ namespace Meadow.Foundation.ICs.IOExpanders
         public void WriteData(byte peripheralAddress, Span<byte> data, int length)
         {
             _tca9548a.BusSelectorSemaphore.Wait(TimeSpan.FromSeconds(10));
-            try 
+            try
             {
                 _tca9548a.SelectBus(_busIndex);
                 _tca9548a.Bus.Write(peripheralAddress, data[..length]);
-            } 
+            }
             finally
             {
                 _tca9548a.BusSelectorSemaphore.Release();
@@ -155,8 +153,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
             {
                 _tca9548a.SelectBus(_busIndex);
                 _tca9548a.Bus.Exchange(peripheralAddress, writeBuffer[0..writeCount], readBuffer[0..readCount]);
-            } 
-            finally 
+            }
+            finally
             {
                 _tca9548a.BusSelectorSemaphore.Release();
             }
@@ -177,12 +175,12 @@ namespace Meadow.Foundation.ICs.IOExpanders
         public void Read(byte peripheralAddress, Span<byte> readBuffer)
         {
             _tca9548a.BusSelectorSemaphore.Wait(TimeSpan.FromSeconds(10));
-            try 
+            try
             {
                 _tca9548a.SelectBus(_busIndex);
                 _tca9548a.Bus.Read(peripheralAddress, readBuffer);
-            } 
-            finally 
+            }
+            finally
             {
                 _tca9548a.BusSelectorSemaphore.Release();
             }
