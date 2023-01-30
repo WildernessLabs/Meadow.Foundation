@@ -45,7 +45,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 "D1",
                 (byte)0x11,
                 new List<IChannelInfo> {
-                    new SpiChannelInfo("SPI_COPI", SpiLineType.MOSI),
+                    new SpiChannelInfo("SPI_COPI", SpiLineType.COPI),
                     new I2cChannelInfo("I2C_SDA", I2cChannelFunctionType.Data)
                 });
 
@@ -53,7 +53,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 "D2",
                 (byte)0x12,
                 new List<IChannelInfo> {
-                    new SpiChannelInfo("SPI_CIPO", SpiLineType.MISO)
+                    new SpiChannelInfo("SPI_CIPO", SpiLineType.CIPO)
                 });
 
             public readonly IPin D3 = new Pin(

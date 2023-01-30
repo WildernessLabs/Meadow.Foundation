@@ -90,20 +90,20 @@ namespace Meadow.Foundation.ICs.IOExpanders
             return CreateI2cBus(busNumber, I2CClockRate.Standard);
         }
 
-        public II2cBus CreateI2cBus(int busNumber, Frequency frequency)
+        public II2cBus CreateI2cBus(int busNumber, I2cBusSpeed busSpeed)
         {
             // TODO: convert frequency
             return CreateI2cBus(busNumber, I2CClockRate.Standard);
         }
 
-        public II2cBus CreateI2cBus(IPin[] pins, Frequency frequency)
+        public II2cBus CreateI2cBus(IPin[] pins, I2cBusSpeed busSpeed)
         {
             // TODO: map the pins to the bus number
             // TODO: convert frequency
             return CreateI2cBus(0, I2CClockRate.Standard);
         }
 
-        public II2cBus CreateI2cBus(IPin clock, IPin data, Frequency frequency)
+        public II2cBus CreateI2cBus(IPin clock, IPin data, I2cBusSpeed busSpeed)
         {
             // TODO: map the pins to the bus number
             // TODO: convert frequency

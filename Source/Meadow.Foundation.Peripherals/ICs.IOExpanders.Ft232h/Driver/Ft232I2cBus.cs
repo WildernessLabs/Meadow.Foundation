@@ -1,5 +1,4 @@
 ﻿using Meadow.Hardware;
-using Meadow.Units;
 using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
@@ -27,7 +26,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             InfoNode = info;
         }
 
-        public Frequency Frequency { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public I2cBusSpeed BusSpeed { get; set; }
 
         private void Dispose(bool disposing)
         {
@@ -94,8 +93,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 readBuffer.Length,
                 MemoryMarshal.GetReference(readBuffer),
                 out int transferred,
-                //I2CTransferOptions.FAST_TRANSFER
-                I2CTransferOptions.START_BIT | I2CTransferOptions.STOP_BIT | I2CTransferOptions.NACK_LAST_BYTE
+                I2CTransferOptions.FAST_TRANSFER | I2CTransferOptions.FAST_TRANSFER_BYTES
+                //I2CTransferOptions.START_BIT | I2CTransferOptions.STOP_BIT | I2CTransferOptions.NACK_LAST_BYTE
                 //                I2CTransferOptions.START_BIT | I2CTransferOptions.STOP_BIT | I2CTransferOptions.FAST_TRANSFER | I2CTransferOptions.NACK_LAST_BYTE
                 );
 
@@ -111,9 +110,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 writeBuffer.Length,
                 MemoryMarshal.GetReference(writeBuffer),
                 out int transferred,
-                //                                I2CTransferOptions.FAST_TRANSFER
-                I2CTransferOptions.START_BIT | I2CTransferOptions.BREAK_ON_NACK
-                //                I2CTransferOptions.START_BIT | I2CTransferOptions.STOP_BIT | I2CTransferOptions.FAST_TRANSFER | I2CTransferOptions.BREAK_ON_NACK
+                                I2CTransferOptions.FAST_TRANSFER | I2CTransferOptions.FAST_TRANSFER_BYTES
+                //I2CTransferOptions.START_BIT | I2CTransferOptions.BREAK_ON_NACK
+                //I2CTransferOptions.START_BIT | I2CTransferOptions.STOP_BIT | I2CTransferOptions.NACK_LAST_BYTE
                 );
 
             Debug.WriteLine($"transferred: {transferred}");
