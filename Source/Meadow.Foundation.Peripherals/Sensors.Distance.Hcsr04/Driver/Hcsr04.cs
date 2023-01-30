@@ -112,7 +112,7 @@ namespace Meadow.Foundation.Sensors.Distance
             Distance = newDistance;
 
             //debug - remove 
-            Console.WriteLine($"{elapsed}, {curDis}, {Distance}, {DateTime.Now.Ticks}");
+            Resolver.Log.Info($"{elapsed}, {curDis}, {Distance}, {DateTime.Now.Ticks}");
 
             //restore this before publishing to hide false results 
             //    if (CurrentDistance < MinimumDistance || CurrentDistance > MaximumDistance)

@@ -15,7 +15,7 @@ namespace Displays.ePaper.IL91874V03_Sample
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initialize ...");
+            Resolver.Log.Info("Initialize ...");
  
             var display = new Il91874V03(device: Device,
                 spiBus: Device.CreateSpiBus(),

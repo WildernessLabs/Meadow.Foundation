@@ -1,5 +1,4 @@
-﻿using Meadow.Devices;
-using Meadow.Foundation.Graphics;
+﻿using Meadow.Foundation.Graphics;
 using Meadow.Foundation.Graphics.Buffers;
 using Meadow.Hardware;
 
@@ -10,7 +9,12 @@ namespace Meadow.Foundation.Leds
         /// <summary>
         /// Color mode of leds - 24bpp
         /// </summary>
-        public ColorType ColorMode => ColorType.Format24bppRgb888;
+        public ColorMode ColorMode => ColorMode.Format24bppRgb888;
+
+        /// <summary>
+        /// The Color mode supported by the display
+        /// </summary>
+        public ColorMode SupportedColorModes => ColorMode.Format24bppRgb888;
 
         /// <summary>
         /// Width of pixel array 

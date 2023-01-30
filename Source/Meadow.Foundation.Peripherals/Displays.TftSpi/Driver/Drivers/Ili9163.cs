@@ -1,6 +1,5 @@
 ﻿using Meadow.Foundation.Graphics;
 using Meadow.Hardware;
-using System.Threading;
 
 namespace Meadow.Foundation.Displays
 {
@@ -12,7 +11,12 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// The default display color mode
         /// </summary>
-        public override ColorType DefautColorMode => ColorType.Format12bppRgb444;
+        public override ColorMode DefautColorMode => ColorMode.Format12bppRgb444;
+
+        /// <summary>
+        /// The color modes supported by the display
+        /// </summary>
+        public override ColorMode SupportedColorModes => ColorMode.Format16bppRgb565 | ColorMode.Format12bppRgb444;
 
         /// <summary>
         /// Create a new Ili9163 color display object
@@ -26,7 +30,7 @@ namespace Meadow.Foundation.Displays
         /// <param name="height">Height of display in pixels</param>
         /// <param name="colorMode">The color mode to use for the display buffer</param>
         public Ili9163(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
-            int width, int height, ColorType colorMode = ColorType.Format12bppRgb444) 
+            int width, int height, ColorMode colorMode = ColorMode.Format12bppRgb444) 
             : base(device, spiBus, chipSelectPin, dcPin, resetPin, width, height, colorMode)
         {
             Initialize();
@@ -44,7 +48,7 @@ namespace Meadow.Foundation.Displays
         /// <param name="colorMode">The color mode to use for the display buffer</param>
         public Ili9163(ISpiBus spiBus, IDigitalOutputPort chipSelectPort,
                 IDigitalOutputPort dataCommandPort, IDigitalOutputPort resetPort,
-                int width, int height, ColorType colorMode = ColorType.Format12bppRgb444) :
+                int width, int height, ColorMode colorMode = ColorMode.Format12bppRgb444) :
             base(spiBus, chipSelectPort, dataCommandPort, resetPort, width, height, colorMode)
         {
             Initialize();
@@ -58,22 +62,22 @@ namespace Meadow.Foundation.Displays
             if(resetPort != null)
             {
                 resetPort.State = true;
-                Thread.Sleep(50);
+                DelayMs(50);
                 resetPort.State = false;
-                Thread.Sleep(50);
+                DelayMs(50);
                 resetPort.State = true;
-                Thread.Sleep(50);
+                DelayMs(50);
             }
             else
             {
-                Thread.Sleep(150); //Not sure if this is needed but can't hurt
+                DelayMs(150); //Not sure if this is needed but can't hurt
             }
             
             SendCommand(0x01);
             SendCommand(0x11);
 
             SendCommand(Register.COLOR_MODE);
-            if (ColorMode == ColorType.Format16bppRgb565)
+            if (ColorMode == ColorMode.Format16bppRgb565)
             {
                 SendData(0x05);//16 bit 565
             }
@@ -164,7 +168,7 @@ namespace Meadow.Foundation.Displays
             Write(0x00);
             Write(0x00);
             Write(0x7F);
-            Thread.Sleep(250); // Set column address
+            DelayMs(250); // Set column address
 
             dataCommandPort.State = (Command);
             Write(0x2B);
@@ -181,7 +185,7 @@ namespace Meadow.Foundation.Displays
 
             dataCommandPort.State = (Command);
             Write(0x29);           // Set display on
-            Thread.Sleep(10);
+            DelayMs(10);
 
             SetAddressWindow(0, 0, (Width - 1), (Height - 1));
 
@@ -197,14 +201,14 @@ namespace Meadow.Foundation.Displays
         /// <param name="y1">Y1</param>
         protected override void SetAddressWindow(int x0, int y0, int x1, int y1)
         {
-            SendCommand((byte)LcdCommand.CASET);  // column addr set
+            SendCommand(LcdCommand.CASET);  // column addr set
             dataCommandPort.State = Data;
             Write((byte)(x0 >> 8));
             Write((byte)(x0 & 0xff));   // XSTART 
             Write((byte)(x1 >> 8));
             Write((byte)(x1 & 0xff));   // XEND
 
-            SendCommand((byte)LcdCommand.RASET);  // row addr set
+            SendCommand(LcdCommand.RASET);  // row addr set
             dataCommandPort.State = (Data);
             Write((byte)(y0 >> 8));
             Write((byte)(y0 & 0xff));    // YSTART

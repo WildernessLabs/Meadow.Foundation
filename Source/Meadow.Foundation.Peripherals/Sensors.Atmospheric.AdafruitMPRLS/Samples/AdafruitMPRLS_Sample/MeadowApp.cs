@@ -15,7 +15,7 @@ namespace AdafruitMPRLSSensorExample
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initializing...");
+            Resolver.Log.Info("Initializing...");
 
             sensor = new AdafruitMPRLS(Device.CreateI2cBus());
             sensor.Updated += PressureSensor_Updated;
@@ -32,11 +32,11 @@ namespace AdafruitMPRLSSensorExample
 
         void PressureSensor_Updated(object sender, IChangeResult<(Pressure? Pressure, Pressure? RawPsiMeasurement)> result)
         {
-            Console.WriteLine($"New pressure PSI: {result.New.Pressure?.Psi}, Old pressure PSI: {result.Old?.Pressure?.Psi}");
+            Resolver.Log.Info($"New pressure PSI: {result.New.Pressure?.Psi}, Old pressure PSI: {result.Old?.Pressure?.Psi}");
 
-            Console.WriteLine($"Pressure in Pascal: {result.New.Pressure?.Pascal}");
+            Resolver.Log.Info($"Pressure in Pascal: {result.New.Pressure?.Pascal}");
 
-            Console.WriteLine($"Raw sensor value: {result.New.RawPsiMeasurement?.Psi}");
+            Resolver.Log.Info($"Raw sensor value: {result.New.RawPsiMeasurement?.Psi}");
         }
 
         //<!=SNOP=>

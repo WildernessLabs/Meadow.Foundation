@@ -1,5 +1,4 @@
 ﻿using System;
-using Meadow.Devices;
 using Meadow.Hardware;
 using Meadow.Peripherals.Motors;
 using Meadow.Units;

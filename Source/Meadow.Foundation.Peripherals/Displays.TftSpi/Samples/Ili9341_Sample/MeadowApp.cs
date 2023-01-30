@@ -20,12 +20,12 @@ namespace Displays.Tft.Ili9341_Sample
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initializing ...");
+            Resolver.Log.Info("Initializing ...");
 
             var config = new SpiClockConfiguration(new Frequency(12000, Frequency.UnitType.Kilohertz), SpiClockConfiguration.Mode.Mode0);
             var spiBus = Device.CreateSpiBus(Device.Pins.SCK, Device.Pins.MOSI, Device.Pins.MISO, config);
 
-            Console.WriteLine("Create display driver instance");
+            Resolver.Log.Info("Create display driver instance");
 
             display = new Ili9341
             (
@@ -161,7 +161,7 @@ namespace Displays.Tft.Ili9341_Sample
 
                 if(count >= 18 || i >= 254)
                 {
-                    Console.WriteLine(msg);
+                    Resolver.Log.Info(msg);
 
                     graphics.DrawText(12, yPos, msg, Color.LawnGreen);
 
@@ -172,7 +172,7 @@ namespace Displays.Tft.Ili9341_Sample
                 }
 
                 msg += (char)(i);
-                Console.WriteLine($"i = {i}");
+                Resolver.Log.Info($"i = {i}");
                 count++;
             }
 
@@ -213,7 +213,7 @@ namespace Displays.Tft.Ili9341_Sample
             //force a collection
             GC.Collect();
 
-            Console.WriteLine("Draw");
+            Resolver.Log.Info("Draw");
 
             for (int i = 0; i < 30; i++)
             {

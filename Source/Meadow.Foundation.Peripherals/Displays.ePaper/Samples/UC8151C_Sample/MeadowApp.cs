@@ -16,7 +16,7 @@ namespace Displays.ePaper.Uc8151c_Sample
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initialize ...");
+            Resolver.Log.Info("Initialize ...");
  
             var display = new Uc8151c(device: Device, 
                 spiBus: Device.CreateSpiBus(),
@@ -34,7 +34,7 @@ namespace Displays.ePaper.Uc8151c_Sample
 
         public override Task Run()
         {
-            Console.WriteLine("Run");
+            Resolver.Log.Info("Run");
 
             for (int i = 0; i < 100; i++)
             {
@@ -52,7 +52,7 @@ namespace Displays.ePaper.Uc8151c_Sample
 
             graphics.Show();
 
-            Console.WriteLine("Run complete");
+            Resolver.Log.Info("Run complete");
 
             return Task.CompletedTask;
         }

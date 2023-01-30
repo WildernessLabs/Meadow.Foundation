@@ -1,5 +1,4 @@
-﻿using Meadow.Devices;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
 using Meadow.Peripherals.Displays;
 using System;
 using System.Threading;
@@ -337,7 +336,7 @@ namespace Meadow.Foundation.Displays.Lcd
                 throw new ArgumentOutOfRangeException(nameof(contrast), "err: contrast must be between 0 and 1, inclusive.");
             }
 
-            Console.WriteLine($"Contrast: {contrast}");
+            Resolver.Log.Info($"Contrast: {contrast}");
             LCD_V0.DutyCycle = contrast;
         }
 

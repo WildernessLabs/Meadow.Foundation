@@ -42,7 +42,7 @@ namespace Meadow.Foundation.Controllers.Pid
 
             // calculate the error (how far we are from target)
             var error = target - input;
-            //Console.WriteLine("Actual: " + ActualInput.ToString("N1") + ", Error: " + error.ToString("N1"));
+            //Resolver.Log.Info("Actual: " + ActualInput.ToString("N1") + ", Error: " + error.ToString("N1"));
 
             // calculate the integral
             _integral += error * seconds; // add to the integral history
@@ -56,17 +56,17 @@ namespace Meadow.Foundation.Controllers.Pid
             control = ProportionalComponent * (error + integral + derivative);
 
             //
-            //Console.WriteLine("PID Control (preclamp): " + control.ToString("N4"));
+            //Resolver.Log.Info("PID Control (preclamp): " + control.ToString("N4"));
 
             // clamp
             if (control > OutputMax) control = OutputMax;
             if (control < OutputMin) control = OutputMin;
 
-            //Console.WriteLine("PID Control (postclamp): " + control.ToString("N4"));
+            //Resolver.Log.Info("PID Control (postclamp): " + control.ToString("N4"));
 
             if (OutputTuningInformation)
             {
-                Console.WriteLine("SP+PV+PID+O," + target.ToString() + "," + input.ToString() + "," +
+                Resolver.Log.Info("SP+PV+PID+O," + target.ToString() + "," + input.ToString() + "," +
                     ProportionalComponent.ToString() + "," + integral.ToString() + "," +
                     derivative.ToString() + "," + control.ToString());
             }

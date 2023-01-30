@@ -81,7 +81,7 @@ namespace Meadow.Foundation.Sensors.Switches
         /// <param name="switchNumber"></param>
         protected void HandleSwitchChanged(int switchNumber)
         {
-            Console.WriteLine($"HandleSwitchChange: {switchNumber} total switches: {Switches.Length}");
+            Resolver.Log.Info($"HandleSwitchChange: {switchNumber} total switches: {Switches.Length}");
             Changed(this, new ArrayEventArgs(switchNumber, Switches[switchNumber]));
         }
     }

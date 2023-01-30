@@ -12,7 +12,7 @@ namespace Sensors.Distance.Mpr121_Sample
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initialize...");
+            Resolver.Log.Info("Initialize...");
 
             var sensor = new Mpr121(Device.CreateI2cBus(Meadow.Hardware.I2cBusSpeed.Standard), 90, 100);
             sensor.ChannelStatusesChanged += Sensor_ChannelStatusesChanged;
@@ -33,7 +33,7 @@ namespace Sensors.Distance.Mpr121_Sample
             }
 
             var msg = string.IsNullOrEmpty(pads) ? "none" : (pads + "touched");
-            Console.WriteLine(msg);
+            Resolver.Log.Info(msg);
         }
 
         //<!=SNOP=>

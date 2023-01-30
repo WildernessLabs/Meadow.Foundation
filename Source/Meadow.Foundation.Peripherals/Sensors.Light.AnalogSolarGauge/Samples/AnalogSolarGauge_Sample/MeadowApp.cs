@@ -13,16 +13,16 @@ namespace MeadowApp
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initialize...");
+            Resolver.Log.Info("Initialize...");
 
             solarGauge = new AnalogSolarGauge(Device, Device.Pins.A02, updateInterval: TimeSpan.FromSeconds(1));
 
             //==== classic .NET Event
-            solarGauge.SolarIntensityUpdated += (s, result) => Console.WriteLine($"SolarIntensityUpdated: {result.New * 100:n2}%");
+            solarGauge.SolarIntensityUpdated += (s, result) => Resolver.Log.Info($"SolarIntensityUpdated: {result.New * 100:n2}%");
             
             //==== Filterable observer
             var observer = AnalogSolarGauge.CreateObserver(
-                handler: result => Console.WriteLine($"Observer filter satisifed, new intensity: {result.New * 100:n2}%"),
+                handler: result => Resolver.Log.Info($"Observer filter satisifed, new intensity: {result.New * 100:n2}%"),
                 filter: result => {
                     if (result.Old is { } old)
                     {
@@ -38,7 +38,7 @@ namespace MeadowApp
         public override async Task Run()
         {
             var result = await solarGauge.Read();
-            Console.WriteLine($"Solar Intensity: {result * 100:n2}%");
+            Resolver.Log.Info($"Solar Intensity: {result * 100:n2}%");
 
             solarGauge.StartUpdating(TimeSpan.FromSeconds(1));
         }

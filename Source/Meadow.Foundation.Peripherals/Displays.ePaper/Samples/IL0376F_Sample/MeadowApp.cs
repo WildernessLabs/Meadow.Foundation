@@ -15,7 +15,7 @@ namespace Displays.ePaper.IL0376F_Sample
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initialize ...");
+            Resolver.Log.Info("Initialize ...");
  
             var display = new Il0376F(device: Device,
                 spiBus: Device.CreateSpiBus(),

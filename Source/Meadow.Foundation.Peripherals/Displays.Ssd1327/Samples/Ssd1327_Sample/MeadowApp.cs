@@ -17,7 +17,7 @@ namespace MeadowApp
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initialize display...");
+            Resolver.Log.Info("Initialize display...");
 
             var spiBus = Device.CreateSpiBus();
 
@@ -144,7 +144,7 @@ namespace MeadowApp
 
             graphics.Show();
 
-            Console.WriteLine("Show complete");
+            Resolver.Log.Info("Show complete");
         }
     }
 }

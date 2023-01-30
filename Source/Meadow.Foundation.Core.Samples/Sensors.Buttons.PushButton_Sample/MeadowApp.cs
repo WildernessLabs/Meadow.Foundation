@@ -20,7 +20,7 @@ namespace Sensors.Buttons.PushButton_Sample
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initializing...");
+            Resolver.Log.Info("Initializing...");
 
             led = new RgbPwmLed(
                 Device,
@@ -32,7 +32,7 @@ namespace Sensors.Buttons.PushButton_Sample
             //TestAllResistorTypes();
             TestMultiplePorts();
 
-            Console.WriteLine("PushButton(s) ready!!!");
+            Resolver.Log.Info("PushButton(s) ready!!!");
 
             led.SetColor(Color.Green);
 
@@ -135,7 +135,7 @@ namespace Sensors.Buttons.PushButton_Sample
 
         void PushButtonClicked(object sender, EventArgs e)
         {
-            Console.WriteLine($"PushButton Clicked!");
+            Resolver.Log.Info($"PushButton Clicked!");
             led.SetColor(Color.Orange);
             Thread.Sleep(500);
             led.SetColor(Color.Green);
@@ -143,19 +143,19 @@ namespace Sensors.Buttons.PushButton_Sample
 
         void PushButtonPressStarted(object sender, EventArgs e)
         {
-            Console.WriteLine($"PushButton PressStarted!");
+            Resolver.Log.Info($"PushButton PressStarted!");
             led.SetColor(Color.Red);
         }
 
         void PushButtonPressEnded(object sender, EventArgs e)
         {
-            Console.WriteLine($"PushButton PressEnded!");
+            Resolver.Log.Info($"PushButton PressEnded!");
             led.SetColor(Color.Green);
         }
 
         void PushButtonLongClicked(object sender, EventArgs e)
         {
-            Console.WriteLine($"PushButton LongClicked!");
+            Resolver.Log.Info($"PushButton LongClicked!");
             led.SetColor(Color.Blue);
             Thread.Sleep(500);
             led.SetColor(Color.Green);

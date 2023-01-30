@@ -15,7 +15,7 @@ namespace Displays.ePaper.IL3897_Sample
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initialize ...");
+            Resolver.Log.Info("Initialize ...");
  
             var display = new Il3897(device: Device,
                 spiBus: Device.CreateSpiBus(),

@@ -35,7 +35,7 @@ namespace MeadowApp
                 {
                     for (var d = 2; d < 5; d++)
                     {
-                        Console.WriteLine($"180 degrees..Speed divisor = {d}..1/{(int)step} Steps..{a4988.Direction}...");
+                        Resolver.Log.Info($"180 degrees..Speed divisor = {d}..1/{(int)step} Steps..{a4988.Direction}...");
                         a4988.RotationSpeedDivisor = d;
                         a4988.StepDivisor = step;
                         a4988.Rotate(180);

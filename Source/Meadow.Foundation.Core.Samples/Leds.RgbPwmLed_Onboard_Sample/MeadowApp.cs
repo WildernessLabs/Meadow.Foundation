@@ -17,7 +17,7 @@ namespace Leds.RgbPwmLed_Onboard_Sample
 
         public override Task Initialize()
         {
-            Console.WriteLine("Creating peripherals...");
+            Resolver.Log.Info("Creating peripherals...");
             
             onboardLed = new RgbPwmLed(
                 Device,
@@ -54,7 +54,7 @@ namespace Leds.RgbPwmLed_Onboard_Sample
                 // loop through the entire hue spectrum (360 degrees)
                 for (int i = 0; i < 360; i++) {
                     var hue = ((double)i / 360F);
-                    Console.WriteLine($"Hue: {hue}");
+                    Resolver.Log.Info($"Hue: {hue}");
 
                     // set the color of the RGB
                     onboardLed.SetColor(Color.FromHsba((hue), 1, 1));

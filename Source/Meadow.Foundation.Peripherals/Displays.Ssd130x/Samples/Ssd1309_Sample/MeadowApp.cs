@@ -21,7 +21,7 @@ namespace Displays.Ssd130x.Ssd1309_Sample
             CreateSpiDisplay();
             //CreateI2CDisplay();
 
-            Console.WriteLine("Create canvas...");
+            Resolver.Log.Info("Create canvas...");
             graphics = new MicroGraphics(display);
 
             return base.Initialize();
@@ -29,7 +29,7 @@ namespace Displays.Ssd130x.Ssd1309_Sample
 
         void CreateSpiDisplay()
         {
-            Console.WriteLine("Create Display with SPI...");
+            Resolver.Log.Info("Create Display with SPI...");
 
             var config = new Meadow.Hardware.SpiClockConfiguration(new Frequency(6000, Frequency.UnitType.Kilohertz), Meadow.Hardware.SpiClockConfiguration.Mode.Mode0);
 
@@ -47,7 +47,7 @@ namespace Displays.Ssd130x.Ssd1309_Sample
 
         void CreateI2CDisplay()
         {
-            Console.WriteLine("Create Display with I2C...");
+            Resolver.Log.Info("Create Display with I2C...");
 
             display = new Ssd1309
             (
@@ -63,9 +63,9 @@ namespace Displays.Ssd130x.Ssd1309_Sample
             graphics.DrawText(0, 0, "Meadow F7", Meadow.Foundation.Color.White);
             graphics.DrawRectangle(5, 14, 30, 10, true);
 
-            Console.WriteLine("Show...");
+            Resolver.Log.Info("Show...");
             graphics.Show();
-            Console.WriteLine("Show Complete");
+            Resolver.Log.Info("Show Complete");
 
             return base.Run();
         }
@@ -129,7 +129,7 @@ namespace Displays.Ssd130x.Ssd1309_Sample
 
             stopwatch.Stop();
 
-            Console.WriteLine($"FPS: {10000.0 / stopwatch.Elapsed.TotalSeconds}");
+            Resolver.Log.Info($"FPS: {10000.0 / stopwatch.Elapsed.TotalSeconds}");
 
             Thread.Sleep(100);
         }
@@ -165,7 +165,7 @@ namespace Displays.Ssd130x.Ssd1309_Sample
 
         void TestRawDisplayAPI()
         {
-            Console.WriteLine("Clear display");
+            Resolver.Log.Info("Clear display");
             display.Clear(true);
 
             for (int i = 0; i < 30; i++)
@@ -175,7 +175,7 @@ namespace Displays.Ssd130x.Ssd1309_Sample
                 display.DrawPixel(60 + i, i, true);
             }
 
-            Console.WriteLine("Show");
+            Resolver.Log.Info("Show");
             display.Show();
         }
 

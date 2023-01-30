@@ -1,5 +1,4 @@
-﻿using Meadow.Devices;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
 using System;
 using System.Threading;
 
@@ -40,7 +39,7 @@ namespace Meadow.Foundation.Sensors.Sound
 
             while (true)
             {
-                Console.WriteLine($"Analog: {analogPort.Voltage}");
+                Resolver.Log.Info($"Analog: {analogPort.Voltage}");
                 Thread.Sleep(250);
             }
         }

@@ -23,14 +23,14 @@ namespace Motors.Tb67h420ftg_Encoder_Sample
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initialize...");
+            Resolver.Log.Info("Initialize...");
 
             // this causes unterrupts to fail, for some reason:
             //IDigitalInputPort test = Device.CreateDigitalInputPort(Device.Pins.D07);
             // this does not.
             IDigitalOutputPort test = Device.CreateDigitalOutputPort(Device.Pins.D07);
 
-            Console.WriteLine("Made it here.");
+            Resolver.Log.Info("Made it here.");
 
             button1 = new PushButton(Device, Device.Pins.D13, ResistorMode.InternalPullDown);
             button2 = new PushButton(Device, Device.Pins.D12, ResistorMode.InternalPullDown);
@@ -50,16 +50,16 @@ namespace Motors.Tb67h420ftg_Encoder_Sample
             motorDriver.Motor1.MotorCalibrationMultiplier = 0.5f;
             motorDriver.Motor2.MotorCalibrationMultiplier = 0.5f;
 
-            Console.WriteLine("Init encoder");
+            Resolver.Log.Info("Init encoder");
             encoder = new RotaryEncoder(Device, Device.Pins.D09, Device.Pins.D15);
             //encoder.Rotated += Encoder_Rotated;
 
-            Console.WriteLine("Init display");
+            Resolver.Log.Info("Init display");
             var ssd1306 = new Ssd1306(Device.CreateI2cBus(), 60, Ssd1306.DisplayType.OLED128x32);
             display = new MicroGraphics(ssd1306);
             display.CurrentFont = new Font8x12();
 
-            Console.WriteLine("Initialization complete.");
+            Resolver.Log.Info("Initialization complete.");
             UpdateDisplay("Initialization", "Complete");
 
             return base.Initialize();
@@ -81,7 +81,7 @@ namespace Motors.Tb67h420ftg_Encoder_Sample
             //   display.Clear();
             //   display.DrawText(0, 0, $"{++count} - {e.Direction}");
             //   display.Show();
-            //   Console.WriteLine($"{++count} - {e.Direction}");
+            //   Resolver.Log.Info($"{++count} - {e.Direction}");
         }
 
         void UpdateDisplay(string line1, string line2)
@@ -99,7 +99,7 @@ namespace Motors.Tb67h420ftg_Encoder_Sample
             count = forwardCount + backwardsCount;
             pressed = DateTime.Now.Ticks;
 
-            Console.WriteLine("Motor 1 start.");
+            Resolver.Log.Info("Motor 1 start.");
             motorDriver.Motor1.Power = 1f;
         }
         private void Button1_PressEnded(object sender, EventArgs e)
@@ -108,18 +108,18 @@ namespace Motors.Tb67h420ftg_Encoder_Sample
 
           //  UpdateDisplay($"CW: {forwardCount}, CCW {backwardsCount}", $"Events/s {eventsPerSec}");
 
-            Console.WriteLine("Motor 1 stop.");
+            Resolver.Log.Info("Motor 1 stop.");
             motorDriver.Motor1.Power = 0f;
         }
 
         private void Button2_PressStarted(object sender, EventArgs e)
         {
-            Console.WriteLine("Motor 2 start.");
+            Resolver.Log.Info("Motor 2 start.");
             motorDriver.Motor2.Power = 0.5f;
         }
         private void Button2_PressEnded(object sender, EventArgs e)
         {
-            Console.WriteLine("Motor 2 stop.");
+            Resolver.Log.Info("Motor 2 stop.");
             motorDriver.Motor2.Power = 0f;
         }
     }

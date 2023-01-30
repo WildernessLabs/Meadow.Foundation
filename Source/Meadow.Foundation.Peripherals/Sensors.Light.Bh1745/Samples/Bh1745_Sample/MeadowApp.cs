@@ -17,7 +17,7 @@ namespace MeadowApp
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initialize...");
+            Resolver.Log.Info("Initialize...");
 
             sensor = new Bh1745(Device.CreateI2cBus());
 
@@ -31,7 +31,7 @@ namespace MeadowApp
 
             // Example that uses an IObservable subscription to only be notified
             var consumer = Bh1745.CreateObserver(
-                handler: result => Console.WriteLine($"Observer: filter satisifed: {result.New.AmbientLight?.Lux:N2}Lux, old: {result.Old?.AmbientLight?.Lux:N2}Lux"),
+                handler: result => Resolver.Log.Info($"Observer: filter satisifed: {result.New.AmbientLight?.Lux:N2}Lux, old: {result.Old?.AmbientLight?.Lux:N2}Lux"),
                 
                 // only notify if the visible light changes by 100 lux (put your hand over the sensor to trigger)
                 filter: result => 
@@ -47,8 +47,8 @@ namespace MeadowApp
 
             //classical .NET events can also be used:
             sensor.Updated += (sender, result) => {
-                Console.WriteLine($"  Ambient Light: {result.New.AmbientLight?.Lux:N2}Lux");
-                Console.WriteLine($"  Color: {result.New.Color}");
+                Resolver.Log.Info($"  Ambient Light: {result.New.AmbientLight?.Lux:N2}Lux");
+                Resolver.Log.Info($"  Color: {result.New.Color}");
                 
                 if(result.New.Color is { } color) 
                 {
@@ -63,9 +63,9 @@ namespace MeadowApp
         {
             var result = await sensor.Read();
 
-            Console.WriteLine("Initial Readings:");
-            Console.WriteLine($" Visible Light: {result.AmbientLight?.Lux:N2}Lux");
-            Console.WriteLine($" Color: {result.Color}");
+            Resolver.Log.Info("Initial Readings:");
+            Resolver.Log.Info($" Visible Light: {result.AmbientLight?.Lux:N2}Lux");
+            Resolver.Log.Info($" Color: {result.Color}");
             
             if (result.Color is { } color) 
             {

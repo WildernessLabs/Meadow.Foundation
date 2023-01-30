@@ -20,7 +20,7 @@ var temp = analogTemperature.Read().Wait();
 Later on, that value can be accessed via the `Temperature` property:
 
 ```csharp
-Console.WriteLine($"Last read temp: {analogTemperature.Temperature}ºC");
+Resolver.Log.Info($"Last read temp: {analogTemperature.Temperature}ºC");
 ```
 
 ### Recommended Use
@@ -46,7 +46,7 @@ AnalogTemperature analogTemperature = new AnalogTemperature
 );
 
 analogTemperature.Changed += (s, e) => {
-	Console.WriteLine($"Temperature: {e.Temperature)}";
+	Resolver.Log.Info($"Temperature: {e.Temperature)}";
 }
 
 analogTemperature.StartUpdating();
@@ -66,7 +66,7 @@ AnalogTemperature analogTemperature = new AnalogTemperature
 
 analogTemperature.Subscribe(new FilterableObserver<FloatChangeResult, float>(
     h => {
-        Console.WriteLine($"Temp changed by a degree; new: {h.New}, old: {h.Old}");
+        Resolver.Log.Info($"Temp changed by a degree; new: {h.New}, old: {h.Old}");
     },
     e => {
         return (Math.Abs(e.Delta) > 1);

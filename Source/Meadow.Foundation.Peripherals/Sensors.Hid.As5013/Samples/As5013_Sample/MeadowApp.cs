@@ -15,7 +15,7 @@ namespace As5013_Sample
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initializing ...");
+            Resolver.Log.Info("Initializing ...");
 
             joystick = new As5013(Device.CreateI2cBus());
 
@@ -33,7 +33,7 @@ namespace As5013_Sample
 
         private void As5013_Updated(object sender, IChangeResult<Meadow.Peripherals.Sensors.Hid.AnalogJoystickPosition> e)
         {
-            Console.WriteLine($"{e.New.Horizontal}, {e.New.Vertical}");
+            Resolver.Log.Info($"{e.New.Horizontal}, {e.New.Vertical}");
         }
 
         //<!=SNOP=>

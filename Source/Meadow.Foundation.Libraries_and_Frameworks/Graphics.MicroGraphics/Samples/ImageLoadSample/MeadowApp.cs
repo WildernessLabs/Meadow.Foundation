@@ -26,7 +26,7 @@ namespace Meadow.Foundation.Graphics
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initialize...");
+            Resolver.Log.Info("Initialize...");
 
             var config = new SpiClockConfiguration(new Frequency(48000, Frequency.UnitType.Kilohertz), SpiClockConfiguration.Mode.Mode3);
             var spiBus = Device.CreateSpiBus(Device.Pins.SCK, Device.Pins.MOSI, Device.Pins.MISO, config);
@@ -37,7 +37,7 @@ namespace Meadow.Foundation.Graphics
                 chipSelectPin: Device.Pins.A03,
                 dcPin: Device.Pins.A04,
                 resetPin: Device.Pins.A05,
-                width: 240, height: 240, colorMode: ColorType.Format16bppRgb565)
+                width: 240, height: 240, colorMode: ColorMode.Format16bppRgb565)
             {
             };
 
@@ -85,7 +85,7 @@ namespace Meadow.Foundation.Graphics
 
         private void DrawImageFromFile(int depth, int x = 0, int y = 0)
         {
-            Console.WriteLine("Showing file...");
+            Resolver.Log.Info("Showing file...");
             var filePath = Path.Combine(MeadowOS.FileSystem.UserFileSystemRoot, $"wl{depth}.bmp");
             var image = Image.LoadFromFile(filePath);
             graphics.Clear();
@@ -96,7 +96,7 @@ namespace Meadow.Foundation.Graphics
 
         private void DrawImageFromResource(int depth, int x = 0, int y = 0)
         {
-            Console.WriteLine("Showing resource...");
+            Resolver.Log.Info("Showing resource...");
             var image = Image.LoadFromResource($"wl{depth}_res.bmp");
             graphics.Clear();
             graphics.DrawImage(x, y, image);

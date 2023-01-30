@@ -14,7 +14,7 @@ namespace Sensors.Light.AnalogLightSensor_Sample
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initializing...");
+            Resolver.Log.Info("Initializing...");
 
             // configure our AnalogLightSensor sensor
             analogLightSensor = new AnalogLightSensor(
@@ -23,7 +23,7 @@ namespace Sensors.Light.AnalogLightSensor_Sample
 
             //==== IObservable Pattern with an optional notification filter.
             var consumer = AnalogLightSensor.CreateObserver(
-                handler: result => Console.WriteLine($"Observer filter satisfied: {result.New.Lux:N2} lux, old: {result.Old.Value.Lux:N2} lux"),
+                handler: result => Resolver.Log.Info($"Observer filter satisfied: {result.New.Lux:N2} lux, old: {result.Old.Value.Lux:N2} lux"),
 
                 // only notify if the change is greater than 0.5
                 filter: result => {
@@ -40,7 +40,7 @@ namespace Sensors.Light.AnalogLightSensor_Sample
 
             // classical .NET events can also be used:
             analogLightSensor.LuminosityUpdated += (sender, result) => 
-                Console.WriteLine($"Lux changed: {result.New.Lux:N2} lux, old: {result.Old?.Lux:N2} lux");
+                Resolver.Log.Info($"Lux changed: {result.New.Lux:N2} lux, old: {result.Old?.Lux:N2} lux");
 
             //==== One-off reading use case/pattern
             ReadIlluminance().Wait();
@@ -54,7 +54,7 @@ namespace Sensors.Light.AnalogLightSensor_Sample
         protected async Task ReadIlluminance()
         {
             var illuminance = await analogLightSensor.Read();
-            Console.WriteLine($"Initial lux: {illuminance.Lux:N2} lux");
+            Resolver.Log.Info($"Initial lux: {illuminance.Lux:N2} lux");
         }
 
         //<!=SNOP=>
