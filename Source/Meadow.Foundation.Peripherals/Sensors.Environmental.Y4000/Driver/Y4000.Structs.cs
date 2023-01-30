@@ -12,14 +12,14 @@ namespace Meadow.Foundation.Sensors.Environmental
 
         enum Measurement
         {
-            DO,
+            DissolvedOxygen, //DO
             Turbidity,
-            CT,
-            pH,
-            Temp,
-            Orp,
-            Chl,
-            BGA
+            Conductivity, //CT
+            PotentialHydrogen, //pH
+            Temperature,
+            OxidationReductionPotential, //Orp
+            Chlorophyl, //Chl
+            BlueGreenAlgae, //BGA
         }
 
         /// <summary>
@@ -72,28 +72,28 @@ namespace Meadow.Foundation.Sensors.Environmental
                     throw new ArgumentException($"Measurements record expects 8 values, received {data.Length}");
                 }
 
-                float value = Normalize(data[(int)Measurement.DO]);
+                float value = Normalize(data[(int)Measurement.DissolvedOxygen]);
                 DissolvedOxygen = new ConcentrationInWater(value, ConcentrationInWater.UnitType.MilligramsPerLiter);
 
                 value = Normalize(data[(int)Measurement.Turbidity]);
                 Turbidity = new Turbidity(value);
 
-                value = Normalize(data[(int)Measurement.CT]);
+                value = Normalize(data[(int)Measurement.Conductivity]);
                 ElectricalConductivity = new Conductivity(value, Conductivity.UnitType.MilliSiemensPerCentimeter);
 
-                value = Normalize(data[(int)Measurement.pH]);
+                value = Normalize(data[(int)Measurement.PotentialHydrogen]);
                 PH = new PotentialHydrogen(value);
 
-                value = Normalize(data[(int)Measurement.Orp]);
+                value = Normalize(data[(int)Measurement.OxidationReductionPotential]);
                 OxidationReductionPotential = new Voltage(value, Voltage.UnitType.Volts);
 
-                value = Normalize(data[(int)Measurement.Chl]);
+                value = Normalize(data[(int)Measurement.Chlorophyl]);
                 Chlorophyl = new ConcentrationInWater(value, ConcentrationInWater.UnitType.MicrogramsPerLiter);
 
-                value = Normalize(data[(int)Measurement.BGA]);
+                value = Normalize(data[(int)Measurement.BlueGreenAlgae]);
                 BlueGreenAlgae = new ConcentrationInWater(value, ConcentrationInWater.UnitType.MilligramsPerLiter);
 
-                value = Normalize(data[(int)Measurement.Temp]);
+                value = Normalize(data[(int)Measurement.Temperature]);
                 Temperature = new Units.Temperature(value, Units.Temperature.UnitType.Celsius);
             }
 
