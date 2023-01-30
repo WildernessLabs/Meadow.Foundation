@@ -44,7 +44,7 @@ namespace ADC.Ads1015_Sample
                 );
             adc.Subscribe(observer);
 
-            adc.Updated += (sender, result) => 
+            adc.Updated += (sender, result) =>
             {
                 Resolver.Log.Info($"  Voltage: {result.New.Volts:N2}V");
             };
@@ -68,7 +68,7 @@ namespace ADC.Ads1015_Sample
             var start = Environment.TickCount;
             long sum = 0;
 
-            for(var i = 0; i < totalSamples; i++)
+            for (var i = 0; i < totalSamples; i++)
             {
                 sum += await adc.ReadRaw();
             }
