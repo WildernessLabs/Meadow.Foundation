@@ -1,7 +1,6 @@
 ﻿using Meadow.Hardware;
-using System;
 
-namespace Meadow.Foundation.Displays.ePaper
+namespace Meadow.Foundation.Displays
 {
     /// <summary>
     /// Represents an WaveShare Epd4in2 ePaper display
