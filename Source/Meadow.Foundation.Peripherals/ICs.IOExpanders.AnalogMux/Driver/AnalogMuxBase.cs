@@ -3,9 +3,9 @@
 namespace Meadow.Foundation.ICs.IOExpanders
 {
     /// <summary>
-    /// Represents an AnalogInputMultiplexerBase
+    /// Represents an Analog Input Multiplexer (Mux) base
     /// </summary>
-    public abstract class AnalogInputMultiplexerBase : IAnalogInputMultiplexer
+    public abstract class AnalogMuxBase : IAnalogInputMultiplexer
     {
         /// <summary>
         /// Get the sync root
@@ -28,7 +28,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <param name="channel">he input channel</param>
         public abstract void SetInputChannel(int channel);
 
-        internal AnalogInputMultiplexerBase(IAnalogInputPort signalPort, IDigitalOutputPort? enablePort)
+        internal AnalogMuxBase(IAnalogInputPort signalPort, IDigitalOutputPort? enablePort)
         {
             Signal = signalPort;
             EnablePort = enablePort;
