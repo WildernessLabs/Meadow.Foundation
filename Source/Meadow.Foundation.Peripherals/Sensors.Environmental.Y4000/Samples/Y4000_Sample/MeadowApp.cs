@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Meadow;
+using Meadow.Devices;
 using Meadow.Foundation.Sensors.Environmental;
 
 namespace Sensors.Environmental.Y4000_Sample
@@ -15,7 +16,7 @@ namespace Sensors.Environmental.Y4000_Sample
             Resolver.Log.Info("Initialize...");
             await Task.Delay(2000);
 
-            sensor = new Y4000(Device, Device.SerialPortNames.Com4, 0x01, Device.Pins.D09);
+            sensor = new Y4000(Device, Device.PlatformOS.GetSerialPortName("COM4"), 0x01, Device.Pins.D09);
             await sensor.Initialize();
 
             await Task.Delay(2000);
