@@ -107,6 +107,15 @@ namespace Meadow.Foundation.ICs.IOExpanders
             public IntPtr ftHandle;
         }
 
+        [Flags]
+        public enum I2CChannelOptions
+        {
+            None = 0,
+            ThreePhaseClocking = 1 << 0,
+            Loopback = 1 << 1,
+            ClockStretching = 1 << 2,
+        }
+
         public struct I2CChannelConfig
         {
             /*
@@ -128,7 +137,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             */
             public I2CClockRate ClockRate;
             public byte LatencyTimer;
-            public uint Options;
+            public I2CChannelOptions Options;
         }
 
         public struct SpiChannelConfig
