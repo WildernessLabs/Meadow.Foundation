@@ -1,6 +1,6 @@
 ﻿namespace Meadow.Foundation.ICs.ADC
 {
-    public abstract partial class Ads1x15
+    public abstract partial class Ads1x15Base
     {
         /// <summary>
         /// Valid addresses for the sensor

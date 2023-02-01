@@ -18,12 +18,12 @@ namespace Ads1115_Sample
 
             adc = new Ads1115(
                 Device.CreateI2cBus(Meadow.Hardware.I2cBusSpeed.FastPlus),
-                Ads1x15.Addresses.Default,
-                Ads1x15.MeasureMode.Continuous,
-                Ads1x15.ChannelSetting.A0SingleEnded,
+                Ads1x15Base.Addresses.Default,
+                Ads1x15Base.MeasureMode.Continuous,
+                Ads1x15Base.ChannelSetting.A0SingleEnded,
                 Ads1115.SampleRateSetting.Sps128);
 
-            adc.Gain = Ads1x15.FsrGain.TwoThirds;
+            adc.Gain = Ads1x15Base.FsrGain.TwoThirds;
 
             var observer = Ads1115.CreateObserver(
                 handler: result =>
