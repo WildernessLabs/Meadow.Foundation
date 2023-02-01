@@ -5,7 +5,7 @@ namespace Meadow.Foundation.Sensors.Environmental
     /// <summary>
     /// Represents an SCD41 C02 sensor
     /// </summary>
-    public class Scd41 : Scd4x
+    public class Scd41 : Scd4xBase
     {
         /// <summary>
         /// Create a new Scd41 object
