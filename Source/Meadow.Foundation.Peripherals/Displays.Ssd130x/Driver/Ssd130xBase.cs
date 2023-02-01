@@ -2,7 +2,6 @@
 using Meadow.Hardware;
 using Meadow.Foundation.Graphics.Buffers;
 using Meadow.Foundation.Graphics;
-using System.Drawing;
 
 namespace Meadow.Foundation.Displays
 {
