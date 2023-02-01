@@ -1,6 +1,6 @@
 ﻿using Meadow.Hardware;
 
-namespace Meadow.Foundation.Displays.ePaper
+namespace Meadow.Foundation.Displays
 {
     /// <summary>
     /// Represents a WaveShare epd4in2bc tri color 4.2" ePaper color display (red or yellow)

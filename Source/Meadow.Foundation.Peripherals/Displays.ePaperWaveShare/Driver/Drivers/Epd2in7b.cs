@@ -1,6 +1,6 @@
 ﻿using Meadow.Hardware;
 
-namespace Meadow.Foundation.Displays.ePaper
+namespace Meadow.Foundation.Displays
 {
     /// <summary>
     /// Represents an WaveShare Epd2in7b ePaper color display
