@@ -166,7 +166,7 @@ namespace Meadow.Foundation.Sensors.Buttons
 
             if (interruptMode == InterruptMode.None)
             {
-                Console.WriteLine("Warning: Pin doesn't support interrupts, PushButton will use polling");
+                Resolver.Log.Warn("Warning: Pin doesn't support interrupts, PushButton will use polling");
             }
             return device.CreateDigitalInputPort(inputPin, interruptMode, resistorMode, DefaultDebounceDuration, DefaultGlitchDuration);
         }
@@ -254,5 +254,10 @@ namespace Meadow.Foundation.Sensors.Buttons
 
             ctsPolling?.Cancel();
         }
+
+        /// <summary>
+        /// Convenience method to get the current sensor reading
+        /// </summary>
+        public Task<bool> Read() => Task.FromResult(State);
     }
 }

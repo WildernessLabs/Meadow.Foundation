@@ -7,7 +7,7 @@ namespace Meadow.Foundation.Sensors.Rotary
     /// <summary>
     /// Digital rotary encoder that uses two-bit Gray Code to encode rotation.
     /// </summary>
-    public class RotaryEncoder : ObservableBase<RotationDirection>, IRotaryEncoder
+    public class RotaryEncoder : IRotaryEncoder
     {
         /// <summary>
         /// Raised when the rotary encoder is rotated and returns a RotaryTurnedEventArgs object which describes the direction of rotation.
@@ -137,7 +137,6 @@ namespace Meadow.Foundation.Sensors.Rotary
         private void RaiseRotatedAndNotify(RotaryChangeResult result)
         {
             Rotated?.Invoke(this, result);
-            base.NotifyObservers(result);
         }
     }
 }

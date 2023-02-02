@@ -16,7 +16,7 @@ namespace Displays.ePaper.SSD1680_Sample
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initialize ...");
+            Resolver.Log.Info("Initialize ...");
  
             var display = new Ssd1680(device: Device,
                 spiBus: Device.CreateSpiBus(),
@@ -37,7 +37,7 @@ namespace Displays.ePaper.SSD1680_Sample
 
         public override Task Run()
         {
-            Console.WriteLine("Run ...");
+            Resolver.Log.Info("Run ...");
 
             graphics.Clear();
 

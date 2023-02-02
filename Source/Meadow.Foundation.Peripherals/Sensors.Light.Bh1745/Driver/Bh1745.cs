@@ -311,7 +311,7 @@ namespace Meadow.Foundation.Sensors.Light
         /// </summary>
         protected void Reset()
         {
-            Console.WriteLine("Reset");
+            Resolver.Log.Info("Reset");
 
             var status = Peripheral.ReadRegister(Registers.SYSTEM_CONTROL);
             status = (byte)((status & ~MaskValues.SW_RESET) | 0x01 << 7);
@@ -370,7 +370,7 @@ namespace Meadow.Foundation.Sensors.Light
         /// <returns></returns>
         protected ushort ReadClearDataRegister() => Peripheral.ReadRegisterAsUShort(Registers.CLEAR_DATA);
 
-        async Task<Illuminance> ISamplingSensor<Illuminance>.Read()
+        async Task<Illuminance> ISensor<Illuminance>.Read()
             => (await Read()).AmbientLight.Value;
     }
 }

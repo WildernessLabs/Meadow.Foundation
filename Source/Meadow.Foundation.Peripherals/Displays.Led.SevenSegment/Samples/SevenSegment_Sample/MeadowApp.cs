@@ -15,7 +15,7 @@ namespace Displays.Led.SevenSegment_Sample
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initializing...");
+            Resolver.Log.Info("Initializing...");
 
             sevenSegment = new SevenSegment
             (
@@ -44,7 +44,7 @@ namespace Displays.Led.SevenSegment_Sample
 
         void TestSevenSegment(SevenSegment sevenSegment)
         {
-            Console.WriteLine("TestSevenSegment...");
+            Resolver.Log.Info("TestSevenSegment...");
 
             bool showDecimal = false;
 
@@ -54,7 +54,7 @@ namespace Displays.Led.SevenSegment_Sample
                 {
                     if (character != SevenSegment.CharacterType.count)
                     {
-                        Console.WriteLine("Character: {0}", character.ToString());
+                        Resolver.Log.Info($"Character: {character.ToString()}");
                         sevenSegment.SetDisplay(character, showDecimal);
                     }
 

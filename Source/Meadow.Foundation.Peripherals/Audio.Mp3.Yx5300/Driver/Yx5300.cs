@@ -1,8 +1,7 @@
-﻿using System;
+﻿using Meadow.Hardware;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Meadow.Devices;
-using Meadow.Hardware;
 
 namespace Meadow.Foundation.Audio.Mp3
 {
@@ -253,7 +252,7 @@ namespace Meadow.Foundation.Audio.Mp3
             {
                 if (serialPort.BytesToRead == 0)
                 {
-                    Console.WriteLine("No data available");
+                    Resolver.Log.Info("No data available");
                     Thread.Sleep(50);
                     break;
                 }

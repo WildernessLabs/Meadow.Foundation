@@ -14,7 +14,7 @@ namespace Emc2101_Sample
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initialize...");
+            Resolver.Log.Info("Initialize...");
 
             fanController = new Emc2101(i2cBus: Device.CreateI2cBus());
 
@@ -23,7 +23,7 @@ namespace Emc2101_Sample
 
         public override Task Run()
         {
-            Console.WriteLine("Run ...");
+            Resolver.Log.Info("Run ...");
 
             return base.Run();
         }

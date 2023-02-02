@@ -10,7 +10,7 @@ namespace Meadow.Foundation.Sensors.LoadCell
     /// <summary>
     /// 24-Bit Dual-Channel ADC For Bridge Sensors
     /// </summary>
-    public partial class Hx711 : SamplingSensorBase<Mass>, IMassSensor, IDisposable
+    public partial class Hx711 : PollingSensorBase<Mass>, IMassSensor, IDisposable
     {
         private const uint GPIO_BASE = 0x40020000;
         private const uint IDR_OFFSET = 0x10;
@@ -158,7 +158,7 @@ namespace Meadow.Foundation.Sensors.LoadCell
         public void Tare()
         {
             TareValue = ReadADC();
-            Console.WriteLine($"Tare base = {TareValue}");
+            Resolver.Log.Info($"Tare base = {TareValue}");
         }
 
         /// <summary>
@@ -312,7 +312,7 @@ namespace Meadow.Foundation.Sensors.LoadCell
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"HX711 event handler threw: {ex.Message}");
+                Resolver.Log.Info($"HX711 event handler threw: {ex.Message}");
                 throw;
             }
         }

@@ -10,7 +10,7 @@ namespace Meadow.Foundation.ICs.FanControllers
     /// Represents an EMC2101 fan controller and temperature monitor
     /// </summary>
     public partial class Emc2101 :
-        SamplingSensorBase<(Temperature? InternalTemperature, Temperature? ExternalTemperature, AngularVelocity? FanSpeed)>
+        PollingSensorBase<(Temperature? InternalTemperature, Temperature? ExternalTemperature, AngularVelocity? FanSpeed)>
     {
         /// <summary>
         /// Internal Temperature changed event

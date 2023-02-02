@@ -10,7 +10,7 @@ namespace Meadow.Foundation.Sensors.Distance
     /// <summary>
     /// HCSR04 Distance Sensor - driver not complete
     /// </summary>
-    public class Hcsr04 : SensorBase<Length>, IRangeFinder
+    public class Hcsr04 : SamplingSensorBase<Length>, IRangeFinder
     {
         /// <summary>
         /// Raised when an received a rebound trigger signal
@@ -112,7 +112,7 @@ namespace Meadow.Foundation.Sensors.Distance
             Distance = newDistance;
 
             //debug - remove 
-            Console.WriteLine($"{elapsed}, {curDis}, {Distance}, {DateTime.Now.Ticks}");
+            Resolver.Log.Info($"{elapsed}, {curDis}, {Distance}, {DateTime.Now.Ticks}");
 
             //restore this before publishing to hide false results 
             //    if (CurrentDistance < MinimumDistance || CurrentDistance > MaximumDistance)
@@ -146,7 +146,7 @@ namespace Meadow.Foundation.Sensors.Distance
         /// <summary>
         /// Starts continuously sampling the sensor
         /// </summary>
-        public void StartUpdating(TimeSpan? updateInterval = null)
+        public override void StartUpdating(TimeSpan? updateInterval = null)
         {
             //ToDo
             throw new NotImplementedException();
@@ -155,7 +155,7 @@ namespace Meadow.Foundation.Sensors.Distance
         /// <summary>
         /// Stops sampling the sensor
         /// </summary>
-        public void StopUpdating()
+        public override void StopUpdating()
         {
             throw new NotImplementedException();
         }

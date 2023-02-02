@@ -16,7 +16,7 @@ namespace Servos.Servo_Sample
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initialize...");
+            Resolver.Log.Info("Initialize...");
 
             servo = new Servo(Device, Device.Pins.D02, NamedServoConfigs.SG90);
 
@@ -32,7 +32,7 @@ namespace Servos.Servo_Sample
                 for (int i = 0; i <= servo.Config.MaximumAngle.Degrees; i++)
                 {
                     await servo.RotateTo(new Angle(i, AU.Degrees));
-                    Console.WriteLine($"Rotating to {i}");
+                    Resolver.Log.Info($"Rotating to {i}");
                 }
 
                 await Task.Delay(2000);
@@ -40,7 +40,7 @@ namespace Servos.Servo_Sample
                 for (int i = 180; i >= servo.Config.MinimumAngle.Degrees; i--)
                 {
                     await servo.RotateTo(new Angle(i, AU.Degrees));
-                    Console.WriteLine($"Rotating to {i}");
+                    Resolver.Log.Info($"Rotating to {i}");
                 }
                 await Task.Delay(2000);
             }

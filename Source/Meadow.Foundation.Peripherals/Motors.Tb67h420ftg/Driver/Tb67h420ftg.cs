@@ -1,5 +1,4 @@
 ﻿#nullable enable
-using Meadow.Devices;
 using Meadow.Hardware;
 using static Meadow.Units.Frequency;
 

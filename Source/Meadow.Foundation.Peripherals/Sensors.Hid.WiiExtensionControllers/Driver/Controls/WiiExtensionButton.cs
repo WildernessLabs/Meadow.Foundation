@@ -1,5 +1,6 @@
 ﻿using Meadow.Peripherals.Sensors.Buttons;
 using System;
+using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Hid
 {
@@ -59,7 +60,7 @@ namespace Meadow.Foundation.Sensors.Hid
                 }
                 else
                 {
-                //    Console.WriteLine($"{state} {State}");
+                //    Resolver.Log.Info($"{state} {State}");
 
                     RaiseClicked();
                 }
@@ -104,5 +105,10 @@ namespace Meadow.Foundation.Sensors.Hid
         {
             LongClicked?.Invoke(this, new EventArgs());
         }
+
+        /// <summary>
+        /// Convenience method to get the current sensor reading
+        /// </summary>
+        public Task<bool> Read() => Task.FromResult(State);
     }
 }

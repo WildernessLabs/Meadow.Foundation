@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -106,11 +106,11 @@ namespace Meadow.Foundation.DataLoggers
                 }
                 catch (TaskCanceledException)
                 {
-                    Console.WriteLine("Request timed out.");
+                    Resolver.Log.Info("Request timed out.");
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine($"Request went sideways:\n - Source: {e.Source}" +
+                    Resolver.Log.Error($"Request went sideways:\n - Source: {e.Source}" +
                     $"\n - Type: {e.GetType()}" +
                     $"\n - Message: {e.Message}\n - InnerException:\n{e.InnerException}" +
                     $" - StackTrace:\n{e.StackTrace}");

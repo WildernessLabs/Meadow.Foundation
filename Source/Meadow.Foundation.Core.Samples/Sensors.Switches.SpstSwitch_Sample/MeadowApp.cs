@@ -15,16 +15,16 @@ namespace Sensors.Switches.SpstSwitch_Sample
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initializing...");
+            Resolver.Log.Info("Initializing...");
 
             spstSwitch = new SpstSwitch(Device.CreateDigitalInputPort(Device.Pins.D02, InterruptMode.EdgeFalling, ResistorMode.InternalPullDown));
             spstSwitch.Changed += (s,e) => 
             {
-                Console.WriteLine("Switch Changed");
-                Console.WriteLine($"Switch on: {spstSwitch.IsOn}");
+                Resolver.Log.Info("Switch Changed");
+                Resolver.Log.Info($"Switch on: {spstSwitch.IsOn}");
             };
 
-            Console.WriteLine("SpstSwitch ready...");
+            Resolver.Log.Info("SpstSwitch ready...");
 
             return Task.CompletedTask;
         }

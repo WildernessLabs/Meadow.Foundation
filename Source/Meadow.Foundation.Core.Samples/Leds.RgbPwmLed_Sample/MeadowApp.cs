@@ -18,7 +18,7 @@ namespace Leds.RgbPwmLed_Sample
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initializing...");
+            Resolver.Log.Info("Initializing...");
 
             var onRgbLed = new RgbLed(
                 device: Device,
@@ -58,28 +58,28 @@ namespace Leds.RgbPwmLed_Sample
 
         public override Task Run()
         {
-            Console.WriteLine("TestRgbPwmLed...");
+            Resolver.Log.Info("TestRgbPwmLed...");
 
             while (true)
             {
                 foreach (var rgbPwmLed in rgbPwmLeds)
                 {
                     rgbPwmLed.SetColor(Color.Red);
-                    Console.WriteLine("Red");
+                    Resolver.Log.Info("Red");
                     Thread.Sleep(1000);
 
                     rgbPwmLed.SetColor(Color.Green);
-                    Console.WriteLine("Green");
+                    Resolver.Log.Info("Green");
                     Thread.Sleep(1000);
 
                     rgbPwmLed.SetColor(Color.Blue);
-                    Console.WriteLine("Blue");
+                    Resolver.Log.Info("Blue");
                     Thread.Sleep(1000);
 
                     for (int i = 0; i < 10; i++)
                     {
                         rgbPwmLed.SetColor(Color.Red, i * 0.1f);
-                        Console.WriteLine($"Red brightness: {i * 0.1f}");
+                        Resolver.Log.Info($"Red brightness: {i * 0.1f}");
                         Thread.Sleep(500);
                     }
                     rgbPwmLed.Stop();
@@ -87,7 +87,7 @@ namespace Leds.RgbPwmLed_Sample
                     for (int i = 0; i < 10; i++)
                     {
                         rgbPwmLed.SetColor(Color.Green, i * 0.1f);
-                        Console.WriteLine($"Green brightness: {i * 0.1f}");
+                        Resolver.Log.Info($"Green brightness: {i * 0.1f}");
                         Thread.Sleep(500);
                     }
                     rgbPwmLed.Stop();
@@ -95,40 +95,40 @@ namespace Leds.RgbPwmLed_Sample
                     for (int i = 0; i < 10; i++)
                     {
                         rgbPwmLed.SetColor(Color.Blue, i * 0.1f);
-                        Console.WriteLine($"Blue brightness: {i * 0.1f}");
+                        Resolver.Log.Info($"Blue brightness: {i * 0.1f}");
                         Thread.Sleep(500);
                     }
                     rgbPwmLed.Stop();
 
                     // Blink
                     rgbPwmLed.StartBlink(Color.Red, TimeSpan.FromMilliseconds(500), TimeSpan.FromMilliseconds(500), 1f, 0f);
-                    Console.WriteLine("Blinking Red");
+                    Resolver.Log.Info("Blinking Red");
                     Thread.Sleep(3000);
                     rgbPwmLed.Stop();
 
                     rgbPwmLed.StartBlink(Color.Green, TimeSpan.FromMilliseconds(500), TimeSpan.FromMilliseconds(500), 1f, 0f);
-                    Console.WriteLine("Blinking Green");
+                    Resolver.Log.Info("Blinking Green");
                     Thread.Sleep(3000);
                     rgbPwmLed.Stop();
 
                     rgbPwmLed.StartBlink(Color.Blue, TimeSpan.FromMilliseconds(500), TimeSpan.FromMilliseconds(500), 1f, 0f);
-                    Console.WriteLine("Blinking Blue");
+                    Resolver.Log.Info("Blinking Blue");
                     Thread.Sleep(3000);
                     rgbPwmLed.Stop();
 
                     // Pulse
                     rgbPwmLed.StartPulse(Color.Red);
-                    Console.WriteLine("Pulsing Red");
+                    Resolver.Log.Info("Pulsing Red");
                     Thread.Sleep(3000);
                     rgbPwmLed.Stop();
 
                     rgbPwmLed.StartPulse(Color.Green);
-                    Console.WriteLine("Pulsing Green");
+                    Resolver.Log.Info("Pulsing Green");
                     Thread.Sleep(3000);
                     rgbPwmLed.Stop();
 
                     rgbPwmLed.StartPulse(Color.Blue);
-                    Console.WriteLine("Pulsing Blue");
+                    Resolver.Log.Info("Pulsing Blue");
                     Thread.Sleep(3000);
                     rgbPwmLed.Stop();
                 }

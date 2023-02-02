@@ -16,7 +16,7 @@ namespace Leds.Pca9633_Sample
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initialize...");
+            Resolver.Log.Info("Initialize...");
 
             pca9633 = new Pca9633(Device.CreateI2cBus());
 

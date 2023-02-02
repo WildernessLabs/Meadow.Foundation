@@ -9,7 +9,7 @@ namespace Meadow.Foundation.Sensors.Light
     /// <summary>
     /// Represents an Alspt19315C analog light sensor
     /// </summary>
-    public class Alspt19315C : SensorBase<Voltage>
+    public class Alspt19315C : SamplingSensorBase<Voltage>
     {
         /// <summary>
         /// Analog port connected to the sensor
@@ -41,22 +41,15 @@ namespace Meadow.Foundation.Sensors.Light
         {
             AnalogInputPort = port;
 
-            // wire up our observable
-            // have to convert from voltage to temp units for our consumers
-            // this is where the magic is: this allows us to extend the IObservable
-            // pattern through the sensor driver
             AnalogInputPort.Subscribe
             (
                 IAnalogInputPort.CreateObserver(
                     result => {
-                        // create a new change result from the new value
                         ChangeResult<Voltage> changeResult = new ChangeResult<Voltage>() {
                             New = result.New,
                             Old = Voltage
                         };
-                        // save state
                         Voltage = changeResult.New;
-                        // notify
                         RaiseEventsAndNotify(changeResult);
                     }
                 )
@@ -64,7 +57,7 @@ namespace Meadow.Foundation.Sensors.Light
         }
 
         /// <summary>
-        /// Starts continuously sampling the sensor.
+        /// Starts continuously sampling the sensor
         ///
         /// This method also starts raising `Changed` events and IObservable
         /// subscribers getting notified. Use the `readIntervalDuration` parameter
@@ -73,10 +66,9 @@ namespace Meadow.Foundation.Sensors.Light
         /// <param name="updateInterval">A `TimeSpan` that specifies how long to
         /// wait between readings. This value influences how often `*Updated`
         /// events are raised and `IObservable` consumers are notified.
-        /// The default is 5 seconds.</param>
-        public void StartUpdating(TimeSpan? updateInterval)
+        /// </param>
+        public override void StartUpdating(TimeSpan? updateInterval)
         {
-            // thread safety
             lock (samplingLock) {
                 if (IsSampling) return;
                 IsSampling = true;
@@ -85,9 +77,9 @@ namespace Meadow.Foundation.Sensors.Light
         }
 
         /// <summary>
-        /// Stops sampling the temperature.
+        /// Stops sampling the sensor
         /// </summary>
-        public void StopUpdating()
+        public override void StopUpdating()
         {
             lock (samplingLock) {
                 if (!IsSampling) return;
@@ -103,7 +95,6 @@ namespace Meadow.Foundation.Sensors.Light
         /// <returns>A float value that's ann average value of all the samples taken.</returns>
         protected override async Task<Voltage> ReadSensor()
         {
-            // read the voltage
             Voltage = await AnalogInputPort.Read();
             return Voltage;
         }

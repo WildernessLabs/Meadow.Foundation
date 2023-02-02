@@ -14,7 +14,7 @@ namespace MeadowApp
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initialize...");
+            Resolver.Log.Info("Initialize...");
 
             display = new Tm1637(Device, Device.Pins.D02, Device.Pins.D01);
 

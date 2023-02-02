@@ -11,7 +11,7 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// <summary>
         /// Color mode of the buffer - 1 bit per pixel 
         /// </summary>
-        public override ColorType ColorMode => ColorType.Format1bpp;
+        public override ColorMode ColorMode => ColorMode.Format1bpp;
 
         /// <summary>
         /// Creates a new Buffer1bpp object

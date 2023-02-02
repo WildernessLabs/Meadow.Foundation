@@ -12,7 +12,7 @@ namespace Meadow.Foundation.Sensors.Weather
     /// Driver for a "switching" anememoter (wind speed gauge) that has an
     /// internal switch that is triggered during every revolution.
     /// </summary>
-    public partial class SwitchingAnemometer : SamplingSensorBase<Speed>, IAnemometer
+    public partial class SwitchingAnemometer : PollingSensorBase<Speed>, IAnemometer
     {
         /// <summary>
         /// Raised when the speed of the wind changes

@@ -285,7 +285,7 @@ namespace Meadow.Foundation.Sensors.Environmental
             base.RaiseEventsAndNotify(changeResult);
         }
 
-        async Task<Concentration> ISamplingSensor<Concentration>.Read()
+        async Task<Concentration> ISensor<Concentration>.Read()
             => (await Read()).CO2Concentration.Value;
     }
 }

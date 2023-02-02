@@ -15,7 +15,7 @@ namespace ICs.IOExpanders.Is31fl3731_Sample
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initialize...");
+            Resolver.Log.Info("Initialize...");
             iS31FL3731 = new Is31fl3731(Device.CreateI2cBus());
             iS31FL3731.Initialize();
 
@@ -84,8 +84,8 @@ namespace ICs.IOExpanders.Is31fl3731_Sample
         /// </summary>
         void RunExplicit()
         {
-            Console.WriteLine("Run...");
-            Console.WriteLine("Display frame 0");
+            Resolver.Log.Info("Run...");
+            Resolver.Log.Info("Display frame 0");
             iS31FL3731.DisplayFrame(0);
             iS31FL3731.SetLedPwm(0, 1, 128);
 
@@ -94,15 +94,15 @@ namespace ICs.IOExpanders.Is31fl3731_Sample
             iS31FL3731.SetLedPwm(2, 3, 128);
 
             Thread.Sleep(1000);
-            Console.WriteLine("Display frame 1");
+            Resolver.Log.Info("Display frame 1");
             iS31FL3731.DisplayFrame(1);
 
             Thread.Sleep(1000);
-            Console.WriteLine("Display frame 2");
+            Resolver.Log.Info("Display frame 2");
             iS31FL3731.DisplayFrame(2);
 
             Thread.Sleep(1000);
-            Console.WriteLine("Display frame 0");
+            Resolver.Log.Info("Display frame 0");
             iS31FL3731.DisplayFrame(0);
 
             //Turn on all LEDs
@@ -113,7 +113,7 @@ namespace ICs.IOExpanders.Is31fl3731_Sample
                 Thread.Sleep(50);
             }
 
-            Console.WriteLine("Frame switching blinking");
+            Resolver.Log.Info("Frame switching blinking");
             //Switch between Frame 0 and 1. Blinking them
             for (byte i = 0; i < 10; i++)
             {
@@ -127,12 +127,12 @@ namespace ICs.IOExpanders.Is31fl3731_Sample
             //Switch between Frame 0 and 1. Blinking them
             
             Thread.Sleep(1000);
-            Console.WriteLine("Frame 0 blink mode on");
+            Resolver.Log.Info("Frame 0 blink mode on");
             iS31FL3731.SetBlinkMode(true, 0x05);
             iS31FL3731.SetBlinkFunctionOnAllLeds(0, true);
 
             Thread.Sleep(10000);
-            Console.WriteLine("Turn off blink mode");
+            Resolver.Log.Info("Turn off blink mode");
             iS31FL3731.SetBlinkFunctionOnAllLeds(0, false);
             iS31FL3731.SetBlinkMode(false, 0x05);
 
@@ -144,8 +144,8 @@ namespace ICs.IOExpanders.Is31fl3731_Sample
         /// </summary>
         void RunImplicit()
         {
-            Console.WriteLine("Run implicit...");
-            Console.WriteLine("Display frame 0");
+            Resolver.Log.Info("Run implicit...");
+            Resolver.Log.Info("Display frame 0");
             iS31FL3731.DisplayFrame(0);
             iS31FL3731.SetFrame(0);
             iS31FL3731.SetLedPwm(1, 128);
@@ -157,15 +157,15 @@ namespace ICs.IOExpanders.Is31fl3731_Sample
             iS31FL3731.SetLedPwm(2, 3, 128);
 
             Thread.Sleep(1000);
-            Console.WriteLine("Display frame 1");
+            Resolver.Log.Info("Display frame 1");
             iS31FL3731.DisplayFrame(1);
 
             Thread.Sleep(1000);
-            Console.WriteLine("Display frame 2");
+            Resolver.Log.Info("Display frame 2");
             iS31FL3731.DisplayFrame(2);
 
             Thread.Sleep(1000);
-            Console.WriteLine("Display frame 0");
+            Resolver.Log.Info("Display frame 0");
             iS31FL3731.DisplayFrame(0);
 
             //Turn on All the LED
@@ -179,7 +179,7 @@ namespace ICs.IOExpanders.Is31fl3731_Sample
                 Thread.Sleep(50);
             }
 
-            Console.WriteLine("Frame switching blinking");
+            Resolver.Log.Info("Frame switching blinking");
             //Switch between Frame 0 and 1. Blinking them
             for (byte i = 0; i < 10; i++)
             {
@@ -194,12 +194,12 @@ namespace ICs.IOExpanders.Is31fl3731_Sample
 
             Thread.Sleep(1000);
             iS31FL3731.SetFrame(0);
-            Console.WriteLine("Frame 0 blink mode on");
+            Resolver.Log.Info("Frame 0 blink mode on");
             iS31FL3731.SetBlinkMode(true, 0x05);
             iS31FL3731.SetBlinkFunctionOnAllLeds(true);
 
             Thread.Sleep(10000);
-            Console.WriteLine("Turn off blink mode");
+            Resolver.Log.Info("Turn off blink mode");
             iS31FL3731.SetBlinkFunctionOnAllLeds(false);
             iS31FL3731.SetBlinkMode(false, 0x05);
             iS31FL3731.Clear();

@@ -10,7 +10,7 @@ namespace Meadow.Foundation.Sensors.Moisture
     /// <summary>
     /// FC-28-D Soil Hygrometer Detection Module + Soil Moisture Sensor
     /// </summary>
-    public class Fc28 : SensorBase<double>, IMoistureSensor
+    public class Fc28 : SamplingSensorBase<double>, IMoistureSensor
     {
         /// <summary>
         /// Raised when a new sensor reading has been made. To enable, call StartUpdating().
@@ -107,7 +107,7 @@ namespace Meadow.Foundation.Sensors.Moisture
         /// <summary>
         /// Starts continuously sampling the sensor
         /// </summary>
-        public void StartUpdating(TimeSpan? updateInterval)
+        public override void StartUpdating(TimeSpan? updateInterval)
         {
             if(updateInterval == null)
             {
@@ -155,7 +155,7 @@ namespace Meadow.Foundation.Sensors.Moisture
         /// <summary>
         /// Stops sampling the sensor
         /// </summary>
-        public void StopUpdating()
+        public override void StopUpdating()
         {
             lock (samplingLock) 
             {

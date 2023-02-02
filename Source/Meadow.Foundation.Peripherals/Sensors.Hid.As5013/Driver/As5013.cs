@@ -11,7 +11,7 @@ namespace Meadow.Foundation.Sensors.Hid
     /// for analog joysticks
     /// </summary>
     public partial class As5013 
-        : SensorBase<AnalogJoystickPosition>, IAnalogJoystick
+        : SamplingSensorBase<AnalogJoystickPosition>, IAnalogJoystick
     {
         /// <summary>
         /// Event if interrupt port is provided for interrupt pin
@@ -77,8 +77,7 @@ namespace Meadow.Foundation.Sensors.Hid
         }
 
         /// <summary>
-        /// Convenience method to get the current temperature. For frequent reads, use
-        /// StartSampling() and StopSampling() in conjunction with the SampleBuffer.
+        /// Convenience method to get the current position
         /// </summary>
         protected override Task<AnalogJoystickPosition> ReadSensor()
         {
@@ -88,7 +87,7 @@ namespace Meadow.Foundation.Sensors.Hid
         }
 
         /// <summary>
-        /// Starts continuously sampling the sensor.
+        /// Starts continuously sampling the sensor
         ///
         /// This method also starts raising `Changed` events and IObservable
         /// subscribers getting notified. Use the `readIntervalDuration` parameter
@@ -98,9 +97,8 @@ namespace Meadow.Foundation.Sensors.Hid
         /// wait between readings. This value influences how often `*Updated`
         /// events are raised and `IObservable` consumers are notified.
         /// </param>
-        public void StartUpdating(TimeSpan? updateInterval)
+        public override void StartUpdating(TimeSpan? updateInterval)
         {
-            // thread safety
             lock (samplingLock)
             {
                 if (IsSampling) return;
@@ -120,9 +118,9 @@ namespace Meadow.Foundation.Sensors.Hid
         }
 
         /// <summary>
-        /// Stops sampling the joystick position.
+        /// Stops sampling the joystick position
         /// </summary>
-        public void StopUpdating()
+        public override void StopUpdating()
         {
             lock (samplingLock)
             {
@@ -130,7 +128,6 @@ namespace Meadow.Foundation.Sensors.Hid
 
                 SamplingTokenSource?.Cancel();
 
-                // state machine
                 IsSampling = false;
             }
         }
@@ -201,11 +198,9 @@ namespace Meadow.Foundation.Sensors.Hid
                 newY = temp;
             }
 
-            // capture history
             var oldPosition = Position;
             var newPosition = new AnalogJoystickPosition(newX, newY);
 
-            //save state
             Position = newPosition;
 
             var result = new ChangeResult<AnalogJoystickPosition>(newPosition, oldPosition);

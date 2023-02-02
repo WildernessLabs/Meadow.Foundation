@@ -36,7 +36,7 @@ namespace MeadowApp
                  { -cubeSize,  cubeSize, -cubeSize},
             };
 
-            Console.WriteLine("Init...");
+            Resolver.Log.Info("Init...");
 
             var spiBus = Device.CreateSpiBus(Max7219.DefaultSpiBusSpeed);
 
@@ -46,7 +46,7 @@ namespace MeadowApp
 
             graphics.Rotation = RotationType._90Degrees;
 
-            Console.WriteLine("Max7219 instantiated");
+            Resolver.Log.Info("Max7219 instantiated");
 
             return base.Initialize();
         }
@@ -59,7 +59,7 @@ namespace MeadowApp
             int angle = 0;
             while (true)
             {
-                Console.WriteLine("Draw 3DCube frame");
+                Resolver.Log.Info("Draw 3DCube frame");
                 graphics.Clear();
 
                 angle++;

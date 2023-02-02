@@ -148,10 +148,10 @@ namespace Meadow.Foundation.Sensors.Motion
          //  if ((id != APDS9960_ID) && (id != APDS9960_ID_1) && (id != APDS9960_ID_2))
        //     if(id == 0)
         //    {
-                Console.WriteLine($"Device found {id}");
+                Resolver.Log.Info($"Device found {id}");
        //     }
 
-            Console.WriteLine("SetMode");
+            Resolver.Log.Info("SetMode");
             SetMode(OperatingModes.ALL, BooleanValues.OFF);
 
             /* Set default values for ambient light and proximity registers */
@@ -163,7 +163,7 @@ namespace Meadow.Foundation.Sensors.Motion
             Peripheral.WriteRegister(Registers.APDS9960_CONFIG1, DefaultValues.DEFAULT_CONFIG1);
             SetLEDDrive(DefaultValues.DEFAULT_LDRIVE);
 
-            Console.WriteLine("SetProximityGain");
+            Resolver.Log.Info("SetProximityGain");
             SetProximityGain(DefaultValues.DEFAULT_PGAIN);
             SetAmbientLightGain(DefaultValues.DEFAULT_AGAIN);
             SetProxIntLowThresh(DefaultValues.DEFAULT_PILT);
@@ -179,7 +179,7 @@ namespace Meadow.Foundation.Sensors.Motion
 
             Peripheral.WriteRegister(Registers.APDS9960_CONFIG3, DefaultValues.DEFAULT_CONFIG3);
 
-            Console.WriteLine("SetGestureEnterThresh");
+            Resolver.Log.Info("SetGestureEnterThresh");
             SetGestureEnterThresh(DefaultValues.DEFAULT_GPENTH);
             
             SetGestureExitThresh(DefaultValues.DEFAULT_GEXTH);
@@ -406,7 +406,7 @@ namespace Meadow.Foundation.Sensors.Motion
 
                         Peripheral.ReadRegister(Registers.APDS9960_GFIFO_U, readBuffer.Span[0..len]);
 
-                        Console.WriteLine(BitConverter.ToString(readBuffer.Span[0..len].ToArray()));
+                        Resolver.Log.Info(BitConverter.ToString(readBuffer.Span[0..len].ToArray()));
 
                         bytes_read = len; //ToDo should we have a check> (byte)fifo_data.Length;
 

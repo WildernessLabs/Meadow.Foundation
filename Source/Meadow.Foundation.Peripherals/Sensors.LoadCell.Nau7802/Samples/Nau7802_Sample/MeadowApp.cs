@@ -19,7 +19,7 @@ namespace Sensors.LoadCell.Nau7802_Sample
 
         public override async Task Initialize()
         {
-            Console.WriteLine("Initialize...");
+            Resolver.Log.Info("Initialize...");
 
             loadSensor = new Nau7802(Device.CreateI2cBus());
 
@@ -36,7 +36,7 @@ namespace Sensors.LoadCell.Nau7802_Sample
                 loadSensor.Tare();
             }
 
-            loadSensor.MassUpdated += (sender, values) => Console.WriteLine($"Mass is now returned {values.New.Grams:N2}g");
+            loadSensor.MassUpdated += (sender, values) => Resolver.Log.Info($"Mass is now returned {values.New.Grams:N2}g");
         }
 
         public override Task Run()
@@ -49,17 +49,17 @@ namespace Sensors.LoadCell.Nau7802_Sample
         public async Task GetAndDisplayCalibrationUnits(Nau7802 sensor)
         {
             // first notify the user we're starting
-            Console.WriteLine($"Beginning Calibration. First we'll tare (set a zero).");
-            Console.WriteLine($"Make sure scale bed is clear. Next step in 5 seconds...");
+            Resolver.Log.Info($"Beginning Calibration. First we'll tare (set a zero).");
+            Resolver.Log.Info($"Make sure scale bed is clear. Next step in 5 seconds...");
 
             await Task.Delay(5000);
             sensor.Tare();
-            Console.WriteLine($"Place a known weight on the scale. Next step in 5 seconds...");
+            Resolver.Log.Info($"Place a known weight on the scale. Next step in 5 seconds...");
 
             await Task.Delay(500);
             var factor = sensor.CalculateCalibrationFactor();
 
-            Console.WriteLine($"Your scale's Calibration Factor is: {factor}. Enter this into the code for future use.");
+            Resolver.Log.Info($"Your scale's Calibration Factor is: {factor}. Enter this into the code for future use.");
         }
 
         //<!=SNOP=>

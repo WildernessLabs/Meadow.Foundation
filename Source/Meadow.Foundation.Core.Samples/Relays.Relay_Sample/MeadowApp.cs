@@ -15,7 +15,7 @@ namespace Relays.Relay_Sample
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initialize...");
+            Resolver.Log.Info("Initialize...");
 
             relay = new Relay(Device.CreateDigitalOutputPort(Device.Pins.D02));
 
@@ -30,7 +30,7 @@ namespace Relays.Relay_Sample
             {
                 state = !state;
 
-                Console.WriteLine($"- State: {state}");
+                Resolver.Log.Info($"- State: {state}");
                 relay.IsOn = state;
 
                 Thread.Sleep(500);

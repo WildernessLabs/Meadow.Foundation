@@ -39,21 +39,21 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
             position.TalkerID = sentence.TalkerID;
 
             position.TimeOfReading = NmeaUtilities.TimeOfReading(sentence.DataElements[8], sentence.DataElements[0]);
-            //Console.WriteLine($"Time of Reading:{position.TimeOfReading}UTC");
+            //Resolver.Log.Info($"Time of Reading:{position.TimeOfReading}UTC");
 
             if (sentence.DataElements[1].ToLower() == "a") {
                 position.Valid = true;
             } else {
                 position.Valid = false;
             }
-            //Console.WriteLine($"valid:{position.Valid}");
+            //Resolver.Log.Info($"valid:{position.Valid}");
 
             //if (position.Valid) {
-                //Console.WriteLine($"will attempt to parse latitude; element[2]:{sentence.DataElements[2]}, element[3]:{sentence.DataElements[3]}");
+                //Resolver.Log.Info($"will attempt to parse latitude; element[2]:{sentence.DataElements[2]}, element[3]:{sentence.DataElements[3]}");
                 position.Position.Latitude = NmeaUtilities.DegreesMinutesDecode(sentence.DataElements[2], sentence.DataElements[3]);
-                //Console.WriteLine($"will attempt to parse longitude; element[4]:{sentence.DataElements[4]}, element[5]:{sentence.DataElements[5]}");
+                //Resolver.Log.Info($"will attempt to parse longitude; element[4]:{sentence.DataElements[4]}, element[5]:{sentence.DataElements[5]}");
                 position.Position.Longitude = NmeaUtilities.DegreesMinutesDecode(sentence.DataElements[4], sentence.DataElements[5]);
-                //Console.WriteLine("40");
+                //Resolver.Log.Info("40");
 
                 decimal speedInKnots;
                 if(decimal.TryParse(sentence.DataElements[6], out speedInKnots)) {
@@ -72,7 +72,7 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
                     position.MagneticVariation = CardinalDirection.Unknown;
                 }
             //}
-            //Console.WriteLine($"RMC Message Parsed, raising event");
+            //Resolver.Log.Info($"RMC Message Parsed, raising event");
             PositionCourseAndTimeReceived(this, position);
         }
 

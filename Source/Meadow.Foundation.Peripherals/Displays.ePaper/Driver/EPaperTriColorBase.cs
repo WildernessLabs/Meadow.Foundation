@@ -33,7 +33,12 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// Display color mode 
         /// </summary>
-        public ColorType ColorMode => ColorType.Format2bpp;
+        public ColorMode ColorMode => ColorMode.Format2bpp;
+
+        /// <summary>
+        /// The Color mode supported by the display
+        /// </summary>
+        public ColorMode SupportedColorModes => ColorMode.Format2bpp;
 
         /// <summary>
         /// The buffer the holds the black pixel data for the display

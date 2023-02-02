@@ -29,7 +29,7 @@
         /// <summary>
         /// The ColorMode of the pixel buffer
         /// </summary>
-        ColorType ColorMode { get; }
+        ColorMode ColorMode { get; }
 
         /// <summary>
         /// The BitDepth of the chosen ColorMode.

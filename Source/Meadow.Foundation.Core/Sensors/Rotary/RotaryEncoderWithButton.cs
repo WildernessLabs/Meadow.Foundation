@@ -2,16 +2,17 @@
 using Meadow.Hardware;
 using Meadow.Foundation.Sensors.Buttons;
 using Meadow.Peripherals.Sensors.Rotary;
+using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Rotary
 {
     /// <summary>
-    /// Digital rotary encoder that uses two-bit Gray Code to encode rotation and has an integrated push button.
+    /// Digital rotary encoder that uses two-bit Gray Code to encode rotation and has an integrated push button
     /// </summary>
     public class RotaryEncoderWithButton : RotaryEncoder, IRotaryEncoderWithButton
     {
         /// <summary>
-        /// Returns the PushButton that represents the integrated button.
+        /// Returns the PushButton that represents the integrated button
         /// </summary>
         public PushButton Button { get; private set; }
 
@@ -102,5 +103,10 @@ namespace Meadow.Foundation.Sensors.Rotary
         {
             PressStarted(this, e);
         }
+
+        /// <summary>
+        /// Convenience method to get the current sensor reading
+        /// </summary>
+        public Task<bool> Read() => Button.Read();
     }
 }

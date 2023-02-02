@@ -10,7 +10,7 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// <summary>
         /// Color mode of the buffer
         /// </summary>
-        public override ColorType ColorMode => ColorType.Format8bppGray;
+        public override ColorMode ColorMode => ColorMode.Format8bppGray;
 
         /// <summary>
         /// Create a new BufferGray8 object

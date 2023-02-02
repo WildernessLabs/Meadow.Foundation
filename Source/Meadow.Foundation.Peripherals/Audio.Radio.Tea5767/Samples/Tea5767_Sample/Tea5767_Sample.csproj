@@ -10,6 +10,8 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Meadow.F7" Version="0.*" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\..\Driver\Audio.Radio.Tea5767.csproj" />
   </ItemGroup>
   <ItemGroup>

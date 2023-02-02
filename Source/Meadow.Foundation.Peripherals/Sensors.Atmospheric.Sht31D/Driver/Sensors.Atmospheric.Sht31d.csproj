@@ -5,10 +5,10 @@
     <Authors>Wilderness Labs, Inc</Authors>
     <TargetFramework>netstandard2.1</TargetFramework>
     <OutputType>Library</OutputType>
-    <AssemblyName>Sht31D</AssemblyName>
+    <AssemblyName>Sht31d</AssemblyName>
     <Company>Wilderness Labs, Inc</Company>
     <PackageProjectUrl>http://developer.wildernesslabs.co/Meadow/Meadow.Foundation/</PackageProjectUrl>
-    <PackageId>Meadow.Foundation.Sensors.Atmospheric.Sht31D</PackageId>
+    <PackageId>Meadow.Foundation.Sensors.Atmospheric.Sht31d</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow.Foundation, Meadow, Atmospheric, Temperature, Humidity, SHT31D</PackageTags>
     <Version>0.1.54</Version>

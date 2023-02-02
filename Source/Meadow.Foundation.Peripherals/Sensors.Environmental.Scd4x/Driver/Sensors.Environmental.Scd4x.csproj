@@ -8,7 +8,7 @@
     <AssemblyName>Scd4x</AssemblyName>
     <Company>Wilderness Labs, Inc</Company>
     <PackageProjectUrl>http://developer.wildernesslabs.co/Meadow/Meadow.Foundation/</PackageProjectUrl>
-    <PackageId>Meadow.Foundation.Sensors.Environmental.SCD4x</PackageId>
+    <PackageId>Meadow.Foundation.Sensors.Environmental.Scd4x</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow,Meadow.Foundation,Environmental,SCD40,SCD41,gas,c02,temperature,relative,humidity</PackageTags>
     <Version>0.1.0</Version>

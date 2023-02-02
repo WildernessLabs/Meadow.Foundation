@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading;
-using Meadow.Devices;
 using Meadow.Hardware;
 using Meadow.Units;
 

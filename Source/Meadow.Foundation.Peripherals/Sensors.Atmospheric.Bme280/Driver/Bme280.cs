@@ -35,7 +35,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     /// from the Bosch BME280 sensor
     /// </remarks>
     public partial class Bme280 :
-        SamplingSensorBase<(Units.Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure)>,
+        PollingSensorBase<(Units.Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure)>,
         ITemperatureSensor, IHumiditySensor, IBarometricPressureSensor
     {
         /// <summary>
@@ -440,13 +440,13 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             base.StartUpdating(updateInterval);
         }
 
-        async Task<Units.Temperature> ISamplingSensor<Units.Temperature>.Read()
+        async Task<Units.Temperature> ISensor<Units.Temperature>.Read()
             => (await Read()).Temperature.Value;
 
-        async Task<RelativeHumidity> ISamplingSensor<RelativeHumidity>.Read()
+        async Task<RelativeHumidity> ISensor<RelativeHumidity>.Read()
             => (await Read()).Humidity.Value;
 
-        async Task<Pressure> ISamplingSensor<Pressure>.Read()
+        async Task<Pressure> ISensor<Pressure>.Read()
             => (await Read()).Pressure.Value;
     }
 }

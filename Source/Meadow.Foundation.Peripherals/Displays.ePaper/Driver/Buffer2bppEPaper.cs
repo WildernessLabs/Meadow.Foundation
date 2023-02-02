@@ -26,7 +26,7 @@
         /// <summary>
         /// Color mode of the buffer - 2 bit per pixel 
         /// </summary>
-        public ColorType ColorMode => ColorType.Format2bpp;
+        public ColorMode ColorMode => ColorMode.Format2bpp;
 
         /// <summary>
         /// Bitdepth of display as an integer

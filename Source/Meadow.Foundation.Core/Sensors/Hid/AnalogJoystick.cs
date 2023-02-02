@@ -12,7 +12,7 @@ namespace Meadow.Foundation.Sensors.Hid
     /// 2-axis analog joystick
     /// </summary>
     public partial class AnalogJoystick
-        : SensorBase<AnalogJoystickPosition>, IAnalogJoystick
+        : SamplingSensorBase<AnalogJoystickPosition>, IAnalogJoystick
     {
         /// <summary>
         /// Number of samples used to calculate position
@@ -305,7 +305,7 @@ namespace Meadow.Foundation.Sensors.Hid
         /// wait between readings. This value influences how often `*Updated`
         /// events are raised and `IObservable` consumers are notified.
         /// The default is 5 seconds.</param>
-        public void StartUpdating(TimeSpan? updateInterval)
+        public override void StartUpdating(TimeSpan? updateInterval)
         {
             // thread safety
             lock (samplingLock)
@@ -322,9 +322,9 @@ namespace Meadow.Foundation.Sensors.Hid
         }
 
         /// <summary>
-        /// Stops sampling the joystick position.
+        /// Stops sampling the joystick position
         /// </summary>
-        public void StopUpdating()
+        public override void StopUpdating()
         {
             lock (samplingLock)
             {

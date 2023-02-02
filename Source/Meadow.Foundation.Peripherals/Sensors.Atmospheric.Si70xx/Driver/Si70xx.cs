@@ -215,10 +215,10 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             Peripheral?.WriteRegister((byte)Register.USER_REG_1, register); //Write the new resolution bits
         }
 
-        async Task<Units.Temperature> ISamplingSensor<Units.Temperature>.Read()
+        async Task<Units.Temperature> ISensor<Units.Temperature>.Read()
             => (await Read()).Temperature.Value;
 
-        async Task<RelativeHumidity> ISamplingSensor<RelativeHumidity>.Read()
+        async Task<RelativeHumidity> ISensor<RelativeHumidity>.Read()
             => (await Read()).Humidity.Value;
     }
 }

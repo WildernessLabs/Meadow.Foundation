@@ -8,9 +8,11 @@ namespace Meadow.Foundation.Sensors.Weather
     /// <summary>
     /// Represents a simple switching rain gauge
     /// </summary>
-    public partial class SwitchingRainGauge : SensorBase<Length>
+    public partial class SwitchingRainGauge : SamplingSensorBase<Length>
     {
         readonly IDigitalInputPort rainGaugePort;
+
+        DateTime lastUpdated = DateTime.MinValue;
 
         /// <summary>
         /// The number of times the rain tilt sensor has triggered
@@ -71,25 +73,27 @@ namespace Meadow.Foundation.Sensors.Weather
         {
             ClickCount++;
 
-            // create a new change result from the new value
             ChangeResult<Length> changeResult = new ChangeResult<Length>()
             {
                 New = RainDepth,
                 Old = RainDepth - DepthPerClick, //last reading, ClickCount will always be at least 1
             };
 
-            // notify
-            RaiseEventsAndNotify(changeResult);
+            if(DateTime.Now - lastUpdated >= UpdateInterval)
+            {
+                lastUpdated = DateTime.Now;
+                RaiseEventsAndNotify(changeResult);
+            }
         }
 
         /// <summary>
         /// Start the sensor
         /// </summary>
-        public void StartUpdating()
+        public override void StartUpdating(TimeSpan? updateInterval = null)
         {
             lock (samplingLock)
             {
-                if (IsSampling) return;
+                if (IsSampling) { return; }
 
                 IsSampling = true;
                 rainGaugePort.Changed += RainSensorPortChanged;
@@ -99,7 +103,7 @@ namespace Meadow.Foundation.Sensors.Weather
         /// <summary>
         /// Stops sampling the sensor
         /// </summary>
-        public void StopUpdating()
+        public override void StopUpdating()
         {
             lock (samplingLock)
             {

@@ -16,7 +16,7 @@ namespace Displays.ePaper.IL91874_Sample
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initialize ...");
+            Resolver.Log.Info("Initialize ...");
  
             var display = new Il91874(device: Device,
                 spiBus: Device.CreateSpiBus(),
@@ -34,7 +34,7 @@ namespace Displays.ePaper.IL91874_Sample
 
         public override Task Run()
         {
-            Console.WriteLine("Run ...");
+            Resolver.Log.Info("Run ...");
 
             graphics.Clear();
 

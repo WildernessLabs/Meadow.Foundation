@@ -38,8 +38,8 @@ namespace Sensors.Hid.AnalogJoystick_Sample
 
         void JoystickUpdated(object sender, IChangeResult<AnalogJoystickPosition> e)
         {
-            Console.WriteLine($"Horizontal: {e.New.Horizontal:n2}, Vertical: {e.New.Vertical:n2}");
-            Console.WriteLine($"Digital position: {joystick?.DigitalPosition}");
+            Resolver.Log.Info($"Horizontal: {e.New.Horizontal:n2}, Vertical: {e.New.Vertical:n2}");
+            Resolver.Log.Info($"Digital position: {joystick?.DigitalPosition}");
         }
 
         //<!=SNOP=>

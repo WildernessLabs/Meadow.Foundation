@@ -26,7 +26,7 @@ namespace Displays.Lcd.CharacterDisplay_Sample
 
         void InitGpio() 
         {
-            Console.WriteLine("InitGpio...");
+            Resolver.Log.Info("InitGpio...");
             
             display = new CharacterDisplay
             (
@@ -43,7 +43,7 @@ namespace Displays.Lcd.CharacterDisplay_Sample
 
         void InitGpioWithPWM()
         {
-            Console.WriteLine("InitGpioWithPWM...");
+            Resolver.Log.Info("InitGpioWithPWM...");
 
             display = new CharacterDisplay
             (
@@ -61,7 +61,7 @@ namespace Displays.Lcd.CharacterDisplay_Sample
 
         void InitI2c()
         {
-            Console.WriteLine("InitI2c...");
+            Resolver.Log.Info("InitI2c...");
 
             display = new CharacterDisplay
             (
@@ -73,7 +73,7 @@ namespace Displays.Lcd.CharacterDisplay_Sample
 
         void InitGrove()
         {
-            Console.WriteLine("InitGrove...");
+            Resolver.Log.Info("InitGrove...");
 
             display = new CharacterDisplay
             (
@@ -86,7 +86,7 @@ namespace Displays.Lcd.CharacterDisplay_Sample
 
         void TestCharacterDisplay() 
         {
-            Console.WriteLine("TestCharacterDisplay...");
+            Resolver.Log.Info("TestCharacterDisplay...");
 
             display.WriteLine("Hello", 0);
 
@@ -124,7 +124,7 @@ namespace Displays.Lcd.CharacterDisplay_Sample
         {
             TestCharacterDisplay();
 
-            Console.WriteLine("Test complete");
+            Resolver.Log.Info("Test complete");
 
             return base.Run();
         }
