@@ -6,7 +6,7 @@
     <AssemblyName>App</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\..\Meadow.Core\source\implementations\f7\Meadow.F7\Meadow.F7.csproj" />
+    <PackageReference Include="Meadow.F7" Version="0.*" />
     <ProjectReference Include="..\..\Driver\Sensors.Light.AnalogSolarIntensityGauge.csproj" />
   </ItemGroup>
   <ItemGroup>
