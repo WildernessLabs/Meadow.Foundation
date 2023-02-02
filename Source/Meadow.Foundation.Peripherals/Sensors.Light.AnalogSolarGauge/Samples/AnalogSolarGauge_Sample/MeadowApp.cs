@@ -9,19 +9,19 @@ namespace MeadowApp
     public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
-        AnalogSolarGauge solarGauge;
+        AnalogSolarIntensityGauge solarGauge;
 
         public override Task Initialize()
         {
             Resolver.Log.Info("Initialize...");
 
-            solarGauge = new AnalogSolarGauge(Device, Device.Pins.A02, updateInterval: TimeSpan.FromSeconds(1));
+            solarGauge = new AnalogSolarIntensityGauge(Device, Device.Pins.A02, updateInterval: TimeSpan.FromSeconds(1));
 
             //==== classic .NET Event
             solarGauge.SolarIntensityUpdated += (s, result) => Resolver.Log.Info($"SolarIntensityUpdated: {result.New * 100:n2}%");
             
             //==== Filterable observer
-            var observer = AnalogSolarGauge.CreateObserver(
+            var observer = AnalogSolarIntensityGauge.CreateObserver(
                 handler: result => Resolver.Log.Info($"Observer filter satisifed, new intensity: {result.New * 100:n2}%"),
                 filter: result => {
                     if (result.Old is { } old)
