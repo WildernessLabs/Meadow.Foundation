@@ -22,4 +22,4 @@ runs:
       run: dotnet pack -c Release ${{ inputs.path }} /p:Version=${{ inputs.version }} --output .
     - name: Push the library/driver to NuGet
       shell: bash
-      run: dotnet nuget push ${{ inputs.packageId }}.${{ inputs.version }}.nupkg -s https://api.nuget.org/v3/index.json -k ${{ inputs.token }}
+      run: dotnet nuget push ${{ inputs.packageId }}.${{ inputs.version }}.nupkg -s https://api.nuget.org/v3/index.json -k ${{ inputs.token }} --skip-duplicate
