@@ -18,6 +18,6 @@
   <ItemGroup>
     <None Include="..\..\..\icon.png" Pack="true" PackagePath="" />
     <PackageReference Include="Meadow.Foundation" Version="0.*" />
-    <ProjectReference Include="..\..\DataLoggers.SensorReading\Driver\DataLoggers.SensorReading.csproj" />
+    <PackageReference Include="Meadow.Foundation.DataLoggers.SensorReading" Version="0.*" />
   </ItemGroup>
 </Project>
