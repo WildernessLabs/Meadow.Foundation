@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
 env:
-  version: '0.92.5'
+  version: '0.94.0'
   token: ${{ secrets.NUGET_TOKEN }}
 
 jobs:
