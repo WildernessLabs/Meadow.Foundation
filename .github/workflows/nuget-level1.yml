@@ -419,7 +419,7 @@ jobs:
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.Sensors.Light.AnalogSolarIntensityGauge
-        path: Source/Meadow.Foundation.Peripherals/Sensors.Light.AnalogSolarIntensityGauge/Driver/Sensors.Light.AnalogSolarGauge.csproj
+        path: Source/Meadow.Foundation.Peripherals/Sensors.Light.AnalogSolarIntensityGauge/Driver/Sensors.Light.AnalogSolarIntensityGauge.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
