@@ -21,7 +21,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Meadow.Foundation" Version="0.*" />
-    <ProjectReference Include="..\..\Sensors.Distance.Hcsr04\Driver\Sensors.Distance.Hcsr04.csproj" />
-    <ProjectReference Include="..\..\Servos.ServoCore\Driver\Servos.ServoCore.csproj" />
+    <PackageReference Include="Meadow.Foundation.Sensors.Distance.Hcsr04" Version="0.*" />
+    <PackageReference Include="Meadow.Foundation.Servos.ServoCore" Version="0.*" />
   </ItemGroup>
 </Project>
