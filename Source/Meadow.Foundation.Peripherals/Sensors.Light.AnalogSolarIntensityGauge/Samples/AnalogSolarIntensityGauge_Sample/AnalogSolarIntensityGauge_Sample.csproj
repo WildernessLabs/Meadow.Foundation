@@ -7,7 +7,7 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\..\..\Meadow.Core\source\implementations\f7\Meadow.F7\Meadow.F7.csproj" />
-    <ProjectReference Include="..\..\Driver\Sensors.Light.AnalogSolarGauge.csproj" />
+    <ProjectReference Include="..\..\Driver\Sensors.Light.AnalogSolarIntensityGauge.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Update="meadow.config.yaml">
