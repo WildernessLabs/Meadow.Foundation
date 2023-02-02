@@ -75,13 +75,6 @@ jobs:
 
     - uses: ./.github/actions/build-package
       with:
-        packageId: Meadow.Foundation.Displays.Max7219
-        path: Source/Meadow.Foundation.Peripherals/Displays.Max7219/Driver/Displays.Max7219.csproj
-        version: ${{ env.version }}
-        token: ${{ env.token }}
-
-    - uses: ./.github/actions/build-package
-      with:
         packageId: Meadow.Foundation.ICs.ADC.Ads1x15
         path: Source/Meadow.Foundation.Peripherals/ICs.ADC.Ads1x15/Driver/ICs.ADC.Ads1x15.csproj
         version: ${{ env.version }}
@@ -376,6 +369,13 @@ jobs:
 
     - uses: ./.github/actions/build-package
       with:
+        packageId: Meadow.Foundation.Sensors.Environmental.Ens160
+        path: Source/Meadow.Foundation.Peripherals/Sensors.Environmental.Ens160/Driver/Sensors.Environmental.Ens160.csproj
+        version: ${{ env.version }}
+        token: ${{ env.token }}
+
+    - uses: ./.github/actions/build-package
+      with:
         packageId: Meadow.Foundation.Sensors.Environmental.SCD4x
         path: Source/Meadow.Foundation.Peripherals/Sensors.Environmental.Scd4x/Driver/Sensors.Environmental.Scd4x.csproj
         version: ${{ env.version }}
@@ -553,6 +553,13 @@ jobs:
       with:
         packageId: Meadow.Foundation.Sensors.Motion.Mma7660fc
         path: Source/Meadow.Foundation.Peripherals/Sensors.Motion.Mma7660fc/Driver/Sensors.Motion.Mma7660fc.csproj
+        version: ${{ env.version }}
+        token: ${{ env.token }}
+
+    - uses: ./.github/actions/build-package
+      with:
+        packageId: Meadow.Foundation.Sensors.Motion.Mmc5603
+        path: Source/Meadow.Foundation.Peripherals/Sensors.Motion.Mmc5603/Driver/Sensors.Motion.Mmc5603.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 

@@ -54,6 +54,13 @@ jobs:
 
     - uses: ./.github/actions/build-package
       with:
+        packageId: Meadow.Foundation.Displays.Max7219
+        path: Source/Meadow.Foundation.Peripherals/Displays.Max7219/Driver/Displays.Max7219.csproj
+        version: ${{ env.version }}
+        token: ${{ env.token }}
+
+    - uses: ./.github/actions/build-package
+      with:
         packageId: Meadow.Foundation.Displays.Pcd8544
         path: Source/Meadow.Foundation.Peripherals/Displays.Pcd8544/Driver/Displays.Pcd8544.csproj
         version: ${{ env.version }}
@@ -103,8 +110,22 @@ jobs:
 
     - uses: ./.github/actions/build-package
       with:
+        packageId: Meadow.Foundation.ICs.IOExpanders.Ft232h
+        path: Source/Meadow.Foundation.Peripherals/ICs.IOExpanders.Ft232h/Driver/ICs.IOExpanders.Ft232h.csproj
+        version: ${{ env.version }}
+        token: ${{ env.token }}
+
+    - uses: ./.github/actions/build-package
+      with:
         packageId: Meadow.Foundation.ICs.IOExpanders.SerialWombat
         path: Source/Meadow.Foundation.Peripherals/ICs.IOExpanders.SerialWombat/Driver/ICs.IOExpanders.SerialWombat.csproj
+        version: ${{ env.version }}
+        token: ${{ env.token }}
+
+    - uses: ./.github/actions/build-package
+      with:
+        packageId: Meadow.Foundation.Sensors.Environmental.Y4000
+        path: Source/Meadow.Foundation.Peripherals/Sensors.Environmental.Y4000/Driver/Sensors.Environmental.Y4000.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
