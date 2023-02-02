@@ -3,32 +3,55 @@ using Gtk;
 using Meadow.Foundation.Graphics;
 using Meadow.Foundation.Graphics.Buffers;
 using Meadow.Hardware;
-using System;
 using System.Buffers.Binary;
-using System.Threading;
 
 namespace Meadow.Foundation.Displays;
 
+/// <summary>
+/// Represents a GTK graphics display
+/// </summary>
 public class GtkDisplay : IGraphicsDisplay, ITouchScreen
 {
-    public event Hardware.TouchEventHandler TouchDown;
-    public event Hardware.TouchEventHandler TouchUp;
-    public event Hardware.TouchEventHandler TouchClick;
+    /// <summary>
+    /// Event fired when the display gets a mouse down
+    /// </summary>
+    public event Hardware.TouchEventHandler TouchDown = delegate { };
+    /// <summary>
+    /// Event fired when the display gets a mouse up
+    /// </summary>
+    public event Hardware.TouchEventHandler TouchUp = delegate { };
+    /// <summary>
+    /// Event fired when the display gets a mouse click
+    /// </summary>
+    public event Hardware.TouchEventHandler TouchClick = delegate { };
 
-    private Window _window;
-    private IPixelBuffer _pixelBuffer;
-    private Cairo.Format _format;
-    private int _stride;
+    private Window _window = default!;
+    private IPixelBuffer _pixelBuffer = default!;
+    private Cairo.Format _format = default!;
+    private int _stride = 0;
     private Action<byte[]>? _bufferConverter = null;
     private bool _leftButtonState = false;
 
     private EventWaitHandle ShowComplete { get; } = new EventWaitHandle(true, EventResetMode.ManualReset);
     public IPixelBuffer PixelBuffer => _pixelBuffer;
+
+    /// <summary>
+    /// Current color mode of display
+    /// </summary>
     public ColorMode ColorMode => _pixelBuffer.ColorMode;
 
+    /// <summary>
+    /// Width of the display, in pixels
+    /// </summary>
     public int Width => _window.Window.Width;
+    /// <summary>
+    /// Height of the display, in pixels
+    /// </summary>
     public int Height => _window.Window.Height;
 
+    /// <summary>
+    /// The color modes supported by the display
+    /// </summary>
     public ColorMode SupportedColorModes => ColorMode.Format24bppRgb888 | ColorMode.Format16bppRgb565 | ColorMode.Format32bppRgba8888;
 
     static GtkDisplay()
@@ -36,6 +59,10 @@ public class GtkDisplay : IGraphicsDisplay, ITouchScreen
         Application.Init();
     }
 
+    /// <summary>
+    /// Create a new WinFormsDisplay with a default size of 800x600
+    /// </summary>
+    /// <param name="mode">Color mode of the display</param>
     public GtkDisplay(ColorMode mode = ColorMode.Format24bppRgb888)
     {
         Initialize(800, 600, mode); // TODO: query screen size and caps
@@ -136,54 +163,104 @@ public class GtkDisplay : IGraphicsDisplay, ITouchScreen
         ShowComplete.Set();
     }
 
+    /// <summary>
+    /// Performs a full display update
+    /// </summary>
     public void Show()
     {
         _window.QueueDraw();
         ShowComplete.Reset();
     }
 
+    /// <summary>
+    /// Partial screen update
+    /// </summary>
+    /// <param name="left"></param>
+    /// <param name="top"></param>
+    /// <param name="right"></param>
+    /// <param name="bottom"></param>
     public void Show(int left, int top, int right, int bottom)
     {
         _window.QueueDrawArea(left, top, right - left, bottom - top);
         ShowComplete.Reset();
     }
 
+    /// <summary>
+    /// Clears the display buffer
+    /// </summary>
+    /// <param name="updateDisplay"></param>
     public void Clear(bool updateDisplay = false)
     {
         ShowComplete.WaitOne();
         _pixelBuffer.Clear();
     }
 
+    /// <summary>
+    /// Fills the entire display with a given color
+    /// </summary>
+    /// <param name="fillColor"></param>
+    /// <param name="updateDisplay"></param>
     public void Fill(Foundation.Color fillColor, bool updateDisplay = false)
     {
         ShowComplete.WaitOne();
         _pixelBuffer.Fill(fillColor);
     }
 
+    /// <summary>
+    /// Fills a region with a given color
+    /// </summary>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
+    /// <param name="width"></param>
+    /// <param name="height"></param>
+    /// <param name="fillColor"></param>
     public void Fill(int x, int y, int width, int height, Foundation.Color fillColor)
     {
         ShowComplete.WaitOne();
         _pixelBuffer.Fill(x, y, width, height, fillColor);
     }
 
+    /// <summary>
+    /// Fills a pixel with a given color
+    /// </summary>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
+    /// <param name="color"></param>
     public void DrawPixel(int x, int y, Foundation.Color color)
     {
         ShowComplete.WaitOne();
         _pixelBuffer.SetPixel(x, y, color);
     }
 
+    /// <summary>
+    /// Fills a pixel with either black or white
+    /// </summary>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
+    /// <param name="colored"></param>
     public void DrawPixel(int x, int y, bool colored)
     {
         ShowComplete.WaitOne();
         DrawPixel(x, y, colored ? Foundation.Color.White : Foundation.Color.Black);
     }
 
+    /// <summary>
+    /// Inverts the pixel at the given location
+    /// </summary>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
     public void InvertPixel(int x, int y)
     {
         ShowComplete.WaitOne();
         _pixelBuffer.InvertPixel(x, y);
     }
 
+    /// <summary>
+    /// Draws to the pixel buffer at a specified location
+    /// </summary>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
+    /// <param name="displayBuffer"></param>
     public void WriteBuffer(int x, int y, IPixelBuffer displayBuffer)
     {
         ShowComplete.WaitOne();
