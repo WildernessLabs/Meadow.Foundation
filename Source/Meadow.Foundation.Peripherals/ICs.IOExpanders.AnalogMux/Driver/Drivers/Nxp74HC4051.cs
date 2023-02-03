@@ -6,7 +6,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
     /// <summary>
     /// Represents an NXP 74HC4051 8-channel analog multiplexer
     /// </summary>
-    public class Nxp74HC4051 : AnalogInputMultiplexerBase
+    public class Nxp74HC4051 : AnalogMuxBase
     {
         /// <summary>
         /// The port connected to the mux's S0 selection pin

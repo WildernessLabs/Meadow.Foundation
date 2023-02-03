@@ -16,9 +16,7 @@
     <Description>Ft232h USB IOExpander for GPIO, I2C, SPI on Windows</Description>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
     <None Include="..\..\..\icon.png" Pack="true" PackagePath="" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\Meadow.Core\source\Meadow.Core\Meadow.Core.csproj" />
   </ItemGroup>
 </Project>

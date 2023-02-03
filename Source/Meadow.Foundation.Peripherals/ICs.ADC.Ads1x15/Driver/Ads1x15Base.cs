@@ -1,5 +1,3 @@
-using System;
-using System.Threading;
 using System.Threading.Tasks;
 using Meadow.Hardware;
 using Meadow.Units;
@@ -9,7 +7,7 @@ namespace Meadow.Foundation.ICs.ADC
     /// <summary>
     /// Encapsulation for ADCs based upon the Ads1x1x family of chips.
     /// </summary>
-    public abstract partial class Ads1x15 : PollingSensorBase<Units.Voltage>
+    public abstract partial class Ads1x15Base : PollingSensorBase<Voltage>
     {
         private readonly II2cPeripheral i2cPeripheral;
         private ushort config;
@@ -30,13 +28,13 @@ namespace Meadow.Foundation.ICs.ADC
         protected virtual int ReadShiftBits { get; } = 0;
 
         /// <summary>
-        /// Create a new Ads1x15 object using the default parameters for the component.
+        /// Create a new Ads1x15Base object using the default parameters for the component.
         /// </summary>
         /// <param name="address">Address of the At24Cxx (default = 0x50).</param>
         /// <param name="i2cBus"></param>
         /// <param name="mode"></param>
         /// <param name="channel"></param>
-        protected Ads1x15(II2cBus i2cBus,
+        protected Ads1x15Base(II2cBus i2cBus,
             Addresses address,
             MeasureMode mode,
             ChannelSetting channel)

@@ -269,9 +269,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Displays.Lcd.CharacterDisplay", "Meadow.Foundation.Peripherals\Displays.Lcd.CharacterDisplay\Driver\Displays.Lcd.CharacterDisplay.csproj", "{C6178701-C96F-4929-A255-396A7F7F8483}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_External", "_External", "{65C50059-6C22-43E9-88DE-AD73F7F108C8}"
-	ProjectSection(SolutionItems) = preProject
-		Meadow.Foundation.sln = Meadow.Foundation.sln
-	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bno055_Sample", "Meadow.Foundation.Peripherals\Sensors.Motion.Bno055\Samples\Bno055_Sample\Bno055_Sample.csproj", "{20861022-699D-4FA2-A92A-05BC0188D25A}"
 EndProject
@@ -711,9 +708,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ccs811_Sample", "Meadow.Fou
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Buttons.PushButton_BasicSample", "Meadow.Foundation.Core.Samples\Sensors.Buttons.PushButton_BasicSample\Sensors.Buttons.PushButton_BasicSample.csproj", "{2FFEB068-12D2-4EF6-B3CE-767F2E223177}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AnalogSolarGauge", "AnalogSolarGauge", "{A4871FEF-60ED-4BB1-B03C-C149D297A2D7}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AnalogSolarIntensityGauge", "AnalogSolarIntensityGauge", "{A4871FEF-60ED-4BB1-B03C-C149D297A2D7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Light.AnalogSolarGauge", "Meadow.Foundation.Peripherals\Sensors.Light.AnalogSolarGauge\Driver\Sensors.Light.AnalogSolarGauge.csproj", "{91D22CEA-4C96-4643-B486-6ED49FA1124D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Light.AnalogSolarIntensityGauge", "Meadow.Foundation.Peripherals\Sensors.Light.AnalogSolarIntensityGauge\Driver\Sensors.Light.AnalogSolarIntensityGauge.csproj", "{91D22CEA-4C96-4643-B486-6ED49FA1124D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tca9548a_Sample", "Meadow.Foundation.Peripherals\ICs.IOExpanders.Tca9548a\Samples\Tca9548a_Sample\Tca9548a_Sample.csproj", "{223CF15A-83B8-4E43-9645-50D45D9470A5}"
 EndProject
@@ -775,7 +772,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tea5767_Sample", "Meadow.Fo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IDxxLA_Sample", "Meadow.Foundation.Peripherals\Sensors.Radio.Rfid.IDxxLA\Samples\IDxxLA_Sample\IDxxLA_Sample.csproj", "{55ED6655-8545-48DE-8A51-4A8CA1DE5BF9}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AnalogSolarGauge_Sample", "Meadow.Foundation.Peripherals\Sensors.Light.AnalogSolarGauge\Samples\AnalogSolarGauge_Sample\AnalogSolarGauge_Sample.csproj", "{2CD36743-6F9C-41DA-8AA8-68B7E58F2661}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AnalogSolarIntensityGauge_Sample", "Meadow.Foundation.Peripherals\Sensors.Light.AnalogSolarIntensityGauge\Samples\AnalogSolarIntensityGauge_Sample\AnalogSolarIntensityGauge_Sample.csproj", "{2CD36743-6F9C-41DA-8AA8-68B7E58F2661}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Apa102_Display_Sample", "Meadow.Foundation.Peripherals\Leds.Apa102\Samples\Apa102_Display_Sample\Apa102_Display_Sample.csproj", "{64BA87CF-7A11-4715-8EDF-45AFE7D73EBF}"
 EndProject

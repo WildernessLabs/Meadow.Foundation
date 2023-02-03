@@ -7,13 +7,13 @@
     <AssemblyName>MicroGraphics</AssemblyName>
     <Company>Wilderness Labs, Inc</Company>
     <PackageProjectUrl>http://developer.wildernesslabs.co/Meadow/Meadow.Foundation/</PackageProjectUrl>
-    <PackageId>Meadow.Foundation.Displays.MicroGraphics</PackageId>
+    <PackageId>Meadow.Foundation.Graphics.MicroGraphics</PackageId>
     <PackageIcon>icon.png</PackageIcon>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
-    <PackageTags>Meadow, Meadow.Foundation, Display, Graphics</PackageTags>
+    <PackageTags>Meadow,Meadow.Foundation,Display,Graphics</PackageTags>
     <Version>0.9.54</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Description>Lightweight integer accurate 2d graphics drawing system designed for embedded systems</Description>
+    <Description>Lightweight integer accurate 2d graphics drawing system designed for embedded applications</Description>
   </PropertyGroup>
   <ItemGroup>
     <None Include="..\..\..\icon.png" Pack="true" PackagePath="" />

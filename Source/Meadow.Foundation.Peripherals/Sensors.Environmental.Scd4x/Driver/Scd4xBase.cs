@@ -11,7 +11,8 @@ namespace Meadow.Foundation.Sensors.Environmental
     /// <summary>
     /// Base class for SCD4x series of C02 sensors
     /// </summary>
-    public abstract partial class Scd4x : ByteCommsSensorBase<(Concentration? Concentration, 
+    public abstract partial class Scd4xBase
+        : ByteCommsSensorBase<(Concentration? Concentration, 
                                                         Units.Temperature? Temperature,
                                                         RelativeHumidity? Humidity)>,
         ITemperatureSensor, IHumiditySensor, IConcentrationSensor
@@ -47,7 +48,7 @@ namespace Meadow.Foundation.Sensors.Environmental
         public RelativeHumidity? Humidity => Conditions.Humidity;
 
         /// <summary>
-        /// Create a new Scd4x object
+        /// Create a new Scd4xBase object
         /// </summary>
         /// <remarks>
         /// The constructor sends the stop periodic updates method otherwise 
@@ -55,7 +56,7 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// </remarks>
         /// <param name="i2cBus">The I2C bus</param>
         /// <param name="address">The I2C address</param>
-        public Scd4x(II2cBus i2cBus, byte address = (byte)Addresses.Default)
+        public Scd4xBase(II2cBus i2cBus, byte address = (byte)Addresses.Default)
             : base(i2cBus, address, readBufferSize: 9, writeBufferSize: 9)
         {
             StopPeriodicUpdates().Wait();
