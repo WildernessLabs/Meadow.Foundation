@@ -9,7 +9,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
 {
     public sealed class Ft232SpiBus : IFt232Bus, ISpiBus, IDisposable
     {
-        public const uint DefaultClockRate = 4800000;
+        public const uint DefaultClockRate = 25000000;
         private const byte DefaultLatencyTimer = 10; // from the FTDI sample
 
         private bool _isDisposed;
