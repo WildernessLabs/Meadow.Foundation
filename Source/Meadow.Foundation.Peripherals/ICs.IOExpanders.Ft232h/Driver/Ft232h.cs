@@ -40,9 +40,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <summary>
         /// The pins
         /// </summary>
-        public PinDefinitions Pins { get; } = new PinDefinitions()
+        public PinDefinitions Pins { get; } = new PinDefinitions();
 
-        ; private void EnumerateBuses()
+        private void EnumerateBuses()
         {
             _i2cBuses = GetI2CBuses();
             _spiBuses = GetSpiBuses();

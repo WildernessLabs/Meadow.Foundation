@@ -19,7 +19,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// <summary>
             /// Create a new PinDefinitions object
             /// </summary>
-            public PinDefinitions()
+            internal PinDefinitions()
             {
                 InitAllPins();
             }
