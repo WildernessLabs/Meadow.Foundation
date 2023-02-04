@@ -22,8 +22,6 @@
   </PropertyGroup>
   <ItemGroup>
     <None Include="..\..\Source\icon.png" Pack="true" PackagePath="" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Meadow.Contracts" Version="0.94.1" />
+    <ProjectReference Include="..\..\..\Meadow.Contracts\Source\Meadow.Contracts\Meadow.Contracts.csproj" />
   </ItemGroup>
 </Project>
