@@ -16,8 +16,7 @@
     <Description>Digital Four digit seven segment displays</Description>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
-    <ProjectReference Include="..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
     <None Include="..\..\..\icon.png" Pack="true" PackagePath="" />
+    <ProjectReference Include="..\..\Displays.Led.SevenSegment\Driver\Displays.Led.SevenSegment.csproj" />
   </ItemGroup>
 </Project>
