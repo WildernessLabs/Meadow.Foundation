@@ -1,7 +1,6 @@
 ﻿using Meadow.Foundation.Graphics;
 using Meadow.Foundation.Graphics.Buffers;
 using Meadow.Hardware;
-using System;
 
 namespace Meadow.Foundation.Displays
 {
@@ -63,14 +62,10 @@ namespace Meadow.Foundation.Displays
         public EPaperMonoBase(ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, IPin busyPin,
             int width, int height) :
             this(spiBus,
-                (chipSelectPin is IDigitalOutputController { } cs)
-                    ? cs.CreateDigitalOutputPort(chipSelectPin) : throw new ArgumentException("chipSelectPin must support digital output"),
-                (dcPin is IDigitalOutputController { } dc)
-                    ? dc.CreateDigitalOutputPort(dcPin) : throw new ArgumentException("dcPin must support digital output"),
-                (resetPin is IDigitalOutputController { } rc)
-                    ? rc.CreateDigitalOutputPort(resetPin) : throw new ArgumentException("resetPin must support digital output"),
-                (busyPin is IDigitalInputController { } bc)
-                    ? bc.CreateDigitalInputPort(busyPin) : throw new ArgumentException("busyPin must support digital input"),
+                chipSelectPin.CreateDigitalOutputPort(),
+                dcPin.CreateDigitalOutputPort(),
+                resetPin.CreateDigitalOutputPort(),
+                busyPin.CreateDigitalInputPort(),
                 width, height)
         {
         }

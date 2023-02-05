@@ -102,28 +102,14 @@ namespace Meadow.Foundation.Displays
         /// <param name="colorMode">The color mode to use for the display buffer</param>
         public TftSpiBase(ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
             int width, int height, ColorMode colorMode = ColorMode.Format16bppRgb565)
+            : this(
+                    spiBus,
+                    chipSelectPin.CreateDigitalOutputPort(),
+                    dcPin.CreateDigitalOutputPort(),
+                    resetPin.CreateDigitalOutputPort(),
+                    width, height, colorMode
+                  )
         {
-            var doc = dcPin.Controller as IDigitalOutputController;
-            if (doc == null) throw new ArgumentException("dcPin must support digital output capability");
-            dataCommandPort = doc.CreateDigitalOutputPort(dcPin, false);
-
-            if (resetPin != null)
-            {
-                var roc = resetPin.Controller as IDigitalOutputController;
-                if (roc == null) throw new ArgumentException("resetPin must support digital output capability");
-                resetPort = roc.CreateDigitalOutputPort(resetPin, true);
-            }
-
-            if (chipSelectPin != null)
-            {
-                var csc = chipSelectPin.Controller as IDigitalOutputController;
-                if (csc == null) throw new ArgumentException("chipSelectPin must support digital output capability");
-                chipSelectPort = csc.CreateDigitalOutputPort(chipSelectPin, false);
-            }
-
-            spiDisplay = new SpiPeripheral(spiBus, chipSelectPort);
-
-            CreateBuffer(colorMode, width, height);
         }
 
         /// <summary>
