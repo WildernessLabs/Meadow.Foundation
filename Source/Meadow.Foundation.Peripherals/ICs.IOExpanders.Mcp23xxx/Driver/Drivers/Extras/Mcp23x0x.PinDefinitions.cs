@@ -1,6 +1,6 @@
-﻿using System.Collections;
+﻿using Meadow.Hardware;
+using System.Collections;
 using System.Collections.Generic;
-using Meadow.Hardware;
 
 namespace Meadow.Foundation.ICs.IOExpanders
 {
@@ -11,6 +11,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         public class PinDefinitions : IPinDefinitions
         {
+            public IPinController Controller { get; set; }
+
             /// <summary>
             /// List of pins
             /// </summary>
@@ -19,7 +21,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// <summary>
             /// GP0
             /// </summary>
-            public readonly IPin GP0 = new Pin(
+            public IPin GP0 => new Pin(
+                Controller,
                 "GP0", (byte)0x00,
                 new List<IChannelInfo> {
                     new DigitalChannelInfo("GP0", pullDownCapable:false),
@@ -29,7 +32,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// <summary>
             /// GP1
             /// </summary>
-            public readonly IPin GP1 = new Pin(
+            public IPin GP1 => new Pin(
+                Controller,
                 "GP1", (byte)0x01,
                 new List<IChannelInfo> {
                     new DigitalChannelInfo("GP1", pullDownCapable:false),
@@ -39,7 +43,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// <summary>
             /// GP2
             /// </summary>
-            public readonly IPin GP2 = new Pin(
+            public IPin GP2 => new Pin(
+                Controller,
                 "GP2", (byte)0x02,
                 new List<IChannelInfo> {
                     new DigitalChannelInfo("GP2", pullDownCapable:false),
@@ -49,7 +54,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// <summary>
             /// GP3
             /// </summary>
-            public readonly IPin GP3 = new Pin(
+            public IPin GP3 => new Pin(
+                Controller,
                 "GP3", (byte)0x03,
                 new List<IChannelInfo> {
                     new DigitalChannelInfo("GP3", pullDownCapable:false),
@@ -59,7 +65,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// <summary>
             /// GP4
             /// </summary>
-            public readonly IPin GP4 = new Pin(
+            public IPin GP4 => new Pin(
+                Controller,
                 "GP4", (byte)0x04,
                 new List<IChannelInfo> {
                     new DigitalChannelInfo("GP4", pullDownCapable:false),
@@ -69,7 +76,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// <summary>
             /// GP5
             /// </summary>
-            public readonly IPin GP5 = new Pin(
+            public IPin GP5 => new Pin(
+                Controller,
                 "GP5", (byte)0x05,
                 new List<IChannelInfo> {
                     new DigitalChannelInfo("GP5", pullDownCapable:false),
@@ -79,7 +87,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// <summary>
             /// GP6
             /// </summary>
-            public readonly IPin GP6 = new Pin(
+            public IPin GP6 => new Pin(
+                Controller,
                 "GP6", (byte)0x06,
                 new List<IChannelInfo> {
                     new DigitalChannelInfo("GP6", pullDownCapable:false),
@@ -89,7 +98,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// <summary>
             /// GP7
             /// </summary>
-            public readonly IPin GP7 = new Pin(
+            public IPin GP7 => new Pin(
+                Controller,
                 "GP7", (byte)0x07,
                 new List<IChannelInfo> {
                     new DigitalChannelInfo("GP7", pullDownCapable:false),
@@ -99,8 +109,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// <summary>
             /// Create a new PinDefinitions object
             /// </summary>
-            public PinDefinitions()
+            public PinDefinitions(Mcp23x0x controller)
             {
+                controller = controller;
                 InitAllPins();
             }
 
