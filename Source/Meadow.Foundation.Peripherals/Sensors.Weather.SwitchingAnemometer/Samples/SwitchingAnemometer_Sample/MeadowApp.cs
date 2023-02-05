@@ -1,12 +1,11 @@
-﻿using System;
-using System.Threading.Tasks;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation;
 using Meadow.Foundation.Leds;
 using Meadow.Foundation.Sensors.Weather;
 using Meadow.Peripherals.Leds;
 using Meadow.Units;
+using System.Threading.Tasks;
 
 namespace MeadowApp
 {
@@ -22,7 +21,7 @@ namespace MeadowApp
             Resolver.Log.Info("Initialize...");
 
             //==== onboard LED
-            onboardLed = new RgbPwmLed(device: Device,
+            onboardLed = new RgbPwmLed(
                 redPwmPin: Device.Pins.OnboardLedRed,
                 greenPwmPin: Device.Pins.OnboardLedGreen,
                 bluePwmPin: Device.Pins.OnboardLedBlue,
@@ -40,7 +39,8 @@ namespace MeadowApp
 
             //==== IObservable example
             var observer = SwitchingAnemometer.CreateObserver(
-                handler: result => {
+                handler: result =>
+                {
                     Resolver.Log.Info($"new speed (from observer): {result.New.KilometersPerHour:n1}kmh, old: {result.Old?.KilometersPerHour:n1}kmh");
                 },
                 null
@@ -55,7 +55,7 @@ namespace MeadowApp
             // start raising updates
             anemometer.StartUpdating();
             Resolver.Log.Info("Hardware initialized.");
-            
+
             return Task.CompletedTask;
         }
 

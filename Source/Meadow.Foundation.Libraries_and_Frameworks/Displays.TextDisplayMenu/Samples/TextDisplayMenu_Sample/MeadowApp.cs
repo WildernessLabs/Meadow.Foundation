@@ -7,7 +7,6 @@ using Meadow.Foundation.Sensors.Buttons;
 using Meadow.Hardware;
 using Meadow.Peripherals.Displays;
 using Meadow.Peripherals.Sensors.Buttons;
-using System;
 using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -64,13 +63,13 @@ namespace MeadowApp
 
             menu = new Menu(ssd1309 as ITextDisplay, menuData, false);
 
-            next = new PushButton(Device, Device.Pins.D10);
+            next = new PushButton(Device.Pins.D10);
             next.Clicked += (s, e) => { menu.Next(); };
 
-            select = new PushButton(Device, Device.Pins.D11);
+            select = new PushButton(Device.Pins.D11);
             select.Clicked += (s, e) => { menu.Select(); };
 
-            previous = new PushButton(Device, Device.Pins.D12);
+            previous = new PushButton(Device.Pins.D12);
             previous.Clicked += (s, e) => { menu.Previous(); };
 
             Resolver.Log.Info("Enable menu...");
