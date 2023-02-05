@@ -7,7 +7,7 @@ using Meadow.Peripherals.Sensors.Location.Gnss;
 
 namespace Sensors.Gnss.NeoM8_Sample
 {
-    public class MeadowApp : App<F7FeatherV1>
+    public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
 
@@ -21,7 +21,7 @@ namespace Sensors.Gnss.NeoM8_Sample
             gps = new NeoM8(Device.CreateSpiBus(), Device.CreateDigitalOutputPort(Device.Pins.D14));
 
             //Serial
-            //gps = new NeoM8(Device, Device.SerialPortNames.Com4, Device.Pins.D09, Device.Pins.D11);
+            //gps = new NeoM8(Device, Device.PlatformOS.GetSerialPortName("COM4"), Device.Pins.D09, Device.Pins.D11);
 
             gps.GgaReceived += (object sender, GnssPositionInfo location) =>
             {
