@@ -6,26 +6,6 @@ using System.Threading;
 
 namespace Meadow.Foundation.Sensors.Hid;
 
-public class KeyboardPin : Pin
-{
-    public new char Key => Convert.ToChar(base.Key);
-
-    internal KeyboardPin(string name, char key)
-        : base(name, char.ToUpper(key),
-        new List<IChannelInfo>()
-        {
-            new DigitalChannelInfo(name, interruptCapable: true, pullUpCapable: false, pullDownCapable: false)
-        })
-    {
-    }
-
-    public override bool Equals(IPin? other)
-    {
-        if (other == null) return false;
-        return this.Key.Equals(other.Key);
-    }
-}
-
 public partial class Keyboard : IDigitalInputController, IDisposable
 {
     private static Thread? _thread = null;
@@ -33,6 +13,11 @@ public partial class Keyboard : IDigitalInputController, IDisposable
 
     private bool _keepScanning = false;
     private bool _isDisposed = false;
+
+    public Keyboard()
+    {
+        Pins.Controller = this;
+    }
 
     private void Install()
     {

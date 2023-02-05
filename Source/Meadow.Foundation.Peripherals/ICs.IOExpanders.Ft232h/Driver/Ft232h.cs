@@ -34,13 +34,14 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
         public Ft232h()
         {
+            Pins = new PinDefinitions(this);
             EnumerateBuses();
         }
 
         /// <summary>
         /// The pins
         /// </summary>
-        public PinDefinitions Pins { get; } = new PinDefinitions();
+        public PinDefinitions Pins { get; }
 
         private void EnumerateBuses()
         {
