@@ -3,7 +3,6 @@ using Meadow.Devices;
 using Meadow.Foundation;
 using Meadow.Foundation.Displays;
 using Meadow.Foundation.Graphics;
-using System;
 using System.Threading.Tasks;
 
 namespace Displays.TftSpi.St7735_Sample
@@ -22,7 +21,6 @@ namespace Displays.TftSpi.St7735_Sample
 
             //note - you may need to adjust the DisplayType for your specific St7735
             var display = new St7735(
-                device: Device,
                 spiBus: spiBus,
                 chipSelectPin: Device.Pins.D02,
                 dcPin: Device.Pins.D01,

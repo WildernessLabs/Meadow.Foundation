@@ -1,8 +1,4 @@
-﻿using System;
-using System.Diagnostics;
-using System.Threading;
-using System.Threading.Tasks;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation;
 using Meadow.Foundation.Displays;
@@ -10,6 +6,10 @@ using Meadow.Foundation.Graphics;
 using Meadow.Foundation.Graphics.Buffers;
 using Meadow.Hardware;
 using Meadow.Units;
+using System;
+using System.Diagnostics;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Displays.Tft.ST7789_Sample
 {
@@ -43,7 +43,6 @@ namespace Displays.Tft.ST7789_Sample
             var spiBus = Device.CreateSpiBus(Device.Pins.SCK, Device.Pins.MOSI, Device.Pins.MISO, config);
 
             display = new St7789(
-                device: Device,
                 spiBus: spiBus,
                 chipSelectPin: Device.Pins.A03,
                 dcPin: Device.Pins.A04,
@@ -85,7 +84,7 @@ namespace Displays.Tft.ST7789_Sample
 
         int sleepDuration = 500;
         void DisplayTest()
-        { 
+        {
             Thread.Sleep(sleepDuration);
 
             var stopwatch = new Stopwatch();
@@ -122,7 +121,7 @@ namespace Displays.Tft.ST7789_Sample
                 Thread.Sleep(sleepDuration);
 
                 FontAlignmentTest();
-                Thread.Sleep(sleepDuration);                   
+                Thread.Sleep(sleepDuration);
 
                 ColorFontTest();
                 Thread.Sleep(sleepDuration);
@@ -155,7 +154,7 @@ namespace Displays.Tft.ST7789_Sample
             var sw = new Stopwatch();
             sw.Start();
 
-            for(int i = 0; i < 10; i++)
+            for (int i = 0; i < 10; i++)
             {
                 display.Show();
             }
@@ -163,7 +162,7 @@ namespace Displays.Tft.ST7789_Sample
             sw.Stop();
 
             Resolver.Log.Info($"Elapsed: {sw.Elapsed}s");
-            Resolver.Log.Info($"fps: {10.0/sw.Elapsed.TotalSeconds}");
+            Resolver.Log.Info($"fps: {10.0 / sw.Elapsed.TotalSeconds}");
 
             Thread.Sleep(1000);
         }
@@ -202,9 +201,9 @@ namespace Displays.Tft.ST7789_Sample
 
             graphics.Clear(true);
 
-            for(int i = 0; i < 1; i++)
+            for (int i = 0; i < 1; i++)
             {
-                if(i == 0) graphics.DrawRectangle(0, 0, graphics.Width, graphics.Height, Color.Blue, true);
+                if (i == 0) graphics.DrawRectangle(0, 0, graphics.Width, graphics.Height, Color.Blue, true);
                 if (i == 50) graphics.DrawRectangle(0, 0, graphics.Width, graphics.Height, Color.LawnGreen, true);
                 if (i == 100) graphics.DrawRectangle(0, 0, graphics.Width, graphics.Height, Color.Cyan, true);
                 if (i == 150) graphics.DrawRectangle(0, 0, graphics.Width, graphics.Height, Color.Yellow, true);
@@ -223,7 +222,7 @@ namespace Displays.Tft.ST7789_Sample
 
             for (int i = 0; i < 48; i++)
             {
-                if(i == 0)
+                if (i == 0)
                 {
                     pathSin.MoveTo(0, 120 + (int)(Math.Sin(i * 10 * Math.PI / 180) * 100));
                     pathCos.MoveTo(0, 120 + (int)(Math.Cos(i * 10 * Math.PI / 180) * 100));
@@ -273,10 +272,10 @@ namespace Displays.Tft.ST7789_Sample
 
             for (int i = 0; i < 4; i++)
             {
-                for(int j = 0; j < 6; j++)
+                for (int j = 0; j < 6; j++)
                 {
                     graphics.InvertRectangle(i * 12, 0, 12, 16);
-          
+
                     graphics.Show();
                     Thread.Sleep(50);
                 }
@@ -347,7 +346,7 @@ namespace Displays.Tft.ST7789_Sample
             graphics.Clear();
             graphics.Stroke = 3;
 
-            for (int i = 0; i < 270; i+= 12)
+            for (int i = 0; i < 270; i += 12)
             {
                 graphics.DrawLine(120, 120, 80, (float)(i * Math.PI / 180), Color.White);
             }
@@ -432,7 +431,7 @@ namespace Displays.Tft.ST7789_Sample
             graphics.Clear();
 
             graphics.Stroke = 1;
-            graphics.DrawLine(5, 5,  115, 5,  Color.SteelBlue);
+            graphics.DrawLine(5, 5, 115, 5, Color.SteelBlue);
             graphics.Stroke = 2;
             graphics.DrawLine(5, 25, 115, 25, Color.SteelBlue);
             graphics.Stroke = 3;
@@ -454,7 +453,7 @@ namespace Displays.Tft.ST7789_Sample
             graphics.DrawLine(215, 5, 215, 115, Color.SlateGray);
 
             graphics.Stroke = 1;
-            graphics.DrawLine(5,  125, 115, 235, Color.Silver);
+            graphics.DrawLine(5, 125, 115, 235, Color.Silver);
             graphics.Stroke = 2;
             graphics.DrawLine(25, 125, 135, 235, Color.Silver);
             graphics.Stroke = 3;

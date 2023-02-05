@@ -27,7 +27,7 @@ namespace Displays.Tft.Hx8357d_Sample
 
             Resolver.Log.Info("Create display driver instance");
 
-            var display = new Hx8357d(device: Device, spiBus: spiBus,
+            var display = new Hx8357d(spiBus: spiBus,
                 chipSelectPin: Device.Pins.D02,
                 dcPin: Device.Pins.D01,
                 resetPin: Device.Pins.D00,
@@ -61,7 +61,7 @@ namespace Displays.Tft.Hx8357d_Sample
         //<!=SNOP=>
 
         void DisplayTests()
-        { 
+        {
             OverviewScreen();
             Thread.Sleep(5000);
 
@@ -100,9 +100,9 @@ namespace Displays.Tft.Hx8357d_Sample
             var sw = new Stopwatch();
             sw.Start();
 
-            for(int i = 0; i < 10; i++)
+            for (int i = 0; i < 10; i++)
             {
-                for(int x = 0; x < 240; x++)
+                for (int x = 0; x < 240; x++)
                 {
                     for (int y = 0; y < 240; y++)
                     {
@@ -131,10 +131,10 @@ namespace Displays.Tft.Hx8357d_Sample
 
             for (int i = 0; i < 4; i++)
             {
-                for(int j = 0; j < 6; j++)
+                for (int j = 0; j < 6; j++)
                 {
                     graphics.InvertRectangle(i * 12, 0, 12, 16);
-          
+
                     graphics.Show();
                     Thread.Sleep(50);
                 }
@@ -164,11 +164,11 @@ namespace Displays.Tft.Hx8357d_Sample
             graphics.DrawText(0, 30, "320x480 resolution", Color.LawnGreen, ScaleFactor.X2);
             graphics.DrawText(0, 60, "12 or 16 bit color", Color.AliceBlue, ScaleFactor.X2);
 
-            for(int i = 0; i < 16; i++)
+            for (int i = 0; i < 16; i++)
             {
-                graphics.DrawRectangle( 90, i * 20, 20, 30, Color.FromRgb(i * 16, 0, 0));
+                graphics.DrawRectangle(90, i * 20, 20, 30, Color.FromRgb(i * 16, 0, 0));
                 graphics.DrawRectangle(120, i * 20, 20, 30, Color.FromRgb(i * 16, i * 16, 0));
-                graphics.DrawRectangle(150, i * 20, 20, 30, Color.FromRgb(0,  i * 16, 0));
+                graphics.DrawRectangle(150, i * 20, 20, 30, Color.FromRgb(0, i * 16, 0));
                 graphics.DrawRectangle(180, i * 20, 20, 30, Color.FromRgb(0, i * 16, i * 16));
                 graphics.DrawRectangle(210, i * 20, 20, 30, Color.FromRgb(0, 0, i * 16));
                 graphics.DrawRectangle(240, i * 20, 20, 30, Color.FromRgb(i * 16, 0, i * 16));
@@ -185,7 +185,7 @@ namespace Displays.Tft.Hx8357d_Sample
             graphics.Clear();
             graphics.Stroke = 1;
 
-            for (int i = 0; i < 270; i+= 12)
+            for (int i = 0; i < 270; i += 12)
             {
                 graphics.DrawLine(120, 120, 80, (float)(i * Math.PI / 180), Color.White);
             }
@@ -270,7 +270,7 @@ namespace Displays.Tft.Hx8357d_Sample
             graphics.Clear();
 
             graphics.Stroke = 1;
-            graphics.DrawLine(5, 5,  115, 5,  Color.SteelBlue);
+            graphics.DrawLine(5, 5, 115, 5, Color.SteelBlue);
             graphics.Stroke = 2;
             graphics.DrawLine(5, 25, 115, 25, Color.SteelBlue);
             graphics.Stroke = 3;
@@ -292,7 +292,7 @@ namespace Displays.Tft.Hx8357d_Sample
             graphics.DrawLine(215, 5, 215, 115, Color.SlateGray);
 
             graphics.Stroke = 1;
-            graphics.DrawLine(5,  125, 115, 235, Color.Silver);
+            graphics.DrawLine(5, 125, 115, 235, Color.Silver);
             graphics.Stroke = 2;
             graphics.DrawLine(25, 125, 135, 235, Color.Silver);
             graphics.Stroke = 3;
