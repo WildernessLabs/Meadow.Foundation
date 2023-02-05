@@ -22,16 +22,15 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// Create a new Ili9488 display object
         /// </summary>
-        /// <param name="device">Meadow device</param>
         /// <param name="spiBus">SPI bus connected to display</param>
         /// <param name="chipSelectPin">Chip select pin</param>
         /// <param name="dcPin">Data command pin</param>
         /// <param name="resetPin">Reset pin</param>
         /// <param name="width">Width of display in pixels</param>
         /// <param name="height">Height of display in pixels</param>
-        public Ili9488(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
-            int width = 320, int height = 480) 
-            : base(device, spiBus, chipSelectPin, dcPin, resetPin, width, height, ColorMode.Format24bppRgb888)
+        public Ili9488(ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
+            int width = 320, int height = 480)
+            : base(spiBus, chipSelectPin, dcPin, resetPin, width, height, ColorMode.Format24bppRgb888)
         {
             Initialize();
 

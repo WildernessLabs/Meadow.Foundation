@@ -93,7 +93,6 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// Represents an abstract TftSpiBase object
         /// </summary>
-        /// <param name="pinController">The pin controller for the pins passed in</param>
         /// <param name="spiBus">SPI bus connected to display</param>
         /// <param name="chipSelectPin">Chip select pin</param>
         /// <param name="dcPin">Data command pin</param>
@@ -101,12 +100,26 @@ namespace Meadow.Foundation.Displays
         /// <param name="width">Width of display in pixels</param>
         /// <param name="height">Height of display in pixels</param>
         /// <param name="colorMode">The color mode to use for the display buffer</param>
-        public TftSpiBase(IDigitalOutputController pinController, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
+        public TftSpiBase(ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
             int width, int height, ColorMode colorMode = ColorMode.Format16bppRgb565)
         {
-            dataCommandPort = pinController.CreateDigitalOutputPort(dcPin, false);
-            if (resetPin != null) { resetPort = pinController.CreateDigitalOutputPort(resetPin, true); }
-            if (chipSelectPin != null) { chipSelectPort = pinController.CreateDigitalOutputPort(chipSelectPin, false); }
+            var doc = dcPin.Controller as IDigitalOutputController;
+            if (doc == null) throw new ArgumentException("dcPin must support digital output capability");
+            dataCommandPort = doc.CreateDigitalOutputPort(dcPin, false);
+
+            if (resetPin != null)
+            {
+                var roc = resetPin.Controller as IDigitalOutputController;
+                if (roc == null) throw new ArgumentException("resetPin must support digital output capability");
+                resetPort = roc.CreateDigitalOutputPort(resetPin, true);
+            }
+
+            if (chipSelectPin != null)
+            {
+                var csc = chipSelectPin.Controller as IDigitalOutputController;
+                if (csc == null) throw new ArgumentException("chipSelectPin must support digital output capability");
+                chipSelectPort = csc.CreateDigitalOutputPort(chipSelectPin, false);
+            }
 
             spiDisplay = new SpiPeripheral(spiBus, chipSelectPort);
 

@@ -21,7 +21,6 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// Create a new Rm68140 color display object
         /// </summary>
-        /// <param name="device">Meadow device</param>
         /// <param name="spiBus">SPI bus connected to display</param>
         /// <param name="chipSelectPin">Chip select pin</param>
         /// <param name="dcPin">Data command pin</param>
@@ -29,9 +28,9 @@ namespace Meadow.Foundation.Displays
         /// <param name="width">Width of display in pixels</param>
         /// <param name="height">Height of display in pixels</param>
         /// <param name="colorMode">The color mode to use for the display buffer</param>
-        public Rm68140(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
-            int width = 320, int height = 480, ColorMode colorMode = ColorMode.Format12bppRgb444) 
-            : base(device, spiBus, chipSelectPin, dcPin, resetPin, width, height, colorMode)
+        public Rm68140(ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
+            int width = 320, int height = 480, ColorMode colorMode = ColorMode.Format12bppRgb444)
+            : base(spiBus, chipSelectPin, dcPin, resetPin, width, height, colorMode)
         {
             Initialize();
 

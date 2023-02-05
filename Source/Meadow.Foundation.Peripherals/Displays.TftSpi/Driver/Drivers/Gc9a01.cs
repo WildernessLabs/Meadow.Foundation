@@ -21,13 +21,12 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// Create a new Gc9a01 color display object
         /// </summary>
-        /// <param name="device">Meadow device</param>
         /// <param name="spiBus">SPI bus connected to display</param>
         /// <param name="chipSelectPin">Chip select pin</param>
         /// <param name="dcPin">Data command pin</param>
         /// <param name="resetPin">Reset pin</param>
-        public Gc9a01(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin) :
-            base(device, spiBus, chipSelectPin, dcPin, resetPin, 240, 240, ColorMode.Format16bppRgb565)
+        public Gc9a01(ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin) :
+            base(spiBus, chipSelectPin, dcPin, resetPin, 240, 240, ColorMode.Format16bppRgb565)
         {
             Initialize();
 
@@ -51,7 +50,7 @@ namespace Meadow.Foundation.Displays
 
             SetRotation(RotationType.Normal);
         }
-            
+
         /// <summary>
         /// Initialize the display
         /// </summary>
@@ -286,7 +285,7 @@ namespace Meadow.Foundation.Displays
             SendCommand(Register.DISPON);
             DelayMs(20);
         }
-        
+
         /// <summary>
         /// Set address window to update
         /// </summary>

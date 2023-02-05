@@ -32,7 +32,6 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// Create a new St7735 color display object
         /// </summary>
-        /// <param name="device">Meadow device</param>
         /// <param name="spiBus">SPI bus connected to display</param>
         /// <param name="chipSelectPin">Chip select pin</param>
         /// <param name="dcPin">Data command pin</param>
@@ -41,10 +40,10 @@ namespace Meadow.Foundation.Displays
         /// <param name="height">Height of display in pixels</param>
         /// <param name="displayType">The St7735 display types (displays vary from manufacturer and screen size)</param>
         /// <param name="colorMode">The color mode to use for the display buffer</param>
-        public St7735(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
+        public St7735(ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
             int width, int height,
             DisplayType displayType = DisplayType.ST7735R, ColorMode colorMode = ColorMode.Format12bppRgb444)
-            : base(device, spiBus, chipSelectPin, dcPin, resetPin, width, height, colorMode)
+            : base(spiBus, chipSelectPin, dcPin, resetPin, width, height, colorMode)
         {
             this.displayType = displayType;
 
