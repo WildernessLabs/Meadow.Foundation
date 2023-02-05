@@ -17,13 +17,13 @@ namespace Meadow.Foundation.Displays
         /// <param name="dcPin">Data command pin</param>
         /// <param name="resetPin">Reset pin</param>
         /// <param name="busyPin">Busy pin</param>
-        public Epd2in9(IMeadowDevice device,
-                                    ISpiBus spiBus,
-                                    IPin chipSelectPin,
-                                    IPin dcPin,
-                                    IPin resetPin,
-                                    IPin busyPin) :
-            base(device, spiBus, chipSelectPin, dcPin, resetPin, busyPin, 128, 296)
+        public Epd2in9(
+                        ISpiBus spiBus,
+                        IPin chipSelectPin,
+                        IPin dcPin,
+                        IPin resetPin,
+                        IPin busyPin) :
+            base(spiBus, chipSelectPin, dcPin, resetPin, busyPin, 128, 296)
         { }
 
         /// <summary>

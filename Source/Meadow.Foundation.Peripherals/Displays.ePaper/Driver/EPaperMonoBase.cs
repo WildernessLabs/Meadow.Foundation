@@ -1,6 +1,7 @@
-﻿using Meadow.Hardware;
+﻿using Meadow.Foundation.Graphics;
 using Meadow.Foundation.Graphics.Buffers;
-using Meadow.Foundation.Graphics;
+using Meadow.Hardware;
+using System;
 
 namespace Meadow.Foundation.Displays
 {
@@ -52,7 +53,6 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// Create a new ePaper display object
         /// </summary>
-        /// <param name="device">Meadow device</param>
         /// <param name="spiBus">SPI bus connected to display</param>
         /// <param name="chipSelectPin">Chip select pin</param>
         /// <param name="dcPin">Data command pin</param>
@@ -60,10 +60,17 @@ namespace Meadow.Foundation.Displays
         /// <param name="busyPin">Busy pin</param>
         /// <param name="width">Width of display in pixels</param>
         /// <param name="height">Height of display in pixels</param>
-        public EPaperMonoBase(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, IPin busyPin,
-            int width, int height):
-            this(spiBus, device.CreateDigitalOutputPort(chipSelectPin), device.CreateDigitalOutputPort(dcPin, false),
-                device.CreateDigitalOutputPort(resetPin, true), device.CreateDigitalInputPort(busyPin),
+        public EPaperMonoBase(ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, IPin busyPin,
+            int width, int height) :
+            this(spiBus,
+                (chipSelectPin is IDigitalOutputController { } cs)
+                    ? cs.CreateDigitalOutputPort(chipSelectPin) : throw new ArgumentException("chipSelectPin must support digital output"),
+                (dcPin is IDigitalOutputController { } dc)
+                    ? dc.CreateDigitalOutputPort(dcPin) : throw new ArgumentException("dcPin must support digital output"),
+                (resetPin is IDigitalOutputController { } rc)
+                    ? rc.CreateDigitalOutputPort(resetPin) : throw new ArgumentException("resetPin must support digital output"),
+                (busyPin is IDigitalInputController { } bc)
+                    ? bc.CreateDigitalInputPort(busyPin) : throw new ArgumentException("busyPin must support digital input"),
                 width, height)
         {
         }
@@ -78,9 +85,9 @@ namespace Meadow.Foundation.Displays
         /// <param name="busyPort">Busy input port</param>
         /// <param name="width">Width of display in pixels</param>
         /// <param name="height">Height of display in pixels</param>
-        public EPaperMonoBase(ISpiBus spiBus, 
-            IDigitalOutputPort chipSelectPort, 
-            IDigitalOutputPort dataCommandPort, 
+        public EPaperMonoBase(ISpiBus spiBus,
+            IDigitalOutputPort chipSelectPort,
+            IDigitalOutputPort dataCommandPort,
             IDigitalOutputPort resetPort,
             IDigitalInputPort busyPort,
             int width, int height)
@@ -229,7 +236,7 @@ namespace Meadow.Foundation.Displays
             int xEnd;
             int yEnd;
 
-            if (buffer == null ||  x < 0 || width < 0 ||  y < 0 || height < 0)
+            if (buffer == null || x < 0 || width < 0 || y < 0 || height < 0)
             {
                 return;
             }
