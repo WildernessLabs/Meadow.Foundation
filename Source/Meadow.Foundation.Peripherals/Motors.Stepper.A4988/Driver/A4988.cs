@@ -1,8 +1,8 @@
 ﻿using Meadow.Hardware;
 using Meadow.Units;
-using AU = Meadow.Units.Angle.UnitType;
 using System;
 using System.Linq;
+using AU = Meadow.Units.Angle.UnitType;
 
 namespace Meadow.Foundation.Motors.Stepper
 {
@@ -112,47 +112,43 @@ namespace Meadow.Foundation.Motors.Stepper
 
         StepDivisor divisor;
         Angle stepAngle;
-        
+
         /// <summary>
         /// Creates an instance of the A4988 Stepper Motor Driver
         /// </summary>
-        /// <param name="device">The IIoDevice instance that can create Digital Output Ports</param>
         /// <param name="step">The Meadow pin connected to the STEP pin of the A4988</param>
         /// <param name="direction">The Meadow pin connected to the DIR pin of the A4988</param>
         /// <remarks>You must provide either all of the micro-step (MS) lines or none of them</remarks>
-        public A4988(IDigitalOutputController device, IPin step, IPin direction)
-            : this(device, step, direction, null, null, null, null)
+        public A4988(IPin step, IPin direction)
+            : this(step, direction, null, null, null, null)
         { }
 
         /// <summary>
         /// Creates an instance of the A4988 Stepper Motor Driver
         /// </summary>
-        /// <param name="device">The IIoDevice instance that can create Digital Output Ports</param>
         /// <param name="step">The Meadow pin connected to the STEP pin of the A4988</param>
         /// <param name="direction">The Meadow pin connected to the DIR pin of the A4988</param>
         /// <param name="ms1Pin">The (optional) Meadow pin connected to the MS1 pin of the A4988</param>
         /// <param name="ms2Pin">The (optional) Meadow pin connected to the MS2 pin of the A4988</param>
         /// <param name="ms3Pin">The (optional) Meadow pin connected to the MS3 pin of the A4988</param>
         /// <remarks>You must provide either all of the micro-step (MS) lines or none of them</remarks>
-        public A4988(IDigitalOutputController device, IPin step, IPin direction, IPin ms1Pin, IPin ms2Pin, IPin ms3Pin)
-            : this(device, step, direction, null, ms1Pin, ms2Pin, ms3Pin)
+        public A4988(IPin step, IPin direction, IPin ms1Pin, IPin ms2Pin, IPin ms3Pin)
+            : this(step, direction, null, ms1Pin, ms2Pin, ms3Pin)
         { }
 
         /// <summary>
         /// Creates an instance of the A4988 Stepper Motor Driver
         /// </summary>
-        /// <param name="device">The IIoDevice instance that can create Digital Output Ports</param>
         /// <param name="step">The Meadow pin connected to the STEP pin of the A4988</param>
         /// <param name="direction">The Meadow pin connected to the DIR pin of the A4988</param>
         /// <param name="enable">The (optional) Meadow pin connected to the ENABLE pin of the A4988</param>
-        public A4988(IDigitalOutputController device, IPin step, IPin direction, IPin enable)
-            : this(device, step, direction, enable, null, null, null)
+        public A4988(IPin step, IPin direction, IPin enable)
+            : this(step, direction, enable, null, null, null)
         { }
 
         /// <summary>
         /// Creates an instance of the A4988 Stepper Motor Driver
         /// </summary>
-        /// <param name="device">The IIoDevice instance that can create Digital Output Ports</param>
         /// <param name="step">The Meadow pin connected to the STEP pin of the A4988</param>
         /// <param name="direction">The Meadow pin connected to the DIR pin of the A4988</param>
         /// <param name="enablePin">The (optional) Meadow pin connected to the ENABLE pin of the A4988</param>
@@ -160,23 +156,23 @@ namespace Meadow.Foundation.Motors.Stepper
         /// <param name="ms2Pin">The (optional) Meadow pin connected to the MS2 pin of the A4988</param>
         /// <param name="ms3Pin">The (optional) Meadow pin connected to the MS3 pin of the A4988</param>
         /// <remarks>You must provide either all of the micro-step (MS) lines or none of them</remarks>
-        public A4988(IDigitalOutputController device, IPin step, IPin direction, IPin enablePin, IPin ms1Pin, IPin ms2Pin, IPin ms3Pin)
+        public A4988(IPin step, IPin direction, IPin enablePin, IPin ms1Pin, IPin ms2Pin, IPin ms3Pin)
         {
-            stepPort = device.CreateDigitalOutputPort(step);
+            stepPort = step.CreateDigitalOutputPort();
 
-            directionPort = device.CreateDigitalOutputPort(direction);
+            directionPort = direction.CreateDigitalOutputPort();
 
             if (enablePin != null)
             {
-                enablePort = device.CreateDigitalOutputPort(enablePin);
+                enablePort = enablePin.CreateDigitalOutputPort();
             }
 
             // micro-step lines (for now) are all-or-nothing TODO: rethink this?
             if (new IPin[] { ms1Pin, ms2Pin, ms3Pin }.All(p => p != null))
             {
-                ms1Port = device.CreateDigitalOutputPort(ms1Pin);
-                ms2Port = device.CreateDigitalOutputPort(ms2Pin);
-                ms3Port = device.CreateDigitalOutputPort(ms3Pin);
+                ms1Port = ms1Pin.CreateDigitalOutputPort();
+                ms2Port = ms2Pin.CreateDigitalOutputPort();
+                ms3Port = ms3Pin.CreateDigitalOutputPort();
             }
             else if (new IPin[] { ms1Pin, ms2Pin, ms3Pin }.All(p => p == null))
             {    // nop

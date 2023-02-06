@@ -1,13 +1,13 @@
 ﻿using Meadow.Foundation.Helpers;
 using Meadow.Hardware;
+using Meadow.Peripherals.Sensors;
 using Meadow.Peripherals.Sensors.Motion;
 using Meadow.Units;
-using AU = Meadow.Units.Acceleration.UnitType;
-using TU = Meadow.Units.Temperature.UnitType;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Meadow.Peripherals.Sensors;
+using AU = Meadow.Units.Acceleration.UnitType;
+using TU = Meadow.Units.Temperature.UnitType;
 
 namespace Meadow.Foundation.Sensors.Motion
 {
@@ -251,11 +251,10 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         /// Create a new ADXL362 object using the specified SPI module
         /// </summary>
-        /// <param name="device">The device connected to the sensor</param>
         /// <param name="spiBus">Spi Bus object</param>
         /// <param name="chipSelect">Chip select pin</param>
-        public Adxl362(IDigitalOutputController device, ISpiBus spiBus, IPin chipSelect)
-            : base(spiBus, device.CreateDigitalOutputPort(chipSelect))
+        public Adxl362(ISpiBus spiBus, IPin chipSelect)
+            : base(spiBus, chipSelect.CreateDigitalOutputPort())
         { }
 
         /// <summary>
@@ -489,12 +488,11 @@ namespace Meadow.Foundation.Sensors.Motion
         /// possible to disconnect and ADXL362 by setting the interrupt pin
         /// to GPIO_NONE.
         /// </remark>
-        /// <param name="device">The device connected to the sensor</param>
         /// <param name="interruptMap1">Bit mask for interrupt pin 1</param>
         /// <param name="interruptPin1">Pin connected to interrupt pin 1 on the ADXL362</param>
         /// <param name="interruptMap2">Bit mask for interrupt pin 2</param>
         /// <param name="interruptPin2">Pin connected to interrupt pin 2 on the ADXL362</param>
-        private void ConfigureInterrupts(IMeadowDevice device, byte interruptMap1, IPin interruptPin1, byte interruptMap2 = 0, IPin interruptPin2 = null) // TODO: interrupPin2 = IDigitalPin.GPIO_NONE
+        private void ConfigureInterrupts(byte interruptMap1, IPin interruptPin1, byte interruptMap2 = 0, IPin interruptPin2 = null) // TODO: interrupPin2 = IDigitalPin.GPIO_NONE
         {
             WriteBuffer.Span[0] = Commands.WRITE_REGISTER;
             WriteBuffer.Span[1] = interruptMap1;
@@ -503,7 +501,7 @@ namespace Meadow.Foundation.Sensors.Motion
 
             if (interruptPin1 != null)
             {
-                digitalInputPort1 = device.CreateDigitalInputPort(interruptPin1, InterruptMode.EdgeRising, MapResistorMode((interruptMap1 & 0xf0) > 0));
+                digitalInputPort1 = interruptPin1.CreateDigitalInputPort(InterruptMode.EdgeRising, MapResistorMode((interruptMap1 & 0xf0) > 0));
                 digitalInputPort1.Changed += InterruptChanged;
             }
             else
@@ -513,7 +511,7 @@ namespace Meadow.Foundation.Sensors.Motion
 
             if (interruptPin2 != null)
             {
-                digitalInputPort2 = device.CreateDigitalInputPort(interruptPin2, InterruptMode.EdgeRising, MapResistorMode((interruptMap2 & 0xf0) > 0));
+                digitalInputPort2 = interruptPin2.CreateDigitalInputPort(InterruptMode.EdgeRising, MapResistorMode((interruptMap2 & 0xf0) > 0));
                 digitalInputPort2.Changed += InterruptChanged;
             }
             else

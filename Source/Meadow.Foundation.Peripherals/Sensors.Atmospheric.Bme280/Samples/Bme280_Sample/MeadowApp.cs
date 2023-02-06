@@ -1,4 +1,11 @@
-﻿namespace Sensors.Atmospheric.BME280_Sample
+﻿using Meadow;
+using Meadow.Devices;
+using Meadow.Foundation.Sensors.Atmospheric;
+using Meadow.Hardware;
+using System;
+using System.Threading.Tasks;
+
+namespace Sensors.Atmospheric.BME280_Sample
 {
     public class MeadowApp : App<F7FeatherV2>
     {
