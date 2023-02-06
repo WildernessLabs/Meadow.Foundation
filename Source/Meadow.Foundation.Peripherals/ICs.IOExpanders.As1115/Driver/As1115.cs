@@ -91,17 +91,16 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <summary>
         /// Create a new AS1115 object using the default parameters for
         /// </summary>
-        /// <param name="device">Meadow device object</param>
         /// <param name="i2cBus">I2cBus connected to display</param>
         /// <param name="buttonInterruptPin">Interrupt pin</param>
         /// <param name="address">Address of the bus on the I2C display.</param>
-        public As1115(IMeadowDevice device, II2cBus i2cBus, IPin buttonInterruptPin,
+        public As1115(II2cBus i2cBus, IPin buttonInterruptPin,
             byte address = (byte)Addresses.Default)
         {
             i2cPeripheral = new I2cPeripheral(i2cBus, address);
 
-            interruptPort = device.CreateDigitalInputPort(buttonInterruptPin, 
-                InterruptMode.EdgeFalling, 
+            interruptPort = buttonInterruptPin.CreateDigitalInputPort(
+                InterruptMode.EdgeFalling,
                 ResistorMode.InternalPullUp);
 
             interruptPort.Changed += InterruptPort_Changed;
@@ -152,7 +151,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             {
                 KeyScanPressEnded?.Invoke(this, new KeyScanEventArgs(lastButtonPressed, data[0], data[1]));
 
-                if(lastButtonPressed != KeyScanButtonType.None)
+                if (lastButtonPressed != KeyScanButtonType.None)
                 {
                     KeyScanButtons[lastButtonPressed].Update(false);
                 }
@@ -178,7 +177,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
                     _ => KeyScanButtonType.None,
                 };
             }
-            else if(keyB == 255)
+            else if (keyB == 255)
             {
                 ret = keyA switch
                 {
@@ -211,7 +210,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
             byte mask = 1 << REG_FEATURE_BLINK;
 
-            if(isEnabled)
+            if (isEnabled)
             {
                 reg |= mask;
             }
@@ -268,7 +267,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
             for (int i = 0; i < 8; i++)
             {
-                if(DecodeMode == DecodeType.Hexidecimal)
+                if (DecodeMode == DecodeType.Hexidecimal)
                 {
                     SetCharacter((HexCharacterType)(value % 10), i, false);
                 }
@@ -276,7 +275,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 {
                     SetCharacter((BcdCharacterType)(value % 10), i, false);
                 }
-               
+
                 value /= 10;
 
                 if (value == 0)
@@ -294,7 +293,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <param name="showDecimal">show the decimal with the character</param>
         public void SetCharacter(BcdCharacterType character, int digit, bool showDecimal = false)
         {
-            if(DecodeMode != DecodeType.BCD)
+            if (DecodeMode != DecodeType.BCD)
             {
                 throw new Exception("SetCharacterBcd requires DecodeMode to be BCD");
             }
@@ -339,7 +338,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <param name="testOn">True to enable, false to disable</param>
         public void TestMode(bool testOn)
         {
-            i2cPeripheral.WriteRegister(REG_DECODE_MODE, (byte)(testOn?0x01:0x00));
+            i2cPeripheral.WriteRegister(REG_DECODE_MODE, (byte)(testOn ? 0x01 : 0x00));
         }
 
         /// <summary>
@@ -376,7 +375,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         public void Clear(bool updateDisplay = false)
         {
             buffer.Clear();
-            if(updateDisplay) { Show(); }
+            if (updateDisplay) { Show(); }
         }
 
         /// <summary>

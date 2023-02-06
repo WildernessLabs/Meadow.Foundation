@@ -24,8 +24,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <param name="device">The Meadow device to create the chip select port</param>
         /// <param name="spiBus">The SPI bus connected to the device</param>
         /// <param name="chipSelectPin">The chip select pin</param>
-        public Bme688(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin) :
-            base(spiBus, device.CreateDigitalOutputPort(chipSelectPin))
+        public Bme688(ISpiBus spiBus, IPin chipSelectPin) :
+            base(spiBus, chipSelectPin.CreateDigitalOutputPort())
         { }
 
         /// <summary>

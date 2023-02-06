@@ -1,7 +1,7 @@
-﻿using System;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Light;
+using System;
 using System.Threading.Tasks;
 
 namespace MeadowApp
@@ -15,15 +15,16 @@ namespace MeadowApp
         {
             Resolver.Log.Info("Initialize...");
 
-            solarGauge = new AnalogSolarIntensityGauge(Device, Device.Pins.A02, updateInterval: TimeSpan.FromSeconds(1));
+            solarGauge = new AnalogSolarIntensityGauge(Device.Pins.A02, updateInterval: TimeSpan.FromSeconds(1));
 
             //==== classic .NET Event
             solarGauge.SolarIntensityUpdated += (s, result) => Resolver.Log.Info($"SolarIntensityUpdated: {result.New * 100:n2}%");
-            
+
             //==== Filterable observer
             var observer = AnalogSolarIntensityGauge.CreateObserver(
                 handler: result => Resolver.Log.Info($"Observer filter satisifed, new intensity: {result.New * 100:n2}%"),
-                filter: result => {
+                filter: result =>
+                {
                     if (result.Old is { } old)
                     {
                         return (Math.Abs(result.New - old) > 0.05); // only notify if change is > 5%

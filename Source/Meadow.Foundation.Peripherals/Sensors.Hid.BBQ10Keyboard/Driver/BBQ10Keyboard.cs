@@ -43,17 +43,16 @@ namespace Meadow.Foundation.Sensors.Hid
         /// <summary>
         /// Create a new BBQ10Keyboard object
         /// </summary>
-        /// <param name="device">The device connected to the keyboard</param>
         /// <param name="i2cBus">The I2C bus</param>
         /// <param name="interruptPin">The interrupt pin</param>
         /// <param name="address">The I2C address</param>
-        public BBQ10Keyboard(IMeadowDevice device, II2cBus i2cBus, IPin interruptPin = null, byte address = (byte)Addresses.Default)
+        public BBQ10Keyboard(II2cBus i2cBus, IPin interruptPin = null, byte address = (byte)Addresses.Default)
         {
             i2CPeripheral = new I2cPeripheral(i2cBus, address);
 
             if (interruptPin != null)
             {
-                interruptPort = device.CreateDigitalInputPort(interruptPin, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
+                interruptPort = interruptPin.CreateDigitalInputPort(InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
                 interruptPort.Changed += InterruptPort_Changed;
             }
 

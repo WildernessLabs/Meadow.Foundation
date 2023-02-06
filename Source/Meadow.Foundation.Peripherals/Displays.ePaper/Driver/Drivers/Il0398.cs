@@ -11,14 +11,13 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// Create a new Il0398 400x300 pixel display object
         /// </summary>
-        /// <param name="device">Meadow device</param>
         /// <param name="spiBus">SPI bus connected to display</param>
         /// <param name="chipSelectPin">Chip select pin</param>
         /// <param name="dcPin">Data command pin</param>
         /// <param name="resetPin">Reset pin</param>
         /// <param name="busyPin">Busy pin</param>
-        public Il0398(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, IPin busyPin) :
-            base(device, spiBus, chipSelectPin, dcPin, resetPin, busyPin, 400, 300)
+        public Il0398(ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, IPin busyPin) :
+            base(spiBus, chipSelectPin, dcPin, resetPin, busyPin, 400, 300)
         { }
 
         /// <summary>
@@ -244,12 +243,12 @@ namespace Meadow.Foundation.Displays
 
             for (int i = 0; i < Width * Height / 8; i++)
             {
-               SendData(blackBuffer[i]);
+                SendData(blackBuffer[i]);
 
             }
             DelayMs(2);
 
-            
+
             SendCommand(Command.DATA_START_TRANSMISSION_2);
             DelayMs(2);
             for (int i = 0; i < Width * Height / 8; i++)

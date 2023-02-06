@@ -32,7 +32,7 @@ namespace ElectronicSpeedController_Sample
                 esc.Arm();
             }; ;
 
-            esc = new ElectronicSpeedController(Device, Device.Pins.D02, frequency);
+            esc = new ElectronicSpeedController(Device.Pins.D02, frequency);
 
             Resolver.Log.Info("Hardware initialized.");
 

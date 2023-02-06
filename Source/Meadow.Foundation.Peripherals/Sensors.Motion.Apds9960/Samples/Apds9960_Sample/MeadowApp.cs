@@ -1,8 +1,8 @@
-﻿using System;
-using System.Threading.Tasks;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Motion;
+using System;
+using System.Threading.Tasks;
 
 namespace BasicSensors.Motion.Apds9960_Sample
 {
@@ -18,7 +18,7 @@ namespace BasicSensors.Motion.Apds9960_Sample
 
             // configure our sensor on the I2C Bus
             var i2c = Device.CreateI2cBus();
-            sensor = new Apds9960(Device, i2c, Device.Pins.D00);
+            sensor = new Apds9960(i2c, Device.Pins.D00);
 
             // classical .NET events can also be used:
             sensor.Updated += (sender, result) =>
@@ -42,4 +42,4 @@ namespace BasicSensors.Motion.Apds9960_Sample
             sensor.StartUpdating(TimeSpan.FromSeconds(1));
         }
     }
-}     
+}

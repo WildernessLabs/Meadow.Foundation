@@ -1,9 +1,7 @@
-﻿using System;
-using System.Threading.Tasks;
-using Meadow;
-using Meadow.Hardware;
-using Meadow.Peripherals.Sensors;
+﻿using Meadow.Hardware;
 using Meadow.Units;
+using System;
+using System.Threading.Tasks;
 using VU = Meadow.Units.Voltage.UnitType;
 
 namespace Meadow.Foundation.Sensors.Light
@@ -40,7 +38,6 @@ namespace Meadow.Foundation.Sensors.Light
         /// <summary>
         /// Creates a new instance of an analog solar intensity driver.
         /// </summary>
-        /// <param name="device">The `IAnalogInputController` to create the port on</param>
         /// <param name="analogPin">Analog pin the temperature sensor is connected to</param>
         /// <param name="minVoltageReference">The minimum voltage expected when the solar panel isn't receiving light - Default is 0</param>
         /// <param name="maxVoltageReference">The maxmimu voltage expected when the solar panel is in full sun. Default is 3.3V</param>
@@ -50,16 +47,15 @@ namespace Meadow.Foundation.Sensors.Light
         /// <param name="sampleCount">How many samples to take during a given reading. These are automatically averaged to reduce noise</param>
         /// <param name="sampleInterval">The time to wait in between samples during a reading</param>
         public AnalogSolarIntensityGauge(
-            IAnalogInputController device, 
             IPin analogPin,
-            Voltage? minVoltageReference = null, 
+            Voltage? minVoltageReference = null,
             Voltage? maxVoltageReference = null,
             TimeSpan? updateInterval = null,
-            int sampleCount = 5, 
+            int sampleCount = 5,
             TimeSpan? sampleInterval = null)
-             : this(device.CreateAnalogInputPort(analogPin, 
-                                                 sampleCount, 
-                                                 sampleInterval ?? new TimeSpan(0, 0, 0, 40), 
+             : this(analogPin.CreateAnalogInputPort(
+                                                 sampleCount,
+                                                 sampleInterval ?? new TimeSpan(0, 0, 0, 40),
                                                  maxVoltageReference ?? new Voltage(3.3)),
                    minVoltageReference, maxVoltageReference)
         {
@@ -91,9 +87,11 @@ namespace Meadow.Foundation.Sensors.Light
         {
             // wire up our analog input observer
             var observer = IAnalogInputPort.CreateObserver(
-                handler: result => {
+                handler: result =>
+                {
                     // create a new change result from the new value
-                    ChangeResult<float> changeResult = new ChangeResult<float>() {
+                    ChangeResult<float> changeResult = new ChangeResult<float>()
+                    {
                         New = ConvertVoltageToIntensity(result.New),
                         Old = SolarIntensity
                     };

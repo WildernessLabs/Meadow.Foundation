@@ -1,9 +1,9 @@
-﻿using System.Threading.Tasks;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation;
 using Meadow.Foundation.Displays;
 using Meadow.Foundation.Graphics;
+using System.Threading.Tasks;
 
 namespace Displays.ePaper.EpdColor_Sample
 {
@@ -73,56 +73,56 @@ namespace Displays.ePaper.EpdColor_Sample
             //Intialize the display based on the displayType enum
             EPaperTriColorBase display = displayType switch
             {
-                EpdColorDisplay.Epd1in54b => new Epd1in54b(device: Device,
+                EpdColorDisplay.Epd1in54b => new Epd1in54b(
                     spiBus: Device.CreateSpiBus(),
                     chipSelectPin: Device.Pins.D03,
                     dcPin: Device.Pins.D02,
                     resetPin: Device.Pins.D01,
                     busyPin: Device.Pins.D00),
 
-                EpdColorDisplay.Epd1in54c => new Epd1in54c(device: Device,
+                EpdColorDisplay.Epd1in54c => new Epd1in54c(
                     spiBus: Device.CreateSpiBus(),
                     chipSelectPin: Device.Pins.D03,
                     dcPin: Device.Pins.D02,
                     resetPin: Device.Pins.D01,
                     busyPin: Device.Pins.D00),
 
-                EpdColorDisplay.Epd2in13b => new Epd2in13b(device: Device,
+                EpdColorDisplay.Epd2in13b => new Epd2in13b(
                     spiBus: Device.CreateSpiBus(),
                     chipSelectPin: Device.Pins.D03,
                     dcPin: Device.Pins.D02,
                     resetPin: Device.Pins.D01,
                     busyPin: Device.Pins.D00),
 
-                EpdColorDisplay.Epd2in13b_V4 => new Epd2in13b_V4(device: Device,
+                EpdColorDisplay.Epd2in13b_V4 => new Epd2in13b_V4(
                     spiBus: Device.CreateSpiBus(),
                     chipSelectPin: Device.Pins.D03,
                     dcPin: Device.Pins.D02,
                     resetPin: Device.Pins.D01,
                     busyPin: Device.Pins.D00),
 
-                EpdColorDisplay.Epd2in7b => new Epd2in7b(device: Device,
+                EpdColorDisplay.Epd2in7b => new Epd2in7b(
                     spiBus: Device.CreateSpiBus(),
                     chipSelectPin: Device.Pins.D03,
                     dcPin: Device.Pins.D02,
                     resetPin: Device.Pins.D01,
                     busyPin: Device.Pins.D00),
 
-                EpdColorDisplay.Epd2in9b => new Epd2in9b(device: Device,
+                EpdColorDisplay.Epd2in9b => new Epd2in9b(
                     spiBus: Device.CreateSpiBus(),
                     chipSelectPin: Device.Pins.D03,
                     dcPin: Device.Pins.D02,
                     resetPin: Device.Pins.D01,
                     busyPin: Device.Pins.D00),
 
-                EpdColorDisplay.Epd4in2bV2 => new Epd4in2bV2(device: Device,
+                EpdColorDisplay.Epd4in2bV2 => new Epd4in2bV2(
                     spiBus: Device.CreateSpiBus(),
                     chipSelectPin: Device.Pins.D03,
                     dcPin: Device.Pins.D02,
                     resetPin: Device.Pins.D01,
                     busyPin: Device.Pins.D00),
 
-                EpdColorDisplay.Epd4in2bc => new Epd4in2bc(device: Device,
+                EpdColorDisplay.Epd4in2bc => new Epd4in2bc(
                     spiBus: Device.CreateSpiBus(),
                     chipSelectPin: Device.Pins.D03,
                     dcPin: Device.Pins.D02,

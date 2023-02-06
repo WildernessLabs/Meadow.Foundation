@@ -39,7 +39,6 @@ namespace Meadow.Foundation.Sensors.Moisture
         /// <summary>
         /// Creates a Capacitive soil moisture sensor object with the specified analog pin and a IO device.
         /// </summary>
-        /// <param name="device">The `IAnalogInputController` to create the port on.</param>
         /// <param name="analogInputPin">Analog pin the temperature sensor is connected to.</param>
         /// <param name="minimumVoltageCalibration">Minimum calibration voltage</param>
         /// <param name="maximumVoltageCalibration">Maximum calibration voltage</param>
@@ -48,15 +47,14 @@ namespace Meadow.Foundation.Sensors.Moisture
         /// reading. These are automatically averaged to reduce noise.</param>
         /// <param name="sampleInterval">The time, to wait in between samples during a reading.</param>
         public Capacitive(
-            IAnalogInputController device,
             IPin analogInputPin,
             Voltage? minimumVoltageCalibration,
             Voltage? maximumVoltageCalibration,
-            int sampleCount = 5, 
+            int sampleCount = 5,
             TimeSpan? sampleInterval = null)
                 : this(
-                    device.CreateAnalogInputPort(analogInputPin, sampleCount, sampleInterval ?? TimeSpan.FromMilliseconds(40), new Voltage(3.3)),
-                    minimumVoltageCalibration, 
+                    analogInputPin.CreateAnalogInputPort(sampleCount, sampleInterval ?? TimeSpan.FromMilliseconds(40), new Voltage(3.3)),
+                    minimumVoltageCalibration,
                     maximumVoltageCalibration)
         { }
 
@@ -83,7 +81,8 @@ namespace Meadow.Foundation.Sensors.Moisture
             AnalogInputPort.Subscribe
             (
                 IAnalogInputPort.CreateObserver(
-                    result => {
+                    result =>
+                    {
                         // create a new change result from the new value
                         ChangeResult<double> changeResult = new ChangeResult<double>()
                         {
@@ -153,7 +152,7 @@ namespace Meadow.Foundation.Sensors.Moisture
         /// <param name="voltage"></param>
         protected double VoltageToMoisture(Voltage voltage)
         {
-            if (MinimumVoltageCalibration > MaximumVoltageCalibration) 
+            if (MinimumVoltageCalibration > MaximumVoltageCalibration)
             {
                 return (1f - voltage.Volts.Map(MaximumVoltageCalibration.Volts, MinimumVoltageCalibration.Volts, 0f, 1.0f));
             }
