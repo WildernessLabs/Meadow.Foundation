@@ -1,9 +1,8 @@
-﻿using System;
-using System.Threading.Tasks;
-using Meadow.Foundation.Sensors.Base;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
 using Meadow.Peripherals.Sensors.Light;
 using Meadow.Units;
+using System;
+using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Light
 {
@@ -37,7 +36,6 @@ namespace Meadow.Foundation.Sensors.Light
         /// <summary>
         /// New instance of the AnalogLightSensor class.
         /// </summary>
-        /// <param name="device">The `IAnalogInputController` to create the port on.</param>
         /// <param name="analogPin">Analog pin the sensor is connected to.</param>
         /// <param name="calibration">Calibration for the analog sensor.</param> 
         /// <param name="sampleCount">How many samples to take during a given
@@ -45,11 +43,10 @@ namespace Meadow.Foundation.Sensors.Light
         /// <param name="sampleInterval">The time, in milliseconds,
         /// to wait in between samples during a reading.</param>
         public AnalogLightSensor(
-            IAnalogInputController device,
             IPin analogPin,
             Calibration? calibration = null,
             int sampleCount = 5, TimeSpan? sampleInterval = null)
-                : this(device.CreateAnalogInputPort(analogPin, sampleCount, sampleInterval ?? new TimeSpan(0, 0, 40), new Voltage(3.3)), calibration)
+                : this(analogPin.CreateAnalogInputPort(sampleCount, sampleInterval ?? new TimeSpan(0, 0, 40), new Voltage(3.3)), calibration)
         { }
 
         /// <summary>
@@ -71,7 +68,8 @@ namespace Meadow.Foundation.Sensors.Light
             AnalogInputPort.Subscribe
             (
                 IAnalogInputPort.CreateObserver(
-                    h => {
+                    h =>
+                    {
                         // capture the old water leve.
                         var oldLuminance = illuminance;
                         //var oldWaterLevel = VoltageToWaterLevel(h.Old);
@@ -140,7 +138,7 @@ namespace Meadow.Foundation.Sensors.Light
         /// <returns></returns>
         protected Illuminance VoltageToLuminance(Voltage voltage)
         {
-            if(voltage <= LuminanceCalibration.VoltsAtZero)
+            if (voltage <= LuminanceCalibration.VoltsAtZero)
             {
                 return new Illuminance(0);
             }

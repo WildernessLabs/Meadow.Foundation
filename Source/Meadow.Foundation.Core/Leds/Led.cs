@@ -26,7 +26,7 @@ namespace Meadow.Foundation.Leds
         /// <value><c>true</c> if is on; otherwise, <c>false</c>.</value>
         public bool IsOn
         {
-            get => isOn; 
+            get => isOn;
             set
             {
                 isOn = value;
@@ -38,10 +38,9 @@ namespace Meadow.Foundation.Leds
         /// <summary>
         /// Creates a LED through a pin directly from the Digital IO of the board
         /// </summary>
-        /// <param name="device">IDigitalOutputController to instantiate output port</param>
         /// <param name="pin"></param>
-        public Led(IDigitalOutputController device, IPin pin) :
-            this(device.CreateDigitalOutputPort(pin, false))
+        public Led(IPin pin) :
+            this(pin.CreateDigitalOutputPort(false))
         { }
 
         /// <summary>
@@ -96,7 +95,7 @@ namespace Meadow.Foundation.Leds
             });
             animationTask.Start();
         }
-        
+
         /// <summary>
         /// Set LED to blink
         /// </summary>

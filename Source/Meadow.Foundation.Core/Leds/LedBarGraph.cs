@@ -44,7 +44,7 @@ namespace Meadow.Foundation.Leds
 
             for (int i = 0; i < pins.Length; i++)
             {
-                leds[i] = new Led(device, pins[i]);
+                leds[i] = new Led(pins[i]);
             }
         }
 
@@ -109,9 +109,9 @@ namespace Meadow.Foundation.Leds
         /// Returns the index of the last LED turned on
         /// </summary>
         /// <returns></returns>
-        public int GetTopLedForPercentage() 
+        public int GetTopLedForPercentage()
         {
-            return (int) Math.Max(0, percentage * Count - 0.5);
+            return (int)Math.Max(0, percentage * Count - 0.5);
         }
 
         /// <summary>
