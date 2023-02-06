@@ -1,5 +1,5 @@
-﻿using System;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
+using System;
 
 namespace Meadow.Foundation.Sensors.Motion
 {
@@ -26,10 +26,9 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         /// Create a new Parallax PIR object connected to an input pin and IO Device.
         /// </summary>
-        /// <param name="device">The device connected to the sensor</param>
         /// <param name="inputPin">The input pin</param>        
-        public Hcsens0040(IDigitalInputController device, IPin inputPin) :
-            this(device.CreateDigitalInputPort(inputPin, InterruptMode.EdgeRising, ResistorMode.InternalPullDown))
+        public Hcsens0040(IPin inputPin) :
+            this(inputPin.CreateDigitalInputPort(InterruptMode.EdgeRising, ResistorMode.InternalPullDown))
         { }
 
         /// <summary>

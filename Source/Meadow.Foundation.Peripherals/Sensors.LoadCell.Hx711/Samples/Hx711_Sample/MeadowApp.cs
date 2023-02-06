@@ -1,7 +1,7 @@
 ﻿using Meadow;
-using Meadow.Units;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.LoadCell;
+using Meadow.Units;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -21,7 +21,7 @@ namespace Sensors.LoadCell.Hx711_Sample
         {
             Resolver.Log.Info("Initialize...");
 
-            loadSensor = new Hx711(Device, Device.Pins.D04, Device.Pins.D03);
+            loadSensor = new Hx711(Device.Pins.D04, Device.Pins.D03);
 
             if (CalibrationFactor == 0)
             {

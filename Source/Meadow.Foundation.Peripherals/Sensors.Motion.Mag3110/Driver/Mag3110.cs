@@ -24,7 +24,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// Raised when the magnetic field value changes
         /// </summary>
         public event EventHandler<IChangeResult<MagneticField3D>> MagneticField3dUpdated = delegate { };
-        
+
         /// <summary>
         /// Raised when the temperature value changes
         /// </summary>
@@ -76,8 +76,8 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <remarks>
         /// See section 5.1.1 of the datasheet.
         /// </remarks>
-        public bool IsDataReady => (Peripheral.ReadRegister(Registers.DR_STATUS) & 0x08) > 0; 
-        
+        public bool IsDataReady => (Peripheral.ReadRegister(Registers.DR_STATUS) & 0x08) > 0;
+
 
         /// <summary>
         /// Enable or disable interrupts.
@@ -89,7 +89,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </remarks>
         public bool DigitalInputsEnabled
         {
-            get => digitalInputsEnabled; 
+            get => digitalInputsEnabled;
             set
             {
                 Standby = true;
@@ -107,18 +107,6 @@ namespace Meadow.Foundation.Sensors.Motion
             }
         }
         bool digitalInputsEnabled;
-
-        /// <summary>
-        /// Create a new MAG3110 object using the default parameters for the component.
-        /// </summary>
-        /// <param name="device">IO Device</param>
-        /// <param name="i2cBus">The I2C bus</param>
-        /// <param name="interruptPin">Interrupt pin used to detect end of conversions</param>
-        /// <param name="address">Address of the MAG3110 (default = 0x0e)</param>
-        /// <param name="speed">Speed of the I2C bus (default = 400 KHz)</param>        
-        public Mag3110(IMeadowDevice device, II2cBus i2cBus, IPin interruptPin = null, byte address = (byte)Addresses.Default, ushort speed = 400) :
-                this(i2cBus, device.CreateDigitalInputPort(interruptPin, InterruptMode.EdgeRising, ResistorMode.Disabled), address)
-        { }
 
         /// <summary>
         /// Create a new MAG3110 object using the default parameters for the component
@@ -154,7 +142,7 @@ namespace Meadow.Foundation.Sensors.Motion
             WriteBuffer.Span[0] = Registers.X_OFFSET_MSB;
             WriteBuffer.Span[1] = WriteBuffer.Span[2] = WriteBuffer.Span[3] = 0;
             WriteBuffer.Span[4] = WriteBuffer.Span[5] = WriteBuffer.Span[6] = 0;
-            
+
             Peripheral.Write(WriteBuffer.Span[0..7]);
         }
 
@@ -188,7 +176,7 @@ namespace Meadow.Foundation.Sensors.Motion
                 var controlRegister = Peripheral.ReadRegister(Registers.CONTROL_1);
                 controlRegister |= 0x02;
                 Peripheral.WriteRegister(Registers.CONTROL_1, controlRegister);
-                
+
                 Peripheral.ReadRegister(Registers.X_MSB, ReadBuffer.Span[0..6]);
 
                 conditions.MagneticField3D = new MagneticField3D(

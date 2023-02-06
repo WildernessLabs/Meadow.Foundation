@@ -41,7 +41,6 @@ namespace Meadow.Foundation.Displays.Lcd
         /// <summary>
         /// Create a new GpioCharacterDisplay
         /// </summary>
-        /// <param name="device">The device connected to the display</param>
         /// <param name="pinRS">The RS pin</param>
         /// <param name="pinE">The E pin</param>
         /// <param name="pinD4">The D4 pin</param>
@@ -51,7 +50,6 @@ namespace Meadow.Foundation.Displays.Lcd
         /// <param name="rows">The number of character rows</param>
         /// <param name="columns">The number of character columns</param>
         public GpioCharacterDisplay(
-            IMeadowDevice device,
             IPin pinRS,
             IPin pinE,
             IPin pinD4,
@@ -60,12 +58,12 @@ namespace Meadow.Foundation.Displays.Lcd
             IPin pinD7,
             byte rows = 4, byte columns = 20) :
             this(
-                device.CreateDigitalOutputPort(pinRS),
-                device.CreateDigitalOutputPort(pinE),
-                device.CreateDigitalOutputPort(pinD4),
-                device.CreateDigitalOutputPort(pinD5),
-                device.CreateDigitalOutputPort(pinD6),
-                device.CreateDigitalOutputPort(pinD7),
+                pinRS.CreateDigitalOutputPort(),
+                pinE.CreateDigitalOutputPort(),
+                pinD4.CreateDigitalOutputPort(),
+                pinD5.CreateDigitalOutputPort(),
+                pinD6.CreateDigitalOutputPort(),
+                pinD7.CreateDigitalOutputPort(),
                 rows, columns)
         { }
 
@@ -104,7 +102,6 @@ namespace Meadow.Foundation.Displays.Lcd
         /// <summary>
         /// Create a new GpioCharacterDisplay object
         /// </summary>
-        /// <param name="device">The device connected to the display</param>
         /// <param name="pinV0">V0 pin</param>
         /// <param name="pinRS">RS pin</param>
         /// <param name="pinE">W pin</param>
@@ -115,7 +112,6 @@ namespace Meadow.Foundation.Displays.Lcd
         /// <param name="rows">Number of character rows</param>
         /// <param name="columns">Number of character columns</param>
         public GpioCharacterDisplay(
-            IMeadowDevice device,
             IPin pinV0,
             IPin pinRS,
             IPin pinE,
@@ -125,13 +121,13 @@ namespace Meadow.Foundation.Displays.Lcd
             IPin pinD7,
             byte rows = 4, byte columns = 20) :
             this(
-                device.CreatePwmPort(pinV0, new Units.Frequency(IPwmOutputController.DefaultPwmDutyCycle, Units.Frequency.UnitType.Hertz), 0.5f, true),
-                device.CreateDigitalOutputPort(pinRS),
-                device.CreateDigitalOutputPort(pinE),
-                device.CreateDigitalOutputPort(pinD4),
-                device.CreateDigitalOutputPort(pinD5),
-                device.CreateDigitalOutputPort(pinD6),
-                device.CreateDigitalOutputPort(pinD7),
+                pinV0.CreatePwmPort(new Units.Frequency(IPwmOutputController.DefaultPwmDutyCycle, Units.Frequency.UnitType.Hertz), 0.5f, true),
+                pinRS.CreateDigitalOutputPort(),
+                pinE.CreateDigitalOutputPort(),
+                pinD4.CreateDigitalOutputPort(),
+                pinD5.CreateDigitalOutputPort(),
+                pinD6.CreateDigitalOutputPort(),
+                pinD7.CreateDigitalOutputPort(),
                 rows, columns)
         { }
 
@@ -323,7 +319,7 @@ namespace Meadow.Foundation.Displays.Lcd
             }
         }
 
-    
+
         /// <summary>
         /// Set the displa conrtast
         /// </summary>

@@ -16,7 +16,7 @@ namespace Generators.SoftPwmPort_Sample
         {
             Resolver.Log.Info("Initializing...");
 
-            IDigitalOutputPort digiOut = Device.CreateDigitalOutputPort(Device.Pins.D00);
+            IDigitalOutputPort digiOut = Device.Pins.D00.CreateDigitalOutputPort();
             softPwmPort = new SoftPwmPort(digiOut);
 
             return Task.CompletedTask;

@@ -2,7 +2,6 @@
 using Meadow.Devices;
 using Meadow.Foundation.Displays.Lcd;
 using Meadow.Hardware;
-using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -24,13 +23,12 @@ namespace Displays.Lcd.CharacterDisplay_Sample
             return base.Initialize();
         }
 
-        void InitGpio() 
+        void InitGpio()
         {
             Resolver.Log.Info("InitGpio...");
-            
+
             display = new CharacterDisplay
             (
-                device: Device,
                 pinRS: Device.Pins.D10,
                 pinE: Device.Pins.D09,
                 pinD4: Device.Pins.D08,
@@ -47,10 +45,9 @@ namespace Displays.Lcd.CharacterDisplay_Sample
 
             display = new CharacterDisplay
             (
-                device: Device,
                 pinV0: Device.Pins.D11,
                 pinRS: Device.Pins.D10,
-                pinE:  Device.Pins.D09,
+                pinE: Device.Pins.D09,
                 pinD4: Device.Pins.D08,
                 pinD5: Device.Pins.D07,
                 pinD6: Device.Pins.D06,
@@ -84,7 +81,7 @@ namespace Displays.Lcd.CharacterDisplay_Sample
             );
         }
 
-        void TestCharacterDisplay() 
+        void TestCharacterDisplay()
         {
             Resolver.Log.Info("TestCharacterDisplay...");
 
@@ -96,7 +93,7 @@ namespace Displays.Lcd.CharacterDisplay_Sample
             display.WriteLine("Will delete in", 0);
 
             int count = 5;
-            while(count > 0)
+            while (count > 0)
             {
                 display.WriteLine($"{count--}", 1);
                 Thread.Sleep(500);

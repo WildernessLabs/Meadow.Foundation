@@ -1,9 +1,8 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Distance;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Sensors.Distance.HCSR04_Sample
 {
@@ -20,8 +19,7 @@ namespace Sensors.Distance.HCSR04_Sample
             Resolver.Log.Info($"Hello HC-SR04 sample");
 
             hCSR04 = new Hcsr04(
-                device: Device, 
-                triggerPin: Device.Pins.D05, 
+                triggerPin: Device.Pins.D05,
                 echoPin: Device.Pins.D06);
             hCSR04.DistanceUpdated += HCSR04_DistanceUpdated;
 
