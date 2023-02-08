@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Meadow;
 using Meadow.Devices;
@@ -7,7 +8,7 @@ using Meadow.Peripherals.Sensors.Location.Gnss;
 
 namespace Sensors.Gnss.NeoM8_Sample
 {
-    public class MeadowApp : App<F7FeatherV1>
+    public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
 
@@ -18,10 +19,13 @@ namespace Sensors.Gnss.NeoM8_Sample
             Resolver.Log.Info("Initializing ...");
 
             //SPI
-            gps = new NeoM8(Device.CreateSpiBus(), Device.CreateDigitalOutputPort(Device.Pins.D14));
+            //gps = new NeoM8(Device.CreateSpiBus(), Device.CreateDigitalOutputPort(Device.Pins.D14), null);
+
+            //I2C
+            //gps = new NeoM8(Device.CreateI2cBus());
 
             //Serial
-            //gps = new NeoM8(Device, Device.SerialPortNames.Com4, Device.Pins.D09, Device.Pins.D11);
+            gps = new NeoM8(Device, Device.PlatformOS.GetSerialPortName("COM1"), Device.Pins.D09, Device.Pins.D11);
 
             gps.GgaReceived += (object sender, GnssPositionInfo location) =>
             {

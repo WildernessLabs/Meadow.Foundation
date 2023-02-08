@@ -18,9 +18,9 @@ namespace Leds.PwmLed_Onboard_Sample
         public override Task Initialize()
         {
             Resolver.Log.Info("Initializing...");
-            redPwmLed = new PwmLed(Device, Device.Pins.OnboardLedRed, TypicalForwardVoltage.ResistorLimited, CircuitTerminationType.High);
-            greenPwmLed = new PwmLed(Device, Device.Pins.OnboardLedGreen, TypicalForwardVoltage.ResistorLimited, CircuitTerminationType.High);
-            bluePwmLed = new PwmLed(Device, Device.Pins.OnboardLedBlue, TypicalForwardVoltage.ResistorLimited, CircuitTerminationType.High);
+            redPwmLed = new PwmLed(Device.Pins.OnboardLedRed, TypicalForwardVoltage.ResistorLimited, CircuitTerminationType.High);
+            greenPwmLed = new PwmLed(Device.Pins.OnboardLedGreen, TypicalForwardVoltage.ResistorLimited, CircuitTerminationType.High);
+            bluePwmLed = new PwmLed(Device.Pins.OnboardLedBlue, TypicalForwardVoltage.ResistorLimited, CircuitTerminationType.High);
             
             return Task.CompletedTask;
         }
