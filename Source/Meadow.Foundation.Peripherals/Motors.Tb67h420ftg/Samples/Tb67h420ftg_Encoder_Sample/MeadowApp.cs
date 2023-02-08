@@ -32,15 +32,15 @@ namespace Motors.Tb67h420ftg_Encoder_Sample
 
             Resolver.Log.Info("Made it here.");
 
-            button1 = new PushButton(Device, Device.Pins.D13, ResistorMode.InternalPullDown);
-            button2 = new PushButton(Device, Device.Pins.D12, ResistorMode.InternalPullDown);
+            button1 = new PushButton(Device.Pins.D13, ResistorMode.InternalPullDown);
+            button2 = new PushButton(Device.Pins.D12, ResistorMode.InternalPullDown);
 
             button1.PressStarted += Button1_PressStarted;
             button1.PressEnded += Button1_PressEnded;
             button2.PressStarted += Button2_PressStarted;
             button2.PressEnded += Button2_PressEnded;
 
-            motorDriver = new Tb67h420ftg(Device,
+            motorDriver = new Tb67h420ftg(
                 inA1: Device.Pins.D04, inA2: Device.Pins.D03, pwmA: Device.Pins.D01,
                 inB1: Device.Pins.D05, inB2: Device.Pins.D06, pwmB: Device.Pins.D00,
                 fault1: Device.Pins.D02, fault2: Device.Pins.D07,
@@ -51,7 +51,7 @@ namespace Motors.Tb67h420ftg_Encoder_Sample
             motorDriver.Motor2.MotorCalibrationMultiplier = 0.5f;
 
             Resolver.Log.Info("Init encoder");
-            encoder = new RotaryEncoder(Device, Device.Pins.D09, Device.Pins.D15);
+            encoder = new RotaryEncoder(Device.Pins.D09, Device.Pins.D15);
             //encoder.Rotated += Encoder_Rotated;
 
             Resolver.Log.Info("Init display");
@@ -69,7 +69,7 @@ namespace Motors.Tb67h420ftg_Encoder_Sample
         int backwardsCount = 0;
         private void Encoder_Rotated(object sender, Meadow.Peripherals.Sensors.Rotary.RotaryChangeResult e)
         {
-            if(e.New == Meadow.Peripherals.Sensors.Rotary.RotationDirection.Clockwise)
+            if (e.New == Meadow.Peripherals.Sensors.Rotary.RotationDirection.Clockwise)
             {
                 forwardCount++;
             }
@@ -106,7 +106,7 @@ namespace Motors.Tb67h420ftg_Encoder_Sample
         {
             double eventsPerSec = 10000000 * (forwardCount + backwardsCount - count) / (DateTime.Now.Ticks - pressed);
 
-          //  UpdateDisplay($"CW: {forwardCount}, CCW {backwardsCount}", $"Events/s {eventsPerSec}");
+            //  UpdateDisplay($"CW: {forwardCount}, CCW {backwardsCount}", $"Events/s {eventsPerSec}");
 
             Resolver.Log.Info("Motor 1 stop.");
             motorDriver.Motor1.Power = 0f;

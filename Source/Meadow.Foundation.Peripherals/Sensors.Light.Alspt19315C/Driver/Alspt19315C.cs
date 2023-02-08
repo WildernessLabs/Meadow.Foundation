@@ -1,8 +1,7 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
 using Meadow.Units;
+using System;
+using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Light
 {
@@ -29,8 +28,8 @@ namespace Meadow.Foundation.Sensors.Light
         /// <param name="sampleCount">The sample count</param>
         /// <param name="sampleInterval">The sample interval</param>
         /// <param name="voltage">The peak voltage</param>
-        public Alspt19315C(IAnalogInputController device, IPin pin, int sampleCount = 5, TimeSpan? sampleInterval = null, Voltage? voltage = null)
-            : this(device.CreateAnalogInputPort(pin, sampleCount, sampleInterval ?? TimeSpan.FromMilliseconds(40), voltage ?? new Voltage(3.3)))
+        public Alspt19315C(IPin pin, int sampleCount = 5, TimeSpan? sampleInterval = null, Voltage? voltage = null)
+            : this(pin.CreateAnalogInputPort(sampleCount, sampleInterval ?? TimeSpan.FromMilliseconds(40), voltage ?? new Voltage(3.3)))
         { }
 
         /// <summary>
@@ -44,8 +43,10 @@ namespace Meadow.Foundation.Sensors.Light
             AnalogInputPort.Subscribe
             (
                 IAnalogInputPort.CreateObserver(
-                    result => {
-                        ChangeResult<Voltage> changeResult = new ChangeResult<Voltage>() {
+                    result =>
+                    {
+                        ChangeResult<Voltage> changeResult = new ChangeResult<Voltage>()
+                        {
                             New = result.New,
                             Old = Voltage
                         };
@@ -69,7 +70,8 @@ namespace Meadow.Foundation.Sensors.Light
         /// </param>
         public override void StartUpdating(TimeSpan? updateInterval)
         {
-            lock (samplingLock) {
+            lock (samplingLock)
+            {
                 if (IsSampling) return;
                 IsSampling = true;
                 AnalogInputPort.StartUpdating(updateInterval);
@@ -81,7 +83,8 @@ namespace Meadow.Foundation.Sensors.Light
         /// </summary>
         public override void StopUpdating()
         {
-            lock (samplingLock) {
+            lock (samplingLock)
+            {
                 if (!IsSampling) return;
                 base.IsSampling = false;
                 AnalogInputPort.StopUpdating();

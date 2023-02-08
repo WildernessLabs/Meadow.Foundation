@@ -14,7 +14,12 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// The display color mode (4 bit per pixel grayscale)
         /// </summary>
-        public ColorType ColorMode => ColorType.Format4bppGray;
+        public ColorMode ColorMode => ColorMode.Format4bppGray;
+
+        /// <summary>
+        /// The Color mode supported by the display
+        /// </summary>
+        public ColorMode SupportedColorModes => ColorMode.Format4bppGray;
 
         /// <summary>
         /// The display width in pixels

@@ -29,18 +29,16 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// <summary>
         /// New instance of the AnalogWaterLevel class.
         /// </summary>
-        /// <param name="device">The `IAnalogInputController` to create the port on.</param>
         /// <param name="analogPin">Analog pin the sensor is connected to.</param>
         /// <param name="calibration">Calibration for the analog sensor.</param>
         /// <param name="updateInterval">The time, in milliseconds, to wait
         /// between sets of sample readings. This value determines how often
         /// `Changed` events are raised and `IObservable` consumers are notified.</param>
         public AnalogWaterLevel(
-            IAnalogInputController device,
             IPin analogPin,
             Calibration? calibration = null,
             TimeSpan? updateInterval = null)
-                : this(device.CreateAnalogInputPort(analogPin, 5, TimeSpan.FromMilliseconds(40), new Voltage(3.3, Voltage.UnitType.Volts)), calibration)
+                : this(analogPin.CreateAnalogInputPort(5, TimeSpan.FromMilliseconds(40), new Voltage(3.3, Voltage.UnitType.Volts)), calibration)
         {
             base.UpdateInterval = updateInterval ?? TimeSpan.FromSeconds(1000);
         }
@@ -64,7 +62,8 @@ namespace Meadow.Foundation.Sensors.Environmental
             AnalogInputPort.Subscribe
             (
                 IAnalogInputPort.CreateObserver(
-                    h => {
+                    h =>
+                    {
                         // capture the old water leve.
                         var oldWaterLevel = WaterLevel;
                         //var oldWaterLevel = VoltageToWaterLevel(h.Old);
@@ -80,7 +79,7 @@ namespace Meadow.Foundation.Sensors.Environmental
                 )
            );
         }
-        
+
         /// <summary>
         /// Convenience method to get the current water level. For frequent reads, use
         /// StartSampling() and StopSampling() in conjunction with the SampleBuffer.
@@ -126,7 +125,7 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// <returns></returns>
         protected float VoltageToWaterLevel(Voltage voltage)
         {
-            if(voltage <= LevelCalibration.VoltsAtZero)
+            if (voltage <= LevelCalibration.VoltsAtZero)
             {
                 return 0;
             }

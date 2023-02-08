@@ -1,7 +1,6 @@
-﻿using System;
+﻿using Meadow.Hardware;
 using System.Collections;
 using System.Collections.Generic;
-using Meadow.Hardware;
 
 namespace Meadow.Foundation.ICs.IOExpanders
 {
@@ -12,6 +11,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         public class PinDefinitions : IPinDefinitions
         {
+            public IPinController Controller { get; set; }
+
             /// <summary>
             /// List of pins
             /// </summary>
@@ -20,7 +21,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// <summary>
             /// GPA0
             /// </summary>
-            public readonly IPin GPA0 = new Pin(
+            public IPin GPA0 => new Pin(
+                Controller,
                 "GPA0", (byte)0x00,
                 new List<IChannelInfo> {
                     new DigitalChannelInfo("GPA0", pullDownCapable:false),
@@ -30,7 +32,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// <summary>
             /// GPA1
             /// </summary>
-            public readonly IPin GPA1 = new Pin(
+            public IPin GPA1 => new Pin(
+                Controller,
                 "GPA1", (byte)0x01,
                 new List<IChannelInfo> {
                     new DigitalChannelInfo("GPA1", pullDownCapable:false),
@@ -40,7 +43,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// <summary>
             /// GPA2
             /// </summary>
-            public readonly IPin GPA2 = new Pin(
+            public IPin GPA2 => new Pin(
+                Controller,
                 "GPA2", (byte)0x02,
                 new List<IChannelInfo> {
                     new DigitalChannelInfo("GPA2", pullDownCapable:false),
@@ -50,7 +54,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// <summary>
             /// GPA3
             /// </summary>
-            public readonly IPin GPA3 = new Pin(
+            public IPin GPA3 => new Pin(
+                Controller,
                 "GPA3", (byte)0x03,
                 new List<IChannelInfo> {
                     new DigitalChannelInfo("GPA3", pullDownCapable:false),
@@ -60,7 +65,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// <summary>
             /// GPA4
             /// </summary>
-            public readonly IPin GPA4 = new Pin(
+            public IPin GPA4 => new Pin(
+                Controller,
                 "GPA4", (byte)0x04,
                 new List<IChannelInfo> {
                     new DigitalChannelInfo("GPA4", pullDownCapable:false),
@@ -70,7 +76,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// <summary>
             /// GPA5
             /// </summary>
-            public readonly IPin GPA5 = new Pin(
+            public IPin GPA5 => new Pin(
+                Controller,
                 "GPA5", (byte)0x05,
                 new List<IChannelInfo> {
                     new DigitalChannelInfo("GPA5", pullDownCapable:false),
@@ -80,7 +87,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// <summary>
             /// GPA6
             /// </summary>
-            public readonly IPin GPA6 = new Pin(
+            public IPin GPA6 => new Pin(
+                Controller,
                 "GPA6", (byte)0x06,
                 new List<IChannelInfo> {
                     new DigitalChannelInfo("GPA6", pullDownCapable:false),
@@ -90,7 +98,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// <summary>
             /// GPA7
             /// </summary>
-            public readonly IPin GPA7 = new Pin(
+            public IPin GPA7 => new Pin(
+                Controller,
                 "GPA7", (byte)0x07,
                 new List<IChannelInfo> {
                     new DigitalChannelInfo("GPA7", pullDownCapable:false),
@@ -100,7 +109,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// <summary>
             /// GPB0
             /// </summary>
-            public readonly IPin GPB0 = new Pin(
+            public IPin GPB0 => new Pin(
+                Controller,
                 "GPB0", (byte)0x08,
                 new List<IChannelInfo> {
                     new DigitalChannelInfo("GPB0", pullDownCapable:false),
@@ -110,7 +120,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// <summary>
             /// GPB1
             /// </summary>
-            public readonly IPin GPB1 = new Pin(
+            public IPin GPB1 => new Pin(
+                Controller,
                 "GPB1", (byte)0x09,
                 new List<IChannelInfo> {
                     new DigitalChannelInfo("GPB1", pullDownCapable:false),
@@ -120,7 +131,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// <summary>
             /// GPB2
             /// </summary>
-            public readonly IPin GPB2 = new Pin(
+            public IPin GPB2 => new Pin(
+                Controller,
                 "GPB2", (byte)0x0A,
                 new List<IChannelInfo> {
                     new DigitalChannelInfo("GPB2", pullDownCapable:false),
@@ -130,7 +142,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// <summary>
             /// GPB3
             /// </summary>
-            public readonly IPin GPB3 = new Pin(
+            public IPin GPB3 => new Pin(
+                Controller,
                 "GPB3", (byte)0x0B,
                 new List<IChannelInfo> {
                     new DigitalChannelInfo("GPB3", pullDownCapable:false),
@@ -140,7 +153,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// <summary>
             /// GPB4
             /// </summary>
-            public readonly IPin GPB4 = new Pin(
+            public IPin GPB4 => new Pin(
+                Controller,
                 "GPB4", (byte)0x0C,
                 new List<IChannelInfo> {
                     new DigitalChannelInfo("GPB4", pullDownCapable:false),
@@ -150,7 +164,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// <summary>
             /// GPB5
             /// </summary>
-            public readonly IPin GPB5 = new Pin(
+            public IPin GPB5 => new Pin(
+                Controller,
                 "GPB5", (byte)0x0D,
                 new List<IChannelInfo> {
                     new DigitalChannelInfo("GPB5", pullDownCapable:false),
@@ -160,7 +175,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// <summary>
             /// GPB6
             /// </summary>
-            public readonly IPin GPB6 = new Pin(
+            public IPin GPB6 => new Pin(
+                Controller,
                 "GPB6", (byte)0x0E,
                 new List<IChannelInfo> {
                     new DigitalChannelInfo("GPB6", pullDownCapable:false),
@@ -170,7 +186,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// <summary>
             /// GPB7
             /// </summary>
-            public readonly IPin GPB7 = new Pin(
+            public IPin GPB7 => new Pin(
+                Controller,
                 "GPB7", (byte)0x0F,
                 new List<IChannelInfo> {
                     new DigitalChannelInfo("GPB7", pullDownCapable:false),
@@ -180,8 +197,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// <summary>
             /// Create a new PinDefinitions object
             /// </summary>
-            public PinDefinitions()
+            public PinDefinitions(Mcp23x1x controller)
             {
+                Controller = controller;
                 InitAllPins();
             }
 

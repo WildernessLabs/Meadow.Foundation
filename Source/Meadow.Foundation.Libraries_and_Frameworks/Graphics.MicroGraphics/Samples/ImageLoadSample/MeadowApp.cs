@@ -1,11 +1,11 @@
-﻿using System;
-using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
-using Meadow.Devices;
+﻿using Meadow.Devices;
 using Meadow.Foundation.Displays;
 using Meadow.Hardware;
 using Meadow.Units;
+using System;
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Graphics
 {
@@ -32,12 +32,11 @@ namespace Meadow.Foundation.Graphics
             var spiBus = Device.CreateSpiBus(Device.Pins.SCK, Device.Pins.MOSI, Device.Pins.MISO, config);
 
             var display = new St7789(
-                device: Device,
                 spiBus: spiBus,
                 chipSelectPin: Device.Pins.A03,
                 dcPin: Device.Pins.A04,
                 resetPin: Device.Pins.A05,
-                width: 240, height: 240, colorMode: ColorType.Format16bppRgb565)
+                width: 240, height: 240, colorMode: ColorMode.Format16bppRgb565)
             {
             };
 

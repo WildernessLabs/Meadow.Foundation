@@ -1,8 +1,8 @@
 ﻿using Meadow.Hardware;
 using Meadow.Peripherals.Sensors;
+using Meadow.Units;
 using System;
 using System.Threading.Tasks;
-using Meadow.Units;
 
 namespace Meadow.Foundation.Sensors.Temperature
 {
@@ -102,7 +102,6 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// <summary>
         /// Creates a new instance of the AnalogTemperature class.
         /// </summary>
-        /// <param name="device">The `IAnalogInputController` to create the port on</param>
         /// <param name="analogPin">Analog pin the temperature sensor is connected to</param>
         /// <param name="sensorType">Type of sensor attached to the analog port</param>
         /// <param name="calibration">Calibration for the analog temperature sensor - used if sensorType is set to Custom</param>
@@ -110,10 +109,13 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// reading. These are automatically averaged to reduce noise</param>
         /// <param name="sampleInterval">The time between sample readings</param>
         public AnalogTemperature(
-            IAnalogInputController device, IPin analogPin,
-            KnownSensorType sensorType, Calibration? calibration = null,
-            int sampleCount = 5, TimeSpan? sampleInterval = null)
-                : this(device.CreateAnalogInputPort(analogPin, sampleCount, sampleInterval ?? TimeSpan.FromMilliseconds(40), new Voltage(3.3, Voltage.UnitType.Volts)),
+            IPin analogPin,
+            KnownSensorType sensorType,
+            Calibration? calibration = null,
+            int sampleCount = 5,
+            TimeSpan? sampleInterval = null)
+                : this(
+                      analogPin.CreateAnalogInputPort(sampleCount, sampleInterval ?? TimeSpan.FromMilliseconds(40), new Voltage(3.3, Voltage.UnitType.Volts)),
                       sensorType, calibration)
         { }
 
@@ -129,7 +131,8 @@ namespace Meadow.Foundation.Sensors.Temperature
         {
             AnalogInputPort = analogInputPort;
 
-            switch (sensorType) {
+            switch (sensorType)
+            {
                 case KnownSensorType.TMP35:
                 case KnownSensorType.LM35:
                 case KnownSensorType.LM45:
@@ -160,7 +163,7 @@ namespace Meadow.Foundation.Sensors.Temperature
                     break;
                 case KnownSensorType.Custom:
                     //user provided calibration
-                    if(calibration == null)
+                    if (calibration == null)
                     {
                         throw new ArgumentNullException("Custom Calibration sensor type requires a Calibration parameter");
                     }
@@ -179,9 +182,11 @@ namespace Meadow.Foundation.Sensors.Temperature
             AnalogInputPort.Subscribe
             (
                 IAnalogInputPort.CreateObserver(
-                    result => {
+                    result =>
+                    {
                         // create a new change result from the new value
-                        ChangeResult<Units.Temperature> changeResult = new ChangeResult<Units.Temperature>() {
+                        ChangeResult<Units.Temperature> changeResult = new ChangeResult<Units.Temperature>()
+                        {
                             New = VoltageToTemperature(result.New),
                             Old = Temperature
                         };
@@ -201,13 +206,9 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// <returns>A float value that's ann average value of all the samples taken.</returns>
         protected override async Task<Units.Temperature> ReadSensor()
         {
-            // read the voltage
-            Voltage voltage = await AnalogInputPort.Read();
-
-            // convert the voltage
+            var voltage = await AnalogInputPort.Read();
             var newTemp = VoltageToTemperature(voltage);
             Temperature = newTemp;
-            
             return newTemp;
         }
 
@@ -224,7 +225,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         ///</param>
         public override void StartUpdating(TimeSpan? updateInterval)
         {
-            lock (samplingLock) 
+            lock (samplingLock)
             {
                 if (IsSampling) { return; }
                 IsSampling = true;
@@ -237,7 +238,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// </summary>
         public override void StopUpdating()
         {
-            lock (samplingLock) 
+            lock (samplingLock)
             {
                 if (!IsSampling) { return; }
                 IsSampling = false;
@@ -250,7 +251,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// </summary>
         /// <param name="changeResult"></param>
         protected override void RaiseEventsAndNotify(IChangeResult<Units.Temperature> changeResult)
-        { 
+        {
             TemperatureUpdated?.Invoke(this, changeResult);
             base.RaiseEventsAndNotify(changeResult);
         }

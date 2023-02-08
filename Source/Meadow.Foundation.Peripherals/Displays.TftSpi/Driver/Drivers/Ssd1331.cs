@@ -1,6 +1,5 @@
 ﻿using Meadow.Foundation.Graphics;
 using Meadow.Hardware;
-using System.Threading;
 
 namespace Meadow.Foundation.Displays
 {
@@ -13,21 +12,25 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// The default display color mode
         /// </summary>
-        public override ColorType DefautColorMode => ColorType.Format16bppRgb565;
+        public override ColorMode DefautColorMode => ColorMode.Format16bppRgb565;
+
+        /// <summary>
+        /// The color modes supported by the display
+        /// </summary>
+        public override ColorMode SupportedColorModes => ColorMode.Format16bppRgb565;
 
         /// <summary>
         /// Create a new Ssd1331 color display object
         /// </summary>
-        /// <param name="device">Meadow device</param>
         /// <param name="spiBus">SPI bus connected to display</param>
         /// <param name="chipSelectPin">Chip select pin</param>
         /// <param name="dcPin">Data command pin</param>
         /// <param name="resetPin">Reset pin</param>
         /// <param name="width">Width of display in pixels</param>
         /// <param name="height">Height of display in pixels</param>
-        public Ssd1331(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
-           int width = 96, int height = 64) 
-            : base(device, spiBus, chipSelectPin, dcPin, resetPin, width, height, ColorType.Format16bppRgb565)
+        public Ssd1331(ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
+           int width = 96, int height = 64)
+            : base(spiBus, chipSelectPin, dcPin, resetPin, width, height, ColorMode.Format16bppRgb565)
         {
             Initialize();
         }
@@ -44,7 +47,7 @@ namespace Meadow.Foundation.Displays
         public Ssd1331(ISpiBus spiBus, IDigitalOutputPort chipSelectPort,
                 IDigitalOutputPort dataCommandPort, IDigitalOutputPort resetPort,
                 int width = 96, int height = 64) :
-            base(spiBus, chipSelectPort, dataCommandPort, resetPort, width, height, ColorType.Format16bppRgb565)
+            base(spiBus, chipSelectPort, dataCommandPort, resetPort, width, height, ColorMode.Format16bppRgb565)
         {
             Initialize();
         }
@@ -58,15 +61,15 @@ namespace Meadow.Foundation.Displays
             if (resetPort != null)
             {
                 resetPort.State = true;
-                Thread.Sleep(50);
+                DelayMs(50);
                 resetPort.State = false;
-                Thread.Sleep(50);
+                DelayMs(50);
                 resetPort.State = true;
-                Thread.Sleep(50);
+                DelayMs(50);
             }
             else
             {
-                Thread.Sleep(150); //Not sure if this is needed but can't hurt
+                DelayMs(150); //Not sure if this is needed but can't hurt
             }
 
             SendCommand(CMD_DISPLAYOFF);   // 0xAE
@@ -123,20 +126,6 @@ namespace Meadow.Foundation.Displays
         }
 
         /// <summary>
-        /// Is the color mode supported by the display
-        /// </summary>
-        /// <param name="mode">The color mode</param>
-        /// <returns>True if supported</returns>
-        public override bool IsColorModeSupported(ColorType mode)
-        {
-            if (mode == ColorType.Format16bppRgb565)
-            {
-                return true;
-            }
-            return false;
-        }
-
-        /// <summary>
         /// Set addrees window for display updates
         /// </summary>
         /// <param name="x0">X start in pixels</param>
@@ -154,16 +143,7 @@ namespace Meadow.Foundation.Displays
             SendCommand((byte)y1);
         }
 
-        // Timing Delays
-        //static int DELAYS_HWFILL = 3;
-        //static int DELAYS_HWLINE = 1;
-
         // SSD1331 Commands
-        //static byte CMD_DRAWLINE        = 0x21;
-        //static byte CMD_DRAWRECT 		= 0x22;
-        //static byte CMD_FILL 			= 0x26;
-        //static byte CMD_SETCOLUMN 		= 0x15;
-        //static byte CMD_SETROW    		= 0x75;
         static byte CMD_CONTRASTA = 0x81;
         static byte CMD_CONTRASTB = 0x82;
         static byte CMD_CONTRASTC = 0x83;
@@ -172,9 +152,6 @@ namespace Meadow.Foundation.Displays
         static byte CMD_STARTLINE = 0xA1;
         static byte CMD_DISPLAYOFFSET = 0xA2;
         static byte CMD_NORMALDISPLAY = 0xA4;
-        //static byte CMD_DISPLAYALLON  	= 0xA5;
-        //static byte CMD_DISPLAYALLOFF 	= 0xA6;
-        //static byte CMD_INVERTDISPLAY 	= 0xA7;
         static byte CMD_SETMULTIPLEX = 0xA8;
         static byte CMD_SETMASTER = 0xAD;
         static byte CMD_DISPLAYOFF = 0xAE;
@@ -184,7 +161,6 @@ namespace Meadow.Foundation.Displays
         static byte CMD_CLOCKDIV = 0xB3;
         static byte CMD_PRECHARGEA = 0x8A;
         static byte CMD_PRECHARGEB = 0x8B;
-        //static byte CMD_PRECHARGEC 		= 0x8C;
         static byte CMD_PRECHARGELEVEL = 0xBB;
         static byte CMD_VCOMH = 0xBE;
     }

@@ -1,16 +1,18 @@
-﻿using System.Collections;
+﻿using Meadow.Hardware;
+using System.Collections;
 using System.Collections.Generic;
-using Meadow.Hardware;
 
 namespace Meadow.Foundation.ICs.IOExpanders
 {
-	public partial class x74595
-	{
+    public partial class x74595
+    {
         /// <summary>
         /// x74595 pin definitions class
         /// </summary>
 		public class PinDefinitions : IPinDefinitions
-		{
+        {
+            public IPinController Controller { get; set; }
+
             /// <summary>
             /// All pins
             /// </summary>
@@ -19,46 +21,47 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// <summary>
             /// GP0
             /// </summary>
-            public IPin GP0 { get; } = GetPin("GP0", 0x00);
+            public IPin GP0 => GetPin(Controller, "GP0", 0x00);
 
             /// <summary>
             /// GP1
             /// </summary>
-            public IPin GP1 { get; } = GetPin("GP1", 0x01);
+            public IPin GP1 => GetPin(Controller, "GP1", 0x01);
 
             /// <summary>
             /// GP2
             /// </summary>
-            public IPin GP2 { get; } = GetPin("GP2", 0x02);
+            public IPin GP2 => GetPin(Controller, "GP2", 0x02);
 
             /// <summary>
             /// GP3
             /// </summary>
-            public IPin GP3 { get; } = GetPin("GP3", 0x03);
+            public IPin GP3 => GetPin(Controller, "GP3", 0x03);
 
             /// <summary>
             /// GP4
             /// </summary>
-            public IPin GP4 { get; } = GetPin("GP4", 0x04);
+            public IPin GP4 => GetPin(Controller, "GP4", 0x04);
 
             /// <summary>
             /// GP5
             /// </summary>
-            public IPin GP5 { get; } = GetPin("GP5", 0x05);
+            public IPin GP5 => GetPin(Controller, "GP5", 0x05);
 
             /// <summary>
             /// GP6
             /// </summary>
-            public IPin GP6 { get; } = GetPin("GP6", 0x06);
+            public IPin GP6 => GetPin(Controller, "GP6", 0x06);
 
             /// <summary>
             /// GP7
             /// </summary>
-            public IPin GP7 { get; } = GetPin("GP7", 0x07);
+            public IPin GP7 => GetPin(Controller, "GP7", 0x07);
 
-            private static IPin GetPin(string name, byte key)
+            private static IPin GetPin(IPinController controller, string name, byte key)
             {
                 return new Pin(
+                    controller,
                     name, key,
                     new List<IChannelInfo> {
                         new DigitalChannelInfo(
@@ -73,8 +76,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// <summary>
             /// Create a new PinDefinitions object
             /// </summary>
-            public PinDefinitions()
+            public PinDefinitions(x74595 controller)
             {
+                Controller = controller;
                 InitAllPins();
             }
 
@@ -102,5 +106,5 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
             IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
         }
-	}
+    }
 }

@@ -23,13 +23,12 @@ namespace Meadow.Foundation.Sensors.Base
         /// <summary>
         /// Creates a new AnalogObservableBase driver
         /// </summary>
-        /// <param name="device">Meadow device</param>
         /// <param name="pin">AnalogChannel connected to the sensor.</param>
         /// <param name="sampleCount">Number of sample to average for a reading</param>
         /// <param name="sampleInterval">Time between intervals</param>
         /// <param name="voltage">Max voltage of analog port</param>
-        public AnalogSamplingBase(IAnalogInputController device, IPin pin, int sampleCount = 5, TimeSpan? sampleInterval = null, Voltage? voltage = null)
-            : this(device.CreateAnalogInputPort(pin, sampleCount, sampleInterval ?? TimeSpan.FromMilliseconds(40), voltage ?? new Voltage(3.3)))
+        public AnalogSamplingBase(IPin pin, int sampleCount = 5, TimeSpan? sampleInterval = null, Voltage? voltage = null)
+            : this(pin.CreateAnalogInputPort(sampleCount, sampleInterval ?? TimeSpan.FromMilliseconds(40), voltage ?? new Voltage(3.3)))
         { }
 
         /// <summary>

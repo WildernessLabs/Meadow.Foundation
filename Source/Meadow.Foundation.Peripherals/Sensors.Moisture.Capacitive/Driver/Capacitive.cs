@@ -19,7 +19,7 @@ namespace Meadow.Foundation.Sensors.Moisture
         /// <summary>
         /// Returns the analog input port
         /// </summary>
-        public IAnalogInputPort AnalogInputPort { get; protected set; }
+        protected IAnalogInputPort AnalogInputPort { get; }
 
         /// <summary>
         /// Last value read from the moisture sensor.
@@ -39,30 +39,24 @@ namespace Meadow.Foundation.Sensors.Moisture
         /// <summary>
         /// Creates a Capacitive soil moisture sensor object with the specified analog pin and a IO device.
         /// </summary>
-        /// <param name="device">The `IAnalogInputController` to create the port on.</param>
         /// <param name="analogInputPin">Analog pin the temperature sensor is connected to.</param>
         /// <param name="minimumVoltageCalibration">Minimum calibration voltage</param>
         /// <param name="maximumVoltageCalibration">Maximum calibration voltage</param>
-        /// <param name="updateInterval">The time, to wait between sets of sample readings. 
         /// This value determines how often`Changed` events are raised and `IObservable` consumers are notified.</param>
         /// <param name="sampleCount">How many samples to take during a given
         /// reading. These are automatically averaged to reduce noise.</param>
         /// <param name="sampleInterval">The time, to wait in between samples during a reading.</param>
         public Capacitive(
-            IAnalogInputController device, 
             IPin analogInputPin,
-            Voltage? minimumVoltageCalibration, 
+            Voltage? minimumVoltageCalibration,
             Voltage? maximumVoltageCalibration,
-            TimeSpan? updateInterval = null,
-            int sampleCount = 5, 
+            int sampleCount = 5,
             TimeSpan? sampleInterval = null)
                 : this(
-                    device.CreateAnalogInputPort(analogInputPin, sampleCount, sampleInterval ?? TimeSpan.FromMilliseconds(40), new Voltage(3.3)),
-                    minimumVoltageCalibration, 
+                    analogInputPin.CreateAnalogInputPort(sampleCount, sampleInterval ?? TimeSpan.FromMilliseconds(40), new Voltage(3.3)),
+                    minimumVoltageCalibration,
                     maximumVoltageCalibration)
-        {
-            UpdateInterval = updateInterval ?? TimeSpan.FromSeconds(5);
-        }
+        { }
 
         /// <summary>
         /// Creates a Capacitive soil moisture sensor object with the especified AnalogInputPort
@@ -72,12 +66,36 @@ namespace Meadow.Foundation.Sensors.Moisture
         /// <param name="maximumVoltageCalibration">Maximum calibration voltage</param>
         public Capacitive(
             IAnalogInputPort analogInputPort,
-            Voltage? minimumVoltageCalibration, 
+            Voltage? minimumVoltageCalibration,
             Voltage? maximumVoltageCalibration)
         {
             AnalogInputPort = analogInputPort;
-            if(minimumVoltageCalibration is { } min) { MinimumVoltageCalibration = min; }
-            if(maximumVoltageCalibration is { } max) { MaximumVoltageCalibration = max; }
+
+            if (minimumVoltageCalibration is { } min) { MinimumVoltageCalibration = min; }
+            if (maximumVoltageCalibration is { } max) { MaximumVoltageCalibration = max; }
+
+            // wire up our observable
+            // have to convert from voltage to temp units for our consumers
+            // this is where the magic is: this allows us to extend the IObservable
+            // pattern through the sensor driver
+            AnalogInputPort.Subscribe
+            (
+                IAnalogInputPort.CreateObserver(
+                    result =>
+                    {
+                        // create a new change result from the new value
+                        ChangeResult<double> changeResult = new ChangeResult<double>()
+                        {
+                            New = VoltageToMoisture(result.New),
+                            Old = Moisture
+                        };
+                        // save state
+                        Moisture = changeResult.New;
+                        // notify
+                        RaiseEventsAndNotify(changeResult);
+                    }
+                )
+           );
         }
 
         /// <summary>
@@ -97,7 +115,12 @@ namespace Meadow.Foundation.Sensors.Moisture
         /// </summary>
         public override void StartUpdating(TimeSpan? updateInterval)
         {
-            AnalogInputPort.StartUpdating(updateInterval);
+            lock (samplingLock)
+            {
+                if (IsSampling) { return; }
+                IsSampling = true;
+                AnalogInputPort.StartUpdating(updateInterval);
+            }
         }
 
         /// <summary>
@@ -105,14 +128,19 @@ namespace Meadow.Foundation.Sensors.Moisture
         /// </summary>
         public override void StopUpdating()
         {
-            AnalogInputPort.StopUpdating();
+            lock (samplingLock)
+            {
+                if (!IsSampling) { return; }
+                IsSampling = false;
+                AnalogInputPort.StopUpdating();
+            }
         }
 
         /// <summary>
         /// Raise change events for subscribers
         /// </summary>
         /// <param name="changeResult">The change result with the current sensor data</param>
-        protected void RaiseChangedAndNotify(IChangeResult<double> changeResult)
+        protected override void RaiseEventsAndNotify(IChangeResult<double> changeResult)
         {
             HumidityUpdated?.Invoke(this, changeResult);
             base.RaiseEventsAndNotify(changeResult);
@@ -124,7 +152,7 @@ namespace Meadow.Foundation.Sensors.Moisture
         /// <param name="voltage"></param>
         protected double VoltageToMoisture(Voltage voltage)
         {
-            if (MinimumVoltageCalibration > MaximumVoltageCalibration) 
+            if (MinimumVoltageCalibration > MaximumVoltageCalibration)
             {
                 return (1f - voltage.Volts.Map(MaximumVoltageCalibration.Volts, MinimumVoltageCalibration.Volts, 0f, 1.0f));
             }

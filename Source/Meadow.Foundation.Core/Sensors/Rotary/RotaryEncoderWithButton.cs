@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Meadow.Foundation.Sensors.Buttons;
 using Meadow.Hardware;
-using Meadow.Foundation.Sensors.Buttons;
 using Meadow.Peripherals.Sensors.Rotary;
+using System;
 using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Rotary
@@ -53,15 +53,14 @@ namespace Meadow.Foundation.Sensors.Rotary
         /// <summary>
         /// Instantiates a new RotaryEncoder on the specified pins that has an integrated button.
         /// </summary>
-        /// <param name="device"></param>
         /// <param name="aPhasePin"></param>
         /// <param name="bPhasePin"></param>
         /// <param name="buttonPin"></param>
         /// <param name="buttonResistorMode"></param>
-        public RotaryEncoderWithButton(IDigitalInputController device, IPin aPhasePin, IPin bPhasePin, IPin buttonPin, ResistorMode buttonResistorMode = ResistorMode.InternalPullDown)
-            : base(device, aPhasePin, bPhasePin)
+        public RotaryEncoderWithButton(IPin aPhasePin, IPin bPhasePin, IPin buttonPin, ResistorMode buttonResistorMode = ResistorMode.InternalPullDown)
+            : base(aPhasePin, bPhasePin)
         {
-            Button = new PushButton(device, buttonPin, buttonResistorMode);
+            Button = new PushButton(buttonPin, buttonResistorMode);
 
             Button.Clicked += ButtonClicked;
             Button.PressEnded += ButtonPressEnded;

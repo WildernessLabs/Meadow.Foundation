@@ -13,12 +13,22 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// The current display color mode
         /// </summary>
-        public ColorType ColorMode => imageBuffer.ColorMode;
+        public ColorMode ColorMode => imageBuffer.ColorMode;
+
+        /// <summary>
+        /// The color modes supported by the display
+        /// </summary>
+        public abstract ColorMode SupportedColorModes { get; }
+
+        /// <summary>
+        /// The current rotation of the display
+        /// </summary>
+        public RotationType Rotation { get; set; } = RotationType.Normal;
 
         /// <summary>
         /// The display default color mode
         /// </summary>
-        public abstract ColorType DefautColorMode { get; }
+        public abstract ColorMode DefautColorMode { get; }
 
         /// <summary>
         /// Width of display in pixels
@@ -83,7 +93,6 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// Represents an abstract TftSpiBase object
         /// </summary>
-        /// <param name="device">Meadow device</param>
         /// <param name="spiBus">SPI bus connected to display</param>
         /// <param name="chipSelectPin">Chip select pin</param>
         /// <param name="dcPin">Data command pin</param>
@@ -91,16 +100,16 @@ namespace Meadow.Foundation.Displays
         /// <param name="width">Width of display in pixels</param>
         /// <param name="height">Height of display in pixels</param>
         /// <param name="colorMode">The color mode to use for the display buffer</param>
-        public TftSpiBase(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
-            int width, int height, ColorType colorMode = ColorType.Format16bppRgb565)
+        public TftSpiBase(ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
+            int width, int height, ColorMode colorMode = ColorMode.Format16bppRgb565)
+            : this(
+                    spiBus,
+                    chipSelectPin.CreateDigitalOutputPort(),
+                    dcPin.CreateDigitalOutputPort(),
+                    resetPin.CreateDigitalOutputPort(),
+                    width, height, colorMode
+                  )
         {
-            dataCommandPort = device.CreateDigitalOutputPort(dcPin, false);
-            if (resetPin != null) { resetPort = device.CreateDigitalOutputPort(resetPin, true); }
-            if (chipSelectPin != null) { chipSelectPort = device.CreateDigitalOutputPort(chipSelectPin, false); }
-
-            spiDisplay = new SpiPeripheral(spiBus, chipSelectPort);
-            
-            CreateBuffer(colorMode, width, height);
         }
 
         /// <summary>
@@ -117,8 +126,8 @@ namespace Meadow.Foundation.Displays
             IDigitalOutputPort chipSelectPort,
             IDigitalOutputPort dataCommandPort,
             IDigitalOutputPort resetPort,
-            int width, int height, 
-            ColorType colorMode = ColorType.Format16bppRgb565)
+            int width, int height,
+            ColorMode colorMode = ColorMode.Format16bppRgb565)
         {
             this.dataCommandPort = dataCommandPort;
             this.chipSelectPort = chipSelectPort;
@@ -132,38 +141,43 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// Is the color mode supported on this display
         /// </summary>
-        /// <param name="mode">The color mode</param>
+        /// <param name="colorType">The color mode</param>
         /// <returns>true if supported</returns>
-        public virtual bool IsColorModeSupported(ColorType mode)
+        public virtual bool IsColorTypeSupported(ColorMode colorType)
         {
+            return (SupportedColorModes | colorType) != 0;
+            /*
+            if (SupportedColors)
+
+
             if (mode == ColorType.Format12bppRgb444 ||
                 mode == ColorType.Format16bppRgb565)
             {
                 return true;
             }
-            return false;
+            return false;*/
         }
 
         /// <summary>
         /// Create an offscreen buffer for the display
         /// </summary>
-        /// <param name="mode">The color type</param>
+        /// <param name="mode">The color mode</param>
         /// <param name="width">The width in pixels</param>
         /// <param name="height">The height in pixels</param>
         /// <exception cref="ArgumentException">Throws an exception if the color mode isn't supported</exception>
-        protected void CreateBuffer(ColorType mode, int width, int height)
+        protected void CreateBuffer(ColorMode colorType, int width, int height)
         {
-            if (IsColorModeSupported(mode) == false)
+            if (IsColorTypeSupported(colorType) == false)
             {
-                throw new ArgumentException($"Mode {mode} not supported");
+                throw new ArgumentException($"color mode {colorType} not supported");
             }
 
-            if (mode == ColorType.Format24bppRgb888)
+            if (colorType == ColorMode.Format24bppRgb888)
             {
                 imageBuffer = new BufferRgb888(width, height);
             }
 
-            else if (mode == ColorType.Format16bppRgb565)
+            else if (colorType == ColorMode.Format16bppRgb565)
             {
                 imageBuffer = new BufferRgb565(width, height);
             }
@@ -298,13 +312,13 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         public void Show(int left, int top, int right, int bottom)
         {
-            if(PixelBuffer.ColorMode != ColorType.Format16bppRgb565)
+            if (PixelBuffer.ColorMode != ColorMode.Format16bppRgb565)
             {   //only supported in 565 mode 
                 Show();
                 return;
             }
 
-            if(right < left || bottom < top)
+            if (right < left || bottom < top)
             {   //could throw an exception
                 return;
             }
@@ -360,6 +374,16 @@ namespace Meadow.Foundation.Displays
         protected void SendCommand(Register command)
         {
             SendCommand((byte)command);
+        }
+
+        /// <summary>
+        /// Send a command to the display
+        /// </summary>
+        /// <param name="command">The command to send as an LcdCommand</param>
+        protected void SendCommand(LcdCommand command)
+        {
+            dataCommandPort.State = Command;
+            Write((byte)command);
         }
 
         /// <summary>

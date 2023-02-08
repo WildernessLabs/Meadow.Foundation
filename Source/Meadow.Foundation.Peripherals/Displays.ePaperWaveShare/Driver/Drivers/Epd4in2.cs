@@ -1,7 +1,6 @@
 ﻿using Meadow.Hardware;
-using System;
 
-namespace Meadow.Foundation.Displays.ePaper
+namespace Meadow.Foundation.Displays
 {
     /// <summary>
     /// Represents an WaveShare Epd4in2 ePaper display
@@ -12,14 +11,13 @@ namespace Meadow.Foundation.Displays.ePaper
         /// <summary>
         /// Create a new WaveShare Epd4in2 400x300 pixel display object
         /// </summary>
-        /// <param name="device">Meadow device</param>
         /// <param name="spiBus">SPI bus connected to display</param>
         /// <param name="chipSelectPin">Chip select pin</param>
         /// <param name="dcPin">Data command pin</param>
         /// <param name="resetPin">Reset pin</param>
         /// <param name="busyPin">Busy pin</param>
-        public Epd4in2(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, IPin busyPin) :
-            base(device, spiBus, chipSelectPin, dcPin, resetPin, busyPin, 400, 300)
+        public Epd4in2(ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, IPin busyPin) :
+            base(spiBus, chipSelectPin, dcPin, resetPin, busyPin, 400, 300)
         { }
 
         /// <summary>
@@ -65,7 +63,7 @@ namespace Meadow.Foundation.Displays.ePaper
 
             SendCommand(0x61); // resolution setting
             SendData(0x01);    // 400 
-            SendData(0x90); 
+            SendData(0x90);
             SendData(0x01);    // 300
             SendData(0x2c);
 
@@ -279,7 +277,7 @@ namespace Meadow.Foundation.Displays.ePaper
                 SendCommand(DATA_START_TRANSMISSION_1);
                 for (int i = 0; i < Width / 8 * Height; i++)
                 {   // bit set: white, bit reset: black
-                    SendData(0xFF);      
+                    SendData(0xFF);
                 }
                 DelayMs(2);
                 SendCommand(DATA_START_TRANSMISSION_2);
@@ -287,7 +285,7 @@ namespace Meadow.Foundation.Displays.ePaper
                 {   //Set this to 0xFF for white when in single color mode
                     SendData(buffer[i]);
                 }
-            
+
                 DelayMs(2);
             }
 
@@ -382,17 +380,17 @@ namespace Meadow.Foundation.Displays.ePaper
         };
 
         readonly byte PANEL_SETTING = 0x00;
-        readonly byte POWER_SETTING                              = 0x01;
-        readonly byte POWER_OFF                                  = 0x02;
+        readonly byte POWER_SETTING = 0x01;
+        readonly byte POWER_OFF = 0x02;
         //readonly byte POWER_OFF_SEQUENCE_SETTING                 = 0x03;
         //readonly byte POWER_ON                                   = 0x04;
         //readonly byte POWER_ON_MEASURE                           = 0x05;
         //readonly byte BOOSTER_SOFT_START                         = 0x06;
-        readonly byte DEEP_SLEEP                                 = 0x07;
-        readonly byte DATA_START_TRANSMISSION_1                  = 0x10;
+        readonly byte DEEP_SLEEP = 0x07;
+        readonly byte DATA_START_TRANSMISSION_1 = 0x10;
         //readonly byte DATA_STOP                                  = 0x11;
-        readonly byte DISPLAY_REFRESH                            = 0x12;
-        readonly byte DATA_START_TRANSMISSION_2                  = 0x13;
+        readonly byte DISPLAY_REFRESH = 0x12;
+        readonly byte DATA_START_TRANSMISSION_2 = 0x13;
         //readonly byte LUT_FOR_VCOM                               = 0x20; 
         //readonly byte LUT_WHITE_TO_WHITE                         = 0x21;
         //readonly byte LUT_BLACK_TO_WHITE                         = 0x22;
@@ -403,18 +401,18 @@ namespace Meadow.Foundation.Displays.ePaper
         //readonly byte TEMPERATURE_SENSOR_SELECTION               = 0x41;
         //readonly byte TEMPERATURE_SENSOR_WRITE                   = 0x42;
         //readonly byte TEMPERATURE_SENSOR_READ                    = 0x43;
-        readonly byte VCOM_AND_DATA_INTERVAL_SETTING             = 0x50;
+        readonly byte VCOM_AND_DATA_INTERVAL_SETTING = 0x50;
         //readonly byte LOW_POWER_DETECTION                        = 0x51;
         //readonly byte TCON_SETTING                               = 0x60;
-        readonly byte RESOLUTION_SETTING                         = 0x61;
+        readonly byte RESOLUTION_SETTING = 0x61;
         //readonly byte GSST_SETTING                               = 0x65;
         //readonly byte GET_STATUS                                 = 0x71;
         //readonly byte AUTO_MEASUREMENT_VCOM                      = 0x80;
         //readonly byte READ_VCOM_VALUE                            = 0x81;
-        readonly byte VCM_DC_SETTING                             = 0x82;
-        readonly byte PARTIAL_WINDOW                             = 0x90;
-        readonly byte PARTIAL_IN                                 = 0x91;
-        readonly byte PARTIAL_OUT                                = 0x92;
+        readonly byte VCM_DC_SETTING = 0x82;
+        readonly byte PARTIAL_WINDOW = 0x90;
+        readonly byte PARTIAL_IN = 0x91;
+        readonly byte PARTIAL_OUT = 0x92;
         //readonly byte PROGRAM_MODE                               = 0xA0;
         //readonly byte ACTIVE_PROGRAMMING                         = 0xA1;
         //readonly byte READ_OTP                                   = 0xA2;

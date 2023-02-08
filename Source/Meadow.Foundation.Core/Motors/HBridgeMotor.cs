@@ -1,8 +1,7 @@
-﻿using System;
-using Meadow.Devices;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
 using Meadow.Peripherals.Motors;
 using Meadow.Units;
+using System;
 
 namespace Meadow.Foundation.Motors
 {
@@ -45,10 +44,11 @@ namespace Meadow.Foundation.Motors
         /// The power applied to the motor, as a percentage between
         /// `-1.0` and `1.0`.
         /// </summary>
-        public float Power 
+        public float Power
         {
             get => power;
-            set {
+            set
+            {
                 motorLeftPwm.Stop();
                 motorRighPwm.Stop();
 
@@ -83,24 +83,22 @@ namespace Meadow.Foundation.Motors
         /// <summary>
         /// Create an HBridgeMotor object
         /// </summary>
-        /// <param name="device"></param>
         /// <param name="a1Pin"></param>
         /// <param name="a2Pin"></param>
         /// <param name="enablePin"></param>
-        public HBridgeMotor(IMeadowDevice device, IPin a1Pin, IPin a2Pin, IPin enablePin) :
-            this(device.CreatePwmPort(a1Pin, DefaultFrequency), device.CreatePwmPort(a2Pin, DefaultFrequency), device.CreateDigitalOutputPort(enablePin), DefaultFrequency)
+        public HBridgeMotor(IPin a1Pin, IPin a2Pin, IPin enablePin) :
+            this(a1Pin.CreatePwmPort(DefaultFrequency), a2Pin.CreatePwmPort(DefaultFrequency), enablePin.CreateDigitalOutputPort(), DefaultFrequency)
         { }
 
         /// <summary>
         /// Create an HBridgeMotor object
         /// </summary>
-        /// <param name="device"></param>
         /// <param name="a1Pin"></param>
         /// <param name="a2Pin"></param>
         /// <param name="enablePin"></param>
         /// <param name="pwmFrequency"></param>
-        public HBridgeMotor(IMeadowDevice device, IPin a1Pin, IPin a2Pin, IPin enablePin, Frequency pwmFrequency) :
-            this(device.CreatePwmPort(a1Pin, pwmFrequency), device.CreatePwmPort(a2Pin, pwmFrequency), device.CreateDigitalOutputPort(enablePin), pwmFrequency)
+        public HBridgeMotor(IPin a1Pin, IPin a2Pin, IPin enablePin, Frequency pwmFrequency) :
+            this(a1Pin.CreatePwmPort(DefaultFrequency), a2Pin.CreatePwmPort(DefaultFrequency), enablePin.CreateDigitalOutputPort(), pwmFrequency)
         { }
 
         /// <summary>

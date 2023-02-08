@@ -5,7 +5,7 @@ namespace Meadow.Foundation.ICs.ADC
     /// <summary>
     /// Represents an ADS1115 16-bit, 860-SPS, 4-channel, delta-sigma analog-to-digital converter with PGA, oscillator, VREF, comparato
     /// </summary>
-    public class Ads1115 : Ads1x15
+    public class Ads1115 : Ads1x15Base
     {
         /// <summary>
         /// Sample rate setting

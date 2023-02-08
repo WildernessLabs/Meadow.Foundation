@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
 
 namespace Meadow.Foundation.Motors
 {
@@ -29,19 +28,21 @@ namespace Meadow.Foundation.Motors
         /// <summary>
         /// `0.0` -> `1.0`
         /// </summary>
-        public float Power {
+        public float Power
+        {
             get => power;
-            set {
+            set
+            {
                 //if (!armed) {
                 //    Resolver.Log.Info("not armed.");
                 //    return;
                 //}
-                if(value < 0) { value = 0; }
-                if(value > 1) { value = 1; }
+                if (value < 0) { value = 0; }
+                if (value > 1) { value = 1; }
                 power = value;
                 pwmPort.DutyCycle = CalculateDutyCycle(CalculatePulseDuration(value), Frequency);
             }
-        } 
+        }
         float power = 0f;
 
         /// <summary>
@@ -55,13 +56,13 @@ namespace Meadow.Foundation.Motors
         /// Initializes an electronic speed controller on the specified device 
         /// pin, at the specified frequency.
         /// </summary>
-        /// <param name="device">IIODevice capable of creating a PWM port.</param>
         /// <param name="pwmPin">PWM capable pin.</param>
         /// <param name="frequency">Frequency of the PWM signal. All ESCs should
         /// support 50Hz, but some support much higher. Increase for finer grained
         /// control of speed in time.</param>
-        public ElectronicSpeedController(IPwmOutputController device, IPin pwmPin, Units.Frequency frequency) :
-            this(device.CreatePwmPort(pwmPin, frequency)) { }
+        public ElectronicSpeedController(IPin pwmPin, Units.Frequency frequency) :
+            this(pwmPin.CreatePwmPort(frequency))
+        { }
 
         /// <summary>
         /// Initializes an electronic speed controller on the specified device 

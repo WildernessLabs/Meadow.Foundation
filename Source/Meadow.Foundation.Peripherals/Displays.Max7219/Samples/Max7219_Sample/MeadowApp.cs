@@ -1,7 +1,6 @@
 ﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Displays;
-using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -17,7 +16,7 @@ namespace MeadowApp
         {
             Resolver.Log.Info("Initialize...");
 
-            display = new Max7219(Device, Device.CreateSpiBus(), Device.Pins.D01, 1, Max7219.Max7219Mode.Character);
+            display = new Max7219(Device.CreateSpiBus(), Device.Pins.D01, 1, Max7219.Max7219Mode.Character);
 
             return base.Initialize();
         }
@@ -92,6 +91,6 @@ namespace MeadowApp
             Thread.Sleep(1000);
         }
 
-        
+
     }
 }

@@ -1,5 +1,4 @@
 ﻿using Meadow.Hardware;
-using Meadow.Peripherals.Sensors;
 using Meadow.Peripherals.Switches;
 using System;
 using System.Threading.Tasks;
@@ -37,25 +36,23 @@ namespace Meadow.Foundation.Sensors.Switches
         /// <summary>
         /// Instantiates a new SpstSwitch object connected to the specified digital pin, and with the specified CircuitTerminationType in the type parameter.
         /// </summary>
-        /// <param name="device"></param>
         /// <param name="pin"></param>
         /// <param name="interruptMode"></param>
         /// <param name="resistorMode"></param>
-        public SpstSwitch(IDigitalInputController device, IPin pin, InterruptMode interruptMode, ResistorMode resistorMode) :
-            this(device.CreateDigitalInputPort(pin, interruptMode, resistorMode, TimeSpan.FromMilliseconds(20), TimeSpan.Zero))
+        public SpstSwitch(IPin pin, InterruptMode interruptMode, ResistorMode resistorMode) :
+            this(pin.CreateDigitalInputPort(interruptMode, resistorMode, TimeSpan.FromMilliseconds(20), TimeSpan.Zero))
         { }
 
         /// <summary>
         /// Instantiates a new SpstSwitch object connected to the specified digital pin, and with the specified CircuitTerminationType in the type parameter.
         /// </summary>
-        /// <param name="device"></param>
         /// <param name="pin"></param>
         /// <param name="interruptMode"></param>
         /// <param name="resistorMode"></param>
         /// <param name="debounceDuration"></param>
         /// <param name="glitchFilterCycleCount"></param>
-        public SpstSwitch(IDigitalInputController device, IPin pin, InterruptMode interruptMode, ResistorMode resistorMode, TimeSpan debounceDuration, TimeSpan glitchFilterCycleCount) :
-            this(device.CreateDigitalInputPort(pin, interruptMode, resistorMode, debounceDuration, glitchFilterCycleCount))
+        public SpstSwitch(IPin pin, InterruptMode interruptMode, ResistorMode resistorMode, TimeSpan debounceDuration, TimeSpan glitchFilterCycleCount) :
+            this(pin.CreateDigitalInputPort(interruptMode, resistorMode, debounceDuration, glitchFilterCycleCount))
         { }
 
         /// <summary>

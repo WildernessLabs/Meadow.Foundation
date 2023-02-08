@@ -3,7 +3,6 @@ using Meadow.Devices;
 using Meadow.Foundation.Graphics;
 using Meadow.Foundation.Sensors.Hid;
 using Meadow.Hardware;
-using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -19,7 +18,7 @@ namespace Bbq10Keyboard_Sample
         {
             Resolver.Log.Info("Initialize...");
 
-            var i2cBus = Device.CreateI2cBus(I2cBusSpeed.Fast, 0);
+            var i2cBus = Device.CreateI2cBus(I2cBusSpeed.Fast);
 
             touchScreen = new Tsc2004(i2cBus)
             {

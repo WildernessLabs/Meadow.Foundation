@@ -22,7 +22,7 @@ namespace Sensors.Environmental.Scd40_Sample
             var serialNum = sensor.GetSerialNumber();
             Resolver.Log.Info($"Serial: {BitConverter.ToString(serialNum)}");
 
-            var consumer = Scd4x.CreateObserver(
+            var consumer = Scd40.CreateObserver(
                 handler: result =>
                 {
                     Resolver.Log.Info($"Observer: Temp changed by threshold; new temp: {result.New.Temperature?.Celsius:N2}C, old: {result.Old?.Temperature?.Celsius:N2}C");

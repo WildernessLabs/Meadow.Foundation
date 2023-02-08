@@ -2,7 +2,6 @@
 using Meadow.Devices;
 using Meadow.Foundation.Displays;
 using Meadow.Foundation.Graphics;
-using System;
 using System.Threading.Tasks;
 
 namespace Displays.ePaper.SSD1608_Sample
@@ -17,8 +16,7 @@ namespace Displays.ePaper.SSD1608_Sample
         {
             Resolver.Log.Info("Initialize...");
 
-            var display = new Ssd1608(device: Device,
-                spiBus: Device.CreateSpiBus(),
+            var display = new Ssd1608(spiBus: Device.CreateSpiBus(),
                 chipSelectPin: Device.Pins.D02,
                 dcPin: Device.Pins.D01,
                 resetPin: Device.Pins.D00,

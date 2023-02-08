@@ -11,7 +11,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <summary>
         /// MCP23x0x pin definitions
         /// </summary>
-        public PinDefinitions Pins { get; } = new PinDefinitions();
+        public PinDefinitions Pins { get; }
 
         /// <summary>
         /// The number of IO pins avaliable on the device
@@ -32,9 +32,10 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <param name="address">The I2C address</param>
         /// <param name="interruptPort">The interrupt port</param>
         /// <param name="resetPort">Optional Meadow output port used to reset the mcp expander</param>
-        protected Mcp23x0x(II2cBus i2cBus, byte address = 32, IDigitalInputPort interruptPort = null, IDigitalOutputPort resetPort = null) : 
+        protected Mcp23x0x(II2cBus i2cBus, byte address = 32, IDigitalInputPort interruptPort = null, IDigitalOutputPort resetPort = null) :
             base(i2cBus, address, interruptPort, resetPort)
         {
+            Pins = new PinDefinitions(this);
         }
 
         /// <summary>
@@ -47,6 +48,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         protected Mcp23x0x(ISpiBus spiBus, IDigitalOutputPort chipSelectPort, IDigitalInputPort interruptPort = null, IDigitalOutputPort resetPort = null) :
             base(new SpiMcpDeviceComms(spiBus, chipSelectPort), interruptPort, resetPort) // use the internal constructor that takes an IMcpDeviceComms
         {
+            Pins = new PinDefinitions(this);
         }
 
         /// <summary>

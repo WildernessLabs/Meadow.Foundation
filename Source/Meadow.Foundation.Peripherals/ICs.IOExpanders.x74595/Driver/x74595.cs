@@ -1,7 +1,7 @@
-﻿using System;
-using System.Linq;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
 using Meadow.Utilities;
+using System;
+using System.Linq;
 
 namespace Meadow.Foundation.ICs.IOExpanders
 {
@@ -17,7 +17,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <summary>
         /// The pin definitions
         /// </summary>
-        public PinDefinitions Pins { get; } = new PinDefinitions();
+        public PinDefinitions Pins { get; }
 
         /// <summary>
         /// Number of chips required to implement this ShiftRegister.
@@ -50,8 +50,10 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <param name="pinChipSelect">The chip select pin</param>
         public x74595(IMeadowDevice device, ISpiBus spiBus, IPin pinChipSelect, int pins = 8)
         {
-           // if ((pins > 0) && ((pins % 8) == 0))
-            if(pins == 8)
+            Pins = new PinDefinitions(this);
+
+            // if ((pins > 0) && ((pins % 8) == 0))
+            if (pins == 8)
             {
                 numberOfChips = pins / 8;
 
@@ -92,7 +94,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         {
             latchData = new byte[numberOfChips];
 
-            if(update)
+            if (update)
             {
                 spiPeripheral.Write(latchData);
             }
@@ -108,7 +110,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             if (IsValidPin(pin))
             {
                 //ToDo multichip logic
-                latchData[0] =  BitHelpers.SetBit(latchData[0], (byte)pin.Key, value);
+                latchData[0] = BitHelpers.SetBit(latchData[0], (byte)pin.Key, value);
             }
             else
             {

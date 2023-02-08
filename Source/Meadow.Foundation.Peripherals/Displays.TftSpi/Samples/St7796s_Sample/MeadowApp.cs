@@ -1,10 +1,9 @@
-﻿using System;
-using System.Threading.Tasks;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Displays;
 using Meadow.Foundation.Graphics;
 using Meadow.Hardware;
+using System.Threading.Tasks;
 
 namespace Displays.Tft.St7796s_Sample
 {
@@ -26,7 +25,6 @@ namespace Displays.Tft.St7796s_Sample
 
             var display = new Ssd1331
             (
-                device: Device,
                 spiBus: spiBus,
                 resetPin: Device.Pins.D00,
                 chipSelectPin: Device.Pins.D02,

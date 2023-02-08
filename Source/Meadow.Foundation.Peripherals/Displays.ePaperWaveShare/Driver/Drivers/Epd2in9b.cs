@@ -1,6 +1,6 @@
 ﻿using Meadow.Hardware;
 
-namespace Meadow.Foundation.Displays.ePaper
+namespace Meadow.Foundation.Displays
 {
     /// <summary>
     /// Represents a WaveShare Epd2in9b ePaper display
@@ -11,19 +11,18 @@ namespace Meadow.Foundation.Displays.ePaper
         /// <summary>
         /// Create a new WaveShare Epd2in9b 128x296 pixel display object ePaper display object
         /// </summary>
-        /// <param name="device">Meadow device</param>
         /// <param name="spiBus">SPI bus connected to display</param>
         /// <param name="chipSelectPin">Chip select pin</param>
         /// <param name="dcPin">Data command pin</param>
         /// <param name="resetPin">Reset pin</param>
         /// <param name="busyPin">Busy pin</param>
-        public Epd2in9b(IMeadowDevice device,
-                                    ISpiBus spiBus,
-                                    IPin chipSelectPin,
-                                    IPin dcPin,
-                                    IPin resetPin,
-                                    IPin busyPin) :
-            base(device, spiBus, chipSelectPin, dcPin, resetPin, busyPin, 128, 296)
+        public Epd2in9b(
+                        ISpiBus spiBus,
+                        IPin chipSelectPin,
+                        IPin dcPin,
+                        IPin resetPin,
+                        IPin busyPin) :
+            base(spiBus, chipSelectPin, dcPin, resetPin, busyPin, 128, 296)
         { }
 
         /// <summary>

@@ -1,6 +1,7 @@
 ﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Atmospheric;
+using Meadow.Hardware;
 using System;
 using System.Threading.Tasks;
 
@@ -40,7 +41,8 @@ namespace Sensors.Atmospheric.BME280_Sample
             );
             sensor.Subscribe(consumer);
 
-            sensor.Updated += (sender, result) => {
+            sensor.Updated += (sender, result) =>
+            {
                 Resolver.Log.Info($"  Temperature: {result.New.Temperature?.Celsius:N2}C");
                 Resolver.Log.Info($"  Relative Humidity: {result.New.Humidity:N2}%");
                 Resolver.Log.Info($"  Pressure: {result.New.Pressure?.Millibar:N2}mbar ({result.New.Pressure?.Pascal:N2}Pa)");
@@ -65,7 +67,7 @@ namespace Sensors.Atmospheric.BME280_Sample
             Resolver.Log.Info("Create BME280 sensor with SPI...");
 
             var spi = Device.CreateSpiBus();
-            sensor = new Bme280(spi, Device.CreateDigitalOutputPort(Device.Pins.D00));
+            sensor = new Bme280(spi, Device.Pins.D00.CreateDigitalOutputPort());
         }
 
         void CreateI2CSensor()
@@ -74,7 +76,7 @@ namespace Sensors.Atmospheric.BME280_Sample
 
             var i2c = Device.CreateI2cBus();
             sensor = new Bme280(i2c, (byte)Bme280.Addresses.Default); // SDA pulled up
-            
+
         }
 
         //<!=SNOP=>

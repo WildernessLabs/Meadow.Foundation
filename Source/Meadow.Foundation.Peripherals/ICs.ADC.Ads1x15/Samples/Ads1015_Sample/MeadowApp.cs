@@ -18,12 +18,12 @@ namespace ADC.Ads1015_Sample
 
             adc = new Ads1015(
                 Device.CreateI2cBus(Meadow.Hardware.I2cBusSpeed.FastPlus),
-                Ads1x15.Addresses.Default,
-                Ads1x15.MeasureMode.Continuous,
-                Ads1x15.ChannelSetting.A0SingleEnded,
+                Ads1x15Base.Addresses.Default,
+                Ads1x15Base.MeasureMode.Continuous,
+                Ads1x15Base.ChannelSetting.A0SingleEnded,
                 Ads1015.SampleRateSetting.Sps3300);
 
-            adc.Gain = Ads1x15.FsrGain.TwoThirds;
+            adc.Gain = Ads1x15Base.FsrGain.TwoThirds;
 
             var observer = Ads1015.CreateObserver(
                 handler: result =>
@@ -44,7 +44,7 @@ namespace ADC.Ads1015_Sample
                 );
             adc.Subscribe(observer);
 
-            adc.Updated += (sender, result) => 
+            adc.Updated += (sender, result) =>
             {
                 Resolver.Log.Info($"  Voltage: {result.New.Volts:N2}V");
             };
@@ -68,7 +68,7 @@ namespace ADC.Ads1015_Sample
             var start = Environment.TickCount;
             long sum = 0;
 
-            for(var i = 0; i < totalSamples; i++)
+            for (var i = 0; i < totalSamples; i++)
             {
                 sum += await adc.ReadRaw();
             }

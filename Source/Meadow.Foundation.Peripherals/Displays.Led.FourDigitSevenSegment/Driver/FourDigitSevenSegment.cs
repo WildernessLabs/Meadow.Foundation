@@ -1,6 +1,6 @@
-﻿using System.Threading;
+﻿using Meadow.Hardware;
+using System.Threading;
 using System.Threading.Tasks;
-using Meadow.Hardware;
 
 namespace Meadow.Foundation.Displays.Led
 {
@@ -18,7 +18,6 @@ namespace Meadow.Foundation.Displays.Led
         /// <summary>
         /// Creates a SevenSegment connected to the especified IPins to a IODevice
         /// </summary>
-        /// <param name="device">The device connected to the display</param>
         /// <param name="pinDigit1">Digit 1 pin</param>
         /// <param name="pinDigit2">Digit 2 pin</param>
         /// <param name="pinDigit3">Digit 3 pin</param>
@@ -33,7 +32,6 @@ namespace Meadow.Foundation.Displays.Led
         /// <param name="pinDecimal">Decimal pin</param>
         /// <param name="isCommonCathode">Is the display common cathode (true)</param>
         public FourDigitSevenSegment(
-            IMeadowDevice device, 
             IPin pinDigit1, IPin pinDigit2,
             IPin pinDigit3, IPin pinDigit4,
             IPin pinA, IPin pinB,
@@ -41,20 +39,21 @@ namespace Meadow.Foundation.Displays.Led
             IPin pinE, IPin pinF,
             IPin pinG, IPin pinDecimal,
             bool isCommonCathode) :
-            this (
-                device.CreateDigitalOutputPort(pinDigit1),
-                device.CreateDigitalOutputPort(pinDigit2),
-                device.CreateDigitalOutputPort(pinDigit3),
-                device.CreateDigitalOutputPort(pinDigit4),
-                device.CreateDigitalOutputPort(pinA),
-                device.CreateDigitalOutputPort(pinB),
-                device.CreateDigitalOutputPort(pinC),
-                device.CreateDigitalOutputPort(pinD),
-                device.CreateDigitalOutputPort(pinE),
-                device.CreateDigitalOutputPort(pinF),
-                device.CreateDigitalOutputPort(pinG),
-                device.CreateDigitalOutputPort(pinDecimal),
-                isCommonCathode) { }
+            this(
+                pinDigit1.CreateDigitalOutputPort(),
+                pinDigit2.CreateDigitalOutputPort(),
+                pinDigit3.CreateDigitalOutputPort(),
+                pinDigit4.CreateDigitalOutputPort(),
+                pinA.CreateDigitalOutputPort(),
+                pinB.CreateDigitalOutputPort(),
+                pinC.CreateDigitalOutputPort(),
+                pinD.CreateDigitalOutputPort(),
+                pinE.CreateDigitalOutputPort(),
+                pinF.CreateDigitalOutputPort(),
+                pinG.CreateDigitalOutputPort(),
+                pinDecimal.CreateDigitalOutputPort(),
+                isCommonCathode)
+        { }
 
         /// <summary>
         /// Creates a SevenSegment connected to the especified IDigitalOutputPorts
@@ -78,7 +77,7 @@ namespace Meadow.Foundation.Displays.Led
             IDigitalOutputPort portA, IDigitalOutputPort portB,
             IDigitalOutputPort portC, IDigitalOutputPort portD,
             IDigitalOutputPort portE, IDigitalOutputPort portF,
-            IDigitalOutputPort portG, IDigitalOutputPort portDecimal, 
+            IDigitalOutputPort portG, IDigitalOutputPort portDecimal,
             bool isCommonCathode)
         {
             digits = new IDigitalOutputPort[4];
@@ -88,7 +87,7 @@ namespace Meadow.Foundation.Displays.Led
             digits[3] = portDigit4;
 
             sevenSegments = new SevenSegment[4];
-            for(int i=0; i < 4; i++) 
+            for (int i = 0; i < 4; i++)
             {
                 sevenSegments[i] = new SevenSegment(portA, portB, portC, portD, portE, portF, portG, portDecimal, isCommonCathode);
             }
@@ -120,15 +119,15 @@ namespace Meadow.Foundation.Displays.Led
 
             cts = new CancellationTokenSource();
 
-            Task.Run(async ()=> await StartDisplayLoop(characters, decimalLocation, cts.Token));
+            Task.Run(async () => await StartDisplayLoop(characters, decimalLocation, cts.Token));
         }
 
-        async Task StartDisplayLoop(char[] characters, int decimalLocation, CancellationToken cancellationToken) 
+        async Task StartDisplayLoop(char[] characters, int decimalLocation, CancellationToken cancellationToken)
         {
             while (true)
             {
                 if (cancellationToken.IsCancellationRequested)
-                { 
+                {
                     break;
                 }
 

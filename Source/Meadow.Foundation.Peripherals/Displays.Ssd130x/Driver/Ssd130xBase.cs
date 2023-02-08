@@ -2,7 +2,6 @@
 using Meadow.Hardware;
 using Meadow.Foundation.Graphics.Buffers;
 using Meadow.Foundation.Graphics;
-using System.Drawing;
 
 namespace Meadow.Foundation.Displays
 {
@@ -14,7 +13,12 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// The display color mode
         /// </summary>
-        public ColorType ColorMode => ColorType.Format1bpp;
+        public ColorMode ColorMode => ColorMode.Format1bpp;
+
+        /// <summary>
+        /// The Color mode supported by the display
+        /// </summary>
+        public ColorMode SupportedColorModes => ColorMode.Format1bpp;
 
         /// <summary>
         /// The width of the display in pixels

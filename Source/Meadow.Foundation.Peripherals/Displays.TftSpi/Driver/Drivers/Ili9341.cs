@@ -1,5 +1,4 @@
-﻿using System.Threading;
-using Meadow.Foundation.Graphics;
+﻿using Meadow.Foundation.Graphics;
 using Meadow.Hardware;
 using Meadow.Units;
 
@@ -18,12 +17,16 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// The default display color mode
         /// </summary>
-        public override ColorType DefautColorMode => ColorType.Format12bppRgb444;
+        public override ColorMode DefautColorMode => ColorMode.Format12bppRgb444;
+
+        /// <summary>
+        /// The color modes supported by the display
+        /// </summary>
+        public override ColorMode SupportedColorModes => ColorMode.Format16bppRgb565 | ColorMode.Format12bppRgb444;
 
         /// <summary>
         /// Create a new Ili9341 color display object
         /// </summary>
-        /// <param name="device">Meadow device</param>
         /// <param name="spiBus">SPI bus connected to display</param>
         /// <param name="chipSelectPin">Chip select pin</param>
         /// <param name="dcPin">Data command pin</param>
@@ -31,9 +34,9 @@ namespace Meadow.Foundation.Displays
         /// <param name="width">Width of display in pixels</param>
         /// <param name="height">Height of display in pixels</param>
         /// <param name="colorMode">The color mode to use for the display buffer</param>
-        public Ili9341(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
-            int width, int height, ColorType colorMode = ColorType.Format12bppRgb444)
-            : base(device, spiBus, chipSelectPin, dcPin, resetPin, width, height, colorMode)
+        public Ili9341(ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
+            int width, int height, ColorMode colorMode = ColorMode.Format12bppRgb444)
+            : base(spiBus, chipSelectPin, dcPin, resetPin, width, height, colorMode)
         {
             Initialize();
         }
@@ -50,7 +53,7 @@ namespace Meadow.Foundation.Displays
         /// <param name="colorMode">The color mode to use for the display buffer</param>
         public Ili9341(ISpiBus spiBus, IDigitalOutputPort chipSelectPort,
                 IDigitalOutputPort dataCommandPort, IDigitalOutputPort resetPort,
-                int width, int height, ColorType colorMode = ColorType.Format12bppRgb444) :
+                int width, int height, ColorMode colorMode = ColorMode.Format12bppRgb444) :
             base(spiBus, chipSelectPort, dataCommandPort, resetPort, width, height, colorMode)
         {
             Initialize();
@@ -64,15 +67,15 @@ namespace Meadow.Foundation.Displays
             if (resetPort != null)
             {
                 resetPort.State = true;
-                Thread.Sleep(50);
+                DelayMs(50);
                 resetPort.State = false;
-                Thread.Sleep(50);
+                DelayMs(50);
                 resetPort.State = true;
-                Thread.Sleep(50);
+                DelayMs(50);
             }
             else
             {
-                Thread.Sleep(150); //Not sure if this is needed but can't hurt
+                DelayMs(150); //Not sure if this is needed but can't hurt
             }
 
             SendCommand(0xEF, new byte[] { 0x03, 0x80, 0x02 });
@@ -89,25 +92,25 @@ namespace Meadow.Foundation.Displays
             SendCommand(ILI9341_VMCTR2, new byte[] { 0x86 });
             SendCommand((byte)Register.MADCTL, new byte[] { (byte)(Register.MADCTL_MX | Register.MADCTL_BGR) }); //13
 
-            if (ColorMode == ColorType.Format16bppRgb565)
-            { 
+            if (ColorMode == ColorMode.Format16bppRgb565)
+            {
                 SendCommand((byte)Register.COLOR_MODE, new byte[] { 0x55 }); //color mode - 16bpp  
             }
             else
-            {      
+            {
                 SendCommand((byte)Register.COLOR_MODE, new byte[] { 0x53 }); //color mode - 12bpp 
             }
-            SendCommand(ILI9341_FRMCTR1, new byte[] { 0x00, 0x18 });
+            SendCommand((byte)Register.FRMCTR1, new byte[] { 0x00, 0x18 });
             SendCommand(ILI9341_DFUNCTR, new byte[] { 0x08, 0x82, 0x27 });
             SendCommand(0xF2, new byte[] { 0x00 });
             SendCommand(ILI9341_GAMMASET, new byte[] { 0x01 });
             SendCommand(ILI9341_GMCTRP1, new byte[] { 0x0F, 0x31, 0x2B, 0x0C, 0x0E, 0x08, 0x4E, 0xF1, 0x37, 0x07, 0x10, 0x03, 0x0E, 0x09, 0x00 });
             SendCommand(ILI9341_GMCTRN1, new byte[] { 0x00, 0x0E, 0x14, 0x03, 0x11, 0x07, 0x31, 0xC1, 0x48, 0x08, 0x0F, 0x0C, 0x31, 0x36, 0x0F });
-            SendCommand(ILI9341_SLPOUT, null);
-            Thread.Sleep(120);
-            SendCommand(ILI9341_DISPON, null);
+            SendCommand(Register.SLPOUT);
+            DelayMs(120);
+            SendCommand(Register.DISPON);
 
-            SetAddressWindow(0, 0, Width - 1,  Height - 1);
+            SetAddressWindow(0, 0, Width - 1, Height - 1);
 
             dataCommandPort.State = (Data);
         }
@@ -121,14 +124,14 @@ namespace Meadow.Foundation.Displays
         /// <param name="y1">Y end in pixels</param>
         protected override void SetAddressWindow(int x0, int y0, int x1, int y1)
         {
-            SendCommand((byte)LcdCommand.CASET);  // column addr set
+            SendCommand(LcdCommand.CASET);  // column addr set
             dataCommandPort.State = Data;
             Write((byte)(x0 >> 8));
             Write((byte)(x0 & 0xff));   // XSTART 
             Write((byte)(x1 >> 8));
             Write((byte)(x1 & 0xff));   // XEND
 
-            SendCommand((byte)LcdCommand.RASET);  // row addr set
+            SendCommand(LcdCommand.RASET);  // row addr set
             dataCommandPort.State = Data;
             Write((byte)(y0 >> 8));
             Write((byte)(y0 & 0xff));    // YSTART
@@ -151,35 +154,12 @@ namespace Meadow.Foundation.Displays
             }
         }
 
-        //static byte ILI9341_SLPIN      = 0x10;
-        static byte ILI9341_SLPOUT = 0x11;
-        //static byte ILI9341_PTLON      = 0x12;
-        //static byte ILI9341_NORON      = 0x13;
-        //static byte ILI9341_RDMODE     = 0x0A;
-        //static byte ILI9341_RDMADCTL   = 0x0B;
-        //static byte ILI9341_RDPIXFMT   = 0x0C;
-        //static byte ILI9341_RDIMGFMT   = 0x0A;
-        //static byte ILI9341_RDSELFDIAG = 0x0F;
-        //static byte ILI9341_INVOFF     = 0x20;
-        //static byte ILI9341_INVON      = 0x21;
         static byte ILI9341_GAMMASET = 0x26;
-        //static byte ILI9341_DISPOFF    = 0x28;
-        static byte ILI9341_DISPON = 0x29;
-        //static byte ILI9341_PTLAR      = 0x30;
-        //static byte ILI9341_VSCRDEF    = 0x33;
-        //static byte ILI9341_VSCRSADD   = 0x37;
 
-        static byte ILI9341_FRMCTR1 = 0xB1;
-        //static byte ILI9341_FRMCTR2 = 0xB2;
-        //static byte ILI9341_FRMCTR3 = 0xB3;
-        //static byte ILI9341_INVCTR =  0xB4;
         static byte ILI9341_DFUNCTR = 0xB6;
 
         static byte ILI9341_PWCTR1 = 0xC0;
         static byte ILI9341_PWCTR2 = 0xC1;
-        //static byte ILI9341_PWCTR3 = 0xC2;
-        //static byte ILI9341_PWCTR4 = 0xC3;
-        //static byte ILI9341_PWCTR5 = 0xC4;
         static byte ILI9341_VMCTR1 = 0xC5;
         static byte ILI9341_VMCTR2 = 0xC7;
 

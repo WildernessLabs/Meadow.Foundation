@@ -1,10 +1,10 @@
-﻿using System;
-using System.Threading.Tasks;
-using Meadow;
-using Meadow.Units;
-using AU = Meadow.Units.Acceleration.UnitType;
+﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Motion;
+using Meadow.Units;
+using System;
+using System.Threading.Tasks;
+using AU = Meadow.Units.Acceleration.UnitType;
 
 namespace Sensors.Motion.Adxl362_Sample
 {
@@ -19,10 +19,11 @@ namespace Sensors.Motion.Adxl362_Sample
             Resolver.Log.Info("Initialize...");
 
             // create the sensor driver
-            sensor = new Adxl362(Device, Device.CreateSpiBus(), Device.Pins.D00);
+            sensor = new Adxl362(Device.CreateSpiBus(), Device.Pins.D00);
 
             // classical .NET events can also be used:
-            sensor.Updated += (sender, result) => {
+            sensor.Updated += (sender, result) =>
+            {
                 Resolver.Log.Info($"Accel: [X:{result.New.Acceleration3D?.X.MetersPerSecondSquared:N2}," +
                     $"Y:{result.New.Acceleration3D?.Y.MetersPerSecondSquared:N2}," +
                     $"Z:{result.New.Acceleration3D?.Z.MetersPerSecondSquared:N2} (m/s^2)]");
@@ -33,8 +34,10 @@ namespace Sensors.Motion.Adxl362_Sample
             // Example that uses an IObservable subscription to only be notified when the filter is satisfied
             var consumer = Adxl362.CreateObserver(
                 handler: result => Resolver.Log.Info($"Observer: [x] changed by threshold; new [x]: X:{result.New.Acceleration3D?.X.MetersPerSecondSquared:N2}, old: X:{result.Old?.Acceleration3D?.X.MetersPerSecondSquared:N2}"),
-                filter: result => {
-                    if (result.Old is { } old) { //c# 8 pattern match syntax. checks for !null and assigns var.
+                filter: result =>
+                {
+                    if (result.Old is { } old)
+                    { //c# 8 pattern match syntax. checks for !null and assigns var.
                         return ((result.New.Acceleration3D - old.Acceleration3D)?.Y > new Acceleration(1, AU.MetersPerSecondSquared));
                     }
                     return false;
