@@ -18,7 +18,6 @@ namespace Sensors.Light.AnalogLightSensor_Sample
 
             // configure our AnalogLightSensor sensor
             analogLightSensor = new AnalogLightSensor(
-                device: Device,
                 analogPin: Device.Pins.A03);
 
             //==== IObservable Pattern with an optional notification filter.
