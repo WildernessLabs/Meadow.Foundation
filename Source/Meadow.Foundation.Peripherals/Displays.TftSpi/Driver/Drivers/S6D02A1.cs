@@ -21,7 +21,6 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// Create a new S6D02A1 color display object
         /// </summary>
-        /// <param name="device">Meadow device</param>
         /// <param name="spiBus">SPI bus connected to display</param>
         /// <param name="chipSelectPin">Chip select pin</param>
         /// <param name="dcPin">Data command pin</param>
@@ -29,9 +28,9 @@ namespace Meadow.Foundation.Displays
         /// <param name="width">Width of display in pixels</param>
         /// <param name="height">Height of display in pixels</param>
         /// <param name="colorMode">The color mode to use for the display buffer</param>
-        public S6D02A1(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
+        public S6D02A1(ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
             int width = 128, int height = 160, ColorMode colorMode = ColorMode.Format12bppRgb444)
-            : base(device, spiBus, chipSelectPin, dcPin, resetPin, width, height, colorMode)
+            : base(spiBus, chipSelectPin, dcPin, resetPin, width, height, colorMode)
         {
             Initialize();
         }
@@ -108,7 +107,7 @@ namespace Meadow.Foundation.Displays
             SendCommand(0xf4, new byte[] { 0x00, 0x09, 0x00, 0x00, 0x00, 0x3f, 0x3f, 0x07, 0x00, 0x3C, 0x36, 0x00, 0x3C, 0x36, 0x00 });   // Power control
             SendCommand(0x36, new byte[] { 0xC8 }); // Memory access data control
             SendCommand(0x35, new byte[] { 0x00 }); // Tearing effect line on
-         
+
             SendCommand((byte)Register.COLOR_MODE);
             if (ColorMode == ColorMode.Format16bppRgb565)
                 SendData(0x05); //16 bit RGB565

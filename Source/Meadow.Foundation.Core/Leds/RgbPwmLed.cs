@@ -1,9 +1,9 @@
 using Meadow.Hardware;
+using Meadow.Peripherals.Leds;
 using Meadow.Units;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Meadow.Peripherals.Leds;
 
 namespace Meadow.Foundation.Leds
 {
@@ -43,7 +43,7 @@ namespace Meadow.Foundation.Leds
             get => isOn;
             set
             {
-                SetColor(Color, value? 1 : 0);
+                SetColor(Color, value ? 1 : 0);
                 isOn = value;
             }
         }
@@ -128,21 +128,19 @@ namespace Meadow.Foundation.Leds
         /// <summary>
         /// Create instance of RgbPwmLed
         /// </summary>
-        /// <param name="device"></param>
         /// <param name="redPwmPin"></param>
         /// <param name="greenPwmPin"></param>
         /// <param name="bluePwmPin"></param>
         /// <param name="commonType"></param>
         public RgbPwmLed(
-            IPwmOutputController device,
             IPin redPwmPin,
             IPin greenPwmPin,
             IPin bluePwmPin,
             CommonType commonType = CommonType.CommonCathode) :
             this(
-                device.CreatePwmPort(redPwmPin, DefaultFrequency),
-                device.CreatePwmPort(greenPwmPin, DefaultFrequency),
-                device.CreatePwmPort(bluePwmPin, DefaultFrequency),
+                redPwmPin.CreatePwmPort(DefaultFrequency),
+                greenPwmPin.CreatePwmPort(DefaultFrequency),
+                bluePwmPin.CreatePwmPort(DefaultFrequency),
                 commonType)
         { }
 
@@ -150,7 +148,6 @@ namespace Meadow.Foundation.Leds
         /// Instantiates a RgbPwmLed object with the especified IO device, connected
         /// to three digital pins for red, green and blue channels, respectively
         /// </summary>
-        /// <param name="device"></param>
         /// <param name="redPwmPin"></param>
         /// <param name="greenPwmPin"></param>
         /// <param name="bluePwmPin"></param>
@@ -159,20 +156,19 @@ namespace Meadow.Foundation.Leds
         /// <param name="blueLedForwardVoltage"></param>
         /// <param name="commonType"></param>
         public RgbPwmLed(
-            IPwmOutputController device,
-            IPin redPwmPin, 
-            IPin greenPwmPin, 
+            IPin redPwmPin,
+            IPin greenPwmPin,
             IPin bluePwmPin,
             Voltage redLedForwardVoltage,
             Voltage greenLedForwardVoltage,
             Voltage blueLedForwardVoltage,
             CommonType commonType = CommonType.CommonCathode) :
             this(
-                device.CreatePwmPort(redPwmPin, DefaultFrequency),
-                device.CreatePwmPort(greenPwmPin, DefaultFrequency),
-                device.CreatePwmPort(bluePwmPin, DefaultFrequency),
-                redLedForwardVoltage, 
-                greenLedForwardVoltage, 
+                redPwmPin.CreatePwmPort(DefaultFrequency),
+                greenPwmPin.CreatePwmPort(DefaultFrequency),
+                bluePwmPin.CreatePwmPort(DefaultFrequency),
+                redLedForwardVoltage,
+                greenLedForwardVoltage,
                 blueLedForwardVoltage,
                 commonType)
         { }
@@ -192,8 +188,8 @@ namespace Meadow.Foundation.Leds
         /// <param name="blueLedForwardVoltage"></param>
         /// <param name="commonType"></param>
         public RgbPwmLed(
-            IPwmPort redPwm, 
-            IPwmPort greenPwm, 
+            IPwmPort redPwm,
+            IPwmPort greenPwm,
             IPwmPort bluePwm,
             Voltage redLedForwardVoltage,
             Voltage greenLedForwardVoltage,
@@ -254,7 +250,7 @@ namespace Meadow.Foundation.Leds
         /// <param name="brightness"></param>
         public void SetColor(Color color, float brightness = 1)
         {
-            if(color == Color && brightness == Brightness)
+            if (color == Color && brightness == Brightness)
             {
                 return;
             }
@@ -346,7 +342,7 @@ namespace Meadow.Foundation.Leds
             });
             animationTask.Start();
         }
-        
+
         /// <summary>
         /// Start blinking led
         /// </summary>
@@ -442,7 +438,7 @@ namespace Meadow.Foundation.Leds
             });
             animationTask.Start();
         }
-        
+
         /// <summary>
         /// Start led pulsing
         /// </summary>

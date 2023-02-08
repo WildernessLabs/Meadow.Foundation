@@ -19,9 +19,9 @@ namespace Meadow.Foundation.Displays
         /// <param name="busyPin">Busy pin</param>
         /// <param name="width">Width of display in pixels</param>
         /// <param name="height">Height of display in pixels</param>
-        public Ssd1608(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, IPin busyPin,
+        public Ssd1608(ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, IPin busyPin,
             int width = 200, int height = 200) :
-            base(device, spiBus, chipSelectPin, dcPin, resetPin, busyPin, width, height)
+            base(spiBus, chipSelectPin, dcPin, resetPin, busyPin, width, height)
         {
         }
 

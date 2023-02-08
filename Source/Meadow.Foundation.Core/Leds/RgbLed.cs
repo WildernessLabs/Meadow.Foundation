@@ -1,8 +1,8 @@
 ﻿using Meadow.Hardware;
-using System.Threading;
-using System.Threading.Tasks;
 using Meadow.Peripherals.Leds;
 using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Leds
 {
@@ -47,7 +47,7 @@ namespace Meadow.Foundation.Leds
             get => isOn;
             set
             {
-                SetColor(value? Color : RgbLedColors.Black);
+                SetColor(value ? Color : RgbLedColors.Black);
                 isOn = value;
             }
         }
@@ -56,22 +56,21 @@ namespace Meadow.Foundation.Leds
         /// <summary>
         /// Initializes a new instance of the <see cref="T:Meadow.Foundation.Leds.RgbLed"/> class.
         /// </summary>
-        /// <param name="device">IO Device</param>
         /// <param name="redPin">Red Pin</param>
         /// <param name="greenPin">Green Pin</param>
         /// <param name="bluePin">Blue Pin</param>
         /// <param name="commonType">Is Common Cathode</param>
         public RgbLed(
-            IDigitalOutputController device, 
-            IPin redPin, 
-            IPin greenPin, 
-            IPin bluePin, 
+            IPin redPin,
+            IPin greenPin,
+            IPin bluePin,
             CommonType commonType = CommonType.CommonCathode) :
-            this (
-                device.CreateDigitalOutputPort(redPin),
-                device.CreateDigitalOutputPort(greenPin),
-                device.CreateDigitalOutputPort(bluePin),
-                commonType) { }
+            this(
+                redPin.CreateDigitalOutputPort(),
+                greenPin.CreateDigitalOutputPort(),
+                bluePin.CreateDigitalOutputPort(),
+                commonType)
+        { }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="T:Meadow.Foundation.Leds.RgbLed"/> class.
@@ -81,7 +80,7 @@ namespace Meadow.Foundation.Leds
         /// <param name="bluePort">Blue Port</param>
         /// <param name="commonType">Is Common Cathode</param>
         public RgbLed(
-            IDigitalOutputPort redPort, 
+            IDigitalOutputPort redPort,
             IDigitalOutputPort greenPort,
             IDigitalOutputPort bluePort,
             CommonType commonType = CommonType.CommonCathode)
@@ -192,7 +191,7 @@ namespace Meadow.Foundation.Leds
             });
             animationTask.Start();
         }
-        
+
         /// <summary>
         /// Turn the LED on and off (blink)
         /// </summary>

@@ -4,7 +4,6 @@ using Meadow.Foundation.Displays;
 using Meadow.Foundation.Graphics;
 using Meadow.Hardware;
 using Meadow.Units;
-using System;
 using System.Threading.Tasks;
 
 namespace Displays.Tft.Ili9488_Sample
@@ -26,7 +25,6 @@ namespace Displays.Tft.Ili9488_Sample
 
             var display = new Ili9488
             (
-                device: Device, 
                 spiBus: spiBus,
                 chipSelectPin: Device.Pins.D02,
                 dcPin: Device.Pins.D00,

@@ -1,11 +1,10 @@
-﻿using System;
-using System.Threading.Tasks;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Displays;
 using Meadow.Foundation.Graphics;
 using Meadow.Hardware;
 using Meadow.Units;
+using System.Threading.Tasks;
 
 namespace Displays.Tft.Ili9486_Sample
 {
@@ -26,7 +25,6 @@ namespace Displays.Tft.Ili9486_Sample
 
             var display = new Ili9486
             (
-                device: Device, 
                 spiBus: spiBus,
                 chipSelectPin: Device.Pins.D02,
                 dcPin: Device.Pins.D01,
@@ -39,7 +37,7 @@ namespace Displays.Tft.Ili9486_Sample
                 IgnoreOutOfBoundsPixels = true,
                 CurrentFont = new Font8x8()
             };
-            
+
             return base.Initialize();
         }
 

@@ -1,10 +1,10 @@
-﻿using System;
-using System.Threading.Tasks;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Motors;
 using Meadow.Foundation.Sensors.Buttons;
 using Meadow.Hardware;
+using System;
+using System.Threading.Tasks;
 
 namespace Motors.Tb67h420ftg_Sample
 {
@@ -21,15 +21,15 @@ namespace Motors.Tb67h420ftg_Sample
         {
             Resolver.Log.Info("Initialize...");
 
-            button1 = new PushButton(Device, Device.Pins.D12, ResistorMode.InternalPullDown);
-            button2 =  new PushButton(Device, Device.Pins.D13, ResistorMode.InternalPullDown);
+            button1 = new PushButton(Device.Pins.D12, ResistorMode.InternalPullDown);
+            button2 = new PushButton(Device.Pins.D13, ResistorMode.InternalPullDown);
 
             button1.PressStarted += Button1_PressStarted;
             button1.PressEnded += Button1_PressEnded;
             button2.PressStarted += Button2_PressStarted;
             button2.PressEnded += Button2_PressEnded;
 
-            motorDriver = new Tb67h420ftg(Device,
+            motorDriver = new Tb67h420ftg(
                 inA1: Device.Pins.D04, inA2: Device.Pins.D03, pwmA: Device.Pins.D01,
                 inB1: Device.Pins.D05, inB2: Device.Pins.D06, pwmB: Device.Pins.D00,
                 fault1: Device.Pins.D02, fault2: Device.Pins.D07,

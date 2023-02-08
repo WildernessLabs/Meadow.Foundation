@@ -1,7 +1,7 @@
-﻿using System;
-using Meadow.Hardware;
+﻿using Meadow.Foundation.Graphics;
 using Meadow.Foundation.Graphics.Buffers;
-using Meadow.Foundation.Graphics;
+using Meadow.Hardware;
+using System;
 
 namespace Meadow.Foundation.Displays
 {
@@ -67,7 +67,6 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// Create a new color ePaper display object
         /// </summary>
-        /// <param name="device">Meadow device</param>
         /// <param name="spiBus">SPI bus connected to display</param>
         /// <param name="chipSelectPin">Chip select pin</param>
         /// <param name="dcPin">Data command pin</param>
@@ -75,10 +74,10 @@ namespace Meadow.Foundation.Displays
         /// <param name="busyPin">Busy pin</param>
         /// <param name="width">Width of display in pixels</param>
         /// <param name="height">Height of display in pixels</param>
-        public EPaperTriColorBase(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, IPin busyPin,
+        public EPaperTriColorBase(ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, IPin busyPin,
             int width, int height) :
-            this(spiBus, device.CreateDigitalOutputPort(chipSelectPin), device.CreateDigitalOutputPort(dcPin, false),
-                device.CreateDigitalOutputPort(resetPin, true), device.CreateDigitalInputPort(busyPin),
+            this(spiBus, chipSelectPin.CreateDigitalOutputPort(), dcPin.CreateDigitalOutputPort(false),
+                resetPin.CreateDigitalOutputPort(true), busyPin.CreateDigitalInputPort(),
                 width, height)
         { }
 
@@ -199,7 +198,7 @@ namespace Meadow.Foundation.Displays
         /// <param name="enabled">If true, use the enabled color (default is white)</param>
         public void DrawBlackPixel(int x, int y, bool enabled)
         {
-            if(IsBlackInverted) { enabled = !enabled; }
+            if (IsBlackInverted) { enabled = !enabled; }
 
             imageBuffer.SetBlackPixel(x, y, enabled);
         }
@@ -276,7 +275,7 @@ namespace Meadow.Foundation.Displays
         {
             throw new NotImplementedException("Show must be implimented in the ePaper display driver");
         }
-        
+
         /// <summary>
         /// Display commands
         /// </summary>

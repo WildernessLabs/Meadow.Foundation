@@ -36,6 +36,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         protected SerialWombatBase(II2cBus bus, Address address = SerialWombatBase.Address.Default, Logger? logger = null)
         {
+            Pins = new PinDefinitions(this);
             _bus = bus;
             _address = address;
             Logger = logger;
@@ -44,7 +45,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <summary>
         /// The pins
         /// </summary>
-        public PinDefinitions Pins { get; } = new PinDefinitions();
+        public PinDefinitions Pins { get; }
 
         /// <summary>
         /// Send a packet of data

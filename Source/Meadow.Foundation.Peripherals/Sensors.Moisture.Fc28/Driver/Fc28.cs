@@ -45,7 +45,6 @@ namespace Meadow.Foundation.Sensors.Moisture
         /// <summary>
         /// Creates a FC28 soil moisture sensor object with the especified analog pin, digital pin and IO device
         /// </summary>
-        /// <param name="device">Meadow device</param>
         /// <param name="analogInputPin">Analog input pin connected</param>
         /// <param name="digitalOutputPin">Digital output pin connected</param>
         /// <param name="minimumVoltageCalibration">Minimum Voltage Calibration value</param>
@@ -56,18 +55,17 @@ namespace Meadow.Foundation.Sensors.Moisture
         /// reading. These are automatically averaged to reduce noise.</param>
         /// <param name="sampleInterval">The time, to wait in between samples during a reading.</param>
         public Fc28(
-            IMeadowDevice device, 
-            IPin analogInputPin, 
+            IPin analogInputPin,
             IPin digitalOutputPin,
-            Voltage? minimumVoltageCalibration, 
+            Voltage? minimumVoltageCalibration,
             Voltage? maximumVoltageCalibration,
             TimeSpan? updateInterval = null,
-            int sampleCount = 5, 
+            int sampleCount = 5,
             TimeSpan? sampleInterval = null)
                 : this(
-                    device.CreateAnalogInputPort(analogInputPin, sampleCount, sampleInterval ?? new TimeSpan(0, 0, 0, 40), new Voltage(3.3)),
-                    device.CreateDigitalOutputPort(digitalOutputPin), 
-                    minimumVoltageCalibration, 
+                    analogInputPin.CreateAnalogInputPort(sampleCount, sampleInterval ?? new TimeSpan(0, 0, 0, 40), new Voltage(3.3)),
+                    digitalOutputPin.CreateDigitalOutputPort(),
+                    minimumVoltageCalibration,
                     maximumVoltageCalibration)
         {
             UpdateInterval = updateInterval ?? TimeSpan.FromSeconds(5);
@@ -81,9 +79,9 @@ namespace Meadow.Foundation.Sensors.Moisture
         /// <param name="minimumVoltageCalibration">Minimum Voltage Calibration value</param>
         /// <param name="maximumVoltageCalibration">Maximum Voltage Calibration value</param>
         public Fc28(
-            IAnalogInputPort analogInputPort, 
+            IAnalogInputPort analogInputPort,
             IDigitalOutputPort digitalOutputPort,
-            Voltage? minimumVoltageCalibration, 
+            Voltage? minimumVoltageCalibration,
             Voltage? maximumVoltageCalibration)
         {
             AnalogInputPort = analogInputPort;
@@ -109,7 +107,7 @@ namespace Meadow.Foundation.Sensors.Moisture
         /// </summary>
         public override void StartUpdating(TimeSpan? updateInterval)
         {
-            if(updateInterval == null)
+            if (updateInterval == null)
             {
                 UpdateInterval = TimeSpan.FromSeconds(5);
             }
@@ -118,10 +116,10 @@ namespace Meadow.Foundation.Sensors.Moisture
                 UpdateInterval = updateInterval.Value;
             }
 
-            lock (samplingLock) 
+            lock (samplingLock)
             {
                 if (IsSampling) { return; }
-                    
+
                 IsSampling = true;
 
                 SamplingTokenSource = new CancellationTokenSource();
@@ -129,9 +127,9 @@ namespace Meadow.Foundation.Sensors.Moisture
 
                 double? oldConditions;
                 ChangeResult<double> result;
-                Task.Factory.StartNew(async () => 
+                Task.Factory.StartNew(async () =>
                 {
-                    while (true) 
+                    while (true)
                     {
                         if (ct.IsCancellationRequested)
                         {
@@ -157,10 +155,10 @@ namespace Meadow.Foundation.Sensors.Moisture
         /// </summary>
         public override void StopUpdating()
         {
-            lock (samplingLock) 
+            lock (samplingLock)
             {
                 if (!IsSampling) { return; }
-                if (SamplingTokenSource != null) 
+                if (SamplingTokenSource != null)
                 {
                     SamplingTokenSource.Cancel();
                 }
@@ -184,7 +182,7 @@ namespace Meadow.Foundation.Sensors.Moisture
         /// <param name="voltage"></param>
         protected double VoltageToMoisture(Voltage voltage)
         {
-            if (MinimumVoltageCalibration > MaximumVoltageCalibration) 
+            if (MinimumVoltageCalibration > MaximumVoltageCalibration)
             {
                 return (1f - voltage.Volts.Map(MaximumVoltageCalibration.Volts, MinimumVoltageCalibration.Volts, 0d, 1.0d));
             }

@@ -109,11 +109,10 @@ namespace Meadow.Foundation.Sensors.Buttons
         /// <summary>
         /// Creates PushButton with a digital input pin connected on a IIOdevice, specifying if its using an Internal or External PullUp/PullDown resistor.
         /// </summary>
-        /// <param name="device">The device connected to the button</param>
         /// <param name="inputPin">The pin used to create the button port</param>
         /// <param name="resistorMode">The resistor mode</param>
-        public PushButton(IDigitalInputController device, IPin inputPin, ResistorMode resistorMode = ResistorMode.InternalPullUp)
-            : this(CreateInputPort(device, inputPin, resistorMode))
+        public PushButton(IPin inputPin, ResistorMode resistorMode = ResistorMode.InternalPullUp)
+            : this(CreateInputPort(inputPin, resistorMode))
         {
             shouldDisposeInput = true;
         }
@@ -160,7 +159,7 @@ namespace Meadow.Foundation.Sensors.Buttons
         /// Create a digital input port for a pin
         /// This will dynamically set the interupt mode based on the pin capabilities 
         /// </summary>
-        protected static IDigitalInputPort CreateInputPort(IDigitalInputController device, IPin inputPin, ResistorMode resistorMode = ResistorMode.InternalPullUp)
+        protected static IDigitalInputPort CreateInputPort(IPin inputPin, ResistorMode resistorMode = ResistorMode.InternalPullUp)
         {
             var interruptMode = inputPin.Supports<IDigitalChannelInfo>(c => c.InterruptCapable) ? InterruptMode.EdgeBoth : InterruptMode.None;
 
@@ -168,7 +167,7 @@ namespace Meadow.Foundation.Sensors.Buttons
             {
                 Resolver.Log.Warn("Warning: Pin doesn't support interrupts, PushButton will use polling");
             }
-            return device.CreateDigitalInputPort(inputPin, interruptMode, resistorMode, DefaultDebounceDuration, DefaultGlitchDuration);
+            return inputPin.CreateDigitalInputPort(interruptMode, resistorMode, DefaultDebounceDuration, DefaultGlitchDuration);
         }
 
         void DigitalInChanged(object sender, DigitalPortResult result)

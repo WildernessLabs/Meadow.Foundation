@@ -2,7 +2,6 @@
 using Meadow.Devices;
 using Meadow.Foundation.Displays;
 using Meadow.Foundation.Graphics;
-using System;
 using System.Threading.Tasks;
 
 namespace BasicDisplays.Tft.Ssd1351_Sample
@@ -20,7 +19,6 @@ namespace BasicDisplays.Tft.Ssd1351_Sample
             var spiBus = Device.CreateSpiBus(Ssd1351.DefaultSpiBusSpeed);
 
             var display = new Ssd1351(
-                device: Device,
                 spiBus: spiBus,
                 chipSelectPin: Device.Pins.D02,
                 dcPin: Device.Pins.D01,

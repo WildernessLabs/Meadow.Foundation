@@ -62,28 +62,24 @@ namespace Meadow.Foundation.Sensors.Hid
         /// <summary>
         /// Creates a 2-axis analog joystick
         /// </summary>
-        /// <param name="device">The `IAnalogInputController` to create the port on.</param>
         /// <param name="horizontalPin"></param>
         /// <param name="verticalPin"></param>
         /// <param name="calibration">Calibration for the joystick.</param>
         public AnalogJoystick(
-            IAnalogInputController device, 
-            IPin horizontalPin, 
+            IPin horizontalPin,
             IPin verticalPin,
             JoystickCalibration? calibration = null)
                 : this(
-                    device, 
-                    horizontalPin, 
-                    verticalPin, 
-                    calibration, 
-                    sampleCount: 5, 
+                    horizontalPin,
+                    verticalPin,
+                    calibration,
+                    sampleCount: 5,
                     TimeSpan.FromMilliseconds(40))
         { }
 
         /// <summary>
         /// Creates a 2-axis analog joystick
         /// </summary>
-        /// <param name="device">The `IAnalogInputController` to create the port on.</param>
         /// <param name="horizontalPin"></param>
         /// <param name="verticalPin"></param>
         /// <param name="calibration">Calibration for the joystick.</param>
@@ -92,15 +88,14 @@ namespace Meadow.Foundation.Sensors.Hid
         /// <param name="sampleInterval">The time, in milliseconds,
         /// to wait in between samples during a reading.</param>
         public AnalogJoystick(
-            IAnalogInputController device, 
-            IPin horizontalPin, 
+            IPin horizontalPin,
             IPin verticalPin,
             JoystickCalibration? calibration,
             int sampleCount,
             TimeSpan sampleInterval)
                 : this(
-                      device.CreateAnalogInputPort(horizontalPin, sampleCount, sampleInterval, new Voltage(3.3, VU.Volts)),
-                      device.CreateAnalogInputPort(verticalPin, sampleCount, sampleInterval, new Voltage(3.3, VU.Volts)),
+                      horizontalPin.CreateAnalogInputPort(sampleCount, sampleInterval, new Voltage(3.3, VU.Volts)),
+                      verticalPin.CreateAnalogInputPort(sampleCount, sampleInterval, new Voltage(3.3, VU.Volts)),
                       calibration)
         { }
 
@@ -111,7 +106,7 @@ namespace Meadow.Foundation.Sensors.Hid
         /// <param name="verticalInputPort"></param>
         /// <param name="calibration"></param>
         public AnalogJoystick(
-            IAnalogInputPort horizontalInputPort, 
+            IAnalogInputPort horizontalInputPort,
             IAnalogInputPort verticalInputPort,
             JoystickCalibration? calibration = null)
         {
@@ -234,11 +229,11 @@ namespace Meadow.Foundation.Sensors.Hid
                 v = 3.3 - v;
             }
 
-            
+
             if (h > (Calibration.HorizontalCenter + Calibration.DeadZone).Volts)
             {   //Right
                 if (v > (Calibration.VerticalCenter + Calibration.DeadZone).Volts)
-                { 
+                {
                     return DigitalJoystickPosition.UpRight;
                 }
                 if (v < (Calibration.VerticalCenter - Calibration.DeadZone).Volts)
@@ -257,7 +252,7 @@ namespace Meadow.Foundation.Sensors.Hid
                 {
                     return DigitalJoystickPosition.DownLeft;
                 }
-                return  DigitalJoystickPosition.Left;
+                return DigitalJoystickPosition.Left;
             }
             else if (v > (Calibration.VerticalCenter + Calibration.DeadZone).Volts)
             {   //Up
@@ -280,7 +275,7 @@ namespace Meadow.Foundation.Sensors.Hid
             var h = await HorizontalInputPort.Read();
             var v = await VerticalInputPort.Read();
 
-            if(IsHorizontalInverted)
+            if (IsHorizontalInverted)
             {   //just flip the value
                 h = new Voltage(3.3, VU.Volts) - h;
             }

@@ -27,7 +27,6 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// Create a new Ili9341 color display object
         /// </summary>
-        /// <param name="device">Meadow device</param>
         /// <param name="spiBus">SPI bus connected to display</param>
         /// <param name="chipSelectPin">Chip select pin</param>
         /// <param name="dcPin">Data command pin</param>
@@ -35,9 +34,9 @@ namespace Meadow.Foundation.Displays
         /// <param name="width">Width of display in pixels</param>
         /// <param name="height">Height of display in pixels</param>
         /// <param name="colorMode">The color mode to use for the display buffer</param>
-        public Ili9341(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
+        public Ili9341(ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
             int width, int height, ColorMode colorMode = ColorMode.Format12bppRgb444)
-            : base(device, spiBus, chipSelectPin, dcPin, resetPin, width, height, colorMode)
+            : base(spiBus, chipSelectPin, dcPin, resetPin, width, height, colorMode)
         {
             Initialize();
         }
@@ -94,11 +93,11 @@ namespace Meadow.Foundation.Displays
             SendCommand((byte)Register.MADCTL, new byte[] { (byte)(Register.MADCTL_MX | Register.MADCTL_BGR) }); //13
 
             if (ColorMode == ColorMode.Format16bppRgb565)
-            { 
+            {
                 SendCommand((byte)Register.COLOR_MODE, new byte[] { 0x55 }); //color mode - 16bpp  
             }
             else
-            {      
+            {
                 SendCommand((byte)Register.COLOR_MODE, new byte[] { 0x53 }); //color mode - 12bpp 
             }
             SendCommand((byte)Register.FRMCTR1, new byte[] { 0x00, 0x18 });
@@ -111,7 +110,7 @@ namespace Meadow.Foundation.Displays
             DelayMs(120);
             SendCommand(Register.DISPON);
 
-            SetAddressWindow(0, 0, Width - 1,  Height - 1);
+            SetAddressWindow(0, 0, Width - 1, Height - 1);
 
             dataCommandPort.State = (Data);
         }

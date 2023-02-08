@@ -89,13 +89,13 @@ namespace Meadow.Foundation.RTCs
         /// <summary>
         /// Create a new Ds323x object
         /// </summary>
-        protected Ds323x(I2cPeripheral peripheral, IDigitalInputController device, IPin interruptPin)
+        protected Ds323x(I2cPeripheral peripheral, IPin interruptPin)
         {
             ds323x = peripheral;
 
             if (interruptPin != null)
             {
-                var interruptPort = device.CreateDigitalInputPort(interruptPin, InterruptMode.EdgeFalling, ResistorMode.InternalPullUp, TimeSpan.FromMilliseconds(10), TimeSpan.FromMilliseconds(10));
+                var interruptPort = interruptPin.CreateDigitalInputPort(InterruptMode.EdgeFalling, ResistorMode.InternalPullUp, TimeSpan.FromMilliseconds(10), TimeSpan.FromMilliseconds(10));
                 interruptCreatedInternally = true;
 
                 Initialize(interruptPort);

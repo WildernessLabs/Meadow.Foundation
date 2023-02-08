@@ -21,7 +21,6 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// Create a new Ili9163 color display object
         /// </summary>
-        /// <param name="device">Meadow device</param>
         /// <param name="spiBus">SPI bus connected to display</param>
         /// <param name="chipSelectPin">Chip select pin</param>
         /// <param name="dcPin">Data command pin</param>
@@ -29,9 +28,9 @@ namespace Meadow.Foundation.Displays
         /// <param name="width">Width of display in pixels</param>
         /// <param name="height">Height of display in pixels</param>
         /// <param name="colorMode">The color mode to use for the display buffer</param>
-        public Ili9163(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
-            int width, int height, ColorMode colorMode = ColorMode.Format12bppRgb444) 
-            : base(device, spiBus, chipSelectPin, dcPin, resetPin, width, height, colorMode)
+        public Ili9163(ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
+            int width, int height, ColorMode colorMode = ColorMode.Format12bppRgb444)
+            : base(spiBus, chipSelectPin, dcPin, resetPin, width, height, colorMode)
         {
             Initialize();
         }
@@ -59,7 +58,7 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         protected override void Initialize()
         {
-            if(resetPort != null)
+            if (resetPort != null)
             {
                 resetPort.State = true;
                 DelayMs(50);
@@ -72,7 +71,7 @@ namespace Meadow.Foundation.Displays
             {
                 DelayMs(150); //Not sure if this is needed but can't hurt
             }
-            
+
             SendCommand(0x01);
             SendCommand(0x11);
 

@@ -47,12 +47,11 @@ namespace Meadow.Foundation.Sensors.Distance
         /// <summary>
         /// Create a new HCSR04 object with an IO Device
         /// </summary>
-        /// <param name="device">The device conneced to the sensor</param>
         /// <param name="triggerPin">The trigger pin</param>
         /// <param name="echoPin">The echo pin</param>
-        public Hcsr04(IDigitalInputOutputController device, IPin triggerPin, IPin echoPin) :
-            this(device.CreateDigitalOutputPort(triggerPin, false),
-                  device.CreateDigitalInputPort(echoPin, InterruptMode.EdgeBoth))
+        public Hcsr04(IPin triggerPin, IPin echoPin) :
+            this(triggerPin.CreateDigitalOutputPort(false),
+                  echoPin.CreateDigitalInputPort(InterruptMode.EdgeBoth))
         { }
 
         /// <summary>

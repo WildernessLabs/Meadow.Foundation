@@ -1,8 +1,7 @@
-﻿using System;
-using System.Threading.Tasks;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Sound;
+using System.Threading.Tasks;
 
 namespace Sensors.Sound.Ky038_Sample
 {
@@ -16,7 +15,7 @@ namespace Sensors.Sound.Ky038_Sample
         {
             Resolver.Log.Info("Initialize...");
 
-            sensor = new Ky038(Device, Device.Pins.A00, Device.Pins.D10);
+            sensor = new Ky038(Device.Pins.A00, Device.Pins.D10);
 
             return Task.CompletedTask;
         }

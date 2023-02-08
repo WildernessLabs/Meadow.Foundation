@@ -29,7 +29,6 @@ namespace Displays.Tft.Ili9341_Sample
 
             display = new Ili9341
             (
-                device: Device,
                 spiBus: spiBus,
                 chipSelectPin: Device.Pins.D13,
                 dcPin: Device.Pins.D14,
@@ -65,7 +64,7 @@ namespace Displays.Tft.Ili9341_Sample
         //<!=SNOP=>
 
         void DisplayTest()
-	    {
+        {
             while (true)
             {
                 //   PartialUpdate();
@@ -96,9 +95,9 @@ namespace Displays.Tft.Ili9341_Sample
             graphics.DrawRectangle(0, 0, 240, 320, Color.Teal, true);
             //   graphics.Show(0, 0, 240, 10);
 
-            for(int x = 0; x < 200; x += 20)
+            for (int x = 0; x < 200; x += 20)
             {
-                for (int y = 0; y < 300; y+= 20)
+                for (int y = 0; y < 300; y += 20)
                 {
                     display.Show(x, y, x + 20, y + 20);
                 }
@@ -127,7 +126,7 @@ namespace Displays.Tft.Ili9341_Sample
                 x = 5 + i * 20 / 27;
 
                 //fill bottom of mountain
-                if(i < height / 2)
+                if (i < height / 2)
                 {
                     lineWidth = 38;
                     graphics.DrawLine(x, y, x + lineWidth, y, Color.YellowGreen);
@@ -154,12 +153,12 @@ namespace Displays.Tft.Ili9341_Sample
             int yPos = 12;
             int count = 0;
 
-            for(int i = 32; i < 254; i++)
+            for (int i = 32; i < 254; i++)
             {
                 if (i == 127)
                     i += 33;
 
-                if(count >= 18 || i >= 254)
+                if (count >= 18 || i >= 254)
                 {
                     Resolver.Log.Info(msg);
 

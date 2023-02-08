@@ -21,26 +21,26 @@ namespace Meadow.Foundation.Relays
         /// <summary>
         /// Whether or not the relay is on. Setting this property will turn it on or off.
         /// </summary>
-        public bool IsOn 
+        public bool IsOn
         {
-            get => isOn; 
+            get => isOn;
             set
             {
                 isOn = value;
                 DigitalOut.State = isOn ? onValue : !onValue;
             }
-        } 
+        }
         bool isOn = false;
         readonly bool onValue = true;
 
         /// <summary>
         /// Creates a new Relay on an IDigitalOutputPort.
         /// </summary>
-        /// <param name="device">IDigitalOutputController to create digital output port</param>
         /// <param name="pin">Pin connected to relay</param>
         /// <param name="type">Relay type</param>
-        public Relay(IDigitalOutputController device, IPin pin, RelayType type = RelayType.NormallyOpen) :
-            this(device.CreateDigitalOutputPort(pin), type) { }
+        public Relay(IPin pin, RelayType type = RelayType.NormallyOpen) :
+            this(pin.CreateDigitalOutputPort(), type)
+        { }
 
         /// <summary>
         /// Creates a new Relay on an IDigitalOutputPort. Allows you 

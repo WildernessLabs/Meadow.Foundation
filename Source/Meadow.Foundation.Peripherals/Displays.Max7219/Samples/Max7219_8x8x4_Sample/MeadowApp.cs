@@ -2,7 +2,6 @@
 using Meadow.Devices;
 using Meadow.Foundation.Displays;
 using Meadow.Foundation.Graphics;
-using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -18,7 +17,7 @@ namespace MeadowApp
             Resolver.Log.Info("Init...");
 
             display = new Max7219(
-                Device, Device.CreateSpiBus(Max7219.DefaultSpiBusSpeed),
+                Device.CreateSpiBus(Max7219.DefaultSpiBusSpeed),
                 Device.Pins.D00, deviceCount: 4,
                 maxMode: Max7219.Max7219Mode.Display);
 
@@ -54,7 +53,7 @@ namespace MeadowApp
 
             int delta = graphics.MeasureText(message).Width - graphics.Width;
 
-            for(int i = 0; i < delta; i++)
+            for (int i = 0; i < delta; i++)
             {
                 graphics.Clear();
                 graphics.DrawText(0 - i, 0, message);

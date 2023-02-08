@@ -53,7 +53,7 @@ namespace Meadow.Foundation.Sensors.Switches
 
             for (int i = 0; i < switchPins.Length; i++)
             {
-                Switches[i] = new SpstSwitch(device, switchPins[i], interruptMode, resistorMode, debounceDuration, glitchFilterCycleCount);
+                Switches[i] = new SpstSwitch(switchPins[i], interruptMode, resistorMode, debounceDuration, glitchFilterCycleCount);
                 int index = i;
                 Switches[i].Changed += (s, e) => HandleSwitchChanged(index);
             }
