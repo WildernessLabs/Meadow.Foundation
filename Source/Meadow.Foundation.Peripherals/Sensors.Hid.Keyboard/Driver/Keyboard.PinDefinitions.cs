@@ -5,99 +5,344 @@ using System.Collections.Generic;
 namespace Meadow.Foundation.Sensors.Hid;
 public partial class Keyboard
 {
+    /// <summary>
+    /// The collection of IPins that a keyboard can use
+    /// </summary>
     public class PinDefinitions : IPinDefinitions
     {
         private List<IPin> _keys = new List<IPin>();
 
+        /// <summary>
+        /// Enumerates all pins in the keyboard
+        /// </summary>
+        /// <returns></returns>
         public IEnumerator<IPin> GetEnumerator() => AllPins.GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
+        /// <summary>
+        /// A list of all pins in the keyboard
+        /// </summary>
         public IList<IPin> AllPins => _keys;
 
+        /// <summary>
+        /// The Keyboard associated with the pin collection
+        /// </summary>
         public IPinController Controller { get; set; }
 
-        internal PinDefinitions()
+        internal PinDefinitions(Keyboard controller)
         {
+            Controller = controller;
             _keys.Add(A);
         }
 
-        public IPin Back => new KeyboardPin(Controller, "Back", '\u0008');
-        public IPin Tab => new KeyboardPin(Controller, "Tab", '\u0009');
-        public IPin Enter => new KeyboardPin(Controller, "Enter", '\u000d');
-        public IPin Shift => new KeyboardPin(Controller, "Shift", '\u0010');
-        public IPin Control => new KeyboardPin(Controller, "Control", '\u0011');
-        public IPin Escape => new KeyboardPin(Controller, "Escape", '\u001b');
-        public IPin Space => new KeyboardPin(Controller, "Space", '\u0020');
-        public IPin PageUp => new KeyboardPin(Controller, "PageUp", '\u0021');
-        public IPin PageDown => new KeyboardPin(Controller, "PageDown", '\u0022');
-        public IPin End => new KeyboardPin(Controller, "End", '\u0023');
-        public IPin Home => new KeyboardPin(Controller, "Home", '\u0024');
-        public IPin Left => new KeyboardPin(Controller, "Left", '\u0025');
-        public IPin Up => new KeyboardPin(Controller, "Up", '\u0026');
-        public IPin Right => new KeyboardPin(Controller, "Right", '\u0027');
-        public IPin Down => new KeyboardPin(Controller, "Down", '\u0028');
-        public IPin Insert => new KeyboardPin(Controller, "Insert", '\u002d');
-        public IPin Delete => new KeyboardPin(Controller, "Delete", '\u002e');
-        public IPin Tilde => new KeyboardPin(Controller, "Tilde", '\u00c0');
+        /// <summary>
+        /// An input Pin for the Back key
+        /// </summary>
+        public IPin Back => new KeyboardKeyPin(Controller, "Back", '\u0008');
+        /// <summary>
+        /// An input Pin for the Tab key
+        /// </summary>
+        public IPin Tab => new KeyboardKeyPin(Controller, "Tab", '\u0009');
+        /// <summary>
+        /// An input Pin for the Enter key
+        /// </summary>
+        public IPin Enter => new KeyboardKeyPin(Controller, "Enter", '\u000d');
+        /// <summary>
+        /// An input Pin for the Shift key
+        /// </summary>
+        public IPin Shift => new KeyboardKeyPin(Controller, "Shift", '\u0010');
+        /// <summary>
+        /// An input Pin for the Control key
+        /// </summary>
+        public IPin Control => new KeyboardKeyPin(Controller, "Control", '\u0011');
+        /// <summary>
+        /// An input Pin for the Escape key
+        /// </summary>
+        public IPin Escape => new KeyboardKeyPin(Controller, "Escape", '\u001b');
+        /// <summary>
+        /// An input Pin for the Space bar
+        /// </summary>
+        public IPin Space => new KeyboardKeyPin(Controller, "Space", '\u0020');
+        /// <summary>
+        /// An input Pin for the Page Up key
+        /// </summary>
+        public IPin PageUp => new KeyboardKeyPin(Controller, "PageUp", '\u0021');
+        /// <summary>
+        /// An input Pin for the Page Down key
+        /// </summary>
+        public IPin PageDown => new KeyboardKeyPin(Controller, "PageDown", '\u0022');
+        /// <summary>
+        /// An input Pin for the End key
+        /// </summary>
+        public IPin End => new KeyboardKeyPin(Controller, "End", '\u0023');
+        /// <summary>
+        /// An input Pin for the Home key
+        /// </summary>
+        public IPin Home => new KeyboardKeyPin(Controller, "Home", '\u0024');
+        /// <summary>
+        /// An input Pin for the Left Arrow key
+        /// </summary>
+        public IPin Left => new KeyboardKeyPin(Controller, "Left", '\u0025');
+        /// <summary>
+        /// An input Pin for the Up Arrow key
+        /// </summary>
+        public IPin Up => new KeyboardKeyPin(Controller, "Up", '\u0026');
+        /// <summary>
+        /// An input Pin for the Right Arrow key
+        /// </summary>
+        public IPin Right => new KeyboardKeyPin(Controller, "Right", '\u0027');
+        /// <summary>
+        /// An input Pin for the Down Arrow key
+        /// </summary>
+        public IPin Down => new KeyboardKeyPin(Controller, "Down", '\u0028');
+        /// <summary>
+        /// An input Pin for the Insert key
+        /// </summary>
+        public IPin Insert => new KeyboardKeyPin(Controller, "Insert", '\u002d');
+        /// <summary>
+        /// An input Pin for the Delete key
+        /// </summary>
+        public IPin Delete => new KeyboardKeyPin(Controller, "Delete", '\u002e');
+        /// <summary>
+        /// An input Pin for the Back-tick/Tilde key
+        /// </summary>
+        public IPin Tilde => new KeyboardKeyPin(Controller, "Tilde", '\u00c0');
+        /// <summary>
+        /// An input Pin for the Semicolon key
+        /// </summary>
+        public IPin Semicolon => new KeyboardKeyPin(Controller, "Semicolon", '\u00ba');
+        /// <summary>
+        /// An input Pin for the +/= key
+        /// </summary>
+        public IPin Plus => new KeyboardKeyPin(Controller, "Plus", '\u00bb');
+        /// <summary>
+        /// An input Pin for the -/_ key
+        /// </summary>
+        public IPin Minus => new KeyboardKeyPin(Controller, "Minus", '\u00bd');
+        /// <summary>
+        /// An input Pin for the Comma key
+        /// </summary>
+        public IPin Comma => new KeyboardKeyPin(Controller, "Comma", '\u00bc');
+        /// <summary>
+        /// An input Pin for the Period key
+        /// </summary>
+        public IPin Period => new KeyboardKeyPin(Controller, "Period", '\u00be');
+        /// <summary>
+        /// An input Pin for the Forward Slash key
+        /// </summary>
+        public IPin ForwardSlash => new KeyboardKeyPin(Controller, "ForwardSlash", '\u00bf');
+        /// <summary>
+        /// An input Pin for the Back Slash key
+        /// </summary>
+        public IPin BackSlash => new KeyboardKeyPin(Controller, "BackSlash", '\u00dc');
+        /// <summary>
+        /// An input Pin for the Open Bracket key
+        /// </summary>
+        public IPin OpenBracket => new KeyboardKeyPin(Controller, "OpenBracket", '\u00db');
+        /// <summary>
+        /// An input Pin for the Close Bracket key
+        /// </summary>
+        public IPin CloseBracket => new KeyboardKeyPin(Controller, "CloseBracket", '\u00dd');
+        /// <summary>
+        /// An input Pin for the 0 key
+        /// </summary>
+        public IPin Num0 => new KeyboardKeyPin(Controller, "0", '0');
+        /// <summary>
+        /// An input Pin for the 1 key
+        /// </summary>
+        public IPin Num1 => new KeyboardKeyPin(Controller, "1", '1');
+        /// <summary>
+        /// An input Pin for the 2 key
+        /// </summary>
+        public IPin Num2 => new KeyboardKeyPin(Controller, "2", '2');
+        /// <summary>
+        /// An input Pin for the 3 key
+        /// </summary>
+        public IPin Num3 => new KeyboardKeyPin(Controller, "3", '3');
+        /// <summary>
+        /// An input Pin for the 4 key
+        /// </summary>
+        public IPin Num4 => new KeyboardKeyPin(Controller, "4", '4');
+        /// <summary>
+        /// An input Pin for the 5 key
+        /// </summary>
+        public IPin Num5 => new KeyboardKeyPin(Controller, "5", '5');
+        /// <summary>
+        /// An input Pin for the 6 key
+        /// </summary>
+        public IPin Num6 => new KeyboardKeyPin(Controller, "6", '6');
+        /// <summary>
+        /// An input Pin for the 7 key
+        /// </summary>
+        public IPin Num7 => new KeyboardKeyPin(Controller, "7", '7');
+        /// <summary>
+        /// An input Pin for the 8 key
+        /// </summary>
+        public IPin Num8 => new KeyboardKeyPin(Controller, "8", '8');
+        /// <summary>
+        /// An input Pin for the 9 key
+        /// </summary>
+        public IPin Num9 => new KeyboardKeyPin(Controller, "9", '9');
+        /// <summary>
+        /// An input Pin for the A key
+        /// </summary>
+        public IPin A => new KeyboardKeyPin(Controller, "A", 'A');
+        /// <summary>
+        /// An input Pin for the B key
+        /// </summary>
+        public IPin B => new KeyboardKeyPin(Controller, "B", 'B');
+        /// <summary>
+        /// An input Pin for the C key
+        /// </summary>
+        public IPin C => new KeyboardKeyPin(Controller, "C", 'C');
+        /// <summary>
+        /// An input Pin for the D key
+        /// </summary>
+        public IPin D => new KeyboardKeyPin(Controller, "D", 'D');
+        /// <summary>
+        /// An input Pin for the E key
+        /// </summary>
+        public IPin E => new KeyboardKeyPin(Controller, "E", 'E');
+        /// <summary>
+        /// An input Pin for the F key
+        /// </summary>
+        public IPin F => new KeyboardKeyPin(Controller, "F", 'F');
+        /// <summary>
+        /// An input Pin for the G key
+        /// </summary>
+        public IPin G => new KeyboardKeyPin(Controller, "G", 'G');
+        /// <summary>
+        /// An input Pin for the H key
+        /// </summary>
+        public IPin H => new KeyboardKeyPin(Controller, "H", 'H');
+        /// <summary>
+        /// An input Pin for the I key
+        /// </summary>
+        public IPin I => new KeyboardKeyPin(Controller, "I", 'I');
+        /// <summary>
+        /// An input Pin for the J key
+        /// </summary>
+        public IPin J => new KeyboardKeyPin(Controller, "J", 'J');
+        /// <summary>
+        /// An input Pin for the K key
+        /// </summary>
+        public IPin K => new KeyboardKeyPin(Controller, "K", 'K');
+        /// <summary>
+        /// An input Pin for the L key
+        /// </summary>
+        public IPin L => new KeyboardKeyPin(Controller, "L", 'L');
+        /// <summary>
+        /// An input Pin for the M key
+        /// </summary>
+        public IPin M => new KeyboardKeyPin(Controller, "M", 'M');
+        /// <summary>
+        /// An input Pin for the N key
+        /// </summary>
+        public IPin N => new KeyboardKeyPin(Controller, "N", 'N');
+        /// <summary>
+        /// An input Pin for the O key
+        /// </summary>
+        public IPin O => new KeyboardKeyPin(Controller, "O", 'O');
+        /// <summary>
+        /// An input Pin for the P key
+        /// </summary>
+        public IPin P => new KeyboardKeyPin(Controller, "P", 'P');
+        /// <summary>
+        /// An input Pin for the Q key
+        /// </summary>
+        public IPin Q => new KeyboardKeyPin(Controller, "Q", 'Q');
+        /// <summary>
+        /// An input Pin for the R key
+        /// </summary>
+        public IPin R => new KeyboardKeyPin(Controller, "R", 'R');
+        /// <summary>
+        /// An input Pin for the S key
+        /// </summary>
+        public IPin S => new KeyboardKeyPin(Controller, "S", 'S');
+        /// <summary>
+        /// An input Pin for the T key
+        /// </summary>
+        public IPin T => new KeyboardKeyPin(Controller, "T", 'T');
+        /// <summary>
+        /// An input Pin for the U key
+        /// </summary>
+        public IPin U => new KeyboardKeyPin(Controller, "U", 'U');
+        /// <summary>
+        /// An input Pin for the V key
+        /// </summary>
+        public IPin V => new KeyboardKeyPin(Controller, "V", 'V');
+        /// <summary>
+        /// An input Pin for the W key
+        /// </summary>
+        public IPin W => new KeyboardKeyPin(Controller, "W", 'W');
+        /// <summary>
+        /// An input Pin for the X key
+        /// </summary>
+        public IPin X => new KeyboardKeyPin(Controller, "X", 'X');
+        /// <summary>
+        /// An input Pin for the Y key
+        /// </summary>
+        public IPin Y => new KeyboardKeyPin(Controller, "Y", 'Y');
+        /// <summary>
+        /// An input Pin for the Z key
+        /// </summary>
+        public IPin Z => new KeyboardKeyPin(Controller, "Z", 'Z');
+        /// <summary>
+        /// An input Pin for Number Pad 0
+        /// </summary>
+        public IPin NumPad0 => new KeyboardKeyPin(Controller, "NumPad0", '\u0060');
+        /// <summary>
+        /// An input Pin for Number Pad 1
+        /// </summary>
+        public IPin NumPad1 => new KeyboardKeyPin(Controller, "NumPad1", '\u0061');
+        /// <summary>
+        /// An input Pin for Number Pad 2
+        /// </summary>
+        public IPin NumPad2 => new KeyboardKeyPin(Controller, "NumPad2", '\u0062');
+        /// <summary>
+        /// An input Pin for Number Pad 3
+        /// </summary>
+        public IPin NumPad3 => new KeyboardKeyPin(Controller, "NumPad3", '\u0063');
+        /// <summary>
+        /// An input Pin for Number Pad 4
+        /// </summary>
+        public IPin NumPad4 => new KeyboardKeyPin(Controller, "NumPad4", '\u0064');
+        /// <summary>
+        /// An input Pin for Number Pad 5
+        /// </summary>
+        public IPin NumPad5 => new KeyboardKeyPin(Controller, "NumPad5", '\u0065');
+        /// <summary>
+        /// An input Pin for Number Pad 6
+        /// </summary>
+        public IPin NumPad6 => new KeyboardKeyPin(Controller, "NumPad6", '\u0066');
+        /// <summary>
+        /// An input Pin for Number Pad 7
+        /// </summary>
+        public IPin NumPad7 => new KeyboardKeyPin(Controller, "NumPad7", '\u0067');
+        /// <summary>
+        /// An input Pin for Number Pad 8
+        /// </summary>
+        public IPin NumPad8 => new KeyboardKeyPin(Controller, "NumPad8", '\u0068');
+        /// <summary>
+        /// An input Pin for Number Pad 9
+        /// </summary>
+        public IPin NumPad9 => new KeyboardKeyPin(Controller, "NumPad9", '\u0069');
 
-        public IPin Semicolon => new KeyboardPin(Controller, "Semicolon", '\u00ba');
-        public IPin Plus => new KeyboardPin(Controller, "Plus", '\u00bb');
-        public IPin Minus => new KeyboardPin(Controller, "Minus", '\u00bd');
-        public IPin Comma => new KeyboardPin(Controller, "Comma", '\u00bc');
-        public IPin Period => new KeyboardPin(Controller, "Period", '\u00be');
-        public IPin ForwardSlash => new KeyboardPin(Controller, "ForwardSlash", '\u00bf');
-
-        public IPin BackSlash => new KeyboardPin(Controller, "BackSlash", '\u00dc');
-        public IPin OpenBracket => new KeyboardPin(Controller, "OpenBracket", '\u00db');
-        public IPin CloseBracket => new KeyboardPin(Controller, "CloseBracket", '\u00dd');
-
-        public IPin Num0 => new KeyboardPin(Controller, "0", '0');
-        public IPin Num1 => new KeyboardPin(Controller, "1", '1');
-        public IPin Num2 => new KeyboardPin(Controller, "2", '2');
-        public IPin Num3 => new KeyboardPin(Controller, "3", '3');
-        public IPin Num4 => new KeyboardPin(Controller, "4", '4');
-        public IPin Num5 => new KeyboardPin(Controller, "5", '5');
-        public IPin Num6 => new KeyboardPin(Controller, "6", '6');
-        public IPin Num7 => new KeyboardPin(Controller, "7", '7');
-        public IPin Num8 => new KeyboardPin(Controller, "8", '8');
-        public IPin Num9 => new KeyboardPin(Controller, "9", '9');
-
-        public IPin A => new KeyboardPin(Controller, "A", 'A');
-        public IPin B => new KeyboardPin(Controller, "B", 'B');
-        public IPin C => new KeyboardPin(Controller, "C", 'C');
-        public IPin D => new KeyboardPin(Controller, "D", 'D');
-        public IPin E => new KeyboardPin(Controller, "E", 'E');
-        public IPin F => new KeyboardPin(Controller, "F", 'F');
-        public IPin G => new KeyboardPin(Controller, "G", 'G');
-        public IPin H => new KeyboardPin(Controller, "H", 'H');
-        public IPin I => new KeyboardPin(Controller, "I", 'I');
-        public IPin J => new KeyboardPin(Controller, "J", 'J');
-        public IPin K => new KeyboardPin(Controller, "K", 'K');
-        public IPin L => new KeyboardPin(Controller, "L", 'L');
-        public IPin M => new KeyboardPin(Controller, "M", 'M');
-        public IPin N => new KeyboardPin(Controller, "N", 'N');
-        public IPin O => new KeyboardPin(Controller, "O", 'O');
-        public IPin P => new KeyboardPin(Controller, "P", 'P');
-        public IPin Q => new KeyboardPin(Controller, "Q", 'Q');
-        public IPin R => new KeyboardPin(Controller, "R", 'R');
-        public IPin S => new KeyboardPin(Controller, "S", 'S');
-        public IPin T => new KeyboardPin(Controller, "T", 'T');
-        public IPin U => new KeyboardPin(Controller, "U", 'U');
-        public IPin V => new KeyboardPin(Controller, "V", 'V');
-        public IPin W => new KeyboardPin(Controller, "W", 'W');
-        public IPin X => new KeyboardPin(Controller, "X", 'X');
-        public IPin Y => new KeyboardPin(Controller, "Y", 'Y');
-        public IPin Z => new KeyboardPin(Controller, "Z", 'Z');
-
-        public IPin NumPad0 => new KeyboardPin(Controller, "NumPad0", '\u0060');
-        public IPin NumPad1 => new KeyboardPin(Controller, "NumPad1", '\u0061');
-        public IPin NumPad2 => new KeyboardPin(Controller, "NumPad2", '\u0062');
-        public IPin NumPad3 => new KeyboardPin(Controller, "NumPad3", '\u0063');
-        public IPin NumPad4 => new KeyboardPin(Controller, "NumPad4", '\u0064');
-        public IPin NumPad5 => new KeyboardPin(Controller, "NumPad5", '\u0065');
-        public IPin NumPad6 => new KeyboardPin(Controller, "NumPad6", '\u0066');
-        public IPin NumPad7 => new KeyboardPin(Controller, "NumPad7", '\u0067');
-        public IPin NumPad8 => new KeyboardPin(Controller, "NumPad8", '\u0068');
-        public IPin NumPad9 => new KeyboardPin(Controller, "NumPad9", '\u0069');
+        /// <summary>
+        /// An output Pin for Caps Lock indicator
+        /// </summary>
+        public IPin CapsLock => new KeyboardIndicatorPin(Controller, "CapsLock", Interop.Indicators.KEYBOARD_CAPS_LOCK_ON);
+        /// <summary>
+        /// An output Pin for Number Lock indicator
+        /// </summary>
+        public IPin NumLock => new KeyboardIndicatorPin(Controller, "NumLock", Interop.Indicators.KEYBOARD_NUM_LOCK_ON);
+        /// <summary>
+        /// An output Pin for Scroll Lock indicator
+        /// </summary>
+        public IPin ScrollLock => new KeyboardIndicatorPin(Controller, "ScrollLock", Interop.Indicators.KEYBOARD_SCROLL_LOCK_ON);
+        /// <summary>
+        /// An output Pin for Kana Lock indicator
+        /// </summary>
+        public IPin KanaLock => new KeyboardIndicatorPin(Controller, "KanaLock", Interop.Indicators.KEYBOARD_KANA_LOCK_ON);
     }
 }
