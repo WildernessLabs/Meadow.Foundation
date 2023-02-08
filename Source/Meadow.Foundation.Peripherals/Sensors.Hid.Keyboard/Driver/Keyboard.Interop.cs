@@ -50,7 +50,7 @@ public partial class Keyboard
 
         [DllImport(KERNEL32, CharSet = CharSet.Auto, SetLastError = true)]
         public static extern bool DefineDosDeviceW(DosDefineFlags dwFlags,
-            string lpDeviceName, string lpTargetPath);
+            string lpDeviceName, string? lpTargetPath);
         /*
         BOOL DefineDosDeviceW(
           [in] DWORD dwFlags,

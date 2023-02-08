@@ -6,7 +6,7 @@ namespace Meadow.Foundation.Sensors.Hid;
 public partial class Keyboard
 {
     /// <summary>
-    /// Represents a Keyboard key as a meadow digital input
+    /// Represents a Keyboard key as a Meadow digital input
     /// </summary>
     public class KeyboardKey : DigitalInputPortBase
     {

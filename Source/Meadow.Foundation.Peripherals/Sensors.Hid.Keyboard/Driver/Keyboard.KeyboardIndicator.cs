@@ -6,10 +6,16 @@ namespace Meadow.Foundation.Sensors.Hid;
 
 public partial class Keyboard
 {
+    /// <summary>
+    /// Represents a Keyboard indicator as a Meadow digital output
+    /// </summary>
     public class KeyboardIndicator : DigitalOutputPortBase
     {
         private KeyboardIndicatorPin _pin;
 
+        /// <summary>
+        /// Sets the state of the indicator
+        /// </summary>
         public override bool State
         {
             get => GetState();

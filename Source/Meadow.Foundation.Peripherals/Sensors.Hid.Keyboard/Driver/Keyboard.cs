@@ -118,7 +118,9 @@ public partial class Keyboard : IDigitalInputController, IDigitalInputOutputCont
 
         Install();
 
-        var kbk = new KeyboardKey(kp, kp.SupportedChannels.First() as IDigitalChannelInfo, interruptMode);
+        var ci = kp.SupportedChannels?.First() as IDigitalChannelInfo ?? throw new ArgumentException("Pin is not a Digital channel");
+
+        var kbk = new KeyboardKey(kp, ci, interruptMode);
         _keys.Add(key, kbk);
         return kbk;
     }
@@ -179,7 +181,9 @@ public partial class Keyboard : IDigitalInputController, IDigitalInputOutputCont
             OpenKeyboardDevice();
         }
 
-        return new KeyboardIndicator(pin, kp.SupportedChannels.First() as IDigitalChannelInfo, initialState ? true : null);
+        var ci = kp.SupportedChannels?.First() as IDigitalChannelInfo ?? throw new ArgumentException("Pin is not a Digital channel");
+
+        return new KeyboardIndicator(pin, ci, initialState ? true : null);
         throw new NotImplementedException();
     }
 
