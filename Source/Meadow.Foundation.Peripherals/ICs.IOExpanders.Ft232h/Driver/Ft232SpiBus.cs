@@ -9,7 +9,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
 {
     public sealed class Ft232SpiBus : IFt232Bus, ISpiBus, IDisposable
     {
-        public const uint DefaultClockRate = 100000;
+        public const uint DefaultClockRate = 25000000;
         private const byte DefaultLatencyTimer = 10; // from the FTDI sample
 
         private bool _isDisposed;
@@ -136,6 +136,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
         {
             var options = CreateTransferOptions(csMode);
 
+            chipSelect.State = csMode == ChipSelectMode.ActiveLow ? false : true;
+
             var status = Functions.SPI_Read(
                 Handle,
                 MemoryMarshal.GetReference(readBuffer),
@@ -144,12 +146,16 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 options
                 );
 
+            chipSelect.State = csMode == ChipSelectMode.ActiveLow ? true : false;
+
             CheckStatus(status);
         }
 
         public void Write(IDigitalOutputPort chipSelect, Span<byte> writeBuffer, ChipSelectMode csMode = ChipSelectMode.ActiveLow)
         {
             var options = CreateTransferOptions(csMode);
+
+            chipSelect.State = csMode == ChipSelectMode.ActiveLow ? false : true;
 
             var status = Functions.SPI_Write(
                 Handle,
@@ -159,12 +165,16 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 options
                 );
 
+            chipSelect.State = csMode == ChipSelectMode.ActiveLow ? true : false;
+
             CheckStatus(status);
         }
 
         public void Exchange(IDigitalOutputPort chipSelect, Span<byte> writeBuffer, Span<byte> readBuffer, ChipSelectMode csMode = ChipSelectMode.ActiveLow)
         {
             var options = CreateTransferOptions(csMode);
+
+            chipSelect.State = csMode == ChipSelectMode.ActiveLow ? false : true;
 
             var status = Functions.SPI_ReadWrite(
                 Handle,
@@ -174,6 +184,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 out _,
                 options
                 );
+
+            chipSelect.State = csMode == ChipSelectMode.ActiveLow ? true : false;
 
             CheckStatus(status);
         }
