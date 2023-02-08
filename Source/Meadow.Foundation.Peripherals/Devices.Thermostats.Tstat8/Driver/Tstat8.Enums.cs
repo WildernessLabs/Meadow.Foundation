@@ -1,6 +1,6 @@
 ﻿namespace Meadow.Foundation.Thermostats
 {
-    public partial class T8
+    public partial class Tstat8
     {
         internal enum Register : ushort
         {

@@ -1,12 +1,13 @@
 ﻿using Meadow.Modbus;
+using Meadow.Units;
 using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Thermostats
 {
     /// <summary>
-    /// TEMCO T8 Thermostat Driver
+    /// TEMCO TSTAT8 Thermostat Driver
     /// </summary>
-    public partial class T8
+    public partial class Tstat8
     {
         private ModbusRtuClient _modbusClient;
 
@@ -20,7 +21,7 @@ namespace Meadow.Foundation.Thermostats
         /// </summary>
         /// <param name="modbusClient"></param>
         /// <param name="modbusAddress"></param>
-        public T8(ModbusRtuClient modbusClient, byte modbusAddress)
+        public Tstat8(ModbusRtuClient modbusClient, byte modbusAddress)
         {
             if (!modbusClient.IsConnected)
             {
@@ -35,9 +36,12 @@ namespace Meadow.Foundation.Thermostats
         /// Reads the thermostat's current temperature
         /// </summary>
         /// <returns></returns>
-        public async Task<double> GetCurrentTemperature()
+        public async Task<Temperature> GetCurrentTemperature()
         {
-            return await ReadRegisterAsDouble(Register.CurrentTemperature, 0.1);
+            // TODO: determine stat units (metric/imperial)
+
+            var register = await ReadRegisterAsDouble(Register.CurrentTemperature, 0.1);
+            return new Temperature(register, Temperature.UnitType.Fahrenheit);
         }
 
         /// <summary>
@@ -49,6 +53,12 @@ namespace Meadow.Foundation.Thermostats
             return await ReadRegisterAsDouble(Register.OccupiedSetPoint, 0.1);
         }
 
+        public async Task SetOccupiedSetpoint(double setPoint)
+        {
+            var spValue = (ushort)(setPoint * 10);
+            await _modbusClient.WriteHoldingRegister(ModbusAddress, (ushort)Register.OccupiedSetPoint, spValue);
+
+        }
         private async Task<double> ReadRegisterAsDouble(Register register, double scale)
         {
             var registerContents = await _modbusClient.ReadHoldingRegisters(ModbusAddress, (ushort)register, 1);
