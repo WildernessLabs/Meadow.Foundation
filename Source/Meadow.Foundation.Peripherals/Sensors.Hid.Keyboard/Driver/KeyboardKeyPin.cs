@@ -4,11 +4,17 @@ using System.Collections.Generic;
 
 namespace Meadow.Foundation.Sensors.Hid;
 
-public class KeyboardPin : Pin
+/// <summary>
+/// An IPin implementation for a Keyboard input key
+/// </summary>
+public class KeyboardKeyPin : Pin
 {
+    /// <summary>
+    /// The virtual key code of the key
+    /// </summary>
     public new char Key => Convert.ToChar(base.Key);
 
-    internal KeyboardPin(IPinController controller, string name, char key)
+    internal KeyboardKeyPin(IPinController controller, string name, char key)
         : base(controller, name, char.ToUpper(key),
         new List<IChannelInfo>()
         {
@@ -17,10 +23,15 @@ public class KeyboardPin : Pin
     {
         if (!(controller is Keyboard))
         {
-            throw new ArgumentException("KeyboardPins are only supported on a Keyboard");
+            throw new ArgumentException("KeyboardKeyPins are only supported on a Keyboard");
         }
     }
 
+    /// <summary>
+    /// Compares this pin to another
+    /// </summary>
+    /// <param name="other"></param>
+    /// <returns></returns>
     public override bool Equals(IPin? other)
     {
         if (other == null) return false;

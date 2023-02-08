@@ -5,16 +5,31 @@ namespace Meadow.Foundation.Sensors.Hid;
 
 public partial class Keyboard
 {
+    /// <summary>
+    /// Represents a Keyboard key as a meadow digital input
+    /// </summary>
     public class KeyboardKey : DigitalInputPortBase
     {
         private bool _state;
 
+        /// <summary>
+        /// the state of the key, <b>true</b> being "down"
+        /// </summary>
         public override bool State => _state;
+        /// <summary>
+        /// Virtual resistor mode of the key.  Always InternalPullUp
+        /// </summary>
         public override ResistorMode Resistor { get => ResistorMode.InternalPullUp; set => throw new NotSupportedException(); }
+        /// <summary>
+        /// Debounce duration of the key. Unsupported because the hardware handles this.
+        /// </summary>
         public override TimeSpan DebounceDuration { get => throw new NotSupportedException(); set => throw new NotSupportedException(); }
+        /// <summary>
+        /// Glitch filter duration of the key. Unsupported because the hardware handles this.
+        /// </summary>
         public override TimeSpan GlitchDuration { get => throw new NotSupportedException(); set => throw new NotSupportedException(); }
 
-        internal KeyboardKey(KeyboardPin pin, IDigitalChannelInfo info, InterruptMode interruptMode)
+        internal KeyboardKey(KeyboardKeyPin pin, IDigitalChannelInfo info, InterruptMode interruptMode)
             : base(pin, info, interruptMode)
         {
         }
