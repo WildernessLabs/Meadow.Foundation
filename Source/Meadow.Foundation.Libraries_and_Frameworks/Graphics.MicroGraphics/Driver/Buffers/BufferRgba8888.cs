@@ -5,7 +5,7 @@ namespace Meadow.Foundation.Graphics.Buffers
     /// <summary>
     /// Represents a 32bpp color pixel buffer
     /// </summary>
-    public class BufferRgb8888 : PixelBufferBase
+    public class BufferRgba8888 : PixelBufferBase
     {
         /// <summary>
         /// Color mode of the buffer
@@ -13,24 +13,24 @@ namespace Meadow.Foundation.Graphics.Buffers
         public override ColorMode ColorMode => ColorMode.Format32bppRgba8888;
 
         /// <summary>
-        /// Create a new BufferRgb888 object
+        /// Create a new BufferRgba8888 object
         /// </summary>
         /// <param name="width">The width in pixels</param>
         /// <param name="height">The height in pixels</param>
         /// <param name="buffer">The backing buffer</param>
-        public BufferRgb8888(int width, int height, byte[] buffer) : base(width, height, buffer) { }
+        public BufferRgba8888(int width, int height, byte[] buffer) : base(width, height, buffer) { }
 
         /// <summary>
-        /// Create a new BufferRgb888 object
+        /// Create a new BufferRgba8888 object
         /// </summary>
         /// <param name="width">The width in pixels</param>
         /// <param name="height">The height in pixels</param>
-        public BufferRgb8888(int width, int height) : base(width, height) { }
+        public BufferRgba8888(int width, int height) : base(width, height) { }
 
         /// <summary>
-        /// Create a new BufferRgb888 object
+        /// Create a new BufferRgba8888 object
         /// </summary>
-        public BufferRgb8888() : base() { }
+        public BufferRgba8888() : base() { }
 
         /// <summary>
         /// Get the pixel color
@@ -55,7 +55,6 @@ namespace Meadow.Foundation.Graphics.Buffers
         {
             var index = ((y * Width) + x) * 4;
 
-            //split into R,G,B & invert
             byte r = Buffer[index];
             byte g = Buffer[index + 1];
             byte b = Buffer[index + 2];
