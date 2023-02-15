@@ -1084,10 +1084,11 @@ namespace Meadow.Foundation.Graphics
         /// <param name="x">Abscissa of the location of the text</param>
         /// <param name="y">Ordinate of the location of the text</param>
         /// <param name="text">Text to display</param>
+        /// <param name="color">Color of the text</param>
         /// <param name="scaleFactor">Scalefactor used to calculate the size</param>
         /// <param name="alignmentH">Horizontal alignment: Left, Center or right aligned text</param>
         /// <param name="alignmentV">Vertical alignment: Top, Center or bottom aligned text</param>
-        public void DrawText(int x, int y, string text,
+        public void DrawText(int x, int y, string text, Color color,
             ScaleFactor scaleFactor = ScaleFactor.X1,
             HorizontalAlignment alignmentH = HorizontalAlignment.Left,
             VerticalAlignment alignmentV = VerticalAlignment.Top)
@@ -1102,7 +1103,7 @@ namespace Meadow.Foundation.Graphics
             x = GetXForAlignment(x, MeasureText(text, scaleFactor).Width, alignmentH);
             y = GetYForAlignment(y, MeasureText(text, scaleFactor).Height, alignmentV);
 
-            DrawBitmap(x, y, bitMap.Length / CurrentFont.Height * 8, CurrentFont.Height, bitMap, scaleFactor);
+            DrawBitmap(x, y, bitMap.Length / CurrentFont.Height * 8, CurrentFont.Height, bitMap, color, scaleFactor);
         }
 
         /// <summary>
@@ -1225,17 +1226,15 @@ namespace Meadow.Foundation.Graphics
         /// <param name="x">Abscissa of the location of the text</param>
         /// <param name="y">Ordinate of the location of the text</param>
         /// <param name="text">Text to display</param>
-        /// <param name="color">Color of the text</param>
         /// <param name="scaleFactor">Scalefactor used to calculate the size</param>
         /// <param name="alignmentH">Horizontal alignment: Left, Center or right aligned text</param>
         /// <param name="alignmentV">Vertical alignment: Top, Center or bottom aligned text</param>
-        public void DrawText(int x, int y, string text, Color color,
+        public void DrawText(int x, int y, string text,
             ScaleFactor scaleFactor = ScaleFactor.X1, 
             HorizontalAlignment alignmentH = HorizontalAlignment.Left, 
             VerticalAlignment alignmentV = VerticalAlignment.Top)
         {
-            PenColor = color;
-            DrawText(x, y, text, scaleFactor, alignmentH, alignmentV);
+            DrawText(x, y, text, PenColor, scaleFactor, alignmentH, alignmentV);
         }
 
         private byte[] GetBytesForTextBitmap(string text)
