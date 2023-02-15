@@ -13,6 +13,15 @@
         }
 
         /// <summary>
+        /// Draw a graphics path 
+        /// </summary>
+        /// <param name="path">The path</param>
+        public void DrawPath(GraphicsPath path)
+        {
+            DrawPath(path, PenColor);
+        }
+
+        /// <summary>
         /// Draw a graphics path
         /// </summary>
         /// <param name="path">The path</param>
