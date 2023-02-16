@@ -38,7 +38,6 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// <param name="color">The fill color</param>
         public override void Fill(Color color)
         {
-            // split the color in to two byte values
             Buffer[0] = (byte)(color.Color4bppGray | color.Color4bppGray << 4);
 
             int arrayMidPoint = Buffer.Length / 2;
