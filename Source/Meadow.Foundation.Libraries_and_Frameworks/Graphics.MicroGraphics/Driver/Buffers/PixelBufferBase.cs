@@ -320,5 +320,20 @@ namespace Meadow.Foundation.Graphics.Buffers
 
             return newBuffer;
         }
+
+        /// <summary>
+        /// Calculate the uncorrected distance between two colors using bytes for red, green, blue
+        /// </summary>
+        /// <param name="color1"></param>
+        /// <param name="color2"></param>
+        /// <returns>The distance as a double</returns>
+        public double GetColorDistance(Color color1, Color color2)
+        {
+            var rDeltaSquared = Math.Abs(color1.R - color2.R) ^ 2;
+            var gDeltaSquared = Math.Abs(color1.G - color2.G) ^ 2;
+            var bDeltaSquared = Math.Abs(color1.B - color2.B) ^ 2;
+
+            return Math.Sqrt(rDeltaSquared + gDeltaSquared + bDeltaSquared);
+        }
     }
 }
