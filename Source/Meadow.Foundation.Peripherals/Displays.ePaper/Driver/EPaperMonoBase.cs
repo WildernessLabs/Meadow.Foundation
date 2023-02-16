@@ -116,7 +116,7 @@ namespace Meadow.Foundation.Displays
         }
 
         /// <summary>
-        /// Clear the display.
+        /// Clear the display
         /// </summary>
         /// <param name="color">Color to set the display (not used on ePaper displays)</param>
         /// <param name="updateDisplay">Update the dipslay once the buffer has been cleared when true</param>
