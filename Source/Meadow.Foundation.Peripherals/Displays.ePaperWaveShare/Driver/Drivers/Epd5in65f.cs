@@ -1,11 +1,8 @@
-﻿using Meadow.Foundation;
-using Meadow.Foundation.Displays;
-using Meadow.Foundation.Graphics;
+﻿using Meadow.Foundation.Graphics;
 using Meadow.Foundation.Graphics.Buffers;
 using Meadow.Hardware;
-using System;
 
-namespace Displays.ePaperWaveShare.Drivers
+namespace Meadow.Foundation.Displays
 {
     /// <summary>
     /// Represents a WaveShare 5.65" ACeP 7 color epaper display
@@ -60,16 +57,12 @@ namespace Displays.ePaperWaveShare.Drivers
         /// <param name="dcPin">Data command pin</param>
         /// <param name="resetPin">Reset pin</param>
         /// <param name="busyPin">Busy pin</param>
-        /// <param name="width">Width of display in pixels</param>
-        /// <param name="height">Height of display in pixels</param>
-        public Epd5in65f(ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, IPin busyPin,
-            int width, int height) :
+        public Epd5in65f(ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, IPin busyPin) :
             this(spiBus,
                 chipSelectPin.CreateDigitalOutputPort(),
                 dcPin.CreateDigitalOutputPort(),
                 resetPin.CreateDigitalOutputPort(),
-                busyPin.CreateDigitalInputPort(),
-                width, height)
+                busyPin.CreateDigitalInputPort())
         {
         }
 
@@ -81,14 +74,11 @@ namespace Displays.ePaperWaveShare.Drivers
         /// <param name="dataCommandPort">Data command output port</param>
         /// <param name="resetPort">Reset output port</param>
         /// <param name="busyPort">Busy input port</param>
-        /// <param name="width">Width of display in pixels</param>
-        /// <param name="height">Height of display in pixels</param>
         public Epd5in65f(ISpiBus spiBus,
             IDigitalOutputPort chipSelectPort,
             IDigitalOutputPort dataCommandPort,
             IDigitalOutputPort resetPort,
-            IDigitalInputPort busyPort,
-            int width, int height)
+            IDigitalInputPort busyPort)
         {
             this.dataCommandPort = dataCommandPort;
             this.chipSelectPort = chipSelectPort;
@@ -97,7 +87,7 @@ namespace Displays.ePaperWaveShare.Drivers
 
             spiPeripheral = new SpiPeripheral(spiBus, chipSelectPort);
 
-            imageBuffer = new BufferIndexed4(width, height);
+            imageBuffer = new BufferIndexed4(Width, Height);
 
             //set the indexed colors
             imageBuffer.IndexedColors[0] = Color.Black;
