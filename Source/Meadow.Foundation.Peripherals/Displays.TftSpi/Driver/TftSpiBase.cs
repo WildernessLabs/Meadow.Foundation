@@ -104,7 +104,7 @@ namespace Meadow.Foundation.Displays
             int width, int height, ColorMode colorMode = ColorMode.Format16bppRgb565)
             : this(
                     spiBus,
-                    chipSelectPin.CreateDigitalOutputPort(),
+                    chipSelectPin?.CreateDigitalOutputPort(),
                     dcPin.CreateDigitalOutputPort(),
                     resetPin.CreateDigitalOutputPort(),
                     width, height, colorMode
