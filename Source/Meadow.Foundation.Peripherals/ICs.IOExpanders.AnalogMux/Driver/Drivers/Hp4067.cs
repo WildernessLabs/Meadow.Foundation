@@ -6,7 +6,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
     /// Represents an Ti HP4067 16-channel analog multiplexer
     /// </summary>
     /// <remarks>This part is identical to the Nxp74HC4067</remarks>
-    public class Hp4067 : x74HC4067
+    public class Hp4067 : x74x4067
     {
         /// <summary>
         /// Creates a new Hp4067 object

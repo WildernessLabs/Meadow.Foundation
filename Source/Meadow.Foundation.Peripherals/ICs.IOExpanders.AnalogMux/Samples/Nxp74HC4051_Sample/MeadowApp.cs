@@ -9,13 +9,13 @@ namespace ICs.IOExpanders.Nxp74HC4051_Sample
     {
         //<!=SNIP=>
 
-        private x74HC4051 mux;
+        private x74x4051 mux;
 
         public override Task Initialize()
         {
             Resolver.Log.Info("Initialize...");
 
-            mux = new x74HC4051(
+            mux = new x74x4051(
                 Device.CreateAnalogInputPort(Device.Pins.A00),      // input
                 Device.CreateDigitalOutputPort(Device.Pins.D00),    // s0
                 Device.CreateDigitalOutputPort(Device.Pins.D01),    // s1
