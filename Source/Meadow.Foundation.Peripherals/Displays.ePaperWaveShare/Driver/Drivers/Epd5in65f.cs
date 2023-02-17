@@ -1,6 +1,7 @@
 ﻿using Meadow.Foundation.Graphics;
 using Meadow.Foundation.Graphics.Buffers;
 using Meadow.Hardware;
+using System;
 
 namespace Meadow.Foundation.Displays
 {
@@ -47,7 +48,7 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// Height of display in pixels
         /// </summary>
-        public int Height => 488;
+        public int Height => 448;
 
         /// <summary>
         /// Create a new Epd5in65f ePaper display object
@@ -198,15 +199,16 @@ namespace Meadow.Foundation.Displays
             SendData(0xC0);
             SendCommand(0x10);
 
-            for (int i = 0; i < Width / 2 * Height; i++)
-            {
-                spiPeripheral.Write(imageBuffer.Buffer[i]);
-            }
+            dataCommandPort.State = DataState;
+
+            spiPeripheral.Write(imageBuffer.Buffer);
 
             SendCommand(0x04);
             WaitForBusyState(true);
+
             SendCommand(0x12);
             WaitForBusyState(true);
+
             SendCommand(0x02);
             WaitForBusyState(false);
             DelayMs(200);

@@ -19,10 +19,10 @@ namespace Displays.ePaper.EpdColor_Sample
 
             var display = new Epd5in65f(
                     spiBus: Device.CreateSpiBus(),
-                    chipSelectPin: Device.Pins.D03,
-                    dcPin: Device.Pins.D02,
-                    resetPin: Device.Pins.D01,
-                    busyPin: Device.Pins.D00);
+                    chipSelectPin: Device.Pins.A04,
+                    dcPin: Device.Pins.A03,
+                    resetPin: Device.Pins.A02,
+                    busyPin: Device.Pins.A01);
 
             graphics = new MicroGraphics(display);
 
@@ -33,16 +33,7 @@ namespace Displays.ePaper.EpdColor_Sample
         {
             Resolver.Log.Info("Run");
 
-            for (int i = 0; i < 100; i++)
-            {
-                graphics.DrawPixel(i, i, Color.Black);
-            }
-
-            /*
-            graphics.DrawRectangle(10, 40, 120, 60, Color.Black, true);
-            graphics.DrawRectangle(20, 80, 120, 90, Color.Red, true);
-
-            */
+            graphics.Clear();
 
             graphics.CurrentFont = new Font12x16();
             graphics.DrawText(0, 0, "Meadow F7", Color.Black, scaleFactor: ScaleFactor.X2);
