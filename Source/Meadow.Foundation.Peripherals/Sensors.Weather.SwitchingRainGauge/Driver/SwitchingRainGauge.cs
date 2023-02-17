@@ -34,20 +34,18 @@ namespace Meadow.Foundation.Sensors.Weather
         /// <summary>
         /// Create a new SwitchingRainGauge object with a default depth of 0.2794 per click
         /// </summary>
-        /// <param name="device">The device connected to the sensor</param>
         /// <param name="rainSensorPin">The rain sensor pin</param>
-        public SwitchingRainGauge(IDigitalInputController device, IPin rainSensorPin) :
-            this(device, rainSensorPin, new Length(0.2794, Length.UnitType.Millimeters))
+        public SwitchingRainGauge(IPin rainSensorPin) :
+            this(rainSensorPin, new Length(0.2794, Length.UnitType.Millimeters))
         { }
 
         /// <summary>
         /// Create a new SwitchingRainGauge object
         /// </summary>
-        /// <param name="device">The device connected to the sensor</param>
         /// <param name="rainSensorPin">The rain sensor pin</param>
         /// <param name="depthPerClick">The depth per click</param>
-        public SwitchingRainGauge(IDigitalInputController device, IPin rainSensorPin, Length depthPerClick) :
-            this(device.CreateDigitalInputPort(rainSensorPin, InterruptMode.EdgeRising, ResistorMode.InternalPullUp, TimeSpan.FromMilliseconds(100), TimeSpan.Zero), depthPerClick)
+        public SwitchingRainGauge(IPin rainSensorPin, Length depthPerClick) :
+            this(rainSensorPin.CreateDigitalInputPort(InterruptMode.EdgeRising, ResistorMode.InternalPullUp, TimeSpan.FromMilliseconds(100), TimeSpan.Zero), depthPerClick)
         { }
 
         /// <summary>

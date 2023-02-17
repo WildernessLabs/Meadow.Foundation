@@ -63,14 +63,13 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// Create a Pcd8544 object
         /// </summary>
-        /// <param name="device">Meadow device</param>
         /// <param name="spiBus">SPI bus connected to display</param>
         /// <param name="chipSelectPin">Chip select pin</param>
         /// <param name="dcPin">Data command pin</param>
         /// <param name="resetPin">Reset pin</param>
-        public Pcd8544(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin):
-            this(spiBus, device.CreateDigitalOutputPort(chipSelectPin), device.CreateDigitalOutputPort(dcPin, true),
-                device.CreateDigitalOutputPort(resetPin, true))
+        public Pcd8544(ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin):
+            this(spiBus, chipSelectPin?.CreateDigitalOutputPort(), dcPin.CreateDigitalOutputPort(true),
+                resetPin.CreateDigitalOutputPort(true))
         {
         }
 

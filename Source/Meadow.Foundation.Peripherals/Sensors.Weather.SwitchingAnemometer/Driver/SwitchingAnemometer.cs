@@ -64,12 +64,12 @@ namespace Meadow.Foundation.Sensors.Weather
         /// Creates a new `SwitchingAnemometer` using the specific digital input
         /// on the device.
         /// </summary>
-        /// <param name="device"></param>
         /// <param name="digitalInputPin"></param>
-        public SwitchingAnemometer(IDigitalInputController device, IPin digitalInputPin)
-            : this(device.CreateDigitalInputPort(
-                digitalInputPin, InterruptMode.EdgeFalling,
-                ResistorMode.InternalPullUp, TimeSpan.FromMilliseconds(2), TimeSpan.FromMilliseconds(0)))
+        public SwitchingAnemometer(IPin digitalInputPin)
+            : this(digitalInputPin.CreateDigitalInputPort(InterruptMode.EdgeFalling,
+                                                            ResistorMode.InternalPullUp, 
+                                                            TimeSpan.FromMilliseconds(2), 
+                                                            TimeSpan.FromMilliseconds(0)))
         { }
 
         /// <summary>

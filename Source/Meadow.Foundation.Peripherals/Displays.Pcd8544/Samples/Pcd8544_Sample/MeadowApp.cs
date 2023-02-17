@@ -21,7 +21,6 @@ namespace Displays.Pcd8854_Sample
 
             var display = new Pcd8544
             (
-                device: Device,
                 spiBus: Device.CreateSpiBus(Device.Pins.SCK, Device.Pins.MOSI, Device.Pins.MISO, config),
                 chipSelectPin: Device.Pins.D01,
                 dcPin: Device.Pins.D00,

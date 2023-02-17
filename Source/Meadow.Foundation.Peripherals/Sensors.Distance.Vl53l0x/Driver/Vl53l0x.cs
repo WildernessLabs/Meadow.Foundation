@@ -57,32 +57,26 @@ namespace Meadow.Foundation.Sensors.Distance
         /// <summary>
         /// Creates a new Vl53l0x object
         /// </summary>
-        /// <param name="device">Meadow device</param>
         /// <param name="i2cBus">I2C bus</param>
         /// <param name="address">I2C address</param>
-        public Vl53l0x(
-            IDigitalOutputController device, II2cBus i2cBus,
-            byte address = (byte)Addresses.Default)
-                : this(device, i2cBus, null, address)
+        public Vl53l0x(II2cBus i2cBus, byte address = (byte)Addresses.Default)
+                : this(i2cBus, null, address)
         {
         }
 
         /// <summary>
         /// Creates a new Vl53l0x object
         /// </summary>
-        /// <param name="device">Meadow device</param>
         /// <param name="i2cBus">I2C bus</param>
         /// <param name="shutdownPin">Shutdown pin</param>
         /// <param name="address">VL53L0X address</param>
 
-        public Vl53l0x(
-            IDigitalOutputController device, II2cBus i2cBus, IPin shutdownPin,
-            byte address = (byte)Addresses.Default)
+        public Vl53l0x(II2cBus i2cBus, IPin shutdownPin, byte address = (byte)Addresses.Default)
                 : base(i2cBus, address)
         {
             if (shutdownPin != null)
             {
-                shutdownPort = device.CreateDigitalOutputPort(shutdownPin, true);
+                shutdownPort = shutdownPin.CreateDigitalOutputPort(true);
             }
             Initialize().Wait();
         }

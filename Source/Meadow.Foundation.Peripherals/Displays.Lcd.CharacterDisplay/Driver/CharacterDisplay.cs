@@ -18,7 +18,6 @@ namespace Meadow.Foundation.Displays.Lcd
         /// <summary>
         /// Create a new character display object using GPIO
         /// </summary>
-        /// <param name="device">The device connected to the display</param>
         /// <param name="pinRS">The RS pin</param>
         /// <param name="pinE">The E pin</param>
         /// <param name="pinD4">The D4 pin</param>

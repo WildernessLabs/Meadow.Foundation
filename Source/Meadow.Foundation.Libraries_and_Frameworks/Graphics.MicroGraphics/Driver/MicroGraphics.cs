@@ -644,7 +644,7 @@ namespace Meadow.Foundation.Graphics
         /// <param name="enabled">Show the circle when true</param>
         /// <param name="filled">Draw a filled circle?</param>
         /// <param name="centerBetweenPixels">Set center between pixels</param>
-        public void DrawCircle(int centerX, int centerY, int radius, bool enabled = true, bool filled = false, bool centerBetweenPixels = false)
+        public void DrawCircle(int centerX, int centerY, int radius, bool enabled, bool filled = false, bool centerBetweenPixels = false)
         {
             DrawCircle(centerX, centerY, radius, enabled ? display.EnabledColor : display.DisabledColor, filled, centerBetweenPixels);
         }
@@ -922,7 +922,7 @@ namespace Meadow.Foundation.Graphics
         /// <param name="height">Height of the rectangle</param>
         /// <param name="enabled">Turn pixels on (true) or turn pixels off (false)</param>
         /// <param name="filled">Fill the rectangle (true) or draw the outline (false, default)</param>
-        public void DrawRectangle(int x, int y, int width, int height, bool enabled = true, bool filled = false)
+        public void DrawRectangle(int x, int y, int width, int height, bool enabled, bool filled = false)
         {
             DrawRectangle(x, y, width, height, enabled ? display.EnabledColor : display.DisabledColor, filled);
         }

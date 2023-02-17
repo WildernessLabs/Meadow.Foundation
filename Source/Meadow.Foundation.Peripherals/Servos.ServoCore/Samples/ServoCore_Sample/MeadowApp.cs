@@ -18,7 +18,7 @@ namespace Servos.Servo_Sample
         {
             Resolver.Log.Info("Initialize...");
 
-            servo = new Servo(Device, Device.Pins.D02, NamedServoConfigs.SG90);
+            servo = new Servo(Device.Pins.D02, NamedServoConfigs.SG90);
 
             return Task.CompletedTask;
         }

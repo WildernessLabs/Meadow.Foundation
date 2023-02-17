@@ -21,7 +21,6 @@ namespace Meadow.Foundation.Audio
         /// <summary>
         /// Create a new PiezoSpeaker instance
         /// </summary>
-        /// <param name="device">IPwmOutputController to create PWM port</param>
         /// <param name="pin">PWM Pin connected to the PiezoSpeaker</param>
         /// <param name="frequency">PWM frequency</param>
         /// <param name="dutyCycle">Duty cycle</param>
@@ -32,7 +31,6 @@ namespace Meadow.Foundation.Audio
         /// <summary>
         /// Create a new PiezoSpeaker instance
         /// </summary>
-        /// <param name="device">IPwmOutputController to create PWM port</param>
         /// <param name="pin">PWM Pin connected to the PiezoSpeaker</param>
         public PiezoSpeaker(IPin pin) :
             this(pin.CreatePwmPort(new Frequency(100, Frequency.UnitType.Hertz), 0))

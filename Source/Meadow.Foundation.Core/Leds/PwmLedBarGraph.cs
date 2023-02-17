@@ -37,10 +37,9 @@ namespace Meadow.Foundation.Leds
         /// <summary>
         /// Create an LedBarGraph instance for single color LED bar graphs
         /// </summary>
-        /// <param name="device"></param>
         /// <param name="pins">Array of pins</param>
         /// <param name="forwardVoltage">Single forward voltage</param>
-        public PwmLedBarGraph(IPwmOutputController device, IPin[] pins, Voltage forwardVoltage)
+        public PwmLedBarGraph(IPin[] pins, Voltage forwardVoltage)
         {
             pwmLeds = new PwmLed[pins.Length];
 

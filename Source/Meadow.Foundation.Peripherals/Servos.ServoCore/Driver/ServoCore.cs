@@ -10,11 +10,10 @@ namespace Meadow.Foundation.Servos
         /// <summary>
         /// Create a new Servo object
         /// </summary>
-        /// <param name="device">The device connected to the servo</param>
-        /// <param name="pwmPort">The PWM pin</param>
+        /// <param name="pwmPin">The PWM pin</param>
         /// <param name="config">The servo configuration</param>
-        public Servo(IPwmOutputController device, IPin pwmPort, ServoConfig config) :
-            this(device.CreatePwmPort(pwmPort, new Units.Frequency(IPwmOutputController.DefaultPwmFrequency, Units.Frequency.UnitType.Hertz)), config) { }
+        public Servo(IPin pwmPin, ServoConfig config) :
+            this(pwmPin.CreatePwmPort(new Units.Frequency(IPwmOutputController.DefaultPwmFrequency, Units.Frequency.UnitType.Hertz)), config) { }
 
         /// <summary>
         /// Create a new Servo object

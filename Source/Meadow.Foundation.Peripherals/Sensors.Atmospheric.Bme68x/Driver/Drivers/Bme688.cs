@@ -21,7 +21,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <summary>
         /// Creates a new instance of the BME688 class
         /// </summary>
-        /// <param name="device">The Meadow device to create the chip select port</param>
         /// <param name="spiBus">The SPI bus connected to the device</param>
         /// <param name="chipSelectPin">The chip select pin</param>
         public Bme688(ISpiBus spiBus, IPin chipSelectPin) :
