@@ -28,7 +28,7 @@ namespace MeadowApp
                 CommonType.CommonAnode);
 
             //==== create the anemometer
-            anemometer = new SwitchingAnemometer(Device, Device.Pins.A01);
+            anemometer = new SwitchingAnemometer(Device.Pins.A01);
 
             //==== classic events example
             anemometer.WindSpeedUpdated += (sender, result) =>

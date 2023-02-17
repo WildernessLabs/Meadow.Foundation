@@ -124,7 +124,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <summary>
         /// Initializes a new instance of the BME280 class
         /// </summary>
-        /// <param name="device">The meadow device used to create the chip select port</param>
         /// <param name="spiBus">The SPI bus connected to the BME280</param>
         /// <param name="chipSelectPin">The chip select pin</param>
         public Bme280(ISpiBus spiBus, IPin chipSelectPin) :

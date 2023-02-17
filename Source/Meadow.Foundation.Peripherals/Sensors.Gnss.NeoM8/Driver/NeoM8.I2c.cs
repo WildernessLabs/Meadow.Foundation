@@ -9,21 +9,25 @@ namespace Meadow.Foundation.Sensors.Gnss
     public partial class NeoM8
     {
         I2cPeripheral i2CPeripheral;
+
         readonly Memory<byte> i2cBuffer = new byte[BUFFER_SIZE];
+
+        IDigitalOutputPort resetPort;
+        IDigitalInputPort ppsPort;
 
         /// <summary>
         /// Create a new NeoM8 object using I2C
         /// </summary>
-        public NeoM8(IMeadowDevice device, II2cBus i2cBus, byte address = (byte)Addresses.Default, IPin resetPin = null, IPin ppsPin = null)  
+        public NeoM8(II2cBus i2cBus, byte address = (byte)Addresses.Default, IPin resetPin = null, IPin ppsPin = null)  
         {
-            if(resetPin!= null)
+            if(resetPin != null)
             {
-                device.CreateDigitalOutputPort(resetPin, true);
+                resetPort = resetPin.CreateDigitalOutputPort(true);
             }
 
             if(ppsPin != null)
             {
-                device.CreateDigitalInputPort(ppsPin, InterruptMode.EdgeRising, ResistorMode.InternalPullDown);
+                ppsPort = ppsPin.CreateDigitalInputPort(InterruptMode.EdgeRising, ResistorMode.InternalPullDown);
             }
 
             _ = InitializeI2c(i2cBus, address);

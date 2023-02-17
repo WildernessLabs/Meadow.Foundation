@@ -19,7 +19,6 @@ namespace Displays.ST7565_Sample
 
             var sT7565 = new St7565
             (
-                device: Device,
                 spiBus: Device.CreateSpiBus(),
                 chipSelectPin: Device.Pins.D02,
                 dcPin: Device.Pins.D00,

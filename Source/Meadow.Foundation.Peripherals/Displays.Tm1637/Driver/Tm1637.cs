@@ -107,7 +107,7 @@ namespace Meadow.Foundation.Displays
         /// <param name="pinData">The data pin</param>
         public Tm1637(IMeadowDevice device, IPin pinClock, IPin pinData)
         {
-            portClock = device.CreateDigitalOutputPort(pinClock);
+            portClock = pinClock.CreateDigitalOutputPort();
             portData = device.CreateBiDirectionalPort(pinData);
 
             _brightness = 7;

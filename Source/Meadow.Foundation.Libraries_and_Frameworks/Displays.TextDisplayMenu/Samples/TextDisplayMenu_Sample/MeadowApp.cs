@@ -33,7 +33,6 @@ namespace MeadowApp
 
             ssd1309 = new Ssd1309
             (
-                device: Device,
                 spiBus: bus,
                 chipSelectPin: Device.Pins.D02,
                 dcPin: Device.Pins.D01,

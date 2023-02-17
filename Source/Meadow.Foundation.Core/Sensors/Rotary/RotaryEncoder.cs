@@ -60,7 +60,6 @@ namespace Meadow.Foundation.Sensors.Rotary
         /// <summary>
         /// Instantiate a new RotaryEncoder on the specified pins.
         /// </summary>
-        /// <param name="device"></param>
         /// <param name="aPhasePin"></param>
         /// <param name="bPhasePin"></param>
         public RotaryEncoder(IPin aPhasePin, IPin bPhasePin) :

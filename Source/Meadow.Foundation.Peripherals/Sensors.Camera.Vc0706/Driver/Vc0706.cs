@@ -32,7 +32,7 @@ namespace Meadow.Foundation.Sensors.Camera
         /// <summary>
         /// Create a new VC0706 serial camera object
         /// </summary>
-        /// <param name="device"></param>
+        /// <param name="device">The device conected to the sensor</param>
         /// <param name="portName"></param>
         /// <param name="baudRate"></param>
         public Vc0706(ISerialController device, SerialPortName portName, int baudRate)

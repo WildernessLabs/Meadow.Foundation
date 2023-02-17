@@ -32,7 +32,7 @@ namespace Leds.LedBarGraph_Sample
                  Device.Pins.D02
             };
 
-            ledBarGraph = new LedBarGraph(Device, pins);
+            ledBarGraph = new LedBarGraph(pins);
 
             return Task.CompletedTask;
         }

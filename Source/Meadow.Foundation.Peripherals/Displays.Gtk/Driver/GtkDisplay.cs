@@ -90,7 +90,7 @@ public class GtkDisplay : IGraphicsDisplay, ITouchScreen
                 _bufferConverter = ConvertRGBBufferToBGRBuffer24;
                 break;
             case ColorMode.Format32bppRgba8888:
-                _pixelBuffer = new BufferRgb8888(width, height);
+                _pixelBuffer = new BufferRgba8888(width, height);
                 _format = Cairo.Format.Argb32;
                 break;
             default:
