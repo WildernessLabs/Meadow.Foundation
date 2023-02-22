@@ -30,20 +30,20 @@ namespace Meadow.Foundation.Sensors.Gnss
         /// <summary>
         /// Create a new NeoM8 object using SPI
         /// </summary>
-        public NeoM8(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin = null, IPin resetPin = null, IPin ppsPin = null)
+        public NeoM8(ISpiBus spiBus, IPin chipSelectPin = null, IPin resetPin = null, IPin ppsPin = null)
         {
-            var chipSelectPort = device.CreateDigitalOutputPort(chipSelectPin);
+            var chipSelectPort = chipSelectPin.CreateDigitalOutputPort();
 
             spiPeripheral = new SpiPeripheral(spiBus, chipSelectPort);
 
             if (resetPin != null)
             {
-                device.CreateDigitalOutputPort(resetPin, true);
+                resetPin.CreateDigitalOutputPort(true);
             }
 
             if (ppsPin != null)
             {
-                device.CreateDigitalInputPort(ppsPin, InterruptMode.EdgeRising, ResistorMode.InternalPullDown);
+                ppsPin.CreateDigitalInputPort(InterruptMode.EdgeRising, ResistorMode.InternalPullDown);
             }
 
             _ = InitializeSpi();
