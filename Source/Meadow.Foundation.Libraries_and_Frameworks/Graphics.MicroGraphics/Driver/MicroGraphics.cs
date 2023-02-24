@@ -51,15 +51,15 @@ namespace Meadow.Foundation.Graphics
         /// Current rotation used for drawing pixels to the display
         /// </summary>
         public RotationType Rotation
-        { 
+        {
             get
             {
-                if(display is IRotatableDisplay {} d) { return d.Rotation; }
+                if (display is IRotatableDisplay { } d) { return d.Rotation; }
                 return _rotation;
             }
             set
             {
-                if (display is IRotatableDisplay {} d) { d.SetRotation(value); }
+                if (display is IRotatableDisplay { } d) { d.SetRotation(value); }
                 else { _rotation = value; }
             }
         }
@@ -126,7 +126,7 @@ namespace Meadow.Foundation.Graphics
         {
             this.pixelBuffer = pixelBuffer;
 
-            if(initializeBuffer)
+            if (initializeBuffer)
             {
                 pixelBuffer.InitializeBuffer();
             }
@@ -140,7 +140,7 @@ namespace Meadow.Foundation.Graphics
         /// <param name="color">Color of pixel</param>
         public virtual void DrawPixel(int x, int y, Color color)
         {
-            if(IgnoreOutOfBoundsPixels && IsCoordinateInBounds(x, y) == false)
+            if (IgnoreOutOfBoundsPixels && IsCoordinateInBounds(x, y) == false)
             {
                 return;
             }
@@ -175,7 +175,7 @@ namespace Meadow.Foundation.Graphics
         /// <param name="index">pixel location in buffer</param>
         public virtual void DrawPixel(int index)
         {
-            if(IgnoreOutOfBoundsPixels && (index < 0 || index >= Width * Height))
+            if (IgnoreOutOfBoundsPixels && (index < 0 || index >= Width * Height))
             {
                 return;
             }
@@ -439,7 +439,7 @@ namespace Meadow.Foundation.Graphics
 
             if (Stroke == 1)
             {
-                
+
             }
             else
             {
@@ -896,9 +896,9 @@ namespace Meadow.Foundation.Graphics
             while (x <= y)
             {
                 DrawHorizontalLine(centerX - x, centerY + y - offset, 2 * x - offset, color);
-                DrawHorizontalLine(centerX - x, centerY - y,          2 * x - offset, color);
+                DrawHorizontalLine(centerX - x, centerY - y, 2 * x - offset, color);
                 DrawHorizontalLine(centerX - y, centerY + x - offset, 2 * y - offset, color);
-                DrawHorizontalLine(centerX - y, centerY - x,          2 * y - offset, color);
+                DrawHorizontalLine(centerX - y, centerY - x, 2 * y - offset, color);
 
                 if (d < 0)
                 {
@@ -1134,7 +1134,7 @@ namespace Meadow.Foundation.Graphics
         /// <param name="buffer">the source buffer to write to the display buffer</param>
         public void DrawBuffer(int x, int y, IPixelBuffer buffer)
         {
-            if(x >= Width || y >= Height || x + buffer.Width < 0 || y + buffer.Height < 0)
+            if (x >= Width || y >= Height || x + buffer.Width < 0 || y + buffer.Height < 0)
             {   //nothing to do 
                 return;
             }
@@ -1148,18 +1148,18 @@ namespace Meadow.Foundation.Graphics
 
             if (IgnoreOutOfBoundsPixels)
             {
-                if (x < 0) 
-                { 
+                if (x < 0)
+                {
                     xStartIndex = 0 - x;
                     isInBounds = false;
                 }
-                if (y < 0) 
-                { 
+                if (y < 0)
+                {
                     yStartIndex = 0 - x;
                     isInBounds = false;
                 }
 
-                if(x + buffer.Width > Width)
+                if (x + buffer.Width > Width)
                 {
                     widthToDraw = Width - x;
                     isInBounds = false;
@@ -1230,8 +1230,8 @@ namespace Meadow.Foundation.Graphics
         /// <param name="alignmentH">Horizontal alignment: Left, Center or right aligned text</param>
         /// <param name="alignmentV">Vertical alignment: Top, Center or bottom aligned text</param>
         public void DrawText(int x, int y, string text,
-            ScaleFactor scaleFactor = ScaleFactor.X1, 
-            HorizontalAlignment alignmentH = HorizontalAlignment.Left, 
+            ScaleFactor scaleFactor = ScaleFactor.X1,
+            HorizontalAlignment alignmentH = HorizontalAlignment.Left,
             VerticalAlignment alignmentV = VerticalAlignment.Top)
         {
             DrawText(x, y, text, PenColor, scaleFactor, alignmentH, alignmentV);
@@ -1409,7 +1409,7 @@ namespace Meadow.Foundation.Graphics
                 await Task.Delay(DelayBetweenFrames - timeSinceLastUpdate);
             }
 
-            await Task.Run(()=> display.Show());
+            await Task.Run(() => display.Show());
             lastUpdated = DateTime.Now;
 
             if (isUpdateRequested)
@@ -1562,7 +1562,7 @@ namespace Meadow.Foundation.Graphics
                             }
                             else
                             {   //1x
-                                DrawPixel(x + (8 * abscissa) + pixel, y + ordinate);
+                                DrawPixel(x + (8 * abscissa) + pixel, y + ordinate, color);
                             }
                         }
                         mask <<= 1;
@@ -1631,9 +1631,9 @@ namespace Meadow.Foundation.Graphics
         {
             if (IgnoreOutOfBoundsPixels)
             {
-                if (x >= Width || 
+                if (x >= Width ||
                     y >= Height ||
-                    width < 1 || 
+                    width < 1 ||
                     height < 1)
                 {
                     return;
@@ -1641,7 +1641,7 @@ namespace Meadow.Foundation.Graphics
 
                 if (x < 0) x = 0;
                 if (y < 0) y = 0;
- 
+
                 if (x + width >= Width) width = Width - x;
                 if (y + height >= Height) height = Height - y;
             }
