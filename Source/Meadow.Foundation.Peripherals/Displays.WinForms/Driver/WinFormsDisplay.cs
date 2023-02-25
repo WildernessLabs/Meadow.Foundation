@@ -40,14 +40,15 @@ public class WinFormsDisplay : Form, IGraphicsDisplay, ITouchScreen
     /// </summary>
     /// <param name="width">Width of the display, in pixles</param>
     /// <param name="height">Height of the display, in pixels</param>
-    public WinFormsDisplay(int width = 800, int height = 600)
+    public WinFormsDisplay(int width = 800, int height = 600, ColorMode colorMode = ColorMode.Format16bppRgb565)
     {
         this.Width = width;
         this.Height = height;
 
         this.DoubleBuffered = true;
-
-        _buffer = new WinFormsPixelBuffer(Width, Height);
+        this.FormBorderStyle = FormBorderStyle.FixedSingle;
+        this.ControlBox = false;
+        _buffer = new WinFormsPixelBuffer(Width, Height, colorMode);
     }
 
     protected override void OnMouseDown(MouseEventArgs e)
@@ -74,7 +75,15 @@ public class WinFormsDisplay : Form, IGraphicsDisplay, ITouchScreen
     void IGraphicsDisplay.Show()
     {
         this.Invalidate(true);
-        this.Update();
+
+        if (InvokeRequired)
+        {
+            Invoke(Update);
+        }
+        else
+        {
+            this.Update();
+        }
     }
 
     /// <summary>

@@ -23,7 +23,7 @@ internal class WinFormsPixelBuffer : IPixelBuffer
     /// <summary>
     /// Gets the color mode of the buffer
     /// </summary>
-    public ColorMode ColorMode => ColorMode.Format24bppRgb888;
+    public ColorMode ColorMode { get; }
     /// <summary>
     /// Gets the buffer bit depth
     /// </summary>
@@ -46,11 +46,13 @@ internal class WinFormsPixelBuffer : IPixelBuffer
     /// </summary>
     /// <param name="width"></param>
     /// <param name="height"></param>
-    public WinFormsPixelBuffer(int width, int height)
+    public WinFormsPixelBuffer(int width, int height, ColorMode colorMode = ColorMode.Format24bppRgb888)
     {
         Width = width;
         Height = height;
+        ColorMode = colorMode;
 
+        // TODO: use this buffer in a future version for improved perf
         _bmp = new Bitmap(Width, Height);
         var data = _bmp.LockBits(new Rectangle(0, 0, Width, Height), System.Drawing.Imaging.ImageLockMode.ReadWrite, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
         _buffer = new byte[Math.Abs(data.Stride * Height)];
