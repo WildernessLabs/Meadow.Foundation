@@ -94,7 +94,7 @@ internal class WinFormsPixelBuffer : IPixelBuffer
     {
         using (var g = System.Drawing.Graphics.FromImage(_bmp))
         {
-            g.FillRectangle(new SolidBrush(System.Drawing.Color.FromArgb(color.R, color.G, color.B)), originX, originX, width, height);
+            g.FillRectangle(new SolidBrush(System.Drawing.Color.FromArgb(color.R, color.G, color.B)), originX, originY, width, height);
         }
     }
 
