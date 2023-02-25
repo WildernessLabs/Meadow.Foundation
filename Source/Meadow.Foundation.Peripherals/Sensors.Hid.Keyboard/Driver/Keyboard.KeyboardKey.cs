@@ -19,7 +19,7 @@ public partial class Keyboard
         /// <summary>
         /// Virtual resistor mode of the key.  Always InternalPullUp
         /// </summary>
-        public override ResistorMode Resistor { get => ResistorMode.InternalPullUp; set => throw new NotSupportedException(); }
+        public override ResistorMode Resistor { get => ResistorMode.InternalPullUp; set { } }
         /// <summary>
         /// Debounce duration of the key. Unsupported because the hardware handles this.
         /// </summary>

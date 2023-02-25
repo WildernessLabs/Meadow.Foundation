@@ -397,6 +397,11 @@ namespace Meadow.Foundation.Graphics
         /// <param name="color">The color of the line</param>
         public void DrawHorizontalLine(int x, int y, int length, Color color)
         {
+            if (length == 0)
+            {
+                return;
+            }
+
             if (length < 0)
             {
                 x += length;
