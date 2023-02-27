@@ -1,5 +1,6 @@
 ﻿using Meadow.Foundation.Graphics.Buffers;
 using Meadow.Peripherals.Displays;
+using Meadow.Units;
 using System;
 using System.Threading.Tasks;
 
@@ -485,6 +486,90 @@ namespace Meadow.Foundation.Graphics
         }
 
         /// <summary>
+        /// Draw a circular arc between two angles
+        /// </summary>
+        /// <remarks>
+        /// Note that y axis is inversed so the arc will be flipped from the standard cartesian plain
+        /// </remarks>
+        /// <param name="centerX">Abscissa of the centre point of the circle</param>
+        /// <param name="centerY">Ordinate of the centre point of the circle</param>
+        /// <param name="radius">Radius of the circle</param>
+        /// <param name="startAngle">The arc starting angle</param>
+        /// <param name="endAngle">The arc ending angle</param>
+        /// <param name="color">The color of the circle</param>
+        /// <param name="centerBetweenPixels">If true, the center of the arc is between the assigned pixel and the next pixel, false it's directly on the center pixel</param>
+
+        public void DrawArc(int centerX, int centerY, int radius, Angle startAngle, Angle endAngle, Color color, bool centerBetweenPixels)
+        {
+            var d = 3 - 2 * radius;
+            var x = 0;
+            var y = radius;
+
+            int offset = centerBetweenPixels ? 1 : 0;
+
+            var start = new Angle(startAngle.Degrees + 0);
+            var end = new Angle(endAngle.Degrees + 0);
+
+            int strokeOffset = Stroke / 2;
+
+            if (end < start)
+            {
+                end += new Angle(360);
+            }
+
+            bool IsCoordinateOnArc(int x, int y, int octect)
+            {
+                var angle = Math.Atan2(-y, x);
+                if (angle < 0) { angle += 2 * Math.PI; }
+
+                if (angle >= start.Radians && angle <= end.Radians)
+                {
+                    return true;
+                }
+                return false;
+            }
+
+            void DrawArcPoint(int x, int y, Color color)
+            {
+                if (Stroke == 1)
+                {
+                    DrawPixel(x, y, color);
+                }
+                else
+                {
+                    DrawCircleFilled(x, y, Stroke / 2, true, color);
+                }
+            }
+
+            while (x <= y)
+            {
+                if (IsCoordinateOnArc(y, -x, 1)) DrawArcPoint(centerX + y - offset, centerY - x, color); //1
+                if (IsCoordinateOnArc(x, -y, 2)) DrawArcPoint(centerX + x - offset, centerY - y, color); //2
+
+                if (IsCoordinateOnArc(-x, -y, 3)) DrawArcPoint(centerX - x, centerY - y, color); //3
+                if (IsCoordinateOnArc(-y, -x, 4)) DrawArcPoint(centerX - y, centerY - x, color); //4
+
+                if (IsCoordinateOnArc(-y, x, 5)) DrawArcPoint(centerX - y, centerY + x - offset, color); //5
+                if (IsCoordinateOnArc(-x, y, 6)) DrawArcPoint(centerX - x, centerY + y - offset, color); //6
+
+                if (IsCoordinateOnArc(x, y, 7)) DrawArcPoint(centerX + x - offset, centerY + y - offset, color); //7
+                if (IsCoordinateOnArc(y, x, 8)) DrawArcPoint(centerX + y - offset, centerY + x - offset, color); //8
+
+                if (d < 0)
+                {
+                    d += (2 * x) + 1;
+                }
+                else
+                {
+                    d += (2 * (x - y)) + 1;
+                    y--;
+                }
+                x++;
+            }
+
+        }
+
+        /// <summary>
         /// Draw a  triangle
         /// </summary>
         /// <param name="x0">Vertex #0 x coordinate</param>
@@ -857,7 +942,7 @@ namespace Meadow.Foundation.Graphics
         private void DrawCircleOutline(int centerX, int centerY, int radius, bool centerBetweenPixels, Color color)
         {
             //I prefer the look of the original Bresenham’s decision param calculation
-            var d = 3 - 2 * radius; // (5 - (radius * 4)) / 4;
+            var d = 3 - 2 * radius;
             var x = 0;
             var y = radius;
 
@@ -900,10 +985,10 @@ namespace Meadow.Foundation.Graphics
 
             while (x <= y)
             {
-                DrawHorizontalLine(centerX - x, centerY + y - offset, 2 * x - offset, color);
-                DrawHorizontalLine(centerX - x, centerY - y, 2 * x - offset, color);
-                DrawHorizontalLine(centerX - y, centerY + x - offset, 2 * y - offset, color);
-                DrawHorizontalLine(centerX - y, centerY - x, 2 * y - offset, color);
+                DrawHorizontalLine(centerX - x, centerY + y - offset, 2 * x - offset + 1, color);
+                DrawHorizontalLine(centerX - x, centerY - y, 2 * x - offset + 1, color);
+                DrawHorizontalLine(centerX - y, centerY + x - offset, 2 * y - offset + 1, color);
+                DrawHorizontalLine(centerX - y, centerY - x, 2 * y - offset + 1, color);
 
                 if (d < 0)
                 {
@@ -915,6 +1000,16 @@ namespace Meadow.Foundation.Graphics
                     y--;
                 }
                 x++;
+            }
+
+            if (Stroke > 1)
+            {
+                offset = Stroke >> 1;
+
+                for (int i = 0; i < Stroke; i++)
+                {
+                    DrawCircleOutline(centerX, centerY, radius - offset + i, centerBetweenPixels, color);
+                }
             }
         }
 
