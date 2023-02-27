@@ -489,7 +489,7 @@ namespace Meadow.Foundation.Graphics
         /// Draw a circular arc between two angles
         /// </summary>
         /// <remarks>
-        /// Note that y axis is inversed so the arc will be flipped from the standard cartesian plain
+        /// Note that y axis is inverted so the arc will be flipped from the standard cartesian plain
         /// </remarks>
         /// <param name="centerX">Abscissa of the centre point of the circle</param>
         /// <param name="centerY">Ordinate of the centre point of the circle</param>
@@ -498,8 +498,7 @@ namespace Meadow.Foundation.Graphics
         /// <param name="endAngle">The arc ending angle</param>
         /// <param name="color">The color of the circle</param>
         /// <param name="centerBetweenPixels">If true, the center of the arc is between the assigned pixel and the next pixel, false it's directly on the center pixel</param>
-
-        public void DrawArc(int centerX, int centerY, int radius, Angle startAngle, Angle endAngle, Color color, bool centerBetweenPixels)
+        public void DrawArc(int centerX, int centerY, int radius, Angle startAngle, Angle endAngle, Color color, bool centerBetweenPixels = true)
         {
             var d = 3 - 2 * radius;
             var x = 0;
@@ -507,25 +506,28 @@ namespace Meadow.Foundation.Graphics
 
             int offset = centerBetweenPixels ? 1 : 0;
 
-            var start = new Angle(startAngle.Degrees + 0);
-            var end = new Angle(endAngle.Degrees + 0);
-
-            int strokeOffset = Stroke / 2;
-
-            if (end < start)
+            if (startAngle > endAngle)
             {
-                end += new Angle(360);
+                endAngle += new Angle(360);
             }
 
-            bool IsCoordinateOnArc(int x, int y, int octect)
+            bool IsCoordinateOnArc(int x, int y)
             {
-                var angle = Math.Atan2(-y, x);
+                var angle = Math.Atan2(y, x);
                 if (angle < 0) { angle += 2 * Math.PI; }
 
-                if (angle >= start.Radians && angle <= end.Radians)
+                if (angle >= startAngle.Radians &&
+                    angle <= endAngle.Radians)
                 {
                     return true;
                 }
+
+                if (angle >= (startAngle.Radians - 2 * Math.PI) &&
+                    angle <= (endAngle.Radians - 2 * Math.PI))
+                {
+                    return true;
+                }
+
                 return false;
             }
 
@@ -543,17 +545,17 @@ namespace Meadow.Foundation.Graphics
 
             while (x <= y)
             {
-                if (IsCoordinateOnArc(y, -x, 1)) DrawArcPoint(centerX + y - offset, centerY - x, color); //1
-                if (IsCoordinateOnArc(x, -y, 2)) DrawArcPoint(centerX + x - offset, centerY - y, color); //2
+                if (IsCoordinateOnArc(y, -x)) DrawArcPoint(centerX + y - offset, centerY - x, color); //1
+                if (IsCoordinateOnArc(x, -y)) DrawArcPoint(centerX + x - offset, centerY - y, color); //2
 
-                if (IsCoordinateOnArc(-x, -y, 3)) DrawArcPoint(centerX - x, centerY - y, color); //3
-                if (IsCoordinateOnArc(-y, -x, 4)) DrawArcPoint(centerX - y, centerY - x, color); //4
+                if (IsCoordinateOnArc(-x, -y)) DrawArcPoint(centerX - x, centerY - y, color); //3
+                if (IsCoordinateOnArc(-y, -x)) DrawArcPoint(centerX - y, centerY - x, color); //4
 
-                if (IsCoordinateOnArc(-y, x, 5)) DrawArcPoint(centerX - y, centerY + x - offset, color); //5
-                if (IsCoordinateOnArc(-x, y, 6)) DrawArcPoint(centerX - x, centerY + y - offset, color); //6
+                if (IsCoordinateOnArc(-y, x)) DrawArcPoint(centerX - y, centerY + x - offset, color); //5
+                if (IsCoordinateOnArc(-x, y)) DrawArcPoint(centerX - x, centerY + y - offset, color); //6
 
-                if (IsCoordinateOnArc(x, y, 7)) DrawArcPoint(centerX + x - offset, centerY + y - offset, color); //7
-                if (IsCoordinateOnArc(y, x, 8)) DrawArcPoint(centerX + y - offset, centerY + x - offset, color); //8
+                if (IsCoordinateOnArc(x, y)) DrawArcPoint(centerX + x - offset, centerY + y - offset, color); //7
+                if (IsCoordinateOnArc(y, x)) DrawArcPoint(centerX + y - offset, centerY + x - offset, color); //8
 
                 if (d < 0)
                 {
@@ -566,7 +568,41 @@ namespace Meadow.Foundation.Graphics
                 }
                 x++;
             }
+        }
 
+        /// <summary>
+        /// Draw a circular arc between two angles
+        /// </summary>
+        /// <remarks>
+        /// Note that y axis is inverted so the arc will be flipped from the standard cartesian plain
+        /// </remarks>
+        /// <param name="centerX">Abscissa of the centre point of the circle</param>
+        /// <param name="centerY">Ordinate of the centre point of the circle</param>
+        /// <param name="radius">Radius of the circle</param>
+        /// <param name="startAngle">The arc starting angle</param>
+        /// <param name="endAngle">The arc ending angle</param>
+        /// <param name="enabled">Should draw the arc (true) or remove (false)</param>
+        /// <param name="centerBetweenPixels">If true, the center of the arc is between the assigned pixel and the next pixel, false it's directly on the center pixel</param>
+        public void DrawArc(int centerX, int centerY, int radius, Angle startAngle, Angle endAngle, bool enabled = true, bool centerBetweenPixels = true)
+        {
+            DrawArc(centerX, centerY, radius, startAngle, endAngle, enabled ? display.EnabledColor : display.DisabledColor, centerBetweenPixels);
+        }
+
+        /// <summary>
+        /// Draw a circular arc between two angles using PenColor
+        /// </summary>
+        /// <remarks>
+        /// Note that y axis is inverted so the arc will be flipped from the standard cartesian plain
+        /// </remarks>
+        /// <param name="centerX">Abscissa of the centre point of the circle</param>
+        /// <param name="centerY">Ordinate of the centre point of the circle</param>
+        /// <param name="radius">Radius of the circle</param>
+        /// <param name="startAngle">The arc starting angle</param>
+        /// <param name="endAngle">The arc ending angle</param>
+        /// <param name="centerBetweenPixels">If true, the center of the arc is between the assigned pixel and the next pixel, false it's directly on the center pixel</param>
+        public void DrawArc(int centerX, int centerY, int radius, Angle startAngle, Angle endAngle, bool centerBetweenPixels = true)
+        {
+            DrawArc(centerX, centerY, radius, startAngle, endAngle, PenColor, centerBetweenPixels);
         }
 
         /// <summary>
