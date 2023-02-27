@@ -507,25 +507,30 @@ namespace Meadow.Foundation.Graphics
 
             int offset = centerBetweenPixels ? 1 : 0;
 
-            var start = new Angle(startAngle.Degrees + 0);
-            var end = new Angle(endAngle.Degrees + 0);
+            if (startAngle > endAngle)
+            {
+                endAngle += new Angle(360);
+            }
 
             int strokeOffset = Stroke / 2;
-
-            if (end < start)
-            {
-                end += new Angle(360);
-            }
 
             bool IsCoordinateOnArc(int x, int y, int octect)
             {
                 var angle = Math.Atan2(-y, x);
                 if (angle < 0) { angle += 2 * Math.PI; }
 
-                if (angle >= start.Radians && angle <= end.Radians)
+                if (angle >= startAngle.Radians &&
+                    angle <= endAngle.Radians)
                 {
                     return true;
                 }
+
+                if (angle >= (startAngle.Radians - 2 * Math.PI) &&
+                    angle <= (endAngle.Radians - 2 * Math.PI))
+                {
+                    return true;
+                }
+
                 return false;
             }
 
