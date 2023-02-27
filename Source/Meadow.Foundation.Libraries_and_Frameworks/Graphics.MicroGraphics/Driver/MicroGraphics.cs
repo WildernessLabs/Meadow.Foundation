@@ -511,9 +511,7 @@ namespace Meadow.Foundation.Graphics
                 endAngle += new Angle(360);
             }
 
-            int strokeOffset = Stroke / 2;
-
-            bool IsCoordinateOnArc(int x, int y, int octect)
+            bool IsCoordinateOnArc(int x, int y)
             {
                 var angle = Math.Atan2(y, x);
                 if (angle < 0) { angle += 2 * Math.PI; }
@@ -547,17 +545,17 @@ namespace Meadow.Foundation.Graphics
 
             while (x <= y)
             {
-                if (IsCoordinateOnArc(y, -x, 1)) DrawArcPoint(centerX + y - offset, centerY - x, color); //1
-                if (IsCoordinateOnArc(x, -y, 2)) DrawArcPoint(centerX + x - offset, centerY - y, color); //2
+                if (IsCoordinateOnArc(y, -x)) DrawArcPoint(centerX + y - offset, centerY - x, color); //1
+                if (IsCoordinateOnArc(x, -y)) DrawArcPoint(centerX + x - offset, centerY - y, color); //2
 
-                if (IsCoordinateOnArc(-x, -y, 3)) DrawArcPoint(centerX - x, centerY - y, color); //3
-                if (IsCoordinateOnArc(-y, -x, 4)) DrawArcPoint(centerX - y, centerY - x, color); //4
+                if (IsCoordinateOnArc(-x, -y)) DrawArcPoint(centerX - x, centerY - y, color); //3
+                if (IsCoordinateOnArc(-y, -x)) DrawArcPoint(centerX - y, centerY - x, color); //4
 
-                if (IsCoordinateOnArc(-y, x, 5)) DrawArcPoint(centerX - y, centerY + x - offset, color); //5
-                if (IsCoordinateOnArc(-x, y, 6)) DrawArcPoint(centerX - x, centerY + y - offset, color); //6
+                if (IsCoordinateOnArc(-y, x)) DrawArcPoint(centerX - y, centerY + x - offset, color); //5
+                if (IsCoordinateOnArc(-x, y)) DrawArcPoint(centerX - x, centerY + y - offset, color); //6
 
-                if (IsCoordinateOnArc(x, y, 7)) DrawArcPoint(centerX + x - offset, centerY + y - offset, color); //7
-                if (IsCoordinateOnArc(y, x, 8)) DrawArcPoint(centerX + y - offset, centerY + x - offset, color); //8
+                if (IsCoordinateOnArc(x, y)) DrawArcPoint(centerX + x - offset, centerY + y - offset, color); //7
+                if (IsCoordinateOnArc(y, x)) DrawArcPoint(centerX + y - offset, centerY + x - offset, color); //8
 
                 if (d < 0)
                 {
