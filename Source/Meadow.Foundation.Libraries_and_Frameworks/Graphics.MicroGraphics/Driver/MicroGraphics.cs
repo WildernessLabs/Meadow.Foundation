@@ -489,7 +489,7 @@ namespace Meadow.Foundation.Graphics
         /// Draw a circular arc between two angles
         /// </summary>
         /// <remarks>
-        /// Note that y axis is inversed so the arc will be flipped from the standard cartesian plain
+        /// Note that y axis is inverted so the arc will be flipped from the standard cartesian plain
         /// </remarks>
         /// <param name="centerX">Abscissa of the centre point of the circle</param>
         /// <param name="centerY">Ordinate of the centre point of the circle</param>
@@ -498,7 +498,6 @@ namespace Meadow.Foundation.Graphics
         /// <param name="endAngle">The arc ending angle</param>
         /// <param name="color">The color of the circle</param>
         /// <param name="centerBetweenPixels">If true, the center of the arc is between the assigned pixel and the next pixel, false it's directly on the center pixel</param>
-
         public void DrawArc(int centerX, int centerY, int radius, Angle startAngle, Angle endAngle, Color color, bool centerBetweenPixels)
         {
             var d = 3 - 2 * radius;
@@ -516,7 +515,7 @@ namespace Meadow.Foundation.Graphics
 
             bool IsCoordinateOnArc(int x, int y, int octect)
             {
-                var angle = Math.Atan2(-y, x);
+                var angle = Math.Atan2(y, x);
                 if (angle < 0) { angle += 2 * Math.PI; }
 
                 if (angle >= startAngle.Radians &&
