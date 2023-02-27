@@ -498,7 +498,7 @@ namespace Meadow.Foundation.Graphics
         /// <param name="endAngle">The arc ending angle</param>
         /// <param name="color">The color of the circle</param>
         /// <param name="centerBetweenPixels">If true, the center of the arc is between the assigned pixel and the next pixel, false it's directly on the center pixel</param>
-        public void DrawArc(int centerX, int centerY, int radius, Angle startAngle, Angle endAngle, Color color, bool centerBetweenPixels)
+        public void DrawArc(int centerX, int centerY, int radius, Angle startAngle, Angle endAngle, Color color, bool centerBetweenPixels = true)
         {
             var d = 3 - 2 * radius;
             var x = 0;
@@ -568,7 +568,41 @@ namespace Meadow.Foundation.Graphics
                 }
                 x++;
             }
+        }
 
+        /// <summary>
+        /// Draw a circular arc between two angles
+        /// </summary>
+        /// <remarks>
+        /// Note that y axis is inverted so the arc will be flipped from the standard cartesian plain
+        /// </remarks>
+        /// <param name="centerX">Abscissa of the centre point of the circle</param>
+        /// <param name="centerY">Ordinate of the centre point of the circle</param>
+        /// <param name="radius">Radius of the circle</param>
+        /// <param name="startAngle">The arc starting angle</param>
+        /// <param name="endAngle">The arc ending angle</param>
+        /// <param name="enabled">Should draw the arc (true) or remove (false)</param>
+        /// <param name="centerBetweenPixels">If true, the center of the arc is between the assigned pixel and the next pixel, false it's directly on the center pixel</param>
+        public void DrawArc(int centerX, int centerY, int radius, Angle startAngle, Angle endAngle, bool enabled = true, bool centerBetweenPixels = true)
+        {
+            DrawArc(centerX, centerY, radius, startAngle, endAngle, enabled ? display.EnabledColor : display.DisabledColor, centerBetweenPixels);
+        }
+
+        /// <summary>
+        /// Draw a circular arc between two angles using PenColor
+        /// </summary>
+        /// <remarks>
+        /// Note that y axis is inverted so the arc will be flipped from the standard cartesian plain
+        /// </remarks>
+        /// <param name="centerX">Abscissa of the centre point of the circle</param>
+        /// <param name="centerY">Ordinate of the centre point of the circle</param>
+        /// <param name="radius">Radius of the circle</param>
+        /// <param name="startAngle">The arc starting angle</param>
+        /// <param name="endAngle">The arc ending angle</param>
+        /// <param name="centerBetweenPixels">If true, the center of the arc is between the assigned pixel and the next pixel, false it's directly on the center pixel</param>
+        public void DrawArc(int centerX, int centerY, int radius, Angle startAngle, Angle endAngle, bool centerBetweenPixels = true)
+        {
+            DrawArc(centerX, centerY, radius, startAngle, endAngle, PenColor, centerBetweenPixels);
         }
 
         /// <summary>
