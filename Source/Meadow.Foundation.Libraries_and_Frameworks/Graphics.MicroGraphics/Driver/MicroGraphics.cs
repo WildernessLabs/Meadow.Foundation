@@ -31,7 +31,16 @@ namespace Meadow.Foundation.Graphics
         /// </summary>
         public IFont CurrentFont
         {
-            get => currentFont;
+            get
+            {
+                // lazy load
+                if (currentFont == null)
+                {
+                    currentFont = new Font6x8();
+                }
+
+                return currentFont;
+            }
             set
             {
                 currentFont = value;
@@ -41,7 +50,7 @@ namespace Meadow.Foundation.Graphics
                 DisplayConfig.Height = (ushort)(Height / CurrentFont.Height);
             }
         }
-        IFont currentFont;
+        IFont? currentFont = null;
 
         /// <summary>
         /// Current color mode
@@ -295,6 +304,7 @@ namespace Meadow.Foundation.Graphics
         /// <param name="y0">Ordinate of the starting point of the line</param>
         /// <param name="x1">Abscissa of the end point of the line</param>
         /// <param name="y1">Ordinate of the end point of the line</param>
+        /// <param name="color">Color of the line to be drawn</param>
         public void DrawLine(int x0, int y0, int x1, int y1, Color color)
         {
             if (y0 == y1)
@@ -1224,22 +1234,26 @@ namespace Meadow.Foundation.Graphics
         /// <param name="scaleFactor">Scalefactor used to calculate the size</param>
         /// <param name="alignmentH">Horizontal alignment: Left, Center or right aligned text</param>
         /// <param name="alignmentV">Vertical alignment: Top, Center or bottom aligned text</param>
+        /// <param name="font">Optional font used to draw the text</param>
         public void DrawText(int x, int y, string text, Color color,
             ScaleFactor scaleFactor = ScaleFactor.X1,
             HorizontalAlignment alignmentH = HorizontalAlignment.Left,
-            VerticalAlignment alignmentV = VerticalAlignment.Top)
+            VerticalAlignment alignmentV = VerticalAlignment.Top,
+            IFont? font = null)
         {
-            if (CurrentFont == null)
+            var fontToDraw = font != null ? font : CurrentFont;
+
+            if (fontToDraw == null)
             {
                 throw new Exception("CurrentFont must be set before calling DrawText.");
             }
 
-            byte[] bitMap = GetBytesForTextBitmap(text);
+            byte[] bitMap = GetBytesForTextBitmap(text, fontToDraw);
 
             x = GetXForAlignment(x, MeasureText(text, scaleFactor).Width, alignmentH);
             y = GetYForAlignment(y, MeasureText(text, scaleFactor).Height, alignmentV);
 
-            DrawBitmap(x, y, bitMap.Length / CurrentFont.Height * 8, CurrentFont.Height, bitMap, color, scaleFactor);
+            DrawBitmap(x, y, bitMap.Length / fontToDraw.Height * 8, fontToDraw.Height, bitMap, color, scaleFactor);
         }
 
         /// <summary>
@@ -1373,31 +1387,31 @@ namespace Meadow.Foundation.Graphics
             DrawText(x, y, text, PenColor, scaleFactor, alignmentH, alignmentV);
         }
 
-        private byte[] GetBytesForTextBitmap(string text)
+        private byte[] GetBytesForTextBitmap(string text, IFont font)
         {
             byte[] bitmap;
 
-            if (CurrentFont.Width == 8) //just copy bytes
+            if (font.Width == 8) //just copy bytes
             {
-                bitmap = new byte[text.Length * CurrentFont.Height * (CurrentFont.Width >> 3)];
+                bitmap = new byte[text.Length * font.Height * (font.Width >> 3)];
 
                 byte[] characterMap;
 
                 for (int i = 0; i < text.Length; i++)
                 {
-                    characterMap = CurrentFont[text[i]];
+                    characterMap = font[text[i]];
 
                     //copy data for 1 character at a time going top to bottom
-                    for (int segment = 0; segment < CurrentFont.Height; segment++)
+                    for (int segment = 0; segment < font.Height; segment++)
                     {
                         bitmap[i + (segment * text.Length)] = characterMap[segment];
                     }
                 }
             }
-            else if (CurrentFont.Width == 12)
+            else if (font.Width == 12)
             {
                 var len = ((text.Length + text.Length % 2) * 3) >> 1;
-                bitmap = new byte[len * CurrentFont.Height];
+                bitmap = new byte[len * font.Height];
 
                 byte[] charMap1, charMap2;
                 int index = 0;
@@ -1405,11 +1419,11 @@ namespace Meadow.Foundation.Graphics
                 for (int i = 0; i < text.Length; i += 2) //2 chracters, 3 bytes ... 24 bytes total so the math is good
                 {
                     //grab two characters at once
-                    charMap1 = CurrentFont[text[i]];
-                    charMap2 = (i + 1 < text.Length) ? CurrentFont[text[i + 1]] : CurrentFont[' '];
+                    charMap1 = font[text[i]];
+                    charMap2 = (i + 1 < text.Length) ? font[text[i + 1]] : font[' '];
 
                     int cIndex = 0;
-                    for (int j = 0; j < CurrentFont.Height; j += 2)
+                    for (int j = 0; j < font.Height; j += 2)
                     {
                         //first row - spans 3 bytes (for 2 chars)
                         bitmap[index + (j) * len + 0] = charMap1[cIndex]; //good
@@ -1426,7 +1440,7 @@ namespace Meadow.Foundation.Graphics
                     index += 3;
                 }
             }
-            else if (CurrentFont.Width == 6)
+            else if (font.Width == 6)
             {
                 var len = text.Length;
 
@@ -1436,7 +1450,7 @@ namespace Meadow.Foundation.Graphics
                 }
                 len = len * 3 / 4; //length in bytes
 
-                bitmap = new byte[len * CurrentFont.Height];
+                bitmap = new byte[len * font.Height];
 
                 byte[] charMap1, charMap2, charMap3, charMap4;
                 int index = 0;
@@ -1444,13 +1458,13 @@ namespace Meadow.Foundation.Graphics
                 for (int i = 0; i < len; i += 3)
                 {
                     //grab four characters at once
-                    charMap1 = CurrentFont[text[index++]];
-                    charMap2 = (index < text.Length) ? CurrentFont[text[index++]] : CurrentFont[' '];
-                    charMap3 = (index < text.Length) ? CurrentFont[text[index++]] : CurrentFont[' '];
-                    charMap4 = (index < text.Length) ? CurrentFont[text[index++]] : CurrentFont[' '];
+                    charMap1 = font[text[index++]];
+                    charMap2 = (index < text.Length) ? font[text[index++]] : font[' '];
+                    charMap3 = (index < text.Length) ? font[text[index++]] : font[' '];
+                    charMap4 = (index < text.Length) ? font[text[index++]] : font[' '];
 
                     int cIndex = 0;
-                    for (int j = 0; j < CurrentFont.Height; j += 4)
+                    for (int j = 0; j < font.Height; j += 4)
                     {
                         //first row
                         bitmap[i + (j + 0) * len + 0] = (byte)((charMap1[cIndex] & 0x3F) | (charMap2[cIndex] << 6));
@@ -1476,17 +1490,17 @@ namespace Meadow.Foundation.Graphics
                     }
                 }
             }
-            else if (CurrentFont.Width == 4)
+            else if (font.Width == 4)
             {
                 var len = (text.Length + text.Length % 2) >> 1;
-                bitmap = new byte[len * CurrentFont.Height];
+                bitmap = new byte[len * font.Height];
                 byte[] charMap1, charMap2;
 
                 for (int i = 0; i < len; i++)
                 {
                     //grab two characters at once to fill a complete byte
-                    charMap1 = CurrentFont[text[2 * i]];
-                    charMap2 = (2 * i + 1 < text.Length) ? CurrentFont[text[2 * i + 1]] : CurrentFont[' '];
+                    charMap1 = font[text[2 * i]];
+                    charMap2 = (2 * i + 1 < text.Length) ? font[text[2 * i + 1]] : font[' '];
 
                     for (int j = 0; j < charMap1.Length; j++)
                     {
