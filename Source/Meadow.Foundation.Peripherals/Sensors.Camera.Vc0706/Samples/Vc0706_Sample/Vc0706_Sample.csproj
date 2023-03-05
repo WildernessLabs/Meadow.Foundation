@@ -15,8 +15,8 @@
     <PackageReference Include="BitMiracle.LibJpeg.NET" Version="1.5.324" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.Foundation.Sensors.Camera.Vc0706" Version="0.*" />
-    <PackageReference Include="Meadow.F7" Version="0.*" />
+    <ProjectReference Include="..\..\Driver\Sensors.Camera.Vc0706.csproj" />
+    <ProjectReference Include="..\..\..\..\..\..\Meadow.Core\Source\implementations\f7\Meadow.F7\Meadow.F7.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Update="meadow.config.yaml">

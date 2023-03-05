@@ -17,6 +17,6 @@
   </PropertyGroup>
   <ItemGroup>
     <None Include="..\..\..\icon.png" Pack="true" PackagePath="" />
-    <PackageReference Include="Meadow.Foundation.DataLoggers.SensorReading" Version="0.*" />
+    <ProjectReference Include="..\..\DataLoggers.SensorReading\Driver\DataLoggers.SensorReading.csproj" />
   </ItemGroup>
 </Project>
