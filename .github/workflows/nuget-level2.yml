@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
 env:
-  version: '0.95.1'
+  version: '0.95.0'
   token: ${{ secrets.NUGET_TOKEN }}
 
 jobs:
@@ -105,13 +105,6 @@ jobs:
       with:
         packageId: Meadow.Foundation.Displays.Tm1637
         path: Source/Meadow.Foundation.Peripherals/Displays.Tm1637/Driver/Displays.Tm1637.csproj
-        version: ${{ env.version }}
-        token: ${{ env.token }}
-
-    - uses: ./.github/actions/build-package
-      with:
-        packageId: Meadow.Foundation.Displays.WinForms
-        path: Source/Meadow.Foundation.Peripherals/Displays.WinForms/Driver/Displays.WinForms.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
