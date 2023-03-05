@@ -4,7 +4,7 @@ using Windows.ApplicationModel.Core;
 using Windows.UI.Composition;
 using Windows.UI.Core;
 
-namespace Meadow.WinUI
+namespace Meadow.Foundation.Displays
 {
     class WinUIDisplay : IFrameworkView, IFrameworkViewSource
     {
