@@ -3,18 +3,18 @@
 	 <TargetFramework>net7.0</TargetFramework>
 	 <OutputType>Library</OutputType>
 	 <ImplicitUsings>enable</ImplicitUsings>
-	 <AssemblyName>Meadow.Gtk</AssemblyName>
+	 <AssemblyName>Gtk</AssemblyName>
 	 <Nullable>enable</Nullable>
 	 <Authors>Wilderness Labs, Inc</Authors>
 	 <Company>Wilderness Labs, Inc</Company>
 	 <PackageProjectUrl>http://developer.wildernesslabs.co/Meadow/Meadow.Foundation/</PackageProjectUrl>
-	 <PackageId>Meadow.Foundation.Displays.WinForms</PackageId>
+	 <PackageId>Meadow.Foundation.Displays.Gtk</PackageId>
 	 <PackageIcon>icon.png</PackageIcon>
 	 <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
 	 <PackageTags>Meadow.Foundation,Display,GTK</PackageTags>
 	 <Version>0.94.0</Version>
 	 <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-	 <Description>Meadow display implementation using WinForms</Description>
+	 <Description>Gtk display driver for Meadow</Description>
 	 <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
  </PropertyGroup>
  <ItemGroup>
