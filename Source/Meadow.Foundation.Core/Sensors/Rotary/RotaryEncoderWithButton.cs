@@ -22,27 +22,27 @@ namespace Meadow.Foundation.Sensors.Rotary
         public bool State => Button.State;
 
         /// <summary>
-        /// Raised when the button circuit is re-opened after it has been closed (at the end of a �press�.
+        /// Raised when the button circuit is re-opened after it has been closed
         /// </summary>
         public event EventHandler Clicked = delegate { };
 
         /// <summary>
-        /// Raised when a press ends (the button is released; circuit is opened).
+        /// Raised when a press ends
         /// </summary>
         public event EventHandler PressEnded = delegate { };
 
         /// <summary>
-        /// Raised when a press starts (the button is pushed down; circuit is closed).
+        /// Raised when a press starts
         /// </summary>
         public event EventHandler PressStarted = delegate { };
 
         /// <summary>
-        /// Raised when the button circuit is pressed for LongPressDuration.
+        /// Raised when the button circuit is pressed for LongPressDuration
         /// </summary>
         public event EventHandler LongClicked = delegate { };
 
         /// <summary>
-        /// The minimum duration for a long press.
+        /// The minimum duration for a long press
         /// </summary>
         public TimeSpan LongClickedThreshold
         {
