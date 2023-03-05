@@ -11,7 +11,6 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// Create a new IL0373 object
         /// </summary>
-        /// <param name="device">Meadow device</param>
         /// <param name="spiBus">SPI bus connected to display</param>
         /// <param name="chipSelectPin">Chip select pin</param>
         /// <param name="dcPin">Data command pin</param>
@@ -19,9 +18,9 @@ namespace Meadow.Foundation.Displays
         /// <param name="busyPin">Busy pin</param>
         /// <param name="width">Width of display in pixels</param>
         /// <param name="height">Height of display in pixels</param>
-        public Il0373(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, IPin busyPin,
+        public Il0373(ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, IPin busyPin,
             int width, int height) :
-            base(device, spiBus, chipSelectPin, dcPin, resetPin, busyPin, width, height)
+            base(spiBus, chipSelectPin, dcPin, resetPin, busyPin, width, height)
         { }
 
         /// <summary>
@@ -39,7 +38,7 @@ namespace Meadow.Foundation.Displays
             IDigitalOutputPort dataCommandPort,
             IDigitalOutputPort resetPort,
             IDigitalInputPort busyPort,
-            int width, int height):
+            int width, int height) :
             base(spiBus, chipSelectPort, dataCommandPort, resetPort, busyPort, width, height)
         {
         }
@@ -242,7 +241,7 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// Update the display from the offscreen buffer
         /// </summary>
-         public override void Show()
+        public override void Show()
         {
             DisplayFrame(imageBuffer.BlackBuffer, imageBuffer.ColorBuffer);
         }

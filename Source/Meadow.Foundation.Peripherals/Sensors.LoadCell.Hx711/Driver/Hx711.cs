@@ -1,9 +1,9 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
 using Meadow.Peripherals.Sensors;
 using Meadow.Units;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.LoadCell
 {
@@ -67,14 +67,13 @@ namespace Meadow.Foundation.Sensors.LoadCell
         /// <summary>
         /// Creates an instance of the Hx711 Driver class
         /// </summary>
-        /// <param name="device">Digital Input Output Controller to create digital input and output ports</param>
         /// <param name="sck">Serial clock pin</param>
         /// <param name="dout">Digital output pin</param>
         /// <param name="tareValue">Tare value threshold</param>
-        public Hx711(IDigitalInputOutputController device, IPin sck, IPin dout, uint? tareValue = null)
+        public Hx711(IPin sck, IPin dout, uint? tareValue = null)
         {
-            SCK = device.CreateDigitalOutputPort(sck);
-            DOUT = device.CreateDigitalInputPort(dout);
+            SCK = sck.CreateDigitalOutputPort();
+            DOUT = dout.CreateDigitalInputPort();
             _createdPorts = true; // we need to dispose what we create
 
             CalculateRegisterValues(sck, dout);

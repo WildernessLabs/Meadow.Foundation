@@ -111,6 +111,17 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// <summary>
         /// Creates a new Y4000 object
         /// </summary>
+        public Y4000(
+            IModbusBusClient modbusClient,
+            byte modbusAddress = 0x01)
+        {
+            this.modbusClient = modbusClient;
+            ModbusAddress = modbusAddress;
+        }
+
+        /// <summary>
+        /// Creates a new Y4000 object
+        /// </summary>
         public Y4000(IMeadowDevice device,
             SerialPortName serialPortName,
             byte modbusAddress = 0x01,

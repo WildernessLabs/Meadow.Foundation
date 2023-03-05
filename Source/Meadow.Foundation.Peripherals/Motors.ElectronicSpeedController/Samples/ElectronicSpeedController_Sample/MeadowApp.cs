@@ -5,7 +5,6 @@ using Meadow.Foundation.Motors;
 using Meadow.Foundation.Sensors.Rotary;
 using Meadow.Peripherals.Sensors.Rotary;
 using Meadow.Units;
-using System;
 using System.Threading.Tasks;
 
 namespace ElectronicSpeedController_Sample
@@ -25,14 +24,15 @@ namespace ElectronicSpeedController_Sample
         {
             Resolver.Log.Info("Initialize...");
 
-            rotary = new RotaryEncoderWithButton(Device, Device.Pins.D07, Device.Pins.D08, Device.Pins.D06);
+            rotary = new RotaryEncoderWithButton(Device.Pins.D07, Device.Pins.D08, Device.Pins.D06);
             rotary.Rotated += RotaryRotated;
-            rotary.Clicked += (s, e) => {
+            rotary.Clicked += (s, e) =>
+            {
                 Resolver.Log.Info($"Arming the device.");
                 esc.Arm();
             }; ;
 
-            esc = new ElectronicSpeedController(Device, Device.Pins.D02, frequency);
+            esc = new ElectronicSpeedController(Device.Pins.D02, frequency);
 
             Resolver.Log.Info("Hardware initialized.");
 

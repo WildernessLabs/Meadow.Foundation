@@ -4,7 +4,6 @@ using Meadow.Foundation.Displays;
 using Meadow.Foundation.Graphics;
 using Meadow.Hardware;
 using Meadow.Units;
-using System;
 using System.Threading.Tasks;
 
 namespace Displays.Tft.S6D02A1_Sample
@@ -26,7 +25,6 @@ namespace Displays.Tft.S6D02A1_Sample
 
             var display = new S6D02A1
             (
-                device: Device,
                 spiBus: spiBus,
                 chipSelectPin: Device.Pins.D02,
                 dcPin: Device.Pins.D01,

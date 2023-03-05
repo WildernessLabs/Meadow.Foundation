@@ -53,17 +53,16 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// Create a new ST7565 object
         /// </summary>
-        /// <param name="device">Meadow device</param>
         /// <param name="spiBus">SPI bus connected to display</param>
         /// <param name="chipSelectPin">Chip select pin</param>
         /// <param name="dcPin">Data command pin</param>
         /// <param name="resetPin">Reset pin</param>
         /// <param name="width">Width of display in pixels</param>
         /// <param name="height">Height of display in pixels</param>
-        public St7565(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
+        public St7565(ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
             int width = 128, int height = 64) :
-            this(spiBus, device.CreateDigitalOutputPort(chipSelectPin), device.CreateDigitalOutputPort(dcPin),
-                device.CreateDigitalOutputPort(resetPin), width, height)
+            this(spiBus, chipSelectPin?.CreateDigitalOutputPort(), dcPin.CreateDigitalOutputPort(),
+                resetPin.CreateDigitalOutputPort(), width, height)
         {
         }
 

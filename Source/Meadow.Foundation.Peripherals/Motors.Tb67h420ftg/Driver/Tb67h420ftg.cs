@@ -52,21 +52,21 @@ namespace Meadow.Foundation.Motors
         /// <summary>
         /// Create a new Tb67h420ftg object
         /// </summary>
-        public Tb67h420ftg(IMeadowDevice device,
+        public Tb67h420ftg(
             IPin inA1, IPin inA2, IPin pwmA,
             IPin? inB1, IPin? inB2, IPin? pwmB,
             IPin? fault1, IPin? fault2,
             IPin? hbMode = null, IPin? tblkab = null) : this(
-                inA1: device.CreatePwmPort(inA1, new Units.Frequency(100, UnitType.Hertz)), 
-                inA2: device.CreatePwmPort(inA2, new Units.Frequency(100, UnitType.Hertz)),
-                pwmA: device.CreateDigitalOutputPort(pwmA),
-                inB1: inB1 is null ? null : device.CreatePwmPort(inB1, new Units.Frequency(100, UnitType.Hertz)),
-                inB2: inB2 is null ? null : device.CreatePwmPort(inB2, new Units.Frequency(100, UnitType.Hertz)),
-                pwmB: pwmB is null ? null : device.CreateDigitalOutputPort(pwmB),
-                fault1 is null ? null : device.CreateDigitalInputPort(fault1),
+                inA1: inA1.CreatePwmPort(new Units.Frequency(100, UnitType.Hertz)),
+                inA2: inA2.CreatePwmPort(new Units.Frequency(100, UnitType.Hertz)),
+                pwmA: pwmA.CreateDigitalOutputPort(),
+                inB1: inB1?.CreatePwmPort(new Units.Frequency(100, UnitType.Hertz)),
+                inB2: inB2?.CreatePwmPort(new Units.Frequency(100, UnitType.Hertz)),
+                pwmB: pwmB?.CreateDigitalOutputPort(),
+                fault1: fault1?.CreateDigitalInputPort(),
                 fault2: null,
-                hbMode: hbMode == null ? null : device.CreateDigitalOutputPort(hbMode),
-                tblkab: tblkab == null ? null : device.CreateDigitalOutputPort(tblkab)
+                hbMode: hbMode.CreateDigitalOutputPort(),
+                tblkab: tblkab.CreateDigitalOutputPort()
                 )
         { }
 
@@ -87,7 +87,7 @@ namespace Meadow.Foundation.Motors
 
             ValidateConfiguration();
 
-            if(hbMode is null) { hbridgeMode = HBridgeMode.Dual; }
+            if (hbMode is null) { hbridgeMode = HBridgeMode.Dual; }
 
             Motor1 = new HBridgeMotor(inA1, inA2, pwmA);
 

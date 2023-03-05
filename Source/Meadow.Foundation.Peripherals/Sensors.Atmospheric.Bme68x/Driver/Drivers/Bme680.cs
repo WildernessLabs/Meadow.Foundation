@@ -21,11 +21,10 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <summary>
         /// Creates a new instance of the Bme680 class
         /// </summary>
-        /// <param name="device">The Meadow device to create the chip select port</param>
         /// <param name="spiBus">The SPI bus connected to the device</param>
         /// <param name="chipSelectPin">The chip select pin</param>
-        public Bme680(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin) :
-            base(spiBus, device.CreateDigitalOutputPort(chipSelectPin))
+        public Bme680(ISpiBus spiBus, IPin chipSelectPin) :
+            base(spiBus, chipSelectPin.CreateDigitalOutputPort())
         { }
 
         /// <summary>

@@ -8,23 +8,43 @@ namespace Meadow.Foundation.Sensors.Gnss
     public partial class NeoM8
     {
         readonly ISpiPeripheral spiPeripheral;
-        readonly SerialMessageProcessor messageProcessor;
 
         const byte NULL_VALUE = 0xFF;
-        const byte BUFFER_SIZE = 128;
-        const byte SPI_SLEEP_MS = 200;
 
         /// <summary>
         /// Create a new NEOM8 object using SPI
         /// </summary>
-        public NeoM8(ISpiBus spiBus, IDigitalOutputPort chipSelectPort, IDigitalOutputPort resetPort = null)
+        public NeoM8(ISpiBus spiBus, 
+            IDigitalOutputPort chipSelectPort, 
+            IDigitalOutputPort resetPort = null, 
+            IDigitalInputPort ppsPort = null)
         {
             ResetPort = resetPort;
+            PulsePerSecondPort = ppsPort;
+
             spiPeripheral = new SpiPeripheral(spiBus, chipSelectPort);
 
-            messageProcessor = new SerialMessageProcessor(suffixDelimiter: Encoding.ASCII.GetBytes("\r\n"),
-                                                    preserveDelimiter: true,
-                                                    readBufferSize: 512);
+            _ = InitializeSpi();
+        }
+
+        /// <summary>
+        /// Create a new NeoM8 object using SPI
+        /// </summary>
+        public NeoM8(ISpiBus spiBus, IPin chipSelectPin = null, IPin resetPin = null, IPin ppsPin = null)
+        {
+            var chipSelectPort = chipSelectPin.CreateDigitalOutputPort();
+
+            spiPeripheral = new SpiPeripheral(spiBus, chipSelectPort);
+
+            if (resetPin != null)
+            {
+                resetPin.CreateDigitalOutputPort(true);
+            }
+
+            if (ppsPin != null)
+            {
+                ppsPin.CreateDigitalInputPort(InterruptMode.EdgeRising, ResistorMode.InternalPullDown);
+            }
 
             _ = InitializeSpi();
         }
@@ -32,6 +52,11 @@ namespace Meadow.Foundation.Sensors.Gnss
         //ToDo cancellation for sleep aware 
         async Task InitializeSpi()
         {
+            messageProcessor = new SerialMessageProcessor(suffixDelimiter: Encoding.ASCII.GetBytes("\r\n"),
+                                                    preserveDelimiter: true,
+                                                    readBufferSize: 512);
+
+            communicationMode = CommunicationMode.SPI;
             messageProcessor.MessageReceived += MessageReceived;
 
             InitDecoders();
@@ -45,7 +70,7 @@ namespace Meadow.Foundation.Sensors.Gnss
         { 
             byte[] data = new byte[BUFFER_SIZE];
 
-            bool HasMoreData(byte[] data)
+            static bool HasMoreData(byte[] data)
             {
                 bool hasNullValue = false;
                 for(int i = 1; i < data.Length; i++)
@@ -68,7 +93,7 @@ namespace Meadow.Foundation.Sensors.Gnss
 
                     if(HasMoreData(data) == false)
                     {
-                        Thread.Sleep(SPI_SLEEP_MS);
+                        Thread.Sleep(COMMS_SLEEP_MS);
                     }
                 }
             });

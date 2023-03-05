@@ -122,7 +122,6 @@ namespace Meadow.Foundation.Displays.Led
         /// <summary>
         /// Creates a SevenSegment connected to the especified IPins to a IODevice
         /// </summary>
-        /// <param name="device">The Meadow device</param>
         /// <param name="pinA">Pin A</param>
         /// <param name="pinB">Pin B</param>
         /// <param name="pinC">Pin C</param>
@@ -133,20 +132,19 @@ namespace Meadow.Foundation.Displays.Led
         /// <param name="pinDecimal">Pin decimal</param>
         /// <param name="isCommonCathode">Is the display using common cathod (true) or common annode (false)</param>
         public SevenSegment(
-            IDigitalOutputController device, 
             IPin pinA, IPin pinB,
             IPin pinC, IPin pinD,
             IPin pinE, IPin pinF,
             IPin pinG, IPin pinDecimal,
             bool isCommonCathode) :
-            this(device.CreateDigitalOutputPort(pinA),
-                 device.CreateDigitalOutputPort(pinB),
-                 device.CreateDigitalOutputPort(pinC),
-                 device.CreateDigitalOutputPort(pinD),
-                 device.CreateDigitalOutputPort(pinE),
-                 device.CreateDigitalOutputPort(pinF),
-                 device.CreateDigitalOutputPort(pinG),
-                 device.CreateDigitalOutputPort(pinDecimal),
+            this(pinA.CreateDigitalOutputPort(),
+                 pinB.CreateDigitalOutputPort(),
+                 pinC.CreateDigitalOutputPort(),
+                 pinD.CreateDigitalOutputPort(),
+                 pinE.CreateDigitalOutputPort(),
+                 pinF.CreateDigitalOutputPort(),
+                 pinG.CreateDigitalOutputPort(),
+                 pinDecimal.CreateDigitalOutputPort(),
                  isCommonCathode) { }
 
         /// <summary>

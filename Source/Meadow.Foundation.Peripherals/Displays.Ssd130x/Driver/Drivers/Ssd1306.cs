@@ -11,16 +11,15 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// Create a new SSD1306 object
         /// </summary>
-        /// <param name="device">Meadow device</param>
         /// <param name="spiBus">SPI bus connected to display</param>
         /// <param name="chipSelectPin">Chip select pin</param>
         /// <param name="dcPin">Data command pin</param>
         /// <param name="resetPin">Reset pin</param>
         /// <param name="displayType">Type of SSD1306 display (default = 128x64 pixel display)</param>
-        public Ssd1306(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
+        public Ssd1306(ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
             DisplayType displayType = DisplayType.OLED128x64):
-            this(spiBus, device.CreateDigitalOutputPort(chipSelectPin, false), device.CreateDigitalOutputPort(dcPin, true),
-                device.CreateDigitalOutputPort(resetPin, false), displayType)
+            this(spiBus, chipSelectPin?.CreateDigitalOutputPort(false), dcPin.CreateDigitalOutputPort(true),
+                resetPin.CreateDigitalOutputPort(false), displayType)
         { }
 
         /// <summary>

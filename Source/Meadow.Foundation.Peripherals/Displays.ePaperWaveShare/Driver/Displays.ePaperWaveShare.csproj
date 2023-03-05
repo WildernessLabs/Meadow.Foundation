@@ -17,8 +17,6 @@
   </PropertyGroup>
   <ItemGroup>
     <None Include="..\..\..\icon.png" Pack="true" PackagePath="" />
-    <PackageReference Include="Meadow.Foundation" Version="0.*" />
-    <PackageReference Include="Meadow.Foundation.Graphics.MicroGraphics" Version="0.*" />
-    <PackageReference Include="Meadow.Foundation.Displays.ePaper" Version="0.*" />
+    <ProjectReference Include="..\..\Displays.ePaper\Driver\Displays.ePaper.csproj" />
   </ItemGroup>
 </Project>

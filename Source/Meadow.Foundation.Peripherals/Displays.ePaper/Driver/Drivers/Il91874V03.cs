@@ -14,7 +14,6 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// Create a new Il91874V03 object
         /// </summary>
-        /// <param name="device">Meadow device</param>
         /// <param name="spiBus">SPI bus connected to display</param>
         /// <param name="chipSelectPin">Chip select pin</param>
         /// <param name="dcPin">Data command pin</param>
@@ -22,9 +21,9 @@ namespace Meadow.Foundation.Displays
         /// <param name="busyPin">Busy pin</param>
         /// <param name="width">Width of display in pixels</param>
         /// <param name="height">Height of display in pixels</param>
-        public Il91874V03(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, IPin busyPin,
+        public Il91874V03(ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, IPin busyPin,
             int width = 176, int height = 264) :
-            base(device, spiBus, chipSelectPin, dcPin, resetPin, busyPin, width, height)
+            base(spiBus, chipSelectPin, dcPin, resetPin, busyPin, width, height)
         { }
 
         /// <summary>

@@ -19,7 +19,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// Raised when the ambient light value changes
         /// </summary>
         public event EventHandler<IChangeResult<Illuminance>> AmbientLightUpdated = delegate { };
-        
+
         /// <summary>
         /// Raised when the color value changes
         /// </summary>
@@ -56,15 +56,14 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         /// Create a new instance of the APDS9960 communicating over the I2C interface.
         /// </summary>
-        /// <param name="device">The device connected to the sensor</param>
         /// <param name="i2cBus">SI2C bus object</param>
         /// <param name="interruptPin">The interrupt pin</param>
-        public Apds9960(IMeadowDevice device, II2cBus i2cBus, IPin interruptPin)
+        public Apds9960(II2cBus i2cBus, IPin interruptPin)
             : base(i2cBus, (byte)Addresses.Default)
         {
             if (interruptPin != null)
             {
-                interruptPort = device.CreateDigitalInputPort(interruptPin, InterruptMode.EdgeRising, ResistorMode.Disabled);
+                interruptPort = interruptPin.CreateDigitalInputPort(InterruptMode.EdgeRising, ResistorMode.Disabled);
                 interruptPort.Changed += InterruptPort_Changed;
             }
 
@@ -91,7 +90,8 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <returns>The latest sensor reading</returns>
         protected override Task<(Color? Color, Illuminance? AmbientLight)> ReadSensor()
         {
-            return Task.Run(() => {
+            return Task.Run(() =>
+            {
 
                 (Color? Color, Illuminance? AmbientLight) conditions;
 
@@ -127,10 +127,12 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <param name="changeResult">The updated sensor data</param>
         protected override void RaiseEventsAndNotify(IChangeResult<(Color? Color, Illuminance? AmbientLight)> changeResult)
         {
-            if (changeResult.New.AmbientLight is { } ambient) {
+            if (changeResult.New.AmbientLight is { } ambient)
+            {
                 AmbientLightUpdated?.Invoke(this, new ChangeResult<Illuminance>(ambient, changeResult.Old?.AmbientLight));
             }
-            if (changeResult.New.Color is { } color) {
+            if (changeResult.New.Color is { } color)
+            {
                 ColorUpdated?.Invoke(this, new ChangeResult<Color>(color, changeResult.Old?.Color));
             }
             base.RaiseEventsAndNotify(changeResult);
@@ -138,18 +140,18 @@ namespace Meadow.Foundation.Sensors.Motion
 
         private void InterruptPort_Changed(object sender, DigitalPortResult e)
         {
-        //    throw new NotImplementedException();
+            //    throw new NotImplementedException();
         }
 
         void Initialize()
         {
             var id = Peripheral.ReadRegister(Registers.APDS9960_ID);
 
-         //  if ((id != APDS9960_ID) && (id != APDS9960_ID_1) && (id != APDS9960_ID_2))
-       //     if(id == 0)
-        //    {
-                Resolver.Log.Info($"Device found {id}");
-       //     }
+            //  if ((id != APDS9960_ID) && (id != APDS9960_ID_1) && (id != APDS9960_ID_2))
+            //     if(id == 0)
+            //    {
+            Resolver.Log.Info($"Device found {id}");
+            //     }
 
             Resolver.Log.Info("SetMode");
             SetMode(OperatingModes.ALL, BooleanValues.OFF);
@@ -181,17 +183,17 @@ namespace Meadow.Foundation.Sensors.Motion
 
             Resolver.Log.Info("SetGestureEnterThresh");
             SetGestureEnterThresh(DefaultValues.DEFAULT_GPENTH);
-            
+
             SetGestureExitThresh(DefaultValues.DEFAULT_GEXTH);
-            
+
             Peripheral.WriteRegister(Registers.APDS9960_GCONF1, DefaultValues.DEFAULT_GCONF1);
-            
+
             SetGestureGain(DefaultValues.DEFAULT_GGAIN);
-            
+
             SetGestureLEDDrive(DefaultValues.DEFAULT_GLDRIVE);
-            
+
             SetGestureWaitTime(DefaultValues.DEFAULT_GWTIME);
-            
+
             Peripheral.WriteRegister(Registers.APDS9960_GOFFSET_U, DefaultValues.DEFAULT_GOFFSET);
             Peripheral.WriteRegister(Registers.APDS9960_GOFFSET_D, DefaultValues.DEFAULT_GOFFSET);
             Peripheral.WriteRegister(Registers.APDS9960_GOFFSET_L, DefaultValues.DEFAULT_GOFFSET);
@@ -208,7 +210,7 @@ namespace Meadow.Foundation.Sensors.Motion
          */
         byte GetMode()
         {
-             return Peripheral.ReadRegister(Registers.APDS9960_ENABLE);
+            return Peripheral.ReadRegister(Registers.APDS9960_ENABLE);
         }
 
         /**
@@ -267,9 +269,9 @@ namespace Meadow.Foundation.Sensors.Motion
         {
             /* Set default gain, interrupts, enable power, and enable sensor */
             SetAmbientLightGain(DefaultValues.DEFAULT_AGAIN);
-    
+
             SetAmbientLightIntEnable(interrupts);
-    
+
             EnablePower(true);
             SetMode(OperatingModes.AMBIENT_LIGHT, 1);
         }
@@ -333,7 +335,7 @@ namespace Meadow.Foundation.Sensors.Motion
 
             SetLEDBoost(GainValues.LED_BOOST_100);
 
-            SetGestureIntEnable((byte)(interrupts?1:0));
+            SetGestureIntEnable((byte)(interrupts ? 1 : 0));
 
             SetGestureMode(1);
             EnablePower(true);
@@ -575,8 +577,8 @@ namespace Meadow.Foundation.Sensors.Motion
             }
 
             /* Check to make sure our data isn't out of bounds */
-            if ((gestureData.TotalGestures <= 32) && 
-                (gestureData.TotalGestures > 0) )
+            if ((gestureData.TotalGestures <= 32) &&
+                (gestureData.TotalGestures > 0))
             {
                 /* Find the first value in U/D/L/R above the threshold */
                 for (i = 0; i < gestureData.TotalGestures; i++)
@@ -596,8 +598,8 @@ namespace Meadow.Foundation.Sensors.Motion
                 }
 
                 /* If one of the _first values is 0, then there is no good data */
-                if ((u_first == 0) || (d_first == 0) || 
-                    (l_first == 0) || (r_first == 0) )
+                if ((u_first == 0) || (d_first == 0) ||
+                    (l_first == 0) || (r_first == 0))
                 {
                     return false;
                 }
@@ -664,8 +666,8 @@ namespace Meadow.Foundation.Sensors.Motion
             /* Determine Near/Far gesture */
             if ((gestureUdCount == 0) && (gestureLrCount == 0))
             {
-                if ((Math.Abs(ud_delta) < GestureParameters.GESTURE_SENSITIVITY_2) && 
-                    (Math.Abs(lr_delta) < GestureParameters.GESTURE_SENSITIVITY_2) )
+                if ((Math.Abs(ud_delta) < GestureParameters.GESTURE_SENSITIVITY_2) &&
+                    (Math.Abs(lr_delta) < GestureParameters.GESTURE_SENSITIVITY_2))
                 {
 
                     if ((ud_delta == 0) && (lr_delta == 0))
@@ -681,7 +683,7 @@ namespace Meadow.Foundation.Sensors.Motion
                     {
                         if ((ud_delta == 0) && (lr_delta == 0))
                         {
-                            gestureState =States.NEAR_STATE;
+                            gestureState = States.NEAR_STATE;
                         }
                         else if ((ud_delta != 0) && (lr_delta != 0))
                         {
@@ -693,7 +695,8 @@ namespace Meadow.Foundation.Sensors.Motion
             }
             else
             {
-                if ((Math.Abs(ud_delta) < GestureParameters.GESTURE_SENSITIVITY_2) && (Math.Abs(lr_delta) < GestureParameters.GESTURE_SENSITIVITY_2) ) {
+                if ((Math.Abs(ud_delta) < GestureParameters.GESTURE_SENSITIVITY_2) && (Math.Abs(lr_delta) < GestureParameters.GESTURE_SENSITIVITY_2))
+                {
 
                     if ((ud_delta == 0) && (lr_delta == 0))
                     {
@@ -1321,7 +1324,7 @@ namespace Meadow.Foundation.Sensors.Motion
             var threshold = Peripheral.ReadRegister(Registers.APDS9960_AILTL);
 
             var val_byte = Peripheral.ReadRegister(Registers.APDS9960_AILTH);
-      
+
             return (byte)(threshold + ((ushort)val_byte << 8));
         }
 
@@ -1578,7 +1581,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /* Container for gesture data */
         class GestureData
         {
-            public byte[] UData { get; set; } = new byte[32]; 
+            public byte[] UData { get; set; } = new byte[32];
             public byte[] DData { get; set; } = new byte[32];
             public byte[] LData { get; set; } = new byte[32];
             public byte[] RData { get; set; } = new byte[32];

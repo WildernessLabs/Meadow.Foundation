@@ -46,18 +46,16 @@ namespace Meadow.Foundation.Sensors.Weather
         /// Creates a new `WindVane` on the specified IO Device's analog input
         /// Optionally, with a custom voltage to azimuth lookup
         /// </summary>
-        /// <param name="device">The IO Device</param>
         /// <param name="analogInputPin">The analog input pin</param>
         /// <param name="azimuthVoltages">Optional - Supply if you have custom azimuth voltages</param>
         /// <param name="updateInterval">The sensor update interval</param>
         /// <param name="sampleCount">Sample couple</param>
         /// <param name="sampleInterval">Sample interval</param>
-        public WindVane(
-            IAnalogInputController device, IPin analogInputPin,
+        public WindVane(IPin analogInputPin,
             IDictionary<Voltage, Azimuth> azimuthVoltages = null,
             TimeSpan? updateInterval = null,
             int sampleCount = 1, TimeSpan? sampleInterval = null)
-            : this(device.CreateAnalogInputPort(analogInputPin, sampleCount, sampleInterval ?? TimeSpan.FromMilliseconds(40), new Voltage(3.3))
+            : this(analogInputPin.CreateAnalogInputPort(sampleCount, sampleInterval ?? TimeSpan.FromMilliseconds(40), new Voltage(3.3))
                   , azimuthVoltages)
         {
             UpdateInterval = updateInterval ?? new TimeSpan(0, 0, 1);

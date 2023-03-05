@@ -18,7 +18,6 @@
   <ItemGroup>
     <None Include="..\..\..\icon.png" Pack="true" PackagePath="" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="Meadow.Foundation" Version="0.*" />
-    <PackageReference Include="Meadow.Foundation.Graphics.MicroGraphics" Version="0.*" />
+    <ProjectReference Include="..\..\Graphics.MicroGraphics\Driver\Graphics.MicroGraphics.csproj" />
   </ItemGroup>
 </Project>

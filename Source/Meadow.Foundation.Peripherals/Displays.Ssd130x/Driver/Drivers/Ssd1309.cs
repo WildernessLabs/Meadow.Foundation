@@ -21,13 +21,12 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// Create a new Ssd1309 object
         /// </summary>
-        /// <param name="device">Meadow device</param>
         /// <param name="spiBus">SPI bus connected to display</param>
         /// <param name="chipSelectPin">Chip select pin</param>
         /// <param name="dcPin">Data command pin</param>
         /// <param name="resetPin">Reset pin</param>
-        public Ssd1309(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin) :
-            base(device, spiBus, chipSelectPin, dcPin, resetPin, DisplayType.OLED128x64)
+        public Ssd1309(ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin) :
+            base(spiBus, chipSelectPin, dcPin, resetPin, DisplayType.OLED128x64)
         {
         }
 

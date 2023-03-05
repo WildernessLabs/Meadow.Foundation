@@ -30,30 +30,28 @@ namespace Meadow.Foundation.Sensors.Switches
         /// <summary>
         /// Creates a new DipSwitch connected to the specified switchPins, with the InterruptMode and ResisterMode specified by the type parameters.
         /// </summary>
-        /// <param name="device">The device connected to the switch</param>
         /// <param name="switchPins">An array of pins for each switch</param>
         /// <param name="interruptMode">The interrupt mode for all pins</param>
         /// <param name="resistorMode">The resistor mode for all pins</param>
-        public DipSwitch(IDigitalInputController device, IPin[] switchPins, InterruptMode interruptMode, ResistorMode resistorMode)
-            : this(device, switchPins, interruptMode, resistorMode, TimeSpan.FromMilliseconds(20), TimeSpan.Zero)
+        public DipSwitch(IPin[] switchPins, InterruptMode interruptMode, ResistorMode resistorMode)
+            : this(switchPins, interruptMode, resistorMode, TimeSpan.FromMilliseconds(20), TimeSpan.Zero)
         { }
 
         /// <summary>
         /// Creates a new DipSwitch connected to the specified switchPins, with the InterruptMode and ResisterMode specified by the type parameters.
         /// </summary>
-        /// <param name="device"></param>
         /// <param name="switchPins"></param>
         /// <param name="interruptMode"></param>
         /// <param name="resistorMode"></param>
         /// <param name="debounceDuration"></param>
         /// <param name="glitchFilterCycleCount"></param>
-        public DipSwitch(IDigitalInputController device, IPin[] switchPins, InterruptMode interruptMode, ResistorMode resistorMode, TimeSpan debounceDuration, TimeSpan glitchFilterCycleCount)
+        public DipSwitch(IPin[] switchPins, InterruptMode interruptMode, ResistorMode resistorMode, TimeSpan debounceDuration, TimeSpan glitchFilterCycleCount)
         {
             Switches = new ISwitch[switchPins.Length];
 
             for (int i = 0; i < switchPins.Length; i++)
             {
-                Switches[i] = new SpstSwitch(device, switchPins[i], interruptMode, resistorMode, debounceDuration, glitchFilterCycleCount);
+                Switches[i] = new SpstSwitch(switchPins[i], interruptMode, resistorMode, debounceDuration, glitchFilterCycleCount);
                 int index = i;
                 Switches[i].Changed += (s, e) => HandleSwitchChanged(index);
             }

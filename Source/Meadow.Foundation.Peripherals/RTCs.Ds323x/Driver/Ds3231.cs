@@ -10,16 +10,14 @@ namespace Meadow.Foundation.RTCs
         /// <summary>
         /// Create a new MAG3110 object using the default parameters for the component.
         /// </summary>
-        /// <param name="device">The device connected to the RTC</param>
         /// <param name="interruptPin">Digital pin connected to the alarm interrupt pin on the RTC.</param>
         /// <param name="i2cBus">The I2C Bus the peripheral is connected to</param>
         /// <param name="address">I2C Bus address of the peripheral</param>
         public Ds3231(
-            IDigitalInputController device,
             II2cBus i2cBus,
             IPin interruptPin = null,
             byte address = (byte)Address.Default)
-            : base(new I2cPeripheral(i2cBus, address), device, interruptPin)
+            : base(new I2cPeripheral(i2cBus, address), interruptPin)
         { }
 
         /// <summary>

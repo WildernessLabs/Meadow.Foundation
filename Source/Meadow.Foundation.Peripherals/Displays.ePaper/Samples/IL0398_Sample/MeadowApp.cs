@@ -1,10 +1,9 @@
-﻿using System;
-using System.Threading.Tasks;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation;
 using Meadow.Foundation.Displays;
 using Meadow.Foundation.Graphics;
+using System.Threading.Tasks;
 
 namespace Displays.ePaper.IL0398_Sample
 {
@@ -18,8 +17,8 @@ namespace Displays.ePaper.IL0398_Sample
         public override Task Initialize()
         {
             Resolver.Log.Info("Initialize ...");
- 
-            display = new Il0398(device: Device,
+
+            display = new Il0398(
                 spiBus: Device.CreateSpiBus(),
                 chipSelectPin: Device.Pins.D03,
                 dcPin: Device.Pins.D02,

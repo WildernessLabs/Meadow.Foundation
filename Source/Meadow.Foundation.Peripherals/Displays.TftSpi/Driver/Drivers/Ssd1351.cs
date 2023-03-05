@@ -27,16 +27,15 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// Create a new Ssd1351 color display object
         /// </summary>
-        /// <param name="device">Meadow device</param>
         /// <param name="spiBus">SPI bus connected to display</param>
         /// <param name="chipSelectPin">Chip select pin</param>
         /// <param name="dcPin">Data command pin</param>
         /// <param name="resetPin">Reset pin</param>
         /// <param name="width">Width of display in pixels</param>
         /// <param name="height">Height of display in pixels</param>
-        public Ssd1351(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
+        public Ssd1351(ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
             int width, int height)
-            : base(device, spiBus, chipSelectPin, dcPin, resetPin, width, height, ColorMode.Format16bppRgb565)
+            : base(spiBus, chipSelectPin, dcPin, resetPin, width, height, ColorMode.Format16bppRgb565)
         {
             Initialize();
         }
@@ -133,7 +132,7 @@ namespace Meadow.Foundation.Displays
             SendData(0x01);
 
             SendCommand(CMD_DISPLAYON);
-            
+
             SetAddressWindow(0, 0, (Width - 1), (Height - 1));
 
             dataCommandPort.State = Data;
@@ -163,30 +162,30 @@ namespace Meadow.Foundation.Displays
         /// Invert the display
         /// </summary>
         /// <param name="invert"></param>
-        public void InvertDisplay (bool invert)
+        public void InvertDisplay(bool invert)
         {
             SendCommand(invert ? CMD_INVERTDISPLAY : CMD_NORMALDISPLAY);
         }
 
-        static byte CMD_SETCOLUMN      = 0x15;
-        static byte CMD_SETROW         = 0x75;
-        static byte CMD_WRITERAM       = 0x5C;
-        static byte CMD_SETREMAP       = 0xA0;
-        static byte CMD_DISPLAYOFFSET  = 0xA2;
-        static byte CMD_NORMALDISPLAY  = 0xA6;
-        static byte CMD_INVERTDISPLAY  = 0xA7;
+        static byte CMD_SETCOLUMN = 0x15;
+        static byte CMD_SETROW = 0x75;
+        static byte CMD_WRITERAM = 0x5C;
+        static byte CMD_SETREMAP = 0xA0;
+        static byte CMD_DISPLAYOFFSET = 0xA2;
+        static byte CMD_NORMALDISPLAY = 0xA6;
+        static byte CMD_INVERTDISPLAY = 0xA7;
         static byte CMD_FUNCTIONSELECT = 0xAB;
-        static byte CMD_DISPLAYOFF     = 0xAE;
-        static byte CMD_DISPLAYON      = 0xAF;
-        static byte CMD_PRECHARGE      = 0xB1;
-        static byte CMD_CLOCKDIV       = 0xB3;
-        static byte CMD_SETVSL         = 0xB4;
-        static byte CMD_SETGPIO        = 0xB5;
-        static byte CMD_PRECHARGE2     = 0xB6;
-        static byte CMD_VCOMH          = 0xBE;
-        static byte CMD_CONTRASTABC    = 0xC1;
+        static byte CMD_DISPLAYOFF = 0xAE;
+        static byte CMD_DISPLAYON = 0xAF;
+        static byte CMD_PRECHARGE = 0xB1;
+        static byte CMD_CLOCKDIV = 0xB3;
+        static byte CMD_SETVSL = 0xB4;
+        static byte CMD_SETGPIO = 0xB5;
+        static byte CMD_PRECHARGE2 = 0xB6;
+        static byte CMD_VCOMH = 0xBE;
+        static byte CMD_CONTRASTABC = 0xC1;
         static byte CMD_CONTRASTMASTER = 0xC7;
-        static byte CMD_MUXRATIO       = 0xCA;
-        static byte CMD_COMMANDLOCK    = 0xFD;
+        static byte CMD_MUXRATIO = 0xCA;
+        static byte CMD_COMMANDLOCK = 0xFD;
     }
 }

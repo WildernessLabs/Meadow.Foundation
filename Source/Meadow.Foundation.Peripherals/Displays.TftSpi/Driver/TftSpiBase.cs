@@ -93,7 +93,6 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// Represents an abstract TftSpiBase object
         /// </summary>
-        /// <param name="device">Meadow device</param>
         /// <param name="spiBus">SPI bus connected to display</param>
         /// <param name="chipSelectPin">Chip select pin</param>
         /// <param name="dcPin">Data command pin</param>
@@ -101,16 +100,16 @@ namespace Meadow.Foundation.Displays
         /// <param name="width">Width of display in pixels</param>
         /// <param name="height">Height of display in pixels</param>
         /// <param name="colorMode">The color mode to use for the display buffer</param>
-        public TftSpiBase(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
+        public TftSpiBase(ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
             int width, int height, ColorMode colorMode = ColorMode.Format16bppRgb565)
+            : this(
+                    spiBus,
+                    chipSelectPin?.CreateDigitalOutputPort(),
+                    dcPin.CreateDigitalOutputPort(),
+                    resetPin.CreateDigitalOutputPort(),
+                    width, height, colorMode
+                  )
         {
-            dataCommandPort = device.CreateDigitalOutputPort(dcPin, false);
-            if (resetPin != null) { resetPort = device.CreateDigitalOutputPort(resetPin, true); }
-            if (chipSelectPin != null) { chipSelectPort = device.CreateDigitalOutputPort(chipSelectPin, false); }
-
-            spiDisplay = new SpiPeripheral(spiBus, chipSelectPort);
-            
-            CreateBuffer(colorMode, width, height);
         }
 
         /// <summary>
@@ -127,7 +126,7 @@ namespace Meadow.Foundation.Displays
             IDigitalOutputPort chipSelectPort,
             IDigitalOutputPort dataCommandPort,
             IDigitalOutputPort resetPort,
-            int width, int height, 
+            int width, int height,
             ColorMode colorMode = ColorMode.Format16bppRgb565)
         {
             this.dataCommandPort = dataCommandPort;
@@ -313,13 +312,13 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         public void Show(int left, int top, int right, int bottom)
         {
-            if(PixelBuffer.ColorMode != ColorMode.Format16bppRgb565)
+            if (PixelBuffer.ColorMode != ColorMode.Format16bppRgb565)
             {   //only supported in 565 mode 
                 Show();
                 return;
             }
 
-            if(right < left || bottom < top)
+            if (right < left || bottom < top)
             {   //could throw an exception
                 return;
             }

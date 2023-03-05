@@ -37,8 +37,7 @@ namespace Meadow.Foundation.Audio.Mp3
         /// <param name="device">Meadow device</param>
         /// <param name="serialPortName">Name of serial port connected to YX5300</param>
         public Yx5300(IMeadowDevice device, SerialPortName serialPortName)
-            : this(device.CreateSerialPort(
-                serialPortName))
+            : this(device.CreateSerialPort(serialPortName))
         { }
 
         /// <summary>

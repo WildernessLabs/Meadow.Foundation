@@ -18,7 +18,6 @@ namespace Sensors.Temperature.AnalogWaterLevel_Sample
 
             // configure our AnalogWaterLevel sensor
             analogWaterLevel = new AnalogWaterLevel(
-                device: Device,
                 analogPin: Device.Pins.A00
             );
 

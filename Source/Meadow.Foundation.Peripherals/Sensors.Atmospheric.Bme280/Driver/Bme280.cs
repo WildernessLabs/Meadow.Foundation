@@ -1,11 +1,11 @@
-﻿using System;
-using System.Threading.Tasks;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
 using Meadow.Peripherals.Sensors;
 using Meadow.Units;
+using System;
+using System.Threading.Tasks;
+using HU = Meadow.Units.RelativeHumidity.UnitType;
 using PU = Meadow.Units.Pressure.UnitType;
 using TU = Meadow.Units.Temperature.UnitType;
-using HU = Meadow.Units.RelativeHumidity.UnitType;
 
 namespace Meadow.Foundation.Sensors.Atmospheric
 {
@@ -67,7 +67,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// Temperature oversample count
         /// </summary>
         public Oversample TemperatureSampleCount { get; set; } = Oversample.OversampleX8;
-        
+
         /// <summary>
         /// Pressure oversample count
         /// </summary>
@@ -124,11 +124,10 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <summary>
         /// Initializes a new instance of the BME280 class
         /// </summary>
-        /// <param name="device">The meadow device used to create the chip select port</param>
         /// <param name="spiBus">The SPI bus connected to the BME280</param>
         /// <param name="chipSelectPin">The chip select pin</param>
-        public Bme280(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin) :
-            this(spiBus, device.CreateDigitalOutputPort(chipSelectPin))
+        public Bme280(ISpiBus spiBus, IPin chipSelectPin) :
+            this(spiBus, chipSelectPin.CreateDigitalOutputPort())
         { }
 
         /// <summary>
@@ -207,7 +206,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 await Task.Delay(100); //give the BME280 time to read new values
             }
 
-            return await Task.Run(() => {
+            return await Task.Run(() =>
+            {
 
                 (Units.Temperature Temperature, RelativeHumidity Humidity, Pressure Pressure) conditions;
 
@@ -271,9 +271,12 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 pvar2 += (long)compensationData.P4 << 35;
                 pvar1 = ((pvar1 * pvar1 * compensationData.P8) >> 8) + ((pvar1 * compensationData.P2) << 12);
                 pvar1 = ((((long)1 << 47) + pvar1) * compensationData.P1) >> 33;
-                if (pvar1 == 0) {
+                if (pvar1 == 0)
+                {
                     conditions.Pressure = new Pressure(0, PU.Pascal);
-                } else {
+                }
+                else
+                {
                     var adcPressure = (readBuffer.Span[0] << 12) | (readBuffer.Span[1] << 4) | ((readBuffer.Span[2] >> 4) & 0x0f);
                     long pressure = 1048576 - adcPressure;
                     pressure = (((pressure << 31) - pvar2) * 3125) / pvar1;

@@ -2,7 +2,6 @@
 using Meadow.Devices;
 using Meadow.Foundation.Displays;
 using Meadow.Foundation.Graphics;
-using System;
 using System.Threading.Tasks;
 
 namespace Displays.ePaper.IL3897_Sample
@@ -16,8 +15,8 @@ namespace Displays.ePaper.IL3897_Sample
         public override Task Initialize()
         {
             Resolver.Log.Info("Initialize ...");
- 
-            var display = new Il3897(device: Device,
+
+            var display = new Il3897(
                 spiBus: Device.CreateSpiBus(),
                 chipSelectPin: Device.Pins.D02,
                 dcPin: Device.Pins.D01,

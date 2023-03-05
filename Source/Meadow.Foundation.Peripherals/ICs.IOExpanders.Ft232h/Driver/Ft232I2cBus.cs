@@ -9,7 +9,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
     public sealed class Ft232I2cBus : IFt232Bus, II2cBus, IDisposable
     {
         private const byte DefaultLatencyTimer = 10;
-        private const int DefaultChannelOptions = 0;
+        private const I2CChannelOptions DefaultChannelOptions = I2CChannelOptions.None;
 
         private bool _isDisposed;
 

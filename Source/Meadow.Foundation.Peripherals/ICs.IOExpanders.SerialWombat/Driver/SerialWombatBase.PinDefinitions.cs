@@ -21,18 +21,22 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// </summary>
             public IList<IPin> AllPins { get; } = new List<IPin>();
 
+            public IPinController Controller { get; set; }
+
             /// <summary>
             /// Create a new PinDefinitions object
             /// </summary>
-            public PinDefinitions()
+            public PinDefinitions(SerialWombatBase wombat)
             {
+                Controller = wombat;
                 InitAllPins();
             }
 
             /// <summary>
             /// Pin WP0
             /// </summary>
-            public readonly IPin WP0 = new Pin(
+            public IPin WP0 => new Pin(
+                Controller,
                 "WP0",
                 (byte)0x00,
                 new List<IChannelInfo> {
@@ -45,7 +49,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// <summary>
             /// Pin WP1
             /// </summary>
-            public readonly IPin WP1 = new Pin(
+            public IPin WP1 => new Pin(
+                Controller,
                 "WP1",
                 (byte)0x01,
                 new List<IChannelInfo> {
@@ -58,7 +63,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// <summary>
             /// Pin WP2
             /// </summary>
-            public readonly IPin WP2 = new Pin(
+            public IPin WP2 => new Pin(
+                Controller,
                 "WP2",
                 (byte)0x02,
                 new List<IChannelInfo> {
@@ -71,7 +77,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// <summary>
             /// Pin WP5
             /// </summary>
-            public readonly IPin WP5 = new Pin(
+            public IPin WP5 => new Pin(
+                Controller,
                 "WP5",
                 (byte)0x05,
                 new List<IChannelInfo> {
@@ -82,7 +89,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// <summary>
             /// Pin WP6
             /// </summary>
-            public readonly IPin WP6 = new Pin(
+            public IPin WP6 => new Pin(
+                Controller,
                 "WP6",
                 (byte)0x06,
                 new List<IChannelInfo> {
@@ -93,7 +101,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// <summary>
             /// Pin WP7
             /// </summary>
-            public readonly IPin WP7 = new Pin(
+            public IPin WP7 => new Pin(
+                Controller,
                 "WP7",
                 (byte)0x07,
                 new List<IChannelInfo> {
@@ -105,7 +114,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// <summary>
             /// Pin WP8
             /// </summary>
-            public readonly IPin WP8 = new Pin(
+            public IPin WP8 => new Pin(
+                Controller,
                 "WP8",
                 (byte)0x08,
                 new List<IChannelInfo> {
@@ -116,7 +126,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// <summary>
             /// Pin WP9
             /// </summary>
-            public readonly IPin WP9 = new Pin(
+            public IPin WP9 => new Pin(
+                Controller,
                 "WP9",
                 (byte)0x09,
                 new List<IChannelInfo> {
@@ -128,7 +139,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// <summary>
             /// Pin WP10
             /// </summary>
-            public readonly IPin WP10 = new Pin(
+            public IPin WP10 => new Pin(
+                Controller,
                 "WP10",
                 (byte)0x0a,
                 new List<IChannelInfo> {
@@ -140,7 +152,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// <summary>
             /// Pin WP11
             /// </summary>
-            public readonly IPin WP11 = new Pin(
+            public IPin WP11 => new Pin(
+                Controller,
                 "WP11",
                 (byte)0x0b,
                 new List<IChannelInfo> {
@@ -152,7 +165,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// <summary>
             /// Pin WP12
             /// </summary>
-            public readonly IPin WP12 = new Pin(
+            public IPin WP12 => new Pin(
+                Controller,
                 "WP12",
                 (byte)0x0c,
                 new List<IChannelInfo> {
@@ -164,7 +178,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// <summary>
             /// Pin WP13
             /// </summary>
-            public readonly IPin WP13 = new Pin(
+            public IPin WP13 => new Pin(
+                Controller,
                 "WP13",
                 (byte)0x0d,
                 new List<IChannelInfo> {
@@ -176,7 +191,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// <summary>
             /// Pin WP14
             /// </summary>
-            public readonly IPin WP14 = new Pin(
+            public IPin WP14 => new Pin(
+                Controller,
                 "WP14",
                 (byte)0x0e,
                 new List<IChannelInfo> {
@@ -188,7 +204,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// <summary>
             /// Pin WP15
             /// </summary>
-            public readonly IPin WP15 = new Pin(
+            public IPin WP15 => new Pin(
+                Controller,
                 "WP15",
                 (byte)0x0f,
                 new List<IChannelInfo> {
@@ -200,7 +217,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// <summary>
             /// Pin WP16
             /// </summary>
-            public readonly IPin WP16 = new Pin(
+            public IPin WP16 => new Pin(
+                Controller,
                 "WP16",
                 (byte)0x10,
                 new List<IChannelInfo> {
@@ -213,7 +231,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// <summary>
             /// Pin WP17
             /// </summary>
-            public readonly IPin WP17 = new Pin(
+            public IPin WP17 => new Pin(
+                Controller,
                 "WP17",
                 (byte)0x11,
                 new List<IChannelInfo> {
@@ -226,7 +245,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// <summary>
             /// Pin WP18
             /// </summary>
-            public readonly IPin WP18 = new Pin(
+            public IPin WP18 => new Pin(
+                Controller,
                 "WP18",
                 (byte)0x12,
                 new List<IChannelInfo> {
@@ -239,7 +259,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// <summary>
             /// Pin WP19
             /// </summary>
-            public readonly IPin WP19 = new Pin(
+            public IPin WP19 => new Pin(
+                Controller,
                 "WP19",
                 (byte)0x13,
                 new List<IChannelInfo> {

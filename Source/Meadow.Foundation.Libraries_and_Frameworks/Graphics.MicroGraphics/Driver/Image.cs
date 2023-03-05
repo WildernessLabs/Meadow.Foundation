@@ -189,7 +189,7 @@ namespace Meadow.Foundation.Graphics
             switch (BitsPerPixel)
             {
                 case 32:
-                    DisplayBuffer = new BufferRgb8888(width, height, pixelData);
+                    DisplayBuffer = new BufferRgba8888(width, height, pixelData);
                     break;
                 case 24:
                     // 24-bit images are stored BGR, not RGB.  Yay.  Time to swap

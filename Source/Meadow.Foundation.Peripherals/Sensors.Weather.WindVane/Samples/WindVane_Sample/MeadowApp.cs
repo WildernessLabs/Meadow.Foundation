@@ -18,7 +18,7 @@ namespace MeadowApp
             Resolver.Log.Info("Initialize...");
 
             // initialize the wind vane driver
-            windVane = new WindVane(Device, Device.Pins.A00);
+            windVane = new WindVane(Device.Pins.A00);
 
             //==== Classic event example:
             windVane.Updated += (sender, result) => Resolver.Log.Info($"Updated event {result.New.DecimalDegrees}");

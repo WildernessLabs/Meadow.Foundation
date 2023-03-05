@@ -18,7 +18,6 @@ namespace Meadow.Foundation.Displays.Lcd
         /// <summary>
         /// Create a new character display object using GPIO
         /// </summary>
-        /// <param name="device">The device connected to the display</param>
         /// <param name="pinRS">The RS pin</param>
         /// <param name="pinE">The E pin</param>
         /// <param name="pinD4">The D4 pin</param>
@@ -28,7 +27,6 @@ namespace Meadow.Foundation.Displays.Lcd
         /// <param name="rows">The number of character rows</param>
         /// <param name="columns">The number of character columns</param>
         public CharacterDisplay(
-            IMeadowDevice device,
             IPin pinRS,
             IPin pinE,
             IPin pinD4,
@@ -37,7 +35,7 @@ namespace Meadow.Foundation.Displays.Lcd
             IPin pinD7,
             byte rows = 4, byte columns = 20)
         {
-            characterDisplay = new GpioCharacterDisplay(device, pinRS, pinE, pinD4, pinD5, pinD6, pinD7, rows, columns);
+            characterDisplay = new GpioCharacterDisplay(pinRS, pinE, pinD4, pinD5, pinD6, pinD7, rows, columns);
         }
 
         /// <summary>
@@ -66,7 +64,6 @@ namespace Meadow.Foundation.Displays.Lcd
         /// <summary>
         /// Create a new CharacterDisplay object
         /// </summary>
-        /// <param name="device">The device connected to the display</param>
         /// <param name="pinV0">V0 pin</param>
         /// <param name="pinRS">RS pin</param>
         /// <param name="pinE">W pin</param>
@@ -77,7 +74,6 @@ namespace Meadow.Foundation.Displays.Lcd
         /// <param name="rows">Number of character rows</param>
         /// <param name="columns">Number of character columns</param>
         public CharacterDisplay(
-            IMeadowDevice device,
             IPin pinV0,
             IPin pinRS,
             IPin pinE,
@@ -87,7 +83,7 @@ namespace Meadow.Foundation.Displays.Lcd
             IPin pinD7,
             byte rows = 4, byte columns = 20)
         {
-            characterDisplay = new GpioCharacterDisplay(device, pinV0, pinRS, pinE, pinD4, pinD5, pinD6, pinD7, rows, columns);
+            characterDisplay = new GpioCharacterDisplay(pinV0, pinRS, pinE, pinD4, pinD5, pinD6, pinD7, rows, columns);
         }
 
         /// <summary>
@@ -128,7 +124,7 @@ namespace Meadow.Foundation.Displays.Lcd
             byte rows = 4, byte columns = 20,
             bool isGroveDisplay = false)
         {
-            if(isGroveDisplay)
+            if (isGroveDisplay)
             {
                 characterDisplay = new GroveCharacterDisplay(i2cBus, address, rows, columns);
             }

@@ -20,7 +20,6 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// Create a new Ssd1680 object
         /// </summary>
-        /// <param name="device">Meadow device</param>
         /// <param name="spiBus">SPI bus connected to display</param>
         /// <param name="chipSelectPin">Chip select pin</param>
         /// <param name="dcPin">Data command pin</param>
@@ -28,9 +27,9 @@ namespace Meadow.Foundation.Displays
         /// <param name="busyPin">Busy pin</param>
         /// <param name="width">Width of display in pixels</param>
         /// <param name="height">Height of display in pixels</param>
-        public Ssd1680(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, IPin busyPin,
+        public Ssd1680(ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, IPin busyPin,
             int width, int height) :
-            base(device, spiBus, chipSelectPin, dcPin, resetPin, busyPin, width, height)
+            base(spiBus, chipSelectPin, dcPin, resetPin, busyPin, width, height)
         { }
 
         /// <summary>
@@ -90,7 +89,7 @@ namespace Meadow.Foundation.Displays
             SendCommand(SSD1680_WRITE_BORDER);
             SendData(0x05);
 
-            SendCommand(SSD1680_TEMP_CONTROL); 
+            SendCommand(SSD1680_TEMP_CONTROL);
             SendData(0x80);
 
             SendCommand(SSD1680_DISP_CTRL1);
@@ -145,7 +144,7 @@ namespace Meadow.Foundation.Displays
             SetRamAddress();
             SendCommand(SSD1680_WRITE_RAM1);
             SendData(blackBuffer);
-                        
+
             SetRamAddress();
             SendCommand(SSD1680_WRITE_RAM2);
             SendData(colorBuffer);

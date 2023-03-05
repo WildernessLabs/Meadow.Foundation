@@ -38,7 +38,6 @@ namespace MeadowApp
 
             ssd1309 = new Ssd1309
             (
-                device: Device,
                 spiBus: bus,
                 chipSelectPin: Device.Pins.D02,
                 dcPin: Device.Pins.D01,
@@ -60,16 +59,16 @@ namespace MeadowApp
 
             Resolver.Log.Info("Create buttons...");
 
-            up = new PushButton(Device, Device.Pins.D09, ResistorMode.InternalPullDown);
+            up = new PushButton(Device.Pins.D09, ResistorMode.InternalPullDown);
             up.Clicked += Up_Clicked;
 
-            left = new PushButton(Device, Device.Pins.D11, ResistorMode.InternalPullDown);
+            left = new PushButton(Device.Pins.D11, ResistorMode.InternalPullDown);
             left.Clicked += Left_Clicked;
 
-            right = new PushButton(Device, Device.Pins.D10, ResistorMode.InternalPullDown);
+            right = new PushButton(Device.Pins.D10, ResistorMode.InternalPullDown);
             right.Clicked += Right_Clicked;
 
-            down = new PushButton(Device, Device.Pins.D12, ResistorMode.InternalPullDown);
+            down = new PushButton(Device.Pins.D12, ResistorMode.InternalPullDown);
             down.Clicked += Down_Clicked;
 
             menu.Enable();

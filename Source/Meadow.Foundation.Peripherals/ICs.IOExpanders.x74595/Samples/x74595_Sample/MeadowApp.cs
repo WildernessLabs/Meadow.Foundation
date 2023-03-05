@@ -17,7 +17,7 @@ namespace MeadowApp
         {
             Resolver.Log.Info("Initialize...");
 
-            shiftRegister = new x74595(Device, Device.CreateSpiBus(), Device.Pins.D00, 8);
+            shiftRegister = new x74595(Device.CreateSpiBus(), Device.Pins.D00, 8);
 
             return base.Initialize();
         }

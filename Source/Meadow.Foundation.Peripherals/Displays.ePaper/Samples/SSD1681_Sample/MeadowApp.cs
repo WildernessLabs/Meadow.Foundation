@@ -1,10 +1,9 @@
-﻿using System;
-using System.Threading.Tasks;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation;
 using Meadow.Foundation.Displays;
 using Meadow.Foundation.Graphics;
+using System.Threading.Tasks;
 
 namespace Displays.ePaper.SSD1681_Sample
 {
@@ -17,8 +16,8 @@ namespace Displays.ePaper.SSD1681_Sample
         public override Task Initialize()
         {
             Resolver.Log.Info("Initialize ...");
- 
-            var display = new Ssd1681(device: Device,
+
+            var display = new Ssd1681(
                 spiBus: Device.CreateSpiBus(),
                 chipSelectPin: Device.Pins.A04,
                 dcPin: Device.Pins.A03,

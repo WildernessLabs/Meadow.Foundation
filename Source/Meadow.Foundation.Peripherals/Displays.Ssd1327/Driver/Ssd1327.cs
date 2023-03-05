@@ -49,18 +49,17 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// Create a new Ssd1327 object
         /// </summary>
-        /// <param name="device">Meadow device</param>
         /// <param name="spiBus">SPI bus connected to display</param>
         /// <param name="chipSelectPin">Chip select pin</param>
         /// <param name="dcPin">Data command pin</param>
         /// <param name="resetPin">Reset pin</param>
-        public Ssd1327(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin)
+        public Ssd1327(ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin)
         {
             imageBuffer = new BufferGray4(Width, Height);
 
-            dataCommandPort = device.CreateDigitalOutputPort(dcPin, false);
-            if (resetPin != null) { resetPort = device.CreateDigitalOutputPort(resetPin, true); }
-            if (chipSelectPin != null) { chipSelectPort = device.CreateDigitalOutputPort(chipSelectPin, false); }
+            dataCommandPort = dcPin.CreateDigitalOutputPort(false);
+            if (resetPin != null) { resetPort = resetPin.CreateDigitalOutputPort(true); }
+            if (chipSelectPin != null) { chipSelectPort = chipSelectPin.CreateDigitalOutputPort(false); }
 
             spiPeripheral = new SpiPeripheral(spiBus, chipSelectPort);
 

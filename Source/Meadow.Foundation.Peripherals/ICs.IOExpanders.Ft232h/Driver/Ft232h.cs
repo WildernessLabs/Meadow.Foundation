@@ -10,7 +10,12 @@ namespace Meadow.Foundation.ICs.IOExpanders
     /// <summary>
     /// Represents a DS3502 digital potentiometer
     /// </summary>
-    public partial class Ft232h : IDisposable, IIoDevice
+    public partial class Ft232h :
+        IDisposable,
+        IDigitalInputOutputController,
+        IDigitalOutputController,
+        ISpiController,
+        II2cController
     {
         private bool _isDisposed;
         private static int _instanceCount = 0;
@@ -29,15 +34,16 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
         public Ft232h()
         {
+            Pins = new PinDefinitions(this);
             EnumerateBuses();
         }
 
         /// <summary>
         /// The pins
         /// </summary>
-        public PinDefinitions Pins { get; } = new PinDefinitions()
+        public PinDefinitions Pins { get; }
 
-        ; private void EnumerateBuses()
+        private void EnumerateBuses()
         {
             _i2cBuses = GetI2CBuses();
             _spiBuses = GetSpiBuses();

@@ -1,25 +1,25 @@
-﻿using System;
+﻿using Meadow.Hardware;
+using Meadow.Peripherals.Sensors;
+using Meadow.Units;
+using Meadow.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Meadow.Hardware;
-using Meadow.Peripherals.Sensors;
-using Meadow.Units;
-using Meadow.Utilities;
+using HU = Meadow.Units.RelativeHumidity.UnitType;
 using PU = Meadow.Units.Pressure.UnitType;
 using TU = Meadow.Units.Temperature.UnitType;
-using HU = Meadow.Units.RelativeHumidity.UnitType;
 
 namespace Meadow.Foundation.Sensors.Atmospheric
 {
     /// <summary>
     /// Represents the Bosch BME68x Temperature, Pressure and Humidity Sensor
     /// </summary>
-    public abstract partial class Bme68x:
-        PollingSensorBase<(Units.Temperature? Temperature, 
-                            RelativeHumidity? Humidity, 
-                            Pressure? Pressure, 
+    public abstract partial class Bme68x :
+        PollingSensorBase<(Units.Temperature? Temperature,
+                            RelativeHumidity? Humidity,
+                            Pressure? Pressure,
                             Resistance? GasResistance)>,
         ITemperatureSensor, IHumiditySensor, IBarometricPressureSensor
     {
@@ -27,12 +27,12 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// Raised when the temperature value changes
         /// </summary>
         public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
-       
+
         /// <summary>
         /// Raised when the pressure value changes
         /// </summary>
         public event EventHandler<IChangeResult<Pressure>> PressureUpdated = delegate { };
-       
+
         /// <summary>
         /// Raised when the humidity value changes
         /// </summary>
@@ -51,7 +51,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             get => configuration.TemperatureOversample;
             set => configuration.TemperatureOversample = value;
         }
-       
+
         /// <summary>
         /// The pressure oversampling mode
         /// </summary>
@@ -216,11 +216,10 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <summary>
         /// Creates a new instance of the BME68x class
         /// </summary>
-        /// <param name="device">The Meadow device to create the chip select port</param>
         /// <param name="spiBus">The SPI bus connected to the device</param>
         /// <param name="chipSelectPin">The chip select pin</param>
-        protected Bme68x(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin) :
-            this(spiBus, device.CreateDigitalOutputPort(chipSelectPin))
+        protected Bme68x(ISpiBus spiBus, IPin chipSelectPin) :
+            this(spiBus, chipSelectPin.CreateDigitalOutputPort())
         { }
 
         /// <summary>
@@ -364,13 +363,16 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <param name="changeResult">The updated sensor data</param>
         protected override void RaiseEventsAndNotify(IChangeResult<(Units.Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure, Resistance? GasResistance)> changeResult)
         {
-            if (changeResult.New.Temperature is { } temp) {
+            if (changeResult.New.Temperature is { } temp)
+            {
                 TemperatureUpdated?.Invoke(this, new ChangeResult<Units.Temperature>(temp, changeResult.Old?.Temperature));
             }
-            if (changeResult.New.Humidity is { } humidity) {
+            if (changeResult.New.Humidity is { } humidity)
+            {
                 HumidityUpdated?.Invoke(this, new ChangeResult<RelativeHumidity>(humidity, changeResult.Old?.Humidity));
             }
-            if (changeResult.New.Pressure is { } pressure) {
+            if (changeResult.New.Pressure is { } pressure)
+            {
                 PressureUpdated?.Invoke(this, new ChangeResult<Pressure>(pressure, changeResult.Old?.Pressure));
             }
             if (changeResult.New.GasResistance is { } gasResistance)
@@ -422,7 +424,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 sensor.ReadRegister((byte)Registers.PRESSUREDATA, data);
                 var rawPressure = (data[0] << 12) | (data[1] << 4) | ((data[2] >> 4) & 0x0);
 
-                if(GasConversionIsEnabled)
+                if (GasConversionIsEnabled)
                 {
                     Thread.Sleep(GetMeasurementDuration(HeaterProfile));
 
@@ -441,7 +443,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 conditions.Temperature = CompensateTemperature(rawTemperature);
                 conditions.Pressure = CompensatePressure(rawPressure);
                 conditions.Humidity = CompensateHumidity(rawHumidity);
-                
+
 
                 return conditions;
             });

@@ -39,7 +39,7 @@ namespace Meadow.Foundation
         /// <summary>
         /// Get the 16bpp (565) color value for current color
         /// </summary>
-        public ushort Color16bppRgb565 => 
+        public ushort Color16bppRgb565 =>
             (ushort)(((R & 0b11111000) << 8) | ((G & 0b11111100) << 3) | (B >> 3));
 
         /// <summary>
@@ -74,7 +74,7 @@ namespace Meadow.Foundation
         {
             get
             {
-                if(hue == -1)
+                if (hue == -1)
                 {
                     ConvertToHsb(R, G, B, out hue, out saturation, out brightness);
                 }
@@ -122,7 +122,7 @@ namespace Meadow.Foundation
         /// <param name="green">green component of color</param>
         /// <param name="blue">blue component of color</param>
         /// <param name="alpha">transparancy of color</param>
-        public Color(byte red, byte green, byte blue, byte alpha = 255) 
+        public Color(byte red, byte green, byte blue, byte alpha = 255)
         {
             R = red;
             G = green;
@@ -139,7 +139,7 @@ namespace Meadow.Foundation
         /// <param name="green">green component of color</param>
         /// <param name="blue">blue component of color</param>
         public Color(double red, double green, double blue) :
-            this((byte)(red*255), (byte)(green*255), (byte)(blue*255), 1)
+            this((byte)(red * 255), (byte)(green * 255), (byte)(blue * 255), 1)
         {
         }
 
@@ -147,13 +147,13 @@ namespace Meadow.Foundation
         /// Create a color struct
         /// </summary>
         /// <param name="hue">hue of color</param>
-        /// <param name="brightness">brightness of color</param>
         /// <param name="saturation">saturation of color</param>
+        /// <param name="brightness">brightness of color</param>
         /// <param name="alpha">alpha (transparency) of color</param>
 
-        public Color(double hue, double brightness, double saturation, byte alpha = 255)
+        public Color(double hue, double saturation, double brightness, byte alpha = 255)
         {
-            Converters.HsvToRgb(hue * 360, saturation, brightness, out double red, out double green, out double blue);
+            Converters.HslToRgb(hue * 360, saturation, brightness, out double red, out double green, out double blue);
 
             R = (byte)(255 * red);
             G = (byte)(255 * green);
@@ -304,7 +304,7 @@ namespace Meadow.Foundation
 
         static bool EqualsInner(Color color1, Color color2)
         {
-             return color1.R == color2.R && color1.G == color2.G && color1.B == color2.B && color1.A == color2.A;
+            return color1.R == color2.R && color1.G == color2.G && color1.B == color2.B && color1.A == color2.A;
         }
 
         /// <summary>
@@ -429,7 +429,7 @@ namespace Meadow.Foundation
         /// <returns>new color object</returns>
         public static Color FromRgba(double r, double g, double b, double a)
         {
-            return new Color((byte)(r*255), (byte)(g * 255), (byte)(b * 255), (byte)(a * 255));
+            return new Color((byte)(r * 255), (byte)(g * 255), (byte)(b * 255), (byte)(a * 255));
         }
 
         /// <summary>
@@ -454,7 +454,7 @@ namespace Meadow.Foundation
         /// <returns>new color object</returns>
         public static Color FromHsba(double h, double s, double b, double a = 1.0)
         {
-            return new Color(h, s, b, (byte)(a*255));
+            return new Color(h, s, b, (byte)(a * 255));
         }
 
         // matches colors in WPF's System.Windows.Media.Colors

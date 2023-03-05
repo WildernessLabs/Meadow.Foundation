@@ -1,9 +1,9 @@
-﻿using System.Threading.Tasks;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation;
 using Meadow.Foundation.Displays;
 using Meadow.Foundation.Graphics;
+using System.Threading.Tasks;
 
 namespace Displays.ePaper.EpdMonochrome_Sample
 {
@@ -25,7 +25,7 @@ namespace Displays.ePaper.EpdMonochrome_Sample
         public override Task Initialize()
         {
             Resolver.Log.Info("Initialize ...");
-            
+
             var displayType = EpdMonochromeDisplay.Epd1in54;
 
             Resolver.Log.Info($"{displayType} selected - change displayType to select a different display");
@@ -70,28 +70,28 @@ namespace Displays.ePaper.EpdMonochrome_Sample
         {
             EPaperMonoBase display = displayType switch
             {
-                EpdMonochromeDisplay.Epd1in54 => new Epd1in54(device: Device,
+                EpdMonochromeDisplay.Epd1in54 => new Epd1in54(
                     spiBus: Device.CreateSpiBus(),
                     chipSelectPin: Device.Pins.D03,
                     dcPin: Device.Pins.D02,
                     resetPin: Device.Pins.D01,
                     busyPin: Device.Pins.D00),
 
-                EpdMonochromeDisplay.Epd2in13 => new Epd2in13(device: Device,
+                EpdMonochromeDisplay.Epd2in13 => new Epd2in13(
                     spiBus: Device.CreateSpiBus(),
                     chipSelectPin: Device.Pins.D03,
                     dcPin: Device.Pins.D02,
                     resetPin: Device.Pins.D01,
                     busyPin: Device.Pins.D00),
 
-                EpdMonochromeDisplay.Epd2in9 => new Epd2in9(device: Device,
+                EpdMonochromeDisplay.Epd2in9 => new Epd2in9(
                     spiBus: Device.CreateSpiBus(),
                     chipSelectPin: Device.Pins.D03,
                     dcPin: Device.Pins.D02,
                     resetPin: Device.Pins.D01,
                     busyPin: Device.Pins.D00),
 
-                EpdMonochromeDisplay.Epd4in2 => new Epd4in2(device: Device,
+                EpdMonochromeDisplay.Epd4in2 => new Epd4in2(
                     spiBus: Device.CreateSpiBus(),
                     chipSelectPin: Device.Pins.D03,
                     dcPin: Device.Pins.D02,

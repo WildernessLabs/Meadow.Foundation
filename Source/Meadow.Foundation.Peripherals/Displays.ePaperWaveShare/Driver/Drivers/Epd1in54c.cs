@@ -11,14 +11,13 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// Create a new WaveShare Epd1in54c 152x152 pixel display object
         /// </summary>
-        /// <param name="device">Meadow device</param>
         /// <param name="spiBus">SPI bus connected to display</param>
         /// <param name="chipSelectPin">Chip select pin</param>
         /// <param name="dcPin">Data command pin</param>
         /// <param name="resetPin">Reset pin</param>
         /// <param name="busyPin">Busy pin</param>
-        public Epd1in54c(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, IPin busyPin) :
-            base(device, spiBus, chipSelectPin, dcPin, resetPin, busyPin, 152, 152)
+        public Epd1in54c(ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, IPin busyPin) :
+            base(spiBus, chipSelectPin, dcPin, resetPin, busyPin, 152, 152)
         { }
 
         /// <summary>

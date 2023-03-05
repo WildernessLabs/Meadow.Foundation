@@ -3,7 +3,6 @@ using Meadow.Devices;
 using Meadow.Foundation;
 using Meadow.Foundation.Displays;
 using Meadow.Foundation.Graphics;
-using System;
 using System.Threading.Tasks;
 
 namespace Displays.ePaper.Uc8151c_Sample
@@ -17,8 +16,8 @@ namespace Displays.ePaper.Uc8151c_Sample
         public override Task Initialize()
         {
             Resolver.Log.Info("Initialize ...");
- 
-            var display = new Uc8151c(device: Device, 
+
+            var display = new Uc8151c(
                 spiBus: Device.CreateSpiBus(),
                 chipSelectPin: Device.Pins.D03,
                 dcPin: Device.Pins.D02,

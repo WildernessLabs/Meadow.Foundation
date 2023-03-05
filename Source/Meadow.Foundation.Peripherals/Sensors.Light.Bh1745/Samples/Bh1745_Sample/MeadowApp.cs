@@ -1,10 +1,10 @@
-﻿using System;
-using System.Threading.Tasks;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Leds;
 using Meadow.Foundation.Sensors.Light;
 using Meadow.Peripherals.Leds;
+using System;
+using System.Threading.Tasks;
 
 namespace MeadowApp
 {
@@ -23,7 +23,6 @@ namespace MeadowApp
 
             // instantiate our onboard LED that we'll show the color with
             rgbLed = new RgbPwmLed(
-                Device,
                 Device.Pins.OnboardLedRed,
                 Device.Pins.OnboardLedGreen,
                 Device.Pins.OnboardLedBlue,
@@ -32,11 +31,12 @@ namespace MeadowApp
             // Example that uses an IObservable subscription to only be notified
             var consumer = Bh1745.CreateObserver(
                 handler: result => Resolver.Log.Info($"Observer: filter satisifed: {result.New.AmbientLight?.Lux:N2}Lux, old: {result.Old?.AmbientLight?.Lux:N2}Lux"),
-                
+
                 // only notify if the visible light changes by 100 lux (put your hand over the sensor to trigger)
-                filter: result => 
+                filter: result =>
                 {
-                    if (result.Old is { } old) { //c# 8 pattern match syntax. checks for !null and assigns var.
+                    if (result.Old is { } old)
+                    { //c# 8 pattern match syntax. checks for !null and assigns var.
                         // returns true if > 100lux change
                         return ((result.New.AmbientLight.Value - old.AmbientLight.Value).Abs().Lux > 100);
                     }
@@ -46,13 +46,14 @@ namespace MeadowApp
             sensor.Subscribe(consumer);
 
             //classical .NET events can also be used:
-            sensor.Updated += (sender, result) => {
+            sensor.Updated += (sender, result) =>
+            {
                 Resolver.Log.Info($"  Ambient Light: {result.New.AmbientLight?.Lux:N2}Lux");
                 Resolver.Log.Info($"  Color: {result.New.Color}");
-                
-                if(result.New.Color is { } color) 
+
+                if (result.New.Color is { } color)
                 {
-                    rgbLed.SetColor(color); 
+                    rgbLed.SetColor(color);
                 }
             };
 
@@ -66,10 +67,10 @@ namespace MeadowApp
             Resolver.Log.Info("Initial Readings:");
             Resolver.Log.Info($" Visible Light: {result.AmbientLight?.Lux:N2}Lux");
             Resolver.Log.Info($" Color: {result.Color}");
-            
-            if (result.Color is { } color) 
+
+            if (result.Color is { } color)
             {
-                rgbLed.SetColor(color); 
+                rgbLed.SetColor(color);
             }
 
             sensor.StartUpdating(TimeSpan.FromSeconds(1));

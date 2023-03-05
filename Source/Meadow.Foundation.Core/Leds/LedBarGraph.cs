@@ -36,15 +36,14 @@ namespace Meadow.Foundation.Leds
         /// <summary>
         /// Create an LedBarGraph instance from an array of IPins
         /// </summary>
-        /// <param name="device"></param>
         /// <param name="pins"></param>
-        public LedBarGraph(IDigitalOutputController device, IPin[] pins)
+        public LedBarGraph(IPin[] pins)
         {
             leds = new Led[pins.Length];
 
             for (int i = 0; i < pins.Length; i++)
             {
-                leds[i] = new Led(device, pins[i]);
+                leds[i] = new Led(pins[i]);
             }
         }
 
@@ -109,9 +108,9 @@ namespace Meadow.Foundation.Leds
         /// Returns the index of the last LED turned on
         /// </summary>
         /// <returns></returns>
-        public int GetTopLedForPercentage() 
+        public int GetTopLedForPercentage()
         {
-            return (int) Math.Max(0, percentage * Count - 0.5);
+            return (int)Math.Max(0, percentage * Count - 0.5);
         }
 
         /// <summary>

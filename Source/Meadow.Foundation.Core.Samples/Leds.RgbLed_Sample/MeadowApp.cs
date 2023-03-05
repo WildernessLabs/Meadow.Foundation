@@ -19,7 +19,6 @@ namespace Leds.RgbLed_Sample
             Resolver.Log.Info("Initializing...");
 
             var onRgbLed = new RgbLed(
-                device: Device,
                 redPin: Device.Pins.OnboardLedRed,
                 greenPin: Device.Pins.OnboardLedGreen,
                 bluePin: Device.Pins.OnboardLedBlue);

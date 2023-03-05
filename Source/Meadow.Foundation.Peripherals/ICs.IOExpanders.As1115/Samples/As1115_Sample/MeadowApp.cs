@@ -18,7 +18,7 @@ namespace ICs.IOExpanders.As1115_Sample
         public override Task Initialize()
         {
             Resolver.Log.Info("Initialize...");
-            as1115 = new As1115(Device, Device.CreateI2cBus(), Device.Pins.D03);
+            as1115 = new As1115(Device.CreateI2cBus(), Device.Pins.D03);
 
             //general key scan events - will raise for all buttons
             as1115.KeyScanPressStarted += KeyScanPressStarted;

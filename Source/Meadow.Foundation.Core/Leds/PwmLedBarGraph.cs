@@ -37,16 +37,15 @@ namespace Meadow.Foundation.Leds
         /// <summary>
         /// Create an LedBarGraph instance for single color LED bar graphs
         /// </summary>
-        /// <param name="device"></param>
         /// <param name="pins">Array of pins</param>
         /// <param name="forwardVoltage">Single forward voltage</param>
-        public PwmLedBarGraph(IPwmOutputController device, IPin[] pins, Voltage forwardVoltage)
+        public PwmLedBarGraph(IPin[] pins, Voltage forwardVoltage)
         {
             pwmLeds = new PwmLed[pins.Length];
 
             for (int i = 0; i < pins.Length; i++)
             {
-                pwmLeds[i] = new PwmLed(device, pins[i], forwardVoltage);
+                pwmLeds[i] = new PwmLed(pins[i], forwardVoltage);
             }
         }
 
@@ -68,16 +67,15 @@ namespace Meadow.Foundation.Leds
         /// <summary>
         /// Create an LedBarGraph instance for multi color LED bar graphs
         /// </summary>
-        /// <param name="device"></param>
         /// <param name="pins">Array of pins</param>
         /// <param name="forwardVoltage">Array of forward voltages</param>
-        public PwmLedBarGraph(IPwmOutputController device, IPin[] pins, Voltage[] forwardVoltage)
+        public PwmLedBarGraph(IPin[] pins, Voltage[] forwardVoltage)
         {
             pwmLeds = new PwmLed[pins.Length];
 
             for (int i = 0; i < pins.Length; i++)
             {
-                pwmLeds[i] = new PwmLed(device, pins[i], forwardVoltage[i]);
+                pwmLeds[i] = new PwmLed(pins[i], forwardVoltage[i]);
             }
         }
 
@@ -206,7 +204,7 @@ namespace Meadow.Foundation.Leds
         /// <param name="lowBrightnessDuration"></param>
         /// <param name="highBrightness"></param>
         /// <param name="lowBrightness"></param>
-        public void StartBlink(int index, TimeSpan highBrightnessDuration, TimeSpan lowBrightnessDuration, float highBrightness = 1, float lowBrightness = 0) 
+        public void StartBlink(int index, TimeSpan highBrightnessDuration, TimeSpan lowBrightnessDuration, float highBrightness = 1, float lowBrightness = 0)
         {
             if (index < 0 || index >= Count)
             {

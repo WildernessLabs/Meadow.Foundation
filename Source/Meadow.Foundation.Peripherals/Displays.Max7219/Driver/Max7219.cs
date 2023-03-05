@@ -1,7 +1,7 @@
-﻿using System;
-using System.Threading;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
 using Meadow.Units;
+using System;
+using System.Threading;
 
 namespace Meadow.Foundation.Displays
 {
@@ -51,7 +51,7 @@ namespace Meadow.Foundation.Displays
         /// A Buffer that contains the values of the digits registers per device
         /// </summary>
         private readonly byte[,] buffer;
-        
+
         private readonly byte DECIMAL = 0b10000000;
 
         /// <summary>
@@ -62,7 +62,7 @@ namespace Meadow.Foundation.Displays
         /// <param name="deviceCount">Number of cascaded devices</param>
         /// <param name="maxMode">Display mode of max7219</param>
         public Max7219(ISpiBus spiBus, IDigitalOutputPort chipselectPort, int deviceCount = 1, Max7219Mode maxMode = Max7219Mode.Display)
-            :this(spiBus, chipselectPort, deviceCount, 1, maxMode)
+            : this(spiBus, chipselectPort, deviceCount, 1, maxMode)
         {
         }
 
@@ -91,26 +91,24 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// Create a new Max7219 object
         /// </summary>
-        /// <param name="device">IMeadowDevice</param>
         /// <param name="spiBus">SPI bus</param>
         /// <param name="chipSelectPin">Chip select pin</param>
         /// <param name="deviceRows">Number of devices cascaded vertically</param>
         /// <param name="deviceColumns">Number of devices cascaded horizontally</param>
         /// <param name="maxMode">Display mode of max7219</param>
-        public Max7219(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, int deviceRows = 1, int deviceColumns = 1, Max7219Mode maxMode = Max7219Mode.Display)
-            : this(spiBus, device.CreateDigitalOutputPort(chipSelectPin), deviceRows, deviceColumns, maxMode)
+        public Max7219(ISpiBus spiBus, IPin chipSelectPin, int deviceRows = 1, int deviceColumns = 1, Max7219Mode maxMode = Max7219Mode.Display)
+            : this(spiBus, chipSelectPin.CreateDigitalOutputPort(), deviceRows, deviceColumns, maxMode)
         { }
 
         /// <summary>
         /// Create a new Max7219 object
         /// </summary>
-        /// <param name="device">IMeadowDevice</param>
         /// <param name="spiBus">SPI bus</param>
         /// <param name="chipSelectPin">Chip select pin</param>
         /// <param name="deviceCount">Number of cascaded devices</param>
         /// <param name="maxMode">Display mode of max7219</param>
-        public Max7219(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, int deviceCount = 1, Max7219Mode maxMode = Max7219Mode.Display)
-            : this(spiBus, device.CreateDigitalOutputPort(chipSelectPin), deviceCount, 1, maxMode)
+        public Max7219(ISpiBus spiBus, IPin chipSelectPin, int deviceCount = 1, Max7219Mode maxMode = Max7219Mode.Display)
+            : this(spiBus, chipSelectPin.CreateDigitalOutputPort(), deviceCount, 1, maxMode)
         { }
 
         /// <summary>
@@ -118,7 +116,7 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         void Initialize(Max7219Mode maxMode)
         {
-            SetRegister(Register.DecodeMode, (byte)((maxMode == Max7219Mode.Character)? 0xFF:0)); // use matrix(0) or digits
+            SetRegister(Register.DecodeMode, (byte)((maxMode == Max7219Mode.Character) ? 0xFF : 0)); // use matrix(0) or digits
             SetRegister(Register.ScanLimit, 7); //show all 8 digits
             SetRegister(Register.DisplayTest, 0); // no display test
             SetRegister(Register.ShutDown, 1); // not shutdown mode
@@ -135,17 +133,17 @@ namespace Meadow.Foundation.Displays
         public void SetNumber(int value, int deviceId = 0)
         {
             //12345678
-            if(value > 99999999)
+            if (value > 99999999)
             {
                 throw new ArgumentOutOfRangeException();
             }
 
-            for(int i = 0; i < 8; i++)
+            for (int i = 0; i < 8; i++)
             {
                 SetCharacter((CharacterType)(value % 10), i, false, deviceId);
                 value /= 10;
 
-                if(value == 0)
+                if (value == 0)
                 {
                     break;
                 }
@@ -189,7 +187,7 @@ namespace Meadow.Foundation.Displays
 
             Thread.Sleep((int)time.TotalMilliseconds);
 
-            SetRegister(Register.DisplayTest, 0); 
+            SetRegister(Register.DisplayTest, 0);
         }
 
         /// <summary>
@@ -236,7 +234,7 @@ namespace Meadow.Foundation.Displays
         /// <param name="deviceId">index of cascaded device. </param>
         public void SetBrightness(int intensity, int deviceId)
         {
-            if(deviceId < 0 || deviceId >= DeviceCount)
+            if (deviceId < 0 || deviceId >= DeviceCount)
             {
                 throw new ArgumentOutOfRangeException(nameof(deviceId), $"Invalid device Id {deviceId}");
             }

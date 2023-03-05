@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Meadow.Foundation.Sensors.Buttons;
 using Meadow.Hardware;
-using Meadow.Foundation.Sensors.Buttons;
 using Meadow.Peripherals.Sensors.Rotary;
+using System;
 using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Rotary
@@ -22,27 +22,27 @@ namespace Meadow.Foundation.Sensors.Rotary
         public bool State => Button.State;
 
         /// <summary>
-        /// Raised when the button circuit is re-opened after it has been closed (at the end of a �press�.
+        /// Raised when the button circuit is re-opened after it has been closed
         /// </summary>
         public event EventHandler Clicked = delegate { };
 
         /// <summary>
-        /// Raised when a press ends (the button is released; circuit is opened).
+        /// Raised when a press ends
         /// </summary>
         public event EventHandler PressEnded = delegate { };
 
         /// <summary>
-        /// Raised when a press starts (the button is pushed down; circuit is closed).
+        /// Raised when a press starts
         /// </summary>
         public event EventHandler PressStarted = delegate { };
 
         /// <summary>
-        /// Raised when the button circuit is pressed for LongPressDuration.
+        /// Raised when the button circuit is pressed for LongPressDuration
         /// </summary>
         public event EventHandler LongClicked = delegate { };
 
         /// <summary>
-        /// The minimum duration for a long press.
+        /// The minimum duration for a long press
         /// </summary>
         public TimeSpan LongClickedThreshold
         {
@@ -53,15 +53,14 @@ namespace Meadow.Foundation.Sensors.Rotary
         /// <summary>
         /// Instantiates a new RotaryEncoder on the specified pins that has an integrated button.
         /// </summary>
-        /// <param name="device"></param>
         /// <param name="aPhasePin"></param>
         /// <param name="bPhasePin"></param>
         /// <param name="buttonPin"></param>
         /// <param name="buttonResistorMode"></param>
-        public RotaryEncoderWithButton(IDigitalInputController device, IPin aPhasePin, IPin bPhasePin, IPin buttonPin, ResistorMode buttonResistorMode = ResistorMode.InternalPullDown)
-            : base(device, aPhasePin, bPhasePin)
+        public RotaryEncoderWithButton(IPin aPhasePin, IPin bPhasePin, IPin buttonPin, ResistorMode buttonResistorMode = ResistorMode.InternalPullDown)
+            : base(aPhasePin, bPhasePin)
         {
-            Button = new PushButton(device, buttonPin, buttonResistorMode);
+            Button = new PushButton(buttonPin, buttonResistorMode);
 
             Button.Clicked += ButtonClicked;
             Button.PressEnded += ButtonPressEnded;

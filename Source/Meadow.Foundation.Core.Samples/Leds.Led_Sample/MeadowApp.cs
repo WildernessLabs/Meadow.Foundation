@@ -17,7 +17,6 @@ namespace Leds.Led_Sample
         public override Task Initialize()
         {
             var onRgbLed = new RgbLed(
-                device: Device,
                 redPin: Device.Pins.OnboardLedRed,
                 greenPin: Device.Pins.OnboardLedGreen,
                 bluePin: Device.Pins.OnboardLedBlue);
@@ -25,22 +24,22 @@ namespace Leds.Led_Sample
 
             leds = new List<Led>
             {
-                new Led(Device.CreateDigitalOutputPort(Device.Pins.D00, false)),
-                new Led(Device.CreateDigitalOutputPort(Device.Pins.D01, false)),
-                new Led(Device.CreateDigitalOutputPort(Device.Pins.D02, false)),
-                new Led(Device.CreateDigitalOutputPort(Device.Pins.D03, false)),
-                new Led(Device.CreateDigitalOutputPort(Device.Pins.D04, false)),
-                new Led(Device.CreateDigitalOutputPort(Device.Pins.D05, false)),
-                new Led(Device.CreateDigitalOutputPort(Device.Pins.D06, false)),
-                new Led(Device.CreateDigitalOutputPort(Device.Pins.D07, false)),
-                new Led(Device.CreateDigitalOutputPort(Device.Pins.D08, false)),
-                new Led(Device.CreateDigitalOutputPort(Device.Pins.D09, false)),
-                new Led(Device.CreateDigitalOutputPort(Device.Pins.D10, false)),
-                new Led(Device.CreateDigitalOutputPort(Device.Pins.D11, false)),
-                new Led(Device.CreateDigitalOutputPort(Device.Pins.D12, false)),
-                new Led(Device.CreateDigitalOutputPort(Device.Pins.D13, false)),
-                new Led(Device.CreateDigitalOutputPort(Device.Pins.D14, false)),
-                new Led(Device.CreateDigitalOutputPort(Device.Pins.D15, false))
+                new Led(Device.Pins.D00),
+                new Led(Device.Pins.D01),
+                new Led(Device.Pins.D02),
+                new Led(Device.Pins.D03),
+                new Led(Device.Pins.D04),
+                new Led(Device.Pins.D05),
+                new Led(Device.Pins.D06),
+                new Led(Device.Pins.D07),
+                new Led(Device.Pins.D08),
+                new Led(Device.Pins.D09),
+                new Led(Device.Pins.D10),
+                new Led(Device.Pins.D11),
+                new Led(Device.Pins.D12),
+                new Led(Device.Pins.D13),
+                new Led(Device.Pins.D14),
+                new Led(Device.Pins.D15)
             };
 
             onRgbLed.SetColor(RgbLedColors.Green);

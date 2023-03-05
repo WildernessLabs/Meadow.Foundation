@@ -1,8 +1,8 @@
-﻿using System;
-using System.Threading.Tasks;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.RTCs;
+using System;
+using System.Threading.Tasks;
 
 namespace RTCs.Ds323x_Sample
 {
@@ -16,7 +16,7 @@ namespace RTCs.Ds323x_Sample
         {
             Resolver.Log.Info("Initialize...");
 
-            sensor = new Ds3231(Device, Device.CreateI2cBus(), Device.Pins.D06);
+            sensor = new Ds3231(Device.CreateI2cBus(), Device.Pins.D06);
             sensor.OnAlarm1Raised += Sensor_OnAlarm1Raised;
 
             return base.Initialize();

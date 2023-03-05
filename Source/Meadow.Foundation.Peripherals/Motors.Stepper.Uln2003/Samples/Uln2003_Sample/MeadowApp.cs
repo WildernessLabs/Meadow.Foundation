@@ -16,7 +16,6 @@ namespace MeadowApp
         public override Task Initialize()
         {
             stepperController = new Uln2003(
-                device: Device,
                 pin1: Device.Pins.D01,
                 pin2: Device.Pins.D02,
                 pin3: Device.Pins.D03,

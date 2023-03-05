@@ -33,7 +33,6 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// Create a new St7789 color display object
         /// </summary>
-        /// <param name="device">Meadow device</param>
         /// <param name="spiBus">SPI bus connected to display</param>
         /// <param name="chipSelectPin">Chip select pin</param>
         /// <param name="dcPin">Data command pin</param>
@@ -41,9 +40,9 @@ namespace Meadow.Foundation.Displays
         /// <param name="width">Width of display in pixels</param>
         /// <param name="height">Height of display in pixels</param>
         /// <param name="colorMode">The color mode to use for the display buffer</param>
-        public St7789(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
-            int width, int height, ColorMode colorMode = ColorMode.Format12bppRgb444) 
-            : base(device, spiBus, chipSelectPin, dcPin, resetPin, width, height, colorMode)
+        public St7789(ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
+            int width, int height, ColorMode colorMode = ColorMode.Format12bppRgb444)
+            : base(spiBus, chipSelectPin, dcPin, resetPin, width, height, colorMode)
         {
             Initialize();
         }
@@ -89,9 +88,9 @@ namespace Meadow.Foundation.Displays
             {   //unknown if this is consistant across all displays with this res
                 rowStart = rowStart2 = 40;
                 columnStart = 53;
-                columnStart2 = 52; 
+                columnStart2 = 52;
             }
-            else if(Width == 240 && Height == 240)
+            else if (Width == 240 && Height == 240)
             {
                 rowStart = 80;
                 rowStart2 = columnStart = columnStart2 = 0;
@@ -101,7 +100,7 @@ namespace Meadow.Foundation.Displays
                 rowStart = rowStart2 = (byte)((320 - Width) / 2);
                 columnStart = columnStart2 = (byte)((240 - Width) / 2);
             }
-            
+
             SendCommand(Register.SWRESET);
             DelayMs(150);
             SendCommand(Register.SLPOUT);
@@ -112,7 +111,7 @@ namespace Meadow.Foundation.Displays
                 SendData(0x55);  // 16-bit color RGB565
             else
                 SendData(0x53); //12-bit color RGB444
-           
+
             DelayMs(10);
 
             SendCommand(Register.MADCTL);

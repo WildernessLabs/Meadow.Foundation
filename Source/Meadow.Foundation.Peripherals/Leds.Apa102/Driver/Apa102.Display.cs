@@ -54,19 +54,18 @@ namespace Meadow.Foundation.Leds
         /// <summary>
         /// Creates a new APA102 object
         /// </summary>
-        /// <param name="device">IMeadowDevice</param>
         /// <param name="spiBus">SPI bus</param>
         /// <param name="chipSelectPin">Chip select pin</param>
         /// <param name="width">Width of led array</param>
         /// <param name="height">Height of led array</param>
         /// <param name="pixelOrder">Pixel color order</param>
-        public Apa102(IMeadowDevice device, 
+        public Apa102(
                     ISpiBus spiBus,
                     IPin chipSelectPin,
                     int width,
-                    int height, 
+                    int height,
                     PixelOrder pixelOrder = PixelOrder.BGR)
-        : this(spiBus, width, height, pixelOrder, device.CreateDigitalOutputPort(chipSelectPin))
+        : this(spiBus, width, height, pixelOrder, chipSelectPin.CreateDigitalOutputPort())
         {
         }
 

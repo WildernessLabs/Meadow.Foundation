@@ -32,7 +32,7 @@ namespace Meadow.Foundation.Leds
         public float Brightness
         {
             get => _brightness;
-            set 
+            set
             {
                 if (value < 0 || value > 1)
                 {
@@ -56,7 +56,7 @@ namespace Meadow.Foundation.Leds
         public bool IsOn
         {
             get => isOn;
-            set 
+            set
             {
                 Port.DutyCycle = value ? maximumPwmDuty : 0;
                 isOn = value;
@@ -77,7 +77,6 @@ namespace Meadow.Foundation.Leds
         /// <summary>
         /// Initializes a new instance PwmLed class
         /// </summary>
-        /// <param name="device">IO Device</param>
         /// <param name="pin">Pin</param>
         /// <param name="forwardVoltage">Forward voltage</param>
         /// <param name="terminationType">Whether the other end of the LED is
@@ -85,12 +84,11 @@ namespace Meadow.Foundation.Leds
         /// either a common cathode, or common anode. But can also enable an LED
         /// to be reversed by inverting the PWM signal.</param>
         public PwmLed(
-            IPwmOutputController device, 
             IPin pin,
-            Voltage forwardVoltage, 
+            Voltage forwardVoltage,
             CircuitTerminationType terminationType = CircuitTerminationType.CommonGround)
         {
-            Port = device.CreatePwmPort(pin, new Frequency(100, Frequency.UnitType.Hertz));
+            Port = pin.CreatePwmPort(new Frequency(100, Frequency.UnitType.Hertz));
             createdPwm = true; // signal that we created it, so we should dispose of it
             Port.DutyCycle = 0;
             Initialize(forwardVoltage, terminationType);
@@ -105,7 +103,7 @@ namespace Meadow.Foundation.Leds
         /// <param name="forwardVoltage">Forward voltage of led</param>
         /// <param name="terminationType">Termination type of LED</param>
         public PwmLed(
-            IPwmPort pwmPort, 
+            IPwmPort pwmPort,
             Voltage forwardVoltage,
             CircuitTerminationType terminationType = CircuitTerminationType.CommonGround)
         {
@@ -116,7 +114,7 @@ namespace Meadow.Foundation.Leds
         private void Initialize(
             Voltage forwardVoltage,
             CircuitTerminationType terminationType = CircuitTerminationType.CommonGround)
-        {   
+        {
             if (forwardVoltage < new Voltage(0) || forwardVoltage > new Voltage(3.3))
             {
                 throw new ArgumentOutOfRangeException(nameof(forwardVoltage), "error, forward voltage must be between 0, and 3.3");
@@ -165,7 +163,7 @@ namespace Meadow.Foundation.Leds
         [Obsolete("Use Brightness property instead")]
         public void SetBrightness(float brightness)
         {
-            if (brightness < 0 || brightness > 1) 
+            if (brightness < 0 || brightness > 1)
             {
                 throw new ArgumentOutOfRangeException(nameof(brightness), "brightness must be between 0 and 1, inclusive.");
             }
@@ -248,7 +246,7 @@ namespace Meadow.Foundation.Leds
             });
             animationTask.Start();
         }
-        
+
         /// <summary>
         /// Start blinking the LED
         /// </summary>
@@ -315,11 +313,11 @@ namespace Meadow.Foundation.Leds
         /// <param name="lowBrightness"></param>
         public void StartPulse(TimeSpan pulseDuration, float highBrightness = 1, float lowBrightness = 0.15F)
         {
-            if (highBrightness > 1 || highBrightness <= 0) 
+            if (highBrightness > 1 || highBrightness <= 0)
             {
                 throw new ArgumentOutOfRangeException(nameof(highBrightness), "highBrightness must be > 0 and <= 1");
             }
-            if (lowBrightness >= 1 || lowBrightness < 0) 
+            if (lowBrightness >= 1 || lowBrightness < 0)
             {
                 throw new ArgumentOutOfRangeException(nameof(lowBrightness), "lowBrightness must be >= 0 and < 1");
             }
@@ -337,7 +335,7 @@ namespace Meadow.Foundation.Leds
             });
             animationTask.Start();
         }
-        
+
         /// <summary>
         /// Start pulsing the led
         /// </summary>

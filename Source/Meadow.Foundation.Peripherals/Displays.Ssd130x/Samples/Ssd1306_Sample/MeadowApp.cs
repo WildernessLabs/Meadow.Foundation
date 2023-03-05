@@ -31,7 +31,6 @@ namespace Displays.Ssd130x.Ssd1306_Sample
 
             display = new Ssd1306
             (
-                device: Device,
                 spiBus: Device.CreateSpiBus(),
                 chipSelectPin: Device.Pins.D02,
                 dcPin: Device.Pins.D01,

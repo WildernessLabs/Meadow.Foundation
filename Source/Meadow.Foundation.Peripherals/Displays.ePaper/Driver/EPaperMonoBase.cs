@@ -1,6 +1,6 @@
-﻿using Meadow.Hardware;
+﻿using Meadow.Foundation.Graphics;
 using Meadow.Foundation.Graphics.Buffers;
-using Meadow.Foundation.Graphics;
+using Meadow.Hardware;
 
 namespace Meadow.Foundation.Displays
 {
@@ -52,7 +52,6 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// Create a new ePaper display object
         /// </summary>
-        /// <param name="device">Meadow device</param>
         /// <param name="spiBus">SPI bus connected to display</param>
         /// <param name="chipSelectPin">Chip select pin</param>
         /// <param name="dcPin">Data command pin</param>
@@ -60,10 +59,13 @@ namespace Meadow.Foundation.Displays
         /// <param name="busyPin">Busy pin</param>
         /// <param name="width">Width of display in pixels</param>
         /// <param name="height">Height of display in pixels</param>
-        public EPaperMonoBase(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, IPin busyPin,
-            int width, int height):
-            this(spiBus, device.CreateDigitalOutputPort(chipSelectPin), device.CreateDigitalOutputPort(dcPin, false),
-                device.CreateDigitalOutputPort(resetPin, true), device.CreateDigitalInputPort(busyPin),
+        public EPaperMonoBase(ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, IPin busyPin,
+            int width, int height) :
+            this(spiBus,
+                chipSelectPin.CreateDigitalOutputPort(),
+                dcPin.CreateDigitalOutputPort(),
+                resetPin.CreateDigitalOutputPort(),
+                busyPin.CreateDigitalInputPort(),
                 width, height)
         {
         }
@@ -78,9 +80,9 @@ namespace Meadow.Foundation.Displays
         /// <param name="busyPort">Busy input port</param>
         /// <param name="width">Width of display in pixels</param>
         /// <param name="height">Height of display in pixels</param>
-        public EPaperMonoBase(ISpiBus spiBus, 
-            IDigitalOutputPort chipSelectPort, 
-            IDigitalOutputPort dataCommandPort, 
+        public EPaperMonoBase(ISpiBus spiBus,
+            IDigitalOutputPort chipSelectPort,
+            IDigitalOutputPort dataCommandPort,
             IDigitalOutputPort resetPort,
             IDigitalInputPort busyPort,
             int width, int height)
@@ -114,7 +116,7 @@ namespace Meadow.Foundation.Displays
         }
 
         /// <summary>
-        /// Clear the display.
+        /// Clear the display
         /// </summary>
         /// <param name="color">Color to set the display (not used on ePaper displays)</param>
         /// <param name="updateDisplay">Update the dipslay once the buffer has been cleared when true</param>
@@ -229,7 +231,7 @@ namespace Meadow.Foundation.Displays
             int xEnd;
             int yEnd;
 
-            if (buffer == null ||  x < 0 || width < 0 ||  y < 0 || height < 0)
+            if (buffer == null || x < 0 || width < 0 || y < 0 || height < 0)
             {
                 return;
             }

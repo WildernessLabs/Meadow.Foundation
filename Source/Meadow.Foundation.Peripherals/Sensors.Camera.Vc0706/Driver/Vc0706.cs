@@ -16,9 +16,9 @@ namespace Meadow.Foundation.Sensors.Camera
         /// The camera serial number
         /// </summary>
         public byte SerialNumber { get; private set; }
-        
+
         readonly ISerialPort serialPort;
-        
+
         readonly byte[] cameraBuffer = new byte[CAMERABUFFSIZE + 1];
 
         byte bufferLength;
@@ -32,12 +32,12 @@ namespace Meadow.Foundation.Sensors.Camera
         /// <summary>
         /// Create a new VC0706 serial camera object
         /// </summary>
-        /// <param name="device"></param>
+        /// <param name="device">The device conected to the sensor</param>
         /// <param name="portName"></param>
         /// <param name="baudRate"></param>
         public Vc0706(ISerialController device, SerialPortName portName, int baudRate)
         {
-             serialPort = device.CreateSerialPort(portName, baudRate);
+            serialPort = device.CreateSerialPort(portName, baudRate);
 
             serialPort.Open();
 
@@ -105,7 +105,7 @@ namespace Meadow.Foundation.Sensors.Camera
             if (!SetMotionStatus(MOTIONCONTROL, UARTMOTION, ACTIVATEMOTION))
                 return false;
 
-            byte[] args = { 0x01, (byte)((enable == true)?1:0) };
+            byte[] args = { 0x01, (byte)((enable == true) ? 1 : 0) };
 
             return RunCommand(COMM_MOTION_CTRL, args, (byte)args.Length, 5);
         }
@@ -134,8 +134,8 @@ namespace Meadow.Foundation.Sensors.Camera
         {
             byte[] args = { 0x4, 0x4, 0x1, 0x00, 0x19 };
             if (!RunCommand(READ_DATA, args, (byte)args.Length, 6))
-            { 
-                return ImageResolution.Unknown; 
+            {
+                return ImageResolution.Unknown;
             }
 
             return (ImageResolution)cameraBuffer[5];
@@ -188,12 +188,12 @@ namespace Meadow.Foundation.Sensors.Camera
         /// <returns>the version as a string</returns>
         public string GetVersion()
         {
-            SendCommand(GEN_VERSION, new byte[]{ 0x01 }, 1);
+            SendCommand(GEN_VERSION, new byte[] { 0x01 }, 1);
             // get reply
             if (ReadResponse(CAMERABUFFSIZE) == 0)
             { return string.Empty; }
 
-            cameraBuffer[bufferLength] = 0; 
+            cameraBuffer[bufferLength] = 0;
 
             var versionData = new byte[14];
             Array.Copy(cameraBuffer, 5, versionData, 0, 11);
@@ -301,10 +301,10 @@ namespace Meadow.Foundation.Sensors.Camera
         /// <returns></returns>
         public bool SetPanTiltZoom(ushort horizontalZoom, ushort verticalZoom, ushort pan, ushort tilt)
         {
-            byte[] args = {0x08, 
-                            (byte)(horizontalZoom >> 8), (byte)horizontalZoom, 
+            byte[] args = {0x08,
+                            (byte)(horizontalZoom >> 8), (byte)horizontalZoom,
                             (byte)(verticalZoom >> 8), (byte)horizontalZoom,
-                            (byte)(pan >> 8), (byte)pan,     
+                            (byte)(pan >> 8), (byte)pan,
                             (byte)(tilt >> 8), (byte)tilt};
 
             return (!RunCommand(SET_ZOOM, args, (byte)args.Length, 5));
@@ -319,7 +319,7 @@ namespace Meadow.Foundation.Sensors.Camera
             byte[] args = { 0x0 };
 
             if (!RunCommand(GET_ZOOM, args, (byte)args.Length, 16))
-            { return (0,0,0,0,0,0); }
+            { return (0, 0, 0, 0, 0, 0); }
 
             ushort w = cameraBuffer[5];
             w <<= 8;
@@ -379,7 +379,7 @@ namespace Meadow.Foundation.Sensors.Camera
                 byte bytesToRead;
 
                 var stream = new MemoryStream();
-                
+
                 int bytesRead = 0;
 
                 while (frameLen > 0)
@@ -518,14 +518,14 @@ namespace Meadow.Foundation.Sensors.Camera
             args[10] = length;
 
             if (!RunCommand(READ_FBUF, args, (byte)args.Length, 5, false))
-            { 
-                return new byte[0]; 
+            {
+                return new byte[0];
             }
 
             // read into the buffer PACKETLEN!
             if (ReadResponse((byte)(length + 5), CAMERA_DELAY) == 0)
-            { 
-                return new byte[0]; 
+            {
+                return new byte[0];
             }
 
             framePointer += length;
@@ -533,10 +533,10 @@ namespace Meadow.Foundation.Sensors.Camera
             return cameraBuffer; //this returns the entire buffer instead of the data we need
         }
 
-        bool RunCommand(byte cmd, 
-                        byte[] args, 
+        bool RunCommand(byte cmd,
+                        byte[] args,
                         byte argn,
-                        byte resplen, 
+                        byte resplen,
                         bool flushflag = true)
         {   // flush out anything in the buffer?
             if (flushflag)

@@ -28,7 +28,7 @@ namespace Sensors.Rotary.RotaryEncoder_Sample
             // | `CLK`        | `bPhasePin`     |
 
             // initialize the encoder
-            rotaryEncoder = new RotaryEncoder(Device, Device.Pins.D07, Device.Pins.D08);
+            rotaryEncoder = new RotaryEncoder(Device.Pins.D07, Device.Pins.D08);
 
             //==== Classic Events
             rotaryEncoder.Rotated += RotaryEncoder_Rotated;
