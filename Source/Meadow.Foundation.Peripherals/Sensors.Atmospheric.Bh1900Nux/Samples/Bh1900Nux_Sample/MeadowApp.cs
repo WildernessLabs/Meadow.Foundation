@@ -13,7 +13,7 @@ namespace Bh1900Nux_Sample
 
         private Bh1900Nux _sensor;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initializing...");
 

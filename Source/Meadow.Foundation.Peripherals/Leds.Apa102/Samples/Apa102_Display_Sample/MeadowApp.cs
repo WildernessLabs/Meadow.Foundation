@@ -3,8 +3,6 @@ using Meadow.Devices;
 using Meadow.Foundation;
 using Meadow.Foundation.Graphics;
 using Meadow.Foundation.Leds;
-using System;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace Leds.Apa102_Display_Sample
@@ -15,7 +13,7 @@ namespace Leds.Apa102_Display_Sample
 
         MicroGraphics canvas;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initialize...");
 
@@ -24,7 +22,7 @@ namespace Leds.Apa102_Display_Sample
 
             Resolver.Log.Info("Hardware intitialized.");
 
-            return base.Initialize();
+            return base.Initialize(args);
         }
 
         public override async Task Run()
@@ -50,22 +48,28 @@ namespace Leds.Apa102_Display_Sample
 
         static class Colors
         {
-            public static Color AzureBlue {
-                get {
+            public static Color AzureBlue
+            {
+                get
+                {
                     var azureBlue = Color.FromHex("#23abe3");
                     // make it way less bright
                     return Color.FromHsba(azureBlue.Hue, azureBlue.Saturation, 0.025);
                 }
             }
-            public static Color ChileanFire {
-                get {
+            public static Color ChileanFire
+            {
+                get
+                {
                     var chileanFire = Color.FromHex("#ef7d3b");
                     // make it way less bright
                     return Color.FromHsba(chileanFire.Hue, chileanFire.Saturation, 0.025);
                 }
             }
-            public static Color PearGreen {
-                get {
+            public static Color PearGreen
+            {
+                get
+                {
                     var PearGreen = Color.FromHex("#c9db31");
                     // make it way less bright
                     return Color.FromHsba(PearGreen.Hue, PearGreen.Saturation, 0.025);

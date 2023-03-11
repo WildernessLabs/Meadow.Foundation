@@ -12,7 +12,7 @@ namespace Sensors.Atmospheric.Bmp180_Sample
 
         Bmp180 sensor;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initializing...");
 

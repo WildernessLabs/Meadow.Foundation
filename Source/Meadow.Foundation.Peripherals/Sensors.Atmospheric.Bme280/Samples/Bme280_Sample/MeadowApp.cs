@@ -13,7 +13,7 @@ namespace Sensors.Atmospheric.BME280_Sample
 
         Bme280 sensor;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initializing...");
 

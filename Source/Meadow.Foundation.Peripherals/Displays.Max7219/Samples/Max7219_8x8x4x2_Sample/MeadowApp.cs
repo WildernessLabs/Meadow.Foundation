@@ -21,7 +21,7 @@ namespace MeadowApp
         int[,] cubeWireframe = new int[12, 3];
         int[,] cubeVertices;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             int cubeSize = 5;
 
@@ -48,7 +48,7 @@ namespace MeadowApp
 
             Resolver.Log.Info("Max7219 instantiated");
 
-            return base.Initialize();
+            return base.Initialize(args);
         }
 
         void Show3dCube()

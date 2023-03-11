@@ -12,7 +12,7 @@ namespace MeadowApp
 
         Tm1637 display;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initialize...");
 

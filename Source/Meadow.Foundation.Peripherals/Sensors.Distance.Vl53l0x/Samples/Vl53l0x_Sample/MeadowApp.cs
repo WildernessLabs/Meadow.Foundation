@@ -15,7 +15,7 @@ namespace Sensors.Distance.Vl53l0x_Sample
 
         Vl53l0x sensor;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initializing hardware...");
 

@@ -1,6 +1,5 @@
 ﻿using Meadow;
 using Meadow.Devices;
-using Meadow.Foundation;
 using Meadow.Foundation.Sensors.LoadCell;
 using Meadow.Units;
 using System;
@@ -17,7 +16,7 @@ namespace Sensors.LoadCell.Nau7802_Sample
         public int CalibrationFactor { get; set; } = 16526649; // TODO: change this based on your scale (using the method provided below)
         public Mass CalibrationWeight { get; set; } = new Mass(1600, Mass.UnitType.Grams); // TODO: enter the known-weight you used in calibration
 
-        public override async Task Initialize()
+        public override async Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initialize...");
 

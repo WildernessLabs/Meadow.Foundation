@@ -12,7 +12,7 @@ namespace Sensors.Atmospheric.Mpl3115A2_Sample
 
         Mpl3115a2? sensor;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initializing...");
 

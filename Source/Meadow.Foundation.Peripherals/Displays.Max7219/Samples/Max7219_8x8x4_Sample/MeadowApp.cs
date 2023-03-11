@@ -12,7 +12,7 @@ namespace MeadowApp
         MicroGraphics graphics;
         Max7219 display;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Init...");
 
@@ -42,7 +42,7 @@ namespace MeadowApp
 
             Thread.Sleep(2000);
 
-            return base.Initialize();
+            return base.Initialize(args);
         }
 
         void ScrollText()

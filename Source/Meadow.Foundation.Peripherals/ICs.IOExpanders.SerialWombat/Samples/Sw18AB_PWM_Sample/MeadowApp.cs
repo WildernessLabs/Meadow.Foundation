@@ -14,7 +14,7 @@ namespace ICs.IOExpanders.Sw18AB_PWM_Sample
         private Sw18AB serialWombat;
         private IPwmPort pwmPort;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initialize...");
 

@@ -18,7 +18,7 @@ namespace Displays.Tft.Hx8357d_Sample
 
         MicroGraphics graphics;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initializing ...");
 
@@ -38,7 +38,7 @@ namespace Displays.Tft.Hx8357d_Sample
             graphics = new MicroGraphics(display);
             graphics.IgnoreOutOfBoundsPixels = true;
 
-            return base.Initialize();
+            return base.Initialize(args);
         }
 
         public override Task Run()

@@ -12,7 +12,7 @@ namespace BasicSensors.Atmospheric.SI7021_Sample
 
         Sgp40? sensor;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initializing...");
 
@@ -47,7 +47,7 @@ namespace BasicSensors.Atmospheric.SI7021_Sample
                 Resolver.Log.Info($"  VOC: {result.New}");
             };
 
-            return base.Initialize();
+            return base.Initialize(args);
         }
 
         public override async Task Run()

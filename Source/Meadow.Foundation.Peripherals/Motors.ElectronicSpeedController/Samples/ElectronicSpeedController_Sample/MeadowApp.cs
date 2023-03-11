@@ -20,7 +20,7 @@ namespace ElectronicSpeedController_Sample
         ElectronicSpeedController esc;
         RotaryEncoderWithButton rotary;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initialize...");
 
@@ -36,7 +36,7 @@ namespace ElectronicSpeedController_Sample
 
             Resolver.Log.Info("Hardware initialized.");
 
-            return base.Initialize();
+            return base.Initialize(args);
         }
 
         private void RotaryRotated(object sender, RotaryChangeResult e)

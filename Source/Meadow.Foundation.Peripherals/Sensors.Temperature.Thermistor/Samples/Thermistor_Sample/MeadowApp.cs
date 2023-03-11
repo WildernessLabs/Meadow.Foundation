@@ -13,7 +13,7 @@ namespace Sensors.Temperature.Thermistor_Sample
 
         private SteinhartHartCalculatedThermistor thermistor;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initialize...");
 

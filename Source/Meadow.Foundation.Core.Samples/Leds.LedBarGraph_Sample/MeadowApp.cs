@@ -13,7 +13,7 @@ namespace Leds.LedBarGraph_Sample
 
         LedBarGraph ledBarGraph;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initializing...");
 

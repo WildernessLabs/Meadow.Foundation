@@ -13,7 +13,7 @@ namespace Sensors.Camera.Vc0706_Sample
 
         Vc0706 camera;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initialize...");
 

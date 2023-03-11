@@ -16,7 +16,7 @@ namespace MeadowApp
         RgbPwmLed onboardLed;
         SwitchingAnemometer anemometer;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initialize...");
 

@@ -12,7 +12,7 @@ namespace Sensors.AirQuality.Ccs811_Sample
 
         Ccs811 sensor;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initializing...");
 

@@ -12,13 +12,13 @@ namespace Emc2101_Sample
 
         Emc2101 fanController;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initialize...");
 
             fanController = new Emc2101(i2cBus: Device.CreateI2cBus());
 
-            return base.Initialize();
+            return base.Initialize(args);
         }
 
         public override Task Run()

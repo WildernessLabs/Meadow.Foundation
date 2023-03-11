@@ -16,12 +16,12 @@ namespace Leds.APA102_Sample
         int numberOfLeds = 256;
         float maxBrightness = 0.25f;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initialize...");
             apa102 = new Apa102(Device.CreateSpiBus(Apa102.DefaultSpiBusSpeed), numberOfLeds, Apa102.PixelOrder.BGR);
 
-            return base.Initialize();
+            return base.Initialize(args);
         }
 
         public override Task Run()

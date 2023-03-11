@@ -18,7 +18,7 @@ namespace Sensors.Buttons.PushButton_Sample
         RgbPwmLed led;
         List<PushButton> pushButtons;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initializing...");
 

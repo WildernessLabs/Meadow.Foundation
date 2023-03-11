@@ -13,13 +13,13 @@ namespace ICs.IOExpanders.Ds3502_Sample
 
         protected Ds3502 ds3502;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initialize...");
 
             ds3502 = new Ds3502(Device.CreateI2cBus(Ds3502.DefaultBusSpeed));
 
-            return base.Initialize();
+            return base.Initialize(args);
         }
 
         public override Task Run()

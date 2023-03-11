@@ -26,7 +26,7 @@ namespace MeadowApp
         IButton left = null;
         IButton right = null;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initialize...");
 

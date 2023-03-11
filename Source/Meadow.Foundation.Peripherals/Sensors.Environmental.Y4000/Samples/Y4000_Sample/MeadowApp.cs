@@ -1,7 +1,7 @@
-﻿using System.Threading.Tasks;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Environmental;
+using System.Threading.Tasks;
 
 namespace Sensors.Environmental.Y4000_Sample
 {
@@ -11,7 +11,7 @@ namespace Sensors.Environmental.Y4000_Sample
 
         Y4000 sensor;
 
-        public async override Task Initialize()
+        public override async Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initialize...");
             await Task.Delay(2000);

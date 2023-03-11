@@ -12,13 +12,13 @@ namespace RTCs.DS1307_Sample
 
         Ds1307 rtc;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initializing...");
 
             rtc = new Ds1307(Device.CreateI2cBus());
 
-            return base.Initialize();
+            return base.Initialize(args);
         }
 
         public override Task Run()

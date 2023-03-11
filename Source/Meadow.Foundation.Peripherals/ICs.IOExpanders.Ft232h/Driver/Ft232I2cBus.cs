@@ -93,13 +93,13 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 readBuffer.Length,
                 MemoryMarshal.GetReference(readBuffer),
                 out int transferred,
-                I2CTransferOptions.FAST_TRANSFER | I2CTransferOptions.FAST_TRANSFER_BYTES
-                //I2CTransferOptions.START_BIT | I2CTransferOptions.STOP_BIT | I2CTransferOptions.NACK_LAST_BYTE
+                //I2CTransferOptions.FAST_TRANSFER | I2CTransferOptions.FAST_TRANSFER_BYTES
+                I2CTransferOptions.START_BIT | I2CTransferOptions.STOP_BIT
                 //                I2CTransferOptions.START_BIT | I2CTransferOptions.STOP_BIT | I2CTransferOptions.FAST_TRANSFER | I2CTransferOptions.NACK_LAST_BYTE
                 );
 
-            Debug.WriteLine($"transferred: {transferred}");
-            CheckStatus(status);
+            Debug.WriteLine($"Read transferred: {transferred} byes, status: {status}");
+            //CheckStatus(status);
         }
 
         public void Write(byte peripheralAddress, Span<byte> writeBuffer)
@@ -110,12 +110,12 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 writeBuffer.Length,
                 MemoryMarshal.GetReference(writeBuffer),
                 out int transferred,
-                                I2CTransferOptions.FAST_TRANSFER | I2CTransferOptions.FAST_TRANSFER_BYTES
-                //I2CTransferOptions.START_BIT | I2CTransferOptions.BREAK_ON_NACK
-                //I2CTransferOptions.START_BIT | I2CTransferOptions.STOP_BIT | I2CTransferOptions.NACK_LAST_BYTE
+                //I2CTransferOptions.FAST_TRANSFER | I2CTransferOptions.FAST_TRANSFER_BYTES
+                I2CTransferOptions.START_BIT | I2CTransferOptions.BREAK_ON_NACK
+                //I2CTransferOptions.START_BIT | I2CTransferOptions.STOP_BIT | I2CTransferOptions.NO_ADDRESS
                 );
 
-            Debug.WriteLine($"transferred: {transferred}");
+            Debug.WriteLine($"Write transferred: {transferred} byes, status: {status}");
             //            CheckStatus(status);
         }
     }

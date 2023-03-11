@@ -15,7 +15,7 @@ namespace MeadowApp
 
         MicroGraphics graphics;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initialize display...");
 
@@ -28,7 +28,7 @@ namespace MeadowApp
             graphics = new MicroGraphics(display);
             graphics.CurrentFont = new Font8x12();
 
-            return base.Initialize();
+            return base.Initialize(args);
         }
 
         public override Task Run()

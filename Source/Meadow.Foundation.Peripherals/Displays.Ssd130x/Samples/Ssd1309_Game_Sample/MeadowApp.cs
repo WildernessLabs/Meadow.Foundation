@@ -25,7 +25,7 @@ namespace Displays.Ssd130x.Ssd1309_Game_Sample
         BreakoutGame breakoutGame;
         SnakeGame snakeGame;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initialize...");
 
@@ -77,7 +77,7 @@ namespace Displays.Ssd130x.Ssd1309_Game_Sample
 
             Resolver.Log.Info("Initialize complete");
 
-            return base.Initialize();
+            return base.Initialize(args);
         }
 
         void StartBreakoutLoop()

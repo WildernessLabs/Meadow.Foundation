@@ -13,7 +13,7 @@ namespace Sensors.Light.Bh1750_Sample
 
         Bh1750 sensor;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initialize...");
 

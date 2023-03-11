@@ -14,7 +14,7 @@ namespace Displays.Tft.Ili9488_Sample
 
         MicroGraphics graphics;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initializing ...");
 
@@ -37,7 +37,7 @@ namespace Displays.Tft.Ili9488_Sample
                 CurrentFont = new Font8x8()
             };
 
-            return base.Initialize();
+            return base.Initialize(args);
         }
 
         public override Task Run()

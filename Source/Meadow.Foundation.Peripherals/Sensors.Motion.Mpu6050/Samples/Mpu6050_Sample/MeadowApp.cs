@@ -15,7 +15,7 @@ namespace Sensors.Motion.mpu5060_Sample
 
         Mpu6050 sensor;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initialize...");
 

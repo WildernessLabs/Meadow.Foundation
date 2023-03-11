@@ -14,7 +14,7 @@ namespace Bbq10Keyboard_Sample
 
         Tsc2004 touchScreen;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initialize...");
 

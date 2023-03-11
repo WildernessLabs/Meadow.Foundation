@@ -13,7 +13,7 @@ namespace MeadowApp
 
         A4988 a4988;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             a4988 = new A4988(
                 step: Device.Pins.D01,
@@ -22,7 +22,7 @@ namespace MeadowApp
                 ms2Pin: Device.Pins.D03,
                 ms3Pin: Device.Pins.D02);
 
-            return base.Initialize();
+            return base.Initialize(args);
         }
 
         public override Task Run()

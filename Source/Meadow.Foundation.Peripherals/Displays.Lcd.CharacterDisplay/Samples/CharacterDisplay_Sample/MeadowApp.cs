@@ -13,14 +13,14 @@ namespace Displays.Lcd.CharacterDisplay_Sample
 
         CharacterDisplay display;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             //InitGpio();
             //InitGpioWithPWM();
             //InitI2c();
             InitGrove();
 
-            return base.Initialize();
+            return base.Initialize(args);
         }
 
         void InitGpio()

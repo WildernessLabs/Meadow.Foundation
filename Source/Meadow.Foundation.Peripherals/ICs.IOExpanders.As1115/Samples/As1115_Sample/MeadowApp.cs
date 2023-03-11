@@ -15,7 +15,7 @@ namespace ICs.IOExpanders.As1115_Sample
         As1115 as1115;
         MicroGraphics graphics;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initialize...");
             as1115 = new As1115(Device.CreateI2cBus(), Device.Pins.D03);
@@ -30,7 +30,7 @@ namespace ICs.IOExpanders.As1115_Sample
 
             graphics = new MicroGraphics(as1115);
 
-            return base.Initialize();
+            return base.Initialize(args);
         }
 
         private void Button1_LongClicked(object sender, EventArgs e)

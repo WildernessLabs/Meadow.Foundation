@@ -16,7 +16,7 @@ namespace ICs.IOExpanders.Mcp23x17_Input_Sample
     {
         Mcp23017 mcp;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initializing...");
 
@@ -27,7 +27,7 @@ namespace ICs.IOExpanders.Mcp23x17_Input_Sample
 
             mcp.InputChanged += Mcp_InputChanged;
 
-            return base.Initialize();
+            return base.Initialize(args);
         }
 
         private void Mcp_InputChanged(object sender, IOExpanderInputChangedEventArgs e)

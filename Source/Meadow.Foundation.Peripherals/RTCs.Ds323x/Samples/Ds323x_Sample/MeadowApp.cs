@@ -12,14 +12,14 @@ namespace RTCs.Ds323x_Sample
 
         Ds3231 sensor;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initialize...");
 
             sensor = new Ds3231(Device.CreateI2cBus(), Device.Pins.D06);
             sensor.OnAlarm1Raised += Sensor_OnAlarm1Raised;
 
-            return base.Initialize();
+            return base.Initialize(args);
         }
 
         public override Task Run()

@@ -13,7 +13,7 @@ namespace Displays.ePaper.SSD1681_Sample
 
         MicroGraphics graphics;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initialize ...");
 
@@ -28,7 +28,7 @@ namespace Displays.ePaper.SSD1681_Sample
 
             graphics = new MicroGraphics(display);
 
-            return base.Initialize();
+            return base.Initialize(args);
         }
 
         public override Task Run()

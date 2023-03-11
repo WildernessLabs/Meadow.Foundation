@@ -12,7 +12,7 @@ namespace Sensors.Atmospheric.Th02_Sample
 
         Th02 sensor;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initializing...");
 

@@ -12,7 +12,7 @@ namespace Sensors.Light.Veml7700_Sample
 
         Veml7700 sensor;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initialize...");
 

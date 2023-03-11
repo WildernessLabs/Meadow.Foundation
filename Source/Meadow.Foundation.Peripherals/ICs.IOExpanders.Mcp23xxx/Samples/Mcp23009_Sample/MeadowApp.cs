@@ -14,14 +14,14 @@ namespace ICs.IOExpanders.Mcp23009_Sample
 
         Mcp23009 mcp;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             IDigitalInputPort interruptPort = Device.CreateDigitalInputPort(Device.Pins.D00, InterruptMode.EdgeRising);
             IDigitalOutputPort resetPort = Device.CreateDigitalOutputPort(Device.Pins.D01);
 
             mcp = new Mcp23009(Device.CreateI2cBus(), 0x20, interruptPort, resetPort);
 
-            return base.Initialize();
+            return base.Initialize(args);
         }
 
         public override Task Run()

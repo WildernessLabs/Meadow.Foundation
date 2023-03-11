@@ -14,7 +14,7 @@ namespace Leds.RgbLed_Sample
 
         protected List<RgbLed> rgbLeds;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initializing...");
 

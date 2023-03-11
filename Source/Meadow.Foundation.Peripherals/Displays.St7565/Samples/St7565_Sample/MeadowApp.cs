@@ -13,7 +13,7 @@ namespace Displays.ST7565_Sample
 
         MicroGraphics graphics;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initializing...");
 
@@ -30,7 +30,7 @@ namespace Displays.ST7565_Sample
             graphics = new MicroGraphics(sT7565);
             graphics.CurrentFont = new Font8x8();
 
-            return base.Initialize();
+            return base.Initialize(args);
         }
 
         public override Task Run()

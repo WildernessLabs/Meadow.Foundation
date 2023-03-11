@@ -11,7 +11,7 @@ namespace Dht10_Sample
     {
         Dht10? dht10;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initialize...");
 

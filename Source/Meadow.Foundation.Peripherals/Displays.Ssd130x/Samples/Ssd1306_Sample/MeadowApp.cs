@@ -15,14 +15,14 @@ namespace Displays.Ssd130x.Ssd1306_Sample
         MicroGraphics graphics;
         Ssd1306 display;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             //CreateSpiDisplay();
             CreateI2CDisplay();
 
             graphics = new MicroGraphics(display);
 
-            return base.Initialize();
+            return base.Initialize(args);
         }
 
         void CreateSpiDisplay()

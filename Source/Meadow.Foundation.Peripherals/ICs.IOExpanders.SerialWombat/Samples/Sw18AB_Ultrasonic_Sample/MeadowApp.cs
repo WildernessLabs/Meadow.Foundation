@@ -18,7 +18,7 @@ namespace ICs.IOExpanders.Sw18AB_Samples
         {
         }
 
-        public override async Task Initialize()
+        public override async Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initialize...");
 

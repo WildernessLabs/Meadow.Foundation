@@ -16,7 +16,7 @@ namespace ICs.IOExpanders.Mcp23x08_Input_Sample
     {
         Mcp23008 mcp;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initializing...");
 
@@ -26,7 +26,7 @@ namespace ICs.IOExpanders.Mcp23x08_Input_Sample
 
             mcp = new Mcp23008(Device.CreateI2cBus(), (byte)Addresses.Address_0x20, interruptPort, resetPort);
 
-            return base.Initialize();
+            return base.Initialize(args);
         }
         
         public override Task Run()

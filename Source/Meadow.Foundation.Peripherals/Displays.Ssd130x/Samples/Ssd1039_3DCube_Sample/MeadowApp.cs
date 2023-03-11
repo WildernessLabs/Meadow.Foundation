@@ -21,7 +21,7 @@ namespace Displays.Ssd130x.Ssd1309_3DCube_Sample
         int[,] cubeWireframe = new int[12, 3];
         int[,] cubeVertices;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             // CreateSpiDisplay();
             CreateI2CDisplay();
@@ -52,7 +52,7 @@ namespace Displays.Ssd130x.Ssd1309_3DCube_Sample
 
             graphics = new MicroGraphics(display);
 
-            return base.Initialize();
+            return base.Initialize(args);
         }
 
         void CreateSpiDisplay()

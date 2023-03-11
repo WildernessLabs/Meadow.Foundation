@@ -12,7 +12,7 @@ namespace BasicSensors.Atmospheric.Sht4x_Sample
 
         Sht4x sensor;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initializing...");
 

@@ -13,7 +13,7 @@ namespace Sensors.Switches.SpstSwitch_Sample
 
         protected SpstSwitch spstSwitch;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initializing...");
 

@@ -12,12 +12,12 @@ namespace ICs.IOExpanders.HT16K33_Sample
 
         Ht16k33 ht16k33;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initialize...");
             ht16k33 = new Ht16k33(Device.CreateI2cBus());
 
-            return base.Initialize();
+            return base.Initialize(args);
         }
 
         public override async Task Run()

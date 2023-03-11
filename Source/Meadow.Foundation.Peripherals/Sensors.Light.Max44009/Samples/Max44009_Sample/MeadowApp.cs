@@ -12,7 +12,7 @@ namespace Sensors.Light.Max44009_Sample
 
         Max44009 sensor;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initialize...");
 

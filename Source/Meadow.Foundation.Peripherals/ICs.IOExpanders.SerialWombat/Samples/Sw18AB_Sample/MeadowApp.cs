@@ -14,7 +14,7 @@ namespace ICs.IOExpanders.Sw18AB_Sample
         private Sw18AB serialWombat;
         private IDigitalOutputPort digitalOutputPort;
         private IDigitalInputPort digitalInputPort;
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initialize...");
 

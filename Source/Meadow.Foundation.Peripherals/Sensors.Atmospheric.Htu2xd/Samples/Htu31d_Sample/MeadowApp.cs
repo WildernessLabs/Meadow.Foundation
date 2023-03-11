@@ -12,7 +12,7 @@ namespace MeadowApp
 
         Htu31d? sensor;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initializing...");
 

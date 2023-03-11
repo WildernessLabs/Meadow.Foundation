@@ -35,7 +35,7 @@ namespace Displays.Tft.ST7789_Sample
         MicroGraphics graphics;
         St7789 display;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initializing ...");
 
@@ -58,7 +58,7 @@ namespace Displays.Tft.ST7789_Sample
                 IgnoreOutOfBoundsPixels = true
             };
 
-            return base.Initialize();
+            return base.Initialize(args);
         }
 
         public override Task Run()

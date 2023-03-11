@@ -12,7 +12,7 @@ namespace Sensors.Temperature.Lm75_Sample
 
         Lm75 lm75;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initialize...");
 

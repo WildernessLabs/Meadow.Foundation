@@ -12,7 +12,7 @@ namespace BasicSensors.Atmospheric.SI7021_Sample
 
         Si70xx? sensor;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initializing...");
 

@@ -12,7 +12,7 @@ namespace WiiClassicController_Sample
 
         WiiClassicController classicController;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initialize...");
 

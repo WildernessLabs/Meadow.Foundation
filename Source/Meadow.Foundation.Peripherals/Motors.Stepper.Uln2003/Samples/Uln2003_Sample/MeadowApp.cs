@@ -13,7 +13,7 @@ namespace MeadowApp
 
         Uln2003 stepperController;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             stepperController = new Uln2003(
                 pin1: Device.Pins.D01,
@@ -21,7 +21,7 @@ namespace MeadowApp
                 pin3: Device.Pins.D03,
                 pin4: Device.Pins.D04);
 
-            return base.Initialize();
+            return base.Initialize(args);
         }
 
         public override Task Run()

@@ -16,7 +16,7 @@ namespace Leds.RgbPwmLed_Sample
 
         List<RgbPwmLed> rgbPwmLeds;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initializing...");
 

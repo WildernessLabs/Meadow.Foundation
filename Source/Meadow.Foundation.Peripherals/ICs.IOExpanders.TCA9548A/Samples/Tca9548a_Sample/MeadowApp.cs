@@ -14,7 +14,7 @@ namespace ICs.IOExpanders.Tca9685_Sample
         IDigitalOutputPort bus0Port0;
         IDigitalOutputPort bus1Port0;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initialize...");
 
@@ -26,7 +26,7 @@ namespace ICs.IOExpanders.Tca9685_Sample
             bus0Port0 = mcp0.CreateDigitalOutputPort(mcp0.Pins.GP0);
             bus1Port0 = mcp1.CreateDigitalOutputPort(mcp1.Pins.GP0);
 
-            return base.Initialize();
+            return base.Initialize(args);
         }
 
         public override async Task Run()

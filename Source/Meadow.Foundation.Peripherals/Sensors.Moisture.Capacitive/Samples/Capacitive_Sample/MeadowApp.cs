@@ -13,7 +13,7 @@ namespace Sensors.Moisture.Capacitive_Sample
 
         Capacitive capacitive;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initialize...");
 

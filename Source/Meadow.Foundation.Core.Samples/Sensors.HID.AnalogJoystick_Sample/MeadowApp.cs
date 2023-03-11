@@ -14,7 +14,7 @@ namespace Sensors.Hid.AnalogJoystick_Sample
 
         AnalogJoystick? joystick;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             joystick = new AnalogJoystick(
                 Device.CreateAnalogInputPort(Device.Pins.A01, 1, TimeSpan.FromMilliseconds(10), new Voltage(3.3)),

@@ -12,7 +12,7 @@ namespace BasicSensors.Atmospheric.SHT31D_Sample
 
         Sht31d sensor;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initializing...");
 

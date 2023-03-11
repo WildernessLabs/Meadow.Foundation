@@ -12,7 +12,7 @@ namespace Sensors.Atmospheric.BME680_Sample
 
         Bme680? sensor;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initializing...");
 
@@ -62,7 +62,7 @@ namespace Sensors.Atmospheric.BME680_Sample
 
             ReadConditions().Wait();
 
-            return base.Initialize();
+            return base.Initialize(args);
         }
 
         void EnableGasHeater()

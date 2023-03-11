@@ -15,7 +15,7 @@ namespace Sensors.Location.Gnss.NmeaProcessor_Sample
         List<string> sentences;
         NmeaSentenceProcessor nmeaProcessor;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initialize...");
             

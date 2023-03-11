@@ -22,7 +22,7 @@ namespace Displays.ePaper.EpdMonochrome_Sample
         EPaperMonoBase display;
         MicroGraphics graphics;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initialize ...");
 

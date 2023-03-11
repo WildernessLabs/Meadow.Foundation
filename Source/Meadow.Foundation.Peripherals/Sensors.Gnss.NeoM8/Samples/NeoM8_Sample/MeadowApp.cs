@@ -14,7 +14,7 @@ namespace Sensors.Gnss.NeoM8_Sample
 
         NeoM8 gps;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initializing ...");
 

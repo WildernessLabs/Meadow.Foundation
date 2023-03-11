@@ -13,7 +13,7 @@ namespace Audio.PiezoSpeaker_Sample
 
         protected PiezoSpeaker piezoSpeaker;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initializing...");
 
