@@ -14,7 +14,7 @@ namespace Sensors.Motion.Mma7660fc_Sample
 
         Mma7660fc sensor;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initialize...");
 

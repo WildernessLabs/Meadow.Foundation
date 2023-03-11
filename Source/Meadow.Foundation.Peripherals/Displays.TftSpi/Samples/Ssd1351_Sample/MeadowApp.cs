@@ -12,7 +12,7 @@ namespace BasicDisplays.Tft.Ssd1351_Sample
 
         MicroGraphics graphics;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initializing ...");
 
@@ -31,7 +31,7 @@ namespace BasicDisplays.Tft.Ssd1351_Sample
                 IgnoreOutOfBoundsPixels = true
             };
 
-            return base.Initialize();
+            return base.Initialize(args);
         }
 
         public override Task Run()

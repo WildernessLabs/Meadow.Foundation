@@ -13,7 +13,7 @@ namespace Displays.Led.SevenSegment_Sample
 
         FourDigitSevenSegment sevenSegment;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initializing...");
 
@@ -34,7 +34,7 @@ namespace Displays.Led.SevenSegment_Sample
                 isCommonCathode: true
             );
 
-            return base.Initialize();
+            return base.Initialize(args);
         }
 
         public override Task Run()

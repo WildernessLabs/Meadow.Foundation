@@ -14,7 +14,7 @@ namespace Leds.Led_Sample
 
         List<Led> leds;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             var onRgbLed = new RgbLed(
                 redPin: Device.Pins.OnboardLedRed,

@@ -14,7 +14,7 @@ namespace Displays.ePaper.IL0398_Sample
         Il0398 display;
         MicroGraphics graphics;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initialize ...");
 

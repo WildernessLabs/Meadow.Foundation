@@ -12,7 +12,7 @@ namespace Generators.SoftPwmPort_Sample
 
         protected SoftPwmPort softPwmPort;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initializing...");
 

@@ -14,7 +14,7 @@ namespace Sensors.Distance.HCSR04_Sample
 
         Hcsr04 hCSR04;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info($"Hello HC-SR04 sample");
 

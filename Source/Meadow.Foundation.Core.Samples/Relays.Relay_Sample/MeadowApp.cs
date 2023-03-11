@@ -13,7 +13,7 @@ namespace Relays.Relay_Sample
 
         protected Relay relay;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initialize...");
 

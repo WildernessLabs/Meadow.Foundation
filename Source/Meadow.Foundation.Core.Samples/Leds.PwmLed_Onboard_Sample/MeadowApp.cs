@@ -15,7 +15,7 @@ namespace Leds.PwmLed_Onboard_Sample
         PwmLed greenPwmLed;
         PwmLed bluePwmLed;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initializing...");
             redPwmLed = new PwmLed(Device.Pins.OnboardLedRed, TypicalForwardVoltage.ResistorLimited, CircuitTerminationType.High);

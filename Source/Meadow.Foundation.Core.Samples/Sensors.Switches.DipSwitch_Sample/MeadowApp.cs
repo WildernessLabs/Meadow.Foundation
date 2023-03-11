@@ -14,7 +14,7 @@ namespace Sensors.Switches.DipSwitch_Sample
 
         protected DipSwitch dipSwitch;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initializing...");
 

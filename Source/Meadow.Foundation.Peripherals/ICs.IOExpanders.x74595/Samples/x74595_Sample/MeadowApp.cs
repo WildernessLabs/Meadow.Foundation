@@ -13,13 +13,13 @@ namespace MeadowApp
 
         x74595 shiftRegister;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initialize...");
 
             shiftRegister = new x74595(Device.CreateSpiBus(), Device.Pins.D00, 8);
 
-            return base.Initialize();
+            return base.Initialize(args);
         }
 
         public override async Task Run()

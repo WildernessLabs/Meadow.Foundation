@@ -9,7 +9,7 @@ namespace Bbq10Keyboard_Sample
     {
         BBQ10Keyboard keyboard;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initialize...");
 

@@ -12,7 +12,7 @@ namespace Sensors.Environmental.Scd40_Sample
 
         Scd40 sensor;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initializing...");
 
@@ -55,7 +55,7 @@ namespace Sensors.Environmental.Scd40_Sample
 
             sensor?.StartUpdating(TimeSpan.FromSeconds(6));
 
-            return base.Initialize();
+            return base.Initialize(args);
         }
 
         //<!=SNOP=>

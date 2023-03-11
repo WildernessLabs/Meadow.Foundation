@@ -23,7 +23,7 @@ namespace MeadowApp
         IButton previous = null;
         IButton select = null;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initialize...");
 

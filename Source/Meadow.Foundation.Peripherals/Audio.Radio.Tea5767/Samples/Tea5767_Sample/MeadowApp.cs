@@ -13,7 +13,7 @@ namespace Audio.Radio.Tea5767_Sample
 
         Tea5767 radio;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initializing...");
             

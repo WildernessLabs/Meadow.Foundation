@@ -11,7 +11,7 @@ namespace Meadow.Foundation.Sensors.Radio.Rfid.IDxxLA_Sample
 
         IRfidReader rfidReader;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initialize...");
 

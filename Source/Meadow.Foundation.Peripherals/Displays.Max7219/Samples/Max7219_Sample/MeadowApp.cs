@@ -12,13 +12,13 @@ namespace MeadowApp
 
         Max7219 display;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initialize...");
 
             display = new Max7219(Device.CreateSpiBus(), Device.Pins.D01, 1, Max7219.Max7219Mode.Character);
 
-            return base.Initialize();
+            return base.Initialize(args);
         }
 
         void TestCharacterMode()

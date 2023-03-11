@@ -11,7 +11,7 @@ namespace ICs.IOExpanders.Nxp74HC4051_Sample
 
         private Nxp74HC4051 mux;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initialize...");
 
@@ -23,7 +23,7 @@ namespace ICs.IOExpanders.Nxp74HC4051_Sample
                 Device.CreateDigitalOutputPort(Device.Pins.D03)     // enable
                 );
 
-            return base.Initialize();
+            return base.Initialize(args);
         }
 
         public override Task Run()

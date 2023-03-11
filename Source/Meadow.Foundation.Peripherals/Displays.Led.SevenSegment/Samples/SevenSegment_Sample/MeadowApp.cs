@@ -13,7 +13,7 @@ namespace Displays.Led.SevenSegment_Sample
 
         SevenSegment sevenSegment;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initializing...");
 
@@ -30,7 +30,7 @@ namespace Displays.Led.SevenSegment_Sample
                 isCommonCathode: false
             );
 
-            return base.Initialize();
+            return base.Initialize(args);
         }
 
         public override Task Run()

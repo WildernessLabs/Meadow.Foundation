@@ -3,9 +3,7 @@ using Meadow.Devices;
 using Meadow.Foundation.Sensors.Accelerometers;
 using Meadow.Units;
 using System;
-using System.Security.Cryptography;
 using System.Threading.Tasks;
-using System.Threading.Tasks.Sources;
 
 namespace MeadowApp
 {
@@ -16,7 +14,7 @@ namespace MeadowApp
 
         Bmi270 bmi270;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Console.WriteLine("Initialize hardware...");
             bmi270 = new Bmi270(Device.CreateI2cBus());
@@ -32,7 +30,7 @@ namespace MeadowApp
 
             bmi270.StartUpdating(TimeSpan.FromMilliseconds(2000));
 
-            return base.Initialize();
+            return base.Initialize(args);
         }
 
         bool FilterResult(IChangeResult<(Acceleration3D? Acceleration3D,

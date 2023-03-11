@@ -15,7 +15,7 @@ namespace Sensors.Temperature.MLX90640_Sample
 
         Mlx90640 sensor;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initialize...");
 

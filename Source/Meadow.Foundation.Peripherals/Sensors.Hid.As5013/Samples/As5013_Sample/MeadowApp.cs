@@ -13,7 +13,7 @@ namespace As5013_Sample
 
         As5013 joystick;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initializing ...");
 

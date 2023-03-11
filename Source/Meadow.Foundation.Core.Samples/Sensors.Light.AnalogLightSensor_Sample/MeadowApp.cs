@@ -12,7 +12,7 @@ namespace Sensors.Light.AnalogLightSensor_Sample
         
         AnalogLightSensor analogLightSensor;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initializing...");
 

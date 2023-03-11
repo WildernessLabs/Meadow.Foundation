@@ -12,7 +12,7 @@ namespace ICs.IOExpanders.Sw18AB_Samples
 
         private Sw18AB _wombat;
         
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initialize...");
 

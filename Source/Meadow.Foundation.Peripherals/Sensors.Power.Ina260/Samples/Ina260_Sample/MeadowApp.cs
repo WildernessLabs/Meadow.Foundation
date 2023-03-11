@@ -12,7 +12,7 @@ namespace MeadowApp
 
         Ina260 ina260;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initialize...");
 

@@ -12,7 +12,7 @@ namespace Sensors.Temperature.Mcp9808_Sample
 
         Mcp9808 mcp9808;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initialize...");
 

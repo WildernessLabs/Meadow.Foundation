@@ -12,7 +12,7 @@ namespace Sensors.Temperature.AnalogWaterLevel_Sample
 
         AnalogWaterLevel analogWaterLevel;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initializing...");
 

@@ -18,7 +18,7 @@ namespace Displays.TftSpi.Ili9341_Jpg_Sample
         Ili9341 display;
         MicroGraphics graphics;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initializing...");
 
@@ -36,7 +36,7 @@ namespace Displays.TftSpi.Ili9341_Jpg_Sample
             graphics = new MicroGraphics(display);
             graphics.IgnoreOutOfBoundsPixels = true;
 
-            return base.Initialize();
+            return base.Initialize(args);
         }
 
         void JpegTest()

@@ -13,7 +13,7 @@ namespace Displays.Tft.Ssd1331_Sample
 
         MicroGraphics graphics;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initializing ...");
 
@@ -35,7 +35,7 @@ namespace Displays.Tft.Ssd1331_Sample
             graphics = new MicroGraphics(display);
             graphics.CurrentFont = new Font8x8();
 
-            return base.Initialize();
+            return base.Initialize(args);
         }
 
         public override Task Run()

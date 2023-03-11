@@ -13,7 +13,7 @@ namespace MeadowApp
 
         At24Cxx eeprom;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initialize...");
 
@@ -21,7 +21,7 @@ namespace MeadowApp
             //if you're using the ZS-042 board, it has an AT24C32 and uses the default value of 8192
             eeprom = new At24Cxx(i2cBus: Device.CreateI2cBus(), memorySize: 32768);
 
-            return base.Initialize();
+            return base.Initialize(args);
         }
 
         public override Task Run()

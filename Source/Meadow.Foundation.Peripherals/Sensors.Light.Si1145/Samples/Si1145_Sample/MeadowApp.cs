@@ -12,7 +12,7 @@ namespace MeadowApp
 
         Si1145 sensor;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initialize...");
 

@@ -17,7 +17,7 @@ namespace Motors.Tb67h420ftg_Sample
         PushButton button1;
         PushButton button2;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initialize...");
 
@@ -41,7 +41,7 @@ namespace Motors.Tb67h420ftg_Sample
 
             Resolver.Log.Info("Initialization complete.");
 
-            return base.Initialize();
+            return base.Initialize(args);
         }
 
         private void Button1_PressStarted(object sender, EventArgs e)

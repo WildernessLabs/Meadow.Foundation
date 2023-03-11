@@ -14,7 +14,7 @@ namespace Sensors.Motion.Mmc5603_Sample
 
         Mmc5603 sensor;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initialize...");
 

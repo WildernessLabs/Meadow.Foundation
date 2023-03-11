@@ -13,7 +13,7 @@ namespace Sensors.Environmental.Ags01Db_Sample
 
         Ags01Db ags10Db;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initialize ...");
             ags10Db = new Ags01Db(Device.CreateI2cBus());

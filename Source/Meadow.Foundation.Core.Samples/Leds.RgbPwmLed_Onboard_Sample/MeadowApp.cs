@@ -15,7 +15,7 @@ namespace Leds.RgbPwmLed_Onboard_Sample
 
         RgbPwmLed onboardLed;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Creating peripherals...");
             

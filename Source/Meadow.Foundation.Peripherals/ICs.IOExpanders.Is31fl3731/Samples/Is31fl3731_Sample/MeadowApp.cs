@@ -13,13 +13,13 @@ namespace ICs.IOExpanders.Is31fl3731_Sample
 
         Is31fl3731 iS31FL3731;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initialize...");
             iS31FL3731 = new Is31fl3731(Device.CreateI2cBus());
             iS31FL3731.Initialize();
 
-            return base.Initialize();
+            return base.Initialize(args);
         }
 
         public override Task Run()

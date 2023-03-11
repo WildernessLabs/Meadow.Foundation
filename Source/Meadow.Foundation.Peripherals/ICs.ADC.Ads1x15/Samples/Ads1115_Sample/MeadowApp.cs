@@ -12,7 +12,7 @@ namespace Ads1115_Sample
 
         Ads1115 adc;
 
-        public override async Task Initialize()
+        public override async Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initialize...");
 

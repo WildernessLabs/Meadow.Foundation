@@ -16,7 +16,7 @@ namespace Displays.Ssd130x.Ssd1309_Sample
         MicroGraphics graphics;
         Ssd1309 display;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             CreateSpiDisplay();
             //CreateI2CDisplay();
@@ -24,7 +24,7 @@ namespace Displays.Ssd130x.Ssd1309_Sample
             Resolver.Log.Info("Create canvas...");
             graphics = new MicroGraphics(display);
 
-            return base.Initialize();
+            return base.Initialize(args);
         }
 
         void CreateSpiDisplay()

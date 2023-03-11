@@ -15,7 +15,7 @@ namespace Leds.PwmLedBarGraph_Sample
 
         PwmLedBarGraph pwmLedBarGraph;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initializing...");
 

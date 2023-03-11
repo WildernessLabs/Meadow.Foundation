@@ -11,7 +11,7 @@ namespace Sensors.Sound.Ky038_Sample
 
         Ky038 sensor;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initialize...");
 

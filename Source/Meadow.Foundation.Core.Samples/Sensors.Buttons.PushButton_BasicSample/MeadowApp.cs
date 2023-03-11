@@ -20,7 +20,7 @@ namespace MeadowApp
         RgbPwmLed onboardLed;
         PushButton pushButton;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initialize...");
 

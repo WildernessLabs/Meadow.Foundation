@@ -12,7 +12,7 @@ namespace Sensors.Motion.Adxl345_Sample
 
         Adxl345 sensor;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initialize...");
 

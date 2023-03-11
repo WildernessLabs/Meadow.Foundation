@@ -12,7 +12,7 @@ namespace Audio.Mp3.Yx5300_Sample
 
         Yx5300 mp3Player;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initialize...");
 

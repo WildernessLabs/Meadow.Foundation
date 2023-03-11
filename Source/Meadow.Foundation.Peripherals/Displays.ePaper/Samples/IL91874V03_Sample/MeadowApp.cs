@@ -12,7 +12,7 @@ namespace Displays.ePaper.IL91874V03_Sample
 
         MicroGraphics graphics;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initialize ...");
 
@@ -27,7 +27,7 @@ namespace Displays.ePaper.IL91874V03_Sample
 
             graphics = new MicroGraphics(display);
 
-            return base.Initialize();
+            return base.Initialize(args);
         }
 
         public override Task Run()

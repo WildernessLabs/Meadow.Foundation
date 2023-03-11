@@ -14,7 +14,7 @@ namespace ICs.IOExpanders.Mcp23s0S_Sample
 
         Mcp23s09 mcp;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             IDigitalInputPort interruptPort = Device.CreateDigitalInputPort(Device.Pins.D00, InterruptMode.EdgeRising);
             IDigitalOutputPort chipSelectPort = Device.CreateDigitalOutputPort(Device.Pins.D01);
@@ -22,7 +22,7 @@ namespace ICs.IOExpanders.Mcp23s0S_Sample
 
             mcp = new Mcp23s09(Device.CreateSpiBus(), chipSelectPort, interruptPort, resetPort);
 
-            return base.Initialize();
+            return base.Initialize(args);
         }
 
         public override Task Run()

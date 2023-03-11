@@ -12,7 +12,7 @@ namespace WiiNunchuck_Sample
 
         WiiNunchuck nunchuck;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initialize...");
 

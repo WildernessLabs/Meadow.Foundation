@@ -13,7 +13,7 @@ namespace Sensors.Atmospheric.Dht12_Sample
 
         Dht12? sensor;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initializing...");
 

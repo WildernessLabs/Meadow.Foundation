@@ -15,7 +15,7 @@ namespace Sensors.Temperature.Tmp102_Sample
 
         Tmp102 tmp102;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initialize...");
 

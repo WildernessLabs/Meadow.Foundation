@@ -14,7 +14,7 @@ namespace Displays.Tft.Ili9163_Sample
 
         MicroGraphics graphics;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initializing ...");
 
@@ -39,7 +39,7 @@ namespace Displays.Tft.Ili9163_Sample
             };
 
 
-            return base.Initialize();
+            return base.Initialize(args);
         }
 
         public override Task Run()

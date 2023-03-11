@@ -13,7 +13,7 @@ namespace Displays.ePaper.SSD1680_Sample
 
         MicroGraphics graphics;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initialize ...");
 
@@ -31,7 +31,7 @@ namespace Displays.ePaper.SSD1680_Sample
                 Rotation = RotationType._270Degrees
             };
 
-            return base.Initialize();
+            return base.Initialize(args);
         }
 
         public override Task Run()

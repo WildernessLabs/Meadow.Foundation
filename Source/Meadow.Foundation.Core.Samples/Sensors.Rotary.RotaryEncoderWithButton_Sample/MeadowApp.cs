@@ -14,7 +14,7 @@ namespace Sensors.Rotary.RotaryEncoderWithButton_Sample
         protected int value = 0;
         protected RotaryEncoderWithButton rotaryEncoder;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initializing Hardware...");
 

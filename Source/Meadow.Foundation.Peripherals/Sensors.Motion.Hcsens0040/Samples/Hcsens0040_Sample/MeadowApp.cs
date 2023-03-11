@@ -12,7 +12,7 @@ namespace Sensors.Motion.ParallaxPir_Sample
 
         Hcsens0040 sensor;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initialize...");
 

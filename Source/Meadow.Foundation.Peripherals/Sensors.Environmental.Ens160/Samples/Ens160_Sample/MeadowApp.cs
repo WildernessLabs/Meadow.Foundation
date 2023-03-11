@@ -12,7 +12,7 @@ namespace Sensors.Environmental.Ens160_Sample
 
         Ens160 sensor;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initializing...");
 
@@ -52,7 +52,7 @@ namespace Sensors.Environmental.Ens160_Sample
 
             sensor?.StartUpdating(TimeSpan.FromSeconds(2));
 
-            return base.Initialize();
+            return base.Initialize(args);
         }
 
         //<!=SNOP=>

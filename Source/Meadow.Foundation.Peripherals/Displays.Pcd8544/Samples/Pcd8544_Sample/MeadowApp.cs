@@ -13,7 +13,7 @@ namespace Displays.Pcd8854_Sample
 
         MicroGraphics graphics;
 
-        public override Task Initialize()
+        public override Task Initialize(string[]? args)
         {
             Resolver.Log.Info("Initializing...");
 
@@ -29,7 +29,7 @@ namespace Displays.Pcd8854_Sample
 
             graphics = new MicroGraphics(display);
 
-            return base.Initialize();
+            return base.Initialize(args);
         }
 
         public override Task Run()

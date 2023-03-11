@@ -141,6 +141,11 @@ namespace Meadow.Foundation.ICs.IOExpanders
             return bus;
         }
 
+        public ISpiBus CreateSpiBus(Frequency busSpeed)
+        {
+            return CreateSpiBus(0, new SpiClockConfiguration(busSpeed));
+        }
+
         public ISpiBus CreateSpiBus()
         {
             return CreateSpiBus(0, DefaultClockConfiguration);
