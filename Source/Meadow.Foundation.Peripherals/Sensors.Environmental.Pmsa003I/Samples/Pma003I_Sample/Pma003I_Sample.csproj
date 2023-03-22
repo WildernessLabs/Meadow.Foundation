@@ -1,0 +1,20 @@
+﻿<Project Sdk="Meadow.Sdk/1.1.0">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <OutputType>Library</OutputType>
+    <AssemblyName>App</AssemblyName>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Meadow" Version="0.95.0" />
+    <PackageReference Include="Meadow.F7" Version="0.*" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Driver\Pmsa003I\Sensors.Environmental.Pmsa003I.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="meadow.config.yaml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+</Project>
