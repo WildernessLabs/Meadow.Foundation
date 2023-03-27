@@ -2,6 +2,7 @@
 using Meadow.Peripherals.Displays;
 using Meadow.Units;
 using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Graphics
@@ -1239,7 +1240,7 @@ namespace Meadow.Foundation.Graphics
             ScaleFactor scaleFactor = ScaleFactor.X1,
             HorizontalAlignment alignmentH = HorizontalAlignment.Left,
             VerticalAlignment alignmentV = VerticalAlignment.Top,
-            IFont? font = null)
+            IFont font = null)
         {
             var fontToDraw = font != null ? font : CurrentFont;
 
@@ -1248,12 +1249,21 @@ namespace Meadow.Foundation.Graphics
                 throw new Exception("CurrentFont must be set before calling DrawText.");
             }
 
-            byte[] bitMap = GetBytesForTextBitmap(text, fontToDraw);
+            if (fontToDraw is IYaffFont && !((IYaffFont)fontToDraw).IsIFontCompatible)
+            {
+                // Handle drawing if Yaff Font
+                DrawYaffText(x, y, text, color, scaleFactor, alignmentH, alignmentV, (IYaffFont)font);
+            }
+            else
+            {
 
-            x = GetXForAlignment(x, MeasureText(text, scaleFactor).Width, alignmentH);
-            y = GetYForAlignment(y, MeasureText(text, scaleFactor).Height, alignmentV);
+                byte[] bitMap = GetBytesForTextBitmap(text, fontToDraw);
 
-            DrawBitmap(x, y, bitMap.Length / fontToDraw.Height * 8, fontToDraw.Height, bitMap, color, scaleFactor);
+                x = GetXForAlignment(x, MeasureText(text, scaleFactor).Width, alignmentH);
+                y = GetYForAlignment(y, MeasureText(text, scaleFactor).Height, alignmentV);
+
+                DrawBitmap(x, y, bitMap.Length / fontToDraw.Height * 8, fontToDraw.Height, bitMap, color, scaleFactor);
+            }
         }
 
         /// <summary>
