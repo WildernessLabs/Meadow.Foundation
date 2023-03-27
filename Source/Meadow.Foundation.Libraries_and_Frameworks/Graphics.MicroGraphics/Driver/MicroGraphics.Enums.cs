@@ -21,6 +21,22 @@
         /// 4x / quadruple scaling
         /// </summary>
         X4 = 4,
+        /// <summary>
+        /// 5x / quintuple scaling
+        /// </summary>
+        X5 = 5,
+        /// <summary>
+        /// 6x / sextuple scaling
+        /// </summary>
+        X6 = 6,
+        /// <summary>
+        /// 7x / septuple scaling
+        /// </summary>
+        X7 = 7,
+        /// <summary>
+        /// 6x / octuple scaling
+        /// </summary>
+        X8 = 8,
     }
 
     /// <summary>
