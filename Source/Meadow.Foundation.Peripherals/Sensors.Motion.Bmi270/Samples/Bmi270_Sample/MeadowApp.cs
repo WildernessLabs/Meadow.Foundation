@@ -3,14 +3,12 @@ using Meadow.Devices;
 using Meadow.Foundation.Sensors.Accelerometers;
 using Meadow.Units;
 using System;
-using System.Security.Cryptography;
 using System.Threading.Tasks;
-using System.Threading.Tasks.Sources;
 
 namespace MeadowApp
 {
     // Change F7FeatherV2 to F7FeatherV1 for V1.x boards
-    public class MeadowApp<T> : App<F7FeatherV1>
+    public class MeadowApp<T> : App<F7FeatherV2>
     {
         //<!=SNIP=>
 

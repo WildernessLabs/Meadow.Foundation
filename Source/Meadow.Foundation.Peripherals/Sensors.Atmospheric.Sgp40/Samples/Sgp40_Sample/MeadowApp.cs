@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BasicSensors.Atmospheric.SI7021_Sample
 {
-    public class MeadowApp : App<F7FeatherV1>
+    public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
 
@@ -59,7 +59,7 @@ namespace BasicSensors.Atmospheric.SI7021_Sample
 
         async Task ReadConditions()
         {
-            if(sensor == null) { return; }
+            if (sensor == null) { return; }
 
             var result = await sensor.Read();
             Resolver.Log.Info("Initial Readings:");
