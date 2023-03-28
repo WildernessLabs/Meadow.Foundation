@@ -183,6 +183,8 @@ namespace Meadow.Foundation.Displays
                     SendData((byte)(Register.MADCTL_MV | Register.MADCTL_BGR | Register.MADCTL_SS | Register.MADCTL_GS));
                     break;
             }
+
+            UpdateBuffer();
         }
     }
 }

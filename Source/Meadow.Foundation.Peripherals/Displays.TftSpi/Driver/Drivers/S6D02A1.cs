@@ -173,6 +173,8 @@ namespace Meadow.Foundation.Displays
                     SendData((byte)Register.MADCTL_MX | (byte)Register.MADCTL_MV | (byte)Register.MADCTL_BGR);
                     break;
             }
+
+            UpdateBuffer();
         }
 
         void SendCommand(byte command, byte[] data)

@@ -34,7 +34,7 @@
         /// </summary>
         X7 = 7,
         /// <summary>
-        /// 6x / octuple scaling
+        /// 8x / octuple scaling
         /// </summary>
         X8 = 8,
     }
