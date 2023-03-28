@@ -36,23 +36,11 @@
             PageAddress = 0xB0,
             ColumnAddressHigh = 0x10,
             ColumnAddressLow = 0x00,
-            //AdcSelectNormal = 0xA0, // X axis flip OFF
-            //AdcSelectReverse = 0xA1, // X axis flip ON
             DisplayVideoNormal = 0xA6,
             DisplayVideoReverse = 0xA7,
             AllPixelsOff = 0xA4,
             AllPixelsOn = 0xA5,
-            //LcdVoltageBias9 = 0xA2,
-            //LcdVoltageBias7 = 0xA3,
-            //EnterReadModifyWriteMode = 0xE0,
-            //ClearReadModifyWriteMode = 0xEE,
-            //ResetLcdModule = 0xE2,
-            //ShlSelectNormal = 0xC0, // Y axis flip OFF
-            //ShlSelectReverse = 0xC8, // Y axis flip ON
-            //PowerControl = 0x28,
-            //RegulatorResistorRatio = 0x20,
             ContrastValue = 0x00,
-            //NoOperation = 0xE3
             IRefRestigerSet = 0x82,
             IRefRestigerAdjust = 0x00,
             SetPumpReg = 0x30,
@@ -82,9 +70,6 @@
 
             DCModeSet = 0xAD,
             DCOnOffSet = 0x8B,
-
-
-
         }
     }
 }
