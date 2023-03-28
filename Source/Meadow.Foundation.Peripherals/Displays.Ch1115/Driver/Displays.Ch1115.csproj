@@ -5,15 +5,15 @@
     <Authors>Wilderness Labs, Inc</Authors>
     <TargetFramework>netstandard2.1</TargetFramework>
     <OutputType>Library</OutputType>
-    <AssemblyName>St7565</AssemblyName>
+    <AssemblyName>Ch1115</AssemblyName>
     <Company>Wilderness Labs, Inc</Company>
     <PackageProjectUrl>http://developer.wildernesslabs.co/Meadow/Meadow.Foundation/</PackageProjectUrl>
-    <PackageId>Meadow.Foundation.Displays.St7565</PackageId>
+    <PackageId>Meadow.Foundation.Displays.Ch1115</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
-    <PackageTags>Meadow, Meadow.Foundation, Displays, LCD, ST7565</PackageTags>
-    <Version>0.1.55</Version>
+    <PackageTags>Meadow, Meadow.Foundation, Displays, LCD, Ch1115</PackageTags>
+    <Version>0.1.0</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Description>ST7565 SPI monochrome OLED display</Description>
+    <Description>Ch1115 SPI monochrome OLED display</Description>
   </PropertyGroup>
   <ItemGroup>
     <None Include="..\..\..\icon.png" Pack="true" PackagePath="" />

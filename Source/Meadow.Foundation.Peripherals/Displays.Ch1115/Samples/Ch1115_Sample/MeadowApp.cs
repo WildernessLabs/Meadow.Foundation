@@ -4,9 +4,9 @@ using Meadow.Foundation.Displays;
 using Meadow.Foundation.Graphics;
 using System.Threading.Tasks;
 
-namespace Displays.ST7565_Sample
+namespace Displays.Ch1115_Sample
 {
-    public class MeadowApp : App<F7FeatherV2>
+    public class MeadowApp : App<F7FeatherV1>
     {
         //<!=SNIP=>
 
@@ -16,17 +16,17 @@ namespace Displays.ST7565_Sample
         {
             Resolver.Log.Info("Initializing...");
 
-            var sT7565 = new St7565
+            var ch1115 = new Ch1115
             (
                 spiBus: Device.CreateSpiBus(),
                 chipSelectPin: Device.Pins.D02,
-                dcPin: Device.Pins.D00,
-                resetPin: Device.Pins.D01,
+                dcPin: Device.Pins.D01,
+                resetPin: Device.Pins.D00,
                 width: 128,
                 height: 64
             );
 
-            graphics = new MicroGraphics(sT7565);
+            graphics = new MicroGraphics(ch1115);
             graphics.CurrentFont = new Font8x8();
 
             return base.Initialize();
@@ -37,7 +37,7 @@ namespace Displays.ST7565_Sample
             graphics.Clear();
             graphics.DrawTriangle(10, 10, 50, 50, 10, 50, false);
             graphics.DrawRectangle(20, 15, 40, 20, true);
-            graphics.DrawText(5, 5, "ST7565");
+            graphics.DrawText(5, 5, "CH1115");
             graphics.Show();
 
             return base.Run();
