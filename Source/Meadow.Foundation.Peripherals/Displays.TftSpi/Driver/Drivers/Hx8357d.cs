@@ -210,12 +210,14 @@ namespace Meadow.Foundation.Displays
                     SendData((byte)(Register.MADCTL_MY | Register.MADCTL_MV | Register.MADCTL_RGB));
                     break;
                 case RotationType._180Degrees:
-                    SendData((byte)(Register.MADCTL_RGB));
+                    SendData((byte)Register.MADCTL_RGB);
                     break;
                 case RotationType._270Degrees:
                     SendData((byte)(Register.MADCTL_MX | Register.MADCTL_MV | Register.MADCTL_RGB));
                     break;
             }
+
+            UpdateBuffer();
         }
 
         internal const byte HX8357_RDDID = 0x04;

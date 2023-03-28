@@ -194,6 +194,8 @@ namespace Meadow.Foundation.Displays
                     SendData(0x3B);
                     break;
             }
+
+            UpdateBuffer();
         }
     }
 }
