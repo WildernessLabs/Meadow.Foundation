@@ -7,9 +7,9 @@ using System.Threading;
 namespace Meadow.Foundation.Displays
 {
     /// <summary>
-    /// Provide an interface to the Ch1115 family of displays.
+    /// Provide an interface to the Sh1106 family of displays
     /// </summary>
-    public partial class Ch1115 : IGraphicsDisplay
+    public partial class Sh1106 : IGraphicsDisplay
     {
         /// <summary>
         /// The display color mode - 1 bit per pixel monochrome
@@ -24,12 +24,12 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// The display width in pixels
         /// </summary>
-        public int Width => imageBuffer.Width;
+        public int Width => 128;
 
         /// <summary>
         /// The display height in pixels
         /// </summary>
-        public int Height => imageBuffer.Height;
+        public int Height => 64;
 
         /// <summary>
         /// The buffer the holds the pixel data for the display
@@ -51,49 +51,43 @@ namespace Meadow.Foundation.Displays
         byte[] pageBuffer;
 
         /// <summary>
-        /// Create a new Ch1115 object
+        /// Create a new Sh1106 object
         /// </summary>
         /// <param name="spiBus">SPI bus connected to display</param>
         /// <param name="chipSelectPin">Chip select pin</param>
         /// <param name="dcPin">Data command pin</param>
         /// <param name="resetPin">Reset pin</param>
-        /// <param name="width">Width of display in pixels</param>
-        /// <param name="height">Height of display in pixels</param>
-        public Ch1115(ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
-            int width = 128, int height = 64) :
+        public Sh1106(ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin) :
             this(spiBus, chipSelectPin?.CreateDigitalOutputPort(), dcPin.CreateDigitalOutputPort(),
-                resetPin.CreateDigitalOutputPort(), width, height)
+                resetPin.CreateDigitalOutputPort())
         {
         }
 
         /// <summary>
-        /// Create a new Ch1115 display object
+        /// Create a new Sh1106 display object
         /// </summary>
         /// <param name="spiBus">SPI bus connected to display</param>
         /// <param name="chipSelectPort">Chip select output port</param>
         /// <param name="dataCommandPort">Data command output port</param>
         /// <param name="resetPort">Reset output port</param>
-        /// <param name="width">Width of display in pixels</param>
-        /// <param name="height">Height of display in pixels</param>
-        public Ch1115(ISpiBus spiBus,
+        public Sh1106(ISpiBus spiBus,
             IDigitalOutputPort chipSelectPort,
             IDigitalOutputPort dataCommandPort,
-            IDigitalOutputPort resetPort,
-            int width = 128, int height = 64)
+            IDigitalOutputPort resetPort)
         {
             this.dataCommandPort = dataCommandPort;
             this.resetPort = resetPort;
 
             spiPerihperal = new SpiPeripheral(spiBus, chipSelectPort);
 
-            imageBuffer = new Buffer1bpp(width, height);
+            imageBuffer = new Buffer1bpp(Width, Height);
             pageBuffer = new byte[PageSize];
 
             Initialize();
         }
 
         /// <summary>
-        /// Invert the entire display (true) or return to normal mode (false).
+        /// Invert the entire display (true) or return to normal mode (false)
         /// </summary>
         public void InvertDisplay(bool invert)
         {
@@ -136,45 +130,34 @@ namespace Meadow.Foundation.Displays
             Reset();
 
             SendCommand(DisplayCommand.DisplayOff);
-            SendCommand(DisplayCommand.ColumnAddressLow);
-            SendCommand(DisplayCommand.ColumnAddressHigh);
-            SendCommand(DisplayCommand.PageAddress);
-            SendCommand(DisplayCommand.DisplayStartLine);
-
-            SetContrast(32);
-
-            SendCommand(DisplayCommand.IRefRestigerSet);
-            SendCommand(DisplayCommand.IRefRestigerAdjust);
-
-            SendCommand(DisplayCommand.SegSetRemap);
-            SendCommand(DisplayCommand.SegSetPads);
-            SendCommand(DisplayCommand.AllPixelsOn);
-            SendCommand(DisplayCommand.DisplayVideoNormal);
+            SendCommand(DisplayCommand.SetDisplayClockDiv);
+            //128x64 init commands
+            SendCommand(0x80);
 
             SendCommand(DisplayCommand.MultiplexModeSet);
             SendCommand(DisplayCommand.MultiplexDataSet);
 
-            SendCommand(DisplayCommand.CommonScanDir);
-            SendCommand(DisplayCommand.OffsetModeSet);
-            SendCommand(DisplayCommand.OffsetDataSet);
+            SendCommand(DisplayCommand.SetDisplayOffset);
+            SendCommand((byte)0);
 
-            SendCommand(DisplayCommand.OscFrequencyModeSet);
-            SendCommand(DisplayCommand.OscFrequencyDataSet);
+            SendCommand(DisplayCommand.DisplayStartLine);
 
-            SendCommand(DisplayCommand.PrechargeModeSet);
-            SendCommand(DisplayCommand.PrechargeDataSet);
+            SendCommand(DisplayCommand.SegInvNormal);
+            SendCommand(0xC0);
 
-            SendCommand(DisplayCommand.ComLevelModeSet);
-            SendCommand(DisplayCommand.ComLevelDataSet);
+            SendCommand(DisplayCommand.SetComPins);
+            SendCommand(0x12);
 
-            SendCommand(DisplayCommand.SetPumpSet | DisplayCommand.SetPumpSet);
+            SendCommand(DisplayCommand.SetContrast);
+            SendCommand(0x0F);
 
-            SendCommand(DisplayCommand.DCModeSet);
-            SendCommand(DisplayCommand.DCOnOffSet);
+            SendCommand(0x30);
+            SendCommand(0xA4);
+
+            SendCommand(DisplayCommand.SetDisplayClockDiv);
+            SendCommand(0xF0);
 
             SendCommand(DisplayCommand.DisplayOn);
-            SendCommand(DisplayCommand.AllPixelsOff);
-            Thread.Sleep(10);
         }
 
         /// <summary>
@@ -183,12 +166,12 @@ namespace Meadow.Foundation.Displays
         /// <param name="contrast">The contrast value (0-63)</param>
         public void SetContrast(byte contrast)
         {
-            SendCommand(DisplayCommand.ContrastValue);
-            SendCommand((byte)((int)DisplayCommand.ContrastValue | (contrast & 0x3f)));
+            SendCommand(DisplayCommand.SetContrast);
+            SendCommand(contrast);
         }
 
         /// <summary>
-        /// Send a command to the display.
+        /// Send a command to the display
         /// </summary>
         /// <param name="command">Command byte to send to the display</param>
         private void SendCommand(byte command)
@@ -221,14 +204,16 @@ namespace Meadow.Foundation.Displays
         {
             for (int page = 0; page < 8; page++)
             {
-                SendCommand((DisplayCommand.ColumnAddressLow) | (StartColumnOffset & 0x0F));
-                SendCommand((int)DisplayCommand.ColumnAddressHigh);
+                SendCommand(DisplayCommand.ColumnAddressLow);
+                SendCommand(DisplayCommand.ColumnAddressHigh);
                 SendCommand((byte)((byte)DisplayCommand.PageAddress | page));
 
                 dataCommandPort.State = Data;
 
                 Array.Copy(imageBuffer.Buffer, Width * page, pageBuffer, 0, PageSize);
                 spiPerihperal.Write(pageBuffer);
+
+                dataCommandPort.State = Command;
             }
         }
 
@@ -252,7 +237,7 @@ namespace Meadow.Foundation.Displays
                     continue;
                 }
 
-                SendCommand((byte)((int)(DisplayCommand.PageAddress) | page));
+                SendCommand((byte)((int)DisplayCommand.PageAddress | page));
                 SendCommand((DisplayCommand.ColumnAddressLow) | (StartColumnOffset & 0x0F));
                 SendCommand((int)DisplayCommand.ColumnAddressHigh | 0);
 
