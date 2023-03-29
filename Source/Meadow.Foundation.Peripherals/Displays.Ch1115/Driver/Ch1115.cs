@@ -95,9 +95,9 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// Invert the entire display (true) or return to normal mode (false).
         /// </summary>
-        public void InvertDisplay(bool cmd)
+        public void InvertDisplay(bool invert)
         {
-            if (cmd)
+            if (invert)
             {
                 SendCommand(DisplayCommand.DisplayVideoReverse);
             }
@@ -222,8 +222,8 @@ namespace Meadow.Foundation.Displays
             for (int page = 0; page < 8; page++)
             {
                 SendCommand((DisplayCommand.ColumnAddressLow) | (StartColumnOffset & 0x0F));
-                SendCommand((int)DisplayCommand.ColumnAddressHigh | 0);
-                SendCommand((byte)((int)DisplayCommand.PageAddress | page));
+                SendCommand((int)DisplayCommand.ColumnAddressHigh);
+                SendCommand((byte)((byte)DisplayCommand.PageAddress | page));
 
                 dataCommandPort.State = Data;
 
