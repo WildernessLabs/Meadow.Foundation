@@ -237,7 +237,7 @@ namespace Meadow.Foundation.Displays
                     continue;
                 }
 
-                SendCommand((byte)((int)(DisplayCommand.PageAddress) | page));
+                SendCommand((byte)((int)DisplayCommand.PageAddress | page));
                 SendCommand((DisplayCommand.ColumnAddressLow) | (StartColumnOffset & 0x0F));
                 SendCommand((int)DisplayCommand.ColumnAddressHigh | 0);
 
