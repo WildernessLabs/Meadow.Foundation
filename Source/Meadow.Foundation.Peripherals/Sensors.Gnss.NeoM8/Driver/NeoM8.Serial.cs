@@ -45,23 +45,17 @@ namespace Meadow.Foundation.Sensors.Gnss
             InitDecoders();
 
             Reset().Wait();
-
-            Resolver.Log.Debug("Finish NeoM8 Serial initialization");
         }
 
         void StartUpdatingSerial()
         {
             if (serialPort.IsOpen)
             {
-                Resolver.Log.Debug("serial port already open");
                 return;
             }
 
-            Resolver.Log.Debug("opening serial port");
             serialPort.Open();
-            Resolver.Log.Debug("serial port opened");
 
-            Resolver.Log.Debug("Requesting NMEA data");
             serialPort.Write(Encoding.ASCII.GetBytes(Commands.PMTK_SET_NMEA_OUTPUT_ALLDATA));
             serialPort.Write(Encoding.ASCII.GetBytes(Commands.PMTK_Q_RELEASE));
             serialPort.Write(Encoding.ASCII.GetBytes(Commands.PGCMD_ANTENNA));
