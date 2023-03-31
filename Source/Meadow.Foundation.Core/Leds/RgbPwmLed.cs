@@ -412,8 +412,6 @@ namespace Meadow.Foundation.Leds
         /// <param name="lowBrightness"></param>
         public void StartPulse(Color color, TimeSpan pulseDuration, float highBrightness = 1, float lowBrightness = 0.15F)
         {
-            pulseDuration = TimeSpan.FromMilliseconds(600);
-
             if (highBrightness > 1 || highBrightness <= 0)
             {
                 throw new ArgumentOutOfRangeException(nameof(highBrightness), "onBrightness must be > 0 and <= 1");
