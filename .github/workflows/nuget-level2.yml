@@ -33,6 +33,13 @@ jobs:
 
     - uses: ./.github/actions/build-package
       with:
+        packageId: Meadow.Foundation.Displays.Ch1115
+        path: Source/Meadow.Foundation.Peripherals/Displays.Ch1115/Driver/Displays.Ch1115.csproj
+        version: ${{ env.version }}
+        token: ${{ env.token }}
+
+    - uses: ./.github/actions/build-package
+      with:
         packageId: Meadow.Foundation.Displays.ePaper
         path: Source/Meadow.Foundation.Peripherals/Displays.ePaper/Driver/Displays.ePaper.csproj
         version: ${{ env.version }}
@@ -63,6 +70,13 @@ jobs:
       with:
         packageId: Meadow.Foundation.Displays.Pcd8544
         path: Source/Meadow.Foundation.Peripherals/Displays.Pcd8544/Driver/Displays.Pcd8544.csproj
+        version: ${{ env.version }}
+        token: ${{ env.token }}
+
+    - uses: ./.github/actions/build-package
+      with:
+        packageId: Meadow.Foundation.Displays.Sh1106
+        path: Source/Meadow.Foundation.Peripherals/Displays.Sh1106/Driver/Displays.Sh1106.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
@@ -108,12 +122,6 @@ jobs:
         version: ${{ env.version }}
         token: ${{ env.token }}
 
-    - uses: ./.github/actions/build-package
-      with:
-        packageId: Meadow.Foundation.ICs.IOExpanders.Ft232h
-        path: Source/Meadow.Foundation.Peripherals/ICs.IOExpanders.Ft232h/Driver/ICs.IOExpanders.Ft232h.csproj
-        version: ${{ env.version }}
-        token: ${{ env.token }}
 
     - uses: ./.github/actions/build-package
       with:

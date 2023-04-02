@@ -110,6 +110,13 @@ jobs:
 
     - uses: ./.github/actions/build-package
       with:
+        packageId: Meadow.Foundation.ICs.IOExpanders.Ft232h
+        path: Source/Meadow.Foundation.Peripherals/ICs.IOExpanders.Ft232h/Driver/ICs.IOExpanders.Ft232h.csproj
+        version: ${{ env.version }}
+        token: ${{ env.token }}
+
+    - uses: ./.github/actions/build-package
+      with:
         packageId: Meadow.Foundation.ICs.IOExpanders.Ht16k33
         path: Source/Meadow.Foundation.Peripherals/ICs.IOExpanders.Ht16k33/Driver/ICs.IOExpanders.Ht16k33.csproj
         version: ${{ env.version }}
@@ -419,7 +426,7 @@ jobs:
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.Sensors.Light.AnalogSolarIntensityGauge
-        path: Source/Meadow.Foundation.Peripherals/Sensors.Light.AnalogSolarGauge/Driver/Sensors.Light.AnalogSolarGauge.csproj
+        path: Source/Meadow.Foundation.Peripherals/Sensors.Light.AnalogSolarIntensityGauge/Driver/Sensors.Light.AnalogSolarIntensityGauge.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
