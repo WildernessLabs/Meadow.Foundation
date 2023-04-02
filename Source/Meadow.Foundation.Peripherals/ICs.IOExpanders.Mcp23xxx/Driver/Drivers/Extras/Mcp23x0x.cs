@@ -35,7 +35,10 @@ namespace Meadow.Foundation.ICs.IOExpanders
         protected Mcp23x0x(II2cBus i2cBus, byte address = 32, IDigitalInputPort interruptPort = null, IDigitalOutputPort resetPort = null) :
             base(i2cBus, address, interruptPort, resetPort)
         {
-            Pins = new PinDefinitions(this);
+            Pins = new PinDefinitions(this)
+            {
+                Controller = this
+            };
         }
 
         /// <summary>
@@ -48,7 +51,10 @@ namespace Meadow.Foundation.ICs.IOExpanders
         protected Mcp23x0x(ISpiBus spiBus, IDigitalOutputPort chipSelectPort, IDigitalInputPort interruptPort = null, IDigitalOutputPort resetPort = null) :
             base(new SpiMcpDeviceComms(spiBus, chipSelectPort), interruptPort, resetPort) // use the internal constructor that takes an IMcpDeviceComms
         {
-            Pins = new PinDefinitions(this);
+            Pins = new PinDefinitions(this)
+            {
+                Controller = this
+            };
         }
 
         /// <summary>

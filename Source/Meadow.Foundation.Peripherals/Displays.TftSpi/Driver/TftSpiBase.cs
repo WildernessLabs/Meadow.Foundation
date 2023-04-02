@@ -91,6 +91,16 @@ namespace Meadow.Foundation.Displays
         protected abstract void Initialize();
 
         /// <summary>
+        /// The display's native height without rotation
+        /// </summary>
+        protected int nativeHeight;
+
+        /// <summary>
+        /// The display's native width without rotation
+        /// </summary>
+        protected int nativeWidth;
+
+        /// <summary>
         /// Represents an abstract TftSpiBase object
         /// </summary>
         /// <param name="spiBus">SPI bus connected to display</param>
@@ -135,7 +145,7 @@ namespace Meadow.Foundation.Displays
 
             spiDisplay = new SpiPeripheral(spiBus, chipSelectPort);
 
-            CreateBuffer(colorMode, width, height);
+            CreateBuffer(colorMode, nativeWidth = width, nativeHeight = height);
         }
 
         /// <summary>
@@ -432,6 +442,31 @@ namespace Meadow.Foundation.Displays
         public void Clear(Color color)
         {
             imageBuffer.Fill(color);
+        }
+
+        /// <summary>
+        /// Update the display buffer if the dimensions change on rotation
+        /// </summary>
+        protected void UpdateBuffer()
+        {
+            var newWidth = Rotation switch
+            {
+                RotationType._90Degrees => nativeHeight,
+                RotationType._270Degrees => nativeHeight,
+                _ => nativeWidth
+            };
+
+            var newHeight = Rotation switch
+            {
+                RotationType._90Degrees => nativeWidth,
+                RotationType._270Degrees => nativeWidth,
+                _ => nativeHeight
+            };
+
+            if (newWidth != Width)
+            {
+                CreateBuffer(ColorMode, newWidth, newHeight);
+            }
         }
     }
 }

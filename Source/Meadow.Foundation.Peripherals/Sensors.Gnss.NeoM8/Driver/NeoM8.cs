@@ -96,13 +96,9 @@ namespace Meadow.Foundation.Sensors.Gnss
 
         void InitDecoders()
         {
-            Resolver.Log.Debug("Create NMEA");
             nmeaProcessor = new NmeaSentenceProcessor();
 
-            Resolver.Log.Debug("Add decoders");
-
             var ggaDecoder = new GgaDecoder();
-            Resolver.Log.Debug("Created GGA");
             nmeaProcessor.RegisterDecoder(ggaDecoder);
             ggaDecoder.PositionReceived += (object sender, GnssPositionInfo location) =>
             {
@@ -148,8 +144,6 @@ namespace Meadow.Foundation.Sensors.Gnss
         void MessageReceived(object sender, SerialMessageData e)
         {
             string msg = e.GetMessageString(Encoding.ASCII);
-
-            Resolver.Log.Debug($"Message arrived:{msg}");
 
             nmeaProcessor?.ProcessNmeaMessage(msg);
         }

@@ -58,8 +58,6 @@ namespace Meadow.Foundation.Sensors.Gnss
             InitDecoders();
 
             await Reset();
-
-            Resolver.Log.Debug("Finish NeoM8 I2C initialization");
         }
 
         async Task StartUpdatingI2c()
