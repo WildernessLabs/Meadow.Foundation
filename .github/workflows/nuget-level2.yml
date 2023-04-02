@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
 env:
-  version: '0.95.0'
+  version: '0.96.0'
   token: ${{ secrets.NUGET_TOKEN }}
 
 jobs:
@@ -28,6 +28,13 @@ jobs:
       with:
         packageId: Meadow.Foundation.Displays.TextDisplayMenu
         path: Source/Meadow.Foundation.Libraries_and_Frameworks/Displays.TextDisplayMenu/Driver/Displays.TextDisplayMenu.csproj
+        version: ${{ env.version }}
+        token: ${{ env.token }}
+
+    - uses: ./.github/actions/build-package
+      with:
+        packageId: Meadow.Foundation.Displays.Ch1115
+        path: Source/Meadow.Foundation.Peripherals/Displays.Ch1115/Driver/Displays.Ch1115.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
@@ -70,6 +77,13 @@ jobs:
       with:
         packageId: Meadow.Foundation.Displays.Pcd8544
         path: Source/Meadow.Foundation.Peripherals/Displays.Pcd8544/Driver/Displays.Pcd8544.csproj
+        version: ${{ env.version }}
+        token: ${{ env.token }}
+
+    - uses: ./.github/actions/build-package
+      with:
+        packageId: Meadow.Foundation.Displays.Sh1106
+        path: Source/Meadow.Foundation.Peripherals/Displays.Sh1106/Driver/Displays.Sh1106.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
