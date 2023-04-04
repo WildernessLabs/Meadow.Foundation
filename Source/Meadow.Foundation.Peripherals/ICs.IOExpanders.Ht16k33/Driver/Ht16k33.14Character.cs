@@ -6,7 +6,20 @@ namespace Meadow.Foundation.ICs.IOExpanders
     public partial class Ht16k33
     {
         /// <summary>
-        /// Set a 14-segment display to a specific character
+        /// Set a message on a 14-segment display array
+        /// </summary>
+        /// <param name="message">The message (up to 4 chracters)</param>
+        public void Set14SegmentMessage(string message)
+        {
+            for (int i = 0; i < Math.Max(message.Length, 4); i++)
+            {
+                Set14SegmentDisplay(message[i], i);
+            }
+        }
+
+
+        /// <summary>
+        /// Set a single 14-segment display to a specific character
         /// </summary>
         /// <param name="character">The ascii chracter</param>
         /// <param name="displayIndex">The display index (0-3)</param>
