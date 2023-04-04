@@ -17,7 +17,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
             }
         }
 
-
         /// <summary>
         /// Set a single 14-segment display to a specific character
         /// </summary>
