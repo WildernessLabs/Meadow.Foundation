@@ -9,17 +9,17 @@ using System.Threading.Tasks;
 namespace Meadow.Foundation.Sensors.Environmental
 {
     /// <summary>
-    /// Represents a Pmsa003I 
+    /// Represents a Pmsa003I AQI particulate matter sensor
     /// </summary>
     public partial class Pmsa003I :
         ByteCommsSensorBase<(
-            Density? StandardParticulateMatter_1micron, //Particulate Matter 1 micro or less
-            Density? StandardParticulateMatter_2_5micron, //Particulate Matter 2.5 micro or less
-            Density? StandardParticulateMatter_10micron, //Particulate Matter 10 micro or less
+            Density? StandardParticulateMatter_1micron, //Particulate Matter 1 micron or less
+            Density? StandardParticulateMatter_2_5micron, //Particulate Matter 2.5 micron or less
+            Density? StandardParticulateMatter_10micron, //Particulate Matter 10 micron or less
             Density? EnvironmentalParticulateMatter_1micron,
             Density? EnvironmentalParticulateMatter_2_5micron,
             Density? EnvironmentalParticulateMatter_10micron,
-            Concentration? particles_0_3microns,//P03um,
+            Concentration? particles_0_3microns,
             Concentration? particles_0_5microns,
             Concentration? particles_10microns,
             Concentration? particles_25microns,
@@ -28,49 +28,125 @@ namespace Meadow.Foundation.Sensors.Environmental
         IConcentrationSensor
     {
         public Concentration? Concentration { get; }
+
+        /// <summary>
+        /// Raised when the Standard particulate matter PM2.5 density changes
+        /// </summary>
         public event EventHandler<IChangeResult<Concentration>> ConcentrationUpdated;
 
         /// <summary>
-        /// Raised when the Standard PM1.0 concentration changes
+        /// Raised when the Standard particulate matter PM1.0 density changes
         /// </summary>
-        public event EventHandler<IChangeResult<Density>> StandardParticulateMatter_1micronUpdated = delegate { };
+        public event EventHandler<IChangeResult<Density>> StandardPM_1micronUpdated = delegate { };
 
         /// <summary>
-        /// Raised when the Standard PM2.5 concentration changes
+        /// Raised when the Standard particulate matter PM2.5 density changes
         /// </summary>
-        public event EventHandler<IChangeResult<Density>> StandardParticulateMatter_2_5micronUpdated = delegate { };
+        public event EventHandler<IChangeResult<Density>> StandardPM_2_5micronUpdated = delegate { };
 
         /// <summary>
-        /// Raised when the Standard PM10.0 concentration changes
+        /// Raised when the Standard particulate matter PM10.0 density changes
         /// </summary>
-        public event EventHandler<IChangeResult<Density>> StandardParticulateMatter_10micron = delegate { };
+        public event EventHandler<IChangeResult<Density>> StandardPM_10micronUpdated = delegate { };
 
         /// <summary>
-        /// Raised when the Environment PM1.0 concentration changes
+        /// Raised when the Environment particulate matter PM1.0 density changes
         /// </summary>
-        public event EventHandler<IChangeResult<Density>> EnvironmentalParticulateMatter_1micron = delegate { };
+        public event EventHandler<IChangeResult<Density>> EnvironmentalPM_1micronUpdated = delegate { };
 
         /// <summary>
-        /// Raised when the Environment PM2.5 concentration changes
+        /// Raised when the Environment particulate matter PM2.5 density changes
         /// </summary>
-        public event EventHandler<IChangeResult<Density>> EnvironmentalParticulateMatter_2_5micron = delegate { };
+        public event EventHandler<IChangeResult<Density>> EnvironmentalPM_2_5micronUpdated = delegate { };
 
         /// <summary>
-        /// Raised when the Environment PM10.0 concentration changes
+        /// Raised when the Environment particulate matter PM10.0 density changes
         /// </summary>
-        public event EventHandler<IChangeResult<Density>> EnvironmentalParticulateMatter_10micron = delegate { };
+        public event EventHandler<IChangeResult<Density>> EnvironmentalPM_10micronUpdated = delegate { };
 
+        /// <summary>
+        /// Raised when the concentration of 0-0.3 micron particles changes
+        /// </summary>
+        public event EventHandler<IChangeResult<Concentration>> ConcentrationOf0_3micronParticlesUpdated = delegate { };
+
+        /// <summary>
+        /// Raised when the concentration of 0.3-0.5 micron particles changes
+        /// </summary>
+        public event EventHandler<IChangeResult<Concentration>> ConcentrationOf0_5micronParticlesUpdated = delegate { };
+
+        /// <summary>
+        /// Raised when the concentration of 0.5-10 micron particles changes
+        /// </summary>
+        public event EventHandler<IChangeResult<Concentration>> ConcentrationOf10micronParticlesUpdated = delegate { };
+
+        /// <summary>
+        /// Raised when the concentration of 10-25 micron particles changes
+        /// </summary>
+        public event EventHandler<IChangeResult<Concentration>> ConcentrationOf25micronParticlesUpdated = delegate { };
+
+        /// <summary>
+        /// Raised when the concentration of 25-50 micron particles changes
+        /// </summary>
+        public event EventHandler<IChangeResult<Concentration>> ConcentrationOf50micronParticlesUpdated = delegate { };
+
+        /// <summary>
+        /// Raised when the concentration of 50-100 micron particles changes
+        /// </summary>
+        public event EventHandler<IChangeResult<Concentration>> ConcentrationOf100micronParticlesUpdated = delegate { };
+
+        /// <summary>
+        /// Standard particulate matter PM1.0 density
+        /// </summary>
         public Density? PM1_0Std => Conditions.StandardParticulateMatter_1micron;
+
+        /// <summary>
+        /// Standard particulate matter PM2.5 density
+        /// </summary>
         public Density? PM2_5Std => Conditions.StandardParticulateMatter_2_5micron;
+
+        /// <summary>
+        /// Standard particulate matter PM10 density
+        /// </summary>
         public Density? PM10_0Std => Conditions.StandardParticulateMatter_10micron;
+
+        /// <summary>
+        /// Standard particulate matter PM1.0 density
+        /// </summary>
         public Density? PM1_0Env => Conditions.EnvironmentalParticulateMatter_1micron;
+
+        /// <summary>
+        /// Standard particulate matter PM2.5 density
+        /// </summary>
         public Density? PM2_5Env => Conditions.EnvironmentalParticulateMatter_2_5micron;
+
+        /// <summary>
+        /// Standard particulate matter PM10 density
+        /// </summary>
         public Density? PM10_0Env => Conditions.EnvironmentalParticulateMatter_10micron;
+
+        /// <summary>
+        /// Concentration of 0 - 0.3 micron particles
+        /// </summary>
         public Concentration? ConcentrationOf0_3micronParticles => Conditions.particles_0_3microns;
+        /// <summary>
+        /// Concentration of 0.3 - 0.5 micron particles
+        /// </summary>
         public Concentration? ConcentrationOf0_5micronParticles => Conditions.particles_0_5microns;
+        /// <summary>
+        /// Concentration of 0.5 - 10 micron particles
+        /// </summary>
         public Concentration? ConcentrationOf10micronParticles => Conditions.particles_10microns;
+        /// <summary>
+        /// Concentration of 0.5 - 10 micron particles
+        /// </summary>
         public Concentration? ConcentrationOf25micronParticles => Conditions.particles_25microns;
+        /// <summary>
+        /// Concentration of 10 - 50 micron particles
+        /// </summary>
         public Concentration? ConcentrationOf50micronParticles => Conditions.particles_50microns;
+        /// <summary>
+        /// Concentration of 50 - 100 micron particles
+        /// </summary>
         public Concentration? ConcentrationOf100micronParticles => Conditions.particles_100microns;
 
         /// <summary>
@@ -150,6 +226,6 @@ namespace Meadow.Foundation.Sensors.Environmental
         }
 
         async Task<Concentration> ISensor<Concentration>.Read()
-            => (await Read()).particles_0_3microns.Value;
+            => (await Read()).particles_25microns.Value;
     }
 }
