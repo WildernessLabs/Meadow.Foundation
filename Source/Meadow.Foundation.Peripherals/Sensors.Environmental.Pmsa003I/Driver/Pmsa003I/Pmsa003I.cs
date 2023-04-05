@@ -225,6 +225,10 @@ namespace Meadow.Foundation.Sensors.Environmental
             return Task.FromResult(Conditions);
         }
 
+        /// <summary>
+        /// Raise change events for subscribers
+        /// </summary>
+        /// <param name="changeResult">The change result with the current sensor data</param>
         protected override void RaiseEventsAndNotify(
             IChangeResult<(Density? StandardParticulateMatter_1micron,
                 Density? StandardParticulateMatter_2_5micron,
@@ -270,23 +274,24 @@ namespace Meadow.Foundation.Sensors.Environmental
             }
             if (changeResult.New.particles_0_5microns is { } P_0_5)
             {
-                ConcentrationOf0_3micronParticlesUpdated?.Invoke(this, new ChangeResult<Concentration>(P_0_5, changeResult.Old.Value.particles_0_5microns));
+                ConcentrationOf0_5micronParticlesUpdated?.Invoke(this, new ChangeResult<Concentration>(P_0_5, changeResult.Old.Value.particles_0_5microns));
             }
             if (changeResult.New.particles_10microns is { } P_10)
             {
-                ConcentrationOf0_3micronParticlesUpdated?.Invoke(this, new ChangeResult<Concentration>(P_10, changeResult.Old.Value.particles_10microns));
+                ConcentrationOf10micronParticlesUpdated?.Invoke(this, new ChangeResult<Concentration>(P_10, changeResult.Old.Value.particles_10microns));
+                ConcentrationUpdated?.Invoke(this, new ChangeResult<Concentration>(P_10, changeResult.Old.Value.particles_10microns));
             }
-            if (changeResult.New.particles_0_3microns is { } P_25)
+            if (changeResult.New.particles_25microns is { } P_25)
             {
-                ConcentrationOf0_3micronParticlesUpdated?.Invoke(this, new ChangeResult<Concentration>(P_25, changeResult.Old.Value.particles_25microns));
+                ConcentrationOf25micronParticlesUpdated?.Invoke(this, new ChangeResult<Concentration>(P_25, changeResult.Old.Value.particles_25microns));
             }
-            if (changeResult.New.particles_0_3microns is { } P_50)
+            if (changeResult.New.particles_50microns is { } P_50)
             {
-                ConcentrationOf0_3micronParticlesUpdated?.Invoke(this, new ChangeResult<Concentration>(P_50, changeResult.Old.Value.particles_50microns));
+                ConcentrationOf50micronParticlesUpdated?.Invoke(this, new ChangeResult<Concentration>(P_50, changeResult.Old.Value.particles_50microns));
             }
-            if (changeResult.New.particles_0_3microns is { } P_100)
+            if (changeResult.New.particles_100microns is { } P_100)
             {
-                ConcentrationOf0_3micronParticlesUpdated?.Invoke(this, new ChangeResult<Concentration>(P_100, changeResult.Old.Value.particles_100microns));
+                ConcentrationOf100micronParticlesUpdated?.Invoke(this, new ChangeResult<Concentration>(P_100, changeResult.Old.Value.particles_100microns));
             }
 
             base.RaiseEventsAndNotify(changeResult);
