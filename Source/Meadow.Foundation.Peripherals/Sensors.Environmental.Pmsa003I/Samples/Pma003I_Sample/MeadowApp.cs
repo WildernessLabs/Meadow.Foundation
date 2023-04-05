@@ -15,15 +15,6 @@ namespace Pmsa003i_Sample
 
         Pmsa003i pmsa003i;
 
-        public override Task Run()
-        {
-            Resolver.Log.Info("Run...");
-
-            pmsa003i.StartUpdating(TimeSpan.FromSeconds(2));
-
-            return base.Run();
-        }
-
         public override Task Initialize()
         {
             var bus = Device.CreateI2cBus(I2cBusSpeed.Standard);
@@ -32,6 +23,15 @@ namespace Pmsa003i_Sample
             pmsa003i.Updated += Pmsa003i_Updated;
 
             return base.Initialize();
+        }
+
+        public override Task Run()
+        {
+            Resolver.Log.Info("Run...");
+
+            pmsa003i.StartUpdating(TimeSpan.FromSeconds(2));
+
+            return base.Run();
         }
 
         private void Pmsa003i_Updated(object sender, IChangeResult<(
