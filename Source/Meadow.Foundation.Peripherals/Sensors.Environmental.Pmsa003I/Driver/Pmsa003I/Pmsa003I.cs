@@ -225,6 +225,73 @@ namespace Meadow.Foundation.Sensors.Environmental
             return Task.FromResult(Conditions);
         }
 
+        protected override void RaiseEventsAndNotify(
+            IChangeResult<(Density? StandardParticulateMatter_1micron,
+                Density? StandardParticulateMatter_2_5micron,
+                Density? StandardParticulateMatter_10micron,
+                Density? EnvironmentalParticulateMatter_1micron,
+                Density? EnvironmentalParticulateMatter_2_5micron,
+                Density? EnvironmentalParticulateMatter_10micron,
+                Concentration? particles_0_3microns,
+                Concentration? particles_0_5microns,
+                Concentration? particles_10microns,
+                Concentration? particles_25microns,
+                Concentration? particles_50microns,
+                Concentration? particles_100microns)> changeResult)
+        {
+            if (changeResult.New.StandardParticulateMatter_1micron is { } SPM0_1)
+            {
+                StandardPM_1micronUpdated?.Invoke(this, new ChangeResult<Density>(SPM0_1, changeResult.Old.Value.StandardParticulateMatter_1micron));
+            }
+            if (changeResult.New.StandardParticulateMatter_2_5micron is { } SPM0_2_5)
+            {
+                StandardPM_1micronUpdated?.Invoke(this, new ChangeResult<Density>(SPM0_2_5, changeResult.Old.Value.StandardParticulateMatter_2_5micron));
+            }
+            if (changeResult.New.StandardParticulateMatter_10micron is { } SPM0_10)
+            {
+                StandardPM_1micronUpdated?.Invoke(this, new ChangeResult<Density>(SPM0_10, changeResult.Old.Value.StandardParticulateMatter_10micron));
+            }
+            if (changeResult.New.EnvironmentalParticulateMatter_1micron is { } EM0_1)
+            {
+                StandardPM_1micronUpdated?.Invoke(this, new ChangeResult<Density>(EM0_1, changeResult.Old.Value.EnvironmentalParticulateMatter_1micron));
+            }
+            if (changeResult.New.EnvironmentalParticulateMatter_2_5micron is { } EM0_2_5)
+            {
+                StandardPM_1micronUpdated?.Invoke(this, new ChangeResult<Density>(EM0_2_5, changeResult.Old.Value.EnvironmentalParticulateMatter_2_5micron));
+            }
+            if (changeResult.New.EnvironmentalParticulateMatter_10micron is { } EM0_10)
+            {
+                StandardPM_1micronUpdated?.Invoke(this, new ChangeResult<Density>(EM0_10, changeResult.Old.Value.EnvironmentalParticulateMatter_10micron));
+            }
+
+            if (changeResult.New.particles_0_3microns is { } P_0_3)
+            {
+                ConcentrationOf0_3micronParticlesUpdated?.Invoke(this, new ChangeResult<Concentration>(P_0_3, changeResult.Old.Value.particles_0_3microns));
+            }
+            if (changeResult.New.particles_0_5microns is { } P_0_5)
+            {
+                ConcentrationOf0_3micronParticlesUpdated?.Invoke(this, new ChangeResult<Concentration>(P_0_5, changeResult.Old.Value.particles_0_5microns));
+            }
+            if (changeResult.New.particles_10microns is { } P_10)
+            {
+                ConcentrationOf0_3micronParticlesUpdated?.Invoke(this, new ChangeResult<Concentration>(P_10, changeResult.Old.Value.particles_10microns));
+            }
+            if (changeResult.New.particles_0_3microns is { } P_25)
+            {
+                ConcentrationOf0_3micronParticlesUpdated?.Invoke(this, new ChangeResult<Concentration>(P_25, changeResult.Old.Value.particles_25microns));
+            }
+            if (changeResult.New.particles_0_3microns is { } P_50)
+            {
+                ConcentrationOf0_3micronParticlesUpdated?.Invoke(this, new ChangeResult<Concentration>(P_50, changeResult.Old.Value.particles_50microns));
+            }
+            if (changeResult.New.particles_0_3microns is { } P_100)
+            {
+                ConcentrationOf0_3micronParticlesUpdated?.Invoke(this, new ChangeResult<Concentration>(P_100, changeResult.Old.Value.particles_100microns));
+            }
+
+            base.RaiseEventsAndNotify(changeResult);
+        }
+
         async Task<Concentration> ISensor<Concentration>.Read()
             => (await Read()).particles_25microns.Value;
     }
