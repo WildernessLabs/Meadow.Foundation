@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Displays.ePaper.Uc8151c_Sample
 {
-    public class MeadowApp : App<F7FeatherV1>
+    public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
 

@@ -198,6 +198,8 @@ namespace Meadow.Foundation.Displays
                     yOffset = columnStart;
                     break;
             }
+
+            UpdateBuffer();
         }
     }
 }

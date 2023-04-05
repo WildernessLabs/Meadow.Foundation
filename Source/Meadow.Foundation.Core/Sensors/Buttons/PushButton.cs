@@ -134,7 +134,8 @@ namespace Meadow.Foundation.Sensors.Buttons
             else
             {
                 //ToDo remove resistor mode hack for RC2
-                DigitalIn.Resistor = resistorMode;
+                if (DigitalIn.Resistor != resistorMode)
+                { DigitalIn.Resistor = resistorMode; }
                 IsPolling = true;
                 ctsPolling = new CancellationTokenSource();
 

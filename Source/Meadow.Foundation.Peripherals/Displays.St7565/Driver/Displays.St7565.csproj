@@ -13,7 +13,7 @@
     <PackageTags>Meadow, Meadow.Foundation, Displays, LCD, ST7565</PackageTags>
     <Version>0.1.55</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Description>ST7565 SPI color display</Description>
+    <Description>ST7565 SPI monochrome OLED display</Description>
   </PropertyGroup>
   <ItemGroup>
     <None Include="..\..\..\icon.png" Pack="true" PackagePath="" />

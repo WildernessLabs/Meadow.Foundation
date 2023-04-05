@@ -1,5 +1,5 @@
-﻿using System;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
+using System;
 
 namespace Meadow.Foundation.ICs.IOExpanders
 {
@@ -26,7 +26,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <summary>
         /// Create a new HT16K33 object using the default parameters
         /// </summary>
-        /// <param name="address">Address of the bus on the I2C display.</param>
+        /// <param name="address">Address of the bus on the I2C display</param>
         /// <param name="i2cBus">I2C bus instance</param>
         public Ht16k33(II2cBus i2cBus, byte address = (byte)Addresses.Default)
         {

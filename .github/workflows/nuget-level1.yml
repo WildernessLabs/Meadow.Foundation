@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
 env:
-  version: '0.94.0'
+  version: '0.96.0'
   token: ${{ secrets.NUGET_TOKEN }}
 
 jobs:
@@ -105,6 +105,13 @@ jobs:
       with:
         packageId: Meadow.Foundation.ICs.IOExpanders.Ds3502
         path: Source/Meadow.Foundation.Peripherals/ICs.IOExpanders.Ds3502/Driver/ICs.IOExpanders.Ds3502.csproj
+        version: ${{ env.version }}
+        token: ${{ env.token }}
+
+    - uses: ./.github/actions/build-package
+      with:
+        packageId: Meadow.Foundation.ICs.IOExpanders.Ft232h
+        path: Source/Meadow.Foundation.Peripherals/ICs.IOExpanders.Ft232h/Driver/ICs.IOExpanders.Ft232h.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
@@ -419,7 +426,7 @@ jobs:
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.Sensors.Light.AnalogSolarIntensityGauge
-        path: Source/Meadow.Foundation.Peripherals/Sensors.Light.AnalogSolarGauge/Driver/Sensors.Light.AnalogSolarGauge.csproj
+        path: Source/Meadow.Foundation.Peripherals/Sensors.Light.AnalogSolarIntensityGauge/Driver/Sensors.Light.AnalogSolarIntensityGauge.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
@@ -653,4 +660,3 @@ jobs:
         path: Source/Meadow.Foundation.Peripherals/Servos.ServoCore/Driver/Servos.ServoCore.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
-
