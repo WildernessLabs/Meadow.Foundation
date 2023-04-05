@@ -11,7 +11,9 @@ namespace Pmsa003i_Sample
     // Change F7FeatherV2 to F7FeatherV1 for V1.x boards
     public class MeadowApp : App<F7FeatherV2>
     {
-        private Pmsa003i pmsa003i;
+        //<!=SNIP=>
+
+        Pmsa003i pmsa003i;
 
         public override Task Run()
         {
@@ -60,5 +62,7 @@ namespace Pmsa003i_Sample
             Console.WriteLine($"Count of particles - 50 microns: {e.New.particles_50microns.Value} in 0.1 liters of air");
             Console.WriteLine($"Count of particles - 100 microns: {e.New.particles_100microns.Value} in 0.1 liters of air");
         }
+
+        //<!=SNOP=>
     }
 }
