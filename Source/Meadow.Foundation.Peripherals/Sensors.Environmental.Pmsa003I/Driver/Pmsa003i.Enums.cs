@@ -1,6 +1,6 @@
 ﻿namespace Meadow.Foundation.Sensors.Environmental
 {
-    public partial class Pmsa003I
+    public partial class Pmsa003i
     {
         /// <summary>
         /// Valid I2C addresses for the sensor
