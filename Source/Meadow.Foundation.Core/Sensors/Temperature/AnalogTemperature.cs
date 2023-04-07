@@ -203,7 +203,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// Convenience method to get the current temperature. For frequent reads, use
         /// StartSampling() and StopSampling() in conjunction with the SampleBuffer.
         /// </summary>
-        /// <returns>A float value that's ann average value of all the samples taken.</returns>
+        /// <returns>The temperature averages of the given sample count</returns>
         protected override async Task<Units.Temperature> ReadSensor()
         {
             var voltage = await AnalogInputPort.Read();
@@ -260,7 +260,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// Converts voltage to Temperature
         /// </summary>
         /// <param name="voltage"></param>
-        /// <returns>temperature at a Temperature struct</returns>
+        /// <returns>Temperature</returns>
         protected Units.Temperature VoltageToTemperature(Voltage voltage)
         {
             return new Units.Temperature(SensorCalibration.SampleReading +
