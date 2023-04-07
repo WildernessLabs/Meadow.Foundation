@@ -1,20 +1,20 @@
-using System;
-using System.Threading.Tasks;
 using Meadow.Hardware;
 using Meadow.Peripherals.Sensors;
 using Meadow.Peripherals.Sensors.Environmental;
 using Meadow.Units;
 using Meadow.Utilities;
+using System;
+using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Environmental
 {
     /// <summary>
     /// Represents an ENS160 Digital Metal-Oxide Multi-Gas Sensor
     /// </summary>
-    public partial class Ens160 : 
-        ByteCommsSensorBase<(Concentration? CO2Concentration, 
-                             Concentration? EthanolConcentration, 
-                             Concentration? TVOCConcentration)>, 
+    public partial class Ens160 :
+        ByteCommsSensorBase<(Concentration? CO2Concentration,
+                             Concentration? EthanolConcentration,
+                             Concentration? TVOCConcentration)>,
         IConcentrationSensor
     {
         /// <summary>
@@ -246,7 +246,7 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// Get Scdx40 C02 Gas Concentration and
         /// Update the Concentration property
         /// </summary>
-        protected override async Task<(Concentration? CO2Concentration, 
+        protected override async Task<(Concentration? CO2Concentration,
                                        Concentration? EthanolConcentration,
                                        Concentration? TVOCConcentration)> ReadSensor()
         {
@@ -266,7 +266,7 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// Raise change events for subscribers
         /// </summary>
         /// <param name="changeResult">The change result with the current sensor data</param>
-        protected void RaiseChangedAndNotify(IChangeResult<(Concentration? CO2Concentration, Concentration? EthanolConcentration, Concentration? TVOCConcentration)> changeResult)
+        protected override void RaiseEventsAndNotify(IChangeResult<(Concentration? CO2Concentration, Concentration? EthanolConcentration, Concentration? TVOCConcentration)> changeResult)
         {
             if (changeResult.New.CO2Concentration is { } concentration)
             {
