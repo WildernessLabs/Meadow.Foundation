@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Meadow.Foundation.Sensors.Environmental
 {
     /// <summary>
-    /// Represents an MiniPID2 analog photoionisation (PID) VOC sensor
+    /// Represents an IonScience MiniPID2 analog photoionisation (PID) VOC sensor
     /// </summary>
     public partial class MiniPID2 : SamplingSensorBase<Concentration>, IConcentrationSensor
     {
@@ -26,6 +26,11 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// </summary>
         public Concentration? Concentration { get; protected set; }
 
+        /// <summary>
+        /// The MiniPID2 device type
+        /// </summary>
+        public MiniPID2Type MiniPID2DeviceType { get; protected set; }
+
         ///<Summary>
         /// AnalogInputPort connected to temperature sensor
         ///</Summary>
@@ -39,11 +44,12 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// These are automatically averaged to reduce noise</param>
         /// <param name="sampleInterval">The time between sample readings</param>
         public MiniPID2(IPin analogPin,
+                        MiniPID2Type pid2Type,
                         int sampleCount = 5,
                         TimeSpan? sampleInterval = null) :
             this(analogPin.CreateAnalogInputPort(sampleCount,
                 sampleInterval ?? TimeSpan.FromMilliseconds(40),
-                new Voltage(3.3, Voltage.UnitType.Volts)))
+                new Voltage(3.3, Voltage.UnitType.Volts)), pid2Type)
         {
         }
 
@@ -51,8 +57,9 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// Create a new MiniPID2 object
         /// </summary>
         /// <param name="analogInputPort">The analog port connected to the sensor</param>
-        public MiniPID2(IAnalogInputPort analogInputPort)
+        public MiniPID2(IAnalogInputPort analogInputPort, MiniPID2Type pid2Type)
         {
+            MiniPID2DeviceType = pid2Type;
             AnalogInputPort = analogInputPort;
             Initialize();
         }
@@ -62,7 +69,6 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// </summary>
         void Initialize()
         {
-            // wire up our observable
             AnalogInputPort.Subscribe
             (
                 IAnalogInputPort.CreateObserver(
@@ -73,9 +79,7 @@ namespace Meadow.Foundation.Sensors.Environmental
                             New = VoltageToConcentration(result.New),
                             Old = Concentration
                         };
-                        // save state
                         Concentration = changeResult.New;
-                        // notify
                         RaiseEventsAndNotify(changeResult);
                     }
                 )
@@ -156,7 +160,16 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// <returns>Concentration</returns>
         protected Concentration VoltageToConcentration(Voltage voltage)
         {
-            return new Concentration(voltage.Volts);
+            switch (MiniPID2DeviceType)
+            {
+                case MiniPID2Type.PPB:
+                    Console.WriteLine(voltage.ToString());
+                    var ppb = (voltage.Millivolts - (51 + 65) / 2.0) / 30.0;
+                    return new Concentration(ppb, Units.Concentration.UnitType.PartsPerBillion);
+
+            }
+
+            return new Concentration(0);
         }
     }
 }

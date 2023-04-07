@@ -1,35 +1,35 @@
-﻿using System;
-using System.Threading.Tasks;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Environmental;
+using System;
+using System.Threading.Tasks;
 
 namespace Sensors.Environmental.Ens160_Sample
 {
-    public class MeadowApp : App<F7FeatherV2>
+    public class MeadowApp : App<F7FeatherV1>
     {
         //<!=SNIP=>
 
-        Ens160 sensor;
+        MiniPID2 sensor;
 
         public override Task Initialize()
         {
             Resolver.Log.Info("Initializing...");
 
-            var i2cBus = Device.CreateI2cBus(Meadow.Hardware.I2cBusSpeed.Standard);
-      
-            sensor = new Ens160(i2cBus, (byte)Ens160.Addresses.Address_0x53);
 
-            
-            var consumer = Ens160.CreateObserver(
+            sensor = new MiniPID2(Device.Pins.A01, MiniPID2.MiniPID2Type.PPB);
+
+
+
+            var consumer = MiniPID2.CreateObserver(
                 handler: result =>
                 {
-                    Resolver.Log.Info($"Observer: C02 concentration changed by threshold; new: {result.New.CO2Concentration?.PartsPerMillion:N0}ppm");
+                    Resolver.Log.Info($"Observer: VOC concentration changed by threshold; new: {result.New.PartsPerBillion:N0}ppm");
                 },
                 filter: result =>
                 {
-                    if (result.Old?.CO2Concentration is { } oldCon &&
-                        result.New.CO2Concentration is { } newCon)
+                    if (result.Old is { } oldCon &&
+                        result.New is { } newCon)
                     {
                         return Math.Abs((newCon - oldCon).PartsPerMillion) > 10;
                     }
@@ -43,10 +43,7 @@ namespace Sensors.Environmental.Ens160_Sample
             {
                 sensor.Updated += (sender, result) =>
                 {
-                    Resolver.Log.Info($"  CO2 Concentration: {result.New.CO2Concentration?.PartsPerMillion:N0}ppm");
-                    Resolver.Log.Info($"  Ethanol Concentraion: {result.New.EthanolConcentration?.PartsPerBillion:N0}ppb");
-                    Resolver.Log.Info($"  TVOC Concentraion: {result.New.TVOCConcentration?.PartsPerBillion:N0}ppb");
-                    Resolver.Log.Info($"  AQI: {sensor.GetAirQualityIndex()}");    
+                    Resolver.Log.Info($"  VOC Concentraion: {result.New.PartsPerBillion:N0}ppb");
                 };
             }
 
