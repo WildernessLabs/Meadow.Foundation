@@ -16,15 +16,12 @@ namespace Sensors.Environmental.Ens160_Sample
         {
             Resolver.Log.Info("Initializing...");
 
-
-            sensor = new MiniPID2(Device.Pins.A01, MiniPID2.MiniPID2Type.PPB);
-
-
+            sensor = new MiniPID2(Device.Pins.A01, MiniPID2.MiniPID2Type.PPB_WR);
 
             var consumer = MiniPID2.CreateObserver(
                 handler: result =>
                 {
-                    Resolver.Log.Info($"Observer: VOC concentration changed by threshold; new: {result.New.PartsPerBillion:N0}ppm");
+                    Resolver.Log.Info($"Observer: VOC concentration changed by threshold; new: {result.New.PartsPerBillion:N1}ppm");
                 },
                 filter: result =>
                 {
@@ -43,7 +40,7 @@ namespace Sensors.Environmental.Ens160_Sample
             {
                 sensor.Updated += (sender, result) =>
                 {
-                    Resolver.Log.Info($"  VOC Concentraion: {result.New.PartsPerBillion:N0}ppb");
+                    Resolver.Log.Info($"  VOC Concentraion: {result.New.PartsPerMillion:N1}ppm");
                 };
             }
 

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Meadow.Foundation.Sensors.Environmental
 {
     /// <summary>
-    /// Represents an IonScience MiniPID2 analog photoionisation (PID) VOC sensor
+    /// Represents an IonScience MiniPID2 analog photoionisation (PID) Volatile Organic Compounds (VOC) sensor
     /// </summary>
     public partial class MiniPID2 : SamplingSensorBase<Concentration>, IConcentrationSensor
     {
@@ -36,10 +36,13 @@ namespace Meadow.Foundation.Sensors.Environmental
         ///</Summary>
         protected IAnalogInputPort AnalogInputPort { get; }
 
+        SensorCalibration[] calibrations;
+
         /// <summary>
         /// Create a new MiniPID2 object
         /// </summary>
         /// <param name="analogPin">The analog data pin connected to the sensor</param>
+        /// <param name="pid2Type">The MiniPID sensor type</param>
         /// <param name="sampleCount">How many samples to take during a given reading.
         /// These are automatically averaged to reduce noise</param>
         /// <param name="sampleInterval">The time between sample readings</param>
@@ -57,6 +60,7 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// Create a new MiniPID2 object
         /// </summary>
         /// <param name="analogInputPort">The analog port connected to the sensor</param>
+        /// <param name="pid2Type">The MiniPID sensor type</param>
         public MiniPID2(IAnalogInputPort analogInputPort, MiniPID2Type pid2Type)
         {
             MiniPID2DeviceType = pid2Type;
@@ -65,10 +69,46 @@ namespace Meadow.Foundation.Sensors.Environmental
         }
 
         /// <summary>
+        /// Set the sensor voltage offset 
+        /// Useful for compensating for air conditions
+        /// </summary>
+        /// <param name="offset">Offset voltage</param>
+        /// <param name="sensorType">The sensor to change</param>
+        public void SetOffsetForSensor(Voltage offset, MiniPID2Type sensorType)
+        {
+            calibrations[(int)sensorType].Offset = offset;
+        }
+
+        /// <summary>
+        /// Get the voltage offset for a sensor
+        /// </summary>
+        /// <param name="sensorType">The sensor</param>
+        /// <returns>The offset as voltage</returns>
+        public Voltage GetOffsetForSensor(MiniPID2Type sensorType)
+            => calibrations[(int)sensorType].Offset;
+
+        /// <summary>
         /// Initialize the sensor
         /// </summary>
         void Initialize()
         {
+            static SensorCalibration GetCalibration(int airOffsetLow, int airOffsetHigh, double sensitivity, double minimumPPB)
+            {
+                return new SensorCalibration(new Voltage((airOffsetLow + airOffsetHigh) / 2, Voltage.UnitType.Millivolts),
+                                                                        new Voltage(sensitivity, Voltage.UnitType.Millivolts),
+                                                                        new Concentration(minimumPPB, Units.Concentration.UnitType.PartsPerBillion));
+            }
+
+            calibrations = new SensorCalibration[(int)MiniPID2Type.count];
+
+            calibrations[(int)MiniPID2Type.PPM] = GetCalibration(51, 65, 65, 100);
+            calibrations[(int)MiniPID2Type.PPM_WR] = GetCalibration(51, 64, 40, 500);
+            calibrations[(int)MiniPID2Type.PPB] = GetCalibration(51, 80, 30, 1);
+            calibrations[(int)MiniPID2Type.PPB_WR] = GetCalibration(51, 80, 5, 20);
+            calibrations[(int)MiniPID2Type.HS] = GetCalibration(100, 200, 600, 0.5);
+            calibrations[(int)MiniPID2Type._10ev] = GetCalibration(51, 80, 15, 5);
+            calibrations[(int)MiniPID2Type._11_7eV] = GetCalibration(51, 90, 1, 100);
+
             AnalogInputPort.Subscribe
             (
                 IAnalogInputPort.CreateObserver(
@@ -97,24 +137,6 @@ namespace Meadow.Foundation.Sensors.Environmental
             var newConcentration = VoltageToConcentration(voltage);
             Concentration = newConcentration;
             return newConcentration;
-        }
-
-        /// <summary>
-        /// Set ambient temperature
-        /// </summary>
-        /// <param name="ambientTemperature"></param>
-        public void SetTemperature(Units.Temperature ambientTemperature)
-        {
-
-        }
-
-        /// <summary>
-        /// Set relative humidity
-        /// </summary>
-        /// <param name="humidity"></param>
-        public void SetHumidity(RelativeHumidity humidity)
-        {
-
         }
 
         /// <summary>
@@ -160,16 +182,41 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// <returns>Concentration</returns>
         protected Concentration VoltageToConcentration(Voltage voltage)
         {
-            switch (MiniPID2DeviceType)
-            {
-                case MiniPID2Type.PPB:
-                    Console.WriteLine(voltage.ToString());
-                    var ppb = (voltage.Millivolts - (51 + 65) / 2.0) / 30.0;
-                    return new Concentration(ppb, Units.Concentration.UnitType.PartsPerBillion);
+            int i = (int)MiniPID2DeviceType;
 
+            var ppm = (voltage.Millivolts - calibrations[i].Offset.Millivolts) / calibrations[i].Sensitivity.Millivolts;
+
+            if (ppm < calibrations[i].MinimumDetectionLimit.PartsPerMillion)
+            {
+                return calibrations[i].MinimumDetectionLimit;
             }
 
-            return new Concentration(0);
+            return new Concentration(ppm, Units.Concentration.UnitType.PartsPerMillion);
+        }
+
+        struct SensorCalibration
+        {
+            public SensorCalibration(Voltage offset, Voltage sensitivity, Concentration minimumDetectionLimit)
+            {
+                Offset = offset;
+                Sensitivity = sensitivity;
+                MinimumDetectionLimit = minimumDetectionLimit;
+            }
+
+            /// <summary>
+            /// The offset to compensate for air quality/conditions
+            /// </summary>
+            public Voltage Offset { get; set; }
+
+            /// <summary>
+            /// Sensitivity mv/ppm as voltage
+            /// </summary>
+            public Voltage Sensitivity { get; set; }
+
+            /// <summary>
+            /// The minimum concentration returned by the sensor
+            /// </summary>
+            public Concentration MinimumDetectionLimit { get; set; }
         }
     }
 }
