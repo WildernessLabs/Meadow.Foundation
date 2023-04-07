@@ -3,7 +3,6 @@ using Meadow.Hardware;
 using Meadow.Peripherals.Sensors.Hid;
 using System;
 
-
 namespace Meadow.Foundation.Sensors.Hid
 {
     /// <summary>
@@ -16,20 +15,22 @@ namespace Meadow.Foundation.Sensors.Hid
         /// </summary>
         public DigitalJoystickPosition? Position { get; protected set; } = DigitalJoystickPosition.Center;
 
+        /// <summary>
+        /// Raised when the digital joystick position changes
+        /// </summary>
         public event EventHandler<ChangeResult<DigitalJoystickPosition>> Updated;
 
-        PushButton buttonUp;
-        PushButton buttonDown;
-        PushButton buttonLeft;
-        PushButton buttonRight;
+        readonly PushButton buttonUp;
+        readonly PushButton buttonDown;
+        readonly PushButton buttonLeft;
+        readonly PushButton buttonRight;
 
         public DigitalJoystick(IPin pinUp, IPin pinDown, IPin pinLeft, IPin pinRight, ResistorMode resistorMode)
             : this(pinUp.CreateDigitalInputPort(InterruptMode.EdgeBoth, resistorMode),
                    pinDown.CreateDigitalInputPort(InterruptMode.EdgeBoth, resistorMode),
                    pinLeft.CreateDigitalInputPort(InterruptMode.EdgeBoth, resistorMode),
                    pinRight.CreateDigitalInputPort(InterruptMode.EdgeBoth, resistorMode))
-        {
-        }
+        { }
 
         public DigitalJoystick(IDigitalInputPort portUp,
                                 IDigitalInputPort portDown,

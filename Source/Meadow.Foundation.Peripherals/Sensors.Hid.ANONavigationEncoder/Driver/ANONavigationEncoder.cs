@@ -34,10 +34,10 @@ namespace Meadow.Foundation.Sensors.Hid
             var buttonResistorMode = isSwitchCommonGround ? ResistorMode.InternalPullUp : ResistorMode.InternalPullDown;
 
             DirectionalPad = new DigitalJoystick(
-                pinSwitch2,
                 pinSwitch4,
-                pinSwitch1,
+                pinSwitch2,
                 pinSwitch3,
+                pinSwitch1,
                 buttonResistorMode);
 
             ButtonCenter = new PushButton(pinSwitch5, buttonResistorMode);
