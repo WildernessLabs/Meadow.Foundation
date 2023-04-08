@@ -8,7 +8,7 @@ namespace Meadow.Foundation.Sensors.Hid
     /// <summary>
     /// Represents a ANO Directional Navigation and Scroll Wheel Rotary Encoder
     /// </summary>
-    public partial class ANONavigationEncoder
+    public class ANONavigationEncoder
     {
         /// <summary>
         /// The directional pad
@@ -28,6 +28,15 @@ namespace Meadow.Foundation.Sensors.Hid
         /// <summary>
         /// Create a new ANONavigationEncoder object
         /// </summary>
+        /// <param name="pinSwitch1">The pin connected to switch 1 (left)</param>
+        /// <param name="pinSwitch2">The pin connected to switch 2 (down)</param>
+        /// <param name="pinSwitch3">The pin connected to switch 3 (right)</param>
+        /// <param name="pinSwitch4">The pin connected to switch 4 (up)</param>
+        /// <param name="pinSwitch5">The pin connected to switch 5 (center button)</param>
+        /// <param name="isSwitchCommonGround">Are the switches connected to ground (true) or VCC (false)</param>
+        /// <param name="pinEncoderA">The pin connected to rotary encoder A</param>
+        /// <param name="pinEncoderB">The pin connected to rotary encoder B</param>
+        /// <param name="isEncoderCommonGround">Is the rotary encoder connected to ground (true) or VCC (false)></param>
         public ANONavigationEncoder(IPin pinSwitch1, IPin pinSwitch2, IPin pinSwitch3, IPin pinSwitch4, IPin pinSwitch5,
             bool isSwitchCommonGround, IPin pinEncoderA, IPin pinEncoderB, bool isEncoderCommonGround)
         {
@@ -48,6 +57,13 @@ namespace Meadow.Foundation.Sensors.Hid
         /// <summary>
         /// Create a new ANONavigationEncoder object
         /// </summary>
+        /// <param name="portSwitch1">The port for switch 1 (left)</param>
+        /// <param name="portSwitch2">The port for switch 2 (down)</param>
+        /// <param name="portSwitch3">The port for switch 3 (right)</param>
+        /// <param name="portSwitch4">The port for switch 4 (up)</param>
+        /// <param name="portSwitch5">The port for switch 5 (center buttons)</param>
+        /// <param name="portEncoderA">The port for rotary encoder A</param>
+        /// <param name="portEncoderB">The port for rotary encoder A</param>
         public ANONavigationEncoder(IDigitalInputPort portSwitch1,
             IDigitalInputPort portSwitch2,
             IDigitalInputPort portSwitch3,
