@@ -6,7 +6,7 @@ using System;
 namespace Meadow.Foundation.Sensors.Hid
 {
     /// <summary>
-    /// Represents a 4 switch digital joystick or directional pad (D-pad)
+    /// Represents a 4 switch digital joystick / directional pad (D-pad)
     /// </summary>
     public class DigitalJoystick : IDigitalJoystick
     {
@@ -18,13 +18,33 @@ namespace Meadow.Foundation.Sensors.Hid
         /// <summary>
         /// Raised when the digital joystick position changes
         /// </summary>
-        public event EventHandler<ChangeResult<DigitalJoystickPosition>> Updated;
+        public event EventHandler<ChangeResult<DigitalJoystickPosition>> Updated = delegate { };
 
-        readonly PushButton buttonUp;
-        readonly PushButton buttonDown;
-        readonly PushButton buttonLeft;
-        readonly PushButton buttonRight;
+        /// <summary>
+        /// The PushButton class for the up digital joystick switch
+        /// </summary>
+        public PushButton ButtonUp { get; protected set; }
+        /// <summary>
+        /// The PushButton class for the down digital joystick switch
+        /// </summary>
+        public PushButton ButtonDown { get; protected set; }
+        /// <summary>
+        /// The PushButton class for the left digital joystick switch
+        /// </summary>
+        public PushButton ButtonLeft { get; protected set; }
+        /// <summary>
+        /// The PushButton class for the right digital joystick switch
+        /// </summary>
+        public PushButton ButtonRight { get; protected set; }
 
+        /// <summary>
+        /// Create a new DigitalJoystick object
+        /// </summary>
+        /// <param name="pinUp">The pin connected to the up switch</param>
+        /// <param name="pinDown">The pin connected to the down switch</param>
+        /// <param name="pinLeft">The pin connected to the left switch</param>
+        /// <param name="pinRight">The pin connected to the right switch</param>
+        /// <param name="resistorMode">The resistor mode for all pins</param>
         public DigitalJoystick(IPin pinUp, IPin pinDown, IPin pinLeft, IPin pinRight, ResistorMode resistorMode)
             : this(pinUp.CreateDigitalInputPort(InterruptMode.EdgeBoth, resistorMode),
                    pinDown.CreateDigitalInputPort(InterruptMode.EdgeBoth, resistorMode),
@@ -32,43 +52,46 @@ namespace Meadow.Foundation.Sensors.Hid
                    pinRight.CreateDigitalInputPort(InterruptMode.EdgeBoth, resistorMode))
         { }
 
+        /// <summary>
+        /// Create a new DigitalJoystick object
+        /// </summary>
+        /// <param name="portUp">The digital port for the up switch</param>
+        /// <param name="portDown">The digital port for the down switch</param>
+        /// <param name="portLeft">The digital port for the left switch</param>
+        /// <param name="portRight">The digital port for the right switch</param>
         public DigitalJoystick(IDigitalInputPort portUp,
                                 IDigitalInputPort portDown,
                                 IDigitalInputPort portLeft,
                                 IDigitalInputPort portRight)
         {
-            buttonUp = new PushButton(portUp);
-            buttonDown = new PushButton(portDown);
-            buttonLeft = new PushButton(portLeft);
-            buttonRight = new PushButton(portRight);
+            ButtonUp = new PushButton(portUp);
+            ButtonDown = new PushButton(portDown);
+            ButtonLeft = new PushButton(portLeft);
+            ButtonRight = new PushButton(portRight);
 
-            buttonUp.PressStarted += PressStarted;
-            buttonDown.PressStarted += PressStarted;
-            buttonLeft.PressStarted += PressStarted;
-            buttonRight.PressStarted += PressStarted;
+            ButtonUp.PressStarted += PressStarted;
+            ButtonDown.PressStarted += PressStarted;
+            ButtonLeft.PressStarted += PressStarted;
+            ButtonRight.PressStarted += PressStarted;
 
-            buttonUp.PressEnded += PressEnded;
-            buttonDown.PressEnded += PressEnded;
-            buttonLeft.PressEnded += PressEnded;
-            buttonUp.PressEnded += PressEnded;
+            ButtonUp.PressEnded += PressEnded;
+            ButtonDown.PressEnded += PressEnded;
+            ButtonLeft.PressEnded += PressEnded;
+            ButtonUp.PressEnded += PressEnded;
         }
 
         private void PressEnded(object sender, EventArgs e)
-        {
-            Update();
-        }
+            => Update();
 
         private void PressStarted(object sender, EventArgs e)
-        {
-            Update();
-        }
+            => Update();
 
         void Update()
         {
-            var isLeftPressed = buttonLeft.State;
-            var isRightPressed = buttonRight.State;
-            var isUpPressed = buttonUp.State;
-            var isDownPressed = buttonDown.State;
+            var isLeftPressed = ButtonLeft.State;
+            var isRightPressed = ButtonRight.State;
+            var isUpPressed = ButtonUp.State;
+            var isDownPressed = ButtonDown.State;
 
             var newPosition = GetDigitalPosition(isLeftPressed, isRightPressed, isUpPressed, isDownPressed);
 
