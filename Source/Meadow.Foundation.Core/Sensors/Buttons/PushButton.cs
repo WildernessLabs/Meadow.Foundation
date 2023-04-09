@@ -39,7 +39,7 @@ namespace Meadow.Foundation.Sensors.Buttons
 
         /// <summary>
         /// The button state polling interval for PushButton instances that are created
-        /// from a port that doesn't have an tnterrupt mode of EdgeBoth - otherwise ignored
+        /// from a port that doesn't have an interrupt mode of EdgeBoth - otherwise ignored
         /// </summary>
         public TimeSpan ButtonPollingInterval { get; set; } = TimeSpan.FromMilliseconds(100);
 

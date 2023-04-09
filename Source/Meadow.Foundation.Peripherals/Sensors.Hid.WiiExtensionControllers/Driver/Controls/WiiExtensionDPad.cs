@@ -1,5 +1,4 @@
-﻿using Meadow;
-using Meadow.Peripherals.Sensors.Hid;
+﻿using Meadow.Peripherals.Sensors.Hid;
 using System;
 
 namespace Meadow.Foundation.Sensors.Hid
@@ -14,11 +13,10 @@ namespace Meadow.Foundation.Sensors.Hid
         {
             var newPosition = GetDigitalPosition(isLeftPressed, isRightPressed, isUpPressed, isDownPressed);
 
-            if(newPosition != Position)
+            if (newPosition != Position)
             {
-
                 Updated?.Invoke(this, new ChangeResult<DigitalJoystickPosition>(newPosition, Position));
-                Position = newPosition; 
+                Position = newPosition;
             }
         }
 

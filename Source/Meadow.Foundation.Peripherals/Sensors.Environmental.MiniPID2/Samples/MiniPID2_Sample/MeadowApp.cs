@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Sensors.Environmental.Ens160_Sample
 {
-    public class MeadowApp : App<F7FeatherV1>
+    public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
 
