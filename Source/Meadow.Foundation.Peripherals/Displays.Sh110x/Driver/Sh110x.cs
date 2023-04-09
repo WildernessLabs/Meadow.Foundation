@@ -7,9 +7,9 @@ using System.Threading;
 namespace Meadow.Foundation.Displays
 {
     /// <summary>
-    /// Provide an interface to the Sh1106 family of displays
+    /// Provide an interface to the Sh110x family of displays
     /// </summary>
-    public partial class Sh1106 : IGraphicsDisplay
+    public abstract partial class Sh110x : IGraphicsDisplay
     {
         /// <summary>
         /// The display color mode - 1 bit per pixel monochrome
@@ -24,12 +24,17 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// The display width in pixels
         /// </summary>
-        public int Width => 128;
+        public int Width { get; protected set; } = 128;
 
         /// <summary>
         /// The display height in pixels
         /// </summary>
-        public int Height => 64;
+        public int Height { get; protected set; } = 64;
+
+        /// <summary>
+        /// The connection type (I2C or SPI)
+        /// </summary>
+        protected ConnectionType connectionType;
 
         /// <summary>
         /// The buffer the holds the pixel data for the display
@@ -37,53 +42,111 @@ namespace Meadow.Foundation.Displays
         public IPixelBuffer PixelBuffer => imageBuffer;
 
         /// <summary>
-        /// SPI peripheral object
+        /// I2C peripheral object for I2C displays
         /// </summary>
-        ISpiPeripheral spiPerihperal;
+        protected II2cPeripheral i2cPeripheral;
 
-        IDigitalOutputPort dataCommandPort;
-        IDigitalOutputPort resetPort;
+        /// <summary>
+        /// SPI peripheral object for SPI displays
+        /// </summary>
+        readonly ISpiPeripheral spiPeripheral;
+
+        readonly IDigitalOutputPort dataCommandPort;
+        readonly IDigitalOutputPort resetPort;
+
+        const int StartColumnOffset = 0;
+        int PAGE_SIZE;
 
         const bool Data = true;
         const bool Command = false;
 
-        Buffer1bpp imageBuffer;
-        byte[] pageBuffer;
+        readonly Buffer1bpp imageBuffer;
+        readonly byte[] pageBuffer;
 
         /// <summary>
-        /// Create a new Sh1106 object
+        /// Display command buffer
+        /// </summary>
+        protected Memory<byte> commandBuffer;
+
+        /// <summary>
+        /// Create a new Sh110x object
+        /// </summary>
+        /// <param name="i2cBus">I2C bus connected to display</param>
+        /// <param name="address">I2C address</param>
+        /// <param name="width">Display width in pixels</param>
+        /// <param name="height">Display height in pixels</param>
+        public Sh110x(II2cBus i2cBus, byte address, int width, int height)
+        {
+            i2cPeripheral = new I2cPeripheral(i2cBus, address);
+
+            Width = width;
+            Height = height;
+
+            connectionType = ConnectionType.I2C;
+            commandBuffer = new byte[2];
+
+            imageBuffer = new Buffer1bpp(Width, Height);
+            PAGE_SIZE = Width;
+            pageBuffer = new byte[PAGE_SIZE + 1];
+
+            Initialize();
+        }
+
+        /// <summary>
+        /// Create a new Sh110x object
         /// </summary>
         /// <param name="spiBus">SPI bus connected to display</param>
         /// <param name="chipSelectPin">Chip select pin</param>
         /// <param name="dcPin">Data command pin</param>
         /// <param name="resetPin">Reset pin</param>
-        public Sh1106(ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin) :
+        /// <param name="width">Display width in pixels</param>
+        /// <param name="height">Display height in pixels</param>
+        public Sh110x(ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, int width, int height) :
             this(spiBus, chipSelectPin?.CreateDigitalOutputPort(), dcPin.CreateDigitalOutputPort(),
-                resetPin.CreateDigitalOutputPort())
+                resetPin.CreateDigitalOutputPort(), width, height)
         {
         }
 
         /// <summary>
-        /// Create a new Sh1106 display object
+        /// Create a new Sh110x display object
         /// </summary>
         /// <param name="spiBus">SPI bus connected to display</param>
         /// <param name="chipSelectPort">Chip select output port</param>
         /// <param name="dataCommandPort">Data command output port</param>
         /// <param name="resetPort">Reset output port</param>
-        public Sh1106(ISpiBus spiBus,
+        /// <param name="width">Display width in pixels</param>
+        /// <param name="height">Display height in pixels</param>
+        public Sh110x(ISpiBus spiBus,
             IDigitalOutputPort chipSelectPort,
             IDigitalOutputPort dataCommandPort,
-            IDigitalOutputPort resetPort)
+            IDigitalOutputPort resetPort,
+            int width, int height)
         {
+            connectionType = ConnectionType.SPI;
+
             this.dataCommandPort = dataCommandPort;
             this.resetPort = resetPort;
 
-            spiPerihperal = new SpiPeripheral(spiBus, chipSelectPort);
+            spiPeripheral = new SpiPeripheral(spiBus, chipSelectPort);
+
+            Width = width;
+            Height = height;
 
             imageBuffer = new Buffer1bpp(Width, Height);
-            pageBuffer = new byte[PageSize];
+            pageBuffer = new byte[Width];
 
             Initialize();
+        }
+
+        /// <summary>
+        /// This varies between manufactures 
+        /// If the display is misaligned, try 0 and 0x40
+        /// </summary>
+        /// <param name="offset"></param>
+        public void SetDisplayOffset(byte offset)
+        {
+            SendCommand(DisplayCommand.SetDisplayOffset);
+            SendCommand(offset);
         }
 
         /// <summary>
@@ -110,12 +173,10 @@ namespace Meadow.Foundation.Displays
             SendCommand(DisplayCommand.AllPixelsOn);
         }
 
-        void SendCommand(DisplayCommand command)
-        {
-            SendCommand((byte)command);
-        }
-
-        void Reset()
+        /// <summary>
+        /// Reset the display
+        /// </summary>
+        protected void Reset()
         {
             resetPort.State = true;
             Thread.Sleep(10);
@@ -125,40 +186,7 @@ namespace Meadow.Foundation.Displays
             Thread.Sleep(100);
         }
 
-        private void Initialize()
-        {
-            Reset();
-
-            SendCommand(DisplayCommand.DisplayOff);
-            SendCommand(DisplayCommand.SetDisplayClockDiv);
-            //128x64 init commands
-            SendCommand(0x80);
-
-            SendCommand(DisplayCommand.MultiplexModeSet);
-            SendCommand(DisplayCommand.MultiplexDataSet);
-
-            SendCommand(DisplayCommand.SetDisplayOffset);
-            SendCommand((byte)0);
-
-            SendCommand(DisplayCommand.DisplayStartLine);
-
-            SendCommand(DisplayCommand.SegInvNormal);
-            SendCommand(0xC0);
-
-            SendCommand(DisplayCommand.SetComPins);
-            SendCommand(0x12);
-
-            SendCommand(DisplayCommand.SetContrast);
-            SendCommand(0x0F);
-
-            SendCommand(0x30);
-            SendCommand(0xA4);
-
-            SendCommand(DisplayCommand.SetDisplayClockDiv);
-            SendCommand(0xF0);
-
-            SendCommand(DisplayCommand.DisplayOn);
-        }
+        protected abstract void Initialize();
 
         /// <summary>
         /// Set the display contrast 
@@ -174,46 +202,86 @@ namespace Meadow.Foundation.Displays
         /// Send a command to the display
         /// </summary>
         /// <param name="command">Command byte to send to the display</param>
-        private void SendCommand(byte command)
+        internal void SendCommand(byte command)
         {
-            dataCommandPort.State = Command;
-            spiPerihperal.Write(command);
+            if (connectionType == ConnectionType.SPI)
+            {
+                dataCommandPort.State = Command;
+                spiPeripheral.Write(command);
+            }
+            else
+            {
+                commandBuffer.Span[0] = 0x00;
+                commandBuffer.Span[1] = command;
+                i2cPeripheral.Write(commandBuffer.Span);
+            }
+        }
+
+        /// <summary>
+        /// Send a command to the display
+        /// </summary>
+        /// <param name="command">Command byte to send to the display</param>
+        internal void SendCommand(DisplayCommand command)
+        {
+            SendCommand((byte)command);
         }
 
         /// <summary>
         /// Send a sequence of commands to the display
         /// </summary>
         /// <param name="commands">List of commands to send</param>
-        private void SendCommands(byte[] commands)
+        internal void SendCommands(byte[] commands)
         {
-            var data = new byte[commands.Length + 1];
-            data[0] = 0x00;
-            Array.Copy(commands, 0, data, 1, commands.Length);
-
-            dataCommandPort.State = Command;
-            spiPerihperal.Write(commands);
+            if (connectionType == ConnectionType.SPI)
+            {
+                dataCommandPort.State = Command;
+                spiPeripheral.Write(commands);
+            }
+            else
+            {
+                Span<byte> data = new byte[commands.Length + 1];
+                data[0] = 0x00;
+                commands.CopyTo(data.Slice(1, commands.Length));
+                i2cPeripheral.Write(data);
+            }
         }
-
-        const int StartColumnOffset = 0;
-        const int PageSize = 128;
 
         /// <summary>
         /// Send the internal pixel buffer to display
         /// </summary>
         public void Show()
         {
-            for (int page = 0; page < 8; page++)
+            if (connectionType == ConnectionType.SPI)
             {
-                SendCommand(DisplayCommand.ColumnAddressLow);
-                SendCommand(DisplayCommand.ColumnAddressHigh);
-                SendCommand((byte)((byte)DisplayCommand.PageAddress | page));
+                int count = (Height + 7) / 8;//+7 to round up
+                for (int page = 0; page < count; page++)
+                {
+                    {
+                        SendCommand(DisplayCommand.ColumnAddressLow);
+                        SendCommand(DisplayCommand.ColumnAddressHigh);
+                        SendCommand((byte)((byte)DisplayCommand.SetPageAddress | page));
 
-                dataCommandPort.State = Data;
+                        dataCommandPort.State = Data;
 
-                Array.Copy(imageBuffer.Buffer, Width * page, pageBuffer, 0, PageSize);
-                spiPerihperal.Write(pageBuffer);
+                        Array.Copy(imageBuffer.Buffer, Width * page, pageBuffer, 0, PAGE_SIZE);
+                        spiPeripheral.Write(pageBuffer);
+                    }
+                }
+            }
+            else //I2C
+            {
+                pageBuffer[0] = 0x40;
+                int count = (Height + 7) / 8;//+7 to round up
+                for (int page = 0; page < count; page++)
+                {
+                    SendCommand((byte)0);
+                    SendCommand((byte)((byte)DisplayCommand.SetPageAddress | page));
+                    SendCommand(0x10 >> 4);
+                    SendCommand((byte)(0x10 & 0xF));
 
-                dataCommandPort.State = Command;
+                    Array.Copy(imageBuffer.Buffer, Width * page, pageBuffer, 1, PAGE_SIZE);
+                    i2cPeripheral.Write(pageBuffer);
+                }
             }
         }
 
@@ -237,14 +305,14 @@ namespace Meadow.Foundation.Displays
                     continue;
                 }
 
-                SendCommand((byte)((int)DisplayCommand.PageAddress | page));
+                SendCommand((byte)((int)DisplayCommand.SetPageAddress | page));
                 SendCommand((DisplayCommand.ColumnAddressLow) | (StartColumnOffset & 0x0F));
                 SendCommand((int)DisplayCommand.ColumnAddressHigh | 0);
 
                 dataCommandPort.State = Data;
 
-                Array.Copy(imageBuffer.Buffer, Width * page, pageBuffer, 0, PageSize);
-                spiPerihperal.Write(pageBuffer);
+                Array.Copy(imageBuffer.Buffer, Width * page, pageBuffer, 0, PAGE_SIZE);
+                spiPeripheral.Write(pageBuffer);
             }
         }
 
