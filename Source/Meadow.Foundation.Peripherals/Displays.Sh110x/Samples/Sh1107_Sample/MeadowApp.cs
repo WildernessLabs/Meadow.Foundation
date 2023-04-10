@@ -7,7 +7,7 @@ using static Meadow.Foundation.Displays.Sh110x;
 
 namespace Displays.Sh1107_Sample
 {
-    public class MeadowApp : App<F7FeatherV1>
+    public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
 
@@ -25,11 +25,9 @@ namespace Displays.Sh1107_Sample
                 height: 128
             );
 
-            sh1107.SetDisplayOffset(0);
-
             graphics = new MicroGraphics(sh1107)
             {
-                CurrentFont = new Font8x8(),
+                CurrentFont = new Font12x16(),
                 Rotation = RotationType._180Degrees
             };
 
