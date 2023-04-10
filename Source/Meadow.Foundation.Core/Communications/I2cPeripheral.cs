@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Meadow.Hardware
 {
@@ -10,7 +8,14 @@ namespace Meadow.Hardware
     /// </summary>
     public class I2cPeripheral : II2cPeripheral
     {
+        /// <summary>
+        /// The I2C address
+        /// </summary>
         public byte Address { get; protected set; }
+
+        /// <summary>
+        /// The I2C bus
+        /// </summary>
         public II2cBus Bus { get; protected set; }
 
         /// <summary>
@@ -77,9 +82,12 @@ namespace Meadow.Hardware
         {
             WriteBuffer.Span[0] = address;
             Bus.Exchange(this.Address, WriteBuffer[0..1].Span, ReadBuffer[0..2].Span);
-            if (order == ByteOrder.LittleEndian) {
+            if (order == ByteOrder.LittleEndian)
+            {
                 return (ushort)(ReadBuffer.Span[0] | (ReadBuffer.Span[1] << 8));
-            } else {
+            }
+            else
+            {
                 return (ushort)(ReadBuffer.Span[0] << 8 | ReadBuffer.Span[1]);
             }
         }
@@ -167,7 +175,8 @@ namespace Meadow.Hardware
         /// <param name="order">Indicate if the data should be written as big or little endian.</param>
         public void WriteRegister(byte address, Span<byte> writeBuffer, ByteOrder order = ByteOrder.LittleEndian)
         {
-            if (WriteBuffer.Length < writeBuffer.Length + 1) {
+            if (WriteBuffer.Length < writeBuffer.Length + 1)
+            {
                 throw new ArgumentException("Data to write is too large for the write buffer. " +
                     "Must be less than WriteBuffer.Length + 1 (to allow for address). " +
                     "Instantiate this class with a larger WriteBuffer, or send a smaller" +
@@ -179,21 +188,24 @@ namespace Meadow.Hardware
 
             // stuff the bytes into the write buffer (starting at `1` index,
             // because `0` is the register address.
-            switch (order) {
+            switch (order)
+            {
                 case ByteOrder.LittleEndian:
-                    for (int i = 0; i < writeBuffer.Length; i++) {
+                    for (int i = 0; i < writeBuffer.Length; i++)
+                    {
                         WriteBuffer.Span[i + 1] = writeBuffer[i];
                     }
                     break;
                 case ByteOrder.BigEndian:
-                    for (int i = 0; i < writeBuffer.Length; i++) {
+                    for (int i = 0; i < writeBuffer.Length; i++)
+                    {
                         // stuff them backwards
                         WriteBuffer.Span[i + 1] = writeBuffer[writeBuffer.Length - (i + 1)];
                     }
                     break;
             }
             // write it
-            this.Bus.Write(this.Address, WriteBuffer.Span[0..(writeBuffer.Length + 1)]);
+            this.Bus.Write(Address, WriteBuffer.Span[0..(writeBuffer.Length + 1)]);
         }
 
         public void Exchange(Span<byte> writeBuffer, Span<byte> readBuffer, DuplexType duplex = DuplexType.Half)

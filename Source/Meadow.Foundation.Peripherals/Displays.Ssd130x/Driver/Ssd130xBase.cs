@@ -1,12 +1,12 @@
-﻿using System;
-using Meadow.Hardware;
+﻿using Meadow.Foundation.Graphics;
 using Meadow.Foundation.Graphics.Buffers;
-using Meadow.Foundation.Graphics;
+using Meadow.Hardware;
+using System;
 
 namespace Meadow.Foundation.Displays
 {
     /// <summary>
-    /// Provide an interface to the SSD130x family of OLED displays
+    /// Represents the SSD130x family of OLED displays
     /// </summary>
     public abstract partial class Ssd130xBase : IGraphicsDisplay
     {
