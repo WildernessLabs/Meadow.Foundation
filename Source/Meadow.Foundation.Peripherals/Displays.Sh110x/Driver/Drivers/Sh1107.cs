@@ -85,7 +85,7 @@ namespace Meadow.Foundation.Displays
             if (Width == 128 && Height == 128)
             {
                 SendCommand(DisplayCommand.SetDisplayOffset);
-                SendCommand(0x40);
+                SendCommand((byte)0x00);
                 SendCommand(DisplayCommand.MultiplexModeSet);
                 SendCommand(0x07F);
             }

@@ -55,7 +55,7 @@ namespace Meadow.Foundation.Displays
         readonly IDigitalOutputPort resetPort;
 
         const int StartColumnOffset = 0;
-        int PAGE_SIZE;
+        readonly int PAGE_SIZE;
 
         const bool Data = true;
         const bool Command = false;
@@ -174,7 +174,7 @@ namespace Meadow.Foundation.Displays
         }
 
         /// <summary>
-        /// Reset the display
+        /// Reset for SPI displays
         /// </summary>
         protected void Reset()
         {
@@ -186,6 +186,9 @@ namespace Meadow.Foundation.Displays
             Thread.Sleep(100);
         }
 
+        /// <summary>
+        /// Initialize the display
+        /// </summary>
         protected abstract void Initialize();
 
         /// <summary>
