@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace Lsm303agr_Sample
 {
     // Change F7FeatherV2 to F7FeatherV1 for V1.x boards
-    public class MeadowApp : App<F7FeatherV1>
+    public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
 
@@ -16,11 +16,11 @@ namespace Lsm303agr_Sample
 
         public override Task Initialize()
         {
-            Console.WriteLine("Initialize hardware...");
+            Resolver.Log.Info("Initialize hardware...");
             sensor = new Lsm303agr(Device.CreateI2cBus());
 
             // classical .NET events can also be used:
-            sensor.Updated += Sensor_Updated;
+            sensor.Updated += HandleResult;
 
             // Example that uses an IObservable subscription to only be notified when the filter is satisfied
             var consumer = Lsm303agr.CreateObserver(handler: result => HandleResult(this, result),
@@ -33,13 +33,7 @@ namespace Lsm303agr_Sample
             return base.Initialize();
         }
 
-        private void Sensor_Updated(object sender, IChangeResult<(Acceleration3D? Acceleration3D, MagneticField3D? MagneticField3D)> e)
-        {
-
-        }
-
-        bool FilterResult(IChangeResult<(Acceleration3D? Acceleration3D,
-                                         MagneticField3D? MagneticField3D)> result)
+        bool FilterResult(IChangeResult<(Acceleration3D? Acceleration3D, MagneticField3D? MagneticField3D)> result)
         {
             return result.New.Acceleration3D.Value.Z > new Acceleration(0.1, Acceleration.UnitType.Gravity);
         }
