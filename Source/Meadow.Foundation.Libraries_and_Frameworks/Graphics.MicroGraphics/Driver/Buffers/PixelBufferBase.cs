@@ -87,7 +87,7 @@ namespace Meadow.Foundation.Graphics.Buffers
         {
             Width = width;
             Height = height;
-            if(buffer.Length != ByteCount)
+            if (buffer.Length != ByteCount)
             {
                 throw new ArgumentException($"Provided buffer length ({buffer.Length}) does not match this buffer's ByteCount ({ByteCount}).");
             }
@@ -101,7 +101,7 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// <param name="replaceIfExists">If true, will recreates the buffer if it already exists</param>
         public void InitializeBuffer(bool replaceIfExists = false)
         {
-            if(Buffer == null || replaceIfExists)
+            if (Buffer == null || replaceIfExists)
             {
                 Buffer = new byte[ByteCount];
             }
@@ -120,7 +120,7 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// </summary>
         /// <param name="color">Fill color</param>
         public abstract void Fill(Color color);
-        
+
         /// <summary>
         /// Fill a region of the pixel buffer with a color
         /// </summary>
@@ -182,7 +182,7 @@ namespace Meadow.Foundation.Graphics.Buffers
         {
             for (var x = 0; x < buffer.Width; x++)
             {
-                for(var y = 0; y < buffer.Height; y++)
+                for (var y = 0; y < buffer.Height; y++)
                 {
                     SetPixel(originX + x, originY + y, buffer.GetPixel(x, y));
                 }
@@ -195,7 +195,7 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// <typeparam name="T">Buffer type</typeparam>
         /// <param name="rotation">Rotation</param>
         /// <returns>The new buffer</returns>
-        public T RotateAndConvert<T>(RotationType rotation) 
+        public T RotateAndConvert<T>(RotationType rotation)
             where T : PixelBufferBase, new()
         {
             T newBuffer;
@@ -273,16 +273,44 @@ namespace Meadow.Foundation.Graphics.Buffers
         }
 
         /// <summary>
+        /// Create a new buffer scaled up from the existing buffer
+        /// </summary>
+        /// <typeparam name="T">Buffer type</typeparam>
+        /// <param name="scaleFactor">Integer scale ratio</param>
+        /// <returns>The new buffer</returns>
+
+        public T ScaleUp<T>(int scaleFactor)
+            where T : PixelBufferBase, new()
+        {
+            T newBuffer = new T
+            {
+                Width = Width * scaleFactor,
+                Height = Height * scaleFactor,
+            };
+            newBuffer.InitializeBuffer(true);
+            newBuffer.Clear();
+
+            for (int i = 0; i < Width; i++)
+            {
+                for (int j = 0; j < Height; j++)
+                {
+                    newBuffer.Fill(i * scaleFactor, j * scaleFactor, scaleFactor, scaleFactor, GetPixel(i, j));
+                }
+            }
+            return newBuffer;
+        }
+
+        /// <summary>
         /// Create a new pixel buffer and 
         /// copy/convert pixel data from existing buffer
         /// </summary>
         /// <typeparam name="T">The buffer type to convert to</typeparam>
         /// <returns>A pixel buffer derrived from PixelBufferBase</returns>
-        public T ConvertPixelBuffer<T>() 
+        public T ConvertPixelBuffer<T>()
             where T : PixelBufferBase, new()
         {
-            if(GetType() == typeof(T))
-            {   
+            if (GetType() == typeof(T))
+            {
                 return Clone<T>();
             }
 
@@ -303,7 +331,7 @@ namespace Meadow.Foundation.Graphics.Buffers
 
             return newBuffer;
         }
-        
+
         /// <summary>
         /// Make a copy of the buffer object 
         /// Intentionally private
