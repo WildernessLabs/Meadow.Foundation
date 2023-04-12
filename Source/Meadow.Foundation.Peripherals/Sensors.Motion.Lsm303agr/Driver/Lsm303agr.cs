@@ -219,5 +219,57 @@ namespace Meadow.Foundation.Sensors.Accelerometers
 
             return (x, y, z);
         }
+
+        /// <summary>
+        /// Sets the output data rate for the accelerometer.
+        /// </summary>
+        /// <param name="dataRate">The desired output data rate setting.</param>
+        public void SetAccelerometerOutputDataRate(AccOutputDataRate dataRate)
+        {
+            byte[] readBuffer = new byte[1];
+            i2cPeripheralAccel.ReadRegister(ACC_CTRL_REG1_A, readBuffer);
+
+            byte newSetting = (byte)((readBuffer[0] & 0x0F) | (byte)dataRate);
+            i2cPeripheralAccel.WriteRegister(ACC_CTRL_REG1_A, newSetting);
+        }
+
+        /// <summary>
+        /// Retrieves the current output data rate setting for the accelerometer.
+        /// </summary>
+        /// <returns>The current output data rate setting.</returns>
+        public AccOutputDataRate GetAccelerometerOutputDataRate()
+        {
+            byte[] readBuffer = new byte[1];
+            i2cPeripheralAccel.ReadRegister(ACC_CTRL_REG1_A, readBuffer);
+
+            byte dataRate = (byte)(readBuffer[0] & 0xF0);
+            return (AccOutputDataRate)dataRate;
+        }
+
+        /// <summary>
+        /// Sets the output data rate for the magnetometer.
+        /// </summary>
+        /// <param name="dataRate">The desired output data rate setting.</param>
+        public void SetMagnetometerOutputDataRate(MagOutputDataRate dataRate)
+        {
+            byte[] readBuffer = new byte[1];
+            i2cPeripheralMag.ReadRegister(MAG_CTRL_REG1_M, readBuffer);
+
+            byte newSetting = (byte)((readBuffer[0] & 0xCF) | (byte)dataRate);
+            i2cPeripheralMag.WriteRegister(MAG_CTRL_REG1_M, newSetting);
+        }
+
+        /// <summary>
+        /// Retrieves the current output data rate setting for the magnetometer.
+        /// </summary>
+        /// <returns>The current output data rate setting.</returns>
+        public MagOutputDataRate GetMagnetometerOutputDataRate()
+        {
+            byte[] readBuffer = new byte[1];
+            i2cPeripheralMag.ReadRegister(MAG_CTRL_REG1_M, readBuffer);
+
+            byte dataRate = (byte)(readBuffer[0] & 0x30);
+            return (MagOutputDataRate)dataRate;
+        }
     }
 }
