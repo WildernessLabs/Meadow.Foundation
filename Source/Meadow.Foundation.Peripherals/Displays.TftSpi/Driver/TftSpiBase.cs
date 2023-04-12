@@ -116,7 +116,7 @@ namespace Meadow.Foundation.Displays
                     spiBus,
                     chipSelectPin?.CreateDigitalOutputPort(),
                     dcPin.CreateDigitalOutputPort(),
-                    resetPin.CreateDigitalOutputPort(),
+                    resetPin?.CreateDigitalOutputPort(),
                     width, height, colorMode
                   )
         {
