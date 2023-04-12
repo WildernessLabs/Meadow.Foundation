@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace Meadow.Foundation.Graphics.Buffers
 {
@@ -199,74 +200,39 @@ namespace Meadow.Foundation.Graphics.Buffers
             where T : PixelBufferBase, new()
         {
             T newBuffer;
+            int[] rowLookup;
+            int[] colLookup;
 
             switch (rotation)
             {
                 case RotationType._90Degrees:
-                    newBuffer = new T
-                    {
-                        Width = Height,
-                        Height = Width
-                    };
-                    newBuffer.InitializeBuffer();
-
-                    for (int i = 0; i < Width; i++)
-                    {
-                        for (int j = 0; j < Height; j++)
-                        {
-                            newBuffer.SetPixel(Height - j - 1, i, GetPixel(i, j));
-                        }
-                    }
+                    newBuffer = new T { Width = Height, Height = Width };
+                    rowLookup = Enumerable.Range(0, Height).Reverse().ToArray();
+                    colLookup = Enumerable.Range(0, Width).ToArray();
                     break;
                 case RotationType._270Degrees:
-                    newBuffer = new T
-                    {
-                        Width = Height,
-                        Height = Width
-                    };
-                    newBuffer.InitializeBuffer();
-
-                    for (int i = 0; i < Width; i++)
-                    {
-                        for (int j = 0; j < Height; j++)
-                        {
-                            newBuffer.SetPixel(j, Width - i - 1, GetPixel(i, j));
-                        }
-                    }
+                    newBuffer = new T { Width = Height, Height = Width };
+                    rowLookup = Enumerable.Range(0, Height).ToArray();
+                    colLookup = Enumerable.Range(0, Width).Reverse().ToArray();
                     break;
                 case RotationType._180Degrees:
-                    newBuffer = new T
-                    {
-                        Width = Width,
-                        Height = Height
-                    };
-                    newBuffer.InitializeBuffer();
-
-                    for (int i = 0; i < Width; i++)
-                    {
-                        for (int j = 0; j < Height; j++)
-                        {
-                            newBuffer.SetPixel(Width - i - 1, Height - j - 1, GetPixel(i, j));
-                        }
-                    }
+                    newBuffer = new T { Width = Width, Height = Height };
+                    rowLookup = Enumerable.Range(0, Width).Reverse().ToArray();
+                    colLookup = Enumerable.Range(0, Height).Reverse().ToArray();
                     break;
                 case RotationType.Default:
                 default:
-                    newBuffer = new T
-                    {
-                        Width = Height,
-                        Height = Width
-                    };
-                    newBuffer.InitializeBuffer();
+                    return Clone<T>();
+            }
 
-                    for (int i = 0; i < Width; i++)
-                    {
-                        for (int j = 0; j < Height; j++)
-                        {
-                            newBuffer.SetPixel(i, j, GetPixel(i, j));
-                        }
-                    }
-                    break;
+            newBuffer.InitializeBuffer();
+
+            for (int i = 0; i < Width; i++)
+            {
+                for (int j = 0; j < Height; j++)
+                {
+                    newBuffer.SetPixel(rowLookup[j], colLookup[i], GetPixel(i, j));
+                }
             }
 
             return newBuffer;

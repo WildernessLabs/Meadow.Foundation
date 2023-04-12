@@ -516,29 +516,14 @@ namespace Meadow.Foundation.Graphics
 
             int offset = centerBetweenPixels ? 1 : 0;
 
-            if (startAngle > endAngle)
+            double startAngleRadians = startAngle.Radians;
+            double endAngleRadians = endAngle.Radians;
+
+            if (startAngleRadians > endAngleRadians)
             {
-                endAngle += new Angle(360);
-            }
-
-            bool IsCoordinateOnArc(int x, int y)
-            {
-                var angle = Math.Atan2(y, x);
-                if (angle < 0) { angle += 2 * Math.PI; }
-
-                if (angle >= startAngle.Radians &&
-                    angle <= endAngle.Radians)
-                {
-                    return true;
-                }
-
-                if (angle >= (startAngle.Radians - 2 * Math.PI) &&
-                    angle <= (endAngle.Radians - 2 * Math.PI))
-                {
-                    return true;
-                }
-
-                return false;
+                double temp = startAngleRadians;
+                startAngleRadians = endAngleRadians;
+                endAngleRadians = temp;
             }
 
             void DrawArcPoint(int x, int y, Color color)
@@ -555,17 +540,23 @@ namespace Meadow.Foundation.Graphics
 
             while (x <= y)
             {
-                if (IsCoordinateOnArc(y, -x)) DrawArcPoint(centerX + y - offset, centerY - x, color); //1
-                if (IsCoordinateOnArc(x, -y)) DrawArcPoint(centerX + x - offset, centerY - y, color); //2
+                double angle1 = Math.Atan2(y, -x);
+                double angle2 = Math.Atan2(x, -y);
+                double angle3 = Math.Atan2(-x, -y);
+                double angle4 = Math.Atan2(-y, -x);
+                double angle5 = Math.Atan2(-y, x);
+                double angle6 = Math.Atan2(-x, y);
+                double angle7 = Math.Atan2(x, y);
+                double angle8 = Math.Atan2(y, x);
 
-                if (IsCoordinateOnArc(-x, -y)) DrawArcPoint(centerX - x, centerY - y, color); //3
-                if (IsCoordinateOnArc(-y, -x)) DrawArcPoint(centerX - y, centerY - x, color); //4
-
-                if (IsCoordinateOnArc(-y, x)) DrawArcPoint(centerX - y, centerY + x - offset, color); //5
-                if (IsCoordinateOnArc(-x, y)) DrawArcPoint(centerX - x, centerY + y - offset, color); //6
-
-                if (IsCoordinateOnArc(x, y)) DrawArcPoint(centerX + x - offset, centerY + y - offset, color); //7
-                if (IsCoordinateOnArc(y, x)) DrawArcPoint(centerX + y - offset, centerY + x - offset, color); //8
+                if (angle1 >= startAngleRadians && angle1 <= endAngleRadians) { DrawArcPoint(centerX + y - offset, centerY - x, color); }
+                if (angle2 >= startAngleRadians && angle2 <= endAngleRadians) { DrawArcPoint(centerX + x - offset, centerY - y, color); }
+                if (angle3 >= startAngleRadians && angle3 <= endAngleRadians) { DrawArcPoint(centerX - x, centerY - y, color); }
+                if (angle4 >= startAngleRadians && angle4 <= endAngleRadians) { DrawArcPoint(centerX - y, centerY - x, color); }
+                if (angle5 >= startAngleRadians && angle5 <= endAngleRadians) { DrawArcPoint(centerX - y, centerY + x - offset, color); }
+                if (angle6 >= startAngleRadians && angle6 <= endAngleRadians) { DrawArcPoint(centerX - x, centerY + y - offset, color); }
+                if (angle7 >= startAngleRadians && angle7 <= endAngleRadians) { DrawArcPoint(centerX + x - offset, centerY + y - offset, color); }
+                if (angle8 >= startAngleRadians && angle8 <= endAngleRadians) { DrawArcPoint(centerX + y - offset, centerY + x - offset, color); }
 
                 if (d < 0)
                 {

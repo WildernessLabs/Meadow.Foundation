@@ -49,7 +49,7 @@ namespace Meadow.Foundation.Graphics.Buffers
             Width = width;
             Height = height;
 
-            int bufferSize = width * height / 8;
+            int bufferSize = (width * height + 7) / 8;
             bufferSize += bufferSize % pageSize;
 
             Buffer = new byte[bufferSize];
@@ -63,9 +63,9 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// <returns>true if pixel is set / enabled</returns>
         public virtual bool GetPixelIsEnabled(int x, int y)
         {
-            var index = (y >> 3) * Width + x;
+            var index = (y * Width + x) >> 3;
 
-            return (Buffer[index] & (1 << y % 8)) != 0;
+            return (Buffer[index] & (1 << (y % 8))) != 0;
         }
 
         /// <summary>
@@ -87,16 +87,10 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// <param name="enabled">is pixel enabled (on)</param>
         public virtual void SetPixel(int x, int y, bool enabled)
         {
-            var index = (y >> 3) * Width + x; //divide by 8
+            var index = (y * Width + x) >> 3;
+            var bitMask = (byte)(1 << (y % 8));
 
-            if (enabled)
-            {
-                Buffer[index] = (byte)(Buffer[index] | (byte)(1 << (y % 8)));
-            }
-            else
-            {
-                Buffer[index] = (byte)(Buffer[index] & ~(byte)(1 << (y % 8)));
-            }
+            Buffer[index] = enabled ? (byte)(Buffer[index] | bitMask) : (byte)(Buffer[index] & ~bitMask);
         }
 
         /// <summary>
