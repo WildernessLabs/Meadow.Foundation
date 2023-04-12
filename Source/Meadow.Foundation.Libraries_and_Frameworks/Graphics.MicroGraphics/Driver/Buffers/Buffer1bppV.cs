@@ -44,7 +44,7 @@ namespace Meadow.Foundation.Graphics.Buffers
             Width = width;
             Height = height;
 
-            width = width % 8 > 0 ? width + 8 - (width % 8) : width;
+            width = (width + 7) & ~7;
 
             int bufferSize = width * height / 8;
             bufferSize += bufferSize % pageSize;
@@ -60,7 +60,7 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// <returns>true if pixel is set / enabled</returns>
         public override bool GetPixelIsEnabled(int x, int y)
         {
-            return (Buffer[(x + y * Width) / 8] & (0x80 >> (x % 8))) != 0;
+            return (Buffer[(x + y * Width) >> 3] & (0x80 >> (x % 8))) != 0;
         }
 
         /// <summary>
@@ -71,14 +71,10 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// <param name="enabled">is pixel enabled (on)</param>
         public override void SetPixel(int x, int y, bool enabled)
         {
-            if (enabled)
-            {   //0x80 = 128 = 0b_10000000
-                Buffer[(x + y * Width) / 8] |= (byte)(0x80 >> (x % 8));
-            }
-            else
-            {
-                Buffer[(x + y * Width) / 8] &= (byte)~(0x80 >> (x % 8));
-            }
+            int index = x / 8 + y * Width / 8;
+            byte bitMask = (byte)(0x80 >> (x % 8));
+
+            Buffer[index] = enabled ? (byte)(Buffer[index] | bitMask) : (byte)(Buffer[index] & ~bitMask);
         }
 
         /// <summary>
@@ -103,7 +99,7 @@ namespace Meadow.Foundation.Graphics.Buffers
             for (int i = 0; i < width; i++)
             {
                 for (int j = 0; j < height; j++)
-                {   
+                {
                     //ToDo - optimize for full byte copies
                     SetPixel(x + i, y + j, isColored);
                 }
