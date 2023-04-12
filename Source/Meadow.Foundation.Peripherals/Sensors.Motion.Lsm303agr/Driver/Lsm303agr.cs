@@ -52,11 +52,11 @@ namespace Meadow.Foundation.Sensors.Accelerometers
         void Initialize()
         {
             i2cPeripheralAccel.WriteRegister(ACC_CTRL_REG1_A, 0x57);
-            i2cPeripheralMag.WriteRegister(ACC_CTRL_REG1_A, 0x60);
+            i2cPeripheralMag.WriteRegister(MAG_CTRL_REG1_M, 0x60);
         }
 
         /// <summary>
-        /// Sets the sensitivity of the accelerometer.
+        /// Sets the sensitivity of the accelerometer
         /// </summary>
         /// <param name="sensitivity">The desired sensitivity setting, specified by the AccSensitivity enum.</param>
         public void SetAccelerometerSensitivity(AccSensitivity sensitivity)
@@ -66,7 +66,7 @@ namespace Meadow.Foundation.Sensors.Accelerometers
         }
 
         /// <summary>
-        /// Sets the sensitivity of the magnetometer.
+        /// Sets the sensitivity of the magnetometer
         /// </summary>
         /// <param name="sensitivity">The desired sensitivity setting, specified by the MagSensitivity enum.</param>
         public void SetMagnetometerSensitivity(MagSensitivity sensitivity)
@@ -76,7 +76,7 @@ namespace Meadow.Foundation.Sensors.Accelerometers
         }
 
         /// <summary>
-        /// Retrieves the current sensitivity setting of the accelerometer.
+        /// Retrieves the current sensitivity setting of the accelerometer
         /// </summary>
         /// <returns>The current sensitivity setting, represented by the AccSensitivity enum.</returns>
         public AccSensitivity GetAccelerometerSensitivity()
@@ -88,7 +88,7 @@ namespace Meadow.Foundation.Sensors.Accelerometers
         }
 
         /// <summary>
-        /// Retrieves the current sensitivity setting of the magnetometer.
+        /// Retrieves the current sensitivity setting of the magnetometer
         /// </summary>
         /// <returns>The current sensitivity setting, represented by the MagSensitivity enum.</returns>
         public MagSensitivity GetMagnetometerSensitivity()
@@ -155,7 +155,6 @@ namespace Meadow.Foundation.Sensors.Accelerometers
                     break;
             }
 
-            // Convert raw values to units of g
             float x = rawX / lsbPerG;
             float y = rawY / lsbPerG;
             float z = rawZ / lsbPerG;
@@ -182,7 +181,6 @@ namespace Meadow.Foundation.Sensors.Accelerometers
                     break;
             }
 
-            // Convert raw values to units of gauss
             float x = rawX / lsbPerGauss;
             float y = rawY / lsbPerGauss;
             float z = rawZ / lsbPerGauss;
@@ -191,7 +189,7 @@ namespace Meadow.Foundation.Sensors.Accelerometers
         }
 
         /// <summary>
-        /// Reads raw accelerometer data.
+        /// Reads raw accelerometer data
         /// </summary>
         /// <returns>A tuple containing the X, Y, and Z values of the accelerometer.</returns>
         (short x, short y, short z) ReadAccelerometerRaw()
@@ -207,7 +205,7 @@ namespace Meadow.Foundation.Sensors.Accelerometers
         }
 
         /// <summary>
-        /// Reads raw magnetometer data.
+        /// Reads raw magnetometer data
         /// </summary>
         /// <returns>A tuple containing the X, Y, and Z values of the magnetometer.</returns>
         (short x, short y, short z) ReadMagnetometerRaw()
@@ -221,7 +219,5 @@ namespace Meadow.Foundation.Sensors.Accelerometers
 
             return (x, y, z);
         }
-
-
     }
 }
