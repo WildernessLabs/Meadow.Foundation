@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 namespace Meadow.Foundation.Sensors.Accelerometers
 {
     /// <summary>
-    /// Represents a LSM303AGR is a system-in-package (SiP) that combines a A 3D linear acceleration sensor and a A 3D magnetic sensor
+    /// Represents a LSM303AGR is a system-in-package (SiP) that combines a 3D linear acceleration sensor and a 3D magnetic sensor
     /// </summary>
     public partial class Lsm303agr :
         ByteCommsSensorBase<(Acceleration3D? Acceleration3D, MagneticField3D? MagneticField3D)>
@@ -17,7 +17,7 @@ namespace Meadow.Foundation.Sensors.Accelerometers
         public event EventHandler<IChangeResult<Acceleration3D>> Acceleration3DUpdated = delegate { };
 
         /// <summary>
-        /// Event raised when magentic field changes
+        /// Event raised when magnetic field changes
         /// </summary>
         public event EventHandler<IChangeResult<MagneticField3D>> MagneticField3DUpdated = delegate { };
 
@@ -27,7 +27,7 @@ namespace Meadow.Foundation.Sensors.Accelerometers
         public Acceleration3D? Acceleration3D => Conditions.Acceleration3D;
 
         /// <summary>
-        /// Current Magentic Field 3D
+        /// Current Magnetic Field 3D
         /// </summary>
         public MagneticField3D? MagneticField3D => Conditions.MagneticField3D;
 
