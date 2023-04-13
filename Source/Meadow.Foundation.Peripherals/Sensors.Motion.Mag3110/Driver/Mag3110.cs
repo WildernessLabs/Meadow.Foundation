@@ -23,7 +23,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         /// Raised when the magnetic field value changes
         /// </summary>
-        public event EventHandler<IChangeResult<MagneticField3D>> MagneticField3dUpdated = delegate { };
+        public event EventHandler<IChangeResult<MagneticField3D>> MagneticField3DUpdated = delegate { };
 
         /// <summary>
         /// Raised when the temperature value changes
@@ -38,7 +38,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         /// The current magnetic field value
         /// </summary>
-        public MagneticField3D? MagneticField3d => Conditions.MagneticField3D;
+        public MagneticField3D? MagneticField3D => Conditions.MagneticField3D;
 
         /// <summary>
         /// Current emperature of the die
@@ -52,7 +52,7 @@ namespace Meadow.Foundation.Sensors.Motion
         {
             get
             {
-                var controlRegister = Peripheral.ReadRegister((byte)Registers.CONTROL_1);
+                var controlRegister = Peripheral.ReadRegister(Registers.CONTROL_1);
                 return (controlRegister & 0x03) == 0;
             }
             set
@@ -117,7 +117,7 @@ namespace Meadow.Foundation.Sensors.Motion
         public Mag3110(II2cBus i2cBus, IDigitalInputPort interruptPort = null, byte address = (byte)Addresses.Default)
             : base(i2cBus, address)
         {
-            var deviceID = Peripheral.ReadRegister((byte)Registers.WHO_AM_I);
+            var deviceID = Peripheral.ReadRegister(Registers.WHO_AM_I);
             if (deviceID != 0xc4)
             {
                 throw new Exception("Unknown device ID, " + deviceID + " retruend, 0xc4 expected");
@@ -154,7 +154,7 @@ namespace Meadow.Foundation.Sensors.Motion
         {
             if (changeResult.New.MagneticField3D is { } mag)
             {
-                MagneticField3dUpdated?.Invoke(this, new ChangeResult<MagneticField3D>(mag, changeResult.Old?.MagneticField3D));
+                MagneticField3DUpdated?.Invoke(this, new ChangeResult<MagneticField3D>(mag, changeResult.Old?.MagneticField3D));
             }
             if (changeResult.New.Temperature is { } temp)
             {

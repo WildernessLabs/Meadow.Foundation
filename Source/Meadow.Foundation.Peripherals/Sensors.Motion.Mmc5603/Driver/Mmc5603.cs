@@ -17,12 +17,12 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         /// Raised when the magnetic field value changes
         /// </summary>
-        public event EventHandler<IChangeResult<MagneticField3D>> MagneticField3dUpdated = delegate { };
+        public event EventHandler<IChangeResult<MagneticField3D>> MagneticField3DUpdated = delegate { };
 
         /// <summary>
         /// The current magnetic field value
         /// </summary>
-        public MagneticField3D? MagneticField3d => Conditions;
+        public MagneticField3D? MagneticField3D => Conditions;
 
         /// <summary>
         /// Get/set continuous sensor reading mode
@@ -74,11 +74,11 @@ namespace Meadow.Foundation.Sensors.Motion
 
         void SetContinuousMode(bool on)
         {
-            if(on == true)
+            if (on == true)
             {
                 SetRegisterBit(Registers.CONTROL_0, 7, true);
                 SetRegisterBit(Registers.CONTROL_2, 4, true);
-            }   
+            }
             else
             {
                 SetRegisterBit(Registers.CONTROL_2, 4, false);
@@ -93,7 +93,7 @@ namespace Meadow.Foundation.Sensors.Motion
         {
             if (changeResult is { } mag)
             {
-                MagneticField3dUpdated?.Invoke(this, new ChangeResult<MagneticField3D>(mag.New, changeResult.Old));
+                MagneticField3DUpdated?.Invoke(this, new ChangeResult<MagneticField3D>(mag.New, changeResult.Old));
             }
             base.RaiseEventsAndNotify(changeResult);
         }
@@ -103,18 +103,18 @@ namespace Meadow.Foundation.Sensors.Motion
             SetRegisterBit(Registers.CONTROL_0, 0, true);
             return Task.Delay(10);
         }
-        
+
         Task TriggerTemperatureReading()
         {
             SetRegisterBit(Registers.CONTROL_0, 1, true);
             return Task.Delay(10);
         }
 
-    /// <summary>
-    /// Reads data from the sensor
-    /// </summary>
-    /// <returns>The latest sensor reading</returns>
-    protected override Task<MagneticField3D> ReadSensor()
+        /// <summary>
+        /// Reads data from the sensor
+        /// </summary>
+        /// <returns>The latest sensor reading</returns>
+        protected override Task<MagneticField3D> ReadSensor()
         {
             return Task.Run(async () =>
             {
@@ -157,12 +157,12 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <returns></returns>
         public async Task<Units.Temperature> ReadTemperature()
         {
-            if(ContinuousModeEnabled)
+            if (ContinuousModeEnabled)
             {
                 throw new Exception("Cannot read temperature while continous sampling mode is enabled");
             }
 
-            if(IsTemperatureDataReady() == false)
+            if (IsTemperatureDataReady() == false)
             {
                 await TriggerTemperatureReading();
             }
