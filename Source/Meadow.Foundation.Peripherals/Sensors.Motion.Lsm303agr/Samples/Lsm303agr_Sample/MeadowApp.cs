@@ -45,7 +45,7 @@ namespace Lsm303agr_Sample
             var accel = result.New.Acceleration3D.Value;
             var mag = result.New.MagneticField3D.Value;
 
-            Resolver.Log.Info($"AccelX={accel.X.Gravity:0.##}g, AccelY={accel.Y.Gravity:0.##}g, AccelZ={accel.Z.Gravity:0.##}g, MagX={mag.X.Gauss:0.##}gauss, MagY={mag.Y.Gauss:0.##}gauss, GyroZ={mag.Z.Gauss:0.##}gauss");
+            Resolver.Log.Info($"AccelX={accel.X.Gravity:0.##}g, AccelY={accel.Y.Gravity:0.##}g, AccelZ={accel.Z.Gravity:0.##}g, MagX={mag.X.Gauss:0.##}gauss, MagY={mag.Y.Gauss:0.##}gauss, MagZ={mag.Z.Gauss:0.##}gauss");
         }
 
         //<!=SNOP=>

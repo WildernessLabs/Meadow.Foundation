@@ -1,4 +1,6 @@
 ﻿using Meadow.Hardware;
+using Meadow.Peripherals.Sensors;
+using Meadow.Peripherals.Sensors.Motion;
 using Meadow.Units;
 using System;
 using System.Threading.Tasks;
@@ -9,7 +11,7 @@ namespace Meadow.Foundation.Sensors.Accelerometers
     /// Represents a LSM303AGR is a system-in-package (SiP) that combines a 3D linear acceleration sensor and a 3D magnetic sensor
     /// </summary>
     public partial class Lsm303agr :
-        ByteCommsSensorBase<(Acceleration3D? Acceleration3D, MagneticField3D? MagneticField3D)>
+        ByteCommsSensorBase<(Acceleration3D? Acceleration3D, MagneticField3D? MagneticField3D)>, IMagnetometer, IAccelerometer
     {
         /// <summary>
         /// Event raised when acceleration changes
@@ -41,7 +43,7 @@ namespace Meadow.Foundation.Sensors.Accelerometers
         public Lsm303agr(II2cBus i2cBus)
         {
             i2cPeripheralAccel = new I2cPeripheral(i2cBus, (byte)Addresses.AddressAccel_0x19);
-            i2cPeripheralMag = new I2cPeripheral(i2cBus, (byte)Addresses.AddressMag_0x69);
+            i2cPeripheralMag = new I2cPeripheral(i2cBus, (byte)Addresses.AddressMag_0x1E);
 
             Initialize();
         }
@@ -66,16 +68,6 @@ namespace Meadow.Foundation.Sensors.Accelerometers
         }
 
         /// <summary>
-        /// Sets the sensitivity of the magnetometer
-        /// </summary>
-        /// <param name="sensitivity">The desired sensitivity setting, specified by the MagSensitivity enum.</param>
-        public void SetMagnetometerSensitivity(MagSensitivity sensitivity)
-        {
-            byte[] writeBuffer = new byte[] { MAG_CTRL_REG2_M, (byte)sensitivity };
-            i2cPeripheralMag.Write(writeBuffer);
-        }
-
-        /// <summary>
         /// Retrieves the current sensitivity setting of the accelerometer
         /// </summary>
         /// <returns>The current sensitivity setting, represented by the AccSensitivity enum.</returns>
@@ -85,18 +77,6 @@ namespace Meadow.Foundation.Sensors.Accelerometers
             i2cPeripheralAccel.ReadRegister(ACC_CTRL_REG4_A, readBuffer);
             byte sensitivity = (byte)(readBuffer[0] & 0x30);
             return (AccSensitivity)sensitivity;
-        }
-
-        /// <summary>
-        /// Retrieves the current sensitivity setting of the magnetometer
-        /// </summary>
-        /// <returns>The current sensitivity setting, represented by the MagSensitivity enum.</returns>
-        public MagSensitivity GetMagnetometerSensitivity()
-        {
-            byte[] readBuffer = new byte[1];
-            i2cPeripheralMag.ReadRegister(MAG_CTRL_REG2_M, readBuffer);
-            byte sensitivity = (byte)(readBuffer[0] & 0x60);
-            return (MagSensitivity)sensitivity;
         }
 
         /// <summary>
@@ -130,7 +110,7 @@ namespace Meadow.Foundation.Sensors.Accelerometers
                 var mag = ReadMagnetometerRaw();
 
                 conditions.Acceleration3D = GetAcceleration3D(accel.x, accel.y, accel.z, GetAccelerometerSensitivity());
-                conditions.MagneticField3D = GetMagneticField3D(mag.x, mag.y, mag.z, GetMagnetometerSensitivity());
+                conditions.MagneticField3D = GetMagneticField3D(mag.x, mag.y, mag.z);
 
                 return conditions;
             });
@@ -162,28 +142,11 @@ namespace Meadow.Foundation.Sensors.Accelerometers
             return new Acceleration3D(x, y, z, Acceleration.UnitType.Gravity);
         }
 
-        MagneticField3D GetMagneticField3D(short rawX, short rawY, short rawZ, MagSensitivity sensitivity)
+        MagneticField3D GetMagneticField3D(short rawX, short rawY, short rawZ)
         {
-            float lsbPerGauss = 0;
-            switch (sensitivity)
-            {
-                case MagSensitivity.Gauss50:
-                    lsbPerGauss = 6842.0f; // 2^15 / 50
-                    break;
-                case MagSensitivity.Gauss100:
-                    lsbPerGauss = 3421.0f; // 2^15 / 100
-                    break;
-                case MagSensitivity.Gauss200:
-                    lsbPerGauss = 1711.0f; // 2^15 / 200
-                    break;
-                case MagSensitivity.Gauss400:
-                    lsbPerGauss = 855.0f; // 2^15 / 400
-                    break;
-            }
-
-            float x = rawX / lsbPerGauss;
-            float y = rawY / lsbPerGauss;
-            float z = rawZ / lsbPerGauss;
+            var x = rawX * 1500;
+            var y = rawY * 1500;
+            var z = rawZ * 1500;
 
             return new MagneticField3D(x, y, z, MagneticField.UnitType.Gauss);
         }
@@ -195,7 +158,7 @@ namespace Meadow.Foundation.Sensors.Accelerometers
         (short x, short y, short z) ReadAccelerometerRaw()
         {
             byte[] readBuffer = new byte[6];
-            i2cPeripheralAccel.ReadRegister(ACC_OUT_X_L_A | 0x80, readBuffer);
+            i2cPeripheralAccel.ReadRegister(ACC_OUT_X_L_A, readBuffer);
 
             short x = BitConverter.ToInt16(new byte[] { readBuffer[0], readBuffer[1] }, 0);
             short y = BitConverter.ToInt16(new byte[] { readBuffer[2], readBuffer[3] }, 0);
@@ -211,7 +174,7 @@ namespace Meadow.Foundation.Sensors.Accelerometers
         (short x, short y, short z) ReadMagnetometerRaw()
         {
             byte[] readBuffer = new byte[6];
-            i2cPeripheralMag.ReadRegister(MAG_OUTX_L_REG_M | 0x80, readBuffer);
+            i2cPeripheralMag.ReadRegister(MAG_OUTX_L_REG_M, readBuffer);
 
             short x = BitConverter.ToInt16(new byte[] { readBuffer[0], readBuffer[1] }, 0);
             short y = BitConverter.ToInt16(new byte[] { readBuffer[2], readBuffer[3] }, 0);
@@ -252,11 +215,10 @@ namespace Meadow.Foundation.Sensors.Accelerometers
         /// <param name="dataRate">The desired output data rate setting.</param>
         public void SetMagnetometerOutputDataRate(MagOutputDataRate dataRate)
         {
-            byte[] readBuffer = new byte[1];
-            i2cPeripheralMag.ReadRegister(MAG_CTRL_REG1_M, readBuffer);
-
-            byte newSetting = (byte)((readBuffer[0] & 0xCF) | (byte)dataRate);
-            i2cPeripheralMag.WriteRegister(MAG_CTRL_REG1_M, newSetting);
+            byte odrByte = i2cPeripheralMag.ReadRegister(MAG_CTRL_REG1_M);
+            odrByte &= 0xF3; // Clear bits 2 and 3
+            odrByte |= (byte)dataRate;
+            i2cPeripheralMag.WriteRegister(MAG_CTRL_REG1_M, odrByte);
         }
 
         /// <summary>
@@ -265,11 +227,14 @@ namespace Meadow.Foundation.Sensors.Accelerometers
         /// <returns>The current output data rate setting.</returns>
         public MagOutputDataRate GetMagnetometerOutputDataRate()
         {
-            byte[] readBuffer = new byte[1];
-            i2cPeripheralMag.ReadRegister(MAG_CTRL_REG1_M, readBuffer);
-
-            byte dataRate = (byte)(readBuffer[0] & 0x30);
-            return (MagOutputDataRate)dataRate;
+            byte odrByte = i2cPeripheralMag.ReadRegister(MAG_CTRL_REG1_M);
+            return (MagOutputDataRate)(odrByte & 0x0C);
         }
+
+        async Task<Acceleration3D> ISensor<Acceleration3D>.Read()
+        => (await Read()).Acceleration3D.Value;
+
+        async Task<MagneticField3D> ISensor<MagneticField3D>.Read()
+        => (await Read()).MagneticField3D.Value;
     }
 }

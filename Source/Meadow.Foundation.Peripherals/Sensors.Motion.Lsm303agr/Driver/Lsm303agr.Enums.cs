@@ -14,7 +14,7 @@
             /// <summary>
             /// Bus address 0x1E for the magnetometer
             /// </summary>
-            AddressMag_0x69 = 0x1E,
+            AddressMag_0x1E = 0x1E,
         }
 
         /// <summary>
@@ -38,29 +38,6 @@
             /// ±16g sensitivity setting for the accelerometer.
             /// </summary>
             G16 = 0x30
-        }
-
-        /// <summary>
-        /// Enum representing the sensitivity settings for the magnetometer of the LSM303AGR sensor.
-        /// </summary>
-        public enum MagSensitivity
-        {
-            /// <summary>
-            /// ±50 gauss sensitivity setting for the magnetometer.
-            /// </summary>
-            Gauss50 = 0x00,
-            /// <summary>
-            /// ±100 gauss sensitivity setting for the magnetometer.
-            /// </summary>
-            Gauss100 = 0x20,
-            /// <summary>
-            /// ±200 gauss sensitivity setting for the magnetometer.
-            /// </summary>
-            Gauss200 = 0x40,
-            /// <summary>
-            /// ±400 gauss sensitivity setting for the magnetometer.
-            /// </summary>
-            Gauss400 = 0x60
         }
 
         /// <summary>
@@ -112,37 +89,21 @@
         public enum MagOutputDataRate
         {
             /// <summary>
-            /// Output data rate: 0.625 Hz
+            /// Output Data Rate: 10 Hz.
             /// </summary>
-            Hz0_625 = 0x00,
+            Odr10Hz = 0x00,
             /// <summary>
-            /// Output data rate: 1.25 Hz
+            /// Output Data Rate: 20 Hz.
             /// </summary>
-            Hz1_25 = 0x04,
+            Odr20Hz = 0x04,
             /// <summary>
-            /// Output data rate: 2.5 Hz
+            /// Output Data Rate: 50 Hz.
             /// </summary>
-            Hz2_5 = 0x08,
+            Odr50Hz = 0x08,
             /// <summary>
-            /// Output data rate: 5 Hz
+            /// Output Data Rate: 100 Hz.
             /// </summary>
-            Hz5 = 0x0C,
-            /// <summary>
-            /// Output data rate: 10 Hz
-            /// </summary>
-            Hz10 = 0x10,
-            /// <summary>
-            /// Output data rate: 20 Hz
-            /// </summary>
-            Hz20 = 0x14,
-            /// <summary>
-            /// Output data rate: 40 Hz
-            /// </summary>
-            Hz40 = 0x18,
-            /// <summary>
-            /// Output data rate: 80 Hz
-            /// </summary>
-            Hz80 = 0x1C
+            Odr100Hz = 0x0C,
         }
     }
 }
