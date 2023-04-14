@@ -1,8 +1,8 @@
-﻿using Meadow.Hardware;
+﻿using Meadow.Foundation.Graphics;
 using Meadow.Foundation.Graphics.Buffers;
-using System;
-using Meadow.Foundation.Graphics;
+using Meadow.Hardware;
 using Meadow.Units;
+using System;
 
 namespace Meadow.Foundation.Displays
 {
@@ -67,7 +67,7 @@ namespace Meadow.Foundation.Displays
         /// <param name="chipSelectPin">Chip select pin</param>
         /// <param name="dcPin">Data command pin</param>
         /// <param name="resetPin">Reset pin</param>
-        public Pcd8544(ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin):
+        public Pcd8544(ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin) :
             this(spiBus, chipSelectPin?.CreateDigitalOutputPort(), dcPin.CreateDigitalOutputPort(true),
                 resetPin.CreateDigitalOutputPort(true))
         {
@@ -80,11 +80,13 @@ namespace Meadow.Foundation.Displays
         /// <param name="chipSelectPort">Chip select output port</param>
         /// <param name="dataCommandPort">Data command output port</param>
         /// <param name="resetPort">Reset output port</param>
-        public Pcd8544(ISpiBus spiBus, 
+        public Pcd8544(ISpiBus spiBus,
             IDigitalOutputPort chipSelectPort,
             IDigitalOutputPort dataCommandPort,
             IDigitalOutputPort resetPort)
         {
+            imageBuffer = new Buffer1bpp(Width, Height);
+
             dataCommandPort.State = true;
             resetPort.State = true;
 
@@ -212,7 +214,7 @@ namespace Meadow.Foundation.Displays
         {
             imageBuffer.Clear(fillColor.Color1bpp);
 
-            if(updateDisplay) { Show(); }
+            if (updateDisplay) { Show(); }
         }
 
         /// <summary>
