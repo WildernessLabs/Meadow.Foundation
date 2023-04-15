@@ -51,35 +51,35 @@
         public enum ThermocoupleType
         {
             /// <summary>
-            /// K-type thermocouple (chromel–alumel), widely used due to its broad temperature range and durability.
+            /// K-type thermocouple (chromel–alumel), widely used due to its broad temperature range and durability
             /// </summary>
             K = 0x00,
             /// <summary>
-            /// J-type thermocouple (iron–constantan), commonly used in general-purpose applications.
+            /// J-type thermocouple (iron–constantan), commonly used in general-purpose applications
             /// </summary>
             J = 0x01,
             /// <summary>
-            /// T-type thermocouple (copper–constantan), suitable for low-temperature measurements.
+            /// T-type thermocouple (copper–constantan), suitable for low-temperature measurements
             /// </summary>
             T = 0x02,
             /// <summary>
-            /// N-type thermocouple (nicrosil–nisil), known for its stability and resistance to high temperatures.
+            /// N-type thermocouple (nicrosil–nisil), known for its stability and resistance to high temperatures
             /// </summary>
             N = 0x03,
             /// <summary>
-            /// S-type thermocouple (platinum–rhodium), suitable for high-temperature measurements.
+            /// S-type thermocouple (platinum–rhodium), suitable for high-temperature measurements
             /// </summary>
             S = 0x04,
             /// <summary>
-            /// E-type thermocouple (chromel–constantan), featuring a high output signal and excellent stability.
+            /// E-type thermocouple (chromel–constantan), featuring a high output signal and excellent stability
             /// </summary>
             E = 0x05,
             /// <summary>
-            /// B-type thermocouple (platinum–rhodium), used for very high-temperature measurements.
+            /// B-type thermocouple (platinum–rhodium), used for very high-temperature measurements
             /// </summary>
             B = 0x06,
             /// <summary>
-            /// R-type thermocouple (platinum–rhodium), suitable for high-temperature measurements.
+            /// R-type thermocouple (platinum–rhodium), suitable for high-temperature measurements
             /// </summary>
             R = 0x07
         }
@@ -90,19 +90,19 @@
         public enum AdcResolution
         {
             /// <summary>
-            /// 18-bit ADC resolution, providing the fastest conversion time.
+            /// 18-bit ADC resolution, providing the fastest conversion time
             /// </summary>
             _18Bit = 0x00,
             /// <summary>
-            /// 16-bit ADC resolution, providing a balance between conversion time and resolution.
+            /// 16-bit ADC resolution, providing a balance between conversion time and resolution
             /// </summary>
             _16Bit = 0x01,
             /// <summary>
-            /// 14-bit ADC resolution, providing a slower conversion time but higher resolution.
+            /// 14-bit ADC resolution, providing a slower conversion time but higher resolution
             /// </summary>
             _14Bit = 0x02,
             /// <summary>
-            /// 12-bit ADC resolution, providing the slowest conversion time but highest resolution.
+            /// 12-bit ADC resolution, providing the slowest conversion time but highest resolution
             /// </summary>
             _12Bit = 0x03
         }
@@ -147,24 +147,24 @@
         }
 
         /// <summary>
-        /// Represents the alert number for the MCP9600.
+        /// Represents the alert number for the MCP9600
         /// </summary>
         public enum AlertNumber
         {
             /// <summary>
-            /// Alert number 1.
+            /// Alert number 1
             /// </summary>
             Alert1 = 1,
             /// <summary>
-            /// Alert number 2.
+            /// Alert number 2
             /// </summary>
             Alert2 = 2,
             /// <summary>
-            /// Alert number 3.
+            /// Alert number 3
             /// </summary>
             Alert3 = 3,
             /// <summary>
-            /// Alert number 4.
+            /// Alert number 4
             /// </summary>
             Alert4 = 4
         }

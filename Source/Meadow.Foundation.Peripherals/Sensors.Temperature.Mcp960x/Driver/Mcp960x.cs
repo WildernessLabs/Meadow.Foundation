@@ -70,7 +70,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// <summary>
         /// Reads the hot junction temperature from the MCP960x
         /// </summary>
-        /// <returns>The hot junction temperature in degrees Celsius.</returns>
+        /// <returns>The hot junction temperature in degrees Celsius</returns>
         double ReadTemperatureHot()
         {
             byte[] readBuffer = new byte[2];
@@ -86,7 +86,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// <summary>
         /// Reads the cold/ambient temperature from the MCP960x
         /// </summary>
-        /// <returns>The cold/ambient temperature in degrees Celsius.</returns>
+        /// <returns>The cold/ambient temperature in degrees Celsius</returns>
         double ReadTemperatureCold()
         {
             byte[] readBuffer = new byte[2];
@@ -102,7 +102,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// <summary>
         /// Sets the thermocouple type for the MCP960x
         /// </summary>
-        /// <param name="type">The thermocouple type to set.</param>
+        /// <param name="type">The thermocouple type to set</param>
         public void SetThermocoupleType(ThermocoupleType type)
         {
             byte config = Peripheral.ReadRegister(SENSORCONFIG);
@@ -115,7 +115,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// <summary>
         /// Gets the thermocouple type currently configured for the MCP960x
         /// </summary>
-        /// <returns>The currently configured thermocouple type.</returns>
+        /// <returns>The currently configured thermocouple type</returns>
         public ThermocoupleType GetThermocoupleType()
         {
             byte config = Peripheral.ReadRegister(SENSORCONFIG);
@@ -126,7 +126,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// <summary>
         /// Sets the ADC resolution for the MCP960x
         /// </summary>
-        /// <param name="resolution">The ADC resolution to set.</param>
+        /// <param name="resolution">The ADC resolution to set</param>
         public void SetAdcResolution(AdcResolution resolution)
         {
             byte config = Peripheral.ReadRegister(SENSORCONFIG);
@@ -139,7 +139,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// <summary>
         /// Gets the ADC resolution currently configured for the MCP960x
         /// </summary>
-        /// <returns>The currently configured ADC resolution.</returns>
+        /// <returns>The currently configured ADC resolution</returns>
         public AdcResolution GetAdcResolution()
         {
             byte config = Peripheral.ReadRegister(SENSORCONFIG);
@@ -150,7 +150,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// <summary>
         /// Sets the filter coefficient for the MCP960x
         /// </summary>
-        /// <param name="coefficient">The filter coefficient to set.</param>
+        /// <param name="coefficient">The filter coefficient to set</param>
         public void SetFilterCoefficient(FilterCoefficient coefficient)
         {
             byte config = Peripheral.ReadRegister(SENSORCONFIG);
@@ -163,7 +163,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// <summary>
         /// Gets the filter coefficient for the MCP960x
         /// </summary>
-        /// <returns>The currently configured filter coefficient.</returns>
+        /// <returns>The currently configured filter coefficient</returns>
         public FilterCoefficient GetFilterCoefficient()
         {
             byte config = Peripheral.ReadRegister(SENSORCONFIG);
@@ -213,12 +213,12 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// <summary>
         /// Configures the alert settings for the MCP960x
         /// </summary>
-        /// <param name="alertNumber">The alert number (Alert1-Alert4) to configure.</param>
-        /// <param name="enabled">Whether the alert is enabled.</param>
-        /// <param name="rising">Whether the alert triggers on a rising temperature. Set to false for falling temperature.</param>
-        /// <param name="alertColdJunction">Whether the alert triggers on cold junction temperature. Set to false for thermocouple temperature.</param>
-        /// <param name="activeHigh">Whether the alert pin is active high. Set to false for active low.</param>
-        /// <param name="interruptMode">Whether the alert pin is in interrupt mode. Set to false for comparator mode.</param>
+        /// <param name="alertNumber">The alert number (Alert1-Alert4) to configure</param>
+        /// <param name="enabled">Whether the alert is enabled</param>
+        /// <param name="rising">Whether the alert triggers on a rising temperature. Set to false for falling temperature</param>
+        /// <param name="alertColdJunction">Whether the alert triggers on cold junction temperature. Set to false for thermocouple temperature</param>
+        /// <param name="activeHigh">Whether the alert pin is active high. Set to false for active low</param>
+        /// <param name="interruptMode">Whether the alert pin is in interrupt mode. Set to false for comparator mode</param>
         public void ConfigureAlert(AlertNumber alertNumber, bool enabled, bool rising, bool alertColdJunction, bool activeHigh, bool interruptMode)
         {
             if (alertNumber < AlertNumber.Alert1 || alertNumber > AlertNumber.Alert4)
@@ -240,7 +240,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// <summary>
         /// Enables or disables the MCP960x sensor
         /// </summary>
-        /// <param name="enable">True to enable the sensor, false to enter sleep mode.</param>
+        /// <param name="enable">True to enable the sensor, false to enter sleep mode</param>
         public void Enable(bool enable)
         {
             byte config = Peripheral.ReadRegister(DEVICECONFIG);
@@ -258,15 +258,14 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// <summary>
         /// Checks whether the MCP960x sensor is enabled and working or in sleep mode
         /// </summary>
-        /// <returns>True if in awake mode, false if in sleep mode.</returns>
+        /// <returns>True if in awake mode, false if in sleep mode</returns>
         public bool IsEnabled()
         {
             byte config = Peripheral.ReadRegister(DEVICECONFIG);
-            int statusBits = (config & 0b11); // Mask all bits except bits 0 and 1
+            int statusBits = (config & 0b11);
 
             return statusBits == 0;
         }
-
 
         /// <summary>
         /// Raise events for subcribers and notify of value changes

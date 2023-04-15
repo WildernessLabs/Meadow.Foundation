@@ -1,6 +1,6 @@
 ﻿using Meadow;
 using Meadow.Devices;
-using Meadow.Foundation.Sensors.Temperature.Drivers;
+using Meadow.Foundation.Sensors.Temperature;
 using System.Threading.Tasks;
 
 namespace Sensors.Temperature.MCP9601_Sample

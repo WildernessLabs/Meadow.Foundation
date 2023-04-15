@@ -1,6 +1,6 @@
 ﻿using Meadow.Hardware;
 
-namespace Meadow.Foundation.Sensors.Temperature.Drivers
+namespace Meadow.Foundation.Sensors.Temperature
 {
     /// <summary>
     /// Represents a Mcp9600 Thermocouple sensor object
