@@ -17,6 +17,7 @@ namespace Audio.MicroAudio_Sample
                 {
                     AddNote(new Note((Pitch)(i), 3, NoteDuration.Quarter));
                 }
+                AddNote(new Note(Pitch.C, 4, NoteDuration.Quarter));
             }
         }
     }

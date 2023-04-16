@@ -41,10 +41,7 @@ namespace Meadow.Foundation.Audio
         {
             foreach (var note in Notes)
             {
-
                 int duration = (int)(60.0 / tempo * (int)note.Duration);
-                Console.WriteLine($"Duration in ms: {duration}");
-
 
                 if (note.Pitch == Pitch.Rest)
                 {
