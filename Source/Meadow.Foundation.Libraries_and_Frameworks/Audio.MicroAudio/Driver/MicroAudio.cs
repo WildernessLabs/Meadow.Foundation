@@ -8,7 +8,7 @@ namespace Meadow.Foundation.Audio
     /// </summary>
     public partial class MicroAudio
     {
-        IToneGenerator speaker;
+        readonly IToneGenerator speaker;
 
         SystemSounds systemSounds;
         GameSounds gameSounds;
@@ -28,10 +28,7 @@ namespace Meadow.Foundation.Audio
         /// <param name="effect">The sound effect to play</param>
         public Task PlaySystemSound(SystemSoundEffect effect)
         {
-            if(systemSounds == null)
-            {
-                systemSounds = new SystemSounds(speaker);
-            }
+            systemSounds ??= new SystemSounds(speaker);
             return systemSounds.PlayEffect(effect);
         }
 
@@ -39,15 +36,16 @@ namespace Meadow.Foundation.Audio
         /// Plays the specified game sound effect
         /// </summary>
         /// <param name="effect">The sound effect to play</param>
-        public Task PlayGameSound(SystemSoundEffect effect)
+        public Task PlayGameSound(GameSoundEffect effect)
         {
-            if (gameSounds == null)
-            {
-                gameSounds = new GameSounds(speaker);
-            }
-            return systemSounds.PlayEffect(effect);
+            gameSounds ??= new GameSounds(speaker);
+            return gameSounds.PlayEffect(effect);
         }
 
+        /// <summary>
+        /// Play the specified song
+        /// </summary>
+        /// <param name="song">The song object</param>
         public Task PlaySong(Song song)
         {
             return song.Play(speaker);

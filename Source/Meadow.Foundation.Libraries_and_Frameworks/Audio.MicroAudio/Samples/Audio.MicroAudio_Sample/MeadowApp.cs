@@ -1,106 +1,86 @@
-﻿using Meadow.Devices;
-using Meadow.Foundation.Displays;
-using Meadow.Hardware;
-using Meadow.Units;
+﻿using Audio.MicroAudio_Sample.SongPlayer;
+using Meadow;
+using Meadow.Devices;
+using Meadow.Foundation.Audio;
+using Meadow.Gateways.Bluetooth;
+using Meadow.Peripherals.Speakers;
 using System;
-using System.IO;
-using System.Threading;
 using System.Threading.Tasks;
 
-namespace Meadow.Foundation.Graphics
+namespace MicroAudio_Sample
 {
-    /* 
-       AISU:
-        chipSelectPin: Device.Pins.D15,
-        dcPin: Device.Pins.D11,
-        resetPin: Device.Pins.D14, 
-       JUEGO:
-        chipSelectPin: Device.Pins.D14,
-        dcPin: Device.Pins.D03,
-        resetPin: Device.Pins.D04,
-    */
-
     public class MeadowApp : App<F7FeatherV2>
     {
-        private MicroGraphics graphics;
+        private MicroAudio audio;
+
+        IToneGenerator speaker;
 
         public override Task Initialize()
         {
             Resolver.Log.Info("Initialize...");
 
-            var config = new SpiClockConfiguration(new Frequency(48000, Frequency.UnitType.Kilohertz), SpiClockConfiguration.Mode.Mode3);
-            var spiBus = Device.CreateSpiBus(Device.Pins.SCK, Device.Pins.MOSI, Device.Pins.MISO, config);
+            speaker = new PiezoSpeaker(Device.Pins.D11);
 
-            var display = new St7789(
-                spiBus: spiBus,
-                chipSelectPin: Device.Pins.A03,
-                dcPin: Device.Pins.A04,
-                resetPin: Device.Pins.A05,
-                width: 240, height: 240, colorMode: ColorMode.Format16bppRgb565)
-            {
-            };
-
-            graphics = new MicroGraphics(display)
-            {
-                Rotation = RotationType._180Degrees,
-                IgnoreOutOfBoundsPixels = true
-            };
+            audio = new MicroAudio(speaker);
 
             return Task.CompletedTask;
         }
 
-        public override Task Run()
+        public override async Task Run()
         {
-            var delay = TimeSpan.FromMilliseconds(1000);
+            Resolver.Log.Info("Play happy birthday");
+            await HappyBirthDay(speaker);
 
-            graphics.Clear();
-            graphics.CurrentFont = new Font12x20();
+            await Task.Delay(1000);
 
-            graphics.DrawText(5, 200, "starting...", Color.White);
-            graphics.Show();
-            Thread.Sleep(delay);
+            Resolver.Log.Info("Play C major scale");
+            var scale = new CMajorScale();
+            await audio.PlaySong(scale);
 
-            int x = 0;
-            int y = 0;
+            await Task.Delay(1000);
 
-            while (true)
+            Resolver.Log.Info("Sound effects test");
+            await SoundEffectsTest();
+
+            Resolver.Log.Info("Game effects test");
+            await GameEffectsTest();
+        }
+
+        Task HappyBirthDay(IToneGenerator speaker)
+        { 
+            var happyBirthday = new Song();
+            happyBirthday.AddNote(new Note(Pitch.C, 3, NoteDuration.Quarter));
+            happyBirthday.AddNote(new Note(Pitch.C, 3, NoteDuration.Quarter));
+            happyBirthday.AddNote(new Note(Pitch.D, 3, NoteDuration.Half));
+            happyBirthday.AddNote(new Note(Pitch.C, 3, NoteDuration.Half));
+            happyBirthday.AddNote(new Note(Pitch.F, 3, NoteDuration.Half));
+            happyBirthday.AddNote(new Note(Pitch.E, 3, NoteDuration.Whole));
+
+            return happyBirthday.Play(speaker, 160);
+        }
+
+        async Task GameEffectsTest()
+        {
+            foreach (GameSoundEffect effect in Enum.GetValues(typeof(GameSoundEffect)))
             {
-                DrawImageFromFile(8, x, y);
-                Thread.Sleep(delay);
-                DrawImageFromResource(8, x, y);
-                Thread.Sleep(delay);
-                DrawImageFromFile(24, x, y);
-                Thread.Sleep(delay);
-                DrawImageFromResource(24, x, y);
-                Thread.Sleep(delay);
-
-                x += 1;
-                y += 1;
-
-                if (x > 260) x = -20;
-                if (y > 260) y = -20;
+                Resolver.Log.Info($"Playing {effect} game effect...");
+                await audio.PlayGameSound(effect);
+                await Task.Delay(1000);
             }
+
+            Resolver.Log.Info("Sound effects demo complete.");
         }
 
-        private void DrawImageFromFile(int depth, int x = 0, int y = 0)
+        async Task SoundEffectsTest()
         {
-            Resolver.Log.Info("Showing file...");
-            var filePath = Path.Combine(MeadowOS.FileSystem.UserFileSystemRoot, $"wl{depth}.bmp");
-            var image = Image.LoadFromFile(filePath);
-            graphics.Clear();
-            graphics.DrawImage(x, y, image);
-            graphics.DrawText(5, 200, $"{depth}bpp file", Color.White);
-            graphics.Show();
-        }
+            foreach (SystemSoundEffect effect in Enum.GetValues(typeof(SystemSoundEffect)))
+            {
+                Resolver.Log.Info($"Playing {effect} sound effect...");
+                await audio.PlaySystemSound(effect);
+                await Task.Delay(1000);
+            }
 
-        private void DrawImageFromResource(int depth, int x = 0, int y = 0)
-        {
-            Resolver.Log.Info("Showing resource...");
-            var image = Image.LoadFromResource($"wl{depth}_res.bmp");
-            graphics.Clear();
-            graphics.DrawImage(x, y, image);
-            graphics.DrawText(5, 200, $"{depth}bpp resource", Color.White);
-            graphics.Show();
+            Resolver.Log.Info("Sound effects demo complete.");
         }
     }
 }
