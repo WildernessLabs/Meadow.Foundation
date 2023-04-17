@@ -9,17 +9,17 @@ namespace Meadow.Foundation.Audio
     public class NotesToFrequency
     {
         /// <summary>
-        /// The frequency of the A4 note, in hertz.
+        /// The frequency of the A4 note, in hertz
         /// </summary>
         public static Frequency A4Frequency { get; set; } = new Frequency(440.0, Frequency.UnitType.Hertz);
 
         private static double SemitoneRatio { get; } = 1.059463094359;
 
         /// <summary>
-        /// Converts the specified musical note to its frequency in hertz.
+        /// Converts the specified musical note to its frequency in hertz
         /// </summary>
-        /// <param name="note">The musical note to convert.</param>
-        /// <returns>The frequency of the note in hertz.</returns>
+        /// <param name="note">The musical note to convert</param>
+        /// <returns>The frequency of the note in hertz</returns>
         public static Frequency ConvertToFrequency(Note note)
         {
             int semitonesFromA4 = CalculateSemitonesFromA4(note.Pitch, note.Octave);

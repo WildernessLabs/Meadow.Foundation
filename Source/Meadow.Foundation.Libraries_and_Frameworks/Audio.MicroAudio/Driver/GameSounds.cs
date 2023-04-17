@@ -15,9 +15,9 @@ namespace Meadow.Foundation.Audio
         private readonly int defaultPause = 50;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="GameSounds"/> class.
+        /// Initializes a new instance of the <see cref="GameSounds"/> class
         /// </summary>
-        /// <param name="toneGenerator">The <see cref="IToneGenerator"/> object to use for audio playback.</param>
+        /// <param name="toneGenerator">The <see cref="IToneGenerator"/> object to use for audio playback</param>
         public GameSounds(IToneGenerator toneGenerator)
         {
             this.toneGenerator = toneGenerator;
@@ -61,7 +61,7 @@ namespace Meadow.Foundation.Audio
 
 
         /// <summary>
-        /// Plays a simple blip sound effect.
+        /// Plays a simple blip sound effect
         /// </summary>
         private async Task PlayBlip()
         {
@@ -69,7 +69,7 @@ namespace Meadow.Foundation.Audio
         }
 
         /// <summary>
-        /// Plays a power-up or item pick-up sound effect.
+        /// Plays a power-up or item pick-up sound effect
         /// </summary>
         private async Task PlayPowerUp()
         {
@@ -79,7 +79,7 @@ namespace Meadow.Foundation.Audio
         }
 
         /// <summary>
-        /// Plays a coin or currency collection sound effect.
+        /// Plays a coin or currency collection sound effect
         /// </summary>
         private async Task PlayCoin()
         {
@@ -87,7 +87,7 @@ namespace Meadow.Foundation.Audio
         }
 
         /// <summary>
-        /// Plays a jump or hop sound effect.
+        /// Plays a jump or hop sound effect
         /// </summary>
         private async Task PlayJump()
         {
@@ -97,7 +97,7 @@ namespace Meadow.Foundation.Audio
         }
 
         /// <summary>
-        /// Plays a hit or damage sound effect.
+        /// Plays a hit or damage sound effect
         /// </summary>
         private async Task PlayHit()
         {
@@ -106,7 +106,7 @@ namespace Meadow.Foundation.Audio
         }
 
         /// <summary>
-        /// Plays a laser or projectile firing sound effect.
+        /// Plays a laser or projectile firing sound effect
         /// </summary>
         private async Task PlayLaser()
         {
@@ -115,7 +115,7 @@ namespace Meadow.Foundation.Audio
         }
 
         /// <summary>
-        /// Plays an explosion or destruction sound effect.
+        /// Plays an explosion or destruction sound effect
         /// </summary>
         private async Task PlayExplosion()
         {
@@ -126,7 +126,7 @@ namespace Meadow.Foundation.Audio
         }
 
         /// <summary>
-        /// Plays a game over or failure sound effect.
+        /// Plays a game over or failure sound effect
         /// </summary>
         private async Task PlayGameOver()
         {
@@ -140,7 +140,7 @@ namespace Meadow.Foundation.Audio
         }
 
         /// <summary>
-        /// Plays a victory or success sound effect.
+        /// Plays a victory or success sound effect
         /// </summary>
         private async Task PlayVictory()
         {
@@ -151,7 +151,7 @@ namespace Meadow.Foundation.Audio
         }
 
         /// <summary>
-        /// Plays a countdown or timer sound effect.
+        /// Plays a countdown or timer sound effect
         /// </summary>
         private async Task PlayCountdown()
         {
@@ -167,7 +167,7 @@ namespace Meadow.Foundation.Audio
         }
 
         /// <summary>
-        /// Plays a power-down sound effect.
+        /// Plays a power-down sound effect
         /// </summary>
         private async Task PlayPowerDown()
         {
@@ -177,7 +177,7 @@ namespace Meadow.Foundation.Audio
         }
 
         /// <summary>
-        /// Plays a button press sound effect.
+        /// Plays a button press sound effect
         /// </summary>
         private async Task PlayButtonPress()
         {
@@ -185,7 +185,7 @@ namespace Meadow.Foundation.Audio
         }
 
         /// <summary>
-        /// Plays a menu navigation sound effect.
+        /// Plays a menu navigation sound effect
         /// </summary>
         private async Task PlayMenuNavigate()
         {
@@ -194,7 +194,7 @@ namespace Meadow.Foundation.Audio
         }
 
         /// <summary>
-        /// Plays a collectible item sound effect.
+        /// Plays a collectible item sound effect
         /// </summary>
         private async Task PlayCollectible()
         {
@@ -213,7 +213,7 @@ namespace Meadow.Foundation.Audio
         }
 
         /// <summary>
-        /// Plays a secret found sound effect.
+        /// Plays a secret found sound effect
         /// </summary>
         private async Task PlaySecretFound()
         {
@@ -223,7 +223,7 @@ namespace Meadow.Foundation.Audio
         }
 
         /// <summary>
-        /// Plays a level complete sound effect.
+        /// Plays a level complete sound effect
         /// </summary>
         private async Task PlayLevelComplete()
         {
@@ -234,7 +234,7 @@ namespace Meadow.Foundation.Audio
         }
 
         /// <summary>
-        /// Plays a weapon switch sound effect.
+        /// Plays a weapon switch sound effect
         /// </summary>
         private async Task PlayWeaponSwitch()
         {
@@ -246,7 +246,7 @@ namespace Meadow.Foundation.Audio
         }
 
         /// <summary>
-        /// Plays a warning or alarm sound effect.
+        /// Plays a warning or alarm sound effect
         /// </summary>
         private async Task PlayWarning()
         {
@@ -256,7 +256,7 @@ namespace Meadow.Foundation.Audio
         }
 
         /// <summary>
-        /// Plays a teleport or warp sound effect.
+        /// Plays a teleport or warp sound effect
         /// </summary>
         private async Task PlayTeleport()
         {
@@ -267,7 +267,7 @@ namespace Meadow.Foundation.Audio
         }
 
         /// <summary>
-        /// Plays a health pickup or healing sound effect.
+        /// Plays a health pickup or healing sound effect
         /// </summary>
         private async Task PlayHealth()
         {
@@ -278,7 +278,7 @@ namespace Meadow.Foundation.Audio
         }
 
         /// <summary>
-        /// Plays a footstep or movement sound effect.
+        /// Plays a footstep or movement sound effect
         /// </summary>
         private async Task PlayFootstep()
         {
@@ -286,7 +286,7 @@ namespace Meadow.Foundation.Audio
         }
 
         /// <summary>
-        /// Plays an item activation or use sound effect.
+        /// Plays an item activation or use sound effect
         /// </summary>
         private async Task PlayActivation()
         {
@@ -296,7 +296,7 @@ namespace Meadow.Foundation.Audio
         }
 
         /// <summary>
-        /// Plays an enemy death or defeat sound effect.
+        /// Plays an enemy death or defeat sound effect
         /// </summary>
         private async Task PlayEnemyDeath()
         {
@@ -307,7 +307,7 @@ namespace Meadow.Foundation.Audio
         }
 
         /// <summary>
-        /// Plays a splash sound effect.
+        /// Plays a splash sound effect
         /// </summary>
         public async Task PlaySplash()
         {

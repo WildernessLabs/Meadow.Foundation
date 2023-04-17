@@ -4,9 +4,9 @@ namespace Audio.MicroAudio_Sample
 {
     namespace SongPlayer
     {
-        internal class CMajorScale : Song
+        internal class CScale : Song
         {
-            public CMajorScale()
+            public CScale()
             {
                 AddNotes();
             }

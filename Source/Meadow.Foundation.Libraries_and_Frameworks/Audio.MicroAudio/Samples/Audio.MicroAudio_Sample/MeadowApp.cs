@@ -33,8 +33,8 @@ namespace MicroAudio_Sample
 
             await Task.Delay(1000);
 
-            Resolver.Log.Info("Play C major scale");
-            var scale = new CMajorScale();
+            Resolver.Log.Info("Play C scale");
+            var scale = new CScale();
             await audio.PlaySong(scale);
 
             await Task.Delay(1000);

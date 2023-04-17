@@ -134,7 +134,7 @@ namespace Meadow.Foundation.Audio
         }
 
         /// <summary>
-        /// Plays an alert or notification sound effect.
+        /// Plays an alert or notification sound effect
         /// </summary>
         private async Task PlayAlert()
         {
@@ -148,7 +148,7 @@ namespace Meadow.Foundation.Audio
         }
 
         /// <summary>
-        /// Plays a short click sound effect.
+        /// Plays a short click sound effect
         /// </summary>
         private async Task PlayClick()
         {
@@ -156,7 +156,7 @@ namespace Meadow.Foundation.Audio
         }
 
         /// <summary>
-        /// Plays a popping sound effect.
+        /// Plays a popping sound effect
         /// </summary>
         private async Task PlayPop()
         {
@@ -164,7 +164,7 @@ namespace Meadow.Foundation.Audio
         }
 
         /// <summary>
-        /// Plays a power-up sound effect.
+        /// Plays a power-up sound effect
         /// </summary>
         private async Task PlayPowerUp()
         {
