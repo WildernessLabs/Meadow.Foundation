@@ -5,6 +5,9 @@ using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Audio
 {
+    /// <summary>
+    /// A class for playing game sounds using an IToneGenerator
+    /// </summary>
     public class GameSounds
     {
         private readonly IToneGenerator toneGenerator;
@@ -12,7 +15,7 @@ namespace Meadow.Foundation.Audio
         private readonly int defaultPause = 50;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="GameSoundPlayer"/> class.
+        /// Initializes a new instance of the <see cref="GameSounds"/> class.
         /// </summary>
         /// <param name="toneGenerator">The <see cref="IToneGenerator"/> object to use for audio playback.</param>
         public GameSounds(IToneGenerator toneGenerator)
@@ -28,33 +31,34 @@ namespace Meadow.Foundation.Audio
         {
             return effect switch
             {
-                GameSoundEffect.Blip => PlayBlip(),
-                GameSoundEffect.PowerUp => PlayPowerUp(),
-                GameSoundEffect.PowerDown => PlayPowerDown(),
-                GameSoundEffect.Coin => PlayCoin(),
-                GameSoundEffect.Jump => PlayJump(),
-                GameSoundEffect.Hit => PlayHit(),
-                GameSoundEffect.Laser => PlayLaser(),
-                GameSoundEffect.Explosion => PlayExplosion(),
-                GameSoundEffect.GameOver => PlayGameOver(),
-                GameSoundEffect.Victory => PlayVictory(),
-                GameSoundEffect.Countdown => PlayCountdown(),
-                GameSoundEffect.ButtonPress => PlayButtonPress(),
-                GameSoundEffect.MenuNavigate => PlayMenuNavigate(),
-                GameSoundEffect.Collectible => PlayCollectible(),
-                GameSoundEffect.SecretFound => PlaySecretFound(),
-                GameSoundEffect.LevelComplete => PlayLevelComplete(),
-                GameSoundEffect.WeaponSwitch => PlayWeaponSwitch(),
-                GameSoundEffect.Warning => PlayWarning(),
-                GameSoundEffect.Teleport => PlayTeleport(),
-                GameSoundEffect.BossBattle => PlayBossBattle(),
-                GameSoundEffect.Health => PlayHealth(),
-                GameSoundEffect.EnemyDeath => PlayEnemyDeath(),
-                GameSoundEffect.Footstep => PlayFootstep(),
                 GameSoundEffect.Activation => PlayActivation(),
+                GameSoundEffect.Blip => PlayBlip(),
+                GameSoundEffect.BossBattle => PlayBossBattle(),
+                GameSoundEffect.ButtonPress => PlayButtonPress(),
+                GameSoundEffect.Coin => PlayCoin(),
+                GameSoundEffect.Collectible => PlayCollectible(),
+                GameSoundEffect.Countdown => PlayCountdown(),
+                GameSoundEffect.EnemyDeath => PlayEnemyDeath(),
+                GameSoundEffect.Explosion => PlayExplosion(),
+                GameSoundEffect.Footstep => PlayFootstep(),
+                GameSoundEffect.GameOver => PlayGameOver(),
+                GameSoundEffect.Health => PlayHealth(),
+                GameSoundEffect.Hit => PlayHit(),
+                GameSoundEffect.Jump => PlayJump(),
+                GameSoundEffect.Laser => PlayLaser(),
+                GameSoundEffect.LevelComplete => PlayLevelComplete(),
+                GameSoundEffect.MenuNavigate => PlayMenuNavigate(),
+                GameSoundEffect.PowerDown => PlayPowerDown(),
+                GameSoundEffect.PowerUp => PlayPowerUp(),
+                GameSoundEffect.SecretFound => PlaySecretFound(),
+                GameSoundEffect.Teleport => PlayTeleport(),
+                GameSoundEffect.Victory => PlayVictory(),
+                GameSoundEffect.Warning => PlayWarning(),
+                GameSoundEffect.WeaponSwitch => PlayWeaponSwitch(),
                 _ => throw new ArgumentException("Invalid game sound effect specified.", nameof(effect)),
             };
         }
+
 
         /// <summary>
         /// Plays a simple blip sound effect.
@@ -300,6 +304,22 @@ namespace Meadow.Foundation.Audio
             await toneGenerator.PlayTone(new Frequency(1244.51), TimeSpan.FromMilliseconds(defaultDuration / 2));
             await toneGenerator.PlayTone(new Frequency(1046.5), TimeSpan.FromMilliseconds(defaultDuration / 2));
             await toneGenerator.PlayTone(new Frequency(783.99), TimeSpan.FromMilliseconds(defaultDuration / 2));
+        }
+
+        /// <summary>
+        /// Plays a splash sound effect.
+        /// </summary>
+        public async Task PlaySplash()
+        {
+            await toneGenerator.PlayTone(new Frequency(220), TimeSpan.FromMilliseconds(defaultDuration / 4));
+            await Task.Delay(TimeSpan.FromMilliseconds(defaultPause));
+            await toneGenerator.PlayTone(new Frequency(440), TimeSpan.FromMilliseconds(defaultDuration / 4));
+            await Task.Delay(TimeSpan.FromMilliseconds(defaultPause));
+            await toneGenerator.PlayTone(new Frequency(880), TimeSpan.FromMilliseconds(defaultDuration / 4));
+            await Task.Delay(TimeSpan.FromMilliseconds(defaultPause));
+            await toneGenerator.PlayTone(new Frequency(440), TimeSpan.FromMilliseconds(defaultDuration / 4));
+            await Task.Delay(TimeSpan.FromMilliseconds(defaultPause));
+            await toneGenerator.PlayTone(new Frequency(220), TimeSpan.FromMilliseconds(defaultDuration / 4));
         }
     }
 }

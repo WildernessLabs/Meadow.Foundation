@@ -1,4 +1,5 @@
 ﻿using Meadow.Peripherals.Speakers;
+using System;
 using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Audio
@@ -14,7 +15,7 @@ namespace Meadow.Foundation.Audio
         GameSounds gameSounds;
 
         /// <summary>
-        /// Create a new MicroAudio instance from a ITOneGenerator driver instance
+        /// Create a new MicroAudio instance from a IToneGenerator driver instance
         /// </summary>
         /// <param name="speaker">An IToneGenerator object</param>
         public MicroAudio(IToneGenerator speaker)
@@ -23,23 +24,42 @@ namespace Meadow.Foundation.Audio
         }
 
         /// <summary>
+        /// Set the playback volume
+        /// </summary>
+        /// <param name="volume">The volume from 0-1</param>
+        public void SetVolume(float volume)
+        {
+            speaker?.SetVolume(volume);
+        }
+
+        /// <summary>
         /// Plays the specified system sound effect
         /// </summary>
         /// <param name="effect">The sound effect to play</param>
-        public Task PlaySystemSound(SystemSoundEffect effect)
+        /// <param name="numberOfLoops">The number of times to play the sound effect</param>
+        public async Task PlaySystemSound(SystemSoundEffect effect, int numberOfLoops = 1)
         {
             systemSounds ??= new SystemSounds(speaker);
-            return systemSounds.PlayEffect(effect);
+
+            for(int i = 0; i < numberOfLoops; i++)
+            {
+                await systemSounds.PlayEffect(effect);
+            }
         }
 
         /// <summary>
         /// Plays the specified game sound effect
         /// </summary>
         /// <param name="effect">The sound effect to play</param>
-        public Task PlayGameSound(GameSoundEffect effect)
+        /// /// <param name="numberOfLoops">The number of times to play the sound effect</param>
+        public async Task PlayGameSound(GameSoundEffect effect, int numberOfLoops = 1)
         {
             gameSounds ??= new GameSounds(speaker);
-            return gameSounds.PlayEffect(effect);
+
+            for (int i = 0; i < numberOfLoops; i++)
+            {
+                await gameSounds.PlayEffect(effect);
+            }
         }
 
         /// <summary>

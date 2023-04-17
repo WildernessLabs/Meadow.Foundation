@@ -32,59 +32,29 @@ namespace Meadow.Foundation.Audio
         /// Plays the specified sound effect
         /// </summary>
         /// <param name="effect">The sound effect to play</param>
-        public async Task PlayEffect(SystemSoundEffect effect)
+        public Task PlayEffect(SystemSoundEffect effect)
         {
-            switch (effect)
+            return effect switch
             {
-                case SystemSoundEffect.Beep:
-                    await PlayBeep();
-                    break;
-                case SystemSoundEffect.Success:
-                    await PlaySuccess();
-                    break;
-                case SystemSoundEffect.Failure:
-                    await PlayFailure();
-                    break;
-                case SystemSoundEffect.Warning:
-                    await PlayWarning();
-                    break;
-                case SystemSoundEffect.Alarm:
-                    await PlayAlarm();
-                    break;
-                case SystemSoundEffect.Tick:
-                    await PlayTick();
-                    break;
-                case SystemSoundEffect.Chime:
-                    await PlayChime();
-                    break;
-                case SystemSoundEffect.Buzz:
-                    await PlayBuzz();
-                    break;
-                case SystemSoundEffect.Fanfare:
-                    await PlayFanfare();
-                    break;
-                case SystemSoundEffect.Alert:
-                    await PlayAlert();
-                    break;
-                case SystemSoundEffect.Click:
-                    await PlayClick();
-                    break;
-                case SystemSoundEffect.Pop:
-                    await PlayPop();
-                    break;
-                case SystemSoundEffect.PowerUp:
-                    await PlayPowerUp();
-                    break;
-                case SystemSoundEffect.PowerDown:
-                    await PlayPowerDown();
-                    break;
-                case SystemSoundEffect.Notification:
-                    await PlayNotification();
-                    break;
-                default:
-                    throw new ArgumentException($"Unknown effect: {effect}");
-            }
+                SystemSoundEffect.Alert => PlayAlert(),
+                SystemSoundEffect.Alarm => PlayAlarm(),
+                SystemSoundEffect.Beep => PlayBeep(),
+                SystemSoundEffect.Buzz => PlayBuzz(),
+                SystemSoundEffect.Chime => PlayChime(),
+                SystemSoundEffect.Click => PlayClick(),
+                SystemSoundEffect.Failure => PlayFailure(),
+                SystemSoundEffect.Fanfare => PlayFanfare(),
+                SystemSoundEffect.Notification => PlayNotification(),
+                SystemSoundEffect.Pop => PlayPop(),
+                SystemSoundEffect.PowerDown => PlayPowerDown(),
+                SystemSoundEffect.PowerUp => PlayPowerUp(),
+                SystemSoundEffect.Success => PlaySuccess(),
+                SystemSoundEffect.Tick => PlayTick(),
+                SystemSoundEffect.Warning => PlayWarning(),
+                _ => throw new ArgumentException($"Unknown effect: {effect}"),
+            };
         }
+
 
         private async Task PlayBeep()
         {
