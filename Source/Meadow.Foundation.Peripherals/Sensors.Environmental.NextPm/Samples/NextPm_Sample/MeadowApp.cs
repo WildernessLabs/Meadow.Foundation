@@ -3,7 +3,7 @@ using Meadow.Devices;
 using Meadow.Foundation.Sensors.Environmental;
 using System.Threading.Tasks;
 
-namespace Pmsa003i_Sample
+namespace NextPm_Sample
 {
     // Change F7FeatherV2 to F7FeatherV1 for V1.x boards
     public class MeadowApp : App<F7FeatherV2>

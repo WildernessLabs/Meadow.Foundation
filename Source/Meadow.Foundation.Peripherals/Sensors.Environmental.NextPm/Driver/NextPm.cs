@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 namespace Meadow.Foundation.Sensors.Environmental
 {
     /// <summary>
-    /// Represents a TERA Sensor NextPM particulate matter sensor
+    /// Represents a TERA Sensor NextPM serial particulate matter sensor
     /// </summary>
     public partial class NextPm :
         PollingSensorBase<(
@@ -66,7 +66,7 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// <summary>
         /// Gets the sensor's firmware
         /// </summary>
-        /// <returns></returns>
+        /// <returns>The sensor's firmware version</returns>
         public async Task<short> GetFirmwareVersion()
         {
             await SendCommand(CommandByte.ReadFirmware);
@@ -76,7 +76,7 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// <summary>
         /// Checks to see if the sensor is in Sleep mode
         /// </summary>
-        /// <returns></returns>
+        /// <returns><b>True</b> if the sensor is in Sleep mode</returns>
         public async Task<bool> IsAsleep()
         {
             await SendCommand(CommandByte.ReadSensorState);
@@ -86,7 +86,6 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// <summary>
         /// Puts the device into Sleep mode
         /// </summary>
-        /// <returns></returns>
         public async Task PowerOff()
         {
             await SendCommand(CommandByte.SetPowerMode, 0x01);
@@ -95,7 +94,6 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// <summary>
         /// Wakes the device from Sleep mode
         /// </summary>
-        /// <returns></returns>
         public async Task PowerOn()
         {
             await SendCommand(CommandByte.SetPowerMode, 0x00);
@@ -104,7 +102,6 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// <summary>
         /// Gets the fan speed (in percentage)
         /// </summary>
-        /// <returns></returns>
         public async Task<int> GetFanSpeed()
         {
             await SendCommand(CommandByte.ReadWriteFanSpeed, 0x00, 0x00);
@@ -120,7 +117,6 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// Sets the sensor fan speed (in percentage)
         /// </summary>
         /// <param name="speedPercent"></param>
-        /// <returns></returns>
         /// <exception cref="ArgumentOutOfRangeException"></exception>
         public async Task SetFanSpeed(int speedPercent)
         {
@@ -137,7 +133,6 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// <summary>
         /// Gets the sensor's current Temperature and Humidity readings
         /// </summary>
-        /// <returns></returns>
         public async Task<(Units.Temperature temperature, RelativeHumidity humidity)> GetTemperatureAndHumidity()
         {
             await SendCommand(CommandByte.ReadTempAndHumidity);
@@ -154,7 +149,6 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// <summary>
         /// Gets the average particulate reading for the past 10 seconds
         /// </summary>
-        /// <returns></returns>
         public async Task<ParticulateReading> Get10SecondAverageReading()
         {
             await SendCommand(CommandByte.Read10sConcentrations);
@@ -164,7 +158,6 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// <summary>
         /// Gets the average particulate reading for the past 60 seconds
         /// </summary>
-        /// <returns></returns>
         public async Task<ParticulateReading> Get1MinuteAverageReading()
         {
             await SendCommand(CommandByte.Read60sConcentrations);
@@ -174,7 +167,6 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// <summary>
         /// Gets the average particulate reading for the past 15 minutes
         /// </summary>
-        /// <returns></returns>
         public async Task<ParticulateReading> Get15MinueAverageReading()
         {
             await SendCommand(CommandByte.Read900sConcentrations);
