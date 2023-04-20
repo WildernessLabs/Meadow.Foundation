@@ -15,7 +15,7 @@ namespace Meadow.Foundation.Sensors.Environmental
             ParticulateReading? reading15min,
             Units.Temperature? temperature,
             RelativeHumidity? humidity)>,
-        IDisposable
+        IDisposable, IPowerControllablePeripheral
     {
         /// <summary>
         /// Raised when a new 10-second average reading is taken

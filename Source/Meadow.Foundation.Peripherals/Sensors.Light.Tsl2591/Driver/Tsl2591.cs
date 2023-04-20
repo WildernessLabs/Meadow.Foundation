@@ -1,9 +1,9 @@
-﻿using System;
-using System.Threading.Tasks;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
 using Meadow.Peripherals.Sensors;
 using Meadow.Peripherals.Sensors.Light;
 using Meadow.Units;
+using System;
+using System.Threading.Tasks;
 using IU = Meadow.Units.Illuminance.UnitType;
 
 namespace Meadow.Foundation.Sensors.Light
@@ -15,7 +15,7 @@ namespace Meadow.Foundation.Sensors.Light
     /// </summary>
     public partial class Tsl2591 :
         ByteCommsSensorBase<(Illuminance? FullSpectrum, Illuminance? Infrared, Illuminance? VisibleLight, Illuminance? Integrated)>,
-        ILightSensor, IDisposable
+        ILightSensor, IDisposable, IPowerControllablePeripheral
     {
         /// <summary>
         /// Raised when Full Spectrum Illuminance value changes
@@ -178,17 +178,19 @@ namespace Meadow.Foundation.Sensors.Light
         /// <summary>
         /// Power the sensor on
         /// </summary>
-        public void PowerOn()
+        public Task PowerOn()
         {
             Peripheral.WriteRegister((byte)(Register.Enable | Register.Command), 3);
+            return Task.CompletedTask;
         }
 
         /// <summary>
         /// Power the sensor off
         /// </summary>
-        public void PowerOff()
+        public Task PowerOff()
         {
             Peripheral.WriteRegister((byte)(Register.Enable | Register.Command), 0);
+            return Task.CompletedTask;
         }
 
         /// <summary>
