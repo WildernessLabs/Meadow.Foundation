@@ -167,7 +167,7 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// <summary>
         /// Gets the average particulate reading for the past 15 minutes
         /// </summary>
-        public async Task<ParticulateReading> Get15MinueAverageReading()
+        public async Task<ParticulateReading> Get15MinuteAverageReading()
         {
             await SendCommand(CommandByte.Read900sConcentrations);
             return new ParticulateReading(_readBuffer, 3);
@@ -239,7 +239,7 @@ namespace Meadow.Foundation.Sensors.Environmental
 
                 try
                 {
-                    conditions.reading15min = await Get15MinueAverageReading();
+                    conditions.reading15min = await Get15MinuteAverageReading();
                 }
                 catch (TeraException)
                 {
