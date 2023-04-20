@@ -54,7 +54,7 @@ namespace NextPm_Sample
             Resolver.Log.Info($"  {read1m.EnvironmentalPM_2_5micron.MicroGramsPerMetersCubed:0} ug/L^3 1 micron particles");
             Resolver.Log.Info($"  {read1m.EnvironmentalPM_10micron.MicroGramsPerMetersCubed:0} ug/L^3 1 micron particles");
 
-            var read15m = await nextPm.Get15MinueAverageReading();
+            var read15m = await nextPm.Get15MinuteAverageReading();
             Resolver.Log.Info($"Past 15 minutes");
             Resolver.Log.Info($"  {read15m.CountOf1micronParticles.ParticlesPerLiter:0} 1 micron particles per liter");
             Resolver.Log.Info($"  {read15m.CountOf2_5micronParticles.ParticlesPerLiter:0} 2.5 micron particles per liter");
