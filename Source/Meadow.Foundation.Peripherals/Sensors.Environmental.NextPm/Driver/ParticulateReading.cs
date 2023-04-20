@@ -6,7 +6,7 @@ namespace Meadow.Foundation.Sensors.Environmental
     /// <summary>
     /// A collection of particulate density readings
     /// </summary>
-    public class ParticulateReading
+    public struct ParticulateReading
     {
         private byte[] _data;
 

@@ -7,7 +7,7 @@ namespace Meadow.Foundation.Sensors.Environmental
     /// <summary>
     /// Represents a TERA Sensor NextPM particulate matter sensor
     /// </summary>
-    public partial class NextPm : SamplingSensorBase<int>
+    public partial class NextPm
     {
         private ISerialPort _port;
         // dev note: these common buffers are used to minimize heap allocations during serial communications with the sensor

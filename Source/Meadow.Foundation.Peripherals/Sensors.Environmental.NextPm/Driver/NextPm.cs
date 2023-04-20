@@ -8,8 +8,36 @@ namespace Meadow.Foundation.Sensors.Environmental
     /// <summary>
     /// Represents a TERA Sensor NextPM particulate matter sensor
     /// </summary>
-    public partial class NextPm : SamplingSensorBase<int>, IDisposable
+    public partial class NextPm :
+        PollingSensorBase<(
+            ParticulateReading? reading10s,
+            ParticulateReading? reading1min,
+            ParticulateReading? reading15min,
+            Units.Temperature? temperature,
+            RelativeHumidity? humidity)>,
+        IDisposable
     {
+        /// <summary>
+        /// Raised when a new 10-second average reading is taken
+        /// </summary>
+        public event EventHandler<IChangeResult<ParticulateReading>> Readings10sUpdated = delegate { };
+        /// <summary>
+        /// Raised when a new 1-minute average reading is taken
+        /// </summary>
+        public event EventHandler<IChangeResult<ParticulateReading>> Readings1minUpdated = delegate { };
+        /// <summary>
+        /// Raised when a new 15-minute average reading is taken
+        /// </summary>
+        public event EventHandler<IChangeResult<ParticulateReading>> Readings15minUpdated = delegate { };
+        /// <summary>
+        /// Raised when a new temperature reading is taken
+        /// </summary>
+        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
+        /// <summary>
+        /// Raised when a new humidity reading is taken
+        /// </summary>
+        public event EventHandler<IChangeResult<RelativeHumidity>> HumidityUpdated = delegate { };
+
         /// <summary>
         /// Returns true if the object is disposed, otherwise false
         /// </summary>
@@ -59,7 +87,7 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// Puts the device into Sleep mode
         /// </summary>
         /// <returns></returns>
-        public async Task Sleep()
+        public async Task PowerOff()
         {
             await SendCommand(CommandByte.SetPowerMode, 0x01);
         }
@@ -68,7 +96,7 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// Wakes the device from Sleep mode
         /// </summary>
         /// <returns></returns>
-        public async Task Wake()
+        public async Task PowerOn()
         {
             await SendCommand(CommandByte.SetPowerMode, 0x00);
         }
@@ -154,21 +182,94 @@ namespace Meadow.Foundation.Sensors.Environmental
         }
 
         /// <inheritdoc/>
-        public override void StartUpdating(TimeSpan? updateInterval = null)
+        protected override void RaiseEventsAndNotify(IChangeResult<(
+            ParticulateReading? reading10s,
+            ParticulateReading? reading1min,
+            ParticulateReading? reading15min,
+            Units.Temperature? temperature,
+            RelativeHumidity? humidity)> changeResult)
         {
-            throw new NotImplementedException();
+            if (changeResult.New.reading10s is { } r10)
+            {
+                Readings10sUpdated?.Invoke(this, new ChangeResult<ParticulateReading>(r10, changeResult.Old?.reading10s));
+            }
+            if (changeResult.New.reading1min is { } r1)
+            {
+                Readings1minUpdated?.Invoke(this, new ChangeResult<ParticulateReading>(r1, changeResult.Old?.reading10s));
+            }
+            if (changeResult.New.reading15min is { } r15)
+            {
+                Readings15minUpdated?.Invoke(this, new ChangeResult<ParticulateReading>(r15, changeResult.Old?.reading10s));
+            }
+            if (changeResult.New.temperature is { } temperature)
+            {
+                TemperatureUpdated?.Invoke(this, new ChangeResult<Units.Temperature>(temperature, changeResult.Old?.temperature));
+            }
+            if (changeResult.New.humidity is { } humidity)
+            {
+                HumidityUpdated?.Invoke(this._port, new ChangeResult<RelativeHumidity>(humidity, changeResult.Old?.humidity));
+            }
+            base.RaiseEventsAndNotify(changeResult);
         }
 
         /// <inheritdoc/>
-        public override void StopUpdating()
+        protected override async Task<(
+            ParticulateReading? reading10s,
+            ParticulateReading? reading1min,
+            ParticulateReading? reading15min,
+            Units.Temperature? temperature,
+            RelativeHumidity? humidity)> ReadSensor()
         {
-            throw new NotImplementedException();
-        }
+            (ParticulateReading? reading10s, ParticulateReading? reading1min, ParticulateReading? reading15min, Units.Temperature? temperature, RelativeHumidity? humidity) conditions;
 
-        /// <inheritdoc/>
-        protected override Task<int> ReadSensor()
-        {
-            throw new NotImplementedException();
+            return await Task.Run(async () =>
+            {
+                // data sheet indicates you should always read all 4 bytes, in order, for valid data
+                try
+                {
+                    conditions.reading10s = await Get10SecondAverageReading();
+                }
+                catch (TeraException)
+                {
+                    // data likely not ready, or device is asleep
+                    conditions.reading10s = null;
+                }
+
+                try
+                {
+                    conditions.reading1min = await Get1MinuteAverageReading();
+                }
+                catch (TeraException)
+                {
+                    // data likely not ready, or device is asleep
+                    conditions.reading1min = null;
+                }
+
+                try
+                {
+                    conditions.reading15min = await Get15MinueAverageReading();
+                }
+                catch (TeraException)
+                {
+                    // data likely not ready, or device is asleep
+                    conditions.reading15min = null;
+                }
+
+                try
+                {
+                    var th = await GetTemperatureAndHumidity();
+                    conditions.temperature = th.temperature;
+                    conditions.humidity = th.humidity;
+                }
+                catch (TeraException)
+                {
+                    // data likely not ready, or device is asleep
+                    conditions.temperature = null;
+                    conditions.humidity = null;
+                }
+
+                return conditions;
+            });
         }
 
         ///<inheritdoc/>
