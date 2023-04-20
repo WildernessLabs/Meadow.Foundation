@@ -21,8 +21,20 @@ namespace NextPm_Sample
 
             nextPm = new NextPm(port);
 
+            nextPm.Readings10sUpdated += NextPm_Readings10sUpdated;
 
             return Task.CompletedTask;
+        }
+
+        private void NextPm_Readings10sUpdated(object sender, IChangeResult<ParticulateReading> e)
+        {
+            Resolver.Log.Info($"Past 10 seconds");
+            Resolver.Log.Info($"  {e.New.CountOf1micronParticles.ParticlesPerLiter:0} 1 micron particles per liter");
+            Resolver.Log.Info($"  {e.New.CountOf2_5micronParticles.ParticlesPerLiter:0} 2.5 micron particles per liter");
+            Resolver.Log.Info($"  {e.New.CountOf10micronParticles.ParticlesPerLiter:0} 10 micron particles per liter");
+            Resolver.Log.Info($"  {e.New.EnvironmentalPM_1micron.MicroGramsPerMetersCubed:0} ug/L^3 1 micron particles");
+            Resolver.Log.Info($"  {e.New.EnvironmentalPM_2_5micron.MicroGramsPerMetersCubed:0} ug/L^3 1 micron particles");
+            Resolver.Log.Info($"  {e.New.EnvironmentalPM_10micron.MicroGramsPerMetersCubed:0} ug/L^3 1 micron particles");
         }
 
         public override async Task Run()
@@ -32,36 +44,10 @@ namespace NextPm_Sample
             var firmware = await nextPm.GetFirmwareVersion();
             Resolver.Log.Info($"Firmware: 0x{firmware:X4}");
 
-            // if the device was asleep this will fail because data is not yet available
             var tempAndHumidity = await nextPm.GetTemperatureAndHumidity();
             Resolver.Log.Info($"Temp: {tempAndHumidity.temperature:0.0}C  Humidity: {tempAndHumidity.humidity}%");
 
-            var read10s = await nextPm.Get10SecondAverageReading();
-            Resolver.Log.Info($"Past 10 seconds");
-            Resolver.Log.Info($"  {read10s.CountOf1micronParticles.ParticlesPerLiter:0} 1 micron particles per liter");
-            Resolver.Log.Info($"  {read10s.CountOf2_5micronParticles.ParticlesPerLiter:0} 2.5 micron particles per liter");
-            Resolver.Log.Info($"  {read10s.CountOf10micronParticles.ParticlesPerLiter:0} 10 micron particles per liter");
-            Resolver.Log.Info($"  {read10s.EnvironmentalPM_1micron.MicroGramsPerMetersCubed:0} ug/L^3 1 micron particles");
-            Resolver.Log.Info($"  {read10s.EnvironmentalPM_2_5micron.MicroGramsPerMetersCubed:0} ug/L^3 1 micron particles");
-            Resolver.Log.Info($"  {read10s.EnvironmentalPM_10micron.MicroGramsPerMetersCubed:0} ug/L^3 1 micron particles");
-
-            var read1m = await nextPm.Get1MinuteAverageReading();
-            Resolver.Log.Info($"Past 1 minute");
-            Resolver.Log.Info($"  {read1m.CountOf1micronParticles.ParticlesPerLiter:0} 1 micron particles per liter");
-            Resolver.Log.Info($"  {read1m.CountOf2_5micronParticles.ParticlesPerLiter:0} 2.5 micron particles per liter");
-            Resolver.Log.Info($"  {read1m.CountOf10micronParticles.ParticlesPerLiter:0} 10 micron particles per liter");
-            Resolver.Log.Info($"  {read1m.EnvironmentalPM_1micron.MicroGramsPerMetersCubed:0} ug/L^3 1 micron particles");
-            Resolver.Log.Info($"  {read1m.EnvironmentalPM_2_5micron.MicroGramsPerMetersCubed:0} ug/L^3 1 micron particles");
-            Resolver.Log.Info($"  {read1m.EnvironmentalPM_10micron.MicroGramsPerMetersCubed:0} ug/L^3 1 micron particles");
-
-            var read15m = await nextPm.Get15MinuteAverageReading();
-            Resolver.Log.Info($"Past 15 minutes");
-            Resolver.Log.Info($"  {read15m.CountOf1micronParticles.ParticlesPerLiter:0} 1 micron particles per liter");
-            Resolver.Log.Info($"  {read15m.CountOf2_5micronParticles.ParticlesPerLiter:0} 2.5 micron particles per liter");
-            Resolver.Log.Info($"  {read15m.CountOf10micronParticles.ParticlesPerLiter:0} 10 micron particles per liter");
-            Resolver.Log.Info($"  {read15m.EnvironmentalPM_1micron.MicroGramsPerMetersCubed:0} ug/L^3 1 micron particles");
-            Resolver.Log.Info($"  {read15m.EnvironmentalPM_2_5micron.MicroGramsPerMetersCubed:0} ug/L^3 1 micron particles");
-            Resolver.Log.Info($"  {read15m.EnvironmentalPM_10micron.MicroGramsPerMetersCubed:0} ug/L^3 1 micron particles");
+            nextPm.StartUpdating();
         }
 
 
