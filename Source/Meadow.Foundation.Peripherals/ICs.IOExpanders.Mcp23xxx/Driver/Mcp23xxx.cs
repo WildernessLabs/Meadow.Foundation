@@ -1,9 +1,9 @@
 ﻿using Meadow.Hardware;
+using Meadow.Units;
 using Meadow.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using static Meadow.Foundation.ICs.IOExpanders.Mcp23xxx;
 
 namespace Meadow.Foundation.ICs.IOExpanders
 {
@@ -23,6 +23,17 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// The number of IO pins avaliable on the device
         /// </summary>
         public abstract int NumberOfPins { get; }
+
+        /// <summary>
+        /// The SPI bus speed for the device
+        /// </summary>
+        public static Frequency SpiBusSpeed { get; } = new Frequency(375, Frequency.UnitType.Kilohertz);
+
+        /// <summary>
+        /// The SPI bus mode for the device
+        /// </summary>
+        public static SpiClockConfiguration.Mode SpiBusMode { get; } = SpiClockConfiguration.Mode.Mode0;
+
 
         private readonly IMcpDeviceComms mcpDevice;
         private readonly IDigitalInputPort interruptPort;
@@ -61,7 +72,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             IDigitalOutputPort chipSelectPort,
             IDigitalInputPort interruptPort = null,
             IDigitalOutputPort resetPort = null) :
-            this(new SpiMcpDeviceComms(spiBus, chipSelectPort), interruptPort, resetPort) // use the internal constructor that takes an IMcpDeviceComms
+            this(new SpiMcpDeviceComms(spiBus, chipSelectPort, SpiBusSpeed, SpiBusMode), interruptPort, resetPort) // use the internal constructor that takes an IMcpDeviceComms
         { }
 
         /// <summary>

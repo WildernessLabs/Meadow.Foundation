@@ -1,8 +1,9 @@
-﻿using System;
-using System.Threading;
-using Meadow.Hardware;
+﻿using Meadow.Foundation.Graphics;
 using Meadow.Foundation.Graphics.Buffers;
-using Meadow.Foundation.Graphics;
+using Meadow.Hardware;
+using Meadow.Units;
+using System;
+using System.Threading;
 
 namespace Meadow.Foundation.Displays
 {
@@ -36,10 +37,29 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         public IPixelBuffer PixelBuffer => imageBuffer;
 
+        /// <summary>
+        /// The SPI bus speed for the device
+        /// </summary>
+        public Frequency SpiBusSpeed
+        {
+            get => _spiBusSpeed;
+            set => _spiBusSpeed = spiPeripheral.BusSpeed = value;
+        }
+        Frequency _spiBusSpeed = new Frequency(10000, Frequency.UnitType.Kilohertz);
+
+        /// <summary>
+        /// The SPI bus mode for the device
+        /// </summary>
+        public SpiClockConfiguration.Mode SpiBusMode
+        {
+            get => _piBusMode;
+            set => _piBusMode = spiPeripheral.BusMode = value;
+        }
+        SpiClockConfiguration.Mode _piBusMode = SpiClockConfiguration.Mode.Mode0;
+
         readonly ISpiPeripheral spiPeripheral;
         readonly IDigitalOutputPort dataCommandPort;
         readonly IDigitalOutputPort resetPort;
-        readonly IDigitalOutputPort chipSelectPort;
 
         readonly BufferGray4 imageBuffer;
 
@@ -54,16 +74,8 @@ namespace Meadow.Foundation.Displays
         /// <param name="dcPin">Data command pin</param>
         /// <param name="resetPin">Reset pin</param>
         public Ssd1327(ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin)
+            : this(spiBus, chipSelectPin?.CreateDigitalOutputPort(false), dcPin?.CreateDigitalOutputPort(false), resetPin?.CreateDigitalOutputPort(true))
         {
-            imageBuffer = new BufferGray4(Width, Height);
-
-            dataCommandPort = dcPin.CreateDigitalOutputPort(false);
-            if (resetPin != null) { resetPort = resetPin.CreateDigitalOutputPort(true); }
-            if (chipSelectPin != null) { chipSelectPort = chipSelectPin.CreateDigitalOutputPort(false); }
-
-            spiPeripheral = new SpiPeripheral(spiBus, chipSelectPort);
-
-            Initialize();
         }
 
         /// <summary>
@@ -78,11 +90,12 @@ namespace Meadow.Foundation.Displays
             IDigitalOutputPort dataCommandPort,
             IDigitalOutputPort resetPort)
         {
+            imageBuffer = new BufferGray4(Width, Height);
+
             this.dataCommandPort = dataCommandPort;
-            this.chipSelectPort = chipSelectPort;
             this.resetPort = resetPort;
 
-            spiPeripheral = new SpiPeripheral(spiBus, chipSelectPort);
+            spiPeripheral = new SpiPeripheral(spiBus, chipSelectPort, SpiBusSpeed, SpiBusMode);
 
             Initialize();
         }
@@ -121,7 +134,7 @@ namespace Meadow.Foundation.Displays
         {
             Array.Clear(imageBuffer.Buffer, 0, imageBuffer.ByteCount);
 
-            if(updateDisplay == true)
+            if (updateDisplay == true)
             {
                 Show();
             }
@@ -200,7 +213,7 @@ namespace Meadow.Foundation.Displays
         {
             SendCommand(Command.SETCOLUMN); //Set Column Address
             SendCommand(x0); //Beginning. Note that you must divide the column by 2, since 1 byte in memory is 2 pixels
-            SendCommand((byte)(x1/2)); //End
+            SendCommand((byte)(x1 / 2)); //End
 
             SendCommand(Command.SETROW); //Set Row Address
             SendCommand(y0); //Beginning
@@ -216,23 +229,6 @@ namespace Meadow.Foundation.Displays
         {
             dataCommandPort.State = CommandState;
             spiPeripheral.Write(command);
-        }
-
-        void SendData(int data)
-        {
-            SendData((byte)data);
-        }
-
-        void SendData(byte data)
-        {
-            dataCommandPort.State = DataState;
-            spiPeripheral.Write(data);
-        }
-
-        void SendData(byte[] data)
-        {
-            dataCommandPort.State = DataState;
-            spiPeripheral.Write(data);
         }
 
         /// <summary>
@@ -281,7 +277,7 @@ namespace Meadow.Foundation.Displays
               0x00, // 0xA1, 0x00
               (byte)Command.SETDISPLAYOFFSET,
               0x00, // 0xA2, 0x00
-              (byte)Command.DISPLAYALLOFF, 
+              (byte)Command.DISPLAYALLOFF,
               (byte)Command.SETMULTIPLEX,
               0x7F, // 0xA8, 0x7F (1/64)
               (byte)Command.PHASELEN,
@@ -305,7 +301,7 @@ namespace Meadow.Foundation.Displays
               0x62, // 0xD5, 0x62
               (byte)Command.CMDLOCK,
               0x12, // 0xFD, 0x12
-              (byte)Command.NORMALDISPLAY, 
+              (byte)Command.NORMALDISPLAY,
               (byte)Command.DISPLAYON
         };
     }

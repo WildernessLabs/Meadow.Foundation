@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Meadow.Units;
+using System;
 
 namespace Meadow.Hardware
 {
@@ -16,12 +17,22 @@ namespace Meadow.Hardware
         /// <summary>
         /// The chip select mode (active high or active low)
         /// </summary>
-        ChipSelectMode chipSelectMode;
+        readonly ChipSelectMode chipSelectMode;
 
         /// <summary>
         /// the ISpiBus object
         /// </summary>
         public ISpiBus Bus { get; }
+
+        /// <summary>
+        /// SPI bus speed
+        /// </summary>
+        public Frequency BusSpeed { get; set; }
+
+        /// <summary>
+        /// SPI bus mode
+        /// </summary>
+        public SpiClockConfiguration.Mode BusMode { get; set; }
 
         /// <summary>
         /// Internal write buffer. Used in methods in which the buffers aren't
@@ -39,18 +50,24 @@ namespace Meadow.Hardware
         /// </summary>
         /// <param name="bus">The spi bus connected to the peripheral</param>
         /// <param name="chipSelect">The chip select port</param>
+        /// <param name="busSpeed">The SPI bus speed</param>
+        /// <param name="busMode">The SPI bus mode (0-3)</param>
         /// <param name="readBufferSize">The size of the read buffer in bytes</param>
         /// <param name="writeBufferSize">The size of the write buffer in bytes</param>
         /// <param name="csMode">The chip select mode, active high or active low</param>
         public SpiPeripheral(
             ISpiBus bus,
             IDigitalOutputPort? chipSelect,
+            Frequency busSpeed,
+            SpiClockConfiguration.Mode busMode = SpiClockConfiguration.Mode.Mode0,
             int readBufferSize = 8, int writeBufferSize = 8,
             ChipSelectMode csMode = ChipSelectMode.ActiveLow)
         {
-            this.Bus = bus;
-            this.ChipSelect = chipSelect;
-            this.chipSelectMode = csMode;
+            Bus = bus;
+            BusMode = busMode;
+            BusSpeed = busSpeed;
+            ChipSelect = chipSelect;
+            chipSelectMode = csMode;
             WriteBuffer = new byte[writeBufferSize];
             ReadBuffer = new byte[readBufferSize];
         }
@@ -65,7 +82,7 @@ namespace Meadow.Hardware
         /// </remarks>
         public void Read(Span<byte> readBuffer)
         {
-            Bus.Read(this.ChipSelect, readBuffer, this.chipSelectMode);
+            Bus.Read(ChipSelect, readBuffer, chipSelectMode);
         }
 
         /// <summary>
@@ -76,7 +93,7 @@ namespace Meadow.Hardware
         public void ReadRegister(byte address, Span<byte> readBuffer)
         {
             WriteBuffer.Span[0] = address;
-            Bus.Exchange(this.ChipSelect, WriteBuffer.Span[0..readBuffer.Length], readBuffer, this.chipSelectMode);
+            Bus.Exchange(ChipSelect, WriteBuffer.Span[0..readBuffer.Length], readBuffer, chipSelectMode);
         }
 
         /// <summary>
@@ -87,7 +104,7 @@ namespace Meadow.Hardware
         public byte ReadRegister(byte address)
         {
             WriteBuffer.Span[0] = address;
-            Bus.Exchange(this.ChipSelect, WriteBuffer.Span[0..1], ReadBuffer.Span[0..1], this.chipSelectMode);
+            Bus.Exchange(ChipSelect, WriteBuffer.Span[0..1], ReadBuffer.Span[0..1], chipSelectMode);
             return ReadBuffer.Span[0];
         }
 
@@ -117,7 +134,7 @@ namespace Meadow.Hardware
         public void Write(byte value)
         {
             WriteBuffer.Span[0] = value;
-            Bus.Write(ChipSelect, WriteBuffer.Span[0..1], this.chipSelectMode);
+            Bus.Write(ChipSelect, WriteBuffer.Span[0..1], chipSelectMode);
         }
 
         /// <summary>
@@ -126,7 +143,7 @@ namespace Meadow.Hardware
         /// <param name="data">Data to be written.</param>
         public void Write(Span<byte> data)
         {
-            Bus.Write(this.ChipSelect, data, this.chipSelectMode);
+            Bus.Write(ChipSelect, data, chipSelectMode);
         }
 
         /// <summary>
@@ -139,7 +156,7 @@ namespace Meadow.Hardware
             // stuff the address and value into the write buffer
             WriteBuffer.Span[0] = address;
             WriteBuffer.Span[1] = value;
-            Bus.Write(ChipSelect, WriteBuffer.Span[0..2], this.chipSelectMode);
+            Bus.Write(ChipSelect, WriteBuffer.Span[0..2], chipSelectMode);
         }
 
         /// <summary>
@@ -152,7 +169,6 @@ namespace Meadow.Hardware
         {
             // split the 16 bit ushort into two bytes
             var bytes = BitConverter.GetBytes(value);
-            // call the helper method
             WriteRegister(address, bytes, order);
         }
 
@@ -166,7 +182,6 @@ namespace Meadow.Hardware
         {
             // split the 32 bit ushort into four bytes
             var bytes = BitConverter.GetBytes(value);
-            // call the helper method
             WriteRegister(address, bytes, order);
         }
 
@@ -180,7 +195,6 @@ namespace Meadow.Hardware
         {
             // split the 64 bit ushort into eight bytes
             var bytes = BitConverter.GetBytes(value);
-            // call the helper method
             WriteRegister(address, bytes, order);
         }
 
@@ -200,7 +214,6 @@ namespace Meadow.Hardware
                     "amount of data to fix.");
             }
 
-            // stuff the register address into the write buffer
             WriteBuffer.Span[0] = address;
 
             // stuff the bytes into the write buffer (starting at `1` index,
@@ -221,8 +234,7 @@ namespace Meadow.Hardware
                     }
                     break;
             }
-            // write it
-            this.Bus.Write(this.ChipSelect, WriteBuffer.Span[0..(writeBuffer.Length + 1)], this.chipSelectMode);
+            Bus.Write(ChipSelect, WriteBuffer.Span[0..(writeBuffer.Length + 1)], chipSelectMode);
         }
 
         /// <summary>
@@ -233,6 +245,16 @@ namespace Meadow.Hardware
         /// <param name="duplex">The duplex mode - half or full</param>
         public void Exchange(Span<byte> writeBuffer, Span<byte> readBuffer, DuplexType duplex = DuplexType.Half)
         {
+            if (Bus.Configuration.SpiMode != BusMode)
+            {
+                Bus.Configuration.SetBusMode(BusMode);
+            }
+
+            if (Bus.Configuration.Speed != BusSpeed)
+            {
+                Bus.Configuration.Speed = BusSpeed;
+            }
+
             if (duplex == DuplexType.Half)
             {
                 // Todo: we should move this functionality deeper into the stack
@@ -253,14 +275,14 @@ namespace Meadow.Hardware
                 writeBuffer.CopyTo(txBuffer);
 
                 // write/read the data
-                Bus.Exchange(ChipSelect, txBuffer, rxBuffer, this.chipSelectMode);
+                Bus.Exchange(ChipSelect, txBuffer, rxBuffer, chipSelectMode);
 
                 // move the rx data into the read buffer, starting it at zero
                 rxBuffer[writeBuffer.Length..length].CopyTo(readBuffer);
             }
             else
             {
-                Bus.Exchange(ChipSelect, writeBuffer, readBuffer, this.chipSelectMode);
+                Bus.Exchange(ChipSelect, writeBuffer, readBuffer, chipSelectMode);
             }
         }
     }

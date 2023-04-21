@@ -1,6 +1,7 @@
 ﻿using Meadow.Foundation.Graphics;
 using Meadow.Foundation.Graphics.Buffers;
 using Meadow.Hardware;
+using Meadow.Units;
 using System;
 using System.Threading;
 
@@ -30,6 +31,26 @@ namespace Meadow.Foundation.Displays
         /// The display height in pixels
         /// </summary>
         public int Height { get; protected set; } = 64;
+
+        /// <summary>
+        /// The SPI bus speed for the device
+        /// </summary>
+        public Frequency SpiBusSpeed
+        {
+            get => _spiBusSpeed;
+            set => _spiBusSpeed = spiPeripheral.BusSpeed = value;
+        }
+        Frequency _spiBusSpeed = new Frequency(4000, Frequency.UnitType.Kilohertz);
+
+        /// <summary>
+        /// The SPI bus mode for the device
+        /// </summary>
+        public SpiClockConfiguration.Mode SpiBusMode
+        {
+            get => _piBusMode;
+            set => _piBusMode = spiPeripheral.BusMode = value;
+        }
+        SpiClockConfiguration.Mode _piBusMode = SpiClockConfiguration.Mode.Mode0;
 
         /// <summary>
         /// The connection type (I2C or SPI)
@@ -127,7 +148,7 @@ namespace Meadow.Foundation.Displays
             this.dataCommandPort = dataCommandPort;
             this.resetPort = resetPort;
 
-            spiPeripheral = new SpiPeripheral(spiBus, chipSelectPort);
+            spiPeripheral = new SpiPeripheral(spiBus, chipSelectPort, SpiBusSpeed, SpiBusMode);
 
             Width = width;
             Height = height;

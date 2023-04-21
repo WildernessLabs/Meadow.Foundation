@@ -10,9 +10,9 @@ namespace Meadow.Foundation.Displays
     public class Ili9341 : TftSpiBase
     {
         /// <summary>
-        /// The default SPI bus frequency
+        /// SPI bus speed
         /// </summary>
-        public static Frequency DefaultSpiBusSpeed = new Frequency(24000, Frequency.UnitType.Kilohertz);
+        protected override Frequency _spiBusSpeed { get; set; } = new Frequency(24000, Frequency.UnitType.Kilohertz);
 
         /// <summary>
         /// The default display color mode

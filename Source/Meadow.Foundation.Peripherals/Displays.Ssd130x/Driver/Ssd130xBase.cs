@@ -1,6 +1,7 @@
 ﻿using Meadow.Foundation.Graphics;
 using Meadow.Foundation.Graphics.Buffers;
 using Meadow.Hardware;
+using Meadow.Units;
 using System;
 
 namespace Meadow.Foundation.Displays
@@ -34,6 +35,26 @@ namespace Meadow.Foundation.Displays
         /// The buffer the holds the pixel data for the display
         /// </summary>
         public IPixelBuffer PixelBuffer => imageBuffer;
+
+        /// <summary>
+        /// The SPI bus speed for the device
+        /// </summary>
+        public Frequency SpiBusSpeed
+        {
+            get => _spiBusSpeed;
+            set => _spiBusSpeed = spiPeripheral.BusSpeed = value;
+        }
+        Frequency _spiBusSpeed = new Frequency(8000, Frequency.UnitType.Kilohertz);
+
+        /// <summary>
+        /// The SPI bus mode for the device
+        /// </summary>
+        public SpiClockConfiguration.Mode SpiBusMode
+        {
+            get => _piBusMode;
+            set => _piBusMode = spiPeripheral.BusMode = value;
+        }
+        SpiClockConfiguration.Mode _piBusMode = SpiClockConfiguration.Mode.Mode0;
 
         /// <summary>
         /// SSD1306 SPI display

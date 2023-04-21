@@ -32,9 +32,7 @@ namespace MeadowApp
 
             Resolver.Log.Info("Create Display with SPI...");
 
-            var config = new SpiClockConfiguration(Ssd1309.DefaultSpiBusSpeed, Ssd1309.DefaultSpiClockMode);
-
-            var bus = Device.CreateSpiBus(Device.Pins.SCK, Device.Pins.MOSI, Device.Pins.MISO, config);
+            var bus = Device.CreateSpiBus();
 
             ssd1309 = new Ssd1309
             (

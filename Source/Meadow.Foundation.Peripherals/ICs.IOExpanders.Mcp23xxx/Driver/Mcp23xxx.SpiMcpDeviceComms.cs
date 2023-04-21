@@ -1,4 +1,5 @@
 ﻿using Meadow.Hardware;
+using Meadow.Units;
 
 namespace Meadow.Foundation.ICs.IOExpanders
 {
@@ -6,8 +7,11 @@ namespace Meadow.Foundation.ICs.IOExpanders
     {
         internal class SpiMcpDeviceComms : SpiPeripheral, IMcpDeviceComms
         {
-            public SpiMcpDeviceComms(ISpiBus spiBus, IDigitalOutputPort chipSelectPort)
-                : base(spiBus, chipSelectPort)
+            public SpiMcpDeviceComms(ISpiBus spiBus,
+                IDigitalOutputPort chipSelectPort,
+                Frequency busSpeed,
+                SpiClockConfiguration.Mode busMode)
+                : base(spiBus, chipSelectPort, busSpeed, busMode)
             {
             }
         }

@@ -110,6 +110,16 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         public RelativeHumidity? Humidity => Conditions.Humidity;
 
         /// <summary>
+        /// The SPI bus speed for the device
+        /// </summary>
+        public Frequency SpiBusSpeed { get; } = new Frequency(10, Frequency.UnitType.Megahertz);
+
+        /// <summary>
+        /// The SPI bus mode for the device
+        /// </summary>
+        public SpiClockConfiguration.Mode SpiBusMode { get; } = SpiClockConfiguration.Mode.Mode0;
+
+        /// <summary>
         /// Initializes a new instance of the BME280 class
         /// </summary>
         /// <param name="i2cBus">I2C Bus to use for communicating with the sensor</param>
@@ -137,7 +147,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <param name="chipSelectPort">The port for the chip select pin</param>
         public Bme280(ISpiBus spiBus, IDigitalOutputPort chipSelectPort)
         {
-            bme280Comms = new Bme280Spi(spiBus, chipSelectPort);
+            bme280Comms = new Bme280Spi(spiBus, SpiBusSpeed, SpiBusMode, chipSelectPort);
             configuration = new Configuration(); // here to avoid the warning
             Initialize();
         }

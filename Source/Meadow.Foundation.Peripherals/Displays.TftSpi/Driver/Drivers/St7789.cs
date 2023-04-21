@@ -10,11 +10,6 @@ namespace Meadow.Foundation.Displays
     public class St7789 : TftSpiBase, IRotatableDisplay
     {
         /// <summary>
-        /// The default SPI bus frequency
-        /// </summary>
-        public static Frequency DefaultSpiBusSpeed = new Frequency(48000, Frequency.UnitType.Kilohertz);
-
-        /// <summary>
         /// The default display color mode
         /// </summary>
         public override ColorMode DefautColorMode => ColorMode.Format16bppRgb565;
@@ -23,6 +18,17 @@ namespace Meadow.Foundation.Displays
         /// The color modes supported by the display
         /// </summary>
         public override ColorMode SupportedColorModes => ColorMode.Format16bppRgb565 | ColorMode.Format12bppRgb444;
+
+        /// <summary>
+        /// SPI bus speed
+        /// </summary>
+        protected override Frequency _spiBusSpeed { get; set; } = new Frequency(48000, Frequency.UnitType.Kilohertz);
+
+        /// <summary>
+        /// The SPI bus mode for the device
+        /// </summary>
+        protected override SpiClockConfiguration.Mode _piBusMode { get; set; } = SpiClockConfiguration.Mode.Mode3;
+
 
         private byte rowStart, rowStart2;
         private byte columnStart, columnStart2;

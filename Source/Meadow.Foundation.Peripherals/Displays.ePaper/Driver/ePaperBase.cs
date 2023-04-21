@@ -1,4 +1,5 @@
 using Meadow.Hardware;
+using Meadow.Units;
 using System.Threading;
 
 namespace Meadow.Foundation.Displays
@@ -8,6 +9,26 @@ namespace Meadow.Foundation.Displays
     /// </summary>
     public abstract class EPaperBase
     {
+        /// <summary>
+        /// The SPI bus speed for the device
+        /// </summary>
+        public Frequency SpiBusSpeed
+        {
+            get => _spiBusSpeed;
+            set => _spiBusSpeed = spiPeripheral.BusSpeed = value;
+        }
+        Frequency _spiBusSpeed = new Frequency(375, Frequency.UnitType.Kilohertz);
+
+        /// <summary>
+        /// The SPI bus mode for the device
+        /// </summary>
+        public SpiClockConfiguration.Mode SpiBusMode
+        {
+            get => _piBusMode;
+            set => _piBusMode = spiPeripheral.BusMode = value;
+        }
+        SpiClockConfiguration.Mode _piBusMode = SpiClockConfiguration.Mode.Mode0;
+
         /// <summary>
         /// The command buffer
         /// </summary>
@@ -68,7 +89,7 @@ namespace Meadow.Foundation.Displays
             resetPort.State = true;
             DelayMs(200);
         }
-        
+
         /// <summary>
         /// Delay for a specified amount of time
         /// </summary>

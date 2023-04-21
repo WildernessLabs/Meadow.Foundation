@@ -60,6 +60,16 @@ namespace Meadow.Foundation.Sensors.Motion
         public Units.Temperature? Temperature => Conditions.Temperature;
 
         /// <summary>
+        /// The SPI bus speed for the device
+        /// </summary>
+        public static Frequency SpiBusSpeed { get; } = new Frequency(8, Frequency.UnitType.Megahertz);
+
+        /// <summary>
+        /// The SPI bus mode for the device
+        /// </summary>
+        public static SpiClockConfiguration.Mode SpiBusMode { get; } = SpiClockConfiguration.Mode.Mode0;
+
+        /// <summary>
         /// Indicate of data is ready to be read
         /// </summary>
         public bool DataReady
@@ -254,7 +264,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <param name="spiBus">Spi Bus object</param>
         /// <param name="chipSelect">Chip select pin</param>
         public Adxl362(ISpiBus spiBus, IPin chipSelect)
-            : base(spiBus, chipSelect.CreateDigitalOutputPort())
+            : base(spiBus, chipSelect.CreateDigitalOutputPort(), SpiBusSpeed, SpiBusMode)
         { }
 
         /// <summary>

@@ -1,4 +1,5 @@
 ﻿using Meadow.Hardware;
+using Meadow.Units;
 using Meadow.Utilities;
 using System;
 using System.Linq;
@@ -18,6 +19,16 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// The pin definitions
         /// </summary>
         public PinDefinitions Pins { get; }
+
+        /// <summary>
+        /// The SPI bus speed for the device
+        /// </summary>
+        public Frequency SpiBusSpeed { get; } = new Frequency(10, Frequency.UnitType.Megahertz);
+
+        /// <summary>
+        /// The SPI bus mode for the device
+        /// </summary>
+        public SpiClockConfiguration.Mode SpiBusMode { get; } = SpiClockConfiguration.Mode.Mode0;
 
         /// <summary>
         /// Number of chips required to implement this ShiftRegister.
@@ -58,7 +69,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
                 latchData = new byte[numberOfChips];
 
-                spiPeripheral = new SpiPeripheral(spiBus, pinChipSelect?.CreateDigitalOutputPort());
+                spiPeripheral = new SpiPeripheral(spiBus, pinChipSelect?.CreateDigitalOutputPort(), SpiBusSpeed, SpiBusMode);
             }
             else
             {

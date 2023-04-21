@@ -1,6 +1,7 @@
 using Meadow.Foundation.Graphics;
 using Meadow.Foundation.Graphics.Buffers;
 using Meadow.Hardware;
+using Meadow.Units;
 using System;
 using System.Threading;
 
@@ -44,6 +45,32 @@ namespace Meadow.Foundation.Displays
         /// The buffer used to store the pixel data for the display
         /// </summary>
         public IPixelBuffer PixelBuffer => imageBuffer;
+
+        /// <summary>
+        /// The SPI bus speed for the device
+        /// </summary>
+        public Frequency SpiBusSpeed
+        {
+            get => _spiBusSpeed;
+            set => _spiBusSpeed = spiDisplay.BusSpeed = value;
+        }
+        /// <summary>
+        /// The SPI bus speed for the device
+        /// </summary>
+        protected virtual Frequency _spiBusSpeed { get; set; } = new Frequency(12000, Frequency.UnitType.Kilohertz);
+
+        /// <summary>
+        /// The SPI bus mode for the device
+        /// </summary>
+        public SpiClockConfiguration.Mode SpiBusMode
+        {
+            get => _piBusMode;
+            set => _piBusMode = spiDisplay.BusMode = value;
+        }
+        /// <summary>
+        /// The SPI bus mode for the device
+        /// </summary>
+        protected virtual SpiClockConfiguration.Mode _piBusMode { get; set; } = SpiClockConfiguration.Mode.Mode0;
 
         /// <summary>
         /// The data command port
@@ -143,7 +170,7 @@ namespace Meadow.Foundation.Displays
             this.chipSelectPort = chipSelectPort;
             this.resetPort = resetPort;
 
-            spiDisplay = new SpiPeripheral(spiBus, chipSelectPort);
+            spiDisplay = new SpiPeripheral(spiBus, chipSelectPort, SpiBusSpeed, SpiBusMode);
 
             CreateBuffer(colorMode, nativeWidth = width, nativeHeight = height);
         }
@@ -156,42 +183,32 @@ namespace Meadow.Foundation.Displays
         public virtual bool IsColorTypeSupported(ColorMode colorType)
         {
             return (SupportedColorModes | colorType) != 0;
-            /*
-            if (SupportedColors)
-
-
-            if (mode == ColorType.Format12bppRgb444 ||
-                mode == ColorType.Format16bppRgb565)
-            {
-                return true;
-            }
-            return false;*/
         }
 
         /// <summary>
         /// Create an offscreen buffer for the display
         /// </summary>
-        /// <param name="mode">The color mode</param>
+        /// <param name="colorMode">The color mode</param>
         /// <param name="width">The width in pixels</param>
         /// <param name="height">The height in pixels</param>
         /// <exception cref="ArgumentException">Throws an exception if the color mode isn't supported</exception>
-        protected void CreateBuffer(ColorMode colorType, int width, int height)
+        protected void CreateBuffer(ColorMode colorMode, int width, int height)
         {
-            if (IsColorTypeSupported(colorType) == false)
+            if (IsColorTypeSupported(colorMode) == false)
             {
-                throw new ArgumentException($"color mode {colorType} not supported");
+                throw new ArgumentException($"color mode {colorMode} not supported");
             }
 
-            if (colorType == ColorMode.Format24bppRgb888)
+            if (colorMode == ColorMode.Format24bppRgb888)
             {
                 imageBuffer = new BufferRgb888(width, height);
             }
 
-            else if (colorType == ColorMode.Format16bppRgb565)
+            else if (colorMode == ColorMode.Format16bppRgb565)
             {
                 imageBuffer = new BufferRgb565(width, height);
             }
-            else //Rgb444
+            else
             {
                 imageBuffer = new BufferRgb444(width, height);
             }

@@ -2,8 +2,6 @@
 using Meadow.Devices;
 using Meadow.Foundation.Displays;
 using Meadow.Foundation.Graphics;
-using Meadow.Hardware;
-using Meadow.Units;
 using System.Threading.Tasks;
 
 namespace Displays.Tft.S6D02A1_Sample
@@ -18,8 +16,7 @@ namespace Displays.Tft.S6D02A1_Sample
         {
             Resolver.Log.Info("Initializing ...");
 
-            var config = new SpiClockConfiguration(new Frequency(12000, Frequency.UnitType.Kilohertz), SpiClockConfiguration.Mode.Mode0);
-            var spiBus = Device.CreateSpiBus(Device.Pins.SCK, Device.Pins.MOSI, Device.Pins.MISO, config);
+            var spiBus = Device.CreateSpiBus();
 
             Resolver.Log.Info("Create display driver instance");
 

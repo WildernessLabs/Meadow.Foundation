@@ -11,9 +11,14 @@ namespace Meadow.Foundation.Leds
     public partial class Apa102 : IApa102
     {
         /// <summary>
-        /// Default SPI bus speed
+        /// The SPI bus speed for the device
         /// </summary>
-        public static Frequency DefaultSpiBusSpeed = new Frequency(6000, Frequency.UnitType.Kilohertz);
+        public Frequency SpiBusSpeed { get; set; } = new Frequency(6000, Frequency.UnitType.Kilohertz);
+
+        /// <summary>
+        /// The SPI bus mode for the device
+        /// </summary>
+        public SpiClockConfiguration.Mode SpiBusMode { get; set; } = SpiClockConfiguration.Mode.Mode0;
 
         /// <summary>
         /// SpiPeripheral object
@@ -73,7 +78,7 @@ namespace Meadow.Foundation.Leds
         /// <param name="chipSelectPort">SPI chip select port (optional)</param>
         public Apa102(ISpiBus spiBus, int numberOfLeds, PixelOrder pixelOrder = PixelOrder.BGR, IDigitalOutputPort chipSelectPort = null)
         {
-            spiPeripheral = new SpiPeripheral(spiBus, chipSelectPort);
+            spiPeripheral = new SpiPeripheral(spiBus, chipSelectPort, SpiBusSpeed, SpiBusMode);
             this.numberOfLeds = numberOfLeds;
             endHeaderSize = this.numberOfLeds / 16;
             Brightness = 1.0f;

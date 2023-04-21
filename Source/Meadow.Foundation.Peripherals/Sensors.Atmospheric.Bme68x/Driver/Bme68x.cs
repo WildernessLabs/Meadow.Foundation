@@ -156,6 +156,16 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         bool gasConversionIsEnabled = false;
 
         /// <summary>
+        /// The SPI bus speed for the device
+        /// </summary>
+        public Frequency SpiBusSpeed { get; } = new Frequency(10, Frequency.UnitType.Megahertz);
+
+        /// <summary>
+        /// The SPI bus mode for the device
+        /// </summary>
+        public SpiClockConfiguration.Mode SpiBusMode { get; } = SpiClockConfiguration.Mode.Mode0;
+
+        /// <summary>
         /// Communication bus used to read and write to the BME68x sensor
         /// </summary>
         /// <remarks>
@@ -230,7 +240,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <param name="configuration">The BMP68x configuration (optional)</param>
         protected Bme68x(ISpiBus spiBus, IDigitalOutputPort chipSelectPort, Configuration? configuration = null)
         {
-            sensor = new Bme68xSPI(spiBus, chipSelectPort);
+            sensor = new Bme68xSPI(spiBus, SpiBusSpeed, SpiBusMode, chipSelectPort);
             this.configuration = configuration ?? new Configuration();
 
             byte value = sensor.ReadRegister((byte)Registers.STATUS);

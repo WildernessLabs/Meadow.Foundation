@@ -1,5 +1,6 @@
-﻿using System;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
+using Meadow.Units;
+using System;
 
 namespace Meadow.Foundation.Sensors.Atmospheric
 {
@@ -30,9 +31,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
         SpiRegisterPage currentPage = SpiRegisterPage.Page1;
 
-        internal Bme68xSPI(ISpiBus spi, IDigitalOutputPort? chipSelect = null)
+        internal Bme68xSPI(ISpiBus spi, Frequency busSpeed, SpiClockConfiguration.Mode busMode, IDigitalOutputPort? chipSelect = null)
         {
-            spiPeripheral = new SpiPeripheral(spi, chipSelect, 32, 32);
+            spiPeripheral = new SpiPeripheral(spi, chipSelect, busSpeed, busMode, 32, 32);
         }
 
         public override byte ReadRegister(byte address)

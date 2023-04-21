@@ -1,13 +1,14 @@
-﻿using System;
-using System.Threading;
-using Meadow.Hardware;
-using Meadow.Foundation.Graphics;
+﻿using Meadow.Foundation.Graphics;
 using Meadow.Foundation.Graphics.Buffers;
+using Meadow.Hardware;
+using Meadow.Units;
+using System;
+using System.Threading;
 
 namespace Meadow.Foundation.Displays
 {
     /// <summary>
-    /// Provide an interface to the ST7565 family of displays.
+    /// Provide an interface to the ST7565 family of displays
     /// </summary>
     public partial class St7565 : IGraphicsDisplay
     {
@@ -37,18 +38,37 @@ namespace Meadow.Foundation.Displays
         public IPixelBuffer PixelBuffer => imageBuffer;
 
         /// <summary>
+        /// The SPI bus speed for the device
+        /// </summary>
+        public Frequency SpiBusSpeed
+        {
+            get => _spiBusSpeed;
+            set => _spiBusSpeed = spiPeripheral.BusSpeed = value;
+        }
+        Frequency _spiBusSpeed = new Frequency(12000, Frequency.UnitType.Kilohertz);
+
+        /// <summary>
+        /// The SPI bus mode for the device
+        /// </summary>
+        public SpiClockConfiguration.Mode SpiBusMode
+        {
+            get => _piBusMode;
+            set => _piBusMode = spiPeripheral.BusMode = value;
+        }
+        SpiClockConfiguration.Mode _piBusMode = SpiClockConfiguration.Mode.Mode0;
+
+        /// <summary>
         /// SPI peripheral object
         /// </summary>
-        ISpiPeripheral spiPerihperal;
-
-        IDigitalOutputPort dataCommandPort;
-        IDigitalOutputPort resetPort;
+        readonly ISpiPeripheral spiPeripheral;
+        readonly IDigitalOutputPort dataCommandPort;
+        readonly IDigitalOutputPort resetPort;
 
         const bool Data = true;
         const bool Command = false;
 
-        Buffer1bpp imageBuffer;
-        byte[] pageBuffer;
+        readonly Buffer1bpp imageBuffer;
+        readonly byte[] pageBuffer;
 
         /// <summary>
         /// Create a new ST7565 object
@@ -84,7 +104,7 @@ namespace Meadow.Foundation.Displays
             this.dataCommandPort = dataCommandPort;
             this.resetPort = resetPort;
 
-            spiPerihperal = new SpiPeripheral(spiBus, chipSelectPort);
+            spiPeripheral = new SpiPeripheral(spiBus, chipSelectPort, SpiBusSpeed, SpiBusMode);
 
             imageBuffer = new Buffer1bpp(width, height);
             pageBuffer = new byte[PageSize];
@@ -162,7 +182,7 @@ namespace Meadow.Foundation.Displays
         private void SendCommand(byte command)
         {
             dataCommandPort.State = Command;
-            spiPerihperal.Write(command);
+            spiPeripheral.Write(command);
         }
 
         /// <summary>
@@ -176,7 +196,7 @@ namespace Meadow.Foundation.Displays
             Array.Copy(commands, 0, data, 1, commands.Length);
 
             dataCommandPort.State = Command;
-            spiPerihperal.Write(commands);
+            spiPeripheral.Write(commands);
         }
 
         const int StartColumnOffset = 0;
@@ -197,7 +217,7 @@ namespace Meadow.Foundation.Displays
                 dataCommandPort.State = Data;
 
                 Array.Copy(imageBuffer.Buffer, Width * page, pageBuffer, 0, PageSize);
-                spiPerihperal.Write(pageBuffer);
+                spiPeripheral.Write(pageBuffer);
             }
         }
 
@@ -216,7 +236,7 @@ namespace Meadow.Foundation.Displays
             //so interate over all 8 pages and check if they're in range
             for (int page = 0; page < 8; page++)
             {
-                if(top > pageHeight*page || bottom < (page + 1) * pageHeight)
+                if (top > pageHeight * page || bottom < (page + 1) * pageHeight)
                 {
                     continue;
                 }
@@ -229,7 +249,7 @@ namespace Meadow.Foundation.Displays
                 dataCommandPort.State = Data;
 
                 Array.Copy(imageBuffer.Buffer, Width * page, pageBuffer, 0, PageSize);
-                spiPerihperal.Write(pageBuffer);
+                spiPeripheral.Write(pageBuffer);
             }
         }
 
@@ -321,7 +341,7 @@ namespace Meadow.Foundation.Displays
                     scrollDirection = 0x29;
                 }
 
-                commands = new byte[] { 0xa3, 0x00, (byte) Height, scrollDirection, 0x00, startPage, 0x00, endPage, 0x01, 0x2f };
+                commands = new byte[] { 0xa3, 0x00, (byte)Height, scrollDirection, 0x00, startPage, 0x00, endPage, 0x01, 0x2f };
             }
             SendCommands(commands);
         }

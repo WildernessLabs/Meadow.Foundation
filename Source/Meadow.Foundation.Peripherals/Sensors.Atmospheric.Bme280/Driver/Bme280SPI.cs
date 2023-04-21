@@ -1,6 +1,6 @@
-﻿using System;
-using System.Linq;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
+using Meadow.Units;
+using System;
 
 namespace Meadow.Foundation.Sensors.Atmospheric
 {
@@ -8,9 +8,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     {
         ISpiPeripheral spiPeripheral;
 
-        internal Bme280Spi(ISpiBus spi, IDigitalOutputPort? chipSelect = null)
+        internal Bme280Spi(ISpiBus spi, Frequency busSpeed, SpiClockConfiguration.Mode busMode, IDigitalOutputPort? chipSelect = null)
         {
-            spiPeripheral = new SpiPeripheral(spi, chipSelect);
+            spiPeripheral = new SpiPeripheral(spi, chipSelect, busSpeed, busMode);
         }
 
         public override void ReadRegisters(byte startRegister, Span<byte> readBuffer)
@@ -18,7 +18,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             spiPeripheral.ReadRegister(startRegister, readBuffer);
 
             // skip past the byte where we clocked out the register address
-            for (int i = 1; i < readBuffer.Length; i++) {
+            for (int i = 1; i < readBuffer.Length; i++)
+            {
                 readBuffer[i - 1] = readBuffer[i];
             }
         }

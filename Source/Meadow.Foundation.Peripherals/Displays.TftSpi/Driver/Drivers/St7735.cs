@@ -1,6 +1,5 @@
 ﻿using Meadow.Foundation.Graphics;
 using Meadow.Hardware;
-using Meadow.Units;
 
 namespace Meadow.Foundation.Displays
 {
@@ -9,11 +8,6 @@ namespace Meadow.Foundation.Displays
     /// </summary>
     public class St7735 : TftSpiBase
     {
-        /// <summary>
-        /// The default SPI bus frequency
-        /// </summary>
-        public static Frequency DefaultSpiBusSpeed = new Frequency(12000, Frequency.UnitType.Kilohertz);
-
         /// <summary>
         /// The default display color mode
         /// </summary>
