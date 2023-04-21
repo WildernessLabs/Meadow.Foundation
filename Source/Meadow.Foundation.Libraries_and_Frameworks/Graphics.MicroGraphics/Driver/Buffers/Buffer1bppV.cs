@@ -46,7 +46,7 @@ namespace Meadow.Foundation.Graphics.Buffers
 
             width = (width + 7) & ~7;
 
-            int bufferSize = width * height / 8;
+            int bufferSize = (width * height) >> 3;
             bufferSize += bufferSize % pageSize;
 
             Buffer = new byte[bufferSize];
@@ -71,7 +71,7 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// <param name="enabled">is pixel enabled (on)</param>
         public override void SetPixel(int x, int y, bool enabled)
         {
-            int index = x / 8 + y * Width / 8;
+            int index = (x >> 3) + (y * Width) >> 3;
             byte bitMask = (byte)(0x80 >> (x % 8));
 
             Buffer[index] = enabled ? (byte)(Buffer[index] | bitMask) : (byte)(Buffer[index] & ~bitMask);
@@ -113,7 +113,7 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// <param name="y">y position of pixel</param>
         public override void InvertPixel(int x, int y)
         {
-            Buffer[(x + y * Width) / 8] ^= (byte)~(0x80 >> (x % 8));
+            Buffer[(x + y * Width) >> 3] ^= (byte)~(0x80 >> (x % 8));
         }
 
         /// <summary>

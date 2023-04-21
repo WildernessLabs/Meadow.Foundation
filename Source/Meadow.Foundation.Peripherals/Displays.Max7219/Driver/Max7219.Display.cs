@@ -1,6 +1,5 @@
-﻿using System;
+﻿using Meadow.Foundation.Graphics;
 using Meadow.Foundation.Graphics.Buffers;
-using Meadow.Foundation.Graphics;
 
 namespace Meadow.Foundation.Displays
 {
@@ -90,7 +89,7 @@ namespace Meadow.Foundation.Displays
         {
             var index = x % 8;
 
-            var display = y / 8 + (x / 8) * DigitRows;
+            var display = (y >> 3) + (x >> 3) * DigitRows;
 
             if (display > DeviceCount)
             {
@@ -116,7 +115,7 @@ namespace Meadow.Foundation.Displays
         {
             var index = x % 8;
 
-            var display = y / 8 + (x / 8) * DigitRows;
+            var display = (y >> 3) + (x >> 3) * DigitRows;
 
             if (display > DeviceCount)
             {

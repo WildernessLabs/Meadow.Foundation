@@ -12,7 +12,7 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// The total bytes used for the display buffer
         /// </summary>
-        public int ByteCount => Width * Height / 8;
+        public int ByteCount => Width * Height >> 3;
 
         /// <summary>
         /// The backing buffer for the pixel buffer (not implemented)
