@@ -41,12 +41,12 @@ namespace Pmsa003i_Sample
             Density? EnvironmentalParticulateMatter_1micron,
             Density? EnvironmentalParticulateMatter_2_5micron,
             Density? EnvironmentalParticulateMatter_10micron,
-            int? particles_0_3microns,
-            int? particles_0_5microns,
-            int? particles_10microns,
-            int? particles_25microns,
-            int? particles_50microns,
-            int? particles_100microns)> e)
+            ParticleDensity? ParticleDensity_0_3microns,
+            ParticleDensity? ParticleDensity_0_5microns,
+            ParticleDensity? ParticleDensity_10microns,
+            ParticleDensity? ParticleDensity_25microns,
+            ParticleDensity? ParticleDensity_50microns,
+            ParticleDensity? ParticleDensity_100microns)> e)
         {
             Resolver.Log.Info($"Standard Particulate Matter 1 micron: {e.New.StandardParticulateMatter_1micron.Value.MicroGramsPerMetersCubed} micrograms per m^3");
             Resolver.Log.Info($"Standard Particulate Matter 2_5micron: {e.New.StandardParticulateMatter_2_5micron.Value.MicroGramsPerMetersCubed} micrograms per m^3");
@@ -55,12 +55,12 @@ namespace Pmsa003i_Sample
             Resolver.Log.Info($"Environmental Particulate Matter 2.5 micron: {e.New.EnvironmentalParticulateMatter_2_5micron.Value.MicroGramsPerMetersCubed} micrograms per m^3");
             Resolver.Log.Info($"Environmental Particulate Matter 10 micron: {e.New.EnvironmentalParticulateMatter_10micron.Value.MicroGramsPerMetersCubed} micrograms per m^3"); ;
 
-            Resolver.Log.Info($"Count of particles - 0.3 microns: {e.New.particles_0_3microns.Value} in 0.1 liters of air");
-            Resolver.Log.Info($"Count of particles - 0.5 microns: {e.New.particles_0_5microns.Value} in 0.1 liters of air");
-            Resolver.Log.Info($"Count of particles - 10 microns: {e.New.particles_10microns.Value} in 0.1 liters of air");
-            Resolver.Log.Info($"Count of particles - 25 microns: {e.New.particles_25microns.Value} in 0.1 liters of air");
-            Resolver.Log.Info($"Count of particles - 50 microns: {e.New.particles_50microns.Value} in 0.1 liters of air");
-            Resolver.Log.Info($"Count of particles - 100 microns: {e.New.particles_100microns.Value} in 0.1 liters of air");
+            Resolver.Log.Info($"Count of particles - 0.3 microns: {e.New.ParticleDensity_0_3microns.Value.ParticlesPerCentiliter} in 0.1 liters of air");
+            Resolver.Log.Info($"Count of particles - 0.5 microns: {e.New.ParticleDensity_0_5microns.Value.ParticlesPerCentiliter} in 0.1 liters of air");
+            Resolver.Log.Info($"Count of particles - 10 microns: {e.New.ParticleDensity_10microns.Value.ParticlesPerCentiliter} in 0.1 liters of air");
+            Resolver.Log.Info($"Count of particles - 25 microns: {e.New.ParticleDensity_25microns.Value.ParticlesPerCentiliter} in 0.1 liters of air");
+            Resolver.Log.Info($"Count of particles - 50 microns: {e.New.ParticleDensity_50microns.Value.ParticlesPerCentiliter} in 0.1 liters of air");
+            Resolver.Log.Info($"Count of particles - 100 microns: {e.New.ParticleDensity_100microns.Value.ParticlesPerCentiliter} in 0.1 liters of air");
         }
 
         //<!=SNOP=>
