@@ -101,8 +101,8 @@ namespace Meadow.Foundation.Audio
         /// </summary>
         private async Task PlayHit()
         {
-            await toneGenerator.PlayTone(new Frequency(440), TimeSpan.FromMilliseconds(defaultDuration / 2));
-            await toneGenerator.PlayTone(new Frequency(220), TimeSpan.FromMilliseconds(defaultDuration / 2));
+            await toneGenerator.PlayTone(new Frequency(440), TimeSpan.FromMilliseconds(defaultDuration >> 1));
+            await toneGenerator.PlayTone(new Frequency(220), TimeSpan.FromMilliseconds(defaultDuration >> 1));
         }
 
         /// <summary>
@@ -110,8 +110,8 @@ namespace Meadow.Foundation.Audio
         /// </summary>
         private async Task PlayLaser()
         {
-            await toneGenerator.PlayTone(new Frequency(440), TimeSpan.FromMilliseconds(defaultDuration / 2));
-            await toneGenerator.PlayTone(new Frequency(1760), TimeSpan.FromMilliseconds(defaultDuration / 2));
+            await toneGenerator.PlayTone(new Frequency(440), TimeSpan.FromMilliseconds(defaultDuration >> 1));
+            await toneGenerator.PlayTone(new Frequency(1760), TimeSpan.FromMilliseconds(defaultDuration >> 1));
         }
 
         /// <summary>
@@ -119,10 +119,10 @@ namespace Meadow.Foundation.Audio
         /// </summary>
         private async Task PlayExplosion()
         {
-            await toneGenerator.PlayTone(new Frequency(440), TimeSpan.FromMilliseconds(defaultDuration / 2));
-            await toneGenerator.PlayTone(new Frequency(220), TimeSpan.FromMilliseconds(defaultDuration / 2));
-            await toneGenerator.PlayTone(new Frequency(110), TimeSpan.FromMilliseconds(defaultDuration / 2));
-            await toneGenerator.PlayTone(new Frequency(55), TimeSpan.FromMilliseconds(defaultDuration / 2));
+            await toneGenerator.PlayTone(new Frequency(440), TimeSpan.FromMilliseconds(defaultDuration >> 1));
+            await toneGenerator.PlayTone(new Frequency(220), TimeSpan.FromMilliseconds(defaultDuration >> 1));
+            await toneGenerator.PlayTone(new Frequency(110), TimeSpan.FromMilliseconds(defaultDuration >> 1));
+            await toneGenerator.PlayTone(new Frequency(55), TimeSpan.FromMilliseconds(defaultDuration >> 1));
         }
 
         /// <summary>
@@ -144,10 +144,10 @@ namespace Meadow.Foundation.Audio
         /// </summary>
         private async Task PlayVictory()
         {
-            await toneGenerator.PlayTone(new Frequency(440), TimeSpan.FromMilliseconds(defaultDuration / 4));
-            await toneGenerator.PlayTone(new Frequency(659), TimeSpan.FromMilliseconds(defaultDuration / 4));
-            await toneGenerator.PlayTone(new Frequency(880), TimeSpan.FromMilliseconds(defaultDuration / 4));
-            await toneGenerator.PlayTone(new Frequency(1175), TimeSpan.FromMilliseconds(defaultDuration / 4));
+            await toneGenerator.PlayTone(new Frequency(440), TimeSpan.FromMilliseconds(defaultDuration >> 2));
+            await toneGenerator.PlayTone(new Frequency(659), TimeSpan.FromMilliseconds(defaultDuration >> 2));
+            await toneGenerator.PlayTone(new Frequency(880), TimeSpan.FromMilliseconds(defaultDuration >> 2));
+            await toneGenerator.PlayTone(new Frequency(1175), TimeSpan.FromMilliseconds(defaultDuration >> 2));
         }
 
         /// <summary>
@@ -155,15 +155,15 @@ namespace Meadow.Foundation.Audio
         /// </summary>
         private async Task PlayCountdown()
         {
-            await toneGenerator.PlayTone(new Frequency(880), TimeSpan.FromMilliseconds(defaultDuration / 2));
+            await toneGenerator.PlayTone(new Frequency(880), TimeSpan.FromMilliseconds(defaultDuration >> 1));
             await Task.Delay(TimeSpan.FromMilliseconds(defaultPause));
-            await toneGenerator.PlayTone(new Frequency(783.99), TimeSpan.FromMilliseconds(defaultDuration / 2));
+            await toneGenerator.PlayTone(new Frequency(783.99), TimeSpan.FromMilliseconds(defaultDuration >> 1));
             await Task.Delay(TimeSpan.FromMilliseconds(defaultPause));
-            await toneGenerator.PlayTone(new Frequency(698.46), TimeSpan.FromMilliseconds(defaultDuration / 2));
+            await toneGenerator.PlayTone(new Frequency(698.46), TimeSpan.FromMilliseconds(defaultDuration >> 1));
             await Task.Delay(TimeSpan.FromMilliseconds(defaultPause));
-            await toneGenerator.PlayTone(new Frequency(587.33), TimeSpan.FromMilliseconds(defaultDuration / 2));
+            await toneGenerator.PlayTone(new Frequency(587.33), TimeSpan.FromMilliseconds(defaultDuration >> 1));
             await Task.Delay(TimeSpan.FromMilliseconds(defaultPause));
-            await toneGenerator.PlayTone(new Frequency(523.25), TimeSpan.FromMilliseconds(defaultDuration / 2));
+            await toneGenerator.PlayTone(new Frequency(523.25), TimeSpan.FromMilliseconds(defaultDuration >> 1));
         }
 
         /// <summary>
@@ -171,9 +171,9 @@ namespace Meadow.Foundation.Audio
         /// </summary>
         private async Task PlayPowerDown()
         {
-            await toneGenerator.PlayTone(new Frequency(523.25), TimeSpan.FromMilliseconds(defaultDuration / 2));
-            await toneGenerator.PlayTone(new Frequency(440), TimeSpan.FromMilliseconds(defaultDuration / 2));
-            await toneGenerator.PlayTone(new Frequency(349.23), TimeSpan.FromMilliseconds(defaultDuration / 2));
+            await toneGenerator.PlayTone(new Frequency(523.25), TimeSpan.FromMilliseconds(defaultDuration >> 1));
+            await toneGenerator.PlayTone(new Frequency(440), TimeSpan.FromMilliseconds(defaultDuration >> 1));
+            await toneGenerator.PlayTone(new Frequency(349.23), TimeSpan.FromMilliseconds(defaultDuration >> 1));
         }
 
         /// <summary>
@@ -189,8 +189,8 @@ namespace Meadow.Foundation.Audio
         /// </summary>
         private async Task PlayMenuNavigate()
         {
-            await toneGenerator.PlayTone(new Frequency(440), TimeSpan.FromMilliseconds(defaultDuration / 4));
-            await toneGenerator.PlayTone(new Frequency(880), TimeSpan.FromMilliseconds(defaultDuration / 4));
+            await toneGenerator.PlayTone(new Frequency(440), TimeSpan.FromMilliseconds(defaultDuration >> 2));
+            await toneGenerator.PlayTone(new Frequency(880), TimeSpan.FromMilliseconds(defaultDuration >> 2));
         }
 
         /// <summary>
@@ -206,10 +206,10 @@ namespace Meadow.Foundation.Audio
         /// </summary>
         private async Task PlayBossBattle()
         {
-            await toneGenerator.PlayTone(new Frequency(440), TimeSpan.FromMilliseconds(defaultDuration / 4));
-            await toneGenerator.PlayTone(new Frequency(554.37), TimeSpan.FromMilliseconds(defaultDuration / 4));
-            await toneGenerator.PlayTone(new Frequency(659.25), TimeSpan.FromMilliseconds(defaultDuration / 4));
-            await toneGenerator.PlayTone(new Frequency(783.99), TimeSpan.FromMilliseconds(defaultDuration / 4));
+            await toneGenerator.PlayTone(new Frequency(440), TimeSpan.FromMilliseconds(defaultDuration >> 2));
+            await toneGenerator.PlayTone(new Frequency(554.37), TimeSpan.FromMilliseconds(defaultDuration >> 2));
+            await toneGenerator.PlayTone(new Frequency(659.25), TimeSpan.FromMilliseconds(defaultDuration >> 2));
+            await toneGenerator.PlayTone(new Frequency(783.99), TimeSpan.FromMilliseconds(defaultDuration >> 2));
         }
 
         /// <summary>
@@ -217,9 +217,9 @@ namespace Meadow.Foundation.Audio
         /// </summary>
         private async Task PlaySecretFound()
         {
-            await toneGenerator.PlayTone(new Frequency(880), TimeSpan.FromMilliseconds(defaultDuration / 2));
-            await toneGenerator.PlayTone(new Frequency(1174.66), TimeSpan.FromMilliseconds(defaultDuration / 2));
-            await toneGenerator.PlayTone(new Frequency(1396.91), TimeSpan.FromMilliseconds(defaultDuration / 2));
+            await toneGenerator.PlayTone(new Frequency(880), TimeSpan.FromMilliseconds(defaultDuration >> 1));
+            await toneGenerator.PlayTone(new Frequency(1174.66), TimeSpan.FromMilliseconds(defaultDuration >> 1));
+            await toneGenerator.PlayTone(new Frequency(1396.91), TimeSpan.FromMilliseconds(defaultDuration >> 1));
         }
 
         /// <summary>
@@ -227,10 +227,10 @@ namespace Meadow.Foundation.Audio
         /// </summary>
         private async Task PlayLevelComplete()
         {
-            await toneGenerator.PlayTone(new Frequency(1047), TimeSpan.FromMilliseconds(defaultDuration / 4));
-            await toneGenerator.PlayTone(new Frequency(1396.91), TimeSpan.FromMilliseconds(defaultDuration / 4));
-            await toneGenerator.PlayTone(new Frequency(1760), TimeSpan.FromMilliseconds(defaultDuration / 4));
-            await toneGenerator.PlayTone(new Frequency(2217.46), TimeSpan.FromMilliseconds(defaultDuration / 4));
+            await toneGenerator.PlayTone(new Frequency(1047), TimeSpan.FromMilliseconds(defaultDuration >> 2));
+            await toneGenerator.PlayTone(new Frequency(1396.91), TimeSpan.FromMilliseconds(defaultDuration >> 2));
+            await toneGenerator.PlayTone(new Frequency(1760), TimeSpan.FromMilliseconds(defaultDuration >> 2));
+            await toneGenerator.PlayTone(new Frequency(2217.46), TimeSpan.FromMilliseconds(defaultDuration >> 2));
         }
 
         /// <summary>
@@ -238,11 +238,11 @@ namespace Meadow.Foundation.Audio
         /// </summary>
         private async Task PlayWeaponSwitch()
         {
-            await toneGenerator.PlayTone(new Frequency(523.25), TimeSpan.FromMilliseconds(defaultDuration / 4));
+            await toneGenerator.PlayTone(new Frequency(523.25), TimeSpan.FromMilliseconds(defaultDuration >> 2));
             await Task.Delay(TimeSpan.FromMilliseconds(defaultPause));
-            await toneGenerator.PlayTone(new Frequency(440), TimeSpan.FromMilliseconds(defaultDuration / 4));
+            await toneGenerator.PlayTone(new Frequency(440), TimeSpan.FromMilliseconds(defaultDuration >> 2));
             await Task.Delay(TimeSpan.FromMilliseconds(defaultPause));
-            await toneGenerator.PlayTone(new Frequency(349.23), TimeSpan.FromMilliseconds(defaultDuration / 4));
+            await toneGenerator.PlayTone(new Frequency(349.23), TimeSpan.FromMilliseconds(defaultDuration >> 2));
         }
 
         /// <summary>
@@ -250,9 +250,9 @@ namespace Meadow.Foundation.Audio
         /// </summary>
         private async Task PlayWarning()
         {
-            await toneGenerator.PlayTone(new Frequency(1047), TimeSpan.FromMilliseconds(defaultDuration / 2));
-            await toneGenerator.PlayTone(new Frequency(880), TimeSpan.FromMilliseconds(defaultDuration / 2));
-            await toneGenerator.PlayTone(new Frequency(783.99), TimeSpan.FromMilliseconds(defaultDuration / 2));
+            await toneGenerator.PlayTone(new Frequency(1047), TimeSpan.FromMilliseconds(defaultDuration >> 1));
+            await toneGenerator.PlayTone(new Frequency(880), TimeSpan.FromMilliseconds(defaultDuration >> 1));
+            await toneGenerator.PlayTone(new Frequency(783.99), TimeSpan.FromMilliseconds(defaultDuration >> 1));
         }
 
         /// <summary>
@@ -260,10 +260,10 @@ namespace Meadow.Foundation.Audio
         /// </summary>
         private async Task PlayTeleport()
         {
-            await toneGenerator.PlayTone(new Frequency(880), TimeSpan.FromMilliseconds(defaultDuration / 2));
-            await toneGenerator.PlayTone(new Frequency(783.99), TimeSpan.FromMilliseconds(defaultDuration / 2));
-            await toneGenerator.PlayTone(new Frequency(659.25), TimeSpan.FromMilliseconds(defaultDuration / 2));
-            await toneGenerator.PlayTone(new Frequency(523.25), TimeSpan.FromMilliseconds(defaultDuration / 2));
+            await toneGenerator.PlayTone(new Frequency(880), TimeSpan.FromMilliseconds(defaultDuration >> 1));
+            await toneGenerator.PlayTone(new Frequency(783.99), TimeSpan.FromMilliseconds(defaultDuration >> 1));
+            await toneGenerator.PlayTone(new Frequency(659.25), TimeSpan.FromMilliseconds(defaultDuration >> 1));
+            await toneGenerator.PlayTone(new Frequency(523.25), TimeSpan.FromMilliseconds(defaultDuration >> 1));
         }
 
         /// <summary>
@@ -271,10 +271,10 @@ namespace Meadow.Foundation.Audio
         /// </summary>
         private async Task PlayHealth()
         {
-            await toneGenerator.PlayTone(new Frequency(622.25), TimeSpan.FromMilliseconds(defaultDuration / 4));
-            await toneGenerator.PlayTone(new Frequency(659.25), TimeSpan.FromMilliseconds(defaultDuration / 4));
-            await toneGenerator.PlayTone(new Frequency(698.46), TimeSpan.FromMilliseconds(defaultDuration / 4));
-            await toneGenerator.PlayTone(new Frequency(783.99), TimeSpan.FromMilliseconds(defaultDuration / 4));
+            await toneGenerator.PlayTone(new Frequency(622.25), TimeSpan.FromMilliseconds(defaultDuration >> 2));
+            await toneGenerator.PlayTone(new Frequency(659.25), TimeSpan.FromMilliseconds(defaultDuration >> 2));
+            await toneGenerator.PlayTone(new Frequency(698.46), TimeSpan.FromMilliseconds(defaultDuration >> 2));
+            await toneGenerator.PlayTone(new Frequency(783.99), TimeSpan.FromMilliseconds(defaultDuration >> 2));
         }
 
         /// <summary>
@@ -282,7 +282,7 @@ namespace Meadow.Foundation.Audio
         /// </summary>
         private async Task PlayFootstep()
         {
-            await toneGenerator.PlayTone(new Frequency(196), TimeSpan.FromMilliseconds(defaultDuration / 8));
+            await toneGenerator.PlayTone(new Frequency(196), TimeSpan.FromMilliseconds(defaultDuration >> 3));
         }
 
         /// <summary>
@@ -290,9 +290,9 @@ namespace Meadow.Foundation.Audio
         /// </summary>
         private async Task PlayActivation()
         {
-            await toneGenerator.PlayTone(new Frequency(440), TimeSpan.FromMilliseconds(defaultDuration / 4));
-            await toneGenerator.PlayTone(new Frequency(880), TimeSpan.FromMilliseconds(defaultDuration / 4));
-            await toneGenerator.PlayTone(new Frequency(440), TimeSpan.FromMilliseconds(defaultDuration / 4));
+            await toneGenerator.PlayTone(new Frequency(440), TimeSpan.FromMilliseconds(defaultDuration >> 2));
+            await toneGenerator.PlayTone(new Frequency(880), TimeSpan.FromMilliseconds(defaultDuration >> 2));
+            await toneGenerator.PlayTone(new Frequency(440), TimeSpan.FromMilliseconds(defaultDuration >> 2));
         }
 
         /// <summary>
@@ -300,10 +300,10 @@ namespace Meadow.Foundation.Audio
         /// </summary>
         private async Task PlayEnemyDeath()
         {
-            await toneGenerator.PlayTone(new Frequency(1568), TimeSpan.FromMilliseconds(defaultDuration / 2));
-            await toneGenerator.PlayTone(new Frequency(1244.51), TimeSpan.FromMilliseconds(defaultDuration / 2));
-            await toneGenerator.PlayTone(new Frequency(1046.5), TimeSpan.FromMilliseconds(defaultDuration / 2));
-            await toneGenerator.PlayTone(new Frequency(783.99), TimeSpan.FromMilliseconds(defaultDuration / 2));
+            await toneGenerator.PlayTone(new Frequency(1568), TimeSpan.FromMilliseconds(defaultDuration >> 1));
+            await toneGenerator.PlayTone(new Frequency(1244.51), TimeSpan.FromMilliseconds(defaultDuration >> 1));
+            await toneGenerator.PlayTone(new Frequency(1046.5), TimeSpan.FromMilliseconds(defaultDuration >> 1));
+            await toneGenerator.PlayTone(new Frequency(783.99), TimeSpan.FromMilliseconds(defaultDuration >> 1));
         }
 
         /// <summary>
@@ -311,15 +311,15 @@ namespace Meadow.Foundation.Audio
         /// </summary>
         public async Task PlaySplash()
         {
-            await toneGenerator.PlayTone(new Frequency(220), TimeSpan.FromMilliseconds(defaultDuration / 4));
+            await toneGenerator.PlayTone(new Frequency(220), TimeSpan.FromMilliseconds(defaultDuration >> 2));
             await Task.Delay(TimeSpan.FromMilliseconds(defaultPause));
-            await toneGenerator.PlayTone(new Frequency(440), TimeSpan.FromMilliseconds(defaultDuration / 4));
+            await toneGenerator.PlayTone(new Frequency(440), TimeSpan.FromMilliseconds(defaultDuration >> 2));
             await Task.Delay(TimeSpan.FromMilliseconds(defaultPause));
-            await toneGenerator.PlayTone(new Frequency(880), TimeSpan.FromMilliseconds(defaultDuration / 4));
+            await toneGenerator.PlayTone(new Frequency(880), TimeSpan.FromMilliseconds(defaultDuration >> 2));
             await Task.Delay(TimeSpan.FromMilliseconds(defaultPause));
-            await toneGenerator.PlayTone(new Frequency(440), TimeSpan.FromMilliseconds(defaultDuration / 4));
+            await toneGenerator.PlayTone(new Frequency(440), TimeSpan.FromMilliseconds(defaultDuration >> 2));
             await Task.Delay(TimeSpan.FromMilliseconds(defaultPause));
-            await toneGenerator.PlayTone(new Frequency(220), TimeSpan.FromMilliseconds(defaultDuration / 4));
+            await toneGenerator.PlayTone(new Frequency(220), TimeSpan.FromMilliseconds(defaultDuration >> 2));
         }
     }
 }
