@@ -17,20 +17,13 @@ namespace Meadow.Foundation.Sensors.Environmental
             Density? EnvironmentalParticulateMatter_1micron,
             Density? EnvironmentalParticulateMatter_2_5micron,
             Density? EnvironmentalParticulateMatter_10micron,
-            int? particles_0_3microns,
-            int? particles_0_5microns,
-            int? particles_10microns,
-            int? particles_25microns,
-            int? particles_50microns,
-            int? particles_100microns)>
+            ParticleDensity? ParticleDensity_0_3microns,
+            ParticleDensity? ParticleDensity_0_5microns,
+            ParticleDensity? ParticleDensity_10microns,
+            ParticleDensity? ParticleDensity_25microns,
+            ParticleDensity? ParticleDensity_50microns,
+            ParticleDensity? ParticleDensity_100microns)>
     {
-        public Concentration? Concentration { get; }
-
-        /// <summary>
-        /// Raised when the Standard particulate matter PM2.5 density changes
-        /// </summary>
-        public event EventHandler<IChangeResult<Concentration>> ConcentrationUpdated;
-
         /// <summary>
         /// Raised when the Standard particulate matter PM1.0 density changes
         /// </summary>
@@ -64,32 +57,32 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// <summary>
         /// Raised when the number of of 0-0.3 micron particles (in 0.1 liters of air) changes
         /// </summary>
-        public event EventHandler<IChangeResult<int>> CountOf0_3micronParticlesUpdated = delegate { };
+        public event EventHandler<IChangeResult<ParticleDensity>> CountOf0_3micronParticlesUpdated = delegate { };
 
         /// <summary>
         /// Raised when the number of of 0.3-0.5 micron particles (in 0.1 liters of air) changes
         /// </summary>
-        public event EventHandler<IChangeResult<int>> CountOf0_5micronParticlesUpdated = delegate { };
+        public event EventHandler<IChangeResult<ParticleDensity>> CountOf0_5micronParticlesUpdated = delegate { };
 
         /// <summary>
         /// Raised when the number of of 0.5-10 micron particles changes
         /// </summary>
-        public event EventHandler<IChangeResult<int>> CountOf10micronParticlesUpdated = delegate { };
+        public event EventHandler<IChangeResult<ParticleDensity>> CountOf10micronParticlesUpdated = delegate { };
 
         /// <summary>
         /// Raised when the number of of 10-25 micron particles (in 0.1 liters of air) changes
         /// </summary>
-        public event EventHandler<IChangeResult<int>> CountOf25micronParticlesUpdated = delegate { };
+        public event EventHandler<IChangeResult<ParticleDensity>> CountOf25micronParticlesUpdated = delegate { };
 
         /// <summary>
         /// Raised when the number of of 25-50 micron particles (in 0.1 liters of air) changes
         /// </summary>
-        public event EventHandler<IChangeResult<int>> CountOf50micronParticlesUpdated = delegate { };
+        public event EventHandler<IChangeResult<ParticleDensity>> CountOf50micronParticlesUpdated = delegate { };
 
         /// <summary>
         /// Raised when the number of 50-100 micron particles (in 0.1 liters of air) changes
         /// </summary>
-        public event EventHandler<IChangeResult<int>> CountOf100micronParticlesUpdated = delegate { };
+        public event EventHandler<IChangeResult<ParticleDensity>> CountOf100micronParticlesUpdated = delegate { };
 
         /// <summary>
         /// Standard particulate matter PM1.0 density
@@ -122,29 +115,29 @@ namespace Meadow.Foundation.Sensors.Environmental
         public Density? PM10_0Env => Conditions.EnvironmentalParticulateMatter_10micron;
 
         /// <summary>
-        /// Number of 0 - 0.3 micron particles in 0.1 liters of air
+        /// Particle density of 0 - 0.3 micron particles inair
         /// </summary>
-        public int? CountOf0_3micronParticles => Conditions.particles_0_3microns;
+        public ParticleDensity? CountOf0_3micronParticles => Conditions.ParticleDensity_0_3microns;
         /// <summary>
-        /// Number of of 0.3 - 0.5 micron particles in 0.1 liters of air
+        /// Particle density of of 0.3 - 0.5 micron particles in air
         /// </summary>
-        public int? CountOf0_5micronParticles => Conditions.particles_0_5microns;
+        public ParticleDensity? CountOf0_5micronParticles => Conditions.ParticleDensity_0_5microns;
         /// <summary>
-        /// Number of of 0.5 - 10 micron particles in 0.1 liters of air
+        /// Particle density of of 0.5 - 10 micron particles in air
         /// </summary>
-        public int? CountOf10micronParticles => Conditions.particles_10microns;
+        public ParticleDensity? CountOf10micronParticles => Conditions.ParticleDensity_10microns;
         /// <summary>
-        /// Number of of 0.5 - 10 micron particles in 0.1 liters of air
+        /// Particle density of of 0.5 - 10 micron particles in air
         /// </summary>
-        public int? CountOf25micronParticles => Conditions.particles_25microns;
+        public ParticleDensity? CountOf25micronParticles => Conditions.ParticleDensity_25microns;
         /// <summary>
-        /// Number of of 10 - 50 micron particles in 0.1 liters of air
+        /// Particle density of of 10 - 50 micron particles in air
         /// </summary>
-        public int? CountOf50micronParticles => Conditions.particles_50microns;
+        public ParticleDensity? CountOf50micronParticles => Conditions.ParticleDensity_50microns;
         /// <summary>
-        /// Number of of 50 - 100 micron particles in 0.1 liters of air
+        /// Particle density of of 50 - 100 micron particles in  air
         /// </summary>
-        public int? CountOf100micronParticles => Conditions.particles_100microns;
+        public ParticleDensity? CountOf100micronParticles => Conditions.ParticleDensity_100microns;
 
         /// <summary>
         /// Create a new PMSA003I sensor object
@@ -173,6 +166,11 @@ namespace Meadow.Foundation.Sensors.Environmental
             base.StopUpdating();
         }
 
+        /// <summary>
+        /// Read data from the sensor
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         protected override Task<(
            Density? StandardParticulateMatter_1micron,
            Density? StandardParticulateMatter_2_5micron,
@@ -180,12 +178,12 @@ namespace Meadow.Foundation.Sensors.Environmental
            Density? EnvironmentalParticulateMatter_1micron,
            Density? EnvironmentalParticulateMatter_2_5micron,
            Density? EnvironmentalParticulateMatter_10micron,
-           int? particles_0_3microns,
-           int? particles_0_5microns,
-           int? particles_10microns,
-           int? particles_25microns,
-           int? particles_50microns,
-           int? particles_100microns)> ReadSensor()
+           ParticleDensity? ParticleDensity_0_3microns,
+           ParticleDensity? ParticleDensity_0_5microns,
+           ParticleDensity? ParticleDensity_10microns,
+           ParticleDensity? ParticleDensity_25microns,
+           ParticleDensity? ParticleDensity_50microns,
+           ParticleDensity? ParticleDensity_100microns)> ReadSensor()
         {
             var buffer = new byte[32];
             Peripheral.Read(buffer);
@@ -209,12 +207,12 @@ namespace Meadow.Foundation.Sensors.Environmental
             var pm10Environmental = new Density(BitConverter.ToUInt16(span[20..22]), Density.UnitType.MicroGramsPerMetersCubed);
             var pm25Environmental = new Density(BitConverter.ToUInt16(span[18..20]), Density.UnitType.MicroGramsPerMetersCubed);
             var pm100Environmental = new Density(BitConverter.ToUInt16(span[16..18]), Density.UnitType.MicroGramsPerMetersCubed);
-            var p03um = BitConverter.ToUInt16(span[14..16]);
-            var p05um = BitConverter.ToUInt16(span[12..14]);
-            var p10um = BitConverter.ToUInt16(span[10..12]);
-            var p25um = BitConverter.ToUInt16(span[8..10]);
-            var p50um = BitConverter.ToUInt16(span[6..8]);
-            var p100um = BitConverter.ToUInt16(span[4..6]);
+            var p03um = new ParticleDensity(BitConverter.ToUInt16(span[14..16]), ParticleDensity.UnitType.ParticlesPerCentiliter);
+            var p05um = new ParticleDensity(BitConverter.ToUInt16(span[12..14]), ParticleDensity.UnitType.ParticlesPerCentiliter);
+            var p10um = new ParticleDensity(BitConverter.ToUInt16(span[10..12]), ParticleDensity.UnitType.ParticlesPerCentiliter);
+            var p25um = new ParticleDensity(BitConverter.ToUInt16(span[8..10]), ParticleDensity.UnitType.ParticlesPerCentiliter);
+            var p50um = new ParticleDensity(BitConverter.ToUInt16(span[6..8]), ParticleDensity.UnitType.ParticlesPerCentiliter);
+            var p100um = new ParticleDensity(BitConverter.ToUInt16(span[4..6]), ParticleDensity.UnitType.ParticlesPerCentiliter);
 
             Conditions = (pm10Standard, pm25Standard, pm100Standard, pm10Environmental, pm25Environmental,
                           pm100Environmental, p03um, p05um, p10um, p25um, p50um, p100um);
@@ -233,12 +231,12 @@ namespace Meadow.Foundation.Sensors.Environmental
                 Density? EnvironmentalParticulateMatter_1micron,
                 Density? EnvironmentalParticulateMatter_2_5micron,
                 Density? EnvironmentalParticulateMatter_10micron,
-                int? particles_0_3microns,
-                int? particles_0_5microns,
-                int? particles_10microns,
-                int? particles_25microns,
-                int? particles_50microns,
-                int? particles_100microns)> changeResult)
+                ParticleDensity? ParticleDensity_0_3microns,
+                ParticleDensity? ParticleDensity_0_5microns,
+                ParticleDensity? ParticleDensity_10microns,
+                ParticleDensity? ParticleDensity_25microns,
+                ParticleDensity? ParticleDensity_50microns,
+                ParticleDensity? ParticleDensity_100microns)> changeResult)
         {
             if (changeResult.New.StandardParticulateMatter_1micron is { } SPM0_1)
             {
@@ -265,29 +263,29 @@ namespace Meadow.Foundation.Sensors.Environmental
                 StandardPM_1micronUpdated?.Invoke(this, new ChangeResult<Density>(EM0_10, changeResult.Old.Value.EnvironmentalParticulateMatter_10micron));
             }
 
-            if (changeResult.New.particles_0_3microns is { } P_0_3)
+            if (changeResult.New.ParticleDensity_0_3microns is { } P_0_3)
             {
-                CountOf0_3micronParticlesUpdated?.Invoke(this, new ChangeResult<int>(P_0_3, changeResult.Old.Value.particles_0_3microns));
+                CountOf0_3micronParticlesUpdated?.Invoke(this, new ChangeResult<ParticleDensity>(P_0_3, changeResult.Old.Value.ParticleDensity_0_3microns));
             }
-            if (changeResult.New.particles_0_5microns is { } P_0_5)
+            if (changeResult.New.ParticleDensity_0_5microns is { } P_0_5)
             {
-                CountOf0_5micronParticlesUpdated?.Invoke(this, new ChangeResult<int>(P_0_5, changeResult.Old.Value.particles_0_5microns));
+                CountOf0_5micronParticlesUpdated?.Invoke(this, new ChangeResult<ParticleDensity>(P_0_5, changeResult.Old.Value.ParticleDensity_0_5microns));
             }
-            if (changeResult.New.particles_10microns is { } P_10)
+            if (changeResult.New.ParticleDensity_10microns is { } P_10)
             {
-                CountOf10micronParticlesUpdated?.Invoke(this, new ChangeResult<int>(P_10, changeResult.Old.Value.particles_10microns));
+                CountOf10micronParticlesUpdated?.Invoke(this, new ChangeResult<ParticleDensity>(P_10, changeResult.Old.Value.ParticleDensity_10microns));
             }
-            if (changeResult.New.particles_25microns is { } P_25)
+            if (changeResult.New.ParticleDensity_25microns is { } P_25)
             {
-                CountOf25micronParticlesUpdated?.Invoke(this, new ChangeResult<int>(P_25, changeResult.Old.Value.particles_25microns));
+                CountOf25micronParticlesUpdated?.Invoke(this, new ChangeResult<ParticleDensity>(P_25, changeResult.Old.Value.ParticleDensity_25microns));
             }
-            if (changeResult.New.particles_50microns is { } P_50)
+            if (changeResult.New.ParticleDensity_50microns is { } P_50)
             {
-                CountOf50micronParticlesUpdated?.Invoke(this, new ChangeResult<int>(P_50, changeResult.Old.Value.particles_50microns));
+                CountOf50micronParticlesUpdated?.Invoke(this, new ChangeResult<ParticleDensity>(P_50, changeResult.Old.Value.ParticleDensity_50microns));
             }
-            if (changeResult.New.particles_100microns is { } P_100)
+            if (changeResult.New.ParticleDensity_100microns is { } P_100)
             {
-                CountOf100micronParticlesUpdated?.Invoke(this, new ChangeResult<int>(P_100, changeResult.Old.Value.particles_100microns));
+                CountOf100micronParticlesUpdated?.Invoke(this, new ChangeResult<ParticleDensity>(P_100, changeResult.Old.Value.ParticleDensity_100microns));
             }
 
             base.RaiseEventsAndNotify(changeResult);
