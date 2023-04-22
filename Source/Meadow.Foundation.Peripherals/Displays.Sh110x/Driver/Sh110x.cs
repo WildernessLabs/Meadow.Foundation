@@ -1,6 +1,7 @@
 ﻿using Meadow.Foundation.Graphics;
 using Meadow.Foundation.Graphics.Buffers;
 using Meadow.Hardware;
+using Meadow.Units;
 using System;
 using System.Threading;
 
@@ -9,7 +10,7 @@ namespace Meadow.Foundation.Displays
     /// <summary>
     /// Provide an interface to the Sh110x family of displays
     /// </summary>
-    public abstract partial class Sh110x : IGraphicsDisplay
+    public abstract partial class Sh110x : IGraphicsDisplay, ISpiDevice
     {
         /// <summary>
         /// The display color mode - 1 bit per pixel monochrome
@@ -30,6 +31,34 @@ namespace Meadow.Foundation.Displays
         /// The display height in pixels
         /// </summary>
         public int Height { get; protected set; } = 64;
+
+        /// <summary>
+        /// The default SPI bus speed for the device
+        /// </summary>
+        public Frequency DefaultSpiBusSpeed => new Frequency(4000, Frequency.UnitType.Kilohertz);
+
+        /// <summary>
+        /// The SPI bus speed for the device
+        /// </summary>
+        public Frequency SpiBusSpeed
+        {
+            get => spiPeripheral.BusSpeed;
+            set => spiPeripheral.BusSpeed = value;
+        }
+
+        /// <summary>
+        /// The default SPI bus mode for the device
+        /// </summary>
+        public SpiClockConfiguration.Mode DefaultSpiBusMode => SpiClockConfiguration.Mode.Mode0;
+
+        /// <summary>
+        /// The SPI bus mode for the device
+        /// </summary>
+        public SpiClockConfiguration.Mode SpiBusMode
+        {
+            get => spiPeripheral.BusMode;
+            set => spiPeripheral.BusMode = value;
+        }
 
         /// <summary>
         /// The connection type (I2C or SPI)
@@ -127,7 +156,7 @@ namespace Meadow.Foundation.Displays
             this.dataCommandPort = dataCommandPort;
             this.resetPort = resetPort;
 
-            spiPeripheral = new SpiPeripheral(spiBus, chipSelectPort);
+            spiPeripheral = new SpiPeripheral(spiBus, chipSelectPort, DefaultSpiBusSpeed, DefaultSpiBusMode);
 
             Width = width;
             Height = height;

@@ -22,7 +22,7 @@ namespace Displays.TftSpi.Ili9341_Jpg_Sample
         {
             Resolver.Log.Info("Initializing...");
 
-            var spiBus = Device.CreateSpiBus(Ili9341.DefaultSpiBusSpeed);
+            var spiBus = Device.CreateSpiBus();
 
             display = new Ili9341
             (

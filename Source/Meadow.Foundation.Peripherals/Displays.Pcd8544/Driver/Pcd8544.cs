@@ -9,13 +9,8 @@ namespace Meadow.Foundation.Displays
     /// <summary>
     /// Represents a Pcd8544 monochrome display
     /// </summary>
-    public class Pcd8544 : IGraphicsDisplay
+    public class Pcd8544 : IGraphicsDisplay, ISpiDevice
     {
-        /// <summary>
-        /// Default SPI bus speed
-        /// </summary>
-        public static Frequency DEFAULT_SPEED = new Frequency(4000, Frequency.UnitType.Kilohertz);
-
         /// <summary>
         /// Display color mode 
         /// </summary>
@@ -45,6 +40,34 @@ namespace Meadow.Foundation.Displays
         /// Is the display inverted 
         /// </summary>
         public bool IsDisplayInverted { get; private set; } = false;
+
+        /// <summary>
+        /// The default SPI bus speed for the device
+        /// </summary>
+        public Frequency DefaultSpiBusSpeed => new Frequency(4000, Frequency.UnitType.Kilohertz);
+
+        /// <summary>
+        /// The SPI bus speed for the device
+        /// </summary>
+        public Frequency SpiBusSpeed
+        {
+            get => spiPeripheral.BusSpeed;
+            set => spiPeripheral.BusSpeed = value;
+        }
+
+        /// <summary>
+        /// The default SPI bus mode for the device
+        /// </summary>
+        public SpiClockConfiguration.Mode DefaultSpiBusMode => SpiClockConfiguration.Mode.Mode0;
+
+        /// <summary>
+        /// The SPI bus mode for the device
+        /// </summary>
+        public SpiClockConfiguration.Mode SpiBusMode
+        {
+            get => spiPeripheral.BusMode;
+            set => spiPeripheral.BusMode = value;
+        }
 
         readonly IDigitalOutputPort dataCommandPort;
         readonly IDigitalOutputPort resetPort;
@@ -93,7 +116,7 @@ namespace Meadow.Foundation.Displays
             this.dataCommandPort = dataCommandPort;
             this.resetPort = resetPort;
 
-            spiPeripheral = new SpiPeripheral(spiBus, chipSelectPort);
+            spiPeripheral = new SpiPeripheral(spiBus, chipSelectPort, DefaultSpiBusSpeed, DefaultSpiBusMode);
 
             Initialize();
         }

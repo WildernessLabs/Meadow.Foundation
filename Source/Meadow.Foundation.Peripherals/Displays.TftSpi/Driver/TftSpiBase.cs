@@ -1,12 +1,13 @@
 using Meadow.Foundation.Graphics;
 using Meadow.Foundation.Graphics.Buffers;
 using Meadow.Hardware;
+using Meadow.Units;
 using System;
 using System.Threading;
 
 namespace Meadow.Foundation.Displays
 {
-    public abstract partial class TftSpiBase : IGraphicsDisplay
+    public abstract partial class TftSpiBase : IGraphicsDisplay, ISpiDevice
     {
         //these displays typically support 16 & 18 bit, some also include 8, 9, 12 and/or 24 bit color 
 
@@ -44,6 +45,34 @@ namespace Meadow.Foundation.Displays
         /// The buffer used to store the pixel data for the display
         /// </summary>
         public IPixelBuffer PixelBuffer => imageBuffer;
+
+        /// <summary>
+        /// The default SPI bus speed for the device
+        /// </summary>
+        public virtual Frequency DefaultSpiBusSpeed => new Frequency(12000, Frequency.UnitType.Kilohertz);
+
+        /// <summary>
+        /// The SPI bus speed for the device
+        /// </summary>
+        public Frequency SpiBusSpeed
+        {
+            get => spiDisplay.BusSpeed;
+            set => spiDisplay.BusSpeed = value;
+        }
+
+        /// <summary>
+        /// The default SPI bus mode for the device
+        /// </summary>
+        public virtual SpiClockConfiguration.Mode DefaultSpiBusMode => SpiClockConfiguration.Mode.Mode0;
+
+        /// <summary>
+        /// The SPI bus mode for the device
+        /// </summary>
+        public SpiClockConfiguration.Mode SpiBusMode
+        {
+            get => spiDisplay.BusMode;
+            set => spiDisplay.BusMode = value;
+        }
 
         /// <summary>
         /// The data command port
@@ -143,7 +172,7 @@ namespace Meadow.Foundation.Displays
             this.chipSelectPort = chipSelectPort;
             this.resetPort = resetPort;
 
-            spiDisplay = new SpiPeripheral(spiBus, chipSelectPort);
+            spiDisplay = new SpiPeripheral(spiBus, chipSelectPort, DefaultSpiBusSpeed, DefaultSpiBusMode);
 
             CreateBuffer(colorMode, nativeWidth = width, nativeHeight = height);
         }
@@ -156,42 +185,32 @@ namespace Meadow.Foundation.Displays
         public virtual bool IsColorTypeSupported(ColorMode colorType)
         {
             return (SupportedColorModes | colorType) != 0;
-            /*
-            if (SupportedColors)
-
-
-            if (mode == ColorType.Format12bppRgb444 ||
-                mode == ColorType.Format16bppRgb565)
-            {
-                return true;
-            }
-            return false;*/
         }
 
         /// <summary>
         /// Create an offscreen buffer for the display
         /// </summary>
-        /// <param name="mode">The color mode</param>
+        /// <param name="colorMode">The color mode</param>
         /// <param name="width">The width in pixels</param>
         /// <param name="height">The height in pixels</param>
         /// <exception cref="ArgumentException">Throws an exception if the color mode isn't supported</exception>
-        protected void CreateBuffer(ColorMode colorType, int width, int height)
+        protected void CreateBuffer(ColorMode colorMode, int width, int height)
         {
-            if (IsColorTypeSupported(colorType) == false)
+            if (IsColorTypeSupported(colorMode) == false)
             {
-                throw new ArgumentException($"color mode {colorType} not supported");
+                throw new ArgumentException($"color mode {colorMode} not supported");
             }
 
-            if (colorType == ColorMode.Format24bppRgb888)
+            if (colorMode == ColorMode.Format24bppRgb888)
             {
                 imageBuffer = new BufferRgb888(width, height);
             }
 
-            else if (colorType == ColorMode.Format16bppRgb565)
+            else if (colorMode == ColorMode.Format16bppRgb565)
             {
                 imageBuffer = new BufferRgb565(width, height);
             }
-            else //Rgb444
+            else
             {
                 imageBuffer = new BufferRgb444(width, height);
             }

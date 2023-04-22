@@ -92,7 +92,7 @@ namespace Meadow.Foundation.Displays
             this.resetPort = resetPort;
             this.busyPort = busyPort;
 
-            spiPeripheral = new SpiPeripheral(spiBus, chipSelectPort);
+            spiPeripheral = new SpiPeripheral(spiBus, chipSelectPort, DefaultSpiBusSpeed, DefaultSpiBusMode);
 
             imageBuffer = new Buffer1bppV(width, height);
 

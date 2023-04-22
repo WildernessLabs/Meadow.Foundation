@@ -1,4 +1,5 @@
 ﻿using Meadow.Hardware;
+using Meadow.Units;
 using Meadow.Utilities;
 using System;
 using System.Linq;
@@ -12,12 +13,40 @@ namespace Meadow.Foundation.ICs.IOExpanders
     /// Control the outputs from a 74595 shift register (or a chain of shift registers)
     /// using a SPI interface.
     /// </remarks>
-    public partial class x74595 : IDigitalOutputController
+    public partial class x74595 : IDigitalOutputController, ISpiDevice
     {
         /// <summary>
         /// The pin definitions
         /// </summary>
         public PinDefinitions Pins { get; }
+
+        /// <summary>
+        /// The default SPI bus speed for the device
+        /// </summary>
+        public Frequency DefaultSpiBusSpeed => new Frequency(10000, Frequency.UnitType.Kilohertz);
+
+        /// <summary>
+        /// The SPI bus speed for the device
+        /// </summary>
+        public Frequency SpiBusSpeed
+        {
+            get => spiPeripheral.BusSpeed;
+            set => spiPeripheral.BusSpeed = value;
+        }
+
+        /// <summary>
+        /// The default SPI bus mode for the device
+        /// </summary>
+        public SpiClockConfiguration.Mode DefaultSpiBusMode => SpiClockConfiguration.Mode.Mode0;
+
+        /// <summary>
+        /// The SPI bus mode for the device
+        /// </summary>
+        public SpiClockConfiguration.Mode SpiBusMode
+        {
+            get => spiPeripheral.BusMode;
+            set => spiPeripheral.BusMode = value;
+        }
 
         /// <summary>
         /// Number of chips required to implement this ShiftRegister.
@@ -51,14 +80,13 @@ namespace Meadow.Foundation.ICs.IOExpanders
         {
             Pins = new PinDefinitions(this);
 
-            // if ((pins > 0) && ((pins % 8) == 0))
             if (pins == 8)
             {
                 numberOfChips = pins / 8;
 
                 latchData = new byte[numberOfChips];
 
-                spiPeripheral = new SpiPeripheral(spiBus, pinChipSelect?.CreateDigitalOutputPort());
+                spiPeripheral = new SpiPeripheral(spiBus, pinChipSelect?.CreateDigitalOutputPort(), DefaultSpiBusSpeed, DefaultSpiBusMode);
             }
             else
             {

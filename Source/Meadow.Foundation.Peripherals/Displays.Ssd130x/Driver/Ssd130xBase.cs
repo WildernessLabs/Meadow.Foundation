@@ -1,6 +1,7 @@
 ﻿using Meadow.Foundation.Graphics;
 using Meadow.Foundation.Graphics.Buffers;
 using Meadow.Hardware;
+using Meadow.Units;
 using System;
 
 namespace Meadow.Foundation.Displays
@@ -8,7 +9,7 @@ namespace Meadow.Foundation.Displays
     /// <summary>
     /// Represents the SSD130x family of OLED displays
     /// </summary>
-    public abstract partial class Ssd130xBase : IGraphicsDisplay
+    public abstract partial class Ssd130xBase : IGraphicsDisplay, ISpiDevice
     {
         /// <summary>
         /// The display color mode
@@ -36,7 +37,35 @@ namespace Meadow.Foundation.Displays
         public IPixelBuffer PixelBuffer => imageBuffer;
 
         /// <summary>
-        /// SSD1306 SPI display
+        /// The default SPI bus speed for the device
+        /// </summary>
+        public Frequency DefaultSpiBusSpeed => new Frequency(8000, Frequency.UnitType.Kilohertz);
+
+        /// <summary>
+        /// The SPI bus speed for the device
+        /// </summary>
+        public Frequency SpiBusSpeed
+        {
+            get => spiPeripheral.BusSpeed;
+            set => spiPeripheral.BusSpeed = value;
+        }
+
+        /// <summary>
+        /// The default SPI bus mode for the device
+        /// </summary>
+        public SpiClockConfiguration.Mode DefaultSpiBusMode => SpiClockConfiguration.Mode.Mode0;
+
+        /// <summary>
+        /// The SPI bus mode for the device
+        /// </summary>
+        public SpiClockConfiguration.Mode SpiBusMode
+        {
+            get => spiPeripheral.BusMode;
+            set => spiPeripheral.BusMode = value;
+        }
+
+        /// <summary>
+        /// SSD130x SPI display
         /// </summary>
         protected ISpiPeripheral spiPeripheral;
 

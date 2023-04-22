@@ -1,5 +1,6 @@
-﻿using System;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
+using Meadow.Units;
+using System;
 
 namespace Meadow.Foundation
 {
@@ -45,15 +46,21 @@ namespace Meadow.Foundation
         /// </summary>
         /// <param name="spiBus">SPI bus object</param>
         /// <param name="chipSelect">Chip select port</param>
+        /// <param name="busSpeed">The SPI bus speed</param>
+        /// <param name="busMode">The SPI bus mode (0-3)</param>
         /// <param name="readBufferSize">Read buffer size</param>
         /// <param name="writeBufferSize">Write buffer size</param>
         /// <param name="chipSelectMode">Chip select mode</param>
         protected ByteCommsSensorBase(
-            ISpiBus spiBus, IDigitalOutputPort? chipSelect,
-            int readBufferSize = 8, int writeBufferSize = 8,
+            ISpiBus spiBus,
+            IDigitalOutputPort? chipSelect,
+            Frequency busSpeed,
+            SpiClockConfiguration.Mode busMode = SpiClockConfiguration.Mode.Mode0,
+            int readBufferSize = 8,
+            int writeBufferSize = 8,
             ChipSelectMode chipSelectMode = ChipSelectMode.ActiveLow)
         {
-            Peripheral = new SpiPeripheral(spiBus, chipSelect, readBufferSize, writeBufferSize, chipSelectMode);
+            Peripheral = new SpiPeripheral(spiBus, chipSelect, busSpeed, busMode, readBufferSize, writeBufferSize, chipSelectMode);
             Init(readBufferSize, writeBufferSize);
         }
 

@@ -1,16 +1,16 @@
 ﻿using Meadow.Hardware;
+using Meadow.Units;
 using Meadow.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using static Meadow.Foundation.ICs.IOExpanders.Mcp23xxx;
 
 namespace Meadow.Foundation.ICs.IOExpanders
 {
     /// <summary>
     /// Provide an interface to connect to a MCP2xxx port expander
     /// </summary>
-    abstract partial class Mcp23xxx : IDigitalInputOutputController
+    abstract partial class Mcp23xxx : IDigitalInputOutputController, ISpiDevice
     {
         /// <summary> 
         /// Raised when the value of any pin configured for input interrupts changes
@@ -24,14 +24,43 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         public abstract int NumberOfPins { get; }
 
+        /// <summary>
+        /// The default SPI bus speed for the device
+        /// </summary>
+        public Frequency DefaultSpiBusSpeed => _defaultSpiBusSpeed;
+        private static Frequency _defaultSpiBusSpeed = new Frequency(375, Frequency.UnitType.Kilohertz);
+
+        /// <summary>
+        /// The SPI bus speed for the device
+        /// </summary>
+        public Frequency SpiBusSpeed
+        {
+            get => (mcpDevice as SpiMcpDeviceComms).BusSpeed;
+            set => (mcpDevice as SpiMcpDeviceComms).BusSpeed = value;
+        }
+
+        /// <summary>
+        /// The default SPI bus mode for the device
+        /// </summary>
+        public SpiClockConfiguration.Mode DefaultSpiBusMode => _defaultSpiBusMode;
+        private static SpiClockConfiguration.Mode _defaultSpiBusMode = SpiClockConfiguration.Mode.Mode0;
+
+        /// <summary>
+        /// The SPI bus mode for the device
+        /// </summary>
+        public SpiClockConfiguration.Mode SpiBusMode
+        {
+            get => (mcpDevice as SpiMcpDeviceComms).BusMode;
+            set => (mcpDevice as SpiMcpDeviceComms).BusMode = value;
+        }
+
         private readonly IMcpDeviceComms mcpDevice;
         private readonly IDigitalInputPort interruptPort;
         private readonly IDigitalOutputPort resetPort;
         private readonly IDictionary<IPin, DigitalInputPort> inputPorts;
 
-        // state
-        byte ioDirA, ioDirB;
-        byte olatA, olatB;
+        private byte ioDirA, ioDirB;
+        private byte olatA, olatB;
 
         /// <summary>
         /// object for using lock() to do thread sync
@@ -47,7 +76,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <param name="resetPort">Optional Meadow output port used to reset the mcp expander</param>
         protected Mcp23xxx(II2cBus i2cBus, byte address,
             IDigitalInputPort interruptPort = null, IDigitalOutputPort resetPort = null) :
-            this(new I2cMcpDeviceComms(i2cBus, address), interruptPort, resetPort) // use the internal constructor that takes an IMcpDeviceComms
+            this(new I2cMcpDeviceComms(i2cBus, address), interruptPort, resetPort)
         { }
 
         /// <summary>
@@ -61,8 +90,10 @@ namespace Meadow.Foundation.ICs.IOExpanders
             IDigitalOutputPort chipSelectPort,
             IDigitalInputPort interruptPort = null,
             IDigitalOutputPort resetPort = null) :
-            this(new SpiMcpDeviceComms(spiBus, chipSelectPort), interruptPort, resetPort) // use the internal constructor that takes an IMcpDeviceComms
-        { }
+            this(new SpiMcpDeviceComms(spiBus, chipSelectPort, _defaultSpiBusSpeed, _defaultSpiBusMode), interruptPort, resetPort)
+        {
+
+        }
 
         /// <summary>
         /// Mcp23xxx base class
@@ -75,7 +106,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
                           IDigitalOutputPort resetPort = null)
         {
             if (resetPort != null)
-            {   //disable and enable the mcp before initializing
+            {
                 this.resetPort = resetPort;
                 ResetMcp();
             }
@@ -90,6 +121,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
             }
 
             inputPorts = new Dictionary<IPin, DigitalInputPort>();
+
+            IByteCommunications comms;
             mcpDevice = device;
 
             Initialize();

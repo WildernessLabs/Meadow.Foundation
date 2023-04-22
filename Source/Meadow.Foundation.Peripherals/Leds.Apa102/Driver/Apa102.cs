@@ -8,12 +8,35 @@ namespace Meadow.Foundation.Leds
     /// Represents APA102/Dotstar Led(s).
     /// </summary>
     /// <remarks>Based on logic from https://github.com/adafruit/Adafruit_CircuitPython_DotStar/blob/master/adafruit_dotstar.py </remarks>
-    public partial class Apa102 : IApa102
+    public partial class Apa102 : IApa102, ISpiDevice
     {
         /// <summary>
-        /// Default SPI bus speed
+        /// The default SPI bus speed for the device
         /// </summary>
-        public static Frequency DefaultSpiBusSpeed = new Frequency(6000, Frequency.UnitType.Kilohertz);
+        public Frequency DefaultSpiBusSpeed => new Frequency(6000, Frequency.UnitType.Kilohertz);
+
+        /// <summary>
+        /// The SPI bus speed for the device
+        /// </summary>
+        public Frequency SpiBusSpeed
+        {
+            get => spiPeripheral.BusSpeed;
+            set => spiPeripheral.BusSpeed = value;
+        }
+
+        /// <summary>
+        /// The default SPI bus mode for the device
+        /// </summary>
+        public SpiClockConfiguration.Mode DefaultSpiBusMode => SpiClockConfiguration.Mode.Mode0;
+
+        /// <summary>
+        /// The SPI bus mode for the device
+        /// </summary>
+        public SpiClockConfiguration.Mode SpiBusMode
+        {
+            get => spiPeripheral.BusMode;
+            set => spiPeripheral.BusMode = value;
+        }
 
         /// <summary>
         /// SpiPeripheral object
@@ -73,7 +96,7 @@ namespace Meadow.Foundation.Leds
         /// <param name="chipSelectPort">SPI chip select port (optional)</param>
         public Apa102(ISpiBus spiBus, int numberOfLeds, PixelOrder pixelOrder = PixelOrder.BGR, IDigitalOutputPort chipSelectPort = null)
         {
-            spiPeripheral = new SpiPeripheral(spiBus, chipSelectPort);
+            spiPeripheral = new SpiPeripheral(spiBus, chipSelectPort, DefaultSpiBusSpeed, DefaultSpiBusMode);
             this.numberOfLeds = numberOfLeds;
             endHeaderSize = this.numberOfLeds / 16;
             Brightness = 1.0f;

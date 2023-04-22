@@ -4,7 +4,6 @@ using Meadow.Foundation.Displays;
 using Meadow.Foundation.Displays.TextDisplayMenu;
 using Meadow.Foundation.Graphics;
 using Meadow.Foundation.Sensors.Buttons;
-using Meadow.Hardware;
 using Meadow.Peripherals.Displays;
 using Meadow.Peripherals.Sensors.Buttons;
 using System.IO;
@@ -27,9 +26,7 @@ namespace MeadowApp
         {
             Resolver.Log.Info("Initialize...");
 
-            var config = new SpiClockConfiguration(Ssd1309.DefaultSpiBusSpeed, Ssd1309.DefaultSpiClockMode);
-
-            var bus = Device.CreateSpiBus(Device.Pins.SCK, Device.Pins.MOSI, Device.Pins.MISO, config);
+            var bus = Device.CreateSpiBus();
 
             ssd1309 = new Ssd1309
             (

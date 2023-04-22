@@ -1,5 +1,4 @@
 ﻿using Meadow.Hardware;
-using Meadow.Units;
 
 namespace Meadow.Foundation.Displays
 {
@@ -8,16 +7,6 @@ namespace Meadow.Foundation.Displays
     /// </summary>
     public class Ssd1309 : Ssd1306
     {
-        /// <summary>
-        /// The default SPI clock mode
-        /// </summary>
-        public static SpiClockConfiguration.Mode DefaultSpiClockMode = SpiClockConfiguration.Mode.Mode0;
-
-        /// <summary>
-        /// Default SPI frequency
-        /// </summary>
-        public static Frequency DefaultSpiBusSpeed = new Frequency(12000, Frequency.UnitType.Kilohertz);
-
         /// <summary>
         /// Create a new Ssd1309 object
         /// </summary>

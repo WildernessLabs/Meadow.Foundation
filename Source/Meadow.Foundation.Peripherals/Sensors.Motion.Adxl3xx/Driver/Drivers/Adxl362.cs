@@ -24,7 +24,7 @@ namespace Meadow.Foundation.Sensors.Motion
     /// </summary>
     public partial class Adxl362
         : ByteCommsSensorBase<(Acceleration3D? Acceleration3D, Units.Temperature? Temperature)>,
-        IAccelerometer, ITemperatureSensor
+        IAccelerometer, ITemperatureSensor, ISpiDevice
     {
         /// <summary>
         /// Raised when the acceleration value changes
@@ -60,6 +60,36 @@ namespace Meadow.Foundation.Sensors.Motion
         public Units.Temperature? Temperature => Conditions.Temperature;
 
         /// <summary>
+        /// The default SPI bus speed for the device
+        /// </summary>
+        public Frequency DefaultSpiBusSpeed => _defaultSpiBusSpeed;
+        private static Frequency _defaultSpiBusSpeed = new Frequency(8000, Frequency.UnitType.Kilohertz);
+
+        /// <summary>
+        /// The SPI bus speed for the device
+        /// </summary>
+        public Frequency SpiBusSpeed
+        {
+            get => ((SpiPeripheral)Peripheral).BusSpeed;
+            set => ((SpiPeripheral)Peripheral).BusSpeed = value;
+        }
+
+        /// <summary>
+        /// The default SPI bus mode for the device
+        /// </summary>
+        public SpiClockConfiguration.Mode DefaultSpiBusMode => _defaultSpiBusMode;
+        private static SpiClockConfiguration.Mode _defaultSpiBusMode = SpiClockConfiguration.Mode.Mode0;
+
+        /// <summary>
+        /// The SPI bus mode for the device
+        /// </summary>
+        public SpiClockConfiguration.Mode SpiBusMode
+        {
+            get => ((SpiPeripheral)Peripheral).BusMode;
+            set => ((SpiPeripheral)Peripheral).BusMode = value;
+        }
+
+        /// <summary>
         /// Indicate of data is ready to be read
         /// </summary>
         public bool DataReady
@@ -88,8 +118,7 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         /// <summary>
-        /// Indicate if there are at least the desired number
-        /// of samples in the FIFO buffer
+        /// Indicate if there are at least the desired number of samples in the FIFO buffer
         /// </summary>
         public bool FIFOWatermark
         {
@@ -118,8 +147,7 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         /// <summary>
-        /// Indicate if any activity has been detected over the
-        /// specified threshold
+        /// Indicate if any activity has been detected over the specified threshold
         /// </summary>
         public bool ActivityDetected
         {
@@ -133,8 +161,7 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         /// <summary>
-        /// Indicate if the sensor has detected inactivity or a
-        /// free fall condition
+        /// Indicate if the sensor has detected inactivity or a free fall condition
         /// </summary>
         public bool InactivityDetected
         {
@@ -213,9 +240,8 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         /// <summary>
-        /// Set the value of the self test register.  Setting this to true will put
-        /// the device into self test mode, setting this to false will turn off the
-        /// self test
+        /// Set the value of the self test register - setting this to true will put the device into 
+        /// self test mode, setting this to false will turn off the self test
         /// </summary>
         public bool SelfTest
         {
@@ -254,7 +280,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <param name="spiBus">Spi Bus object</param>
         /// <param name="chipSelect">Chip select pin</param>
         public Adxl362(ISpiBus spiBus, IPin chipSelect)
-            : base(spiBus, chipSelect.CreateDigitalOutputPort())
+            : base(spiBus, chipSelect.CreateDigitalOutputPort(), _defaultSpiBusSpeed, _defaultSpiBusMode)
         { }
 
         /// <summary>
