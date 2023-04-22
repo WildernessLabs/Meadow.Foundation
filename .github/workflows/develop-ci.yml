@@ -41,6 +41,12 @@ jobs:
         repository: WildernessLabs/MQTTnet
         path: MQTTnet
         
+    - name: Checkout Meadow.Modbus
+      uses: actions/checkout@v3
+      with:
+        repository: WildernessLabs/Meadow.Modbus
+        path: Meadow.Modbus
+        
     - name: Checkout Meadow.Foundation
       uses: actions/checkout@v3
       with:
