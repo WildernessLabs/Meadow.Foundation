@@ -96,19 +96,13 @@ namespace Meadow.Foundation.ICs.IOExpanders
         }
 
         /// <summary>
-        /// Initialize
+        /// Initializes the Mcp23xxx
         /// </summary>
         /// <param name="interruptPort">optional interupt port, needed for input interrupts (pins 1-8)</param>
         /// <param name="resetPort">Optional Meadow output port used to reset the mcp expander</param>
         void Initialize(IDigitalInputPort interruptPort = null,
-                          IDigitalOutputPort resetPort = null)
+                        IDigitalOutputPort resetPort = null)
         {
-            if (resetPort != null)
-            {
-                this.resetPort = resetPort;
-                ResetMcp();
-            }
-
             // TODO: more interrupt 
             // check the interrupt mode and make sure it's correct
             // raise an exception if not. also, doc in constructor what we expect from an interrupt port
@@ -118,9 +112,52 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 interruptPort.Changed += InterruptPortChanged;
             }
 
+            if (resetPort != null)
+            {
+                this.resetPort = resetPort;
+                ResetMcp();
+            }
+
             inputPorts = new Dictionary<IPin, DigitalInputPort>();
 
-            Initialize();
+            mcpDevice.WriteRegister(MapRegister(Registers.IODIR_IODirection, PortBank.A), 0xFF);
+            mcpDevice.WriteRegister(MapRegister(Registers.GPIO, PortBank.A), 0x00);
+            mcpDevice.WriteRegister(MapRegister(Registers.IPOL_InputPolarity, PortBank.A), 0x00);
+            mcpDevice.WriteRegister(MapRegister(Registers.GPINTEN_InterruptOnChange), 0x00);
+
+            if (NumberOfPins == 16)
+            {   //write the following registers as well (assume device is interleaving)
+                mcpDevice.WriteRegister(MapRegister(Registers.IODIR_IODirection, PortBank.B), 0xFF);
+                mcpDevice.WriteRegister(MapRegister(Registers.GPIO, PortBank.B), 0x00);
+                mcpDevice.WriteRegister(MapRegister(Registers.IPOL_InputPolarity, PortBank.B), 0x00);
+                mcpDevice.WriteRegister(MapRegister(Registers.GPINTEN_InterruptOnChange, PortBank.B), 0x00);
+            }
+
+            // save our state
+            ioDirA = ioDirB = 0xFF;
+            olatA = olatB = 0x00;
+
+            if (interruptPort != null)
+            {
+                bool intHigh = true;
+
+                if (interruptPort.Resistor == ResistorMode.InternalPullUp ||
+                   interruptPort.Resistor == ResistorMode.ExternalPullUp)
+                {
+                    intHigh = false;
+                }
+
+                byte iocon = 0x00;
+                iocon = BitHelpers.SetBit(iocon, 0x01, intHigh); //set interrupt pin to active high (true), low (false)
+                iocon = BitHelpers.SetBit(iocon, 0x02, false); //don't set interrupt to open drain (should be the default)
+
+                mcpDevice.WriteRegister(MapRegister(Registers.IOCON_IOConfiguration), iocon);
+
+                if (NumberOfPins == 16)
+                {
+                    mcpDevice.WriteRegister(MapRegister(Registers.IOCON_IOConfiguration, PortBank.B), iocon);
+                }
+            }
         }
 
         /// <summary>
@@ -164,51 +201,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 port.Value.Update(state);
             }
             InputChanged?.Invoke(this, new IOExpanderInputChangedEventArgs(interruptFlag, (ushort)(currentStatesB << 8 | currentStates)));
-        }
-
-        /// <summary>
-        /// Initializes the Mcp23xxx
-        /// </summary>
-        protected virtual void Initialize()
-        {
-            mcpDevice.WriteRegister(MapRegister(Registers.IODIR_IODirection, PortBank.A), 0xFF);
-            mcpDevice.WriteRegister(MapRegister(Registers.GPIO, PortBank.A), 0x00);
-            mcpDevice.WriteRegister(MapRegister(Registers.IPOL_InputPolarity, PortBank.A), 0x00);
-            mcpDevice.WriteRegister(MapRegister(Registers.GPINTEN_InterruptOnChange), 0x00);
-
-            if (NumberOfPins == 16)
-            {   //write the following registers as well (assume device is interleaving)
-                mcpDevice.WriteRegister(MapRegister(Registers.IODIR_IODirection, PortBank.B), 0xFF);
-                mcpDevice.WriteRegister(MapRegister(Registers.GPIO, PortBank.B), 0x00);
-                mcpDevice.WriteRegister(MapRegister(Registers.IPOL_InputPolarity, PortBank.B), 0x00);
-                mcpDevice.WriteRegister(MapRegister(Registers.GPINTEN_InterruptOnChange, PortBank.B), 0x00);
-            }
-
-            // save our state
-            ioDirA = ioDirB = 0xFF;
-            olatA = olatB = 0x00;
-
-            if (interruptPort != null)
-            {
-                bool intHigh = true;
-
-                if (interruptPort.Resistor == ResistorMode.InternalPullUp ||
-                   interruptPort.Resistor == ResistorMode.ExternalPullUp)
-                {
-                    intHigh = false;
-                }
-
-                byte iocon = 0x00;
-                iocon = BitHelpers.SetBit(iocon, 0x01, intHigh); //set interrupt pin to active high (true), low (false)
-                iocon = BitHelpers.SetBit(iocon, 0x02, false); //don't set interrupt to open drain (should be the default)
-
-                mcpDevice.WriteRegister(MapRegister(Registers.IOCON_IOConfiguration), iocon);
-
-                if (NumberOfPins == 16)
-                {
-                    mcpDevice.WriteRegister(MapRegister(Registers.IOCON_IOConfiguration, PortBank.B), iocon);
-                }
-            }
         }
 
         /// <summary>
