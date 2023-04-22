@@ -27,37 +27,35 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <summary>
         /// The default SPI bus speed for the device
         /// </summary>
-        public Frequency DefaultSpiBusSpeed => _defaultSpiBusSpeed;
-        private static Frequency _defaultSpiBusSpeed = new Frequency(375, Frequency.UnitType.Kilohertz);
+        public Frequency DefaultSpiBusSpeed => new Frequency(375, Frequency.UnitType.Kilohertz);
 
         /// <summary>
         /// The SPI bus speed for the device
         /// </summary>
         public Frequency SpiBusSpeed
         {
-            get => (mcpDevice as SpiMcpDeviceComms).BusSpeed;
-            set => (mcpDevice as SpiMcpDeviceComms).BusSpeed = value;
+            get => (mcpDevice as ISpiPeripheral).BusSpeed;
+            set => (mcpDevice as ISpiPeripheral).BusSpeed = value;
         }
 
         /// <summary>
         /// The default SPI bus mode for the device
         /// </summary>
-        public SpiClockConfiguration.Mode DefaultSpiBusMode => _defaultSpiBusMode;
-        private static SpiClockConfiguration.Mode _defaultSpiBusMode = SpiClockConfiguration.Mode.Mode0;
+        public SpiClockConfiguration.Mode DefaultSpiBusMode => SpiClockConfiguration.Mode.Mode0;
 
         /// <summary>
         /// The SPI bus mode for the device
         /// </summary>
         public SpiClockConfiguration.Mode SpiBusMode
         {
-            get => (mcpDevice as SpiMcpDeviceComms).BusMode;
-            set => (mcpDevice as SpiMcpDeviceComms).BusMode = value;
+            get => (mcpDevice as ISpiPeripheral).BusMode;
+            set => (mcpDevice as ISpiPeripheral).BusMode = value;
         }
 
-        private readonly IMcpDeviceComms mcpDevice;
-        private readonly IDigitalInputPort interruptPort;
-        private readonly IDigitalOutputPort resetPort;
-        private readonly IDictionary<IPin, DigitalInputPort> inputPorts;
+        private readonly IByteCommunications mcpDevice;
+        private IDigitalInputPort interruptPort;
+        private IDigitalOutputPort resetPort;
+        private IDictionary<IPin, DigitalInputPort> inputPorts;
 
         private byte ioDirA, ioDirB;
         private byte olatA, olatB;
@@ -75,9 +73,11 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <param name="interruptPort">Optional interupt port, needed for input interrupts (pins 1-8)</param>
         /// <param name="resetPort">Optional Meadow output port used to reset the mcp expander</param>
         protected Mcp23xxx(II2cBus i2cBus, byte address,
-            IDigitalInputPort interruptPort = null, IDigitalOutputPort resetPort = null) :
-            this(new I2cMcpDeviceComms(i2cBus, address), interruptPort, resetPort)
-        { }
+            IDigitalInputPort interruptPort = null, IDigitalOutputPort resetPort = null)
+        {
+            mcpDevice = new I2cPeripheral(i2cBus, address);
+            Initialize(interruptPort, resetPort);
+        }
 
         /// <summary>
         /// Mcpxxx base class contructor
@@ -89,20 +89,18 @@ namespace Meadow.Foundation.ICs.IOExpanders
         protected Mcp23xxx(ISpiBus spiBus,
             IDigitalOutputPort chipSelectPort,
             IDigitalInputPort interruptPort = null,
-            IDigitalOutputPort resetPort = null) :
-            this(new SpiMcpDeviceComms(spiBus, chipSelectPort, _defaultSpiBusSpeed, _defaultSpiBusMode), interruptPort, resetPort)
+            IDigitalOutputPort resetPort = null)
         {
-
+            mcpDevice = new SpiPeripheral(spiBus, chipSelectPort, DefaultSpiBusSpeed, DefaultSpiBusMode);
+            Initialize(interruptPort, resetPort);
         }
 
         /// <summary>
-        /// Mcp23xxx base class
+        /// Initialize
         /// </summary>
-        /// <param name="device"></param>
         /// <param name="interruptPort">optional interupt port, needed for input interrupts (pins 1-8)</param>
         /// <param name="resetPort">Optional Meadow output port used to reset the mcp expander</param>
-        internal Mcp23xxx(IMcpDeviceComms device,
-                          IDigitalInputPort interruptPort = null,
+        void Initialize(IDigitalInputPort interruptPort = null,
                           IDigitalOutputPort resetPort = null)
         {
             if (resetPort != null)
@@ -121,9 +119,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
             }
 
             inputPorts = new Dictionary<IPin, DigitalInputPort>();
-
-            IByteCommunications comms;
-            mcpDevice = device;
 
             Initialize();
         }
