@@ -29,6 +29,18 @@ jobs:
         repository: WildernessLabs/Meadow.Units
         path: Meadow.Units
     
+    - name: Checkout Meadow.Core
+      uses: actions/checkout@v3
+      with:
+        repository: WildernessLabs/Meadow.Core
+        path: Meadow.Core
+        
+    - name: Checkout MQTTnet
+      uses: actions/checkout@v3
+      with:
+        repository: WildernessLabs/MQTTnet
+        path: MQTTnet
+        
     - name: Checkout Meadow.Foundation
       uses: actions/checkout@v3
       with:
@@ -41,5 +53,5 @@ jobs:
         dotnet-version:
           6.0.x
     
-    - name: Build Meadow.Contracts
+    - name: Build Meadow Foundation
       run: dotnet build -c Release Meadow.Foundation/Source/Meadow.Foundation.sln
