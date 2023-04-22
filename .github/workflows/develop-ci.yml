@@ -1,0 +1,45 @@
+name: Develop Build
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ develop ]
+
+jobs:
+  build:
+
+    runs-on: windows-latest
+    
+    steps:
+    - name: Checkout Meadow.Contracts
+      uses: actions/checkout@v3
+      with:
+        repository: WildernessLabs/Meadow.Contracts
+        path: Meadow.Contracts
+        
+    - name: Checkout Meadow.Logging
+      uses: actions/checkout@v3
+      with:
+        repository: WildernessLabs/Meadow.Logging
+        path: Meadow.Logging
+        
+    - name: Checkout Meadow.Units
+      uses: actions/checkout@v3
+      with:
+        repository: WildernessLabs/Meadow.Units
+        path: Meadow.Units
+    
+    - name: Checkout Meadow.Foundation
+      uses: actions/checkout@v3
+      with:
+        path: Meadow.Foundation
+        ref: develop
+        
+    - name: Setup .NET SDK
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version:
+          6.0.x
+    
+    - name: Build Meadow.Contracts
+      run: dotnet build -c Release Meadow.Foundation/Source/Meadow.Foundation.sln
