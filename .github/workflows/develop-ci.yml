@@ -16,24 +16,28 @@ jobs:
       with:
         repository: WildernessLabs/Meadow.Contracts
         path: Meadow.Contracts
+        ref: develop
         
     - name: Checkout Meadow.Logging
       uses: actions/checkout@v3
       with:
         repository: WildernessLabs/Meadow.Logging
         path: Meadow.Logging
+        ref: develop
         
     - name: Checkout Meadow.Units
       uses: actions/checkout@v3
       with:
         repository: WildernessLabs/Meadow.Units
         path: Meadow.Units
+        ref: develop
     
     - name: Checkout Meadow.Core
       uses: actions/checkout@v3
       with:
         repository: WildernessLabs/Meadow.Core
         path: Meadow.Core
+        ref: develop
         
     - name: Checkout MQTTnet
       uses: actions/checkout@v3
