@@ -6,27 +6,35 @@ using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Gnss
 {
-    public partial class NeoM8
+    public partial class NeoM8 : ISpiDevice
     {
+        /// <summary>
+        /// The default SPI bus speed for the device
+        /// </summary>
+        public Frequency DefaultSpiBusSpeed => new Frequency(375, Frequency.UnitType.Kilohertz);
+
         /// <summary>
         /// The SPI bus speed for the device
         /// </summary>
         public Frequency SpiBusSpeed
         {
-            get => _spiBusSpeed;
-            set => _spiBusSpeed = spiPeripheral.BusSpeed = value;
+            get => spiPeripheral.BusSpeed;
+            set => spiPeripheral.BusSpeed = value;
         }
-        Frequency _spiBusSpeed = new Frequency(375, Frequency.UnitType.Kilohertz);
+
+        /// <summary>
+        /// The default SPI bus mode for the device
+        /// </summary>
+        public SpiClockConfiguration.Mode DefaultSpiBusMode => SpiClockConfiguration.Mode.Mode0;
 
         /// <summary>
         /// The SPI bus mode for the device
         /// </summary>
         public SpiClockConfiguration.Mode SpiBusMode
         {
-            get => _piBusMode;
-            set => _piBusMode = spiPeripheral.BusMode = value;
+            get => spiPeripheral.BusMode;
+            set => spiPeripheral.BusMode = value;
         }
-        SpiClockConfiguration.Mode _piBusMode = SpiClockConfiguration.Mode.Mode0;
 
         readonly ISpiPeripheral spiPeripheral;
 
@@ -43,7 +51,7 @@ namespace Meadow.Foundation.Sensors.Gnss
             ResetPort = resetPort;
             PulsePerSecondPort = ppsPort;
 
-            spiPeripheral = new SpiPeripheral(spiBus, chipSelectPort, SpiBusSpeed, SpiBusMode);
+            spiPeripheral = new SpiPeripheral(spiBus, chipSelectPort, DefaultSpiBusSpeed, DefaultSpiBusMode);
 
             _ = InitializeSpi();
         }
@@ -55,17 +63,11 @@ namespace Meadow.Foundation.Sensors.Gnss
         {
             var chipSelectPort = chipSelectPin.CreateDigitalOutputPort();
 
-            spiPeripheral = new SpiPeripheral(spiBus, chipSelectPort, SpiBusSpeed, SpiBusMode);
+            spiPeripheral = new SpiPeripheral(spiBus, chipSelectPort, DefaultSpiBusSpeed, DefaultSpiBusMode);
 
-            if (resetPin != null)
-            {
-                resetPin.CreateDigitalOutputPort(true);
-            }
+            resetPin?.CreateDigitalOutputPort(true);
 
-            if (ppsPin != null)
-            {
-                ppsPin.CreateDigitalInputPort(InterruptMode.EdgeRising, ResistorMode.InternalPullDown);
-            }
+            ppsPin?.CreateDigitalInputPort(InterruptMode.EdgeRising, ResistorMode.InternalPullDown);
 
             _ = InitializeSpi();
         }

@@ -8,7 +8,7 @@ namespace Meadow.Foundation.Displays
     /// <summary>
     /// Max7219 LED matrix driver
     /// </summary>
-    public partial class Max7219
+    public partial class Max7219 : ISpiDevice
     {
         /// <summary>
         /// Number of digits per Module
@@ -36,24 +36,32 @@ namespace Meadow.Foundation.Displays
         public int Length => DigitRows * DigitColumns;
 
         /// <summary>
+        /// The default SPI bus speed for the device
+        /// </summary>
+        public Frequency DefaultSpiBusSpeed => new Frequency(10000, Frequency.UnitType.Kilohertz);
+
+        /// <summary>
         /// The SPI bus speed for the device
         /// </summary>
         public Frequency SpiBusSpeed
         {
-            get => _spiBusSpeed;
-            set => _spiBusSpeed = spiPeripheral.BusSpeed = value;
+            get => spiPeripheral.BusSpeed;
+            set => spiPeripheral.BusSpeed = value;
         }
-        Frequency _spiBusSpeed = new Frequency(10000, Frequency.UnitType.Kilohertz);
+
+        /// <summary>
+        /// The default SPI bus mode for the device
+        /// </summary>
+        public SpiClockConfiguration.Mode DefaultSpiBusMode => SpiClockConfiguration.Mode.Mode0;
 
         /// <summary>
         /// The SPI bus mode for the device
         /// </summary>
         public SpiClockConfiguration.Mode SpiBusMode
         {
-            get => _piBusMode;
-            set => _piBusMode = spiPeripheral.BusMode = value;
+            get => spiPeripheral.BusMode;
+            set => spiPeripheral.BusMode = value;
         }
-        SpiClockConfiguration.Mode _piBusMode = SpiClockConfiguration.Mode.Mode0;
 
         private readonly ISpiPeripheral spiPeripheral;
 
@@ -91,7 +99,7 @@ namespace Meadow.Foundation.Displays
         /// <param name="maxMode">Display mode of spiPeripheral</param>
         public Max7219(ISpiBus spiBus, IDigitalOutputPort chipselectPort, int deviceRows, int deviceColumns, Max7219Mode maxMode = Max7219Mode.Display)
         {
-            spiPeripheral = new SpiPeripheral(spiBus, chipselectPort, SpiBusSpeed, SpiBusMode);
+            spiPeripheral = new SpiPeripheral(spiBus, chipselectPort, DefaultSpiBusSpeed, DefaultSpiBusMode);
 
             DigitRows = deviceRows;
             DigitColumns = deviceColumns * DigitsPerDevice;

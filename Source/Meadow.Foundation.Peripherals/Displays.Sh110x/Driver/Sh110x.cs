@@ -10,7 +10,7 @@ namespace Meadow.Foundation.Displays
     /// <summary>
     /// Provide an interface to the Sh110x family of displays
     /// </summary>
-    public abstract partial class Sh110x : IGraphicsDisplay
+    public abstract partial class Sh110x : IGraphicsDisplay, ISpiDevice
     {
         /// <summary>
         /// The display color mode - 1 bit per pixel monochrome
@@ -33,24 +33,32 @@ namespace Meadow.Foundation.Displays
         public int Height { get; protected set; } = 64;
 
         /// <summary>
+        /// The default SPI bus speed for the device
+        /// </summary>
+        public Frequency DefaultSpiBusSpeed => new Frequency(4000, Frequency.UnitType.Kilohertz);
+
+        /// <summary>
         /// The SPI bus speed for the device
         /// </summary>
         public Frequency SpiBusSpeed
         {
-            get => _spiBusSpeed;
-            set => _spiBusSpeed = spiPeripheral.BusSpeed = value;
+            get => spiPeripheral.BusSpeed;
+            set => spiPeripheral.BusSpeed = value;
         }
-        Frequency _spiBusSpeed = new Frequency(4000, Frequency.UnitType.Kilohertz);
+
+        /// <summary>
+        /// The default SPI bus mode for the device
+        /// </summary>
+        public SpiClockConfiguration.Mode DefaultSpiBusMode => SpiClockConfiguration.Mode.Mode0;
 
         /// <summary>
         /// The SPI bus mode for the device
         /// </summary>
         public SpiClockConfiguration.Mode SpiBusMode
         {
-            get => _piBusMode;
-            set => _piBusMode = spiPeripheral.BusMode = value;
+            get => spiPeripheral.BusMode;
+            set => spiPeripheral.BusMode = value;
         }
-        SpiClockConfiguration.Mode _piBusMode = SpiClockConfiguration.Mode.Mode0;
 
         /// <summary>
         /// The connection type (I2C or SPI)
@@ -148,7 +156,7 @@ namespace Meadow.Foundation.Displays
             this.dataCommandPort = dataCommandPort;
             this.resetPort = resetPort;
 
-            spiPeripheral = new SpiPeripheral(spiBus, chipSelectPort, SpiBusSpeed, SpiBusMode);
+            spiPeripheral = new SpiPeripheral(spiBus, chipSelectPort, DefaultSpiBusSpeed, DefaultSpiBusMode);
 
             Width = width;
             Height = height;

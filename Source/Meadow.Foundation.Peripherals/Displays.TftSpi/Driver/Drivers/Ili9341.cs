@@ -12,7 +12,7 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// SPI bus speed
         /// </summary>
-        protected override Frequency _spiBusSpeed { get; set; } = new Frequency(24000, Frequency.UnitType.Kilohertz);
+        public override Frequency DefaultSpiBusSpeed => new Frequency(24000, Frequency.UnitType.Kilohertz);
 
         /// <summary>
         /// The default display color mode

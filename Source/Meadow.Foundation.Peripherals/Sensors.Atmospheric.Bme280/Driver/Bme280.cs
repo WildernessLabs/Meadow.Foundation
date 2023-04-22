@@ -36,7 +36,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     /// </remarks>
     public partial class Bme280 :
         PollingSensorBase<(Units.Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure)>,
-        ITemperatureSensor, IHumiditySensor, IBarometricPressureSensor
+        ITemperatureSensor, IHumiditySensor, IBarometricPressureSensor, ISpiDevice
     {
         /// <summary>
         /// Temperature changed event
@@ -110,14 +110,32 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         public RelativeHumidity? Humidity => Conditions.Humidity;
 
         /// <summary>
+        /// The default SPI bus speed for the device
+        /// </summary>
+        public Frequency DefaultSpiBusSpeed => new Frequency(10000, Frequency.UnitType.Kilohertz);
+
+        /// <summary>
         /// The SPI bus speed for the device
         /// </summary>
-        public Frequency SpiBusSpeed { get; } = new Frequency(10, Frequency.UnitType.Megahertz);
+        public Frequency SpiBusSpeed
+        {
+            get => ((Bme280Spi)bme280Comms).SpiPeripheral.BusSpeed;
+            set => ((Bme280Spi)bme280Comms).SpiPeripheral.BusSpeed = value;
+        }
+
+        /// <summary>
+        /// The default SPI bus mode for the device
+        /// </summary>
+        public SpiClockConfiguration.Mode DefaultSpiBusMode => SpiClockConfiguration.Mode.Mode0;
 
         /// <summary>
         /// The SPI bus mode for the device
         /// </summary>
-        public SpiClockConfiguration.Mode SpiBusMode { get; } = SpiClockConfiguration.Mode.Mode0;
+        public SpiClockConfiguration.Mode SpiBusMode
+        {
+            get => ((Bme280Spi)bme280Comms).SpiPeripheral.BusMode;
+            set => ((Bme280Spi)bme280Comms).SpiPeripheral.BusMode = value;
+        }
 
         /// <summary>
         /// Initializes a new instance of the BME280 class
@@ -147,7 +165,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <param name="chipSelectPort">The port for the chip select pin</param>
         public Bme280(ISpiBus spiBus, IDigitalOutputPort chipSelectPort)
         {
-            bme280Comms = new Bme280Spi(spiBus, SpiBusSpeed, SpiBusMode, chipSelectPort);
+            bme280Comms = new Bme280Spi(spiBus, DefaultSpiBusSpeed, DefaultSpiBusMode, chipSelectPort);
             configuration = new Configuration(); // here to avoid the warning
             Initialize();
         }

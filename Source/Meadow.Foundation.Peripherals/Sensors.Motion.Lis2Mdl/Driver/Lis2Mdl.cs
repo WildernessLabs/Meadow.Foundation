@@ -10,8 +10,7 @@ namespace Meadow.Foundation.Sensors.Accelerometers
     /// Represents a LIS2MDL is a low-power, high-performance 3-axis magnetometer from STMicroelectronics
     /// with a fixed full range of ±50 gauss and a 16-bit resolution
     /// </summary>
-    public partial class Lis2Mdl :
-        ByteCommsSensorBase<MagneticField3D>, IMagnetometer
+    public partial class Lis2Mdl : PollingSensorBase<MagneticField3D>, IMagnetometer
     {
         /// <summary>
         /// Event raised when magnetic field changes

@@ -18,7 +18,6 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         public override ColorMode SupportedColorModes => ColorMode.Format24bppRgb888;
 
-
         /// <summary>
         /// Create a new Ili9488 display object
         /// </summary>

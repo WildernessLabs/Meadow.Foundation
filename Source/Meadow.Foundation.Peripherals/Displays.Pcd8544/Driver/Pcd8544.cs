@@ -9,13 +9,8 @@ namespace Meadow.Foundation.Displays
     /// <summary>
     /// Represents a Pcd8544 monochrome display
     /// </summary>
-    public class Pcd8544 : IGraphicsDisplay
+    public class Pcd8544 : IGraphicsDisplay, ISpiDevice
     {
-        /// <summary>
-        /// Default SPI bus speed
-        /// </summary>
-        public static Frequency DEFAULT_SPEED = new Frequency(4000, Frequency.UnitType.Kilohertz);
-
         /// <summary>
         /// Display color mode 
         /// </summary>
@@ -47,24 +42,32 @@ namespace Meadow.Foundation.Displays
         public bool IsDisplayInverted { get; private set; } = false;
 
         /// <summary>
+        /// The default SPI bus speed for the device
+        /// </summary>
+        public Frequency DefaultSpiBusSpeed => new Frequency(4000, Frequency.UnitType.Kilohertz);
+
+        /// <summary>
         /// The SPI bus speed for the device
         /// </summary>
         public Frequency SpiBusSpeed
         {
-            get => _spiBusSpeed;
-            set => _spiBusSpeed = spiPeripheral.BusSpeed = value;
+            get => spiPeripheral.BusSpeed;
+            set => spiPeripheral.BusSpeed = value;
         }
-        Frequency _spiBusSpeed = new Frequency(4000, Frequency.UnitType.Kilohertz);
+
+        /// <summary>
+        /// The default SPI bus mode for the device
+        /// </summary>
+        public SpiClockConfiguration.Mode DefaultSpiBusMode => SpiClockConfiguration.Mode.Mode0;
 
         /// <summary>
         /// The SPI bus mode for the device
         /// </summary>
         public SpiClockConfiguration.Mode SpiBusMode
         {
-            get => _piBusMode;
-            set => _piBusMode = spiPeripheral.BusMode = value;
+            get => spiPeripheral.BusMode;
+            set => spiPeripheral.BusMode = value;
         }
-        SpiClockConfiguration.Mode _piBusMode = SpiClockConfiguration.Mode.Mode0;
 
         readonly IDigitalOutputPort dataCommandPort;
         readonly IDigitalOutputPort resetPort;
@@ -113,7 +116,7 @@ namespace Meadow.Foundation.Displays
             this.dataCommandPort = dataCommandPort;
             this.resetPort = resetPort;
 
-            spiPeripheral = new SpiPeripheral(spiBus, chipSelectPort, SpiBusSpeed, SpiBusMode);
+            spiPeripheral = new SpiPeripheral(spiBus, chipSelectPort, DefaultSpiBusSpeed, DefaultSpiBusMode);
 
             Initialize();
         }

@@ -7,7 +7,7 @@ using System.Threading;
 
 namespace Meadow.Foundation.Displays
 {
-    public abstract partial class TftSpiBase : IGraphicsDisplay
+    public abstract partial class TftSpiBase : IGraphicsDisplay, ISpiDevice
     {
         //these displays typically support 16 & 18 bit, some also include 8, 9, 12 and/or 24 bit color 
 
@@ -47,30 +47,32 @@ namespace Meadow.Foundation.Displays
         public IPixelBuffer PixelBuffer => imageBuffer;
 
         /// <summary>
+        /// The default SPI bus speed for the device
+        /// </summary>
+        public virtual Frequency DefaultSpiBusSpeed => new Frequency(12000, Frequency.UnitType.Kilohertz);
+
+        /// <summary>
         /// The SPI bus speed for the device
         /// </summary>
         public Frequency SpiBusSpeed
         {
-            get => _spiBusSpeed;
-            set => _spiBusSpeed = spiDisplay.BusSpeed = value;
+            get => spiDisplay.BusSpeed;
+            set => spiDisplay.BusSpeed = value;
         }
+
         /// <summary>
-        /// The SPI bus speed for the device
+        /// The default SPI bus mode for the device
         /// </summary>
-        protected virtual Frequency _spiBusSpeed { get; set; } = new Frequency(12000, Frequency.UnitType.Kilohertz);
+        public virtual SpiClockConfiguration.Mode DefaultSpiBusMode => SpiClockConfiguration.Mode.Mode0;
 
         /// <summary>
         /// The SPI bus mode for the device
         /// </summary>
         public SpiClockConfiguration.Mode SpiBusMode
         {
-            get => _piBusMode;
-            set => _piBusMode = spiDisplay.BusMode = value;
+            get => spiDisplay.BusMode;
+            set => spiDisplay.BusMode = value;
         }
-        /// <summary>
-        /// The SPI bus mode for the device
-        /// </summary>
-        protected virtual SpiClockConfiguration.Mode _piBusMode { get; set; } = SpiClockConfiguration.Mode.Mode0;
 
         /// <summary>
         /// The data command port
@@ -170,7 +172,7 @@ namespace Meadow.Foundation.Displays
             this.chipSelectPort = chipSelectPort;
             this.resetPort = resetPort;
 
-            spiDisplay = new SpiPeripheral(spiBus, chipSelectPort, SpiBusSpeed, SpiBusMode);
+            spiDisplay = new SpiPeripheral(spiBus, chipSelectPort, DefaultSpiBusSpeed, DefaultSpiBusMode);
 
             CreateBuffer(colorMode, nativeWidth = width, nativeHeight = height);
         }

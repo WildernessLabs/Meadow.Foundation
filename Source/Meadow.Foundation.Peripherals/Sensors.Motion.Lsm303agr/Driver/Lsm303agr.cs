@@ -11,7 +11,7 @@ namespace Meadow.Foundation.Sensors.Accelerometers
     /// Represents a LSM303AGR is a system-in-package (SiP) that combines a 3D linear acceleration sensor and a 3D magnetic sensor
     /// </summary>
     public partial class Lsm303agr :
-        ByteCommsSensorBase<(Acceleration3D? Acceleration3D, MagneticField3D? MagneticField3D)>, IMagnetometer, IAccelerometer
+        PollingSensorBase<(Acceleration3D? Acceleration3D, MagneticField3D? MagneticField3D)>, IMagnetometer, IAccelerometer
     {
         /// <summary>
         /// Event raised when acceleration changes

@@ -22,13 +22,12 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// SPI bus speed
         /// </summary>
-        protected override Frequency _spiBusSpeed { get; set; } = new Frequency(48000, Frequency.UnitType.Kilohertz);
+        public override Frequency DefaultSpiBusSpeed => new Frequency(48000, Frequency.UnitType.Kilohertz);
 
         /// <summary>
         /// The SPI bus mode for the device
         /// </summary>
-        protected override SpiClockConfiguration.Mode _piBusMode { get; set; } = SpiClockConfiguration.Mode.Mode3;
-
+        public override SpiClockConfiguration.Mode DefaultSpiBusMode => SpiClockConfiguration.Mode.Mode3;
 
         private byte rowStart, rowStart2;
         private byte columnStart, columnStart2;

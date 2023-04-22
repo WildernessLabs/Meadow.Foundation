@@ -48,6 +48,11 @@ namespace Meadow.Foundation.Sensors.Temperature
         public Mcp960x(II2cBus i2cBus, byte address)
             : base(i2cBus, address)
         {
+            if (Peripheral == null)
+            {
+                throw new NullReferenceException("Mcp960x peripheral did not initialize");
+            }
+
             Peripheral.WriteRegister(DEVICECONFIG, 0x80);
         }
 

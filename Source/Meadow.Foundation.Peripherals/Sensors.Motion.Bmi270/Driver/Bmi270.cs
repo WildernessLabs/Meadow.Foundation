@@ -11,7 +11,7 @@ namespace Meadow.Foundation.Sensors.Accelerometers
     /// Represents a BMI270 interial measurement unit (IMU) 
     /// </summary>
     public partial class Bmi270 :
-        ByteCommsSensorBase<(Acceleration3D? Acceleration3D, AngularVelocity3D? AngularVelocity3D, Units.Temperature? Temperature)>
+        PollingSensorBase<(Acceleration3D? Acceleration3D, AngularVelocity3D? AngularVelocity3D, Units.Temperature? Temperature)>
     {
         /// <summary>
         /// Event raised when linear acceleration changes
@@ -53,7 +53,7 @@ namespace Meadow.Foundation.Sensors.Accelerometers
         /// </summary>
         public AngularVelocityRange CurrentAngularVelocityRange { get; private set; }
 
-        readonly II2cPeripheral i2cPeripheral; 
+        readonly II2cPeripheral i2cPeripheral;
 
         /// <summary>
         /// Create a new Bmi270 instance
@@ -92,7 +92,7 @@ namespace Meadow.Foundation.Sensors.Accelerometers
             //upload a configuration file to register INIT_DATA
             ushort index = 0;
             ushort length = 128;
-            byte[] dmaLocation = new byte[2]; 
+            byte[] dmaLocation = new byte[2];
 
             while (index < bmi270_config_file.Length) //8096
             {   /* Store 0 to 3 bits of address in first byte */
@@ -240,7 +240,7 @@ namespace Meadow.Foundation.Sensors.Accelerometers
                     tempC = -41 + (tempRaw - 0x8000) * degreePerByte;
                 }
 
-                if(tempRaw == 0x8000)
+                if (tempRaw == 0x8000)
                 {   //means we have an invalid temperature reading
                     conditions.Temperature = null;
                 }
@@ -258,7 +258,7 @@ namespace Meadow.Foundation.Sensors.Accelerometers
         /// <param name="powerMode">The power mode</param>
         public void SetPowerMode(PowerMode powerMode)
         {
-            switch(powerMode)
+            switch (powerMode)
             {
                 case PowerMode.Suspend:
                     i2cPeripheral.WriteRegister(PWR_CTRL, 0x00);
