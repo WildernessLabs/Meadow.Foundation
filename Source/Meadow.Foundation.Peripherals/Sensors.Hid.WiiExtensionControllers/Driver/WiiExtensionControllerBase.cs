@@ -1,5 +1,4 @@
 ﻿using Meadow.Hardware;
-using Meadow.Peripherals.Sensors;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -103,14 +102,15 @@ namespace Meadow.Foundation.Sensors.Hid
                 SamplingTokenSource = new CancellationTokenSource();
                 CancellationToken ct = SamplingTokenSource.Token;
 
-                Task.Run(() =>
+                var t = new Task(() =>
                 {
-                    while(ct.IsCancellationRequested == false)
+                    while (ct.IsCancellationRequested == false)
                     {
                         Update();
                         Thread.Sleep(updateInterval.Value);
                     }
-                });
+                }, ct, TaskCreationOptions.LongRunning);
+                t.Start();
             }
         }
 

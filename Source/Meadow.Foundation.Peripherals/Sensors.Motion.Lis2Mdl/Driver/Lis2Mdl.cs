@@ -66,18 +66,12 @@ namespace Meadow.Foundation.Sensors.Accelerometers
         /// <returns>The latest sensor reading</returns>
         protected override Task<MagneticField3D> ReadSensor()
         {
-            return Task.Run(() =>
-            {
-                MagneticField3D conditions;
+            var (x, y, z) = ReadMagnetometerRaw();
 
-                var mag = ReadMagnetometerRaw();
+            var conditions = new MagneticField3D(x / 1500.0, y / 1500.0, z / 1500.0, MagneticField.UnitType.Gauss);
 
-                conditions = new MagneticField3D(mag.x / 1500.0, mag.y / 1500.0, mag.z / 1500.0, MagneticField.UnitType.Gauss);
-
-                return conditions;
-            });
+            return Task.FromResult(conditions);
         }
-
 
         /// <summary>
         /// Reads raw magnetometer data

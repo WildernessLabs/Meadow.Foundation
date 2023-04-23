@@ -214,54 +214,51 @@ namespace Meadow.Foundation.Sensors.Environmental
         {
             (ParticulateReading? reading10s, ParticulateReading? reading1min, ParticulateReading? reading15min, Units.Temperature? temperature, RelativeHumidity? humidity) conditions;
 
-            return await Task.Run(async () =>
+            // data sheet indicates you should always read all 4 bytes, in order, for valid data
+            try
             {
-                // data sheet indicates you should always read all 4 bytes, in order, for valid data
-                try
-                {
-                    conditions.reading10s = await Get10SecondAverageReading();
-                }
-                catch (TeraException)
-                {
-                    // data likely not ready, or device is asleep
-                    conditions.reading10s = null;
-                }
+                conditions.reading10s = await Get10SecondAverageReading();
+            }
+            catch (TeraException)
+            {
+                // data likely not ready, or device is asleep
+                conditions.reading10s = null;
+            }
 
-                try
-                {
-                    conditions.reading1min = await Get1MinuteAverageReading();
-                }
-                catch (TeraException)
-                {
-                    // data likely not ready, or device is asleep
-                    conditions.reading1min = null;
-                }
+            try
+            {
+                conditions.reading1min = await Get1MinuteAverageReading();
+            }
+            catch (TeraException)
+            {
+                // data likely not ready, or device is asleep
+                conditions.reading1min = null;
+            }
 
-                try
-                {
-                    conditions.reading15min = await Get15MinuteAverageReading();
-                }
-                catch (TeraException)
-                {
-                    // data likely not ready, or device is asleep
-                    conditions.reading15min = null;
-                }
+            try
+            {
+                conditions.reading15min = await Get15MinuteAverageReading();
+            }
+            catch (TeraException)
+            {
+                // data likely not ready, or device is asleep
+                conditions.reading15min = null;
+            }
 
-                try
-                {
-                    var th = await GetTemperatureAndHumidity();
-                    conditions.temperature = th.temperature;
-                    conditions.humidity = th.humidity;
-                }
-                catch (TeraException)
-                {
-                    // data likely not ready, or device is asleep
-                    conditions.temperature = null;
-                    conditions.humidity = null;
-                }
+            try
+            {
+                var th = await GetTemperatureAndHumidity();
+                conditions.temperature = th.temperature;
+                conditions.humidity = th.humidity;
+            }
+            catch (TeraException)
+            {
+                // data likely not ready, or device is asleep
+                conditions.temperature = null;
+                conditions.humidity = null;
+            }
 
-                return conditions;
-            });
+            return conditions;
         }
 
         ///<inheritdoc/>

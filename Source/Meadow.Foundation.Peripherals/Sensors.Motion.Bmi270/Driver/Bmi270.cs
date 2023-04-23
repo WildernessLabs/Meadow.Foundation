@@ -171,85 +171,82 @@ namespace Meadow.Foundation.Sensors.Accelerometers
         /// <returns>The latest sensor reading</returns>
         protected override Task<(Acceleration3D? Acceleration3D, AngularVelocity3D? AngularVelocity3D, Units.Temperature? Temperature)> ReadSensor()
         {
-            return Task.Run(() =>
+            (Acceleration3D? Acceleration3D, AngularVelocity3D? AngularVelocity3D, Units.Temperature? Temperature) conditions;
+
+            //12 bytes - includes accel and gyro
+            var data = ReadAccelerationData();
+
+            //likely +/- 2g by default
+            var accelX = (short)(data[1] << 8 | data[0]);
+            var accelY = (short)(data[3] << 8 | data[2]);
+            var accelZ = (short)(data[5] << 8 | data[4]);
+
+            double divisor = CurrentAccelerationRange switch
             {
-                (Acceleration3D? Acceleration3D, AngularVelocity3D? AngularVelocity3D, Units.Temperature? Temperature) conditions;
+                AccelerationRange._2g => 16384,
+                AccelerationRange._4g => 8192,
+                AccelerationRange._8g => 4096,
+                AccelerationRange._16g => 2048,
+                _ => throw new ArgumentException("CurrentAccelerationRange is out of range")
+            };
 
-                //12 bytes - includes accel and gyro
-                var data = ReadAccelerationData();
+            var gX = accelX / divisor;
+            var gY = accelY / divisor;
+            var gZ = accelZ / divisor;
 
-                //likely +/- 2g by default
-                var accelX = (short)(data[1] << 8 | data[0]);
-                var accelY = (short)(data[3] << 8 | data[2]);
-                var accelZ = (short)(data[5] << 8 | data[4]);
+            divisor = CurrentAngularVelocityRange switch
+            {
+                AngularVelocityRange._2000dps => 16.4,
+                AngularVelocityRange._1000dps => 32.8,
+                AngularVelocityRange._500dps => 65.5,
+                AngularVelocityRange._250dps => 131,
+                AngularVelocityRange._125dps => 262,
 
-                double divisor = CurrentAccelerationRange switch
-                {
-                    AccelerationRange._2g => 16384,
-                    AccelerationRange._4g => 8192,
-                    AccelerationRange._8g => 4096,
-                    AccelerationRange._16g => 2048,
-                    _ => throw new ArgumentException("CurrentAccelerationRange is out of range")
-                };
+                _ => throw new ArgumentException("CurrentAngularAccelerationRange is out of range")
+            };
 
-                var gX = accelX / divisor;
-                var gY = accelY / divisor;
-                var gZ = accelZ / divisor;
+            var gyroX = (short)(data[7] << 8 | data[6]);
+            var gyroY = (short)(data[9] << 8 | data[8]);
+            var gyroZ = (short)(data[11] << 8 | data[10]);
 
-                divisor = CurrentAngularVelocityRange switch
-                {
-                    AngularVelocityRange._2000dps => 16.4,
-                    AngularVelocityRange._1000dps => 32.8,
-                    AngularVelocityRange._500dps => 65.5,
-                    AngularVelocityRange._250dps => 131,
-                    AngularVelocityRange._125dps => 262,
+            var dpsX = gyroX / divisor;
+            var dpsY = gyroY / divisor;
+            var dpsZ = gyroZ / divisor;
 
-                    _ => throw new ArgumentException("CurrentAngularAccelerationRange is out of range")
-                };
+            conditions.Acceleration3D = new Acceleration3D(
+                new Acceleration(gX, Acceleration.UnitType.Gravity),
+                new Acceleration(gY, Acceleration.UnitType.Gravity),
+                new Acceleration(gZ, Acceleration.UnitType.Gravity));
 
-                var gyroX = (short)(data[7] << 8 | data[6]);
-                var gyroY = (short)(data[9] << 8 | data[8]);
-                var gyroZ = (short)(data[11] << 8 | data[10]);
+            conditions.AngularVelocity3D = new AngularVelocity3D(
+                new AngularVelocity(dpsX, AngularVelocity.UnitType.DegreesPerSecond),
+                new AngularVelocity(dpsY, AngularVelocity.UnitType.DegreesPerSecond),
+                new AngularVelocity(dpsZ, AngularVelocity.UnitType.DegreesPerSecond));
 
-                var dpsX = gyroX / divisor;
-                var dpsY = gyroY / divisor;
-                var dpsZ = gyroZ / divisor;
+            //Get the temperature
+            ushort tempRaw = (ushort)(i2cPeripheral.ReadRegister(TEMPERATURE_1) << 8 | i2cPeripheral.ReadRegister(TEMPERATURE_0));
+            double tempC;
 
-                conditions.Acceleration3D = new Acceleration3D(
-                    new Acceleration(gX, Acceleration.UnitType.Gravity),
-                    new Acceleration(gY, Acceleration.UnitType.Gravity),
-                    new Acceleration(gZ, Acceleration.UnitType.Gravity));
+            double degreePerByte = 0.001953125; //in celcius
 
-                conditions.AngularVelocity3D = new AngularVelocity3D(
-                    new AngularVelocity(dpsX, AngularVelocity.UnitType.DegreesPerSecond),
-                    new AngularVelocity(dpsY, AngularVelocity.UnitType.DegreesPerSecond),
-                    new AngularVelocity(dpsZ, AngularVelocity.UnitType.DegreesPerSecond));
+            if (tempRaw < 0x8000)
+            {
+                tempC = 23 + tempRaw * degreePerByte;
+            }
+            else
+            {
+                tempC = -41 + (tempRaw - 0x8000) * degreePerByte;
+            }
 
-                //Get the temperature
-                ushort tempRaw = (ushort)(i2cPeripheral.ReadRegister(TEMPERATURE_1) << 8 | i2cPeripheral.ReadRegister(TEMPERATURE_0));
-                double tempC;
-
-                double degreePerByte = 0.001953125; //in celcius
-
-                if (tempRaw < 0x8000)
-                {
-                    tempC = 23 + tempRaw * degreePerByte;
-                }
-                else
-                {
-                    tempC = -41 + (tempRaw - 0x8000) * degreePerByte;
-                }
-
-                if (tempRaw == 0x8000)
-                {   //means we have an invalid temperature reading
-                    conditions.Temperature = null;
-                }
-                else
-                {
-                    conditions.Temperature = new Units.Temperature(tempC, Units.Temperature.UnitType.Celsius);
-                }
-                return conditions;
-            });
+            if (tempRaw == 0x8000)
+            {   //means we have an invalid temperature reading
+                conditions.Temperature = null;
+            }
+            else
+            {
+                conditions.Temperature = new Units.Temperature(tempC, Units.Temperature.UnitType.Celsius);
+            }
+            return Task.FromResult(conditions);
         }
 
         /// <summary>

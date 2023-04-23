@@ -105,7 +105,7 @@ namespace Meadow.Foundation.Sensors.Gnss
                 return !hasNullValue;
             }
 
-            await Task.Run(() =>
+            var t = new Task(() =>
             {
                 while (true)
                 {
@@ -117,7 +117,8 @@ namespace Meadow.Foundation.Sensors.Gnss
                         Thread.Sleep(COMMS_SLEEP_MS);
                     }
                 }
-            });
+            }, TaskCreationOptions.LongRunning);
+            await t;
         }
     }
 }

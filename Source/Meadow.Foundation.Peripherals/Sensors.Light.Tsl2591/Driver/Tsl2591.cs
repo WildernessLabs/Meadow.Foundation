@@ -119,34 +119,31 @@ namespace Meadow.Foundation.Sensors.Light
         /// Reads data from the sensor
         /// </summary>
         /// <returns>The latest sensor reading</returns>
-        protected override async Task<(Illuminance? FullSpectrum, Illuminance? Infrared, Illuminance? VisibleLight, Illuminance? Integrated)> ReadSensor()
+        protected override Task<(Illuminance? FullSpectrum, Illuminance? Infrared, Illuminance? VisibleLight, Illuminance? Integrated)> ReadSensor()
         {
-            (Illuminance FullSpectrum, Illuminance Infrared, Illuminance VisibleLight, Illuminance Integrated) conditions;
+            (Illuminance? FullSpectrum, Illuminance? Infrared, Illuminance? VisibleLight, Illuminance? Integrated) conditions;
 
-            return await Task.Run(() =>
+            // data sheet indicates you should always read all 4 bytes, in order, for valid data
+            var channel0 = Peripheral.ReadRegisterAsUShort((byte)(Register.CH0DataL | Register.Command));
+            var channel1 = Peripheral.ReadRegisterAsUShort((byte)(Register.CH1DataL | Register.Command));
+
+            conditions.FullSpectrum = new Illuminance(channel0, IU.Lux);
+            conditions.Infrared = new Illuminance(channel1, IU.Lux);
+            conditions.VisibleLight = new Illuminance(channel0 - channel1, IU.Lux);
+
+            double countsPerLux;
+
+            if ((channel0 == 0xffff) || (channel1 == 0xffff))
             {
-                // data sheet indicates you should always read all 4 bytes, in order, for valid data
-                var channel0 = Peripheral.ReadRegisterAsUShort((byte)(Register.CH0DataL | Register.Command));
-                var channel1 = Peripheral.ReadRegisterAsUShort((byte)(Register.CH1DataL | Register.Command));
+                conditions.Integrated = new Illuminance(-1, IU.Lux);
+            }
+            else
+            {
+                countsPerLux = (IntegrationTimeInMilliseconds(IntegrationTime) * GainMultiplier(Gain)) / 408.0;
+                conditions.Integrated = new Illuminance((channel0 - channel1) * (1 - (channel1 / channel0)) / countsPerLux, IU.Lux);
+            }
 
-                conditions.FullSpectrum = new Illuminance(channel0, IU.Lux);
-                conditions.Infrared = new Illuminance(channel1, IU.Lux);
-                conditions.VisibleLight = new Illuminance(channel0 - channel1, IU.Lux);
-
-                double countsPerLux;
-
-                if ((channel0 == 0xffff) || (channel1 == 0xffff))
-                {
-                    conditions.Integrated = new Illuminance(-1, IU.Lux);
-                }
-                else
-                {
-                    countsPerLux = (IntegrationTimeInMilliseconds(IntegrationTime) * GainMultiplier(Gain)) / 408.0;
-                    conditions.Integrated = new Illuminance((channel0 - channel1) * (1 - (channel1 / channel0)) / countsPerLux, IU.Lux);
-                }
-
-                return conditions;
-            });
+            return Task.FromResult(conditions);
         }
 
         /// <summary>

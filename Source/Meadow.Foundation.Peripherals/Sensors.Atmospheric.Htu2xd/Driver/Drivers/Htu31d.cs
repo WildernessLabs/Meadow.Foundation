@@ -29,50 +29,45 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// Read atmospheric data from sensor
         /// </summary>
         /// <returns></returns>
-        protected override async Task<(Units.Temperature? Temperature, RelativeHumidity? Humidity)> ReadSensor()
+        protected async override Task<(Units.Temperature? Temperature, RelativeHumidity? Humidity)> ReadSensor()
         {
-            (Units.Temperature Temperature, RelativeHumidity Humidity) conditions;
+            (Units.Temperature? Temperature, RelativeHumidity? Humidity) conditions;
 
-            return await Task.Run(() => 
-            {
-                Peripheral?.Write((byte)Commands.Conversion);
-                Thread.Sleep(20); // Maximum conversion time is 20ms 
-                Peripheral?.ReadRegister((byte)Commands.ReadTempHumidity, ReadBuffer.Span[0..5]);// 2 bytes for temp, checksum, 2 bytes humidity, checksum
+            Peripheral?.Write((byte)Commands.Conversion);
+            await Task.Delay(20); // Maximum conversion time is 20ms 
+            Peripheral?.ReadRegister((byte)Commands.ReadTempHumidity, ReadBuffer.Span[0..5]);// 2 bytes for temp, checksum, 2 bytes humidity, checksum
 
-                // temperature
-                var temperatureReading = (ushort)((ReadBuffer.Span[0] << 8) + ReadBuffer.Span[1]);
-                conditions.Temperature = new Units.Temperature((float)(((175.72 * temperatureReading) / 65536) - 46.85), Units.Temperature.UnitType.Celsius);
+            var temperatureReading = (ushort)((ReadBuffer.Span[0] << 8) + ReadBuffer.Span[1]);
+            conditions.Temperature = new Units.Temperature((float)(((175.72 * temperatureReading) / 65536) - 46.85), Units.Temperature.UnitType.Celsius);
 
-                // humidity
-                var humidityReading = (ushort)((ReadBuffer.Span[3] << 8) + ReadBuffer.Span[4]);
-                var humidity = (125 * (float)humidityReading / 65536) - 6;
-                humidity = Math.Clamp(humidity, 0, 100);
-                conditions.Humidity = new RelativeHumidity(humidity, HU.Percent);
+            var humidityReading = (ushort)((ReadBuffer.Span[3] << 8) + ReadBuffer.Span[4]);
+            var humidity = (125 * (float)humidityReading / 65536) - 6;
+            humidity = Math.Clamp(humidity, 0, 100);
+            conditions.Humidity = new RelativeHumidity(humidity, HU.Percent);
 
-                return conditions;
-            });
+            return conditions;
         }
-		
+
         /// <summary>
-		/// Turn the heater on or off
+        /// Turn the heater on or off
         /// </summary>
         /// <param name="heaterOn">Heater status, true = turn heater on, false = turn heater off</param>
         public void Heater(bool heaterOn)
         {
-           if(heaterOn)
-           {
+            if (heaterOn)
+            {
                 Peripheral?.WriteRegister((byte)Commands.HeaterOn, 1);
-           }
-           else
+            }
+            else
             {
                 Peripheral?.WriteRegister((byte)Commands.HeaterOff, 1);
             }
         }
-		
+
         /// <summary>
         /// Reset the sensor
         /// </summary>
-		public void Reset()
+        public void Reset()
         {
             Peripheral?.WriteRegister((byte)Commands.Reset, 1);
 

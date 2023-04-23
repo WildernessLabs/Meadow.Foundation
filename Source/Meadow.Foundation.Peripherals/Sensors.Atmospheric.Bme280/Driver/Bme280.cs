@@ -220,7 +220,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         {
             //TODO: set an update flag on the oversample properties and set
             // these once, unless the update flag has been set.
-            // update configuration
             configuration.TemperatureOverSampling = TemperatureSampleCount;
             configuration.PressureOversampling = PressureSampleCount;
             configuration.HumidityOverSampling = HumiditySampleCount;
@@ -234,131 +233,55 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 await Task.Delay(100); //give the BME280 time to read new values
             }
 
-            return await Task.Run(() =>
+            (Units.Temperature Temperature, RelativeHumidity Humidity, Pressure Pressure) conditions;
+
+            bme280Comms.ReadRegisters(0xf7, readBuffer.Span[0..8]);
+
+            var adcTemperature = (readBuffer.Span[3] << 12) | (readBuffer.Span[4] << 4) | ((readBuffer.Span[5] >> 4) & 0x0f);
+            var tvar1 = (((adcTemperature >> 3) - (compensationData.T1 << 1)) * compensationData.T2) >> 11;
+            var tvar2 = (((((adcTemperature >> 4) - compensationData.T1) *
+                           ((adcTemperature >> 4) - compensationData.T1)) >> 12) * compensationData.T3) >> 14;
+            var tfine = tvar1 + tvar2;
+
+            conditions.Temperature = new Units.Temperature((float)(((tfine * 5) + 128) >> 8) / 100, TU.Celsius);
+
+            long pvar1 = tfine - 128000;
+            var pvar2 = pvar1 * pvar1 * compensationData.P6;
+            pvar2 += (pvar1 * compensationData.P5) << 17;
+            pvar2 += (long)compensationData.P4 << 35;
+            pvar1 = ((pvar1 * pvar1 * compensationData.P8) >> 8) + ((pvar1 * compensationData.P2) << 12);
+            pvar1 = ((((long)1 << 47) + pvar1) * compensationData.P1) >> 33;
+            if (pvar1 == 0)
             {
+                conditions.Pressure = new Pressure(0, PU.Pascal);
+            }
+            else
+            {
+                var adcPressure = (readBuffer.Span[0] << 12) | (readBuffer.Span[1] << 4) | ((readBuffer.Span[2] >> 4) & 0x0f);
+                long pressure = 1048576 - adcPressure;
+                pressure = (((pressure << 31) - pvar2) * 3125) / pvar1;
+                pvar1 = (compensationData.P9 * (pressure >> 13) * (pressure >> 13)) >> 25;
+                pvar2 = (compensationData.P8 * pressure) >> 19;
+                pressure = ((pressure + pvar1 + pvar2) >> 8) + ((long)compensationData.P7 << 4);
+                conditions.Pressure = new Pressure((double)pressure / 256, PU.Pascal);
+            }
 
-                (Units.Temperature Temperature, RelativeHumidity Humidity, Pressure Pressure) conditions;
+            var adcHumidity = (readBuffer.Span[6] << 8) | readBuffer.Span[7];
+            var v_x1_u32r = tfine - 76800;
 
-                // readily read the readings from the reading register into the read buffer
-                bme280Comms.ReadRegisters(0xf7, readBuffer.Span[0..8]);
-                //
-                //  Temperature calculation from section 4.2.3 of the datasheet.
-                //
-                // Returns temperature in DegC, resolution is 0.01 DegC. Output value of “5123” equals 51.23 DegC.
-                // t_fine carries fine temperature as global value:
-                //
-                // BME280_S32_t t_fine;
-                // BME280_S32_t BME280_compensate_T_int32(BME280_S32_t adc_T)
-                // {
-                //     BME280_S32_t var1, var2, T;
-                //     var1 = ((((adc_T>>3) - ((BME280_S32_t)dig_T1<<1))) * ((BME280_S32_t)dig_T2)) >> 11;
-                //     var2 = (((((adc_T>>4) - ((BME280_S32_t)dig_T1)) * ((adc_T>>4) - ((BME280_S32_t)dig_T1))) >> 12) *
-                //     ((BME280_S32_t)dig_T3)) >> 14;
-                //     t_fine = var1 + var2;
-                //     T = (t_fine * 5 + 128) >> 8;
-                //     return T;
-                // }
-                //
-                var adcTemperature = (readBuffer.Span[3] << 12) | (readBuffer.Span[4] << 4) | ((readBuffer.Span[5] >> 4) & 0x0f);
-                var tvar1 = (((adcTemperature >> 3) - (compensationData.T1 << 1)) * compensationData.T2) >> 11;
-                var tvar2 = (((((adcTemperature >> 4) - compensationData.T1) *
-                               ((adcTemperature >> 4) - compensationData.T1)) >> 12) * compensationData.T3) >> 14;
-                var tfine = tvar1 + tvar2;
-                //
-                conditions.Temperature = new Units.Temperature((float)(((tfine * 5) + 128) >> 8) / 100, TU.Celsius);
-                //
-                // Pressure calculation from section 4.2.3 of the datasheet.
-                //
-                // Returns pressure in Pa as unsigned 32 bit integer in Q24.8 format (24 integer bits and 8 fractional bits).
-                // Output value of “24674867” represents 24674867/256 = 96386.2 Pa = 963.862 hPa
-                //
-                // BME280_U32_t BME280_compensate_P_int64(BME280_S32_t adc_P)
-                // {
-                //     BME280_S64_t var1, var2, p;
-                //     var1 = ((BME280_S64_t)t_fine) - 128000;
-                //     var2 = var1 * var1 * (BME280_S64_t)dig_P6;
-                //     var2 = var2 + ((var1*(BME280_S64_t)dig_P5)<<17);
-                //     var2 = var2 + (((BME280_S64_t)dig_P4)<<35);
-                //     var1 = ((var1 * var1 * (BME280_S64_t)dig_P3)>>8) + ((var1 * (BME280_S64_t)dig_P2)<<12);
-                //     var1 = (((((BME280_S64_t)1)<<47)+var1))*((BME280_S64_t)dig_P1)>>33;
-                //     if (var1 == 0)
-                //     {
-                //         return 0; // avoid exception caused by division by zero
-                //     }
-                //     p = 1048576-adc_P;
-                //     p = (((p<<31)-var2)*3125)/var1;
-                //     var1 = (((BME280_S64_t)dig_P9) * (p>>13) * (p>>13)) >> 25;
-                //     var2 = (((BME280_S64_t)dig_P8) * p) >> 19;
-                //     p = ((p + var1 + var2) >> 8) + (((BME280_S64_t)dig_P7)<<4);
-                //     return (BME280_U32_t)p;
-                // }
-                //
-                long pvar1 = tfine - 128000;
-                var pvar2 = pvar1 * pvar1 * compensationData.P6;
-                pvar2 += (pvar1 * compensationData.P5) << 17;
-                pvar2 += (long)compensationData.P4 << 35;
-                pvar1 = ((pvar1 * pvar1 * compensationData.P8) >> 8) + ((pvar1 * compensationData.P2) << 12);
-                pvar1 = ((((long)1 << 47) + pvar1) * compensationData.P1) >> 33;
-                if (pvar1 == 0)
-                {
-                    conditions.Pressure = new Pressure(0, PU.Pascal);
-                }
-                else
-                {
-                    var adcPressure = (readBuffer.Span[0] << 12) | (readBuffer.Span[1] << 4) | ((readBuffer.Span[2] >> 4) & 0x0f);
-                    long pressure = 1048576 - adcPressure;
-                    pressure = (((pressure << 31) - pvar2) * 3125) / pvar1;
-                    pvar1 = (compensationData.P9 * (pressure >> 13) * (pressure >> 13)) >> 25;
-                    pvar2 = (compensationData.P8 * pressure) >> 19;
-                    pressure = ((pressure + pvar1 + pvar2) >> 8) + ((long)compensationData.P7 << 4);
-                    //
-                    conditions.Pressure = new Pressure((double)pressure / 256, PU.Pascal);
-                }
-                //
-                // Humidity calculations from section 4.2.3 of the datasheet.
-                //
-                // Returns humidity in %RH as unsigned 32 bit integer in Q22.10 format (22 integer and 10 fractional bits).
-                // Output value of “47445” represents 47445/1024 = 46.333 %RH
-                //
-                // BME280_U32_t bme280_compensate_H_int32(BME280_S32_t adc_H)
-                // {
-                //     BME280_S32_t v_x1_u32r;
-                //     v_x1_u32r = (t_fine - ((BME280_S32_t)76800));
-                //     v_x1_u32r = (((((adc_H << 14) - (((BME280_S32_t)dig_H4) << 20) - (((BME280_S32_t)dig_H5) * v_x1_u32r)) +
-                //         ((BME280_S32_t)16384)) >> 15) * (((((((v_x1_u32r * ((BME280_S32_t)dig_H6)) >> 10) * (((v_x1_u32r *
-                //         ((BME280_S32_t)dig_H3)) >> 11) + ((BME280_S32_t)32768))) >> 10) + ((BME280_S32_t)2097152)) *
-                //         ((BME280_S32_t)dig_H2) + 8192) >> 14));
-                //     v_x1_u32r = (v_x1_u32r - (((((v_x1_u32r >> 15) * (v_x1_u32r >> 15)) >> 7) * ((BME280_S32_t)dig_H1)) >> 4));
-                //     v_x1_u32r = (v_x1_u32r < 0 ? 0 : v_x1_u32r);
-                //     v_x1_u32r = (v_x1_u32r > 419430400 ? 419430400 : v_x1_u32r);
-                //     return (BME280_U32_t)(v_x1_u32r>>12);
-                // }
-                //
-                var adcHumidity = (readBuffer.Span[6] << 8) | readBuffer.Span[7];
-                var v_x1_u32r = tfine - 76800;
+            v_x1_u32r = ((((adcHumidity << 14) - (compensationData.H4 << 20) - (compensationData.H5 * v_x1_u32r)) +
+                          16384) >> 15) *
+                        ((((((((v_x1_u32r * compensationData.H6) >> 10) *
+                              (((v_x1_u32r * compensationData.H3) >> 11) + 32768)) >> 10) + 2097152) *
+                           compensationData.H2) + 8192) >> 14);
+            v_x1_u32r = v_x1_u32r - (((((v_x1_u32r >> 15) * (v_x1_u32r >> 15)) >> 7) * compensationData.H1) >> 4);
 
-                v_x1_u32r = ((((adcHumidity << 14) - (compensationData.H4 << 20) - (compensationData.H5 * v_x1_u32r)) +
-                              16384) >> 15) *
-                            ((((((((v_x1_u32r * compensationData.H6) >> 10) *
-                                  (((v_x1_u32r * compensationData.H3) >> 11) + 32768)) >> 10) + 2097152) *
-                               compensationData.H2) + 8192) >> 14);
-                v_x1_u32r = v_x1_u32r - (((((v_x1_u32r >> 15) * (v_x1_u32r >> 15)) >> 7) * compensationData.H1) >> 4);
+            v_x1_u32r = v_x1_u32r < 0 ? 0 : v_x1_u32r;
+            v_x1_u32r = v_x1_u32r > 419430400 ? 419430400 : v_x1_u32r;
+            //
+            conditions.Humidity = new RelativeHumidity((v_x1_u32r >> 12) / 1024, HU.Percent);
 
-                //v_x1_u32r = (((((adcHumidity << 14) - (((int) _compensationData.H4) << 20) - (((int) _compensationData.H5) * v_x1_u32r)) +
-                //            ((int) 16384)) >> 15) * (((((((v_x1_u32r * ((int) _compensationData.H6)) >> 10) * (((v_x1_u32r *
-                //            ((int) _compensationData.H3)) >> 11) + ((int) 32768))) >> 10) + ((int) 2097152)) *
-                //            ((int) _compensationData.H2) + 8192) >> 14));
-                //v_x1_u32r = (v_x1_u32r - (((((v_x1_u32r >> 15) * (v_x1_u32r >> 15)) >> 7) * ((int) _compensationData.H1)) >> 4));
-                //
-                //  Makes sure the humidity reading is in the range [0..100].
-                //
-                v_x1_u32r = v_x1_u32r < 0 ? 0 : v_x1_u32r;
-                v_x1_u32r = v_x1_u32r > 419430400 ? 419430400 : v_x1_u32r;
-                //
-                conditions.Humidity = new RelativeHumidity((v_x1_u32r >> 12) / 1024, HU.Percent);
-
-                return conditions;
-            });
+            return conditions;
         }
         /// <summary>
         /// Update the configuration for the BME280.

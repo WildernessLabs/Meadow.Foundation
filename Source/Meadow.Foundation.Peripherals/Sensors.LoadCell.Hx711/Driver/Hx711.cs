@@ -194,32 +194,36 @@ namespace Meadow.Foundation.Sensors.LoadCell
         /// <returns></returns>
         protected override Task<Mass> ReadSensor()
         {
-            if (_gramsPerAdcUnit == 0)
+            //ReadADC() call may block so wrap the logic in a Task
+            return Task.Run(() =>
             {
-                throw new Exception("Calibration factor has not been set");
-            }
+                if (_gramsPerAdcUnit == 0)
+                {
+                    throw new Exception("Calibration factor has not been set");
+                }
 
-            // get an ADC conversion
-            var raw = ReadADC();
-            // subtract the tare
-            var adc = raw - TareValue;
+                // get an ADC conversion
+                var raw = ReadADC();
+                // subtract the tare
+                var adc = raw - TareValue;
 
-            // two's complement
-            int value;
-            if ((raw & 0x800000) != 0)
-            {
-                value = (int)(~adc + 1) * -1;
-            }
-            else
-            {
-                value = (int)adc;
-            }
+                // two's complement
+                int value;
+                if ((raw & 0x800000) != 0)
+                {
+                    value = (int)(~adc + 1) * -1;
+                }
+                else
+                {
+                    value = (int)adc;
+                }
 
-            // convert to grams
-            var grams = value * _gramsPerAdcUnit;
+                // convert to grams
+                var grams = value * _gramsPerAdcUnit;
 
-            // convert to desired units
-            return Task.FromResult(new Mass(grams, Units.Mass.UnitType.Grams));
+                // convert to desired units
+                return new Mass(grams, Units.Mass.UnitType.Grams);
+            });
         }
 
         private void CalculateRegisterValues(IPin sck, IPin dout)

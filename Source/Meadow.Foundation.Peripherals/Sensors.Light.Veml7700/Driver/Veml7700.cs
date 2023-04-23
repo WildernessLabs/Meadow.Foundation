@@ -1,10 +1,8 @@
-﻿using System;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
 using Meadow.Peripherals.Sensors.Light;
 using Meadow.Units;
+using System;
+using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Light
 {
@@ -17,7 +15,7 @@ namespace Meadow.Foundation.Sensors.Light
         /// Raised when the luminosity value changes
         /// </summary>
         public event EventHandler<IChangeResult<Illuminance>> LuminosityUpdated = delegate { };
-        
+
         /// <summary>
         /// Raised when the high range is exceeded
         /// </summary>
@@ -63,81 +61,77 @@ namespace Meadow.Foundation.Sensors.Light
         /// <returns>The latest sensor reading</returns>
         protected async override Task<Illuminance> ReadSensor()
         {
-            return await Task.Run(async () =>
+            Illuminance illuminance = new Illuminance(0);
+
+            if (_firstRead)
             {
-                Illuminance illuminance = new Illuminance(0);
+                WriteRegister(Registers.AlsConf0, 0);
+                //--//--//
+                await Task.Delay(5);
+                _firstRead = false;
+            }
 
-                if (_firstRead)
-                {
-                    WriteRegister(Registers.AlsConf0, 0);
-                    //--//--//
-                    await Task.Delay(5);
-                    _firstRead = false;
+            // priming read
+            var data = ReadRegister(DataSource == SensorTypes.Ambient ? Registers.Als : Registers.White);
+
+            while (true)
+            {
+                _outOfRange = false;
+
+                // Resolver.Log.Info($"{DataSource} DATA A: 0x{data:x4}");
+
+                if (data > DATA_CEILING)
+                { // Too bright!
+                    if (_gain > 1)
+                    {
+                        await SetGain(--_gain);
+                    }
+                    else if (data > DATA_CEILING)
+                    {
+                        // we're at min gain, have to speed integration time
+                        if (++_integrationTime >= 4)
+                        {
+                            // everything is maxed out                                
+                            RangeExceededHigh?.Invoke(this, EventArgs.Empty);
+                            _outOfRange = true;
+                        }
+                        else
+                        {
+                            await SetIntegrationTime(_integrationTime);
+                        }
+                    }
                 }
-
-                // priming read
-                var data = ReadRegister(DataSource == SensorTypes.Ambient ? Registers.Als : Registers.White);
-
-                while (true)
+                else if (data < DATA_FLOOR)
                 {
-                    _outOfRange = false;
-
-                    // Resolver.Log.Info($"{DataSource} DATA A: 0x{data:x4}");
-
-                    if (data > DATA_CEILING)
-                    { // Too bright!
-                        if (_gain > 1)
-                        {
-                            await SetGain(--_gain);
-                        }
-                        else if (data > DATA_CEILING)
-                        {
-                            // we're at min gain, have to speed integration time
-                            if (++_integrationTime >= 4)
-                            {
-                                // everything is maxed out                                
-                                RangeExceededHigh?.Invoke(this, EventArgs.Empty);
-                                _outOfRange = true;
-                            }
-                            else
-                            {
-                                await SetIntegrationTime(_integrationTime);
-                            }
-                        }
+                    // Too dim!
+                    if (_gain < 4)
+                    {
+                        await SetGain(++_gain);
                     }
                     else if (data < DATA_FLOOR)
                     {
-                        // Too dim!
-                        if (_gain < 4)
+                        // we're at max gain, have to slow integration time
+                        if (--_integrationTime <= -2)
                         {
-                            await SetGain(++_gain);
+                            RangeExceededLow?.Invoke(this, EventArgs.Empty);
+                            _outOfRange = true;
                         }
-                        else if (data < DATA_FLOOR)
+                        else
                         {
-                            // we're at max gain, have to slow integration time
-                            if (--_integrationTime <= -2)
-                            {
-                                RangeExceededLow?.Invoke(this, EventArgs.Empty);
-                                _outOfRange = true;
-                            }
-                            else
-                            {
-                                await SetIntegrationTime(_integrationTime);
-                            }
+                            await SetIntegrationTime(_integrationTime);
                         }
                     }
-
-                    if ((data >= DATA_FLOOR && data <= DATA_CEILING) || _outOfRange)
-                    {
-                        return ScaleDataToIluminance(data, _gain, _integrationTime);
-                    }
-
-                    await DelayForIntegrationTime(_integrationTime);
-
-                    data = ReadRegister(DataSource == SensorTypes.Ambient ? Registers.Als : Registers.White);
                 }
 
-            });
+                if ((data >= DATA_FLOOR && data <= DATA_CEILING) || _outOfRange)
+                {
+                    return ScaleDataToIluminance(data, _gain, _integrationTime);
+                }
+
+                await DelayForIntegrationTime(_integrationTime);
+
+                data = ReadRegister(DataSource == SensorTypes.Ambient ? Registers.Als : Registers.White);
+            }
         }
 
         private Illuminance ScaleDataToIluminance(ushort data, int gain, int integrationTime)
@@ -155,11 +149,11 @@ namespace Meadow.Foundation.Sensors.Light
                 case 4: // 2
                     scale = 2;
                     break;
-            case 3: // 1
-            default:
+                case 3: // 1
+                default:
                     scale = 1;
                     break;
-            }  
+            }
 
             switch (integrationTime)
             {
@@ -324,7 +318,7 @@ namespace Meadow.Foundation.Sensors.Light
         private void WriteRegister(Registers register, ushort value)
         {
             Peripheral.WriteRegister((byte)register, value, ByteOrder.LittleEndian);
-        }        
+        }
 
     }
 }

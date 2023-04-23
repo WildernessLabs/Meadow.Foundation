@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Meadow.Hardware;
+using Meadow.Units;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Meadow.Hardware;
-using Meadow.Units;
 
 namespace Meadow.Foundation.Sensors.Atmospheric
 {
@@ -76,27 +76,24 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// Reads data from the sensor
         /// </summary>
         /// <returns>The latest sensor reading</returns>
-        protected async override Task<int> ReadSensor()
+        protected override Task<int> ReadSensor()
         {
-            return await Task.Run(() =>
+            if (_compensationData != null)
             {
-                if(_compensationData != null)
-                {
-                    Peripheral?.Write(_compensationData);
-                }
-                else
-                {
-                    Peripheral?.Write(sgp40_measure_raw_signal_uncompensated);
-                }
+                Peripheral?.Write(_compensationData);
+            }
+            else
+            {
+                Peripheral?.Write(sgp40_measure_raw_signal_uncompensated);
+            }
 
-                Thread.Sleep(30); // per the data sheet
+            Thread.Sleep(30); // per the data sheet
 
-                Peripheral?.Read(ReadBuffer.Span[0..3]);
+            Peripheral?.Read(ReadBuffer.Span[0..3]);
 
-                var data = ReadBuffer.Span[0..3].ToArray();
+            var data = ReadBuffer.Span[0..3].ToArray();
 
-                return data[0] << 8 | data[1];
-            });
+            return Task.FromResult(data[0] << 8 | data[1]);
         }
 
         /// <summary>

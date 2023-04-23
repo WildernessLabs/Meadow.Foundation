@@ -1,7 +1,7 @@
-﻿using System;
-using System.Threading.Tasks;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
 using Meadow.Units;
+using System;
+using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Light
 {
@@ -16,7 +16,7 @@ namespace Meadow.Foundation.Sensors.Light
         /// <param name="i2cBus">The I2C bus</param>
         /// <param name="address">The I2C address</param>
         public Max44009(II2cBus i2cBus, byte address = (byte)Addresses.Default)
-            : base (i2cBus, address)
+            : base(i2cBus, address)
         {
             Initialize();
         }
@@ -35,19 +35,16 @@ namespace Meadow.Foundation.Sensors.Light
         /// <returns>The latest sensor reading</returns>
         protected override Task<Illuminance> ReadSensor()
         {
-            return Task.Run(() => {
+            Peripheral.ReadRegister(0x03, ReadBuffer.Span[0..2]);
 
-                Peripheral.ReadRegister(0x03, ReadBuffer.Span[0..2]);
+            var exponent = (ReadBuffer.Span[0] >> 4);
+            if (exponent == 0x0f) throw new Exception("Out of range");
 
-                var exponent = (ReadBuffer.Span[0] >> 4);
-                if (exponent == 0x0f) throw new Exception("Out of range");
+            int mantissa = ((ReadBuffer.Span[0] & 0x0F) >> 4) | (ReadBuffer.Span[1] & 0x0F);
 
-                int mantissa = ((ReadBuffer.Span[0] & 0x0F) >> 4) | (ReadBuffer.Span[1] & 0x0F);
+            var luminance = Math.Pow(2, exponent) * mantissa * 0.72;
 
-                var luminance = Math.Pow(2, exponent) * mantissa * 0.72;
-
-                return new Illuminance(luminance, Illuminance.UnitType.Lux);
-            });
+            return Task.FromResult(new Illuminance(luminance, Illuminance.UnitType.Lux));
         }
     }
 }

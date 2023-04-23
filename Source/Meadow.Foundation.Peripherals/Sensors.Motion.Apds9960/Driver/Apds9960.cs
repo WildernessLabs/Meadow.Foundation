@@ -26,8 +26,7 @@ namespace Meadow.Foundation.Sensors.Motion
         public event EventHandler<IChangeResult<Color>> ColorUpdated = delegate { };
 
         readonly IDigitalInputPort interruptPort;
-
-        GestureData gestureData;
+        readonly GestureData gestureData;
         int gestureUdDelta;
         int gestureLrDelta;
         int gestureUdCount;
@@ -90,35 +89,31 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <returns>The latest sensor reading</returns>
         protected override Task<(Color? Color, Illuminance? AmbientLight)> ReadSensor()
         {
-            return Task.Run(() =>
-            {
+            (Color? Color, Illuminance? AmbientLight) conditions;
 
-                (Color? Color, Illuminance? AmbientLight) conditions;
+            // TODO: before each of these readings, we need to check to see
+            // if that feature is enabled, and if it's not, skip it and set
+            // the `conditions.[feature] = null;`
 
-                // TODO: before each of these readings, we need to check to see
-                // if that feature is enabled, and if it's not, skip it and set
-                // the `conditions.[feature] = null;`
+            //---- ambient light
+            // TODO: someone needs to verify this
+            // have no idea if this conversion is correct. the exten of the datasheet documentation is:
+            // "RGBC results can be used to calculate ambient light levels (i.e. Lux) and color temperature (i.e. Kelvin)."
+            // NOTE: looks correct, actually. reading ~600 lux in my office and went to 4k LUX when i moved the sensor to the window
+            var ambient = ReadAmbientLight();
+            conditions.AmbientLight = new Illuminance(ambient, Illuminance.UnitType.Lux);
 
-                //---- ambient light
-                // TODO: someone needs to verify this
-                // have no idea if this conversion is correct. the exten of the datasheet documentation is:
-                // "RGBC results can be used to calculate ambient light levels (i.e. Lux) and color temperature (i.e. Kelvin)."
-                // NOTE: looks correct, actually. reading ~600 lux in my office and went to 4k LUX when i moved the sensor to the window
-                var ambient = ReadAmbientLight();
-                conditions.AmbientLight = new Illuminance(ambient, Illuminance.UnitType.Lux);
+            //---- color
+            // TODO: someone needs to verify this.
+            var rgbDivisor = 65536 / 256; // come back as 16-bit values (ushorts). need to be byte.
+            var r = ReadRedLight() / rgbDivisor;
+            var g = ReadGreenLight() / rgbDivisor;
+            var b = ReadBlueLight() / rgbDivisor;
+            var a = ambient / rgbDivisor;
 
-                //---- color
-                // TODO: someone needs to verify this.
-                var rgbDivisor = 65536 / 256; // come back as 16-bit values (ushorts). need to be byte.
-                var r = (int)(ReadRedLight() / rgbDivisor);
-                var g = (int)(ReadGreenLight() / rgbDivisor);
-                var b = (int)(ReadBlueLight() / rgbDivisor);
-                var a = (int)(ambient / rgbDivisor);
+            conditions.Color = Foundation.Color.FromRgba(r, g, b, a);
 
-                conditions.Color = Foundation.Color.FromRgba(r, g, b, a);
-
-                return conditions;
-            });
+            return Task.FromResult(conditions);
         }
 
         /// <summary>
@@ -983,12 +978,10 @@ namespace Meadow.Foundation.Sensors.Motion
         {
             byte val = Peripheral.ReadRegister(Registers.APDS9960_CONTROL);
 
-            /* Set bits in register to given value */
             drive &= 0b00000011;
             val &= 0b11111100;
             val |= drive;
 
-            /* Write register value back into CONTROL register */
             Peripheral.WriteRegister(Registers.APDS9960_CONTROL, val);
         }
 
@@ -1325,7 +1318,7 @@ namespace Meadow.Foundation.Sensors.Motion
 
             var val_byte = Peripheral.ReadRegister(Registers.APDS9960_AILTH);
 
-            return (byte)(threshold + ((ushort)val_byte << 8));
+            return (byte)(threshold + (val_byte << 8));
         }
 
         /**
@@ -1359,7 +1352,7 @@ namespace Meadow.Foundation.Sensors.Motion
 
             var val_byte = Peripheral.ReadRegister(Registers.APDS9960_AIHTH);
 
-            return (byte)(threshold + ((ushort)val_byte << 8));
+            return (byte)(threshold + (val_byte << 8));
         }
 
         /**

@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Meadow.Hardware;
+using Meadow.Units;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Meadow.Hardware;
-using Meadow.Units;
 
 namespace Meadow.Foundation.Sensors.Light
 {
@@ -34,37 +34,27 @@ namespace Meadow.Foundation.Sensors.Light
         /// Read data from the sensor
         /// </summary>
         /// <returns>Returns visible, ultraviolet index and ifrared data</returns>
-        protected async override Task<(Illuminance? VisibleLight, double? UltravioletIndex, Illuminance? Infrared)> ReadSensor()
+        protected override Task<(Illuminance? VisibleLight, double? UltravioletIndex, Illuminance? Infrared)> ReadSensor()
         {
-            return await Task.Run(() =>
-            {
-                (Illuminance? VisibleLight, double? UltravioletIndex, Illuminance? Infrared) conditions;
+            (Illuminance? VisibleLight, double? UltravioletIndex, Illuminance? Infrared) conditions;
 
-                // ultraviolet (UV) index
-                Peripheral.ReadRegister(0x2C, ReadBuffer.Span[0..2]);
-                int rawUVIndex = (ReadBuffer.Span[1] << 8) | ReadBuffer.Span[0];
-                conditions.UltravioletIndex = rawUVIndex / 100.0;
+            // ultraviolet (UV) index
+            Peripheral.ReadRegister(0x2C, ReadBuffer.Span[0..2]);
+            int rawUVIndex = (ReadBuffer.Span[1] << 8) | ReadBuffer.Span[0];
+            conditions.UltravioletIndex = rawUVIndex / 100.0;
 
-                // Infrared
-                Peripheral.ReadRegister(0x22, ReadBuffer.Span[0..2]);
-                int rawInfrared = (ReadBuffer.Span[1] << 8) | ReadBuffer.Span[0];
-                conditions.Infrared = new Illuminance(rawInfrared, Illuminance.UnitType.Lux);
+            // Infrared
+            Peripheral.ReadRegister(0x22, ReadBuffer.Span[0..2]);
+            int rawInfrared = (ReadBuffer.Span[1] << 8) | ReadBuffer.Span[0];
+            conditions.Infrared = new Illuminance(rawInfrared, Illuminance.UnitType.Lux);
 
-                // Visible
-                Peripheral.ReadRegister(0x24, ReadBuffer.Span[0..2]);
-                int rawVisible = (ReadBuffer.Span[1] << 8) | ReadBuffer.Span[0];
-                conditions.VisibleLight = new Illuminance(rawVisible, Illuminance.UnitType.Lux);
+            // Visible
+            Peripheral.ReadRegister(0x24, ReadBuffer.Span[0..2]);
+            int rawVisible = (ReadBuffer.Span[1] << 8) | ReadBuffer.Span[0];
+            conditions.VisibleLight = new Illuminance(rawVisible, Illuminance.UnitType.Lux);
 
-                return conditions;
-            });
+            return Task.FromResult(conditions);
         }
-
-        //public double GetProximity()
-        //{
-        //    byte[] data = Peripheral.ReadRegisters(0x26, 2);
-        //    int result = (data[1] << 8) | data[0];
-        //    return result;
-        //}
 
         private void Initialize()
         {

@@ -10,7 +10,7 @@ namespace Meadow.Foundation.Sensors.Hid
     /// Represents an AS5013 Hall navigation sensor
     /// for analog joysticks
     /// </summary>
-    public partial class As5013 
+    public partial class As5013
         : SamplingSensorBase<AnalogJoystickPosition>, IAnalogJoystick
     {
         /// <summary>
@@ -50,13 +50,13 @@ namespace Meadow.Foundation.Sensors.Hid
         {
             get
             {
-                if(IsSampling == false)
+                if (IsSampling == false)
                 {
                     Update();
                 }
                 return GetDigitalJoystickPosition();
             }
-        } 
+        }
 
         readonly II2cPeripheral i2CPeripheral;
 
@@ -70,7 +70,7 @@ namespace Meadow.Foundation.Sensors.Hid
         {
             i2CPeripheral = new I2cPeripheral(i2cBus, address);
 
-            if(interruptPort != null)
+            if (interruptPort != null)
             {
                 interruptPort.Changed += (s, e) => Interrupt?.Invoke(s, EventArgs.Empty);
             }
@@ -106,14 +106,15 @@ namespace Meadow.Foundation.Sensors.Hid
 
                 SamplingTokenSource = new CancellationTokenSource();
 
-                Task.Run(() =>
+                var t = new Task(() =>
                 {
                     while (!SamplingTokenSource.IsCancellationRequested)
                     {
                         Update();
                         Thread.Sleep((int)UpdateInterval.TotalMilliseconds);
                     }
-                }, SamplingTokenSource.Token);
+                }, SamplingTokenSource.Token, TaskCreationOptions.LongRunning);
+                t.Start();
             }
         }
 

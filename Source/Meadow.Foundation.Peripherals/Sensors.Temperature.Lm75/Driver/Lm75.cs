@@ -35,32 +35,27 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// </summary>
         protected override Task<Units.Temperature> ReadSensor()
         {
-            return Task.Run(() =>
+            Peripheral?.Write((byte)Registers.LM_TEMP);
+
+            Peripheral?.ReadRegister((byte)Registers.LM_TEMP, ReadBuffer.Span[0..2]);
+
+            // Details in Datasheet P10
+            double temp;
+            ushort raw = (ushort)((ReadBuffer.Span[0] << 3) | (ReadBuffer.Span[1] >> 5));
+            if ((ReadBuffer.Span[0] & 0x80) == 0)
             {
-                Peripheral?.Write((byte)Registers.LM_TEMP);
+                // temperature >= 0
+                temp = raw * 0.125;
+            }
+            else
+            {
+                raw |= 0xF800;
+                raw = (ushort)(~raw + 1);
 
-                Peripheral?.ReadRegister((byte)Registers.LM_TEMP, ReadBuffer.Span[0..2]);
+                temp = raw * (-1) * 0.125;
+            }
 
-                // Details in Datasheet P10
-                double temp = 0;
-                ushort raw = (ushort)((ReadBuffer.Span[0] << 3) | (ReadBuffer.Span[1] >> 5));
-                if ((ReadBuffer.Span[0] & 0x80) == 0)
-                {
-                    // temperature >= 0
-                    temp = raw * 0.125;
-                }
-                else
-                {
-                    raw |= 0xF800;
-                    raw = (ushort)(~raw + 1);
-
-                    temp = raw * (-1) * 0.125;
-                }
-
-                //only accurate to +/- 0.1 degrees
-                return (new Units.Temperature((float)Math.Round(temp, 1), Units.Temperature.UnitType.Celsius));
-
-            });
+            return Task.FromResult(new Units.Temperature((float)Math.Round(temp, 1), Units.Temperature.UnitType.Celsius));
         }
 
         /// <summary>

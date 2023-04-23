@@ -61,15 +61,12 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// </summary>
         protected override Task<(Units.Temperature? TemperatureHot, Units.Temperature? TemperatureCold)> ReadSensor()
         {
-            return Task.Run(() =>
-            {
-                (Units.Temperature? TemperatureHot, Units.Temperature? TemperatureCold) conditions;
+            (Units.Temperature? TemperatureHot, Units.Temperature? TemperatureCold) conditions;
 
-                conditions.TemperatureHot = new Units.Temperature(ReadTemperatureHot(), Units.Temperature.UnitType.Celsius);
-                conditions.TemperatureCold = new Units.Temperature(ReadTemperatureCold(), Units.Temperature.UnitType.Celsius);
+            conditions.TemperatureHot = new Units.Temperature(ReadTemperatureHot(), Units.Temperature.UnitType.Celsius);
+            conditions.TemperatureCold = new Units.Temperature(ReadTemperatureCold(), Units.Temperature.UnitType.Celsius);
 
-                return conditions;
-            });
+            return Task.FromResult(conditions);
         }
 
         /// <summary>

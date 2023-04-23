@@ -68,17 +68,14 @@ namespace Meadow.Foundation.Sensors.Power
         /// Reads data from the sensor
         /// </summary>
         /// <returns>The latest sensor reading</returns>
-        protected override async Task<(Units.Power? Power, Voltage? Voltage, Current? Current)> ReadSensor()
+        protected override Task<(Units.Power? Power, Voltage? Voltage, Current? Current)> ReadSensor()
         {
-            return await Task.Run(() =>
-            {
-                (Units.Power? Power, Units.Voltage? Voltage, Units.Current? Current) conditions;
-                conditions.Voltage = new Units.Voltage(Peripheral.ReadRegister((byte)Register.Voltage) * MeasurementScale, Units.Voltage.UnitType.Volts);
-                conditions.Current = new Units.Current(Peripheral.ReadRegister((byte)Register.Current) * MeasurementScale, Units.Current.UnitType.Amps);
-                conditions.Power = new Units.Power(Peripheral.ReadRegister((byte)Register.Power) * 0.01f, Units.Power.UnitType.Watts);
+            (Units.Power? Power, Voltage? Voltage, Current? Current) conditions;
+            conditions.Voltage = new Voltage(Peripheral.ReadRegister((byte)Register.Voltage) * MeasurementScale, Units.Voltage.UnitType.Volts);
+            conditions.Current = new Current(Peripheral.ReadRegister((byte)Register.Current) * MeasurementScale, Units.Current.UnitType.Amps);
+            conditions.Power = new Units.Power(Peripheral.ReadRegister((byte)Register.Power) * 0.01f, Units.Power.UnitType.Watts);
 
-                return conditions;
-            });
+            return Task.FromResult(conditions);
         }
 
         /// <summary>

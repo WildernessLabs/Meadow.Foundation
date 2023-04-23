@@ -10,7 +10,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     /// <summary>
     /// Represents an Ms5611 pressure and temperature sensor
     /// </summary>
-    public partial class Ms5611:
+    public partial class Ms5611 :
         ByteCommsSensorBase<(Units.Temperature? Temperature, Pressure? Pressure)>,
         ITemperatureSensor, IBarometricPressureSensor
     {
@@ -69,17 +69,14 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// Reads data from the sensor
         /// </summary>
         /// <returns>The latest sensor reading</returns>
-        protected override async Task<(Units.Temperature? Temperature, Pressure? Pressure)> ReadSensor()
+        protected override Task<(Units.Temperature? Temperature, Pressure? Pressure)> ReadSensor()
         {
-            return await Task.Run(() => {
+            (Units.Temperature? Temperature, Pressure? Pressure) conditions;
 
-                (Units.Temperature Temperature, Pressure Pressure) conditions;
+            conditions.Temperature = new Units.Temperature(ReadTemperature(), Units.Temperature.UnitType.Celsius);
+            conditions.Pressure = new Pressure(ReadPressure(), Units.Pressure.UnitType.Millibar);
 
-                conditions.Temperature = new Units.Temperature(ReadTemperature(), Units.Temperature.UnitType.Celsius);
-                conditions.Pressure = new Pressure(ReadPressure(), Units.Pressure.UnitType.Millibar);
-
-                return conditions;
-            });
+            return Task.FromResult(conditions);
         }
 
         /// <summary>

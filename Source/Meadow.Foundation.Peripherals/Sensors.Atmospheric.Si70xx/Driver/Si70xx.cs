@@ -1,9 +1,9 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
 using Meadow.Peripherals.Sensors;
 using Meadow.Units;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 using HU = Meadow.Units.RelativeHumidity.UnitType;
 using TU = Meadow.Units.Temperature.UnitType;
 
@@ -21,7 +21,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// Raised when the temperature value changes
         /// </summary>
         public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
-        
+
         /// <summary>
         /// Raised when the humidity value changes
         /// </summary>
@@ -128,33 +128,30 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         {
             (Units.Temperature Temperature, RelativeHumidity Humidity) conditions;
 
-            return await Task.Run(() =>
+            Peripheral?.Write(HUMDITY_MEASURE_NOHOLD);
+            await Task.Delay(25); // Maximum conversion time is 12ms (page 5 of the datasheet).
+            Peripheral?.Read(ReadBuffer.Span); // 2 data bytes plus a checksum (we ignore the checksum here)
+            var humidityReading = (ushort)((ReadBuffer.Span[0] << 8) + ReadBuffer.Span[1]);
+            conditions.Humidity = new RelativeHumidity(((125 * (float)humidityReading) / 65536) - 6, HU.Percent);
+            if (conditions.Humidity < new RelativeHumidity(0, HU.Percent))
             {
-                Peripheral?.Write(HUMDITY_MEASURE_NOHOLD);
-                Thread.Sleep(25); // Maximum conversion time is 12ms (page 5 of the datasheet).
-                Peripheral?.Read(ReadBuffer.Span); // 2 data bytes plus a checksum (we ignore the checksum here)
-                var humidityReading = (ushort)((ReadBuffer.Span[0] << 8) + ReadBuffer.Span[1]);
-                conditions.Humidity = new RelativeHumidity(((125 * (float)humidityReading) / 65536) - 6, HU.Percent);
-                if (conditions.Humidity < new RelativeHumidity(0, HU.Percent))
+                conditions.Humidity = new RelativeHumidity(0, HU.Percent);
+            }
+            else
+            {
+                if (conditions.Humidity > new RelativeHumidity(100, HU.Percent))
                 {
-                    conditions.Humidity = new RelativeHumidity(0, HU.Percent);
+                    conditions.Humidity = new RelativeHumidity(100, HU.Percent);
                 }
-                else
-                {
-                    if (conditions.Humidity > new RelativeHumidity(100, HU.Percent))
-                    {
-                        conditions.Humidity = new RelativeHumidity(100, HU.Percent);
-                    }
-                }
+            }
 
-                Peripheral?.Write(TEMPERATURE_MEASURE_NOHOLD);
-                Thread.Sleep(25); // Maximum conversion time is 12ms (page 5 of the datasheet).
-                Peripheral?.Read(ReadBuffer.Span); // 2 data bytes plus a checksum (we ignore the checksum here)
-                var temperatureReading = (short)((ReadBuffer.Span[0] << 8) + ReadBuffer.Span[1]);
-                conditions.Temperature = new Units.Temperature((float)(((175.72 * temperatureReading) / 65536) - 46.85), TU.Celsius);
+            Peripheral?.Write(TEMPERATURE_MEASURE_NOHOLD);
+            Thread.Sleep(25); // Maximum conversion time is 12ms (page 5 of the datasheet).
+            Peripheral?.Read(ReadBuffer.Span); // 2 data bytes plus a checksum (we ignore the checksum here)
+            var temperatureReading = (short)((ReadBuffer.Span[0] << 8) + ReadBuffer.Span[1]);
+            conditions.Temperature = new Units.Temperature((float)((175.72 * temperatureReading / 65536) - 46.85), TU.Celsius);
 
-                return conditions;
-            });
+            return conditions;
         }
 
         /// <summary>

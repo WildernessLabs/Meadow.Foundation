@@ -153,19 +153,16 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// Reads data from the sensor
         /// </summary>
         /// <returns>The latest sensor reading</returns>
-        protected override async Task<(Concentration? Co2, Concentration? Voc)> ReadSensor()
+        protected override Task<(Concentration? Co2, Concentration? Voc)> ReadSensor()
         {
-            return await Task.Run(() =>
-            {
-                // data is really in just the first 4, but this gets us status and raw data as well
-                Peripheral?.ReadRegister((byte)Register.ALG_RESULT_DATA, _readingBuffer);
+            // data is really in just the first 4, but this gets us status and raw data as well
+            Peripheral?.ReadRegister((byte)Register.ALG_RESULT_DATA, _readingBuffer);
 
-                (Concentration co2, Concentration voc) state;
-                state.co2 = new Concentration(_readingBuffer[0] << 8 | _readingBuffer[1], Concentration.UnitType.PartsPerMillion);
-                state.voc = new Concentration(_readingBuffer[2] << 8 | _readingBuffer[3], Concentration.UnitType.PartsPerBillion);
+            (Concentration? co2, Concentration? voc) state;
+            state.co2 = new Concentration(_readingBuffer[0] << 8 | _readingBuffer[1], Concentration.UnitType.PartsPerMillion);
+            state.voc = new Concentration(_readingBuffer[2] << 8 | _readingBuffer[3], Concentration.UnitType.PartsPerBillion);
 
-                return state;
-            });
+            return Task.FromResult(state);
         }
 
         /// <summary>

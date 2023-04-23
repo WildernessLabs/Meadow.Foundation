@@ -102,18 +102,15 @@ namespace Meadow.Foundation.Sensors.Accelerometers
         /// <returns>The latest sensor reading</returns>
         protected override Task<(Acceleration3D? Acceleration3D, MagneticField3D? MagneticField3D)> ReadSensor()
         {
-            return Task.Run(() =>
-            {
-                (Acceleration3D? Acceleration3D, MagneticField3D? MagneticField3D) conditions;
+            (Acceleration3D? Acceleration3D, MagneticField3D? MagneticField3D) conditions;
 
-                var accel = ReadAccelerometerRaw();
-                var mag = ReadMagnetometerRaw();
+            var accel = ReadAccelerometerRaw();
+            var mag = ReadMagnetometerRaw();
 
-                conditions.Acceleration3D = GetAcceleration3D(accel.x, accel.y, accel.z, GetAccelerometerSensitivity());
-                conditions.MagneticField3D = GetMagneticField3D(mag.x, mag.y, mag.z);
+            conditions.Acceleration3D = GetAcceleration3D(accel.x, accel.y, accel.z, GetAccelerometerSensitivity());
+            conditions.MagneticField3D = GetMagneticField3D(mag.x, mag.y, mag.z);
 
-                return conditions;
-            });
+            return Task.FromResult(conditions);
         }
 
         Acceleration3D GetAcceleration3D(short rawX, short rawY, short rawZ, AccSensitivity sensitivity)

@@ -160,7 +160,7 @@ namespace Meadow.Foundation.ICs.FanControllers
         void Initialize()
         {
             EnableTachInput(true);
-            
+
             InvertFanSpeed(false);
             PwmFrequencyScaler = 0x1F;
             ConfigurePwmClock(true, false);
@@ -185,7 +185,7 @@ namespace Meadow.Foundation.ICs.FanControllers
             {
                 ExternalTemperatureUpdated?.Invoke(this, new ChangeResult<Temperature>(tempEx, changeResult.Old?.ExternalTemperature));
             }
-            if(changeResult.New.FanSpeed is { } fanSpeed)
+            if (changeResult.New.FanSpeed is { } fanSpeed)
             {
                 FanSpeedUpdated?.Invoke(this, new ChangeResult<AngularVelocity>(fanSpeed, changeResult.Old?.FanSpeed));
             }
@@ -199,28 +199,25 @@ namespace Meadow.Foundation.ICs.FanControllers
         /// <returns>The latest sensor reading</returns>
         protected override Task<(Temperature? InternalTemperature, Temperature? ExternalTemperature, AngularVelocity? FanSpeed)> ReadSensor()
         {
-            return Task.Run(() =>
-            {
-                (Temperature? InternalTemperature, Temperature? ExternalTemperature, AngularVelocity? FanSpeed) conditions;
+            (Temperature? InternalTemperature, Temperature? ExternalTemperature, AngularVelocity? FanSpeed) conditions;
 
-                //internal temperature
-                conditions.InternalTemperature = new Temperature(i2cPeripheral.ReadRegister((byte)Registers.InternalTemperature), Temperature.UnitType.Celsius);
+            //internal temperature
+            conditions.InternalTemperature = new Temperature(i2cPeripheral.ReadRegister((byte)Registers.InternalTemperature), Temperature.UnitType.Celsius);
 
-                //external temperature
-                byte lsb = i2cPeripheral.ReadRegister((byte)Registers.ExternalTemperatureLSB);
-                byte msb = i2cPeripheral.ReadRegister((byte)Registers.ExternalTemperatureMSB);
-                short raw = (short)(msb << 8 | lsb);
-                raw >>= 5;
-                conditions.ExternalTemperature = new Temperature(raw * TemperatureBit, Temperature.UnitType.Celsius);
+            //external temperature
+            byte lsb = i2cPeripheral.ReadRegister((byte)Registers.ExternalTemperatureLSB);
+            byte msb = i2cPeripheral.ReadRegister((byte)Registers.ExternalTemperatureMSB);
+            short raw = (short)(msb << 8 | lsb);
+            raw >>= 5;
+            conditions.ExternalTemperature = new Temperature(raw * TemperatureBit, Temperature.UnitType.Celsius);
 
-                //fan speed
-                lsb = i2cPeripheral.ReadRegister((byte)Registers.TachLSB);
-                msb = i2cPeripheral.ReadRegister((byte)Registers.TachMSB);
-                short speed = (short)(msb << 8 | lsb);
-                conditions.FanSpeed = new AngularVelocity(FanRpmNumerator / speed, AngularVelocity.UnitType.RevolutionsPerMinute);
+            //fan speed
+            lsb = i2cPeripheral.ReadRegister((byte)Registers.TachLSB);
+            msb = i2cPeripheral.ReadRegister((byte)Registers.TachMSB);
+            short speed = (short)(msb << 8 | lsb);
+            conditions.FanSpeed = new AngularVelocity(FanRpmNumerator / speed, AngularVelocity.UnitType.RevolutionsPerMinute);
 
-                return conditions;
-            });
+            return Task.FromResult(conditions);
         }
 
         /// <summary>
@@ -286,13 +283,13 @@ namespace Meadow.Foundation.ICs.FanControllers
         /// <param name="index">The LUT index to set</param>
         /// <param name="temperatureThreshhold">the temperature threshhold</param>
         /// <param name="pwmDutyCycle">the fan PWM duty cycle</param>
-        public void SetLookupTable(LutIndex index, 
-            Temperature temperatureThreshhold, 
+        public void SetLookupTable(LutIndex index,
+            Temperature temperatureThreshhold,
             float pwmDutyCycle)
         {
             pwmDutyCycle = Math.Clamp(pwmDutyCycle, 0, 1);
 
-            if(temperatureThreshhold.Celsius > MaxLutTemperature)
+            if (temperatureThreshhold.Celsius > MaxLutTemperature)
             {
                 temperatureThreshhold = new Units.Temperature(MaxLutTemperature, Units.Temperature.UnitType.Celsius);
             }

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Meadow.Foundation.Sensors.Motion
 {
     /// <summary>
-    /// Driver for the Hmc5883 digital compass.
+    /// Driver for the Hmc5883 digital compass
     /// 
     /// This driver is untested
     /// </summary>
@@ -85,7 +85,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <param name="changeResult">The updated sensor data</param>
         protected override void RaiseEventsAndNotify(IChangeResult<Vector> changeResult)
         {
-            this.DirectionUpdated?.Invoke(this, changeResult);
+            DirectionUpdated?.Invoke(this, changeResult);
             base.RaiseEventsAndNotify(changeResult);
         }
 
@@ -95,13 +95,10 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <returns>The latest sensor reading</returns>
         protected override Task<Vector> ReadSensor()
         {
-            return Task.Run(() =>
-            {
-                ushort x = Peripheral.ReadRegisterAsUShort(Registers.HMC_X_MSB_REG_ADDR, ByteOrder.BigEndian);
-                ushort y = Peripheral.ReadRegisterAsUShort(Registers.HMC_Y_MSB_REG_ADDR, ByteOrder.BigEndian);
-                ushort z = Peripheral.ReadRegisterAsUShort(Registers.HMC_Z_MSB_REG_ADDR, ByteOrder.BigEndian);
-                return new Vector(x, y, z);
-            });
+            ushort x = Peripheral.ReadRegisterAsUShort(Registers.HMC_X_MSB_REG_ADDR, ByteOrder.BigEndian);
+            ushort y = Peripheral.ReadRegisterAsUShort(Registers.HMC_Y_MSB_REG_ADDR, ByteOrder.BigEndian);
+            ushort z = Peripheral.ReadRegisterAsUShort(Registers.HMC_Z_MSB_REG_ADDR, ByteOrder.BigEndian);
+            return Task.FromResult(new Vector(x, y, z));
         }
 
         /// <summary>

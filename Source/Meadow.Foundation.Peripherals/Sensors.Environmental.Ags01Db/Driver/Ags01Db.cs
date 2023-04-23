@@ -1,7 +1,7 @@
-using System;
-using System.Threading.Tasks;
 using Meadow.Hardware;
 using Meadow.Units;
+using System;
+using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Environmental
 {
@@ -44,23 +44,20 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// Get ASG01DB VOC Gas Concentration and
         /// Update the Concentration property.
         /// </summary>
-        protected override Task<Units.Concentration> ReadSensor()
+        protected override Task<Concentration> ReadSensor()
         {
-            return Task.Run(() =>
-            {
-                WriteBuffer.Span[0] = ASG_DATA_MSB;
-                WriteBuffer.Span[1] = ASG_DATA_LSB;
+            WriteBuffer.Span[0] = ASG_DATA_MSB;
+            WriteBuffer.Span[1] = ASG_DATA_LSB;
 
-                Peripheral.Exchange(WriteBuffer.Span[0..1], ReadBuffer.Span);
+            Peripheral.Exchange(WriteBuffer.Span[0..1], ReadBuffer.Span);
 
-                var value = ReadBuffer.Span[0] << 8 | ReadBuffer.Span[1];
+            var value = ReadBuffer.Span[0] << 8 | ReadBuffer.Span[1];
 
-                var voc = value / 10.0;//should be ppm
+            var voc = value / 10.0;//ppm
 
-                Concentration = new Concentration(voc, Units.Concentration.UnitType.PartsPerMillion);
+            Concentration = new Concentration(voc, Units.Concentration.UnitType.PartsPerMillion);
 
-                return Concentration.Value;
-            });
+            return Task.FromResult(Concentration.Value);
         }
 
         /// <summary>

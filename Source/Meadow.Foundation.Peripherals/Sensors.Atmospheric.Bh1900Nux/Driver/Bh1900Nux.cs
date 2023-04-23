@@ -1,6 +1,5 @@
 ﻿using Meadow.Hardware;
 using Meadow.Peripherals.Sensors;
-using Meadow.Units;
 using System;
 using System.Threading.Tasks;
 
@@ -208,19 +207,16 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// Read the temperature
         /// </summary>
         /// <returns>The current temperature value</returns>
-        protected override async Task<Units.Temperature> ReadSensor()
+        protected override Task<Units.Temperature> ReadSensor()
         {
-            return await Task.Run(() =>
-            {
-                // 12-bit data
-                // Negative numbers are represented in binary twos complement format. The
-                // Temperature Register is 0x0000 until the first conversion complete after a software
-                // reset or power - on.
-                // Measurement Temperature Value [°C] = Temperature Data [11:0] x 0.0625
-                Peripheral?.ReadRegister((byte)Register.Temperature, ReadBuffer.Span[0..2]);
+            // 12-bit data
+            // Negative numbers are represented in binary twos complement format. The
+            // Temperature Register is 0x0000 until the first conversion complete after a software
+            // reset or power - on.
+            // Measurement Temperature Value [°C] = Temperature Data [11:0] x 0.0625
+            Peripheral?.ReadRegister((byte)Register.Temperature, ReadBuffer.Span[0..2]);
 
-                return RegisterToTemp(ReadBuffer);
-            });
+            return Task.FromResult(RegisterToTemp(ReadBuffer));
         }
 
         /// <summary>
