@@ -14,16 +14,6 @@ namespace Meadow.Foundation
         where UNIT : struct
     {
         /// <summary>
-        /// The read buffer
-        /// </summary>
-        protected Memory<byte> ReadBuffer { get; private set; }
-
-        /// <summary>
-        /// The write buffer
-        /// </summary>
-        protected Memory<byte> WriteBuffer { get; private set; }
-
-        /// <summary>
         /// Starts updating the sensor on the updateInterval frequency specified.
         ///
         /// This method also starts raising `Updated` events and notifying
