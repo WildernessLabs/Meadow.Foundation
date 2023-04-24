@@ -88,9 +88,9 @@ namespace Meadow.Foundation.RTCs
         /// <summary>
         /// Create a new Ds323x object
         /// </summary>
-        protected Ds323x(I2cCommunications peripheral, IPin interruptPin)
+        protected Ds323x(I2cCommunications i2cComms, IPin interruptPin)
         {
-            i2cComms = peripheral;
+            this.i2cComms = i2cComms;
 
             if (interruptPin != null)
             {
@@ -228,7 +228,7 @@ namespace Meadow.Foundation.RTCs
         }
 
         /// <summary>
-        /// I2C Communication bus used to communicate with the peripheral
+        /// I2C Communication bus used to communicate with the i2cComms
         /// </summary>
         protected II2cCommunications i2cComms;
 
