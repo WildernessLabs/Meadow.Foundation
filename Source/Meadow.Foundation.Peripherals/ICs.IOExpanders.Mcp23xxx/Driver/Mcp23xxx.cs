@@ -310,7 +310,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
         private void SetRegisterBit(byte register, int bit)
         {
-            if (bit >= 7 || bit < 0) { throw new ArgumentOutOfRangeException(); }
+            if (bit > 7 || bit < 0) { throw new ArgumentOutOfRangeException(); }
 
             var value = mcpDevice.ReadRegister(register);
             value |= (byte)(1 << bit);
@@ -319,7 +319,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
         private void ClearRegisterBit(byte register, int bit)
         {
-            if (bit >= 7 || bit < 0) { throw new ArgumentOutOfRangeException(); }
+            if (bit > 7 || bit < 0) { throw new ArgumentOutOfRangeException(); }
             var value = mcpDevice.ReadRegister(register);
             value &= (byte)~(1 << bit);
             mcpDevice.WriteRegister(register, value);
