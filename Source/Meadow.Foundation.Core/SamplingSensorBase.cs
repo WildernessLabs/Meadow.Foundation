@@ -67,10 +67,9 @@ namespace Meadow.Foundation
         /// Convenience method to get the current sensor readings. For frequent reads, use
         /// StartSampling() and StopSampling() in conjunction with the SampleBuffer.
         /// </summary>
-        public virtual async Task<UNIT> Read()
+        public virtual Task<UNIT> Read()
         {
-            Conditions = await ReadSensor();
-            return Conditions;
+            return ReadSensor();
         }
 
         /// <summary>
