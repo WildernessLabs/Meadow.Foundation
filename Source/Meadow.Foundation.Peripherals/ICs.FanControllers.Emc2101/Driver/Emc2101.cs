@@ -49,15 +49,15 @@ namespace Meadow.Foundation.ICs.FanControllers
         {
             get
             {
-                byte lsb = i2cPeripheral.ReadRegister((byte)Registers.TachLimitLSB);
-                byte msb = i2cPeripheral.ReadRegister((byte)Registers.TachLimitMSB);
+                byte lsb = i2cComms.ReadRegister((byte)Registers.TachLimitLSB);
+                byte msb = i2cComms.ReadRegister((byte)Registers.TachLimitMSB);
                 ushort speed = (ushort)(msb << 8 | lsb);
                 return new AngularVelocity(FanRpmNumerator / speed, AngularVelocity.UnitType.RevolutionsPerMinute);
             }
             set
             {
                 ushort raw = (ushort)(value.RevolutionsPerMinute * FanRpmNumerator);
-                i2cPeripheral.WriteRegister((byte)Registers.TachLimitLSB, raw);
+                i2cComms.WriteRegister((byte)Registers.TachLimitLSB, raw);
             }
         }
 
@@ -68,8 +68,8 @@ namespace Meadow.Foundation.ICs.FanControllers
         /// </summary>
         public byte PwmFrequencyScaler
         {
-            get => i2cPeripheral.ReadRegister((byte)Registers.PwmFrequency);
-            set => i2cPeripheral.WriteRegister((byte)Registers.PwmFrequency, Math.Min(value, (byte)0x1F));
+            get => i2cComms.ReadRegister((byte)Registers.PwmFrequency);
+            set => i2cComms.WriteRegister((byte)Registers.PwmFrequency, Math.Min(value, (byte)0x1F));
         }
 
         /// <summary>
@@ -78,8 +78,8 @@ namespace Meadow.Foundation.ICs.FanControllers
         /// </summary>
         public byte PwmDivisor
         {
-            get => i2cPeripheral.ReadRegister((byte)Registers.PwmDivisor);
-            set => i2cPeripheral.WriteRegister((byte)Registers.PwmDivisor, value);
+            get => i2cComms.ReadRegister((byte)Registers.PwmDivisor);
+            set => i2cComms.WriteRegister((byte)Registers.PwmDivisor, value);
         }
 
         /// <summary>
@@ -87,8 +87,8 @@ namespace Meadow.Foundation.ICs.FanControllers
         /// </summary>
         public float FanPwmDutyCycle
         {
-            get => i2cPeripheral.ReadRegister((byte)Registers.FanSetting) / (float)MaxFanSpeed;
-            set => i2cPeripheral.WriteRegister((byte)Registers.FanSetting, (byte)(Math.Clamp(value, 0, 1) * MaxFanSpeed));
+            get => i2cComms.ReadRegister((byte)Registers.FanSetting) / (float)MaxFanSpeed;
+            set => i2cComms.WriteRegister((byte)Registers.FanSetting, (byte)(Math.Clamp(value, 0, 1) * MaxFanSpeed));
         }
 
         /// <summary>
@@ -98,8 +98,8 @@ namespace Meadow.Foundation.ICs.FanControllers
         /// <returns>The hysteresis temperature value</returns>
         public Temperature Hysteresis
         {
-            get => new Temperature(i2cPeripheral.ReadRegister((byte)Registers.LutHysteresis), Temperature.UnitType.Celsius);
-            set => i2cPeripheral.WriteRegister((byte)Registers.LutHysteresis, (byte)value.Celsius);
+            get => new Temperature(i2cComms.ReadRegister((byte)Registers.LutHysteresis), Temperature.UnitType.Celsius);
+            set => i2cComms.WriteRegister((byte)Registers.LutHysteresis, (byte)value.Celsius);
         }
 
         /// <summary>
@@ -107,8 +107,8 @@ namespace Meadow.Foundation.ICs.FanControllers
         /// </summary>
         public DataRate SensorDataRate
         {
-            get => (DataRate)i2cPeripheral.ReadRegister((byte)Registers.DataRate);
-            set => i2cPeripheral.WriteRegister((byte)Registers.DataRate, (byte)value);
+            get => (DataRate)i2cComms.ReadRegister((byte)Registers.DataRate);
+            set => i2cComms.WriteRegister((byte)Registers.DataRate, (byte)value);
         }
 
         /// <summary>
@@ -117,12 +117,12 @@ namespace Meadow.Foundation.ICs.FanControllers
         /// <returns>true if enabled</returns>
         bool LutEnabled
         {
-            get => BitHelpers.GetBitValue(i2cPeripheral.ReadRegister((byte)Registers.FanConfiguration), 5);
+            get => BitHelpers.GetBitValue(i2cComms.ReadRegister((byte)Registers.FanConfiguration), 5);
             set
             {
-                byte config = i2cPeripheral.ReadRegister((byte)Registers.FanConfiguration);
+                byte config = i2cComms.ReadRegister((byte)Registers.FanConfiguration);
                 BitHelpers.SetBit(config, 5, value);
-                i2cPeripheral.WriteRegister((byte)Registers.FanConfiguration, config);
+                i2cComms.WriteRegister((byte)Registers.FanConfiguration, config);
             }
         }
 
@@ -131,19 +131,19 @@ namespace Meadow.Foundation.ICs.FanControllers
         /// </summary>
         public bool DACOutputEnabled
         {
-            get => BitHelpers.GetBitValue(i2cPeripheral.ReadRegister((byte)Registers.Configuration), 4);
+            get => BitHelpers.GetBitValue(i2cComms.ReadRegister((byte)Registers.Configuration), 4);
             set
             {
-                byte config = i2cPeripheral.ReadRegister((byte)Registers.Configuration);
+                byte config = i2cComms.ReadRegister((byte)Registers.Configuration);
                 config = BitHelpers.SetBit(config, 4, value);
-                i2cPeripheral.WriteRegister((byte)Registers.Configuration, config);
+                i2cComms.WriteRegister((byte)Registers.Configuration, config);
             }
         }
 
         /// <summary>
-        /// Communication bus used to communicate with the Emc2101
+        /// I2C Communication bus used to communicate with the peripheral
         /// </summary>
-        readonly II2cPeripheral i2cPeripheral;
+        protected readonly II2cCommunications i2cComms;
 
         /// <summary>
         /// Create a new EMC2101 object
@@ -152,7 +152,7 @@ namespace Meadow.Foundation.ICs.FanControllers
         /// <param name="address">Address of the EMC2101 (default = 0x4C)</param>
         public Emc2101(II2cBus i2cBus, byte address = (byte)Address.Default)
         {
-            i2cPeripheral = new I2cPeripheral(i2cBus, address);
+            i2cComms = new I2cCommunications(i2cBus, address);
 
             Initialize();
         }
@@ -202,18 +202,18 @@ namespace Meadow.Foundation.ICs.FanControllers
             (Temperature? InternalTemperature, Temperature? ExternalTemperature, AngularVelocity? FanSpeed) conditions;
 
             //internal temperature
-            conditions.InternalTemperature = new Temperature(i2cPeripheral.ReadRegister((byte)Registers.InternalTemperature), Temperature.UnitType.Celsius);
+            conditions.InternalTemperature = new Temperature(i2cComms.ReadRegister((byte)Registers.InternalTemperature), Temperature.UnitType.Celsius);
 
             //external temperature
-            byte lsb = i2cPeripheral.ReadRegister((byte)Registers.ExternalTemperatureLSB);
-            byte msb = i2cPeripheral.ReadRegister((byte)Registers.ExternalTemperatureMSB);
+            byte lsb = i2cComms.ReadRegister((byte)Registers.ExternalTemperatureLSB);
+            byte msb = i2cComms.ReadRegister((byte)Registers.ExternalTemperatureMSB);
             short raw = (short)(msb << 8 | lsb);
             raw >>= 5;
             conditions.ExternalTemperature = new Temperature(raw * TemperatureBit, Temperature.UnitType.Celsius);
 
             //fan speed
-            lsb = i2cPeripheral.ReadRegister((byte)Registers.TachLSB);
-            msb = i2cPeripheral.ReadRegister((byte)Registers.TachMSB);
+            lsb = i2cComms.ReadRegister((byte)Registers.TachLSB);
+            msb = i2cComms.ReadRegister((byte)Registers.TachMSB);
             short speed = (short)(msb << 8 | lsb);
             conditions.FanSpeed = new AngularVelocity(FanRpmNumerator / speed, AngularVelocity.UnitType.RevolutionsPerMinute);
 
@@ -226,11 +226,11 @@ namespace Meadow.Foundation.ICs.FanControllers
         /// <param name="enable">true to renable, false to disable</param>
         public void EnableTachInput(bool enable)
         {
-            byte config = i2cPeripheral.ReadRegister((byte)Registers.Configuration);
+            byte config = i2cComms.ReadRegister((byte)Registers.Configuration);
 
             config = BitHelpers.SetBit(config, 2, enable);
 
-            i2cPeripheral.WriteRegister((byte)Registers.Configuration, config);
+            i2cComms.WriteRegister((byte)Registers.Configuration, config);
         }
 
         /// <summary>
@@ -239,11 +239,11 @@ namespace Meadow.Foundation.ICs.FanControllers
         /// <param name="invert">true to invert, false for normal</param>
         public void InvertFanSpeed(bool invert)
         {
-            byte config = i2cPeripheral.ReadRegister((byte)Registers.FanConfiguration);
+            byte config = i2cComms.ReadRegister((byte)Registers.FanConfiguration);
 
             config = BitHelpers.SetBit(config, 4, invert);
 
-            i2cPeripheral.WriteRegister((byte)Registers.FanConfiguration, config);
+            i2cComms.WriteRegister((byte)Registers.FanConfiguration, config);
         }
 
         /// <summary>
@@ -253,12 +253,12 @@ namespace Meadow.Foundation.ICs.FanControllers
         /// <param name="clockOverride">true to override the base clock and use the frequency divisor to set the PWM frequency</param>
         public void ConfigurePwmClock(bool clockSelect, bool clockOverride)
         {
-            byte config = i2cPeripheral.ReadRegister((byte)Registers.FanConfiguration);
+            byte config = i2cComms.ReadRegister((byte)Registers.FanConfiguration);
 
             config = BitHelpers.SetBit(config, 3, clockSelect);
             config = BitHelpers.SetBit(config, 2, clockOverride);
 
-            i2cPeripheral.WriteRegister((byte)Registers.FanConfiguration, config);
+            i2cComms.WriteRegister((byte)Registers.FanConfiguration, config);
         }
 
         /// <summary>
@@ -268,13 +268,13 @@ namespace Meadow.Foundation.ICs.FanControllers
         /// <param name="spinupTime">The time taken to spin up to the drive speed</param>
         public void ConfigureFanSpinup(FanSpinupDrive spinupDrive, FanSpinupTime spinupTime)
         {
-            byte config = i2cPeripheral.ReadRegister((byte)Registers.FanSpinup);
+            byte config = i2cComms.ReadRegister((byte)Registers.FanSpinup);
 
             config = (byte)(config & ~0x1F); //zero out the bits 
             config |= (byte)spinupDrive;
             config |= (byte)spinupTime;
 
-            i2cPeripheral.WriteRegister((byte)Registers.FanSpinup, config);
+            i2cComms.WriteRegister((byte)Registers.FanSpinup, config);
         }
 
         /// <summary>
@@ -302,8 +302,8 @@ namespace Meadow.Foundation.ICs.FanControllers
             //Oh C# and bytes/enums ... best to leave as an int and cast when it's used
             int address = (byte)Registers.LutStartRegister + (byte)index * 2;
 
-            i2cPeripheral.WriteRegister((byte)address, (byte)temperatureThreshhold.Celsius);
-            i2cPeripheral.WriteRegister((byte)(address + 1), (byte)(pwmDutyCycle * MaxFanSpeed));
+            i2cComms.WriteRegister((byte)address, (byte)temperatureThreshhold.Celsius);
+            i2cComms.WriteRegister((byte)(address + 1), (byte)(pwmDutyCycle * MaxFanSpeed));
 
             //restore lut state 
             LutEnabled = lutState;

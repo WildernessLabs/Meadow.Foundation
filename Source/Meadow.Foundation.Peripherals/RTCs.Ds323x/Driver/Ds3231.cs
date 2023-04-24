@@ -17,7 +17,7 @@ namespace Meadow.Foundation.RTCs
             II2cBus i2cBus,
             IPin interruptPin = null,
             byte address = (byte)Address.Default)
-            : base(new I2cPeripheral(i2cBus, address), interruptPin)
+            : base(new I2cCommunications(i2cBus, address), interruptPin)
         { }
 
         /// <summary>
@@ -30,7 +30,7 @@ namespace Meadow.Foundation.RTCs
            II2cBus i2cBus,
            IDigitalInputPort interruptPort = null,
            byte address = (byte)Address.Default)
-           : base(new I2cPeripheral(i2cBus, address), interruptPort)
+           : base(new I2cCommunications(i2cBus, address), interruptPort)
         {
         }
     }

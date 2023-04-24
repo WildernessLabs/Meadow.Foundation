@@ -10,7 +10,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
     /// <summary>
     /// A TCA9548A i2c multiplexer
     /// </summary>
-    public partial class Tca9548a : II2cPeripheral
+    public partial class Tca9548a : II2cCommunications
     {
         internal SemaphoreSlim BusSelectorSemaphore = new SemaphoreSlim(1, 1);
 

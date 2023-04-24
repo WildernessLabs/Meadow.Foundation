@@ -19,8 +19,8 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         public Frequency SpiBusSpeed
         {
-            get => spiPeripheral.BusSpeed;
-            set => spiPeripheral.BusSpeed = value;
+            get => spiComms.BusSpeed;
+            set => spiComms.BusSpeed = value;
         }
 
         /// <summary>
@@ -33,8 +33,8 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         public SpiClockConfiguration.Mode SpiBusMode
         {
-            get => spiPeripheral.BusMode;
-            set => spiPeripheral.BusMode = value;
+            get => spiComms.BusMode;
+            set => spiComms.BusMode = value;
         }
 
         /// <summary>
@@ -63,9 +63,9 @@ namespace Meadow.Foundation.Displays
         protected IDigitalInputPort busyPort;
 
         /// <summary>
-        /// The SpiPeripheral object that reprsents the display
+        /// SPI Communication bus used to communicate with the peripheral
         /// </summary>
-        protected ISpiPeripheral spiPeripheral;
+        protected ISpiCommunications spiComms;
 
         /// <summary>
         /// Const bool representing the data state
@@ -84,7 +84,7 @@ namespace Meadow.Foundation.Displays
         protected void Write(byte value)
         {
             commandBuffer[0] = value;
-            spiPeripheral.Write(commandBuffer);
+            spiComms.Write(commandBuffer);
         }
 
         /// <summary>
@@ -143,7 +143,7 @@ namespace Meadow.Foundation.Displays
         protected void SendData(byte[] data)
         {
             dataCommandPort.State = DataState;
-            spiPeripheral.Write(data);
+            spiComms.Write(data);
         }
 
         /// <summary>

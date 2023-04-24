@@ -10,27 +10,28 @@ namespace Meadow.Foundation.Sensors.Hid
     /// </summary>
     public partial class Tsc2004
     {
-        readonly I2cPeripheral i2CPeripheral;
-
-        //default values from arturo182
-    
         /// <summary>
-        /// Minimum X value of touchscreen 
+        /// I2C Communication bus used to communicate with the peripheral
+        /// </summary>
+        protected readonly II2cCommunications i2cComms;
+
+        /// <summary>
+        /// Minimum X value of touchscreen (defaults to 366)
         /// </summary>
         public int XMin { get; set; } = 366;
 
         /// <summary>
-        /// Maximum X value of touchscreen
+        /// Maximum X value of touchscreen (defaults to 3567)
         /// </summary>
         public int XMax { get; set; } = 3567;
 
         /// <summary>
-        /// Minimum Y value of touchscreen
+        /// Minimum Y value of touchscreen (defaults to 334)
         /// </summary>
         public int YMin { get; set; } = 334;
 
         /// <summary>
-        /// Maximum Y value of touchscreen
+        /// Maximum Y value of touchscreen (defaults to 3787)
         /// </summary>
         public int YMax { get; set; } = 3787;
 
@@ -56,7 +57,7 @@ namespace Meadow.Foundation.Sensors.Hid
         /// <param name="address">The I2C address</param>
         public Tsc2004(II2cBus i2cBus, byte address = (byte)Addresses.Default)
         {
-            i2CPeripheral = new I2cPeripheral(i2cBus, address);
+            i2cComms = new I2cCommunications(i2cBus, address);
 
             Initialize();
         }
@@ -106,8 +107,8 @@ namespace Meadow.Foundation.Sensors.Hid
         /// <returns></returns>
         public Point3d GetPointRaw()
         {
-            while((ReadRegister16((byte)Registers.STATUS) & STATUS_DAV_MASK) == 0)
-            {   
+            while ((ReadRegister16((byte)Registers.STATUS) & STATUS_DAV_MASK) == 0)
+            {
                 return new Point3d();
             }
 
@@ -118,10 +119,10 @@ namespace Meadow.Foundation.Sensors.Hid
             ushort z1 = ReadRegister16((byte)Registers.Z1);
             ushort z2 = ReadRegister16((byte)Registers.Z2);
 
-            if( x > _MAX_12BIT || 
-                y > _MAX_12BIT || 
-                z1 == 0 || 
-                z2 > _MAX_12BIT || 
+            if (x > _MAX_12BIT ||
+                y > _MAX_12BIT ||
+                z1 == 0 ||
+                z2 > _MAX_12BIT ||
                 z1 >= z2)
             {
                 x = 0;
@@ -132,7 +133,7 @@ namespace Meadow.Foundation.Sensors.Hid
             {
                 var val = (x * (z2 - z1) / z1);
                 val *= _RESISTOR_VAL;
-                z = (ushort)(val/4096);
+                z = (ushort)(val / 4096);
             }
 
             return new Point3d(x, y, z);
@@ -144,8 +145,8 @@ namespace Meadow.Foundation.Sensors.Hid
         /// <returns>True if touched</returns>
         public bool IsTouched()
             => (ReadRegister16((byte)Registers.STATUS) & STATUS_DAV_MASK) != 0;
-        
-        
+
+
         /// <summary>
         /// Is the touch buffer empty
         /// </summary>
@@ -156,8 +157,8 @@ namespace Meadow.Foundation.Sensors.Hid
         {
             Span<byte> data = new byte[2];
 
-            i2CPeripheral.ReadRegister((byte)(address | (byte)Registers.READ), data);
-            
+            i2cComms.ReadRegister((byte)(address | (byte)Registers.READ), data);
+
             return (ushort)(data[0] << 8 | data[1]);
         }
 
@@ -168,12 +169,12 @@ namespace Meadow.Foundation.Sensors.Hid
             data[1] = (byte)((value >> 8) & 0xFF);
             data[2] = (byte)((value >> 0) & 0xFF);
 
-            i2CPeripheral.Write(data);
+            i2cComms.Write(data);
         }
 
         void SendCommand(byte command)
         {
-            i2CPeripheral.Write((byte)(CMD | CMD_12BIT | command));
+            i2cComms.Write((byte)(CMD | CMD_12BIT | command));
         }
 
         int GetXForRotation(int x, int y)

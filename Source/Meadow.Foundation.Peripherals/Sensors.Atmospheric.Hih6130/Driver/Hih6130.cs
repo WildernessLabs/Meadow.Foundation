@@ -68,12 +68,12 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             (Units.Temperature Temperature, RelativeHumidity Humidity) conditions;
 
             // send a start signal on the I2C bus to notify the sensor to read.
-            Peripheral?.Write(0);
+            BusComms?.Write(0);
             // Sensor takes 35ms to make a valid reading.
             await Task.Delay(40);
 
             // read data from the sensor
-            Peripheral?.Read(base.ReadBuffer.Span);
+            BusComms?.Read(base.ReadBuffer.Span);
             //
             //  Data format:
             //

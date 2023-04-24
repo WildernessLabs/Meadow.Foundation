@@ -20,8 +20,8 @@ namespace Meadow.Foundation.Leds
         /// </summary>
         public Frequency SpiBusSpeed
         {
-            get => spiPeripheral.BusSpeed;
-            set => spiPeripheral.BusSpeed = value;
+            get => spiComms.BusSpeed;
+            set => spiComms.BusSpeed = value;
         }
 
         /// <summary>
@@ -34,14 +34,14 @@ namespace Meadow.Foundation.Leds
         /// </summary>
         public SpiClockConfiguration.Mode SpiBusMode
         {
-            get => spiPeripheral.BusMode;
-            set => spiPeripheral.BusMode = value;
+            get => spiComms.BusMode;
+            set => spiComms.BusMode = value;
         }
 
         /// <summary>
-        /// SpiPeripheral object
+        /// SPI Communication bus used to communicate with the peripheral
         /// </summary>
-        protected ISpiPeripheral spiPeripheral;
+        protected ISpiCommunications spiComms;
 
         const short StartHeaderSize = 4;
         const byte LedStart = 0b11100000;
@@ -96,7 +96,7 @@ namespace Meadow.Foundation.Leds
         /// <param name="chipSelectPort">SPI chip select port (optional)</param>
         public Apa102(ISpiBus spiBus, int numberOfLeds, PixelOrder pixelOrder = PixelOrder.BGR, IDigitalOutputPort chipSelectPort = null)
         {
-            spiPeripheral = new SpiPeripheral(spiBus, chipSelectPort, DefaultSpiBusSpeed, DefaultSpiBusMode);
+            spiComms = new SpiCommunications(spiBus, chipSelectPort, DefaultSpiBusSpeed, DefaultSpiBusMode);
             this.numberOfLeds = numberOfLeds;
             endHeaderSize = this.numberOfLeds / 16;
             Brightness = 1.0f;
@@ -229,7 +229,7 @@ namespace Meadow.Foundation.Leds
         /// </summary>
         public void Show()
         {
-            spiPeripheral.Write(buffer);
+            spiComms.Write(buffer);
         }
 
         /// <summary>

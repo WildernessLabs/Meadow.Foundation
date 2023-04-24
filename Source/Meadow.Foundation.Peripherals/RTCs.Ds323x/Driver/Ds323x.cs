@@ -83,15 +83,14 @@ namespace Meadow.Foundation.RTCs
         AlarmRaised alarm1Delegate;
         AlarmRaised alarm2Delegate;
         bool interruptCreatedInternally;
-
-        Memory<byte> readBuffer;
+        readonly Memory<byte> readBuffer;
 
         /// <summary>
         /// Create a new Ds323x object
         /// </summary>
-        protected Ds323x(I2cPeripheral peripheral, IPin interruptPin)
+        protected Ds323x(I2cCommunications i2cComms, IPin interruptPin)
         {
-            ds323x = peripheral;
+            this.i2cComms = i2cComms;
 
             if (interruptPin != null)
             {
@@ -107,9 +106,9 @@ namespace Meadow.Foundation.RTCs
         /// <summary>
         /// Create a new Ds323x object
         /// </summary>
-        protected Ds323x(I2cPeripheral peripheral, IDigitalInputPort interruptPort)
+        protected Ds323x(I2cCommunications i2cComms, IDigitalInputPort interruptPort)
         {
-            ds323x = peripheral;
+            this.i2cComms = i2cComms;
 
             Initialize(interruptPort);
         }
@@ -205,12 +204,12 @@ namespace Meadow.Foundation.RTCs
             get
             {
                 var data = readBuffer.Span[0..DATE_TIME_REGISTERS_SIZE];
-                ds323x.ReadRegister(Registers.Seconds, data);
+                i2cComms.ReadRegister(Registers.Seconds, data);
                 return DecodeDateTimeRegisters(data);
             }
             set
             {
-                ds323x.WriteRegister(Registers.Seconds, EncodeDateTimeRegisters(value));
+                i2cComms.WriteRegister(Registers.Seconds, EncodeDateTimeRegisters(value));
             }
         }
 
@@ -222,16 +221,16 @@ namespace Meadow.Foundation.RTCs
             get
             {
                 var data = readBuffer.Span[0..2];
-                ds323x.ReadRegister(Registers.TemperatureMSB, data);
+                i2cComms.ReadRegister(Registers.TemperatureMSB, data);
                 var temperature = (ushort)((data[0] << 2) | (data[1] >> 6));
                 return new Units.Temperature(temperature * 0.25, Units.Temperature.UnitType.Celsius);
             }
         }
 
         /// <summary>
-        /// DS323x Real Time Clock object.
+        /// I2C Communication bus used to communicate with the i2cComms
         /// </summary>
-        protected II2cPeripheral ds323x { get; }
+        protected II2cCommunications i2cComms;
 
         /// <summary>
         /// Interrupt port attached to the DS323x RTC module.
@@ -247,8 +246,8 @@ namespace Meadow.Foundation.RTCs
         /// </remarks>
         protected byte ControlRegister
         {
-            get { return ds323x.ReadRegister(Registers.Control); }
-            set { ds323x.WriteRegister(Registers.Control, value); }
+            get { return i2cComms.ReadRegister(Registers.Control); }
+            set { i2cComms.WriteRegister(Registers.Control, value); }
         }
 
         /// <summary>
@@ -260,8 +259,8 @@ namespace Meadow.Foundation.RTCs
         /// </remarks>
         protected byte ControlStatusRegister
         {
-            get { return ds323x.ReadRegister(Registers.ControlStatus); }
-            set { ds323x.WriteRegister(Registers.ControlStatus, value); }
+            get { return i2cComms.ReadRegister(Registers.ControlStatus); }
+            set { i2cComms.WriteRegister(Registers.ControlStatus, value); }
         }
 
         /// <summary>
@@ -300,7 +299,8 @@ namespace Meadow.Foundation.RTCs
         {
             var seconds = Converters.BCDToByte(data[0]);
             var minutes = Converters.BCDToByte(data[1]);
-            byte hour = 0;
+            byte hour;
+
             if ((data[2] & 0x40) != 0)
             {
                 hour = Converters.BCDToByte((byte)(data[2] & 0x1f));
@@ -313,7 +313,7 @@ namespace Meadow.Foundation.RTCs
             {
                 hour = Converters.BCDToByte((byte)(data[2] & 0x3f));
             }
-            var wday = data[3];
+
             var day = Converters.BCDToByte(data[4]);
             var month = Converters.BCDToByte((byte)(data[5] & 0x7f));
             var year = (ushort)(1900 + Converters.BCDToByte(data[6]));
@@ -394,7 +394,7 @@ namespace Meadow.Foundation.RTCs
         /// <param name="type">Type of alarm to set.</param>
         public void SetAlarm(Alarm alarm, DateTime time, AlarmType type)
         {
-            byte[] data = null;
+            byte[] data;
             var register = Registers.Alarm1Seconds;
             var element = 0;
 
@@ -468,7 +468,7 @@ namespace Meadow.Foundation.RTCs
                     data[2] |= 0x40;
                     break;
             }
-            ds323x.WriteRegister(register, data);
+            i2cComms.WriteRegister(register, data);
             //
             //  Turn the relevant alarm on.
             //
@@ -545,7 +545,7 @@ namespace Meadow.Foundation.RTCs
         public void DisplayRegisters()
         {
             var data = readBuffer.Span[0..0x12];
-            ds323x.ReadRegister(0, data);
+            i2cComms.ReadRegister(0, data);
             DebugInformation.DisplayRegisters(0, data);
         }
     }

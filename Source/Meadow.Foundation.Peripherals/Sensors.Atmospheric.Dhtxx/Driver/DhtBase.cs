@@ -85,8 +85,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         internal virtual void ReadDataI2c()
         {
-            Peripheral?.Write(0x00);
-            Peripheral?.Read(ReadBuffer.Span[0..5]);
+            BusComms?.Write(0x00);
+            BusComms?.Read(ReadBuffer.Span[0..5]);
 
             lastMeasurement = Environment.TickCount;
 

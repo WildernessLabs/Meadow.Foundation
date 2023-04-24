@@ -70,9 +70,9 @@ namespace Meadow.Foundation.Sensors.Power
         {
             (Units.Power? Power, Voltage? Voltage, Current? Current) conditions;
 
-            conditions.Voltage = new Voltage(Peripheral.ReadRegister((byte)Register.Voltage) * MeasurementScale, Units.Voltage.UnitType.Volts);
-            conditions.Current = new Current(Peripheral.ReadRegister((byte)Register.Current) * MeasurementScale, Units.Current.UnitType.Amps);
-            conditions.Power = new Units.Power(Peripheral.ReadRegister((byte)Register.Power) * 0.01f, Units.Power.UnitType.Watts);
+            conditions.Voltage = new Voltage(BusComms.ReadRegister((byte)Register.Voltage) * MeasurementScale, Units.Voltage.UnitType.Volts);
+            conditions.Current = new Current(BusComms.ReadRegister((byte)Register.Current) * MeasurementScale, Units.Current.UnitType.Amps);
+            conditions.Power = new Units.Power(BusComms.ReadRegister((byte)Register.Power) * 0.01f, Units.Power.UnitType.Watts);
 
             return Task.FromResult(conditions);
         }
@@ -102,11 +102,11 @@ namespace Meadow.Foundation.Sensors.Power
         /// <summary>
         /// Reads the unique manufacturer identification number
         /// </summary>
-        public int ManufacturerID => Peripheral.ReadRegister((byte)Register.ManufacturerID);
+        public int ManufacturerID => BusComms.ReadRegister((byte)Register.ManufacturerID);
 
         /// <summary>
         /// Reads the unique die identification number
         /// </summary>
-        public int DieID => Peripheral.ReadRegister((byte)Register.ManufacturerID);
+        public int DieID => BusComms.ReadRegister((byte)Register.ManufacturerID);
     }
 }

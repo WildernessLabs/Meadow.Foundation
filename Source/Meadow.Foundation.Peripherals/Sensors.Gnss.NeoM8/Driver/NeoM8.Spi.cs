@@ -18,8 +18,8 @@ namespace Meadow.Foundation.Sensors.Gnss
         /// </summary>
         public Frequency SpiBusSpeed
         {
-            get => spiPeripheral.BusSpeed;
-            set => spiPeripheral.BusSpeed = value;
+            get => spiComms.BusSpeed;
+            set => spiComms.BusSpeed = value;
         }
 
         /// <summary>
@@ -32,11 +32,14 @@ namespace Meadow.Foundation.Sensors.Gnss
         /// </summary>
         public SpiClockConfiguration.Mode SpiBusMode
         {
-            get => spiPeripheral.BusMode;
-            set => spiPeripheral.BusMode = value;
+            get => spiComms.BusMode;
+            set => spiComms.BusMode = value;
         }
 
-        readonly ISpiPeripheral spiPeripheral;
+        /// <summary>
+        /// SPI Communication bus used to communicate with the peripheral
+        /// </summary>
+        protected ISpiCommunications spiComms;
 
         const byte NULL_VALUE = 0xFF;
 
@@ -51,7 +54,7 @@ namespace Meadow.Foundation.Sensors.Gnss
             ResetPort = resetPort;
             PulsePerSecondPort = ppsPort;
 
-            spiPeripheral = new SpiPeripheral(spiBus, chipSelectPort, DefaultSpiBusSpeed, DefaultSpiBusMode);
+            spiComms = new SpiCommunications(spiBus, chipSelectPort, DefaultSpiBusSpeed, DefaultSpiBusMode);
 
             _ = InitializeSpi();
         }
@@ -63,7 +66,7 @@ namespace Meadow.Foundation.Sensors.Gnss
         {
             var chipSelectPort = chipSelectPin.CreateDigitalOutputPort();
 
-            spiPeripheral = new SpiPeripheral(spiBus, chipSelectPort, DefaultSpiBusSpeed, DefaultSpiBusMode);
+            spiComms = new SpiCommunications(spiBus, chipSelectPort, DefaultSpiBusSpeed, DefaultSpiBusMode);
 
             resetPin?.CreateDigitalOutputPort(true);
 
@@ -109,7 +112,7 @@ namespace Meadow.Foundation.Sensors.Gnss
             {
                 while (true)
                 {
-                    spiPeripheral.Read(data);
+                    spiComms.Read(data);
                     messageProcessor.Process(data);
 
                     if (HasMoreData(data) == false)

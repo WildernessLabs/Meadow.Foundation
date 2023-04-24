@@ -165,8 +165,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         public Frequency SpiBusSpeed
         {
-            get => ((Bme68xSPI)sensor).SpiPeripheral.BusSpeed;
-            set => ((Bme68xSPI)sensor).SpiPeripheral.BusSpeed = value;
+            get => ((Bme68xSPI)sensor).spiComms.BusSpeed;
+            set => ((Bme68xSPI)sensor).spiComms.BusSpeed = value;
         }
 
         /// <summary>
@@ -179,8 +179,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         public SpiClockConfiguration.Mode SpiBusMode
         {
-            get => ((Bme68xSPI)sensor).SpiPeripheral.BusMode;
-            set => ((Bme68xSPI)sensor).SpiPeripheral.BusMode = value;
+            get => ((Bme68xSPI)sensor).spiComms.BusMode;
+            set => ((Bme68xSPI)sensor).spiComms.BusMode = value;
         }
 
         /// <summary>

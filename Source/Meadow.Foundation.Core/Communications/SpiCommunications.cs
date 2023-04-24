@@ -4,10 +4,10 @@ using System;
 namespace Meadow.Hardware
 {
     /// <summary>
-    /// Represents an SPI peripheral object
+    /// Helper class for SPI communications, handles registers, endian, etc.
     /// This encapsulates and synchronizes the SPI bus and chip select ports
     /// </summary>
-    public class SpiPeripheral : ISpiPeripheral
+    public class SpiCommunications : ISpiCommunications
     {
         /// <summary>
         /// The SPI chip select port
@@ -46,7 +46,7 @@ namespace Meadow.Hardware
         protected Memory<byte> ReadBuffer { get; }
 
         /// <summary>
-        /// Creates a new SpiPeripheral instance
+        /// Creates a new SpiCommunications instance
         /// </summary>
         /// <param name="bus">The spi bus connected to the peripheral</param>
         /// <param name="chipSelect">The chip select port</param>
@@ -55,7 +55,7 @@ namespace Meadow.Hardware
         /// <param name="readBufferSize">The size of the read buffer in bytes</param>
         /// <param name="writeBufferSize">The size of the write buffer in bytes</param>
         /// <param name="csMode">The chip select mode, active high or active low</param>
-        public SpiPeripheral(
+        public SpiCommunications(
             ISpiBus bus,
             IDigitalOutputPort? chipSelect,
             Frequency busSpeed,
@@ -153,7 +153,6 @@ namespace Meadow.Hardware
         /// <param name="value">Value to write</param>
         public void WriteRegister(byte address, byte value)
         {
-            // stuff the address and value into the write buffer
             WriteBuffer.Span[0] = address;
             WriteBuffer.Span[1] = value;
             Bus.Write(ChipSelect, WriteBuffer.Span[0..2], chipSelectMode);
@@ -180,7 +179,6 @@ namespace Meadow.Hardware
         /// <param name="order">Indicate if the data should be written as big or little endian.</param>
         public void WriteRegister(byte address, uint value, ByteOrder order = ByteOrder.LittleEndian)
         {
-            // split the 32 bit ushort into four bytes
             var bytes = BitConverter.GetBytes(value);
             WriteRegister(address, bytes, order);
         }
@@ -193,7 +191,6 @@ namespace Meadow.Hardware
         /// <param name="order">Indicate if the data should be written as big or little endian.</param>
         public void WriteRegister(byte address, ulong value, ByteOrder order = ByteOrder.LittleEndian)
         {
-            // split the 64 bit ushort into eight bytes
             var bytes = BitConverter.GetBytes(value);
             WriteRegister(address, bytes, order);
         }
@@ -216,8 +213,6 @@ namespace Meadow.Hardware
 
             WriteBuffer.Span[0] = address;
 
-            // stuff the bytes into the write buffer (starting at `1` index,
-            // because `0` is the register address.
             switch (order)
             {
                 case ByteOrder.LittleEndian:
@@ -229,7 +224,6 @@ namespace Meadow.Hardware
                 case ByteOrder.BigEndian:
                     for (int i = 0; i < writeBuffer.Length; i++)
                     {
-                        // stuff them backwards
                         WriteBuffer.Span[i + 1] = writeBuffer[writeBuffer.Length - (i + 1)];
                     }
                     break;
@@ -257,27 +251,14 @@ namespace Meadow.Hardware
 
             if (duplex == DuplexType.Half)
             {
-                // Todo: we should move this functionality deeper into the stack
-                // and have nuttx write the write buffer, then continue clocking out
-                // 0x00's until it's hit writeBuffer.Length + readBuffer.Lenght
-                // and ignore the input until it hits writeBuffer.Length, and then
-                // start writing directly into the readBuffer starting at 0.
-                // that will prevent all the allocations and copying we're doing
-                // here.
-
-                // clock in and clock out data means that the buffers have to be as
-                // long as both tx and rx together
                 int length = writeBuffer.Length + readBuffer.Length;
                 Span<byte> txBuffer = stackalloc byte[length];
                 Span<byte> rxBuffer = stackalloc byte[length];
 
-                // copy the write into tx
                 writeBuffer.CopyTo(txBuffer);
 
-                // write/read the data
                 Bus.Exchange(ChipSelect, txBuffer, rxBuffer, chipSelectMode);
 
-                // move the rx data into the read buffer, starting it at zero
                 rxBuffer[writeBuffer.Length..length].CopyTo(readBuffer);
             }
             else

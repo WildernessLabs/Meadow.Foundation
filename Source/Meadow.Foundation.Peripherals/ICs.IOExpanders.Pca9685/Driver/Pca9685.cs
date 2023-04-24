@@ -11,7 +11,11 @@ namespace Meadow.Foundation.ICs.IOExpanders
     /// <remarks>All PWM channels run at the same Frequency</remarks>
     public partial class Pca9685
     {
-        private readonly II2cPeripheral i2cPeripheral;
+        /// <summary>
+        /// I2C Communication bus used to communicate with the peripheral
+        /// </summary>
+        protected readonly II2cCommunications i2cComms;
+
         private readonly Frequency frequency;
 
         //# Registers/etc.
@@ -55,7 +59,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         {
             i2CBus = i2cBus;
             this.address = address;
-            i2cPeripheral = new I2cPeripheral(i2CBus, address);
+            i2cComms = new I2cCommunications(i2CBus, address);
             this.frequency = frequency;
         }
 
@@ -160,7 +164,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
         void Write(byte register, byte value)
         {
-            i2cPeripheral.WriteRegister(register, value);
+            i2cComms.WriteRegister(register, value);
         }
 
         void SetFrequency(Frequency frequency)
@@ -171,7 +175,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             prescaleval -= 1.0;
 
             double prescale = Math.Floor(prescaleval + 0.5);
-            byte oldmode = i2cPeripheral.ReadRegister(Mode1);
+            byte oldmode = i2cComms.ReadRegister(Mode1);
             byte newmode = (byte)((oldmode & 0x7F) | 0x10);         //   # sleep
 
             Write(Mode1, newmode);//       # go to sleep

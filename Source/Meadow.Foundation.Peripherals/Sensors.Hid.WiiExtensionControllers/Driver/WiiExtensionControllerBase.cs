@@ -17,9 +17,9 @@ namespace Meadow.Foundation.Sensors.Hid
         public static I2cBusSpeed DefaultSpeed => I2cBusSpeed.Fast;
 
         /// <summary>
-        /// The I2C peripheral object for the extension
+        /// I2C Communication bus used to communicate with the peripheral
         /// </summary>
-        protected readonly II2cPeripheral i2cPeripheral;
+        protected readonly II2cCommunications i2cComms;
 
         /// <summary>
         /// Data buffer returned by the controller
@@ -49,7 +49,7 @@ namespace Meadow.Foundation.Sensors.Hid
         /// <param name="address">The extension controller address</param>
         public WiiExtensionControllerBase(II2cBus i2cBus, byte address)
         {
-            i2cPeripheral = new I2cPeripheral(i2cBus, address);
+            i2cComms = new I2cCommunications(i2cBus, address);
 
             Initialize();
         }
@@ -59,8 +59,8 @@ namespace Meadow.Foundation.Sensors.Hid
         /// </summary>
         protected virtual void Initialize()
         {
-            i2cPeripheral.WriteRegister(0xF0, 0x55);
-            i2cPeripheral.WriteRegister(0xFB, 0x00);
+            i2cComms.WriteRegister(0xF0, 0x55);
+            i2cComms.WriteRegister(0xFB, 0x00);
             Thread.Sleep(100);
         }
 
@@ -69,9 +69,9 @@ namespace Meadow.Foundation.Sensors.Hid
         /// </summary>
         public virtual void Update()
         {
-            i2cPeripheral.Write(0);
+            i2cComms.Write(0);
 
-            i2cPeripheral.Read(readBuffer[..6]);
+            i2cComms.Read(readBuffer[..6]);
         }
 
         /// <summary>
@@ -80,8 +80,8 @@ namespace Meadow.Foundation.Sensors.Hid
         /// <returns>The ID as a byte</returns>
         public byte[] GetIdentification()
         {
-            i2cPeripheral.Write(0xFA);
-            i2cPeripheral.Read(readBuffer[..6]);
+            i2cComms.Write(0xFA);
+            i2cComms.Read(readBuffer[..6]);
 
             Resolver.Log.Info(BitConverter.ToString(readBuffer[..6].ToArray()));
 

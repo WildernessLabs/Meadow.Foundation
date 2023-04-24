@@ -66,7 +66,7 @@ namespace Meadow.Foundation.Sensors.LoadCell
                 Thread.Sleep(1);
             }
 
-            Peripheral?.ReadRegister((byte)Register.ADCO_B2, _read);
+            BusComms?.ReadRegister((byte)Register.ADCO_B2, _read);
             return _read[0] << 16 | _read[1] << 8 | _read[2];
         }
 
@@ -90,16 +90,16 @@ namespace Meadow.Foundation.Sensors.LoadCell
 
             // Set and clear the RR bit in 0x00, to guarantee a reset of all register values
             _currentPU_CTRL = PU_CTRL_BITS.RR;
-            Peripheral?.WriteRegister((byte)Register.PU_CTRL, (byte)_currentPU_CTRL);
+            BusComms?.WriteRegister((byte)Register.PU_CTRL, (byte)_currentPU_CTRL);
             Thread.Sleep(1); // make sure it has time to do it's thing
             _currentPU_CTRL &= ~PU_CTRL_BITS.RR;
 
-            Peripheral?.WriteRegister((byte)Register.PU_CTRL, (byte)_currentPU_CTRL);
+            BusComms?.WriteRegister((byte)Register.PU_CTRL, (byte)_currentPU_CTRL);
 
             // turn on the analog and digital power
             _currentPU_CTRL |= (PU_CTRL_BITS.PUD | PU_CTRL_BITS.PUA);
 
-            Peripheral?.WriteRegister((byte)Register.PU_CTRL, (byte)_currentPU_CTRL);
+            BusComms?.WriteRegister((byte)Register.PU_CTRL, (byte)_currentPU_CTRL);
             // wait for power-up ready
             var timeout = 100;
             do
@@ -110,7 +110,7 @@ namespace Meadow.Foundation.Sensors.LoadCell
                     throw new Exception("Timeout powering up");
                 }
                 Thread.Sleep(10);
-                _currentPU_CTRL = (PU_CTRL_BITS)(Peripheral?.ReadRegister((byte)Register.PU_CTRL) ?? 0);
+                _currentPU_CTRL = (PU_CTRL_BITS)(BusComms?.ReadRegister((byte)Register.PU_CTRL) ?? 0);
             } while ((_currentPU_CTRL & PU_CTRL_BITS.PUR) != PU_CTRL_BITS.PUR);
 
 
@@ -119,7 +119,7 @@ namespace Meadow.Foundation.Sensors.LoadCell
             SetLDO(LdoVoltage.LDO_3V3);
             SetGain(AdcGain.Gain128);
             SetConversionRate(ConversionRate.SamplePerSecond80);
-            Peripheral?.WriteRegister((byte)Register.OTP_ADC, 0x30); // turn off CLK_CHP
+            BusComms?.WriteRegister((byte)Register.OTP_ADC, 0x30); // turn off CLK_CHP
             EnableCh2DecouplingCap();
 
             if (!CalibrateAdc())
@@ -128,10 +128,10 @@ namespace Meadow.Foundation.Sensors.LoadCell
             }
 
             // turn on cycle start
-            _currentPU_CTRL = (PU_CTRL_BITS)(Peripheral?.ReadRegister((byte)Register.PU_CTRL) ?? 0);
+            _currentPU_CTRL = (PU_CTRL_BITS)(BusComms?.ReadRegister((byte)Register.PU_CTRL) ?? 0);
             _currentPU_CTRL |= PU_CTRL_BITS.CS;
 
-            Peripheral?.WriteRegister((byte)Register.PU_CTRL, (byte)_currentPU_CTRL);
+            BusComms?.WriteRegister((byte)Register.PU_CTRL, (byte)_currentPU_CTRL);
 
 
             Output.WriteLine($"PU_CTRL: {_currentPU_CTRL}"); // 0xBE
@@ -143,61 +143,61 @@ namespace Meadow.Foundation.Sensors.LoadCell
 
         private bool IsConversionComplete()
         {
-            var puctrl = (PU_CTRL_BITS)(Peripheral?.ReadRegister((byte)Register.PU_CTRL) ?? 0);
+            var puctrl = (PU_CTRL_BITS)(BusComms?.ReadRegister((byte)Register.PU_CTRL) ?? 0);
             return (puctrl & PU_CTRL_BITS.CR) == PU_CTRL_BITS.CR;
         }
 
         private void EnableCh2DecouplingCap()
         {   // app note - enable ch2 decoupling cap
-            var pga_pwr = Peripheral?.ReadRegister((byte)Register.PGA_PWR) ?? 0;
+            var pga_pwr = BusComms?.ReadRegister((byte)Register.PGA_PWR) ?? 0;
             pga_pwr |= 1 << 7;
 
-            Peripheral?.WriteRegister((byte)Register.PGA_PWR, pga_pwr);
+            BusComms?.WriteRegister((byte)Register.PGA_PWR, pga_pwr);
         }
 
         private void SetLDO(LdoVoltage value)
         {
-            var ctrl1 = Peripheral?.ReadRegister((byte)Register.CTRL1) ?? 0;
+            var ctrl1 = BusComms?.ReadRegister((byte)Register.CTRL1) ?? 0;
             ctrl1 &= 0b11000111; // clear LDO
             ctrl1 |= (byte)((byte)value << 3);
 
-            Peripheral?.WriteRegister((byte)Register.CTRL1, ctrl1);
+            BusComms?.WriteRegister((byte)Register.CTRL1, ctrl1);
             _currentPU_CTRL |= PU_CTRL_BITS.AVDDS;
 
-            Peripheral?.WriteRegister((byte)Register.PU_CTRL, (byte)_currentPU_CTRL); // enable internal LDO
+            BusComms?.WriteRegister((byte)Register.PU_CTRL, (byte)_currentPU_CTRL); // enable internal LDO
         }
 
         private void SetGain(AdcGain value)
         {
-            var ctrl1 = Peripheral?.ReadRegister((byte)Register.CTRL1) ?? 0;
+            var ctrl1 = BusComms?.ReadRegister((byte)Register.CTRL1) ?? 0;
 
             ctrl1 &= 0b11111000; // clear gain
             ctrl1 |= (byte)value;
             //Bus.WriteRegister((byte)Register.CTRL1, ctrl1);
-            Peripheral?.WriteRegister((byte)Register.CTRL1, ctrl1);
+            BusComms?.WriteRegister((byte)Register.CTRL1, ctrl1);
         }
 
         void SetConversionRate(ConversionRate value)
         {
-            var ctrl2 = Peripheral?.ReadRegister((byte)Register.CTRL2) ?? 0;
+            var ctrl2 = BusComms?.ReadRegister((byte)Register.CTRL2) ?? 0;
             ctrl2 &= 0b10001111; // clear gain
             ctrl2 |= (byte)((byte)value << 4);
 
-            Peripheral?.WriteRegister((byte)Register.CTRL2, ctrl2);
+            BusComms?.WriteRegister((byte)Register.CTRL2, ctrl2);
         }
 
         bool CalibrateAdc()
         {
-            var ctrl2 = Peripheral?.ReadRegister((byte)Register.CTRL2) ?? 0;
+            var ctrl2 = BusComms?.ReadRegister((byte)Register.CTRL2) ?? 0;
 
             // turn on the calibration bit
             ctrl2 |= (byte)CTRL2_BITS.CALS;
 
-            Peripheral?.WriteRegister((byte)Register.CTRL2, ctrl2);
+            BusComms?.WriteRegister((byte)Register.CTRL2, ctrl2);
 
             do
             {
-                ctrl2 = Peripheral?.ReadRegister((byte)Register.CTRL2) ?? 0;
+                ctrl2 = BusComms?.ReadRegister((byte)Register.CTRL2) ?? 0;
                 if ((ctrl2 & (byte)CTRL2_BITS.CAL_ERROR) != 0)
                 {
                     // calibration error
