@@ -169,26 +169,23 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <returns>The latest sensor reading</returns>
         protected override Task<(MagneticField3D? MagneticField3D, Units.Temperature? Temperature)> ReadSensor()
         {
-            return Task.Run(() =>
-            {
-                (MagneticField3D? MagneticField3D, Units.Temperature? Temperature) conditions;
+            (MagneticField3D? MagneticField3D, Units.Temperature? Temperature) conditions;
 
-                var controlRegister = Peripheral.ReadRegister(Registers.CONTROL_1);
-                controlRegister |= 0x02;
-                Peripheral.WriteRegister(Registers.CONTROL_1, controlRegister);
+            var controlRegister = Peripheral.ReadRegister(Registers.CONTROL_1);
+            controlRegister |= 0x02;
+            Peripheral.WriteRegister(Registers.CONTROL_1, controlRegister);
 
-                Peripheral.ReadRegister(Registers.X_MSB, ReadBuffer.Span[0..6]);
+            Peripheral.ReadRegister(Registers.X_MSB, ReadBuffer.Span[0..6]);
 
-                conditions.MagneticField3D = new MagneticField3D(
-                    new MagneticField((short)((ReadBuffer.Span[0] << 8) | ReadBuffer.Span[1]), MagneticField.UnitType.MicroTesla),
-                    new MagneticField((short)((ReadBuffer.Span[2] << 8) | ReadBuffer.Span[3]), MagneticField.UnitType.MicroTesla),
-                    new MagneticField((short)((ReadBuffer.Span[4] << 8) | ReadBuffer.Span[5]), MagneticField.UnitType.MicroTesla)
-                    );
+            conditions.MagneticField3D = new MagneticField3D(
+                new MagneticField((short)((ReadBuffer.Span[0] << 8) | ReadBuffer.Span[1]), MagneticField.UnitType.MicroTesla),
+                new MagneticField((short)((ReadBuffer.Span[2] << 8) | ReadBuffer.Span[3]), MagneticField.UnitType.MicroTesla),
+                new MagneticField((short)((ReadBuffer.Span[4] << 8) | ReadBuffer.Span[5]), MagneticField.UnitType.MicroTesla)
+                );
 
-                conditions.Temperature = new Units.Temperature((sbyte)Peripheral.ReadRegister(Registers.TEMPERATURE), Units.Temperature.UnitType.Celsius);
+            conditions.Temperature = new Units.Temperature((sbyte)Peripheral.ReadRegister(Registers.TEMPERATURE), Units.Temperature.UnitType.Celsius);
 
-                return conditions;
-            });
+            return Task.FromResult(conditions);
         }
 
         /// <summary>

@@ -1,9 +1,9 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
 using Meadow.Peripherals.Sensors;
 using Meadow.Units;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Atmospheric
 {
@@ -18,14 +18,14 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// Raised when the temperature value changes
         /// </summary>
         public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
-        
+
         /// <summary>
         /// Raised when the pressure value changes
         /// </summary>
         public event EventHandler<IChangeResult<Pressure>> PressureUpdated = delegate { };
 
         // Oversampling for measurements
-        private byte oversamplingSetting;
+        private readonly byte oversamplingSetting;
 
         // These wait times correspond to the oversampling settings
         private readonly byte[] pressureWaitTime = { 5, 8, 14, 26 };
@@ -95,62 +95,47 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         protected override Task<(Units.Temperature? Temperature, Pressure? Pressure)> ReadSensor()
         {
-            return Task.Run(() =>
+            (Units.Temperature? Temperature, Pressure? Pressure) conditions;
+
+            long x1, x2, x3, b4, b5, b6, b7, p;
+            long ut = ReadUncompensatedTemperature();
+            long up = ReadUncompensatedPressure();
+
+            // calculate the compensated temperature
+            x1 = (ut - _ac6) * _ac5 >> 15;
+            x2 = (_mc << 11) / (x1 + _md);
+            b5 = x1 + x2;
+
+            conditions.Temperature = new Units.Temperature((float)((b5 + 8) >> 4) / 10, Units.Temperature.UnitType.Celsius);
+
+            // calculate the compensated pressure
+            b6 = b5 - 4000;
+            x1 = (_b2 * (b6 * b6 >> 12)) >> 11;
+            x2 = _ac2 * b6 >> 11;
+            x3 = x1 + x2;
+            var b3 = oversamplingSetting switch
             {
-                (Units.Temperature? Temperature, Pressure? Pressure) conditions;
+                0 => ((_ac1 * 4 + x3) + 2) >> 2,
+                1 => ((_ac1 * 4 + x3) + 2) >> 1,
+                2 => ((_ac1 * 4 + x3) + 2),
+                3 => ((_ac1 * 4 + x3) + 2) << 1,
+                _ => throw new Exception("Oversampling setting must be 0-3"),
+            };
+            x1 = _ac3 * b6 >> 13;
+            x2 = (_b1 * (b6 * b6 >> 12)) >> 16;
+            x3 = ((x1 + x2) + 2) >> 2;
+            b4 = (_ac4 * (x3 + 32768)) >> 15;
+            b7 = (up - b3) * (50000 >> oversamplingSetting);
+            p = (b7 < 0x80000000 ? (b7 * 2) / b4 : (b7 / b4) * 2);
+            x1 = (p >> 8) * (p >> 8);
+            x1 = (x1 * 3038) >> 16;
+            x2 = (-7357 * p) >> 16;
 
-                long x1, x2, x3, b3, b4, b5, b6, b7, p;
+            int value = (int)(p + ((x1 + x2 + 3791) >> 4));
 
-                long ut = ReadUncompensatedTemperature();
+            conditions.Pressure = new Pressure(value, Units.Pressure.UnitType.Pascal);
 
-                long up = ReadUncompensatedPressure();
-
-                // calculate the compensated temperature
-                x1 = (ut - _ac6) * _ac5 >> 15;
-                x2 = (_mc << 11) / (x1 + _md);
-                b5 = x1 + x2;
-
-                conditions.Temperature = new Units.Temperature((float)((b5 + 8) >> 4) / 10, Units.Temperature.UnitType.Celsius);
-
-                // calculate the compensated pressure
-                b6 = b5 - 4000;
-                x1 = (_b2 * (b6 * b6 >> 12)) >> 11;
-                x2 = _ac2 * b6 >> 11;
-                x3 = x1 + x2;
-
-                switch (oversamplingSetting)
-                {
-                    case 0:
-                        b3 = ((_ac1 * 4 + x3) + 2) >> 2;
-                        break;
-                    case 1:
-                        b3 = ((_ac1 * 4 + x3) + 2) >> 1;
-                        break;
-                    case 2:
-                        b3 = ((_ac1 * 4 + x3) + 2);
-                        break;
-                    case 3:
-                        b3 = ((_ac1 * 4 + x3) + 2) << 1;
-                        break;
-                    default:
-                        throw new Exception("Oversampling setting must be 0-3");
-                }
-                x1 = _ac3 * b6 >> 13;
-                x2 = (_b1 * (b6 * b6 >> 12)) >> 16;
-                x3 = ((x1 + x2) + 2) >> 2;
-                b4 = (_ac4 * (x3 + 32768)) >> 15;
-                b7 = (up - b3) * (50000 >> oversamplingSetting);
-                p = (b7 < 0x80000000 ? (b7 * 2) / b4 : (b7 / b4) * 2);
-                x1 = (p >> 8) * (p >> 8);
-                x1 = (x1 * 3038) >> 16;
-                x2 = (-7357 * p) >> 16;
-
-                int value = (int)(p + ((x1 + x2 + 3791) >> 4));
-
-                conditions.Pressure = new Pressure(value, Units.Pressure.UnitType.Pascal);
-
-                return conditions;
-            });
+            return Task.FromResult(conditions);
         }
 
         private long ReadUncompensatedTemperature()

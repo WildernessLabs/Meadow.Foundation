@@ -1,9 +1,8 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
 using Meadow.Peripherals.Sensors;
 using Meadow.Units;
+using System;
+using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Atmospheric
 {
@@ -91,29 +90,22 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         protected override async Task<(Units.Temperature? Temperature, Pressure? Pressure)> ReadSensor()
         {
-            return await Task.Run(() =>
+            (Units.Temperature? Temperature, Pressure? Pressure) conditions;
+            //  Force the sensor to make a reading by setting the OST bit in Control
+            //  register 1 (see 7.17.1 of the datasheet).
+            Standby = false;
+            //  Pause until both temperature and pressure readings are available
+            while ((Status & 0x06) != 0x06)
             {
-                (Units.Temperature? Temperature, Pressure? Pressure) conditions;
-                //
-                //  Force the sensor to make a reading by setting the OST bit in Control
-                //  register 1 (see 7.17.1 of the datasheet).
-                //
-                Standby = false;
-                //
-                //  Pause until both temperature and pressure readings are available.
-                //            
-                while ((Status & 0x06) != 0x06)
-                {
-                    Thread.Sleep(5);
-                }
+                await Task.Delay(5);
+            }
 
-                Thread.Sleep(100);
-                Peripheral?.ReadRegister(Registers.PressureMSB, ReadBuffer.Span);
-                conditions.Pressure = new Pressure(DecodePresssure(ReadBuffer.Span[0], ReadBuffer.Span[1], ReadBuffer.Span[2]), Units.Pressure.UnitType.Pascal);
-                conditions.Temperature = new Units.Temperature(DecodeTemperature(ReadBuffer.Span[3], ReadBuffer.Span[4]), Units.Temperature.UnitType.Celsius);
+            await Task.Delay(100);
+            Peripheral?.ReadRegister(Registers.PressureMSB, ReadBuffer.Span);
+            conditions.Pressure = new Pressure(DecodePresssure(ReadBuffer.Span[0], ReadBuffer.Span[1], ReadBuffer.Span[2]), Units.Pressure.UnitType.Pascal);
+            conditions.Temperature = new Units.Temperature(DecodeTemperature(ReadBuffer.Span[3], ReadBuffer.Span[4]), Units.Temperature.UnitType.Celsius);
 
-                return conditions;
-            });
+            return conditions;
         }
 
         /// <summary>
@@ -153,25 +145,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         }
 
         /// <summary>
-        /// Encode the pressure into the sensor reading byes.
-        /// This method is used to allow the target pressure and pressure window
-        /// properties to be set.
-        /// </summary>
-        /// <param name="pressure">Pressure in Pascals to encode.</param>
-        /// <returns>Array holding the three byte values for the sensor.</returns>
-        private byte[] EncodePressure(double pressure)
-        {
-            var result = new byte[3];
-            var temp = (uint)(pressure * 64);
-            result[2] = (byte)(temp & 0xff);
-            temp >>= 8;
-            result[1] = (byte)(temp & 0xff);
-            temp >>= 8;
-            result[0] = (byte)(temp & 0xff);
-            return result;
-        }
-
-        /// <summary>
         /// Decode the two bytes representing the temperature into degrees C.
         /// </summary>
         /// <param name="msb">MSB of the temperature sensor reading.</param>
@@ -183,23 +156,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             temperature <<= 8;
             temperature |= lsb;
             return (float)(temperature / 256.0);
-        }
-
-        /// <summary>
-        /// Encode a temperature into sensor reading bytes.
-        /// This method is needed in order to allow the temperature target
-        /// and window properties to work.
-        /// </summary>
-        /// <param name="temperature">Temperature to encode.</param>
-        /// <returns>Temperature tuple containing the two bytes for the sensor.</returns>
-        private byte[] EncodeTemperature(double temperature)
-        {
-            var result = new byte[2];
-            var temp = (ushort)(temperature * 256);
-            result[1] = (byte)(temp & 0xff);
-            temp >>= 8;
-            result[0] = (byte)(temp & 0xff);
-            return result;
         }
 
         /// <summary>

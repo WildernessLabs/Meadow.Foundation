@@ -3,6 +3,7 @@ using Meadow.Peripherals.Sensors;
 using Meadow.Units;
 using Meadow.Utilities;
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Atmospheric
@@ -82,21 +83,21 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// Convenience method to get the current Pressure. For frequent reads, use
         /// StartSampling() and StopSampling() in conjunction with the SampleBuffer.
         /// </summary>
-        protected override async Task<(Pressure? Pressure, Pressure? RawPsiMeasurement)> ReadSensor()
+        protected override Task<(Pressure? Pressure, Pressure? RawPsiMeasurement)> ReadSensor()
         {
-            return await Task.Run(async () =>
+            return Task.Run(() =>
             {
                 //Send the command to the sensor to tell it to do the thing.
                 Peripheral.Write(mprlsMeasurementCommand);
 
-                //Datasheet says wait 5 ms.
-                await Task.Delay(5);
+                //Datasheet says wait 5ms
+                Thread.Sleep(5);
 
                 while (true)
                 {
                     Peripheral.Read(ReadBuffer.Span[0..1]);
 
-                    //From section 6.5 of the datasheet.
+                    //From section 6.5 of the datasheet
                     IsDevicePowered = BitHelpers.GetBitValue(ReadBuffer.Span[0], 6);
                     IsDeviceBusy = BitHelpers.GetBitValue(ReadBuffer.Span[0], 5);
                     HasMemoryIntegrityFailed = BitHelpers.GetBitValue(ReadBuffer.Span[0], 2);
@@ -112,7 +113,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                         throw new InvalidOperationException("Sensor internal memory integrity check failed!");
                     }
 
-                    if (!(IsDeviceBusy))
+                    if (!IsDeviceBusy)
                     {
                         break;
                     }

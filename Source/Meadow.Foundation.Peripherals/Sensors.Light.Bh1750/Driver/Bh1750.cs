@@ -1,11 +1,10 @@
 ﻿using Meadow.Hardware;
 using Meadow.Peripherals.Sensors.Light;
 using Meadow.Units;
-using IU = Meadow.Units.Illuminance.UnitType;
 using System;
 using System.Buffers.Binary;
 using System.Threading.Tasks;
-using System.Threading;
+using IU = Meadow.Units.Illuminance.UnitType;
 
 namespace Meadow.Foundation.Sensors.Light
 {
@@ -68,36 +67,33 @@ namespace Meadow.Foundation.Sensors.Light
         /// Read the current luminocity 
         /// </summary>
         /// <returns>The current Illuminance value</returns>
-        protected override Task<Illuminance> ReadSensor()
+        protected async override Task<Illuminance> ReadSensor()
         {
-            return Task.Run(() =>
+            if (MeasuringMode == MeasuringModes.OneTimeHighResolutionMode ||
+                MeasuringMode == MeasuringModes.OneTimeHighResolutionMode2 ||
+                MeasuringMode == MeasuringModes.OneTimeLowResolutionMode)
             {
-                if (MeasuringMode == MeasuringModes.OneTimeHighResolutionMode ||
-                    MeasuringMode == MeasuringModes.OneTimeHighResolutionMode2 ||
-                    MeasuringMode == MeasuringModes.OneTimeLowResolutionMode)
-                {
-                    Peripheral.Write((byte)Commands.PowerOn);
-                }
+                Peripheral.Write((byte)Commands.PowerOn);
+            }
 
-                Peripheral.Write((byte)MeasuringMode);
+            Peripheral.Write((byte)MeasuringMode);
 
-                //wait for the measurement to complete before reading
-                Thread.Sleep(GetMeasurementTime(MeasuringMode));
+            //wait for the measurement to complete before reading
+            await Task.Delay(GetMeasurementTime(MeasuringMode));
 
-                Peripheral.Read(ReadBuffer.Span[0..2]);
+            Peripheral.Read(ReadBuffer.Span[0..2]);
 
-                ushort raw = BinaryPrimitives.ReadUInt16BigEndian(ReadBuffer.Span[0..2]);
+            ushort raw = BinaryPrimitives.ReadUInt16BigEndian(ReadBuffer.Span[0..2]);
 
-                double result = raw / (1.2 * lightTransmittance);
+            double result = raw / (1.2 * lightTransmittance);
 
-                if (MeasuringMode == MeasuringModes.ContinuouslyHighResolutionMode2 ||
-                    MeasuringMode == MeasuringModes.OneTimeHighResolutionMode2)
-                {
-                    result *= 2;
-                }
+            if (MeasuringMode == MeasuringModes.ContinuouslyHighResolutionMode2 ||
+                MeasuringMode == MeasuringModes.OneTimeHighResolutionMode2)
+            {
+                result *= 2;
+            }
 
-                return new Illuminance(result, IU.Lux);
-            });
+            return new Illuminance(result, IU.Lux);
         }
 
         TimeSpan GetMeasurementTime(MeasuringModes mode)

@@ -3,13 +3,12 @@ using Meadow.Hardware;
 using Meadow.Peripherals.Sensors.Motion;
 using Meadow.Units;
 using System;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Motion
 {
     /// <summary>
-    /// Driver for the ADXL345 triple axis accelerometer.
+    /// Driver for the ADXL345 triple axis accelerometer
     /// +/- 16g
     /// </summary>
     public partial class Adxl345 : ByteCommsSensorBase<Acceleration3D>, IAccelerometer
@@ -40,8 +39,8 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </remarks>
         public sbyte OffsetX
         {
-            get => (sbyte)ReadRegister(Register.OFFSET_X); 
-            set => WriteRegister(Register.OFFSET_X, (byte)value); 
+            get => (sbyte)ReadRegister(Register.OFFSET_X);
+            set => WriteRegister(Register.OFFSET_X, (byte)value);
         }
 
         /// <summary>
@@ -52,8 +51,8 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </remarks>
         public sbyte OffsetY
         {
-            get => (sbyte)ReadRegister(Register.OFFSET_Y); 
-            set => WriteRegister(Register.OFFSET_Y, (byte)value); 
+            get => (sbyte)ReadRegister(Register.OFFSET_Y);
+            set => WriteRegister(Register.OFFSET_Y, (byte)value);
         }
 
         /// <summary>
@@ -64,8 +63,8 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </remarks>
         public sbyte OffsetZ
         {
-            get => (sbyte)ReadRegister(Register.OFFSET_Z); 
-            set => WriteRegister(Register.OFFSET_Z, (byte)value); 
+            get => (sbyte)ReadRegister(Register.OFFSET_Z);
+            set => WriteRegister(Register.OFFSET_Z, (byte)value);
         }
 
         /// <summary>
@@ -100,17 +99,14 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <returns>Current acceleration</returns>
         protected override Task<Acceleration3D> ReadSensor()
         {
-            return Task.Run(() =>
-            {
-                // read the data from the sensor starting at the X0 register
-                Peripheral.ReadRegister((byte)Register.X0, ReadBuffer.Span[0..6]);
+            Peripheral.ReadRegister((byte)Register.X0, ReadBuffer.Span[0..6]);
 
-                return new Acceleration3D(
-                    new Acceleration(ADXL345_MG2G_MULTIPLIER * (short)(ReadBuffer.Span[0] + (ReadBuffer.Span[1] << 8)), Acceleration.UnitType.Gravity),
-                    new Acceleration(ADXL345_MG2G_MULTIPLIER * (short)(ReadBuffer.Span[2] + (ReadBuffer.Span[3] << 8)), Acceleration.UnitType.Gravity),
-                    new Acceleration(ADXL345_MG2G_MULTIPLIER * (short)(ReadBuffer.Span[4] + (ReadBuffer.Span[5] << 8)), Acceleration.UnitType.Gravity)
-                    );
-            });
+            var conditions = new Acceleration3D(
+                new Acceleration(ADXL345_MG2G_MULTIPLIER * (short)(ReadBuffer.Span[0] + (ReadBuffer.Span[1] << 8)), Acceleration.UnitType.Gravity),
+                new Acceleration(ADXL345_MG2G_MULTIPLIER * (short)(ReadBuffer.Span[2] + (ReadBuffer.Span[3] << 8)), Acceleration.UnitType.Gravity),
+                new Acceleration(ADXL345_MG2G_MULTIPLIER * (short)(ReadBuffer.Span[4] + (ReadBuffer.Span[5] << 8)), Acceleration.UnitType.Gravity));
+
+            return Task.FromResult(conditions);
         }
 
         /// <summary>

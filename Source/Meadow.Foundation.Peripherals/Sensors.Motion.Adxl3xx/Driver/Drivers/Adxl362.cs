@@ -372,31 +372,26 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <returns>The latest sensor reading</returns>
         protected override Task<(Acceleration3D? Acceleration3D, Units.Temperature? Temperature)> ReadSensor()
         {
-            return Task.Run(() =>
-            {
-                (Acceleration3D? Acceleration3D, Units.Temperature? Temperature) conditions;
+            (Acceleration3D? Acceleration3D, Units.Temperature? Temperature) conditions;
 
-                // read the XYZ and Temp registers in one go
-                WriteBuffer.Span[0] = Commands.READ_REGISTER;
-                WriteBuffer.Span[1] = Registers.X_AXIS_LSB;
-                Peripheral.Exchange(WriteBuffer.Span[0..2], ReadBuffer.Span[0..8]);
+            // read the XYZ and Temp registers in one go
+            WriteBuffer.Span[0] = Commands.READ_REGISTER;
+            WriteBuffer.Span[1] = Registers.X_AXIS_LSB;
+            Peripheral.Exchange(WriteBuffer.Span[0..2], ReadBuffer.Span[0..8]);
 
-                // milli-gravity (1/1000 G)
-                conditions.Acceleration3D = new Acceleration3D(
-                    new Acceleration((short)((ReadBuffer.Span[1] << 8) | ReadBuffer.Span[0]) / 1000d, AU.Gravity),
-                    new Acceleration((short)((ReadBuffer.Span[3] << 8) | ReadBuffer.Span[2]) / 1000d, AU.Gravity),
-                    new Acceleration((short)((ReadBuffer.Span[5] << 8) | ReadBuffer.Span[4]) / 1000d, AU.Gravity)
-                    );
+            // milli-gravity (1/1000 G)
+            conditions.Acceleration3D = new Acceleration3D(
+                new Acceleration((short)((ReadBuffer.Span[1] << 8) | ReadBuffer.Span[0]) / 1000d, AU.Gravity),
+                new Acceleration((short)((ReadBuffer.Span[3] << 8) | ReadBuffer.Span[2]) / 1000d, AU.Gravity),
+                new Acceleration((short)((ReadBuffer.Span[5] << 8) | ReadBuffer.Span[4]) / 1000d, AU.Gravity));
 
-                double rawTemp = (short)((ReadBuffer.Span[7] << 8) | ReadBuffer.Span[6]);
-                // decimal doesn't come in, so 20.0C comes in as `200`. and also have to remove the bias.
-                double tempC = (rawTemp - AVERAGE_TEMPERATURE_BIAS) / 10d;
-                conditions.Temperature = new Units.Temperature(tempC, TU.Celsius);
+            double rawTemp = (short)((ReadBuffer.Span[7] << 8) | ReadBuffer.Span[6]);
+            // decimal doesn't come in, so 20.0C comes in as `200`. and also have to remove the bias.
+            double tempC = (rawTemp - AVERAGE_TEMPERATURE_BIAS) / 10d;
+            conditions.Temperature = new Units.Temperature(tempC, TU.Celsius);
 
-                return conditions;
-            });
+            return Task.FromResult(conditions);
         }
-
 
         /// <summary>
         /// Configure the activity threshold and activity time. Once configured it will be
@@ -455,9 +450,7 @@ namespace Meadow.Foundation.Sensors.Motion
             {
                 throw new ArgumentOutOfRangeException(nameof(threshold), "Inactivity threshold should be in the range 0-0x7ff");
             }
-            //
             //  The threshold and number of samples register are in consecutive locations.
-            //
             WriteBuffer.Span[0] = Commands.WRITE_REGISTER;
             WriteBuffer.Span[1] = Registers.INACTIVITY_TIME_COUNT_LSB;
             WriteBuffer.Span[2] = (byte)(threshold & 0xff);
@@ -475,14 +468,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <returns>Resistor mode mapping based upon the active low state.</returns>
         private ResistorMode MapResistorMode(bool activeLow)
         {
-            if (activeLow)
-            {
-                return (ResistorMode.InternalPullUp);
-            }
-            else
-            {
-                return (ResistorMode.InternalPullDown);
-            }
+            return activeLow ? ResistorMode.InternalPullUp : ResistorMode.InternalPullDown;
         }
 
         /// <summary>
@@ -493,14 +479,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <returns>Interrupt mode mapping based upon the active low state.</returns>
         private InterruptMode MapInterruptMode(bool activeLow)
         {
-            if (activeLow)
-            {
-                return (InterruptMode.EdgeFalling);
-            }
-            else
-            {
-                return (InterruptMode.EdgeRising);
-            }
+            return activeLow ? InterruptMode.EdgeFalling : InterruptMode.EdgeRising;
         }
 
         /// <summary>

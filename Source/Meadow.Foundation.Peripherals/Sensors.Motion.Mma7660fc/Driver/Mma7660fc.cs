@@ -1,8 +1,8 @@
-﻿using System;
-using System.Threading.Tasks;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
 using Meadow.Peripherals.Sensors.Motion;
 using Meadow.Units;
+using System;
+using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Motion
 {
@@ -58,7 +58,7 @@ namespace Meadow.Foundation.Sensors.Motion
             SetSampleRate(SampleRate._32);
             SetMode(SensorPowerMode.Active);
         }
-      
+
         void SetMode(SensorPowerMode mode)
         {
             Peripheral.WriteRegister((byte)Registers.Mode, (byte)mode);
@@ -90,12 +90,11 @@ namespace Meadow.Foundation.Sensors.Motion
 
                 //Signed byte 6-bit 2’s complement data with allowable range of +31 to -32
                 //[5] is 0 if the g direction is positive, 1 if the g direction is negative.
+                //ensure bit 6 isn't set - if so, it means there was a read/write collision ... try again
                 do
                 {
                     x = Peripheral.ReadRegister((byte)Registers.XOUT);
-                }
-                //ensure bit 6 isn't set - if so, it means there was a read/write collision ... try again
-                while (x >= 64);
+                } while (x >= 64);
 
                 //check bit 5 and flip to negative
                 if ((x & (1 << 5)) != 0) xAccel = x - 64;
@@ -104,19 +103,16 @@ namespace Meadow.Foundation.Sensors.Motion
                 do
                 {
                     y = Peripheral.ReadRegister((byte)Registers.YOUT);
-                }
-                //ensure bit 6 isn't set - if so, it means there was a read/write collision ... try again
-                while (y >= 64);
+                } while (y >= 64); //ensure bit 6 isn't set - if so, it means there was a read/write collision ... try again
 
                 if ((y & (1 << 5)) != 0) yAccel = y - 64;
                 else yAccel = y;
 
+                //ensure bit 6 isn't set - if so, it means there was a read/write collision ... try again
                 do
                 {
                     z = Peripheral.ReadRegister((byte)Registers.ZOUT);
-                }
-                //ensure bit 6 isn't set - if so, it means there was a read/write collision ... try again
-                while (y >= 64);
+                } while (y >= 64);
 
                 if ((z & (1 << 5)) != 0) zAccel = z - 64;
                 else zAccel = z;
@@ -124,8 +120,7 @@ namespace Meadow.Foundation.Sensors.Motion
                 return new Acceleration3D(
                     new Acceleration(xAccel * 3.0 / 64.0, Acceleration.UnitType.Gravity),
                     new Acceleration(yAccel * 3.0 / 64.0, Acceleration.UnitType.Gravity),
-                    new Acceleration(zAccel * 3.0 / 64.0, Acceleration.UnitType.Gravity)
-                    );
+                    new Acceleration(zAccel * 3.0 / 64.0, Acceleration.UnitType.Gravity));
             });
         }
 

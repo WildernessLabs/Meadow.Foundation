@@ -143,8 +143,7 @@ namespace Meadow.Foundation.Sensors.Motion
                 conditions = new MagneticField3D(
                     new MagneticField(x * 0.00625, MagneticField.UnitType.MicroTesla),
                     new MagneticField(y * 0.00625, MagneticField.UnitType.MicroTesla),
-                    new MagneticField(z * 0.00625, MagneticField.UnitType.MicroTesla)
-                    );
+                    new MagneticField(z * 0.00625, MagneticField.UnitType.MicroTesla));
 
                 return conditions;
             });

@@ -414,15 +414,15 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// Reads data from the sensor
         /// </summary>
         /// <returns>The latest sensor reading</returns>
-        protected override async Task<(Units.Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure, Resistance? GasResistance)> ReadSensor()
+        protected override Task<(Units.Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure, Resistance? GasResistance)> ReadSensor()
         {
             configuration.TemperatureOversample = TemperatureOversampleMode;
             configuration.PressureOversample = PressureOversampleMode;
             configuration.HumidityOversample = HumidityOversampleMode;
 
-            return await Task.Run(() =>
+            return Task.Run(() =>
             {
-                (Units.Temperature Temperature, RelativeHumidity Humidity, Pressure Pressure, Resistance GasResistance) conditions;
+                (Units.Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure, Resistance? GasResistance) conditions;
 
                 //set onetime measurement
                 SetPowerMode(PowerMode.Forced);
@@ -471,7 +471,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 conditions.Temperature = CompensateTemperature(rawTemperature);
                 conditions.Pressure = CompensatePressure(rawPressure);
                 conditions.Humidity = CompensateHumidity(rawHumidity);
-
 
                 return conditions;
             });

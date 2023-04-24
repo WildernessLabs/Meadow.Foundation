@@ -18,14 +18,14 @@ namespace Meadow.Foundation.Sensors.Gnss
         /// <summary>
         /// Create a new NeoM8 object using I2C
         /// </summary>
-        public NeoM8(II2cBus i2cBus, byte address = (byte)Addresses.Default, IPin resetPin = null, IPin ppsPin = null)  
+        public NeoM8(II2cBus i2cBus, byte address = (byte)Addresses.Default, IPin resetPin = null, IPin ppsPin = null)
         {
-            if(resetPin != null)
+            if (resetPin != null)
             {
                 resetPort = resetPin.CreateDigitalOutputPort(true);
             }
 
-            if(ppsPin != null)
+            if (ppsPin != null)
             {
                 ppsPort = ppsPin.CreateDigitalInputPort(InterruptMode.EdgeRising, ResistorMode.InternalPullDown);
             }
@@ -62,7 +62,7 @@ namespace Meadow.Foundation.Sensors.Gnss
 
         async Task StartUpdatingI2c()
         {
-            await Task.Run(() =>
+            var t = new Task(() =>
             {
                 int len;
 
@@ -70,9 +70,9 @@ namespace Meadow.Foundation.Sensors.Gnss
                 {
                     len = i2CPeripheral.ReadRegisterAsUShort(0xFD, ByteOrder.BigEndian);
 
-                    if(len > 0)
+                    if (len > 0)
                     {
-                        if(len > 0)
+                        if (len > 0)
                         {
                             var data = i2cBuffer.Slice(0, Math.Min(len, BUFFER_SIZE)).Span;
 
@@ -82,7 +82,9 @@ namespace Meadow.Foundation.Sensors.Gnss
                     }
                     Thread.Sleep(COMMS_SLEEP_MS);
                 }
-            });
+            }, TaskCreationOptions.LongRunning);
+            t.Start();
+            await t;
         }
     }
 }

@@ -1,9 +1,9 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
 using Meadow.Peripherals.Sensors;
 using Meadow.Units;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.LoadCell
 {
@@ -93,12 +93,12 @@ namespace Meadow.Foundation.Sensors.LoadCell
             Peripheral?.WriteRegister((byte)Register.PU_CTRL, (byte)_currentPU_CTRL);
             Thread.Sleep(1); // make sure it has time to do it's thing
             _currentPU_CTRL &= ~PU_CTRL_BITS.RR;
-            
+
             Peripheral?.WriteRegister((byte)Register.PU_CTRL, (byte)_currentPU_CTRL);
 
             // turn on the analog and digital power
             _currentPU_CTRL |= (PU_CTRL_BITS.PUD | PU_CTRL_BITS.PUA);
-          
+
             Peripheral?.WriteRegister((byte)Register.PU_CTRL, (byte)_currentPU_CTRL);
             // wait for power-up ready
             var timeout = 100;
@@ -130,7 +130,7 @@ namespace Meadow.Foundation.Sensors.LoadCell
             // turn on cycle start
             _currentPU_CTRL = (PU_CTRL_BITS)(Peripheral?.ReadRegister((byte)Register.PU_CTRL) ?? 0);
             _currentPU_CTRL |= PU_CTRL_BITS.CS;
-           
+
             Peripheral?.WriteRegister((byte)Register.PU_CTRL, (byte)_currentPU_CTRL);
 
 
@@ -151,7 +151,7 @@ namespace Meadow.Foundation.Sensors.LoadCell
         {   // app note - enable ch2 decoupling cap
             var pga_pwr = Peripheral?.ReadRegister((byte)Register.PGA_PWR) ?? 0;
             pga_pwr |= 1 << 7;
-            
+
             Peripheral?.WriteRegister((byte)Register.PGA_PWR, pga_pwr);
         }
 
@@ -160,10 +160,10 @@ namespace Meadow.Foundation.Sensors.LoadCell
             var ctrl1 = Peripheral?.ReadRegister((byte)Register.CTRL1) ?? 0;
             ctrl1 &= 0b11000111; // clear LDO
             ctrl1 |= (byte)((byte)value << 3);
-          
+
             Peripheral?.WriteRegister((byte)Register.CTRL1, ctrl1);
             _currentPU_CTRL |= PU_CTRL_BITS.AVDDS;
-            
+
             Peripheral?.WriteRegister((byte)Register.PU_CTRL, (byte)_currentPU_CTRL); // enable internal LDO
         }
 
@@ -182,7 +182,7 @@ namespace Meadow.Foundation.Sensors.LoadCell
             var ctrl2 = Peripheral?.ReadRegister((byte)Register.CTRL2) ?? 0;
             ctrl2 &= 0b10001111; // clear gain
             ctrl2 |= (byte)((byte)value << 4);
-            
+
             Peripheral?.WriteRegister((byte)Register.CTRL2, ctrl2);
         }
 
@@ -192,7 +192,7 @@ namespace Meadow.Foundation.Sensors.LoadCell
 
             // turn on the calibration bit
             ctrl2 |= (byte)CTRL2_BITS.CALS;
-            
+
             Peripheral?.WriteRegister((byte)Register.CTRL2, ctrl2);
 
             do
@@ -220,7 +220,7 @@ namespace Meadow.Foundation.Sensors.LoadCell
         /// </summary>
         /// <returns>The calibration factor as an int</returns>
         public int CalculateCalibrationFactor()
-        {   
+        {
             var reads = 5;
             var sum = 0;
 
@@ -239,7 +239,7 @@ namespace Meadow.Foundation.Sensors.LoadCell
         public void SetCalibrationFactor(int factor, Mass knownValue)
         {
             Resolver.Log.Info($"SetCalibrationFactor: knownValue.Grams: {knownValue.Grams:N1}");
-            _gramsPerAdcUnit = knownValue.Grams / (double)factor;
+            _gramsPerAdcUnit = knownValue.Grams / factor;
         }
 
         int DoConversion()
@@ -263,24 +263,21 @@ namespace Meadow.Foundation.Sensors.LoadCell
         /// Reads data from the sensor
         /// </summary>
         /// <returns>The latest sensor reading</returns>
-        protected override async Task<Mass> ReadSensor()
+        protected override Task<Mass> ReadSensor()
         {
-            return await Task.Run(() =>
+            if (_gramsPerAdcUnit == 0)
             {
-                if (_gramsPerAdcUnit == 0)
-                {
-                    throw new Exception("Calibration factor has not been set");
-                }
+                throw new Exception("Calibration factor has not been set");
+            }
 
-                // get an ADC conversion
-                var c = DoConversion();
-                // subtract the tare
-                var adc = c - _tareValue;
-                // convert to grams
-                var grams = adc * _gramsPerAdcUnit;
-                // convert to desired units
-                return new Mass(grams, Units.Mass.UnitType.Grams);
-            });
+            // get an ADC conversion
+            var c = DoConversion();
+            // subtract the tare
+            var adc = c - _tareValue;
+            // convert to grams
+            var grams = adc * _gramsPerAdcUnit;
+            // convert to desired units
+            return Task.FromResult(new Mass(grams, Units.Mass.UnitType.Grams));
         }
 
 

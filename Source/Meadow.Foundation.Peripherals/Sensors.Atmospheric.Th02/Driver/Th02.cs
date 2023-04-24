@@ -1,9 +1,9 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
 using Meadow.Peripherals.Sensors;
 using Meadow.Units;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Atmospheric
 {
@@ -64,47 +64,44 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <summary>
         /// Calculates the compensated pressure and temperature.
         /// </summary>
-        protected override Task<(Units.Temperature? Temperature, RelativeHumidity? Humidity)> ReadSensor()
+        protected async override Task<(Units.Temperature? Temperature, RelativeHumidity? Humidity)> ReadSensor()
         {
-            return Task.Run(() =>
+            (Units.Temperature? Temperature, RelativeHumidity? Humidity) conditions;
+
+            //  Read the humidity
+            Peripheral?.WriteRegister((byte)Registers.Config, MeasureHumidity);
+
+            //  Maximum conversion time should be 40ms
+            while ((Peripheral?.ReadRegister((byte)Registers.Status) & 0x01) > 0)
             {
-                (Units.Temperature? Temperature, RelativeHumidity? Humidity) conditions;
+                await Task.Delay(40);
+            }
 
-                //  Read the humidity
-                Peripheral?.WriteRegister((byte)Registers.Config, MeasureHumidity);
-                
-                //  Maximum conversion time should be 40ms
-                while ((Peripheral?.ReadRegister((byte)Registers.Status) & 0x01) > 0)
-                {
-                    Thread.Sleep(40);
-                }
+            byte[] data = new byte[2];
 
-                byte[] data = new byte[2];
-                
-                Peripheral?.ReadRegister((byte)Registers.DataHigh, data);
-                int temp = data[0] << 8;
-                temp |= data[1];
-                temp >>= 4;
+            Peripheral?.ReadRegister((byte)Registers.DataHigh, data);
+            int temp = data[0] << 8;
+            temp |= data[1];
+            temp >>= 4;
 
-                conditions.Humidity = new RelativeHumidity(temp / 16.0 - 24);
+            conditions.Humidity = new RelativeHumidity(temp / 16.0 - 24);
 
-                //  Read the temperature
-                Peripheral?.WriteRegister((byte)Registers.Config, MeasureTemperature);
+            //  Read the temperature
+            Peripheral?.WriteRegister((byte)Registers.Config, MeasureTemperature);
 
-                //  Maximum conversion time should be 40ms
-                while ((Peripheral?.ReadRegister((byte)Registers.Status) & 0x01) > 0)
-                {
-                    Thread.Sleep(40);
-                }
+            //  Maximum conversion time should be 40ms
+            while ((Peripheral?.ReadRegister((byte)Registers.Status) & 0x01) > 0)
+            {
+                Thread.Sleep(40);
+            }
 
-                Peripheral?.ReadRegister((byte)Registers.DataHigh, data);
-                temp = data[0] << 8;
-                temp |= data[1];
-                temp >>= 2; //drop the two unused bits (14 bit value)
-                conditions.Temperature = new Units.Temperature(temp / 32.0 - 50, Units.Temperature.UnitType.Celsius);
+            Peripheral?.ReadRegister((byte)Registers.DataHigh, data);
+            temp = data[0] << 8;
+            temp |= data[1];
+            temp >>= 2; //drop the two unused bits (14 bit value)
+            conditions.Temperature = new Units.Temperature(temp / 32.0 - 50, Units.Temperature.UnitType.Celsius);
 
-                return conditions;
-            });
+            return conditions;
         }
 
         async Task<Units.Temperature> ISensor<Units.Temperature>.Read()

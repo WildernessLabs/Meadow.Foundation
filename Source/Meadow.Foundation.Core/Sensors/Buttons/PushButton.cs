@@ -141,7 +141,7 @@ namespace Meadow.Foundation.Sensors.Buttons
 
                 bool currentState = DigitalIn.State;
 
-                _ = Task.Run(async () =>
+                var t = new Task(async () =>
                 {
                     while (!ctsPolling.Token.IsCancellationRequested)
                     {
@@ -152,7 +152,7 @@ namespace Meadow.Foundation.Sensors.Buttons
 
                         await Task.Delay(ButtonPollingInterval);
                     }
-                });
+                }, ctsPolling.Token, TaskCreationOptions.LongRunning);
             }
         }
 

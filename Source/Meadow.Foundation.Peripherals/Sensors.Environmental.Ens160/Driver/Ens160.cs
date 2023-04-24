@@ -246,20 +246,17 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// Get Scdx40 C02 Gas Concentration and
         /// Update the Concentration property
         /// </summary>
-        protected override async Task<(Concentration? CO2Concentration,
+        protected override Task<(Concentration? CO2Concentration,
                                        Concentration? EthanolConcentration,
                                        Concentration? TVOCConcentration)> ReadSensor()
         {
-            return await Task.Run(() =>
-            {
-                (Concentration? CO2Concentration, Concentration? EthanolConcentration, Concentration? TVOCConcentration) conditions;
+            (Concentration? CO2Concentration, Concentration? EthanolConcentration, Concentration? TVOCConcentration) conditions;
 
-                conditions.CO2Concentration = GetCO2Concentration();
-                conditions.EthanolConcentration = GetEthanolConcentration();
-                conditions.TVOCConcentration = GetTotalVolotileOrganicCompounds();
+            conditions.CO2Concentration = GetCO2Concentration();
+            conditions.EthanolConcentration = GetEthanolConcentration();
+            conditions.TVOCConcentration = GetTotalVolotileOrganicCompounds();
 
-                return conditions;
-            });
+            return Task.FromResult(conditions);
         }
 
         /// <summary>

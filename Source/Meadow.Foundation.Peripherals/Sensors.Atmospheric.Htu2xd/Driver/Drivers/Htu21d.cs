@@ -33,11 +33,11 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <summary>
         /// Initialize HTU21D
         /// </summary>
-        protected void Initialize ()
+        protected void Initialize()
         {
             Peripheral?.Write((byte)Registers.SOFT_RESET);
-					 			
-			Thread.Sleep(100);
+
+            Thread.Sleep(100);
 
             SetResolution(SensorResolution.TEMP11_HUM11);
         }
@@ -48,34 +48,29 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <returns>The latest sensor reading</returns>
         protected override async Task<(Units.Temperature? Temperature, RelativeHumidity? Humidity)> ReadSensor()
         {
-            (Units.Temperature Temperature, RelativeHumidity Humidity) conditions;
+            (Units.Temperature? Temperature, RelativeHumidity? Humidity) conditions;
 
-            return await Task.Run(() => 
-            {
-                // humidity
-                Peripheral?.Write((byte)Registers.HUMDITY_MEASURE_NOHOLD);
-                Thread.Sleep(20); // Maximum conversion time is 12ms (page 5 of the datasheet)
-             
-                Peripheral?.Read(ReadBuffer.Span[0..2]);// 2 data bytes plus a checksum (we ignore the checksum here)
-                var humidityReading = (ushort)((ReadBuffer.Span[0] << 8) + ReadBuffer.Span[1]);
-                var humidity = (125 * (float)humidityReading / 65536) - 6;
-                humidity = Math.Clamp(humidity, 0, 100);
-                conditions.Humidity = new RelativeHumidity(humidity, HU.Percent);
+            Peripheral?.Write((byte)Registers.HUMDITY_MEASURE_NOHOLD);
+            await Task.Delay(20); // Maximum conversion time is 12ms (page 5 of the datasheet)
 
-                // temperature
-                Peripheral?.Write((byte)Registers.TEMPERATURE_MEASURE_NOHOLD);
-                Thread.Sleep(20); // Maximum conversion time is 12ms (page 5 of the datasheet)
+            Peripheral?.Read(ReadBuffer.Span[0..2]);// 2 data bytes plus a checksum (we ignore the checksum here)
+            var humidityReading = (ushort)((ReadBuffer.Span[0] << 8) + ReadBuffer.Span[1]);
+            var humidity = (125 * (float)humidityReading / 65536) - 6;
+            humidity = Math.Clamp(humidity, 0, 100);
+            conditions.Humidity = new RelativeHumidity(humidity, HU.Percent);
 
-                Peripheral?.Read(ReadBuffer.Span[0..2]);// 2 data bytes plus a checksum (we ignore the checksum here)
-                var temperatureReading = (short)((ReadBuffer.Span[0] << 8) + ReadBuffer.Span[1]);
-                conditions.Temperature = new Units.Temperature((float)(((175.72 * temperatureReading) / 65536) - 46.85), Units.Temperature.UnitType.Celsius);
+            Peripheral?.Write((byte)Registers.TEMPERATURE_MEASURE_NOHOLD);
+            await Task.Delay(20); // Maximum conversion time is 12ms (page 5 of the datasheet)
 
-                return conditions;
-            });
+            Peripheral?.Read(ReadBuffer.Span[0..2]);// 2 data bytes plus a checksum (we ignore the checksum here)
+            var temperatureReading = (short)((ReadBuffer.Span[0] << 8) + ReadBuffer.Span[1]);
+            conditions.Temperature = new Units.Temperature((float)(((175.72 * temperatureReading) / 65536) - 46.85), Units.Temperature.UnitType.Celsius);
+
+            return conditions;
         }
-		
-		/// <summary>
-		/// Turn the heater on or off
+
+        /// <summary>
+        /// Turn the heater on or off
         /// </summary>
         /// <param name="heaterOn">Heater status, true = turn heater on, false = turn heater off.</param>
         public void Heater(bool heaterOn)
@@ -91,8 +86,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             }
             Peripheral.WriteRegister((byte)Registers.WRITE_HEATER_REGISTER, register);
         }
-		
-		//Set sensor resolution
+
+        //Set sensor resolution
         /*******************************************************************************************/
         //Sets the sensor resolution to one of four levels
         //Page 12:

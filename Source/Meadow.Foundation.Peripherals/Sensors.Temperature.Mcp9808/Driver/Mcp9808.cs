@@ -55,7 +55,7 @@ namespace Meadow.Foundation.Sensors.Temperature
 		/// </summary>
         public void Wake()
         {
-            ushort config = Peripheral?.ReadRegisterAsUShort(MCP_REG_CONFIG, ByteOrder.BigEndian) ?? 0; 
+            ushort config = Peripheral?.ReadRegisterAsUShort(MCP_REG_CONFIG, ByteOrder.BigEndian) ?? 0;
 
             config = (ushort)(config & (~MCP_CONFIG_SHUTDOWN));
 
@@ -70,7 +70,7 @@ namespace Meadow.Foundation.Sensors.Temperature
             ushort config = Peripheral?.ReadRegisterAsUShort(MCP_REG_CONFIG, ByteOrder.BigEndian) ?? 0;
 
             Peripheral?.WriteRegister(MCP_REG_CONFIG, (ushort)(config | MCP_CONFIG_SHUTDOWN));
-         }
+        }
 
         /// <summary>
 		/// Read the device ID 
@@ -108,25 +108,19 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// Reads data from the sensor
         /// </summary>
         /// <returns>The latest sensor reading</returns>
-        protected override async Task<Units.Temperature> ReadSensor()
+        protected override Task<Units.Temperature> ReadSensor()
         {
-            return await Task.Run(() =>
+            ushort value = Peripheral?.ReadRegisterAsUShort(MCP_AMBIENT_TEMP, ByteOrder.BigEndian) ?? 0;
+            double temp = value & 0x0FFF;
+
+            temp /= 16.0;
+
+            if ((value & 0x1000) != 0)
             {
-                ushort value = Peripheral?.ReadRegisterAsUShort(MCP_AMBIENT_TEMP, ByteOrder.BigEndian) ?? 0;
-                double temp = value & 0x0FFF;
+                temp -= 256;
+            }
 
-                temp /= 16.0;
-
-                if ((value & 0x1000) != 0)
-                {
-                    temp -= 256;
-                }
-
-                var newTemp = new Units.Temperature(temp);
-                Temperature = newTemp;
-
-                return newTemp;
-            });
+            return Task.FromResult(new Units.Temperature(temp, Units.Temperature.UnitType.Celsius));
         }
 
         /// <summary>

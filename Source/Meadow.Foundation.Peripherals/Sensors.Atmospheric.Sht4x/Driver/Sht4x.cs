@@ -1,9 +1,9 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
 using Meadow.Peripherals.Sensors;
 using Meadow.Units;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Atmospheric
 {
@@ -108,24 +108,21 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <summary>
         /// Get a reading from the sensor and set the Temperature and Humidity properties.
         /// </summary>
-        protected async override Task<(Units.Temperature? Temperature, RelativeHumidity? Humidity)> ReadSensor()
+        protected override Task<(Units.Temperature? Temperature, RelativeHumidity? Humidity)> ReadSensor()
         {
-            (Units.Temperature Temperature, RelativeHumidity Humidity) conditions;
+            (Units.Temperature? Temperature, RelativeHumidity? Humidity) conditions;
 
-            return await Task.Run(() =>
-            {
-                Peripheral?.Write((byte)ReadPrecision);
-                Thread.Sleep(GetDelayForPrecision(ReadPrecision));
-                Peripheral?.Read(ReadBuffer.Span[0..5]);
+            Peripheral?.Write((byte)ReadPrecision);
+            Thread.Sleep(GetDelayForPrecision(ReadPrecision));
+            Peripheral?.Read(ReadBuffer.Span[0..5]);
 
-                var temperature = (175 * (float)((ReadBuffer.Span[0] << 8) + ReadBuffer.Span[1]) / 65535) - 45;
-                var humidity = (125 * (float)((ReadBuffer.Span[3] << 8) + ReadBuffer.Span[4]) / 65535) - 6;
+            var temperature = (175 * (float)((ReadBuffer.Span[0] << 8) + ReadBuffer.Span[1]) / 65535) - 45;
+            var humidity = (125 * (float)((ReadBuffer.Span[3] << 8) + ReadBuffer.Span[4]) / 65535) - 6;
 
-                conditions.Humidity = new RelativeHumidity(humidity);
-                conditions.Temperature = new Units.Temperature(temperature, Units.Temperature.UnitType.Celsius);
+            conditions.Humidity = new RelativeHumidity(humidity);
+            conditions.Temperature = new Units.Temperature(temperature, Units.Temperature.UnitType.Celsius);
 
-                return conditions;
-            });
+            return Task.FromResult(conditions);
         }
 
         async Task<Units.Temperature> ISensor<Units.Temperature>.Read()

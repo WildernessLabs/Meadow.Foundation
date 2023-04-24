@@ -84,16 +84,13 @@ namespace Meadow.Foundation.Sensors.Motion
         /// Reads data from the sensor
         /// </summary>
         /// <returns>The latest sensor reading</returns>
-        protected override Task<Acceleration3D> ReadSensor()
+        protected async override Task<Acceleration3D> ReadSensor()
         {
-            return Task.Run(async () =>
-            {
-                var x = await XAnalogIn.Read();
-                var y = await YAnalogIn.Read();
-                var z = await ZAnalogIn.Read();
+            var x = await XAnalogIn.Read();
+            var y = await YAnalogIn.Read();
+            var z = await ZAnalogIn.Read();
 
-                return new Acceleration3D(VoltageToGravity(x), VoltageToGravity(y), VoltageToGravity(z));
-            });
+            return new Acceleration3D(VoltageToGravity(x), VoltageToGravity(y), VoltageToGravity(z));
         }
 
         /// <summary>

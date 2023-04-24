@@ -36,7 +36,7 @@ namespace Meadow.Foundation.Sensors.Light
         /// The current Illuminance value
         /// </summary>
         public Illuminance? Illuminance => Conditions.AmbientLight;
-        
+
         /// <summary>
         /// Interrupt reset status
         /// </summary>
@@ -258,38 +258,31 @@ namespace Meadow.Foundation.Sensors.Light
         /// <returns>The latest sensor reading</returns>
         protected override Task<(Illuminance? AmbientLight, Color? Color, bool Valid)> ReadSensor()
         {
-            return Task.Run(() =>
-            {
-                (Illuminance? AmbientLight, Color? Color, bool Valid) conditions;
+            (Illuminance? AmbientLight, Color? Color, bool Valid) conditions;
 
-                // get the ambient light
-                var clearData = ReadClearDataRegister();
+            // get the ambient light
+            var clearData = ReadClearDataRegister();
 
-                if (clearData == 0) { conditions.Color = Color.Black; }
+            if (clearData == 0) { conditions.Color = Color.Black; }
 
-                // apply channel multipliers and normalize
-                double compensatedRed = ReadRedDataRegister() * CompensationMultipliers.Red / (int)MeasurementTime * 360;
-                double compensatedGreen = ReadGreenDataRegister() * CompensationMultipliers.Green / (int)MeasurementTime * 360;
-                double compensatedBlue = ReadBlueDataRegister() * CompensationMultipliers.Blue / (int)MeasurementTime * 360;
-                double compensatedClear = clearData * CompensationMultipliers.Clear / (int)MeasurementTime * 360;
+            // apply channel multipliers and normalize
+            double compensatedRed = ReadRedDataRegister() * CompensationMultipliers.Red / (int)MeasurementTime * 360;
+            double compensatedGreen = ReadGreenDataRegister() * CompensationMultipliers.Green / (int)MeasurementTime * 360;
+            double compensatedBlue = ReadBlueDataRegister() * CompensationMultipliers.Blue / (int)MeasurementTime * 360;
+            double compensatedClear = clearData * CompensationMultipliers.Clear / (int)MeasurementTime * 360;
 
-                // scale relative to clear
-                int red = (int)Math.Min(255, compensatedRed / compensatedClear * 255);
-                int green = (int)Math.Min(255, compensatedGreen / compensatedClear * 255);
-                int blue = (int)Math.Min(255, compensatedBlue / compensatedClear * 255);
+            // scale relative to clear
+            int red = (int)Math.Min(255, compensatedRed / compensatedClear * 255);
+            int green = (int)Math.Min(255, compensatedGreen / compensatedClear * 255);
+            int blue = (int)Math.Min(255, compensatedBlue / compensatedClear * 255);
 
-                conditions.Color = Color.FromRgb(red, green, blue);
+            conditions.Color = Color.FromRgb(red, green, blue);
 
-                // TODO: honestly, no idea what this comes back as
-                // need to test when i get a sensor and compare to other light
-                // sensors
-                conditions.AmbientLight = new Illuminance(compensatedClear, Units.Illuminance.UnitType.Lux);
+            conditions.AmbientLight = new Illuminance(compensatedClear, Units.Illuminance.UnitType.Lux);
 
-                // WTH
-                conditions.Valid = ReadMeasurementIsValid();
+            conditions.Valid = ReadMeasurementIsValid();
 
-                return conditions;
-            });
+            return Task.FromResult(conditions);
         }
 
         /// <summary>
