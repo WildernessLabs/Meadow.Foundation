@@ -1,4 +1,6 @@
-﻿namespace Meadow.Foundation.Sensors.Atmospheric
+﻿using Meadow.Hardware;
+
+namespace Meadow.Foundation.Sensors.Atmospheric
 {
     partial class Bme68x
     {
@@ -41,43 +43,43 @@
             public sbyte ResHeatVal { get; set; }
             public sbyte RangeSwErr { get; set; }
 
-            public void LoadCalibrationDataFromSensor(Bme68xComms sensor)
+            public void LoadCalibrationDataFromSensor(IByteCommunications byteComms)
             {
                 // Read temperature calibration data.
-                T1 = sensor.ReadRegisterAsUShort((byte)Registers.T1);
-                T2 = (short)sensor.ReadRegisterAsUShort((byte)Registers.T2);
-                T3 = sensor.ReadRegister((byte)Registers.T3);
+                T1 = byteComms.ReadRegisterAsUShort((byte)Registers.T1);
+                T2 = (short)byteComms.ReadRegisterAsUShort((byte)Registers.T2);
+                T3 = byteComms.ReadRegister((byte)Registers.T3);
 
                 // Read humidity calibration data.
-                H1 = (ushort)((sensor.ReadRegister((byte)Registers.H1_MSB) << 4) | (sensor.ReadRegister((byte)Registers.H1_LSB) & 0x0F));
-                H2 = (ushort)((sensor.ReadRegister((byte)Registers.H2_MSB) << 4) | (sensor.ReadRegister((byte)Registers.H2_LSB) >> 4));
-                H3 = (sbyte)sensor.ReadRegister((byte)Registers.H3);
-                H4 = (sbyte)sensor.ReadRegister((byte)Registers.H4);
-                H5 = (sbyte)sensor.ReadRegister((byte)Registers.H5);
-                H6 = sensor.ReadRegister((byte)Registers.H6);
-                H7 = (sbyte)(sensor.ReadRegister((byte)Registers.H7));
+                H1 = (ushort)((byteComms.ReadRegister((byte)Registers.H1_MSB) << 4) | (byteComms.ReadRegister((byte)Registers.H1_LSB) & 0x0F));
+                H2 = (ushort)((byteComms.ReadRegister((byte)Registers.H2_MSB) << 4) | (byteComms.ReadRegister((byte)Registers.H2_LSB) >> 4));
+                H3 = (sbyte)byteComms.ReadRegister((byte)Registers.H3);
+                H4 = (sbyte)byteComms.ReadRegister((byte)Registers.H4);
+                H5 = (sbyte)byteComms.ReadRegister((byte)Registers.H5);
+                H6 = byteComms.ReadRegister((byte)Registers.H6);
+                H7 = (sbyte)(byteComms.ReadRegister((byte)Registers.H7));
 
                 // Read pressure calibration data.
-                P1 = sensor.ReadRegisterAsUShort((byte)Registers.P1_LSB);
-                P2 = (short)sensor.ReadRegisterAsUShort((byte)Registers.P2_LSB);
-                P3 = sensor.ReadRegister((byte)Registers.P3);
-                P4 = (short)sensor.ReadRegisterAsUShort((byte)Registers.P4_LSB);
-                P5 = (short)sensor.ReadRegisterAsUShort((byte)Registers.P5_LSB);
-                P6 = sensor.ReadRegister((byte)Registers.P6);
-                P7 = sensor.ReadRegister((byte)Registers.P7);
-                P8 = (short)sensor.ReadRegisterAsUShort((byte)Registers.P8_LSB);
-                P9 = (short)sensor.ReadRegisterAsUShort((byte)Registers.P9_LSB);
-                P10 = sensor.ReadRegister((byte)Registers.P10);
+                P1 = byteComms.ReadRegisterAsUShort((byte)Registers.P1_LSB);
+                P2 = (short)byteComms.ReadRegisterAsUShort((byte)Registers.P2_LSB);
+                P3 = byteComms.ReadRegister((byte)Registers.P3);
+                P4 = (short)byteComms.ReadRegisterAsUShort((byte)Registers.P4_LSB);
+                P5 = (short)byteComms.ReadRegisterAsUShort((byte)Registers.P5_LSB);
+                P6 = byteComms.ReadRegister((byte)Registers.P6);
+                P7 = byteComms.ReadRegister((byte)Registers.P7);
+                P8 = (short)byteComms.ReadRegisterAsUShort((byte)Registers.P8_LSB);
+                P9 = (short)byteComms.ReadRegisterAsUShort((byte)Registers.P9_LSB);
+                P10 = byteComms.ReadRegister((byte)Registers.P10);
 
                 // read gas calibration data.
-                Gh1 = (sbyte)sensor.ReadRegister((byte)Registers.GH1);
-                Gh2 = (short)sensor.ReadRegisterAsUShort((byte)Registers.GH2);
-                Gh3 = (sbyte)sensor.ReadRegister((byte)Registers.GH3);
+                Gh1 = (sbyte)byteComms.ReadRegister((byte)Registers.GH1);
+                Gh2 = (short)byteComms.ReadRegisterAsUShort((byte)Registers.GH2);
+                Gh3 = (sbyte)byteComms.ReadRegister((byte)Registers.GH3);
 
                 // read heater calibration data
-                ResHeatRange = (byte)(sensor.ReadRegister(((byte)Registers.RES_HEAT_RANGE) & 0x30) >> 4);
-                RangeSwErr = (sbyte)(sensor.ReadRegister(((byte)Registers.RANGE_SW_ERR) & 0xF0) >> 4);
-                ResHeatVal = (sbyte)sensor.ReadRegister((byte)Registers.RES_HEAT_VAL);
+                ResHeatRange = (byte)(byteComms.ReadRegister(((byte)Registers.RES_HEAT_RANGE) & 0x30) >> 4);
+                RangeSwErr = (sbyte)(byteComms.ReadRegister(((byte)Registers.RANGE_SW_ERR) & 0xF0) >> 4);
+                ResHeatVal = (sbyte)byteComms.ReadRegister((byte)Registers.RES_HEAT_VAL);
             }
         }
     }
