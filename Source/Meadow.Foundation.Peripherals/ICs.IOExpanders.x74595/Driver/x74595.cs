@@ -30,8 +30,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         public Frequency SpiBusSpeed
         {
-            get => spiPeripheral.BusSpeed;
-            set => spiPeripheral.BusSpeed = value;
+            get => spiComms.BusSpeed;
+            set => spiComms.BusSpeed = value;
         }
 
         /// <summary>
@@ -44,27 +44,27 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         public SpiClockConfiguration.Mode SpiBusMode
         {
-            get => spiPeripheral.BusMode;
-            set => spiPeripheral.BusMode = value;
+            get => spiComms.BusMode;
+            set => spiComms.BusMode = value;
         }
 
         /// <summary>
-        /// Number of chips required to implement this ShiftRegister.
+        /// Number of chips required to implement this ShiftRegister
         /// </summary>
         private readonly int numberOfChips;
 
         private byte[] latchData;
 
         /// <summary>
-        /// SPI interface used to communicate with the shift registers.
+        /// SPI Communication bus used to communicate with the peripheral
         /// </summary>
-        private readonly ISpiPeripheral spiPeripheral;
+        protected ISpiCommunications spiComms;
 
         /// <summary>
         /// Default constructor.
         /// </summary>
         /// <remarks>
-        /// This is private to prevent the programmer from calling it explicitly.
+        /// This is private to prevent the programmer from calling it explicitly
         /// </remarks>
         private x74595()
         {
@@ -86,7 +86,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
                 latchData = new byte[numberOfChips];
 
-                spiPeripheral = new SpiPeripheral(spiBus, pinChipSelect?.CreateDigitalOutputPort(), DefaultSpiBusSpeed, DefaultSpiBusMode);
+                spiComms = new SpiCommunications(spiBus, pinChipSelect?.CreateDigitalOutputPort(), DefaultSpiBusSpeed, DefaultSpiBusMode);
             }
             else
             {
@@ -123,7 +123,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
             if (update)
             {
-                spiPeripheral.Write(latchData);
+                spiComms.Write(latchData);
             }
         }
 
@@ -143,7 +143,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             {
                 throw new Exception("Pin is out of range");
             }
-            spiPeripheral.Write(latchData);
+            spiComms.Write(latchData);
         }
 
         /// <summary>

@@ -51,8 +51,8 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         public Frequency SpiBusSpeed
         {
-            get => spiPeripheral.BusSpeed;
-            set => spiPeripheral.BusSpeed = value;
+            get => spiComms.BusSpeed;
+            set => spiComms.BusSpeed = value;
         }
 
         /// <summary>
@@ -65,13 +65,17 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         public SpiClockConfiguration.Mode SpiBusMode
         {
-            get => spiPeripheral.BusMode;
-            set => spiPeripheral.BusMode = value;
+            get => spiComms.BusMode;
+            set => spiComms.BusMode = value;
         }
 
         readonly IDigitalOutputPort dataCommandPort;
         readonly IDigitalOutputPort resetPort;
-        readonly ISpiPeripheral spiPeripheral;
+
+        /// <summary>
+        /// SPI Communication bus used to communicate with the peripheral
+        /// </summary>
+        protected ISpiCommunications spiComms;
 
         /// <summary>
         /// Buffer to hold display data
@@ -116,7 +120,7 @@ namespace Meadow.Foundation.Displays
             this.dataCommandPort = dataCommandPort;
             this.resetPort = resetPort;
 
-            spiPeripheral = new SpiPeripheral(spiBus, chipSelectPort, DefaultSpiBusSpeed, DefaultSpiBusMode);
+            spiComms = new SpiCommunications(spiBus, chipSelectPort, DefaultSpiBusSpeed, DefaultSpiBusMode);
 
             Initialize();
         }
@@ -136,7 +140,7 @@ namespace Meadow.Foundation.Displays
             commandBuffer.Span[5] = 0x20;
             commandBuffer.Span[6] = 0x0C;
 
-            spiPeripheral.Write(commandBuffer.Span[0..6]);
+            spiComms.Write(commandBuffer.Span[0..6]);
 
             dataCommandPort.State = true;
 
@@ -198,7 +202,7 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         public void Show()
         {
-            spiPeripheral.Write(imageBuffer.Buffer);
+            spiComms.Write(imageBuffer.Buffer);
         }
 
         /// <summary>
@@ -224,7 +228,7 @@ namespace Meadow.Foundation.Displays
             dataCommandPort.State = false;
             commandBuffer.Span[0] = inverse ? (byte)0x0D : (byte)0x0C;
 
-            spiPeripheral.Write(commandBuffer.Span[0]);
+            spiComms.Write(commandBuffer.Span[0]);
             dataCommandPort.State = true;
         }
 

@@ -1,8 +1,8 @@
 ﻿
-using System;
-using System.Threading;
 using Meadow.Hardware;
 using Meadow.Units;
+using System;
+using System.Threading;
 
 namespace Meadow.Foundation.Audio.Radio
 {
@@ -12,9 +12,9 @@ namespace Meadow.Foundation.Audio.Radio
     public partial class Tea5767
     {
         /// <summary>
-        /// TEA5767 radio.
+        /// I2C Communication bus used to communicate with the peripheral
         /// </summary>
-        private readonly II2cPeripheral i2cPeripheral;
+        protected readonly II2cCommunications i2cComms;
 
         byte hiInjection;
         readonly Memory<byte> writeBuffer = new byte[5];
@@ -32,7 +32,7 @@ namespace Meadow.Foundation.Audio.Radio
         /// <param name="address">Address of the bus on the I2C display.</param>
         public Tea5767(II2cBus i2cBus, byte address = (byte)Address.Default)
         {
-            i2cPeripheral = new I2cPeripheral(i2cBus, address);
+            i2cComms = new I2cCommunications(i2cBus, address);
 
             InitTEA5767();
         }
@@ -111,7 +111,7 @@ namespace Meadow.Foundation.Audio.Radio
 
         void TransmitData()
         {
-            i2cPeripheral.Exchange(writeBuffer.Span, readBuffer.Span);
+            i2cComms.Exchange(writeBuffer.Span, readBuffer.Span);
 
             Thread.Sleep(100);
         }
@@ -155,7 +155,7 @@ namespace Meadow.Foundation.Audio.Radio
 
         void ReadStatus()
         {
-            i2cPeripheral.Read(readBuffer.Span);
+            i2cComms.Read(readBuffer.Span);
             Thread.Sleep(100);
         }
 

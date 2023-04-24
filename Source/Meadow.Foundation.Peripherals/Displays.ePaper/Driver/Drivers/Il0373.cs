@@ -108,14 +108,14 @@ namespace Meadow.Foundation.Displays
             {
                 for (int i = 0; i < width / 8 * height; i++)
                 {
-                    spiPeripheral.Write(bufferBlack[i]);
+                    spiComms.Write(bufferBlack[i]);
                 }
             }
             else
             {
                 for (int i = 0; i < width / 8 * height; i++)
                 {
-                    spiPeripheral.Write(0x00);
+                    spiComms.Write(0x00);
                 }
             }
             DelayMs(2);
@@ -127,14 +127,14 @@ namespace Meadow.Foundation.Displays
             {
                 for (int i = 0; i < width / 8 * height; i++)
                 {
-                    spiPeripheral.Write(bufferColor[i]);
+                    spiComms.Write(bufferColor[i]);
                 }
             }
             else
             {
                 for (int i = 0; i < width / 8 * height; i++)
                 {
-                    spiPeripheral.Write(0x00);
+                    spiComms.Write(0x00);
                 }
             }
             DelayMs(2);

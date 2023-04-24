@@ -47,8 +47,8 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         public Frequency SpiBusSpeed
         {
-            get => spiPeripheral.BusSpeed;
-            set => spiPeripheral.BusSpeed = value;
+            get => spiComms.BusSpeed;
+            set => spiComms.BusSpeed = value;
         }
 
         /// <summary>
@@ -61,14 +61,14 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         public SpiClockConfiguration.Mode SpiBusMode
         {
-            get => spiPeripheral.BusMode;
-            set => spiPeripheral.BusMode = value;
+            get => spiComms.BusMode;
+            set => spiComms.BusMode = value;
         }
 
         /// <summary>
-        /// SPI peripheral object
+        /// SPI Communication bus used to communicate with the peripheral
         /// </summary>
-        readonly ISpiPeripheral spiPeripheral;
+        protected readonly ISpiCommunications spiComms;
 
         readonly IDigitalOutputPort dataCommandPort;
         readonly IDigitalOutputPort resetPort;
@@ -113,7 +113,7 @@ namespace Meadow.Foundation.Displays
             this.dataCommandPort = dataCommandPort;
             this.resetPort = resetPort;
 
-            spiPeripheral = new SpiPeripheral(spiBus, chipSelectPort, DefaultSpiBusSpeed, DefaultSpiBusMode);
+            spiComms = new SpiCommunications(spiBus, chipSelectPort, DefaultSpiBusSpeed, DefaultSpiBusMode);
 
             imageBuffer = new Buffer1bpp(width, height);
             pageBuffer = new byte[PageSize];
@@ -223,7 +223,7 @@ namespace Meadow.Foundation.Displays
         private void SendCommand(byte command)
         {
             dataCommandPort.State = Command;
-            spiPeripheral.Write(command);
+            spiComms.Write(command);
         }
 
         /// <summary>
@@ -237,7 +237,7 @@ namespace Meadow.Foundation.Displays
             Array.Copy(commands, 0, data, 1, commands.Length);
 
             dataCommandPort.State = Command;
-            spiPeripheral.Write(commands);
+            spiComms.Write(commands);
         }
 
         const int StartColumnOffset = 0;
@@ -257,7 +257,7 @@ namespace Meadow.Foundation.Displays
                 dataCommandPort.State = Data;
 
                 Array.Copy(imageBuffer.Buffer, Width * page, pageBuffer, 0, PageSize);
-                spiPeripheral.Write(pageBuffer);
+                spiComms.Write(pageBuffer);
             }
         }
 
@@ -288,7 +288,7 @@ namespace Meadow.Foundation.Displays
                 dataCommandPort.State = Data;
 
                 Array.Copy(imageBuffer.Buffer, Width * page, pageBuffer, 0, PageSize);
-                spiPeripheral.Write(pageBuffer);
+                spiComms.Write(pageBuffer);
             }
         }
 

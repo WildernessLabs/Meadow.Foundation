@@ -89,7 +89,7 @@ namespace Meadow.Foundation.RTCs
         /// <summary>
         /// Create a new Ds323x object
         /// </summary>
-        protected Ds323x(I2cPeripheral peripheral, IPin interruptPin)
+        protected Ds323x(I2cCommunications peripheral, IPin interruptPin)
         {
             ds323x = peripheral;
 
@@ -107,7 +107,7 @@ namespace Meadow.Foundation.RTCs
         /// <summary>
         /// Create a new Ds323x object
         /// </summary>
-        protected Ds323x(I2cPeripheral peripheral, IDigitalInputPort interruptPort)
+        protected Ds323x(I2cCommunications peripheral, IDigitalInputPort interruptPort)
         {
             ds323x = peripheral;
 
@@ -231,7 +231,7 @@ namespace Meadow.Foundation.RTCs
         /// <summary>
         /// DS323x Real Time Clock object.
         /// </summary>
-        protected II2cPeripheral ds323x { get; }
+        protected II2cCommunications ds323x { get; }
 
         /// <summary>
         /// Interrupt port attached to the DS323x RTC module.

@@ -70,8 +70,8 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
         public Frequency SpiBusSpeed
         {
-            get => ((SpiPeripheral)Peripheral).BusSpeed;
-            set => ((SpiPeripheral)Peripheral).BusSpeed = value;
+            get => ((SpiCommunications)Peripheral).BusSpeed;
+            set => ((SpiCommunications)Peripheral).BusSpeed = value;
         }
 
         /// <summary>
@@ -85,8 +85,8 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
         public SpiClockConfiguration.Mode SpiBusMode
         {
-            get => ((SpiPeripheral)Peripheral).BusMode;
-            set => ((SpiPeripheral)Peripheral).BusMode = value;
+            get => ((SpiCommunications)Peripheral).BusMode;
+            set => ((SpiCommunications)Peripheral).BusMode = value;
         }
 
         /// <summary>

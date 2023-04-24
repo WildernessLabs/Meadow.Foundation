@@ -45,8 +45,8 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         public Frequency SpiBusSpeed
         {
-            get => spiPeripheral.BusSpeed;
-            set => spiPeripheral.BusSpeed = value;
+            get => spiComms.BusSpeed;
+            set => spiComms.BusSpeed = value;
         }
 
         /// <summary>
@@ -59,11 +59,14 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         public SpiClockConfiguration.Mode SpiBusMode
         {
-            get => spiPeripheral.BusMode;
-            set => spiPeripheral.BusMode = value;
+            get => spiComms.BusMode;
+            set => spiComms.BusMode = value;
         }
 
-        private readonly ISpiPeripheral spiPeripheral;
+        /// <summary>
+        /// SPI Communication bus used to communicate with the peripheral
+        /// </summary>
+        protected ISpiCommunications spiComms;
 
         /// <summary>
         /// internal buffer used to write to registers for all devices.
@@ -83,7 +86,7 @@ namespace Meadow.Foundation.Displays
         /// <param name="spiBus">SPI bus</param>
         /// <param name="chipselectPort">Chip select port</param>
         /// <param name="deviceCount">Number of cascaded devices</param>
-        /// <param name="maxMode">Display mode of spiPeripheral</param>
+        /// <param name="maxMode">Display mode</param>
         public Max7219(ISpiBus spiBus, IDigitalOutputPort chipselectPort, int deviceCount = 1, Max7219Mode maxMode = Max7219Mode.Display)
             : this(spiBus, chipselectPort, deviceCount, 1, maxMode)
         {
@@ -96,10 +99,10 @@ namespace Meadow.Foundation.Displays
         /// <param name="chipselectPort">Chip select port</param>
         /// <param name="deviceRows">Number of devices cascaded vertically</param>
         /// <param name="deviceColumns">Number of devices cascaded horizontally</param>
-        /// <param name="maxMode">Display mode of spiPeripheral</param>
+        /// <param name="maxMode">Display mode</param>
         public Max7219(ISpiBus spiBus, IDigitalOutputPort chipselectPort, int deviceRows, int deviceColumns, Max7219Mode maxMode = Max7219Mode.Display)
         {
-            spiPeripheral = new SpiPeripheral(spiBus, chipselectPort, DefaultSpiBusSpeed, DefaultSpiBusMode);
+            spiComms = new SpiCommunications(spiBus, chipselectPort, DefaultSpiBusSpeed, DefaultSpiBusMode);
 
             DigitRows = deviceRows;
             DigitColumns = deviceColumns * DigitsPerDevice;
@@ -118,7 +121,7 @@ namespace Meadow.Foundation.Displays
         /// <param name="chipSelectPin">Chip select pin</param>
         /// <param name="deviceRows">Number of devices cascaded vertically</param>
         /// <param name="deviceColumns">Number of devices cascaded horizontally</param>
-        /// <param name="maxMode">Display mode of spiPeripheral</param>
+        /// <param name="maxMode">Display mode</param>
         public Max7219(ISpiBus spiBus, IPin chipSelectPin, int deviceRows = 1, int deviceColumns = 1, Max7219Mode maxMode = Max7219Mode.Display)
             : this(spiBus, chipSelectPin.CreateDigitalOutputPort(), deviceRows, deviceColumns, maxMode)
         { }
@@ -129,7 +132,7 @@ namespace Meadow.Foundation.Displays
         /// <param name="spiBus">SPI bus</param>
         /// <param name="chipSelectPin">Chip select pin</param>
         /// <param name="deviceCount">Number of cascaded devices</param>
-        /// <param name="maxMode">Display mode of spiPeripheral</param>
+        /// <param name="maxMode">Display mode</param>
         public Max7219(ISpiBus spiBus, IPin chipSelectPin, int deviceCount = 1, Max7219Mode maxMode = Max7219Mode.Display)
             : this(spiBus, chipSelectPin.CreateDigitalOutputPort(), deviceCount, 1, maxMode)
         { }
@@ -214,7 +217,7 @@ namespace Meadow.Foundation.Displays
         }
 
         /// <summary>
-        /// Set the display mode of the spiPeripheral
+        /// Set the display mode of the Max7219
         /// </summary>
         /// <param name="maxMode">the mode</param>
         public void SetMode(Max7219Mode maxMode)
@@ -234,7 +237,7 @@ namespace Meadow.Foundation.Displays
                 writeBuffer[i++] = (byte)register;
                 writeBuffer[i++] = data;
             }
-            spiPeripheral.Write(writeBuffer);
+            spiComms.Write(writeBuffer);
         }
 
         /// <summary>
@@ -247,7 +250,7 @@ namespace Meadow.Foundation.Displays
             writeBuffer[deviceId * 2] = (byte)register;
             writeBuffer[deviceId * 2 + 1] = data;
 
-            spiPeripheral.Write(writeBuffer);
+            spiComms.Write(writeBuffer);
         }
 
         /// <summary>
@@ -340,7 +343,7 @@ namespace Meadow.Foundation.Displays
                     writeBuffer[i++] = (byte)((int)Register.Digit0 + digit);
                     writeBuffer[i++] = buffer[deviceId, digit];
                 }
-                spiPeripheral.Write(writeBuffer);
+                spiComms.Write(writeBuffer);
             }
         }
 

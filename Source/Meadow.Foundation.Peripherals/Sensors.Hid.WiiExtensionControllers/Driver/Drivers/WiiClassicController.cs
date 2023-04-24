@@ -102,8 +102,8 @@ namespace Meadow.Foundation.Sensors.Hid
         {
             if(useHighResolutionMode)
             {
-                i2cPeripheral.WriteRegister(0, 0);
-                i2cPeripheral.Read(readBuffer[..8]);
+                i2cComms.WriteRegister(0, 0);
+                i2cComms.Read(readBuffer[..8]);
             }
             else
             {

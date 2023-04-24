@@ -34,8 +34,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         public Frequency SpiBusSpeed
         {
-            get => (mcpDevice as ISpiPeripheral).BusSpeed;
-            set => (mcpDevice as ISpiPeripheral).BusSpeed = value;
+            get => (mcpDevice as ISpiCommunications).BusSpeed;
+            set => (mcpDevice as ISpiCommunications).BusSpeed = value;
         }
 
         /// <summary>
@@ -48,8 +48,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         public SpiClockConfiguration.Mode SpiBusMode
         {
-            get => (mcpDevice as ISpiPeripheral).BusMode;
-            set => (mcpDevice as ISpiPeripheral).BusMode = value;
+            get => (mcpDevice as ISpiCommunications).BusMode;
+            set => (mcpDevice as ISpiCommunications).BusMode = value;
         }
 
         private readonly IByteCommunications mcpDevice;
@@ -75,7 +75,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         protected Mcp23xxx(II2cBus i2cBus, byte address,
             IDigitalInputPort interruptPort = null, IDigitalOutputPort resetPort = null)
         {
-            mcpDevice = new I2cPeripheral(i2cBus, address);
+            mcpDevice = new I2cCommunications(i2cBus, address);
             Initialize(interruptPort, resetPort);
         }
 
@@ -91,7 +91,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             IDigitalInputPort interruptPort = null,
             IDigitalOutputPort resetPort = null)
         {
-            mcpDevice = new SpiPeripheral(spiBus, chipSelectPort, DefaultSpiBusSpeed, DefaultSpiBusMode);
+            mcpDevice = new SpiCommunications(spiBus, chipSelectPort, DefaultSpiBusSpeed, DefaultSpiBusMode);
             Initialize(interruptPort, resetPort);
         }
 

@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Meadow.Hardware;
+using System;
 using System.Threading.Tasks;
-using Meadow.Hardware;
 
 namespace Meadow.Foundation.ICs.IOExpanders
 {
@@ -14,7 +14,10 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         public static I2cBusSpeed DefaultBusSpeed => I2cBusSpeed.Fast;
 
-        private readonly II2cPeripheral i2cPeripheral;
+        /// <summary>
+        /// I2C Communication bus used to communicate with the peripheral
+        /// </summary>
+        protected readonly II2cCommunications i2cComms;
 
         /// <summary>
         /// Create a new Ds3502 object using the default parameters
@@ -23,9 +26,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <param name="i2cBus">I2C bus instance</param>
         public Ds3502(II2cBus i2cBus, byte address = (byte)Addresses.Default)
         {
-            i2cPeripheral = new I2cPeripheral(i2cBus, address);
+            i2cComms = new I2cCommunications(i2cBus, address);
 
-            i2cPeripheral.WriteRegister((byte)Register.DS3502_MODE, 0x80);
+            i2cComms.WriteRegister((byte)Register.DS3502_MODE, 0x80);
         }
 
         /// <summary>
@@ -34,7 +37,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <returns>the 7-bit wiper value</returns>
         public byte GetWiper()
         {
-            return i2cPeripheral.ReadRegister((byte)Register.DS3502_WIPER);
+            return i2cComms.ReadRegister((byte)Register.DS3502_WIPER);
         }
 
         /// <summary>
@@ -45,7 +48,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         {
             value = Math.Min(value, (byte)127);
 
-            i2cPeripheral.WriteRegister((byte)Register.DS3502_WIPER, value);
+            i2cComms.WriteRegister((byte)Register.DS3502_WIPER, value);
         }
 
         /// <summary>
@@ -55,13 +58,13 @@ namespace Meadow.Foundation.ICs.IOExpanders
         public async Task SetWiperDefault(byte value)
         {
             value = Math.Min(value, (byte)127);
-            
-            i2cPeripheral.WriteRegister((byte)Register.DS3502_MODE, 0x00);
-            i2cPeripheral.WriteRegister((byte)Register.DS3502_WIPER, value);
+
+            i2cComms.WriteRegister((byte)Register.DS3502_MODE, 0x00);
+            i2cComms.WriteRegister((byte)Register.DS3502_WIPER, value);
 
             await Task.Delay(100).ConfigureAwait(false);
 
-            i2cPeripheral.WriteRegister((byte)Register.DS3502_MODE, 0x80);
+            i2cComms.WriteRegister((byte)Register.DS3502_MODE, 0x80);
         }
     }
 }
