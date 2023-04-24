@@ -82,7 +82,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 //swap the page
                 currentPage = (currentPage == SpiRegisterPage.Page0) ? SpiRegisterPage.Page1 : SpiRegisterPage.Page0;
                 //write the page to the status register
-                WriteRegister(0x73, (byte)currentPage);
+                base.WriteRegister(0x73, (byte)currentPage);
             }
         }
 
