@@ -33,9 +33,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         {
             (Units.Temperature? Temperature, RelativeHumidity? Humidity) conditions;
 
-            Peripheral?.Write((byte)Commands.Conversion);
+            BusComms?.Write((byte)Commands.Conversion);
             await Task.Delay(20); // Maximum conversion time is 20ms 
-            Peripheral?.ReadRegister((byte)Commands.ReadTempHumidity, ReadBuffer.Span[0..5]);// 2 bytes for temp, checksum, 2 bytes humidity, checksum
+            BusComms?.ReadRegister((byte)Commands.ReadTempHumidity, ReadBuffer.Span[0..5]);// 2 bytes for temp, checksum, 2 bytes humidity, checksum
 
             var temperatureReading = (ushort)((ReadBuffer.Span[0] << 8) + ReadBuffer.Span[1]);
             conditions.Temperature = new Units.Temperature((float)(((175.72 * temperatureReading) / 65536) - 46.85), Units.Temperature.UnitType.Celsius);
@@ -56,11 +56,11 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         {
             if (heaterOn)
             {
-                Peripheral?.WriteRegister((byte)Commands.HeaterOn, 1);
+                BusComms?.WriteRegister((byte)Commands.HeaterOn, 1);
             }
             else
             {
-                Peripheral?.WriteRegister((byte)Commands.HeaterOff, 1);
+                BusComms?.WriteRegister((byte)Commands.HeaterOff, 1);
             }
         }
 
@@ -69,18 +69,18 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         public void Reset()
         {
-            Peripheral?.WriteRegister((byte)Commands.Reset, 1);
+            BusComms?.WriteRegister((byte)Commands.Reset, 1);
 
             Thread.Sleep(15); //could make this async ...
         }
 
         private UInt32 GetSerial()
         {
-            if (Peripheral == null) return 0;
+            if (BusComms == null) return 0;
 
             var data = new byte[4];
 
-            Peripheral.ReadRegister((byte)Commands.ReadSerial, data);
+            BusComms.ReadRegister((byte)Commands.ReadSerial, data);
 
             UInt32 serial;
 

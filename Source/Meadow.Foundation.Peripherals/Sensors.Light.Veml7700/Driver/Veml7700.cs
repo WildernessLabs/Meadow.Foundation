@@ -312,12 +312,12 @@ namespace Meadow.Foundation.Sensors.Light
 
         private ushort ReadRegister(Registers register)
         {
-            return Peripheral.ReadRegisterAsUShort((byte)register, ByteOrder.LittleEndian);
+            return BusComms.ReadRegisterAsUShort((byte)register, ByteOrder.LittleEndian);
         }
 
         private void WriteRegister(Registers register, ushort value)
         {
-            Peripheral.WriteRegister((byte)register, value, ByteOrder.LittleEndian);
+            BusComms.WriteRegister((byte)register, value, ByteOrder.LittleEndian);
         }
 
     }

@@ -61,7 +61,7 @@ namespace Meadow.Foundation.Sensors.Motion
 
         void SetMode(SensorPowerMode mode)
         {
-            Peripheral.WriteRegister((byte)Registers.Mode, (byte)mode);
+            BusComms.WriteRegister((byte)Registers.Mode, (byte)mode);
         }
 
         /// <summary>
@@ -70,7 +70,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <param name="rate">sample rate</param>
         public void SetSampleRate(SampleRate rate)
         {
-            Peripheral.WriteRegister((byte)Registers.SleepRate, (byte)rate);
+            BusComms.WriteRegister((byte)Registers.SleepRate, (byte)rate);
         }
 
         /// <summary>
@@ -81,9 +81,9 @@ namespace Meadow.Foundation.Sensors.Motion
         {
             return Task.Run(() =>
             {
-                Direction = (DirectionType)(Peripheral.ReadRegister((byte)Registers.TILT) & 0x1C);
+                Direction = (DirectionType)(BusComms.ReadRegister((byte)Registers.TILT) & 0x1C);
 
-                Orientation = (OrientationType)(Peripheral.ReadRegister((byte)Registers.TILT) & 0x03);
+                Orientation = (OrientationType)(BusComms.ReadRegister((byte)Registers.TILT) & 0x03);
 
                 int xAccel, yAccel, zAccel;
                 byte x, y, z;
@@ -93,7 +93,7 @@ namespace Meadow.Foundation.Sensors.Motion
                 //ensure bit 6 isn't set - if so, it means there was a read/write collision ... try again
                 do
                 {
-                    x = Peripheral.ReadRegister((byte)Registers.XOUT);
+                    x = BusComms.ReadRegister((byte)Registers.XOUT);
                 } while (x >= 64);
 
                 //check bit 5 and flip to negative
@@ -102,7 +102,7 @@ namespace Meadow.Foundation.Sensors.Motion
 
                 do
                 {
-                    y = Peripheral.ReadRegister((byte)Registers.YOUT);
+                    y = BusComms.ReadRegister((byte)Registers.YOUT);
                 } while (y >= 64); //ensure bit 6 isn't set - if so, it means there was a read/write collision ... try again
 
                 if ((y & (1 << 5)) != 0) yAccel = y - 64;
@@ -111,7 +111,7 @@ namespace Meadow.Foundation.Sensors.Motion
                 //ensure bit 6 isn't set - if so, it means there was a read/write collision ... try again
                 do
                 {
-                    z = Peripheral.ReadRegister((byte)Registers.ZOUT);
+                    z = BusComms.ReadRegister((byte)Registers.ZOUT);
                 } while (y >= 64);
 
                 if ((z & (1 << 5)) != 0) zAccel = z - 64;

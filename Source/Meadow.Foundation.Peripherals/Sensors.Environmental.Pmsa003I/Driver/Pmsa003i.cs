@@ -186,7 +186,7 @@ namespace Meadow.Foundation.Sensors.Environmental
            ParticleDensity? ParticleDensity_100microns)> ReadSensor()
         {
             var buffer = new byte[32];
-            Peripheral.Read(buffer);
+            BusComms.Read(buffer);
             var span = buffer.AsSpan();
             span.Reverse();
             if (buffer[30..32].SequenceEqual(Preamble) == false)

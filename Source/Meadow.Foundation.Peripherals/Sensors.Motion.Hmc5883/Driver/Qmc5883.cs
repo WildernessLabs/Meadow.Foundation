@@ -36,16 +36,16 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
         override protected void Initialize()
         {
-            Peripheral.WriteRegister(0x0B, 0x01);
+            BusComms.WriteRegister(0x0B, 0x01);
             Thread.Sleep(50);
 
-            Peripheral.WriteRegister(0x20, 0x40);
+            BusComms.WriteRegister(0x20, 0x40);
             Thread.Sleep(50);
 
-            Peripheral.WriteRegister(0x21, 0x01);
+            BusComms.WriteRegister(0x21, 0x01);
             Thread.Sleep(50);
 
-            Peripheral.WriteRegister(0x09, 0x0D);
+            BusComms.WriteRegister(0x09, 0x0D);
         }
 
         /// <summary>
@@ -54,7 +54,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <returns>The latest sensor reading</returns>
         protected override Task<Vector> ReadSensor()
         {
-            Peripheral.ReadRegister(0x00, ReadBuffer.Span[0..6]);
+            BusComms.ReadRegister(0x00, ReadBuffer.Span[0..6]);
 
             ushort X = (ushort)(ReadBuffer.Span[0] | ReadBuffer.Span[1] << 8);
             ushort Y = (ushort)(ReadBuffer.Span[2] | ReadBuffer.Span[3] << 8);

@@ -29,7 +29,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
         public bool ContinuousModeEnabled
         {
-            get => (Peripheral.ReadRegister(Registers.CONTROL_2) & 0x10) == 1;
+            get => (BusComms.ReadRegister(Registers.CONTROL_2) & 0x10) == 1;
             set => SetContinuousMode(value);
         }
 
@@ -41,7 +41,7 @@ namespace Meadow.Foundation.Sensors.Motion
         public Mmc5603(II2cBus i2cBus, byte address = (byte)Addresses.Default)
             : base(i2cBus, address, 10, 8)
         {
-            var deviceID = Peripheral.ReadRegister(Registers.WHO_AM_I);
+            var deviceID = BusComms.ReadRegister(Registers.WHO_AM_I);
 
             if (deviceID != 0x10)
             {
@@ -67,9 +67,9 @@ namespace Meadow.Foundation.Sensors.Motion
 
         void SetRegisterBit(byte register, byte bitIndex, bool enabled = true)
         {
-            var value = Peripheral.ReadRegister(register);
+            var value = BusComms.ReadRegister(register);
             value = BitHelpers.SetBit(value, bitIndex, enabled);
-            Peripheral.WriteRegister(register, value);
+            BusComms.WriteRegister(register, value);
         }
 
         void SetContinuousMode(bool on)
@@ -128,7 +128,7 @@ namespace Meadow.Foundation.Sensors.Motion
                     }
                 }
 
-                Peripheral.ReadRegister(Registers.OUT_X_L, ReadBuffer.Span[0..9]); //9 bytes
+                BusComms.ReadRegister(Registers.OUT_X_L, ReadBuffer.Span[0..9]); //9 bytes
 
                 int x = (int)((uint)(ReadBuffer.Span[0] << 12) | (uint)(ReadBuffer.Span[1] << 4) | (uint)(ReadBuffer.Span[6] >> 4));
                 int y = (int)((uint)(ReadBuffer.Span[2] << 12) | (uint)(ReadBuffer.Span[3] << 4) | (uint)(ReadBuffer.Span[7] >> 4));
@@ -166,18 +166,18 @@ namespace Meadow.Foundation.Sensors.Motion
                 await TriggerTemperatureReading();
             }
 
-            return new Units.Temperature((sbyte)Peripheral.ReadRegister(Registers.TEMPERATURE) * 0.8 - 75, Units.Temperature.UnitType.Celsius);
+            return new Units.Temperature((sbyte)BusComms.ReadRegister(Registers.TEMPERATURE) * 0.8 - 75, Units.Temperature.UnitType.Celsius);
         }
 
         bool IsTemperatureDataReady()
         {
-            var value = Peripheral.ReadRegister(Registers.STATUS);
+            var value = BusComms.ReadRegister(Registers.STATUS);
             return BitHelpers.GetBitValue(value, 7);
         }
 
         bool IsMagneticDataReady()
         {
-            var value = Peripheral.ReadRegister(Registers.STATUS);
+            var value = BusComms.ReadRegister(Registers.STATUS);
             return BitHelpers.GetBitValue(value, 6);
         }
     }

@@ -13,7 +13,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     /// https://www.adafruit.com/product/3965
     /// Device datasheets also available here: https://sensing.honeywell.com/micropressure-mpr-series
     /// </summary>
-    public partial class AdafruitMPRLS : ByteCommsSensorBase<(Pressure? Pressure, Pressure? RawPsiMeasurement)>, IBarometricPressureSensor
+    public partial class AdafruitMPRLS
+        : ByteCommsSensorBase<(Pressure? Pressure, Pressure? RawPsiMeasurement)>, IBarometricPressureSensor
     {
         //Defined in section 6.6.1 of the datasheet.
         private readonly byte[] mprlsMeasurementCommand = { 0xAA, 0x00, 0x00 };
@@ -88,14 +89,14 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             return Task.Run(() =>
             {
                 //Send the command to the sensor to tell it to do the thing.
-                Peripheral.Write(mprlsMeasurementCommand);
+                BusComms.Write(mprlsMeasurementCommand);
 
                 //Datasheet says wait 5ms
                 Thread.Sleep(5);
 
                 while (true)
                 {
-                    Peripheral.Read(ReadBuffer.Span[0..1]);
+                    BusComms.Read(ReadBuffer.Span[0..1]);
 
                     //From section 6.5 of the datasheet
                     IsDevicePowered = BitHelpers.GetBitValue(ReadBuffer.Span[0], 6);
@@ -119,7 +120,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                     }
                 }
 
-                Peripheral.Read(ReadBuffer.Span[0..4]);
+                BusComms.Read(ReadBuffer.Span[0..4]);
 
                 var rawPSIMeasurement = (ReadBuffer.Span[1] << 16) | (ReadBuffer.Span[2] << 8) | ReadBuffer.Span[3];
 

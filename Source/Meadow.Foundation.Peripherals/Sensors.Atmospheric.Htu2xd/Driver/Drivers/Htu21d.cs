@@ -35,7 +35,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         protected void Initialize()
         {
-            Peripheral?.Write((byte)Registers.SOFT_RESET);
+            BusComms?.Write((byte)Registers.SOFT_RESET);
 
             Thread.Sleep(100);
 
@@ -50,19 +50,19 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         {
             (Units.Temperature? Temperature, RelativeHumidity? Humidity) conditions;
 
-            Peripheral?.Write((byte)Registers.HUMDITY_MEASURE_NOHOLD);
+            BusComms?.Write((byte)Registers.HUMDITY_MEASURE_NOHOLD);
             await Task.Delay(20); // Maximum conversion time is 12ms (page 5 of the datasheet)
 
-            Peripheral?.Read(ReadBuffer.Span[0..2]);// 2 data bytes plus a checksum (we ignore the checksum here)
+            BusComms?.Read(ReadBuffer.Span[0..2]);// 2 data bytes plus a checksum (we ignore the checksum here)
             var humidityReading = (ushort)((ReadBuffer.Span[0] << 8) + ReadBuffer.Span[1]);
             var humidity = (125 * (float)humidityReading / 65536) - 6;
             humidity = Math.Clamp(humidity, 0, 100);
             conditions.Humidity = new RelativeHumidity(humidity, HU.Percent);
 
-            Peripheral?.Write((byte)Registers.TEMPERATURE_MEASURE_NOHOLD);
+            BusComms?.Write((byte)Registers.TEMPERATURE_MEASURE_NOHOLD);
             await Task.Delay(20); // Maximum conversion time is 12ms (page 5 of the datasheet)
 
-            Peripheral?.Read(ReadBuffer.Span[0..2]);// 2 data bytes plus a checksum (we ignore the checksum here)
+            BusComms?.Read(ReadBuffer.Span[0..2]);// 2 data bytes plus a checksum (we ignore the checksum here)
             var temperatureReading = (short)((ReadBuffer.Span[0] << 8) + ReadBuffer.Span[1]);
             conditions.Temperature = new Units.Temperature((float)(((175.72 * temperatureReading) / 65536) - 46.85), Units.Temperature.UnitType.Celsius);
 
@@ -75,16 +75,16 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <param name="heaterOn">Heater status, true = turn heater on, false = turn heater off.</param>
         public void Heater(bool heaterOn)
         {
-            if (Peripheral == null) return;
+            if (BusComms == null) return;
 
-            var register = Peripheral.ReadRegister((byte)Registers.READ_HEATER_REGISTER);
+            var register = BusComms.ReadRegister((byte)Registers.READ_HEATER_REGISTER);
             register &= 0xfd;
 
             if (heaterOn)
             {
                 register |= 0x02;
             }
-            Peripheral.WriteRegister((byte)Registers.WRITE_HEATER_REGISTER, register);
+            BusComms.WriteRegister((byte)Registers.WRITE_HEATER_REGISTER, register);
         }
 
         //Set sensor resolution
@@ -98,9 +98,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         //Power on default is 0/0
         void SetResolution(SensorResolution resolution)
         {
-            if (Peripheral == null) return;
+            if (BusComms == null) return;
 
-            var register = Peripheral.ReadRegister((byte)Registers.READ_USER_REGISTER);
+            var register = BusComms.ReadRegister((byte)Registers.READ_USER_REGISTER);
 
             var res = (byte)resolution;
 
@@ -109,7 +109,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             register |= res; //Mask in the requested resolution bits
 
             //Request a write to user register
-            Peripheral.WriteRegister((byte)Registers.WRITE_USER_REGISTER, register); //Write the new resolution bits
+            BusComms.WriteRegister((byte)Registers.WRITE_USER_REGISTER, register); //Write the new resolution bits
         }
     }
 }

@@ -464,7 +464,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         }
 
         /// <summary>
-        /// Dispose Peripheral
+        /// Dispose BusComms
         /// </summary>
         public void Dispose()
         {

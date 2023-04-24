@@ -52,12 +52,12 @@ namespace Meadow.Foundation.Sensors.Motion
         {
             get
             {
-                var controlRegister = Peripheral.ReadRegister(Registers.CONTROL_1);
+                var controlRegister = BusComms.ReadRegister(Registers.CONTROL_1);
                 return (controlRegister & 0x03) == 0;
             }
             set
             {
-                var controlRegister = Peripheral.ReadRegister(Registers.CONTROL_1);
+                var controlRegister = BusComms.ReadRegister(Registers.CONTROL_1);
                 if (value)
                 {
                     controlRegister &= 0xfc; // ~0x03
@@ -66,7 +66,7 @@ namespace Meadow.Foundation.Sensors.Motion
                 {
                     controlRegister |= 0x01;
                 }
-                Peripheral.WriteRegister(Registers.CONTROL_1, controlRegister);
+                BusComms.WriteRegister(Registers.CONTROL_1, controlRegister);
             }
         }
 
@@ -76,7 +76,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <remarks>
         /// See section 5.1.1 of the datasheet.
         /// </remarks>
-        public bool IsDataReady => (Peripheral.ReadRegister(Registers.DR_STATUS) & 0x08) > 0;
+        public bool IsDataReady => (BusComms.ReadRegister(Registers.DR_STATUS) & 0x08) > 0;
 
 
         /// <summary>
@@ -93,7 +93,7 @@ namespace Meadow.Foundation.Sensors.Motion
             set
             {
                 Standby = true;
-                var cr2 = Peripheral.ReadRegister(Registers.CONTROL_2);
+                var cr2 = BusComms.ReadRegister(Registers.CONTROL_2);
                 if (value)
                 {
                     cr2 |= 0x80;
@@ -102,7 +102,7 @@ namespace Meadow.Foundation.Sensors.Motion
                 {
                     cr2 &= 0x7f;
                 }
-                Peripheral.WriteRegister(Registers.CONTROL_2, cr2);
+                BusComms.WriteRegister(Registers.CONTROL_2, cr2);
                 digitalInputsEnabled = value;
             }
         }
@@ -117,7 +117,7 @@ namespace Meadow.Foundation.Sensors.Motion
         public Mag3110(II2cBus i2cBus, IDigitalInputPort interruptPort = null, byte address = (byte)Addresses.Default)
             : base(i2cBus, address)
         {
-            var deviceID = Peripheral.ReadRegister(Registers.WHO_AM_I);
+            var deviceID = BusComms.ReadRegister(Registers.WHO_AM_I);
             if (deviceID != 0xc4)
             {
                 throw new Exception("Unknown device ID, " + deviceID + " retruend, 0xc4 expected");
@@ -137,13 +137,13 @@ namespace Meadow.Foundation.Sensors.Motion
         public void Reset()
         {
             Standby = true;
-            Peripheral.WriteRegister(Registers.CONTROL_1, 0x00);
-            Peripheral.WriteRegister(Registers.CONTROL_2, 0x80);
+            BusComms.WriteRegister(Registers.CONTROL_1, 0x00);
+            BusComms.WriteRegister(Registers.CONTROL_2, 0x80);
             WriteBuffer.Span[0] = Registers.X_OFFSET_MSB;
             WriteBuffer.Span[1] = WriteBuffer.Span[2] = WriteBuffer.Span[3] = 0;
             WriteBuffer.Span[4] = WriteBuffer.Span[5] = WriteBuffer.Span[6] = 0;
 
-            Peripheral.Write(WriteBuffer.Span[0..7]);
+            BusComms.Write(WriteBuffer.Span[0..7]);
         }
 
         /// <summary>
@@ -171,11 +171,11 @@ namespace Meadow.Foundation.Sensors.Motion
         {
             (MagneticField3D? MagneticField3D, Units.Temperature? Temperature) conditions;
 
-            var controlRegister = Peripheral.ReadRegister(Registers.CONTROL_1);
+            var controlRegister = BusComms.ReadRegister(Registers.CONTROL_1);
             controlRegister |= 0x02;
-            Peripheral.WriteRegister(Registers.CONTROL_1, controlRegister);
+            BusComms.WriteRegister(Registers.CONTROL_1, controlRegister);
 
-            Peripheral.ReadRegister(Registers.X_MSB, ReadBuffer.Span[0..6]);
+            BusComms.ReadRegister(Registers.X_MSB, ReadBuffer.Span[0..6]);
 
             conditions.MagneticField3D = new MagneticField3D(
                 new MagneticField((short)((ReadBuffer.Span[0] << 8) | ReadBuffer.Span[1]), MagneticField.UnitType.MicroTesla),
@@ -183,7 +183,7 @@ namespace Meadow.Foundation.Sensors.Motion
                 new MagneticField((short)((ReadBuffer.Span[4] << 8) | ReadBuffer.Span[5]), MagneticField.UnitType.MicroTesla)
                 );
 
-            conditions.Temperature = new Units.Temperature((sbyte)Peripheral.ReadRegister(Registers.TEMPERATURE), Units.Temperature.UnitType.Celsius);
+            conditions.Temperature = new Units.Temperature((sbyte)BusComms.ReadRegister(Registers.TEMPERATURE), Units.Temperature.UnitType.Celsius);
 
             return Task.FromResult(conditions);
         }

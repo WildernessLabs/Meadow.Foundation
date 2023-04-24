@@ -48,12 +48,12 @@ namespace Meadow.Foundation.Sensors.Temperature
         public Mcp960x(II2cBus i2cBus, byte address)
             : base(i2cBus, address)
         {
-            if (Peripheral == null)
+            if (BusComms == null)
             {
                 throw new NullReferenceException("Mcp960x peripheral did not initialize");
             }
 
-            Peripheral.WriteRegister(DEVICECONFIG, 0x80);
+            BusComms.WriteRegister(DEVICECONFIG, 0x80);
         }
 
         /// <summary>
@@ -77,7 +77,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         {
             byte[] readBuffer = new byte[2];
 
-            Peripheral?.ReadRegister(HOTJUNCTION, readBuffer);
+            BusComms?.ReadRegister(HOTJUNCTION, readBuffer);
 
             int rawTemp = (readBuffer[0] << 8) | readBuffer[1];
             double temperature = rawTemp * 0.0625;
@@ -93,7 +93,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         {
             byte[] readBuffer = new byte[2];
 
-            Peripheral?.ReadRegister(COLDJUNCTION, readBuffer);
+            BusComms?.ReadRegister(COLDJUNCTION, readBuffer);
 
             int rawTemp = (readBuffer[0] << 8) | readBuffer[1];
             double temperature = rawTemp * 0.0625;
@@ -107,11 +107,11 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// <param name="type">The thermocouple type to set</param>
         public void SetThermocoupleType(ThermocoupleType type)
         {
-            byte config = Peripheral.ReadRegister(SENSORCONFIG);
+            byte config = BusComms.ReadRegister(SENSORCONFIG);
 
             config = (byte)((config & 0xF8) | (byte)type);
 
-            Peripheral.WriteRegister(SENSORCONFIG, config);
+            BusComms.WriteRegister(SENSORCONFIG, config);
         }
 
         /// <summary>
@@ -120,7 +120,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// <returns>The currently configured thermocouple type</returns>
         public ThermocoupleType GetThermocoupleType()
         {
-            byte config = Peripheral.ReadRegister(SENSORCONFIG);
+            byte config = BusComms.ReadRegister(SENSORCONFIG);
 
             return (ThermocoupleType)(config & 0x07);
         }
@@ -131,11 +131,11 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// <param name="resolution">The ADC resolution to set</param>
         public void SetAdcResolution(AdcResolution resolution)
         {
-            byte config = Peripheral.ReadRegister(SENSORCONFIG);
+            byte config = BusComms.ReadRegister(SENSORCONFIG);
 
             config = (byte)((config & 0x9F) | ((byte)resolution << 5));
 
-            Peripheral.WriteRegister(SENSORCONFIG, config);
+            BusComms.WriteRegister(SENSORCONFIG, config);
         }
 
         /// <summary>
@@ -144,7 +144,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// <returns>The currently configured ADC resolution</returns>
         public AdcResolution GetAdcResolution()
         {
-            byte config = Peripheral.ReadRegister(SENSORCONFIG);
+            byte config = BusComms.ReadRegister(SENSORCONFIG);
 
             return (AdcResolution)((config & 0x60) >> 5);
         }
@@ -155,11 +155,11 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// <param name="coefficient">The filter coefficient to set</param>
         public void SetFilterCoefficient(FilterCoefficient coefficient)
         {
-            byte config = Peripheral.ReadRegister(SENSORCONFIG);
+            byte config = BusComms.ReadRegister(SENSORCONFIG);
 
             config = (byte)((config & 0xF8) | ((byte)coefficient & 0x07));
 
-            Peripheral.WriteRegister(SENSORCONFIG, config);
+            BusComms.WriteRegister(SENSORCONFIG, config);
         }
 
         /// <summary>
@@ -168,7 +168,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// <returns>The currently configured filter coefficient</returns>
         public FilterCoefficient GetFilterCoefficient()
         {
-            byte config = Peripheral.ReadRegister(SENSORCONFIG);
+            byte config = BusComms.ReadRegister(SENSORCONFIG);
 
             return (FilterCoefficient)(config & 0x07);
         }
@@ -187,7 +187,7 @@ namespace Meadow.Foundation.Sensors.Temperature
 
             short tempData = (short)(temperature.Celsius / 0.0625);
 
-            Peripheral.WriteRegister((byte)(ALERTLIMIT_1 + ((int)alertNumber - 1) * 2), new byte[] { (byte)(tempData >> 8), (byte)(tempData & 0xFF) });
+            BusComms.WriteRegister((byte)(ALERTLIMIT_1 + ((int)alertNumber - 1) * 2), new byte[] { (byte)(tempData >> 8), (byte)(tempData & 0xFF) });
         }
 
         /// <summary>
@@ -204,7 +204,7 @@ namespace Meadow.Foundation.Sensors.Temperature
 
             byte[] readBuffer = new byte[2];
 
-            Peripheral.ReadRegister((byte)(ALERTLIMIT_1 + ((int)alertNumber - 1) * 2), readBuffer);
+            BusComms.ReadRegister((byte)(ALERTLIMIT_1 + ((int)alertNumber - 1) * 2), readBuffer);
 
             ushort tempData = (ushort)((readBuffer[0] << 8) | readBuffer[1]);
             double temperature = tempData / 16.0;
@@ -236,7 +236,7 @@ namespace Meadow.Foundation.Sensors.Temperature
             if (rising) configValue |= 0x08;
             if (alertColdJunction) configValue |= 0x10;
 
-            Peripheral.WriteRegister((byte)(ALERTCONFIG_1 + ((int)alertNumber - 1)), configValue);
+            BusComms.WriteRegister((byte)(ALERTCONFIG_1 + ((int)alertNumber - 1)), configValue);
         }
 
         /// <summary>
@@ -245,7 +245,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// <param name="enable">True to enable the sensor, false to enter sleep mode</param>
         public void Enable(bool enable)
         {
-            byte config = Peripheral.ReadRegister(DEVICECONFIG);
+            byte config = BusComms.ReadRegister(DEVICECONFIG);
 
             config &= 0b1111_1100; // Clear bits 0 and 1
 
@@ -254,7 +254,7 @@ namespace Meadow.Foundation.Sensors.Temperature
                 config |= 0x01;
             }
 
-            Peripheral.WriteRegister(DEVICECONFIG, config);
+            BusComms.WriteRegister(DEVICECONFIG, config);
         }
 
         /// <summary>
@@ -263,7 +263,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// <returns>True if in awake mode, false if in sleep mode</returns>
         public bool IsEnabled()
         {
-            byte config = Peripheral.ReadRegister(DEVICECONFIG);
+            byte config = BusComms.ReadRegister(DEVICECONFIG);
             int statusBits = (config & 0b11);
 
             return statusBits == 0;

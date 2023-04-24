@@ -72,7 +72,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         protected void Reset()
         {
-            Peripheral?.Write(CMD_RESET);
+            BusComms?.Write(CMD_RESET);
             Thread.Sleep(100);
         }
 
@@ -89,7 +89,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
             tx[0] = READ_ID_PART1;
             tx[1] = READ_ID_PART2;
-            Peripheral?.Exchange(tx, ReadBuffer.Span);
+            BusComms?.Exchange(tx, ReadBuffer.Span);
             for (var index = 0; index < 4; index++)
             {
                 SerialNumber <<= 8;
@@ -98,7 +98,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
             tx[0] = READ_2ND_ID_PART1;
             tx[1] = READ_2ND_ID_PART2;
-            Peripheral?.Exchange(tx, ReadBuffer.Span);
+            BusComms?.Exchange(tx, ReadBuffer.Span);
 
             SerialNumber <<= 8;
             SerialNumber += ReadBuffer.Span[0];
@@ -128,9 +128,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         {
             (Units.Temperature Temperature, RelativeHumidity Humidity) conditions;
 
-            Peripheral?.Write(HUMDITY_MEASURE_NOHOLD);
+            BusComms?.Write(HUMDITY_MEASURE_NOHOLD);
             await Task.Delay(25); // Maximum conversion time is 12ms (page 5 of the datasheet).
-            Peripheral?.Read(ReadBuffer.Span); // 2 data bytes plus a checksum (we ignore the checksum here)
+            BusComms?.Read(ReadBuffer.Span); // 2 data bytes plus a checksum (we ignore the checksum here)
             var humidityReading = (ushort)((ReadBuffer.Span[0] << 8) + ReadBuffer.Span[1]);
             conditions.Humidity = new RelativeHumidity(((125 * (float)humidityReading) / 65536) - 6, HU.Percent);
             if (conditions.Humidity < new RelativeHumidity(0, HU.Percent))
@@ -145,9 +145,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 }
             }
 
-            Peripheral?.Write(TEMPERATURE_MEASURE_NOHOLD);
+            BusComms?.Write(TEMPERATURE_MEASURE_NOHOLD);
             Thread.Sleep(25); // Maximum conversion time is 12ms (page 5 of the datasheet).
-            Peripheral?.Read(ReadBuffer.Span); // 2 data bytes plus a checksum (we ignore the checksum here)
+            BusComms?.Read(ReadBuffer.Span); // 2 data bytes plus a checksum (we ignore the checksum here)
             var temperatureReading = (short)((ReadBuffer.Span[0] << 8) + ReadBuffer.Span[1]);
             conditions.Temperature = new Units.Temperature((float)((175.72 * temperatureReading / 65536) - 46.85), TU.Celsius);
 
@@ -178,14 +178,14 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <param name="onOrOff">Heater status, true = turn heater on, false = turn heater off.</param>
         public void Heater(bool onOrOff)
         {
-            var register = Peripheral?.ReadRegister((byte)Register.USER_REG_1) ?? 0;
+            var register = BusComms?.ReadRegister((byte)Register.USER_REG_1) ?? 0;
             register &= 0xfd;
 
             if (onOrOff)
             {
                 register |= 0x02;
             }
-            Peripheral?.WriteRegister((byte)Register.USER_REG_1, register);
+            BusComms?.WriteRegister((byte)Register.USER_REG_1, register);
         }
 
         /// <summary>
@@ -200,7 +200,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <param name="resolution">The resolution to set</param>
         void SetResolution(SensorResolution resolution)
         {
-            var register = Peripheral?.ReadRegister((byte)Register.USER_REG_1) ?? 0;
+            var register = BusComms?.ReadRegister((byte)Register.USER_REG_1) ?? 0;
 
             var res = (byte)resolution;
 
@@ -209,7 +209,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             register |= res; //Mask in the requested resolution bits
 
             //Request a write to user register
-            Peripheral?.WriteRegister((byte)Register.USER_REG_1, register); //Write the new resolution bits
+            BusComms?.WriteRegister((byte)Register.USER_REG_1, register); //Write the new resolution bits
         }
 
         async Task<Units.Temperature> ISensor<Units.Temperature>.Read()

@@ -106,7 +106,7 @@ namespace Meadow.Foundation.Sensors.Environmental
             Thread.Sleep(1);
 
             var data = new byte[9];
-            Peripheral.Read(data);
+            BusComms.Read(data);
 
             var ret = new byte[6];
 
@@ -130,7 +130,7 @@ namespace Meadow.Foundation.Sensors.Environmental
             SendCommand(Commands.GetDataReadyStatus);
             Thread.Sleep(1);
             var data = new byte[3];
-            Peripheral.Read(data);
+            BusComms.Read(data);
 
             if (data[1] == 0 && (data[0] & 0x07) == 0)
             {
@@ -184,7 +184,7 @@ namespace Meadow.Foundation.Sensors.Environmental
             data[0] = (byte)((ushort)command >> 8);
             data[1] = (byte)(ushort)command;
 
-            Peripheral.Write(data);
+            BusComms.Write(data);
         }
 
         /// <summary>
@@ -202,7 +202,7 @@ namespace Meadow.Foundation.Sensors.Environmental
 
             SendCommand(Commands.ReadMeasurement);
             Thread.Sleep(1);
-            Peripheral.Read(ReadBuffer.Span[0..9]);
+            BusComms.Read(ReadBuffer.Span[0..9]);
 
             int value = ReadBuffer.Span[0] << 8 | ReadBuffer.Span[1];
             conditions.Concentration = new Concentration(value, Units.Concentration.UnitType.PartsPerMillion);

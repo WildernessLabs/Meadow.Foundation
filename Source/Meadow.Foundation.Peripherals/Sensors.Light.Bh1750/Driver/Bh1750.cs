@@ -59,8 +59,8 @@ namespace Meadow.Foundation.Sensors.Light
 
         private void Initialize()
         {
-            Peripheral.Write((byte)Commands.PowerOn);
-            Peripheral.Write((byte)Commands.Reset);
+            BusComms.Write((byte)Commands.PowerOn);
+            BusComms.Write((byte)Commands.Reset);
         }
 
         /// <summary>
@@ -73,15 +73,15 @@ namespace Meadow.Foundation.Sensors.Light
                 MeasuringMode == MeasuringModes.OneTimeHighResolutionMode2 ||
                 MeasuringMode == MeasuringModes.OneTimeLowResolutionMode)
             {
-                Peripheral.Write((byte)Commands.PowerOn);
+                BusComms.Write((byte)Commands.PowerOn);
             }
 
-            Peripheral.Write((byte)MeasuringMode);
+            BusComms.Write((byte)MeasuringMode);
 
             //wait for the measurement to complete before reading
             await Task.Delay(GetMeasurementTime(MeasuringMode));
 
-            Peripheral.Read(ReadBuffer.Span[0..2]);
+            BusComms.Read(ReadBuffer.Span[0..2]);
 
             ushort raw = BinaryPrimitives.ReadUInt16BigEndian(ReadBuffer.Span[0..2]);
 
@@ -123,8 +123,8 @@ namespace Meadow.Foundation.Sensors.Light
 
             byte val = (byte)(DefaultLightTransmittance / transmittance);
 
-            Peripheral.Write((byte)((byte)Commands.MeasurementTimeHigh | (val >> 5)));
-            Peripheral.Write((byte)((byte)Commands.MeasurementTimeLow | (val & 0b_0001_1111)));
+            BusComms.Write((byte)((byte)Commands.MeasurementTimeHigh | (val >> 5)));
+            BusComms.Write((byte)((byte)Commands.MeasurementTimeLow | (val & 0b_0001_1111)));
         }
 
         /// <summary>

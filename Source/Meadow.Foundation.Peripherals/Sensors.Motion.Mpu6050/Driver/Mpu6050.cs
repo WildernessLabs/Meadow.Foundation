@@ -85,7 +85,7 @@ namespace Meadow.Foundation.Sensors.Motion
         {
             WriteBuffer.Span[0] = Registers.POWER_MANAGEMENT;
             WriteBuffer.Span[1] = 0x00;
-            Peripheral?.Write(WriteBuffer.Span[0..2]);
+            BusComms?.Write(WriteBuffer.Span[0..2]);
 
             LoadConfiguration();
         }
@@ -96,7 +96,7 @@ namespace Meadow.Foundation.Sensors.Motion
         protected void LoadConfiguration()
         {
             // read all 3 config bytes
-            Peripheral?.ReadRegister(Registers.CONFIG, ReadBuffer.Span[0..3]);
+            BusComms?.ReadRegister(Registers.CONFIG, ReadBuffer.Span[0..3]);
 
             GyroScale = (ReadBuffer.Span[1] & 0b00011000) >> 3;
             AccelerometerScale = (ReadBuffer.Span[2] & 0b00011000) >> 3;
@@ -132,7 +132,7 @@ namespace Meadow.Foundation.Sensors.Motion
             (Acceleration3D? Acceleration3D, AngularVelocity3D? AngularVelocity3D, Units.Temperature? Temperature) conditions;
 
             // Read 14 bytes (7 registers), starting at 0x3b
-            Peripheral?.ReadRegister(Registers.ACCELEROMETER_X, ReadBuffer.Span);
+            BusComms?.ReadRegister(Registers.ACCELEROMETER_X, ReadBuffer.Span);
 
             var a_scale = (1 << AccelerometerScale) / AccelScaleBase;
             var g_scale = (1 << GyroScale) / GyroScaleBase;

@@ -41,12 +41,12 @@ namespace Meadow.Foundation.Sensors.Light
         /// <summary>
         /// Sensor package ID
         /// </summary>
-        public int PackageID => Peripheral.ReadRegister((byte)(Register.PackageID | Register.Command));
+        public int PackageID => BusComms.ReadRegister((byte)(Register.PackageID | Register.Command));
 
         /// <summary>
         /// Sensor device ID
         /// </summary>
-        public int DeviceID => Peripheral.ReadRegister((byte)(Register.DeviceID | Register.Command));
+        public int DeviceID => BusComms.ReadRegister((byte)(Register.DeviceID | Register.Command));
 
         /// <summary>
         /// Gain of the sensor
@@ -58,7 +58,7 @@ namespace Meadow.Foundation.Sensors.Light
             {
                 PowerOff();
                 gainFactor = value;
-                Peripheral.WriteRegister((byte)(Register.Command | Register.Config), (byte)((byte)integrationTime | (byte)gainFactor));
+                BusComms.WriteRegister((byte)(Register.Command | Register.Config), (byte)((byte)integrationTime | (byte)gainFactor));
                 PowerOn();
             }
         }
@@ -73,7 +73,7 @@ namespace Meadow.Foundation.Sensors.Light
             {
                 PowerOff();
                 integrationTime = value;
-                Peripheral.WriteRegister((byte)(Register.Command | Register.Config), (byte)((byte)integrationTime | (byte)gainFactor));
+                BusComms.WriteRegister((byte)(Register.Command | Register.Config), (byte)((byte)integrationTime | (byte)gainFactor));
                 PowerOn();
             }
         }
@@ -124,8 +124,8 @@ namespace Meadow.Foundation.Sensors.Light
             (Illuminance? FullSpectrum, Illuminance? Infrared, Illuminance? VisibleLight, Illuminance? Integrated) conditions;
 
             // data sheet indicates you should always read all 4 bytes, in order, for valid data
-            var channel0 = Peripheral.ReadRegisterAsUShort((byte)(Register.CH0DataL | Register.Command));
-            var channel1 = Peripheral.ReadRegisterAsUShort((byte)(Register.CH1DataL | Register.Command));
+            var channel0 = BusComms.ReadRegisterAsUShort((byte)(Register.CH0DataL | Register.Command));
+            var channel1 = BusComms.ReadRegisterAsUShort((byte)(Register.CH1DataL | Register.Command));
 
             conditions.FullSpectrum = new Illuminance(channel0, IU.Lux);
             conditions.Infrared = new Illuminance(channel1, IU.Lux);
@@ -177,7 +177,7 @@ namespace Meadow.Foundation.Sensors.Light
         /// </summary>
         public Task PowerOn()
         {
-            Peripheral.WriteRegister((byte)(Register.Enable | Register.Command), 3);
+            BusComms.WriteRegister((byte)(Register.Enable | Register.Command), 3);
             return Task.CompletedTask;
         }
 
@@ -186,7 +186,7 @@ namespace Meadow.Foundation.Sensors.Light
         /// </summary>
         public Task PowerOff()
         {
-            Peripheral.WriteRegister((byte)(Register.Enable | Register.Command), 0);
+            BusComms.WriteRegister((byte)(Register.Enable | Register.Command), 0);
             return Task.CompletedTask;
         }
 
