@@ -53,7 +53,10 @@ namespace Meadow.Foundation.Sensors.Accelerometers
         /// </summary>
         public AngularVelocityRange CurrentAngularVelocityRange { get; private set; }
 
-        readonly II2cPeripheral i2cPeripheral;
+        /// <summary>
+        /// I2C Communication bus used to communicate with the peripheral
+        /// </summary>
+        protected readonly II2cCommunications i2cComms;
 
         /// <summary>
         /// Create a new Bmi270 instance
@@ -64,9 +67,9 @@ namespace Meadow.Foundation.Sensors.Accelerometers
         {
             //Read buffer: 16 (needs at least 13)
             //Write buffer: 256 bytes for the config data + 1 for the address
-            i2cPeripheral = new I2cPeripheral(i2cBus, address, 16, 256 + 1);
+            i2cComms = new I2cCommunications(i2cBus, address, 16, 256 + 1);
 
-            var id = i2cPeripheral.ReadRegister(CHIP_ID);
+            var id = i2cComms.ReadRegister(CHIP_ID);
 
             if (id != 36)
             {
@@ -79,7 +82,7 @@ namespace Meadow.Foundation.Sensors.Accelerometers
 
         void Initialize()
         {   //disable advanced power save mode
-            i2cPeripheral.WriteRegister(PWR_CONF, 0xB0);
+            i2cComms.WriteRegister(PWR_CONF, 0xB0);
 
             SetAccelerationRange(AccelerationRange._16g);
 
@@ -87,7 +90,7 @@ namespace Meadow.Foundation.Sensors.Accelerometers
             Thread.Sleep(1);
 
             //Write INIT_CTRL 0x00 to prepare config load
-            i2cPeripheral.WriteRegister(INIT_CTRL, 0);
+            i2cComms.WriteRegister(INIT_CTRL, 0);
 
             //upload a configuration file to register INIT_DATA
             ushort index = 0;
@@ -103,21 +106,21 @@ namespace Meadow.Foundation.Sensors.Accelerometers
 
                 Thread.Sleep(1); //probably not needed ... data sheet wants a 2us delay
 
-                i2cPeripheral.WriteRegister(INIT_0, dmaLocation);
+                i2cComms.WriteRegister(INIT_0, dmaLocation);
 
-                i2cPeripheral.WriteRegister(INIT_DATA, bmi270_config_file.Skip(index).Take(length).ToArray());
+                i2cComms.WriteRegister(INIT_DATA, bmi270_config_file.Skip(index).Take(length).ToArray());
 
                 index += length;
             }
 
             //Write INIT_CTRL 0x01 to complete config load
-            i2cPeripheral.WriteRegister(INIT_CTRL, 1);
+            i2cComms.WriteRegister(INIT_CTRL, 1);
 
             //wait until register INTERNAL_STATUS contains 0b0001 (~20 ms)
             while (true)
             {
                 Thread.Sleep(10);
-                byte status = i2cPeripheral.ReadRegister(INTERNAL_STATUS);
+                byte status = i2cComms.ReadRegister(INTERNAL_STATUS);
 
                 if (status == 0x01) { break; }
             }
@@ -131,7 +134,7 @@ namespace Meadow.Foundation.Sensors.Accelerometers
         /// <param name="accelRange">AccelerationRange</param>
         public void SetAccelerationRange(AccelerationRange accelRange)
         {
-            i2cPeripheral.WriteRegister(ACC_RANGE, (byte)accelRange);
+            i2cComms.WriteRegister(ACC_RANGE, (byte)accelRange);
             CurrentAccelerationRange = accelRange;
         }
 
@@ -141,7 +144,7 @@ namespace Meadow.Foundation.Sensors.Accelerometers
         /// <param name="angRange">AngularAccelerationRange</param>
         public void SetAngularVelocityRange(AngularVelocityRange angRange)
         {   //This register also sets the OIS range but it's not implemented so we can ignore it 
-            i2cPeripheral.WriteRegister(GYR_RANGE, (byte)angRange);
+            i2cComms.WriteRegister(GYR_RANGE, (byte)angRange);
         }
 
         /// <summary>
@@ -224,7 +227,7 @@ namespace Meadow.Foundation.Sensors.Accelerometers
                 new AngularVelocity(dpsZ, AngularVelocity.UnitType.DegreesPerSecond));
 
             //Get the temperature
-            ushort tempRaw = (ushort)(i2cPeripheral.ReadRegister(TEMPERATURE_1) << 8 | i2cPeripheral.ReadRegister(TEMPERATURE_0));
+            ushort tempRaw = (ushort)(i2cComms.ReadRegister(TEMPERATURE_1) << 8 | i2cComms.ReadRegister(TEMPERATURE_0));
             double tempC;
 
             double degreePerByte = 0.001953125; //in celcius
@@ -258,30 +261,30 @@ namespace Meadow.Foundation.Sensors.Accelerometers
             switch (powerMode)
             {
                 case PowerMode.Suspend:
-                    i2cPeripheral.WriteRegister(PWR_CTRL, 0x00);
-                    i2cPeripheral.WriteRegister(PWR_CONF, 0x00);
+                    i2cComms.WriteRegister(PWR_CTRL, 0x00);
+                    i2cComms.WriteRegister(PWR_CONF, 0x00);
                     break;
                 case PowerMode.Configuration:
-                    i2cPeripheral.WriteRegister(PWR_CTRL, 0x00);
-                    i2cPeripheral.WriteRegister(PWR_CONF, 0x00);
+                    i2cComms.WriteRegister(PWR_CTRL, 0x00);
+                    i2cComms.WriteRegister(PWR_CONF, 0x00);
                     break;
                 case PowerMode.LowPower:
-                    i2cPeripheral.WriteRegister(PWR_CTRL, 0x04);
-                    i2cPeripheral.WriteRegister(ACC_CONF, 0x17);
-                    i2cPeripheral.WriteRegister(GYR_CONF, 0xA9);
-                    i2cPeripheral.WriteRegister(PWR_CONF, 0x03);
+                    i2cComms.WriteRegister(PWR_CTRL, 0x04);
+                    i2cComms.WriteRegister(ACC_CONF, 0x17);
+                    i2cComms.WriteRegister(GYR_CONF, 0xA9);
+                    i2cComms.WriteRegister(PWR_CONF, 0x03);
                     break;
                 case PowerMode.Normal:
-                    i2cPeripheral.WriteRegister(PWR_CTRL, 0x0E);
-                    i2cPeripheral.WriteRegister(ACC_CONF, 0xA8);
-                    i2cPeripheral.WriteRegister(GYR_CONF, 0xA9);
-                    i2cPeripheral.WriteRegister(PWR_CONF, 0x02);
+                    i2cComms.WriteRegister(PWR_CTRL, 0x0E);
+                    i2cComms.WriteRegister(ACC_CONF, 0xA8);
+                    i2cComms.WriteRegister(GYR_CONF, 0xA9);
+                    i2cComms.WriteRegister(PWR_CONF, 0x02);
                     break;
                 case PowerMode.Performance:
-                    i2cPeripheral.WriteRegister(PWR_CTRL, 0x0E);
-                    i2cPeripheral.WriteRegister(ACC_CONF, 0xA8);
-                    i2cPeripheral.WriteRegister(GYR_CONF, 0xE9);
-                    i2cPeripheral.WriteRegister(PWR_CONF, 0x02);
+                    i2cComms.WriteRegister(PWR_CTRL, 0x0E);
+                    i2cComms.WriteRegister(ACC_CONF, 0xA8);
+                    i2cComms.WriteRegister(GYR_CONF, 0xE9);
+                    i2cComms.WriteRegister(PWR_CONF, 0x02);
                     break;
             }
         }
@@ -289,7 +292,7 @@ namespace Meadow.Foundation.Sensors.Accelerometers
         byte[] ReadAccelerationData()
         {
             var readBuffer = new byte[12];
-            i2cPeripheral.ReadRegister(0x0C, readBuffer);
+            i2cComms.ReadRegister(0x0C, readBuffer);
             return readBuffer;
         }
     }

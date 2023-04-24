@@ -69,17 +69,17 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             (Units.Temperature? Temperature, RelativeHumidity? Humidity) conditions;
 
             //  Read the humidity
-            Peripheral?.WriteRegister((byte)Registers.Config, MeasureHumidity);
+            BusComms?.WriteRegister((byte)Registers.Config, MeasureHumidity);
 
             //  Maximum conversion time should be 40ms
-            while ((Peripheral?.ReadRegister((byte)Registers.Status) & 0x01) > 0)
+            while ((BusComms?.ReadRegister((byte)Registers.Status) & 0x01) > 0)
             {
                 await Task.Delay(40);
             }
 
             byte[] data = new byte[2];
 
-            Peripheral?.ReadRegister((byte)Registers.DataHigh, data);
+            BusComms?.ReadRegister((byte)Registers.DataHigh, data);
             int temp = data[0] << 8;
             temp |= data[1];
             temp >>= 4;
@@ -87,15 +87,15 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             conditions.Humidity = new RelativeHumidity(temp / 16.0 - 24);
 
             //  Read the temperature
-            Peripheral?.WriteRegister((byte)Registers.Config, MeasureTemperature);
+            BusComms?.WriteRegister((byte)Registers.Config, MeasureTemperature);
 
             //  Maximum conversion time should be 40ms
-            while ((Peripheral?.ReadRegister((byte)Registers.Status) & 0x01) > 0)
+            while ((BusComms?.ReadRegister((byte)Registers.Status) & 0x01) > 0)
             {
                 Thread.Sleep(40);
             }
 
-            Peripheral?.ReadRegister((byte)Registers.DataHigh, data);
+            BusComms?.ReadRegister((byte)Registers.DataHigh, data);
             temp = data[0] << 8;
             temp |= data[1];
             temp >>= 2; //drop the two unused bits (14 bit value)

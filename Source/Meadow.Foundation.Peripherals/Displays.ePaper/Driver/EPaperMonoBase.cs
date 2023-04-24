@@ -92,7 +92,7 @@ namespace Meadow.Foundation.Displays
             this.resetPort = resetPort;
             this.busyPort = busyPort;
 
-            spiPeripheral = new SpiPeripheral(spiBus, chipSelectPort, DefaultSpiBusSpeed, DefaultSpiBusMode);
+            spiComms = new SpiCommunications(spiBus, chipSelectPort, DefaultSpiBusSpeed, DefaultSpiBusMode);
 
             imageBuffer = new Buffer1bppV(width, height);
 
@@ -284,7 +284,7 @@ namespace Meadow.Foundation.Displays
             dataCommandPort.State = DataState;
             for (int i = 0; i < Width / 8 * Height; i++)
             {
-                spiPeripheral.Write(buffer[i]);
+                spiComms.Write(buffer[i]);
             }
         }
 

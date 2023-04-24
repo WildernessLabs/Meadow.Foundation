@@ -12,9 +12,9 @@ namespace Meadow.Foundation
         PollingSensorBase<UNIT>, IDisposable where UNIT : struct
     {
         /// <summary>
-        /// Peripheral object, i.e. an I2CPeripheral or SpiPeripheral
+        /// Bus communications object, i.e. an I2cCommunications or SpiCommunications
         /// </summary>
-        protected IByteCommunications? Peripheral { get; set; }
+        protected IByteCommunications? BusComms { get; set; }
 
         /// <summary>
         /// The read buffer
@@ -37,7 +37,7 @@ namespace Meadow.Foundation
             II2cBus i2cBus, byte address,
             int readBufferSize = 8, int writeBufferSize = 8)
         {
-            Peripheral = new I2cPeripheral(i2cBus, address, readBufferSize, writeBufferSize);
+            BusComms = new I2cCommunications(i2cBus, address, readBufferSize, writeBufferSize);
             Init(readBufferSize, writeBufferSize);
         }
 
@@ -60,7 +60,7 @@ namespace Meadow.Foundation
             int writeBufferSize = 8,
             ChipSelectMode chipSelectMode = ChipSelectMode.ActiveLow)
         {
-            Peripheral = new SpiPeripheral(spiBus, chipSelect, busSpeed, busMode, readBufferSize, writeBufferSize, chipSelectMode);
+            BusComms = new SpiCommunications(spiBus, chipSelect, busSpeed, busMode, readBufferSize, writeBufferSize, chipSelectMode);
             Init(readBufferSize, writeBufferSize);
         }
 

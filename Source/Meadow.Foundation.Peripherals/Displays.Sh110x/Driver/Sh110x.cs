@@ -42,8 +42,8 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         public Frequency SpiBusSpeed
         {
-            get => spiPeripheral.BusSpeed;
-            set => spiPeripheral.BusSpeed = value;
+            get => spiComms.BusSpeed;
+            set => spiComms.BusSpeed = value;
         }
 
         /// <summary>
@@ -56,8 +56,8 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         public SpiClockConfiguration.Mode SpiBusMode
         {
-            get => spiPeripheral.BusMode;
-            set => spiPeripheral.BusMode = value;
+            get => spiComms.BusMode;
+            set => spiComms.BusMode = value;
         }
 
         /// <summary>
@@ -71,14 +71,14 @@ namespace Meadow.Foundation.Displays
         public IPixelBuffer PixelBuffer => imageBuffer;
 
         /// <summary>
-        /// I2C peripheral object for I2C displays
+        /// I2C Communication bus used to communicate with the peripheral
         /// </summary>
-        protected II2cPeripheral i2cPeripheral;
+        protected readonly II2cCommunications i2cComms;
 
         /// <summary>
-        /// SPI peripheral object for SPI displays
+        /// SPI Communication bus used to communicate with the peripheral
         /// </summary>
-        readonly ISpiPeripheral spiPeripheral;
+        protected ISpiCommunications spiComms;
 
         readonly IDigitalOutputPort dataCommandPort;
         readonly IDigitalOutputPort resetPort;
@@ -106,7 +106,7 @@ namespace Meadow.Foundation.Displays
         /// <param name="height">Display height in pixels</param>
         public Sh110x(II2cBus i2cBus, byte address, int width, int height)
         {
-            i2cPeripheral = new I2cPeripheral(i2cBus, address);
+            i2cComms = new I2cCommunications(i2cBus, address);
 
             Width = width;
             Height = height;
@@ -156,7 +156,7 @@ namespace Meadow.Foundation.Displays
             this.dataCommandPort = dataCommandPort;
             this.resetPort = resetPort;
 
-            spiPeripheral = new SpiPeripheral(spiBus, chipSelectPort, DefaultSpiBusSpeed, DefaultSpiBusMode);
+            spiComms = new SpiCommunications(spiBus, chipSelectPort, DefaultSpiBusSpeed, DefaultSpiBusMode);
 
             Width = width;
             Height = height;
@@ -239,13 +239,13 @@ namespace Meadow.Foundation.Displays
             if (connectionType == ConnectionType.SPI)
             {
                 dataCommandPort.State = Command;
-                spiPeripheral.Write(command);
+                spiComms.Write(command);
             }
             else
             {
                 commandBuffer.Span[0] = 0x00;
                 commandBuffer.Span[1] = command;
-                i2cPeripheral.Write(commandBuffer.Span);
+                i2cComms.Write(commandBuffer.Span);
             }
         }
 
@@ -267,14 +267,14 @@ namespace Meadow.Foundation.Displays
             if (connectionType == ConnectionType.SPI)
             {
                 dataCommandPort.State = Command;
-                spiPeripheral.Write(commands);
+                spiComms.Write(commands);
             }
             else
             {
                 Span<byte> data = new byte[commands.Length + 1];
                 data[0] = 0x00;
                 commands.CopyTo(data.Slice(1, commands.Length));
-                i2cPeripheral.Write(data);
+                i2cComms.Write(data);
             }
         }
 
@@ -296,7 +296,7 @@ namespace Meadow.Foundation.Displays
                         dataCommandPort.State = Data;
 
                         Array.Copy(imageBuffer.Buffer, Width * page, pageBuffer, 0, PAGE_SIZE);
-                        spiPeripheral.Write(pageBuffer);
+                        spiComms.Write(pageBuffer);
                     }
                 }
             }
@@ -312,7 +312,7 @@ namespace Meadow.Foundation.Displays
                     SendCommand((byte)(0x10 & 0xF));
 
                     Array.Copy(imageBuffer.Buffer, Width * page, pageBuffer, 1, PAGE_SIZE);
-                    i2cPeripheral.Write(pageBuffer);
+                    i2cComms.Write(pageBuffer);
                 }
             }
         }
@@ -344,7 +344,7 @@ namespace Meadow.Foundation.Displays
                 dataCommandPort.State = Data;
 
                 Array.Copy(imageBuffer.Buffer, Width * page, pageBuffer, 0, PAGE_SIZE);
-                spiPeripheral.Write(pageBuffer);
+                spiComms.Write(pageBuffer);
             }
         }
 

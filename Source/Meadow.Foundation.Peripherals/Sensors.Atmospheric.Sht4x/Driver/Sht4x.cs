@@ -112,9 +112,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         {
             (Units.Temperature? Temperature, RelativeHumidity? Humidity) conditions;
 
-            Peripheral?.Write((byte)ReadPrecision);
+            BusComms?.Write((byte)ReadPrecision);
             Thread.Sleep(GetDelayForPrecision(ReadPrecision));
-            Peripheral?.Read(ReadBuffer.Span[0..5]);
+            BusComms?.Read(ReadBuffer.Span[0..5]);
 
             var temperature = (175 * (float)((ReadBuffer.Span[0] << 8) + ReadBuffer.Span[1]) / 65535) - 45;
             var humidity = (125 * (float)((ReadBuffer.Span[3] << 8) + ReadBuffer.Span[4]) / 65535) - 6;

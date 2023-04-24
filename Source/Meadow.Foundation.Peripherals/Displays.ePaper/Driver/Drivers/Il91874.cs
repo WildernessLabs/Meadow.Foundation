@@ -277,7 +277,7 @@ namespace Meadow.Foundation.Displays
 
                 for (int i = 0; i < Width * Height / 8; i++)
                 {
-                    spiPeripheral.Write(bufferBlack[i]);
+                    spiComms.Write(bufferBlack[i]);
                 }
             }
 
@@ -289,7 +289,7 @@ namespace Meadow.Foundation.Displays
 
                 for (int i = 0; i < Width * Height / 8; i++)
                 {
-                    spiPeripheral.Write((byte)~bufferRed[i]);
+                    spiComms.Write((byte)~bufferRed[i]);
                 }
             }
 

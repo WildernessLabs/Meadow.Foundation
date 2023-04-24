@@ -42,10 +42,10 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </remarks>
         public bool Standby
         {
-            get => (Peripheral?.ReadRegister(Registers.Control1) & 0x01) > 0;
+            get => (BusComms?.ReadRegister(Registers.Control1) & 0x01) > 0;
             set
             {
-                var status = Peripheral?.ReadRegister(Registers.Control1) ?? 0;
+                var status = BusComms?.ReadRegister(Registers.Control1) ?? 0;
                 if (value)
                 {
                     status &= (byte)~ControlRegisterBits.Active;
@@ -54,14 +54,14 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 {
                     status |= ControlRegisterBits.Active;
                 }
-                Peripheral?.WriteRegister(Registers.Control1, status);
+                BusComms?.WriteRegister(Registers.Control1, status);
             }
         }
 
         /// <summary>
         /// Get the status register from the sensor
         /// </summary>
-        public byte Status => Peripheral?.ReadRegister(Registers.Status) ?? 0;
+        public byte Status => BusComms?.ReadRegister(Registers.Status) ?? 0;
 
         /// <summary>
         /// Create a new MPL3115A2 object with the default address and speed settings
@@ -71,15 +71,15 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         public Mpl3115a2(II2cBus i2cBus, byte address = (byte)Addresses.Default)
             : base(i2cBus, address)
         {
-            if (Peripheral?.ReadRegister(Registers.WhoAmI) != 0xc4)
+            if (BusComms?.ReadRegister(Registers.WhoAmI) != 0xc4)
             {
                 throw new Exception("Unexpected device ID, expected 0xc4");
             }
-            Peripheral?.WriteRegister(Registers.Control1,
+            BusComms?.WriteRegister(Registers.Control1,
                                      (byte)(ControlRegisterBits.Active |
                                             ControlRegisterBits.OverSample128));
 
-            Peripheral?.WriteRegister(Registers.DataConfiguration,
+            BusComms?.WriteRegister(Registers.DataConfiguration,
                                      (byte)(ConfigurationRegisterBits.DataReadyEvent |
                                             ConfigurationRegisterBits.EnablePressureEvent |
                                             ConfigurationRegisterBits.EnableTemperatureEvent));
@@ -101,7 +101,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             }
 
             await Task.Delay(100);
-            Peripheral?.ReadRegister(Registers.PressureMSB, ReadBuffer.Span);
+            BusComms?.ReadRegister(Registers.PressureMSB, ReadBuffer.Span);
             conditions.Pressure = new Pressure(DecodePresssure(ReadBuffer.Span[0], ReadBuffer.Span[1], ReadBuffer.Span[2]), Units.Pressure.UnitType.Pascal);
             conditions.Temperature = new Units.Temperature(DecodeTemperature(ReadBuffer.Span[3], ReadBuffer.Span[4]), Units.Temperature.UnitType.Celsius);
 
@@ -163,9 +163,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         public void Reset()
         {
-            var data = Peripheral?.ReadRegister(Registers.Control1) ?? 0;
+            var data = BusComms?.ReadRegister(Registers.Control1) ?? 0;
             data |= 0x04;
-            Peripheral?.WriteRegister(Registers.Control1, data);
+            BusComms?.WriteRegister(Registers.Control1, data);
         }
 
         async Task<Units.Temperature> ISensor<Units.Temperature>.Read()

@@ -46,11 +46,11 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             // write buffer for initialization commands only can be two bytes.
             Span<byte> tx = WriteBuffer.Span[0..2];
 
-            Peripheral?.Write(sgp4x_get_serial_number);
+            BusComms?.Write(sgp4x_get_serial_number);
 
             Thread.Sleep(1); // per the data sheet
 
-            Peripheral?.Read(ReadBuffer.Span[0..9]);
+            BusComms?.Read(ReadBuffer.Span[0..9]);
 
             var bytes = ReadBuffer.ToArray();
 
@@ -63,11 +63,11 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <returns>true on sucessful test, otherwise false</returns>
         public bool RunSelfTest()
         {
-            Peripheral?.Write(sgp40_execute_self_test);
+            BusComms?.Write(sgp40_execute_self_test);
 
             Thread.Sleep(325); // test requires 320ms to complete
 
-            Peripheral?.Read(ReadBuffer.Span[0..3]);
+            BusComms?.Read(ReadBuffer.Span[0..3]);
 
             return ReadBuffer.Span[0..1][0] == 0xd4;
         }
@@ -80,16 +80,16 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         {
             if (_compensationData != null)
             {
-                Peripheral?.Write(_compensationData);
+                BusComms?.Write(_compensationData);
             }
             else
             {
-                Peripheral?.Write(sgp40_measure_raw_signal_uncompensated);
+                BusComms?.Write(sgp40_measure_raw_signal_uncompensated);
             }
 
             Thread.Sleep(30); // per the data sheet
 
-            Peripheral?.Read(ReadBuffer.Span[0..3]);
+            BusComms?.Read(ReadBuffer.Span[0..3]);
 
             var data = ReadBuffer.Span[0..3].ToArray();
 
@@ -112,7 +112,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         public void TurnHeaterOff()
         {
-            Peripheral?.Write(sgp4x_turn_heater_off);
+            BusComms?.Write(sgp4x_turn_heater_off);
         }
 
         /// <summary>

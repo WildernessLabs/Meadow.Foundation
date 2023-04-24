@@ -25,20 +25,20 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         public Dht10(II2cBus i2cBus, byte address = (byte)Addresses.Default)
             : base(i2cBus, address)
         {
-            Peripheral?.Write(CMD_SOFTRESET);
+            BusComms?.Write(CMD_SOFTRESET);
             Thread.Sleep(20);
-            Peripheral?.Write(CMD_INIT);
+            BusComms?.Write(CMD_INIT);
         }
 
         internal override void ReadDataI2c()
         {
             WasLastReadSuccessful = true;
 
-            Peripheral?.Write(CMD_START);
+            BusComms?.Write(CMD_START);
             Thread.Sleep(75);
             
             //data stored in the read buffer
-            Peripheral?.Read(ReadBuffer.Span);
+            BusComms?.Read(ReadBuffer.Span);
         }
 
         internal override float GetHumidity()

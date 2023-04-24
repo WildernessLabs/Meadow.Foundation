@@ -26,7 +26,7 @@ namespace Meadow.Foundation.Sensors.Light
         /// </summary>
         protected void Initialize()
         {
-            Peripheral.WriteRegister(0x02, 0x00);
+            BusComms.WriteRegister(0x02, 0x00);
         }
 
         /// <summary>
@@ -35,7 +35,7 @@ namespace Meadow.Foundation.Sensors.Light
         /// <returns>The latest sensor reading</returns>
         protected override Task<Illuminance> ReadSensor()
         {
-            Peripheral.ReadRegister(0x03, ReadBuffer.Span[0..2]);
+            BusComms.ReadRegister(0x03, ReadBuffer.Span[0..2]);
 
             var exponent = (ReadBuffer.Span[0] >> 4);
             if (exponent == 0x0f) throw new Exception("Out of range");

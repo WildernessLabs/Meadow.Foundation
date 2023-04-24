@@ -532,7 +532,7 @@
             /// <summary>
             /// Indicates the type of error (if any) that has occurred.
             /// 0: No error
-            /// 1: Peripheral initialization error
+            /// 1: BusComms initialization error
             /// 2: System initialization error
             /// 3: Self test failed
             /// 4: Register map value out of range

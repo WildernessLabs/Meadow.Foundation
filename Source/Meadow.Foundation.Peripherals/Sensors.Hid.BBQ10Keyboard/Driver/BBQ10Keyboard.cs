@@ -9,7 +9,10 @@ namespace Meadow.Foundation.Sensors.Hid
     /// </summary>
     public partial class BBQ10Keyboard
     {
-        readonly I2cPeripheral i2CPeripheral;
+        /// <summary>
+        /// I2C Communication bus used to communicate with the peripheral
+        /// </summary>
+        protected readonly II2cCommunications i2cComms;
 
         readonly IDigitalInterruptPort interruptPort;
 
@@ -18,17 +21,17 @@ namespace Meadow.Foundation.Sensors.Hid
         /// </summary>
         public event EventHandler<KeyEvent> OnKeyEvent = delegate { };
 
-        byte Status => i2CPeripheral.ReadRegister((byte)Registers.KEY);
+        byte Status => i2cComms.ReadRegister((byte)Registers.KEY);
 
-        byte KeyCount => (byte)(i2CPeripheral.ReadRegister(KEY_COUNT_MASK) & Status);
+        byte KeyCount => (byte)(i2cComms.ReadRegister(KEY_COUNT_MASK) & Status);
 
         /// <summary>
         /// Get or set the backlight
         /// </summary>
         public byte BackLight
         {
-            get => i2CPeripheral.ReadRegister((byte)Registers.BKL);
-            set => i2CPeripheral.WriteRegister((byte)Registers.BKL, value);
+            get => i2cComms.ReadRegister((byte)Registers.BKL);
+            set => i2cComms.WriteRegister((byte)Registers.BKL, value);
         }
 
         /// <summary>
@@ -36,8 +39,8 @@ namespace Meadow.Foundation.Sensors.Hid
         /// </summary>
         public byte BackLight2
         {
-            get => i2CPeripheral.ReadRegister((byte)Registers.BK2);
-            set => i2CPeripheral.WriteRegister((byte)Registers.BK2, value);
+            get => i2cComms.ReadRegister((byte)Registers.BK2);
+            set => i2cComms.WriteRegister((byte)Registers.BK2, value);
         }
 
         /// <summary>
@@ -48,7 +51,7 @@ namespace Meadow.Foundation.Sensors.Hid
         /// <param name="address">The I2C address</param>
         public BBQ10Keyboard(II2cBus i2cBus, IPin interruptPin = null, byte address = (byte)Addresses.Default)
         {
-            i2CPeripheral = new I2cPeripheral(i2cBus, address);
+            i2cComms = new I2cCommunications(i2cBus, address);
 
             if (interruptPin != null)
             {
@@ -70,7 +73,7 @@ namespace Meadow.Foundation.Sensors.Hid
                 return new KeyEvent('\0', KeyState.StateIdle);
             }
 
-            var keyData = i2CPeripheral.ReadRegisterAsUShort((byte)Registers.FIF);
+            var keyData = i2cComms.ReadRegisterAsUShort((byte)Registers.FIF);
 
             return new KeyEvent((char)(keyData >> 8), (KeyState)(keyData & 0xFF));
         }
@@ -80,7 +83,7 @@ namespace Meadow.Foundation.Sensors.Hid
         /// </summary>
         public void Reset()
         {
-            i2CPeripheral?.Write((byte)Registers.RST);
+            i2cComms?.Write((byte)Registers.RST);
             Thread.Sleep(100);
         }
 
@@ -89,7 +92,7 @@ namespace Meadow.Foundation.Sensors.Hid
         /// </summary>
         protected void ClearInerruptStatus()
         {
-            i2CPeripheral.WriteRegister((byte)Registers.INT, 0x00);
+            i2cComms.WriteRegister((byte)Registers.INT, 0x00);
         }
 
         private void InterruptPort_Changed(object sender, DigitalPortResult e)

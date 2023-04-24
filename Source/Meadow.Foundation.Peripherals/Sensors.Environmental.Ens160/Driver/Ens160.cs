@@ -62,8 +62,8 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// </summary>
         public OperatingMode CurrentOperatingMode
         {
-            get => (OperatingMode)Peripheral.ReadRegister((byte)Registers.OPMODE);
-            set => Peripheral.WriteRegister((byte)Registers.OPMODE, (byte)value);
+            get => (OperatingMode)BusComms.ReadRegister((byte)Registers.OPMODE);
+            set => BusComms.WriteRegister((byte)Registers.OPMODE, (byte)value);
         }
 
         /// <summary>
@@ -88,8 +88,8 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// </summary>
         protected async Task Initialize()
         {
-            Peripheral.WriteRegister((byte)Registers.COMMAND, (byte)Commands.NOP);
-            Peripheral.WriteRegister((byte)Registers.COMMAND, (byte)Commands.CLRGPR);
+            BusComms.WriteRegister((byte)Registers.COMMAND, (byte)Commands.NOP);
+            BusComms.WriteRegister((byte)Registers.COMMAND, (byte)Commands.CLRGPR);
 
             await Task.Delay(10);
             await Reset();
@@ -101,7 +101,7 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// <returns></returns>
         public Task Reset()
         {
-            Peripheral.WriteRegister((byte)Registers.OPMODE, (byte)OperatingMode.Reset);
+            BusComms.WriteRegister((byte)Registers.OPMODE, (byte)OperatingMode.Reset);
             return Task.Delay(10);
         }
 
@@ -112,7 +112,7 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// <returns>ID as a ushort (2 bytes)</returns>
         public ushort GetDeviceID()
         {
-            return Peripheral.ReadRegisterAsUShort((byte)Registers.PART_ID);
+            return BusComms.ReadRegisterAsUShort((byte)Registers.PART_ID);
         }
 
         /// <summary>
@@ -121,11 +121,11 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// <returns>The major, minor, release values as a ttuple of bytes</returns>
         public (byte Major, byte Minor, byte Release) GetFirmwareVersion()
         {
-            Peripheral.WriteRegister((byte)Registers.COMMAND, (byte)Commands.GET_APPVER);
+            BusComms.WriteRegister((byte)Registers.COMMAND, (byte)Commands.GET_APPVER);
 
             var version = new byte[3];
 
-            Peripheral.ReadRegister((byte)Registers.GPR_READ_4);
+            BusComms.ReadRegister((byte)Registers.GPR_READ_4);
 
             return (version[0], version[1], version[2]);
         }
@@ -135,7 +135,7 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// </summary>
         void ClearGPRRegisters()
         {
-            Peripheral.WriteRegister((byte)Registers.COMMAND, (byte)Commands.CLRGPR);
+            BusComms.WriteRegister((byte)Registers.COMMAND, (byte)Commands.CLRGPR);
         }
 
         /// <summary>
@@ -146,7 +146,7 @@ namespace Meadow.Foundation.Sensors.Environmental
         {
             ushort temp = (ushort)(ambientTemperature.Kelvin * 64);
 
-            Peripheral.WriteRegister((byte)Registers.TEMP_IN, temp);
+            BusComms.WriteRegister((byte)Registers.TEMP_IN, temp);
         }
 
         /// <summary>
@@ -157,7 +157,7 @@ namespace Meadow.Foundation.Sensors.Environmental
         {
             ushort hum = (ushort)(humidity.Percent * 64);
 
-            Peripheral.WriteRegister((byte)Registers.RH_IN, hum);
+            BusComms.WriteRegister((byte)Registers.RH_IN, hum);
         }
 
         /// <summary>
@@ -165,7 +165,7 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// </summary>
         public UBAAirQualityIndex GetAirQualityIndex()
         {
-            var value = Peripheral.ReadRegister((byte)Registers.DATA_AQI);
+            var value = BusComms.ReadRegister((byte)Registers.DATA_AQI);
 
             var aqi = value >> 5;
 
@@ -174,33 +174,33 @@ namespace Meadow.Foundation.Sensors.Environmental
 
         bool IsNewDataAvailable()
         {
-            var value = Peripheral.ReadRegister((byte)Registers.DATA_STATUS);
+            var value = BusComms.ReadRegister((byte)Registers.DATA_STATUS);
 
             return BitHelpers.GetBitValue(value, 0x02);
         }
 
         bool IsNewGPRAvailable()
         {
-            var value = Peripheral.ReadRegister((byte)Registers.DATA_STATUS);
+            var value = BusComms.ReadRegister((byte)Registers.DATA_STATUS);
 
             return BitHelpers.GetBitValue(value, 0x03);
         }
 
         Concentration GetTotalVolotileOrganicCompounds()
         {
-            var con = Peripheral.ReadRegisterAsUShort((byte)Registers.DATA_TVOC);
+            var con = BusComms.ReadRegisterAsUShort((byte)Registers.DATA_TVOC);
             return new Concentration(con, Units.Concentration.UnitType.PartsPerBillion);
         }
 
         Concentration GetCO2Concentration()
         {
-            var con = Peripheral.ReadRegisterAsUShort((byte)Registers.DATA_ECO2);
+            var con = BusComms.ReadRegisterAsUShort((byte)Registers.DATA_ECO2);
             return new Concentration(con, Units.Concentration.UnitType.PartsPerMillion);
         }
 
         Concentration GetEthanolConcentration()
         {
-            var con = Peripheral.ReadRegisterAsUShort((byte)Registers.DATA_ETOH);
+            var con = BusComms.ReadRegisterAsUShort((byte)Registers.DATA_ETOH);
             return new Concentration(con, Units.Concentration.UnitType.PartsPerBillion);
         }
 
@@ -210,7 +210,7 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// <returns>Temperature</returns>
         public Units.Temperature GetTemperature()
         {
-            var temp = Peripheral.ReadRegisterAsUShort((byte)Registers.DATA_T);
+            var temp = BusComms.ReadRegisterAsUShort((byte)Registers.DATA_T);
             return new Units.Temperature(temp / 64.0, Units.Temperature.UnitType.Kelvin);
         }
 
@@ -220,7 +220,7 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// <returns></returns>
         public RelativeHumidity GetHumidity()
         {
-            var hum = Peripheral.ReadRegisterAsUShort((byte)Registers.DATA_T);
+            var hum = BusComms.ReadRegisterAsUShort((byte)Registers.DATA_T);
             return new RelativeHumidity(hum / 512.0);
         }
 

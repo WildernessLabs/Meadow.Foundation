@@ -33,8 +33,15 @@ namespace Meadow.Foundation.Sensors.Accelerometers
         /// </summary>
         public MagneticField3D? MagneticField3D => Conditions.MagneticField3D;
 
-        readonly II2cPeripheral i2cPeripheralAccel;
-        readonly II2cPeripheral i2cPeripheralMag;
+        /// <summary>
+        /// I2C Communication bus used to communicate with the accelerometer
+        /// </summary>
+        readonly II2cCommunications i2cCommsAccel;
+
+        /// <summary>
+        /// I2C Communication bus used to communicate with the magnetometer
+        /// </summary>
+        readonly II2cCommunications i2cCommsMag;
 
         /// <summary>
         /// Create a new Lsm303agr instance
@@ -42,8 +49,8 @@ namespace Meadow.Foundation.Sensors.Accelerometers
         /// <param name="i2cBus">The I2C bus connected to the sensor</param>
         public Lsm303agr(II2cBus i2cBus)
         {
-            i2cPeripheralAccel = new I2cPeripheral(i2cBus, (byte)Addresses.AddressAccel_0x19);
-            i2cPeripheralMag = new I2cPeripheral(i2cBus, (byte)Addresses.AddressMag_0x1E);
+            i2cCommsAccel = new I2cCommunications(i2cBus, (byte)Addresses.AddressAccel_0x19);
+            i2cCommsMag = new I2cCommunications(i2cBus, (byte)Addresses.AddressMag_0x1E);
 
             Initialize();
         }
@@ -53,8 +60,8 @@ namespace Meadow.Foundation.Sensors.Accelerometers
         /// </summary>
         void Initialize()
         {
-            i2cPeripheralAccel.WriteRegister(ACC_CTRL_REG1_A, 0x57);
-            i2cPeripheralMag.WriteRegister(MAG_CTRL_REG1_M, 0x60);
+            i2cCommsAccel.WriteRegister(ACC_CTRL_REG1_A, 0x57);
+            i2cCommsMag.WriteRegister(MAG_CTRL_REG1_M, 0x60);
         }
 
         /// <summary>
@@ -64,7 +71,7 @@ namespace Meadow.Foundation.Sensors.Accelerometers
         public void SetAccelerometerSensitivity(AccSensitivity sensitivity)
         {
             byte[] writeBuffer = new byte[] { ACC_CTRL_REG4_A, (byte)sensitivity };
-            i2cPeripheralAccel.Write(writeBuffer);
+            i2cCommsAccel.Write(writeBuffer);
         }
 
         /// <summary>
@@ -74,7 +81,7 @@ namespace Meadow.Foundation.Sensors.Accelerometers
         public AccSensitivity GetAccelerometerSensitivity()
         {
             byte[] readBuffer = new byte[1];
-            i2cPeripheralAccel.ReadRegister(ACC_CTRL_REG4_A, readBuffer);
+            i2cCommsAccel.ReadRegister(ACC_CTRL_REG4_A, readBuffer);
             byte sensitivity = (byte)(readBuffer[0] & 0x30);
             return (AccSensitivity)sensitivity;
         }
@@ -155,7 +162,7 @@ namespace Meadow.Foundation.Sensors.Accelerometers
         (short x, short y, short z) ReadAccelerometerRaw()
         {
             byte[] readBuffer = new byte[6];
-            i2cPeripheralAccel.ReadRegister(ACC_OUT_X_L_A, readBuffer);
+            i2cCommsAccel.ReadRegister(ACC_OUT_X_L_A, readBuffer);
 
             short x = BitConverter.ToInt16(new byte[] { readBuffer[0], readBuffer[1] }, 0);
             short y = BitConverter.ToInt16(new byte[] { readBuffer[2], readBuffer[3] }, 0);
@@ -171,7 +178,7 @@ namespace Meadow.Foundation.Sensors.Accelerometers
         (short x, short y, short z) ReadMagnetometerRaw()
         {
             byte[] readBuffer = new byte[6];
-            i2cPeripheralMag.ReadRegister(MAG_OUTX_L_REG_M, readBuffer);
+            i2cCommsMag.ReadRegister(MAG_OUTX_L_REG_M, readBuffer);
 
             short x = BitConverter.ToInt16(new byte[] { readBuffer[0], readBuffer[1] }, 0);
             short y = BitConverter.ToInt16(new byte[] { readBuffer[2], readBuffer[3] }, 0);
@@ -187,10 +194,10 @@ namespace Meadow.Foundation.Sensors.Accelerometers
         public void SetAccelerometerOutputDataRate(AccOutputDataRate dataRate)
         {
             byte[] readBuffer = new byte[1];
-            i2cPeripheralAccel.ReadRegister(ACC_CTRL_REG1_A, readBuffer);
+            i2cCommsAccel.ReadRegister(ACC_CTRL_REG1_A, readBuffer);
 
             byte newSetting = (byte)((readBuffer[0] & 0x0F) | (byte)dataRate);
-            i2cPeripheralAccel.WriteRegister(ACC_CTRL_REG1_A, newSetting);
+            i2cCommsAccel.WriteRegister(ACC_CTRL_REG1_A, newSetting);
         }
 
         /// <summary>
@@ -200,7 +207,7 @@ namespace Meadow.Foundation.Sensors.Accelerometers
         public AccOutputDataRate GetAccelerometerOutputDataRate()
         {
             byte[] readBuffer = new byte[1];
-            i2cPeripheralAccel.ReadRegister(ACC_CTRL_REG1_A, readBuffer);
+            i2cCommsAccel.ReadRegister(ACC_CTRL_REG1_A, readBuffer);
 
             byte dataRate = (byte)(readBuffer[0] & 0xF0);
             return (AccOutputDataRate)dataRate;
@@ -212,10 +219,10 @@ namespace Meadow.Foundation.Sensors.Accelerometers
         /// <param name="dataRate">The desired output data rate setting.</param>
         public void SetMagnetometerOutputDataRate(MagOutputDataRate dataRate)
         {
-            byte odrByte = i2cPeripheralMag.ReadRegister(MAG_CTRL_REG1_M);
+            byte odrByte = i2cCommsMag.ReadRegister(MAG_CTRL_REG1_M);
             odrByte &= 0xF3; // Clear bits 2 and 3
             odrByte |= (byte)dataRate;
-            i2cPeripheralMag.WriteRegister(MAG_CTRL_REG1_M, odrByte);
+            i2cCommsMag.WriteRegister(MAG_CTRL_REG1_M, odrByte);
         }
 
         /// <summary>
@@ -224,7 +231,7 @@ namespace Meadow.Foundation.Sensors.Accelerometers
         /// <returns>The current output data rate setting.</returns>
         public MagOutputDataRate GetMagnetometerOutputDataRate()
         {
-            byte odrByte = i2cPeripheralMag.ReadRegister(MAG_CTRL_REG1_M);
+            byte odrByte = i2cCommsMag.ReadRegister(MAG_CTRL_REG1_M);
             return (MagOutputDataRate)(odrByte & 0x0C);
         }
 

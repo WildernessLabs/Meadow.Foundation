@@ -92,7 +92,7 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// The spi peripheral for the display
         /// </summary>
-        protected ISpiPeripheral spiDisplay;
+        protected ISpiCommunications spiDisplay;
 
         /// <summary>
         /// The offscreen image buffer
@@ -172,7 +172,7 @@ namespace Meadow.Foundation.Displays
             this.chipSelectPort = chipSelectPort;
             this.resetPort = resetPort;
 
-            spiDisplay = new SpiPeripheral(spiBus, chipSelectPort, DefaultSpiBusSpeed, DefaultSpiBusMode);
+            spiDisplay = new SpiCommunications(spiBus, chipSelectPort, DefaultSpiBusSpeed, DefaultSpiBusMode);
 
             CreateBuffer(colorMode, nativeWidth = width, nativeHeight = height);
         }

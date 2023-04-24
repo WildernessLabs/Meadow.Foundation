@@ -99,7 +99,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <returns>Current acceleration</returns>
         protected override Task<Acceleration3D> ReadSensor()
         {
-            Peripheral.ReadRegister((byte)Register.X0, ReadBuffer.Span[0..6]);
+            BusComms.ReadRegister((byte)Register.X0, ReadBuffer.Span[0..6]);
 
             var conditions = new Acceleration3D(
                 new Acceleration(ADXL345_MG2G_MULTIPLIER * (short)(ReadBuffer.Span[0] + (ReadBuffer.Span[1] << 8)), Acceleration.UnitType.Gravity),
@@ -220,12 +220,12 @@ namespace Meadow.Foundation.Sensors.Motion
 
         private void WriteRegister(Register register, byte value)
         {
-            Peripheral.WriteRegister((byte)register, value);
+            BusComms.WriteRegister((byte)register, value);
         }
 
         private byte ReadRegister(Register register)
         {
-            return Peripheral.ReadRegister((byte)register);
+            return BusComms.ReadRegister((byte)register);
         }
 
         /// <summary>
@@ -234,7 +234,7 @@ namespace Meadow.Foundation.Sensors.Motion
         public void DisplayRegisters()
         {
             byte[] registerData = new byte[29];
-            Peripheral.ReadRegister((byte)Register.TAP_THRESHOLD, registerData);
+            BusComms.ReadRegister((byte)Register.TAP_THRESHOLD, registerData);
             DebugInformation.DisplayRegisters((byte)Register.TAP_THRESHOLD, registerData);
         }
     }

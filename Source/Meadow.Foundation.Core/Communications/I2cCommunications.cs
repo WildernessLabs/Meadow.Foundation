@@ -3,10 +3,9 @@
 namespace Meadow.Hardware
 {
     /// <summary>
-    /// Defines a contract for a peripheral that communicates via the IIC/I2C 
-    /// protocol.
+    /// Helper class for I2C communications, handles registers, endian, etc.
     /// </summary>
-    public class I2cPeripheral : II2cPeripheral
+    public class I2cCommunications : II2cCommunications
     {
         /// <summary>
         /// The I2C address
@@ -19,24 +18,24 @@ namespace Meadow.Hardware
         public II2cBus Bus { get; protected set; }
 
         /// <summary>
-        /// Internal write buffer. Used in methods in which the buffers aren't
+        /// Internal write buffer - used in methods in which the buffers aren't
         /// passed in.
         /// </summary>
         protected Memory<byte> WriteBuffer { get; }
         /// <summary>
-        /// Internal read buffer. Used in methods in which the buffers aren't
+        /// Internal read buffer - used in methods in which the buffers aren't
         /// passed in.
         /// </summary>
         protected Memory<byte> ReadBuffer { get; }
 
         /// <summary>
-        /// Initializes a new instance of the I2cPeripheral class
+        /// Initializes a new instance of the I2cCommunications class
         /// </summary>
         /// <param name="bus">The II2cBus used for communication with the peripheral</param>
         /// <param name="peripheralAddress">The address of the peripheral on the I2C bus</param>
         /// <param name="readBufferSize">The size of the buffer used for reading data from the peripheral. Defaults to 8 bytes</param>
         /// <param name="writeBufferSize">The size of the buffer used for writing data to the peripheral. Defaults to 8 bytes</param>
-        public I2cPeripheral(II2cBus bus, byte peripheralAddress, int readBufferSize = 8, int writeBufferSize = 8)
+        public I2cCommunications(II2cBus bus, byte peripheralAddress, int readBufferSize = 8, int writeBufferSize = 8)
         {
             Bus = bus;
             Address = peripheralAddress;
@@ -122,7 +121,6 @@ namespace Meadow.Hardware
         /// <param name="value">Data to write into the register.</param>
         public void WriteRegister(byte address, byte value)
         {
-            // stuff the address and value into the write buffer
             WriteBuffer.Span[0] = address;
             WriteBuffer.Span[1] = value;
             Bus.Write(Address, WriteBuffer.Span[0..2]);
@@ -136,9 +134,7 @@ namespace Meadow.Hardware
         /// <param name="order">Indicate if the data should be written as big or little endian.</param>
         public void WriteRegister(byte address, ushort value, ByteOrder order = ByteOrder.LittleEndian)
         {
-            // split the 16 bit ushort into two bytes
             var bytes = BitConverter.GetBytes(value);
-            // call the helper method
             WriteRegister(address, bytes, order);
         }
 
@@ -150,9 +146,7 @@ namespace Meadow.Hardware
         /// <param name="order">Indicate if the data should be written as big or little endian.</param>
         public void WriteRegister(byte address, uint value, ByteOrder order = ByteOrder.LittleEndian)
         {
-            // split the 32 bit uint into four bytes
             var bytes = BitConverter.GetBytes(value);
-            // call the helper method
             WriteRegister(address, bytes, order);
         }
 
@@ -164,9 +158,7 @@ namespace Meadow.Hardware
         /// <param name="order">Indicate if the data should be written as big or little endian.</param>
         public void WriteRegister(byte address, ulong value, ByteOrder order = ByteOrder.LittleEndian)
         {
-            // split the 64 bit ulong into 8 bytes
             var bytes = BitConverter.GetBytes(value);
-            // call the helper method
             WriteRegister(address, bytes, order);
         }
 
@@ -186,11 +178,9 @@ namespace Meadow.Hardware
                     "amount of data to fix.");
             }
 
-            // stuff the register address into the write buffer
+            // add the register address to the start of the write buffer
             WriteBuffer.Span[0] = address;
 
-            // stuff the bytes into the write buffer (starting at `1` index,
-            // because `0` is the register address.
             switch (order)
             {
                 case ByteOrder.LittleEndian:
@@ -202,12 +192,10 @@ namespace Meadow.Hardware
                 case ByteOrder.BigEndian:
                     for (int i = 0; i < writeBuffer.Length; i++)
                     {
-                        // stuff them backwards
                         WriteBuffer.Span[i + 1] = writeBuffer[writeBuffer.Length - (i + 1)];
                     }
                     break;
             }
-            // write it
             Bus.Write(Address, WriteBuffer.Span[0..(writeBuffer.Length + 1)]);
         }
 

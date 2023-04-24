@@ -35,9 +35,9 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// </summary>
         protected override Task<Units.Temperature> ReadSensor()
         {
-            Peripheral?.Write((byte)Registers.LM_TEMP);
+            BusComms?.Write((byte)Registers.LM_TEMP);
 
-            Peripheral?.ReadRegister((byte)Registers.LM_TEMP, ReadBuffer.Span[0..2]);
+            BusComms?.ReadRegister((byte)Registers.LM_TEMP, ReadBuffer.Span[0..2]);
 
             // Details in Datasheet P10
             double temp;

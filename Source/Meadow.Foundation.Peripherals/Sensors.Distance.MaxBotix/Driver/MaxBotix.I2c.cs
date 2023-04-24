@@ -23,13 +23,13 @@ namespace Meadow.Foundation.Sensors.Distance
 
         void StartI2cSensor(byte address)
         {
-            Peripheral.ReadRegister(address);
+            BusComms.ReadRegister(address);
             Thread.Sleep(100);
         }
 
         Length ReadSensorI2c()
         {
-            return new Length(Peripheral.ReadRegisterAsUShort(0x51), GetUnitsForSensor(sensorType));
+            return new Length(BusComms.ReadRegisterAsUShort(0x51), GetUnitsForSensor(sensorType));
         }
     }
 }

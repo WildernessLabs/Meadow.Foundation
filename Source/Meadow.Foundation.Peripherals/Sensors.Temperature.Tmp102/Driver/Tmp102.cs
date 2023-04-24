@@ -28,7 +28,7 @@ namespace Meadow.Foundation.Sensors.Temperature
             get => _sensorResolution;
             set
             {
-                Peripheral?.ReadRegister(0x01, ReadBuffer.Span);
+                BusComms?.ReadRegister(0x01, ReadBuffer.Span);
 
                 if (value == Resolution.Resolution12Bits)
                 {
@@ -39,7 +39,7 @@ namespace Meadow.Foundation.Sensors.Temperature
                     ReadBuffer.Span[1] |= 0x10;
                 }
 
-                Peripheral?.WriteRegister(0x01, ReadBuffer.Span);
+                BusComms?.WriteRegister(0x01, ReadBuffer.Span);
                 _sensorResolution = value;
             }
         }
@@ -57,7 +57,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         public Tmp102(II2cBus i2cBus, byte address = (byte)Addresses.Default)
             : base(i2cBus, address, readBufferSize: 2, writeBufferSize: 2)
         {
-            Peripheral?.ReadRegister(0x01, ReadBuffer.Span);
+            BusComms?.ReadRegister(0x01, ReadBuffer.Span);
             _sensorResolution = (ReadBuffer.Span[1] & 0x10) > 0 ?
                                  Resolution.Resolution13Bits : Resolution.Resolution12Bits;
         }
@@ -67,7 +67,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// </summary>
         protected override Task<Units.Temperature> ReadSensor()
         {
-            Peripheral?.ReadRegister(0x00, ReadBuffer.Span);
+            BusComms?.ReadRegister(0x00, ReadBuffer.Span);
 
             int sensorReading;
             if (SensorResolution == Resolution.Resolution12Bits)

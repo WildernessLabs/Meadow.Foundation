@@ -10,15 +10,15 @@ namespace Meadow.Foundation.Displays.Lcd
     public partial class I2cCharacterDisplay : ICharacterDisplay
     {
         /// <summary>
-        /// The I2C peripheral used to communicate with the display
+        /// I2C Communication bus used to communicate with the peripheral
         /// </summary>
-        protected readonly II2cPeripheral i2cPeripheral;
+        protected readonly II2cCommunications i2cComms;
 
         /// <summary>
         /// Display control value
         /// </summary>
         protected byte displayControl;
-        
+
         /// <summary>
         /// Display mode value
         /// </summary>
@@ -77,7 +77,7 @@ namespace Meadow.Foundation.Displays.Lcd
             /// </summary>
             LCD_SETDDRAMADDR = 0x80,
         }
-  
+
         // flags for display entry mode
         internal static byte LCD_ENTRYRIGHT = 0x00;
         internal static byte LCD_ENTRYLEFT = 0x02;
@@ -123,7 +123,7 @@ namespace Meadow.Foundation.Displays.Lcd
         /// <param name="columns">Number of character columns</param>
         public I2cCharacterDisplay(II2cBus i2cBus, byte address = (byte)Addresses.Default, byte rows = 4, byte columns = 20)
         {
-            i2cPeripheral = new I2cPeripheral(i2cBus, address);
+            i2cComms = new I2cCommunications(i2cBus, address);
             DisplayConfig = new TextDisplayConfig() { Width = columns, Height = rows };
 
             backlightValue = LCD_BACKLIGHT;
@@ -138,7 +138,7 @@ namespace Meadow.Foundation.Displays.Lcd
         {
             var displayFunction = (byte)(LCD_4BITMODE | LCD_1LINE | LCD_5x8DOTS);
 
-            if(DisplayConfig.Height > 1)
+            if (DisplayConfig.Height > 1)
             {
                 displayFunction |= LCD_2LINE;
             }
@@ -181,7 +181,7 @@ namespace Meadow.Foundation.Displays.Lcd
         void Home()
         {
             Command((byte)I2CCommands.LCD_RETURNHOME);  // set cursor position to zero
-            Thread.Sleep(2); 
+            Thread.Sleep(2);
         }
 
         /// <summary>
@@ -201,7 +201,7 @@ namespace Meadow.Foundation.Displays.Lcd
 
         void ExpanderWrite(byte value)
         {
-            i2cPeripheral.Write((byte)(value | backlightValue));
+            i2cComms.Write((byte)(value | backlightValue));
         }
 
         /// <summary>
@@ -262,7 +262,7 @@ namespace Meadow.Foundation.Displays.Lcd
 
             if (line > DisplayConfig.Height)
             {
-                line = (byte)(DisplayConfig.Height - 1);    
+                line = (byte)(DisplayConfig.Height - 1);
             }
             Command((byte)((byte)I2CCommands.LCD_SETDDRAMADDR | (column + rowOffsets[line])));
 
@@ -422,7 +422,7 @@ namespace Meadow.Foundation.Displays.Lcd
             Command((byte)((byte)I2CCommands.LCD_SETCGRAMADDR | (address << 3)));
             for (int i = 0; i < 8; i++)
             {
-                i2cPeripheral.WriteRegister(Rs, characterMap[i]);
+                i2cComms.WriteRegister(Rs, characterMap[i]);
             }
         }
 
