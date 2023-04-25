@@ -80,7 +80,7 @@ namespace Meadow.Hardware
         /// The number of bytes to be read is determined by the length of the
         /// `readBuffer`.
         /// </remarks>
-        public void Read(Span<byte> readBuffer)
+        public virtual void Read(Span<byte> readBuffer)
         {
             Bus.Read(ChipSelect, readBuffer, chipSelectMode);
         }
@@ -90,7 +90,7 @@ namespace Meadow.Hardware
         /// </summary>
         /// <param name="address">The register address</param>
         /// <param name="readBuffer">The buffer to hold the data</param>
-        public void ReadRegister(byte address, Span<byte> readBuffer)
+        public virtual void ReadRegister(byte address, Span<byte> readBuffer)
         {
             WriteBuffer.Span[0] = address;
             Bus.Exchange(ChipSelect, WriteBuffer.Span[0..readBuffer.Length], readBuffer, chipSelectMode);
@@ -101,7 +101,7 @@ namespace Meadow.Hardware
         /// </summary>
         /// <param name="address">Address to read</param>
         /// <returns>The byte read</returns>
-        public byte ReadRegister(byte address)
+        public virtual byte ReadRegister(byte address)
         {
             WriteBuffer.Span[0] = address;
             Bus.Exchange(ChipSelect, WriteBuffer.Span[0..1], ReadBuffer.Span[0..1], chipSelectMode);
@@ -114,7 +114,7 @@ namespace Meadow.Hardware
         /// <param name="address">Address of the read</param>
         /// <param name="order">Endianness of the value read</param>
         /// <returns>The value read</returns>
-        public ushort ReadRegisterAsUShort(byte address, ByteOrder order = ByteOrder.LittleEndian)
+        public virtual ushort ReadRegisterAsUShort(byte address, ByteOrder order = ByteOrder.LittleEndian)
         {
             ReadRegister(address, ReadBuffer[0..2].Span);
             if (order == ByteOrder.LittleEndian)
@@ -141,7 +141,7 @@ namespace Meadow.Hardware
         /// Write a span of bytes to the peripheral.
         /// </summary>
         /// <param name="data">Data to be written.</param>
-        public void Write(Span<byte> data)
+        public virtual void Write(Span<byte> data)
         {
             Bus.Write(ChipSelect, data, chipSelectMode);
         }
@@ -151,7 +151,7 @@ namespace Meadow.Hardware
         /// </summary>
         /// <param name="address">The target write register address</param>
         /// <param name="value">Value to write</param>
-        public void WriteRegister(byte address, byte value)
+        public virtual void WriteRegister(byte address, byte value)
         {
             WriteBuffer.Span[0] = address;
             WriteBuffer.Span[1] = value;
@@ -164,7 +164,7 @@ namespace Meadow.Hardware
         /// <param name="address">The target write register address</param>
         /// <param name="value">Value to write</param>
         /// <param name="order">Endianness of the value to be written</param>
-        public void WriteRegister(byte address, ushort value, ByteOrder order = ByteOrder.LittleEndian)
+        public virtual void WriteRegister(byte address, ushort value, ByteOrder order = ByteOrder.LittleEndian)
         {
             // split the 16 bit ushort into two bytes
             var bytes = BitConverter.GetBytes(value);
@@ -177,7 +177,7 @@ namespace Meadow.Hardware
         /// <param name="address">Address to write the first byte to.</param>
         /// <param name="value">Value to be written.</param>
         /// <param name="order">Indicate if the data should be written as big or little endian.</param>
-        public void WriteRegister(byte address, uint value, ByteOrder order = ByteOrder.LittleEndian)
+        public virtual void WriteRegister(byte address, uint value, ByteOrder order = ByteOrder.LittleEndian)
         {
             var bytes = BitConverter.GetBytes(value);
             WriteRegister(address, bytes, order);
@@ -189,7 +189,7 @@ namespace Meadow.Hardware
         /// <param name="address">Address to write the first byte to.</param>
         /// <param name="value">Value to be written.</param>
         /// <param name="order">Indicate if the data should be written as big or little endian.</param>
-        public void WriteRegister(byte address, ulong value, ByteOrder order = ByteOrder.LittleEndian)
+        public virtual void WriteRegister(byte address, ulong value, ByteOrder order = ByteOrder.LittleEndian)
         {
             var bytes = BitConverter.GetBytes(value);
             WriteRegister(address, bytes, order);
@@ -201,7 +201,7 @@ namespace Meadow.Hardware
         /// <param name="address">Address of the register to write to.</param>
         /// <param name="writeBuffer">A buffer of byte values to be written.</param>
         /// <param name="order">Indicate if the data should be written as big or little endian.</param>
-        public void WriteRegister(byte address, Span<byte> writeBuffer, ByteOrder order = ByteOrder.LittleEndian)
+        public virtual void WriteRegister(byte address, Span<byte> writeBuffer, ByteOrder order = ByteOrder.LittleEndian)
         {
             if (WriteBuffer.Length < writeBuffer.Length + 1)
             {
@@ -237,7 +237,7 @@ namespace Meadow.Hardware
         /// <param name="writeBuffer">The buffer holding the data to write</param>
         /// <param name="readBuffer">The buffer to receieve data</param>
         /// <param name="duplex">The duplex mode - half or full</param>
-        public void Exchange(Span<byte> writeBuffer, Span<byte> readBuffer, DuplexType duplex = DuplexType.Half)
+        public virtual void Exchange(Span<byte> writeBuffer, Span<byte> readBuffer, DuplexType duplex = DuplexType.Half)
         {
             if (Bus.Configuration.SpiMode != BusMode)
             {

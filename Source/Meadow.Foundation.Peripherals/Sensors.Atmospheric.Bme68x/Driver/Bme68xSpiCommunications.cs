@@ -4,7 +4,7 @@ using System;
 
 namespace Meadow.Foundation.Sensors.Atmospheric
 {
-    internal class Bme68xSPI : Bme68xComms
+    internal class Bme68xSpiCommunications : SpiCommunications
     {
         /// <summary>
         /// Register pages (for SPI only)
@@ -27,16 +27,11 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             Page1 = 0x00,
         }
 
-        /// <summary>
-        /// SPI Communication bus used to communicate with the peripheral
-        /// </summary>
-        internal readonly ISpiCommunications spiComms;
-
         SpiRegisterPage currentPage = SpiRegisterPage.Page1;
 
-        internal Bme68xSPI(ISpiBus spi, Frequency busSpeed, SpiClockConfiguration.Mode busMode, IDigitalOutputPort? chipSelect = null)
+        internal Bme68xSpiCommunications(ISpiBus spiBus, IDigitalOutputPort? chipSelect, Frequency busSpeed, SpiClockConfiguration.Mode busMode)
+            : base(spiBus, chipSelect, busSpeed, busMode, 32, 32)
         {
-            spiComms = new SpiCommunications(spi, chipSelect, busSpeed, busMode, 32, 32);
         }
 
         public override byte ReadRegister(byte address)
@@ -46,7 +41,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             //adjust register for paging
             if (address > 0x7F) { address -= 0x7F; }
 
-            return spiComms.ReadRegister(address);
+            return base.ReadRegister(address);
         }
 
         public override ushort ReadRegisterAsUShort(byte address, ByteOrder order = ByteOrder.LittleEndian)
@@ -56,7 +51,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             //adjust register for paging
             if (address > 0x7F) { address -= 0x7F; }
 
-            return spiComms.ReadRegisterAsUShort(address, order);
+            return base.ReadRegisterAsUShort(address, order);
         }
 
         public override void ReadRegister(byte startRegister, Span<byte> readBuffer)
@@ -66,9 +61,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             //adjust register for paging
             if (startRegister > 0x7F) { startRegister -= 0x7F; }
 
-            spiComms.ReadRegister(startRegister, readBuffer);
-
-            return;
+            base.ReadRegister(startRegister, readBuffer);
         }
 
         public override void WriteRegister(byte register, byte value)
@@ -78,7 +71,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             //adjust register for paging
             if (register > 0x7F) { register -= 0x7F; }
 
-            spiComms.WriteRegister(register, value);
+            base.WriteRegister(register, value);
         }
 
         void SetPageForRegister(byte register)
@@ -89,7 +82,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 //swap the page
                 currentPage = (currentPage == SpiRegisterPage.Page0) ? SpiRegisterPage.Page1 : SpiRegisterPage.Page0;
                 //write the page to the status register
-                spiComms.WriteRegister(0x73, (byte)currentPage);
+                base.WriteRegister(0x73, (byte)currentPage);
             }
         }
 
