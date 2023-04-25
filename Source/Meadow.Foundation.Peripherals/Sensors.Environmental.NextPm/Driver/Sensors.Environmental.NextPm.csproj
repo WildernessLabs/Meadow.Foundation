@@ -14,7 +14,7 @@
 		<Version>0.1.0</Version>
 		<Nullable>enable</Nullable>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-		<Description>TERA Sensor NextPM particulate matter sensor</Description>
+		<Description>TERA Sensor NextPM serial particulate matter sensor</Description>
 	</PropertyGroup>
 	<ItemGroup>
 		<None Include="..\..\..\icon.png" Pack="true" PackagePath="" />

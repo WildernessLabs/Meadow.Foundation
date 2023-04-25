@@ -3,7 +3,7 @@
     public partial class Ms5611
     {
         /// <summary>
-        /// Valid addresses for the sensor
+        /// Valid I2C addresses for the sensor
         /// </summary>
         public enum Addresses : byte
         {
@@ -42,6 +42,14 @@
             /// OSR 4096
             /// </summary>
             OSR_4096 = 4
+        }
+
+        enum Commands : byte
+        {
+            Reset = 0x1e,
+            ConvertD1 = 0x40,
+            ConvertD2 = 0x50,
+            ReadADC = 0x00,
         }
     }
 }

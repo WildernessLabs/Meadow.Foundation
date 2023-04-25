@@ -8,22 +8,18 @@ using TU = Meadow.Units.Temperature.UnitType;
 
 namespace Meadow.Foundation.Sensors.Motion
 {
-    // Sample reading:
-    // Accel: [X:0.24,Y:-0.74,Z:10.49 (m/s^2)]
-    // Angular Velocity: [X:-0.90, Y:-1.24, Z:-0.52 (dps)]
-    // Temp: 33.33C
-
-    // TODO: this sensor has software controlled sensitivity ranges. we should
-    // expose them. note the `AccelScaleBase` will need to change. Right now it's
-    // hard coded to +-2G
-
     /// <summary>
     /// Represents an MPU6050 Six-Axis (Gyro + Accelerometer) MEMS MotionTracking device
     /// </summary>
     public partial class Mpu6050 :
         ByteCommsSensorBase<(Acceleration3D? Acceleration3D, AngularVelocity3D? AngularVelocity3D, Units.Temperature? Temperature)>,
-        IAccelerometer, IGyroscope, ITemperatureSensor
+        IAccelerometer, IGyroscope, ITemperatureSensor, II2cPeripheral
     {
+        /// <summary>
+        /// The default I2C address for the peripheral
+        /// </summary>
+        public byte DefaultI2cAddress => (byte)Addresses.Default;
+
         /// <summary>
         /// Raised when the acceration value changes
         /// </summary>

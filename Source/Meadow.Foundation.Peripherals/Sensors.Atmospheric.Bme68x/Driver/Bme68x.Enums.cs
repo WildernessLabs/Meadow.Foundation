@@ -3,7 +3,7 @@
     partial class Bme68x
     {
         /// <summary>
-        /// Valid addresses for the busComms
+        /// Valid I2C addresses for the sensor
         /// </summary>
         public enum Addresses : byte
         {

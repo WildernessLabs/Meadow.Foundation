@@ -2,7 +2,6 @@
 using Meadow.Devices;
 using Meadow.Foundation.ICs.IOExpanders;
 using Meadow.Hardware;
-using System;
 using System.Threading.Tasks;
 
 namespace ICs.IOExpanders.Pca9685_Sample

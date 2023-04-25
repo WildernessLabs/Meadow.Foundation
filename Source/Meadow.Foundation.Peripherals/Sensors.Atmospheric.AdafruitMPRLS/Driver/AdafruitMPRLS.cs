@@ -10,17 +10,15 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 {
     /// <summary>
     /// Device driver for the Adafruit MPRLS Ported Pressure Sensor Breakout
-    /// https://www.adafruit.com/product/3965
-    /// Device datasheets also available here: https://sensing.honeywell.com/micropressure-mpr-series
     /// </summary>
-    public partial class AdafruitMPRLS
-        : ByteCommsSensorBase<(Pressure? Pressure, Pressure? RawPsiMeasurement)>, IBarometricPressureSensor
+    public partial class AdafruitMPRLS :
+        ByteCommsSensorBase<(Pressure? Pressure, Pressure? RawPsiMeasurement)>,
+        II2cPeripheral, IBarometricPressureSensor
     {
-        //Defined in section 6.6.1 of the datasheet.
-        private readonly byte[] mprlsMeasurementCommand = { 0xAA, 0x00, 0x00 };
-
-        private const int MINIMUM_PSI = 0;
-        private const int MAXIMUM_PSI = 25;
+        /// <summary>
+        /// The default I2C address for the peripheral
+        /// </summary>
+        public byte DefaultI2cAddress => (byte)Addresses.Default;
 
         /// <summary>
         /// Raised when a new reading has been made. Events will only be raised
@@ -59,6 +57,11 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         public bool InternalMathSaturated { get; set; }
 
+        private readonly byte[] mprlsMeasurementCommand = { 0xAA, 0x00, 0x00 };
+
+        private const int MINIMUM_PSI = 0;
+        private const int MAXIMUM_PSI = 25;
+
         /// <summary>
         /// Represents an Adafruit MPRLS Ported Pressure Sensor
         /// </summary>
@@ -88,17 +91,14 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         {
             return Task.Run(() =>
             {
-                //Send the command to the sensor to tell it to do the thing.
                 BusComms.Write(mprlsMeasurementCommand);
 
-                //Datasheet says wait 5ms
                 Thread.Sleep(5);
 
                 while (true)
                 {
                     BusComms.Read(ReadBuffer.Span[0..1]);
 
-                    //From section 6.5 of the datasheet
                     IsDevicePowered = BitHelpers.GetBitValue(ReadBuffer.Span[0], 6);
                     IsDeviceBusy = BitHelpers.GetBitValue(ReadBuffer.Span[0], 5);
                     HasMemoryIntegrityFailed = BitHelpers.GetBitValue(ReadBuffer.Span[0], 2);
@@ -108,12 +108,10 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                     {
                         throw new InvalidOperationException("Sensor pressure has exceeded max value!");
                     }
-
                     if (HasMemoryIntegrityFailed)
                     {
                         throw new InvalidOperationException("Sensor internal memory integrity check failed!");
                     }
-
                     if (!IsDeviceBusy)
                     {
                         break;
@@ -124,7 +122,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
                 var rawPSIMeasurement = (ReadBuffer.Span[1] << 16) | (ReadBuffer.Span[2] << 8) | ReadBuffer.Span[3];
 
-                //From Section 8.0 of the datasheet.
                 var calculatedPSIMeasurement = (rawPSIMeasurement - 1677722) * (MAXIMUM_PSI - MINIMUM_PSI);
                 calculatedPSIMeasurement /= 15099494 - 1677722;
                 calculatedPSIMeasurement += MINIMUM_PSI;

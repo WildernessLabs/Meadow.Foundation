@@ -9,24 +9,6 @@ using TU = Meadow.Units.Temperature.UnitType;
 
 namespace Meadow.Foundation.Sensors.Atmospheric
 {
-    // TODO: for standby durations of 1,000ms and less, the sensor
-    // will actually handle the reading loop. you put it into `Normal`
-    // mode and set it to one of the known `StandbyDuration`s.
-    //
-    // So perhaps this should be an option. From a method signature
-    // standpoint, i think that we would add an overload that took
-    // a known `StandbyDuration` instead of an int.
-    //
-    // With that said, however, as far as I can tell, the sensor won't
-    // send an interrupt when a new reading is taken, so i'm not sure
-    // how we would synchronize with it, since the time that each read
-    // takes is determined by the samples, filter, etc. -b
-    //
-    // TODO: for longer standby durations, we should put the sensor into
-    // Modes.Sleep to save power. Need to figure out what the stanby
-    // duration threshold is for that. i'm guessing 5 seconds might be a
-    // good value.
-
     /// <summary>
     /// BME280 Temperature, Pressure and Humidity Sensor
     /// </summary>
@@ -36,7 +18,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     /// </remarks>
     public partial class Bme280 :
         PollingSensorBase<(Units.Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure)>,
-        ITemperatureSensor, IHumiditySensor, IBarometricPressureSensor, ISpiDevice
+        ITemperatureSensor, IHumiditySensor, IBarometricPressureSensor, ISpiPeripheral, II2cPeripheral
     {
         /// <summary>
         /// Temperature changed event
@@ -136,6 +118,11 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             get => ((ISpiCommunications)bme280Comms).BusMode;
             set => ((ISpiCommunications)bme280Comms).BusMode = value;
         }
+
+        /// <summary>
+        /// The default I2C address for the peripheral
+        /// </summary>
+        public byte DefaultI2cAddress => (byte)Addresses.Default;
 
         /// <summary>
         /// Initializes a new instance of the BME280 class
@@ -278,7 +265,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
             v_x1_u32r = v_x1_u32r < 0 ? 0 : v_x1_u32r;
             v_x1_u32r = v_x1_u32r > 419430400 ? 419430400 : v_x1_u32r;
-            //
+
             conditions.Humidity = new RelativeHumidity((v_x1_u32r >> 12) / 1024, HU.Percent);
 
             return conditions;

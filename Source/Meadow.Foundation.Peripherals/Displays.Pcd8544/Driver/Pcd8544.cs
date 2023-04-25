@@ -9,7 +9,7 @@ namespace Meadow.Foundation.Displays
     /// <summary>
     /// Represents a Pcd8544 monochrome display
     /// </summary>
-    public class Pcd8544 : IGraphicsDisplay, ISpiDevice
+    public class Pcd8544 : IGraphicsDisplay, ISpiPeripheral
     {
         /// <summary>
         /// Display color mode 

@@ -10,7 +10,8 @@ namespace Meadow.Foundation.ICs.FanControllers
     /// Represents an EMC2101 fan controller and temperature monitor
     /// </summary>
     public partial class Emc2101 :
-        PollingSensorBase<(Temperature? InternalTemperature, Temperature? ExternalTemperature, AngularVelocity? FanSpeed)>
+        PollingSensorBase<(Temperature? InternalTemperature, Temperature? ExternalTemperature, AngularVelocity? FanSpeed)>,
+        II2cPeripheral
     {
         /// <summary>
         /// Internal Temperature changed event
@@ -41,6 +42,11 @@ namespace Meadow.Foundation.ICs.FanControllers
         /// The current fan speed
         /// </summary>
         public AngularVelocity? FanSpeed => Conditions.FanSpeed;
+
+        /// <summary>
+        /// The default I2C address for the peripheral
+        /// </summary>
+        public byte DefaultI2cAddress => (byte)Addresses.Default;
 
         /// <summary>
         /// Get/Set the minimum fan speed for the currently connected fan
@@ -150,7 +156,7 @@ namespace Meadow.Foundation.ICs.FanControllers
         /// </summary>
         /// <param name="i2cBus">I2CBus connected to display</param>
         /// <param name="address">Address of the EMC2101 (default = 0x4C)</param>
-        public Emc2101(II2cBus i2cBus, byte address = (byte)Address.Default)
+        public Emc2101(II2cBus i2cBus, byte address = (byte)Addresses.Default)
         {
             i2cComms = new I2cCommunications(i2cBus, address);
 

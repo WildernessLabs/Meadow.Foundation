@@ -7,8 +7,13 @@ namespace Meadow.Foundation.ICs.EEPROM
     /// <summary>
     /// Encapsulation for EEPROMs based upon the AT24Cxx family of chips
     /// </summary>
-    public partial class At24Cxx
+    public partial class At24Cxx : II2cPeripheral
     {
+        /// <summary>
+        /// The default I2C address for the peripheral
+        /// </summary>
+        public byte DefaultI2cAddress => (byte)Addresses.Default;
+
         /// <summary>
         /// I2C Communication bus used to communicate with the peripheral
         /// </summary>
@@ -35,7 +40,7 @@ namespace Meadow.Foundation.ICs.EEPROM
         /// <param name="pageSize">Number of bytes in a page (default = 32 - AT24C32).</param>
         /// <param name="memorySize">Total number of bytes in the EEPROM (default = 8192 - AT24C32).</param>
         public At24Cxx(II2cBus i2cBus,
-            byte address = (byte)Address.Default,
+            byte address = (byte)Addresses.Default,
             ushort pageSize = 32,
             ushort memorySize = 8192)
         {

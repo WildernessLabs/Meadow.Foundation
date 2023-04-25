@@ -7,8 +7,13 @@ namespace Meadow.Foundation.Displays.Lcd
     /// <summary>
     /// Represents a character display using I2C
     /// </summary>
-    public partial class I2cCharacterDisplay : ICharacterDisplay
+    public partial class I2cCharacterDisplay : ICharacterDisplay, II2cPeripheral
     {
+        /// <summary>
+        /// The default I2C address for the peripheral
+        /// </summary>
+        public byte DefaultI2cAddress => (byte)Addresses.Default;
+
         /// <summary>
         /// I2C Communication bus used to communicate with the peripheral
         /// </summary>

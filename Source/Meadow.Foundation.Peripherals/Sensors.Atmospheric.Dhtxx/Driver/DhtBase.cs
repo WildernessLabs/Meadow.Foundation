@@ -1,17 +1,16 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
 using Meadow.Peripherals.Sensors;
 using Meadow.Units;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Atmospheric
 {
     /// <summary>
-    /// Provide a mechanism for reading the Temperature and Humidity from
-    /// a DHT temperature and Humidity sensor.
+    /// Base class for th DHT family Temperature and Humidity sensors
     /// </summary>
-    public abstract partial class DhtBase : 
+    public abstract partial class DhtBase :
         ByteCommsSensorBase<(Units.Temperature? Temperature, RelativeHumidity? Humidity)>,
         ITemperatureSensor, IHumiditySensor
     {
@@ -26,25 +25,24 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         public event EventHandler<IChangeResult<RelativeHumidity>> HumidityUpdated = delegate { };
 
         private readonly BusType protocol;
-        private int lastMeasurement = 0;
 
         /// <summary>
-        /// The temperature
+        /// The current temperature
         /// </summary>
         public Units.Temperature? Temperature => Conditions.Temperature;
 
         /// <summary>
-        /// The relative humidity
+        /// The current relative humidity
         /// </summary>
         public RelativeHumidity? Humidity => Conditions.Humidity;
 
         /// <summary>
-        /// How last read went, true for success, false for failure
+        /// Was the last sensor read succesful, true for success, false for failure
         /// </summary>
         public bool WasLastReadSuccessful { get; internal set; }
 
         /// <summary>
-        /// Create a DHT sensor through I2C (Only DHT12)
+        /// Create a DHT sensor through I2C
         /// </summary>
         /// <param name="i2cBus">The I2C bus connected to the sensor</param>
         /// <param name="address">The I2C address</param>
@@ -62,11 +60,11 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         internal virtual void ReadData()
         {
-            if (protocol == BusType.OneWire) 
+            if (protocol == BusType.OneWire)
             {
                 ReadDataOneWire();
-            } 
-            else 
+            }
+            else
             {
                 ReadDataI2c();
             }
@@ -88,13 +86,11 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             BusComms?.Write(0x00);
             BusComms?.Read(ReadBuffer.Span[0..5]);
 
-            lastMeasurement = Environment.TickCount;
-
-            if ((ReadBuffer.Span[4] == ((ReadBuffer.Span[0] + ReadBuffer.Span[1] + ReadBuffer.Span[2] + ReadBuffer.Span[3]) & 0xFF))) 
+            if ((ReadBuffer.Span[4] == ((ReadBuffer.Span[0] + ReadBuffer.Span[1] + ReadBuffer.Span[2] + ReadBuffer.Span[3]) & 0xFF)))
             {
                 WasLastReadSuccessful = (ReadBuffer.Span[0] != 0) || (ReadBuffer.Span[2] != 0);
-            } 
-            else 
+            }
+            else
             {
                 WasLastReadSuccessful = false;
             }
@@ -118,10 +114,12 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <param name="changeResult">The updated sensor data</param>
         protected override void RaiseEventsAndNotify(IChangeResult<(Units.Temperature? Temperature, RelativeHumidity? Humidity)> changeResult)
         {
-            if (changeResult.New.Temperature is { } temp) {
+            if (changeResult.New.Temperature is { } temp)
+            {
                 TemperatureUpdated?.Invoke(this, new ChangeResult<Units.Temperature>(temp, changeResult.Old?.Temperature));
             }
-            if (changeResult.New.Humidity is { } humidity) {
+            if (changeResult.New.Humidity is { } humidity)
+            {
                 HumidityUpdated?.Invoke(this, new ChangeResult<Units.RelativeHumidity>(humidity, changeResult.Old?.Humidity));
             }
             base.RaiseEventsAndNotify(changeResult);
@@ -135,11 +133,11 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         {
             (Units.Temperature? Temperature, RelativeHumidity? Humidity) conditions;
 
-            if (protocol == BusType.I2C) 
+            if (protocol == BusType.I2C)
             {
                 ReadDataI2c();
-            } 
-            else 
+            }
+            else
             {
                 ReadDataOneWire();
             }

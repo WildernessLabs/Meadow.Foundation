@@ -7,13 +7,13 @@ using System.Linq;
 namespace Meadow.Foundation.ICs.IOExpanders
 {
     /// <summary>
-    /// Provide an interface to connect to a 74595 shift register.
+    /// Provide an interface to connect to a 74595 shift register
     /// </summary>
     /// <remarks>
     /// Control the outputs from a 74595 shift register (or a chain of shift registers)
-    /// using a SPI interface.
+    /// using a SPI interface
     /// </remarks>
-    public partial class x74595 : IDigitalOutputController, ISpiDevice
+    public partial class x74595 : IDigitalOutputController, ISpiPeripheral
     {
         /// <summary>
         /// The pin definitions

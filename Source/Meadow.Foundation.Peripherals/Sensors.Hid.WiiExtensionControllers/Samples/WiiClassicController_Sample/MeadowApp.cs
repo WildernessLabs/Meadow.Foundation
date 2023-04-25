@@ -16,7 +16,7 @@ namespace WiiClassicController_Sample
         {
             Resolver.Log.Info("Initialize...");
 
-            var i2cBus = Device.CreateI2cBus(WiiClassicController.DefaultSpeed);
+            var i2cBus = Device.CreateI2cBus(WiiClassicController.DefaultI2cSpeed);
 
             classicController = new WiiClassicController(i2cBus: i2cBus, 
                                                          useHighResolutionMode: true);

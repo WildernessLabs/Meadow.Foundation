@@ -7,8 +7,13 @@ namespace Meadow.Foundation.ICs.IOExpanders
     /// <summary>
     /// Represents a DS3502 digital potentiometer
     /// </summary>
-    public partial class Ds3502
+    public partial class Ds3502 : II2cPeripheral
     {
+        /// <summary>
+        /// The default I2C address for the peripheral
+        /// </summary>
+        public byte DefaultI2cAddress => (byte)Addresses.Default;
+
         /// <summary>
         /// Default I2C bus speed
         /// </summary>

@@ -5,8 +5,13 @@ namespace Meadow.Foundation.Leds
     /// <summary>
     /// Represents a Pca9633 led driver
     /// </summary>
-    public partial class Pca9633
+    public partial class Pca9633 : II2cPeripheral
     {
+        /// <summary>
+        /// The default I2C address for the peripheral
+        /// </summary>
+        public byte DefaultI2cAddress => (byte)Addresses.Default;
+
         /// <summary>
         /// I2C Communication bus used to communicate with the peripheral
         /// </summary>
@@ -40,7 +45,7 @@ namespace Meadow.Foundation.Leds
         /// </summary>
         /// <param name="i2cBus">i2c bus</param>
         /// <param name="address">i2c address</param>
-        public Pca9633(II2cBus i2cBus, Addresses address)
+        public Pca9633(II2cBus i2cBus, Addresses address = Addresses.Default)
             : this(i2cBus, (byte)address)
         {
         }
@@ -50,7 +55,7 @@ namespace Meadow.Foundation.Leds
         /// </summary>
         /// <param name="i2cBus">i2c bus</param>
         /// <param name="address">i2c address</param>
-        public Pca9633(II2cBus i2cBus, byte address = (byte)Addresses.Default)
+        public Pca9633(II2cBus i2cBus, byte address)
         {
             i2cComms = new I2cCommunications(i2cBus, address);
 

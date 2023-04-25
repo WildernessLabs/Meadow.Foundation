@@ -15,7 +15,7 @@ namespace Meadow.Foundation.Sensors.Environmental
         ByteCommsSensorBase<(Concentration? CO2Concentration,
                              Concentration? EthanolConcentration,
                              Concentration? TVOCConcentration)>,
-        IConcentrationSensor
+        IConcentrationSensor, II2cPeripheral
     {
         /// <summary>
         /// Raised when the CO2 concentration changes
@@ -65,6 +65,11 @@ namespace Meadow.Foundation.Sensors.Environmental
             get => (OperatingMode)BusComms.ReadRegister((byte)Registers.OPMODE);
             set => BusComms.WriteRegister((byte)Registers.OPMODE, (byte)value);
         }
+
+        /// <summary>
+        /// The default I2C address for the peripheral
+        /// </summary>
+        public byte DefaultI2cAddress => (byte)Addresses.Default;
 
         /// <summary>
         /// Create a new ENS160 object

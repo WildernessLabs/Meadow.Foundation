@@ -9,8 +9,13 @@ namespace Meadow.Foundation.ICs.IOExpanders
     /// Represents PCA9685 IC
     /// </summary>
     /// <remarks>All PWM channels run at the same Frequency</remarks>
-    public partial class Pca9685
+    public partial class Pca9685 : II2cPeripheral
     {
+        /// <summary>
+        /// The default I2C address for the peripheral
+        /// </summary>
+        public byte DefaultI2cAddress => (byte)Addresses.Default;
+
         /// <summary>
         /// I2C Communication bus used to communicate with the peripheral
         /// </summary>
@@ -18,7 +23,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
         private readonly Frequency frequency;
 
-        //# Registers/etc.
         const byte Mode1 = 0x00;
         const byte Mode2 = 0x01;
         const byte SubAdr1 = 0x02;

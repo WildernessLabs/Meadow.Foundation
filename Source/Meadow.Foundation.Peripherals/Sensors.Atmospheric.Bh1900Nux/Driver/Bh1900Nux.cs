@@ -8,7 +8,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     /// <summary>
     /// Represents a Bh1900Nux temperature sensor
     /// </summary>
-    public partial class Bh1900Nux : ByteCommsSensorBase<Units.Temperature>, ITemperatureSensor
+    public partial class Bh1900Nux : ByteCommsSensorBase<Units.Temperature>, ITemperatureSensor, II2cPeripheral
     {
         /// <summary>
         /// Raised when the temperature value changes
@@ -21,14 +21,19 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         public Units.Temperature? Temperature => Conditions;
 
         /// <summary>
+        /// The default I2C address for the peripheral
+        /// </summary>
+        public byte DefaultI2cAddress => (byte)Addresses.Default;
+
+        /// <summary>
         /// Create a new Bh1900Nux object
         /// </summary>
         /// <param name="i2cBus">The I2C bus</param>
         /// <param name="address">The I2C address</param>
-        public Bh1900Nux(II2cBus i2cBus, Address address)
+        public Bh1900Nux(II2cBus i2cBus, Addresses address)
             : base(i2cBus, (byte)address, 2, 2)
         {
-            if (address < Address.Address_0x48 || address > Address.Address_0x4f)
+            if (address < Addresses.Address_0x48 || address > Addresses.Address_0x4f)
             {
                 throw new ArgumentOutOfRangeException("Bh1900Nux address must be in the range of 0x48-0x4f");
             }
@@ -42,7 +47,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <param name="i2cBus">The I2C bus</param>
         /// <param name="address">The I2C address</param>
         public Bh1900Nux(II2cBus i2cBus, byte address)
-            : this(i2cBus, (Address)address)
+            : this(i2cBus, (Addresses)address)
         { }
 
         /// <summary>

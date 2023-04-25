@@ -9,24 +9,23 @@ namespace Meadow.Foundation.ICs.IOExpanders
     /// The Is31fl3731 is a compact LED driver for 144 single LEDs
     /// </summary>
     /// <remarks>Based on https://github.com/adafruit/Adafruit_IS31FL3731 </remarks>
-    public partial class Is31fl3731
+    public partial class Is31fl3731 : II2cPeripheral
     {
         const byte RegConfig = 0x00;
         const byte RegConfigPictureMode = 0x00;
-        //const byte RegConfigAutoPlayMode = 0x08;
-        //const byte RegConfigAudioPlayMode = 0x18;
 
-        //const byte ConfPictureMode = 0x00;
-        //const byte ConfAutoFrameMode = 0x04;
-        //const byte ConfAudioMode = 0x08;
         const byte DisplayOptionRegister = 0x05;
         const byte PictureFrameReg = 0x01;
 
         const byte RegShutdown = 0x0A;
-        //const byte RegAudioSync = 0x06;
 
         const byte CommandRegister = 0xFD;
-        const byte CommandFunctionReg = 0x0B;  //'page nine'
+        const byte CommandFunctionReg = 0x0B;
+
+        /// <summary>
+        /// The default I2C address for the peripheral
+        /// </summary>
+        public byte DefaultI2cAddress => (byte)Addresses.Default;
 
         /// <summary>
         /// I2C Communication bus used to communicate with the peripheral

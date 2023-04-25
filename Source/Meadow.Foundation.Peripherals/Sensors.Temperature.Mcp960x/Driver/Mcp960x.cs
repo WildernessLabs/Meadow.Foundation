@@ -8,8 +8,15 @@ namespace Meadow.Foundation.Sensors.Temperature
     /// <summary>
     /// Represents a Mcp960x Thermocouple sensor object
     /// </summary>    
-    public abstract partial class Mcp960x : ByteCommsSensorBase<(Units.Temperature? TemperatureHot, Units.Temperature? TemperatureCold)>, ITemperatureSensor
+    public abstract partial class Mcp960x :
+        ByteCommsSensorBase<(Units.Temperature? TemperatureHot, Units.Temperature? TemperatureCold)>,
+        ITemperatureSensor, II2cPeripheral
     {
+        /// <summary>
+        /// The default I2C address for the peripheral
+        /// </summary>
+        public byte DefaultI2cAddress => (byte)Addresses.Default;
+
         /// <summary>
         /// Raised when the Hot temperature value changes
         /// </summary>

@@ -8,8 +8,14 @@ namespace Meadow.Foundation.Sensors.Temperature
     /// <summary>
     /// TMP102 Temperature sensor object
     /// </summary>    
-    public partial class Lm75 : ByteCommsSensorBase<Units.Temperature>, ITemperatureSensor
+    public partial class Lm75 : ByteCommsSensorBase<Units.Temperature>,
+        ITemperatureSensor, II2cPeripheral
     {
+        /// <summary>
+        /// The default I2C address for the peripheral
+        /// </summary>
+        public byte DefaultI2cAddress => (byte)Addresses.Default;
+
         /// <summary>
         /// Raised when the value of the reading changes
         /// </summary>

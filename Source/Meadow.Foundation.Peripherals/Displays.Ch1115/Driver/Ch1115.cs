@@ -10,7 +10,7 @@ namespace Meadow.Foundation.Displays
     /// <summary>
     /// Provide an interface to the Ch1115 family of displays
     /// </summary>
-    public partial class Ch1115 : IGraphicsDisplay, ISpiDevice
+    public partial class Ch1115 : IGraphicsDisplay, ISpiPeripheral
     {
         /// <summary>
         /// The display color mode - 1 bit per pixel monochrome

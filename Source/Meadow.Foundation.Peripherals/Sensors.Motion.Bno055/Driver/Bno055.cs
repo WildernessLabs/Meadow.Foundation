@@ -10,27 +10,6 @@ using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Motion
 {
-    // Sample Reading:
-    // Accel: [X:0.00,Y:-1.15,Z:10.09 (m/s^2)]
-    // Gyro: [X:0.00,Y:-0.06,Z:0.06 (degrees/s)]
-    // Compass: [X:19.38,Y:-36.75,Z:-118.25 (Tesla)]
-    // Gravity: [X:0.00, Y:-1.12, Z:9.74 (meters/s^2)]
-    // Quaternion orientation: [X:-0.06, Y:0.00, Z:0.00]
-    // Euler orientation: [heading: 0.00, Roll: 0.00, Pitch: 0.12]
-    // Linear Accel: [X:0.00, Y:-0.03, Z:0.35 (meters/s^2)]
-    // Temp: 33.00C
-
-    //TODO: the sensor works great as is right now, but there's some room for
-    // improvement. Currently, we basically turn it on full bore and get all
-    // the readings.
-    // However, there's an opportunity here to allow users to selectively turn
-    // on the various features, and then in the `ReadSensor()` method we can
-    // check before we do the reading to see what the user has turned on.
-    // if the feature is turned on, we can read and parse the registers and then
-    // set the `Conditions.[X] = reading`, otherwise set them to `null`, since
-    // all the conditions are nullable. this would provide folks with an
-    // opportunity to use the sensor in a low or lower-power configuration.
-
     /// <summary>
     /// Provide methods / properties to allow an application to control a BNO055 
     /// 9-axis absolute orientation sensor.
@@ -48,8 +27,13 @@ namespace Meadow.Foundation.Sensors.Motion
         MagneticField3D? MagneticField3D, Quaternion? QuaternionOrientation,
         Acceleration3D? LinearAcceleration, Acceleration3D? GravityVector,
         EulerAngles? EulerOrientation, Units.Temperature? Temperature)>,
-        IAccelerometer, IGyroscope, ITemperatureSensor
+        IAccelerometer, IGyroscope, ITemperatureSensor, II2cPeripheral
     {
+        /// <summary>
+        /// The default I2C address for the peripheral
+        /// </summary>
+        public byte DefaultI2cAddress => (byte)Addresses.Default;
+
         /// <summary>
         /// Raised when the acceleration value changes
         /// </summary>

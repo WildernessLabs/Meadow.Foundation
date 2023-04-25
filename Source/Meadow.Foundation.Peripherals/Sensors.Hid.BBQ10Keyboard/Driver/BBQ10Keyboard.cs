@@ -7,8 +7,13 @@ namespace Meadow.Foundation.Sensors.Hid
     /// <summary>
     /// Represents a BBQ10Keyboard Featherwing
     /// </summary>
-    public partial class BBQ10Keyboard
+    public partial class BBQ10Keyboard : II2cPeripheral
     {
+        /// <summary>
+        /// The default I2C address for the peripheral
+        /// </summary>
+        public byte DefaultI2cAddress => (byte)Addresses.Default;
+
         /// <summary>
         /// I2C Communication bus used to communicate with the peripheral
         /// </summary>

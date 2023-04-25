@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Gnss
 {
-    public partial class NeoM8 : ISpiDevice
+    public partial class NeoM8 : ISpiPeripheral
     {
         /// <summary>
         /// The default SPI bus speed for the device

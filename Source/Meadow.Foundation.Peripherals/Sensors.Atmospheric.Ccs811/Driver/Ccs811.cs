@@ -12,7 +12,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     /// </summary>
     public partial class Ccs811 :
         ByteCommsSensorBase<(Concentration? Co2, Concentration? Voc)>,
-        ICo2Sensor, IVocSensor
+        ICo2Sensor, IVocSensor, II2cPeripheral
     {
         private const int ReadBufferSize = 10;
         private const int WriteBufferSize = 8;
@@ -38,6 +38,11 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// The measured VOC concentration
         /// </summary>
         public Concentration? Voc => Conditions.Voc;
+
+        /// <summary>
+        /// The default I2C address for the peripheral
+        /// </summary>
+        public byte DefaultI2cAddress => (byte)Addresses.Default;
 
         /// <summary>
         /// Create a new Ccs811 object

@@ -9,8 +9,13 @@ namespace Meadow.Foundation.Sensors.Motion
     /// <summary>
     /// Represents Mma7660fc 3-axis acclerometer
     /// </summary>
-    public partial class Mma7660fc : ByteCommsSensorBase<Acceleration3D>, IAccelerometer
+    public partial class Mma7660fc : ByteCommsSensorBase<Acceleration3D>, IAccelerometer, II2cPeripheral
     {
+        /// <summary>
+        /// The default I2C address for the peripheral
+        /// </summary>
+        public byte DefaultI2cAddress => (byte)Addresses.Default;
+
         /// <summary>
         /// Raised when new acceleration data is processed
         /// </summary>
@@ -38,8 +43,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <param name="i2cBus">I2C bus</param>
         public Mma7660fc(II2cBus i2cBus, Addresses address = Addresses.Default)
             : this(i2cBus, (byte)address)
-        {
-        }
+        { }
 
         /// <summary>
         /// Create a new instance of the Mma7660fc communicating over the I2C interface.

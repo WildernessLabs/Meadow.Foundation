@@ -10,7 +10,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
     /// <summary>
     /// Provide an interface to connect to a MCP2xxx port expander
     /// </summary>
-    abstract partial class Mcp23xxx : IDigitalInputOutputController, ISpiDevice
+    abstract partial class Mcp23xxx : IDigitalInputOutputController, ISpiPeripheral, II2cPeripheral
     {
         /// <summary> 
         /// Raised when the value of any pin configured for input interrupts changes
@@ -52,8 +52,12 @@ namespace Meadow.Foundation.ICs.IOExpanders
             set => (mcpDevice as ISpiCommunications).BusMode = value;
         }
 
+        /// <summary>
+        /// The default I2C address for the peripheral
+        /// </summary>
+        public byte DefaultI2cAddress => (byte)Addresses.Default;
+
         private readonly IByteCommunications mcpDevice;
-        private IDigitalInputPort interruptPort;
         private IDigitalOutputPort resetPort;
         private IDictionary<IPin, DigitalInputPort> inputPorts;
 
@@ -108,7 +112,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
             // raise an exception if not. also, doc in constructor what we expect from an interrupt port
             if (interruptPort != null)
             {
-                this.interruptPort = interruptPort;
                 interruptPort.Changed += InterruptPortChanged;
             }
 

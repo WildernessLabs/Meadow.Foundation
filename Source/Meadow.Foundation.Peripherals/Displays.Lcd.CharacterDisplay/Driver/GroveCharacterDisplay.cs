@@ -1,5 +1,5 @@
-﻿using System.Threading;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
+using System.Threading;
 
 namespace Meadow.Foundation.Displays.Lcd
 {

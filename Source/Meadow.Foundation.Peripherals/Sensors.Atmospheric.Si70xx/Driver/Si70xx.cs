@@ -11,11 +11,11 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 {
     /// <summary>
     /// Provide access to the Si70xx series (Si7020, Si7021, and Si7030)
-    /// temperature and humidity sensors.
+    /// temperature and humidity sensors
     /// </summary>
     public partial class Si70xx :
         ByteCommsSensorBase<(Units.Temperature? Temperature, RelativeHumidity? Humidity)>,
-        ITemperatureSensor, IHumiditySensor
+        ITemperatureSensor, IHumiditySensor, II2cPeripheral
     {
         /// <summary>
         /// Raised when the temperature value changes
@@ -28,12 +28,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         public event EventHandler<IChangeResult<RelativeHumidity>> HumidityUpdated = delegate { };
 
         /// <summary>
-        /// Default SPI bus speed
-        /// </summary>
-        public static Frequency DEFAULT_SPEED = new Frequency(400, Frequency.UnitType.Kilohertz);
-
-        /// <summary>
-        /// The temperature, from the last reading
+        /// The temperature from the last reading
         /// </summary>
         public Units.Temperature? Temperature => Conditions.Temperature;
 
@@ -58,11 +53,16 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         public byte FirmwareRevision { get; private set; }
 
         /// <summary>
+        /// The default I2C address for the peripheral
+        /// </summary>
+        public byte DefaultI2cAddress => (byte)Addresses.Default;
+
+        /// <summary>
         /// Create a new SI7021 temperature and humidity sensor
         /// </summary>
         /// <param name="i2cBus">I2CBus</param>
         /// <param name="address">I2C address (default to 0x40)</param>
-        public Si70xx(II2cBus i2cBus, byte address = (byte)Address.Default)
+        public Si70xx(II2cBus i2cBus, byte address = (byte)Addresses.Default)
             : base(i2cBus, address, 8, 3)
         {
             Initialize();

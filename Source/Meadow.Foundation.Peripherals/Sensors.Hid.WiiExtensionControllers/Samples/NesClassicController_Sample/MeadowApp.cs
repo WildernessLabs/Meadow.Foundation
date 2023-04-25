@@ -16,7 +16,7 @@ namespace NesClassicController_Sample
         {
             Resolver.Log.Info("Initialize...");
 
-            var i2cBus = Device.CreateI2cBus(NesClassicController.DefaultSpeed);
+            var i2cBus = Device.CreateI2cBus(NesClassicController.DefaultI2cSpeed);
 
             nesController = new NesClassicController(i2cBus: i2cBus);
 

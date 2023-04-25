@@ -15,7 +15,7 @@ namespace Meadow.Foundation.Sensors.Environmental
         : ByteCommsSensorBase<(Concentration? Concentration,
                                                         Units.Temperature? Temperature,
                                                         RelativeHumidity? Humidity)>,
-        ITemperatureSensor, IHumiditySensor, IConcentrationSensor
+        ITemperatureSensor, IHumiditySensor, IConcentrationSensor, II2cPeripheral
     {
         /// <summary>
         /// Raised when the concentration changes
@@ -46,6 +46,11 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// The current humidity
         /// </summary>
         public RelativeHumidity? Humidity => Conditions.Humidity;
+
+        /// <summary>
+        /// The default I2C address for the peripheral
+        /// </summary>
+        public byte DefaultI2cAddress => (byte)Addresses.Default;
 
         /// <summary>
         /// Create a new Scd4xBase object

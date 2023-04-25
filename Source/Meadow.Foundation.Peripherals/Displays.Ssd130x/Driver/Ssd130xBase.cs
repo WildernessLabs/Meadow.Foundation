@@ -9,7 +9,7 @@ namespace Meadow.Foundation.Displays
     /// <summary>
     /// Represents the SSD130x family of OLED displays
     /// </summary>
-    public abstract partial class Ssd130xBase : IGraphicsDisplay, ISpiDevice
+    public abstract partial class Ssd130xBase : IGraphicsDisplay, ISpiPeripheral, II2cPeripheral
     {
         /// <summary>
         /// The display color mode
@@ -49,6 +49,11 @@ namespace Meadow.Foundation.Displays
             get => spiComms.BusSpeed;
             set => spiComms.BusSpeed = value;
         }
+
+        /// <summary>
+        /// The default I2C address for the peripheral
+        /// </summary>
+        public byte DefaultI2cAddress => (byte)Addresses.Default;
 
         /// <summary>
         /// The default SPI bus mode for the device

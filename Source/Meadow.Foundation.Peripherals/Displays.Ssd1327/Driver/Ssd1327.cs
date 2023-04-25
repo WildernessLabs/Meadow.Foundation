@@ -10,7 +10,7 @@ namespace Meadow.Foundation.Displays
     /// <summary>
     /// Provides an interface to the Ssd1327 greyscale OLED display
     /// </summary>
-    public partial class Ssd1327 : IGraphicsDisplay, ISpiDevice
+    public partial class Ssd1327 : IGraphicsDisplay, ISpiPeripheral
     {
         /// <summary>
         /// The display color mode (4 bit per pixel grayscale)

@@ -11,7 +11,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
     /// <summary>
     /// Represents an As1115 led driver and key scanner
     /// </summary>
-    public partial class As1115 : IGraphicsDisplay, IDisposable
+    public partial class As1115 : IGraphicsDisplay, II2cPeripheral, IDisposable
     {
         /// <summary>
         /// Event raised when any key scan button is pressed
@@ -44,6 +44,11 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// I2C Communication bus used to communicate with the peripheral
         /// </summary>
         protected readonly II2cCommunications i2cComms;
+
+        /// <summary>
+        /// The default I2C address for the peripheral
+        /// </summary>
+        public byte DefaultI2cAddress => (byte)Addresses.Default;
 
         /// <summary>
         /// The display color mode (1 bit per pixel)

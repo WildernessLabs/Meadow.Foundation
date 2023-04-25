@@ -10,7 +10,7 @@ namespace Meadow.Foundation.Sensors.Environmental
     /// Pinout (left to right, label side down): VDD, SDA, GND, SCL
     /// Note: requires pullup resistors on SDA/SCL
     /// </summary>
-    public partial class Ags01Db : ByteCommsSensorBase<Concentration>
+    public partial class Ags01Db : ByteCommsSensorBase<Concentration>, II2cPeripheral
     {
         const byte CRC_POLYNOMIAL = 0x31;
         const byte CRC_INIT = 0xFF;
@@ -31,6 +31,11 @@ namespace Meadow.Foundation.Sensors.Environmental
         public Concentration? Concentration { get; private set; }
 
         /// <summary>
+        /// The default I2C address for the peripheral
+        /// </summary>
+        public byte DefaultI2cAddress => (byte)Addresses.Default;
+
+        /// <summary>
         /// Create a new Ags01Db object
         /// </summary>
         /// <param name="i2cBus">The I2C bus</param>
@@ -41,8 +46,7 @@ namespace Meadow.Foundation.Sensors.Environmental
         }
 
         /// <summary>
-        /// Get ASG01DB VOC Gas Concentration and
-        /// Update the Concentration property.
+        /// Get ASG01DB VOC Gas Concentration and update the Concentration property
         /// </summary>
         protected override Task<Concentration> ReadSensor()
         {
@@ -74,7 +78,7 @@ namespace Meadow.Foundation.Sensors.Environmental
             BusComms.Exchange(WriteBuffer.Span[0..1], ReadBuffer.Span[0..1]);
 
             // CRC check
-            if (!CheckCrc8(ReadBuffer.Slice(0, 1).ToArray(), 1, ReadBuffer.Span[1]))
+            if (!CheckCrc8(ReadBuffer[..1].ToArray(), 1, ReadBuffer.Span[1]))
             {
                 return unchecked((byte)-1);
             }

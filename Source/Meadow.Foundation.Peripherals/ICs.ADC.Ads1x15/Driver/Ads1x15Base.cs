@@ -7,8 +7,13 @@ namespace Meadow.Foundation.ICs.ADC
     /// <summary>
     /// Encapsulation for ADCs based upon the Ads1x1x family of chips.
     /// </summary>
-    public abstract partial class Ads1x15Base : PollingSensorBase<Voltage>
+    public abstract partial class Ads1x15Base : PollingSensorBase<Voltage>, II2cPeripheral
     {
+        /// <summary>
+        /// The default I2C address for the peripheral
+        /// </summary>
+        public byte DefaultI2cAddress => (byte)Addresses.Default;
+
         /// <summary>
         /// I2C Communication bus used to communicate with the peripheral
         /// </summary>
