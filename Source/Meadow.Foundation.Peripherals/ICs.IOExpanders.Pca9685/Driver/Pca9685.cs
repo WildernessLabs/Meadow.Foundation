@@ -9,12 +9,12 @@ namespace Meadow.Foundation.ICs.IOExpanders
     /// Represents PCA9685 IC
     /// </summary>
     /// <remarks>All PWM channels run at the same Frequency</remarks>
-    public partial class Pca9685
+    public partial class Pca9685 : II2cPeripheral
     {
         /// <summary>
         /// The default I2C address for the peripheral
         /// </summary>
-        public byte I2cDefaultAddress => (byte)Addresses.Default;
+        public byte DefaultI2cAddress => (byte)Addresses.Default;
 
         /// <summary>
         /// I2C Communication bus used to communicate with the peripheral
