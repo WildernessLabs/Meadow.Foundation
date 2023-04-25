@@ -8,8 +8,13 @@ namespace Meadow.Foundation.Sensors.Hid
     /// <summary>
     /// Represents a TSC2004 4-wire touch screen controller
     /// </summary>
-    public partial class Tsc2004
+    public partial class Tsc2004 : II2cPeripheral
     {
+        /// <summary>
+        /// The default I2C address for the peripheral
+        /// </summary>
+        public byte I2cDefaultAddress => (byte)Address.Default;
+
         /// <summary>
         /// I2C Communication bus used to communicate with the peripheral
         /// </summary>

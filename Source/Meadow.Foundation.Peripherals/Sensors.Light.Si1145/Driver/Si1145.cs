@@ -6,17 +6,18 @@ using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Light
 {
-    // TODO: the proximity stuff isn't exposed. exposing it needs some more
-    // thought. you need to hook up an infrared LED to the LED pin. this will
-    // cause that pin to fire, then the sensor measures the time of flight.
-    // it's basically a completely different sensor.
-
     /// <summary>
     /// Represents a SiLabs Proximity, UV, and ambient light sensor
     /// </summary>
     public partial class Si1145
-        : ByteCommsSensorBase<(Illuminance? VisibleLight, double? UltravioletIndex, Illuminance? Infrared)>
+        : ByteCommsSensorBase<(Illuminance? VisibleLight, double? UltravioletIndex, Illuminance? Infrared)>,
+        II2cPeripheral
     {
+        /// <summary>
+        /// The default I2C address for the peripheral
+        /// </summary>
+        public byte I2cDefaultAddress => (byte)Address.Default;
+
         /// <summary>
         /// Create a new SI1145 sensor object
         /// </summary>

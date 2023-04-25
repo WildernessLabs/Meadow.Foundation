@@ -11,7 +11,7 @@ namespace Meadow.Foundation.Sensors.Light
     /// <summary>
     /// Represents a BH1750 ambient light sensor
     /// </summary>
-    public partial class Bh1750 : ByteCommsSensorBase<Illuminance>, ILightSensor
+    public partial class Bh1750 : ByteCommsSensorBase<Illuminance>, ILightSensor, II2cPeripheral
     {
         /// <summary>
         /// Raised when a new Illuminance value is read by the sensor
@@ -41,6 +41,11 @@ namespace Meadow.Foundation.Sensors.Light
         private const byte DefaultLightTransmittance = 0b_0100_0101;
         private const float MaxTransmittance = 2.225f;
         private const float MinTransmittance = 0.272f;
+
+        /// <summary>
+        /// The default I2C address for the peripheral
+        /// </summary>
+        public byte I2cDefaultAddress => (byte)Address.Default;
 
         /// <summary>
         /// Create a new BH1750 light sensor object using a static reference voltage.

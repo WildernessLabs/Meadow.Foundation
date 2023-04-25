@@ -9,8 +9,13 @@ namespace Meadow.Foundation.Sensors.Hid
     /// <summary>
     /// Represents the MPR121 12-Key Capacitive Touch Sensor
     /// </summary>
-    public partial class Mpr121
+    public partial class Mpr121 : II2cPeripheral
     {
+        /// <summary>
+        /// The default I2C address for the peripheral
+        /// </summary>
+        public byte I2cDefaultAddress => (byte)Address.Default;
+
         /// <summary>
         /// I2C Communication bus used to communicate with the peripheral
         /// </summary>

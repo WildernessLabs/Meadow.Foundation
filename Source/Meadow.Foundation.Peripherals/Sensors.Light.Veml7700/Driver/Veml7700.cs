@@ -9,7 +9,8 @@ namespace Meadow.Foundation.Sensors.Light
     /// <summary>
     /// High Accuracy Ambient Light Sensor 
     /// </summary>
-    public partial class Veml7700 : ByteCommsSensorBase<Illuminance>, ILightSensor, IDisposable
+    public partial class Veml7700 : ByteCommsSensorBase<Illuminance>,
+        ILightSensor, II2cPeripheral, IDisposable
     {
         /// <summary>
         /// Raised when the luminosity value changes
@@ -42,6 +43,11 @@ namespace Meadow.Foundation.Sensors.Light
         private const ushort DATA_CEILING = 10000;
 
         /// <summary>
+        /// The default I2C address for the peripheral
+        /// </summary>
+        public byte I2cDefaultAddress => (byte)Address.Default;
+
+        /// <summary>
         /// Create a new Veml7700 object with the default address
         /// </summary>
         /// <param name="i2cBus">The I2C bus</param>
@@ -50,10 +56,10 @@ namespace Meadow.Foundation.Sensors.Light
         {
         }
 
-        int _gain = 3;
-        int _integrationTime = 0;
-        bool _firstRead = true;
-        bool _outOfRange = false;
+        int gain = 3;
+        int integrationTime = 0;
+        bool firstRead = true;
+        bool outOfRange = false;
 
         /// <summary>
         /// Reads data from the sensor
@@ -63,12 +69,11 @@ namespace Meadow.Foundation.Sensors.Light
         {
             Illuminance illuminance = new Illuminance(0);
 
-            if (_firstRead)
+            if (firstRead)
             {
                 WriteRegister(Registers.AlsConf0, 0);
-                //--//--//
                 await Task.Delay(5);
-                _firstRead = false;
+                firstRead = false;
             }
 
             // priming read
@@ -76,59 +81,59 @@ namespace Meadow.Foundation.Sensors.Light
 
             while (true)
             {
-                _outOfRange = false;
+                outOfRange = false;
 
                 // Resolver.Log.Info($"{DataSource} DATA A: 0x{data:x4}");
 
                 if (data > DATA_CEILING)
                 { // Too bright!
-                    if (_gain > 1)
+                    if (gain > 1)
                     {
-                        await SetGain(--_gain);
+                        await SetGain(--gain);
                     }
                     else if (data > DATA_CEILING)
                     {
                         // we're at min gain, have to speed integration time
-                        if (++_integrationTime >= 4)
+                        if (++integrationTime >= 4)
                         {
                             // everything is maxed out                                
                             RangeExceededHigh?.Invoke(this, EventArgs.Empty);
-                            _outOfRange = true;
+                            outOfRange = true;
                         }
                         else
                         {
-                            await SetIntegrationTime(_integrationTime);
+                            await SetIntegrationTime(integrationTime);
                         }
                     }
                 }
                 else if (data < DATA_FLOOR)
                 {
                     // Too dim!
-                    if (_gain < 4)
+                    if (gain < 4)
                     {
-                        await SetGain(++_gain);
+                        await SetGain(++gain);
                     }
                     else if (data < DATA_FLOOR)
                     {
                         // we're at max gain, have to slow integration time
-                        if (--_integrationTime <= -2)
+                        if (--integrationTime <= -2)
                         {
                             RangeExceededLow?.Invoke(this, EventArgs.Empty);
-                            _outOfRange = true;
+                            outOfRange = true;
                         }
                         else
                         {
-                            await SetIntegrationTime(_integrationTime);
+                            await SetIntegrationTime(integrationTime);
                         }
                     }
                 }
 
-                if ((data >= DATA_FLOOR && data <= DATA_CEILING) || _outOfRange)
+                if ((data >= DATA_FLOOR && data <= DATA_CEILING) || outOfRange)
                 {
-                    return ScaleDataToIluminance(data, _gain, _integrationTime);
+                    return ScaleDataToIluminance(data, gain, integrationTime);
                 }
 
-                await DelayForIntegrationTime(_integrationTime);
+                await DelayForIntegrationTime(integrationTime);
 
                 data = ReadRegister(DataSource == SensorTypes.Ambient ? Registers.Als : Registers.White);
             }
@@ -136,24 +141,17 @@ namespace Meadow.Foundation.Sensors.Light
 
         private Illuminance ScaleDataToIluminance(ushort data, int gain, int integrationTime)
         {
-            int scale;
-
-            switch (gain)
+            var scale = gain switch
             {
-                case 1: // 1/8
-                    scale = 8;
-                    break;
-                case 2: // 1/4
-                    scale = 4;
-                    break;
-                case 4: // 2
-                    scale = 2;
-                    break;
-                case 3: // 1
-                default:
-                    scale = 1;
-                    break;
-            }
+                // 1/8
+                1 => 8,
+                // 1/4
+                2 => 4,
+                // 2
+                4 => 2,
+                // 1
+                _ => 1,
+            };
 
             switch (integrationTime)
             {
@@ -196,8 +194,11 @@ namespace Meadow.Foundation.Sensors.Light
             return new Illuminance(6.0135E-13 * Math.Pow(lux, 4) - 9.3924E-09 * Math.Pow(lux, 3) + 8.1488E-05 * Math.Pow(lux, 2) + 1.0023E+00 * lux);
         }
 
-
-        private void SetPower(bool on)
+        /// <summary>
+        /// Set power mode
+        /// </summary>
+        /// <param name="on"></param>
+        public void SetPower(bool on)
         {
             ushort cfg;
 

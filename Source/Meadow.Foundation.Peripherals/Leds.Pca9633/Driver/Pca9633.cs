@@ -5,7 +5,7 @@ namespace Meadow.Foundation.Leds
     /// <summary>
     /// Represents a Pca9633 led driver
     /// </summary>
-    public partial class Pca9633
+    public partial class Pca9633 : II2cPeripheral
     {
         /// <summary>
         /// The default I2C address for the peripheral

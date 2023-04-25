@@ -15,16 +15,16 @@ namespace Meadow.Foundation.Sensors.LoadCell
         private const uint GPIO_BASE = 0x40020000;
         private const uint IDR_OFFSET = 0x10;
         private const uint BSSR_OFFSET = 0x18;
-        private const int timing_iterations = 3;
+        private const int timingIterations = 3;
 
-        private uint _sck_address;
-        private int _sck_pin;
-        private uint _dout_address;
-        private uint _sck_set;
-        private uint _sck_clear;
-        private uint _dout_mask;
-        private double _gramsPerAdcUnit;
-        private bool _createdPorts = false;
+        private uint sckAddress;
+        private int sckPin;
+        private uint doutAddress;
+        private uint sckSet;
+        private uint sckClear;
+        private uint doutMask;
+        private double gramsPerAdcUnit;
+        private readonly bool createdPorts = false;
 
         private IDigitalOutputPort SCK { get; }
         private IDigitalInputPort DOUT { get; }
@@ -74,7 +74,7 @@ namespace Meadow.Foundation.Sensors.LoadCell
         {
             SCK = sck.CreateDigitalOutputPort();
             DOUT = dout.CreateDigitalInputPort();
-            _createdPorts = true; // we need to dispose what we create
+            createdPorts = true; // we need to dispose what we create
 
             CalculateRegisterValues(sck, dout);
             Start();
@@ -185,7 +185,7 @@ namespace Meadow.Foundation.Sensors.LoadCell
         /// <param name="knownValue"></param>
         public void SetCalibrationFactor(int factor, Mass knownValue)
         {
-            _gramsPerAdcUnit = (knownValue.Grams / factor);
+            gramsPerAdcUnit = (knownValue.Grams / factor);
         }
 
         /// <summary>
@@ -197,7 +197,7 @@ namespace Meadow.Foundation.Sensors.LoadCell
             //ReadADC() call may block so wrap the logic in a Task
             return Task.Run(() =>
             {
-                if (_gramsPerAdcUnit == 0)
+                if (gramsPerAdcUnit == 0)
                 {
                     throw new Exception("Calibration factor has not been set");
                 }
@@ -219,7 +219,7 @@ namespace Meadow.Foundation.Sensors.LoadCell
                 }
 
                 // convert to grams
-                var grams = value * _gramsPerAdcUnit;
+                var grams = value * gramsPerAdcUnit;
 
                 // convert to desired units
                 return new Mass(grams, Units.Mass.UnitType.Grams);
@@ -234,15 +234,15 @@ namespace Meadow.Foundation.Sensors.LoadCell
             // Bits 15:0  set
             // Port offset = 0x0400 * index (with A being index 0)
             int gpio_port = sck.Key.ToString()[1] - 'A';
-            _sck_pin = int.Parse(sck.Key.ToString().Substring(2));
-            _sck_address = GPIO_BASE | (0x400u * (uint)gpio_port) | BSSR_OFFSET;
-            _sck_set = 1u << _sck_pin;
-            _sck_clear = 1u << (16 + _sck_pin);
+            sckPin = int.Parse(sck.Key.ToString().Substring(2));
+            sckAddress = GPIO_BASE | (0x400u * (uint)gpio_port) | BSSR_OFFSET;
+            sckSet = 1u << sckPin;
+            sckClear = 1u << (16 + sckPin);
 
             gpio_port = dout.Key.ToString()[1] - 'A';
             var gpio_pin = int.Parse(dout.Key.ToString().Substring(2));
-            _dout_address = GPIO_BASE | (0x400u * (uint)gpio_port) | IDR_OFFSET;
-            _dout_mask = 1u << gpio_pin;
+            doutAddress = GPIO_BASE | (0x400u * (uint)gpio_port) | IDR_OFFSET;
+            doutMask = 1u << gpio_pin;
         }
 
         private unsafe void ClockLow()
@@ -250,19 +250,19 @@ namespace Meadow.Foundation.Sensors.LoadCell
             // this seems convoluted, but it is intentionally so to keep the compiler from optimizing out out timing.
             // A single call takes roughly 0.2us, but the part requires a minimum of 0.25us for the ADC to settle.  
             // We don't have a simple micro-sleep, so we simply make multiple calls to assert state to suck up the required timing
-            for (int i = 0; i < timing_iterations; i++)
+            for (int i = 0; i < timingIterations; i++)
             {
-                var val = 1u << (16 + _sck_pin); // low
-                *(uint*)_sck_address = val;
+                var val = 1u << (16 + sckPin); // low
+                *(uint*)sckAddress = val;
             }
         }
 
         private unsafe void ClockHigh()
         {
-            for (int i = 0; i < timing_iterations; i++)
+            for (int i = 0; i < timingIterations; i++)
             {
-                var val = 1u << _sck_pin; // high
-                *(uint*)_sck_address = val;
+                var val = 1u << sckPin; // high
+                *(uint*)sckAddress = val;
             }
         }
 
@@ -273,7 +273,7 @@ namespace Meadow.Foundation.Sensors.LoadCell
             lock (samplingLock)
             {
                 // data line low indicates ready
-                while ((*(uint*)_dout_address & _dout_mask) != 0)
+                while ((*(uint*)doutAddress & doutMask) != 0)
                 {
                     Thread.Sleep(0);
                 }
@@ -281,10 +281,10 @@ namespace Meadow.Foundation.Sensors.LoadCell
                 for (int i = 0; i < 24; i++) // 24 bits of data
                 {
                     ClockHigh();
-                    count = count << 1;
+                    count <<= 1;
                     ClockLow();
 
-                    if ((*(uint*)_dout_address & _dout_mask) != 0) // read DOUT state
+                    if ((*(uint*)doutAddress & doutMask) != 0) // read DOUT state
                     {
                         count++;
                     }
@@ -326,7 +326,7 @@ namespace Meadow.Foundation.Sensors.LoadCell
         /// <param name="disposing">Is disposing</param>
         protected virtual void Dispose(bool disposing)
         {
-            if (_createdPorts)
+            if (createdPorts)
             {
                 SCK.Dispose();
                 DOUT.Dispose();

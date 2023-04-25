@@ -7,25 +7,12 @@ using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Light
 {
-    // TODO: The chip can drive LEDs which will help to identify colors more
-    // accurately by lighting them up. I found this documentation from the
-    // pimoroni site (https://shop.pimoroni.com/products/bh1745-luminance-and-colour-sensor-breakout)
-    // which makes a breakout that has LEDs:
-    //
-    // The LEDs are connected to the BH1745 Interrupt line. This is activated by
-    // a threshold mechanism that is fully documented in the BH1745 chip manual.
-    // You can select which of the four light sensor channels to use and you can
-    // set a high and a low threshold. The Interrupt is enabled when the light
-    // is above the high level or below the low level. Write 0x1D to register
-    // 0x60 to enable Interrupts and select the unfiltered light sensor. Write
-    // 0xFF to the four registers starting at 0x62 to force the LEDs on. With
-    // the default settings in these registers, the LEDS will be off.
-
     /// <summary>
     /// Represents a BH1745 Luminance and Colour Sensor
     /// </summary>
     public partial class Bh1745
-        : ByteCommsSensorBase<(Illuminance? AmbientLight, Color? Color, bool Valid)>, ILightSensor
+        : ByteCommsSensorBase<(Illuminance? AmbientLight, Color? Color, bool Valid)>,
+        ILightSensor, II2cPeripheral
     {
         /// <summary>
         /// Raised when the luminosity changes
@@ -234,6 +221,11 @@ namespace Meadow.Foundation.Sensors.Light
         /// Gets or sets the channel compensation multipliers which are used to scale the channel measurements
         /// </summary>
         public ChannelMultipliers CompensationMultipliers { get; set; }
+
+        /// <summary>
+        /// The default I2C address for the peripheral
+        /// </summary>
+        public byte I2cDefaultAddress => (byte)Address.Default;
 
         /// <summary>
         /// Create a new BH17545 color sensor object

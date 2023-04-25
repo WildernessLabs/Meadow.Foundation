@@ -11,7 +11,7 @@ namespace Meadow.Foundation.Sensors.Hid
     /// for analog joysticks
     /// </summary>
     public partial class As5013
-        : SamplingSensorBase<AnalogJoystickPosition>, IAnalogJoystick
+        : SamplingSensorBase<AnalogJoystickPosition>, IAnalogJoystick, II2cPeripheral
     {
         /// <summary>
         /// Event if interrupt port is provided for interrupt pin
@@ -57,6 +57,11 @@ namespace Meadow.Foundation.Sensors.Hid
                 return GetDigitalJoystickPosition();
             }
         }
+
+        /// <summary>
+        /// The default I2C address for the peripheral
+        /// </summary>
+        public byte I2cDefaultAddress => (byte)Address.Default;
 
         /// <summary>
         /// I2C Communication bus used to communicate with the peripheral
@@ -197,9 +202,7 @@ namespace Meadow.Foundation.Sensors.Hid
 
             if (IsVerticalHorizonalSwapped)
             {
-                float temp = newX;
-                newX = newY;
-                newY = temp;
+                (newY, newX) = (newX, newY);
             }
 
             var oldPosition = Position;
