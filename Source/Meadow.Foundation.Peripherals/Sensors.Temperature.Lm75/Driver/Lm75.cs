@@ -25,7 +25,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// </summary>
         /// <param name="i2cBus">The I2C bus</param>
         /// <param name="address">I2C address of the sensor</param>
-        public Lm75(II2cBus i2cBus, byte address = (byte)Addresses.Default)
+        public Lm75(II2cBus i2cBus, byte address = (byte)Address.Default)
             : base(i2cBus, address)
         {
         }

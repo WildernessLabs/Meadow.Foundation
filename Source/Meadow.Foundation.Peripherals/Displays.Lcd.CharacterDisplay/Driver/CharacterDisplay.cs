@@ -120,7 +120,7 @@ namespace Meadow.Foundation.Displays.Lcd
         /// <param name="columns">The number of character columns</param>
         /// <param name="isGroveDisplay">True if this is a Seeed Studio Grove display (default is false)</param>
         public CharacterDisplay(II2cBus i2cBus,
-            byte address = (byte)I2cCharacterDisplay.Addresses.Default,
+            byte address = (byte)I2cCharacterDisplay.Address.Default,
             byte rows = 4, byte columns = 20,
             bool isGroveDisplay = false)
         {

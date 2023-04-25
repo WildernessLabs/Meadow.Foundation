@@ -44,7 +44,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// </summary>
         /// <param name="i2CBus">The I2C bus</param>
         /// <param name="address">The I2C address</param>
-        public Mcp9808(II2cBus i2CBus, byte address = (byte)Addresses.Default)
+        public Mcp9808(II2cBus i2CBus, byte address = (byte)Address.Default)
             : base(i2CBus, address, readBufferSize: 8, writeBufferSize: 8)
         {
             BusComms?.WriteRegister(MCP_REG_CONFIG, (ushort)0x0);

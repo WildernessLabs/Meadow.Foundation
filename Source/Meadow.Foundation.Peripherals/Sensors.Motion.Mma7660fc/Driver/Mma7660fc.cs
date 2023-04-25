@@ -36,7 +36,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
         /// <param name="address">Address of the I2C sensor</param>
         /// <param name="i2cBus">I2C bus</param>
-        public Mma7660fc(II2cBus i2cBus, Addresses address = Addresses.Default)
+        public Mma7660fc(II2cBus i2cBus, Address address = Address.Default)
             : this(i2cBus, (byte)address)
         {
         }

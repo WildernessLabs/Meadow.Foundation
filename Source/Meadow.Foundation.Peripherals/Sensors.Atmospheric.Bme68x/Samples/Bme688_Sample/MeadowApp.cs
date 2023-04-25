@@ -33,7 +33,7 @@ namespace Sensors.Atmospheric.BME688_Sample
                     //c# 8 pattern match syntax. checks for !null and assigns var.
                     if (result.Old?.Temperature is { } oldTemp &&
                         result.Old?.Humidity is { } oldHumidity &&
-                        result.New.Temperature is { } newTemp && 
+                        result.New.Temperature is { } newTemp &&
                         result.New.Humidity is { } newHumidity)
                     {
                         return ((newTemp - oldTemp).Abs().Celsius > 0.5 &&
@@ -45,7 +45,7 @@ namespace Sensors.Atmospheric.BME688_Sample
 
             sensor?.Subscribe(consumer);
 
-            if(sensor != null)
+            if (sensor != null)
             {
                 sensor.Updated += (sender, result) =>
                 {
@@ -90,12 +90,12 @@ namespace Sensors.Atmospheric.BME688_Sample
             Resolver.Log.Info("Create BME688 sensor with I2C...");
 
             var i2c = Device.CreateI2cBus();
-            sensor = new Bme688(i2c, (byte)Bme688.Addresses.Address_0x76);
+            sensor = new Bme688(i2c, (byte)Bme688.Address.Address_0x76);
         }
 
         async Task ReadConditions()
         {
-            if(sensor == null) { return; }
+            if (sensor == null) { return; }
 
             var (Temperature, Humidity, Pressure, Resistance) = await sensor.Read();
 

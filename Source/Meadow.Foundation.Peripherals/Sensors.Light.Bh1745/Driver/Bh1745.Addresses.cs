@@ -3,9 +3,9 @@
     public partial class Bh1745
     {
         /// <summary>
-        /// Valid addresses for the sensor.
+        /// Valid I2C addresses for the sensor
         /// </summary>
-        public enum Addresses : byte
+        public enum Address : byte
         {
             /// <summary>
             /// Address of the peripheral when the address pin is pulled low.

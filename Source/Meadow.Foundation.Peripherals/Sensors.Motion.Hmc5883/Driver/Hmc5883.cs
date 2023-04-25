@@ -49,7 +49,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <param name="outputRate">Output rate</param>
         /// <param name="sampleAmount">Sample amount</param>
         /// <param name="measurementConfig">Measurement configuration</param>
-        public Hmc5883(II2cBus i2cBus, byte address = (byte)Addresses.Default,
+        public Hmc5883(II2cBus i2cBus, byte address = (byte)Address.Default,
             GainLevels gain = GainLevels.Gain1090,
             MeasuringModes measuringMode = MeasuringModes.Continuous,
             DataOutputRates outputRate = DataOutputRates.Rate15,

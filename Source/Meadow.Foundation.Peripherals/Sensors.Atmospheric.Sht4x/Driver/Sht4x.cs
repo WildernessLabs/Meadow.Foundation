@@ -8,15 +8,11 @@ using System.Threading.Tasks;
 namespace Meadow.Foundation.Sensors.Atmospheric
 {
     /// <summary>
-    /// Provide a mechanism for reading the temperature and humidity from
-    /// a SHT4x temperature / humidity sensor (SHT40, SHT41, SHT45, etc.)
+    /// Represent a SHT4x temperature and humidity sensor (SHT40, SHT41, SHT45, etc.)
     /// </summary>
-    /// <remarks>
-    /// Readings from the sensor are made in Single-shot mode.
-    /// </remarks>
     public partial class Sht4x :
         ByteCommsSensorBase<(Units.Temperature? Temperature, RelativeHumidity? Humidity)>,
-        ITemperatureSensor, IHumiditySensor
+        ITemperatureSensor, IHumiditySensor, II2cPeripheral
     {
         /// <summary>
         /// Precision of sensor reading
@@ -34,24 +30,28 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         public event EventHandler<IChangeResult<RelativeHumidity>> HumidityUpdated = delegate { };
 
         /// <summary>
-        /// The curren temperature -from the last reading.
+        /// The current temperature
         /// </summary>
         public Units.Temperature? Temperature => Conditions.Temperature;
 
         /// <summary>
-        /// The humidity, in percent relative humidity, from the last reading
+        /// The current humidity
         /// </summary>
         public RelativeHumidity? Humidity => Conditions.Humidity;
 
         /// <summary>
+        /// The default I2C address for the peripheral
+        /// </summary>
+        public byte I2cDefaultAddress => (byte)Address.Default;
+
+        /// <summary>
         /// Create a new SHT4x object
         /// </summary>
-        /// <param name="address">Sensor address (0x44 or 0x45)</param>
+        /// <param name="address">Sensor address</param>
         /// <param name="i2cBus">I2cBus</param>
-        public Sht4x(II2cBus i2cBus, byte address = (byte)Addresses.Default)
+        public Sht4x(II2cBus i2cBus, byte address = (byte)Address.Default)
             : base(i2cBus, address, readBufferSize: 6, writeBufferSize: 2)
-        {
-        }
+        { }
 
         /// <summary>
         /// Raise events for subscribers

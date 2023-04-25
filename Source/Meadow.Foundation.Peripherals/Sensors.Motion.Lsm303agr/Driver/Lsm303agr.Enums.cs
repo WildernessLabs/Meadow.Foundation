@@ -5,7 +5,7 @@
         /// <summary>
         /// Valid I2C addresses for the sensor
         /// </summary>
-        enum Addresses : byte
+        enum Address : byte
         {
             /// <summary>
             /// Bus address 0x19 for the accelerometer

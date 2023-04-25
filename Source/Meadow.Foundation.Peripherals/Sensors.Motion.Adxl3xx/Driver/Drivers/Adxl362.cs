@@ -24,7 +24,7 @@ namespace Meadow.Foundation.Sensors.Motion
     /// </summary>
     public partial class Adxl362
         : ByteCommsSensorBase<(Acceleration3D? Acceleration3D, Units.Temperature? Temperature)>,
-        IAccelerometer, ITemperatureSensor, ISpiDevice
+        IAccelerometer, ITemperatureSensor, ISpiPeripheral
     {
         /// <summary>
         /// Raised when the acceleration value changes

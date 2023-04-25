@@ -8,6 +8,11 @@ namespace Meadow.Foundation.Leds
     public partial class Pca9633
     {
         /// <summary>
+        /// The default I2C address for the peripheral
+        /// </summary>
+        public byte I2cDefaultAddress => (byte)Address.Default;
+
+        /// <summary>
         /// I2C Communication bus used to communicate with the peripheral
         /// </summary>
         protected readonly II2cCommunications i2cComms;
@@ -40,7 +45,7 @@ namespace Meadow.Foundation.Leds
         /// </summary>
         /// <param name="i2cBus">i2c bus</param>
         /// <param name="address">i2c address</param>
-        public Pca9633(II2cBus i2cBus, Addresses address)
+        public Pca9633(II2cBus i2cBus, Address address = Address.Default)
             : this(i2cBus, (byte)address)
         {
         }
@@ -50,7 +55,7 @@ namespace Meadow.Foundation.Leds
         /// </summary>
         /// <param name="i2cBus">i2c bus</param>
         /// <param name="address">i2c address</param>
-        public Pca9633(II2cBus i2cBus, byte address = (byte)Addresses.Default)
+        public Pca9633(II2cBus i2cBus, byte address)
         {
             i2cComms = new I2cCommunications(i2cBus, address);
 

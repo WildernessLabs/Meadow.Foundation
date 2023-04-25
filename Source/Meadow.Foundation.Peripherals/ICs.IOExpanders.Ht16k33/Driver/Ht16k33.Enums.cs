@@ -5,9 +5,9 @@
     public partial class Ht16k33
     {
         /// <summary>
-        /// Valid addresses for the sensor.
+        /// Valid I2C addresses for the sensor
         /// </summary>
-        public enum Addresses : byte
+        public enum Address : byte
         {
             /// <summary>
             /// Bus address 0x70

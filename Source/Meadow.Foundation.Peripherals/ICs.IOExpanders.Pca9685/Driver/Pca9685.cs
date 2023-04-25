@@ -12,13 +12,17 @@ namespace Meadow.Foundation.ICs.IOExpanders
     public partial class Pca9685
     {
         /// <summary>
+        /// The default I2C address for the peripheral
+        /// </summary>
+        public byte I2cDefaultAddress => (byte)Address.Default;
+
+        /// <summary>
         /// I2C Communication bus used to communicate with the peripheral
         /// </summary>
         protected readonly II2cCommunications i2cComms;
 
         private readonly Frequency frequency;
 
-        //# Registers/etc.
         const byte Mode1 = 0x00;
         const byte Mode2 = 0x01;
         const byte SubAdr1 = 0x02;
@@ -55,7 +59,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <param name="i2cBus">The I2C bus connected to the peripheral</param>
         /// <param name="frequency">The frequency</param>
         /// <param name="address">The I2C address</param>
-        public Pca9685(II2cBus i2cBus, Frequency frequency, byte address = (byte)Addresses.Default)
+        public Pca9685(II2cBus i2cBus, Frequency frequency, byte address = (byte)Address.Default)
         {
             i2CBus = i2cBus;
             this.address = address;
@@ -68,7 +72,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         /// <param name="i2cBus">The I2C bus connected to the peripheral</param>
         /// <param name="address">The I2C address</param>
-        public Pca9685(II2cBus i2cBus, byte address = (byte)Addresses.Default)
+        public Pca9685(II2cBus i2cBus, byte address = (byte)Address.Default)
         : this(i2cBus, new Frequency(IPwmOutputController.DefaultPwmFrequency, Frequency.UnitType.Hertz), address)
         { }
 

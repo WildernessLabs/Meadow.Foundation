@@ -8,7 +8,7 @@ namespace Meadow.Foundation.Displays
     /// <summary>
     /// Max7219 LED matrix driver
     /// </summary>
-    public partial class Max7219 : ISpiDevice
+    public partial class Max7219 : ISpiPeripheral
     {
         /// <summary>
         /// Number of digits per Module

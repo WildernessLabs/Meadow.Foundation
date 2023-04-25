@@ -3,9 +3,9 @@
     public abstract partial class Ads1x15Base
     {
         /// <summary>
-        /// Valid addresses for the sensor
+        /// Valid I2C addresses for the sensor
         /// </summary>
-        public enum Addresses : byte
+        public enum Address : byte
         {
             /// <summary>
             /// Bus address 0x48

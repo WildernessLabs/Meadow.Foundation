@@ -12,7 +12,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     /// </summary>
     public partial class Bmp180 :
         ByteCommsSensorBase<(Units.Temperature? Temperature, Pressure? Pressure)>,
-        ITemperatureSensor, IBarometricPressureSensor
+        ITemperatureSensor, IBarometricPressureSensor, II2cPeripheral
     {
         /// <summary>
         /// Raised when the temperature value changes
@@ -24,10 +24,14 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         public event EventHandler<IChangeResult<Pressure>> PressureUpdated = delegate { };
 
-        // Oversampling for measurements
+        /// <summary>
+        /// Oversampling for measurements 
+        /// </summary>
         private readonly byte oversamplingSetting;
 
-        // These wait times correspond to the oversampling settings
+        /// <summary>
+        /// These wait times correspond to the oversampling settings 
+        /// </summary>
         private readonly byte[] pressureWaitTime = { 5, 8, 14, 26 };
 
         // Calibration data backing stores
@@ -54,9 +58,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         public Pressure? Pressure => Conditions.Pressure;
 
         /// <summary>
-        /// Default SPI bus speed
+        /// The default I2C address for the peripheral
         /// </summary>
-        public static Frequency DEFAULT_SPEED = new Frequency(40000, Frequency.UnitType.Kilohertz);
+        public byte I2cDefaultAddress => (byte)Address.Default;
 
         /// <summary>
         /// Create a new BMP180 object
@@ -64,7 +68,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <param name="i2cBus">The I2C bus</param>
         /// <param name="address">The I2C address</param>
         /// <param name="deviceMode">The device mode</param>
-        public Bmp180(II2cBus i2cBus, byte address = (byte)Addresses.Default,
+        public Bmp180(II2cBus i2cBus, byte address = (byte)Address.Default,
             DeviceMode deviceMode = DeviceMode.Standard)
                 : base(i2cBus, address)
         {
@@ -140,26 +144,15 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
         private long ReadUncompensatedTemperature()
         {
-            // write register address
-            // TODO: delete after validating
-            //BusComms.WriteBytes(new byte[] { 0xF4, 0x2E });
             WriteBuffer.Span[0] = 0xf4;
             WriteBuffer.Span[1] = 0x2e;
             BusComms?.Write(WriteBuffer.Span[0..2]);
 
-            // Required as per datasheet.
             Thread.Sleep(5);
 
-            // write register address
-            // TODO: Delete after validating
-            //BusComms.WriteBytes(new byte[] { 0xF6 });
             WriteBuffer.Span[0] = 0xf6;
             BusComms?.Write(WriteBuffer.Span[0]);
 
-            // get MSB and LSB result
-            // TODO: Delete after validating
-            //byte[] data = new byte[2];
-            //data = BusComms.ReadBytes(2);
             BusComms?.Read(ReadBuffer.Span[0..2]);
 
             return ((ReadBuffer.Span[0] << 8) | ReadBuffer.Span[1]);
@@ -167,26 +160,18 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
         private long ReadUncompensatedPressure()
         {
-            // write register address
-            // TODO: Delete after validating
-            //BusComms.WriteBytes(new byte[] { 0xF4, (byte)(0x34 + (oversamplingSetting << 6)) });
             WriteBuffer.Span[0] = 0xf4;
             WriteBuffer.Span[1] = (byte)(0x34 + (oversamplingSetting << 6));
 
-            // insert pressure waittime using oversampling setting as index.
             Thread.Sleep(pressureWaitTime[oversamplingSetting]);
 
-            // get MSB and LSB result
-            // TODO: delete after validating
-            //byte[] data = new byte[3];
-            //data = BusComms.ReadRegisters(0xF6, 3);
             BusComms?.ReadRegister(0xf6, ReadBuffer.Span[0..3]);
 
             return ((ReadBuffer.Span[0] << 16) | (ReadBuffer.Span[1] << 8) | (ReadBuffer.Span[2])) >> (8 - oversamplingSetting);
         }
 
         /// <summary>
-        /// Retrieves the factory calibration data stored in the sensor.
+        /// Retrieves the factory calibration data stored in the sensor
         /// </summary>
         private void GetCalibrationData()
         {
@@ -205,13 +190,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
         private short ReadShort(byte address)
         {
-            // TODO: i think we already have a method that does this. I'm just not sure
-            // which endian it is. not sure what the last statement here is dooing
-
-            // get MSB and LSB result
-            // TODO: delete after validating
-            //byte[] data = new byte[2];
-            //data = BusComms.ReadRegisters(address, 2);
             BusComms?.ReadRegister(address, ReadBuffer.Span[0..2]);
 
             return (short)((ReadBuffer.Span[0] << 8) | ReadBuffer.Span[1]);

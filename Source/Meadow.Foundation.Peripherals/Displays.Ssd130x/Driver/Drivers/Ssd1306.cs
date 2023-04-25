@@ -54,7 +54,7 @@ namespace Meadow.Foundation.Displays
         /// <param name="address">Address of the bus on the I2C display.</param>
         /// <param name="displayType">Type of SSD1306 display (default = 128x64 pixel display).</param>
         public Ssd1306(II2cBus i2cBus,
-            byte address = (byte)Addresses.Default,
+            byte address = (byte)Address.Default,
             DisplayType displayType = DisplayType.OLED128x64)
         {
             this.displayType = displayType;

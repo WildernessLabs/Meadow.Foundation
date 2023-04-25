@@ -15,7 +15,7 @@ namespace Meadow.Foundation.Sensors.Environmental
         : ByteCommsSensorBase<(Concentration? Concentration,
                                                         Units.Temperature? Temperature,
                                                         RelativeHumidity? Humidity)>,
-        ITemperatureSensor, IHumiditySensor, IConcentrationSensor
+        ITemperatureSensor, IHumiditySensor, IConcentrationSensor, II2cPeripheral
     {
         /// <summary>
         /// Raised when the concentration changes
@@ -48,6 +48,11 @@ namespace Meadow.Foundation.Sensors.Environmental
         public RelativeHumidity? Humidity => Conditions.Humidity;
 
         /// <summary>
+        /// The default I2C address for the peripheral
+        /// </summary>
+        public byte I2cDefaultAddress => (byte)Address.Default;
+
+        /// <summary>
         /// Create a new Scd4xBase object
         /// </summary>
         /// <remarks>
@@ -56,7 +61,7 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// </remarks>
         /// <param name="i2cBus">The I2C bus</param>
         /// <param name="address">The I2C address</param>
-        public Scd4xBase(II2cBus i2cBus, byte address = (byte)Addresses.Default)
+        public Scd4xBase(II2cBus i2cBus, byte address = (byte)Address.Default)
             : base(i2cBus, address, readBufferSize: 9, writeBufferSize: 9)
         {
             StopPeriodicUpdates().Wait();

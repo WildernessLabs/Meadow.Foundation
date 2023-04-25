@@ -38,7 +38,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
         /// <param name="address">Address of the Mmc5603</param>
         /// <param name="i2cBus">I2C bus object - default = 400 KHz</param>        
-        public Mmc5603(II2cBus i2cBus, byte address = (byte)Addresses.Default)
+        public Mmc5603(II2cBus i2cBus, byte address = (byte)Address.Default)
             : base(i2cBus, address, 10, 8)
         {
             var deviceID = BusComms.ReadRegister(Registers.WHO_AM_I);

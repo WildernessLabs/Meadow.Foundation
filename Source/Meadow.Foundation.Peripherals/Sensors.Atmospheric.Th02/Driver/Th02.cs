@@ -13,7 +13,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     /// </summary>
     public partial class Th02 :
         ByteCommsSensorBase<(Units.Temperature? Temperature, RelativeHumidity? Humidity)>,
-        ITemperatureSensor, IHumiditySensor
+        ITemperatureSensor, IHumiditySensor, II2cPeripheral
     {
         /// <summary>
         /// Event raised when the temperature changes
@@ -26,23 +26,27 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         public event EventHandler<IChangeResult<RelativeHumidity>> HumidityUpdated = delegate { };
 
         /// <summary>
-        /// Last value read from the Temperature sensor.
+        /// The current temperatute
         /// </summary>
         public Units.Temperature? Temperature => Conditions.Temperature;
 
         /// <summary>
-        /// Last value read from the Pressure sensor.
+        /// The current humidity
         /// </summary>
         public RelativeHumidity? Humidity => Conditions.Humidity;
+
+        /// <summary>
+        /// The default I2C address for the peripheral
+        /// </summary>
+        public byte I2cDefaultAddress => (byte)Address.Default;
 
         /// <summary>
         /// Provide a mechanism for reading the temperature and humidity from
         /// a Th02 temperature / humidity sensor
         /// </summary>
-        public Th02(II2cBus i2cBus, byte address = (byte)Addresses.Default)
+        public Th02(II2cBus i2cBus, byte address = (byte)Address.Default)
                 : base(i2cBus, address)
-        {
-        }
+        { }
 
         /// <summary>
         /// Raise all change events for subscribers

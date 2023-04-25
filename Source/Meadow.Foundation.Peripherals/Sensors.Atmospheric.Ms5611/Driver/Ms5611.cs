@@ -12,7 +12,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     /// </summary>
     public partial class Ms5611 :
         ByteCommsSensorBase<(Units.Temperature? Temperature, Pressure? Pressure)>,
-        ITemperatureSensor, IBarometricPressureSensor
+        ITemperatureSensor, IBarometricPressureSensor, II2cPeripheral
     {
         /// <summary>
         /// Temperature changed event
@@ -25,17 +25,26 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         public event EventHandler<IChangeResult<Pressure>> PressureUpdated = delegate { };
 
         /// <summary>
-        /// The temperature, in degrees celsius (°C), from the last reading
+        /// The current temperature
         /// </summary>
         public Units.Temperature? Temperature => Conditions.Temperature;
 
         /// <summary>
-        /// The pressure, in hectopascals (hPa), from the last reading. 1 hPa
-        /// is equal to one millibar, or 1/10th of a kilopascal (kPa)/centibar
+        /// The current pressure
         /// </summary>
         public Pressure? Pressure => Conditions.Pressure;
 
-        private Ms5611Base ms5611;
+        /// <summary>
+        /// The default I2C address for the peripheral
+        /// </summary>
+        public byte I2cDefaultAddress => (byte)Address.Default;
+
+        /// <summary>
+        /// I2C Communication bus used to communicate with the peripheral
+        /// </summary>
+        protected readonly II2cCommunications i2cComms;
+
+        readonly Resolution resolution;
 
         /// <summary>
         /// Connect to the Ms5611 using I2C
@@ -43,9 +52,10 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <param name="i2cBus">The I2C bus connected to the device</param>
         /// <param name="address">I2c address - default is 0x5c</param>
         /// <param name="resolution"></param>
-        public Ms5611(II2cBus i2cBus, byte address = (byte)Addresses.Default, Resolution resolution = Resolution.OSR_1024)
+        public Ms5611(II2cBus i2cBus, byte address = (byte)Address.Default, Resolution resolution = Resolution.OSR_1024)
         {
-            ms5611 = new Ms5611I2c(i2cBus, address, resolution);
+            i2cComms = new I2cCommunications(i2cBus, address);
+            this.resolution = resolution;
         }
 
         /// <summary>
@@ -84,31 +94,37 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         public void Reset()
         {
-            ms5611.Reset();
+            var cmd = (byte)Commands.Reset;
+
+            i2cComms.Write(cmd);
         }
 
         private void BeginTempConversion()
         {
-            ms5611.BeginTempConversion();
+            var cmd = (byte)((byte)Commands.ConvertD2 + 2 * (byte)resolution);
+            i2cComms.Write(cmd);
         }
 
         private void BeginPressureConversion()
         {
-            ms5611.BeginPressureConversion();
+            var cmd = (byte)((byte)Commands.ConvertD1 + 2 * (byte)resolution);
+            i2cComms.Write(cmd);
         }
 
         private byte[] ReadData()
         {
-            return ms5611.ReadData();
+            var data = new byte[3];
+            i2cComms.ReadRegister((byte)Commands.ReadADC, data);
+            return data;
         }
 
         int ReadTemperature()
         {
-            ms5611.BeginTempConversion();
+            BeginTempConversion();
             Thread.Sleep(10); // 1 + 2 * Resolution
 
             // we get back 24 bits (3 bytes), regardless of the resolution we're asking for
-            var data = ms5611.ReadData();
+            var data = ReadData();
 
             var result = data[2] | data[1] << 8 | data[0] << 16;
 
@@ -117,12 +133,12 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
         int ReadPressure()
         {
-            ms5611.BeginPressureConversion();
+            BeginPressureConversion();
 
             Thread.Sleep(10); // 1 + 2 * Resolution
 
             // we get back 24 bits (3 bytes), regardless of the resolution we're asking for
-            var data = ms5611.ReadData();
+            var data = ReadData();
 
             var result = data[2] | data[1] << 8 | data[0] << 16;
 

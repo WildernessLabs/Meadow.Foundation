@@ -5,10 +5,9 @@ using System;
 namespace Meadow.Foundation.Leds
 {
     /// <summary>
-    /// Represents APA102/Dotstar Led(s).
+    /// Represents APA102/Dotstar Led(s)
     /// </summary>
-    /// <remarks>Based on logic from https://github.com/adafruit/Adafruit_CircuitPython_DotStar/blob/master/adafruit_dotstar.py </remarks>
-    public partial class Apa102 : IApa102, ISpiDevice
+    public partial class Apa102 : IApa102, ISpiPeripheral
     {
         /// <summary>
         /// The default SPI bus speed for the device

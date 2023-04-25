@@ -1,8 +1,8 @@
-﻿using System;
-using System.Threading.Tasks;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Environmental;
+using System;
+using System.Threading.Tasks;
 
 namespace Sensors.Environmental.Ens160_Sample
 {
@@ -17,10 +17,10 @@ namespace Sensors.Environmental.Ens160_Sample
             Resolver.Log.Info("Initializing...");
 
             var i2cBus = Device.CreateI2cBus(Meadow.Hardware.I2cBusSpeed.Standard);
-      
-            sensor = new Ens160(i2cBus, (byte)Ens160.Addresses.Address_0x53);
 
-            
+            sensor = new Ens160(i2cBus, (byte)Ens160.Address.Address_0x53);
+
+
             var consumer = Ens160.CreateObserver(
                 handler: result =>
                 {
@@ -46,7 +46,7 @@ namespace Sensors.Environmental.Ens160_Sample
                     Resolver.Log.Info($"  CO2 Concentration: {result.New.CO2Concentration?.PartsPerMillion:N0}ppm");
                     Resolver.Log.Info($"  Ethanol Concentraion: {result.New.EthanolConcentration?.PartsPerBillion:N0}ppb");
                     Resolver.Log.Info($"  TVOC Concentraion: {result.New.TVOCConcentration?.PartsPerBillion:N0}ppb");
-                    Resolver.Log.Info($"  AQI: {sensor.GetAirQualityIndex()}");    
+                    Resolver.Log.Info($"  AQI: {sensor.GetAirQualityIndex()}");
                 };
             }
 

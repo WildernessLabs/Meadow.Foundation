@@ -9,23 +9,28 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     /// <summary>
     /// Provides access to the Sensiron SGP40 VOC sensor
     /// </summary>
-    public partial class Sgp40 : ByteCommsSensorBase<int>
+    public partial class Sgp40 : ByteCommsSensorBase<int>, II2cPeripheral
     {
         /// <summary>
         /// </summary>
         public event EventHandler<ChangeResult<int>> VocIndexUpdated = delegate { };
 
         /// <summary>
-        /// The VOC Index, from the last reading.
+        /// The VOC Index, from the last reading
         /// </summary>
         public int VocIndex => Conditions;
 
         /// <summary>
-        /// Serial number of the device.
+        /// Serial number of the device
         /// </summary>
         public ulong SerialNumber { get; private set; }
 
-        private byte[]? _compensationData = null;
+        /// <summary>
+        /// The default I2C address for the peripheral
+        /// </summary>
+        public byte I2cDefaultAddress => (byte)Address.Default;
+
+        private byte[]? compensationData = null;
 
         /// <summary>
         /// Creates a new SGP40 VOC sensor.
@@ -43,12 +48,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         protected void Initialize()
         {
-            // write buffer for initialization commands only can be two bytes.
-            Span<byte> tx = WriteBuffer.Span[0..2];
-
             BusComms?.Write(sgp4x_get_serial_number);
 
-            Thread.Sleep(1); // per the data sheet
+            Thread.Sleep(1);
 
             BusComms?.Read(ReadBuffer.Span[0..9]);
 
@@ -78,9 +80,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <returns>The latest sensor reading</returns>
         protected override Task<int> ReadSensor()
         {
-            if (_compensationData != null)
+            if (compensationData != null)
             {
-                BusComms?.Write(_compensationData);
+                BusComms?.Write(compensationData);
             }
             else
             {
@@ -122,19 +124,19 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <param name="temperature">Temperature compensation</param>
         public void SetCompensationData(RelativeHumidity humidity, Units.Temperature temperature)
         {
-            _compensationData = new byte[8];
+            compensationData = new byte[8];
 
-            Array.Copy(sgp40_measure_raw_signal, 0, _compensationData, 0, 2);
+            Array.Copy(sgp40_measure_raw_signal, 0, compensationData, 0, 2);
 
             var rh = BitConverter.GetBytes(System.Net.IPAddress.HostToNetworkOrder((ushort)(humidity.Percent * 65535 / 100)));
-            _compensationData[2] = rh[0];
-            _compensationData[3] = rh[1];
-            _compensationData[4] = Crc(rh);
+            compensationData[2] = rh[0];
+            compensationData[3] = rh[1];
+            compensationData[4] = Crc(rh);
 
             var t = BitConverter.GetBytes(System.Net.IPAddress.HostToNetworkOrder((ushort)(temperature.Celsius * 65535 / 175)));
-            _compensationData[5] = t[0];
-            _compensationData[6] = t[1];
-            _compensationData[7] = Crc(t);
+            compensationData[5] = t[0];
+            compensationData[6] = t[1];
+            compensationData[7] = Crc(t);
         }
 
         /// <summary>
@@ -142,7 +144,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         public void ClearCompensationData()
         {
-            _compensationData = null;
+            compensationData = null;
         }
 
         private byte Crc(byte[] data)

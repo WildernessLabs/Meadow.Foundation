@@ -32,7 +32,7 @@ namespace Meadow.Foundation.Sensors.Accelerometers
         /// </summary>
         /// <param name="i2cBus">The I2C bus connected to the sensor</param>
         /// <param name="address">The I2C address</param>
-        public Lis2Mdl(II2cBus i2cBus, byte address = (byte)Addresses.Default)
+        public Lis2Mdl(II2cBus i2cBus, byte address = (byte)Address.Default)
         {
             i2cComms = new I2cCommunications(i2cBus, address);
 

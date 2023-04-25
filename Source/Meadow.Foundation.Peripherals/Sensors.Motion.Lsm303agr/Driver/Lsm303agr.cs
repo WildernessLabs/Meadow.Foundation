@@ -49,8 +49,8 @@ namespace Meadow.Foundation.Sensors.Accelerometers
         /// <param name="i2cBus">The I2C bus connected to the sensor</param>
         public Lsm303agr(II2cBus i2cBus)
         {
-            i2cCommsAccel = new I2cCommunications(i2cBus, (byte)Addresses.AddressAccel_0x19);
-            i2cCommsMag = new I2cCommunications(i2cBus, (byte)Addresses.AddressMag_0x1E);
+            i2cCommsAccel = new I2cCommunications(i2cBus, (byte)Address.AddressAccel_0x19);
+            i2cCommsMag = new I2cCommunications(i2cBus, (byte)Address.AddressMag_0x1E);
 
             Initialize();
         }

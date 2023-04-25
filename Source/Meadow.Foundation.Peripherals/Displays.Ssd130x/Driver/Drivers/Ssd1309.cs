@@ -36,7 +36,7 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         /// <param name="i2cBus">I2cBus connected to display</param>
         /// <param name="address">Address of the bus on the I2C display.</param>
-        public Ssd1309(II2cBus i2cBus, byte address = (byte)Addresses.Default) :
+        public Ssd1309(II2cBus i2cBus, byte address = (byte)Address.Default) :
             base(i2cBus, address, DisplayType.OLED128x64)
         {
         }

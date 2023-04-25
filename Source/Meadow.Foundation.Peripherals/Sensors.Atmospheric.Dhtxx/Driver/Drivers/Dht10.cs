@@ -11,18 +11,16 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     /// </summary>
     public class Dht10 : DhtBase
     {
-        private const byte CMD_INIT         = 0b_1110_0001;
-        private const byte CMD_START        = 0b_1010_1100;
-        private const byte CMD_SOFTRESET    = 0b_1011_1010;
-
-        //private new byte[] _readBuffer = new byte[6];
+        private const byte CMD_INIT = 0b_1110_0001;
+        private const byte CMD_START = 0b_1010_1100;
+        private const byte CMD_SOFTRESET = 0b_1011_1010;
 
         /// <summary>
         /// Create a new Dht10 object.
         /// </summary>
         /// <param name="address">Address of the Dht12 (default = 0x27).</param>
         /// <param name="i2cBus">I2C bus (default = 100 KHz).</param>
-        public Dht10(II2cBus i2cBus, byte address = (byte)Addresses.Default)
+        public Dht10(II2cBus i2cBus, byte address = (byte)Address.Default)
             : base(i2cBus, address)
         {
             BusComms?.Write(CMD_SOFTRESET);
@@ -36,7 +34,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
             BusComms?.Write(CMD_START);
             Thread.Sleep(75);
-            
+
             //data stored in the read buffer
             BusComms?.Read(ReadBuffer.Span);
         }

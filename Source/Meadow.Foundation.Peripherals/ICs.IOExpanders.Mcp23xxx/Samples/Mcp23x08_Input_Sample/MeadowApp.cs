@@ -20,18 +20,18 @@ namespace ICs.IOExpanders.Mcp23x08_Input_Sample
         {
             Resolver.Log.Info("Initializing...");
 
-            
+
             IDigitalInputPort interruptPort = Device.CreateDigitalInputPort(Device.Pins.D00, InterruptMode.EdgeBoth, ResistorMode.InternalPullDown);
             IDigitalOutputPort resetPort = Device.CreateDigitalOutputPort(Device.Pins.D01);
 
-            mcp = new Mcp23008(Device.CreateI2cBus(), (byte)Addresses.Address_0x20, interruptPort, resetPort);
+            mcp = new Mcp23008(Device.CreateI2cBus(), (byte)Address.Address_0x20, interruptPort, resetPort);
 
             return base.Initialize();
         }
-        
+
         public override Task Run()
         {
-           // TestInterrupts();
+            // TestInterrupts();
 
             return TestDigitalInputPorts(1000);
 
@@ -40,19 +40,19 @@ namespace ICs.IOExpanders.Mcp23x08_Input_Sample
 
         void TestBulkPinReads(int loopCount)
         {
-            for (int l = 0; l < loopCount; l++) 
+            for (int l = 0; l < loopCount; l++)
             {
                 byte mask = mcp.ReadFromPorts();
                 var bits = new BitArray(new byte[] { mask });
 
                 var bitsString = new StringBuilder();
-            
-                foreach (var bit in bits) 
+
+                foreach (var bit in bits)
                 {
-                    bitsString.Append((bool)bit ? "1":"0");
+                    bitsString.Append((bool)bit ? "1" : "0");
                 }
 
-                Resolver.Log.Info($"Port Values, raw:{mask:X}, bits: { bitsString}");
+                Resolver.Log.Info($"Port Values, raw:{mask:X}, bits: {bitsString}");
 
                 Thread.Sleep(100);
             }
@@ -69,7 +69,7 @@ namespace ICs.IOExpanders.Mcp23x08_Input_Sample
             var in06 = mcp.CreateDigitalInputPort(mcp.Pins.GP6, InterruptMode.EdgeFalling, ResistorMode.InternalPullUp);
             var in07 = mcp.CreateDigitalInputPort(mcp.Pins.GP7, InterruptMode.EdgeFalling, ResistorMode.InternalPullUp);
 
-            var inputPorts = new List<IDigitalInputPort>() 
+            var inputPorts = new List<IDigitalInputPort>()
             {
                 in00, in01, in02, in03, in04, in05, in06, in07
             };
@@ -77,11 +77,11 @@ namespace ICs.IOExpanders.Mcp23x08_Input_Sample
             string output;
 
             // read all the ports, sleep for 100ms and repeat a few times.
-            for (int l = 0; l < loopCount; l++) 
+            for (int l = 0; l < loopCount; l++)
             {
                 output = string.Empty;
 
-                foreach (var inputPort in inputPorts) 
+                foreach (var inputPort in inputPorts)
                 {
                     //Resolver.Log.Info($"InputPort {inputPort.Pin.Name} Read: {inputPort.State}");
                     output += $"{(inputPort.State ? 1 : 0)}";
@@ -91,7 +91,7 @@ namespace ICs.IOExpanders.Mcp23x08_Input_Sample
             }
 
             // cleanup
-            for (int i = 0; i < inputPorts.Count; i++) 
+            for (int i = 0; i < inputPorts.Count; i++)
             {
                 inputPorts[i].Dispose();
             }

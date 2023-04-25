@@ -1,25 +1,23 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
 using Meadow.Peripherals.Sensors;
 using Meadow.Units;
+using System;
+using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Atmospheric
 {
     /// <summary>
-    /// Provide a mechanism for reading the Temperature and Humidity from
-    /// a HIH6130 temperature and Humidity sensor.
+    /// Represents an HIH6130 Temperature and Humidity sensor
     /// </summary>
     public partial class Hih6130 :
         ByteCommsSensorBase<(Units.Temperature? Temperature, RelativeHumidity? Humidity)>,
-        ITemperatureSensor, IHumiditySensor
+        ITemperatureSensor, IHumiditySensor, II2cPeripheral
     {
         /// <summary>
         /// Raised when the temperature value changes
         /// </summary>
         public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
-        
+
         /// <summary>
         /// Raised when the humidity value changes
         /// </summary>
@@ -36,11 +34,16 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         public RelativeHumidity? Humidity => Conditions.Humidity;
 
         /// <summary>
+        /// The default I2C address for the peripheral
+        /// </summary>
+        public byte I2cDefaultAddress => (byte)Address.Default;
+
+        /// <summary>
         /// Create a new HIH6130 object using the default parameters for the component.
         /// </summary>
         /// <param name="address">Address of the HIH6130 (default = 0x27).</param>
         /// <param name="i2cBus">I2C bus (default = 100 KHz).</param>
-        public Hih6130(II2cBus i2cBus, byte address = (byte)Addresses.Default)
+        public Hih6130(II2cBus i2cBus, byte address = (byte)Address.Default)
             : base(i2cBus, address, readBufferSize: 4, writeBufferSize: 4)
         {
         }
@@ -51,10 +54,12 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <param name="changeResult"></param>
         protected override void RaiseEventsAndNotify(IChangeResult<(Units.Temperature? Temperature, RelativeHumidity? Humidity)> changeResult)
         {
-            if (changeResult.New.Temperature is { } temp) {
+            if (changeResult.New.Temperature is { } temp)
+            {
                 TemperatureUpdated?.Invoke(this, new ChangeResult<Units.Temperature>(temp, changeResult.Old?.Temperature));
             }
-            if (changeResult.New.Humidity is { } humidity) {
+            if (changeResult.New.Humidity is { } humidity)
+            {
                 HumidityUpdated?.Invoke(this, new ChangeResult<Units.RelativeHumidity>(humidity, changeResult.Old?.Humidity));
             }
             base.RaiseEventsAndNotify(changeResult);
@@ -82,7 +87,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             //  Byte 2: T13 T12 T11 T10 T9  T8  T7 T6
             //  Byte 4: T5  T4  T3  T2  T1  T0  XX XX
             //
-            if ((ReadBuffer.Span[0] & 0xc0) != 0) 
+            if ((ReadBuffer.Span[0] & 0xc0) != 0)
             {
                 throw new Exception("Status indicates readings are invalid.");
             }

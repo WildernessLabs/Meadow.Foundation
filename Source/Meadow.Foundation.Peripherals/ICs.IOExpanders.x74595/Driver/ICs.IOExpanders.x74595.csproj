@@ -13,7 +13,7 @@
     <PackageTags>Meadow.Foundation, IOExpanders, x74595</PackageTags>
     <Version>0.1.52</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Description>x74595 I2C shift register digital output expander</Description>
+    <Description>x74595 SPI shift register digital output expander</Description>
   </PropertyGroup>
   <ItemGroup>
     <None Include="..\..\..\icon.png" Pack="true" PackagePath="" />

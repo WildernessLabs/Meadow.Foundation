@@ -252,7 +252,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
         /// <param name="address">Address of the BNO055 (default = 0x28).</param>
         /// <param name="i2cBus">I2C bus (default = 400 KHz).</param>
-        public Bno055(II2cBus i2cBus, Addresses address = Addresses.Default)
+        public Bno055(II2cBus i2cBus, Address address = Address.Default)
             : this(i2cBus, (byte)address)
         {
         }

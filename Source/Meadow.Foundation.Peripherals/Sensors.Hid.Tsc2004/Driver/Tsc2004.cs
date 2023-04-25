@@ -55,7 +55,7 @@ namespace Meadow.Foundation.Sensors.Hid
         /// </summary>
         /// <param name="i2cBus">The I2C bus</param>
         /// <param name="address">The I2C address</param>
-        public Tsc2004(II2cBus i2cBus, byte address = (byte)Addresses.Default)
+        public Tsc2004(II2cBus i2cBus, byte address = (byte)Address.Default)
         {
             i2cComms = new I2cCommunications(i2cBus, address);
 

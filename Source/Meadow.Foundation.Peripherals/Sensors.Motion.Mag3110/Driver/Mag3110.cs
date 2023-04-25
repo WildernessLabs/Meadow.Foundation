@@ -114,7 +114,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <param name="interruptPort">Interrupt port used to detect end of conversions</param>
         /// <param name="address">Address of the MAG3110 (default = 0x0e)</param>
         /// <param name="i2cBus">I2C bus object - default = 400 KHz)</param>        
-        public Mag3110(II2cBus i2cBus, IDigitalInputPort interruptPort = null, byte address = (byte)Addresses.Default)
+        public Mag3110(II2cBus i2cBus, IDigitalInputPort interruptPort = null, byte address = (byte)Address.Default)
             : base(i2cBus, address)
         {
             var deviceID = BusComms.ReadRegister(Registers.WHO_AM_I);

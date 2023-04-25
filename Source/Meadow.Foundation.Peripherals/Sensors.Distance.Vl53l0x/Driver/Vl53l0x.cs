@@ -10,7 +10,7 @@ namespace Meadow.Foundation.Sensors.Distance
     /// <summary>
     /// Represents the Vl53l0x distance sensor
     /// </summary>
-    public partial class Vl53l0x : ByteCommsSensorBase<Length>, IRangeFinder
+    public partial class Vl53l0x : ByteCommsSensorBase<Length>, IRangeFinder, II2cPeripheral
     {
         /// <summary>
         /// Distance updated event
@@ -36,19 +36,24 @@ namespace Meadow.Foundation.Sensors.Distance
         }
 
         /// <summary>
-        /// The distance to the measured object.
+        /// The distance to the measured object
         /// </summary>
         public Length? Distance { get; protected set; } = new Length(0);
 
         /// <summary>
-        /// Minimum valid distance in mm.
+        /// Minimum valid distance
         /// </summary>
         public Length MinimumDistance => new Length(30, Length.UnitType.Millimeters);
 
         /// <summary>
-        /// Maximum valid distance in mm (CurrentDistance returns -1 if above).
+        /// Maximum valid distance (CurrentDistance returns -1 if above)
         /// </summary>
         public Length MaximumDistance => new Length(2000, Length.UnitType.Millimeters);
+
+        /// <summary>
+        /// The default I2C address for the peripheral
+        /// </summary>
+        public byte I2cDefaultAddress => (byte)Address.Default;
 
         readonly IDigitalOutputPort shutdownPort;
 
@@ -59,10 +64,9 @@ namespace Meadow.Foundation.Sensors.Distance
         /// </summary>
         /// <param name="i2cBus">I2C bus</param>
         /// <param name="address">I2C address</param>
-        public Vl53l0x(II2cBus i2cBus, byte address = (byte)Addresses.Default)
+        public Vl53l0x(II2cBus i2cBus, byte address = (byte)Address.Default)
                 : this(i2cBus, null, address)
-        {
-        }
+        { }
 
         /// <summary>
         /// Creates a new Vl53l0x object
@@ -71,7 +75,7 @@ namespace Meadow.Foundation.Sensors.Distance
         /// <param name="shutdownPin">Shutdown pin</param>
         /// <param name="address">VL53L0X address</param>
 
-        public Vl53l0x(II2cBus i2cBus, IPin shutdownPin, byte address = (byte)Addresses.Default)
+        public Vl53l0x(II2cBus i2cBus, IPin shutdownPin, byte address = (byte)Address.Default)
                 : base(i2cBus, address)
         {
             if (shutdownPin != null)

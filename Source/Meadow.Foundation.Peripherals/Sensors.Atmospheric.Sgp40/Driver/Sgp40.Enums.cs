@@ -5,7 +5,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     public partial class Sgp40
     {
         /// <summary>
-        /// Valid addresses for the sensor
+        /// Valid I2C addresses for the sensor
         /// </summary>
         public enum Address : byte
         {

@@ -8,7 +8,7 @@ namespace Meadow.Foundation.Sensors.Camera
     /// Represents the MLX90640 32x24 IR array
     /// The MLX90640 is a fully calibrated 32x24 pixels thermal IR array
     /// </summary>
-    public partial class Mlx90640
+    public partial class Mlx90640 : II2cPeripheral
     {
         /// <summary>
         /// Camera serial number as a string
@@ -41,7 +41,7 @@ namespace Meadow.Foundation.Sensors.Camera
         /// <summary>
         /// Reflected temperature
         /// </summary>
-        public Meadow.Units.Temperature ReflectedTemperature { get; set; }
+        public Units.Temperature ReflectedTemperature { get; set; }
 
         /// <summary>
         /// Camera configuration
@@ -52,6 +52,11 @@ namespace Meadow.Foundation.Sensors.Camera
         const float ScaleAlpha = 0.000001f;
         const byte OpenAirTaShift = 8;
         const short DeviceId1Register = 0x2407;
+
+        /// <summary>
+        /// The default I2C address for the peripheral
+        /// </summary>
+        public byte I2cDefaultAddress => (byte)Address.Default;
 
         /// <summary>
         /// I2C Communication bus used to communicate with the peripheral
@@ -67,7 +72,7 @@ namespace Meadow.Foundation.Sensors.Camera
         /// <param name="address">I2C address</param>
         /// <param name="emissivity">Emissivity</param>
         public Mlx90640(II2cBus i2cBus,
-            byte address = (byte)Addresses.Default,
+            byte address = (byte)Address.Default,
             float emissivity = 0.95f)
         {
             i2cComms = new I2cCommunications(i2cBus, address);
@@ -78,7 +83,7 @@ namespace Meadow.Foundation.Sensors.Camera
         }
 
         /// <summary>
-        /// Initialize the MLX90640. Read the MLX90640 serial number and EEProm
+        /// Initialize the MLX90640 and read the MLX90640 serial number and EEProm
         /// </summary>
         void Initialize()
         {
@@ -166,12 +171,11 @@ namespace Meadow.Foundation.Sensors.Camera
 
         bool GetFrameData(ref ushort[] frameData)
         {
-            ushort dataReady = 1;
             ushort[] controlRegister1 = new ushort[1];
             ushort[] statusRegister = new ushort[1];
             byte cnt = 0;
 
-            dataReady = 0;
+            ushort dataReady = 0;
             while (dataReady == 0)
             {
                 I2CRead(0x8000, 1, ref statusRegister);

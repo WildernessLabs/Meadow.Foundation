@@ -46,7 +46,7 @@ namespace Meadow.Foundation.Sensors.Light
         /// </summary>
         /// <param name="i2cBus">The I2C bus</param>
         public Veml7700(II2cBus i2cBus)
-            : base(i2cBus, (byte)Addresses.Default)
+            : base(i2cBus, (byte)Address.Default)
         {
         }
 

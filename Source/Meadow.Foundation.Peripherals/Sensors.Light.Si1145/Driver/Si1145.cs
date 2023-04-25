@@ -21,7 +21,7 @@ namespace Meadow.Foundation.Sensors.Light
         /// Create a new SI1145 sensor object
         /// </summary>
         /// <param name="i2cBus">I2cBus (default to 400 KHz)</param>
-        public Si1145(II2cBus i2cBus) : base(i2cBus, (byte)Addresses.Default)
+        public Si1145(II2cBus i2cBus) : base(i2cBus, (byte)Address.Default)
         {
             if (BusComms.ReadRegister(Registers.REG_PARTID) != 0x45)
             {

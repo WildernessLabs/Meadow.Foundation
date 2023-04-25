@@ -22,7 +22,8 @@ namespace Meadow.Foundation.Sensors.Environmental
             ParticleDensity? ParticleDensity_10microns,
             ParticleDensity? ParticleDensity_25microns,
             ParticleDensity? ParticleDensity_50microns,
-            ParticleDensity? ParticleDensity_100microns)>
+            ParticleDensity? ParticleDensity_100microns)>,
+        II2cPeripheral
     {
         /// <summary>
         /// Raised when the Standard particulate matter PM1.0 density changes
@@ -140,12 +141,17 @@ namespace Meadow.Foundation.Sensors.Environmental
         public ParticleDensity? CountOf100micronParticles => Conditions.ParticleDensity_100microns;
 
         /// <summary>
+        /// The default I2C address for the peripheral
+        /// </summary>
+        public byte I2cDefaultAddress => (byte)Address.Default;
+
+        /// <summary>
         /// Create a new PMSA003I sensor object
         /// </summary>
         /// <remarks></remarks>
         /// <param name="i2cBus">The I2C bus</param>
         public Pmsa003i(II2cBus i2cBus)
-            : base(i2cBus, (byte)Addresses.Address_0x12)
+            : base(i2cBus, (byte)Address.Default)
         { }
 
         /// <summary>
@@ -199,7 +205,6 @@ namespace Meadow.Foundation.Sensors.Environmental
                 throw new Exception("Message is corrupt or has invalid length");
             }
 
-            var checksum = BitConverter.ToUInt16(buffer[2..4]);
             // this is in big-endian format, so we need to reverse things...
             var pm10Standard = new Density(BitConverter.ToUInt16(span[26..28]), Density.UnitType.MicroGramsPerMetersCubed);
             var pm25Standard = new Density(BitConverter.ToUInt16(span[24..26]), Density.UnitType.MicroGramsPerMetersCubed);

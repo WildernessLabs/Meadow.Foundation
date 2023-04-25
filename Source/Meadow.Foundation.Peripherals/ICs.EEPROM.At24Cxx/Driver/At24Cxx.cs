@@ -7,8 +7,13 @@ namespace Meadow.Foundation.ICs.EEPROM
     /// <summary>
     /// Encapsulation for EEPROMs based upon the AT24Cxx family of chips
     /// </summary>
-    public partial class At24Cxx
+    public partial class At24Cxx : II2cPeripheral
     {
+        /// <summary>
+        /// The default I2C address for the peripheral
+        /// </summary>
+        public byte I2cDefaultAddress => (byte)Address.Default;
+
         /// <summary>
         /// I2C Communication bus used to communicate with the peripheral
         /// </summary>

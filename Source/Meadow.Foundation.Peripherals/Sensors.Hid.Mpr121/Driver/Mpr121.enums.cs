@@ -4,9 +4,9 @@ namespace Meadow.Foundation.Sensors.Hid
     public partial class Mpr121
     {
         /// <summary>
-        /// Valid addresses for the sensor
+        /// Valid I2C addresses for the sensor
         /// </summary>
-        public enum Addresses : byte
+        public enum Address : byte
         {
             /// <summary>
             /// Bus address 0x5A

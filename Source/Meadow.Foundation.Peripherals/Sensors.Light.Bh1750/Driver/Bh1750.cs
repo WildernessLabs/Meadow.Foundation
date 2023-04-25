@@ -46,7 +46,7 @@ namespace Meadow.Foundation.Sensors.Light
         /// Create a new BH1750 light sensor object using a static reference voltage.
         /// </summary>
         public Bh1750(
-            II2cBus i2cBus, byte address = (byte)Addresses.Default,
+            II2cBus i2cBus, byte address = (byte)Address.Default,
             MeasuringModes measuringMode = MeasuringModes.ContinuouslyHighResolutionMode,
             double lightTransmittance = 1)
                 : base(i2cBus, address)

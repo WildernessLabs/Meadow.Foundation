@@ -3,10 +3,10 @@
     public partial class Ds3502
     {
         /// <summary>
-        /// Valid addresses for the sensor
+        /// Valid I2C addresses for the sensor
         /// Controlled by pulling A0 and A1 high or low
         /// </summary>
-        public enum Addresses : byte
+        public enum Address : byte
         {
             /// <summary>
             /// Bus address 0x28 (A0 low, A1 low)

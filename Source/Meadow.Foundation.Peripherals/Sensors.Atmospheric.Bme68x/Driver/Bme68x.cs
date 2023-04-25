@@ -21,7 +21,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                             RelativeHumidity? Humidity,
                             Pressure? Pressure,
                             Resistance? GasResistance)>,
-        ITemperatureSensor, IHumiditySensor, IBarometricPressureSensor, ISpiDevice
+        ITemperatureSensor, IHumiditySensor, IBarometricPressureSensor, ISpiPeripheral, II2cPeripheral
     {
         /// <summary>
         /// Raised when the temperature value changes
@@ -120,7 +120,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         FilteringMode filterMode;
 
         /// <summary>
-        /// Enable / disable the busComms heater
+        /// Enable / disable the sensor heater
         /// </summary>
         public bool HeaterIsEnabled
         {
@@ -184,7 +184,12 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         }
 
         /// <summary>
-        /// Communication bus used to read and write to the BME68x busComms
+        /// The default I2C address for the peripheral
+        /// </summary>
+        public byte I2cDefaultAddress => (byte)Address.Default;
+
+        /// <summary>
+        /// Communication bus used to read and write to the BME68x sensor
         /// </summary>
         readonly IByteCommunications busComms;
 
@@ -211,7 +216,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         readonly Configuration configuration;
 
         /// <summary>
-        /// Calibration data for the busComms
+        /// Calibration data for the sensor
         /// </summary>
         internal Calibration? calibration;
 
@@ -229,7 +234,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         /// <param name="i2cBus">I2C Bus to use for communicating with the sensor</param>
         /// <param name="address">I2C address</param>
-        protected Bme68x(II2cBus i2cBus, byte address = (byte)Addresses.Default)
+        protected Bme68x(II2cBus i2cBus, byte address = (byte)Address.Default)
         {
             configuration = new Configuration();
             busComms = new I2cCommunications(i2cBus, address);
@@ -264,7 +269,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         }
 
         /// <summary>
-        /// Initialize the busComms
+        /// Initialize the sensor
         /// </summary>
         protected void Initialize()
         {
@@ -384,7 +389,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <summary>
         /// Raise events for subcribers and notify of value changes
         /// </summary>
-        /// <param name="changeResult">The updated busComms data</param>
+        /// <param name="changeResult">The updated sensor data</param>
         protected override void RaiseEventsAndNotify(IChangeResult<(Units.Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure, Resistance? GasResistance)> changeResult)
         {
             if (changeResult.New.Temperature is { } temp)
@@ -407,9 +412,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         }
 
         /// <summary>
-        /// Reads data from the busComms
+        /// Reads data from the sensor
         /// </summary>
-        /// <returns>The latest busComms reading</returns>
+        /// <returns>The latest sensor reading</returns>
         protected override Task<(Units.Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure, Resistance? GasResistance)> ReadSensor()
         {
             configuration.TemperatureOversample = TemperatureOversampleMode;

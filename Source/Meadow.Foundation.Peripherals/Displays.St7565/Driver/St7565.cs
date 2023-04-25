@@ -10,7 +10,7 @@ namespace Meadow.Foundation.Displays
     /// <summary>
     /// Provide an interface to the ST7565 family of displays
     /// </summary>
-    public partial class St7565 : IGraphicsDisplay, ISpiDevice
+    public partial class St7565 : IGraphicsDisplay, ISpiPeripheral
     {
         /// <summary>
         /// The display color mode - 1 bit per pixel monochrome

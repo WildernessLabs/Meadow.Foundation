@@ -85,7 +85,7 @@ namespace Meadow.Foundation.Sensors.Hid
         /// </summary>
         /// <param name="i2cBus">the I2C bus connected to controller</param>
         /// <param name="useHighResolutionMode">Enable high resolution mode analog sticks and triggers (8 bits of precision)</param>
-        public WiiClassicController(II2cBus i2cBus, bool useHighResolutionMode = false) : base(i2cBus, (byte)Addresses.Default)
+        public WiiClassicController(II2cBus i2cBus, bool useHighResolutionMode = false) : base(i2cBus, (byte)Address.Default)
         {
             this.useHighResolutionMode = useHighResolutionMode;
 

@@ -7,7 +7,7 @@ namespace Meadow.Foundation.Displays
     /// <summary>
     /// Represents a base ePaper display driver
     /// </summary>
-    public abstract class EPaperBase : ISpiDevice
+    public abstract class EPaperBase : ISpiPeripheral
     {
         /// <summary>
         /// The default SPI bus speed for the device

@@ -2,7 +2,6 @@
 using Meadow.Devices;
 using Meadow.Foundation.ICs.IOExpanders;
 using Meadow.Hardware;
-using System;
 using System.Threading.Tasks;
 
 namespace ICs.IOExpanders.Pca9685_Sample
@@ -18,7 +17,7 @@ namespace ICs.IOExpanders.Pca9685_Sample
             Resolver.Log.Info("Initialize...");
             var i2CBus = Device.CreateI2cBus(I2cBusSpeed.FastPlus);
 
-            pca9685 = new Pca9685(i2CBus, new Meadow.Units.Frequency(50, Meadow.Units.Frequency.UnitType.Hertz), (byte)Pca9685.Addresses.Default);
+            pca9685 = new Pca9685(i2CBus, new Meadow.Units.Frequency(50, Meadow.Units.Frequency.UnitType.Hertz), (byte)Pca9685.Address.Default);
             pca9685.Initialize();
 
             return base.Initialize();

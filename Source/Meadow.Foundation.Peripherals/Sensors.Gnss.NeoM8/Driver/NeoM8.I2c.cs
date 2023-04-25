@@ -6,8 +6,13 @@ using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Gnss
 {
-    public partial class NeoM8
+    public partial class NeoM8 : II2cPeripheral
     {
+        /// <summary>
+        /// The default I2C address for the peripheral
+        /// </summary>
+        public byte I2cDefaultAddress => (byte)Address.Default;
+
         /// <summary>
         /// I2C Communication bus used to communicate with the peripheral
         /// </summary>
@@ -20,7 +25,7 @@ namespace Meadow.Foundation.Sensors.Gnss
         /// <summary>
         /// Create a new NeoM8 object using I2C
         /// </summary>
-        public NeoM8(II2cBus i2cBus, byte address = (byte)Addresses.Default, IPin resetPin = null, IPin ppsPin = null)
+        public NeoM8(II2cBus i2cBus, byte address = (byte)Address.Default, IPin resetPin = null, IPin ppsPin = null)
         {
             if (resetPin != null)
             {
@@ -38,7 +43,7 @@ namespace Meadow.Foundation.Sensors.Gnss
         /// <summary>
         /// Create a new NeoM8 object using I2C
         /// </summary>
-        public NeoM8(II2cBus i2cBus, byte address = (byte)Addresses.Default, IDigitalOutputPort resetPort = null, IDigitalInputPort ppsPort = null)
+        public NeoM8(II2cBus i2cBus, byte address = (byte)Address.Default, IDigitalOutputPort resetPort = null, IDigitalInputPort ppsPort = null)
         {
             ResetPort = resetPort;
             PulsePerSecondPort = ppsPort;

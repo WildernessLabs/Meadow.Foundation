@@ -6,8 +6,13 @@ namespace Meadow.Foundation.ICs.IOExpanders
     /// <summary>
     /// Represents an Ht16k33 128 led driver and 39 key scanner
     /// </summary>
-    public partial class Ht16k33
+    public partial class Ht16k33 : II2cPeripheral
     {
+        /// <summary>
+        /// The default I2C address for the peripheral
+        /// </summary>
+        public byte I2cDefaultAddress => (byte)Address.Default;
+
         /// <summary>
         /// I2C Communication bus used to communicate with the peripheral
         /// </summary>
@@ -28,7 +33,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         /// <param name="address">Address of the bus on the I2C display</param>
         /// <param name="i2cBus">I2C bus instance</param>
-        public Ht16k33(II2cBus i2cBus, byte address = (byte)Addresses.Default)
+        public Ht16k33(II2cBus i2cBus, byte address = (byte)Address.Default)
         {
             i2cComms = new I2cCommunications(i2cBus, address, 8, 17);
 

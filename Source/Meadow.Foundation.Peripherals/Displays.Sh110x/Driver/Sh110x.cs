@@ -10,7 +10,7 @@ namespace Meadow.Foundation.Displays
     /// <summary>
     /// Provide an interface to the Sh110x family of displays
     /// </summary>
-    public abstract partial class Sh110x : IGraphicsDisplay, ISpiDevice
+    public abstract partial class Sh110x : IGraphicsDisplay, ISpiPeripheral, II2cPeripheral
     {
         /// <summary>
         /// The display color mode - 1 bit per pixel monochrome
@@ -59,6 +59,11 @@ namespace Meadow.Foundation.Displays
             get => spiComms.BusMode;
             set => spiComms.BusMode = value;
         }
+
+        /// <summary>
+        /// The default I2C address for the peripheral
+        /// </summary>
+        public byte I2cDefaultAddress => (byte)Address.Default;
 
         /// <summary>
         /// The connection type (I2C or SPI)

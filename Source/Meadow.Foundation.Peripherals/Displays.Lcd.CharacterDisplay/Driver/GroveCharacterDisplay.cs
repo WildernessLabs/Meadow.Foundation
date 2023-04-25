@@ -16,7 +16,7 @@ namespace Meadow.Foundation.Displays.Lcd
         /// <param name="rows">The number of character rows</param>
         /// <param name="columns">The number of character columns</param>
         public GroveCharacterDisplay(II2cBus i2cBus,
-            byte address = (byte)Addresses.Address_0x3E,
+            byte address = (byte)Address.Address_0x3E,
             byte rows = 2, byte columns = 16)
             : base(i2cBus, address, rows, columns)
         {

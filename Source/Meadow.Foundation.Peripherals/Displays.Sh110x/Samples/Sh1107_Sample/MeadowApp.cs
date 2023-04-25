@@ -20,7 +20,7 @@ namespace Displays.Sh1107_Sample
             var sh1107 = new Sh1107
             (
                 i2cBus: Device.CreateI2cBus(),
-                address: (byte)Addresses.Address_0x3C,
+                address: (byte)Address.Address_0x3C,
                 width: 128,
                 height: 128
             );

@@ -238,7 +238,7 @@ namespace Meadow.Foundation.Sensors.Light
         /// <summary>
         /// Create a new BH17545 color sensor object
         /// </summary>
-        public Bh1745(II2cBus i2cBus, byte address = (byte)Addresses.Default)
+        public Bh1745(II2cBus i2cBus, byte address = (byte)Address.Default)
             : base(i2cBus, address)
         {
             CompensationMultipliers = new ChannelMultipliers

@@ -6,7 +6,7 @@
     public partial class SerialWombatBase
     {
         /// <summary>
-        /// Valid addresses for the Chip.
+        /// Valid I2C addresses for the device
         /// </summary>
         public enum Address : byte
         {

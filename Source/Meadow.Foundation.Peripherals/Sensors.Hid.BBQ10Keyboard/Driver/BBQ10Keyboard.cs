@@ -49,7 +49,7 @@ namespace Meadow.Foundation.Sensors.Hid
         /// <param name="i2cBus">The I2C bus</param>
         /// <param name="interruptPin">The interrupt pin</param>
         /// <param name="address">The I2C address</param>
-        public BBQ10Keyboard(II2cBus i2cBus, IPin interruptPin = null, byte address = (byte)Addresses.Default)
+        public BBQ10Keyboard(II2cBus i2cBus, IPin interruptPin = null, byte address = (byte)Address.Default)
         {
             i2cComms = new I2cCommunications(i2cBus, address);
 

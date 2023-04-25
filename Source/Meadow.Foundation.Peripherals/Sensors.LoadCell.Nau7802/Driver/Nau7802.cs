@@ -37,20 +37,20 @@ namespace Meadow.Foundation.Sensors.LoadCell
         /// </summary>
         /// <param name="i2cBus">The I2C bus</param>
         public Nau7802(II2cBus i2cBus)
-            : base(i2cBus, (byte)Addresses.Default)
+            : base(i2cBus, (byte)Address.Default)
         {
-            Initialize((byte)Addresses.Default);
+            Initialize((byte)Address.Default);
         }
 
         private void Initialize(byte address)
         {
             switch (address)
             {
-                case (byte)Addresses.Default:
+                case (byte)Address.Default:
                     // valid;
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException($"NAU7802 device supports only address {(byte)Addresses.Default}");
+                    throw new ArgumentOutOfRangeException($"NAU7802 device supports only address {(byte)Address.Default}");
             }
 
             PowerOn();

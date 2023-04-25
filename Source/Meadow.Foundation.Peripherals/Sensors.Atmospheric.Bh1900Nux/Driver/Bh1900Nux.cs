@@ -8,7 +8,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     /// <summary>
     /// Represents a Bh1900Nux temperature sensor
     /// </summary>
-    public partial class Bh1900Nux : ByteCommsSensorBase<Units.Temperature>, ITemperatureSensor
+    public partial class Bh1900Nux : ByteCommsSensorBase<Units.Temperature>, ITemperatureSensor, II2cPeripheral
     {
         /// <summary>
         /// Raised when the temperature value changes
@@ -19,6 +19,11 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// The current temperature
         /// </summary>
         public Units.Temperature? Temperature => Conditions;
+
+        /// <summary>
+        /// The default I2C address for the peripheral
+        /// </summary>
+        public byte I2cDefaultAddress => (byte)Address.Default;
 
         /// <summary>
         /// Create a new Bh1900Nux object
