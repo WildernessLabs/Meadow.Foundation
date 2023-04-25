@@ -79,9 +79,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         public Oversample HumiditySampleCount { get; set; } = Oversample.OversampleX8;
 
         /// <summary>
-        /// Communication bus used to read and write to the BME280 sensor.
+        /// Communication bus used to read and write to the BME280 sensor
         /// </summary>
-        private readonly Bme280Comms bme280Comms;
+        private readonly IByteCommunications bme280Comms;
 
         /// <summary>
         /// Compensation data from the sensor
@@ -119,8 +119,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         public Frequency SpiBusSpeed
         {
-            get => ((Bme280Spi)bme280Comms).spiComms.BusSpeed;
-            set => ((Bme280Spi)bme280Comms).spiComms.BusSpeed = value;
+            get => ((ISpiCommunications)bme280Comms).BusSpeed;
+            set => ((ISpiCommunications)bme280Comms).BusSpeed = value;
         }
 
         /// <summary>
@@ -133,8 +133,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         public SpiClockConfiguration.Mode SpiBusMode
         {
-            get => ((Bme280Spi)bme280Comms).spiComms.BusMode;
-            set => ((Bme280Spi)bme280Comms).spiComms.BusMode = value;
+            get => ((ISpiCommunications)bme280Comms).BusMode;
+            set => ((ISpiCommunications)bme280Comms).BusMode = value;
         }
 
         /// <summary>
@@ -144,7 +144,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <param name="address">I2C address of the sensor (default = 0x77)</param>
         public Bme280(II2cBus i2cBus, byte address = (byte)Addresses.Default)
         {
-            bme280Comms = new Bme280I2C(i2cBus, address);
+            bme280Comms = new I2cCommunications(i2cBus, address);
             configuration = new Configuration(); // here to avoid the warning
             Initialize();
         }
@@ -165,7 +165,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <param name="chipSelectPort">The port for the chip select pin</param>
         public Bme280(ISpiBus spiBus, IDigitalOutputPort chipSelectPort)
         {
-            bme280Comms = new Bme280Spi(spiBus, DefaultSpiBusSpeed, DefaultSpiBusMode, chipSelectPort);
+            bme280Comms = new SpiCommunications(spiBus, chipSelectPort, DefaultSpiBusSpeed, DefaultSpiBusMode);
             configuration = new Configuration(); // here to avoid the warning
             Initialize();
         }
@@ -235,7 +235,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
             (Units.Temperature Temperature, RelativeHumidity Humidity, Pressure Pressure) conditions;
 
-            bme280Comms.ReadRegisters(0xf7, readBuffer.Span[0..8]);
+            bme280Comms.ReadRegister(0xf7, readBuffer.Span[0..8]);
 
             var adcTemperature = (readBuffer.Span[3] << 12) | (readBuffer.Span[4] << 4) | ((readBuffer.Span[5] >> 4) & 0x0f);
             var tvar1 = (((adcTemperature >> 3) - (compensationData.T1 << 1)) * compensationData.T2) >> 11;
@@ -301,16 +301,16 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             //
             //  Put to sleep to allow the configuration to be changed.
             //
-            bme280Comms.WriteRegister(Bme280Comms.Register.Measurement, 0x00);
+            bme280Comms.WriteRegister((byte)Register.Measurement, 0x00);
 
             var data = (byte)((((byte)configuration.Standby << 5) & 0xe0) | (((byte)configuration.Filter << 2) & 0x1c));
-            bme280Comms.WriteRegister(Bme280Comms.Register.Configuration, data);
+            bme280Comms.WriteRegister((byte)Register.Configuration, data);
             data = (byte)((byte)configuration.HumidityOverSampling & 0x07);
-            bme280Comms.WriteRegister(Bme280Comms.Register.Humidity, data);
+            bme280Comms.WriteRegister((byte)Register.Humidity, data);
             data = (byte)((((byte)configuration.TemperatureOverSampling << 5) & 0xe0) |
                            (((byte)configuration.PressureOversampling << 2) & 0x1c) |
                            ((byte)configuration.Mode & 0x03));
-            bme280Comms.WriteRegister(Bme280Comms.Register.Measurement, data);
+            bme280Comms.WriteRegister((byte)Register.Measurement, data);
         }
 
         /// <summary>
@@ -321,7 +321,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </remarks>
         public void Reset()
         {
-            bme280Comms.WriteRegister(Bme280Comms.Register.Reset, 0xb6);
+            bme280Comms.WriteRegister((byte)Register.Reset, 0xb6);
             UpdateConfiguration(configuration);
         }
 
@@ -340,7 +340,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         protected void ReadCompensationData()
         {
             // read the temperature and pressure data into the internal read buffer
-            bme280Comms.ReadRegisters(0x88, readBuffer.Span[0..24]);
+            bme280Comms.ReadRegister(0x88, readBuffer.Span[0..24]);
 
             // Temperature
             compensationData.T1 = (ushort)(readBuffer.Span[0] + (readBuffer.Span[1] << 8));
@@ -361,10 +361,10 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             // non-sequential registers
 
             // first one
-            bme280Comms.ReadRegisters(0xa1, readBuffer.Span[0..1]);
+            bme280Comms.ReadRegister(0xa1, readBuffer.Span[0..1]);
             compensationData.H1 = readBuffer.Span[0];
             // 2-6
-            bme280Comms.ReadRegisters(0xe1, readBuffer.Span[0..7]);
+            bme280Comms.ReadRegister(0xe1, readBuffer.Span[0..7]);
             compensationData.H2 = (short)(readBuffer.Span[0] + (readBuffer.Span[1] << 8));
             compensationData.H3 = readBuffer.Span[2];
             compensationData.H4 = (short)((readBuffer.Span[3] << 4) + (readBuffer.Span[4] & 0xf));
@@ -378,7 +378,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <returns></returns>
         public byte GetChipID()
         {
-            bme280Comms.ReadRegisters((byte)Bme280Comms.Register.ChipID, readBuffer.Span[0..1]);
+            bme280Comms.ReadRegister((byte)Register.ChipID, readBuffer.Span[0..1]);
             return readBuffer.Span[0];
         }
 
