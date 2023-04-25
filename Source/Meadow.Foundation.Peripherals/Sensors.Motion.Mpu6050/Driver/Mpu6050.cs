@@ -18,7 +18,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         /// The default I2C address for the peripheral
         /// </summary>
-        public byte I2cDefaultAddress => (byte)Address.Default;
+        public byte DefaultI2cAddress => (byte)Addresses.Default;
 
         /// <summary>
         /// Raised when the acceration value changes
@@ -59,7 +59,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
         /// <param name="i2cBus">The I2C bus</param>
         /// <param name="address">The I2C address</param>
-        public Mpu6050(II2cBus i2cBus, Address address = Address.Default)
+        public Mpu6050(II2cBus i2cBus, Addresses address = Addresses.Default)
             : this(i2cBus, (byte)address)
         { }
 

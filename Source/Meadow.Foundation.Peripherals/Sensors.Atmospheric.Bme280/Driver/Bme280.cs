@@ -122,14 +122,14 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <summary>
         /// The default I2C address for the peripheral
         /// </summary>
-        public byte I2cDefaultAddress => (byte)Address.Default;
+        public byte DefaultI2cAddress => (byte)Addresses.Default;
 
         /// <summary>
         /// Initializes a new instance of the BME280 class
         /// </summary>
         /// <param name="i2cBus">I2C Bus to use for communicating with the sensor</param>
         /// <param name="address">I2C address of the sensor (default = 0x77)</param>
-        public Bme280(II2cBus i2cBus, byte address = (byte)Address.Default)
+        public Bme280(II2cBus i2cBus, byte address = (byte)Addresses.Default)
         {
             bme280Comms = new I2cCommunications(i2cBus, address);
             configuration = new Configuration(); // here to avoid the warning

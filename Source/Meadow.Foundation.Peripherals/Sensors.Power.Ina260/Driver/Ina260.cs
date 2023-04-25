@@ -15,7 +15,7 @@ namespace Meadow.Foundation.Sensors.Power
         /// <summary>
         /// The default I2C address for the peripheral
         /// </summary>
-        public byte I2cDefaultAddress => (byte)Address.Default;
+        public byte DefaultI2cAddress => (byte)Addresses.Default;
 
         /// <summary>
         /// Raised when the power value changes
@@ -54,13 +54,13 @@ namespace Meadow.Foundation.Sensors.Power
         /// </summary>
         /// <param name="i2cBus">The I2C bus</param>
         /// <param name="address">The I2C address</param>
-        public Ina260(II2cBus i2cBus, byte address = (byte)Address.Default)
+        public Ina260(II2cBus i2cBus, byte address = (byte)Addresses.Default)
             : base(i2cBus, address)
         {
             switch (address)
             {
-                case (byte)Address.Address_0x40:
-                case (byte)Address.Address_0x41:
+                case (byte)Addresses.Address_0x40:
+                case (byte)Addresses.Address_0x41:
                     // valid;
                     break;
                 default:

@@ -18,7 +18,7 @@ namespace Sensors.Environmental.Ens160_Sample
 
             var i2cBus = Device.CreateI2cBus(Meadow.Hardware.I2cBusSpeed.Standard);
 
-            sensor = new Ens160(i2cBus, (byte)Ens160.Address.Address_0x53);
+            sensor = new Ens160(i2cBus, (byte)Ens160.Addresses.Address_0x53);
 
 
             var consumer = Ens160.CreateObserver(

@@ -90,7 +90,7 @@ namespace Sensors.Atmospheric.BME688_Sample
             Resolver.Log.Info("Create BME688 sensor with I2C...");
 
             var i2c = Device.CreateI2cBus();
-            sensor = new Bme688(i2c, (byte)Bme688.Address.Address_0x76);
+            sensor = new Bme688(i2c, (byte)Bme688.Addresses.Address_0x76);
         }
 
         async Task ReadConditions()

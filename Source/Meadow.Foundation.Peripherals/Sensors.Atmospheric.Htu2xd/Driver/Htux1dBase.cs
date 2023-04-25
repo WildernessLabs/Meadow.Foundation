@@ -9,7 +9,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     /// <summary>
     /// Valid I2C addresses for the sensor
     /// </summary>
-    public enum Address : byte
+    public enum Addresses : byte
     {
         /// <summary>
         /// Bus address 0x40
@@ -41,7 +41,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <summary>
         /// The default I2C address for the peripheral
         /// </summary>
-        public byte I2cDefaultAddress => (byte)Address.Default;
+        public byte DefaultI2cAddress => (byte)Addresses.Default;
 
         /// <summary>
         /// Default I2C bus speed
@@ -69,7 +69,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <param name="i2cBus"></param>
         /// <param name="address"></param>
         /// <param name="updateInterval"></param>
-        public Htux1dBase(II2cBus i2cBus, byte address = (byte)Address.Default, TimeSpan? updateInterval = null)
+        public Htux1dBase(II2cBus i2cBus, byte address = (byte)Addresses.Default, TimeSpan? updateInterval = null)
             : base(i2cBus, address, (int)(updateInterval == null ? 1000 : updateInterval.Value.TotalMilliseconds))
         {
         }

@@ -10,7 +10,7 @@ namespace Meadow.Foundation.Leds
         /// <summary>
         /// The default I2C address for the peripheral
         /// </summary>
-        public byte I2cDefaultAddress => (byte)Address.Default;
+        public byte DefaultI2cAddress => (byte)Addresses.Default;
 
         /// <summary>
         /// I2C Communication bus used to communicate with the peripheral
@@ -45,7 +45,7 @@ namespace Meadow.Foundation.Leds
         /// </summary>
         /// <param name="i2cBus">i2c bus</param>
         /// <param name="address">i2c address</param>
-        public Pca9633(II2cBus i2cBus, Address address = Address.Default)
+        public Pca9633(II2cBus i2cBus, Addresses address = Addresses.Default)
             : this(i2cBus, (byte)address)
         {
         }

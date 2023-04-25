@@ -18,7 +18,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <summary>
         /// The default I2C address for the peripheral
         /// </summary>
-        public byte I2cDefaultAddress => (byte)Address.Default;
+        public byte DefaultI2cAddress => (byte)Addresses.Default;
 
         /// <summary>
         /// Raised when a new reading has been made. Events will only be raised
@@ -67,7 +67,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         /// <param name="i2cbus">I2Cbus connected to the sensor</param>
         public AdafruitMPRLS(II2cBus i2cbus)
-            : base(i2cbus, (byte)Address.Default)
+            : base(i2cbus, (byte)Addresses.Default)
         { }
 
         /// <summary>

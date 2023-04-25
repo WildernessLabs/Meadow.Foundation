@@ -45,14 +45,14 @@ namespace Meadow.Foundation.Sensors.Light
         /// <summary>
         /// The default I2C address for the peripheral
         /// </summary>
-        public byte I2cDefaultAddress => (byte)Address.Default;
+        public byte DefaultI2cAddress => (byte)Addresses.Default;
 
         /// <summary>
         /// Create a new Veml7700 object with the default address
         /// </summary>
         /// <param name="i2cBus">The I2C bus</param>
         public Veml7700(II2cBus i2cBus)
-            : base(i2cBus, (byte)Address.Default)
+            : base(i2cBus, (byte)Addresses.Default)
         {
         }
 

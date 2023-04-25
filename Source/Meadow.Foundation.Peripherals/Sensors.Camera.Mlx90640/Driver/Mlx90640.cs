@@ -56,7 +56,7 @@ namespace Meadow.Foundation.Sensors.Camera
         /// <summary>
         /// The default I2C address for the peripheral
         /// </summary>
-        public byte I2cDefaultAddress => (byte)Address.Default;
+        public byte DefaultI2cAddress => (byte)Addresses.Default;
 
         /// <summary>
         /// I2C Communication bus used to communicate with the peripheral
@@ -72,7 +72,7 @@ namespace Meadow.Foundation.Sensors.Camera
         /// <param name="address">I2C address</param>
         /// <param name="emissivity">Emissivity</param>
         public Mlx90640(II2cBus i2cBus,
-            byte address = (byte)Address.Default,
+            byte address = (byte)Addresses.Default,
             float emissivity = 0.95f)
         {
             i2cComms = new I2cCommunications(i2cBus, address);

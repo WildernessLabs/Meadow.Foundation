@@ -53,7 +53,7 @@ namespace Meadow.Foundation.Sensors.Hid
         /// Creates a SNES Classic Mini Controller object
         /// </summary>
         /// <param name="i2cBus">the I2C bus connected to controller</param>
-        public SnesClassicController(II2cBus i2cBus) : base(i2cBus, (byte)Address.Default)
+        public SnesClassicController(II2cBus i2cBus) : base(i2cBus, (byte)Addresses.Default)
         {
         }
 

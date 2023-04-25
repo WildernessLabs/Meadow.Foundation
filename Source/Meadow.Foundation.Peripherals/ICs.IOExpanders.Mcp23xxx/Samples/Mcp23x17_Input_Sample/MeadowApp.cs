@@ -23,7 +23,7 @@ namespace ICs.IOExpanders.Mcp23x17_Input_Sample
             IDigitalInputPort interruptPort = Device.CreateDigitalInputPort(Device.Pins.D00, InterruptMode.EdgeBoth, ResistorMode.InternalPullDown);
             IDigitalOutputPort resetPort = Device.CreateDigitalOutputPort(Device.Pins.D01);
 
-            mcp = new Mcp23017(Device.CreateI2cBus(), (byte)Address.Address_0x20, interruptPort, resetPort);
+            mcp = new Mcp23017(Device.CreateI2cBus(), (byte)Addresses.Address_0x20, interruptPort, resetPort);
 
             mcp.InputChanged += Mcp_InputChanged;
 

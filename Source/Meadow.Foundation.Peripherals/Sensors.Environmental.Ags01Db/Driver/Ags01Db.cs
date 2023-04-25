@@ -33,14 +33,14 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// <summary>
         /// The default I2C address for the peripheral
         /// </summary>
-        public byte I2cDefaultAddress => (byte)Address.Default;
+        public byte DefaultI2cAddress => (byte)Addresses.Default;
 
         /// <summary>
         /// Create a new Ags01Db object
         /// </summary>
         /// <param name="i2cBus">The I2C bus</param>
         /// <param name="address">The I2C address</param>
-        public Ags01Db(II2cBus i2cBus, byte address = (byte)Address.Default)
+        public Ags01Db(II2cBus i2cBus, byte address = (byte)Addresses.Default)
             : base(i2cBus, address, readBufferSize: 3, writeBufferSize: 3)
         {
         }

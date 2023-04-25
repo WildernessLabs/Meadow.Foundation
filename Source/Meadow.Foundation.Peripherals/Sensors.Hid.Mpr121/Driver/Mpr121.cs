@@ -14,7 +14,7 @@ namespace Meadow.Foundation.Sensors.Hid
         /// <summary>
         /// The default I2C address for the peripheral
         /// </summary>
-        public byte I2cDefaultAddress => (byte)Address.Default;
+        public byte DefaultI2cAddress => (byte)Addresses.Default;
 
         /// <summary>
         /// I2C Communication bus used to communicate with the peripheral
@@ -64,7 +64,7 @@ namespace Meadow.Foundation.Sensors.Hid
         /// <summary>
         /// Create a new MPR121 keypad object.
         /// </summary>
-        public Mpr121(II2cBus i2cBus, byte address = (byte)Address.Default, int refreshPeriod = -1, Mpr121Configuration configuration = null)
+        public Mpr121(II2cBus i2cBus, byte address = (byte)Addresses.Default, int refreshPeriod = -1, Mpr121Configuration configuration = null)
         {
             this.refreshPeriod = refreshPeriod;
 

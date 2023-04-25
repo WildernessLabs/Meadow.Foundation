@@ -14,7 +14,7 @@ namespace Meadow.Foundation.Sensors.Hid
         /// <summary>
         /// The default I2C address for the peripheral
         /// </summary>
-        public byte I2cDefaultAddress => (byte)Address.Default;
+        public byte DefaultI2cAddress => (byte)Addresses.Default;
 
         /// <summary>
         /// Default I2C bus speed (400kHz)

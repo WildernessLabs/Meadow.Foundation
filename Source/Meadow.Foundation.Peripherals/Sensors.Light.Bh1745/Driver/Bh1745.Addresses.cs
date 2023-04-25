@@ -5,7 +5,7 @@
         /// <summary>
         /// Valid I2C addresses for the sensor
         /// </summary>
-        public enum Address : byte
+        public enum Addresses : byte
         {
             /// <summary>
             /// Address of the peripheral when the address pin is pulled low.

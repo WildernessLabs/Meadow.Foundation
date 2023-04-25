@@ -46,7 +46,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         /// <param name="i2cBus">The I2C bus connected to the sensor</param>
         /// <param name="address">The I2C address</param>
-        public DhtBase(II2cBus i2cBus, byte address = (byte)Address.Default)
+        public DhtBase(II2cBus i2cBus, byte address = (byte)Addresses.Default)
             : base(i2cBus, address, writeBufferSize: 8, readBufferSize: 6)
         {
             protocol = BusType.I2C;

@@ -186,7 +186,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <summary>
         /// The default I2C address for the peripheral
         /// </summary>
-        public byte I2cDefaultAddress => (byte)Address.Default;
+        public byte DefaultI2cAddress => (byte)Addresses.Default;
 
         /// <summary>
         /// Communication bus used to read and write to the BME68x sensor
@@ -234,7 +234,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         /// <param name="i2cBus">I2C Bus to use for communicating with the sensor</param>
         /// <param name="address">I2C address</param>
-        protected Bme68x(II2cBus i2cBus, byte address = (byte)Address.Default)
+        protected Bme68x(II2cBus i2cBus, byte address = (byte)Addresses.Default)
         {
             configuration = new Configuration();
             busComms = new I2cCommunications(i2cBus, address);

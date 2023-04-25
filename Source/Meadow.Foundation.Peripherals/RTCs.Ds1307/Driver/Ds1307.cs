@@ -12,7 +12,7 @@ namespace Meadow.Foundation.RTCs
         /// <summary>
         /// The default I2C address for the peripheral
         /// </summary>
-        public byte I2cDefaultAddress => (byte)Address.Default;
+        public byte DefaultI2cAddress => (byte)Addresses.Default;
 
         const int OriginYear = 1980;
 
@@ -36,15 +36,15 @@ namespace Meadow.Foundation.RTCs
             get
             {   // read 1 byte starting from 0x00
                 var reg = new byte[1];
-                i2cBus.Write((byte)Address.Default, new byte[] { 0 });
-                i2cBus.Read((byte)Address.Default, reg);
+                i2cBus.Write((byte)Addresses.Default, new byte[] { 0 });
+                i2cBus.Read((byte)Addresses.Default, reg);
                 return (reg[0] & (1 << 7)) != 0;
             }
             set
             {   // read the seconds register
                 var reg = new byte[1];
-                i2cBus.Write((byte)Address.Default, new byte[] { 0 });
-                i2cBus.Read((byte)Address.Default, reg);
+                i2cBus.Write((byte)Addresses.Default, new byte[] { 0 });
+                i2cBus.Read((byte)Addresses.Default, reg);
                 var current = (reg[0] & (1 << 7)) != 0;
                 if ((value && current) || (!value && !current)) return;
 
@@ -59,7 +59,7 @@ namespace Meadow.Foundation.RTCs
                 }
 
                 // and write it back to register 0x00
-                i2cBus.Write((byte)Address.Default, reg);
+                i2cBus.Write((byte)Addresses.Default, reg);
             }
         }
 
@@ -70,8 +70,8 @@ namespace Meadow.Foundation.RTCs
         public DateTime GetTime()
         {
             var data = new byte[7];
-            i2cBus.Write((byte)Address.Default, new byte[] { 0 });
-            i2cBus.Read((byte)Address.Default, data);
+            i2cBus.Write((byte)Addresses.Default, new byte[] { 0 });
+            i2cBus.Read((byte)Addresses.Default, data);
             return FromRTCTime(data);
         }
 
@@ -84,7 +84,7 @@ namespace Meadow.Foundation.RTCs
             var data = new List<byte> { 0 };
             data.AddRange(ToRTCTime(time));
 
-            i2cBus.Write((byte)Address.Default, data.ToArray());
+            i2cBus.Write((byte)Addresses.Default, data.ToArray());
         }
 
         /// <summary>
@@ -95,8 +95,8 @@ namespace Meadow.Foundation.RTCs
         public byte[] ReadRAM(int offset, int count)
         {
             var data = new byte[count];
-            i2cBus.Write((byte)Address.Default, new byte[] { (byte)(0x08 + offset) });
-            i2cBus.Read((byte)Address.Default, data);
+            i2cBus.Write((byte)Addresses.Default, new byte[] { (byte)(0x08 + offset) });
+            i2cBus.Read((byte)Addresses.Default, data);
             return data;
         }
 
@@ -114,7 +114,7 @@ namespace Meadow.Foundation.RTCs
             };
             d.AddRange(data);
 
-            i2cBus.Write((byte)Address.Default, d.ToArray());
+            i2cBus.Write((byte)Addresses.Default, d.ToArray());
         }
 
         /// <summary>
@@ -136,7 +136,7 @@ namespace Meadow.Foundation.RTCs
             };
 
             // control register is at 0x07
-            i2cBus.Write((byte)Address.Default, new byte[] { 0x07, registerData }); //register and value
+            i2cBus.Write((byte)Addresses.Default, new byte[] { 0x07, registerData }); //register and value
         }
 
         static byte ToBCD(ushort i)

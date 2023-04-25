@@ -20,12 +20,12 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <summary>
         /// The default I2C address for the peripheral
         /// </summary>
-        public byte I2cDefaultAddress => (byte)Address.Default;
+        public byte DefaultI2cAddress => (byte)Addresses.Default;
 
         /// <summary>
         /// The current I2C address for the peripheral
         /// </summary>
-        public Address I2cAddress { get; }
+        public Addresses I2cAddress { get; }
 
         /// <summary>
         /// The sync root object
@@ -40,7 +40,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <summary>
         /// Create SerialWombatBase object
         /// </summary>
-        protected SerialWombatBase(II2cBus bus, Address address = Address.Default, Logger? logger = null)
+        protected SerialWombatBase(II2cBus bus, Addresses address = Addresses.Default, Logger? logger = null)
         {
             Pins = new PinDefinitions(this);
             i2cBus = bus;

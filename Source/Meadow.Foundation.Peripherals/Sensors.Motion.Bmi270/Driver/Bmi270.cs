@@ -57,7 +57,7 @@ namespace Meadow.Foundation.Sensors.Accelerometers
         /// <summary>
         /// The default I2C address for the peripheral
         /// </summary>
-        public byte I2cDefaultAddress => (byte)Address.Default;
+        public byte DefaultI2cAddress => (byte)Addresses.Default;
 
         /// <summary>
         /// I2C Communication bus used to communicate with the peripheral
@@ -69,7 +69,7 @@ namespace Meadow.Foundation.Sensors.Accelerometers
         /// </summary>
         /// <param name="i2cBus">The I2C bus connected to the sensor</param>
         /// <param name="address">The I2C address</param>
-        public Bmi270(II2cBus i2cBus, byte address = (byte)Address.Address_0x68)
+        public Bmi270(II2cBus i2cBus, byte address = (byte)Addresses.Address_0x68)
         {
             //Read buffer: 16 (needs at least 13)
             //Write buffer: 256 bytes for the config data + 1 for the address

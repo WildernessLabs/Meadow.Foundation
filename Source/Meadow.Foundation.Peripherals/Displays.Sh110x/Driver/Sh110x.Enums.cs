@@ -66,7 +66,7 @@
         /// <summary>
         /// Valid I2C addresses for the display
         /// </summary>
-        public enum Address : byte
+        public enum Addresses : byte
         {
             /// <summary>
             /// Bus address 0x3C

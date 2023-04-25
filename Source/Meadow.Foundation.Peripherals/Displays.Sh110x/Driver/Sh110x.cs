@@ -63,7 +63,7 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// The default I2C address for the peripheral
         /// </summary>
-        public byte I2cDefaultAddress => (byte)Address.Default;
+        public byte DefaultI2cAddress => (byte)Addresses.Default;
 
         /// <summary>
         /// The connection type (I2C or SPI)

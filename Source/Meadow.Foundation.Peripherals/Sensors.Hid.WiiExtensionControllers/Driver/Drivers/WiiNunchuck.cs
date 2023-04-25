@@ -45,7 +45,7 @@ namespace Meadow.Foundation.Sensors.Hid
         /// Creates a Wii Nunchuck object
         /// </summary>
         /// <param name="i2cBus">the I2C bus connected to controller</param>
-        public WiiNunchuck(II2cBus i2cBus) : base(i2cBus, (byte)Address.Default)
+        public WiiNunchuck(II2cBus i2cBus) : base(i2cBus, (byte)Addresses.Default)
         {
         }
 

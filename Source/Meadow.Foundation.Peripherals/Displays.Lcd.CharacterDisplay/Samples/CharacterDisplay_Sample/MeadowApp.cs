@@ -63,7 +63,7 @@ namespace Displays.Lcd.CharacterDisplay_Sample
             display = new CharacterDisplay
             (
                 i2cBus: Device.CreateI2cBus(I2cBusSpeed.Standard),
-                address: (byte)I2cCharacterDisplay.Address.Default,
+                address: (byte)I2cCharacterDisplay.Addresses.Default,
                 rows: 4, columns: 20
             );
         }
@@ -75,7 +75,7 @@ namespace Displays.Lcd.CharacterDisplay_Sample
             display = new CharacterDisplay
             (
                 i2cBus: Device.CreateI2cBus(I2cBusSpeed.Standard),
-                address: (byte)I2cCharacterDisplay.Address.Grove,
+                address: (byte)I2cCharacterDisplay.Addresses.Grove,
                 rows: 2, columns: 16,
                 isGroveDisplay: true
             );

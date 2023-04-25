@@ -48,7 +48,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <summary>
         /// The default I2C address for the peripheral
         /// </summary>
-        public byte I2cDefaultAddress => (byte)Address.Default;
+        public byte DefaultI2cAddress => (byte)Addresses.Default;
 
         /// <summary>
         /// The display color mode (1 bit per pixel)
@@ -100,7 +100,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <param name="buttonInterruptPin">Interrupt pin</param>
         /// <param name="address">Address of the bus on the I2C display.</param>
         public As1115(II2cBus i2cBus, IPin buttonInterruptPin,
-            byte address = (byte)Address.Default)
+            byte address = (byte)Addresses.Default)
         {
             i2cComms = new I2cCommunications(i2cBus, address);
 

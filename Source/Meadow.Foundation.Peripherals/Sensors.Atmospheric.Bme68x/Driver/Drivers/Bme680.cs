@@ -15,7 +15,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         /// <param name="i2cBus">I2C Bus to use for communicating with the busComms</param>
         /// <param name="address">I2C address of the busComms</param>
-        public Bme680(II2cBus i2cBus, byte address = (byte)Address.Default) : base(i2cBus, address)
+        public Bme680(II2cBus i2cBus, byte address = (byte)Addresses.Default) : base(i2cBus, address)
         { }
 
         /// <summary>

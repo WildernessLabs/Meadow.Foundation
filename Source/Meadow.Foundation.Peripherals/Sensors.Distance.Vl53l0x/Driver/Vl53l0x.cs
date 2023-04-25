@@ -53,7 +53,7 @@ namespace Meadow.Foundation.Sensors.Distance
         /// <summary>
         /// The default I2C address for the peripheral
         /// </summary>
-        public byte I2cDefaultAddress => (byte)Address.Default;
+        public byte DefaultI2cAddress => (byte)Addresses.Default;
 
         readonly IDigitalOutputPort shutdownPort;
 
@@ -64,7 +64,7 @@ namespace Meadow.Foundation.Sensors.Distance
         /// </summary>
         /// <param name="i2cBus">I2C bus</param>
         /// <param name="address">I2C address</param>
-        public Vl53l0x(II2cBus i2cBus, byte address = (byte)Address.Default)
+        public Vl53l0x(II2cBus i2cBus, byte address = (byte)Addresses.Default)
                 : this(i2cBus, null, address)
         { }
 
@@ -75,7 +75,7 @@ namespace Meadow.Foundation.Sensors.Distance
         /// <param name="shutdownPin">Shutdown pin</param>
         /// <param name="address">VL53L0X address</param>
 
-        public Vl53l0x(II2cBus i2cBus, IPin shutdownPin, byte address = (byte)Address.Default)
+        public Vl53l0x(II2cBus i2cBus, IPin shutdownPin, byte address = (byte)Addresses.Default)
                 : base(i2cBus, address)
         {
             if (shutdownPin != null)

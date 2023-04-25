@@ -12,7 +12,7 @@ namespace Meadow.Foundation.Displays.Lcd
         /// <summary>
         /// The default I2C address for the peripheral
         /// </summary>
-        public byte I2cDefaultAddress => (byte)Address.Default;
+        public byte DefaultI2cAddress => (byte)Addresses.Default;
 
         /// <summary>
         /// I2C Communication bus used to communicate with the peripheral
@@ -126,7 +126,7 @@ namespace Meadow.Foundation.Displays.Lcd
         /// <param name="address">I2C address</param>
         /// <param name="rows">Number of character rows</param>
         /// <param name="columns">Number of character columns</param>
-        public I2cCharacterDisplay(II2cBus i2cBus, byte address = (byte)Address.Default, byte rows = 4, byte columns = 20)
+        public I2cCharacterDisplay(II2cBus i2cBus, byte address = (byte)Addresses.Default, byte rows = 4, byte columns = 20)
         {
             i2cComms = new I2cCommunications(i2cBus, address);
             DisplayConfig = new TextDisplayConfig() { Width = columns, Height = rows };

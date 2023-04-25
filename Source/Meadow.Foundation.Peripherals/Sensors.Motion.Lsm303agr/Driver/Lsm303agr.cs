@@ -37,7 +37,7 @@ namespace Meadow.Foundation.Sensors.Accelerometers
         /// <summary>
         /// The default I2C address for the peripheral
         /// </summary>
-        public byte I2cDefaultAddress => (byte)Address.AddressAccel_0x19;
+        public byte DefaultI2cAddress => (byte)Addresses.AddressAccel_0x19;
 
         /// <summary>
         /// I2C Communication bus used to communicate with the accelerometer
@@ -55,8 +55,8 @@ namespace Meadow.Foundation.Sensors.Accelerometers
         /// <param name="i2cBus">The I2C bus connected to the sensor</param>
         public Lsm303agr(II2cBus i2cBus)
         {
-            i2cCommsAccel = new I2cCommunications(i2cBus, (byte)Address.AddressAccel_0x19);
-            i2cCommsMag = new I2cCommunications(i2cBus, (byte)Address.AddressMag_0x1E);
+            i2cCommsAccel = new I2cCommunications(i2cBus, (byte)Addresses.AddressAccel_0x19);
+            i2cCommsMag = new I2cCommunications(i2cBus, (byte)Addresses.AddressMag_0x1E);
 
             Initialize();
         }

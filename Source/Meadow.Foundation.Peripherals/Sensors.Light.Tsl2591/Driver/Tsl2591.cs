@@ -107,7 +107,7 @@ namespace Meadow.Foundation.Sensors.Light
         /// <param name="i2cBus">The I2C bus</param>
         /// <param name="address">The I2C address</param>
         public Tsl2591(II2cBus i2cBus,
-            byte address = (byte)Address.Default)
+            byte address = (byte)Addresses.Default)
             : base(i2cBus, address)
         {
             Gain = GainFactor.Medium;

@@ -42,14 +42,14 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <summary>
         /// The default I2C address for the peripheral
         /// </summary>
-        public byte I2cDefaultAddress => (byte)Address.Default;
+        public byte DefaultI2cAddress => (byte)Addresses.Default;
 
         /// <summary>
         /// Create a new SHT4x object
         /// </summary>
         /// <param name="address">Sensor address</param>
         /// <param name="i2cBus">I2cBus</param>
-        public Sht4x(II2cBus i2cBus, byte address = (byte)Address.Default)
+        public Sht4x(II2cBus i2cBus, byte address = (byte)Addresses.Default)
             : base(i2cBus, address, readBufferSize: 6, writeBufferSize: 2)
         { }
 

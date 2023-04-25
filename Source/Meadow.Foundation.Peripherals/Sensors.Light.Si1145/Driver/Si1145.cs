@@ -16,13 +16,13 @@ namespace Meadow.Foundation.Sensors.Light
         /// <summary>
         /// The default I2C address for the peripheral
         /// </summary>
-        public byte I2cDefaultAddress => (byte)Address.Default;
+        public byte DefaultI2cAddress => (byte)Addresses.Default;
 
         /// <summary>
         /// Create a new SI1145 sensor object
         /// </summary>
         /// <param name="i2cBus">I2cBus (default to 400 KHz)</param>
-        public Si1145(II2cBus i2cBus) : base(i2cBus, (byte)Address.Default)
+        public Si1145(II2cBus i2cBus) : base(i2cBus, (byte)Addresses.Default)
         {
             if (BusComms.ReadRegister(Registers.REG_PARTID) != 0x45)
             {

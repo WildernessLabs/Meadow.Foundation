@@ -13,14 +13,14 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <summary>
         /// The default I2C address for the peripheral
         /// </summary>
-        public byte I2cDefaultAddress => (byte)Address.Default;
+        public byte DefaultI2cAddress => (byte)Addresses.Default;
 
         /// <summary>
         /// Create a new Dht12 object
         /// </summary>
         /// <param name="address">Address of the Dht12 (default = 0x27)</param>
         /// <param name="i2cBus">I2C bus (default = 100 KHz)</param>
-        public Dht12(II2cBus i2cBus, byte address = (byte)Address.Default)
+        public Dht12(II2cBus i2cBus, byte address = (byte)Addresses.Default)
             : base(i2cBus, address)
         { }
 

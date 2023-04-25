@@ -12,7 +12,7 @@ namespace Meadow.Foundation.RTCs
         /// <summary>
         /// The default I2C address for the peripheral
         /// </summary>
-        public byte I2cDefaultAddress => (byte)Address.Default;
+        public byte DefaultI2cAddress => (byte)Addresses.Default;
 
         /// <summary>
         /// Number of registers that hold the date and time information.

@@ -64,7 +64,7 @@ namespace Meadow.Foundation.ICs.ADC
         /// Create a new ADS1115 object
         /// </summary>
         public Ads1115(II2cBus i2cBus,
-            Address address = Address.Default,
+            Addresses address = Addresses.Default,
             MeasureMode mode = MeasureMode.OneShot,
             ChannelSetting channel = ChannelSetting.A0A1Differential,
             SampleRateSetting sampleRate = SampleRateSetting.Sps128)

@@ -12,7 +12,7 @@ namespace Meadow.Foundation.ICs.ADC
         /// <summary>
         /// The default I2C address for the peripheral
         /// </summary>
-        public byte I2cDefaultAddress => (byte)Address.Default;
+        public byte DefaultI2cAddress => (byte)Addresses.Default;
 
         /// <summary>
         /// I2C Communication bus used to communicate with the peripheral
@@ -44,7 +44,7 @@ namespace Meadow.Foundation.ICs.ADC
         /// <param name="mode"></param>
         /// <param name="channel"></param>
         protected Ads1x15Base(II2cBus i2cBus,
-            Address address,
+            Addresses address,
             MeasureMode mode,
             ChannelSetting channel)
         {

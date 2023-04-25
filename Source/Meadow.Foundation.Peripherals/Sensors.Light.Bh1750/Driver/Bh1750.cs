@@ -45,13 +45,13 @@ namespace Meadow.Foundation.Sensors.Light
         /// <summary>
         /// The default I2C address for the peripheral
         /// </summary>
-        public byte I2cDefaultAddress => (byte)Address.Default;
+        public byte DefaultI2cAddress => (byte)Addresses.Default;
 
         /// <summary>
         /// Create a new BH1750 light sensor object using a static reference voltage.
         /// </summary>
         public Bh1750(
-            II2cBus i2cBus, byte address = (byte)Address.Default,
+            II2cBus i2cBus, byte address = (byte)Addresses.Default,
             MeasuringModes measuringMode = MeasuringModes.ContinuouslyHighResolutionMode,
             double lightTransmittance = 1)
                 : base(i2cBus, address)

@@ -46,7 +46,7 @@ namespace Meadow.Foundation.ICs.FanControllers
         /// <summary>
         /// The default I2C address for the peripheral
         /// </summary>
-        public byte I2cDefaultAddress => (byte)Address.Default;
+        public byte DefaultI2cAddress => (byte)Addresses.Default;
 
         /// <summary>
         /// Get/Set the minimum fan speed for the currently connected fan
@@ -156,7 +156,7 @@ namespace Meadow.Foundation.ICs.FanControllers
         /// </summary>
         /// <param name="i2cBus">I2CBus connected to display</param>
         /// <param name="address">Address of the EMC2101 (default = 0x4C)</param>
-        public Emc2101(II2cBus i2cBus, byte address = (byte)Address.Default)
+        public Emc2101(II2cBus i2cBus, byte address = (byte)Addresses.Default)
         {
             i2cComms = new I2cCommunications(i2cBus, address);
 

@@ -6,7 +6,7 @@
         /// Valid I2C addresses for the sensor
         /// Controlled by pulling A0 and A1 high or low
         /// </summary>
-        public enum Address : byte
+        public enum Addresses : byte
         {
             /// <summary>
             /// Bus address 0x28 (A0 low, A1 low)

@@ -61,7 +61,7 @@ namespace Meadow.Foundation.Sensors.Hid
         /// <summary>
         /// The default I2C address for the peripheral
         /// </summary>
-        public byte I2cDefaultAddress => (byte)Address.Default;
+        public byte DefaultI2cAddress => (byte)Addresses.Default;
 
         /// <summary>
         /// I2C Communication bus used to communicate with the peripheral
@@ -74,7 +74,7 @@ namespace Meadow.Foundation.Sensors.Hid
         /// <param name="i2cBus">the I2C bus</param>
         /// <param name="address">the device I2C address</param>
         /// <param name="interruptPort">port connected to the interrupt pin</param>
-        public As5013(II2cBus i2cBus, byte address = (byte)Address.Default, IDigitalInterruptPort interruptPort = null)
+        public As5013(II2cBus i2cBus, byte address = (byte)Addresses.Default, IDigitalInterruptPort interruptPort = null)
         {
             i2cComms = new I2cCommunications(i2cBus, address);
 

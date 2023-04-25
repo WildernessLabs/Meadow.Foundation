@@ -55,14 +55,14 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <summary>
         /// The default I2C address for the peripheral
         /// </summary>
-        public byte I2cDefaultAddress => (byte)Address.Default;
+        public byte DefaultI2cAddress => (byte)Addresses.Default;
 
         /// <summary>
         /// Create a new SI7021 temperature and humidity sensor
         /// </summary>
         /// <param name="i2cBus">I2CBus</param>
         /// <param name="address">I2C address (default to 0x40)</param>
-        public Si70xx(II2cBus i2cBus, byte address = (byte)Address.Default)
+        public Si70xx(II2cBus i2cBus, byte address = (byte)Addresses.Default)
             : base(i2cBus, address, 8, 3)
         {
             Initialize();

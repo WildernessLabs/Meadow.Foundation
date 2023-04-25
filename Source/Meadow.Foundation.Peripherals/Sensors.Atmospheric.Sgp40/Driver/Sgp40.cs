@@ -28,7 +28,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <summary>
         /// The default I2C address for the peripheral
         /// </summary>
-        public byte I2cDefaultAddress => (byte)Address.Default;
+        public byte DefaultI2cAddress => (byte)Addresses.Default;
 
         private byte[]? compensationData = null;
 
@@ -37,7 +37,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         /// <param name="address">Sensor address (default to 0x40).</param>
         /// <param name="i2cBus">I2CBus.</param>
-        public Sgp40(II2cBus i2cBus, byte address = (byte)Address.Default)
+        public Sgp40(II2cBus i2cBus, byte address = (byte)Addresses.Default)
             : base(i2cBus, address, 9, 8)
         {
             Initialize();

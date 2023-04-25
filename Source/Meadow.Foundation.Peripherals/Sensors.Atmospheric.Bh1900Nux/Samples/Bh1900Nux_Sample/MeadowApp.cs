@@ -17,7 +17,7 @@ namespace Bh1900Nux_Sample
         {
             Resolver.Log.Info("Initializing...");
 
-            _sensor = new Bh1900Nux(Device.CreateI2cBus(), Bh1900Nux.Address.Default);
+            _sensor = new Bh1900Nux(Device.CreateI2cBus(), Bh1900Nux.Addresses.Default);
 
             var consumer = Bh1900Nux.CreateObserver(
                 handler: result =>

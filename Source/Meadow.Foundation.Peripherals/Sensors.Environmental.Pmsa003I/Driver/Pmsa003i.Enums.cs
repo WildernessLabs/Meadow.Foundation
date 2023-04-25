@@ -5,7 +5,7 @@
         /// <summary>
         /// Valid I2C addresses for the sensor
         /// </summary>
-        internal enum Address : byte
+        internal enum Addresses : byte
         {
             /// <summary>
             /// Bus address 0x52

@@ -66,14 +66,14 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <summary>
         /// The default I2C address for the peripheral
         /// </summary>
-        public byte I2cDefaultAddress => (byte)Address.Default;
+        public byte DefaultI2cAddress => (byte)Addresses.Default;
 
         /// <summary>
         /// Create a new MPL3115A2 object with the default address and speed settings
         /// </summary>
         /// <param name="address">Address of the sensor (default = 0x60)</param>
         /// <param name="i2cBus">I2cBus (Maximum is 400 kHz)</param>
-        public Mpl3115a2(II2cBus i2cBus, byte address = (byte)Address.Default)
+        public Mpl3115a2(II2cBus i2cBus, byte address = (byte)Addresses.Default)
             : base(i2cBus, address)
         {
             if (BusComms?.ReadRegister(Registers.WhoAmI) != 0xc4)

@@ -37,7 +37,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <summary>
         /// The default I2C address for the peripheral
         /// </summary>
-        public byte I2cDefaultAddress => (byte)Address.Default;
+        public byte DefaultI2cAddress => (byte)Addresses.Default;
 
         /// <summary>
         /// I2C Communication bus used to communicate with the peripheral
@@ -52,7 +52,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <param name="i2cBus">The I2C bus connected to the device</param>
         /// <param name="address">I2c address - default is 0x5c</param>
         /// <param name="resolution"></param>
-        public Ms5611(II2cBus i2cBus, byte address = (byte)Address.Default, Resolution resolution = Resolution.OSR_1024)
+        public Ms5611(II2cBus i2cBus, byte address = (byte)Addresses.Default, Resolution resolution = Resolution.OSR_1024)
         {
             i2cComms = new I2cCommunications(i2cBus, address);
             this.resolution = resolution;

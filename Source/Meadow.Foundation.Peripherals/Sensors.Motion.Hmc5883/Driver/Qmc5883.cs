@@ -20,7 +20,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <param name="outputRate">Output rate</param>
         /// <param name="samplesAmount">Samples amount</param>
         /// <param name="measurementConfig">Measurement configuration</param>
-        public Qmc5883(II2cBus i2cBus, byte address = (byte)Address.Qmc5883,
+        public Qmc5883(II2cBus i2cBus, byte address = (byte)Addresses.Qmc5883,
             GainLevels gain = GainLevels.Gain1090,
             MeasuringModes measuringMode = MeasuringModes.Continuous,
             DataOutputRates outputRate = DataOutputRates.Rate15,

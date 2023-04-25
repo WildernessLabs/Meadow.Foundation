@@ -25,7 +25,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         /// The default I2C address for the peripheral
         /// </summary>
-        public byte I2cDefaultAddress => (byte)Address.Default;
+        public byte DefaultI2cAddress => (byte)Addresses.Default;
 
         readonly IDigitalInputPort interruptPort;
         readonly GestureData gestureData;
@@ -60,7 +60,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <param name="i2cBus">SI2C bus object</param>
         /// <param name="interruptPin">The interrupt pin</param>
         public Apds9960(II2cBus i2cBus, IPin interruptPin)
-            : base(i2cBus, (byte)Address.Default)
+            : base(i2cBus, (byte)Addresses.Default)
         {
             if (interruptPin != null)
             {

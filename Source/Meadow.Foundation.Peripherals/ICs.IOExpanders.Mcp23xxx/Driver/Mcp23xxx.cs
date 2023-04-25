@@ -55,7 +55,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <summary>
         /// The default I2C address for the peripheral
         /// </summary>
-        public byte I2cDefaultAddress => (byte)Address.Default;
+        public byte DefaultI2cAddress => (byte)Addresses.Default;
 
         private readonly IByteCommunications mcpDevice;
         private IDigitalOutputPort resetPort;

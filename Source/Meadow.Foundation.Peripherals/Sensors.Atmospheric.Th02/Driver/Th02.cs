@@ -38,13 +38,13 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <summary>
         /// The default I2C address for the peripheral
         /// </summary>
-        public byte I2cDefaultAddress => (byte)Address.Default;
+        public byte DefaultI2cAddress => (byte)Addresses.Default;
 
         /// <summary>
         /// Provide a mechanism for reading the temperature and humidity from
         /// a Th02 temperature / humidity sensor
         /// </summary>
-        public Th02(II2cBus i2cBus, byte address = (byte)Address.Default)
+        public Th02(II2cBus i2cBus, byte address = (byte)Addresses.Default)
                 : base(i2cBus, address)
         { }
 

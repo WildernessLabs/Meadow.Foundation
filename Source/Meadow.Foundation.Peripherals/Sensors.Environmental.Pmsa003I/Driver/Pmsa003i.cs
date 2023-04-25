@@ -143,7 +143,7 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// <summary>
         /// The default I2C address for the peripheral
         /// </summary>
-        public byte I2cDefaultAddress => (byte)Address.Default;
+        public byte DefaultI2cAddress => (byte)Addresses.Default;
 
         /// <summary>
         /// Create a new PMSA003I sensor object
@@ -151,7 +151,7 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// <remarks></remarks>
         /// <param name="i2cBus">The I2C bus</param>
         public Pmsa003i(II2cBus i2cBus)
-            : base(i2cBus, (byte)Address.Default)
+            : base(i2cBus, (byte)Addresses.Default)
         { }
 
         /// <summary>

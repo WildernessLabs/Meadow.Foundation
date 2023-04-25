@@ -16,7 +16,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         /// The default I2C address for the peripheral
         /// </summary>
-        public byte I2cDefaultAddress => (byte)Address.Default;
+        public byte DefaultI2cAddress => (byte)Addresses.Default;
 
         /// <summary>
         /// Event to be raised when the compass changes
@@ -54,7 +54,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <param name="outputRate">Output rate</param>
         /// <param name="sampleAmount">Sample amount</param>
         /// <param name="measurementConfig">Measurement configuration</param>
-        public Hmc5883(II2cBus i2cBus, byte address = (byte)Address.Default,
+        public Hmc5883(II2cBus i2cBus, byte address = (byte)Addresses.Default,
             GainLevels gain = GainLevels.Gain1090,
             MeasuringModes measuringMode = MeasuringModes.Continuous,
             DataOutputRates outputRate = DataOutputRates.Rate15,

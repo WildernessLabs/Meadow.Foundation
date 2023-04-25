@@ -36,14 +36,14 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <summary>
         /// The default I2C address for the peripheral
         /// </summary>
-        public byte I2cDefaultAddress => (byte)Address.Default;
+        public byte DefaultI2cAddress => (byte)Addresses.Default;
 
         /// <summary>
         /// Create a new SHT31D object
         /// </summary>
         /// <param name="address">Sensor address (should be 0x44 or 0x45)</param>
         /// <param name="i2cBus">I2cBus (0-1000 KHz).</param>
-        public Sht31d(II2cBus i2cBus, byte address = (byte)Address.Default)
+        public Sht31d(II2cBus i2cBus, byte address = (byte)Addresses.Default)
             : base(i2cBus, address, readBufferSize: 6, writeBufferSize: 2)
         { }
 
