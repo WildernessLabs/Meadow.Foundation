@@ -1,25 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Leds
 {
+    /// <summary>
+    /// Utility functions to provide blinking and pulsing for RgbPwmLeds
+    /// </summary>
     public static class RgbPwmLedExtensions
     {
-        private static Dictionary<RgbPwmLed, CancellationTokenSource> _cancellationTokens = new Dictionary<RgbPwmLed, CancellationTokenSource>();
-
-        //        private Task? animationTask = null;
+        private static Dictionary<RgbPwmLed, Thread> _animationThreads = new Dictionary<RgbPwmLed, Thread>();
 
         /// <summary>
         /// Stops any running animations.
         /// </summary>
         public static void Stop(this RgbPwmLed led)
         {
-            if (_cancellationTokens.ContainsKey(led))
+            if (_animationThreads.ContainsKey(led))
             {
-                _cancellationTokens[led].Cancel();
-                _cancellationTokens.Remove(led);
+                var task = _animationThreads[led];
+                _animationThreads.Remove(led);
+                task.Join();
             }
 
             led.IsOn = false;
@@ -28,6 +29,7 @@ namespace Meadow.Foundation.Leds
         /// <summary>
         /// Start the Blink animation which sets the brightness of the LED alternating between a low and high brightness setting.
         /// </summary>
+        /// <param name="led"></param>
         /// <param name="color"></param>
         /// <param name="highBrightness"></param>
         /// <param name="lowBrightness"></param>
@@ -39,6 +41,7 @@ namespace Meadow.Foundation.Leds
         /// <summary>
         /// Start the Blink animation which sets the brightness of the LED alternating between a low and high brightness setting, using the durations provided.
         /// </summary>
+        /// <param name="led"></param>
         /// <param name="color"></param>
         /// <param name="onDuration"></param>
         /// <param name="offDuration"></param>
@@ -61,46 +64,30 @@ namespace Meadow.Foundation.Leds
 
             led.Stop();
 
-            var animationTask = new Task(async () =>
+            // we need to wait for any currently running animation to complete
+            var animationTask = new Thread((s) =>
             {
-                var cancellationTokenSource = new CancellationTokenSource();
-                _cancellationTokens.Add(led, cancellationTokenSource);
-                await led.StartBlinkAsync(color, onDuration, offDuration, highBrightness, lowBrightness, cancellationTokenSource.Token);
-            }, TaskCreationOptions.LongRunning);
-            animationTask.Start();
-        }
-
-        /// <summary>
-        /// Start blinking led
-        /// </summary>
-        /// <param name="color">color to blink</param>
-        /// <param name="onDuration">on duration in ms</param>
-        /// <param name="offDuration">off duration in ms</param>
-        /// <param name="highBrightness">maximum brightness</param>
-        /// <param name="lowBrightness">minimum brightness</param>
-        /// <param name="cancellationToken">token to cancel blink</param>
-        private static async Task StartBlinkAsync(this RgbPwmLed led, Color color, TimeSpan onDuration, TimeSpan offDuration, float highBrightness, float lowBrightness, CancellationToken cancellationToken)
-        {
-            // stop animation on color change
-            led.ColorChanged += OnLedColorChange;
-
-            while (true)
-            {
-                if (cancellationToken.IsCancellationRequested)
+                while (true)
                 {
-                    break;
-                }
+                    led.SetColor(color, highBrightness);
+                    Thread.Sleep(onDuration);
+                    if (!_animationThreads.ContainsKey(led)) break;
 
-                led.SetColor(color, highBrightness);
-                await Task.Delay(onDuration);
-                led.SetColor(color, lowBrightness);
-                await Task.Delay(offDuration);
-            }
+                    led.SetColor(color, lowBrightness);
+                    Thread.Sleep(offDuration);
+                    if (!_animationThreads.ContainsKey(led)) break;
+                }
+            });
+
+            _animationThreads.Add(led, animationTask);
+
+            animationTask.Start();
         }
 
         /// <summary>
         /// Start the Pulse animation which gradually alternates the brightness of the LED between a low and high brightness setting.
         /// </summary>
+        /// <param name="led"></param>
         /// <param name="color"></param>
         /// <param name="highBrightness"></param>
         /// <param name="lowBrightness"></param>
@@ -112,6 +99,7 @@ namespace Meadow.Foundation.Leds
         /// <summary>
         /// Start the Pulse animation which gradually alternates the brightness of the LED between a low and high brightness setting, using the durations provided.
         /// </summary>
+        /// <param name="led"></param>
         /// <param name="color"></param>
         /// <param name="pulseDuration"></param>
         /// <param name="highBrightness"></param>
@@ -133,66 +121,48 @@ namespace Meadow.Foundation.Leds
 
             led.Stop();
 
-            var animationTask = new Task(async () =>
+            var animationTask = new Thread((s) =>
             {
-                var cancellationTokenSource = new CancellationTokenSource();
-                _cancellationTokens.Add(led, cancellationTokenSource);
-                await led.StartPulseAsync(color, pulseDuration, highBrightness, lowBrightness, cancellationTokenSource.Token);
-            }, TaskCreationOptions.LongRunning);
+                float brightness = lowBrightness;
+                bool ascending = true;
+                TimeSpan intervalTime = TimeSpan.FromMilliseconds(60); // 60 miliseconds is probably the fastest update we want to do, given that threads are given 20 miliseconds by default. 
+                float steps = (float)(pulseDuration.TotalMilliseconds / intervalTime.TotalMilliseconds);
+                float delta = (highBrightness - lowBrightness) / steps;
+
+                while (true)
+                {
+                    if (brightness <= lowBrightness)
+                    {
+                        ascending = true;
+                    }
+                    else if (brightness >= highBrightness)
+                    {
+                        ascending = false;
+                    }
+
+                    brightness += delta * (ascending ? 1 : -1);
+
+                    if (brightness < lowBrightness)
+                    {
+                        brightness = lowBrightness;
+                    }
+                    else if (brightness > highBrightness)
+                    {
+                        brightness = highBrightness;
+                    }
+
+                    Resolver.Log.Info($"Brightness: {brightness}");
+                    led.SetColor(color, brightness);
+
+                    Thread.Sleep(intervalTime);
+
+                    if (!_animationThreads.ContainsKey(led)) break;
+                }
+            });
+
+            _animationThreads.Add(led, animationTask);
+
             animationTask.Start();
-        }
-
-        /// <summary>
-        /// Start led pulsing
-        /// </summary>
-        /// <param name="color">color to pulse</param>
-        /// <param name="pulseDuration">pulse duration in ms</param>
-        /// <param name="highBrightness">maximum brightness</param>
-        /// <param name="lowBrightness">minimum brightness</param>
-        /// <param name="cancellationToken">token to cancel pulse</param>
-        private static async Task StartPulseAsync(this RgbPwmLed led, Color color, TimeSpan pulseDuration, float highBrightness, float lowBrightness, CancellationToken cancellationToken)
-        {
-            float brightness = lowBrightness;
-            bool ascending = true;
-            TimeSpan intervalTime = TimeSpan.FromMilliseconds(60); // 60 miliseconds is probably the fastest update we want to do, given that threads are given 20 miliseconds by default. 
-            float steps = (float)(pulseDuration.TotalMilliseconds / intervalTime.TotalMilliseconds);
-            float delta = (highBrightness - lowBrightness) / steps;
-
-            // stop animation on color change
-            led.ColorChanged += OnLedColorChange;
-
-            while (true)
-            {
-                if (cancellationToken.IsCancellationRequested)
-                {
-                    break;
-                }
-
-                if (brightness <= lowBrightness)
-                {
-                    ascending = true;
-                }
-                else if (brightness >= highBrightness)
-                {
-                    ascending = false;
-                }
-
-                brightness += delta * (ascending ? 1 : -1);
-
-                if (brightness < 0)
-                {
-                    brightness = 0;
-                }
-                else
-                if (brightness > 1)
-                {
-                    brightness = 1;
-                }
-
-                led.SetColor(color, brightness);
-
-                await Task.Delay(intervalTime);
-            }
         }
 
         private static void OnLedColorChange(object sender, EventArgs e)

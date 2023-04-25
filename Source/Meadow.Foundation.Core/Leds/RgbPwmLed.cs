@@ -251,7 +251,10 @@ namespace Meadow.Foundation.Leds
             {
                 return;
             }
-            ColorChanged?.Invoke(this, EventArgs.Empty);
+            if (color != Color)
+            {
+                ColorChanged?.Invoke(this, EventArgs.Empty);
+            }
 
             Color = color;
             Brightness = brightness;
