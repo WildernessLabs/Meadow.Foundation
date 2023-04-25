@@ -10,17 +10,25 @@ namespace Meadow.Foundation.Leds
     public static class RgbPwmLedExtensions
     {
         private static Dictionary<RgbPwmLed, Thread> _animationThreads = new Dictionary<RgbPwmLed, Thread>();
+        private static object _syncRoot = new object();
 
         /// <summary>
         /// Stops any running animations.
         /// </summary>
         public static void Stop(this RgbPwmLed led)
         {
-            if (_animationThreads.ContainsKey(led))
+            var exists = _animationThreads.ContainsKey(led);
+            if (exists)
             {
-                var task = _animationThreads[led];
-                _animationThreads.Remove(led);
-                task.Join();
+                Thread thread;
+
+                lock (_animationThreads)
+                {
+                    thread = _animationThreads[led];
+                    _animationThreads.Remove(led);
+                }
+                // we need to wait for any currently running animation to complete
+                thread.Join();
             }
 
             led.IsOn = false;
@@ -62,26 +70,37 @@ namespace Meadow.Foundation.Leds
                 throw new Exception("offBrightness must be less than onBrightness");
             }
 
-            led.Stop();
-
-            // we need to wait for any currently running animation to complete
-            var animationTask = new Thread((s) =>
+            lock (_syncRoot)
             {
-                while (true)
+                led.Stop();
+
+                var animationTask = new Thread((s) =>
                 {
-                    led.SetColor(color, highBrightness);
-                    Thread.Sleep(onDuration);
-                    if (!_animationThreads.ContainsKey(led)) break;
+                    while (true)
+                    {
+                        led.SetColor(color, highBrightness);
+                        Thread.Sleep(onDuration);
+                        lock (_animationThreads)
+                        {
+                            if (!_animationThreads.ContainsKey(led)) break;
+                        }
 
-                    led.SetColor(color, lowBrightness);
-                    Thread.Sleep(offDuration);
-                    if (!_animationThreads.ContainsKey(led)) break;
+                        led.SetColor(color, lowBrightness);
+                        Thread.Sleep(offDuration);
+                        lock (_animationThreads)
+                        {
+                            if (!_animationThreads.ContainsKey(led)) break;
+                        }
+                    }
+                });
+
+                lock (_animationThreads)
+                {
+                    _animationThreads.Add(led, animationTask);
                 }
-            });
 
-            _animationThreads.Add(led, animationTask);
-
-            animationTask.Start();
+                animationTask.Start();
+            }
         }
 
         /// <summary>
@@ -119,50 +138,59 @@ namespace Meadow.Foundation.Leds
                 throw new Exception("offBrightness must be less than onBrightness");
             }
 
-            led.Stop();
-
-            var animationTask = new Thread((s) =>
+            lock (_syncRoot)
             {
-                float brightness = lowBrightness;
-                bool ascending = true;
-                TimeSpan intervalTime = TimeSpan.FromMilliseconds(60); // 60 miliseconds is probably the fastest update we want to do, given that threads are given 20 miliseconds by default. 
-                float steps = (float)(pulseDuration.TotalMilliseconds / intervalTime.TotalMilliseconds);
-                float delta = (highBrightness - lowBrightness) / steps;
+                led.Stop();
 
-                while (true)
+                var animationTask = new Thread((s) =>
                 {
-                    if (brightness <= lowBrightness)
+                    float brightness = lowBrightness;
+                    bool ascending = true;
+                    TimeSpan intervalTime = TimeSpan.FromMilliseconds(60); // 60 miliseconds is probably the fastest update we want to do, given that threads are given 20 miliseconds by default. 
+                    float steps = (float)(pulseDuration.TotalMilliseconds / intervalTime.TotalMilliseconds);
+                    float delta = (highBrightness - lowBrightness) / steps;
+
+                    while (true)
                     {
-                        ascending = true;
+                        if (brightness <= lowBrightness)
+                        {
+                            ascending = true;
+                        }
+                        else if (brightness >= highBrightness)
+                        {
+                            ascending = false;
+                        }
+
+                        brightness += delta * (ascending ? 1 : -1);
+
+                        if (brightness < lowBrightness)
+                        {
+                            brightness = lowBrightness;
+                        }
+                        else if (brightness > highBrightness)
+                        {
+                            brightness = highBrightness;
+                        }
+
+                        Resolver.Log.Info($"Brightness: {brightness}");
+                        led.SetColor(color, brightness);
+
+                        Thread.Sleep(intervalTime);
+
+                        lock (_animationThreads)
+                        {
+                            if (!_animationThreads.ContainsKey(led)) break;
+                        }
                     }
-                    else if (brightness >= highBrightness)
-                    {
-                        ascending = false;
-                    }
+                });
 
-                    brightness += delta * (ascending ? 1 : -1);
-
-                    if (brightness < lowBrightness)
-                    {
-                        brightness = lowBrightness;
-                    }
-                    else if (brightness > highBrightness)
-                    {
-                        brightness = highBrightness;
-                    }
-
-                    Resolver.Log.Info($"Brightness: {brightness}");
-                    led.SetColor(color, brightness);
-
-                    Thread.Sleep(intervalTime);
-
-                    if (!_animationThreads.ContainsKey(led)) break;
+                lock (_animationThreads)
+                {
+                    _animationThreads.Add(led, animationTask);
                 }
-            });
 
-            _animationThreads.Add(led, animationTask);
-
-            animationTask.Start();
+                animationTask.Start();
+            }
         }
 
         private static void OnLedColorChange(object sender, EventArgs e)
