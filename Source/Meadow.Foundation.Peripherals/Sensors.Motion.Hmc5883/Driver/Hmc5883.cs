@@ -11,8 +11,13 @@ namespace Meadow.Foundation.Sensors.Motion
     /// 
     /// This driver is untested
     /// </summary>
-    public partial class Hmc5883 : ByteCommsSensorBase<Vector>
+    public partial class Hmc5883 : ByteCommsSensorBase<Vector>, II2cPeripheral
     {
+        /// <summary>
+        /// The default I2C address for the peripheral
+        /// </summary>
+        public byte I2cDefaultAddress => (byte)Address.Default;
+
         /// <summary>
         /// Event to be raised when the compass changes
         /// </summary>

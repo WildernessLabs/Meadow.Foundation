@@ -9,8 +9,14 @@ namespace Meadow.Foundation.Sensors.Power
     /// Represents a INA260 Precision Digital Current and Power Monitor
     /// </summary>
     public partial class Ina260
-        : ByteCommsSensorBase<(Units.Power? Power, Voltage? Voltage, Current? Current)>
+        : ByteCommsSensorBase<(Units.Power? Power, Voltage? Voltage, Current? Current)>,
+        II2cPeripheral
     {
+        /// <summary>
+        /// The default I2C address for the peripheral
+        /// </summary>
+        public byte I2cDefaultAddress => (byte)Address.Default;
+
         /// <summary>
         /// Raised when the power value changes
         /// </summary>

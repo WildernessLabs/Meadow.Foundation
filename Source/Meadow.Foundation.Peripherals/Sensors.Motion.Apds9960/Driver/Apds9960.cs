@@ -6,14 +6,11 @@ using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Motion
 {
-    // TODO: the light stuff seems to work. not sure on the RGB conversion though.
-    //  haven't tested any of the gesture stuff.
-    //  need to add distance
-
     /// <summary>
     /// Represents the APDS9960 Proximity, Light, RGB, and Gesture Sensor
     /// </summary>
-    public partial class Apds9960 : ByteCommsSensorBase<(Color? Color, Illuminance? AmbientLight)>
+    public partial class Apds9960 : ByteCommsSensorBase<(Color? Color, Illuminance? AmbientLight)>,
+        II2cPeripheral
     {
         /// <summary>
         /// Raised when the ambient light value changes
@@ -24,6 +21,11 @@ namespace Meadow.Foundation.Sensors.Motion
         /// Raised when the color value changes
         /// </summary>
         public event EventHandler<IChangeResult<Color>> ColorUpdated = delegate { };
+
+        /// <summary>
+        /// The default I2C address for the peripheral
+        /// </summary>
+        public byte I2cDefaultAddress => (byte)Address.Default;
 
         readonly IDigitalInputPort interruptPort;
         readonly GestureData gestureData;

@@ -10,7 +10,7 @@
     <PackageProjectUrl>http://developer.wildernesslabs.co/Meadow/Meadow.Foundation/</PackageProjectUrl>
     <PackageId>Meadow.Foundation.Sensors.Motion.ParallaxPir</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
-    <PackageTags>Meadow, Meadow.Foundation, Motion, Parallax, PIR</PackageTags>
+    <PackageTags>Meadow,Meadow.Foundation,Motion,Parallax,PIR</PackageTags>
     <Version>0.8.55</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Parallax PIR analog motion sensor</Description>

@@ -1,27 +1,33 @@
-﻿using System;
-using System.Threading.Tasks;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
 using Meadow.Peripherals.Sensors;
+using System;
+using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Temperature
 {
     /// <summary>
     /// TMP102 Temperature sensor object
     /// </summary>    
-    public partial class Tmp102 : ByteCommsSensorBase<Units.Temperature>, ITemperatureSensor
+    public partial class Tmp102 : ByteCommsSensorBase<Units.Temperature>,
+        ITemperatureSensor, II2cPeripheral
     {
+        /// <summary>
+        /// The default I2C address for the peripheral
+        /// </summary>
+        public byte I2cDefaultAddress => (byte)Address.Default;
+
         /// <summary>
         /// Raised when the temperature value changes
         /// </summary>
         public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
 
         /// <summary>
-        /// Backing variable for the SensorResolution property.
+        /// Backing variable for the SensorResolution property
         /// </summary>
         private Resolution _sensorResolution;
 
         /// <summary>
-        /// Get / set the resolution of the sensor.
+        /// Get / set the resolution of the sensor
         /// </summary>
         public Resolution SensorResolution
         {
@@ -45,15 +51,15 @@ namespace Meadow.Foundation.Sensors.Temperature
         }
 
         /// <summary>
-        /// The temperature from the last reading.
+        /// The temperature from the last reading
         /// </summary>
         public Units.Temperature? Temperature { get; protected set; }
 
         /// <summary>
-        /// Create a new TMP102 object using the default configuration for the sensor.
+        /// Create a new TMP102 object using the default configuration for the sensor
         /// </summary>
         /// <param name="i2cBus">The I2CBus</param>
-        /// <param name="address">I2C address of the sensor.</param>
+        /// <param name="address">I2C address of the sensor</param>
         public Tmp102(II2cBus i2cBus, byte address = (byte)Address.Default)
             : base(i2cBus, address, readBufferSize: 2, writeBufferSize: 2)
         {

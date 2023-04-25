@@ -15,10 +15,11 @@ namespace Meadow.Foundation.Sensors.Temperature
     ///                        |
     ///                        +---[ TM ]--- &lt; GND
     /// </remarks>
-    public abstract class Thermistor : PollingSensorBase<Units.Temperature>, ITemperatureSensor
+    public abstract class Thermistor : PollingSensorBase<Units.Temperature>,
+        ITemperatureSensor
     {
         /// <summary>
-        /// The analog input eing used to determine output voltage of the voltage divider circuit
+        /// The analog input port used to determine output voltage of the voltage divider circuit
         /// </summary>
         protected IAnalogInputPort AnalogInput { get; }
         /// <summary>
@@ -36,10 +37,10 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// <param name="analogInput">The analog input reading the thermistor voltage divider output</param>
         protected Thermistor(IAnalogInputPort analogInput)
         {
-            this.AnalogInput = analogInput;
-            this.AnalogInput.StartUpdating();
+            AnalogInput = analogInput;
+            AnalogInput.StartUpdating();
 
-            base.Updated += (s, e) => TemperatureUpdated?.Invoke(this, e);
+            Updated += (s, e) => TemperatureUpdated?.Invoke(this, e);
         }
 
         /// <summary>

@@ -11,14 +11,6 @@ using TU = Meadow.Units.Temperature.UnitType;
 
 namespace Meadow.Foundation.Sensors.Motion
 {
-    // Sample Reading
-    //   Accel: [X:-1.04,Y:-0.29,Z:-9.44 (m/s^2)]
-    //   Temp: 21.10C
-
-    // Todo: right now, the sensor default to +-2G sensitivity. that can be
-    // changed in software. it would be good to expose that. note that the
-    // conversion will be different based on sensitivity range.
-
     /// <summary>
     /// Driver for the ADXL362 triple axis accelerometer.
     /// </summary>
@@ -40,12 +32,12 @@ namespace Meadow.Foundation.Sensors.Motion
         const double AVERAGE_TEMPERATURE_BIAS = 350;
 
         /// <summary>
-        /// Digital input port attached to interrupt pin 1 on the ADXL362.
+        /// Digital input port attached to interrupt pin 1 on the ADXL362
         /// </summary>
         private IDigitalInputPort digitalInputPort1;
 
         /// <summary>
-        /// Digital Input port attached to interrupt pin 2 on the ADXL362.
+        /// Digital Input port attached to interrupt pin 2 on the ADXL362
         /// </summary>
         private IDigitalInputPort digitalInputPort2;
 

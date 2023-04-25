@@ -10,7 +10,7 @@
     <PackageProjectUrl>http://developer.wildernesslabs.co/Meadow/Meadow.Foundation/</PackageProjectUrl>
     <PackageId>Meadow.Foundation.Sensors.Weather.WindVane</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
-    <PackageTags>Meadow, Meadow.Foundation, Wind, WindVane</PackageTags>
+    <PackageTags>Meadow,Meadow.Foundation,Wind,WindVane</PackageTags>
     <Version>0.1.22</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>WindVane analog wind direction sensor</Description>

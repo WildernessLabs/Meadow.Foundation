@@ -11,7 +11,8 @@ namespace Meadow.Foundation.Sensors.Accelerometers
     /// Represents a BMI270 interial measurement unit (IMU) 
     /// </summary>
     public partial class Bmi270 :
-        PollingSensorBase<(Acceleration3D? Acceleration3D, AngularVelocity3D? AngularVelocity3D, Units.Temperature? Temperature)>
+        PollingSensorBase<(Acceleration3D? Acceleration3D, AngularVelocity3D? AngularVelocity3D, Units.Temperature? Temperature)>,
+        II2cPeripheral
     {
         /// <summary>
         /// Event raised when linear acceleration changes
@@ -52,6 +53,11 @@ namespace Meadow.Foundation.Sensors.Accelerometers
         /// The range of values that can be read for angular acceleration (gyro) on each axis
         /// </summary>
         public AngularVelocityRange CurrentAngularVelocityRange { get; private set; }
+
+        /// <summary>
+        /// The default I2C address for the peripheral
+        /// </summary>
+        public byte I2cDefaultAddress => (byte)Address.Default;
 
         /// <summary>
         /// I2C Communication bus used to communicate with the peripheral

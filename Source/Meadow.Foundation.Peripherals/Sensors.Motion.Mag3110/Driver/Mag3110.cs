@@ -7,19 +7,18 @@ using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Motion
 {
-    // TODO: Sensor is fully converted but data isn't right:
-    // Accel: [X:429.00,Y:-45.00,Z:-1,682.00 (m/s^2)]
-    // Temp: 16.00C
-
-    // TODO: Interrupt handling is commented out
-
     /// <summary>
     /// Represents the Xtrinsic MAG3110 Three-Axis, Digital Magnetometer
     /// </summary>
     public partial class Mag3110 :
         ByteCommsSensorBase<(MagneticField3D? MagneticField3D, Units.Temperature? Temperature)>,
-        ITemperatureSensor, IMagnetometer
+        ITemperatureSensor, IMagnetometer, II2cPeripheral
     {
+        /// <summary>
+        /// The default I2C address for the peripheral
+        /// </summary>
+        public byte I2cDefaultAddress => (byte)Address.Default;
+
         /// <summary>
         /// Raised when the magnetic field value changes
         /// </summary>

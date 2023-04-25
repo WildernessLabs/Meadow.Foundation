@@ -11,9 +11,14 @@ namespace Meadow.Foundation.Sensors.Motion
     /// <summary>
     /// Represents the Mmc5603 Three-Axis, Digital Magnetometer
     /// </summary>
-    public partial class Mmc5603 :
-        ByteCommsSensorBase<MagneticField3D>, IMagnetometer
+    public partial class Mmc5603 : ByteCommsSensorBase<MagneticField3D>,
+        IMagnetometer, II2cPeripheral
     {
+        /// <summary>
+        /// The default I2C address for the peripheral
+        /// </summary>
+        public byte I2cDefaultAddress => (byte)Address.Default;
+
         /// <summary>
         /// Raised when the magnetic field value changes
         /// </summary>
@@ -128,7 +133,7 @@ namespace Meadow.Foundation.Sensors.Motion
                     }
                 }
 
-                BusComms.ReadRegister(Registers.OUT_X_L, ReadBuffer.Span[0..9]); //9 bytes
+                BusComms.ReadRegister(Registers.OUT_X_L, ReadBuffer.Span[0..9]);
 
                 int x = (int)((uint)(ReadBuffer.Span[0] << 12) | (uint)(ReadBuffer.Span[1] << 4) | (uint)(ReadBuffer.Span[6] >> 4));
                 int y = (int)((uint)(ReadBuffer.Span[2] << 12) | (uint)(ReadBuffer.Span[3] << 4) | (uint)(ReadBuffer.Span[7] >> 4));
