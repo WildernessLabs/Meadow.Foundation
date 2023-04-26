@@ -19,18 +19,11 @@ namespace Meadow.Foundation.Graphics
         /// <summary>
         /// PixelBuffer draw target
         /// </summary>
-        protected IPixelBuffer PixelBuffer
-        {
-            get
-            {
-                if (display != null) return display.PixelBuffer;
-                return _memoryBuffer;
-            }
-        }
+        protected IPixelBuffer PixelBuffer => (display != null) ? display.PixelBuffer : _memoryBuffer;
         private readonly IPixelBuffer _memoryBuffer;
 
         /// <summary>
-        /// Ingore pixels that are outside of the pixel buffer coordinate space
+        /// ignore pixels that are outside of the pixel buffer coordinate space
         /// </summary>
         public bool IgnoreOutOfBoundsPixels = true;
 
@@ -41,9 +34,7 @@ namespace Meadow.Foundation.Graphics
         {
             get
             {
-                // lazy load
                 currentFont ??= new Font6x8();
-
                 return currentFont;
             }
             set
@@ -98,11 +89,10 @@ namespace Meadow.Foundation.Graphics
         {
             get
             {
-                if (display is IRotatableDisplay { } d)
+                if (display is IRotatableDisplay)
                 {
                     return display.Height;
                 }
-
                 return Rotation == RotationType.Default || Rotation == RotationType._180Degrees ? PixelBuffer.Height : PixelBuffer.Width;
             }
         }
@@ -114,11 +104,10 @@ namespace Meadow.Foundation.Graphics
         {
             get
             {
-                if (display is IRotatableDisplay { } d)
+                if (display is IRotatableDisplay)
                 {
                     return display.Width;
                 }
-
                 return Rotation == RotationType.Default || Rotation == RotationType._180Degrees ? PixelBuffer.Width : PixelBuffer.Height;
             }
         }
