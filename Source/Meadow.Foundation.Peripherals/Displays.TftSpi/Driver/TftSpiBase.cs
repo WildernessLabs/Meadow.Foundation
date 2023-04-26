@@ -24,12 +24,12 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// The current rotation of the display
         /// </summary>
-        public RotationType Rotation { get; set; } = RotationType.Normal;
+        public RotationType Rotation { get; protected set; } = RotationType.Normal;
 
         /// <summary>
         /// The display default color mode
         /// </summary>
-        public abstract ColorMode DefautColorMode { get; }
+        public abstract ColorMode DefaultColorMode { get; }
 
         /// <summary>
         /// Width of display in pixels

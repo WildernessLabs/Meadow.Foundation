@@ -11,7 +11,7 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// The display default color mode
         /// </summary>
-        public override ColorMode DefautColorMode => ColorMode.Format16bppRgb565;
+        public override ColorMode DefaultColorMode => ColorMode.Format16bppRgb565;
 
         /// <summary>
         /// The color modes supported by the display
@@ -201,7 +201,7 @@ namespace Meadow.Foundation.Displays
         {
             SendCommand(Register.MADCTL);
 
-            switch (rotation)
+            switch (Rotation = rotation)
             {
                 case RotationType.Normal:
                     SendData((byte)(Register.MADCTL_MX | Register.MADCTL_MY | Register.MADCTL_RGB));

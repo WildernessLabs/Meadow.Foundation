@@ -19,7 +19,15 @@ namespace Meadow.Foundation.Graphics
         /// <summary>
         /// PixelBuffer draw target
         /// </summary>
-        protected IPixelBuffer pixelBuffer;
+        protected IPixelBuffer PixelBuffer
+        {
+            get
+            {
+                if (display != null) return display.PixelBuffer;
+                return _memoryBuffer;
+            }
+        }
+        private readonly IPixelBuffer _memoryBuffer;
 
         /// <summary>
         /// Ingore pixels that are outside of the pixel buffer coordinate space
@@ -34,10 +42,7 @@ namespace Meadow.Foundation.Graphics
             get
             {
                 // lazy load
-                if (currentFont == null)
-                {
-                    currentFont = new Font6x8();
-                }
+                currentFont ??= new Font6x8();
 
                 return currentFont;
             }
@@ -55,7 +60,7 @@ namespace Meadow.Foundation.Graphics
         /// <summary>
         /// Current color mode
         /// </summary>
-        public ColorMode ColorMode => pixelBuffer.ColorMode;
+        public ColorMode ColorMode => PixelBuffer.ColorMode;
 
         /// <summary>
         /// Current rotation used for drawing pixels to the display
@@ -87,14 +92,36 @@ namespace Meadow.Foundation.Graphics
         public Color PenColor { get; set; } = Color.White;
 
         /// <summary>
-        /// Return the height of the display after accounting for the rotation.
+        /// Return the height of the display after accounting for the rotation
         /// </summary>
-        public int Height => Rotation == RotationType.Default || Rotation == RotationType._180Degrees ? pixelBuffer.Height : pixelBuffer.Width;
+        public int Height
+        {
+            get
+            {
+                if (display is IRotatableDisplay { } d)
+                {
+                    return display.Height;
+                }
+
+                return Rotation == RotationType.Default || Rotation == RotationType._180Degrees ? PixelBuffer.Height : PixelBuffer.Width;
+            }
+        }
 
         /// <summary>
-        /// Return the width of the display after accounting for the rotation.
+        /// Return the width of the display after accounting for the rotation
         /// </summary>
-        public int Width => Rotation == RotationType.Default || Rotation == RotationType._180Degrees ? pixelBuffer.Width : pixelBuffer.Height;
+        public int Width
+        {
+            get
+            {
+                if (display is IRotatableDisplay { } d)
+                {
+                    return display.Width;
+                }
+
+                return Rotation == RotationType.Default || Rotation == RotationType._180Degrees ? PixelBuffer.Width : PixelBuffer.Height;
+            }
+        }
 
         /// <summary>
         /// Text display configuration for use with text display menu
@@ -123,8 +150,6 @@ namespace Meadow.Foundation.Graphics
         public MicroGraphics(IGraphicsDisplay display)
         {
             this.display = display;
-
-            this.pixelBuffer = display.PixelBuffer;
         }
 
         /// <summary>
@@ -134,7 +159,7 @@ namespace Meadow.Foundation.Graphics
         /// <param name="initializeBuffer">Initialize the offscreen buffer if true</param>
         public MicroGraphics(PixelBufferBase pixelBuffer, bool initializeBuffer)
         {
-            this.pixelBuffer = pixelBuffer;
+            _memoryBuffer = pixelBuffer;
 
             if (initializeBuffer)
             {
@@ -155,7 +180,14 @@ namespace Meadow.Foundation.Graphics
                 return;
             }
 
-            pixelBuffer.SetPixel(GetXForRotation(x, y), GetYForRotation(x, y), color);
+            if (display is IRotatableDisplay)
+            {
+                PixelBuffer.SetPixel(x, y, color);
+            }
+            else
+            {
+                PixelBuffer.SetPixel(GetXForRotation(x, y), GetYForRotation(x, y), color);
+            }
         }
 
         /// <summary>
@@ -190,7 +222,7 @@ namespace Meadow.Foundation.Graphics
                 return;
             }
 
-            pixelBuffer.SetPixel(index % pixelBuffer.Width, index / pixelBuffer.Width, PenColor);
+            PixelBuffer.SetPixel(index % PixelBuffer.Width, index / PixelBuffer.Width, PenColor);
         }
 
         /// <summary>
@@ -205,7 +237,7 @@ namespace Meadow.Foundation.Graphics
                 return;
             }
 
-            pixelBuffer.InvertPixel(GetXForRotation(x, y), GetYForRotation(x, y));
+            PixelBuffer.InvertPixel(GetXForRotation(x, y), GetYForRotation(x, y));
         }
 
         /// <summary>
@@ -521,9 +553,7 @@ namespace Meadow.Foundation.Graphics
 
             if (startAngleRadians > endAngleRadians)
             {
-                double temp = startAngleRadians;
-                startAngleRadians = endAngleRadians;
-                endAngleRadians = temp;
+                (endAngleRadians, startAngleRadians) = (startAngleRadians, endAngleRadians);
             }
 
             void DrawArcPoint(int x, int y, Color color)
@@ -1232,12 +1262,7 @@ namespace Meadow.Foundation.Graphics
             VerticalAlignment alignmentV = VerticalAlignment.Top,
             IFont? font = null)
         {
-            var fontToDraw = font != null ? font : CurrentFont;
-
-            if (fontToDraw == null)
-            {
-                throw new Exception("CurrentFont must be set before calling DrawText.");
-            }
+            var fontToDraw = (font ?? CurrentFont) ?? throw new Exception("CurrentFont must be set before calling DrawText.");
 
             byte[] bitMap = GetBytesForTextBitmap(text, fontToDraw);
 
@@ -1314,9 +1339,9 @@ namespace Meadow.Foundation.Graphics
             }
 
             //fast and happy path
-            if (Rotation == RotationType.Default && isInBounds)
+            if (display is IRotatableDisplay || Rotation == RotationType.Default && isInBounds)
             {
-                pixelBuffer.WriteBuffer(x, y, buffer);
+                PixelBuffer.WriteBuffer(x, y, buffer);
             }
             else  //loop over every pixel
             {
@@ -1324,7 +1349,7 @@ namespace Meadow.Foundation.Graphics
                 {
                     for (int j = yStartIndex; j < heightToDraw; j++)
                     {
-                        pixelBuffer.SetPixel(GetXForRotation(x + i, y + j),
+                        PixelBuffer.SetPixel(GetXForRotation(x + i, y + j),
                             GetYForRotation(x + i, y + j),
                             buffer.GetPixel(i, j));
                     }
@@ -1618,11 +1643,11 @@ namespace Meadow.Foundation.Graphics
         {
             if (display.DisabledColor == Color.Black)
             {
-                pixelBuffer.Clear();
+                PixelBuffer.Clear();
             }
             else
             {
-                pixelBuffer.Fill(display.DisabledColor);
+                PixelBuffer.Fill(display.DisabledColor);
             }
 
             if (updateDisplay)
@@ -1641,7 +1666,7 @@ namespace Meadow.Foundation.Graphics
         /// <param name="updateDisplay">Update the display immediately when true</param>
         public virtual void Clear(int originX, int originY, int width, int height, bool updateDisplay = false)
         {
-            pixelBuffer.Fill(originX, originY, width, height, display.DisabledColor);
+            PixelBuffer.Fill(originX, originY, width, height, display.DisabledColor);
 
             if (updateDisplay)
             {
@@ -1734,10 +1759,12 @@ namespace Meadow.Foundation.Graphics
         /// <returns></returns>
         public int GetXForRotation(int x, int y)
         {
+            if (display is IRotatableDisplay) { return x; }
+
             return Rotation switch
             {
-                RotationType._90Degrees => pixelBuffer.Width - y - 1,
-                RotationType._180Degrees => pixelBuffer.Width - x - 1,
+                RotationType._90Degrees => PixelBuffer.Width - y - 1,
+                RotationType._180Degrees => PixelBuffer.Width - x - 1,
                 RotationType._270Degrees => y,
                 _ => x,
             };
@@ -1751,11 +1778,13 @@ namespace Meadow.Foundation.Graphics
         /// <returns></returns>
         public int GetYForRotation(int x, int y)
         {
+            if (display is IRotatableDisplay) { return y; }
+
             return Rotation switch
             {
                 RotationType._90Degrees => x,
-                RotationType._180Degrees => pixelBuffer.Height - y - 1,
-                RotationType._270Degrees => pixelBuffer.Height - x - 1,
+                RotationType._180Degrees => PixelBuffer.Height - y - 1,
+                RotationType._270Degrees => PixelBuffer.Height - x - 1,
                 _ => y,
             };
         }
@@ -1787,19 +1816,25 @@ namespace Meadow.Foundation.Graphics
                 if (y + height >= Height) height = Height - y;
             }
 
+            if (display is IRotatableDisplay)
+            {
+                PixelBuffer.Fill(x, y, width, height, color);
+                return;
+            }
+
             switch (Rotation)
             {
                 case RotationType.Default:
-                    pixelBuffer.Fill(x, y, width, height, color);
+                    PixelBuffer.Fill(x, y, width, height, color);
                     break;
                 case RotationType._90Degrees:
-                    pixelBuffer.Fill(GetXForRotation(x, y) - height + 1, GetYForRotation(x, y), height, width, color);
+                    PixelBuffer.Fill(GetXForRotation(x, y) - height + 1, GetYForRotation(x, y), height, width, color);
                     break;
                 case RotationType._180Degrees:
-                    pixelBuffer.Fill(GetXForRotation(x, y) - width + 1, GetYForRotation(x, y) - height + 1, width, height, color);
+                    PixelBuffer.Fill(GetXForRotation(x, y) - width + 1, GetYForRotation(x, y) - height + 1, width, height, color);
                     break;
                 case RotationType._270Degrees:
-                    pixelBuffer.Fill(GetXForRotation(x, y), GetYForRotation(x, y) - width + 1, height, width, color);
+                    PixelBuffer.Fill(GetXForRotation(x, y), GetYForRotation(x, y) - width + 1, height, width, color);
                     break;
             }
         }
