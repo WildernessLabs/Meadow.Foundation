@@ -92,7 +92,7 @@
         /// </summary>
         /// <remarks>
         /// 16-bit controllers are logically separated into two 8-bit ports. 8-bit
-        /// controllers only have one "port" of GPIO pins and ingore the bank setting
+        /// controllers only have one "port" of GPIO pins and ignore the bank setting
         /// </remarks>
         public enum PortBank
         {
