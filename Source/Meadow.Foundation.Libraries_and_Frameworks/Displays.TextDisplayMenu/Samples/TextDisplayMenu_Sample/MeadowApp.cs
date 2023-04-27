@@ -14,7 +14,7 @@ namespace MeadowApp
 {
     public class MeadowApp : App<F7FeatherV2>
     {
-        Menu menu;
+        TextDisplayMenu menu;
 
         Ssd1309 ssd1309;
 
@@ -57,7 +57,7 @@ namespace MeadowApp
 
             Resolver.Log.Info("Create menu...");
 
-            menu = new Menu(ssd1309 as ITextDisplay, menuData, false);
+            menu = new TextDisplayMenu(ssd1309 as ITextDisplay, menuData, false);
 
             next = new PushButton(Device.Pins.D10);
             next.Clicked += (s, e) => { menu.Next(); };

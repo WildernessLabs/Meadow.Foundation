@@ -1,6 +1,6 @@
 using Newtonsoft.Json;
 
-namespace Meadow.Foundation.Displays.TextDisplayMenu
+namespace Meadow.Foundation.Displays.UI
 {
     /// <summary>
     /// Represents a text display menu item

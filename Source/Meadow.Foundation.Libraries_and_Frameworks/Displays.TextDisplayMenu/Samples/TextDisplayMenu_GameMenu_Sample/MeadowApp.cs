@@ -1,7 +1,7 @@
 ﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Displays;
-using Meadow.Foundation.Displays.TextDisplayMenu;
+using Meadow.Foundation.Displays.UI;
 using Meadow.Foundation.Graphics;
 using Meadow.Foundation.Sensors.Buttons;
 using Meadow.Hardware;
@@ -16,7 +16,7 @@ namespace MeadowApp
 {
     public class MeadowApp : App<F7FeatherV2>
     {
-        Menu menu;
+        TextDisplayMenu menu;
 
         MicroGraphics graphics;
         Ssd1309 ssd1309;
@@ -154,7 +154,7 @@ namespace MeadowApp
 
             Resolver.Log.Info("Create menu...");
 
-            menu = new Menu(display, menuData, false);
+            menu = new TextDisplayMenu(display, menuData, false);
 
             menu.Selected += Menu_Selected;
         }
