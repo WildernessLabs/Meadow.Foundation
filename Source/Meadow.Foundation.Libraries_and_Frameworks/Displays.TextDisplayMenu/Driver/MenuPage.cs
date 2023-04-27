@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
-namespace Meadow.Foundation.Displays.TextDisplayMenu
+namespace Meadow.Foundation.Displays.UI
 {
     /// <summary>
     /// Text display MenuPage class
@@ -13,8 +12,9 @@ namespace Meadow.Foundation.Displays.TextDisplayMenu
         /// </summary>
         public int ScrollPosition
         {
-            get => scrollPosition; 
-            set {
+            get => scrollPosition;
+            set
+            {
                 if (value > MenuItems.Count - 1 || value < 0)
                 {
                     Resolver.Log.Warn("Attempting to set a scroll position outside of item range: " + value.ToString());

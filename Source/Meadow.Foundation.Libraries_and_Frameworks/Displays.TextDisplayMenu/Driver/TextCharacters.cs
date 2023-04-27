@@ -1,4 +1,4 @@
-namespace Meadow.Foundation.Displays.TextDisplayMenu
+namespace Meadow.Foundation.Displays.UI
 {
     /// <summary>
     /// TextCharacters class for custom characters on LCD character displays
