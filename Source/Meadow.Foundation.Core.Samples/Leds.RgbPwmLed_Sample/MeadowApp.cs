@@ -77,7 +77,7 @@ namespace Leds.RgbPwmLed_Sample
                         Resolver.Log.Info($"Red brightness: {i * 0.1f}");
                         Thread.Sleep(500);
                     }
-                    rgbPwmLed.Stop();
+                    rgbPwmLed.StopAnimation();
 
                     for (int i = 0; i < 10; i++)
                     {
@@ -85,7 +85,7 @@ namespace Leds.RgbPwmLed_Sample
                         Resolver.Log.Info($"Green brightness: {i * 0.1f}");
                         Thread.Sleep(500);
                     }
-                    rgbPwmLed.Stop();
+                    rgbPwmLed.StopAnimation();
 
                     for (int i = 0; i < 10; i++)
                     {
@@ -93,39 +93,39 @@ namespace Leds.RgbPwmLed_Sample
                         Resolver.Log.Info($"Blue brightness: {i * 0.1f}");
                         Thread.Sleep(500);
                     }
-                    rgbPwmLed.Stop();
+                    rgbPwmLed.StopAnimation();
 
                     // Blink
                     rgbPwmLed.StartBlink(Color.Red, TimeSpan.FromMilliseconds(500), TimeSpan.FromMilliseconds(500), 1f, 0f);
                     Resolver.Log.Info("Blinking Red");
                     Thread.Sleep(3000);
-                    rgbPwmLed.Stop();
+                    rgbPwmLed.StopAnimation();
 
                     rgbPwmLed.StartBlink(Color.Green, TimeSpan.FromMilliseconds(500), TimeSpan.FromMilliseconds(500), 1f, 0f);
                     Resolver.Log.Info("Blinking Green");
                     Thread.Sleep(3000);
-                    rgbPwmLed.Stop();
+                    rgbPwmLed.StopAnimation();
 
                     rgbPwmLed.StartBlink(Color.Blue, TimeSpan.FromMilliseconds(500), TimeSpan.FromMilliseconds(500), 1f, 0f);
                     Resolver.Log.Info("Blinking Blue");
                     Thread.Sleep(3000);
-                    rgbPwmLed.Stop();
+                    rgbPwmLed.StopAnimation();
 
                     // Pulse
                     rgbPwmLed.StartPulse(Color.Red);
                     Resolver.Log.Info("Pulsing Red");
                     Thread.Sleep(3000);
-                    rgbPwmLed.Stop();
+                    rgbPwmLed.StopAnimation();
 
                     rgbPwmLed.StartPulse(Color.Green);
                     Resolver.Log.Info("Pulsing Green");
                     Thread.Sleep(3000);
-                    rgbPwmLed.Stop();
+                    rgbPwmLed.StopAnimation();
 
                     rgbPwmLed.StartPulse(Color.Blue);
                     Resolver.Log.Info("Pulsing Blue");
                     Thread.Sleep(3000);
-                    rgbPwmLed.Stop();
+                    rgbPwmLed.StopAnimation();
                 }
             }
         }

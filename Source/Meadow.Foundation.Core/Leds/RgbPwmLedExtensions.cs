@@ -15,10 +15,10 @@ namespace Meadow.Foundation.Leds
         private static CancellationTokenSource? cancellationTokenSource = null;
 
         /// <summary>
-        /// Stops any running animations
+        /// Stops the current LED animation
         /// </summary>
         /// <param name="led">The LED</param>
-        public static async Task Stop(this RgbPwmLed led)
+        public static async Task StopAnimation(this RgbPwmLed led)
         {
             if (animationTask != null)
             {
@@ -59,7 +59,7 @@ namespace Meadow.Foundation.Leds
         {
             ValidateBrightness(highBrightness, lowBrightness);
 
-            await Stop(led);
+            await StopAnimation(led);
 
             lock (syncRoot)
             {
@@ -104,7 +104,7 @@ namespace Meadow.Foundation.Leds
         {
             ValidateBrightness(highBrightness, lowBrightness);
 
-            await Stop(led);
+            await StopAnimation(led);
 
             lock (syncRoot)
             {
