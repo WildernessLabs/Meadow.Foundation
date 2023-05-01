@@ -273,9 +273,10 @@ namespace Meadow.Foundation.Displays
                 SendCommand(LcdCommand.RASET);  // row addr set
                 dataCommandPort.State = Data;
                 SetAddressBuffer[0] = (byte)(y0 >> 8);
-                SetAddressBuffer[0] = (byte)(y0 & 0xff); // XEND
-                SetAddressBuffer[0] = (byte)(y1 >> 8);
-                SetAddressBuffer[0] = (byte)(y1 & 0xff); // YEND
+                SetAddressBuffer[1] = (byte)(y0 & 0xff); // XEND
+                SetAddressBuffer[2] = (byte)(y1 >> 8);
+                SetAddressBuffer[3] = (byte)(y1 & 0xff); // YEND
+                Write(SetAddressBuffer);
 
                 SendCommand(LcdCommand.RAMWR);  // write to RAM
             }
