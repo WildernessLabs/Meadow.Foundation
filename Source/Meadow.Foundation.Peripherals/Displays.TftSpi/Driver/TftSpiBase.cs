@@ -13,7 +13,7 @@ namespace Meadow.Foundation.Displays
         /// Temporary buffer that can be used to batch set address window buffer commands
         /// </summary>
         protected byte[] SetAddressBuffer { get; } = new byte[4];
-        
+
         //these displays typically support 16 & 18 bit, some also include 8, 9, 12 and/or 24 bit color 
 
         /// <summary>
@@ -135,6 +135,30 @@ namespace Meadow.Foundation.Displays
         protected int nativeWidth;
 
         /// <summary>
+        /// Previous x0 value passed to SetAddressWindow
+        /// Used for optimization to avoid unnecessary SPI commands
+        /// </summary>
+        protected int setAddressLastX0 = -1;
+
+        /// <summary>
+        /// Previous x1 value passed to SetAddressWindow
+        /// Used for optimization to avoid unnecessary SPI commands
+        /// </summary>
+        protected int setAddressLastX1 = -1;
+
+        /// <summary>
+        /// Previous y0 value passed to SetAddressWindow
+        /// Used for optimization to avoid unnecessary SPI commands
+        /// </summary>
+        protected int setAddressLastY0 = -1;
+
+        /// <summary>
+        /// Previous y1 value passed to SetAddressWindow
+        /// Used for optimization to avoid unnecessary SPI commands
+        /// </summary>
+        protected int setAddressLastY1 = -1;
+
+        /// <summary>
         /// Represents an abstract TftSpiBase object
         /// </summary>
         /// <param name="spiBus">SPI bus connected to display</param>
@@ -231,22 +255,30 @@ namespace Meadow.Foundation.Displays
         /// <param name="y1">Y end in pixels</param>
         protected virtual void SetAddressWindow(int x0, int y0, int x1, int y1)
         {
-            SendCommand(LcdCommand.CASET);  // column addr set
-            dataCommandPort.State = Data;
-            SetAddressBuffer[0] = (byte)(x0 >> 8);
-            SetAddressBuffer[1] = (byte)(x0 & 0xff); // XSTART
-            SetAddressBuffer[2] = (byte)(x1 >> 8);
-            SetAddressBuffer[3] = (byte)(x1 & 0xff); // XEND
-            Write(SetAddressBuffer);
-            
-            SendCommand(LcdCommand.RASET);  // row addr set
-            dataCommandPort.State = Data;
-            SetAddressBuffer[0] = (byte)(y0 >> 8);
-            SetAddressBuffer[0] = (byte)(y0 & 0xff); // XEND
-            SetAddressBuffer[0] = (byte)(y1 >> 8);
-            SetAddressBuffer[0] = (byte)(y1 & 0xff); // YEND
-            
-            SendCommand(LcdCommand.RAMWR);  // write to RAM
+            if (x0 != setAddressLastX0 || x1 != setAddressLastX1 || y0 != setAddressLastY0 || y1 != setAddressLastY1)
+            {
+                setAddressLastX0 = x0;
+                setAddressLastX1 = x1;
+                setAddressLastY0 = y0;
+                setAddressLastY1 = y1;
+
+                SendCommand(LcdCommand.CASET);  // column addr set
+                dataCommandPort.State = Data;
+                SetAddressBuffer[0] = (byte)(x0 >> 8);
+                SetAddressBuffer[1] = (byte)(x0 & 0xff); // XSTART
+                SetAddressBuffer[2] = (byte)(x1 >> 8);
+                SetAddressBuffer[3] = (byte)(x1 & 0xff); // XEND
+                Write(SetAddressBuffer);
+
+                SendCommand(LcdCommand.RASET);  // row addr set
+                dataCommandPort.State = Data;
+                SetAddressBuffer[0] = (byte)(y0 >> 8);
+                SetAddressBuffer[0] = (byte)(y0 & 0xff); // XEND
+                SetAddressBuffer[0] = (byte)(y1 >> 8);
+                SetAddressBuffer[0] = (byte)(y1 & 0xff); // YEND
+
+                SendCommand(LcdCommand.RAMWR);  // write to RAM
+            }
         }
 
         /// <summary>
@@ -447,7 +479,7 @@ namespace Meadow.Foundation.Displays
             dataCommandPort.State = Command;
             Write(command);
         }
-        
+
         /// <summary>
         /// Send a single byte to the display (convenience method)
         /// </summary>
