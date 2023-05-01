@@ -9,6 +9,11 @@ namespace Meadow.Foundation.Displays
 {
     public abstract partial class TftSpiBase : IGraphicsDisplay, ISpiPeripheral
     {
+        /// <summary>
+        /// Temporary buffer that can be used to batch set address window buffer commands
+        /// </summary>
+        protected byte[] SetAddressBuffer { get; } = new byte[4];
+        
         //these displays typically support 16 & 18 bit, some also include 8, 9, 12 and/or 24 bit color 
 
         /// <summary>
@@ -218,13 +223,31 @@ namespace Meadow.Foundation.Displays
         }
 
         /// <summary>
-        /// Set addrees window for display updates
+        /// Set address window for display updates
         /// </summary>
         /// <param name="x0">X start in pixels</param>
         /// <param name="y0">Y start in pixels</param>
         /// <param name="x1">X end in pixels</param>
         /// <param name="y1">Y end in pixels</param>
-        protected abstract void SetAddressWindow(int x0, int y0, int x1, int y1);
+        protected virtual void SetAddressWindow(int x0, int y0, int x1, int y1)
+        {
+            SendCommand(LcdCommand.CASET);  // column addr set
+            dataCommandPort.State = Data;
+            SetAddressBuffer[0] = (byte)(x0 >> 8);
+            SetAddressBuffer[1] = (byte)(x0 & 0xff); // XSTART
+            SetAddressBuffer[2] = (byte)(x1 >> 8);
+            SetAddressBuffer[3] = (byte)(x1 & 0xff); // XEND
+            Write(SetAddressBuffer);
+            
+            SendCommand(LcdCommand.RASET);  // row addr set
+            dataCommandPort.State = Data;
+            SetAddressBuffer[0] = (byte)(y0 >> 8);
+            SetAddressBuffer[0] = (byte)(y0 & 0xff); // XEND
+            SetAddressBuffer[0] = (byte)(y1 >> 8);
+            SetAddressBuffer[0] = (byte)(y1 & 0xff); // YEND
+            
+            SendCommand(LcdCommand.RAMWR);  // write to RAM
+        }
 
         /// <summary>
         /// Clear the display.
@@ -424,7 +447,7 @@ namespace Meadow.Foundation.Displays
             dataCommandPort.State = Command;
             Write(command);
         }
-
+        
         /// <summary>
         /// Send a single byte to the display (convenience method)
         /// </summary>

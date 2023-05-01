@@ -9,8 +9,6 @@ namespace Meadow.Foundation.Displays
     /// </summary>
     public class St7789 : TftSpiBase, IRotatableDisplay
     {
-        private readonly byte[] _setAddressBuffer = new byte[4];
-        
         /// <summary>
         /// The default display color mode
         /// </summary>
@@ -156,23 +154,8 @@ namespace Meadow.Foundation.Displays
 
             x1 += xOffset;
             y1 += yOffset;
-
-            SendCommand(LcdCommand.CASET);  // column addr set
-            dataCommandPort.State = Data;
-            _setAddressBuffer[0] = (byte)(x0 >> 8);
-            _setAddressBuffer[1] = (byte)(x0 & 0xff); // XSTART
-            _setAddressBuffer[2] = (byte)(x1 >> 8);
-            _setAddressBuffer[3] = (byte)(x1 & 0xff); // XEND
-            Write(_setAddressBuffer);
             
-            SendCommand(LcdCommand.RASET);  // row addr set
-            dataCommandPort.State = Data;
-            _setAddressBuffer[0] = (byte)(y0 >> 8);
-            _setAddressBuffer[0] = (byte)(y0 & 0xff); // XEND
-            _setAddressBuffer[0] = (byte)(y1 >> 8);
-            _setAddressBuffer[0] = (byte)(y1 & 0xff); // YEND
-            
-            SendCommand(LcdCommand.RAMWR);  // write to RAM
+            base.SetAddressWindow(x0, y0, x1, y1);
         }
 
         /// <summary>
