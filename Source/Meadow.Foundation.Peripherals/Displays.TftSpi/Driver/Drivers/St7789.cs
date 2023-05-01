@@ -154,22 +154,8 @@ namespace Meadow.Foundation.Displays
 
             x1 += xOffset;
             y1 += yOffset;
-
-            SendCommand(LcdCommand.CASET);  // column addr set
-            dataCommandPort.State = Data;
-            Write((byte)(x0 >> 8));
-            Write((byte)(x0 & 0xff));   // XSTART 
-            Write((byte)(x1 >> 8));
-            Write((byte)(x1 & 0xff));   // XEND
-
-            SendCommand(LcdCommand.RASET);  // row addr set
-            dataCommandPort.State = Data;
-            Write((byte)(y0 >> 8));
-            Write((byte)(y0 & 0xff));    // YSTART
-            Write((byte)(y1 >> 8));
-            Write((byte)(y1 & 0xff));    // YEND
-
-            SendCommand(LcdCommand.RAMWR);  // write to RAM
+            
+            base.SetAddressWindow(x0, y0, x1, y1);
         }
 
         /// <summary>

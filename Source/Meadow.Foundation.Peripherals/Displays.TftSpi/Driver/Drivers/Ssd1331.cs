@@ -1,4 +1,5 @@
-﻿using Meadow.Foundation.Graphics;
+﻿using System;
+using Meadow.Foundation.Graphics;
 using Meadow.Hardware;
 
 namespace Meadow.Foundation.Displays
@@ -126,7 +127,7 @@ namespace Meadow.Foundation.Displays
         }
 
         /// <summary>
-        /// Set addrees window for display updates
+        /// Set address window for display updates
         /// </summary>
         /// <param name="x0">X start in pixels</param>
         /// <param name="y0">Y start in pixels</param>
