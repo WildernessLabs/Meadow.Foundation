@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 namespace Meadow.Foundation.Leds
 {
     /// <summary>
-    /// Utility functions to provide blinking and pulsing for RgbPwmLeds
+    /// Utility functions to provide blinking and pulsing for RgbPwmLed
     /// </summary>
     public static class RgbPwmLedExtensions
     {

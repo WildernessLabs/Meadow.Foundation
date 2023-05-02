@@ -1,8 +1,8 @@
 ﻿using Meadow;
 using Meadow.Devices;
-using Meadow.Foundation;
 using Meadow.Foundation.Leds;
 using Meadow.Peripherals.Leds;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -12,17 +12,16 @@ namespace Leds.RgbPwmLed_Onboard_Sample
     {
         //<!=SNIP=>
 
-        RgbPwmLed onboardLed;
+        RgbLed onboardLed;
 
         public override Task Initialize()
         {
             Resolver.Log.Info("Creating peripherals...");
 
-            onboardLed = new RgbPwmLed(
+            onboardLed = new RgbLed(
                 Device.Pins.OnboardLedRed,
                 Device.Pins.OnboardLedGreen,
-                Device.Pins.OnboardLedBlue,
-                commonType: CommonType.CommonAnode);
+                Device.Pins.OnboardLedBlue);
 
             return Task.CompletedTask;
         }
@@ -31,35 +30,34 @@ namespace Leds.RgbPwmLed_Onboard_Sample
         {
             TestColors();
 
-            RunColors();
-
             return Task.CompletedTask;
         }
 
-        public void TestColors()
-        {
-            onboardLed.SetColor(Color.Crimson);
-            Thread.Sleep(3000);
-            onboardLed.SetColor(Color.MediumPurple);
-            Thread.Sleep(3000);
-            onboardLed.SetColor(Color.FromHex("#23abe3"));
-        }
-
-        public void RunColors()
+        public async Task TestColors()
         {
             while (true)
             {
-                // loop through the entire hue spectrum (360 degrees)
-                for (int i = 0; i < 360; i++)
-                {
-                    var hue = (double)i / 360F;
-                    Resolver.Log.Info($"Hue: {hue}");
+                Console.WriteLine("SetColor(RgbLedColors.Red);");
+                onboardLed.SetColor(RgbLedColors.Red);
+                Thread.Sleep(3000);
 
-                    // set the color of the RGB
-                    onboardLed.SetColor(Color.FromHsba(hue, 1, 1));
+                Console.WriteLine("StartBlink();");
+                await onboardLed.StartBlink();
+                Thread.Sleep(3000);
 
-                    Thread.Sleep(20);
-                }
+                Console.WriteLine("StartBlink(RgbLedColors.Green);");
+                await onboardLed.StartBlink(RgbLedColors.Green);
+                Thread.Sleep(3000);
+
+                Console.WriteLine("SetColor(RgbLedColors.Yellow);");
+                onboardLed.SetColor(RgbLedColors.Yellow);
+                Thread.Sleep(3000);
+
+                Console.WriteLine("StartBlink(RgbLedColors.Cyan, 200, 200);");
+                await onboardLed.StartBlink(RgbLedColors.Cyan, TimeSpan.FromMilliseconds(200), TimeSpan.FromMilliseconds(200));
+                Thread.Sleep(3000);
+
+                await onboardLed.StopAnimation();
             }
         }
 
