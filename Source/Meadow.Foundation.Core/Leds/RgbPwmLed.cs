@@ -8,7 +8,7 @@ namespace Meadow.Foundation.Leds
     /// <summary>
     /// Represents a Pulse-Width-Modulation (PWM) controlled RGB LED
     /// </summary>
-    public class RgbPwmLed
+    public partial class RgbPwmLed
     {
         static readonly Frequency DefaultFrequency = new Frequency(200, Frequency.UnitType.Hertz);
 
@@ -208,7 +208,6 @@ namespace Meadow.Foundation.Leds
         /// <param name="redLedForwardVoltage">The forward voltage for the red LED</param>
         /// <param name="greenLedForwardVoltage">The forward voltage for the green LED</param>
         /// <param name="blueLedForwardVoltage">The forward voltage for the blue LED</param>
-        /// <exception cref="ArgumentOutOfRangeException"></exception>
         protected void ValidateForwardVoltages(Voltage redLedForwardVoltage,
             Voltage greenLedForwardVoltage,
             Voltage blueLedForwardVoltage)

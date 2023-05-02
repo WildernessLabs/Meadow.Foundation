@@ -73,7 +73,7 @@ namespace Meadow.Foundation.Leds
                 throw new ArgumentOutOfRangeException();
             }
 
-            leds[index].Stop();
+            leds[index].StopAnimation();
             leds[index].IsOn = isOn;
         }
 
@@ -222,7 +222,7 @@ namespace Meadow.Foundation.Leds
 
             foreach (var led in leds)
             {
-                led.Stop();
+                led.StopAnimation();
             }
         }
 
@@ -236,7 +236,7 @@ namespace Meadow.Foundation.Leds
                 throw new ArgumentOutOfRangeException();
             }
 
-            leds[index].Stop();
+            leds[index].StopAnimation();
         }
     }
 }

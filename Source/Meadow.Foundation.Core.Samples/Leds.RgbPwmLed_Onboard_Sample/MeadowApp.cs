@@ -1,7 +1,7 @@
 ﻿using Meadow;
 using Meadow.Devices;
+using Meadow.Foundation;
 using Meadow.Foundation.Leds;
-using Meadow.Peripherals.Leds;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -12,13 +12,13 @@ namespace Leds.RgbPwmLed_Onboard_Sample
     {
         //<!=SNIP=>
 
-        RgbLed onboardLed;
+        RgbPwmLed onboardLed;
 
         public override Task Initialize()
         {
             Resolver.Log.Info("Creating peripherals...");
 
-            onboardLed = new RgbLed(
+            onboardLed = new RgbPwmLed(
                 Device.Pins.OnboardLedRed,
                 Device.Pins.OnboardLedGreen,
                 Device.Pins.OnboardLedBlue);
@@ -28,7 +28,7 @@ namespace Leds.RgbPwmLed_Onboard_Sample
 
         public override Task Run()
         {
-            TestColors();
+            _ = TestColors();
 
             return Task.CompletedTask;
         }
@@ -38,23 +38,23 @@ namespace Leds.RgbPwmLed_Onboard_Sample
             while (true)
             {
                 Console.WriteLine("SetColor(RgbLedColors.Red);");
-                onboardLed.SetColor(RgbLedColors.Red);
+                onboardLed.SetColor(Color.Red);
                 Thread.Sleep(3000);
 
-                Console.WriteLine("StartBlink();");
-                await onboardLed.StartBlink();
+                Console.WriteLine("StartPulse();");
+                await onboardLed.StartPulse();
                 Thread.Sleep(3000);
 
-                Console.WriteLine("StartBlink(RgbLedColors.Green);");
-                await onboardLed.StartBlink(RgbLedColors.Green);
+                Console.WriteLine("StartPulse(RgbLedColors.Green);");
+                await onboardLed.StartPulse(Color.Green);
                 Thread.Sleep(3000);
 
                 Console.WriteLine("SetColor(RgbLedColors.Yellow);");
-                onboardLed.SetColor(RgbLedColors.Yellow);
+                onboardLed.SetColor(Color.Yellow);
                 Thread.Sleep(3000);
 
-                Console.WriteLine("StartBlink(RgbLedColors.Cyan, 200, 200);");
-                await onboardLed.StartBlink(RgbLedColors.Cyan, TimeSpan.FromMilliseconds(200), TimeSpan.FromMilliseconds(200));
+                Console.WriteLine("StartPulse(RgbLedColors.Cyan, 200, 200);");
+                await onboardLed.StartPulse(Color.Cyan, TimeSpan.FromMilliseconds(400));
                 Thread.Sleep(3000);
 
                 await onboardLed.StopAnimation();
