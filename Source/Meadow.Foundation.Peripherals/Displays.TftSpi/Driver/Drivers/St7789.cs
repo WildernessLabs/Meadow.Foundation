@@ -133,9 +133,7 @@ namespace Meadow.Foundation.Displays
             SendCommand(Register.NORON); //normal display
             DelayMs(10);
             SendCommand(Register.DISPON); //display on
-            DelayMs(500);
-
-            SetAddressWindow(0, 0, Width - 1, Height - 1);
+            DelayMs(120);
 
             dataCommandPort.State = Data;
         }
@@ -154,7 +152,7 @@ namespace Meadow.Foundation.Displays
 
             x1 += xOffset;
             y1 += yOffset;
-            
+
             base.SetAddressWindow(x0, y0, x1, y1);
         }
 
