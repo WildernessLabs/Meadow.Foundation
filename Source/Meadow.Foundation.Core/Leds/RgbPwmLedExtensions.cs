@@ -110,7 +110,7 @@ namespace Meadow.Foundation.Leds
                         led.SetBrightness(lowBrightness);
                         Thread.Sleep(offDuration);
                     }
-                }, TaskCreationOptions.LongRunning);
+                }, cancellationTokenSource.Token, TaskCreationOptions.LongRunning);
 
                 animationTask.Start();
             }
@@ -211,7 +211,7 @@ namespace Meadow.Foundation.Leds
 
                         Thread.Sleep(intervalTime);
                     }
-                }, TaskCreationOptions.LongRunning);
+                }, cancellationTokenSource.Token, TaskCreationOptions.LongRunning);
 
                 animationTask.Start();
             }
