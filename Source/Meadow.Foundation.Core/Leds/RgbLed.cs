@@ -1,5 +1,6 @@
 ﻿using Meadow.Hardware;
 using Meadow.Peripherals.Leds;
+using Meadow.Units;
 
 namespace Meadow.Foundation.Leds
 {
@@ -41,56 +42,7 @@ namespace Meadow.Foundation.Leds
             get => isOn;
             set
             {
-                bool onState = (Common == CommonType.CommonCathode);
-
-                if (value)
-                {
-                    switch (Color)
-                    {
-                        case RgbLedColors.Red:
-                            RedPort.State = onState;
-                            GreenPort.State = !onState;
-                            BluePort.State = !onState;
-                            break;
-                        case RgbLedColors.Green:
-                            RedPort.State = !onState;
-                            GreenPort.State = onState;
-                            BluePort.State = !onState;
-                            break;
-                        case RgbLedColors.Blue:
-                            RedPort.State = !onState;
-                            GreenPort.State = !onState;
-                            BluePort.State = onState;
-                            break;
-                        case RgbLedColors.Yellow:
-                            RedPort.State = onState;
-                            GreenPort.State = onState;
-                            BluePort.State = !onState;
-                            break;
-                        case RgbLedColors.Magenta:
-                            RedPort.State = onState;
-                            GreenPort.State = !onState;
-                            BluePort.State = onState;
-                            break;
-                        case RgbLedColors.Cyan:
-                            RedPort.State = !onState;
-                            GreenPort.State = onState;
-                            BluePort.State = onState;
-                            break;
-                        case RgbLedColors.White:
-                            RedPort.State = onState;
-                            GreenPort.State = onState;
-                            BluePort.State = onState;
-                            break;
-                    }
-                }
-                else
-                {
-                    RedPort.State = !onState;
-                    GreenPort.State = !onState;
-                    BluePort.State = !onState;
-                }
-
+                UpdateLed(value);
                 isOn = value;
             }
         }
@@ -143,6 +95,63 @@ namespace Meadow.Foundation.Leds
             Color = color;
 
             IsOn = true;
+        }
+
+        /// <summary>
+        /// Turns on LED with current color or LED off
+        /// </summary>
+        /// <param name="isOn">Is the LED on</param>
+        protected void UpdateLed(bool isOn) 
+        {
+            bool onState = (Common == CommonType.CommonCathode);
+
+            if (isOn)
+            {
+                switch (Color)
+                {
+                    case RgbLedColors.Red:
+                        RedPort.State = onState;
+                        GreenPort.State = !onState;
+                        BluePort.State = !onState;
+                        break;
+                    case RgbLedColors.Green:
+                        RedPort.State = !onState;
+                        GreenPort.State = onState;
+                        BluePort.State = !onState;
+                        break;
+                    case RgbLedColors.Blue:
+                        RedPort.State = !onState;
+                        GreenPort.State = !onState;
+                        BluePort.State = onState;
+                        break;
+                    case RgbLedColors.Yellow:
+                        RedPort.State = onState;
+                        GreenPort.State = onState;
+                        BluePort.State = !onState;
+                        break;
+                    case RgbLedColors.Magenta:
+                        RedPort.State = onState;
+                        GreenPort.State = !onState;
+                        BluePort.State = onState;
+                        break;
+                    case RgbLedColors.Cyan:
+                        RedPort.State = !onState;
+                        GreenPort.State = onState;
+                        BluePort.State = onState;
+                        break;
+                    case RgbLedColors.White:
+                        RedPort.State = onState;
+                        GreenPort.State = onState;
+                        BluePort.State = onState;
+                        break;
+                }
+            }
+            else
+            {
+                RedPort.State = !onState;
+                GreenPort.State = !onState;
+                BluePort.State = !onState;
+            }
         }
     }
 }
