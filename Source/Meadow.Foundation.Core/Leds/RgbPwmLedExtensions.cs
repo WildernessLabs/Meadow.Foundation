@@ -181,7 +181,7 @@ namespace Meadow.Foundation.Leds
                 {
                     float brightness = lowBrightness;
                     bool ascending = true;
-                    TimeSpan intervalTime = TimeSpan.FromMilliseconds(60); // 60 miliseconds is probably the fastest update we want to do, given that threads are given 20 miliseconds by default. 
+                    var intervalTime = TimeSpan.FromMilliseconds(60); // 60 miliseconds is probably the fastest update we want to do, given that threads are given 20 miliseconds by default. 
                     float steps = (float)(pulseDuration.TotalMilliseconds / intervalTime.TotalMilliseconds);
                     float delta = (highBrightness - lowBrightness) / steps;
 
