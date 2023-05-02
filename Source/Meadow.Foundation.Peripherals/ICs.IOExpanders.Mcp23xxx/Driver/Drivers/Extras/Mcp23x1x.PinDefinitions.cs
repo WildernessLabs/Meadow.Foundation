@@ -11,6 +11,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         public class PinDefinitions : IPinDefinitions
         {
+            /// <summary>
+            /// The controller for the pins
+            /// </summary>
             public IPinController Controller { get; set; }
 
             /// <summary>
@@ -19,7 +22,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             public IList<IPin> AllPins { get; } = new List<IPin>();
 
             /// <summary>
-            /// GPA0
+            /// Pin GPA0
             /// </summary>
             public IPin GPA0 => new Pin(
                 Controller,
@@ -30,7 +33,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             );
 
             /// <summary>
-            /// GPA1
+            /// Pin GPA1
             /// </summary>
             public IPin GPA1 => new Pin(
                 Controller,
@@ -41,7 +44,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             );
 
             /// <summary>
-            /// GPA2
+            /// Pin GPA2
             /// </summary>
             public IPin GPA2 => new Pin(
                 Controller,
@@ -52,7 +55,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             );
 
             /// <summary>
-            /// GPA3
+            /// Pin GPA3
             /// </summary>
             public IPin GPA3 => new Pin(
                 Controller,
@@ -63,7 +66,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             );
 
             /// <summary>
-            /// GPA4
+            /// Pin GPA4
             /// </summary>
             public IPin GPA4 => new Pin(
                 Controller,
@@ -74,7 +77,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             );
 
             /// <summary>
-            /// GPA5
+            /// Pin GPA5
             /// </summary>
             public IPin GPA5 => new Pin(
                 Controller,
@@ -85,7 +88,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             );
 
             /// <summary>
-            /// GPA6
+            /// Pin GPA6
             /// </summary>
             public IPin GPA6 => new Pin(
                 Controller,
@@ -96,7 +99,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             );
 
             /// <summary>
-            /// GPA7
+            /// Pin GPA7
             /// </summary>
             public IPin GPA7 => new Pin(
                 Controller,
@@ -107,7 +110,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             );
 
             /// <summary>
-            /// GPB0
+            /// Pin GPB0
             /// </summary>
             public IPin GPB0 => new Pin(
                 Controller,
@@ -118,7 +121,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             );
 
             /// <summary>
-            /// GPB1
+            /// Pin GPB1
             /// </summary>
             public IPin GPB1 => new Pin(
                 Controller,
@@ -129,7 +132,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             );
 
             /// <summary>
-            /// GPB2
+            /// Pin GPB2
             /// </summary>
             public IPin GPB2 => new Pin(
                 Controller,
@@ -140,7 +143,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             );
 
             /// <summary>
-            /// GPB3
+            /// Pin GPB3
             /// </summary>
             public IPin GPB3 => new Pin(
                 Controller,
@@ -151,7 +154,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             );
 
             /// <summary>
-            /// GPB4
+            /// Pin GPB4
             /// </summary>
             public IPin GPB4 => new Pin(
                 Controller,
@@ -162,7 +165,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             );
 
             /// <summary>
-            /// GPB5
+            /// Pin GPB5
             /// </summary>
             public IPin GPB5 => new Pin(
                 Controller,
@@ -173,7 +176,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             );
 
             /// <summary>
-            /// GPB6
+            /// Pin GPB6
             /// </summary>
             public IPin GPB6 => new Pin(
                 Controller,
@@ -184,7 +187,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             );
 
             /// <summary>
-            /// GPB7
+            /// Pin GPB7
             /// </summary>
             public IPin GPB7 => new Pin(
                 Controller,
