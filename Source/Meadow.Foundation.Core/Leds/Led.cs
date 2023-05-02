@@ -1,8 +1,5 @@
 ﻿using Meadow.Hardware;
 using Meadow.Peripherals.Leds;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Leds
 {
@@ -11,19 +8,14 @@ namespace Meadow.Foundation.Leds
     /// </summary>
     public class Led : ILed
     {
-        private Task? animationTask;
-        private CancellationTokenSource? cancellationTokenSource;
-
         /// <summary>
         /// Gets the port that is driving the LED
         /// </summary>
-        /// <value>The port</value>
         protected IDigitalOutputPort Port { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether this <see cref="T:Meadow.Foundation.Leds.Led"/> is on.
+        /// Turns on LED with current color or turns it off
         /// </summary>
-        /// <value><c>true</c> if is on; otherwise, <c>false</c>.</value>
         public bool IsOn
         {
             get => isOn;
@@ -36,89 +28,20 @@ namespace Meadow.Foundation.Leds
         bool isOn;
 
         /// <summary>
-        /// Creates a LED through a pin directly from the Digital IO of the board
+        /// Create instance of Led
         /// </summary>
-        /// <param name="pin"></param>
+        /// <param name="pin">The Output Pin</param>
         public Led(IPin pin) :
             this(pin.CreateDigitalOutputPort(false))
         { }
 
         /// <summary>
-        /// Creates a LED through a DigitalOutPutPort from an IO Expander
+        /// Create instance of Led
         /// </summary>
-        /// <param name="port"></param>
+        /// <param name="port">The Output Port</param>
         public Led(IDigitalOutputPort port)
         {
             Port = port;
-        }
-
-        /// <summary>
-        /// Stops the LED when its blinking and/or turns it off.
-        /// </summary>
-        public void Stop()
-        {
-            cancellationTokenSource?.Cancel();
-            IsOn = false;
-        }
-
-        /// <summary>
-        /// Blink animation that turns the LED on (500ms) and off (500ms)
-        /// </summary>
-        public void StartBlink()
-        {
-            var onDuration = TimeSpan.FromMilliseconds(500);
-            var offDuration = TimeSpan.FromMilliseconds(500);
-
-            Stop();
-
-            animationTask = new Task(async () =>
-            {
-                cancellationTokenSource = new CancellationTokenSource();
-                await StartBlinkAsync(onDuration, offDuration, cancellationTokenSource.Token);
-            });
-            animationTask.Start();
-        }
-
-        /// <summary>
-        /// Blink animation that turns the LED on and off based on the OnDuration and offDuration values in ms
-        /// </summary>
-        /// <param name="onDuration"></param>
-        /// <param name="offDuration"></param>
-        public void StartBlink(TimeSpan onDuration, TimeSpan offDuration)
-        {
-            Stop();
-
-            animationTask = new Task(async () =>
-            {
-                cancellationTokenSource = new CancellationTokenSource();
-                await StartBlinkAsync(onDuration, offDuration, cancellationTokenSource.Token);
-            });
-            animationTask.Start();
-        }
-
-        /// <summary>
-        /// Set LED to blink
-        /// </summary>
-        /// <param name="onDuration">on duration in ms</param>
-        /// <param name="offDuration">off duration in ms</param>
-        /// <param name="cancellationToken">cancellation token used to cancel blink</param>
-        /// <returns></returns>
-        protected async Task StartBlinkAsync(TimeSpan onDuration, TimeSpan offDuration, CancellationToken cancellationToken)
-        {
-            while (true)
-            {
-                if (cancellationToken.IsCancellationRequested)
-                {
-                    break;
-                }
-
-                Port.State = true;
-                await Task.Delay(onDuration);
-                Port.State = false;
-                await Task.Delay(offDuration);
-            }
-
-            Port.State = IsOn;
         }
     }
 }

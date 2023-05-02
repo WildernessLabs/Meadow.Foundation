@@ -34,10 +34,6 @@
         /// </summary>
         White,
         /// <summary>
-        /// Black (all LEDs off)
-        /// </summary>
-        Black,
-        /// <summary>
         /// Count of colors
         /// </summary>
         count,
