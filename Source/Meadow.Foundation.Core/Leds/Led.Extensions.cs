@@ -7,19 +7,18 @@ namespace Meadow.Foundation.Leds
     /// <summary>
     /// Utility functions to provide blinking for Led
     /// </summary>
-    public static class LedExtensions
+    public partial class Led
     {
-        private static object syncRoot = new object();
+        private object syncRoot = new object();
 
-        private static Task? animationTask = null;
-        private static CancellationTokenSource? cancellationTokenSource = null;
+        private Task? animationTask = null;
+        private CancellationTokenSource? cancellationTokenSource = null;
 
 
         /// <summary>
         /// Stops the current LED animation
         /// </summary>
-        /// <param name="led">The LED</param>
-        public static async Task StopAnimation(this Led led)
+        public async Task StopAnimation()
         {
             if (animationTask != null)
             {
@@ -33,22 +32,19 @@ namespace Meadow.Foundation.Leds
         /// <summary>
         /// Start the Blink animation which sets turns the LED on and off on an interval of 1 second (500ms on, 500ms off)
         /// </summary>
-        /// <param name="led">The LED</param>
-        public static Task StartBlink(this Led led)
+        public Task StartBlink()
         {
-            return led.StartBlink(TimeSpan.FromMilliseconds(500), TimeSpan.FromMilliseconds(500));
+            return StartBlink(TimeSpan.FromMilliseconds(500), TimeSpan.FromMilliseconds(500));
         }
 
         /// <summary>
         /// Start the Blink animation which sets turns the LED on and off with the especified durations
         /// </summary>
-        /// <param name="led">The LED</param>
         /// <param name="onDuration">The duration the LED stays on</param>
         /// <param name="offDuration">The duration the LED stays off</param>
-        public static async Task StartBlink(this Led led,
-            TimeSpan onDuration, TimeSpan offDuration)
+        public async Task StartBlink(TimeSpan onDuration, TimeSpan offDuration)
         {
-            await StopAnimation(led);
+            await StopAnimation();
 
             lock (syncRoot)
             {
@@ -58,10 +54,10 @@ namespace Meadow.Foundation.Leds
                 {
                     while (cancellationTokenSource.Token.IsCancellationRequested == false)
                     {
-                        led.IsOn = true;
+                        IsOn = true;
                         Thread.Sleep(onDuration);
 
-                        led.IsOn = false;
+                        IsOn = false;
                         Thread.Sleep(offDuration);
                     }
                 }, cancellationTokenSource.Token, TaskCreationOptions.LongRunning);

@@ -6,7 +6,7 @@ namespace Meadow.Foundation.Leds
     /// <summary>
     /// Represents a simple LED
     /// </summary>
-    public class Led : ILed
+    public partial class Led : ILed
     {
         /// <summary>
         /// Gets the port that is driving the LED
