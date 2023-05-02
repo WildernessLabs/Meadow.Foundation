@@ -21,7 +21,7 @@ namespace Leds.PwmLed_Onboard_Sample
             redPwmLed = new PwmLed(Device.Pins.OnboardLedRed, TypicalForwardVoltage.ResistorLimited, CircuitTerminationType.High);
             greenPwmLed = new PwmLed(Device.Pins.OnboardLedGreen, TypicalForwardVoltage.ResistorLimited, CircuitTerminationType.High);
             bluePwmLed = new PwmLed(Device.Pins.OnboardLedBlue, TypicalForwardVoltage.ResistorLimited, CircuitTerminationType.High);
-            
+
             return Task.CompletedTask;
         }
 
@@ -29,10 +29,11 @@ namespace Leds.PwmLed_Onboard_Sample
         {
             return PulseLeds();
         }
-        
+
         public async Task BrightnessTest(int loopCount)
         {
-            for (int i = 0; i < loopCount; i++) {
+            for (int i = 0; i < loopCount; i++)
+            {
                 Resolver.Log.Info("Blue On @ 1.0");
                 bluePwmLed.Brightness = 1;
                 await Task.Delay(1000);
@@ -54,7 +55,7 @@ namespace Leds.PwmLed_Onboard_Sample
 
         public async Task PulseLeds()
         {
-            while (true) 
+            while (true)
             {
                 Resolver.Log.Info("Pulse Red.");
                 redPwmLed.StartPulse(TimeSpan.FromMilliseconds(500), lowBrightness: 0.05f);
