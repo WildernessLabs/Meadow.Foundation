@@ -145,7 +145,7 @@ namespace Meadow.Foundation.Leds
                 throw new ArgumentOutOfRangeException();
             }
 
-            pwmLeds[index].Stop();
+            pwmLeds[index].StopAnimation();
             pwmLeds[index].IsOn = isOn;
         }
 
@@ -153,13 +153,13 @@ namespace Meadow.Foundation.Leds
         /// Set the brightness to the LED bar graph using PWM
         /// </summary>
         /// <param name="brightness"></param>
-        public void SetLedBrightness(double brightness)
+        public void SetLedBrightness(float brightness)
         {
             foreach (var led in pwmLeds)
             {
-                led.Stop();
+                led.StopAnimation();
                 led.IsOn = false;
-                led.Brightness = (float)brightness;
+                led.SetBrightness(brightness);
             }
         }
 
@@ -175,9 +175,9 @@ namespace Meadow.Foundation.Leds
                 throw new ArgumentOutOfRangeException();
             }
 
-            pwmLeds[index].Stop();
+            pwmLeds[index].StopAnimation();
             pwmLeds[index].IsOn = false;
-            pwmLeds[index].Brightness = brightness;
+            pwmLeds[index].SetBrightness(brightness);
         }
 
         /// <summary>
@@ -273,7 +273,7 @@ namespace Meadow.Foundation.Leds
 
                 foreach (var led in pwmLeds)
                 {
-                    led.Brightness = highBrightness;
+                    led.SetBrightness(highBrightness);
                 }
                 await Task.Delay(onDuration);
 
@@ -284,7 +284,7 @@ namespace Meadow.Foundation.Leds
 
                 foreach (var led in pwmLeds)
                 {
-                    led.Brightness = lowBrightness;
+                    led.SetBrightness(lowBrightness);
                 }
                 await Task.Delay(offDuration);
             }
@@ -420,7 +420,7 @@ namespace Meadow.Foundation.Leds
 
                 foreach (var led in pwmLeds)
                 {
-                    led.Brightness = Math.Clamp(brightness, 0, 1);
+                    led.SetBrightness(Math.Clamp(brightness, 0, 1));
                 }
 
                 await Task.Delay(intervalTime);
@@ -436,7 +436,7 @@ namespace Meadow.Foundation.Leds
 
             foreach (var led in pwmLeds)
             {
-                led.Stop();
+                led.StopAnimation();
             }
         }
 
@@ -450,7 +450,7 @@ namespace Meadow.Foundation.Leds
                 throw new ArgumentOutOfRangeException();
             }
 
-            pwmLeds[index].Stop();
+            pwmLeds[index].StopAnimation();
         }
     }
 }

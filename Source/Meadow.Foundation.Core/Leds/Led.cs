@@ -1,17 +1,15 @@
 ﻿using Meadow.Hardware;
 using Meadow.Peripherals.Leds;
+using System;
 
 namespace Meadow.Foundation.Leds
 {
     /// <summary>
     /// Represents a simple LED
     /// </summary>
-    public partial class Led : ILed
+    public partial class Led : ILed, IDisposable
     {
-        /// <summary>
-        /// Gets the port that is driving the LED
-        /// </summary>
-        protected IDigitalOutputPort Port { get; set; }
+        readonly bool createdPort = false;
 
         /// <summary>
         /// Turns on LED with current color or turns it off
@@ -28,12 +26,24 @@ namespace Meadow.Foundation.Leds
         bool isOn;
 
         /// <summary>
+        /// Gets the port that is driving the LED
+        /// </summary>
+        protected IDigitalOutputPort Port { get; set; }
+
+        /// <summary>
+        /// Is the object disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
+
+        /// <summary>
         /// Create instance of Led
         /// </summary>
         /// <param name="pin">The Output Pin</param>
         public Led(IPin pin) :
             this(pin.CreateDigitalOutputPort(false))
-        { }
+        {
+            createdPort = true;
+        }
 
         /// <summary>
         /// Create instance of Led
@@ -42,6 +52,32 @@ namespace Meadow.Foundation.Leds
         public Led(IDigitalOutputPort port)
         {
             Port = port;
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        /// <param name="disposing">Is disposing</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && createdPort)
+                {
+                    Port.Dispose();
+                }
+
+                IsDisposed = true;
+            }
         }
     }
 }

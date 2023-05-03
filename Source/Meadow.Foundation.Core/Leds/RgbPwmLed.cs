@@ -247,13 +247,14 @@ namespace Meadow.Foundation.Leds
         /// <summary>
         /// Set the led brightness
         /// </summary>
-        /// <param name="brightness">The LED brightness</param>
+        /// <param name="brightness">Valid values are from 0 to 1, inclusive</param>
         public void SetBrightness(float brightness)
         {
             if (brightness < 0 || brightness > 1)
             {
                 throw new ArgumentOutOfRangeException(nameof(brightness), "error, brightness must be between 0, and 1");
             }
+
             SetColor(Color, brightness);
         }
 
@@ -261,7 +262,7 @@ namespace Meadow.Foundation.Leds
         /// Sets the current color of the LED
         /// </summary>
         /// <param name="color">The LED color</param>
-        /// <param name="brightness">The LED brightness</param>
+        /// <param name="brightness">Valid values are from 0 to 1, inclusive</param>
         public void SetColor(Color color, float brightness = 1)
         {
             if (color == Color && brightness == Brightness)
