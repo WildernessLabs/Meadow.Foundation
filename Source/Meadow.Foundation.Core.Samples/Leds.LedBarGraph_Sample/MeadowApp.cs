@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Leds.LedBarGraph_Sample
 {
-    public class MeadowApp : App<F7FeatherV2>
+    public class MeadowApp : App<F7FeatherV1>
     {
         //<!=SNIP=>
 
@@ -59,7 +59,6 @@ namespace Leds.LedBarGraph_Sample
                 while (percentage < 1)
                 {
                     percentage += 0.10f;
-                    Resolver.Log.Info($"{percentage}");
                     await ledBarGraph.SetPercentage(Math.Min(1.0f, percentage));
                     await Task.Delay(100);
                 }
@@ -70,7 +69,6 @@ namespace Leds.LedBarGraph_Sample
                 while (percentage > 0)
                 {
                     percentage -= 0.10f;
-                    Resolver.Log.Info($"{percentage}");
                     await ledBarGraph.SetPercentage(Math.Max(0.0f, percentage));
                     await Task.Delay(100);
                 }
@@ -81,7 +79,6 @@ namespace Leds.LedBarGraph_Sample
                 while (percentage < 1)
                 {
                     percentage += 0.10f;
-                    Resolver.Log.Info($"{percentage}");
                     await ledBarGraph.SetPercentage(Math.Min(1.0f, percentage));
                     await ledBarGraph.StartBlink(ledBarGraph.GetTopLedForPercentage());
                     await Task.Delay(2000);
@@ -93,7 +90,6 @@ namespace Leds.LedBarGraph_Sample
                 while (percentage > 0)
                 {
                     percentage -= 0.10f;
-                    Resolver.Log.Info($"{percentage}");
                     await ledBarGraph.SetPercentage(Math.Max(0.0f, percentage));
                     await ledBarGraph.StartBlink(ledBarGraph.GetTopLedForPercentage());
                     await Task.Delay(2000);
@@ -104,7 +100,7 @@ namespace Leds.LedBarGraph_Sample
                 Resolver.Log.Info("Blinking for 5 seconds at 500ms on/off...");
                 await ledBarGraph.StartBlink();
                 await Task.Delay(5000);
-                ledBarGraph.StopAnimation();
+                await ledBarGraph.StopAnimation();
 
                 await Task.Delay(1000);
 

@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Leds;
-using Meadow.Peripherals.Leds;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Leds.RgbLed_Sample
 {
@@ -17,12 +16,6 @@ namespace Leds.RgbLed_Sample
         public override Task Initialize()
         {
             Resolver.Log.Info("Initializing...");
-
-            var onRgbLed = new RgbLed(
-                redPin: Device.Pins.OnboardLedRed,
-                greenPin: Device.Pins.OnboardLedGreen,
-                bluePin: Device.Pins.OnboardLedBlue);
-            onRgbLed.SetColor(RgbLedColors.Red);
 
             rgbLeds = new List<RgbLed>
             {
@@ -43,8 +36,6 @@ namespace Leds.RgbLed_Sample
                     Device.CreateDigitalOutputPort(Device.Pins.D12),
                     Device.CreateDigitalOutputPort(Device.Pins.D13))
             };
-
-            onRgbLed.SetColor(RgbLedColors.Green);
 
             return Task.CompletedTask;
         }
@@ -67,25 +58,29 @@ namespace Leds.RgbLed_Sample
 
                 await Task.Delay(1000);
 
-                Resolver.Log.Info("Blinking through each color on each RGB LED...");
+                Resolver.Log.Info("Blinking through each color on each RGB LED (on 500ms / off 500ms)...");
                 foreach (var rgbLed in rgbLeds)
                 {
                     for (int i = 0; i < (int)RgbLedColors.count; i++)
                     {
-                        rgbLed.StartBlink((RgbLedColors)i);
+                        await rgbLed.StartBlink((RgbLedColors)i);
                         await Task.Delay(3000);
+                        await rgbLed.StopAnimation();
+                        rgbLed.IsOn = false;
                     }
                 }
 
                 await Task.Delay(1000);
 
-                Resolver.Log.Info("Blinking through each color on each RGB LED...");
+                Resolver.Log.Info("Blinking through each color on each RGB LED (on 1s / off 1s)...");
                 foreach (var rgbLed in rgbLeds)
                 {
                     for (int i = 0; i < (int)RgbLedColors.count; i++)
                     {
-                        rgbLed.StartBlink((RgbLedColors)i, TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1));
+                        await rgbLed.StartBlink((RgbLedColors)i, TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1));
                         await Task.Delay(3000);
+                        await rgbLed.StopAnimation();
+                        rgbLed.IsOn = false;
                     }
                 }
 

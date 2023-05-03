@@ -97,6 +97,7 @@ namespace Meadow.Foundation.Leds
             ForwardVoltage = forwardVoltage;
 
             maximumPwmDuty = Helpers.CalculateMaximumDutyCycle(forwardVoltage);
+            IsOn = false;
 
             Port.Inverted = terminationType == CircuitTerminationType.High;
             Port.Start();

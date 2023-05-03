@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Leds.PwmLedBarGraph_Sample
 {
-    public class MeadowApp : App<F7FeatherV2>
+    public class MeadowApp : App<F7FeatherV1>
     {
         //<!=SNIP=>
 
@@ -94,6 +94,10 @@ namespace Leds.PwmLedBarGraph_Sample
                 await pwmLedBarGraph.StartPulse();
                 await Task.Delay(5000);
                 await pwmLedBarGraph.StopAnimation();
+
+                await Task.Delay(1000);
+
+                await pwmLedBarGraph.SetBrightness(0);
 
                 await Task.Delay(1000);
             }

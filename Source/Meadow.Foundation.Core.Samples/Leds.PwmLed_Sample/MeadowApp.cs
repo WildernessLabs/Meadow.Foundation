@@ -61,7 +61,7 @@ namespace Leds.PwmLed_Sample
 
                 await Task.Delay(1000);
 
-                Resolver.Log.Info("Blinking the LED for a bit.");
+                Resolver.Log.Info("Blinking each LED (on 500ms / off 500ms)");
                 foreach (var pwmLed in pwmLeds)
                 {
                     await pwmLed.StartBlink();
@@ -71,7 +71,7 @@ namespace Leds.PwmLed_Sample
 
                 await Task.Delay(1000);
 
-                Resolver.Log.Info("Blinking the LED for a bit.");
+                Resolver.Log.Info("Blinking each LED (on 1s / off 1s)");
                 foreach (var pwmLed in pwmLeds)
                 {
                     await pwmLed.StartBlink(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1));
@@ -81,22 +81,13 @@ namespace Leds.PwmLed_Sample
 
                 await Task.Delay(1000);
 
-                Resolver.Log.Info("Pulsing the LED for a bit.");
+                Resolver.Log.Info("Pulsing each LED (600ms pulse duration)");
                 foreach (var pwmLed in pwmLeds)
                 {
                     await pwmLed.StartPulse();
                     await Task.Delay(1000);
                     await pwmLed.StopAnimation();
-                }
-
-                await Task.Delay(1000);
-
-                Resolver.Log.Info("Pulsing the LED for a bit.");
-                foreach (var pwmLed in pwmLeds)
-                {
-                    await pwmLed.StartPulse();
-                    await Task.Delay(1000);
-                    await pwmLed.StopAnimation();
+                    pwmLed.IsOn = false;
                 }
 
                 await Task.Delay(1000);
@@ -112,7 +103,7 @@ namespace Leds.PwmLed_Sample
                     await Task.Delay(250);
                     pwmLed.SetBrightness(1.0f);
                     await Task.Delay(250);
-                    await pwmLed.StopAnimation();
+                    pwmLed.IsOn = false;
                 }
 
                 await Task.Delay(1000);
