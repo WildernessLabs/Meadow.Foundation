@@ -561,7 +561,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
         PortBank GetPortBankForPin(IPin pin)
         {   //hard coded ... verify in Mcp23x1x.PinDefinitions.cs
-            if (pin.Name.StartsWith("GPB"))
+            if ((byte)pin.Key >= 8)
             {
                 return PortBank.B;
             }

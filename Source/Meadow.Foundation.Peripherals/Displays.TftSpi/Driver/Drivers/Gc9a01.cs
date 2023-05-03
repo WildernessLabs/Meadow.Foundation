@@ -287,32 +287,6 @@ namespace Meadow.Foundation.Displays
         }
 
         /// <summary>
-        /// Set address window to update
-        /// </summary>
-        /// <param name="x0">Start x position in pixels</param>
-        /// <param name="y0">End x position in pixels</param>
-        /// <param name="x1">Start y position in pixels</param>
-        /// <param name="y1">End y position in pixels</param>
-        protected override void SetAddressWindow(int x0, int y0, int x1, int y1)
-        {
-            SendCommand(LcdCommand.CASET);  // column addr set
-            dataCommandPort.State = Data;
-            Write((byte)(x0 >> 8));
-            Write((byte)(x0 & 0xff));   // XSTART 
-            Write((byte)(x1 >> 8));
-            Write((byte)(x1 & 0xff));   // XEND
-
-            SendCommand(LcdCommand.RASET);  // row addr set
-            dataCommandPort.State = Data;
-            Write((byte)(y0 >> 8));
-            Write((byte)(y0 & 0xff));    // YSTART
-            Write((byte)(y1 >> 8));
-            Write((byte)(y1 & 0xff));    // YEND
-
-            SendCommand(LcdCommand.RAMWR);  // write to RAM
-        }
-
-        /// <summary>
         /// Set the rotation of the display
         /// </summary>
         /// <param name="rotation">The rotation</param>
