@@ -28,22 +28,22 @@ namespace Meadow.Foundation.Leds
         /// <summary>
         /// Stops the blinking animation on an individual LED
         /// </summary>
-        public async Task StopAnimation(int index)
+        public Task StopAnimation(int index)
         {
             if (index < 0 || index >= Count)
             {
                 throw new ArgumentOutOfRangeException();
             }
 
-            await leds[index].StopAnimation();
+            return leds[index].StopAnimation();
         }
 
         /// <summary>
         /// Blink animation that turns the LED bar graph on (500ms) and off (500ms)
         /// </summary>
-        public async Task StartBlink()
+        public Task StartBlink()
         {
-            await StartBlink(TimeSpan.FromMilliseconds(500), TimeSpan.FromMilliseconds(500));
+            return StartBlink(TimeSpan.FromMilliseconds(500), TimeSpan.FromMilliseconds(500));
         }
 
         /// <summary>
