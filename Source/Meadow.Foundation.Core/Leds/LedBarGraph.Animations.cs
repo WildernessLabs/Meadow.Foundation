@@ -99,8 +99,8 @@ namespace Meadow.Foundation.Leds
         /// Starts a blink animation on an individual LED
         /// </summary>
         /// <param name="index">Index of the LED</param>
-        /// <param name="onDuration">The duration the LED bar graph stays on</param>
-        /// <param name="offDuration">The duration the LED bar graph stays off</param>
+        /// <param name="onDuration">The duration the LED stays on</param>
+        /// <param name="offDuration">The duration the LED stays off</param>
         public Task StartBlink(int index, TimeSpan onDuration, TimeSpan offDuration)
         {
             if (index < 0 || index >= Count)

@@ -55,7 +55,7 @@ namespace Meadow.Foundation.Leds
         /// <summary>
         /// Set the LED state
         /// </summary>
-        /// <param name="index">The index of the LED</param>
+        /// <param name="index">Index of the LED</param>
         /// <param name="isOn">True for on, False for off</param>
         public async Task SetLed(int index, bool isOn)
         {
