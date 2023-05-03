@@ -31,7 +31,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 set => SetPinState?.Invoke(Pin, state = value);
             }
             bool state;
-
+            
             /// <summary>
             /// Create a new DigitalOutputPort 
             /// </summary>
