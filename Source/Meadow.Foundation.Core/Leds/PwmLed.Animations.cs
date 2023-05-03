@@ -42,13 +42,13 @@ namespace Meadow.Foundation.Leds
         /// <summary>
         /// Start the Blink animation which sets the brightness of the LED alternating between a low and high brightness setting, using the durations provided.
         /// </summary>
-        /// <param name="onDuration">The duration the LED stays on</param>
-        /// <param name="offDuration">The duration the LED stays off</param>
+        /// <param name="highBrightnessDuration">The duration the LED stays in high brightness</param>
+        /// <param name="lowBrightnessDuration">The duration the LED stays in low brightness</param>
         /// <param name="highBrightness">The maximum brightness of the animation</param>
         /// <param name="lowBrightness">The minimum brightness of the animation</param>
         public async Task StartBlink(
-            TimeSpan onDuration,
-            TimeSpan offDuration,
+            TimeSpan highBrightnessDuration,
+            TimeSpan lowBrightnessDuration,
             float highBrightness = 1f,
             float lowBrightness = 0f)
         {
@@ -65,10 +65,10 @@ namespace Meadow.Foundation.Leds
                     while (cancellationTokenSource.Token.IsCancellationRequested == false)
                     {
                         SetBrightness(highBrightness);
-                        Thread.Sleep(onDuration);
+                        Thread.Sleep(highBrightnessDuration);
 
                         SetBrightness(lowBrightness);
-                        Thread.Sleep(offDuration);
+                        Thread.Sleep(lowBrightnessDuration);
                     }
                 }, cancellationTokenSource.Token, TaskCreationOptions.LongRunning);
 

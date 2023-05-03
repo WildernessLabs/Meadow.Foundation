@@ -27,7 +27,7 @@ namespace Meadow.Foundation.Leds
         /// <summary>
         /// Create an LedBarGraph instance from an array of IPins
         /// </summary>
-        /// <param name="pins"></param>
+        /// <param name="pins">The Digital Output Pins</param>
         public LedBarGraph(IPin[] pins)
         {
             leds = new Led[pins.Length];
@@ -41,7 +41,7 @@ namespace Meadow.Foundation.Leds
         /// <summary>
         /// Create an LedBarGraph instance from an array of IDigitalOutputPort
         /// </summary>
-        /// <param name="ports"></param>
+        /// <param name="ports">The Digital Output Ports</param>
         public LedBarGraph(IDigitalOutputPort[] ports)
         {
             leds = new Led[ports.Length];
@@ -55,8 +55,8 @@ namespace Meadow.Foundation.Leds
         /// <summary>
         /// Set the LED state
         /// </summary>
-        /// <param name="index">index of the LED</param>
-        /// <param name="isOn"></param>
+        /// <param name="index">The index of the LED</param>
+        /// <param name="isOn">True for on, False for off</param>
         public async Task SetLed(int index, bool isOn)
         {
             if (index >= Count)
@@ -86,14 +86,7 @@ namespace Meadow.Foundation.Leds
 
             for (int i = 1; i <= Count; i++)
             {
-                if (i <= value)
-                {
-                    await SetLed(i - 1, true);
-                }
-                else
-                {
-                    await SetLed(i - 1, false);
-                }
+                await SetLed(i - 1, i <= value);
             }
         }
     }

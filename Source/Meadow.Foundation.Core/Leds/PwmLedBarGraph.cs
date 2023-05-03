@@ -88,8 +88,8 @@ namespace Meadow.Foundation.Leds
         /// <summary>
         /// Set the LED state
         /// </summary>
-        /// <param name="index">index of the LED</param>
-        /// <param name="isOn"></param>
+        /// <param name="index">Index of the LED</param>
+        /// <param name="isOn">True for on, False for off</param>
         public async Task SetLed(int index, bool isOn)
         {
             if (index < 0 || index >= Count)
@@ -104,8 +104,8 @@ namespace Meadow.Foundation.Leds
         /// <summary>
         /// Set the brightness of an individual LED when using PWM
         /// </summary>
-        /// <param name="index"></param>
-        /// <param name="brightness"></param>
+        /// <param name="index">Index of the LED</param>
+        /// <param name="brightness">Valid values are from 0 to 1, inclusive</param>
         public async Task SetLedBrightness(int index, float brightness)
         {
             if (index < 0 || index >= Count)
@@ -150,7 +150,7 @@ namespace Meadow.Foundation.Leds
         /// <summary>
         /// Set the brightness to the LED bar graph using PWM
         /// </summary>
-        /// <param name="brightness"></param>
+        /// <param name="brightness">Valid values are from 0 to 1, inclusive</param>
         public async Task SetBrightness(float brightness)
         {
             foreach (var led in pwmLeds)

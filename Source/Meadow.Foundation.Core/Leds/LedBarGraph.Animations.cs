@@ -49,9 +49,8 @@ namespace Meadow.Foundation.Leds
         /// <summary>
         /// Blink animation that turns the LED bar graph on and off based on the OnDuration and offDuration values
         /// </summary>
-        /// <param name="onDuration">On Duration</param>
-        /// <param name="offDuration">Off Duration</param>
-        /// <returns></returns>
+        /// <param name="onDuration">The duration the LED bar graph stays on</param>
+        /// <param name="offDuration">The duration the LED bar graph stays off</param>
         public async Task StartBlink(TimeSpan onDuration, TimeSpan offDuration)
         {
             await StopAnimation();
@@ -85,7 +84,7 @@ namespace Meadow.Foundation.Leds
         /// <summary>
         /// Starts a blink animation on an individual LED on (500ms) and off (500ms)
         /// </summary>
-        /// <param name="index"></param>
+        /// <param name="index">Index of the LED</param>
         public Task StartBlink(int index)
         {
             if (index < 0 || index >= Count)
@@ -99,9 +98,9 @@ namespace Meadow.Foundation.Leds
         /// <summary>
         /// Starts a blink animation on an individual LED
         /// </summary>
-        /// <param name="index"></param>
-        /// <param name="onDuration"></param>
-        /// <param name="offDuration"></param>
+        /// <param name="index">Index of the LED</param>
+        /// <param name="onDuration">The duration the LED bar graph stays on</param>
+        /// <param name="offDuration">The duration the LED bar graph stays off</param>
         public Task StartBlink(int index, TimeSpan onDuration, TimeSpan offDuration)
         {
             if (index < 0 || index >= Count)
@@ -115,7 +114,6 @@ namespace Meadow.Foundation.Leds
         /// <summary>
         /// Returns the index of the last LED turned on
         /// </summary>
-        /// <returns></returns>
         public int GetTopLedForPercentage()
         {
             return (int)Math.Max(0, Percentage * Count - 0.5);

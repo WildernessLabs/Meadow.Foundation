@@ -28,6 +28,7 @@ namespace Meadow.Foundation.Leds
         /// <summary>
         /// Stops the blinking animation on an individual LED
         /// </summary>
+        /// <param name="index">Index of the LED</param>
         public Task StopAnimation(int index)
         {
             if (index < 0 || index >= Count)
@@ -41,9 +42,9 @@ namespace Meadow.Foundation.Leds
         /// <summary>
         /// Starts a blink animation on an individual LED
         /// </summary>
-        /// <param name="index"></param>
-        /// <param name="highBrightness"></param>
-        /// <param name="lowBrightness"></param>
+        /// <param name="index">Index of the LED</param>
+        /// <param name="highBrightness">The maximum brightness of the animation</param>
+        /// <param name="lowBrightness">The minimum brightness of the animation</param>
         public Task StartBlink(
             int index,
             float highBrightness = 1,
@@ -60,11 +61,11 @@ namespace Meadow.Foundation.Leds
         /// <summary>
         /// Starts a blink animation on an individual LED
         /// </summary>
-        /// <param name="index"></param>
-        /// <param name="highBrightnessDuration"></param>
-        /// <param name="lowBrightnessDuration"></param>
-        /// <param name="highBrightness"></param>
-        /// <param name="lowBrightness"></param>
+        /// <param name="index">Index of the LED</param>
+        /// <param name="highBrightnessDuration">The duration the LED stays in high brightness</param>
+        /// <param name="lowBrightnessDuration">The duration the LED stays in low brightness</param>
+        /// <param name="highBrightness">The maximum brightness of the animation</param>
+        /// <param name="lowBrightness">The minimum brightness of the animation</param>
         public Task StartBlink(
             int index,
             TimeSpan highBrightnessDuration,
@@ -83,8 +84,8 @@ namespace Meadow.Foundation.Leds
         /// <summary>
         /// Start the Blink animation which sets the brightness of the LED alternating between a low and high brightness setting.
         /// </summary>
-        /// <param name="highBrightness">High brigtness.</param>
-        /// <param name="lowBrightness">Low brightness.</param>
+        /// <param name="highBrightness">The maximum brightness of the animation</param>
+        /// <param name="lowBrightness">The minimum brightness of the animation</param>
         public Task StartBlink(float highBrightness = 1, float lowBrightness = 0)
         {
             return StartBlink(TimeSpan.FromMilliseconds(500), TimeSpan.FromMilliseconds(500), highBrightness, lowBrightness);
@@ -134,9 +135,9 @@ namespace Meadow.Foundation.Leds
         /// <summary>
         /// Starts a pulse animation on an individual LED
         /// </summary>
-        /// <param name="index"></param>
-        /// <param name="highBrightness"></param>
-        /// <param name="lowBrightness"></param>
+        /// <param name="index">Index of the LED</param>
+        /// <param name="highBrightness">The maximum brightness of the animation</param>
+        /// <param name="lowBrightness">The minimum brightness of the animation</param>
         public Task StartPulse(int index, float highBrightness = 1, float lowBrightness = 0.15F)
         {
             if (index < 0 || index >= Count)
@@ -150,10 +151,10 @@ namespace Meadow.Foundation.Leds
         /// <summary>
         /// Starts a pulse animation on an individual LED with the specified pulse cycle
         /// </summary>
-        /// <param name="index"></param>
-        /// <param name="pulseDuration"></param>
-        /// <param name="highBrightness"></param>
-        /// <param name="lowBrightness"></param>
+        /// <param name="index">Index of the LED</param>
+        /// <param name="pulseDuration">The pulse animation duration</param>
+        /// <param name="highBrightness">The maximum brightness of the animation</param>
+        /// <param name="lowBrightness">The minimum brightness of the animation</param>
         public Task StartPulse(int index, TimeSpan pulseDuration, float highBrightness = 1, float lowBrightness = 0.15F)
         {
             if (index < 0 || index >= Count)
@@ -167,8 +168,8 @@ namespace Meadow.Foundation.Leds
         /// <summary>
         /// Start the Pulse animation which gradually alternates the brightness of the LED between a low and high brightness setting.
         /// </summary>
-        /// <param name="highBrightness"></param>
-        /// <param name="lowBrightness"></param>
+        /// <param name="highBrightness">The maximum brightness of the animation</param>
+        /// <param name="lowBrightness">The minimum brightness of the animation</param>
         public Task StartPulse(float highBrightness = 1, float lowBrightness = 0.15F)
         {
             return StartPulse(TimeSpan.FromMilliseconds(600), highBrightness, lowBrightness);
@@ -177,9 +178,9 @@ namespace Meadow.Foundation.Leds
         /// <summary>
         /// Start the Pulse animation which gradually alternates the brightness of the LED between a low and high brightness setting, using the durations provided.
         /// </summary>
-        /// <param name="pulseDuration"></param>
-        /// <param name="highBrightness"></param>
-        /// <param name="lowBrightness"></param>
+        /// <param name="pulseDuration">The pulse animation duration</param>
+        /// <param name="highBrightness">The maximum brightness of the animation</param>
+        /// <param name="lowBrightness">The minimum brightness of the animation</param>
         public async Task StartPulse(
             TimeSpan pulseDuration,
             float highBrightness = 1,
@@ -257,7 +258,6 @@ namespace Meadow.Foundation.Leds
         /// <summary>
         /// Returns the index of the last LED turned on
         /// </summary>
-        /// <returns></returns>
         public int GetTopLedForPercentage()
         {
             return (int)Math.Max(0, Percentage * Count - 1);

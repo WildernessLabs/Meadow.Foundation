@@ -1,6 +1,5 @@
 ﻿using Meadow.Hardware;
 using Meadow.Peripherals.Leds;
-using Meadow.Units;
 
 namespace Meadow.Foundation.Leds
 {
@@ -40,11 +39,7 @@ namespace Meadow.Foundation.Leds
         public bool IsOn
         {
             get => isOn;
-            set
-            {
-                UpdateLed(value);
-                isOn = value;
-            }
+            set => UpdateLed(isOn = value);
         }
         bool isOn;
 
@@ -89,7 +84,7 @@ namespace Meadow.Foundation.Leds
         /// <summary>
         /// Sets the current color of the LED.
         /// </summary>
-        /// <param name="color"></param>
+        /// <param name="color">The color value</param>
         public void SetColor(RgbLedColors color)
         {
             Color = color;
@@ -100,8 +95,8 @@ namespace Meadow.Foundation.Leds
         /// <summary>
         /// Turns on LED with current color or LED off
         /// </summary>
-        /// <param name="isOn">Is the LED on</param>
-        protected void UpdateLed(bool isOn) 
+        /// <param name="isOn">True for on, False for off</param>
+        protected void UpdateLed(bool isOn)
         {
             bool onState = (Common == CommonType.CommonCathode);
 
