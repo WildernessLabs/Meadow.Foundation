@@ -71,7 +71,7 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// <param name="enabled">is pixel enabled (on)</param>
         public override void SetPixel(int x, int y, bool enabled)
         {
-            int index = (x >> 3) + (y * Width) >> 3;
+            int index = (x + y * Width) >> 3;
             byte bitMask = (byte)(0x80 >> (x % 8));
 
             Buffer[index] = enabled ? (byte)(Buffer[index] | bitMask) : (byte)(Buffer[index] & ~bitMask);
