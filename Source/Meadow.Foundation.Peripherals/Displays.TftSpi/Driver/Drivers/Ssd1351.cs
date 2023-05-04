@@ -127,8 +127,6 @@ namespace Meadow.Foundation.Displays
 
             SendCommand(CMD_DISPLAYON);
 
-            SetAddressWindow(0, 0, (Width - 1), (Height - 1));
-
             dataCommandPort.State = Data;
         }
 

@@ -383,7 +383,7 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         public void Show()
         {
-            SetAddressWindow(0, 0, Width - 1, Height);
+            SetAddressWindow(0, 0, Width - 1, Height - 1);
 
             dataCommandPort.State = Data;
 

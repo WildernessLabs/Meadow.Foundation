@@ -118,9 +118,7 @@ namespace Meadow.Foundation.Displays
             SendCommand(0x29, null);                // Display on
             SendCommand(0x2c, null);				// Memory write
 
-            SetAddressWindow(0, 0, (Width - 1), (Height - 1));
-
-            dataCommandPort.State = (Data);
+            dataCommandPort.State = Data;
         }
 
         /// <summary>

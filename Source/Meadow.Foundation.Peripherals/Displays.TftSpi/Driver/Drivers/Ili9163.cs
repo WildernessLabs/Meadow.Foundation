@@ -186,9 +186,7 @@ namespace Meadow.Foundation.Displays
             Write(0x29);           // Set display on
             DelayMs(10);
 
-            SetAddressWindow(0, 0, (Width - 1), (Height - 1));
-
-            dataCommandPort.State = (Data);
+            dataCommandPort.State = Data;
         }
     }
 }

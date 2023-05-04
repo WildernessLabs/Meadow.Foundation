@@ -1,5 +1,4 @@
-﻿using System;
-using Meadow.Foundation.Graphics;
+﻿using Meadow.Foundation.Graphics;
 using Meadow.Hardware;
 
 namespace Meadow.Foundation.Displays
@@ -120,8 +119,6 @@ namespace Meadow.Foundation.Displays
             SendCommand(0x7D);
 
             SendCommand(CMD_DISPLAYON);	//--turn on oled panel   
-
-            SetAddressWindow(0, 0, (Width - 1), (Height - 1));
 
             dataCommandPort.State = Data;
         }
