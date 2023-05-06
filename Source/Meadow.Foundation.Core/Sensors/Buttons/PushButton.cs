@@ -153,6 +153,7 @@ namespace Meadow.Foundation.Sensors.Buttons
                         await Task.Delay(ButtonPollingInterval);
                     }
                 }, ctsPolling.Token, TaskCreationOptions.LongRunning);
+                t.Start();
             }
         }
 
