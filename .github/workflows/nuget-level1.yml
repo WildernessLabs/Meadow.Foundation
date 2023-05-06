@@ -19,6 +19,13 @@ jobs:
       
     - uses: ./.github/actions/build-package
       with:
+        packageId: Meadow.Foundation.Audio.MicroAudio
+        path: Source/Meadow.Foundation.Libraries_and_Frameworks/Audio.MicroAudio/Driver/Audio.MicroAudio.csproj
+        version: ${{ env.version }}
+        token: ${{ env.token }}
+      
+    - uses: ./.github/actions/build-package
+      with:
         packageId: Meadow.Foundation.DataLoggers.SensorReading
         path: Source/Meadow.Foundation.Libraries_and_Frameworks/DataLoggers.SensorReading/Driver/DataLoggers.SensorReading.csproj
         version: ${{ env.version }}
