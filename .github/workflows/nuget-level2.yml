@@ -83,7 +83,7 @@ jobs:
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.Displays.Sh1106
-        path: Source/Meadow.Foundation.Peripherals/Displays.Sh1106/Driver/Displays.Sh1106.csproj
+        path: Source/Meadow.Foundation.Peripherals/Displays.Sh110x/Driver/Displays.Sh110x.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
@@ -126,6 +126,13 @@ jobs:
       with:
         packageId: Meadow.Foundation.ICs.IOExpanders.As1115
         path: Source/Meadow.Foundation.Peripherals/ICs.IOExpanders.As1115/Driver/ICs.IOExpanders.As1115.csproj
+        version: ${{ env.version }}
+        token: ${{ env.token }}
+
+    - uses: ./.github/actions/build-package
+      with:
+        packageId: Meadow.Foundation.ICs.IOExpanders.Ht16k33
+        path: Source/Meadow.Foundation.Peripherals/ICs.IOExpanders.Ht16k33/Driver/ICs.IOExpanders.Ht16k33.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
