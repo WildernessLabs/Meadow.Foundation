@@ -13,7 +13,6 @@ namespace Motors.Tb67h420ftg_Encoder_Sample
 {
     public class MeadowApp : App<F7FeatherV2>
     {
-        //RgbPwmLed onboardLed;
         Tb67h420ftg motorDriver;
         RotaryEncoder encoder;
         MicroGraphics display;

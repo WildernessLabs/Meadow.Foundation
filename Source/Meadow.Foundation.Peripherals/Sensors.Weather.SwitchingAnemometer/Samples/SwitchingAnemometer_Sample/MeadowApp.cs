@@ -1,9 +1,7 @@
 ﻿using Meadow;
 using Meadow.Devices;
-using Meadow.Foundation;
 using Meadow.Foundation.Leds;
 using Meadow.Foundation.Sensors.Weather;
-using Meadow.Peripherals.Leds;
 using Meadow.Units;
 using System.Threading.Tasks;
 
@@ -20,14 +18,6 @@ namespace MeadowApp
         {
             Resolver.Log.Info("Initialize...");
 
-            //==== onboard LED
-            onboardLed = new RgbPwmLed(
-                redPwmPin: Device.Pins.OnboardLedRed,
-                greenPwmPin: Device.Pins.OnboardLedGreen,
-                bluePwmPin: Device.Pins.OnboardLedBlue,
-                CommonType.CommonAnode);
-
-            //==== create the anemometer
             anemometer = new SwitchingAnemometer(Device.Pins.A01);
 
             //==== classic events example
@@ -69,9 +59,6 @@ namespace MeadowApp
             // `0.0` - `10kmh`
             int r = (int)windspeed.KilometersPerHour.Map(0f, 10f, 0f, 255f);
             int b = (int)windspeed.KilometersPerHour.Map(0f, 10f, 255f, 0f);
-
-            var wspeedColor = Color.FromRgb(r, 0, b);
-            onboardLed.SetColor(wspeedColor);
         }
         //<!=SNOP=>
     }

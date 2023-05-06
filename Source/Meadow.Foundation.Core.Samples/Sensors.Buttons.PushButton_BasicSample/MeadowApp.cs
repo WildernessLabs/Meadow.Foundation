@@ -4,7 +4,6 @@ using Meadow.Foundation;
 using Meadow.Foundation.Leds;
 using Meadow.Foundation.Sensors.Buttons;
 using Meadow.Peripherals.Leds;
-using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -37,24 +36,28 @@ namespace MeadowApp
 
             //---- wire up the Classic .NET events
             // `PressStarted`
-            pushButton.PressStarted += (s, e) => {
+            pushButton.PressStarted += (s, e) =>
+            {
                 Resolver.Log.Info("pushButton.PressStarted.");
                 onboardLed.SetColor(WildernessLabsColors.AzureBlue);
             };
             // `PressEnded`
-            pushButton.PressEnded += (s, e) => {
+            pushButton.PressEnded += (s, e) =>
+            {
                 Resolver.Log.Info("pushButton.PressEnded.");
                 onboardLed.IsOn = false;
             };
             // `Clicked`
-            pushButton.Clicked += (s, e) => {
+            pushButton.Clicked += (s, e) =>
+            {
                 Resolver.Log.Info("pushButton.Clicked.");
                 onboardLed.SetColor(WildernessLabsColors.PearGreen);
                 Thread.Sleep(250);
                 onboardLed.IsOn = false;
             };
             // `LongPressClicked`
-            pushButton.LongClicked += (s, e) => {
+            pushButton.LongClicked += (s, e) =>
+            {
                 Resolver.Log.Info("pushButton.LongClicked.");
                 onboardLed.SetColor(WildernessLabsColors.ChileanFire);
                 Thread.Sleep(1000);
@@ -65,6 +68,5 @@ namespace MeadowApp
 
             return Task.CompletedTask;
         }
-
     }
 }
