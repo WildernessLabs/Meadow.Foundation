@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace Meadow.Foundation.Displays.TextDisplayMenu.InputTypes
+namespace Meadow.Foundation.Displays.UI.InputTypes
 {
     internal static class InputHelpers
     {

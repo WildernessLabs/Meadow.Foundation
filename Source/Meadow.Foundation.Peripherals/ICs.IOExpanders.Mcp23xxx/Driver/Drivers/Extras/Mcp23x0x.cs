@@ -49,7 +49,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <param name="interruptPort">optional interupt port, needed for input interrupts</param>
         /// <param name="resetPort">Optional Meadow output port used to reset the mcp expander</param>
         protected Mcp23x0x(ISpiBus spiBus, IDigitalOutputPort chipSelectPort, IDigitalInputPort interruptPort = null, IDigitalOutputPort resetPort = null) :
-            base(new SpiMcpDeviceComms(spiBus, chipSelectPort), interruptPort, resetPort) // use the internal constructor that takes an IMcpDeviceComms
+            base(spiBus, chipSelectPort, interruptPort, resetPort)
         {
             Pins = new PinDefinitions(this)
             {

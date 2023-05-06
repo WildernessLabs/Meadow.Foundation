@@ -10,7 +10,7 @@
     <PackageProjectUrl>http://developer.wildernesslabs.co/Meadow/Meadow.Foundation/</PackageProjectUrl>
     <PackageId>Meadow.Foundation.Sensors.Light.Max44009</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
-    <PackageTags>Meadow.Foundation, Max44009, Light</PackageTags>
+    <PackageTags>Meadow.Foundation,Max44009,Light,ultraviolet</PackageTags>
     <Version>0.1.49</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Max44009 I2C ultraviolet and ambient light sensor</Description>
@@ -18,6 +18,6 @@
   </PropertyGroup>
   <ItemGroup>
     <None Include="..\..\..\icon.png" Pack="true" PackagePath="" />
-    <PackageReference Include="Meadow.Foundation" Version="0.*" />
+    <ProjectReference Include="..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
   </ItemGroup>
 </Project>

@@ -18,7 +18,7 @@
             /// <summary>
             /// Default bus address 0x68
             /// </summary>
-            Address_Default = Address_0x68,
+            Default = Address_0x68,
         }
 
         /// <summary>

@@ -58,13 +58,14 @@ namespace Meadow.Foundation.Sensors.Rotary
                                                 0, 1, -1, 0 };
 
         /// <summary>
-        /// Instantiate a new RotaryEncoder on the specified pins.
+        /// Instantiate a new RotaryEncoder on the specified pins
         /// </summary>
-        /// <param name="aPhasePin"></param>
-        /// <param name="bPhasePin"></param>
-        public RotaryEncoder(IPin aPhasePin, IPin bPhasePin) :
-            this(aPhasePin.CreateDigitalInputPort(InterruptMode.EdgeBoth, ResistorMode.InternalPullDown, TimeSpan.Zero, TimeSpan.FromMilliseconds(0.1)),
-                 bPhasePin.CreateDigitalInputPort(InterruptMode.EdgeBoth, ResistorMode.InternalPullDown, TimeSpan.Zero, TimeSpan.FromMilliseconds(0.1)))
+        /// <param name="aPhasePin">Pin A</param>
+        /// <param name="bPhasePin">Pin B</param>
+        /// <param name="isCommonGround">Do the encode pins use a common ground (true) or common positive (false)</param>
+        public RotaryEncoder(IPin aPhasePin, IPin bPhasePin, bool isCommonGround = false) :
+            this(aPhasePin.CreateDigitalInputPort(InterruptMode.EdgeBoth, isCommonGround ? ResistorMode.InternalPullUp : ResistorMode.InternalPullDown, TimeSpan.Zero, TimeSpan.FromMilliseconds(0.1)),
+                 bPhasePin.CreateDigitalInputPort(InterruptMode.EdgeBoth, isCommonGround ? ResistorMode.InternalPullUp : ResistorMode.InternalPullDown, TimeSpan.Zero, TimeSpan.FromMilliseconds(0.1)))
         { }
 
         /// <summary>

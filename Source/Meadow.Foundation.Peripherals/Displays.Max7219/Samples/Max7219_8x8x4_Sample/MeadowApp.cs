@@ -17,7 +17,7 @@ namespace MeadowApp
             Resolver.Log.Info("Init...");
 
             display = new Max7219(
-                Device.CreateSpiBus(Max7219.DefaultSpiBusSpeed),
+                Device.CreateSpiBus(),
                 Device.Pins.D00, deviceCount: 4,
                 maxMode: Max7219.Max7219Mode.Display);
 

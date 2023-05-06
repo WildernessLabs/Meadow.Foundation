@@ -1,9 +1,8 @@
 ﻿using Meadow.Hardware;
 using Meadow.Modbus;
 using Meadow.Units;
-using System.Threading.Tasks;
 using System;
-using System.Net;
+using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Environmental
 {
@@ -253,7 +252,7 @@ namespace Meadow.Foundation.Sensors.Environmental
         /*
          * Get and Set time work but Get returns bad values
          * Leaving code here for future investigation
-         */ 
+         */
         /// <summary>
         /// Set the time on the device
         /// Stores: year, month, day, hour, minute and second
@@ -295,14 +294,14 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// Reads data from the sensor
         /// </summary>
         /// <returns>The latest sensor reading</returns>
-        protected override async Task<(ConcentrationInWater? DisolvedOxygen, 
-            ConcentrationInWater? Chlorophyl, 
-            ConcentrationInWater? BlueGreenAlgae, 
-            Conductivity? ElectricalConductivity, 
-            PotentialHydrogen? PH, 
-            Turbidity? Turbidity, 
-            Units.Temperature? Temperature, 
-            Voltage? OxidationReductionPotential)> 
+        protected override async Task<(ConcentrationInWater? DisolvedOxygen,
+            ConcentrationInWater? Chlorophyl,
+            ConcentrationInWater? BlueGreenAlgae,
+            Conductivity? ElectricalConductivity,
+            PotentialHydrogen? PH,
+            Turbidity? Turbidity,
+            Units.Temperature? Temperature,
+            Voltage? OxidationReductionPotential)>
             ReadSensor()
         {
             (ConcentrationInWater? DisolvedOxygen,
@@ -377,7 +376,7 @@ namespace Meadow.Foundation.Sensors.Environmental
             {
                 OxidationReductionPotentialUpdated?.Invoke(this, new ChangeResult<Voltage>(Redux, changeResult.Old?.OxidationReductionPotential));
             }
- 
+
             base.RaiseEventsAndNotify(changeResult);
         }
     }

@@ -13,11 +13,8 @@ namespace Meadow.Foundation.RTCs
         /// <param name="interruptPin">Digital pin connected to the alarm interrupt pin on the RTC.</param>
         /// <param name="i2cBus">The I2C Bus the peripheral is connected to</param>
         /// <param name="address">I2C Bus address of the peripheral</param>
-        public Ds3231(
-            II2cBus i2cBus,
-            IPin interruptPin = null,
-            byte address = (byte)Address.Default)
-            : base(new I2cPeripheral(i2cBus, address), interruptPin)
+        public Ds3231(II2cBus i2cBus, IPin interruptPin = null, byte address = (byte)Addresses.Default)
+            : base(new I2cCommunications(i2cBus, address), interruptPin)
         { }
 
         /// <summary>
@@ -29,8 +26,8 @@ namespace Meadow.Foundation.RTCs
         public Ds3231(
            II2cBus i2cBus,
            IDigitalInputPort interruptPort = null,
-           byte address = (byte)Address.Default)
-           : base(new I2cPeripheral(i2cBus, address), interruptPort)
+           byte address = (byte)Addresses.Default)
+           : base(new I2cCommunications(i2cBus, address), interruptPort)
         {
         }
     }

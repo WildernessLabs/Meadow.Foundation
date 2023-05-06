@@ -11,13 +11,12 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// The default display color mode
         /// </summary>
-        public override ColorMode DefautColorMode => ColorMode.Format24bppRgb888;
+        public override ColorMode DefaultColorMode => ColorMode.Format24bppRgb888;
 
         /// <summary>
         /// The color modes supported by the display
         /// </summary>
         public override ColorMode SupportedColorModes => ColorMode.Format24bppRgb888;
-
 
         /// <summary>
         /// Create a new Ili9488 display object
@@ -114,10 +113,10 @@ namespace Meadow.Foundation.Displays
             SendData(0x12);
             SendData(0x80);
 
-            SendCommand((byte)Register.MADCTL); // Memory Access Control
-            SendData(0x48);          // MX, BGR
+            SendCommand(Register.MADCTL);
+            SendData(0x48);
 
-            SendCommand((byte)Register.COLOR_MODE); // Pixel Interface Format
+            SendCommand(Register.COLOR_MODE);
             SendData(0x66); //24bpp
 
             SendCommand(0xB0); // Interface Mode Control
@@ -154,40 +153,14 @@ namespace Meadow.Foundation.Displays
         }
 
         /// <summary>
-        /// Set addrees window for display updates
-        /// </summary>
-        /// <param name="x0">X start in pixels</param>
-        /// <param name="y0">Y start in pixels</param>
-        /// <param name="x1">X end in pixels</param>
-        /// <param name="y1">Y end in pixels</param>
-        protected override void SetAddressWindow(int x0, int y0, int x1, int y1)
-        {
-            SendCommand(LcdCommand.CASET);  // column addr set
-            dataCommandPort.State = Data;
-            Write((byte)(x0 >> 8));
-            Write((byte)(x0 & 0xff));   // XSTART 
-            Write((byte)(x1 >> 8));
-            Write((byte)(x1 & 0xff));   // XEND
-
-            SendCommand(LcdCommand.RASET);  // row addr set
-            dataCommandPort.State = Data;
-            Write((byte)(y0 >> 8));
-            Write((byte)(y0 & 0xff));    // YSTART
-            Write((byte)(y1 >> 8));
-            Write((byte)(y1 & 0xff));    // YEND
-
-            SendCommand(LcdCommand.RAMWR);  // write to RAM
-        }
-
-        /// <summary>
         /// Set the display rotation
         /// </summary>
         /// <param name="rotation">The rotation value</param>
         public void SetRotation(RotationType rotation)
         {
-            SendCommand((byte)Register.MADCTL);
+            SendCommand(Register.MADCTL);
 
-            switch (rotation)
+            switch (Rotation = rotation)
             {
                 case RotationType.Normal:
                     SendData((byte)Register.MADCTL_MX | (byte)Register.MADCTL_BGR);

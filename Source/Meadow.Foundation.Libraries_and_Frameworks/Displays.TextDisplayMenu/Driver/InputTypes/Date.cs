@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Meadow.Foundation.Displays.TextDisplayMenu.InputTypes
+namespace Meadow.Foundation.Displays.UI.InputTypes
 {
     /// <summary>
     /// Text display menu Date input type

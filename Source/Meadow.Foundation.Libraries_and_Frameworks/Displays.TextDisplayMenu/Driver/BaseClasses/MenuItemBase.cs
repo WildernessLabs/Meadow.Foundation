@@ -1,47 +1,47 @@
-using Newtonsoft.Json;
 
-namespace Meadow.Foundation.Displays.TextDisplayMenu
+using System.Text.Json.Serialization;
+
+namespace Meadow.Foundation.Displays.UI
 {
     /// <summary>
     /// Represents a text display menu item
     /// </summary>
-    [JsonObject(MemberSerialization.OptIn)]
     public class MenuItem
     {
         /// <summary>
         /// Sub items in the menu
         /// </summary>
-        [JsonProperty("sub")]
+        [JsonPropertyName("sub")]
         public MenuItem[] SubItems { get; set; }
 
         /// <summary>
         /// The text on the menu item
         /// </summary>
-        [JsonProperty("text")]
+        [JsonPropertyName("text")]
         public string Text { get; set; }
 
         /// <summary>
         /// The optional command when the item is selected
         /// </summary>
-        [JsonProperty("command")]
+        [JsonPropertyName("command")]
         public string Command { get; set; }
 
         /// <summary>
         /// The menu item type
         /// </summary>
-        [JsonProperty("type")]
+        [JsonPropertyName("type")]
         public string Type { get; set; }
 
         /// <summary>
         /// The menu item id
         /// </summary>
-        [JsonProperty("id")]
+        [JsonPropertyName("id")]
         public string Id { get; set; }
 
         /// <summary>
         /// The menu item value
         /// </summary>
-        [JsonProperty("value")]
+        [JsonPropertyName("value")]
         public object Value { get; set; }
 
         /// <summary>

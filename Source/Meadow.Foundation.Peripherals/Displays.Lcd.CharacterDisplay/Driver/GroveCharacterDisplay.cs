@@ -1,5 +1,5 @@
-﻿using System.Threading;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
+using System.Threading;
 
 namespace Meadow.Foundation.Displays.Lcd
 {
@@ -66,7 +66,7 @@ namespace Meadow.Foundation.Displays.Lcd
         protected override void Command(byte value)
         {
             var data = new byte[] { 0x80, value };
-            i2cPeripheral.Write(data);
+            i2cComms.Write(data);
         }
 
         /// <summary>
@@ -77,7 +77,7 @@ namespace Meadow.Foundation.Displays.Lcd
         protected override void Send(byte value, byte mode)
         {
             var data = new byte[] { 0x40, value };
-            i2cPeripheral.Write(data);
+            i2cComms.Write(data);
         }
     }
 }

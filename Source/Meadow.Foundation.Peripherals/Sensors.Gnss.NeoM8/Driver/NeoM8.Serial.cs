@@ -34,8 +34,8 @@ namespace Meadow.Foundation.Sensors.Gnss
                 suffixDelimiter: Encoding.ASCII.GetBytes("\r\n"),
                 preserveDelimiter: true,
                 readBufferSize: 512),
-                device.CreateDigitalOutputPort(resetPin, true),
-                device.CreateDigitalInputPort(ppsPin, InterruptMode.EdgeRising, ResistorMode.InternalPullDown))
+                (resetPin != null) ? device.CreateDigitalOutputPort(resetPin, true) : null,
+                (ppsPin != null) ? device.CreateDigitalInputPort(ppsPin, InterruptMode.EdgeRising, ResistorMode.InternalPullDown) : null)
         { }
 
         void InitializeSerial()

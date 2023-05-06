@@ -5,20 +5,42 @@ using System;
 namespace Meadow.Foundation.Leds
 {
     /// <summary>
-    /// Represents APA102/Dotstar Led(s).
+    /// Represents APA102/Dotstar Led(s)
     /// </summary>
-    /// <remarks>Based on logic from https://github.com/adafruit/Adafruit_CircuitPython_DotStar/blob/master/adafruit_dotstar.py </remarks>
-    public partial class Apa102 : IApa102
+    public partial class Apa102 : IApa102, ISpiPeripheral
     {
         /// <summary>
-        /// Default SPI bus speed
+        /// The default SPI bus speed for the device
         /// </summary>
-        public static Frequency DefaultSpiBusSpeed = new Frequency(6000, Frequency.UnitType.Kilohertz);
+        public Frequency DefaultSpiBusSpeed => new Frequency(6000, Frequency.UnitType.Kilohertz);
 
         /// <summary>
-        /// SpiPeripheral object
+        /// The SPI bus speed for the device
         /// </summary>
-        protected ISpiPeripheral spiPeripheral;
+        public Frequency SpiBusSpeed
+        {
+            get => spiComms.BusSpeed;
+            set => spiComms.BusSpeed = value;
+        }
+
+        /// <summary>
+        /// The default SPI bus mode for the device
+        /// </summary>
+        public SpiClockConfiguration.Mode DefaultSpiBusMode => SpiClockConfiguration.Mode.Mode0;
+
+        /// <summary>
+        /// The SPI bus mode for the device
+        /// </summary>
+        public SpiClockConfiguration.Mode SpiBusMode
+        {
+            get => spiComms.BusMode;
+            set => spiComms.BusMode = value;
+        }
+
+        /// <summary>
+        /// SPI Communication bus used to communicate with the peripheral
+        /// </summary>
+        protected ISpiCommunications spiComms;
 
         const short StartHeaderSize = 4;
         const byte LedStart = 0b11100000;
@@ -73,7 +95,7 @@ namespace Meadow.Foundation.Leds
         /// <param name="chipSelectPort">SPI chip select port (optional)</param>
         public Apa102(ISpiBus spiBus, int numberOfLeds, PixelOrder pixelOrder = PixelOrder.BGR, IDigitalOutputPort chipSelectPort = null)
         {
-            spiPeripheral = new SpiPeripheral(spiBus, chipSelectPort);
+            spiComms = new SpiCommunications(spiBus, chipSelectPort, DefaultSpiBusSpeed, DefaultSpiBusMode);
             this.numberOfLeds = numberOfLeds;
             endHeaderSize = this.numberOfLeds / 16;
             Brightness = 1.0f;
@@ -206,7 +228,7 @@ namespace Meadow.Foundation.Leds
         /// </summary>
         public void Show()
         {
-            spiPeripheral.Write(buffer);
+            spiComms.Write(buffer);
         }
 
         /// <summary>

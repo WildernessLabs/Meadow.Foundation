@@ -7,23 +7,22 @@ using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Motion
 {
-    // TODO: Sensor is fully converted but data isn't right:
-    // Accel: [X:429.00,Y:-45.00,Z:-1,682.00 (m/s^2)]
-    // Temp: 16.00C
-
-    // TODO: Interrupt handling is commented out
-
     /// <summary>
     /// Represents the Xtrinsic MAG3110 Three-Axis, Digital Magnetometer
     /// </summary>
     public partial class Mag3110 :
         ByteCommsSensorBase<(MagneticField3D? MagneticField3D, Units.Temperature? Temperature)>,
-        ITemperatureSensor, IMagnetometer
+        ITemperatureSensor, IMagnetometer, II2cPeripheral
     {
+        /// <summary>
+        /// The default I2C address for the peripheral
+        /// </summary>
+        public byte DefaultI2cAddress => (byte)Addresses.Default;
+
         /// <summary>
         /// Raised when the magnetic field value changes
         /// </summary>
-        public event EventHandler<IChangeResult<MagneticField3D>> MagneticField3dUpdated = delegate { };
+        public event EventHandler<IChangeResult<MagneticField3D>> MagneticField3DUpdated = delegate { };
 
         /// <summary>
         /// Raised when the temperature value changes
@@ -38,7 +37,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         /// The current magnetic field value
         /// </summary>
-        public MagneticField3D? MagneticField3d => Conditions.MagneticField3D;
+        public MagneticField3D? MagneticField3D => Conditions.MagneticField3D;
 
         /// <summary>
         /// Current emperature of the die
@@ -52,12 +51,12 @@ namespace Meadow.Foundation.Sensors.Motion
         {
             get
             {
-                var controlRegister = Peripheral.ReadRegister((byte)Registers.CONTROL_1);
+                var controlRegister = BusComms.ReadRegister(Registers.CONTROL_1);
                 return (controlRegister & 0x03) == 0;
             }
             set
             {
-                var controlRegister = Peripheral.ReadRegister(Registers.CONTROL_1);
+                var controlRegister = BusComms.ReadRegister(Registers.CONTROL_1);
                 if (value)
                 {
                     controlRegister &= 0xfc; // ~0x03
@@ -66,7 +65,7 @@ namespace Meadow.Foundation.Sensors.Motion
                 {
                     controlRegister |= 0x01;
                 }
-                Peripheral.WriteRegister(Registers.CONTROL_1, controlRegister);
+                BusComms.WriteRegister(Registers.CONTROL_1, controlRegister);
             }
         }
 
@@ -76,7 +75,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <remarks>
         /// See section 5.1.1 of the datasheet.
         /// </remarks>
-        public bool IsDataReady => (Peripheral.ReadRegister(Registers.DR_STATUS) & 0x08) > 0;
+        public bool IsDataReady => (BusComms.ReadRegister(Registers.DR_STATUS) & 0x08) > 0;
 
 
         /// <summary>
@@ -93,7 +92,7 @@ namespace Meadow.Foundation.Sensors.Motion
             set
             {
                 Standby = true;
-                var cr2 = Peripheral.ReadRegister(Registers.CONTROL_2);
+                var cr2 = BusComms.ReadRegister(Registers.CONTROL_2);
                 if (value)
                 {
                     cr2 |= 0x80;
@@ -102,7 +101,7 @@ namespace Meadow.Foundation.Sensors.Motion
                 {
                     cr2 &= 0x7f;
                 }
-                Peripheral.WriteRegister(Registers.CONTROL_2, cr2);
+                BusComms.WriteRegister(Registers.CONTROL_2, cr2);
                 digitalInputsEnabled = value;
             }
         }
@@ -117,7 +116,7 @@ namespace Meadow.Foundation.Sensors.Motion
         public Mag3110(II2cBus i2cBus, IDigitalInputPort interruptPort = null, byte address = (byte)Addresses.Default)
             : base(i2cBus, address)
         {
-            var deviceID = Peripheral.ReadRegister((byte)Registers.WHO_AM_I);
+            var deviceID = BusComms.ReadRegister(Registers.WHO_AM_I);
             if (deviceID != 0xc4)
             {
                 throw new Exception("Unknown device ID, " + deviceID + " retruend, 0xc4 expected");
@@ -137,13 +136,13 @@ namespace Meadow.Foundation.Sensors.Motion
         public void Reset()
         {
             Standby = true;
-            Peripheral.WriteRegister(Registers.CONTROL_1, 0x00);
-            Peripheral.WriteRegister(Registers.CONTROL_2, 0x80);
+            BusComms.WriteRegister(Registers.CONTROL_1, 0x00);
+            BusComms.WriteRegister(Registers.CONTROL_2, 0x80);
             WriteBuffer.Span[0] = Registers.X_OFFSET_MSB;
             WriteBuffer.Span[1] = WriteBuffer.Span[2] = WriteBuffer.Span[3] = 0;
             WriteBuffer.Span[4] = WriteBuffer.Span[5] = WriteBuffer.Span[6] = 0;
 
-            Peripheral.Write(WriteBuffer.Span[0..7]);
+            BusComms.Write(WriteBuffer.Span[0..7]);
         }
 
         /// <summary>
@@ -154,7 +153,7 @@ namespace Meadow.Foundation.Sensors.Motion
         {
             if (changeResult.New.MagneticField3D is { } mag)
             {
-                MagneticField3dUpdated?.Invoke(this, new ChangeResult<MagneticField3D>(mag, changeResult.Old?.MagneticField3D));
+                MagneticField3DUpdated?.Invoke(this, new ChangeResult<MagneticField3D>(mag, changeResult.Old?.MagneticField3D));
             }
             if (changeResult.New.Temperature is { } temp)
             {
@@ -169,26 +168,23 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <returns>The latest sensor reading</returns>
         protected override Task<(MagneticField3D? MagneticField3D, Units.Temperature? Temperature)> ReadSensor()
         {
-            return Task.Run(() =>
-            {
-                (MagneticField3D? MagneticField3D, Units.Temperature? Temperature) conditions;
+            (MagneticField3D? MagneticField3D, Units.Temperature? Temperature) conditions;
 
-                var controlRegister = Peripheral.ReadRegister(Registers.CONTROL_1);
-                controlRegister |= 0x02;
-                Peripheral.WriteRegister(Registers.CONTROL_1, controlRegister);
+            var controlRegister = BusComms.ReadRegister(Registers.CONTROL_1);
+            controlRegister |= 0x02;
+            BusComms.WriteRegister(Registers.CONTROL_1, controlRegister);
 
-                Peripheral.ReadRegister(Registers.X_MSB, ReadBuffer.Span[0..6]);
+            BusComms.ReadRegister(Registers.X_MSB, ReadBuffer.Span[0..6]);
 
-                conditions.MagneticField3D = new MagneticField3D(
-                    new MagneticField((short)((ReadBuffer.Span[0] << 8) | ReadBuffer.Span[1]), MagneticField.UnitType.MicroTesla),
-                    new MagneticField((short)((ReadBuffer.Span[2] << 8) | ReadBuffer.Span[3]), MagneticField.UnitType.MicroTesla),
-                    new MagneticField((short)((ReadBuffer.Span[4] << 8) | ReadBuffer.Span[5]), MagneticField.UnitType.MicroTesla)
-                    );
+            conditions.MagneticField3D = new MagneticField3D(
+                new MagneticField((short)((ReadBuffer.Span[0] << 8) | ReadBuffer.Span[1]), MagneticField.UnitType.MicroTesla),
+                new MagneticField((short)((ReadBuffer.Span[2] << 8) | ReadBuffer.Span[3]), MagneticField.UnitType.MicroTesla),
+                new MagneticField((short)((ReadBuffer.Span[4] << 8) | ReadBuffer.Span[5]), MagneticField.UnitType.MicroTesla)
+                );
 
-                conditions.Temperature = new Units.Temperature((sbyte)Peripheral.ReadRegister(Registers.TEMPERATURE), Units.Temperature.UnitType.Celsius);
+            conditions.Temperature = new Units.Temperature((sbyte)BusComms.ReadRegister(Registers.TEMPERATURE), Units.Temperature.UnitType.Celsius);
 
-                return conditions;
-            });
+            return Task.FromResult(conditions);
         }
 
         /// <summary>

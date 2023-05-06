@@ -12,7 +12,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     /// </summary>
     public partial class Ccs811 :
         ByteCommsSensorBase<(Concentration? Co2, Concentration? Voc)>,
-        ICo2Sensor, IVocSensor
+        ICo2Sensor, IVocSensor, II2cPeripheral
     {
         private const int ReadBufferSize = 10;
         private const int WriteBufferSize = 8;
@@ -38,6 +38,11 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// The measured VOC concentration
         /// </summary>
         public Concentration? Voc => Conditions.Voc;
+
+        /// <summary>
+        /// The default I2C address for the peripheral
+        /// </summary>
+        public byte DefaultI2cAddress => (byte)Addresses.Default;
 
         /// <summary>
         /// Create a new Ccs811 object
@@ -79,31 +84,31 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
             Thread.Sleep(100);
 
-            var id = Peripheral?.ReadRegister((byte)Register.HW_ID);
+            var id = BusComms?.ReadRegister((byte)Register.HW_ID);
             if (id != 0x81)
             {
                 throw new Exception("Hardware is not identifying as a CCS811");
             }
 
-            Peripheral?.Write((byte)BootloaderCommand.APP_START);
+            BusComms?.Write((byte)BootloaderCommand.APP_START);
 
             SetMeasurementMode(MeasurementMode.ConstantPower1s);
-            var mode = Peripheral?.ReadRegister((byte)Register.MEAS_MODE);
+            var mode = BusComms?.ReadRegister((byte)Register.MEAS_MODE);
         }
 
         private void ShowDebugInfo()
         {
-            var ver = Peripheral?.ReadRegister((byte)Register.HW_VERSION);
+            var ver = BusComms?.ReadRegister((byte)Register.HW_VERSION);
             Resolver.Log.Info($"hardware version A = 0x{ver:x2}");
 
-            var fwb = Peripheral?.ReadRegister((byte)Register.FW_BOOT_VERSION);
+            var fwb = BusComms?.ReadRegister((byte)Register.FW_BOOT_VERSION);
             Resolver.Log.Info($"FWB version = 0x{fwb:x4}");
 
-            var fwa = Peripheral?.ReadRegister((byte)Register.FW_APP_VERSION);
+            var fwa = BusComms?.ReadRegister((byte)Register.FW_APP_VERSION);
             Resolver.Log.Info($"FWA version = 0x{fwa:x4}");
 
             // read status
-            var status = Peripheral?.ReadRegister((byte)Register.STATUS);
+            var status = BusComms?.ReadRegister((byte)Register.STATUS);
             Resolver.Log.Info($"status = 0x{status:x2}");
         }
 
@@ -113,7 +118,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <returns>The baseline value</returns>
         public ushort GetBaseline()
         {
-            return Peripheral?.ReadRegister((byte)Register.BASELINE) ?? 0;
+            return BusComms?.ReadRegister((byte)Register.BASELINE) ?? 0;
         }
 
         /// <summary>
@@ -122,7 +127,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <param name="value">The new baseline</param>
         public void SetBaseline(ushort value)
         {
-            Peripheral?.WriteRegister((byte)Register.BASELINE, (byte)value);
+            BusComms?.WriteRegister((byte)Register.BASELINE, (byte)value);
         }
 
         /// <summary>
@@ -131,7 +136,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <returns>The measurement mode</returns>
         public MeasurementMode GetMeasurementMode()
         {
-            return (MeasurementMode)(Peripheral?.ReadRegister((byte)Register.MEAS_MODE) ?? 0);
+            return (MeasurementMode)(BusComms?.ReadRegister((byte)Register.MEAS_MODE) ?? 0);
         }
 
         /// <summary>
@@ -141,31 +146,28 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         public void SetMeasurementMode(MeasurementMode mode)
         {
             var m = (byte)mode;
-            Peripheral?.WriteRegister((byte)Register.MEAS_MODE, m);
+            BusComms?.WriteRegister((byte)Register.MEAS_MODE, m);
         }
 
         void Reset()
         {
-            Peripheral?.Write(new byte[] { (byte)Register.SW_RESET, 0x11, 0xE5, 0x72, 0x8A });
+            BusComms?.Write(new byte[] { (byte)Register.SW_RESET, 0x11, 0xE5, 0x72, 0x8A });
         }
 
         /// <summary>
         /// Reads data from the sensor
         /// </summary>
         /// <returns>The latest sensor reading</returns>
-        protected override async Task<(Concentration? Co2, Concentration? Voc)> ReadSensor()
+        protected override Task<(Concentration? Co2, Concentration? Voc)> ReadSensor()
         {
-            return await Task.Run(() =>
-            {
-                // data is really in just the first 4, but this gets us status and raw data as well
-                Peripheral?.ReadRegister((byte)Register.ALG_RESULT_DATA, _readingBuffer);
+            // data is really in just the first 4, but this gets us status and raw data as well
+            BusComms?.ReadRegister((byte)Register.ALG_RESULT_DATA, _readingBuffer);
 
-                (Concentration co2, Concentration voc) state;
-                state.co2 = new Concentration(_readingBuffer[0] << 8 | _readingBuffer[1], Concentration.UnitType.PartsPerMillion);
-                state.voc = new Concentration(_readingBuffer[2] << 8 | _readingBuffer[3], Concentration.UnitType.PartsPerBillion);
+            (Concentration? co2, Concentration? voc) state;
+            state.co2 = new Concentration(_readingBuffer[0] << 8 | _readingBuffer[1], Concentration.UnitType.PartsPerMillion);
+            state.voc = new Concentration(_readingBuffer[2] << 8 | _readingBuffer[3], Concentration.UnitType.PartsPerBillion);
 
-                return state;
-            });
+            return Task.FromResult(state);
         }
 
         /// <summary>

@@ -10,13 +10,13 @@
     <PackageProjectUrl>http://developer.wildernesslabs.co/Meadow/Meadow.Foundation/</PackageProjectUrl>
     <PackageId>Meadow.Foundation.Sensors.Radio.Rfid.IDxxLA</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
-    <PackageTags>Meadow, Meadow.Foundation, RFID, ID-2LA, ID-12LA, ID-20LA</PackageTags>
+    <PackageTags>Meadow,Meadow.Foundation,RFID,ID-2LA,ID-12LA,ID-20LA</PackageTags>
     <Version>0.1.50</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>IDxxLA Serial radio frequency ID readers</Description>
   </PropertyGroup>
   <ItemGroup>
     <None Include="..\..\..\icon.png" Pack="true" PackagePath="" />
-    <PackageReference Include="Meadow.Foundation" Version="0.*" />
+    <ProjectReference Include="..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
   </ItemGroup>
 </Project>

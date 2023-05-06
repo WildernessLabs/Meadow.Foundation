@@ -1,14 +1,15 @@
-﻿using System;
-using Meadow.Hardware;
+﻿using Meadow.Foundation.Graphics;
 using Meadow.Foundation.Graphics.Buffers;
-using Meadow.Foundation.Graphics;
+using Meadow.Hardware;
+using Meadow.Units;
+using System;
 
 namespace Meadow.Foundation.Displays
 {
     /// <summary>
-    /// Provide an interface to the SSD130x family of OLED displays
+    /// Represents the SSD130x family of OLED displays
     /// </summary>
-    public abstract partial class Ssd130xBase : IGraphicsDisplay
+    public abstract partial class Ssd130xBase : IGraphicsDisplay, ISpiPeripheral, II2cPeripheral
     {
         /// <summary>
         /// The display color mode
@@ -36,9 +37,42 @@ namespace Meadow.Foundation.Displays
         public IPixelBuffer PixelBuffer => imageBuffer;
 
         /// <summary>
-        /// SSD1306 SPI display
+        /// The default SPI bus speed for the device
         /// </summary>
-        protected ISpiPeripheral spiPeripheral;
+        public Frequency DefaultSpiBusSpeed => new Frequency(8000, Frequency.UnitType.Kilohertz);
+
+        /// <summary>
+        /// The SPI bus speed for the device
+        /// </summary>
+        public Frequency SpiBusSpeed
+        {
+            get => spiComms.BusSpeed;
+            set => spiComms.BusSpeed = value;
+        }
+
+        /// <summary>
+        /// The default I2C address for the peripheral
+        /// </summary>
+        public byte DefaultI2cAddress => (byte)Addresses.Default;
+
+        /// <summary>
+        /// The default SPI bus mode for the device
+        /// </summary>
+        public SpiClockConfiguration.Mode DefaultSpiBusMode => SpiClockConfiguration.Mode.Mode0;
+
+        /// <summary>
+        /// The SPI bus mode for the device
+        /// </summary>
+        public SpiClockConfiguration.Mode SpiBusMode
+        {
+            get => spiComms.BusMode;
+            set => spiComms.BusMode = value;
+        }
+
+        /// <summary>
+        /// SPI Communication bus used to communicate with the peripheral
+        /// </summary>
+        protected ISpiCommunications spiComms;
 
         /// <summary>
         /// The data command port
@@ -76,9 +110,9 @@ namespace Meadow.Foundation.Displays
         protected const int PAGE_SIZE = 16;
 
         /// <summary>
-        /// SSD1306 I2C display
+        /// I2C Communication bus used to communicate with the peripheral
         /// </summary>
-        protected II2cPeripheral i2cPeripheral;
+        protected II2cCommunications i2cComms;
 
         /// <summary>
         /// Buffer holding the pixels in the display
@@ -175,13 +209,13 @@ namespace Meadow.Foundation.Displays
             if (connectionType == ConnectionType.SPI)
             {
                 dataCommandPort.State = Command;
-                spiPeripheral.Write(command);
+                spiComms.Write(command);
             }
             else
             {
                 commandBuffer.Span[0] = 0x00;
                 commandBuffer.Span[1] = command;
-                i2cPeripheral.Write(commandBuffer.Span);
+                i2cComms.Write(commandBuffer.Span);
             }
         }
 
@@ -194,7 +228,7 @@ namespace Meadow.Foundation.Displays
             if (connectionType == ConnectionType.SPI)
             {
                 dataCommandPort.State = Command;
-                spiPeripheral.Write(commands);
+                spiComms.Write(commands);
             }
             else
             {   //a little heavy but this is only used a couple of times
@@ -202,7 +236,7 @@ namespace Meadow.Foundation.Displays
                 Span<byte> data = new byte[commands.Length + 1];
                 data[0] = 0x00;
                 commands.CopyTo(data.Slice(1, commands.Length));
-                i2cPeripheral.Write(data);
+                i2cComms.Write(data);
             }
         }
 
@@ -216,7 +250,7 @@ namespace Meadow.Foundation.Displays
             if (connectionType == ConnectionType.SPI)
             {
                 dataCommandPort.State = Data;
-                spiPeripheral.Bus.Exchange(chipSelectPort, imageBuffer.Buffer, readBuffer);
+                spiComms.Bus.Exchange(chipSelectPort, imageBuffer.Buffer, readBuffer);
             }
             else//  I2C
             {   //  Send the buffer page by page
@@ -228,7 +262,7 @@ namespace Meadow.Foundation.Displays
                     if (imageBuffer.ByteCount - index < PAGE_SIZE) { break; }
 
                     Array.Copy(imageBuffer.Buffer, index, pageBuffer, 1, PAGE_SIZE);
-                    i2cPeripheral.Write(pageBuffer);
+                    i2cComms.Write(pageBuffer);
                 }
             }
         }

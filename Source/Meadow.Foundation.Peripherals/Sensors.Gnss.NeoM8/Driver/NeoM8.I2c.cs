@@ -6,26 +6,33 @@ using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Gnss
 {
-    public partial class NeoM8
+    public partial class NeoM8 : II2cPeripheral
     {
-        I2cPeripheral i2CPeripheral;
+        /// <summary>
+        /// The default I2C address for the peripheral
+        /// </summary>
+        public byte DefaultI2cAddress => (byte)Addresses.Default;
+
+        /// <summary>
+        /// I2C Communication bus used to communicate with the peripheral
+        /// </summary>
+        protected II2cCommunications i2cComms;
 
         readonly Memory<byte> i2cBuffer = new byte[BUFFER_SIZE];
-
-        IDigitalOutputPort resetPort;
-        IDigitalInputPort ppsPort;
+        readonly IDigitalOutputPort resetPort;
+        readonly IDigitalInputPort ppsPort;
 
         /// <summary>
         /// Create a new NeoM8 object using I2C
         /// </summary>
-        public NeoM8(II2cBus i2cBus, byte address = (byte)Addresses.Default, IPin resetPin = null, IPin ppsPin = null)  
+        public NeoM8(II2cBus i2cBus, byte address = (byte)Addresses.Default, IPin resetPin = null, IPin ppsPin = null)
         {
-            if(resetPin != null)
+            if (resetPin != null)
             {
                 resetPort = resetPin.CreateDigitalOutputPort(true);
             }
 
-            if(ppsPin != null)
+            if (ppsPin != null)
             {
                 ppsPort = ppsPin.CreateDigitalInputPort(InterruptMode.EdgeRising, ResistorMode.InternalPullDown);
             }
@@ -46,7 +53,7 @@ namespace Meadow.Foundation.Sensors.Gnss
 
         async Task InitializeI2c(II2cBus i2cBus, byte address)
         {
-            i2CPeripheral = new I2cPeripheral(i2cBus, address, 128);
+            i2cComms = new I2cCommunications(i2cBus, address, 128);
 
             messageProcessor = new SerialMessageProcessor(suffixDelimiter: Encoding.ASCII.GetBytes("\r\n"),
                                         preserveDelimiter: true,
@@ -62,27 +69,29 @@ namespace Meadow.Foundation.Sensors.Gnss
 
         async Task StartUpdatingI2c()
         {
-            await Task.Run(() =>
+            var t = new Task(() =>
             {
                 int len;
 
                 while (true)
                 {
-                    len = i2CPeripheral.ReadRegisterAsUShort(0xFD, ByteOrder.BigEndian);
+                    len = i2cComms.ReadRegisterAsUShort(0xFD, ByteOrder.BigEndian);
 
-                    if(len > 0)
+                    if (len > 0)
                     {
-                        if(len > 0)
+                        if (len > 0)
                         {
                             var data = i2cBuffer.Slice(0, Math.Min(len, BUFFER_SIZE)).Span;
 
-                            i2CPeripheral.ReadRegister(0xFF, data);
+                            i2cComms.ReadRegister(0xFF, data);
                             messageProcessor.Process(data.ToArray());
                         }
                     }
                     Thread.Sleep(COMMS_SLEEP_MS);
                 }
-            });
+            }, TaskCreationOptions.LongRunning);
+            t.Start();
+            await t;
         }
     }
 }

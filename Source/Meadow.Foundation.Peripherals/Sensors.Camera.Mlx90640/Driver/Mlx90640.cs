@@ -1,5 +1,5 @@
-﻿using System;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
+using System;
 using System.Threading;
 
 namespace Meadow.Foundation.Sensors.Camera
@@ -8,7 +8,7 @@ namespace Meadow.Foundation.Sensors.Camera
     /// Represents the MLX90640 32x24 IR array
     /// The MLX90640 is a fully calibrated 32x24 pixels thermal IR array
     /// </summary>
-    public partial class Mlx90640
+    public partial class Mlx90640 : II2cPeripheral
     {
         /// <summary>
         /// Camera serial number as a string
@@ -18,9 +18,9 @@ namespace Meadow.Foundation.Sensors.Camera
         /// <summary>
         /// Emissivity
         /// </summary>
-        public float Emissivity 
+        public float Emissivity
         {
-            get => emissivity; 
+            get => emissivity;
             set
             {
                 if (value > 1)
@@ -35,13 +35,13 @@ namespace Meadow.Foundation.Sensors.Camera
                 {
                     emissivity = value;
                 }
-            } 
+            }
         }
 
         /// <summary>
         /// Reflected temperature
         /// </summary>
-        public Meadow.Units.Temperature ReflectedTemperature { get; set; }
+        public Units.Temperature ReflectedTemperature { get; set; }
 
         /// <summary>
         /// Camera configuration
@@ -53,7 +53,15 @@ namespace Meadow.Foundation.Sensors.Camera
         const byte OpenAirTaShift = 8;
         const short DeviceId1Register = 0x2407;
 
-        readonly II2cPeripheral i2CPeripheral;
+        /// <summary>
+        /// The default I2C address for the peripheral
+        /// </summary>
+        public byte DefaultI2cAddress => (byte)Addresses.Default;
+
+        /// <summary>
+        /// I2C Communication bus used to communicate with the peripheral
+        /// </summary>
+        protected readonly II2cCommunications i2cComms;
 
         float emissivity;
 
@@ -67,7 +75,7 @@ namespace Meadow.Foundation.Sensors.Camera
             byte address = (byte)Addresses.Default,
             float emissivity = 0.95f)
         {
-            i2CPeripheral = new I2cPeripheral(i2cBus, address);
+            i2cComms = new I2cCommunications(i2cBus, address);
             Emissivity = emissivity;
             Config = new Mlx90640Config();
 
@@ -75,7 +83,7 @@ namespace Meadow.Foundation.Sensors.Camera
         }
 
         /// <summary>
-        /// Initialize the MLX90640. Read the MLX90640 serial number and EEProm
+        /// Initialize the MLX90640 and read the MLX90640 serial number and EEProm
         /// </summary>
         void Initialize()
         {
@@ -100,7 +108,7 @@ namespace Meadow.Foundation.Sensors.Camera
         public float[] ReadRawData()
         {
             ushort[] mlx90640Frame = new ushort[834];
-            float[] frameBuffer =new float[32 * 24];
+            float[] frameBuffer = new float[32 * 24];
 
             for (byte page = 0; page < 2; page++)
             {
@@ -163,12 +171,11 @@ namespace Meadow.Foundation.Sensors.Camera
 
         bool GetFrameData(ref ushort[] frameData)
         {
-            ushort dataReady = 1;
             ushort[] controlRegister1 = new ushort[1];
             ushort[] statusRegister = new ushort[1];
             byte cnt = 0;
 
-            dataReady = 0;
+            ushort dataReady = 0;
             while (dataReady == 0)
             {
                 I2CRead(0x8000, 1, ref statusRegister);
@@ -194,7 +201,7 @@ namespace Meadow.Foundation.Sensors.Camera
             if (cnt > 4)
                 return false;
 
-           I2CRead(0x800D, 1, ref controlRegister1);
+            I2CRead(0x800D, 1, ref controlRegister1);
             frameData[832] = controlRegister1[0];
             frameData[833] = (ushort)(statusRegister[0] & 0x0001);
 
@@ -208,9 +215,9 @@ namespace Meadow.Foundation.Sensors.Camera
 
             while (readLen > 0)
             {
-                ushort toRead16 = (int)(MaxBufferSize / 2);
+                ushort toRead16 = MaxBufferSize / 2;
 
-                if (readLen < (int)(MaxBufferSize / 2))
+                if (readLen < MaxBufferSize / 2)
                     toRead16 = readLen;
 
                 cmd[0] = (byte)(startAddress >> 8);
@@ -218,13 +225,13 @@ namespace Meadow.Foundation.Sensors.Camera
 
                 Span<byte> writeBuffer = new Span<byte>(cmd);
                 Span<byte> tempBuf = new Span<byte>(new byte[toRead16 * 2]);
-                i2CPeripheral.Exchange(writeBuffer, tempBuf);
+                i2cComms.Exchange(writeBuffer, tempBuf);
 
                 // we now have to swap every two bytes
                 int index = 0;
                 for (int i = bufferIndex; i < bufferIndex + toRead16; i++)
                 {
-                    data[i] = (ushort)((ushort)(tempBuf[index] * 256) + (ushort)tempBuf[index + 1]); ;
+                    data[i] = (ushort)((ushort)(tempBuf[index] * 256) + tempBuf[index + 1]); ;
                     index += 2;
                 }
 
@@ -244,7 +251,7 @@ namespace Meadow.Foundation.Sensors.Camera
             cmd[2] = (byte)(data >> 8);
             cmd[3] = (byte)(data & 0x00FF);
 
-            i2CPeripheral.Write(cmd);
+            i2cComms.Write(cmd);
 
             Thread.Sleep(1);
 
@@ -322,7 +329,7 @@ namespace Meadow.Foundation.Sensors.Camera
             {
                 if (irDataCP[i] > 32767)
                     irDataCP[i] = irDataCP[i] - 65536;
-                
+
                 irDataCP[i] = irDataCP[i] * gain;
             }
 
@@ -402,8 +409,8 @@ namespace Meadow.Foundation.Sensors.Camera
             ptatArt = frameData[768];
             if (ptatArt > 32767)
                 ptatArt -= 65536;
-            
-            ptatArt = (float)((ptat / (ptat * mlx90640.AlphaPTAT + ptatArt)) * Math.Pow(2, (double)18));
+
+            ptatArt = (float)((ptat / (ptat * mlx90640.AlphaPTAT + ptatArt)) * Math.Pow(2, 18));
 
             ta = (float)((ptatArt / (1 + mlx90640.KvPTAT * (vdd - 3.3)) - mlx90640.VPTAT25));
             ta = ta / mlx90640.KtPTAT + 25;
@@ -425,7 +432,7 @@ namespace Meadow.Foundation.Sensors.Camera
             }
 
             resolutionRAM = (frameData[832] & 0x0C00) >> 10;
-            resolutionCorrection = (float)(Math.Pow(2, (double)mlx90640.ResolutionEE) / Math.Pow(2, (double)resolutionRAM));
+            resolutionCorrection = (float)(Math.Pow(2, mlx90640.ResolutionEE) / Math.Pow(2, resolutionRAM));
             vdd = (float)((resolutionCorrection * vdd - mlx90640.Vdd25) / mlx90640.KVdd + 3.3);
 
             return vdd;
@@ -480,7 +487,7 @@ namespace Meadow.Foundation.Sensors.Camera
             KvPTAT = (eeData[50] & 0xFC00) >> 10;
             if (KvPTAT > 31)
                 KvPTAT -= 64;
-            
+
             KvPTAT /= 4096;
 
             KtPTAT = eeData[50] & 0x03FF;
@@ -517,7 +524,7 @@ namespace Meadow.Foundation.Sensors.Camera
             tgc = eeData[60] & 0x00FF;
             if (tgc > 127)
                 tgc -= 256;
-            
+
             tgc /= 32.0f;
 
             Config.Tgc = tgc;
@@ -539,7 +546,7 @@ namespace Meadow.Foundation.Sensors.Camera
             KsTa = (eeData[60] & 0xFF00) >> 8;
             if (KsTa > 127)
                 KsTa -= 256;
-            
+
             KsTa /= 8192.0f;
 
             Config.KsTa = KsTa;
@@ -637,10 +644,10 @@ namespace Meadow.Foundation.Sensors.Camera
                     alphaTemp[p] = (eeData[64 + p] & 0x03F0) >> 4;
                     if (alphaTemp[p] > 31)
                         alphaTemp[p] = alphaTemp[p] - 64;
-                    
+
                     alphaTemp[p] = alphaTemp[p] * (1 << accRemScale);
                     alphaTemp[p] = (alphaRef + (accRow[i] << accRowScale) + (accColumn[j] << accColumnScale) + alphaTemp[p]);
-                    alphaTemp[p] = (float)(alphaTemp[p] / Math.Pow(2, (double)alphaScale));
+                    alphaTemp[p] = (float)(alphaTemp[p] / Math.Pow(2, alphaScale));
                     alphaTemp[p] = alphaTemp[p] - Config.Tgc * (Config.CpAlpha[0] + Config.CpAlpha[1]) / 2;
                     alphaTemp[p] = ScaleAlpha / alphaTemp[p];
                 }
@@ -651,7 +658,7 @@ namespace Meadow.Foundation.Sensors.Camera
             {
                 if (alphaTemp[i] > temp)
                     temp = alphaTemp[i];
-                
+
             }
 
             alphaScale = 0;
@@ -670,7 +677,7 @@ namespace Meadow.Foundation.Sensors.Camera
 
             for (int i = 0; i < 768; i++)
             {
-                temp = (float)(alphaTemp[i] * Math.Pow(2, (double)alphaScale));
+                temp = (float)(alphaTemp[i] * Math.Pow(2, alphaScale));
                 Config.Alpha[i] = (short)(temp + 0.5);
 
             }
@@ -775,13 +782,13 @@ namespace Meadow.Foundation.Sensors.Camera
             KtaRoCe = (sbyte)((eeData[55] & 0xFF00) >> 8);
             if (KtaRoCe > 127)
                 KtaRoCe = (sbyte)(KtaRoCe - 256);
-            
+
             KtaRC[1] = KtaRoCe;
 
             KtaReCe = (sbyte)((eeData[55] & 0x00FF));
             if (KtaReCe > 127)
                 KtaReCe = (sbyte)(KtaReCe - 256);
-            
+
             KtaRC[3] = KtaReCe;
 
             ktaScale1 = (byte)(((eeData[56] & 0x00F0) >> 4) + 8);
@@ -796,10 +803,10 @@ namespace Meadow.Foundation.Sensors.Camera
                     ktaTemp[p] = (eeData[64 + p] & 0x000E) >> 1;
                     if (ktaTemp[p] > 3)
                         ktaTemp[p] = ktaTemp[p] - 8;
-                    
+
                     ktaTemp[p] = ktaTemp[p] * (1 << ktaScale2);
                     ktaTemp[p] = KtaRC[split] + ktaTemp[p];
-                    ktaTemp[p] = (float)(ktaTemp[p] / Math.Pow(2, (double)ktaScale1));
+                    ktaTemp[p] = (float)(ktaTemp[p] / Math.Pow(2, ktaScale1));
                 }
             }
 
@@ -808,7 +815,7 @@ namespace Meadow.Foundation.Sensors.Camera
             {
                 if (Math.Abs(ktaTemp[i]) > temp)
                     temp = Math.Abs(ktaTemp[i]);
-                
+
             }
 
             ktaScale1 = 0;
@@ -820,7 +827,7 @@ namespace Meadow.Foundation.Sensors.Camera
 
             for (int i = 0; i < 768; i++)
             {
-                temp = (float)(ktaTemp[i] * Math.Pow(2, (double)ktaScale1));
+                temp = (float)(ktaTemp[i] * Math.Pow(2, ktaScale1));
                 if (temp < 0)
                     Config.Kta[i] = (sbyte)(temp - 0.5);
                 else
@@ -846,25 +853,25 @@ namespace Meadow.Foundation.Sensors.Camera
             KvRoCo = (sbyte)((eeData[52] & 0xF000) >> 12);
             if (KvRoCo > 7)
                 KvRoCo = (sbyte)(KvRoCo - 16);
-            
+
             KvT[0] = KvRoCo;
 
             KvReCo = (sbyte)((eeData[52] & 0x0F00) >> 8);
             if (KvReCo > 7)
                 KvReCo = (sbyte)(KvReCo - 16);
-            
+
             KvT[2] = KvReCo;
 
             KvRoCe = (sbyte)((eeData[52] & 0x00F0) >> 4);
             if (KvRoCe > 7)
                 KvRoCe = (sbyte)(KvRoCe - 16);
-            
+
             KvT[1] = KvRoCe;
 
             KvReCe = (sbyte)((eeData[52] & 0x000F));
             if (KvReCe > 7)
                 KvReCe = (sbyte)(KvReCe - 16);
-            
+
             KvT[3] = KvReCe;
 
             kvScale = (byte)((eeData[56] & 0x0F00) >> 8);
@@ -876,7 +883,7 @@ namespace Meadow.Foundation.Sensors.Camera
                     int p = 32 * i + j;
                     split = (byte)(2 * (p / 32 - (p / 64) * 2) + p % 2);
                     kvTemp[p] = KvT[split];
-                    kvTemp[p] = (float)(kvTemp[p] / Math.Pow(2, (double)kvScale));
+                    kvTemp[p] = (float)(kvTemp[p] / Math.Pow(2, kvScale));
                 }
             }
 
@@ -885,7 +892,7 @@ namespace Meadow.Foundation.Sensors.Camera
             {
                 if (Math.Abs(kvTemp[i]) > temp)
                     temp = Math.Abs(kvTemp[i]);
-                
+
             }
 
             kvScale = 0;
@@ -897,7 +904,7 @@ namespace Meadow.Foundation.Sensors.Camera
 
             for (int i = 0; i < 768; i++)
             {
-                temp = (float)(kvTemp[i] * Math.Pow(2, (double)kvScale));
+                temp = (float)(kvTemp[i] * Math.Pow(2, kvScale));
                 if (temp < 0)
                     Config.Kv[i] = (sbyte)(temp - 0.5);
                 else
@@ -929,7 +936,7 @@ namespace Meadow.Foundation.Sensors.Camera
             {
                 ilChessC[1] = ilChessC[1] - 32;
             }
-            
+
             ilChessC[1] = ilChessC[1] / 2.0f;
 
             ilChessC[2] = (eeData[53] & 0xF800) >> 11;
@@ -937,7 +944,7 @@ namespace Meadow.Foundation.Sensors.Camera
             {
                 ilChessC[2] = ilChessC[2] - 32;
             }
-            
+
             ilChessC[2] = ilChessC[2] / 8.0f;
 
             Config.CalibrationModeEE = calibrationModeEE;
@@ -996,16 +1003,16 @@ namespace Meadow.Foundation.Sensors.Camera
             }
 
             ktaScale1 = (byte)(((eeData[56] & 0x00F0) >> 4) + 8);
-            Config.CpKta = (float)(cpKta / Math.Pow(2, (double)ktaScale1));
+            Config.CpKta = (float)(cpKta / Math.Pow(2, ktaScale1));
 
             cpKv = (eeData[59] & 0xFF00) >> 8;
             if (cpKv > 127)
             {
                 cpKv -= 256;
             }
-            
+
             kvScale = (byte)((eeData[56] & 0x0F00) >> 8);
-            Config.CpKv = (float)(cpKv / Math.Pow(2, (double)kvScale));
+            Config.CpKv = (float)(cpKv / Math.Pow(2, kvScale));
 
             Config.CpAlpha[0] = alphaSP[0];
             Config.CpAlpha[1] = alphaSP[1];
@@ -1033,7 +1040,7 @@ namespace Meadow.Foundation.Sensors.Camera
 
             }
 
-            if(Config.BrokenPixels.Count > 1 )
+            if (Config.BrokenPixels.Count > 1)
             {
                 for (pixCnt = 0; pixCnt < Config.BrokenPixels.Count; pixCnt++)
                 {

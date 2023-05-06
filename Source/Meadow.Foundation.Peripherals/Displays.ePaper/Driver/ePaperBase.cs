@@ -1,4 +1,5 @@
 using Meadow.Hardware;
+using Meadow.Units;
 using System.Threading;
 
 namespace Meadow.Foundation.Displays
@@ -6,8 +7,36 @@ namespace Meadow.Foundation.Displays
     /// <summary>
     /// Represents a base ePaper display driver
     /// </summary>
-    public abstract class EPaperBase
+    public abstract class EPaperBase : ISpiPeripheral
     {
+        /// <summary>
+        /// The default SPI bus speed for the device
+        /// </summary>
+        public Frequency DefaultSpiBusSpeed => new Frequency(375, Frequency.UnitType.Kilohertz);
+
+        /// <summary>
+        /// The SPI bus speed for the device
+        /// </summary>
+        public Frequency SpiBusSpeed
+        {
+            get => spiComms.BusSpeed;
+            set => spiComms.BusSpeed = value;
+        }
+
+        /// <summary>
+        /// The default SPI bus mode for the device
+        /// </summary>
+        public SpiClockConfiguration.Mode DefaultSpiBusMode => SpiClockConfiguration.Mode.Mode0;
+
+        /// <summary>
+        /// The SPI bus mode for the device
+        /// </summary>
+        public SpiClockConfiguration.Mode SpiBusMode
+        {
+            get => spiComms.BusMode;
+            set => spiComms.BusMode = value;
+        }
+
         /// <summary>
         /// The command buffer
         /// </summary>
@@ -34,9 +63,9 @@ namespace Meadow.Foundation.Displays
         protected IDigitalInputPort busyPort;
 
         /// <summary>
-        /// The SpiPeripheral object that reprsents the display
+        /// SPI Communication bus used to communicate with the peripheral
         /// </summary>
-        protected ISpiPeripheral spiPeripheral;
+        protected ISpiCommunications spiComms;
 
         /// <summary>
         /// Const bool representing the data state
@@ -55,7 +84,7 @@ namespace Meadow.Foundation.Displays
         protected void Write(byte value)
         {
             commandBuffer[0] = value;
-            spiPeripheral.Write(commandBuffer);
+            spiComms.Write(commandBuffer);
         }
 
         /// <summary>
@@ -68,7 +97,7 @@ namespace Meadow.Foundation.Displays
             resetPort.State = true;
             DelayMs(200);
         }
-        
+
         /// <summary>
         /// Delay for a specified amount of time
         /// </summary>
@@ -114,7 +143,7 @@ namespace Meadow.Foundation.Displays
         protected void SendData(byte[] data)
         {
             dataCommandPort.State = DataState;
-            spiPeripheral.Write(data);
+            spiComms.Write(data);
         }
 
         /// <summary>

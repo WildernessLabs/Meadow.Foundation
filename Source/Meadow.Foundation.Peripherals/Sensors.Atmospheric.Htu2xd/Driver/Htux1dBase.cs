@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Meadow.Foundation.Sensors.Atmospheric
 {
     /// <summary>
-    /// Valid addresses for the sensor
+    /// Valid I2C addresses for the sensor
     /// </summary>
     public enum Addresses : byte
     {
@@ -26,7 +26,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     /// </summary>
     public abstract class Htux1dBase :
         ByteCommsSensorBase<(Units.Temperature? Temperature, RelativeHumidity? Humidity)>,
-        ITemperatureSensor, IHumiditySensor
+        ITemperatureSensor, IHumiditySensor, II2cPeripheral
     {
         /// <summary>
         /// Temperature changed event
@@ -37,6 +37,11 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// Humidity changed event
         /// </summary>
         public event EventHandler<IChangeResult<RelativeHumidity>> HumidityUpdated = delegate { };
+
+        /// <summary>
+        /// The default I2C address for the peripheral
+        /// </summary>
+        public byte DefaultI2cAddress => (byte)Addresses.Default;
 
         /// <summary>
         /// Default I2C bus speed
@@ -70,7 +75,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         }
 
         /// <summary>
-        /// Inheritance-safe way to raise events and notify observers.
+        /// Inheritance-safe way to raise events and notify observers
         /// </summary>
         /// <param name="changeResult">New temperature and humidity values</param>
         protected override void RaiseEventsAndNotify(IChangeResult<(Units.Temperature? Temperature, RelativeHumidity? Humidity)> changeResult)

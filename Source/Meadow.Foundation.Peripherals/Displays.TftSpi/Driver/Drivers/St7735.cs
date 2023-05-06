@@ -1,6 +1,5 @@
 ﻿using Meadow.Foundation.Graphics;
 using Meadow.Hardware;
-using Meadow.Units;
 
 namespace Meadow.Foundation.Displays
 {
@@ -10,14 +9,9 @@ namespace Meadow.Foundation.Displays
     public class St7735 : TftSpiBase
     {
         /// <summary>
-        /// The default SPI bus frequency
-        /// </summary>
-        public static Frequency DefaultSpiBusSpeed = new Frequency(12000, Frequency.UnitType.Kilohertz);
-
-        /// <summary>
         /// The default display color mode
         /// </summary>
-        public override ColorMode DefautColorMode => ColorMode.Format12bppRgb444;
+        public override ColorMode DefaultColorMode => ColorMode.Format12bppRgb444;
 
         /// <summary>
         /// The color modes supported by the display
@@ -153,7 +147,6 @@ namespace Meadow.Foundation.Displays
             if (displayType == DisplayType.ST7735B)
             {
                 Init7735B();
-                SetAddressWindow(0, 0, (Width - 1), (Height - 1));
                 return;
             }
 
@@ -176,8 +169,6 @@ namespace Meadow.Foundation.Displays
                 SendCommand((byte)Register.MADCTL, new byte[] { 0xC0 });
                 SendCommand(Register.INVOFF);
             }
-
-            SetAddressWindow(0, 0, (Width - 1), (Height - 1));
 
             dataCommandPort.State = Data;
         }
@@ -389,21 +380,7 @@ namespace Meadow.Foundation.Displays
             x1 += xOffset;
             y1 += yOffset;
 
-            SendCommand(LcdCommand.CASET);  // column addr set
-            dataCommandPort.State = Data;
-            Write((byte)(x0 >> 8));
-            Write((byte)(x0 & 0xff));   // XSTART 
-            Write((byte)(x1 >> 8));
-            Write((byte)(x1 & 0xff));   // XEND
-
-            SendCommand(LcdCommand.RASET);  // row addr set
-            dataCommandPort.State = Data;
-            Write((byte)(y0 >> 8));
-            Write((byte)(y0 & 0xff));   // YSTART 
-            Write((byte)(y1 >> 8));
-            Write((byte)(y1 & 0xff));   // YEND
-
-            SendCommand(LcdCommand.RAMWR);  // write to RAM
+            base.SetAddressWindow(x0, y0, x1, y1);
         }
     }
 }

@@ -3,7 +3,7 @@
     public partial class Bno055
     {
         /// <summary>
-		/// Valid addresses for the sensor.
+		/// Valid I2C addresses for the sensor
 		/// </summary>
 		public enum Addresses : byte
         {
@@ -32,7 +32,7 @@
             NoError = 0x00,
 
             /// <summary>
-            /// Peripheral initialization error.
+            /// BusComms initialization error.
             /// </summary>
             PeripheralInitializationError = 0x01,
 
@@ -93,7 +93,7 @@
             SystemError = 0x01,
 
             /// <summary>
-            /// Peripheral initialization in progess.
+            /// BusComms initialization in progess.
             /// </summary>
             PeripheralInitializationInProgess = 0x02,
 

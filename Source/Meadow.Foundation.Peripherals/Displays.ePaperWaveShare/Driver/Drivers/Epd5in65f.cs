@@ -1,7 +1,6 @@
 ﻿using Meadow.Foundation.Graphics;
 using Meadow.Foundation.Graphics.Buffers;
 using Meadow.Hardware;
-using System;
 
 namespace Meadow.Foundation.Displays
 {
@@ -86,7 +85,7 @@ namespace Meadow.Foundation.Displays
             this.resetPort = resetPort;
             this.busyPort = busyPort;
 
-            spiPeripheral = new SpiPeripheral(spiBus, chipSelectPort);
+            spiComms = new SpiCommunications(spiBus, chipSelectPort, DefaultSpiBusSpeed, DefaultSpiBusMode);
 
             imageBuffer = new BufferIndexed4(Width, Height);
 
@@ -151,7 +150,7 @@ namespace Meadow.Foundation.Displays
         {
             imageBuffer.Clear();
 
-            if(updateDisplay)
+            if (updateDisplay)
             {
                 Show();
             }
@@ -201,7 +200,7 @@ namespace Meadow.Foundation.Displays
 
             dataCommandPort.State = DataState;
 
-            spiPeripheral.Write(imageBuffer.Buffer);
+            spiComms.Write(imageBuffer.Buffer);
 
             SendCommand(0x04);
             WaitForBusyState(true);
@@ -233,7 +232,7 @@ namespace Meadow.Foundation.Displays
                 {
                     if (i < bottom && i >= top && j < right / 2 && j >= left / 2)
                     {
-                        spiPeripheral.Write(imageBuffer.Buffer[j + ((Width / 2) * i)]);
+                        spiComms.Write(imageBuffer.Buffer[j + ((Width / 2) * i)]);
                     }
                     else
                     {   //no-op 
@@ -259,7 +258,7 @@ namespace Meadow.Foundation.Displays
         {
             Fill(fillColor);
 
-            if(updateDisplay)
+            if (updateDisplay)
             {
                 Show();
             }

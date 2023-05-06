@@ -3,9 +3,9 @@
     public partial class Tea5767
     {
         /// <summary>
-        /// Valid addresses for the sensor.
+        /// Valid I2C addresses for the sensor
         /// </summary>
-        public enum Address : byte
+        public enum Addresses : byte
         {
             /// <summary>
             /// I2C address 0

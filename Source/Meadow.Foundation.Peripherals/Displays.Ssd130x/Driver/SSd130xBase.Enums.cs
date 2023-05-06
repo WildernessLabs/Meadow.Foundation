@@ -1,12 +1,9 @@
 ﻿namespace Meadow.Foundation.Displays
 {
-    /// <summary>
-    /// Provide an interface to the SSD1306 family of OLED displays
-    /// </summary>
     public abstract partial class Ssd130xBase
     {
         /// <summary>
-        /// Valid addresses for the sensor
+        /// Valid I2C addresses for the display
         /// </summary>
         public enum Addresses : byte
         {

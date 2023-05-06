@@ -8,8 +8,13 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     /// 0 - 95% humidity +/- 4%
     /// Currently only supports I2C
     /// </summary>
-    public class Dht12 : DhtBase
+    public class Dht12 : DhtBase, II2cPeripheral
     {
+        /// <summary>
+        /// The default I2C address for the peripheral
+        /// </summary>
+        public byte DefaultI2cAddress => (byte)Addresses.Default;
+
         /// <summary>
         /// Create a new Dht12 object
         /// </summary>

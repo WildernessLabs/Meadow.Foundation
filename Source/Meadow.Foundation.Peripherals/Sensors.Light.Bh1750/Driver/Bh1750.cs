@@ -1,18 +1,17 @@
 ﻿using Meadow.Hardware;
 using Meadow.Peripherals.Sensors.Light;
 using Meadow.Units;
-using IU = Meadow.Units.Illuminance.UnitType;
 using System;
 using System.Buffers.Binary;
 using System.Threading.Tasks;
-using System.Threading;
+using IU = Meadow.Units.Illuminance.UnitType;
 
 namespace Meadow.Foundation.Sensors.Light
 {
     /// <summary>
     /// Represents a BH1750 ambient light sensor
     /// </summary>
-    public partial class Bh1750 : ByteCommsSensorBase<Illuminance>, ILightSensor
+    public partial class Bh1750 : ByteCommsSensorBase<Illuminance>, ILightSensor, II2cPeripheral
     {
         /// <summary>
         /// Raised when a new Illuminance value is read by the sensor
@@ -44,6 +43,11 @@ namespace Meadow.Foundation.Sensors.Light
         private const float MinTransmittance = 0.272f;
 
         /// <summary>
+        /// The default I2C address for the peripheral
+        /// </summary>
+        public byte DefaultI2cAddress => (byte)Addresses.Default;
+
+        /// <summary>
         /// Create a new BH1750 light sensor object using a static reference voltage.
         /// </summary>
         public Bh1750(
@@ -60,44 +64,41 @@ namespace Meadow.Foundation.Sensors.Light
 
         private void Initialize()
         {
-            Peripheral.Write((byte)Commands.PowerOn);
-            Peripheral.Write((byte)Commands.Reset);
+            BusComms.Write((byte)Commands.PowerOn);
+            BusComms.Write((byte)Commands.Reset);
         }
 
         /// <summary>
         /// Read the current luminocity 
         /// </summary>
         /// <returns>The current Illuminance value</returns>
-        protected override Task<Illuminance> ReadSensor()
+        protected async override Task<Illuminance> ReadSensor()
         {
-            return Task.Run(() =>
+            if (MeasuringMode == MeasuringModes.OneTimeHighResolutionMode ||
+                MeasuringMode == MeasuringModes.OneTimeHighResolutionMode2 ||
+                MeasuringMode == MeasuringModes.OneTimeLowResolutionMode)
             {
-                if (MeasuringMode == MeasuringModes.OneTimeHighResolutionMode ||
-                    MeasuringMode == MeasuringModes.OneTimeHighResolutionMode2 ||
-                    MeasuringMode == MeasuringModes.OneTimeLowResolutionMode)
-                {
-                    Peripheral.Write((byte)Commands.PowerOn);
-                }
+                BusComms.Write((byte)Commands.PowerOn);
+            }
 
-                Peripheral.Write((byte)MeasuringMode);
+            BusComms.Write((byte)MeasuringMode);
 
-                //wait for the measurement to complete before reading
-                Thread.Sleep(GetMeasurementTime(MeasuringMode));
+            //wait for the measurement to complete before reading
+            await Task.Delay(GetMeasurementTime(MeasuringMode));
 
-                Peripheral.Read(ReadBuffer.Span[0..2]);
+            BusComms.Read(ReadBuffer.Span[0..2]);
 
-                ushort raw = BinaryPrimitives.ReadUInt16BigEndian(ReadBuffer.Span[0..2]);
+            ushort raw = BinaryPrimitives.ReadUInt16BigEndian(ReadBuffer.Span[0..2]);
 
-                double result = raw / (1.2 * lightTransmittance);
+            double result = raw / (1.2 * lightTransmittance);
 
-                if (MeasuringMode == MeasuringModes.ContinuouslyHighResolutionMode2 ||
-                    MeasuringMode == MeasuringModes.OneTimeHighResolutionMode2)
-                {
-                    result *= 2;
-                }
+            if (MeasuringMode == MeasuringModes.ContinuouslyHighResolutionMode2 ||
+                MeasuringMode == MeasuringModes.OneTimeHighResolutionMode2)
+            {
+                result *= 2;
+            }
 
-                return new Illuminance(result, IU.Lux);
-            });
+            return new Illuminance(result, IU.Lux);
         }
 
         TimeSpan GetMeasurementTime(MeasuringModes mode)
@@ -127,8 +128,8 @@ namespace Meadow.Foundation.Sensors.Light
 
             byte val = (byte)(DefaultLightTransmittance / transmittance);
 
-            Peripheral.Write((byte)((byte)Commands.MeasurementTimeHigh | (val >> 5)));
-            Peripheral.Write((byte)((byte)Commands.MeasurementTimeLow | (val & 0b_0001_1111)));
+            BusComms.Write((byte)((byte)Commands.MeasurementTimeHigh | (val >> 5)));
+            BusComms.Write((byte)((byte)Commands.MeasurementTimeLow | (val & 0b_0001_1111)));
         }
 
         /// <summary>

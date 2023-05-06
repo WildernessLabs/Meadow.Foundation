@@ -1,23 +1,12 @@
 ﻿using Meadow.Hardware;
-using Meadow.Units;
 
 namespace Meadow.Foundation.Displays
 {
     /// <summary>
-    /// Provide an interface to the SSD1309 family of OLED displays
+    /// Represents the SSD1309 family of OLED displays
     /// </summary>
     public class Ssd1309 : Ssd1306
     {
-        /// <summary>
-        /// The default SPI clock mode
-        /// </summary>
-        public static SpiClockConfiguration.Mode DefaultSpiClockMode = SpiClockConfiguration.Mode.Mode0;
-
-        /// <summary>
-        /// Default SPI frequency
-        /// </summary>
-        public static Frequency DefaultSpiBusSpeed = new Frequency(12000, Frequency.UnitType.Kilohertz);
-
         /// <summary>
         /// Create a new Ssd1309 object
         /// </summary>
@@ -47,7 +36,7 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         /// <param name="i2cBus">I2cBus connected to display</param>
         /// <param name="address">Address of the bus on the I2C display.</param>
-        public Ssd1309(II2cBus i2cBus, byte address = (byte)Addresses.Default) : 
+        public Ssd1309(II2cBus i2cBus, byte address = (byte)Addresses.Default) :
             base(i2cBus, address, DisplayType.OLED128x64)
         {
         }

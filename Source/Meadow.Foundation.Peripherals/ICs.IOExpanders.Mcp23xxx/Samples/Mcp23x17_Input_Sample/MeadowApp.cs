@@ -39,26 +39,26 @@ namespace ICs.IOExpanders.Mcp23x17_Input_Sample
         {
             TestInterrupts();
 
-        //    return TestDigitalInputPorts(1000);
+            //    return TestDigitalInputPorts(1000);
 
             return base.Run();
         }
 
         void TestBulkPinReads(int loopCount)
         {
-            for (int l = 0; l < loopCount; l++) 
+            for (int l = 0; l < loopCount; l++)
             {
                 byte mask = mcp.ReadFromPorts();
                 var bits = new BitArray(new byte[] { mask });
 
                 var bitsString = new StringBuilder();
-            
-                foreach (var bit in bits) 
+
+                foreach (var bit in bits)
                 {
-                    bitsString.Append((bool)bit ? "1":"0");
+                    bitsString.Append((bool)bit ? "1" : "0");
                 }
 
-                Resolver.Log.Info($"Port Values, raw:{mask:X}, bits: { bitsString}");
+                Resolver.Log.Info($"Port Values, raw:{mask:X}, bits: {bitsString}");
 
                 Thread.Sleep(100);
             }
@@ -84,20 +84,20 @@ namespace ICs.IOExpanders.Mcp23x17_Input_Sample
             var in14 = mcp.CreateDigitalInputPort(mcp.Pins.GPB6, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
             var in15 = mcp.CreateDigitalInputPort(mcp.Pins.GPB7, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
 
-            var inputPorts = new List<IDigitalInputPort>() 
+            var inputPorts = new List<IDigitalInputPort>()
             {
-                in00, in01, in02, in03, in04, in05, in06, in07, 
+                in00, in01, in02, in03, in04, in05, in06, in07,
                 in08, in09, in10, in11, in12, in13, in14, in15,
             };
 
             string output;
 
             // read all the ports, sleep for 100ms and repeat a few times.
-            for (int l = 0; l < loopCount; l++) 
+            for (int l = 0; l < loopCount; l++)
             {
                 output = string.Empty;
 
-                foreach (var inputPort in inputPorts) 
+                foreach (var inputPort in inputPorts)
                 {
                     //Resolver.Log.Info($"InputPort {inputPort.Pin.Name} Read: {inputPort.State}");
                     output += $"{(inputPort.State ? 1 : 0)}";
@@ -107,7 +107,7 @@ namespace ICs.IOExpanders.Mcp23x17_Input_Sample
             }
 
             // cleanup
-            for (int i = 0; i < inputPorts.Count; i++) 
+            for (int i = 0; i < inputPorts.Count; i++)
             {
                 inputPorts[i].Dispose();
             }
@@ -127,7 +127,7 @@ namespace ICs.IOExpanders.Mcp23x17_Input_Sample
             var inputPort05 = mcp.CreateDigitalInputPort(mcp.Pins.GPA5, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp, debounceTime);
             var inputPort06 = mcp.CreateDigitalInputPort(mcp.Pins.GPA6, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp, debounceTime);
             var inputPort07 = mcp.CreateDigitalInputPort(mcp.Pins.GPA7, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp, debounceTime);
-        
+
             var inputPort08 = mcp.CreateDigitalInputPort(mcp.Pins.GPB0, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp, debounceTime);
             var inputPort09 = mcp.CreateDigitalInputPort(mcp.Pins.GPB1, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp, debounceTime);
             var inputPort10 = mcp.CreateDigitalInputPort(mcp.Pins.GPB2, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp, debounceTime);

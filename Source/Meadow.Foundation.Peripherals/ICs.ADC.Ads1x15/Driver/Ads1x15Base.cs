@@ -1,15 +1,24 @@
-using System.Threading.Tasks;
 using Meadow.Hardware;
 using Meadow.Units;
+using System.Threading.Tasks;
 
 namespace Meadow.Foundation.ICs.ADC
 {
     /// <summary>
     /// Encapsulation for ADCs based upon the Ads1x1x family of chips.
     /// </summary>
-    public abstract partial class Ads1x15Base : PollingSensorBase<Voltage>
+    public abstract partial class Ads1x15Base : PollingSensorBase<Voltage>, II2cPeripheral
     {
-        private readonly II2cPeripheral i2cPeripheral;
+        /// <summary>
+        /// The default I2C address for the peripheral
+        /// </summary>
+        public byte DefaultI2cAddress => (byte)Addresses.Default;
+
+        /// <summary>
+        /// I2C Communication bus used to communicate with the peripheral
+        /// </summary>
+        protected readonly II2cCommunications i2cComms;
+
         private ushort config;
 
         // These are config register bit offsets
@@ -38,8 +47,8 @@ namespace Meadow.Foundation.ICs.ADC
             Addresses address,
             MeasureMode mode,
             ChannelSetting channel)
-        {            
-            i2cPeripheral = new I2cPeripheral(i2cBus, (byte)address, 3, 3);
+        {
+            i2cComms = new I2cCommunications(i2cBus, (byte)address, 3, 3);
 
             SetConfigRegister(0x8583); // this is the default reset - force it in case it's not been reset
             config = GetConfigRegister();
@@ -49,7 +58,7 @@ namespace Meadow.Foundation.ICs.ADC
 
         private ushort GetRegister(Register register)
         {
-            var read = i2cPeripheral.ReadRegisterAsUShort((byte)register, ByteOrder.BigEndian);
+            var read = i2cComms.ReadRegisterAsUShort((byte)register, ByteOrder.BigEndian);
             return read;
         }
 
@@ -59,7 +68,7 @@ namespace Meadow.Foundation.ICs.ADC
             w[0] = (byte)register;
             w[1] = (byte)(value >> 8);
             w[2] = (byte)(value & 0xff);
-            i2cPeripheral.Write(w);
+            i2cComms.Write(w);
             config = value;
         }
 
@@ -137,8 +146,8 @@ namespace Meadow.Foundation.ICs.ADC
                 if (value == Mode) return;
 
                 ushort newConfig;
-                
-                if(value == MeasureMode.OneShot)
+
+                if (value == MeasureMode.OneShot)
                 {
                     newConfig = (ushort)(config | (1 << ModeShift));
                 }
@@ -159,7 +168,7 @@ namespace Meadow.Foundation.ICs.ADC
             var raw = await ReadRaw();
             var scale = 0d;
 
-            switch(Gain)
+            switch (Gain)
             {
                 case FsrGain.TwoThirds:
                     scale = 6.144d;

@@ -11,11 +11,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     /// </summary>
     public class Dht10 : DhtBase
     {
-        private const byte CMD_INIT         = 0b_1110_0001;
-        private const byte CMD_START        = 0b_1010_1100;
-        private const byte CMD_SOFTRESET    = 0b_1011_1010;
-
-        //private new byte[] _readBuffer = new byte[6];
+        private const byte CMD_INIT = 0b_1110_0001;
+        private const byte CMD_START = 0b_1010_1100;
+        private const byte CMD_SOFTRESET = 0b_1011_1010;
 
         /// <summary>
         /// Create a new Dht10 object.
@@ -25,20 +23,20 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         public Dht10(II2cBus i2cBus, byte address = (byte)Addresses.Default)
             : base(i2cBus, address)
         {
-            Peripheral?.Write(CMD_SOFTRESET);
+            BusComms?.Write(CMD_SOFTRESET);
             Thread.Sleep(20);
-            Peripheral?.Write(CMD_INIT);
+            BusComms?.Write(CMD_INIT);
         }
 
         internal override void ReadDataI2c()
         {
             WasLastReadSuccessful = true;
 
-            Peripheral?.Write(CMD_START);
+            BusComms?.Write(CMD_START);
             Thread.Sleep(75);
-            
+
             //data stored in the read buffer
-            Peripheral?.Read(ReadBuffer.Span);
+            BusComms?.Read(ReadBuffer.Span);
         }
 
         internal override float GetHumidity()

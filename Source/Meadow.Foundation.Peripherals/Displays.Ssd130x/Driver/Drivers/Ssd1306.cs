@@ -4,7 +4,7 @@ using Meadow.Hardware;
 namespace Meadow.Foundation.Displays
 {
     /// <summary>
-    /// Provide an interface to the SSD1306 family of OLED displays
+    /// Represents the SSD1306 family of OLED displays
     /// </summary>
     public partial class Ssd1306 : Ssd130xBase
     {
@@ -17,7 +17,7 @@ namespace Meadow.Foundation.Displays
         /// <param name="resetPin">Reset pin</param>
         /// <param name="displayType">Type of SSD1306 display (default = 128x64 pixel display)</param>
         public Ssd1306(ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
-            DisplayType displayType = DisplayType.OLED128x64):
+            DisplayType displayType = DisplayType.OLED128x64) :
             this(spiBus, chipSelectPin?.CreateDigitalOutputPort(false), dcPin.CreateDigitalOutputPort(true),
                 resetPin.CreateDigitalOutputPort(false), displayType)
         { }
@@ -40,7 +40,7 @@ namespace Meadow.Foundation.Displays
             this.chipSelectPort = chipSelectPort;
             this.resetPort = resetPort;
 
-            spiPeripheral = new SpiPeripheral(spiBus, chipSelectPort);
+            spiComms = new SpiCommunications(spiBus, chipSelectPort, DefaultSpiBusSpeed, DefaultSpiBusMode);
 
             connectionType = ConnectionType.SPI;
 
@@ -59,7 +59,7 @@ namespace Meadow.Foundation.Displays
         {
             this.displayType = displayType;
 
-            i2cPeripheral = new I2cPeripheral(i2cBus, address);
+            i2cComms = new I2cCommunications(i2cBus, address);
 
             connectionType = ConnectionType.I2C;
 

@@ -1,4 +1,5 @@
 ﻿using Meadow.Hardware;
+using Meadow.Units;
 using Meadow.Utilities;
 using System;
 using System.Linq;
@@ -6,13 +7,13 @@ using System.Linq;
 namespace Meadow.Foundation.ICs.IOExpanders
 {
     /// <summary>
-    /// Provide an interface to connect to a 74595 shift register.
+    /// Provide an interface to connect to a 74595 shift register
     /// </summary>
     /// <remarks>
     /// Control the outputs from a 74595 shift register (or a chain of shift registers)
-    /// using a SPI interface.
+    /// using a SPI interface
     /// </remarks>
-    public partial class x74595 : IDigitalOutputController
+    public partial class x74595 : IDigitalOutputController, ISpiPeripheral
     {
         /// <summary>
         /// The pin definitions
@@ -20,22 +21,50 @@ namespace Meadow.Foundation.ICs.IOExpanders
         public PinDefinitions Pins { get; }
 
         /// <summary>
-        /// Number of chips required to implement this ShiftRegister.
+        /// The default SPI bus speed for the device
+        /// </summary>
+        public Frequency DefaultSpiBusSpeed => new Frequency(10000, Frequency.UnitType.Kilohertz);
+
+        /// <summary>
+        /// The SPI bus speed for the device
+        /// </summary>
+        public Frequency SpiBusSpeed
+        {
+            get => spiComms.BusSpeed;
+            set => spiComms.BusSpeed = value;
+        }
+
+        /// <summary>
+        /// The default SPI bus mode for the device
+        /// </summary>
+        public SpiClockConfiguration.Mode DefaultSpiBusMode => SpiClockConfiguration.Mode.Mode0;
+
+        /// <summary>
+        /// The SPI bus mode for the device
+        /// </summary>
+        public SpiClockConfiguration.Mode SpiBusMode
+        {
+            get => spiComms.BusMode;
+            set => spiComms.BusMode = value;
+        }
+
+        /// <summary>
+        /// Number of chips required to implement this ShiftRegister
         /// </summary>
         private readonly int numberOfChips;
 
         private byte[] latchData;
 
         /// <summary>
-        /// SPI interface used to communicate with the shift registers.
+        /// SPI Communication bus used to communicate with the peripheral
         /// </summary>
-        private readonly ISpiPeripheral spiPeripheral;
+        protected ISpiCommunications spiComms;
 
         /// <summary>
         /// Default constructor.
         /// </summary>
         /// <remarks>
-        /// This is private to prevent the programmer from calling it explicitly.
+        /// This is private to prevent the programmer from calling it explicitly
         /// </remarks>
         private x74595()
         {
@@ -51,14 +80,13 @@ namespace Meadow.Foundation.ICs.IOExpanders
         {
             Pins = new PinDefinitions(this);
 
-            // if ((pins > 0) && ((pins % 8) == 0))
             if (pins == 8)
             {
                 numberOfChips = pins / 8;
 
                 latchData = new byte[numberOfChips];
 
-                spiPeripheral = new SpiPeripheral(spiBus, pinChipSelect?.CreateDigitalOutputPort());
+                spiComms = new SpiCommunications(spiBus, pinChipSelect?.CreateDigitalOutputPort(), DefaultSpiBusSpeed, DefaultSpiBusMode);
             }
             else
             {
@@ -95,7 +123,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
             if (update)
             {
-                spiPeripheral.Write(latchData);
+                spiComms.Write(latchData);
             }
         }
 
@@ -115,7 +143,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             {
                 throw new Exception("Pin is out of range");
             }
-            spiPeripheral.Write(latchData);
+            spiComms.Write(latchData);
         }
 
         /// <summary>

@@ -11,7 +11,7 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// The default display color mode
         /// </summary>
-        public override ColorMode DefautColorMode => ColorMode.Format12bppRgb444;
+        public override ColorMode DefaultColorMode => ColorMode.Format12bppRgb444;
 
         /// <summary>
         /// The color modes supported by the display
@@ -186,36 +186,7 @@ namespace Meadow.Foundation.Displays
             Write(0x29);           // Set display on
             DelayMs(10);
 
-            SetAddressWindow(0, 0, (Width - 1), (Height - 1));
-
-            dataCommandPort.State = (Data);
-        }
-
-        /// <summary>
-        /// Set the address window to update the display
-        /// </summary>
-        /// <param name="x0">X0</param>
-        /// <param name="y0">Y0</param>
-        /// <param name="x1">X1</param>
-        /// <param name="y1">Y1</param>
-        protected override void SetAddressWindow(int x0, int y0, int x1, int y1)
-        {
-            SendCommand(LcdCommand.CASET);  // column addr set
             dataCommandPort.State = Data;
-            Write((byte)(x0 >> 8));
-            Write((byte)(x0 & 0xff));   // XSTART 
-            Write((byte)(x1 >> 8));
-            Write((byte)(x1 & 0xff));   // XEND
-
-            SendCommand(LcdCommand.RASET);  // row addr set
-            dataCommandPort.State = (Data);
-            Write((byte)(y0 >> 8));
-            Write((byte)(y0 & 0xff));    // YSTART
-            Write((byte)(y1 >> 8));
-            Write((byte)(y1 & 0xff));    // YEND
-
-            dataCommandPort.State = (Command);
-            Write((byte)LcdCommand.RAMWR);  // write to RAM */
         }
     }
 }

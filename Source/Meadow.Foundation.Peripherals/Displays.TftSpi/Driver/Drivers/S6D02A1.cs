@@ -11,7 +11,7 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// The default display color mode
         /// </summary>
-        public override ColorMode DefautColorMode => ColorMode.Format12bppRgb444;
+        public override ColorMode DefaultColorMode => ColorMode.Format12bppRgb444;
 
         /// <summary>
         /// The color modes supported by the display
@@ -108,7 +108,7 @@ namespace Meadow.Foundation.Displays
             SendCommand(0x36, new byte[] { 0xC8 }); // Memory access data control
             SendCommand(0x35, new byte[] { 0x00 }); // Tearing effect line on
 
-            SendCommand((byte)Register.COLOR_MODE);
+            SendCommand(Register.COLOR_MODE);
             if (ColorMode == ColorMode.Format16bppRgb565)
                 SendData(0x05); //16 bit RGB565
             else
@@ -118,36 +118,7 @@ namespace Meadow.Foundation.Displays
             SendCommand(0x29, null);                // Display on
             SendCommand(0x2c, null);				// Memory write
 
-            SetAddressWindow(0, 0, (Width - 1), (Height - 1));
-
-            dataCommandPort.State = (Data);
-        }
-
-        /// <summary>
-        /// Set addrees window for display updates
-        /// </summary>
-        /// <param name="x0">X start in pixels</param>
-        /// <param name="y0">Y start in pixels</param>
-        /// <param name="x1">X end in pixels</param>
-        /// <param name="y1">Y end in pixels</param>
-        protected override void SetAddressWindow(int x0, int y0, int x1, int y1)
-        {
-            SendCommand(LcdCommand.CASET);  // column addr set
-            dataCommandPort.State = (Data);
-            Write((byte)(x0 >> 8));
-            Write((byte)(x0 & 0xff));   // XSTART 
-            Write((byte)(x1 >> 8));
-            Write((byte)(x1 & 0xff));   // XEND
-
-            SendCommand(LcdCommand.RASET);  // row addr set
-            dataCommandPort.State = (Data);
-            Write((byte)(y0 >> 8));
-            Write((byte)(y0 & 0xff));    // YSTART
-            Write((byte)(y1 >> 8));
-            Write((byte)(y1 & 0xff));    // YEND
-
-            dataCommandPort.State = (Command);
-            Write((byte)LcdCommand.RAMWR);  // write to RAM */
+            dataCommandPort.State = Data;
         }
 
         /// <summary>
@@ -156,9 +127,9 @@ namespace Meadow.Foundation.Displays
         /// <param name="rotation">The rotation value</param>
         public void SetRotation(RotationType rotation)
         {
-            SendCommand((byte)Register.MADCTL);
+            SendCommand(Register.MADCTL);
 
-            switch (rotation)
+            switch (Rotation = rotation)
             {
                 case RotationType.Normal:
                     SendData((byte)Register.MADCTL_MX | (byte)Register.MADCTL_MY | (byte)Register.MADCTL_BGR);

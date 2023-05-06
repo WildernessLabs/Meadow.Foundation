@@ -19,8 +19,8 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// <param name="width">width of buffer in pixels</param>
         /// <param name="height">height of buffer in pixels</param>
         /// <param name="buffer">data to copy into buffer</param>
-        public Buffer1bpp(int width, int height, byte[] buffer) : 
-            base(width, height, buffer) 
+        public Buffer1bpp(int width, int height, byte[] buffer) :
+            base(width, height, buffer)
         { }
 
         /// <summary>
@@ -28,8 +28,8 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// </summary>
         /// <param name="width">width of buffer in pixels</param>
         /// <param name="height">height of buffer in pixels</param>
-        public Buffer1bpp(int width, int height) : 
-            base(width, height) 
+        public Buffer1bpp(int width, int height) :
+            base(width, height)
         { }
 
         /// <summary>
@@ -49,7 +49,8 @@ namespace Meadow.Foundation.Graphics.Buffers
             Width = width;
             Height = height;
 
-            int bufferSize = width * height / 8;
+            int bufferSize = (height * width >> 3);
+
             bufferSize += bufferSize % pageSize;
 
             Buffer = new byte[bufferSize];
@@ -63,7 +64,7 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// <returns>true if pixel is set / enabled</returns>
         public virtual bool GetPixelIsEnabled(int x, int y)
         {
-            var index = (y >> 8) * Width + x;
+            var index = (y >> 3) * Width + x;
 
             return (Buffer[index] & (1 << y % 8)) != 0;
         }
@@ -87,16 +88,11 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// <param name="enabled">is pixel enabled (on)</param>
         public virtual void SetPixel(int x, int y, bool enabled)
         {
-            var index = (y >> 3) * Width + x; //divide by 8
+            var index = (y >> 3) * Width + x;
 
-            if (enabled)
-            {
-                Buffer[index] = (byte)(Buffer[index] | (byte)(1 << (y % 8)));
-            }
-            else
-            {
-                Buffer[index] = (byte)(Buffer[index] & ~(byte)(1 << (y % 8)));
-            }
+            var bitMask = (byte)(1 << (y % 8));
+
+            Buffer[index] = enabled ? (byte)(Buffer[index] | bitMask) : (byte)(Buffer[index] & ~bitMask);
         }
 
         /// <summary>
@@ -137,12 +133,12 @@ namespace Meadow.Foundation.Graphics.Buffers
             }
 
             var isColored = color.Color1bpp;
-            
+
             for (int i = 0; i < width; i++)
             {
                 for (int j = 0; j < height; j++)
                 {   //byte aligned and at least 8 rows to go
-                    if((j + y) % 8 == 0 && j + y + 8 <= height)
+                    if ((j + y) % 8 == 0 && j + y + 8 <= height)
                     {
                         //set an entire byte - fast
                         Buffer[((j + y) >> 3) * Width + x + i] = (byte)((isColored) ? 0xFF : 0);
@@ -183,7 +179,7 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// <param name="y">y position of pixel</param>
         public override void InvertPixel(int x, int y)
         {
-            var index = (y / 8 * Width) + x;
+            var index = (y >> 3) * Width + x;
 
             Buffer[index] = Buffer[index] ^= (byte)(1 << y % 8);
         }

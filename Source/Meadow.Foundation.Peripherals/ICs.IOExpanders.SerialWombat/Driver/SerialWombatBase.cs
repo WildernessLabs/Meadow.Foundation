@@ -9,17 +9,23 @@ using System.Text;
 
 namespace Meadow.Foundation.ICs.IOExpanders
 {
-    public abstract partial class SerialWombatBase : IDigitalInputOutputController, IPwmOutputController, IAnalogInputController
+    public abstract partial class SerialWombatBase : IDigitalInputOutputController, IPwmOutputController,
+        IAnalogInputController, II2cPeripheral
     {
-        private II2cBus _bus; // TODO: add uart support
-        private WombatVersion _version = null!;
-        private WombatInfo? _info;
-        private Guid? _uuid;
+        private readonly II2cBus i2cBus;
+        private WombatVersion version = null!;
+        private WombatInfo? wombatInfo;
+        private Guid? uuid;
 
         /// <summary>
-        /// The I2C address
+        /// The default I2C address for the peripheral
         /// </summary>
-        public Address _address { get; }
+        public byte DefaultI2cAddress => (byte)Addresses.Default;
+
+        /// <summary>
+        /// The current I2C address for the peripheral
+        /// </summary>
+        public Addresses I2cAddress { get; }
 
         /// <summary>
         /// The sync root object
@@ -34,11 +40,10 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <summary>
         /// Create SerialWombatBase object
         /// </summary>
-        protected SerialWombatBase(II2cBus bus, Address address = SerialWombatBase.Address.Default, Logger? logger = null)
+        protected SerialWombatBase(II2cBus bus, Addresses address = Addresses.Default, Logger? logger = null)
         {
             Pins = new PinDefinitions(this);
-            _bus = bus;
-            _address = address;
+            i2cBus = bus;
             Logger = logger;
         }
 
@@ -52,7 +57,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         protected void SendPacket(Span<byte> tx, Span<byte> rx)
         {
-            _bus.Exchange((byte)_address, tx, rx);
+            i2cBus.Exchange((byte)I2cAddress, tx, rx);
         }
 
         /// <summary>
@@ -62,12 +67,12 @@ namespace Meadow.Foundation.ICs.IOExpanders
         {
             get
             {
-                if (_version == null) // lazy load
+                if (version == null) // lazy load
                 {
                     try
                     {
                         var response = SendCommand(Commands.GetVersion);
-                        _version = new WombatVersion(Encoding.ASCII.GetString(response));
+                        version = new WombatVersion(Encoding.ASCII.GetString(response));
                     }
                     catch (Exception ex)
                     {
@@ -75,7 +80,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
                     }
                 }
-                return _version ?? new WombatVersion("0");
+                return version ?? new WombatVersion("0");
             }
         }
 
@@ -86,13 +91,13 @@ namespace Meadow.Foundation.ICs.IOExpanders
         {
             get
             {
-                if (_info == null) // lazy load
+                if (wombatInfo == null) // lazy load
                 {
                     try
                     {
                         var id = (ushort)ReadFlash(FlashRegister18.DeviceID);
                         var rev = (ushort)(ReadFlash(FlashRegister18.DeviceRevision) & 0xf);
-                        _info = new WombatInfo(id, rev);
+                        wombatInfo = new WombatInfo(id, rev);
                     }
                     catch (Exception ex)
                     {
@@ -100,7 +105,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
                     }
                 }
-                return _info ?? new WombatInfo(0, 0);
+                return wombatInfo ?? new WombatInfo(0, 0);
             }
         }
 
@@ -111,7 +116,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         {
             get
             {
-                if (_uuid == null) // lazy load
+                if (uuid == null) // lazy load
                 {
                     var address = FlashRegister18.DeviceUuid;
 
@@ -126,10 +131,10 @@ namespace Meadow.Foundation.ICs.IOExpanders
                         bytes[index++] = (byte)(data & 0xff >> 16);
                     }
 
-                    _uuid = new Guid(bytes);
+                    uuid = new Guid(bytes);
                 }
 
-                return _uuid.Value;
+                return uuid.Value;
             }
         }
 
@@ -141,7 +146,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             lock (SyncRoot)
             {
                 var rx = new byte[8] { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
-                _bus.Exchange((byte)_address, command, rx);
+                i2cBus.Exchange((byte)I2cAddress, command, rx);
 
                 Logger?.Trace($"SW: TX {BitConverter.ToString(command.ToArray())}");
                 Logger?.Trace($"SW: RX {BitConverter.ToString(rx)}");
@@ -447,7 +452,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         {
             var channel = pin.SupportedChannels.OfType<IPwmChannelInfo>().FirstOrDefault();
 
-            if (channel == null) throw new NotSupportedException($"Pin {pin.Name} Does not support PWM");
+            if (channel == null) { throw new NotSupportedException($"Pin {pin.Name} Does not support PWM"); }
 
             return new PwmPort(this, pin, channel);
         }
@@ -457,7 +462,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         public IAnalogInputPort CreateAnalogInputPort(IPin pin, int sampleCount = 64)
         {
-            return CreateAnalogInputPort((IPin)pin, sampleCount, TimeSpan.FromSeconds(1), new Voltage(0));
+            return CreateAnalogInputPort(pin, sampleCount, TimeSpan.FromSeconds(1), new Voltage(0));
         }
 
         /// <summary>
@@ -467,7 +472,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         {
             var channel = pin.SupportedChannels.OfType<IAnalogChannelInfo>().FirstOrDefault();
 
-            if (channel == null) throw new NotSupportedException($"Pin {pin.Name} Does not support ADC");
+            if (channel == null) { throw new NotSupportedException($"Pin {pin.Name} Does not support ADC"); }
 
             return new AnalogInputPort(this, pin, channel, sampleCount);
         }

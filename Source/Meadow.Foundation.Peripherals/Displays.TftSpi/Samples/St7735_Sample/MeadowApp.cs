@@ -17,7 +17,7 @@ namespace Displays.TftSpi.St7735_Sample
         {
             Resolver.Log.Info("Initializing ...");
 
-            var spiBus = Device.CreateSpiBus(St7735.DefaultSpiBusSpeed);
+            var spiBus = Device.CreateSpiBus();
 
             //note - you may need to adjust the DisplayType for your specific St7735
             var display = new St7735(

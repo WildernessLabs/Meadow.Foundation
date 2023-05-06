@@ -1,17 +1,22 @@
-﻿using System;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
+using System;
 
 namespace Meadow.Foundation.ICs.IOExpanders
 {
     /// <summary>
     /// Represents an Ht16k33 128 led driver and 39 key scanner
     /// </summary>
-    public partial class Ht16k33
+    public partial class Ht16k33 : II2cPeripheral
     {
         /// <summary>
-        /// HT16K33 LED driver and key scan
+        /// The default I2C address for the peripheral
         /// </summary>
-        private readonly II2cPeripheral i2cPeripheral;
+        public byte DefaultI2cAddress => (byte)Addresses.Default;
+
+        /// <summary>
+        /// I2C Communication bus used to communicate with the peripheral
+        /// </summary>
+        protected readonly II2cCommunications i2cComms;
 
         /// <summary>
         /// Display buffer for 16x8 LEDs 
@@ -26,20 +31,20 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <summary>
         /// Create a new HT16K33 object using the default parameters
         /// </summary>
-        /// <param name="address">Address of the bus on the I2C display.</param>
+        /// <param name="address">Address of the bus on the I2C display</param>
         /// <param name="i2cBus">I2C bus instance</param>
         public Ht16k33(II2cBus i2cBus, byte address = (byte)Addresses.Default)
         {
-            i2cPeripheral = new I2cPeripheral(i2cBus, address, 8, 17);
+            i2cComms = new I2cCommunications(i2cBus, address, 8, 17);
 
             Initialize();
         }
 
         void Initialize()
         {
-            i2cPeripheral.Write(0x21);
+            i2cComms.Write(0x21);
 
-            i2cPeripheral.Write(0x81);
+            i2cComms.Write(0x81);
 
             SetBrightness(Brightness.Maximum);
             ClearDisplay();
@@ -53,7 +58,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         {
             byte value = (byte)((byte)Register.HT16K33_SS | (byte)(awake ? 1 : 0));
 
-            i2cPeripheral.Write(value);
+            i2cComms.Write(value);
         }
 
         /// <summary>
@@ -64,7 +69,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         {
             byte value = (byte)((byte)Register.HT16K33_DSP | (byte)(isOn ? 1 : 0));
 
-            i2cPeripheral.Write(value);
+            i2cComms.Write(value);
         }
 
         /// <summary>
@@ -75,7 +80,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         {
             byte value = (byte)((byte)Register.HT16K33_DSP | (byte)blinkRate);
 
-            i2cPeripheral.Write(value);
+            i2cComms.Write(value);
         }
 
         /// <summary>
@@ -86,7 +91,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         {
             byte value = (byte)((byte)Register.HT16K33_DIM | (byte)brightness);
 
-            i2cPeripheral.Write(value);
+            i2cComms.Write(value);
         }
 
         /// <summary>
@@ -105,7 +110,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         public void UpdateDisplay()
         {
-            i2cPeripheral.WriteRegister(0x0, displayBuffer.Span);
+            i2cComms.WriteRegister(0x0, displayBuffer.Span);
         }
 
         /// <summary>

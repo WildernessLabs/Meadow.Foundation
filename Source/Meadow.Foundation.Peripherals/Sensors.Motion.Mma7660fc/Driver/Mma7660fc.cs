@@ -1,16 +1,21 @@
-﻿using System;
-using System.Threading.Tasks;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
 using Meadow.Peripherals.Sensors.Motion;
 using Meadow.Units;
+using System;
+using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Motion
 {
     /// <summary>
     /// Represents Mma7660fc 3-axis acclerometer
     /// </summary>
-    public partial class Mma7660fc : ByteCommsSensorBase<Acceleration3D>, IAccelerometer
+    public partial class Mma7660fc : ByteCommsSensorBase<Acceleration3D>, IAccelerometer, II2cPeripheral
     {
+        /// <summary>
+        /// The default I2C address for the peripheral
+        /// </summary>
+        public byte DefaultI2cAddress => (byte)Addresses.Default;
+
         /// <summary>
         /// Raised when new acceleration data is processed
         /// </summary>
@@ -38,8 +43,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <param name="i2cBus">I2C bus</param>
         public Mma7660fc(II2cBus i2cBus, Addresses address = Addresses.Default)
             : this(i2cBus, (byte)address)
-        {
-        }
+        { }
 
         /// <summary>
         /// Create a new instance of the Mma7660fc communicating over the I2C interface.
@@ -58,10 +62,10 @@ namespace Meadow.Foundation.Sensors.Motion
             SetSampleRate(SampleRate._32);
             SetMode(SensorPowerMode.Active);
         }
-      
+
         void SetMode(SensorPowerMode mode)
         {
-            Peripheral.WriteRegister((byte)Registers.Mode, (byte)mode);
+            BusComms.WriteRegister((byte)Registers.Mode, (byte)mode);
         }
 
         /// <summary>
@@ -70,7 +74,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <param name="rate">sample rate</param>
         public void SetSampleRate(SampleRate rate)
         {
-            Peripheral.WriteRegister((byte)Registers.SleepRate, (byte)rate);
+            BusComms.WriteRegister((byte)Registers.SleepRate, (byte)rate);
         }
 
         /// <summary>
@@ -81,21 +85,20 @@ namespace Meadow.Foundation.Sensors.Motion
         {
             return Task.Run(() =>
             {
-                Direction = (DirectionType)(Peripheral.ReadRegister((byte)Registers.TILT) & 0x1C);
+                Direction = (DirectionType)(BusComms.ReadRegister((byte)Registers.TILT) & 0x1C);
 
-                Orientation = (OrientationType)(Peripheral.ReadRegister((byte)Registers.TILT) & 0x03);
+                Orientation = (OrientationType)(BusComms.ReadRegister((byte)Registers.TILT) & 0x03);
 
                 int xAccel, yAccel, zAccel;
                 byte x, y, z;
 
                 //Signed byte 6-bit 2’s complement data with allowable range of +31 to -32
                 //[5] is 0 if the g direction is positive, 1 if the g direction is negative.
+                //ensure bit 6 isn't set - if so, it means there was a read/write collision ... try again
                 do
                 {
-                    x = Peripheral.ReadRegister((byte)Registers.XOUT);
-                }
-                //ensure bit 6 isn't set - if so, it means there was a read/write collision ... try again
-                while (x >= 64);
+                    x = BusComms.ReadRegister((byte)Registers.XOUT);
+                } while (x >= 64);
 
                 //check bit 5 and flip to negative
                 if ((x & (1 << 5)) != 0) xAccel = x - 64;
@@ -103,20 +106,17 @@ namespace Meadow.Foundation.Sensors.Motion
 
                 do
                 {
-                    y = Peripheral.ReadRegister((byte)Registers.YOUT);
-                }
-                //ensure bit 6 isn't set - if so, it means there was a read/write collision ... try again
-                while (y >= 64);
+                    y = BusComms.ReadRegister((byte)Registers.YOUT);
+                } while (y >= 64); //ensure bit 6 isn't set - if so, it means there was a read/write collision ... try again
 
                 if ((y & (1 << 5)) != 0) yAccel = y - 64;
                 else yAccel = y;
 
+                //ensure bit 6 isn't set - if so, it means there was a read/write collision ... try again
                 do
                 {
-                    z = Peripheral.ReadRegister((byte)Registers.ZOUT);
-                }
-                //ensure bit 6 isn't set - if so, it means there was a read/write collision ... try again
-                while (y >= 64);
+                    z = BusComms.ReadRegister((byte)Registers.ZOUT);
+                } while (y >= 64);
 
                 if ((z & (1 << 5)) != 0) zAccel = z - 64;
                 else zAccel = z;
@@ -124,8 +124,7 @@ namespace Meadow.Foundation.Sensors.Motion
                 return new Acceleration3D(
                     new Acceleration(xAccel * 3.0 / 64.0, Acceleration.UnitType.Gravity),
                     new Acceleration(yAccel * 3.0 / 64.0, Acceleration.UnitType.Gravity),
-                    new Acceleration(zAccel * 3.0 / 64.0, Acceleration.UnitType.Gravity)
-                    );
+                    new Acceleration(zAccel * 3.0 / 64.0, Acceleration.UnitType.Gravity));
             });
         }
 

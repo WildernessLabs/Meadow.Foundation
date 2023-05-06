@@ -131,13 +131,13 @@
             /// <summary>
             /// 32hz
             /// </summary>
-            _32hz,   
+            _32hz,
         }
 
         /// <summary>
-        /// Valid addresses for the sensor
+        /// Valid I2C addresses for the sensor
         /// </summary>
-        public enum Address : byte
+        public enum Addresses : byte
         {
             /// <summary>
             /// Bus address 0x4C

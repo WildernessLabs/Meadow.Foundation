@@ -11,11 +11,11 @@
         protected enum LcdCommand : byte
         {
             /// <summary>
-            /// CASET
+            /// Column address set
             /// </summary>
             CASET = 0x2A,
             /// <summary>
-            /// RASET
+            /// Row address set
             /// </summary>
             RASET = 0x2B,
             /// <summary>
@@ -70,7 +70,7 @@
             /// </summary>
             DISPON = 0x29,
             /// <summary>
-            /// MADCTL
+            /// Memory access control
             /// </summary>
             MADCTL = 0x36,
             /// <summary>
