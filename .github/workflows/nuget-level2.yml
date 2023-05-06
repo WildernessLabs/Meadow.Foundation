@@ -47,13 +47,6 @@ jobs:
 
     - uses: ./.github/actions/build-package
       with:
-        packageId: Meadow.Foundation.Displays.ePaperWaveShare
-        path: Source/Meadow.Foundation.Peripherals/Displays.ePaperWaveShare/Driver/Displays.ePaperWaveShare.csproj
-        version: ${{ env.version }}
-        token: ${{ env.token }}
-
-    - uses: ./.github/actions/build-package
-      with:
         packageId: Meadow.Foundation.Displays.Gtk
         path: Source/Meadow.Foundation.Peripherals/Displays.Gtk/Driver/Displays.Gtk.csproj
         version: ${{ env.version }}
