@@ -1,0 +1,25 @@
+name: Level3 Package Creation
+
+on:
+  workflow_dispatch:
+
+env:
+  version: '0.98.0'
+  token: ${{ secrets.NUGET_TOKEN }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Set VERSION variable from env.version
+      run: echo "VERSION=${{ env.version }}" >> $GITHUB_ENV
+      
+    - uses: ./.github/actions/build-package
+      with:
+        packageId: Meadow.Foundation.Displays.ePaperWaveShare
+        path: Source/Meadow.Foundation.Peripherals/Displays.ePaperWaveShare/Driver/Displays.ePaperWaveShare.csproj
+        version: ${{ env.version }}
+        token: ${{ env.token }}
