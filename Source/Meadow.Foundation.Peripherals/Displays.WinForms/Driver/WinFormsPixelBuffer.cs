@@ -142,6 +142,12 @@ internal class WinFormsPixelBuffer : IPixelBuffer
     /// <exception cref="NotImplementedException"></exception>
     public void WriteBuffer(int originX, int originY, IPixelBuffer buffer)
     {
-        throw new NotImplementedException();
+        for (var x = 0; x < buffer.Width; x++)
+        {
+            for (var y = 0; y < buffer.Height; y++)
+            {
+                SetPixel(x + originX, y + originY, GetPixel(x, y));
+            }
+        }
     }
 }
