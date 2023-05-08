@@ -55,6 +55,55 @@ namespace Meadow.Foundation.ICs.IOExpanders
             {
                 _channelConfig = CreateChannelConfig(value);
                 _config = value;
+                this.Configuration.Changed += OnConfigurationChanged;
+            }
+        }
+
+        private void OnConfigurationChanged(object sender, EventArgs e)
+        {
+            var changed = false;
+
+            if (Configuration.Speed.Hertz != _channelConfig.ClockRate)
+            {
+                _channelConfig.ClockRate = (uint)Configuration.Speed.Hertz;
+                changed = true;
+            }
+
+            switch (Configuration.SpiMode)
+            {
+                case SpiClockConfiguration.Mode.Mode0:
+                    if ((_channelConfig.Options & SpiConfigOptions.MODE3) != SpiConfigOptions.MODE0)
+                    {
+                        _channelConfig.Options |= SpiConfigOptions.MODE0;
+                        changed = true;
+                    }
+                    break;
+                case SpiClockConfiguration.Mode.Mode1:
+                    if ((_channelConfig.Options & SpiConfigOptions.MODE3) != SpiConfigOptions.MODE1)
+                    {
+                        _channelConfig.Options = (_channelConfig.Options & ~SpiConfigOptions.MODE3) | SpiConfigOptions.MODE1;
+                        changed = true;
+                    }
+                    break;
+                case SpiClockConfiguration.Mode.Mode2:
+                    if ((_channelConfig.Options & SpiConfigOptions.MODE3) != SpiConfigOptions.MODE2)
+                    {
+                        _channelConfig.Options = (_channelConfig.Options & ~SpiConfigOptions.MODE3) | SpiConfigOptions.MODE2;
+                        changed = true;
+                    }
+                    break;
+                case SpiClockConfiguration.Mode.Mode3:
+                    if ((_channelConfig.Options & SpiConfigOptions.MODE3) != SpiConfigOptions.MODE3)
+                    {
+                        _channelConfig.Options = (_channelConfig.Options & ~SpiConfigOptions.MODE3) | SpiConfigOptions.MODE3;
+                        changed = true;
+                    }
+                    break;
+            }
+
+            if (changed)
+            {
+                CheckStatus(Functions.SPI_InitChannel(Handle, ref _channelConfig));
             }
         }
 
