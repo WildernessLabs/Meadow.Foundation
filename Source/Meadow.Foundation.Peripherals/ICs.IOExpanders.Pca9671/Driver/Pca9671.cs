@@ -2,6 +2,7 @@
 using Meadow.Foundation.Relays;
 using Meadow.Hardware;
 using System;
+using System.Linq;
 using System.Threading;
 
 namespace Meadow.Foundation.ICs.IOExpanders
@@ -52,7 +53,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
 		public byte DefaultI2cAddress => 0x20;
 
-		public void Refresh()
+		void Refresh()
 		{
 			Bus.Write(
 				Address,
@@ -63,20 +64,14 @@ namespace Meadow.Foundation.ICs.IOExpanders
 					}));
 		}
 
-		public void AllOn()
+		public void SetState(bool stateForAll)
 		{
-			relayBits = 0xFFFF;
+			if (stateForAll)
+				relayBits = 0xFFFF;
+			else
+				relayBits = 0x0000;
+			
 			Refresh();
-		}
-
-		public void AllOff()
-		{
-			relayBits = 0x0000;
-			Refresh();
-		}
-		public bool GetState(IPin pin)
-		{
-			return (relayBits & (1 << (byte)pin.Key)) != 0;
 		}
 
 		public void SetState(IPin pin, bool state)
@@ -88,6 +83,50 @@ namespace Meadow.Foundation.ICs.IOExpanders
 			
 			Refresh();
 		}
+
+		public void SetStates(
+			bool stateR00 = false,
+			bool stateR01 = false,
+			bool stateR02 = false,
+			bool stateR03 = false,
+			bool stateR04 = false,
+			bool stateR05 = false,
+			bool stateR06 = false,
+			bool stateR07 = false,
+			bool stateR08 = false,
+			bool stateR09 = false,
+			bool stateR10 = false,
+			bool stateR11 = false,
+			bool stateR12 = false,
+			bool stateR13 = false,
+			bool stateR14 = false,
+			bool stateR15 = false)
+			=> SetStates(new bool[]
+			{
+				stateR00, stateR01, stateR02, stateR03, stateR04, stateR05, stateR06, stateR07,
+				stateR08, stateR09, stateR10, stateR11, stateR12, stateR13, stateR14, stateR15
+			});
+
+		public void SetStates(bool[] states)
+		{
+			// set the bool values
+			ushort stateBits = 0x0000;
+
+			for (byte i = 0; i < states.Length && i <= 15; i++)
+			{
+				if (states[i])
+					stateBits |= (ushort)(1 << i);
+			}
+
+			relayBits = stateBits;
+			Refresh();
+		}
+
+		public bool GetState(IPin pin)
+		{
+			return (relayBits & (1 << (byte)pin.Key)) != 0;
+		}
+
 	}
 
 }
