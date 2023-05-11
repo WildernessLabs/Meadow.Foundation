@@ -25,7 +25,7 @@ namespace ICs.IOExpanders.Pca9671_Sample
         {
             while (true)
             {
-                TestBulkDigitalOutputPortWrites(20);
+                //TestBulkDigitalOutputPortWrites(20);
                 TestDigitalOutputPorts(2);
             }
         }

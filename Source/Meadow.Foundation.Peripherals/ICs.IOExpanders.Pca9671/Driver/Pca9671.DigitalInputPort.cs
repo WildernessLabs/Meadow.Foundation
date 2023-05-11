@@ -8,6 +8,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
     {
         public class DigitalInputPort : DigitalInputPortBase
         {
+            private ResistorMode _resistorMode = ResistorMode.Disabled;
+
             internal event EventHandler Disposed = delegate { };
 
             public Pca9671 Peripheral { get; }
@@ -26,10 +28,20 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 Disposed?.Invoke(this, EventArgs.Empty);
             }
 
-            // TODO: these need to go away.  Gotta fix the base class
-            public override ResistorMode Resistor { get => throw new NotSupportedException(); set => throw new NotSupportedException(); }
-            public override TimeSpan DebounceDuration { get => throw new NotSupportedException(); set => throw new NotSupportedException(); }
-            public override TimeSpan GlitchDuration { get => throw new NotSupportedException(); set => throw new NotSupportedException(); }
+            public override ResistorMode Resistor
+            {
+                get => _resistorMode;
+                set
+                {
+                    switch (value)
+                    {
+                        case ResistorMode.InternalPullUp:
+                        case ResistorMode.InternalPullDown:
+                            throw new NotSupportedException($"This device does not support internal resistors");
+                    }
+                    _resistorMode = value;
+                }
+            }
 
             public override bool State => Peripheral.GetState(Pin);
         }
