@@ -82,6 +82,8 @@ namespace Meadow.Hardware
         /// </remarks>
         public virtual void Read(Span<byte> readBuffer)
         {
+            AutoSetBusSpeedAndMode();
+
             Bus.Read(ChipSelect, readBuffer, chipSelectMode);
         }
 
@@ -92,6 +94,8 @@ namespace Meadow.Hardware
         /// <param name="readBuffer">The buffer to hold the data</param>
         public virtual void ReadRegister(byte address, Span<byte> readBuffer)
         {
+            AutoSetBusSpeedAndMode();
+
             WriteBuffer.Span[0] = address;
             Bus.Exchange(ChipSelect, WriteBuffer.Span[0..readBuffer.Length], readBuffer, chipSelectMode);
         }
@@ -103,6 +107,8 @@ namespace Meadow.Hardware
         /// <returns>The byte read</returns>
         public virtual byte ReadRegister(byte address)
         {
+            AutoSetBusSpeedAndMode();
+
             WriteBuffer.Span[0] = address;
             Bus.Exchange(ChipSelect, WriteBuffer.Span[0..1], ReadBuffer.Span[0..1], chipSelectMode);
             return ReadBuffer.Span[0];
@@ -133,6 +139,8 @@ namespace Meadow.Hardware
         /// <param name="value">Value to write</param>
         public void Write(byte value)
         {
+            AutoSetBusSpeedAndMode();
+
             WriteBuffer.Span[0] = value;
             Bus.Write(ChipSelect, WriteBuffer.Span[0..1], chipSelectMode);
         }
@@ -143,6 +151,8 @@ namespace Meadow.Hardware
         /// <param name="data">Data to be written.</param>
         public virtual void Write(Span<byte> data)
         {
+            AutoSetBusSpeedAndMode();
+
             Bus.Write(ChipSelect, data, chipSelectMode);
         }
 
@@ -153,6 +163,8 @@ namespace Meadow.Hardware
         /// <param name="value">Value to write</param>
         public virtual void WriteRegister(byte address, byte value)
         {
+            AutoSetBusSpeedAndMode();
+
             WriteBuffer.Span[0] = address;
             WriteBuffer.Span[1] = value;
             Bus.Write(ChipSelect, WriteBuffer.Span[0..2], chipSelectMode);
@@ -211,6 +223,8 @@ namespace Meadow.Hardware
                     "amount of data to fix.");
             }
 
+            AutoSetBusSpeedAndMode();
+
             WriteBuffer.Span[0] = address;
 
             switch (order)
@@ -231,13 +245,7 @@ namespace Meadow.Hardware
             Bus.Write(ChipSelect, WriteBuffer.Span[0..(writeBuffer.Length + 1)], chipSelectMode);
         }
 
-        /// <summary>
-        /// Exchange data over the SPI bus
-        /// </summary>
-        /// <param name="writeBuffer">The buffer holding the data to write</param>
-        /// <param name="readBuffer">The buffer to receieve data</param>
-        /// <param name="duplex">The duplex mode - half or full</param>
-        public virtual void Exchange(Span<byte> writeBuffer, Span<byte> readBuffer, DuplexType duplex = DuplexType.Half)
+        private void AutoSetBusSpeedAndMode()
         {
             if (Bus.Configuration.SpiMode != BusMode)
             {
@@ -248,6 +256,17 @@ namespace Meadow.Hardware
             {
                 Bus.Configuration.Speed = BusSpeed;
             }
+        }
+
+        /// <summary>
+        /// Exchange data over the SPI bus
+        /// </summary>
+        /// <param name="writeBuffer">The buffer holding the data to write</param>
+        /// <param name="readBuffer">The buffer to receieve data</param>
+        /// <param name="duplex">The duplex mode - half or full</param>
+        public virtual void Exchange(Span<byte> writeBuffer, Span<byte> readBuffer, DuplexType duplex = DuplexType.Half)
+        {
+            AutoSetBusSpeedAndMode();
 
             if (duplex == DuplexType.Half)
             {

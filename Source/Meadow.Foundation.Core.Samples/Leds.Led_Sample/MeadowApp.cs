@@ -1,7 +1,6 @@
 ﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Leds;
-using Meadow.Peripherals.Leds;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -74,17 +73,17 @@ namespace Leds.Led_Sample
                 Resolver.Log.Info("Blinking the LEDs for a second each");
                 foreach (var led in leds)
                 {
-                    led.StartBlink();
+                    await led.StartBlink();
                     await Task.Delay(3000);
-                    led.Stop();
+                    await led.StopAnimation();
                 }
 
                 Resolver.Log.Info("Blinking the LEDs for a second each with on (1s) and off (1s)");
                 foreach (var led in leds)
                 {
-                    led.StartBlink(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1));
+                    await led.StartBlink(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1));
                     await Task.Delay(3000);
-                    led.Stop();
+                    await led.StopAnimation();
                 }
 
                 await Task.Delay(3000);

@@ -2,9 +2,7 @@
 using Meadow.Devices;
 using Meadow.Foundation;
 using Meadow.Foundation.Leds;
-using Meadow.Peripherals.Leds;
 using System;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace Leds.RgbPwmLed_Onboard_Sample
@@ -18,48 +16,45 @@ namespace Leds.RgbPwmLed_Onboard_Sample
         public override Task Initialize()
         {
             Resolver.Log.Info("Creating peripherals...");
-            
+
             onboardLed = new RgbPwmLed(
                 Device.Pins.OnboardLedRed,
                 Device.Pins.OnboardLedGreen,
-                Device.Pins.OnboardLedBlue,
-                commonType: CommonType.CommonAnode);
+                Device.Pins.OnboardLedBlue);
 
             return Task.CompletedTask;
         }
 
         public override Task Run()
         {
-            TestColors();
-
-            RunColors();
-
-            return Task.CompletedTask;
+            return TestColors();
         }
 
-        public void TestColors()
+        public async Task TestColors()
         {
-            onboardLed.SetColor(Color.Crimson);
-            Thread.Sleep(3000);
-            onboardLed.SetColor(Color.MediumPurple);
-            Thread.Sleep(3000);
-            onboardLed.SetColor(Color.FromHex("#23abe3"));
-        }
+            while (true)
+            {
+                Console.WriteLine("SetColor(RgbLedColors.Red);");
+                onboardLed.SetColor(Color.Red);
+                await Task.Delay(3000);
 
-        public void RunColors()
-        {
-            while (true) {
+                Console.WriteLine("StartPulse();");
+                await onboardLed.StartPulse();
+                await Task.Delay(3000);
 
-                // loop through the entire hue spectrum (360 degrees)
-                for (int i = 0; i < 360; i++) {
-                    var hue = ((double)i / 360F);
-                    Resolver.Log.Info($"Hue: {hue}");
+                Console.WriteLine("StartPulse(RgbLedColors.Green);");
+                await onboardLed.StartPulse(Color.Green);
+                await Task.Delay(3000);
 
-                    // set the color of the RGB
-                    onboardLed.SetColor(Color.FromHsba((hue), 1, 1));
+                Console.WriteLine("SetColor(RgbLedColors.Yellow);");
+                onboardLed.SetColor(Color.Yellow);
+                await Task.Delay(3000);
 
-                    Thread.Sleep(18);
-                }
+                Console.WriteLine("StartPulse(RgbLedColors.Cyan, 200, 200);");
+                await onboardLed.StartPulse(Color.Cyan, TimeSpan.FromMilliseconds(400));
+                await Task.Delay(3000);
+
+                await onboardLed.StopAnimation();
             }
         }
 

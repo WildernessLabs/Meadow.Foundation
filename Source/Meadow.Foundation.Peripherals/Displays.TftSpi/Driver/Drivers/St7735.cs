@@ -147,7 +147,6 @@ namespace Meadow.Foundation.Displays
             if (displayType == DisplayType.ST7735B)
             {
                 Init7735B();
-                SetAddressWindow(0, 0, (Width - 1), (Height - 1));
                 return;
             }
 
@@ -170,8 +169,6 @@ namespace Meadow.Foundation.Displays
                 SendCommand((byte)Register.MADCTL, new byte[] { 0xC0 });
                 SendCommand(Register.INVOFF);
             }
-
-            SetAddressWindow(0, 0, (Width - 1), (Height - 1));
 
             dataCommandPort.State = Data;
         }
@@ -382,7 +379,7 @@ namespace Meadow.Foundation.Displays
 
             x1 += xOffset;
             y1 += yOffset;
-            
+
             base.SetAddressWindow(x0, y0, x1, y1);
         }
     }

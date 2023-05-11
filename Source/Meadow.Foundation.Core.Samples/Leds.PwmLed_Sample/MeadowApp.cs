@@ -1,7 +1,6 @@
 ﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Leds;
-using Meadow.Peripherals.Leds;
 using Meadow.Units;
 using System;
 using System.Collections.Generic;
@@ -62,42 +61,33 @@ namespace Leds.PwmLed_Sample
 
                 await Task.Delay(1000);
 
-                Resolver.Log.Info("Blinking the LED for a bit.");
+                Resolver.Log.Info("Blinking each LED (on 500ms / off 500ms)");
                 foreach (var pwmLed in pwmLeds)
                 {
-                    pwmLed.StartBlink();
+                    await pwmLed.StartBlink();
                     await Task.Delay(3000);
-                    pwmLed.Stop();
+                    await pwmLed.StopAnimation();
                 }
 
                 await Task.Delay(1000);
 
-                Resolver.Log.Info("Blinking the LED for a bit.");
+                Resolver.Log.Info("Blinking each LED (on 1s / off 1s)");
                 foreach (var pwmLed in pwmLeds)
                 {
-                    pwmLed.StartBlink(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1));
+                    await pwmLed.StartBlink(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1));
                     await Task.Delay(3000);
-                    pwmLed.Stop();
+                    await pwmLed.StopAnimation();
                 }
 
                 await Task.Delay(1000);
 
-                Resolver.Log.Info("Pulsing the LED for a bit.");
+                Resolver.Log.Info("Pulsing each LED (600ms pulse duration)");
                 foreach (var pwmLed in pwmLeds)
                 {
-                    pwmLed.StartPulse();
+                    await pwmLed.StartPulse();
                     await Task.Delay(1000);
-                    pwmLed.Stop();
-                }
-
-                await Task.Delay(1000);
-
-                Resolver.Log.Info("Pulsing the LED for a bit.");
-                foreach (var pwmLed in pwmLeds)
-                {
-                    pwmLed.StartPulse();
-                    await Task.Delay(1000);
-                    pwmLed.Stop();
+                    await pwmLed.StopAnimation();
+                    pwmLed.IsOn = false;
                 }
 
                 await Task.Delay(1000);
@@ -105,15 +95,15 @@ namespace Leds.PwmLed_Sample
                 Resolver.Log.Info("Set brightness the LED for a bit.");
                 foreach (var pwmLed in pwmLeds)
                 {
-                    pwmLed.Brightness = 0.25f;
+                    pwmLed.SetBrightness(0.25f);
                     await Task.Delay(250);
-                    pwmLed.Brightness = 0.5f;
+                    pwmLed.SetBrightness(0.5f);
                     await Task.Delay(250);
-                    pwmLed.Brightness = 0.75f;
+                    pwmLed.SetBrightness(0.75f);
                     await Task.Delay(250);
-                    pwmLed.Brightness = 1.0f;
+                    pwmLed.SetBrightness(1.0f);
                     await Task.Delay(250);
-                    pwmLed.Stop();
+                    pwmLed.IsOn = false;
                 }
 
                 await Task.Delay(1000);

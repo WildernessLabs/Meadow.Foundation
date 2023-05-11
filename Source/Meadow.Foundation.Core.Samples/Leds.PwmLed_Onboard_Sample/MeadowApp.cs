@@ -21,7 +21,7 @@ namespace Leds.PwmLed_Onboard_Sample
             redPwmLed = new PwmLed(Device.Pins.OnboardLedRed, TypicalForwardVoltage.ResistorLimited, CircuitTerminationType.High);
             greenPwmLed = new PwmLed(Device.Pins.OnboardLedGreen, TypicalForwardVoltage.ResistorLimited, CircuitTerminationType.High);
             bluePwmLed = new PwmLed(Device.Pins.OnboardLedBlue, TypicalForwardVoltage.ResistorLimited, CircuitTerminationType.High);
-            
+
             return Task.CompletedTask;
         }
 
@@ -29,51 +29,51 @@ namespace Leds.PwmLed_Onboard_Sample
         {
             return PulseLeds();
         }
-        
+
         public async Task BrightnessTest(int loopCount)
         {
-            for (int i = 0; i < loopCount; i++) {
+            for (int i = 0; i < loopCount; i++)
+            {
                 Resolver.Log.Info("Blue On @ 1.0");
-                bluePwmLed.Brightness = 1;
+                bluePwmLed.SetBrightness(1);
                 await Task.Delay(1000);
 
                 Resolver.Log.Info("Blue at 98.5%");
-                bluePwmLed.Brightness = 0.985f;
+                bluePwmLed.SetBrightness(0.985f);
                 await Task.Delay(1000);
 
                 Resolver.Log.Info("Blue Off");
-                bluePwmLed.Brightness = 0;
+                bluePwmLed.SetBrightness(0);
                 await Task.Delay(1000);
 
                 Resolver.Log.Info("Blue 50%");
-                bluePwmLed.Brightness = 0.5f;
+                bluePwmLed.SetBrightness(0.5f);
                 await Task.Delay(1000);
-                bluePwmLed.Stop();
+                await bluePwmLed.StopAnimation();
             }
         }
 
         public async Task PulseLeds()
         {
-            while (true) 
+            while (true)
             {
                 Resolver.Log.Info("Pulse Red.");
-                redPwmLed.StartPulse(TimeSpan.FromMilliseconds(500), lowBrightness: 0.05f);
+                await redPwmLed.StartPulse(TimeSpan.FromMilliseconds(500), lowBrightness: 0.05f);
                 await Task.Delay(1000);
                 Resolver.Log.Info("Stop Red.");
-                redPwmLed.Stop();
+                await redPwmLed.StopAnimation();
 
                 Resolver.Log.Info("Pulse Blue.");
-                bluePwmLed.StartPulse(TimeSpan.FromMilliseconds(500), lowBrightness: 0.05f);
+                await bluePwmLed.StartPulse(TimeSpan.FromMilliseconds(500), lowBrightness: 0.05f);
                 await Task.Delay(2000);
                 Resolver.Log.Info("Stop Blue.");
-                bluePwmLed.Stop();
+                await bluePwmLed.StopAnimation();
 
                 Resolver.Log.Info("Pulse Green.");
-                greenPwmLed.StartPulse(TimeSpan.FromMilliseconds(500), lowBrightness: 0.0f);
+                await greenPwmLed.StartPulse(TimeSpan.FromMilliseconds(500), lowBrightness: 0.0f);
                 await Task.Delay(2000);
                 Resolver.Log.Info("Stop Green.");
-                greenPwmLed.Stop();
-
+                await greenPwmLed.StopAnimation();
             }
         }
 
