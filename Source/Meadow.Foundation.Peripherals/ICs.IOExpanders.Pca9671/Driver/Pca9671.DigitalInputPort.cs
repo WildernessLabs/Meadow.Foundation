@@ -8,6 +8,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
     {
         public class DigitalInputPort : DigitalInputPortBase
         {
+            internal event EventHandler Disposed = delegate { };
+
             public Pca9671 Peripheral { get; }
 
             public DigitalInputPort(Pca9671 peripheral, IPin pin)
@@ -15,6 +17,13 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
             {
                 Peripheral = peripheral;
+            }
+
+            /// <inheritdoc/>
+            protected override void Dispose(bool disposing)
+            {
+                base.Dispose(disposing);
+                Disposed?.Invoke(this, EventArgs.Empty);
             }
 
             // TODO: these need to go away.  Gotta fix the base class

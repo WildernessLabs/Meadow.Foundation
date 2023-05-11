@@ -2,9 +2,7 @@
 using Meadow.Devices;
 using Meadow.Foundation.ICs.IOExpanders;
 using Meadow.Hardware;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -14,7 +12,7 @@ namespace ICs.IOExpanders.Pca9671_Sample
     {
         //<!=SNIP=>
 
-        Pca9671 pca;
+        private Pca9671 pca;
 
         public override Task Initialize()
         {
@@ -32,7 +30,7 @@ namespace ICs.IOExpanders.Pca9671_Sample
             }
         }
 
-        void TestDigitalOutputPorts(int loopCount)
+        private void TestDigitalOutputPorts(int loopCount)
         {
             var out00 = pca.CreateDigitalOutputPort(pca.Pins.R00);
             var out01 = pca.CreateDigitalOutputPort(pca.Pins.R01);
@@ -52,7 +50,7 @@ namespace ICs.IOExpanders.Pca9671_Sample
             var out15 = pca.CreateDigitalOutputPort(pca.Pins.R15);
 
 
-            var outputPorts = new List<IDigitalOutputPort>() 
+            var outputPorts = new List<IDigitalOutputPort>()
             {
                 out00, out01, out02, out03, out04, out05, out06, out07,
                 out08, out09, out10, out11, out12, out13, out14, out15
@@ -63,13 +61,13 @@ namespace ICs.IOExpanders.Pca9671_Sample
                 outputPort.State = true;
             }
 
-            for(int l = 0; l < loopCount; l++) 
+            for (int l = 0; l < loopCount; l++)
             {
                 // loop through all the outputs
-                for (int i = 0; i < outputPorts.Count; i++) 
+                for (int i = 0; i < outputPorts.Count; i++)
                 {
                     // turn them all off
-                    pca.SetState(false);
+                    pca.AllOff();
 
                     // turn on just one
                     outputPorts[i].State = true;
@@ -78,12 +76,14 @@ namespace ICs.IOExpanders.Pca9671_Sample
             }
 
             // cleanup
-            for (int i = 0; i < outputPorts.Count; i++) 
+            for (int i = 0; i < outputPorts.Count; i++)
             {
                 outputPorts[i].Dispose();
             }
         }
 
+        /*
+         * this is for the IowaScaledEngineering relay board
         void TestBulkDigitalOutputPortWrites(int loopCount)
         {
             var states = Enumerable.Repeat(false, 16).ToArray();
@@ -99,6 +99,7 @@ namespace ICs.IOExpanders.Pca9671_Sample
                 }
             }
         }
+        */
         //<!=SNOP=>
     }
 }

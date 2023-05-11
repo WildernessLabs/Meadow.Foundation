@@ -1,12 +1,23 @@
 ﻿using Meadow.Hardware;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 
 namespace Meadow.Foundation.ICs.IOExpanders
 {
-    public partial class Pca9671 : I2cCommunications, IDigitalOutputController, IDigitalInputController, II2cPeripheral
+    public partial class Pca9671 : I2cCommunications, IDigitalOutputController, IDigitalInputController, II2cPeripheral, IDisposable
     {
+        private ushort _outputs;
+        private ushort _directionMask; // inputs must be set to logic 1 (data sheet section 8.1)
+        private List<IPin> _pinsInUse = new List<IPin>();
+        private bool _isDisposed;
+        private IDigitalOutputPort? _resetPort;
+
+        public byte DefaultI2cAddress => 0x20;
+
+        public PinDefinitions Pins { get; private set; }
+
         public Pca9671(II2cBus bus, byte peripheralAddress, IPin? resetPin = default, int readBufferSize = 8, int writeBufferSize = 8)
             : base(bus, peripheralAddress, readBufferSize, writeBufferSize)
         {
@@ -16,9 +27,25 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
         public IDigitalOutputPort CreateDigitalOutputPort(IPin pin, bool initialState = false, OutputType initialOutputType = OutputType.PushPull)
         {
-            // TODO: need to reserve the pin so it can't be used again
+            lock (_pinsInUse)
+            {
+                if (_pinsInUse.Contains(pin))
+                {
+                    throw new PortInUseException($"{this.GetType().Name} pin {pin.Name} is already in use.");
+                }
+                var port = new DigitalOutputPort(this, pin, initialState);
+                _pinsInUse.Add(pin);
 
-            return new DigitalOutputPort(this, pin, initialState);
+                port.Disposed += (s, e) =>
+                {
+                    lock (_pinsInUse)
+                    {
+                        _pinsInUse.Add(pin);
+                    }
+                };
+
+                return port;
+            }
         }
 
         public IDigitalInputPort CreateDigitalInputPort(IPin pin, InterruptMode interruptMode, ResistorMode resistorMode, TimeSpan debounceDuration, TimeSpan glitchDuration)
@@ -35,25 +62,39 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 throw new ArgumentException("Interrupts are not supported");
             }
 
-            // TODO: need to reserve the pin so it can't be used again
+            lock (_pinsInUse)
+            {
+                if (_pinsInUse.Contains(pin))
+                {
+                    throw new PortInUseException($"{this.GetType().Name} pin {pin.Name} is already in use.");
+                }
+                var port = new DigitalInputPort(this, pin);
+                _pinsInUse.Add(pin);
 
-            _directionMask |= (ushort)(1 << (byte)pin.Key);
-            return new DigitalInputPort(this, pin);
+                _directionMask |= (ushort)(1 << (byte)pin.Key);
+
+                port.Disposed += (s, e) =>
+                {
+                    lock (_pinsInUse)
+                    {
+                        _pinsInUse.Add(pin);
+                    }
+                };
+
+                return port;
+            }
         }
 
         private void Init(IPin? resetPin = default)
         {
-            // TODO: if we accept in a pin and create a port, we must implement IDisposable and dispose that port
             if (resetPin != null)
-                resetPort = resetPin.CreateDigitalOutputPort(true);
+            {
+                _resetPort = resetPin.CreateDigitalOutputPort(true);
+            }
 
             Reset();
             AllOff();
         }
-
-        public PinDefinitions Pins { get; private set; }
-
-        public int NumberOfPins = 16;
 
         public IPin GetPin(string pinName)
             => Pins.AllPins.FirstOrDefault(p => p.Name == pinName || p.Key.ToString() == p.Name);
@@ -61,75 +102,17 @@ namespace Meadow.Foundation.ICs.IOExpanders
         protected bool IsValidPin(IPin pin)
             => Pins.AllPins.Contains(pin);
 
-        private ushort relayBits;
-        private IDigitalOutputPort? resetPort;
-
         public void Reset()
         {
-            if (resetPort is null)
+            if (_resetPort is null)
+            {
                 return;
-
-            resetPort.State = false;
-            Thread.Sleep(1);
-            resetPort.State = true;
-        }
-
-        public byte DefaultI2cAddress => 0x20;
-
-        private void Refresh()
-        {
-            Bus.Write(
-                Address,
-                new Span<byte>(
-                    new byte[] {
-                        (byte)~(relayBits & 0xFF),
-                        (byte)~((relayBits >> 8) & 0xFF)
-                    }));
-        }
-
-        // NOTE: these need to move to some "relay board" convenience class
-        public void SetStates(
-            bool stateR00 = false,
-            bool stateR01 = false,
-            bool stateR02 = false,
-            bool stateR03 = false,
-            bool stateR04 = false,
-            bool stateR05 = false,
-            bool stateR06 = false,
-            bool stateR07 = false,
-            bool stateR08 = false,
-            bool stateR09 = false,
-            bool stateR10 = false,
-            bool stateR11 = false,
-            bool stateR12 = false,
-            bool stateR13 = false,
-            bool stateR14 = false,
-            bool stateR15 = false)
-            => SetStates(new bool[]
-            {
-                stateR00, stateR01, stateR02, stateR03, stateR04, stateR05, stateR06, stateR07,
-                stateR08, stateR09, stateR10, stateR11, stateR12, stateR13, stateR14, stateR15
-            });
-
-        public void SetStates(bool[] states)
-        {
-            // set the bool values
-            ushort stateBits = 0x0000;
-
-            for (byte i = 0; i < states.Length && i <= 15; i++)
-            {
-                if (states[i])
-                    stateBits |= (ushort)(1 << i);
             }
 
-            relayBits = stateBits;
-            Refresh();
+            _resetPort.State = false;
+            Thread.Sleep(1);
+            _resetPort.State = true;
         }
-
-        //-------
-
-        private ushort _outputs;
-        private ushort _directionMask; // inputs must be set to logic 1 (data sheet section 8.1)
 
         public void AllOff()
         {
@@ -178,18 +161,42 @@ namespace Meadow.Foundation.ICs.IOExpanders
             Input = 1
         }
 
-        private ushort ReadState()
+        protected ushort ReadState()
         {
             Span<byte> buffer = stackalloc byte[2];
             Bus.Read(Address, buffer);
             return (ushort)((buffer[0] << 8) | buffer[1]);
         }
 
-        private void WriteState(ushort state)
+        protected void WriteState(ushort state)
         {
             state |= _directionMask;
             Span<byte> buffer = stackalloc byte[] { (byte)(state & 0xff), (byte)(state >> 8) };
             Bus.Write(Address, buffer);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_isDisposed)
+            {
+                if (disposing)
+                {
+                    if (_resetPort != null)
+                    {
+                        _resetPort.Dispose();
+                        _resetPort = null;
+                    }
+                }
+
+                _isDisposed = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 

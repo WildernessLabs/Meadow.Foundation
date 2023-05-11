@@ -1,4 +1,5 @@
 ﻿using Meadow.Hardware;
+using System;
 
 namespace Meadow.Foundation.ICs.IOExpanders
 {
@@ -6,6 +7,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
     {
         public class DigitalOutputPort : DigitalOutputPortBase
         {
+            internal event EventHandler Disposed = delegate { };
+
             public Pca9671 Peripheral { get; }
 
             public DigitalOutputPort(Pca9671 peripheral, IPin pin, bool initialState, OutputType initialOutputType = OutputType.PushPull)
@@ -13,7 +16,14 @@ namespace Meadow.Foundation.ICs.IOExpanders
             {
                 Peripheral = peripheral;
 
-                // TODO: assert initial state
+                State = initialState;
+            }
+
+            /// <inheritdoc/>
+            protected override void Dispose(bool disposing)
+            {
+                base.Dispose(disposing);
+                Disposed?.Invoke(this, EventArgs.Empty);
             }
 
             public override bool State
