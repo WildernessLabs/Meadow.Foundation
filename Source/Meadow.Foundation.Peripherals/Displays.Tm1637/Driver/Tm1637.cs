@@ -73,7 +73,7 @@ namespace Meadow.Foundation.Displays
         private byte _brightness;
 
         private readonly IDigitalOutputPort portClock;
-        private readonly IBiDirectionalPort portData;
+        private readonly IBiDirectionalInterruptPort portData;
 
         private byte[] displayBuffer = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 

@@ -46,10 +46,10 @@ namespace Meadow.Foundation.Sensors.Hid
         /// <param name="pinRight">The pin connected to the right switch</param>
         /// <param name="resistorMode">The resistor mode for all pins</param>
         public DigitalJoystick(IPin pinUp, IPin pinDown, IPin pinLeft, IPin pinRight, ResistorMode resistorMode)
-            : this(pinUp.CreateDigitalInputPort(InterruptMode.EdgeBoth, resistorMode),
-                   pinDown.CreateDigitalInputPort(InterruptMode.EdgeBoth, resistorMode),
-                   pinLeft.CreateDigitalInputPort(InterruptMode.EdgeBoth, resistorMode),
-                   pinRight.CreateDigitalInputPort(InterruptMode.EdgeBoth, resistorMode))
+            : this(pinUp.CreateDigitalInterruptPort(InterruptMode.EdgeBoth, resistorMode),
+                   pinDown.CreateDigitalInterruptPort(InterruptMode.EdgeBoth, resistorMode),
+                   pinLeft.CreateDigitalInterruptPort(InterruptMode.EdgeBoth, resistorMode),
+                   pinRight.CreateDigitalInterruptPort(InterruptMode.EdgeBoth, resistorMode))
         { }
 
         /// <summary>
@@ -59,10 +59,10 @@ namespace Meadow.Foundation.Sensors.Hid
         /// <param name="portDown">The digital port for the down switch</param>
         /// <param name="portLeft">The digital port for the left switch</param>
         /// <param name="portRight">The digital port for the right switch</param>
-        public DigitalJoystick(IDigitalInputPort portUp,
-                                IDigitalInputPort portDown,
-                                IDigitalInputPort portLeft,
-                                IDigitalInputPort portRight)
+        public DigitalJoystick(IDigitalInterruptPort portUp,
+                                IDigitalInterruptPort portDown,
+                                IDigitalInterruptPort portLeft,
+                                IDigitalInterruptPort portRight)
         {
             ButtonUp = new PushButton(portUp);
             ButtonDown = new PushButton(portDown);
@@ -86,7 +86,7 @@ namespace Meadow.Foundation.Sensors.Hid
         private void PressStarted(object sender, EventArgs e)
             => Update();
 
-        void Update()
+        private void Update()
         {
             var isLeftPressed = ButtonLeft.State;
             var isRightPressed = ButtonRight.State;
@@ -102,7 +102,7 @@ namespace Meadow.Foundation.Sensors.Hid
             }
         }
 
-        DigitalJoystickPosition GetDigitalPosition(bool isLeftPressed, bool isRightPressed, bool isUpPressed, bool isDownPressed)
+        private DigitalJoystickPosition GetDigitalPosition(bool isLeftPressed, bool isRightPressed, bool isUpPressed, bool isDownPressed)
         {
             if (isRightPressed)
             {   //Right
