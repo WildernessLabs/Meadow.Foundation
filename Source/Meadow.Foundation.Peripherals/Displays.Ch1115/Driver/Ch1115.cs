@@ -217,7 +217,7 @@ namespace Meadow.Foundation.Displays
         }
 
         /// <summary>
-        /// Send a command to the display.
+        /// Send a command to the display
         /// </summary>
         /// <param name="command">Command byte to send to the display</param>
         private void SendCommand(byte command)
