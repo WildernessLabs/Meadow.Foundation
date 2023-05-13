@@ -223,18 +223,15 @@ namespace Meadow.Foundation.ICs.IOExpanders
             if (IsValidPin(pin))
             {   // setup the port on the device for output
                 SetPortDirection(pin, PortDirectionType.Output);
-
-                var portBank = GetPortBankForPin(pin);
-                var bitIndex = (byte)(((byte)pin.Key) % 8);
-                var pinDetails = new McpPinDetails(
-                    portBank,
-                    MapRegister(Registers.OutputLatch, portBank),
-                    bitIndex);
-                
                 // create the port model object
                 var port = new DigitalOutputPort(pin, initialState);
 
-                port.SetPinState += (pin, state) => WriteToPort(pin, state, pinDetails);
+                var pinDetails = new McpPinDetails(pin,
+                    GetPortBankForPin(pin),
+                    MapRegister(Registers.OutputLatch, GetPortBankForPin(pin)),
+                    (byte)((byte)pin.Key % 8));
+
+                port.SetPinState += (pin, state) => WriteToPort(pinDetails, state);
 
                 return port;
             }
@@ -345,39 +342,34 @@ namespace Meadow.Foundation.ICs.IOExpanders
         {
             if (IsValidPin(pin))
             {   // if it's already configured, return (1 = input, 0 = output)
+                byte ioDir = GetPortBankForPin(pin) == PortBank.A ? ioDirA : ioDirB;
+
+                if (direction == PortDirectionType.Input)
+                {
+                    if (BitHelpers.GetBitValue(ioDir, (byte)pin.Key)) { return; }
+                }
+                else
+                {
+                    if (!BitHelpers.GetBitValue(ioDir, (byte)pin.Key)) { return; }
+                }
+
+                byte bitIndex = (byte)(((byte)pin.Key) % 8);
+
+                // set the IODIR bit and write the setting
+                if (GetPortBankForPin(pin) == PortBank.A)
+                {
+                    ioDirA = BitHelpers.SetBit(ioDirA, bitIndex, (byte)direction);
+                    mcpDevice.WriteRegister(MapRegister(Registers.IODIR_IODirection, PortBank.A), ioDirA);
+                }
+                else
+                {
+                    ioDirB = BitHelpers.SetBit(ioDirB, bitIndex, (byte)direction);
+                    mcpDevice.WriteRegister(MapRegister(Registers.IODIR_IODirection, PortBank.B), ioDirB);
+                }
             }
             else
             {
                 throw new Exception("Pin is out of range");
-            }
-        }
-
-        private void SetPortDirectionForValidPin(IPin pin, PortDirectionType direction)
-        {
-            var portBank = GetPortBankForPin(pin);
-            byte ioDir = portBank == PortBank.A ? ioDirA : ioDirB;
-
-            if (direction == PortDirectionType.Input)
-            {
-                if (BitHelpers.GetBitValue(ioDir, (byte)pin.Key)) { return; }
-            }
-            else
-            {
-                if (!BitHelpers.GetBitValue(ioDir, (byte)pin.Key)) { return; }
-            }
-
-            byte bitIndex = (byte)(((byte)pin.Key) % 8);
-
-            // set the IODIR bit and write the setting
-            if (portBank == PortBank.A)
-            {
-                ioDirA = BitHelpers.SetBit(ioDirA, bitIndex, (byte)direction);
-                mcpDevice.WriteRegister(MapRegister(Registers.IODIR_IODirection, PortBank.A), ioDirA);
-            }
-            else
-            {
-                ioDirB = BitHelpers.SetBit(ioDirB, bitIndex, (byte)direction);
-                mcpDevice.WriteRegister(MapRegister(Registers.IODIR_IODirection, PortBank.B), ioDirB);
             }
         }
 
@@ -425,26 +417,18 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         /// <param name="pin">The pin to write to.</param>
         /// <param name="value">The value to write. True for high, false for low.</param>
-        public void WriteToPort(IPin pin, bool value, McpPinDetails pinDetails)
+        public void WriteToPort(IPin pin, bool value)
         {
-            lock (_lock)
+            if (!IsValidPin(pin))
             {
-                // if the pin isn't configured for output, configure it
-                SetPortDirectionForValidPin(pin, PortDirectionType.Output);
-                
-                if (pinDetails.PortBank == PortBank.A)
-                {   // update our output latch 
-                    olatA = BitHelpers.SetBit(olatA, pinDetails.BitIndex, value);
-                    // write to the output latch (actually does the output setting)
-                    mcpDevice.WriteRegister(pinDetails.Register, olatA);
-                }
-                else
-                {   // update our output latch 
-                    olatB = BitHelpers.SetBit(olatB, pinDetails.BitIndex, value);
-                    // write to the output latch (actually does the output setting)
-                    mcpDevice.WriteRegister(pinDetails.Register, olatB);
-                }
+                throw new Exception("Pin is out of range");
             }
+
+            var bank = GetPortBankForPin(pin);
+            byte bitIndex = (byte)(((byte)pin.Key) % 8);
+            var register = MapRegister(Registers.OutputLatch, bank);
+            var pinDetails = new McpPinDetails(pin, bank, register, bitIndex);
+            WriteToPort(pinDetails, value);
         }
 
         /// <summary>
@@ -560,6 +544,44 @@ namespace Meadow.Foundation.ICs.IOExpanders
             // Registers for each bank are separated
             // (IODIRA = 0x00, ... OLATA = 0x0A, IODIRB = 0x10, ... OLATB = 0x1A)
             return port == PortBank.A ? address : address += 0x10;
+        }
+
+        /// <summary>
+        /// Sets a particular pin's value. If that pin is not 
+        /// in output mode, this method will first set its 
+        /// mode to output.
+        ///
+        /// This overload takes in cached details that are assumed
+        /// to be accurate for better performance.
+        /// </summary>
+        /// <param name="pinDetails">Information on the pin to set</param>
+        /// <param name="value">The value to write. True for high, false for low</param>
+        private void WriteToPort(McpPinDetails pinDetails, bool value)
+        {
+            lock (_lock)
+            {
+                SetPortDirection(pinDetails.Pin, PortDirectionType.Output);
+                var bitIndex = pinDetails.BitIndex;
+                var register = MapRegister(Registers.OutputLatch, pinDetails.PortBank);
+                ref var latch = ref GetOutputLatch(pinDetails.PortBank);
+                
+                // update the output latch
+                latch = BitHelpers.SetBit(latch, bitIndex, value);
+                
+                // write to the output latch (actually does the output setting)
+                mcpDevice.WriteRegister(register, latch);
+            }
+        }
+
+        private ref byte GetOutputLatch(PortBank portBank)
+        {
+            switch (portBank)
+            {
+                case PortBank.A: return ref olatA;
+                case PortBank.B: return ref olatB;
+                default:
+                    throw new NotSupportedException(portBank.ToString());
+            }
         }
 
         PortBank GetPortBankForPin(IPin pin)

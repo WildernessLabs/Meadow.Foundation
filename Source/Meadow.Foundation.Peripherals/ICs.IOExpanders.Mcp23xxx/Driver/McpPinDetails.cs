@@ -1,13 +1,17 @@
-﻿namespace Meadow.Foundation.ICs.IOExpanders
+﻿using Meadow.Hardware;
+
+namespace Meadow.Foundation.ICs.IOExpanders
 {
-    public readonly struct McpPinDetails
+    internal readonly struct McpPinDetails
     {
+        public readonly IPin Pin;
         public readonly Mcp23xxx.PortBank PortBank;
         public readonly byte Register;
         public readonly byte BitIndex;
 
-        public McpPinDetails(Mcp23xxx.PortBank portBank, byte register, byte bitIndex)
+        public McpPinDetails(IPin pin, Mcp23xxx.PortBank portBank, byte register, byte bitIndex)
         {
+            Pin = pin;
             PortBank = portBank;
             Register = register;
             BitIndex = bitIndex;
