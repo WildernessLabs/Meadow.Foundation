@@ -196,6 +196,11 @@ namespace Meadow.Foundation.Sensors.Buttons
             }
             else
             {
+                if (buttonPressStart == DateTime.MaxValue)
+                {
+                    return;
+                }
+
                 TimeSpan pressDuration = DateTime.Now - buttonPressStart;
                 buttonPressStart = DateTime.MaxValue;
 

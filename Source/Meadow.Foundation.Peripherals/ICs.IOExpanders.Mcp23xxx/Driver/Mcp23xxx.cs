@@ -107,14 +107,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
         void Initialize(IDigitalInputPort interruptPort = null,
                         IDigitalOutputPort resetPort = null)
         {
-            // TODO: more interrupt 
-            // check the interrupt mode and make sure it's correct
-            // raise an exception if not. also, doc in constructor what we expect from an interrupt port
-            if (interruptPort != null)
-            {
-                interruptPort.Changed += InterruptPortChanged;
-            }
-
             if (resetPort != null)
             {
                 this.resetPort = resetPort;
@@ -160,6 +152,14 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 {
                     mcpDevice.WriteRegister(MapRegister(Registers.IOCON_IOConfiguration, PortBank.B), iocon);
                 }
+            }
+
+            // TODO: more interrupt 
+            // check the interrupt mode and make sure it's correct
+            // raise an exception if not. also, doc in constructor what we expect from an interrupt port
+            if (interruptPort != null)
+            {
+                interruptPort.Changed += InterruptPortChanged;
             }
         }
 

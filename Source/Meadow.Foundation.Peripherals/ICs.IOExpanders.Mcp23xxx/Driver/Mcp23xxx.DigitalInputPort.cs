@@ -37,7 +37,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// The resistor mode of the port
             /// </summary>
             public override ResistorMode Resistor
-            { 
+            {
                 get => portResistorMode;
                 set => throw new NotSupportedException("Cannot change port resistor mode after the port is created");
             }
@@ -73,9 +73,10 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// Update the port value 
             /// </summary>
             /// <param name="newState">The new port state</param>
+            /// <param name="raiseEvents">Raise and notify for a state change</param>
             internal void Update(bool newState)
             {
-                if(DateTime.UtcNow - lastUpdate < DebounceDuration)
+                if (DateTime.UtcNow - lastUpdate < DebounceDuration)
                 {
                     return;
                 }
