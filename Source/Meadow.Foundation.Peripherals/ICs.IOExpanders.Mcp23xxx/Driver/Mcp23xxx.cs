@@ -221,15 +221,20 @@ namespace Meadow.Foundation.ICs.IOExpanders
         public virtual IDigitalOutputPort CreateDigitalOutputPort(IPin pin, bool initialState = false, OutputType outputType = OutputType.OpenDrain)
         {
             if (IsValidPin(pin))
-            {   // setup the port on the device for output
-                SetPortDirection(pin, PortDirectionType.Output);
+            {
+                var portBank = GetPortBankForPin(pin);
+                var bitIndex = (byte)((byte)pin.Key % 8);
+                
+                // setup the port on the device for output
+                SetPortDirection(pin, portBank, bitIndex, PortDirectionType.Output);
+                
                 // create the port model object
                 var port = new DigitalOutputPort(pin, initialState);
 
                 var pinDetails = new McpPinDetails(pin,
-                    GetPortBankForPin(pin),
+                    portBank,
                     MapRegister(Registers.OutputLatch, GetPortBankForPin(pin)),
-                    (byte)((byte)pin.Key % 8));
+                    bitIndex);
 
                 port.SetPinState += (pin, state) => WriteToPort(pinDetails, state);
 
@@ -341,36 +346,39 @@ namespace Meadow.Foundation.ICs.IOExpanders
         public void SetPortDirection(IPin pin, PortDirectionType direction)
         {
             if (IsValidPin(pin))
-            {   // if it's already configured, return (1 = input, 0 = output)
-                byte ioDir = GetPortBankForPin(pin) == PortBank.A ? ioDirA : ioDirB;
-
-                if (direction == PortDirectionType.Input)
-                {
-                    if (BitHelpers.GetBitValue(ioDir, (byte)pin.Key)) { return; }
-                }
-                else
-                {
-                    if (!BitHelpers.GetBitValue(ioDir, (byte)pin.Key)) { return; }
-                }
-
-                byte bitIndex = (byte)(((byte)pin.Key) % 8);
-
-                // set the IODIR bit and write the setting
-                if (GetPortBankForPin(pin) == PortBank.A)
-                {
-                    ioDirA = BitHelpers.SetBit(ioDirA, bitIndex, (byte)direction);
-                    mcpDevice.WriteRegister(MapRegister(Registers.IODIR_IODirection, PortBank.A), ioDirA);
-                }
-                else
-                {
-                    ioDirB = BitHelpers.SetBit(ioDirB, bitIndex, (byte)direction);
-                    mcpDevice.WriteRegister(MapRegister(Registers.IODIR_IODirection, PortBank.B), ioDirB);
-                }
+            {
+                var portBank = GetPortBankForPin(pin);
+                var bitIndex = (byte)(((byte)pin.Key) % 8);
+                SetPortDirection(pin, portBank, bitIndex, direction);
             }
             else
             {
                 throw new Exception("Pin is out of range");
             }
+        }
+
+        /// <summary>
+        /// Sets the direction of a port using pre-cached information. This overload
+        /// assumes the pin has been pre-verified as valid.
+        /// </summary>
+        private void SetPortDirection(IPin pin, PortBank portBank, byte bitIndex, PortDirectionType direction)
+        {
+            // if it's already configured, return (1 = input, 0 = output)
+            var ioDir = portBank == PortBank.A ? ioDirA : ioDirB;
+            var register = MapRegister(Registers.IODIR_IODirection, portBank);
+            
+            if (direction == PortDirectionType.Input)
+            {
+                if (BitHelpers.GetBitValue(ioDir, (byte)pin.Key)) { return; }
+            }
+            else
+            {
+                if (!BitHelpers.GetBitValue(ioDir, (byte)pin.Key)) { return; }
+            }
+            
+            ref var ioDirLatch = ref GetIoDirLatch(portBank);
+            ioDirLatch = BitHelpers.SetBit(ioDirLatch, bitIndex, (byte)direction);
+            mcpDevice.WriteRegister(register, ioDirLatch);
         }
 
         /// <summary>
@@ -560,7 +568,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         {
             lock (_lock)
             {
-                SetPortDirection(pinDetails.Pin, PortDirectionType.Output);
+                SetPortDirection(pinDetails.Pin, pinDetails.PortBank, pinDetails.BitIndex, PortDirectionType.Output);
                 var bitIndex = pinDetails.BitIndex;
                 var register = MapRegister(Registers.OutputLatch, pinDetails.PortBank);
                 ref var latch = ref GetOutputLatch(pinDetails.PortBank);
@@ -579,6 +587,17 @@ namespace Meadow.Foundation.ICs.IOExpanders
             {
                 case PortBank.A: return ref olatA;
                 case PortBank.B: return ref olatB;
+                default:
+                    throw new NotSupportedException(portBank.ToString());
+            }
+        }
+
+        private ref byte GetIoDirLatch(PortBank portBank)
+        {
+            switch (portBank)
+            {
+                case PortBank.A: return ref ioDirA;
+                case PortBank.B: return ref ioDirB;
                 default:
                     throw new NotSupportedException(portBank.ToString());
             }
