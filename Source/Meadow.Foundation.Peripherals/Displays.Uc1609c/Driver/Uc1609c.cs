@@ -76,7 +76,7 @@ namespace Meadow.Foundation.Displays
         const bool Data = true;
         const bool Command = false;
 
-        Buffer1bpp imageBuffer;
+        readonly Buffer1bpp imageBuffer;
 
         /// <summary>
         /// Create a new Uc1609c object
@@ -275,6 +275,15 @@ namespace Meadow.Foundation.Displays
                 throw new ArgumentException($"Scroll value must be less than 65: {scrollValue}");
             }
             SendCommand(UC1609_SCROLL, scrollValue);
+        }
+
+        /// <summary>
+        /// Invert the display
+        /// </summary>
+        /// <param name="invert">True for inverted, False for normal</param>
+        public void InvertDisplay(bool invert)
+        {
+            SendCommand(UC1609_INVERSE_DISPLAY, (byte)(invert ? 1 : 0));
         }
     }
 }
