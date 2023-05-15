@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 
+#nullable enable
+
 namespace Meadow.Foundation.ICs.IOExpanders
 {
     /// <summary>
@@ -240,7 +242,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             }
 
             // update the global mask to make this an output
-            _activeBus.GpioDirectionMask |= (byte)((byte)pin.Key);
+            _activeBus.GpioDirectionMask |= (byte)pin.Key;
 
             // update the direction
             Native.Functions.FT_WriteGPIO(_activeBus.Handle, _activeBus.GpioDirectionMask, 0);

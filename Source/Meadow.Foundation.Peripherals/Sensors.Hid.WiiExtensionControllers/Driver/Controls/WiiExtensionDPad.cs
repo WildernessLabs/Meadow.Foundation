@@ -23,7 +23,7 @@ namespace Meadow.Foundation.Sensors.Hid
         DigitalJoystickPosition GetDigitalPosition(bool isLeftPressed, bool isRightPressed, bool isUpPressed, bool isDownPressed)
         {
             if (isRightPressed)
-            {   //Right
+            {
                 if (isUpPressed)
                 {
                     return DigitalJoystickPosition.UpRight;
@@ -35,7 +35,7 @@ namespace Meadow.Foundation.Sensors.Hid
                 return DigitalJoystickPosition.Right;
             }
             else if (isLeftPressed)
-            {   //Left
+            {
                 if (isUpPressed)
                 {
                     return DigitalJoystickPosition.UpLeft;
@@ -47,15 +47,15 @@ namespace Meadow.Foundation.Sensors.Hid
                 return DigitalJoystickPosition.Left;
             }
             else if (isUpPressed)
-            {   //Up
+            {
                 return DigitalJoystickPosition.Up;
             }
             else if (isDownPressed)
-            {   //Down
+            {
                 return DigitalJoystickPosition.Down;
             }
             else
-            {   //Center
+            {
                 return DigitalJoystickPosition.Center;
             }
         }

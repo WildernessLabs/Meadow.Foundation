@@ -27,6 +27,9 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// </summary>
         public struct Measurements
         {
+            /// <summary>
+            /// Concentration of dissolved Oxygen in water
+            /// </summary>
             public ConcentrationInWater DissolvedOxygen { get; private set; }
 
             /// <summary>
@@ -65,9 +68,13 @@ namespace Meadow.Foundation.Sensors.Environmental
             /// </summary>
             public Units.Temperature Temperature { get; private set; }
 
+            /// <summary>
+            /// Measurements constructor, converts float array to Y4000 Measurements.
+            /// </summary>
+            /// <param name="data">8 element float array containing water component measurements</param>
             public Measurements(float[] data)
             {
-                if(data.Length != 8)
+                if (data.Length != 8)
                 {
                     throw new ArgumentException($"Measurements record expects 8 values, received {data.Length}");
                 }
@@ -99,6 +106,10 @@ namespace Meadow.Foundation.Sensors.Environmental
 
             static float Normalize(float value) => float.IsNormal(value) ? value : 0;
 
+            /// <summary>
+            /// Returns a string that represents the current Y4000 measurement data.
+            /// </summary>
+            /// <returns>A string that represents the current Y4000 measurement data.</returns>
             public override string ToString()
             {
                 StringBuilder sb = new StringBuilder();
