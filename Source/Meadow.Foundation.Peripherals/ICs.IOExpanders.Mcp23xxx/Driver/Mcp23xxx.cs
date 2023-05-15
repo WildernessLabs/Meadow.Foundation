@@ -10,7 +10,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
     /// <summary>
     /// Provide an interface to connect to a MCP2xxx port expander
     /// </summary>
-    abstract partial class Mcp23xxx : IDigitalInputOutputController, ISpiPeripheral, II2cPeripheral
+    public abstract partial class Mcp23xxx : IDigitalInputOutputController, ISpiPeripheral, II2cPeripheral
     {
         /// <summary> 
         /// Raised when the value of any pin configured for input interrupts changes
@@ -77,7 +77,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <param name="interruptPort">Optional interupt port, needed for input interrupts (pins 1-8)</param>
         /// <param name="resetPort">Optional Meadow output port used to reset the mcp expander</param>
         protected Mcp23xxx(II2cBus i2cBus, byte address,
-            IDigitalInputPort interruptPort = null, IDigitalOutputPort resetPort = null)
+            IDigitalInterruptPort interruptPort = null, IDigitalOutputPort resetPort = null)
         {
             mcpDevice = new I2cCommunications(i2cBus, address);
             Initialize(interruptPort, resetPort);
@@ -92,7 +92,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <param name="resetPort">Optional Meadow output port used to reset the mcp expander</param>
         protected Mcp23xxx(ISpiBus spiBus,
             IDigitalOutputPort chipSelectPort,
-            IDigitalInputPort interruptPort = null,
+            IDigitalInterruptPort interruptPort = null,
             IDigitalOutputPort resetPort = null)
         {
             mcpDevice = new SpiCommunications(spiBus, chipSelectPort, DefaultSpiBusSpeed, DefaultSpiBusMode);
@@ -104,7 +104,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         /// <param name="interruptPort">optional interupt port, needed for input interrupts (pins 1-8)</param>
         /// <param name="resetPort">Optional Meadow output port used to reset the mcp expander</param>
-        void Initialize(IDigitalInputPort interruptPort = null,
+        private void Initialize(IDigitalInterruptPort interruptPort = null,
                         IDigitalOutputPort resetPort = null)
         {
             if (resetPort != null)
@@ -203,7 +203,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 }
                 port.Value.Update(state);
             }
-            InputChanged?.Invoke(this, new IOExpanderInputChangedEventArgs(interruptFlag, (ushort)(currentStatesB << 8 | currentStates)));
+            InputChanged?.Invoke(this, new IOExpanderInputChangedEventArgs(interruptFlag, (ushort)((currentStatesB << 8) | currentStates)));
         }
 
         /// <summary>
@@ -255,7 +255,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             InterruptMode interruptMode = InterruptMode.None,
             ResistorMode resistorMode = ResistorMode.Disabled)
         {
-            return CreateDigitalInputPort(pin, interruptMode, resistorMode, TimeSpan.Zero, TimeSpan.Zero);
+            return CreateDigitalInterruptPort(pin, interruptMode, resistorMode, TimeSpan.Zero, TimeSpan.Zero);
         }
 
         /// <summary>
@@ -266,13 +266,13 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <param name="resistorMode">The port resistor mode</param>
         /// <param name="debounceDuration">The debounce duration</param>
         /// <returns>IDigitalInputPort</returns>
-        public IDigitalInputPort CreateDigitalInputPort(
+        public IDigitalInterruptPort CreateDigitalInterruptPort(
             IPin pin,
             InterruptMode interruptMode,
             ResistorMode resistorMode,
             TimeSpan debounceDuration)
         {
-            return CreateDigitalInputPort(pin, interruptMode, resistorMode, debounceDuration, TimeSpan.Zero);
+            return CreateDigitalInterruptPort(pin, interruptMode, resistorMode, debounceDuration, TimeSpan.Zero);
         }
 
         /// <summary>
@@ -284,7 +284,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <param name="debounceDuration">The debounce duration</param>
         /// <param name="glitchDuration">The clitch duration - not configurable on Mcpxxxx</param>
         /// <returns>IDigitalInputPort</returns>
-        public IDigitalInputPort CreateDigitalInputPort(
+        public IDigitalInterruptPort CreateDigitalInterruptPort(
             IPin pin,
             InterruptMode interruptMode,
             ResistorMode resistorMode,
@@ -375,7 +375,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <param name="enablePullUp">Enable the internal pullup if true</param>
         /// <param name="interruptMode">Interrupt mode of port</param>
         /// <exception cref="Exception">Throw execption if pin is out of range</exception>
-        void ConfigureMcpInputPort(IPin pin, bool enablePullUp = false, InterruptMode interruptMode = InterruptMode.None)
+        private void ConfigureMcpInputPort(IPin pin, bool enablePullUp = false, InterruptMode interruptMode = InterruptMode.None)
         {
             if (IsValidPin(pin))
             {
@@ -543,7 +543,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <param name="port">The bank of I/O ports used with the register</param>
         /// <param name="bankStyle">The bank style that determines how the register addresses are grouped</param>
         /// <returns>The address of the register</returns>
-        byte MapRegister(byte address, PortBank port = PortBank.A, PortBankType bankStyle = PortBankType.Segregated)
+        private byte MapRegister(byte address, PortBank port = PortBank.A, PortBankType bankStyle = PortBankType.Segregated)
         {
             // There is no mapping for 8 pin io expanders
             if (NumberOfPins == 8) { return address; }
@@ -559,7 +559,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             return port == PortBank.A ? address : address += 0x10;
         }
 
-        PortBank GetPortBankForPin(IPin pin)
+        private PortBank GetPortBankForPin(IPin pin)
         {   //hard coded ... verify in Mcp23x1x.PinDefinitions.cs
             if ((byte)pin.Key >= 8)
             {

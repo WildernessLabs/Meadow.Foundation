@@ -11,7 +11,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         /// Digital input port
         /// </summary>
-        private readonly IDigitalInputPort _digitalInputPort;
+        private readonly IDigitalInterruptPort _digitalInputPort;
 
         /// <summary>
         /// Delgate for the motion start and end events.
@@ -35,7 +35,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <param name="interruptMode"></param>
         /// <param name="resistorMode"></param>
         public ParallaxPir(IPin pin, InterruptMode interruptMode, ResistorMode resistorMode) :
-            this(pin.CreateDigitalInputPort(interruptMode, resistorMode, TimeSpan.FromMilliseconds(2), TimeSpan.Zero))
+            this(pin.CreateDigitalInterruptPort(interruptMode, resistorMode, TimeSpan.FromMilliseconds(2), TimeSpan.Zero))
         { }
 
         /// <summary>
@@ -47,14 +47,14 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <param name="debounceDuration"></param>
         /// <param name="glitchFilterCycleCount"></param>
         public ParallaxPir(IPin pin, InterruptMode interruptMode, ResistorMode resistorMode, TimeSpan debounceDuration, TimeSpan glitchFilterCycleCount) :
-            this(pin.CreateDigitalInputPort(interruptMode, resistorMode, debounceDuration, glitchFilterCycleCount))
+            this(pin.CreateDigitalInterruptPort(interruptMode, resistorMode, debounceDuration, glitchFilterCycleCount))
         { }
 
         /// <summary>
         /// Create a new Parallax PIR object connected to a interrupt port.
         /// </summary>
         /// <param name="digitalInputPort"></param>
-        public ParallaxPir(IDigitalInputPort digitalInputPort)
+        public ParallaxPir(IDigitalInterruptPort digitalInputPort)
         {
             //TODO: I changed this from Pins.GPIO_NONE to null
             if (digitalInputPort != null)

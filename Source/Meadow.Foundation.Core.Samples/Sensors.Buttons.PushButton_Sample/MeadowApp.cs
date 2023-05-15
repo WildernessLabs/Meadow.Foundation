@@ -15,8 +15,8 @@ namespace Sensors.Buttons.PushButton_Sample
     {
         //<!=SNIP=>
 
-        RgbPwmLed led;
-        List<PushButton> pushButtons;
+        private RgbPwmLed led;
+        private List<PushButton> pushButtons;
 
         public override Task Initialize()
         {
@@ -38,11 +38,11 @@ namespace Sensors.Buttons.PushButton_Sample
             return Task.CompletedTask;
         }
 
-        void TestAllResistorTypes()
+        private void TestAllResistorTypes()
         {
             pushButtons = new List<PushButton>();
 
-            var inputInternalPullUp = Device.CreateDigitalInputPort(
+            var inputInternalPullUp = Device.CreateDigitalInterruptPort(
                 Device.Pins.MISO,
                 InterruptMode.EdgeBoth,
                 ResistorMode.InternalPullUp, TimeSpan.FromMilliseconds(20), TimeSpan.Zero);
@@ -50,7 +50,7 @@ namespace Sensors.Buttons.PushButton_Sample
 
             pushButtons.Add(buttonInternalPullUp);
 
-            var inputInternalPullDown = Device.CreateDigitalInputPort(
+            var inputInternalPullDown = Device.CreateDigitalInterruptPort(
                 pin: Device.Pins.D02,
                 InterruptMode.EdgeBoth,
                 resistorMode: ResistorMode.InternalPullDown, TimeSpan.FromMilliseconds(20), TimeSpan.Zero);
@@ -58,7 +58,7 @@ namespace Sensors.Buttons.PushButton_Sample
 
             pushButtons.Add(buttonInternalPullDown);
 
-            var inputExternalPullUp = Device.CreateDigitalInputPort(
+            var inputExternalPullUp = Device.CreateDigitalInterruptPort(
                 pin: Device.Pins.D03,
                 InterruptMode.EdgeBoth,
                 resistorMode: ResistorMode.ExternalPullUp);
@@ -66,7 +66,7 @@ namespace Sensors.Buttons.PushButton_Sample
 
             pushButtons.Add(buttonExternalPullUp);
 
-            var inputExternalPullDown = Device.CreateDigitalInputPort(
+            var inputExternalPullDown = Device.CreateDigitalInterruptPort(
                 pin: Device.Pins.D04,
                 InterruptMode.EdgeBoth,
                 resistorMode: ResistorMode.ExternalPullDown);
@@ -87,7 +87,7 @@ namespace Sensors.Buttons.PushButton_Sample
             led.SetColor(Color.Green);
         }
 
-        void TestMultiplePorts()
+        private void TestMultiplePorts()
         {
             // Important note: You can only use on Push Button per Group Set (GSXX)
             pushButtons = new List<PushButton>
@@ -132,7 +132,7 @@ namespace Sensors.Buttons.PushButton_Sample
             }
         }
 
-        void PushButtonClicked(object sender, EventArgs e)
+        private void PushButtonClicked(object sender, EventArgs e)
         {
             Resolver.Log.Info($"PushButton Clicked!");
             led.SetColor(Color.Orange);
@@ -140,19 +140,19 @@ namespace Sensors.Buttons.PushButton_Sample
             led.SetColor(Color.Green);
         }
 
-        void PushButtonPressStarted(object sender, EventArgs e)
+        private void PushButtonPressStarted(object sender, EventArgs e)
         {
             Resolver.Log.Info($"PushButton PressStarted!");
             led.SetColor(Color.Red);
         }
 
-        void PushButtonPressEnded(object sender, EventArgs e)
+        private void PushButtonPressEnded(object sender, EventArgs e)
         {
             Resolver.Log.Info($"PushButton PressEnded!");
             led.SetColor(Color.Green);
         }
 
-        void PushButtonLongClicked(object sender, EventArgs e)
+        private void PushButtonLongClicked(object sender, EventArgs e)
         {
             Resolver.Log.Info($"PushButton LongClicked!");
             led.SetColor(Color.Blue);

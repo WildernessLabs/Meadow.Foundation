@@ -38,7 +38,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <summary>
         /// Last button pressed, used internally to raise key up events
         /// </summary>
-        KeyScanButtonType lastButtonPressed = KeyScanButtonType.None;
+        private KeyScanButtonType lastButtonPressed = KeyScanButtonType.None;
 
         /// <summary>
         /// I2C Communication bus used to communicate with the peripheral
@@ -78,7 +78,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <summary>
         /// The buffer used to store pixel data
         /// </summary>
-        readonly Buffer1bpp buffer = new Buffer1bpp(8, 8);
+        private readonly Buffer1bpp buffer = new Buffer1bpp(8, 8);
 
         /// <summary>
         /// The display decode mode 
@@ -91,7 +91,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         public bool IsDisposed { get; private set; }
 
-        readonly IDigitalInputPort interruptPort;
+        private readonly IDigitalInterruptPort interruptPort;
 
         /// <summary>
         /// Create a new AS1115 object using the default parameters for
@@ -104,7 +104,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         {
             i2cComms = new I2cCommunications(i2cBus, address);
 
-            interruptPort = buttonInterruptPin.CreateDigitalInputPort(
+            interruptPort = buttonInterruptPin.CreateDigitalInterruptPort(
                 InterruptMode.EdgeFalling,
                 ResistorMode.InternalPullUp);
 
@@ -113,7 +113,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             Initialize();
         }
 
-        void Initialize()
+        private void Initialize()
         {
             var keyDictionary = new Dictionary<KeyScanButtonType, KeyScanButton>();
 
@@ -163,7 +163,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             }
         }
 
-        KeyScanButtonType GetButtonFromKeyScanRegister(byte keyA, byte keyB)
+        private KeyScanButtonType GetButtonFromKeyScanRegister(byte keyA, byte keyB)
         {
             KeyScanButtonType ret;
 
@@ -243,7 +243,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         /// <param name="mode">The decode mode enum</param>
         /// Not currently supported - driver is pixel mode only
-        void SetDecodeMode(DecodeType mode)
+        private void SetDecodeMode(DecodeType mode)
         {
             DecodeMode = mode;
 

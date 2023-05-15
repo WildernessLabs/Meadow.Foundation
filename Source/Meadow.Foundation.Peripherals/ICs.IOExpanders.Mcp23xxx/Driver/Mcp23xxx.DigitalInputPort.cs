@@ -8,7 +8,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <summary>
         /// Represents an Mcp23xxx digital input port
         /// </summary>
-        public class DigitalInputPort : DigitalInputPortBase
+        public class DigitalInputPort : DigitalInterruptPortBase
         {
             /// <summary>
             /// Update state function 

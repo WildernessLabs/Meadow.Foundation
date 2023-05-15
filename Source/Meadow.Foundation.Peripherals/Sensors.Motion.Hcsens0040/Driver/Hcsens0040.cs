@@ -11,7 +11,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         /// Digital input port
         /// </summary>
-        private readonly IDigitalInputPort digitalInputPort;
+        private readonly IDigitalInterruptPort digitalInputPort;
 
         /// <summary>
         /// Delgate for the motion start and end events
@@ -28,14 +28,14 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
         /// <param name="inputPin">The input pin</param>        
         public Hcsens0040(IPin inputPin) :
-            this(inputPin.CreateDigitalInputPort(InterruptMode.EdgeRising, ResistorMode.InternalPullDown))
+            this(inputPin.CreateDigitalInterruptPort(InterruptMode.EdgeRising, ResistorMode.InternalPullDown))
         { }
 
         /// <summary>
         /// Create a new Parallax PIR object connected to a interrupt port
         /// </summary>
         /// <param name="digitalInputPort"></param>        
-        public Hcsens0040(IDigitalInputPort digitalInputPort)
+        public Hcsens0040(IDigitalInterruptPort digitalInputPort)
         {
             if (digitalInputPort != null)
             {

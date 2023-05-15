@@ -29,17 +29,5 @@ namespace Meadow.Foundation.ICs.IOExpanders
             get => ResistorMode.Disabled;
             set => throw new NotSupportedException("The FT232 does not support internal resistors");
         }
-
-        public override TimeSpan DebounceDuration
-        {
-            get => TimeSpan.Zero;
-            set => throw new NotSupportedException("The FT232 does not support debounce");
-        }
-
-        public override TimeSpan GlitchDuration
-        {
-            get => TimeSpan.Zero;
-            set => throw new NotSupportedException("The FT232 does not support glitch filtering");
-        }
     }
 }

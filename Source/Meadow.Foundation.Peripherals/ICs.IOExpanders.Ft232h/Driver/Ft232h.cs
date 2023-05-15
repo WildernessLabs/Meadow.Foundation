@@ -197,18 +197,13 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
         public IDigitalInputPort CreateDigitalInputPort(IPin pin)
         {
-            return CreateDigitalInputPort(pin, InterruptMode.None, ResistorMode.Disabled, TimeSpan.Zero, TimeSpan.Zero);
+            return CreateDigitalInputPort(pin, ResistorMode.Disabled);
         }
 
         private bool _spiBusAutoCreated = false;
 
-        public IDigitalInputPort CreateDigitalInputPort(IPin pin, InterruptMode interruptMode, ResistorMode resistorMode, TimeSpan debounceDuration, TimeSpan glitchDuration)
+        public IDigitalInputPort CreateDigitalInputPort(IPin pin, ResistorMode resistorMode)
         {
-            if (interruptMode != InterruptMode.None)
-            {
-                throw new NotSupportedException("The FT232 does not support interrupts");
-            }
-
             // MPSSE requires a bus, it can be either I2C or SPI, but that bus must be created before you can use GPIO
             // if no bus is yet open, we'll default to a SPI bus.
             // If this is created before an I2C comms bus, we need to let the caller know to create the comms bus first
@@ -240,7 +235,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             }
 
             // update the global mask to make this an output
-            _activeBus.GpioDirectionMask |= (byte)((byte)pin.Key);
+            _activeBus.GpioDirectionMask |= (byte)pin.Key;
 
             // update the direction
             Native.Functions.FT_WriteGPIO(_activeBus.Handle, _activeBus.GpioDirectionMask, 0);

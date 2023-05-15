@@ -18,16 +18,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
             public override PortDirectionType Direction { get; set; }
 
             /// <summary>
-            /// Debounce filer duration
-            /// </summary>
-            public override TimeSpan DebounceDuration { get; set; }
-
-            /// <summary>
-            /// Glitch filter duration 
-            /// </summary>
-            public override TimeSpan GlitchDuration { get; set; }
-
-            /// <summary>
             /// Create a new BiDirectionalPort object
             /// </summary>
             protected BiDirectionalPort(
