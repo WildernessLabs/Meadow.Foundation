@@ -2,6 +2,7 @@
 using Meadow.Foundation.Graphics.Buffers;
 using Meadow.Hardware;
 using Meadow.Units;
+using System;
 using System.Threading;
 
 namespace Meadow.Foundation.Displays
@@ -75,8 +76,7 @@ namespace Meadow.Foundation.Displays
         const bool Data = true;
         const bool Command = false;
 
-        readonly Buffer1bpp imageBuffer;
-        readonly byte[] pageBuffer;
+        Buffer1bpp imageBuffer;
 
         /// <summary>
         /// Create a new Uc1609c object
@@ -91,8 +91,7 @@ namespace Meadow.Foundation.Displays
             int width = 192, int height = 64) :
             this(spiBus, chipSelectPin?.CreateDigitalOutputPort(), dcPin.CreateDigitalOutputPort(),
                 resetPin.CreateDigitalOutputPort(), width, height)
-        {
-        }
+        { }
 
         /// <summary>
         /// Create a new Uc1609c display object
@@ -115,7 +114,6 @@ namespace Meadow.Foundation.Displays
             spiComms = new SpiCommunications(spiBus, chipSelectPort, DefaultSpiBusSpeed, DefaultSpiBusMode);
 
             imageBuffer = new Buffer1bpp(width, height);
-            pageBuffer = new byte[192];
 
             Initialize();
         }
@@ -154,12 +152,15 @@ namespace Meadow.Foundation.Displays
         /// Send a command to the display
         /// </summary>
         /// <param name="data">Command byte to send to the display</param>
-        private void SendData(byte data)
+        protected void SendData(byte data)
         {
             spiComms.Write(data);
         }
 
-        private void Reset()
+        /// <summary>
+        /// Reset the display
+        /// </summary>
+        protected void Reset()
         {
             resetPort.State = false;
             Thread.Sleep(150);
@@ -254,26 +255,26 @@ namespace Meadow.Foundation.Displays
             spiComms.Write(imageBuffer.Buffer);
         }
 
+        /// <summary>
+        /// Send a region of the internal pixel buffer to display
+        /// </summary>
         public void Show(int left, int top, int right, int bottom)
         {
-            throw new System.NotImplementedException();
+            Show();
+        }
 
-            /*   for (int page = 0; page < 8; page++)
-               {
-                   SendCommand(UC1609_SET_COLADD_LSB, 0x0F);
-                   SendCommand(UC1609_SET_COLADD_MSB, 0xF0 >> 4);
-                   SendCommand(UC1609_SET_PAGEADD, (byte)page);
-
-                   dataCommandPort.State = Data;
-
-                   for (int i = 0; i < Width; i++)
-                   {
-                       spiComms.Write(imageBuffer.Buffer[Width * page + i]);
-                   }
-
-                   // Array.Copy(imageBuffer.Buffer, Width * page, pageBuffer, 0, Width);
-                   // spiComms.Write(pageBuffer);
-               } */
+        /// <summary>
+        /// Scroll the display by 0 to 64 rows
+        /// </summary>
+        /// <param name="scrollValue"></param>
+        /// <exception cref="ArgumentException"></exception>
+        public void Scroll(byte scrollValue)
+        {
+            if (scrollValue > 64)
+            {
+                throw new ArgumentException($"Scroll value must be less than 65: {scrollValue}");
+            }
+            SendCommand(UC1609_SCROLL, scrollValue);
         }
     }
 }

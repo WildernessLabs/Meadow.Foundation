@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Displays.Uc1609c_Sample
 {
-    public class MeadowApp : App<F7FeatherV1>
+    public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
 
@@ -26,8 +26,10 @@ namespace Displays.Uc1609c_Sample
                 height: 64
             );
 
-            graphics = new MicroGraphics(uc1609c);
-            graphics.CurrentFont = new Font8x8();
+            graphics = new MicroGraphics(uc1609c)
+            {
+                CurrentFont = new Font8x8()
+            };
 
             return base.Initialize();
         }
