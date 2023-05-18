@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 
+#nullable enable
+
 namespace Meadow.Foundation.ICs.IOExpanders
 {
     /// <summary>

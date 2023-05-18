@@ -4,6 +4,8 @@ using Meadow.Units;
 using System;
 using System.Threading.Tasks;
 
+#nullable enable
+
 namespace Meadow.Foundation.Sensors.Environmental
 {
     /// <summary>
