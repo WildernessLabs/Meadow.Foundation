@@ -1225,6 +1225,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NextPm_Sample", "Meadow.Fou
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pmsa003I_Sample", "Meadow.Foundation.Peripherals\Sensors.Environmental.Pmsa003I\Samples\Pmsa003I_Sample\Pmsa003I_Sample.csproj", "{31D80302-FD83-4958-B379-DAC2BC91ABDA}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "108 Keyboard", "108 Keyboard", "{0D734F8D-2285-4A41-8477-4B8D29D710CF}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Hid.Keyboard", "Meadow.Foundation.Peripherals\Sensors.Hid.Keyboard\Driver\Sensors.Hid.Keyboard.csproj", "{A20C8F00-951A-43FF-8A42-71850A2509E8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -2907,6 +2911,10 @@ Global
 		{31D80302-FD83-4958-B379-DAC2BC91ABDA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{31D80302-FD83-4958-B379-DAC2BC91ABDA}.Release|Any CPU.Build.0 = Release|Any CPU
 		{31D80302-FD83-4958-B379-DAC2BC91ABDA}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{A20C8F00-951A-43FF-8A42-71850A2509E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A20C8F00-951A-43FF-8A42-71850A2509E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A20C8F00-951A-43FF-8A42-71850A2509E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A20C8F00-951A-43FF-8A42-71850A2509E8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -3519,6 +3527,8 @@ Global
 		{8A37E554-5E29-4E3A-A4EF-6E360FBA359B} = {4F21565E-E855-479E-87D1-7F5F3BC96543}
 		{0F63B848-5397-41F5-A6A9-4837ED647E1A} = {8A37E554-5E29-4E3A-A4EF-6E360FBA359B}
 		{31D80302-FD83-4958-B379-DAC2BC91ABDA} = {A3F37EFB-9686-4074-9962-5F731C52D919}
+		{0D734F8D-2285-4A41-8477-4B8D29D710CF} = {818BF624-10A7-45B2-9BEE-4C411CD9CA06}
+		{A20C8F00-951A-43FF-8A42-71850A2509E8} = {0D734F8D-2285-4A41-8477-4B8D29D710CF}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}
