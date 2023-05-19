@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Runtime.InteropServices;
-using System.Text;
 
 namespace Meadow.Foundation.ICs.IOExpanders
 {
@@ -13,24 +12,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
             [DllImport(HIDtoSMB)]
             public static extern HID_SMBUS_STATUS HidSmbus_GetNumDevices(ref uint numDevices, ushort vid, ushort pid);
-
-            [DllImport(HIDtoSMB)]
-            public static extern HID_SMBUS_STATUS HidSmbus_GetString(uint deviceNum, ushort vid, ushort pid, StringBuilder deviceString, uint options);
-
-            [DllImport(HIDtoSMB)]
-            public static extern HID_SMBUS_STATUS HidSmbus_GetOpenedString(IntPtr device, StringBuilder deviceString, uint options);
-
-            [DllImport(HIDtoSMB)]
-            public static extern HID_SMBUS_STATUS HidSmbus_GetIndexedString(uint deviceNum, ushort vid, ushort pid, uint stringIndex, StringBuilder deviceString);
-
-            [DllImport(HIDtoSMB)]
-            public static extern HID_SMBUS_STATUS HidSmbus_GetOpenedIndexedString(IntPtr device, uint stringIndex, StringBuilder deviceString);
-
-            [DllImport(HIDtoSMB)]
-            public static extern HID_SMBUS_STATUS HidSmbus_GetAttributes(uint deviceNum, ushort vid, ushort pid, ref ushort deviceVid, ref ushort devicePid, ref ushort deviceReleaseNumber);
-
-            [DllImport(HIDtoSMB)]
-            public static extern HID_SMBUS_STATUS HidSmbus_GetOpenedAttributes(IntPtr device, ref ushort deviceVid, ref ushort devicePid, ref ushort deviceReleaseNumber);
 
             [DllImport(HIDtoSMB)]
             public static extern HID_SMBUS_STATUS HidSmbus_Open(ref IntPtr device, int deviceNum, ushort vid, ushort pid);
@@ -52,6 +33,15 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
             [DllImport(HIDtoSMB)]
             public static extern HID_SMBUS_STATUS HidSmbus_WriteLatch(IntPtr device, byte value, byte mask);
+
+            [DllImport(HIDtoSMB)]
+            public static extern HID_SMBUS_STATUS HidSmbus_ReadRequest(IntPtr device, byte slaveAddress, byte numBytesToRead);
+
+            [DllImport(HIDtoSMB)]
+            public static extern HID_SMBUS_STATUS HidSmbus_GetReadResponse(IntPtr device, byte statusS0, byte[] buffer, byte bufferSize, out byte bytesRead);
+
+            //            [DllImport(HIDtoSMB)]
+            //            public static extern HID_SMBUS_STATUS HidSmbus_AddressReadRequest(IntPtr device, byte slaveAddress, short numBytesToRead, byte targetAddressSize, byte[16] targetAddress);
         }
     }
 }
