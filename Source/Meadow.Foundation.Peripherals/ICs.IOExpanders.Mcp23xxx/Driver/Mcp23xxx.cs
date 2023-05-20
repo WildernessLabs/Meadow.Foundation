@@ -221,12 +221,17 @@ namespace Meadow.Foundation.ICs.IOExpanders
         public virtual IDigitalOutputPort CreateDigitalOutputPort(IPin pin, bool initialState = false, OutputType outputType = OutputType.OpenDrain)
         {
             if (IsValidPin(pin))
-            {   // setup the port on the device for output
-                SetPortDirection(pin, PortDirectionType.Output);
+            {
+                var portBank = GetPortBankForPin(pin);
+                var bitIndex = (byte)((byte)pin.Key % 8);
+                
+                // setup the port on the device for output
+                PreValidatedSetPortDirection(pin, portBank, bitIndex, PortDirectionType.Output);
+                
                 // create the port model object
                 var port = new DigitalOutputPort(pin, initialState);
 
-                port.SetPinState += (pin, state) => WriteToPort(pin, state);
+                port.SetPinState += (_pin, state) => PreValidatedWriteToPort(pin, portBank, bitIndex, state);
 
                 return port;
             }
@@ -336,36 +341,39 @@ namespace Meadow.Foundation.ICs.IOExpanders
         public void SetPortDirection(IPin pin, PortDirectionType direction)
         {
             if (IsValidPin(pin))
-            {   // if it's already configured, return (1 = input, 0 = output)
-                byte ioDir = GetPortBankForPin(pin) == PortBank.A ? ioDirA : ioDirB;
-
-                if (direction == PortDirectionType.Input)
-                {
-                    if (BitHelpers.GetBitValue(ioDir, (byte)pin.Key)) { return; }
-                }
-                else
-                {
-                    if (!BitHelpers.GetBitValue(ioDir, (byte)pin.Key)) { return; }
-                }
-
-                byte bitIndex = (byte)(((byte)pin.Key) % 8);
-
-                // set the IODIR bit and write the setting
-                if (GetPortBankForPin(pin) == PortBank.A)
-                {
-                    ioDirA = BitHelpers.SetBit(ioDirA, bitIndex, (byte)direction);
-                    mcpDevice.WriteRegister(MapRegister(Registers.IODIR_IODirection, PortBank.A), ioDirA);
-                }
-                else
-                {
-                    ioDirB = BitHelpers.SetBit(ioDirB, bitIndex, (byte)direction);
-                    mcpDevice.WriteRegister(MapRegister(Registers.IODIR_IODirection, PortBank.B), ioDirB);
-                }
+            {
+                var portBank = GetPortBankForPin(pin);
+                var bitIndex = (byte)(((byte)pin.Key) % 8);
+                PreValidatedSetPortDirection(pin, portBank, bitIndex, direction);
             }
             else
             {
                 throw new Exception("Pin is out of range");
             }
+        }
+
+        /// <summary>
+        /// Sets the direction of a port using pre-cached information. This overload
+        /// assumes the pin has been pre-verified as valid.
+        /// </summary>
+        private void PreValidatedSetPortDirection(IPin pin, PortBank portBank, byte bitIndex, PortDirectionType direction)
+        {
+            // if it's already configured, return (1 = input, 0 = output)
+            var ioDir = portBank == PortBank.A ? ioDirA : ioDirB;
+            var register = MapRegister(Registers.IODIR_IODirection, portBank);
+            
+            if (direction == PortDirectionType.Input)
+            {
+                if (BitHelpers.GetBitValue(ioDir, (byte)pin.Key)) { return; }
+            }
+            else
+            {
+                if (!BitHelpers.GetBitValue(ioDir, (byte)pin.Key)) { return; }
+            }
+            
+            ref var ioDirLatch = ref GetIoDirLatch(portBank);
+            ioDirLatch = BitHelpers.SetBit(ioDirLatch, bitIndex, (byte)direction);
+            mcpDevice.WriteRegister(register, ioDirLatch);
         }
 
         /// <summary>
@@ -414,34 +422,14 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <param name="value">The value to write. True for high, false for low.</param>
         public void WriteToPort(IPin pin, bool value)
         {
-            if (IsValidPin(pin))
-            {
-                lock (_lock)
-                {
-                    // if the pin isn't configured for output, configure it
-                    SetPortDirection(pin, PortDirectionType.Output);
-
-                    var bank = GetPortBankForPin(pin);
-                    byte bitIndex = (byte)(((byte)pin.Key) % 8);
-
-                    if (bank == PortBank.A)
-                    {   // update our output latch 
-                        olatA = BitHelpers.SetBit(olatA, bitIndex, value);
-                        // write to the output latch (actually does the output setting)
-                        mcpDevice.WriteRegister(MapRegister(Registers.OutputLatch, PortBank.A), olatA);
-                    }
-                    else
-                    {   // update our output latch 
-                        olatB = BitHelpers.SetBit(olatB, bitIndex, value);
-                        // write to the output latch (actually does the output setting)
-                        mcpDevice.WriteRegister(MapRegister(Registers.OutputLatch, PortBank.B), olatB);
-                    }
-                }
-            }
-            else
+            if (!IsValidPin(pin))
             {
                 throw new Exception("Pin is out of range");
             }
+
+            var bank = GetPortBankForPin(pin);
+            var bitIndex = (byte)(((byte)pin.Key) % 8);
+            PreValidatedWriteToPort(pin, bank, bitIndex, value);
         }
 
         /// <summary>
@@ -557,6 +545,52 @@ namespace Meadow.Foundation.ICs.IOExpanders
             // Registers for each bank are separated
             // (IODIRA = 0x00, ... OLATA = 0x0A, IODIRB = 0x10, ... OLATB = 0x1A)
             return port == PortBank.A ? address : address += 0x10;
+        }
+
+        /// <summary>
+        /// Sets a particular pin's value. If that pin is not 
+        /// in output mode, this method will first set its 
+        /// mode to output.
+        /// 
+        /// This overload takes in cached details that are assumed
+        /// to be accurate for better performance.
+        /// </summary>
+        private void PreValidatedWriteToPort(IPin pin, PortBank portBank, byte bitIndex, bool value)
+        {
+            lock (_lock)
+            {
+                PreValidatedSetPortDirection(pin, portBank, bitIndex, PortDirectionType.Output);
+                var register = MapRegister(Registers.OutputLatch, portBank);
+                ref var latch = ref GetOutputLatch(portBank);
+                
+                // update the output latch
+                latch = BitHelpers.SetBit(latch, bitIndex, value);
+                
+                // write to the output latch (actually does the output setting)
+                mcpDevice.WriteRegister(register, latch);
+            }
+        }
+
+        private ref byte GetOutputLatch(PortBank portBank)
+        {
+            switch (portBank)
+            {
+                case PortBank.A: return ref olatA;
+                case PortBank.B: return ref olatB;
+                default:
+                    throw new NotSupportedException(portBank.ToString());
+            }
+        }
+
+        private ref byte GetIoDirLatch(PortBank portBank)
+        {
+            switch (portBank)
+            {
+                case PortBank.A: return ref ioDirA;
+                case PortBank.B: return ref ioDirB;
+                default:
+                    throw new NotSupportedException(portBank.ToString());
+            }
         }
 
         PortBank GetPortBankForPin(IPin pin)
