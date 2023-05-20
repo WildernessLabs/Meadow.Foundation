@@ -28,53 +28,12 @@ namespace ICs.IOExpanders.Mcp23008_Sample
 
         public override Task Run()
         {
-            BenchmarkDirectDigitalOutputPorts();
             BenchmarkDigitalOutputPorts();
             while (true)
             {
                 TestBulkDigitalOutputPortWrites(20);
                 TestDigitalOutputPorts(2);
             }
-        }
-
-        private void BenchmarkDirectDigitalOutputPorts()
-        {
-            var out00 = Device.CreateDigitalOutputPort(Device.Pins.D14);
-            var out01 = Device.CreateDigitalOutputPort(Device.Pins.D13);
-            var out02 = Device.CreateDigitalOutputPort(Device.Pins.D12);
-            var out03 = Device.CreateDigitalOutputPort(Device.Pins.D11);
-            var out04 = Device.CreateDigitalOutputPort(Device.Pins.D10);
-            var out05 = Device.CreateDigitalOutputPort(Device.Pins.D09);
-            var out06 = Device.CreateDigitalOutputPort(Device.Pins.D03);
-            var out07 = Device.CreateDigitalOutputPort(Device.Pins.D02);
-            
-            var outputPorts = new List<IDigitalOutputPort>() 
-            {
-                out00, out01, out02, out03, out04, out05, out06, out07
-            };
-
-            var state = false;
-            var stopwatch = new Stopwatch();
-            Console.WriteLine("Starting benchmark");
-
-            for (var x = 0; x < 10; x++)
-            {
-                stopwatch.Restart();
-                for (var iteration = 0; iteration < 100; iteration++)
-                {
-                    for (var i = 0; i < outputPorts.Count; i++)
-                    {
-                        outputPorts[i].State = state;
-                    }
-
-                    state = !state;
-                }
-                stopwatch.Stop();
-                
-                Console.WriteLine($"{100 * outputPorts.Count} pins toggled in {stopwatch.ElapsedMilliseconds}ms");
-            }
-            
-            Console.WriteLine("Benchmark finished");
         }
 
         private void BenchmarkDigitalOutputPorts()
