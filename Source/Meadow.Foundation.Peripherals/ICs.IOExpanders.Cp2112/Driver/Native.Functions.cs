@@ -40,8 +40,14 @@ namespace Meadow.Foundation.ICs.IOExpanders
             [DllImport(HIDtoSMB)]
             public static extern HID_SMBUS_STATUS HidSmbus_GetReadResponse(IntPtr device, byte statusS0, byte[] buffer, byte bufferSize, out byte bytesRead);
 
-            //            [DllImport(HIDtoSMB)]
-            //            public static extern HID_SMBUS_STATUS HidSmbus_AddressReadRequest(IntPtr device, byte slaveAddress, short numBytesToRead, byte targetAddressSize, byte[16] targetAddress);
+            [DllImport(HIDtoSMB)]
+            public static extern HID_SMBUS_STATUS HidSmbus_AddressReadRequest(IntPtr device, byte slaveAddress, short numBytesToRead, byte targetAddressSize, byte[] targetAddress);
+
+            [DllImport(HIDtoSMB)]
+            public static extern HID_SMBUS_STATUS HidSmbus_GetSmbusConfig(IntPtr device, out uint bitRate, out byte address, out int autoReadRespond, out short writeTimeout, out short readTimeout, out int sclLowtimeout, out short transferRetries);
+
+            [DllImport(HIDtoSMB)]
+            public static extern HID_SMBUS_STATUS HidSmbus_SetSmbusConfig(IntPtr device, uint bitRate, byte address, int autoReadRespond, short writeTimeout, short readTimeout, int sclLowTimeout, short transferRetries);
         }
     }
 }

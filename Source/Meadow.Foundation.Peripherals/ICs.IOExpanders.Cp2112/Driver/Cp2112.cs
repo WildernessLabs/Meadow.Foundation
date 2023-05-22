@@ -22,6 +22,10 @@ namespace Meadow.Foundation.ICs.IOExpanders
         private int _deviceNumber;
         private ushort _vid;
         private ushort _pid;
+        private byte _direction;
+        private byte _mode;
+        private byte _function;
+        private byte _clockDivisor;
 
         internal Cp2112(int deviceNumber, ushort vid, ushort pid)
         {
@@ -47,12 +51,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
             return isOpen != 0;
         }
 
-        private byte _stateMask;
-        private byte _direction;
-        private byte _mode;
-        private byte _function;
-        private byte _clockDivisor;
-
         private void Open()
         {
             if (IsOpen()) return;
@@ -71,32 +69,34 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
         public II2cBus CreateI2cBus(int busNumber = 0)
         {
-            return CreateI2cBus(busNumber, I2CClockRate.Standard);
-        }
-
-        public II2cBus CreateI2cBus(int busNumber, I2cBusSpeed busSpeed)
-        {
-            // TODO: convert frequency
-            return CreateI2cBus(busNumber, I2CClockRate.Standard);
+            return CreateI2cBus(busNumber, I2cBusSpeed.Standard);
         }
 
         public II2cBus CreateI2cBus(IPin[] pins, I2cBusSpeed busSpeed)
         {
-            // TODO: map the pins to the bus number
-            // TODO: convert frequency
-            return CreateI2cBus(0, I2CClockRate.Standard);
+            return CreateI2cBus(0, busSpeed);
         }
 
         public II2cBus CreateI2cBus(IPin clock, IPin data, I2cBusSpeed busSpeed)
         {
-            // TODO: map the pins to the bus number
-            // TODO: convert frequency
-            return CreateI2cBus(0, I2CClockRate.Standard);
+            return CreateI2cBus(0, busSpeed);
         }
 
-        private II2cBus CreateI2cBus(int busNumber, I2CClockRate clock)
+
+        public II2cBus CreateI2cBus(int busNumber, I2cBusSpeed busSpeed)
         {
-            throw new NotImplementedException();
+            // TODO: only allow this once
+            // TODO: convert frequency
+            // TODO: lock out access to GPIO0,1,5 and 7
+
+            //HID_SMBUS_STATUS HidSmbus_SetSmbusConfig(HID_SMBUS_DEVICE device,DWORD bitRate, BYTE address, BOOL autoReadRespond, WORD writeTimeout,WORD readTimeout, BOOL sclLowTimeout, WORD transferRetries)
+            Functions.HidSmbus_SetSmbusConfig(_handle, 100000, 0x02, 0, 100, 100, 0, 2);
+            //HID_SMBUS_STATUS HidSmbus_SetGpioConfig(HID_SMBUS_DEVICE device,BYTE direction, BYTE mode, BYTE special, BYTE clkDiv)
+            Functions.HidSmbus_SetGpioConfig(_handle, 0x20, 0x20, 0x13, 0xFF);   //GPIO5 output/push-pull/GPIO0,1,7 special function/clkDiv=48MHz/(2x255)
+                                                                                 //HID_SMBUS_STATUS HidSmbus_WriteLatch(HID_SMBUS_DEVICE device,BYTE latchValue, BYTE latchMask)
+            Functions.HidSmbus_WriteLatch(_handle, 0, 0x20);     //"Low" active for GPIO5
+
+            return new Cp2112I2cBus(busSpeed);
         }
 
         internal void SetState(byte pinMask)

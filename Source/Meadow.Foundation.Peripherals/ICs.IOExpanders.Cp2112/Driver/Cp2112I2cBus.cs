@@ -7,8 +7,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
     {
         private bool _isDisposed;
 
-        internal Cp2112I2cBus()
+        internal Cp2112I2cBus(I2cBusSpeed busSpeed)
         {
+            BusSpeed = busSpeed;
         }
 
         public I2cBusSpeed BusSpeed { get; set; }
@@ -32,11 +33,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
             // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
             Dispose(true);
             GC.SuppressFinalize(this);
-        }
-
-        internal void Open(I2CClockRate clockRate = I2CClockRate.Standard)
-        {
-            throw new NotImplementedException();
         }
 
         public void Exchange(byte peripheralAddress, Span<byte> writeBuffer, Span<byte> readBuffer)
