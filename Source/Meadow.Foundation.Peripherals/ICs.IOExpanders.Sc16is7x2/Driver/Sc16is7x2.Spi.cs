@@ -30,8 +30,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <param name="spiBus">The SPI bus connected to the peripheral</param>
         /// <param name="chipSelect">The chip-select port used for the peripheral</param>
         /// <param name="oscillatorFrequency">The frequency of the oscillator connected to the SC16IS</param>
-        public Sc16is7x2(ISpiBus spiBus, Frequency oscillatorFrequency, IDigitalOutputPort? chipSelect)
-            : this(oscillatorFrequency)
+        /// <param name="irq">An optional interrupt port used to detect change conditions on the peripheral</param>
+        public Sc16is7x2(ISpiBus spiBus, Frequency oscillatorFrequency, IDigitalOutputPort? chipSelect = null, IDigitalInterruptPort? irq = null)
+            : this(oscillatorFrequency, irq)
         {
             _spiComms = new SpiCommunications(spiBus, chipSelect, DefaultSpiBusSpeed);
         }

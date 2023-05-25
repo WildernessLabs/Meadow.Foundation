@@ -22,10 +22,12 @@ namespace Meadow.Foundation.ICs.IOExpanders
         private Sc16is7x2Channel? _channelA;
         private Sc16is7x2Channel? _channelB;
         private Frequency _oscillatorFrequency;
+        private IDigitalInterruptPort? _irq;
 
-        internal Sc16is7x2(Frequency oscillatorFrequency)
+        internal Sc16is7x2(Frequency oscillatorFrequency, IDigitalInterruptPort? irq)
         {
             _oscillatorFrequency = oscillatorFrequency;
+            _irq = irq;
         }
 
         private IByteCommunications Comms
@@ -49,19 +51,24 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <param name="readBufferSize">The buffer read buffer size</param>
         public ISerialPort CreateSerialPort(SerialPortName portName, int baudRate = 9600, int dataBits = 8, Parity parity = Parity.None, StopBits stopBits = StopBits.One, int readBufferSize = 64)
         {
+            if (_irq != null && _irq.InterruptMode != InterruptMode.EdgeRising)
+            {
+                throw new ArgumentException("If an interrupt port is provided, it must be a rising edge interrupt");
+            }
+
             switch (portName.SystemName)
             {
                 case "A":
                     if (_channelA == null)
                     {
-                        _channelA = new Sc16is7x2Channel(this, portName.FriendlyName, Channels.A, baudRate, dataBits, parity, stopBits);
+                        _channelA = new Sc16is7x2Channel(this, portName.FriendlyName, Channels.A, baudRate, dataBits, parity, stopBits, irq: _irq);
                         return _channelA;
                     }
                     throw new PortInUseException($"{portName.FriendlyName} already in use");
                 case "B":
                     if (_channelB == null)
                     {
-                        _channelB = new Sc16is7x2Channel(this, portName.FriendlyName, Channels.B, baudRate, dataBits, parity, stopBits);
+                        _channelB = new Sc16is7x2Channel(this, portName.FriendlyName, Channels.B, baudRate, dataBits, parity, stopBits, irq: _irq);
                         return _channelB;
                     }
                     throw new PortInUseException($"{portName.FriendlyName} already in use");
@@ -81,25 +88,45 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <param name="invertDE">Set to true to invert the logic (active high) driver enable output signal</param>
         public ISerialPort CreateRs485SerialPort(Sc16SerialPortName portName, int baudRate = 9600, int dataBits = 8, Parity parity = Parity.None, StopBits stopBits = StopBits.One, bool invertDE = false)
         {
+            if (_irq != null && _irq.InterruptMode != InterruptMode.EdgeRising)
+            {
+                throw new ArgumentException("If an interrupt port is provided, it must be a rising edge interrupt");
+            }
+
             switch (portName.SystemName)
             {
                 case "A":
                     if (_channelA == null)
                     {
-                        _channelA = new Sc16is7x2Channel(this, portName.FriendlyName, Channels.A, baudRate, dataBits, parity, stopBits, true, invertDE);
+                        _channelA = new Sc16is7x2Channel(this, portName.FriendlyName, Channels.A, baudRate, dataBits, parity, stopBits, true, invertDE, _irq);
                         return _channelA;
                     }
                     throw new PortInUseException($"{portName.FriendlyName} already in use");
                 case "B":
                     if (_channelB == null)
                     {
-                        _channelB = new Sc16is7x2Channel(this, portName.FriendlyName, Channels.B, baudRate, dataBits, parity, stopBits, true, invertDE);
+                        _channelB = new Sc16is7x2Channel(this, portName.FriendlyName, Channels.B, baudRate, dataBits, parity, stopBits, true, invertDE, _irq);
                         return _channelB;
                     }
                     throw new PortInUseException($"{portName.FriendlyName} already in use");
             }
 
             throw new Exception("Unknown port");
+        }
+
+        internal bool ReceiveInterruptPending(Channels channel)
+        {
+            // IIR[0] is 0 for any pending interrupt
+            // RHR will be IIR[2] *exclusively*
+            var iir = ReadChannelRegister(Registers.IIR, channel);
+            return (iir & RegisterBits.IIR_RHR_INTERRUPT) == RegisterBits.IIR_RHR_INTERRUPT;
+        }
+
+        internal void EnableReceiveInterrupts(Channels channel)
+        {
+            var ier = ReadChannelRegister(Registers.IER, channel);
+            ier |= RegisterBits.IER_RHR_ENABLE;
+            WriteChannelRegister(Registers.IER, channel, ier);
         }
 
         internal void EnableRS485(Channels channel, bool invertDE)

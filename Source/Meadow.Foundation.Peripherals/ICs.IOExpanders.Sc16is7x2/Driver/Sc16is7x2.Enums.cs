@@ -84,6 +84,13 @@
 
             public const byte LSR_THR_EMPTY = 1 << 5;
 
+            public const byte IIR_RHR_INTERRUPT = 1 << 2;
+
+            public const byte IER_RHR_ENABLE = 1 << 0;
+            public const byte IER_THR_ENABLE = 1 << 1;
+            public const byte IER_LINE_STATUS_ENABLE = 1 << 2;
+            public const byte IER_SLEEP_MODE_ENABLE = 1 << 4;
+
             public const byte MCR_DTR = 1 << 0;
             public const byte MCR_RTS = 1 << 2;
             public const byte MCR_CLOCK_DIVISOR = 1 << 7;

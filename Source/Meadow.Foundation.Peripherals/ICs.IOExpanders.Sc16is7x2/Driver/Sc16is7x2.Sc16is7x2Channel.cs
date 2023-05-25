@@ -42,8 +42,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
             private readonly Sc16is7x2 _controller;
             private readonly Channels _channel;
+            private readonly IDigitalInterruptPort? _irq;
 
-            internal Sc16is7x2Channel(Sc16is7x2 controller, string portName, Channels channel, int baudRate = 9600, int dataBits = 8, Parity parity = Parity.None, StopBits stopBits = StopBits.One, bool isRS485 = false, bool invertDE = false)
+            internal Sc16is7x2Channel(Sc16is7x2 controller, string portName, Channels channel, int baudRate = 9600, int dataBits = 8, Parity parity = Parity.None, StopBits stopBits = StopBits.One, bool isRS485 = false, bool invertDE = false, IDigitalInterruptPort? irq = null)
             {
                 PortName = portName;
                 _controller = controller;
@@ -53,6 +54,21 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 if (isRS485)
                 {
                     InitializeRS485(invertDE);
+                }
+
+                if (irq != null)
+                {
+                    _irq = irq;
+                    _controller.EnableReceiveInterrupts(_channel);
+                    _irq.Changed += OnInterruptLineChanged;
+                }
+            }
+
+            private void OnInterruptLineChanged(object sender, DigitalPortResult e)
+            {
+                if (_controller.ReceiveInterruptPending(_channel))
+                {
+                    this.DataReceived?.Invoke(this, new SerialDataReceivedEventArgs(SerialDataType.Chars));
                 }
             }
 
