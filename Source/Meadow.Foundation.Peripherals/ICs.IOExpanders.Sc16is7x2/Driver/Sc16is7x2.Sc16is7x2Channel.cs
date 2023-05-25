@@ -43,13 +43,17 @@ namespace Meadow.Foundation.ICs.IOExpanders
             private readonly Sc16is7x2 _controller;
             private readonly Channels _channel;
 
-            internal Sc16is7x2Channel(Sc16is7x2 controller, string portName, Channels channel, int baudRate = 9600, int dataBits = 8, Parity parity = Parity.None, StopBits stopBits = StopBits.One, bool isRS485 = false)
+            internal Sc16is7x2Channel(Sc16is7x2 controller, string portName, Channels channel, int baudRate = 9600, int dataBits = 8, Parity parity = Parity.None, StopBits stopBits = StopBits.One, bool isRS485 = false, bool invertDE = false)
             {
                 PortName = portName;
                 _controller = controller;
                 _channel = channel;
 
                 Initialize(baudRate, dataBits, parity, stopBits);
+                if (isRS485)
+                {
+                    InitializeRS485(invertDE);
+                }
             }
 
             /// <inheritdoc/>
@@ -98,6 +102,11 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 _controller.EnableFifo(_channel);
                 _baudRate = _controller.SetBaudRate(_channel, baudRate);
                 _controller.SetLineSettings(_channel, dataBits, parity, stopBits);
+            }
+
+            private void InitializeRS485(bool invertDE)
+            {
+                _controller.EnableRS485(_channel, invertDE);
             }
 
             /// <inheritdoc/>

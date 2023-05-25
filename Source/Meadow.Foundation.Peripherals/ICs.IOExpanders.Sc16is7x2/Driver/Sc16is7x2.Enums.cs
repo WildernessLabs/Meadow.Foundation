@@ -88,6 +88,11 @@
             public const byte MCR_RTS = 1 << 2;
             public const byte MCR_CLOCK_DIVISOR = 1 << 7;
 
+            public const byte EFCR_9BITMODE = 1 << 0;
+            public const byte EFCR_RTSCON = 1 << 4;
+            public const byte EFCR_RTSINVER = 1 << 5;
+
+
         }
     }
 }

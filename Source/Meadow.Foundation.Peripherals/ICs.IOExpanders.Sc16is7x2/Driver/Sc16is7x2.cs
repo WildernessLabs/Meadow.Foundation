@@ -78,27 +78,45 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <param name="dataBits">The data bits used in communication</param>
         /// <param name="parity">The parity used in communication</param>
         /// <param name="stopBits">The stop bits used in communication</param>
-        public ISerialPort CreateRs485SerialPort(Sc16SerialPortName portName, int baudRate = 9600, int dataBits = 8, Parity parity = Parity.None, StopBits stopBits = StopBits.One)
+        /// <param name="invertDE">Set to true to invert the logic (active high) driver enable output signal</param>
+        public ISerialPort CreateRs485SerialPort(Sc16SerialPortName portName, int baudRate = 9600, int dataBits = 8, Parity parity = Parity.None, StopBits stopBits = StopBits.One, bool invertDE = false)
         {
             switch (portName.SystemName)
             {
                 case "A":
                     if (_channelA == null)
                     {
-                        _channelA = new Sc16is7x2Channel(this, portName.FriendlyName, Channels.A, baudRate, dataBits, parity, stopBits, true);
+                        _channelA = new Sc16is7x2Channel(this, portName.FriendlyName, Channels.A, baudRate, dataBits, parity, stopBits, true, invertDE);
                         return _channelA;
                     }
                     throw new PortInUseException($"{portName.FriendlyName} already in use");
                 case "B":
                     if (_channelB == null)
                     {
-                        _channelB = new Sc16is7x2Channel(this, portName.FriendlyName, Channels.B, baudRate, dataBits, parity, stopBits, true);
+                        _channelB = new Sc16is7x2Channel(this, portName.FriendlyName, Channels.B, baudRate, dataBits, parity, stopBits, true, invertDE);
                         return _channelB;
                     }
                     throw new PortInUseException($"{portName.FriendlyName} already in use");
             }
 
             throw new Exception("Unknown port");
+        }
+
+        internal void EnableRS485(Channels channel, bool invertDE)
+        {
+            var efcr = ReadChannelRegister(Registers.EFCR, channel);
+            efcr |= RegisterBits.EFCR_9BITMODE | RegisterBits.EFCR_RTSCON;
+
+            if (invertDE)
+            {
+                efcr |= RegisterBits.EFCR_RTSINVER;
+            }
+            else
+            {
+                efcr &= unchecked((byte)~RegisterBits.EFCR_RTSINVER);
+            }
+
+            WriteChannelRegister(Registers.EFCR, channel, efcr);
         }
 
         internal void WriteByte(Channels channel, byte data)
@@ -227,14 +245,14 @@ namespace Meadow.Foundation.ICs.IOExpanders
             WriteChannelRegister(Registers.FCR, channel, fcr);
         }
 
-        internal byte ReadChannelRegister(Registers register, Channels channel)
+        private byte ReadChannelRegister(Registers register, Channels channel)
         {
             // see page 40 of the data sheet for explanation of this
             var subaddress = (byte)(((byte)register << 3) | ((byte)channel << 1));
             return Comms.ReadRegister(subaddress);
         }
 
-        internal void WriteChannelRegister(Registers register, Channels channel, byte value)
+        private void WriteChannelRegister(Registers register, Channels channel, byte value)
         {
             // see page 40 of the data sheet for explanation of this
             var subaddress = (byte)(((byte)register << 3) | ((byte)channel << 1));
