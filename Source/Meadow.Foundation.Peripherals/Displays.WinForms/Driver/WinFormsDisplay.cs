@@ -35,6 +35,18 @@ public class WinFormsDisplay : Form, IGraphicsDisplay, ITouchScreen
     /// </summary>
     public ColorMode SupportedColorModes => ColorMode.Format24bppRgb888;
 
+    public new int Width
+    {
+        get => base.Width / 2;
+        set => base.Width = value * 2;
+    }
+
+    public new int Height
+    {
+        get => base.Height / 2;
+        set => base.Height = value * 2;
+    }
+
     /// <summary>
     /// Create a new WinFormsDisplay
     /// </summary>
@@ -48,6 +60,7 @@ public class WinFormsDisplay : Form, IGraphicsDisplay, ITouchScreen
         this.DoubleBuffered = true;
         this.FormBorderStyle = FormBorderStyle.FixedSingle;
         this.ControlBox = false;
+
         _buffer = new WinFormsPixelBuffer(Width, Height, colorMode);
     }
 
@@ -157,6 +170,7 @@ public class WinFormsDisplay : Form, IGraphicsDisplay, ITouchScreen
     /// <param name="enabled"></param>
     void IGraphicsDisplay.DrawPixel(int x, int y, bool enabled)
     {
+        // todo
         _buffer.SetPixel(x, y, enabled ? Foundation.Color.White : Foundation.Color.Black);
     }
 
