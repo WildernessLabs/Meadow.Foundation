@@ -5,15 +5,15 @@
     <Authors>Wilderness Labs, Inc</Authors>
     <TargetFramework>netstandard2.1</TargetFramework>
     <OutputType>Library</OutputType>
-    <AssemblyName>Ft232h</AssemblyName>
+    <AssemblyName>Cp2112</AssemblyName>
     <Company>Wilderness Labs, Inc</Company>
     <PackageProjectUrl>http://developer.wildernesslabs.co/Meadow/Meadow.Foundation/</PackageProjectUrl>
-    <PackageId>Meadow.Foundation.ICs.IOExpanders.Ft232h</PackageId>
+    <PackageId>Meadow.Foundation.ICs.IOExpanders.Cp2112</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
-    <PackageTags>Meadow.Foundation,IOExpanders,expander,IO,Ft232h</PackageTags>
+    <PackageTags>Meadow.Foundation,IOExpanders,expander,IO,CP2112</PackageTags>
     <Version>0.1.0</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Description>Ft232h USB IOExpander for GPIO, I2C, SPI on Windows</Description>
+    <Description>CP2112 USB IOExpander for GPIO, I2C, SPI on Windows</Description>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />

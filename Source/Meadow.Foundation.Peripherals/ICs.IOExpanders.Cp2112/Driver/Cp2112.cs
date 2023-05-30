@@ -8,7 +8,7 @@ using static Meadow.Foundation.ICs.IOExpanders.Native;
 namespace Meadow.Foundation.ICs.IOExpanders
 {
     /// <summary>
-    /// Represents a DS3502 digital potentiometer
+    /// Represents a CP2112 USB IO Expander
     /// </summary>
     public partial class Cp2112 :
         IDisposable,
@@ -142,7 +142,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             CheckStatus(Functions.HidSmbus_SetGpioConfig(_handle, d, mode, _function, _clockDivisor));
             _direction = d;
             _mode = mode;
-            _stateMask |= (byte)pin.Key;
+            //            _stateMask |= (byte)pin.Key;
 
             return new Cp2112DigitalOutputPort(pin, pin.SupportedChannels.First(c => c is DigitalChannelInfo) as IDigitalChannelInfo, initialState, initialOutputType, this);
         }
