@@ -1,5 +1,4 @@
 ﻿using Meadow.Hardware;
-using System;
 
 namespace Meadow.Foundation.ICs.IOExpanders
 {
@@ -23,33 +22,11 @@ namespace Meadow.Foundation.ICs.IOExpanders
             protected BiDirectionalPort(
                 IPin pin,
                 IDigitalChannelInfo channel,
-                SerialWombatBase controller,
                 bool initialState,
-                InterruptMode interruptMode = InterruptMode.None,
                 ResistorMode resistorMode = ResistorMode.Disabled,
                 PortDirectionType initialDirection = PortDirectionType.Input)
-                : this(pin, controller, channel, initialState, interruptMode, resistorMode, initialDirection, debounceDuration: TimeSpan.Zero, glitchDuration: TimeSpan.Zero, outputType: OutputType.PushPull)
+                : base(pin, channel, initialState, resistorMode, initialDirection, OutputType.PushPull)
             { }
-
-            /// <summary>
-            /// Create a new BiDirectionalPort object
-            /// </summary>
-            protected BiDirectionalPort(
-                IPin pin,
-                SerialWombatBase controller,
-                IDigitalChannelInfo channel,
-                bool initialState,
-                InterruptMode interruptMode,
-                ResistorMode resistorMode,
-                PortDirectionType initialDirection,
-                TimeSpan debounceDuration,
-                TimeSpan glitchDuration,
-                OutputType outputType
-                )
-                : base(pin, channel, initialState, interruptMode, resistorMode, initialDirection, debounceDuration, glitchDuration, outputType)
-            {
-                _controller = controller;
-            }
 
             /// <summary>
             /// The port state
