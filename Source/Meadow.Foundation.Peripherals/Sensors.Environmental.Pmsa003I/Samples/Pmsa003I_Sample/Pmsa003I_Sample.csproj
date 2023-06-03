@@ -6,8 +6,8 @@
     <AssemblyName>App</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\..\Meadow.Core\Source\implementations\f7\Meadow.F7\Meadow.F7.csproj" />
-    <ProjectReference Include="..\..\Driver\Sensors.Environmental.Pmsa003i.csproj" />
+    <PackageReference Include="Meadow.F7" Version="*" />
+    <PackageReference Include="Meadow.Foundation.Sensors.Environmental.Pmsa300i" Version="*" />
   </ItemGroup>
   <ItemGroup>
     <None Update="meadow.config.yaml">
