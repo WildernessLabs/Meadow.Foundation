@@ -10,9 +10,9 @@
     <RootNamespace>ICs.IOExpanders</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\ICs.IOExpanders.Mcp23xxx\Driver\ICs.IOExpanders.Mcp23xxx.csproj" />
-    <PackageReference Include="Meadow.F7" Version="0.*" />
-    <ProjectReference Include="..\..\Driver\ICs.IOExpanders.Tca9548a.csproj" />
+    <PackageReference Include="Meadow.Foundation.ICs.IOExpanders.Mcp23xxx" Version="*" />
+    <PackageReference Include="Meadow.F7" Version="*" />
+    <PackageReference Include="Meadow.Foundation.ICs.IOExpanders.Tca9548a" Version="*" />
   </ItemGroup>
   <ItemGroup>
     <None Update="meadow.config.yaml">

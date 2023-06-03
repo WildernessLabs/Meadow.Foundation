@@ -17,6 +17,6 @@
   </PropertyGroup>
   <ItemGroup>
     <None Include="..\..\..\icon.png" Pack="true" PackagePath="" />
-    <PackageReference Include="Meadow.Foundation.Displays.Led.SevenSegment" Version="0.*" />
+    <PackageReference Include="Meadow.Foundation.Displays.Led.SevenSegment" Version="*" />
   </ItemGroup>
 </Project>

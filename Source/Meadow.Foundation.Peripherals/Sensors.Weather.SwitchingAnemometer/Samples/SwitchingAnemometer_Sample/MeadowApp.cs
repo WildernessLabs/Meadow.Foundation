@@ -1,10 +1,6 @@
 ﻿using Meadow;
 using Meadow.Devices;
-using Meadow.Foundation;
-using Meadow.Foundation.Leds;
 using Meadow.Foundation.Sensors.Weather;
-using Meadow.Peripherals.Leds;
-using Meadow.Units;
 using System.Threading.Tasks;
 
 namespace MeadowApp
@@ -13,28 +9,18 @@ namespace MeadowApp
     {
         //<!=SNIP=>
 
-        RgbPwmLed onboardLed;
         SwitchingAnemometer anemometer;
 
         public override Task Initialize()
         {
             Resolver.Log.Info("Initialize...");
 
-            //==== onboard LED
-            onboardLed = new RgbPwmLed(
-                redPwmPin: Device.Pins.OnboardLedRed,
-                greenPwmPin: Device.Pins.OnboardLedGreen,
-                bluePwmPin: Device.Pins.OnboardLedBlue,
-                CommonType.CommonAnode);
-
-            //==== create the anemometer
             anemometer = new SwitchingAnemometer(Device.Pins.A01);
 
             //==== classic events example
             anemometer.WindSpeedUpdated += (sender, result) =>
             {
                 Resolver.Log.Info($"new speed: {result.New.KilometersPerHour:n1}kmh, old: {result.Old?.KilometersPerHour:n1}kmh");
-                OutputWindSpeed(result.New);
             };
 
             //==== IObservable example
@@ -59,20 +45,6 @@ namespace MeadowApp
             return Task.CompletedTask;
         }
 
-        /// <summary>
-        /// Displays the windspeed on the onboard LED as full red @ >= `10km/h`,
-        /// blue @ `0km/h`, and a proportional mix, in between those speeds.
-        /// </summary>
-        /// <param name="windspeed"></param>
-        void OutputWindSpeed(Speed windspeed)
-        {
-            // `0.0` - `10kmh`
-            int r = (int)windspeed.KilometersPerHour.Map(0f, 10f, 0f, 255f);
-            int b = (int)windspeed.KilometersPerHour.Map(0f, 10f, 255f, 0f);
-
-            var wspeedColor = Color.FromRgb(r, 0, b);
-            onboardLed.SetColor(wspeedColor);
-        }
         //<!=SNOP=>
     }
 }

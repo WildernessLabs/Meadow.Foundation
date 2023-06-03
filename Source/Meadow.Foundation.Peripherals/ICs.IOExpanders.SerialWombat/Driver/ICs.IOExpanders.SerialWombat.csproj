@@ -18,8 +18,8 @@
   </PropertyGroup>
   <ItemGroup>
     <None Include="..\..\..\icon.png" Pack="true" PackagePath="" />
-    <PackageReference Include="Meadow.Foundation" Version="0.*" />
-    <PackageReference Include="Meadow.Foundation.Sensors.Distance.Hcsr04" Version="0.*" />
-    <PackageReference Include="Meadow.Foundation.Servos.ServoCore" Version="0.*" />
+    <PackageReference Include="Meadow.Foundation" Version="*" />
+    <PackageReference Include="Meadow.Foundation.Sensors.Distance.Hcsr04" Version="*" />
+    <PackageReference Include="Meadow.Foundation.Servos.ServoCore" Version="*" />
   </ItemGroup>
 </Project>
