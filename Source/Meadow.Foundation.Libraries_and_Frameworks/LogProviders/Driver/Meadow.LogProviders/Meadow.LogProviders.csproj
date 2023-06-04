@@ -3,8 +3,20 @@
     <TargetFramework>netstandard2.1</TargetFramework>
     <OutputType>Library</OutputType>
     <AssemblyName>Meadow.LogProviders</AssemblyName>
+	  <GenerateDocumentationFile>true</GenerateDocumentationFile>
+	  <Authors>Wilderness Labs, Inc</Authors>
+	  <Company>Wilderness Labs, Inc</Company>
+	  <PackageProjectUrl>http://developer.wildernesslabs.co/Meadow/Meadow.Foundation/</PackageProjectUrl>
+	  <PackageId>Meadow.Foundation.LogProviders</PackageId>
+	  <PackageIcon>icon.png</PackageIcon>
+	  <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
+	  <PackageTags>Meadow,Meadow.Foundation,ILogger,Logger,UdpLogger</PackageTags>
+	  <Version>0.9.54</Version>
+	  <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+	  <Description>Implementations of the Meadow ILogger interface</Description>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\..\Meadow.Contracts\Source\Meadow.Contracts\Meadow.Contracts.csproj" />
+	  <None Include="..\..\..\..\icon.png" Pack="true" PackagePath="" />
+	  <ProjectReference Include="..\..\..\..\..\..\Meadow.Contracts\Source\Meadow.Contracts\Meadow.Contracts.csproj" />
   </ItemGroup>
 </Project>
