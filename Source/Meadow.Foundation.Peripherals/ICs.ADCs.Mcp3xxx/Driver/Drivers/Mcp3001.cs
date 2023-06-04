@@ -26,6 +26,15 @@ namespace Meadow.Foundation.ICs.IOExpanders
             Pins = new PinDefinitions(this);
         }
 
+        /// <inheritdoc />
+        public override bool IsInputTypeSupported(InputType inputType)
+        {
+            if (inputType == InputType.SingleEnded)
+                return false;
+
+            return base.IsInputTypeSupported(inputType);
+        }
+
         /// <summary>
         /// Create an analog input port for a pin
         /// </summary>

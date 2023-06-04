@@ -5,7 +5,7 @@
         /// <summary>
         /// The Mcp3xxx pin connection type
         /// </summary>
-        protected enum InputType
+        public enum InputType
         {
             /// <summary>
             /// The value is measured as the voltage on a single pin

@@ -61,6 +61,11 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// </summary>
             public TimeSpan SampleInterval => TimeSpan.Zero;
 
+            /// <summary>
+            /// The channel input type
+            /// </summary>
+            public InputType ChannelInputType { get; protected set; }
+
             private readonly List<Voltage> buffer = new();
 
             private Voltage? _previousVoltageReading;
@@ -74,15 +79,19 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// <summary>
             /// Create a new AnalogInputPort object
             /// </summary>
-            public AnalogInputPort(Mcp3xxx controller, IPin pin, IAnalogChannelInfo channel, int sampleCount)
+            public AnalogInputPort(Mcp3xxx controller,
+                IPin pin,
+                IAnalogChannelInfo channel,
+                int sampleCount,
+                InputType inputType = InputType.SingleEnded)
                 : base(pin, channel)
             {
                 this.controller = controller;
 
                 SampleCount = sampleCount;
-                ReferenceVoltage = new Voltage(3.3, Voltage.UnitType.Millivolts);
+                ChannelInputType = inputType;
 
-                //    controller.ConfigureAnalogInput((byte)pin.Key, (ushort)sampleCount);
+                ReferenceVoltage = new Voltage(3.3, Voltage.UnitType.Millivolts);
             }
 
             /// <summary>
@@ -90,25 +99,17 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// </summary>
             public Task<Voltage> Read()
             {
-                return Task.FromResult(new Voltage(0));
-
-
-                /*
-                var data = controller.ReadPublicData((byte)Pin.Key);
-                Voltage = new Voltage((data * ReferenceVoltage.Volts) >> 16, Voltage.UnitType.Millivolts);
-
-                if (buffer.Count == 0)
+                int rawValue = ChannelInputType switch
                 {
-                    buffer.Add(Voltage);
-                }
-                else
-                {
-                    buffer[0] = Voltage;
-                }
+                    InputType.SingleEnded => controller.ReadSingleEnded((int)Pin.Key),
+                    InputType.Differential => controller.ReadDifferential((int)Pin.Key, (int)Pin.Key + 1),
+                    InputType.InvertedDifferential => controller.ReadDifferential((int)Pin.Key, (int)Pin.Key - 1),
+                    _ => 0
+                };
 
+                var voltage = rawValue * ReferenceVoltage.Volts / controller.AdcMaxValue;
 
-
-                return Task.FromResult(Voltage); */
+                return Task.FromResult(new Voltage(voltage, Voltage.UnitType.Volts));
             }
 
             /// <summary>

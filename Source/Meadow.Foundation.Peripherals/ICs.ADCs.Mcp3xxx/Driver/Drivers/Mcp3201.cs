@@ -16,5 +16,14 @@ namespace Meadow.Foundation.ICs.IOExpanders
             : base(spiBus, chipSelectPort, 1, 12)
         {
         }
+
+        /// <inheritdoc />
+        public override bool IsInputTypeSupported(InputType inputType)
+        {
+            if (inputType == InputType.SingleEnded)
+                return false;
+
+            return base.IsInputTypeSupported(inputType);
+        }
     }
 }
