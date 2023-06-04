@@ -18,7 +18,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <summary>
         /// The default SPI bus speed for the device
         /// </summary>
-        public Frequency DefaultSpiBusSpeed => new Frequency(10000, Frequency.UnitType.Kilohertz);
+        public Frequency DefaultSpiBusSpeed => new(10000, Frequency.UnitType.Kilohertz);
 
         /// <summary>
         /// The SPI bus speed for the device
@@ -75,13 +75,13 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <summary>
         /// Create an analog input port for a pin
         /// </summary>
-        protected IAnalogInputPort CreateAnalogInputPort(IPin pin, int sampleCount, TimeSpan sampleInterval, Voltage voltageReference)
+        public IAnalogInputPort CreateAnalogInputPort(IPin pin, int sampleCount, TimeSpan sampleInterval, Voltage voltageReference)
         {
             var channel = pin.SupportedChannels.OfType<IAnalogChannelInfo>().FirstOrDefault();
 
-            if (channel == null) { throw new NotSupportedException($"Pin {pin.Name} Does not support ADC"); }
-
-            return new AnalogInputPort(this, pin, channel, sampleCount);
+            return channel == null
+                ? throw new NotSupportedException($"Pin {pin.Name} Does not support ADC")
+                : (IAnalogInputPort)new AnalogInputPort(this, pin, channel, sampleCount);
         }
 
         /// <summary>
