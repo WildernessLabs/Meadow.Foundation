@@ -1,0 +1,7 @@
+﻿Logging:
+  LogLevel:
+    Default: Information
+Lifecycle:
+  ResetOnAppFailure: false
+Update:
+  Enabled: false
