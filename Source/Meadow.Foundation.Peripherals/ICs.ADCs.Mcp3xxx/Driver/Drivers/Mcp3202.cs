@@ -5,7 +5,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
     /// <summary>
     /// MCP3202 Analog to Digital Converter (ADC)
     /// </summary>
-    public class Mcp3202 : Mcp3xxx
+    public partial class Mcp3202 : Mcp3xxx
     {
         /// <summary>
         /// Constructs Mcp3008 instance

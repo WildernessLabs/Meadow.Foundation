@@ -6,12 +6,12 @@ using System.Linq;
 namespace Meadow.Foundation.ICs.IOExpanders
 {
     /// <summary>
-    /// Provide an interface to connect to a MCP3xxx port expander
+    /// Provide an interface to connect to a MCP3xxx analog to digital converter (ADC)
     /// </summary>
     abstract partial class Mcp3xxx : IAnalogInputController, ISpiPeripheral
     {
         /// <summary>
-        /// the number of single ended input channel on the ADC
+        /// the number of input channels on the ADC
         /// </summary>
         protected int ChannelCount { get; set; }
 
@@ -43,22 +43,26 @@ namespace Meadow.Foundation.ICs.IOExpanders
             set => spiComms.BusMode = value;
         }
 
-        private readonly ISpiCommunications spiComms;
+        /// <summary>
+        /// The resolution of the analog-to-digital converter in the Mcp3xxx
+        /// This is model-specific and not confiruable 
+        /// </summary>
+        public int AdcResolutionInBits { get; protected set; }
 
-        private readonly int adcResolutionInBits;
+        private readonly ISpiCommunications spiComms;
 
         /// <summary>
         /// Mcp3xxx base class contructor
         /// </summary>
         /// <param name="spiBus">The SPI bus</param>
         /// <param name="chipSelectPort">Chip select port</param>
-        /// <param name="channelCount">VThe number of single ended input channels</param>   
+        /// <param name="channelCount">The number of input channels</param>   
         /// <param name="adcResolutionInBits">The resolution in bits for the ADC</param>
         protected Mcp3xxx(ISpiBus spiBus,
             IDigitalOutputPort chipSelectPort,
             int channelCount, int adcResolutionInBits)
         {
-            this.adcResolutionInBits = adcResolutionInBits;
+            AdcResolutionInBits = adcResolutionInBits;
             ChannelCount = channelCount;
 
             spiComms = new SpiCommunications(spiBus, chipSelectPort, DefaultSpiBusSpeed, DefaultSpiBusMode);
@@ -67,15 +71,26 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <summary>
         /// Create an analog input port for a pin
         /// </summary>
+        /// <param name="pin">The pin to use for the analog input port</param>
+        /// <param name="sampleCount">The number of samples to take when measuring the pin's voltage</param>
+        /// <returns>An instance of <see cref="IAnalogInputPort"/> that represents the analog input on the specified pin</returns>
         protected IAnalogInputPort CreateAnalogInputPort(IPin pin, int sampleCount = 64)
         {
             return CreateAnalogInputPort(pin, sampleCount, TimeSpan.FromSeconds(1), new Voltage(0));
         }
 
         /// <summary>
-        /// Create an analog input port for a pin
+        /// Creates a new instance of an `IAnalogInputPort` for the specified pin
         /// </summary>
-        public IAnalogInputPort CreateAnalogInputPort(IPin pin, int sampleCount, TimeSpan sampleInterval, Voltage voltageReference)
+        /// <param name="pin">The IPin object that this port is created from</param>
+        /// <param name="sampleCount">The number of samples to take</param>
+        /// <param name="sampleInterval">The interval delay between samples</param>
+        /// <param name="voltageReference">The `Voltage` reference for ADC readings</param>
+        /// <returns>A new instance of an `IAnalogInputPort`</returns>
+        public IAnalogInputPort CreateAnalogInputPort(IPin pin,
+            int sampleCount,
+            TimeSpan sampleInterval,
+            Voltage voltageReference)
         {
             var channel = pin.SupportedChannels.OfType<IAnalogChannelInfo>().FirstOrDefault();
 
@@ -123,9 +138,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
         {
             ValidateChannelPairing(valueChannel, referenceChannel);
 
-            return ReadInternal(channel: valueChannel / 2,
+            return ReadInternal(channel: valueChannel / 2, //ToDo ... can we remove the divide?
                 valueChannel > referenceChannel ? InputType.InvertedDifferential : InputType.Differential,
-                adcResolutionInBits);
+                AdcResolutionInBits);
         }
 
         /// <summary>
@@ -144,22 +159,24 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 throw new ArgumentException($"ADC differential channels must be unique: {nameof(valueChannel)} - {nameof(referenceChannel)}", nameof(valueChannel));
             }
 
-            return ReadInternal(valueChannel, InputType.SingleEnded, adcResolutionInBits) -
-                   ReadInternal(referenceChannel, InputType.SingleEnded, adcResolutionInBits);
+            return ReadInternal(valueChannel, InputType.SingleEnded, AdcResolutionInBits) -
+                   ReadInternal(referenceChannel, InputType.SingleEnded, AdcResolutionInBits);
         }
 
+        /*
         /// <summary>
         /// Reads a value from the device
         /// </summary>
         /// <param name="channel">Channel to read</param>
         /// <returns>The relative voltage level on specified device channel</returns>
-        public virtual int Read(int channel) => ReadInternal(channel, InputType.SingleEnded, adcResolutionInBits);
+        public virtual int Read(int channel) => ReadInternal(channel, InputType.SingleEnded, AdcResolutionInBits);
+        */
 
         /// <summary>
         /// Reads a value from the device
         /// </summary>
-        /// <param name="channel">Channel which value should be read from. For diffential inputs this represents a channel pair (valid values: 0 - channelcount - 1 or 0 - channelcount / 2 - 1  with differential inputs)</param>
-        /// <param name="inputType">The type of input channel to read.</param>
+        /// <param name="channel">Channel to read - for diffential inputs this represents a channel pair (valid values: 0 - channelcount - 1 or 0 - channelcount / 2 - 1  with differential inputs)</param>
+        /// <param name="inputType">The type of input channel to read</param>
         /// <param name="adcResolutionBits">The number of bits in the returned value</param>
         /// <returns>A value corresponding to relative voltage level on specified device channel</returns>
         protected int ReadInternal(int channel, InputType inputType, int adcResolutionBits)
@@ -188,8 +205,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         /// <param name="adcRequest">A bit pattern to be sent to the ADC</param>
         /// <param name="adcResolutionInBits">The number of bits in the returned value</param>
-        /// <param name="delayBits">The number of bits to be delayed between the request and the response being read.</param>
-        /// <returns>A value corresponding to a voltage level on the input pin described by the request.</returns>
+        /// <param name="delayBits">The number of bits to be delayed between the request and the response being read</param>
+        /// <returns>A value corresponding to a voltage level on the input pin described by the request</returns>
         protected int ReadInternal(int adcRequest, int adcResolutionInBits, int delayBits)
         {
             int retval = 0;
@@ -209,7 +226,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
             }
 
             spiComms.Exchange(requestBuffer, requestBuffer);
-
 
             // transfer the response from the ADC into the return value
             for (int i = 0; i < bufferSize; i++)

@@ -82,7 +82,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 SampleCount = sampleCount;
                 ReferenceVoltage = new Voltage(3.3, Voltage.UnitType.Millivolts);
 
-                controller.ConfigureAnalogInput((byte)pin.Key, (ushort)sampleCount);
+                //    controller.ConfigureAnalogInput((byte)pin.Key, (ushort)sampleCount);
             }
 
             /// <summary>
@@ -90,6 +90,10 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// </summary>
             public Task<Voltage> Read()
             {
+                return Task.FromResult(new Voltage(0));
+
+
+                /*
                 var data = controller.ReadPublicData((byte)Pin.Key);
                 Voltage = new Voltage((data * ReferenceVoltage.Volts) >> 16, Voltage.UnitType.Millivolts);
 
@@ -102,7 +106,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
                     buffer[0] = Voltage;
                 }
 
-                return Task.FromResult(Voltage);
+
+
+                return Task.FromResult(Voltage); */
             }
 
             /// <summary>

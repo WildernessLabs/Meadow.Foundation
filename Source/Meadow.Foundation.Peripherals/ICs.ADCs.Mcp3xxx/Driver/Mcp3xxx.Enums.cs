@@ -3,7 +3,7 @@
     public partial class Mcp3xxx
     {
         /// <summary>
-        /// The pin connection type
+        /// The Mcp3xxx pin connection type
         /// </summary>
         protected enum InputType
         {
