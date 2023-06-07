@@ -61,7 +61,7 @@ namespace Meadow.Foundation.Sensors.Switches
         /// Creates a new DipSwitch connected to an array of Interrupt Ports
         /// </summary>
         /// <param name="interruptPorts"></param>
-        public DipSwitch(IDigitalInputPort[] interruptPorts)
+        public DipSwitch(IDigitalInterruptPort[] interruptPorts)
         {
             Switches = new ISwitch[interruptPorts.Length];
 
