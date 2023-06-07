@@ -2,6 +2,7 @@
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Switches;
 using Meadow.Hardware;
+using System;
 using System.Threading.Tasks;
 
 namespace Sensors.Switches.SpdtSwitch_Sample
