@@ -119,9 +119,6 @@ namespace Meadow.Foundation.Displays
 
             DelayMs(10);
 
-            SendCommand(Register.MADCTL);
-            SendData(0x00); //some variants use 0x08
-
             SendCommand(LcdCommand.CASET);
             SendData(new byte[] { 0, 0, 0, (byte)Width });
 
@@ -136,6 +133,8 @@ namespace Meadow.Foundation.Displays
             DelayMs(120);
 
             dataCommandPort.State = Data;
+
+            SetRotation(RotationType.Normal);
         }
 
         /// <summary>
