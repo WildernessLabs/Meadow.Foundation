@@ -10,7 +10,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
     /// <summary>
     /// Provide an interface to connect to a MCP2xxx port expander
     /// </summary>
-    public abstract partial class Mcp23xxx : IDigitalInputOutputController, ISpiPeripheral, II2cPeripheral
+    public abstract partial class Mcp23xxx : IDigitalInputOutputController, ISpiPeripheral, II2cPeripheral, IDigitalInterruptController
     {
         /// <summary> 
         /// Raised when the value of any pin configured for input interrupts changes
@@ -192,9 +192,10 @@ namespace Meadow.Foundation.ICs.IOExpanders
             {
                 currentStatesB = mcpDevice.ReadRegister(MapRegister(Registers.GPIO, PortBank.B));
             }
+
             bool state;
 
-            foreach (var port in inputPorts)
+            foreach (var port in interruptPorts)
             {   //looks ugly but it's correct
                 if (GetPortBankForPin(port.Key) == PortBank.A)
                 {
@@ -206,6 +207,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 }
                 port.Value.Update(state);
             }
+
             InputChanged?.Invoke(this, new IOExpanderInputChangedEventArgs(interruptFlag, (ushort)((currentStatesB << 8) | currentStates)));
         }
 
