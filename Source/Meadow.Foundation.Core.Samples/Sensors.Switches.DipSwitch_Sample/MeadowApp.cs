@@ -3,7 +3,6 @@ using Meadow.Devices;
 using Meadow.Foundation.Sensors.Switches;
 using Meadow.Hardware;
 using Meadow.Peripherals.Switches;
-using System;
 using System.Threading.Tasks;
 
 namespace Sensors.Switches.DipSwitch_Sample
@@ -18,13 +17,13 @@ namespace Sensors.Switches.DipSwitch_Sample
         {
             Resolver.Log.Info("Initializing...");
 
-            IDigitalInputPort[] ports =
+            IDigitalInterruptPort[] ports =
             {
-                Device.CreateDigitalInputPort(Device.Pins.D06, InterruptMode.EdgeRising, ResistorMode.InternalPullDown),
+                Device.CreateDigitalInterruptPort(Device.Pins.D06, InterruptMode.EdgeRising, ResistorMode.InternalPullDown),
             };
 
             dipSwitch = new DipSwitch(ports);
-            dipSwitch.Changed += (s,e) =>
+            dipSwitch.Changed += (s, e) =>
             {
                 Resolver.Log.Info("Switch " + e.ItemIndex + " changed to " + (((ISwitch)e.Item).IsOn ? "on" : "off"));
             };

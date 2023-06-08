@@ -40,9 +40,9 @@ namespace Meadow.Foundation.Sensors.Distance
         /// <summary>
         /// Port for echo Pin
         /// </summary>
-        protected IDigitalInputPort echoPort;
+        protected IDigitalInterruptPort echoPort;
 
-        long tickStart;
+        private long tickStart;
 
         /// <summary>
         /// Create a new HCSR04 object with an IO Device
@@ -51,7 +51,7 @@ namespace Meadow.Foundation.Sensors.Distance
         /// <param name="echoPin">The echo pin</param>
         public Hcsr04(IPin triggerPin, IPin echoPin) :
             this(triggerPin.CreateDigitalOutputPort(false),
-                  echoPin.CreateDigitalInputPort(InterruptMode.EdgeBoth))
+                  echoPin.CreateDigitalInterruptPort(InterruptMode.EdgeBoth))
         { }
 
         /// <summary>
@@ -65,7 +65,7 @@ namespace Meadow.Foundation.Sensors.Distance
         /// </summary>
         /// <param name="triggerPort">The port for the trigger pin</param>
         /// <param name="echoPort">The port for the echo pin</param>
-        public Hcsr04(IDigitalOutputPort triggerPort, IDigitalInputPort echoPort)
+        public Hcsr04(IDigitalOutputPort triggerPort, IDigitalInterruptPort echoPort)
         {
             this.triggerPort = triggerPort;
 

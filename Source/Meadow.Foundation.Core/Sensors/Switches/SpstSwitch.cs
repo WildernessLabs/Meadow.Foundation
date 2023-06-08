@@ -31,7 +31,7 @@ namespace Meadow.Foundation.Sensors.Switches
         /// <summary>
         /// Returns the DigitalInputPort.
         /// </summary>
-        protected IDigitalInputPort DigitalIn { get; set; }
+        protected IDigitalInterruptPort DigitalIn { get; set; }
 
         /// <summary>
         /// Instantiates a new SpstSwitch object connected to the specified digital pin, and with the specified CircuitTerminationType in the type parameter.
@@ -40,7 +40,7 @@ namespace Meadow.Foundation.Sensors.Switches
         /// <param name="interruptMode"></param>
         /// <param name="resistorMode"></param>
         public SpstSwitch(IPin pin, InterruptMode interruptMode, ResistorMode resistorMode) :
-            this(pin.CreateDigitalInputPort(interruptMode, resistorMode, TimeSpan.FromMilliseconds(20), TimeSpan.Zero))
+            this(pin.CreateDigitalInterruptPort(interruptMode, resistorMode, TimeSpan.FromMilliseconds(20), TimeSpan.Zero))
         { }
 
         /// <summary>
@@ -52,14 +52,14 @@ namespace Meadow.Foundation.Sensors.Switches
         /// <param name="debounceDuration"></param>
         /// <param name="glitchFilterCycleCount"></param>
         public SpstSwitch(IPin pin, InterruptMode interruptMode, ResistorMode resistorMode, TimeSpan debounceDuration, TimeSpan glitchFilterCycleCount) :
-            this(pin.CreateDigitalInputPort(interruptMode, resistorMode, debounceDuration, glitchFilterCycleCount))
+            this(pin.CreateDigitalInterruptPort(interruptMode, resistorMode, debounceDuration, glitchFilterCycleCount))
         { }
 
         /// <summary>
         /// Creates a SpstSwitch on a especified interrupt port
         /// </summary>
         /// <param name="interruptPort"></param>
-        public SpstSwitch(IDigitalInputPort interruptPort)
+        public SpstSwitch(IDigitalInterruptPort interruptPort)
         {
             DigitalIn = interruptPort;
             DigitalIn.Changed += DigitalInChanged;

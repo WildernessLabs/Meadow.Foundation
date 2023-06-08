@@ -10,9 +10,8 @@ namespace Meadow.Foundation.Sensors.Weather
     /// </summary>
     public partial class SwitchingRainGauge : SamplingSensorBase<Length>
     {
-        readonly IDigitalInputPort rainGaugePort;
-
-        DateTime lastUpdated = DateTime.MinValue;
+        private readonly IDigitalInterruptPort rainGaugePort;
+        private DateTime lastUpdated = DateTime.MinValue;
 
         /// <summary>
         /// The number of times the rain tilt sensor has triggered
@@ -45,7 +44,7 @@ namespace Meadow.Foundation.Sensors.Weather
         /// <param name="rainSensorPin">The rain sensor pin</param>
         /// <param name="depthPerClick">The depth per click</param>
         public SwitchingRainGauge(IPin rainSensorPin, Length depthPerClick) :
-            this(rainSensorPin.CreateDigitalInputPort(InterruptMode.EdgeRising, ResistorMode.InternalPullUp, TimeSpan.FromMilliseconds(100), TimeSpan.Zero), depthPerClick)
+            this(rainSensorPin.CreateDigitalInterruptPort(InterruptMode.EdgeRising, ResistorMode.InternalPullUp, TimeSpan.FromMilliseconds(100), TimeSpan.Zero), depthPerClick)
         { }
 
         /// <summary>
@@ -53,7 +52,7 @@ namespace Meadow.Foundation.Sensors.Weather
         /// </summary>
         /// <param name="rainSensorPort">The port for the rain sensor pin</param>
         /// <param name="depthPerClick">The depth per click</param>
-        public SwitchingRainGauge(IDigitalInputPort rainSensorPort, Length depthPerClick)
+        public SwitchingRainGauge(IDigitalInterruptPort rainSensorPort, Length depthPerClick)
         {
             DepthPerClick = depthPerClick;
             rainGaugePort = rainSensorPort;
@@ -77,7 +76,7 @@ namespace Meadow.Foundation.Sensors.Weather
                 Old = RainDepth - DepthPerClick, //last reading, ClickCount will always be at least 1
             };
 
-            if(DateTime.Now - lastUpdated >= UpdateInterval)
+            if (DateTime.Now - lastUpdated >= UpdateInterval)
             {
                 lastUpdated = DateTime.Now;
                 RaiseEventsAndNotify(changeResult);
@@ -117,7 +116,7 @@ namespace Meadow.Foundation.Sensors.Weather
         /// </summary>
         protected override Task<Length> ReadSensor()
         {
-            if(IsSampling == false)
+            if (IsSampling == false)
             {
                 throw new Exception("You must call StartUpdating before SwitchingRainGauge can track rain depth");
             }

@@ -5,7 +5,7 @@ namespace Meadow.Foundation.Sensors.Gnss
 {
     public partial class NeoM8
     {
-        readonly ISerialMessagePort serialPort;
+        private readonly ISerialMessagePort serialPort;
 
         // TODO: if we want to make this public then we're going to have to add
         // a bunch of checks around baud rate, 8n1, etc.
@@ -35,10 +35,10 @@ namespace Meadow.Foundation.Sensors.Gnss
                 preserveDelimiter: true,
                 readBufferSize: 512),
                 (resetPin != null) ? device.CreateDigitalOutputPort(resetPin, true) : null,
-                (ppsPin != null) ? device.CreateDigitalInputPort(ppsPin, InterruptMode.EdgeRising, ResistorMode.InternalPullDown) : null)
+                (ppsPin != null) ? device.CreateDigitalInterruptPort(ppsPin, InterruptMode.EdgeRising, ResistorMode.InternalPullDown) : null)
         { }
 
-        void InitializeSerial()
+        private void InitializeSerial()
         {
             communicationMode = CommunicationMode.Serial;
             serialPort.MessageReceived += MessageReceived;
@@ -47,7 +47,7 @@ namespace Meadow.Foundation.Sensors.Gnss
             Reset().Wait();
         }
 
-        void StartUpdatingSerial()
+        private void StartUpdatingSerial()
         {
             if (serialPort.IsOpen)
             {
