@@ -6,7 +6,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
     /// <summary>
     /// Represents a digital input port implementation for the FT232 bus.
     /// </summary>
-    public sealed class Ft232DigitalInputPort : DigitalInputPortBase
+    public sealed class Ft232DigitalInputPort : DigitalInterruptPortBase
     {
         private IFt232Bus _bus;
 

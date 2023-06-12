@@ -17,10 +17,9 @@ namespace Meadow.Foundation.Sensors.Gnss
         /// I2C Communication bus used to communicate with the peripheral
         /// </summary>
         protected II2cCommunications i2cComms;
-
-        readonly Memory<byte> i2cBuffer = new byte[BUFFER_SIZE];
-        readonly IDigitalOutputPort resetPort;
-        readonly IDigitalInputPort ppsPort;
+        private readonly Memory<byte> i2cBuffer = new byte[BUFFER_SIZE];
+        private readonly IDigitalOutputPort resetPort;
+        private readonly IDigitalInputPort ppsPort;
 
         /// <summary>
         /// Create a new NeoM8 object using I2C
@@ -34,7 +33,7 @@ namespace Meadow.Foundation.Sensors.Gnss
 
             if (ppsPin != null)
             {
-                ppsPort = ppsPin.CreateDigitalInputPort(InterruptMode.EdgeRising, ResistorMode.InternalPullDown);
+                ppsPort = ppsPin.CreateDigitalInterruptPort(InterruptMode.EdgeRising, ResistorMode.InternalPullDown);
             }
 
             _ = InitializeI2c(i2cBus, address);
@@ -51,7 +50,7 @@ namespace Meadow.Foundation.Sensors.Gnss
             _ = InitializeI2c(i2cBus, address);
         }
 
-        async Task InitializeI2c(II2cBus i2cBus, byte address)
+        private async Task InitializeI2c(II2cBus i2cBus, byte address)
         {
             i2cComms = new I2cCommunications(i2cBus, address, 128);
 
@@ -67,7 +66,7 @@ namespace Meadow.Foundation.Sensors.Gnss
             await Reset();
         }
 
-        async Task StartUpdatingI2c()
+        private async Task StartUpdatingI2c()
         {
             var t = new Task(() =>
             {

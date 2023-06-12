@@ -18,17 +18,16 @@ namespace Meadow.Foundation.Sensors.Hid
         /// I2C Communication bus used to communicate with the peripheral
         /// </summary>
         protected readonly II2cCommunications i2cComms;
-
-        readonly IDigitalInterruptPort interruptPort;
+        private readonly IDigitalInterruptPort interruptPort;
 
         /// <summary>
         /// Raised when a key press is detected
         /// </summary>
         public event EventHandler<KeyEvent> OnKeyEvent = delegate { };
 
-        byte Status => i2cComms.ReadRegister((byte)Registers.KEY);
+        private byte Status => i2cComms.ReadRegister((byte)Registers.KEY);
 
-        byte KeyCount => (byte)(i2cComms.ReadRegister(KEY_COUNT_MASK) & Status);
+        private byte KeyCount => (byte)(i2cComms.ReadRegister(KEY_COUNT_MASK) & Status);
 
         /// <summary>
         /// Get or set the backlight
@@ -60,7 +59,7 @@ namespace Meadow.Foundation.Sensors.Hid
 
             if (interruptPin != null)
             {
-                interruptPort = interruptPin.CreateDigitalInputPort(InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
+                interruptPort = interruptPin.CreateDigitalInterruptPort(InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
                 interruptPort.Changed += InterruptPort_Changed;
             }
 

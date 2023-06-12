@@ -40,8 +40,7 @@ namespace Meadow.Foundation.Sensors.Gnss
         /// SPI Communication bus used to communicate with the peripheral
         /// </summary>
         protected ISpiCommunications spiComms;
-
-        const byte NULL_VALUE = 0xFF;
+        private const byte NULL_VALUE = 0xFF;
 
         /// <summary>
         /// Create a new NEOM8 object using SPI
@@ -70,13 +69,13 @@ namespace Meadow.Foundation.Sensors.Gnss
 
             resetPin?.CreateDigitalOutputPort(true);
 
-            ppsPin?.CreateDigitalInputPort(InterruptMode.EdgeRising, ResistorMode.InternalPullDown);
+            ppsPin?.CreateDigitalInterruptPort(InterruptMode.EdgeRising, ResistorMode.InternalPullDown);
 
             _ = InitializeSpi();
         }
 
         //ToDo cancellation for sleep aware 
-        async Task InitializeSpi()
+        private async Task InitializeSpi()
         {
             messageProcessor = new SerialMessageProcessor(suffixDelimiter: Encoding.ASCII.GetBytes("\r\n"),
                                                     preserveDelimiter: true,
@@ -90,7 +89,7 @@ namespace Meadow.Foundation.Sensors.Gnss
             await Reset();
         }
 
-        async Task StartUpdatingSpi()
+        private async Task StartUpdatingSpi()
         {
             byte[] data = new byte[BUFFER_SIZE];
 

@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Meadow.Hardware;
+using System;
 using System.Runtime.InteropServices;
 using System.Threading;
-using Meadow.Hardware;
 
 namespace Meadow.Foundation.Displays
 {
@@ -20,7 +20,7 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         public byte[] SegmentOrder
         {
-            get => _segmentOrder; 
+            get => _segmentOrder;
             set
             {
                 if (value.Length != MAX_SEGMENTS)
@@ -45,7 +45,7 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         public bool ScreenOn
         {
-            get => _screenOn; 
+            get => _screenOn;
 
             set
             {
@@ -60,7 +60,7 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         public byte Brightness
         {
-            get => _brightness; 
+            get => _brightness;
             set
             {
                 if (value > 7)
@@ -73,7 +73,7 @@ namespace Meadow.Foundation.Displays
         private byte _brightness;
 
         private readonly IDigitalOutputPort portClock;
-        private readonly IBiDirectionalPort portData;
+        private readonly IBiDirectionalInterruptPort portData;
 
         private byte[] displayBuffer = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 
@@ -108,7 +108,7 @@ namespace Meadow.Foundation.Displays
         public Tm1637(IMeadowDevice device, IPin pinClock, IPin pinData)
         {
             portClock = pinClock.CreateDigitalOutputPort();
-            portData = device.CreateBiDirectionalPort(pinData);
+            portData = device.CreateBiDirectionalInterruptPort(pinData);
 
             _brightness = 7;
         }
@@ -129,7 +129,7 @@ namespace Meadow.Foundation.Displays
                 {
                     portData.State = false;
                 }
-                    
+
                 // LSB first
                 data >>= 1;
                 portClock.State = true;
@@ -154,9 +154,9 @@ namespace Meadow.Foundation.Displays
             }
 
             portClock.State = true;
-            Thread.Sleep(1); 
+            Thread.Sleep(1);
             portClock.State = false;
-            Thread.Sleep(1); 
+            Thread.Sleep(1);
 
             portData.Direction = PortDirectionType.Output;
 
@@ -167,7 +167,7 @@ namespace Meadow.Foundation.Displays
         {
             portClock.State = true;
             portData.State = true;
-            Thread.Sleep(1); 
+            Thread.Sleep(1);
             portData.State = false;
         }
 
@@ -175,7 +175,7 @@ namespace Meadow.Foundation.Displays
         {
             portClock.State = false;
             portData.State = false;
-            Thread.Sleep(1); 
+            Thread.Sleep(1);
             portData.State = false;
             portClock.State = true;
             portData.State = true;

@@ -31,8 +31,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
             }
             private bool state = false;
 
-            private DateTime lastUpdate;
-
             /// <summary>
             /// The resistor mode of the port
             /// </summary>
@@ -44,27 +42,13 @@ namespace Meadow.Foundation.ICs.IOExpanders
             private readonly ResistorMode portResistorMode;
 
             /// <summary>
-            /// Debouce durration
-            /// </summary>
-            public override TimeSpan DebounceDuration { get; set; } = TimeSpan.Zero;
-
-            /// <summary>
-            /// Glitch durration
-            /// </summary>
-            public override TimeSpan GlitchDuration
-            {
-                get => TimeSpan.FromMilliseconds(0.00015);
-                set => _ = value; //fail silently
-            }
-
-            /// <summary>
             /// Create a new DigitalInputPort object
             /// </summary>
             /// <param name="pin">The interrupt pin</param>
             /// <param name="interruptMode">The interrupt mode used for the interrupt pin</param>
             /// <param name="resistorMode">The resistor mode used by the interrupt pin</param>
-            public DigitalInputPort(IPin pin, InterruptMode interruptMode = InterruptMode.None, ResistorMode resistorMode = ResistorMode.Disabled)
-                : base(pin, (IDigitalChannelInfo)pin.SupportedChannels[0], interruptMode)
+            public DigitalInputPort(IPin pin, ResistorMode resistorMode = ResistorMode.Disabled)
+                : base(pin, (IDigitalChannelInfo)pin.SupportedChannels[0])
             {
                 portResistorMode = resistorMode;
             }
@@ -75,40 +59,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// <param name="newState">The new port state</param>
             internal void Update(bool newState)
             {
-                if (DateTime.UtcNow - lastUpdate < DebounceDuration)
-                {
-                    return;
-                }
-
-                var now = DateTime.UtcNow;
-
-                if (newState != state)
-                {
-                    switch (InterruptMode)
-                    {
-                        case InterruptMode.EdgeFalling:
-                            if (newState)
-                            {
-                                RaiseChangedAndNotify(new DigitalPortResult(new DigitalState(false, now), new DigitalState(true, lastUpdate)));
-                            }
-                            break;
-                        case InterruptMode.EdgeRising:
-                            if (newState)
-                            {
-                                RaiseChangedAndNotify(new DigitalPortResult(new DigitalState(true, now), new DigitalState(false, lastUpdate)));
-                            }
-                            break;
-                        case InterruptMode.EdgeBoth:
-                            RaiseChangedAndNotify(new DigitalPortResult(new DigitalState(newState, now), new DigitalState(!newState, lastUpdate)));
-                            break;
-                        case InterruptMode.None:
-                        default:
-                            break;
-                    }
-                }
-
                 state = newState;
-                lastUpdate = now;
             }
         }
     }
