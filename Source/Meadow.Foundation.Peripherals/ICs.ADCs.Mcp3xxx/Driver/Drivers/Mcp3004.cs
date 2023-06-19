@@ -8,6 +8,11 @@ namespace Meadow.Foundation.ICs.IOExpanders
     public partial class Mcp3004 : Mcp3xxx
     {
         /// <summary>
+        /// The pins
+        /// </summary>
+        public PinDefinitions Pins { get; }
+
+        /// <summary>
         /// Constructs Mcp3004 instance
         /// </summary>
         /// <param name="spiBus">The SPI bus</param>
@@ -15,6 +20,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         public Mcp3004(ISpiBus spiBus, IDigitalOutputPort chipSelectPort)
             : base(spiBus, chipSelectPort, 4, 10)
         {
+            Pins = new PinDefinitions(this);
         }
     }
 }

@@ -14,7 +14,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// <summary>
             /// Analog-digital converter precision
             /// </summary>
-            public const int ADCPrecisionBits = 10;
+            public virtual byte ADCPrecisionBits => 10;
 
             /// <summary>
             /// Collection of pins

@@ -10,7 +10,7 @@ namespace ICs.IOExpanders.Mcp3001_Sample
     {
         //<!=SNIP=>
 
-        Mcp3001 mcp;
+        Mcp3201 mcp;
 
         IAnalogInputPort port;
 
@@ -18,7 +18,7 @@ namespace ICs.IOExpanders.Mcp3001_Sample
         {
             IDigitalOutputPort chipSelectPort = Device.CreateDigitalOutputPort(Device.Pins.D01);
 
-            mcp = new Mcp3001(Device.CreateSpiBus(), chipSelectPort);
+            mcp = new Mcp3201(Device.CreateSpiBus(), chipSelectPort);
 
             port = mcp.CreateAnalogInputPort();
 

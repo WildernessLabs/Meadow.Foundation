@@ -2,15 +2,17 @@
 using Meadow.Devices;
 using Meadow.Foundation.ICs.IOExpanders;
 using Meadow.Hardware;
+using Meadow.Units;
+using System;
 using System.Threading.Tasks;
 
-namespace ICs.IOExpanders.Mcp3001_Sample
+namespace ICs.IOExpanders.Mcp3008_Sample
 {
     public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
 
-        Mcp3001 mcp;
+        Mcp3008 mcp;
 
         IAnalogInputPort port;
 
@@ -18,9 +20,9 @@ namespace ICs.IOExpanders.Mcp3001_Sample
         {
             IDigitalOutputPort chipSelectPort = Device.CreateDigitalOutputPort(Device.Pins.D01);
 
-            mcp = new Mcp3001(Device.CreateSpiBus(), chipSelectPort);
+            mcp = new Mcp3008(Device.CreateSpiBus(), chipSelectPort);
 
-            port = mcp.CreateAnalogInputPort();
+            port = mcp.CreateAnalogInputPort(mcp.Pins.CH0, 32, TimeSpan.FromSeconds(1), new Voltage(3.3, Voltage.UnitType.Volts), Mcp3xxx.InputType.SingleEnded);
 
             return base.Initialize();
         }

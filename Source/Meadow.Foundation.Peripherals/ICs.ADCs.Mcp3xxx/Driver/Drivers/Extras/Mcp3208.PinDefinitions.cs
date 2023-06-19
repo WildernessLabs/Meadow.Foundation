@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Meadow.Foundation.ICs.IOExpanders
 {
-    public partial class Mcp3008
+    public partial class Mcp3208
     {
         /// <summary>
         /// Mcp3008 pin definition class
@@ -14,7 +14,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// <summary>
             /// Analog-digital converter precision
             /// </summary>
-            public virtual byte ADCPrecisionBits => 10;
+            public virtual byte ADCPrecisionBits => 12;
 
             /// <summary>
             /// Collection of pins

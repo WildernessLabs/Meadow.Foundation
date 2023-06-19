@@ -4,17 +4,17 @@ using System.Collections.Generic;
 
 namespace Meadow.Foundation.ICs.IOExpanders
 {
-    public partial class Mcp3001
+    public partial class Mcp3204
     {
         /// <summary>
-        /// Mcp3001 pin definition class
+        /// Mcp3004 pin definition class
         /// </summary>
         public class PinDefinitions : IPinDefinitions
         {
             /// <summary>
             /// Analog-digital converter precision
             /// </summary>
-            public virtual byte ADCPrecisionBits => 10;
+            public virtual byte ADCPrecisionBits => 12;
 
             /// <summary>
             /// Collection of pins
@@ -36,26 +36,50 @@ namespace Meadow.Foundation.ICs.IOExpanders
             }
 
             /// <summary>
-            /// Pin INPlus
+            /// Pin CH0
             /// </summary>
-            public IPin INPlus => new Pin(
+            public IPin CH0 => new Pin(
                 Controller,
-                "IN+",
+                "CH0",
                 (byte)0x00,
                 new List<IChannelInfo> {
-                    new AnalogChannelInfo("IN+", ADCPrecisionBits, true, false),
+                    new AnalogChannelInfo("A0", ADCPrecisionBits, true, false),
                 }
             );
 
             /// <summary>
-            /// Pin INMinus
+            /// Pin CH1
             /// </summary>
-            public IPin INMinus => new Pin(
+            public IPin CH1 => new Pin(
                 Controller,
-                "IN-",
+                "CH1",
                 (byte)0x01,
                 new List<IChannelInfo> {
-                    new AnalogChannelInfo("IN-", ADCPrecisionBits, true, false),
+                    new AnalogChannelInfo("A1", ADCPrecisionBits, true, false),
+                }
+            );
+
+            /// <summary>
+            /// Pin CH2
+            /// </summary>
+            public IPin CH2 => new Pin(
+                Controller,
+                "CH2",
+                (byte)0x02,
+                new List<IChannelInfo> {
+                    new AnalogChannelInfo("A2", ADCPrecisionBits, true, false),
+                }
+            );
+
+            /// <summary>
+            /// Pin CH3
+            /// </summary>
+            public IPin CH3 => new Pin(
+                Controller,
+                "CH3",
+                (byte)0x03,
+                new List<IChannelInfo> {
+                    new AnalogChannelInfo("A3", ADCPrecisionBits, true, false),
                 }
             );
 
@@ -65,8 +89,10 @@ namespace Meadow.Foundation.ICs.IOExpanders
             protected void InitAllPins()
             {
                 // add all our pins to the collection
-                AllPins.Add(INPlus);
-                AllPins.Add(INMinus);
+                AllPins.Add(CH0);
+                AllPins.Add(CH1);
+                AllPins.Add(CH2);
+                AllPins.Add(CH3);
             }
 
             /// <summary>
