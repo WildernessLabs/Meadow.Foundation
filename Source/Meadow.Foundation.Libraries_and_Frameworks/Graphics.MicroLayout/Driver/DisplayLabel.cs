@@ -98,6 +98,7 @@ public class DisplayLabel : DisplayControl
                 break;
         }
 
-        graphics.DrawText(x, y, Text, TextColor, alignmentH: HorizontalAlignment, alignmentV: VerticalAlignment, font: Font);
+        graphics.DrawRectangle(Left, Top, Width, Height, BackColor, true);
+        graphics.DrawText(Left + x, Top + y, Text, TextColor, alignmentH: HorizontalAlignment, alignmentV: VerticalAlignment, font: Font);
     }
 }
