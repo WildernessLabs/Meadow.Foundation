@@ -1251,6 +1251,8 @@ namespace Meadow.Foundation.Graphics
             VerticalAlignment alignmentV = VerticalAlignment.Top,
             IFont? font = null)
         {
+            if (string.IsNullOrEmpty(text)) return;
+
             var fontToDraw = (font ?? CurrentFont) ?? throw new Exception("CurrentFont must be set before calling DrawText.");
 
             byte[] bitMap = GetBytesForTextBitmap(text, fontToDraw);
