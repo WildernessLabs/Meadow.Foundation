@@ -13,7 +13,7 @@
     <PackageTags>Meadow.Foundation,Meadow,ADC,analog,digital,Mcp3001,Mcp3002,Mcp3004,Mcp3008,Mcp3201,Mcp3202,Mcp3204,Mcp3208</PackageTags>
     <Version>0.1.0</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Description>Mcp3xxx SPI analog-to-digital converter</Description>
+    <Description>Mcp3xxx SPI analog-to-digital converter (MCP3001, MCP3002, MCP3004, MCP3008, MCP3201, MCP3202, MCP3204, MCP3208)</Description>
 	<LangVersion>latest</LangVersion>
   </PropertyGroup>
   <ItemGroup>
