@@ -46,7 +46,8 @@ namespace Meadow.Foundation.Sensors.Weather
                 sampleCount = value;
             }
         }
-        int sampleCount = 3;
+
+        private int sampleCount = 3;
 
         /// <summary>
         /// Calibration for how fast the wind speed is when the switch is hit
@@ -55,10 +56,9 @@ namespace Meadow.Foundation.Sensors.Weather
         /// </summary>
         public float KmhPerSwitchPerSecond { get; set; } = 2.4f;
 
-        readonly IDigitalInputPort inputPort;
-        bool running = false;
-
-        readonly Queue<DigitalPortResult>? samples;
+        private readonly IDigitalInterruptPort inputPort;
+        private bool running = false;
+        private readonly Queue<DigitalPortResult>? samples;
 
         /// <summary>
         /// Creates a new `SwitchingAnemometer` using the specific digital input
@@ -66,7 +66,7 @@ namespace Meadow.Foundation.Sensors.Weather
         /// </summary>
         /// <param name="digitalInputPin"></param>
         public SwitchingAnemometer(IPin digitalInputPin)
-            : this(digitalInputPin.CreateDigitalInputPort(InterruptMode.EdgeFalling,
+            : this(digitalInputPin.CreateDigitalInterruptPort(InterruptMode.EdgeFalling,
                                                             ResistorMode.InternalPullUp,
                                                             TimeSpan.FromMilliseconds(2),
                                                             TimeSpan.FromMilliseconds(0)))
@@ -76,18 +76,18 @@ namespace Meadow.Foundation.Sensors.Weather
         /// Creates a new switching anemometer using the specific `IDigitalInputPort`.
         /// </summary>
         /// <param name="inputPort"></param>
-        public SwitchingAnemometer(IDigitalInputPort inputPort)
+        public SwitchingAnemometer(IDigitalInterruptPort inputPort)
         {
             this.inputPort = inputPort;
 
             samples = new Queue<DigitalPortResult>();
         }
 
-        void SubscribeToInputPortEvents() => inputPort.Changed += HandleInputPortChange;
+        private void SubscribeToInputPortEvents() => inputPort.Changed += HandleInputPortChange;
 
-        void UnsubscribeToInputPortEvents() => inputPort.Changed -= HandleInputPortChange;
+        private void UnsubscribeToInputPortEvents() => inputPort.Changed -= HandleInputPortChange;
 
-        void HandleInputPortChange(object sender, DigitalPortResult result)
+        private void HandleInputPortChange(object sender, DigitalPortResult result)
         {
             if (!running) { return; }
 

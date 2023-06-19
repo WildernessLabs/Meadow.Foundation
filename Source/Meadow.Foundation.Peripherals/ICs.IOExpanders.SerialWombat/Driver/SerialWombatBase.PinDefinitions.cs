@@ -21,6 +21,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// </summary>
             public IList<IPin> AllPins { get; } = new List<IPin>();
 
+            /// <summary>
+            /// The pin controller
+            /// </summary>
             public IPinController Controller { get; set; }
 
             /// <summary>
@@ -276,24 +279,24 @@ namespace Meadow.Foundation.ICs.IOExpanders
             protected void InitAllPins()
             {
                 // add all our pins to the collection
-                AllPins.Add(this.WP0);
-                AllPins.Add(this.WP1);
-                AllPins.Add(this.WP2);
-                AllPins.Add(this.WP5);
-                AllPins.Add(this.WP6);
-                AllPins.Add(this.WP7);
-                AllPins.Add(this.WP8);
-                AllPins.Add(this.WP9);
-                AllPins.Add(this.WP10);
-                AllPins.Add(this.WP11);
-                AllPins.Add(this.WP12);
-                AllPins.Add(this.WP13);
-                AllPins.Add(this.WP14);
-                AllPins.Add(this.WP15);
-                AllPins.Add(this.WP16);
-                AllPins.Add(this.WP17);
-                AllPins.Add(this.WP18);
-                AllPins.Add(this.WP19);
+                AllPins.Add(WP0);
+                AllPins.Add(WP1);
+                AllPins.Add(WP2);
+                AllPins.Add(WP5);
+                AllPins.Add(WP6);
+                AllPins.Add(WP7);
+                AllPins.Add(WP8);
+                AllPins.Add(WP9);
+                AllPins.Add(WP10);
+                AllPins.Add(WP11);
+                AllPins.Add(WP12);
+                AllPins.Add(WP13);
+                AllPins.Add(WP14);
+                AllPins.Add(WP15);
+                AllPins.Add(WP16);
+                AllPins.Add(WP17);
+                AllPins.Add(WP18);
+                AllPins.Add(WP19);
             }
 
             /// <summary>

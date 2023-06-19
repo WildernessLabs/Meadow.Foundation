@@ -9,8 +9,8 @@ namespace Meadow.Foundation.Sensors.Sound
     /// </summary>
     public class Ky038
     {
-        IAnalogInputPort analogPort;
-        IDigitalInputPort digitalInputPort;
+        private IAnalogInputPort analogPort;
+        private IDigitalInputPort digitalInputPort;
 
         /// <summary>
         /// Create a new Ky038 object
@@ -19,7 +19,7 @@ namespace Meadow.Foundation.Sensors.Sound
         /// <param name="pinD0">D0 pin</param>
         public Ky038(IPin pinA0, IPin pinD0) :
             this(pinA0.CreateAnalogInputPort(5, TimeSpan.FromMilliseconds(50), new Units.Voltage(3.3)),
-                pinD0.CreateDigitalInputPort())
+                pinD0.CreateDigitalInterruptPort(InterruptMode.EdgeBoth))
         { }
 
         /// <summary>
@@ -27,7 +27,7 @@ namespace Meadow.Foundation.Sensors.Sound
         /// </summary>
         /// <param name="analogPort">The port for the to A0 pin</param>
         /// <param name="digitalInputPort">The port for the to D0 pin</param>
-        public Ky038(IAnalogInputPort analogPort, IDigitalInputPort digitalInputPort)
+        public Ky038(IAnalogInputPort analogPort, IDigitalInterruptPort digitalInputPort)
         {
             this.analogPort = analogPort;
             this.digitalInputPort = digitalInputPort;
@@ -43,7 +43,7 @@ namespace Meadow.Foundation.Sensors.Sound
             }
         }
 
-        void DigitalInputPort_Changed(object sender, DigitalPortResult e)
+        private void DigitalInputPort_Changed(object sender, DigitalPortResult e)
         {
 
         }

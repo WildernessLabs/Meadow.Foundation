@@ -1328,7 +1328,7 @@ namespace Meadow.Foundation.Graphics
             }
 
             //fast and happy path
-            if (display is IRotatableDisplay || Rotation == RotationType.Default && isInBounds)
+            if ((display is IRotatableDisplay || Rotation == RotationType.Default) && isInBounds)
             {
                 PixelBuffer.WriteBuffer(x, y, buffer);
             }
