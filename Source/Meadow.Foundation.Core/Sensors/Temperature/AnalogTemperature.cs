@@ -91,12 +91,8 @@ namespace Meadow.Foundation.Sensors.Temperature
         public Calibration SensorCalibration { get; set; }
 
         /// <summary>
-        /// Temperature in degrees centigrade.
+        /// Current Temperature
         /// </summary>
-        /// <remarks>
-        /// The temperature is given by the following calculation:
-        /// temperature = (reading in millivolts - yIntercept) / millivolts per degree centigrade
-        /// </remarks>
         public Units.Temperature? Temperature { get; protected set; }
 
         /// <summary>
