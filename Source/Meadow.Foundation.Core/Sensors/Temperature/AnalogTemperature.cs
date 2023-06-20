@@ -186,13 +186,11 @@ namespace Meadow.Foundation.Sensors.Temperature
                             New = VoltageToTemperature(result.New),
                             Old = Temperature
                         };
-                        // save state
                         Temperature = changeResult.New;
-                        // notify
                         RaiseEventsAndNotify(changeResult);
                     }
                 )
-           );
+            );
         }
 
         /// <summary>
