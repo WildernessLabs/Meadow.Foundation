@@ -60,6 +60,20 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// Mcp3xxx base class contructor
         /// </summary>
         /// <param name="spiBus">The SPI bus</param>
+        /// <param name="chipSelectPin">Chip select pin</param>
+        /// <param name="channelCount">The number of input channels</param>   
+        /// <param name="adcResolutionInBits">The resolution in bits for the ADC</param>
+        protected Mcp3xxx(ISpiBus spiBus,
+            IPin chipSelectPin,
+            int channelCount, int adcResolutionInBits) :
+            this(spiBus, chipSelectPin.CreateDigitalOutputPort(), channelCount, adcResolutionInBits)
+        {
+        }
+
+        /// <summary>
+        /// Mcp3xxx base class contructor
+        /// </summary>
+        /// <param name="spiBus">The SPI bus</param>
         /// <param name="chipSelectPort">Chip select port</param>
         /// <param name="channelCount">The number of input channels</param>   
         /// <param name="adcResolutionInBits">The resolution in bits for the ADC</param>

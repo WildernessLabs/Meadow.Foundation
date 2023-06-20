@@ -19,6 +19,17 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// Constructs Mcp3201 instance
         /// </summary>
         /// <param name="spiBus">The SPI bus</param>
+        /// <param name="chipSelectPin">Chip select pin</param>
+        public Mcp3201(ISpiBus spiBus, IPin chipSelectPin)
+            : base(spiBus, chipSelectPin, 1, 12)
+        {
+            Pins = new PinDefinitions(this);
+        }
+
+        /// <summary>
+        /// Constructs Mcp3201 instance
+        /// </summary>
+        /// <param name="spiBus">The SPI bus</param>
         /// <param name="chipSelectPort">Chip select port</param>
         public Mcp3201(ISpiBus spiBus, IDigitalOutputPort chipSelectPort)
             : base(spiBus, chipSelectPort, 1, 12)
