@@ -1271,6 +1271,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcp3204_Sample", "Meadow.Fo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mcp3208_Sample", "Meadow.Foundation.Peripherals\ICs.ADCs.Mcp3xxx\Samples\Mcp3208_Sample\Mcp3208_Sample.csproj", "{6731CC68-B1B5-480E-8540-A74D04AF40F3}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CurrentTransducer", "CurrentTransducer", "{2E5C0DC9-CCA0-4E2D-8A83-639A921AEDB4}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Power.CurrentTransducer", "Meadow.Foundation.Peripherals\Sensors.Power.CurrentTransducer\Driver\Sensors.Power.CurrentTransducer.csproj", "{6A85DE57-4ED1-4391-AF1B-11C632634461}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -3051,6 +3055,12 @@ Global
 		{6731CC68-B1B5-480E-8540-A74D04AF40F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6731CC68-B1B5-480E-8540-A74D04AF40F3}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6731CC68-B1B5-480E-8540-A74D04AF40F3}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{6A85DE57-4ED1-4391-AF1B-11C632634461}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6A85DE57-4ED1-4391-AF1B-11C632634461}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6A85DE57-4ED1-4391-AF1B-11C632634461}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{6A85DE57-4ED1-4391-AF1B-11C632634461}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6A85DE57-4ED1-4391-AF1B-11C632634461}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6A85DE57-4ED1-4391-AF1B-11C632634461}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -3685,6 +3695,8 @@ Global
 		{2D2E4AD5-EE92-4909-8AAB-B50DD0F59A1D} = {E8FC09F7-3071-4F68-BA50-724A8996B495}
 		{0CCC5CFE-20FD-49DF-814F-E7B8C1200109} = {E8FC09F7-3071-4F68-BA50-724A8996B495}
 		{6731CC68-B1B5-480E-8540-A74D04AF40F3} = {E8FC09F7-3071-4F68-BA50-724A8996B495}
+		{2E5C0DC9-CCA0-4E2D-8A83-639A921AEDB4} = {C95CDA6C-3968-467E-80ED-5A963BE96215}
+		{6A85DE57-4ED1-4391-AF1B-11C632634461} = {2E5C0DC9-CCA0-4E2D-8A83-639A921AEDB4}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}
