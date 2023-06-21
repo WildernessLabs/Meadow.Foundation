@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Meadow.Foundation.Sensors.Power
 {
     /// <summary>
-    /// Represents a general Current Transducer (CT) sensor INA260 Precision Digital Current and Power Monitor
+    /// Represents a general Current Transducer (CT) sensor
     /// </summary>
     public partial class CurrentTransducer : SamplingSensorBase<Current>
     {
@@ -63,7 +63,8 @@ namespace Meadow.Foundation.Sensors.Power
         }
 
         /// <summary>
-        /// Initializes the CurrentTransducer instance.  Use this method when a derived class must do pre-initialization work
+        /// Initializes the CurrentTransducer instance
+        /// Use this method when a derived class must do pre-initialization work
         /// </summary>
         /// <param name="analogPort">The analog input port connected to the transducer</param>
         /// <param name="maxVoltage">The maximum voltage the CT outputs</param>
@@ -91,7 +92,7 @@ namespace Meadow.Foundation.Sensors.Power
                         // TODO: make the filter below (0.01) user-settable
                         if (!Current.HasValue || delta > 0.01)
                         {
-                            ChangeResult<Current> changeResult = new ChangeResult<Current>()
+                            ChangeResult<Current> changeResult = new()
                             {
                                 New = ConvertVoltageToCurrent(result.New),
                                 Old = Current
