@@ -101,9 +101,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
             {
                 int rawValue = ChannelInputType switch
                 {
-                    InputType.SingleEnded => controller.ReadSingleEnded((int)Pin.Key),
-                    InputType.Differential => controller.ReadDifferential((int)Pin.Key, (int)Pin.Key + 1),
-                    InputType.InvertedDifferential => controller.ReadDifferential((int)Pin.Key, (int)Pin.Key - 1),
+                    InputType.SingleEnded => controller.ReadSingleEnded((byte)Pin.Key),
+                    InputType.Differential => controller.ReadDifferential((byte)Pin.Key, (byte)Pin.Key + 1),
+                    InputType.InvertedDifferential => controller.ReadDifferential((byte)Pin.Key, (byte)Pin.Key - 1),
                     _ => 0
                 };
 
