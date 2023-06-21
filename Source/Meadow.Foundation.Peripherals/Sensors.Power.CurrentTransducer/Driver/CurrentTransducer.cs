@@ -20,22 +20,31 @@ namespace Meadow.Foundation.Sensors.Power
         /// The analog input port connected to the transducer
         /// </summary>
         protected IAnalogInputPort AnalogPort { get; private set; } = default!;
+
         /// <summary>
         /// The maximum voltage the CT outputs
         /// </summary>
         protected Voltage MaxVoltage { get; private set; } = default!;
+
         /// <summary>
         /// The sensed current at the maximum output voltage
         /// </summary>
         protected Current MaxCurrent { get; private set; } = default!;
+
         /// <summary>
         /// The minimum voltage the CT outputs
         /// </summary>
         protected Voltage MinVoltage { get; private set; } = default!;
+
         /// <summary>
         /// The sensed current at the minimum output voltage
         /// </summary>
         protected Current MinCurrent { get; private set; } = default!;
+
+        /// <summary>
+        /// The minimum output voltage
+        /// </summary>
+        protected Current MinVoltgeDelta { get; private set; } = default!;
 
         /// <summary>
         /// The last sensed Current
@@ -84,22 +93,13 @@ namespace Meadow.Foundation.Sensors.Power
                 IAnalogInputPort.CreateObserver(
                     result =>
                     {
-                        var newCurrent = ConvertVoltageToCurrent(result.New);
-                        var old = Current ?? new Current(0);
-
-                        var delta = Math.Abs(old.Amps - newCurrent.Amps);
-
-                        // TODO: make the filter below (0.01) user-settable
-                        if (!Current.HasValue || delta > 0.01)
+                        ChangeResult<Current> changeResult = new()
                         {
-                            ChangeResult<Current> changeResult = new()
-                            {
-                                New = ConvertVoltageToCurrent(result.New),
-                                Old = Current
-                            };
-                            Current = changeResult.New;
-                            RaiseEventsAndNotify(changeResult);
-                        }
+                            New = ConvertVoltageToCurrent(result.New),
+                            Old = Current
+                        };
+                        Current = changeResult.New;
+                        RaiseEventsAndNotify(changeResult);
                     }
                 )
             );
