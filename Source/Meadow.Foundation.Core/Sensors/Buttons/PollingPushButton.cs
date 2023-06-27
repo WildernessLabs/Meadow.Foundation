@@ -24,7 +24,19 @@ namespace Meadow.Foundation.Sensors.Buttons
         /// <summary>
         /// Creates PushButton with a pre-configured input port
         /// </summary>
-        /// <param name="inputPort"></param>
+        /// <param name="inputPin">The pin connected to the button</param>
+        /// /// <param name="resistorMode">The resistor mode</param>
+        public PollingPushButton(IPin inputPin, ResistorMode resistorMode = ResistorMode.InternalPullUp)
+            : this(inputPin.CreateDigitalInputPort(resistorMode), resistorMode)
+        {
+        }
+
+
+        /// <summary>
+        /// Creates PushButton with a pre-configured input port
+        /// </summary>
+        /// <param name="inputPort">The input port connected to the button</param>
+        /// /// <param name="resistorMode">The resistor mode</param>
         public PollingPushButton(IDigitalInputPort inputPort, ResistorMode resistorMode = ResistorMode.InternalPullUp)
             : base(inputPort)
         {
