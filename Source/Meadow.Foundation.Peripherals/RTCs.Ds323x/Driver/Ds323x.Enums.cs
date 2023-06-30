@@ -3,6 +3,21 @@
     public partial class Ds323x
     {
         /// <summary>
+		/// Valid I2C addresses for the sensor
+		/// </summary>
+		public enum Addresses : byte
+        {
+            /// <summary>
+            /// Bus address 0x68
+            /// </summary>
+            Address_0x68 = 0x68,
+            /// <summary>
+            /// Default bus address
+            /// </summary>
+            Default = Address_0x68
+        }
+
+        /// <summary>
         /// Possible values for the alarm that can be set or alarm that has been raised
         /// </summary>
         public enum Alarm

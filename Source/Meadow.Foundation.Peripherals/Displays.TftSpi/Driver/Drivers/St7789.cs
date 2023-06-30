@@ -10,19 +10,24 @@ namespace Meadow.Foundation.Displays
     public class St7789 : TftSpiBase, IRotatableDisplay
     {
         /// <summary>
-        /// The default SPI bus frequency
-        /// </summary>
-        public static Frequency DefaultSpiBusSpeed = new Frequency(48000, Frequency.UnitType.Kilohertz);
-
-        /// <summary>
         /// The default display color mode
         /// </summary>
-        public override ColorMode DefautColorMode => ColorMode.Format16bppRgb565;
+        public override ColorMode DefaultColorMode => ColorMode.Format16bppRgb565;
 
         /// <summary>
         /// The color modes supported by the display
         /// </summary>
         public override ColorMode SupportedColorModes => ColorMode.Format16bppRgb565 | ColorMode.Format12bppRgb444;
+
+        /// <summary>
+        /// SPI bus speed
+        /// </summary>
+        public override Frequency DefaultSpiBusSpeed => new Frequency(48000, Frequency.UnitType.Kilohertz);
+
+        /// <summary>
+        /// The SPI bus mode for the device
+        /// </summary>
+        public override SpiClockConfiguration.Mode DefaultSpiBusMode => SpiClockConfiguration.Mode.Mode3;
 
         private byte rowStart, rowStart2;
         private byte columnStart, columnStart2;
@@ -114,9 +119,6 @@ namespace Meadow.Foundation.Displays
 
             DelayMs(10);
 
-            SendCommand(Register.MADCTL);
-            SendData(0x00); //some variants use 0x08
-
             SendCommand(LcdCommand.CASET);
             SendData(new byte[] { 0, 0, 0, (byte)Width });
 
@@ -128,11 +130,11 @@ namespace Meadow.Foundation.Displays
             SendCommand(Register.NORON); //normal display
             DelayMs(10);
             SendCommand(Register.DISPON); //display on
-            DelayMs(500);
-
-            SetAddressWindow(0, 0, (Width - 1), (Height - 1));
+            DelayMs(120);
 
             dataCommandPort.State = Data;
+
+            SetRotation(RotationType.Normal);
         }
 
         /// <summary>
@@ -150,21 +152,7 @@ namespace Meadow.Foundation.Displays
             x1 += xOffset;
             y1 += yOffset;
 
-            SendCommand(LcdCommand.CASET);  // column addr set
-            dataCommandPort.State = Data;
-            Write((byte)(x0 >> 8));
-            Write((byte)(x0 & 0xff));   // XSTART 
-            Write((byte)(x1 >> 8));
-            Write((byte)(x1 & 0xff));   // XEND
-
-            SendCommand(LcdCommand.RASET);  // row addr set
-            dataCommandPort.State = Data;
-            Write((byte)(y0 >> 8));
-            Write((byte)(y0 & 0xff));    // YSTART
-            Write((byte)(y1 >> 8));
-            Write((byte)(y1 & 0xff));    // YEND
-
-            SendCommand(LcdCommand.RAMWR);  // write to RAM
+            base.SetAddressWindow(x0, y0, x1, y1);
         }
 
         /// <summary>
@@ -175,7 +163,7 @@ namespace Meadow.Foundation.Displays
         {
             SendCommand(Register.MADCTL);
 
-            switch (rotation)
+            switch (Rotation = rotation)
             {
                 case RotationType.Normal:
                     SendData((byte)Register.MADCTL_MX | (byte)Register.MADCTL_MY | (byte)Register.MADCTL_RGB);
@@ -198,6 +186,8 @@ namespace Meadow.Foundation.Displays
                     yOffset = columnStart;
                     break;
             }
+
+            UpdateBuffer();
         }
     }
 }

@@ -1,6 +1,5 @@
 ﻿using Meadow.Foundation.Graphics;
 using Meadow.Hardware;
-using Meadow.Units;
 
 namespace Meadow.Foundation.Displays
 {
@@ -10,14 +9,9 @@ namespace Meadow.Foundation.Displays
     public class Ssd1351 : TftSpiBase
     {
         /// <summary>
-        /// The default SPI bus frequency
-        /// </summary>
-        public static Frequency DefaultSpiBusSpeed = new Frequency(12000, Frequency.UnitType.Kilohertz);
-
-        /// <summary>
         /// The default display color mode
         /// </summary>
-        public override ColorMode DefautColorMode => ColorMode.Format16bppRgb565;
+        public override ColorMode DefaultColorMode => ColorMode.Format16bppRgb565;
 
         /// <summary>
         /// The color modes supported by the display
@@ -132,8 +126,6 @@ namespace Meadow.Foundation.Displays
             SendData(0x01);
 
             SendCommand(CMD_DISPLAYON);
-
-            SetAddressWindow(0, 0, (Width - 1), (Height - 1));
 
             dataCommandPort.State = Data;
         }

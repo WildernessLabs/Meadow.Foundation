@@ -1,6 +1,5 @@
 ﻿using Meadow.Hardware;
 using Meadow.Peripherals.Sensors;
-using Meadow.Units;
 using System;
 using System.Threading.Tasks;
 
@@ -9,7 +8,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     /// <summary>
     /// Represents a Bh1900Nux temperature sensor
     /// </summary>
-    public partial class Bh1900Nux : ByteCommsSensorBase<Units.Temperature>, ITemperatureSensor
+    public partial class Bh1900Nux : ByteCommsSensorBase<Units.Temperature>, ITemperatureSensor, II2cPeripheral
     {
         /// <summary>
         /// Raised when the temperature value changes
@@ -22,14 +21,19 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         public Units.Temperature? Temperature => Conditions;
 
         /// <summary>
+        /// The default I2C address for the peripheral
+        /// </summary>
+        public byte DefaultI2cAddress => (byte)Addresses.Default;
+
+        /// <summary>
         /// Create a new Bh1900Nux object
         /// </summary>
         /// <param name="i2cBus">The I2C bus</param>
         /// <param name="address">The I2C address</param>
-        public Bh1900Nux(II2cBus i2cBus, Address address)
+        public Bh1900Nux(II2cBus i2cBus, Addresses address)
             : base(i2cBus, (byte)address, 2, 2)
         {
-            if (address < Address.Address_0x48 || address > Address.Address_0x4f)
+            if (address < Addresses.Address_0x48 || address > Addresses.Address_0x4f)
             {
                 throw new ArgumentOutOfRangeException("Bh1900Nux address must be in the range of 0x48-0x4f");
             }
@@ -43,7 +47,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <param name="i2cBus">The I2C bus</param>
         /// <param name="address">The I2C address</param>
         public Bh1900Nux(II2cBus i2cBus, byte address)
-            : this(i2cBus, (Address)address)
+            : this(i2cBus, (Addresses)address)
         { }
 
         /// <summary>
@@ -51,18 +55,18 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         public void Reset()
         {
-            Peripheral?.WriteRegister((byte)Register.Reset, 0x01);
+            BusComms?.WriteRegister((byte)Register.Reset, 0x01);
         }
 
         int GetConfig()
         {
-            Peripheral?.ReadRegister((byte)Register.Configuration, ReadBuffer.Span[0..2]);
+            BusComms?.ReadRegister((byte)Register.Configuration, ReadBuffer.Span[0..2]);
             return ReadBuffer.Span[0] << 8 | ReadBuffer.Span[1];
         }
 
         void SetConfig(int cfg)
         {
-            Peripheral?.WriteRegister((byte)Register.Configuration, new byte[] { (byte)(cfg >> 8), (byte)(cfg & 0xff) });
+            BusComms?.WriteRegister((byte)Register.Configuration, new byte[] { (byte)(cfg >> 8), (byte)(cfg & 0xff) });
         }
 
         /// <summary>
@@ -156,13 +160,13 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         {
             get
             {
-                Peripheral?.ReadRegister((byte)Register.TLow, ReadBuffer.Span[0..2]);
+                BusComms?.ReadRegister((byte)Register.TLow, ReadBuffer.Span[0..2]);
 
                 return RegisterToTemp(ReadBuffer);
             }
             set
             {
-                Peripheral?.WriteRegister((byte)Register.TLow, TempToBytes(value));
+                BusComms?.WriteRegister((byte)Register.TLow, TempToBytes(value));
             }
         }
 
@@ -173,13 +177,13 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         {
             get
             {
-                Peripheral?.ReadRegister((byte)Register.THigh, ReadBuffer.Span[0..2]);
+                BusComms?.ReadRegister((byte)Register.THigh, ReadBuffer.Span[0..2]);
 
                 return RegisterToTemp(ReadBuffer);
             }
             set
             {
-                Peripheral?.WriteRegister((byte)Register.THigh, TempToBytes(value));
+                BusComms?.WriteRegister((byte)Register.THigh, TempToBytes(value));
             }
         }
 
@@ -208,19 +212,16 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// Read the temperature
         /// </summary>
         /// <returns>The current temperature value</returns>
-        protected override async Task<Units.Temperature> ReadSensor()
+        protected override Task<Units.Temperature> ReadSensor()
         {
-            return await Task.Run(() =>
-            {
-                // 12-bit data
-                // Negative numbers are represented in binary twos complement format. The
-                // Temperature Register is 0x0000 until the first conversion complete after a software
-                // reset or power - on.
-                // Measurement Temperature Value [°C] = Temperature Data [11:0] x 0.0625
-                Peripheral?.ReadRegister((byte)Register.Temperature, ReadBuffer.Span[0..2]);
+            // 12-bit data
+            // Negative numbers are represented in binary twos complement format. The
+            // Temperature Register is 0x0000 until the first conversion complete after a software
+            // reset or power - on.
+            // Measurement Temperature Value [°C] = Temperature Data [11:0] x 0.0625
+            BusComms?.ReadRegister((byte)Register.Temperature, ReadBuffer.Span[0..2]);
 
-                return RegisterToTemp(ReadBuffer);
-            });
+            return Task.FromResult(RegisterToTemp(ReadBuffer));
         }
 
         /// <summary>

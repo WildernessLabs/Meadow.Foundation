@@ -6,7 +6,7 @@ namespace Meadow.Foundation.Leds
     /// <summary>
     /// Represents a SparkFunQwiicLEDStick that uses APA102 leds
     /// </summary>
-    public partial class SparkFunQwiicLEDStick : I2cPeripheral, IApa102
+    public partial class SparkFunQwiicLEDStick : I2cCommunications, IApa102
     {
         /// <summary>
         /// Enable or disable autowrite to update the LEDs as they're set

@@ -141,7 +141,7 @@ namespace Meadow.Foundation.Displays
 
             for (int i = 0; i < colorBuffer.Length; i++)
             {   //invert the color data
-                spiPeripheral.Write((byte)~colorBuffer[i]);
+                spiComms.Write((byte)~colorBuffer[i]);
             }
 
             DisplayFrame();

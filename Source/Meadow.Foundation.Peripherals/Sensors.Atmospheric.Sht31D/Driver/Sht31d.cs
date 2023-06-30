@@ -1,21 +1,17 @@
-﻿using System;
-using System.Threading.Tasks;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
 using Meadow.Peripherals.Sensors;
 using Meadow.Units;
+using System;
+using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Atmospheric
 {
     /// <summary>
-    /// Provide a mechanism for reading the temperature and humidity from
-    /// a SHT31D temperature / humidity sensor.
+    /// Represents a SHT31 Dtemperature and humidity sensor
     /// </summary>
-    /// <remarks>
-    /// Readings from the sensor are made in Single-shot mode.
-    /// </remarks>
     public partial class Sht31d :
         ByteCommsSensorBase<(Units.Temperature? Temperature, RelativeHumidity? Humidity)>,
-        ITemperatureSensor, IHumiditySensor
+        ITemperatureSensor, IHumiditySensor, II2cPeripheral
     {
         /// <summary>
         /// Temperature changed event
@@ -28,19 +24,24 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         public event EventHandler<IChangeResult<RelativeHumidity>> HumidityUpdated = delegate { };
 
         /// <summary>
-        /// The temperature, in degrees celsius (°C), from the last reading.
+        /// The temperature from the last reading
         /// </summary>
         public Units.Temperature? Temperature => Conditions.Temperature;
 
         /// <summary>
-        /// The humidity, in percent relative humidity, from the last reading..
+        /// The humidity, in percent relative humidity, from the last reading
         /// </summary>
         public RelativeHumidity? Humidity => Conditions.Humidity;
 
         /// <summary>
-        /// Create a new SHT31D object.
+        /// The default I2C address for the peripheral
         /// </summary>
-        /// <param name="address">Sensor address (should be 0x44 or 0x45).</param>
+        public byte DefaultI2cAddress => (byte)Addresses.Default;
+
+        /// <summary>
+        /// Create a new SHT31D object
+        /// </summary>
+        /// <param name="address">Sensor address (should be 0x44 or 0x45)</param>
         /// <param name="i2cBus">I2cBus (0-1000 KHz).</param>
         public Sht31d(II2cBus i2cBus, byte address = (byte)Addresses.Default)
             : base(i2cBus, address, readBufferSize: 6, writeBufferSize: 2)
@@ -74,7 +75,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             WriteBuffer.Span[0] = 0x2c;
             WriteBuffer.Span[1] = 0x06;
 
-            Peripheral?.Exchange(WriteBuffer.Span, ReadBuffer.Span);
+            BusComms?.Exchange(WriteBuffer.Span, ReadBuffer.Span);
 
             var humidity = (100 * (float)((ReadBuffer.Span[3] << 8) + ReadBuffer.Span[4])) / 65535;
             var tempC = ((175 * (float)((ReadBuffer.Span[0] << 8) + ReadBuffer.Span[1])) / 65535) - 45;

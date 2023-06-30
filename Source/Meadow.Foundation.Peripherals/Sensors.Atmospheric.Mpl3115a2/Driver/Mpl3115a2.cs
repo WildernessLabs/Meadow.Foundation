@@ -1,9 +1,8 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
 using Meadow.Peripherals.Sensors;
 using Meadow.Units;
+using System;
+using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Atmospheric
 {
@@ -12,7 +11,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     /// </summary>
     public partial class Mpl3115a2 :
         ByteCommsSensorBase<(Units.Temperature? Temperature, Pressure? Pressure)>,
-        ITemperatureSensor, IBarometricPressureSensor
+        ITemperatureSensor, IBarometricPressureSensor, II2cPeripheral
     {
         /// <summary>
         /// Event raised when temperature value changes
@@ -43,10 +42,10 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </remarks>
         public bool Standby
         {
-            get => (Peripheral?.ReadRegister(Registers.Control1) & 0x01) > 0;
+            get => (BusComms?.ReadRegister(Registers.Control1) & 0x01) > 0;
             set
             {
-                var status = Peripheral?.ReadRegister(Registers.Control1) ?? 0;
+                var status = BusComms?.ReadRegister(Registers.Control1) ?? 0;
                 if (value)
                 {
                     status &= (byte)~ControlRegisterBits.Active;
@@ -55,14 +54,19 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 {
                     status |= ControlRegisterBits.Active;
                 }
-                Peripheral?.WriteRegister(Registers.Control1, status);
+                BusComms?.WriteRegister(Registers.Control1, status);
             }
         }
 
         /// <summary>
         /// Get the status register from the sensor
         /// </summary>
-        public byte Status => Peripheral?.ReadRegister(Registers.Status) ?? 0;
+        public byte Status => BusComms?.ReadRegister(Registers.Status) ?? 0;
+
+        /// <summary>
+        /// The default I2C address for the peripheral
+        /// </summary>
+        public byte DefaultI2cAddress => (byte)Addresses.Default;
 
         /// <summary>
         /// Create a new MPL3115A2 object with the default address and speed settings
@@ -72,15 +76,15 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         public Mpl3115a2(II2cBus i2cBus, byte address = (byte)Addresses.Default)
             : base(i2cBus, address)
         {
-            if (Peripheral?.ReadRegister(Registers.WhoAmI) != 0xc4)
+            if (BusComms?.ReadRegister(Registers.WhoAmI) != 0xc4)
             {
                 throw new Exception("Unexpected device ID, expected 0xc4");
             }
-            Peripheral?.WriteRegister(Registers.Control1,
+            BusComms?.WriteRegister(Registers.Control1,
                                      (byte)(ControlRegisterBits.Active |
                                             ControlRegisterBits.OverSample128));
 
-            Peripheral?.WriteRegister(Registers.DataConfiguration,
+            BusComms?.WriteRegister(Registers.DataConfiguration,
                                      (byte)(ConfigurationRegisterBits.DataReadyEvent |
                                             ConfigurationRegisterBits.EnablePressureEvent |
                                             ConfigurationRegisterBits.EnableTemperatureEvent));
@@ -91,29 +95,22 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         protected override async Task<(Units.Temperature? Temperature, Pressure? Pressure)> ReadSensor()
         {
-            return await Task.Run(() =>
+            (Units.Temperature? Temperature, Pressure? Pressure) conditions;
+            //  Force the sensor to make a reading by setting the OST bit in Control
+            //  register 1 (see 7.17.1 of the datasheet).
+            Standby = false;
+            //  Pause until both temperature and pressure readings are available
+            while ((Status & 0x06) != 0x06)
             {
-                (Units.Temperature? Temperature, Pressure? Pressure) conditions;
-                //
-                //  Force the sensor to make a reading by setting the OST bit in Control
-                //  register 1 (see 7.17.1 of the datasheet).
-                //
-                Standby = false;
-                //
-                //  Pause until both temperature and pressure readings are available.
-                //            
-                while ((Status & 0x06) != 0x06)
-                {
-                    Thread.Sleep(5);
-                }
+                await Task.Delay(5);
+            }
 
-                Thread.Sleep(100);
-                Peripheral?.ReadRegister(Registers.PressureMSB, ReadBuffer.Span);
-                conditions.Pressure = new Pressure(DecodePresssure(ReadBuffer.Span[0], ReadBuffer.Span[1], ReadBuffer.Span[2]), Units.Pressure.UnitType.Pascal);
-                conditions.Temperature = new Units.Temperature(DecodeTemperature(ReadBuffer.Span[3], ReadBuffer.Span[4]), Units.Temperature.UnitType.Celsius);
+            await Task.Delay(100);
+            BusComms?.ReadRegister(Registers.PressureMSB, ReadBuffer.Span);
+            conditions.Pressure = new Pressure(DecodePresssure(ReadBuffer.Span[0], ReadBuffer.Span[1], ReadBuffer.Span[2]), Units.Pressure.UnitType.Pascal);
+            conditions.Temperature = new Units.Temperature(DecodeTemperature(ReadBuffer.Span[3], ReadBuffer.Span[4]), Units.Temperature.UnitType.Celsius);
 
-                return conditions;
-            });
+            return conditions;
         }
 
         /// <summary>
@@ -153,25 +150,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         }
 
         /// <summary>
-        /// Encode the pressure into the sensor reading byes.
-        /// This method is used to allow the target pressure and pressure window
-        /// properties to be set.
-        /// </summary>
-        /// <param name="pressure">Pressure in Pascals to encode.</param>
-        /// <returns>Array holding the three byte values for the sensor.</returns>
-        private byte[] EncodePressure(double pressure)
-        {
-            var result = new byte[3];
-            var temp = (uint)(pressure * 64);
-            result[2] = (byte)(temp & 0xff);
-            temp >>= 8;
-            result[1] = (byte)(temp & 0xff);
-            temp >>= 8;
-            result[0] = (byte)(temp & 0xff);
-            return result;
-        }
-
-        /// <summary>
         /// Decode the two bytes representing the temperature into degrees C.
         /// </summary>
         /// <param name="msb">MSB of the temperature sensor reading.</param>
@@ -186,30 +164,13 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         }
 
         /// <summary>
-        /// Encode a temperature into sensor reading bytes.
-        /// This method is needed in order to allow the temperature target
-        /// and window properties to work.
-        /// </summary>
-        /// <param name="temperature">Temperature to encode.</param>
-        /// <returns>Temperature tuple containing the two bytes for the sensor.</returns>
-        private byte[] EncodeTemperature(double temperature)
-        {
-            var result = new byte[2];
-            var temp = (ushort)(temperature * 256);
-            result[1] = (byte)(temp & 0xff);
-            temp >>= 8;
-            result[0] = (byte)(temp & 0xff);
-            return result;
-        }
-
-        /// <summary>
         /// Reset the sensor
         /// </summary>
         public void Reset()
         {
-            var data = Peripheral?.ReadRegister(Registers.Control1) ?? 0;
+            var data = BusComms?.ReadRegister(Registers.Control1) ?? 0;
             data |= 0x04;
-            Peripheral?.WriteRegister(Registers.Control1, data);
+            BusComms?.WriteRegister(Registers.Control1, data);
         }
 
         async Task<Units.Temperature> ISensor<Units.Temperature>.Read()

@@ -1,6 +1,6 @@
 using System;
 
-namespace Meadow.Foundation.Displays.TextDisplayMenu.InputTypes
+namespace Meadow.Foundation.Displays.UI.InputTypes
 {
     /// <summary>
     /// Represents a base Numeric input type

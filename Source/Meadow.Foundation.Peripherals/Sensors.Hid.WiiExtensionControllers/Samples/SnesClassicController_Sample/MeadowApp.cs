@@ -16,7 +16,7 @@ namespace SnesClassicController_Sample
         {
             Resolver.Log.Info("Initialize...");
         
-            var i2cBus = Device.CreateI2cBus(SnesClassicController.DefaultSpeed);
+            var i2cBus = Device.CreateI2cBus(SnesClassicController.DefaultI2cSpeed);
 
             snesController = new SnesClassicController(i2cBus: i2cBus);
 

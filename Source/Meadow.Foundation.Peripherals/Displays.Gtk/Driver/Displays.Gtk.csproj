@@ -1,30 +1,29 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
  <PropertyGroup>
 	 <TargetFramework>net7.0</TargetFramework>
 	 <OutputType>Library</OutputType>
 	 <ImplicitUsings>enable</ImplicitUsings>
-	 <AssemblyName>Meadow.Gtk</AssemblyName>
+	 <AssemblyName>Gtk</AssemblyName>
 	 <Nullable>enable</Nullable>
 	 <Authors>Wilderness Labs, Inc</Authors>
 	 <Company>Wilderness Labs, Inc</Company>
 	 <PackageProjectUrl>http://developer.wildernesslabs.co/Meadow/Meadow.Foundation/</PackageProjectUrl>
-	 <PackageId>Meadow.Foundation.Displays.WinForms</PackageId>
+	 <PackageId>Meadow.Foundation.Displays.Gtk</PackageId>
 	 <PackageIcon>icon.png</PackageIcon>
 	 <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
 	 <PackageTags>Meadow.Foundation,Display,GTK</PackageTags>
 	 <Version>0.94.0</Version>
 	 <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-	 <Description>Meadow display implementation using WinForms</Description>
+	 <Description>Gtk display driver for Meadow</Description>
 	 <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
  </PropertyGroup>
  <ItemGroup>
    <PackageReference Include="GtkSharp" Version="3.24.24.*" />
  </ItemGroup>
 	<ItemGroup>
-		<None Include="../../../icon.png" Link="icon.png" Pack="true" PackagePath="" />
+		<None Include="..\..\..\icon.png" Link="icon.png" Pack="true" PackagePath="" />
 	</ItemGroup>
 	<ItemGroup>
-	  <ProjectReference Include="..\..\..\..\..\Meadow.Contracts\Source\Meadow.Contracts\Meadow.Contracts.csproj" />
-	  <ProjectReference Include="..\..\..\..\..\Meadow.Foundation\Source\Meadow.Foundation.Libraries_and_Frameworks\Graphics.MicroGraphics\Driver\Graphics.MicroGraphics.csproj" />
+    <ProjectReference Include="..\..\..\Meadow.Foundation.Libraries_and_Frameworks\Graphics.MicroGraphics\Driver\Graphics.MicroGraphics.csproj" />
 	</ItemGroup>
 </Project>

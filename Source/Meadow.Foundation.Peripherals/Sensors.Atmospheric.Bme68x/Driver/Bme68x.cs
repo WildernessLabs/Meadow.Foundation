@@ -21,7 +21,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                             RelativeHumidity? Humidity,
                             Pressure? Pressure,
                             Resistance? GasResistance)>,
-        ITemperatureSensor, IHumiditySensor, IBarometricPressureSensor
+        ITemperatureSensor, IHumiditySensor, IBarometricPressureSensor, ISpiPeripheral, II2cPeripheral
     {
         /// <summary>
         /// Raised when the temperature value changes
@@ -85,10 +85,10 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                         throw new ArgumentOutOfRangeException(nameof(value));
                     }
 
-                    var profile = sensor.ReadRegister((byte)Registers.CTRL_GAS_1);
+                    var profile = busComms.ReadRegister((byte)Registers.CTRL_GAS_1);
                     profile = (byte)((profile & 0x0F) | (byte)value);
 
-                    sensor.WriteRegister((byte)Registers.CTRL_GAS_1, profile);
+                    busComms.WriteRegister((byte)Registers.CTRL_GAS_1, profile);
 
                     heaterProfile = value;
                 }
@@ -109,11 +109,11 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                     throw new ArgumentOutOfRangeException(nameof(value));
                 }
 
-                var filter = sensor.ReadRegister((byte)Registers.CONFIG);
+                var filter = busComms.ReadRegister((byte)Registers.CONFIG);
                 byte mask = 0x1C;
                 filter = (byte)((filter & (byte)~mask) | (byte)value << 2);
 
-                sensor.WriteRegister((byte)Registers.CONFIG, filter);
+                busComms.WriteRegister((byte)Registers.CONFIG, filter);
                 filterMode = value;
             }
         }
@@ -127,11 +127,11 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             get => heaterIsEnabled;
             set
             {
-                var heaterStatus = sensor.ReadRegister((byte)Registers.CTRL_GAS_0);
+                var heaterStatus = busComms.ReadRegister((byte)Registers.CTRL_GAS_0);
                 var mask = 0x08;
                 heaterStatus = (byte)((heaterStatus & (byte)~mask) | Convert.ToByte(!value) << 3);
 
-                sensor.WriteRegister((byte)Registers.CTRL_GAS_0, heaterStatus);
+                busComms.WriteRegister((byte)Registers.CTRL_GAS_0, heaterStatus);
                 heaterIsEnabled = value;
             }
         }
@@ -145,24 +145,53 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             get => gasConversionIsEnabled;
             set
             {
-                var gasConversion = sensor.ReadRegister((byte)Registers.CTRL_GAS_1);
+                var gasConversion = busComms.ReadRegister((byte)Registers.CTRL_GAS_1);
                 byte mask = 0x10;
                 gasConversion = (byte)((gasConversion & (byte)~mask) | Convert.ToByte(value) << 4);
 
-                sensor.WriteRegister((byte)Registers.CTRL_GAS_1, gasConversion);
+                busComms.WriteRegister((byte)Registers.CTRL_GAS_1, gasConversion);
                 gasConversionIsEnabled = value;
             }
         }
         bool gasConversionIsEnabled = false;
 
         /// <summary>
+        /// The default SPI bus speed for the device
+        /// </summary>
+        public Frequency DefaultSpiBusSpeed => new Frequency(10000, Frequency.UnitType.Kilohertz);
+
+        /// <summary>
+        /// The SPI bus speed for the device
+        /// </summary>
+        public Frequency SpiBusSpeed
+        {
+            get => ((Bme68xSpiCommunications)busComms).BusSpeed;
+            set => ((Bme68xSpiCommunications)busComms).BusSpeed = value;
+        }
+
+        /// <summary>
+        /// The default SPI bus mode for the device
+        /// </summary>
+        public SpiClockConfiguration.Mode DefaultSpiBusMode => SpiClockConfiguration.Mode.Mode0;
+
+        /// <summary>
+        /// The SPI bus mode for the device
+        /// </summary>
+        public SpiClockConfiguration.Mode SpiBusMode
+        {
+            get => ((Bme68xSpiCommunications)busComms).BusMode;
+            set => ((Bme68xSpiCommunications)busComms).BusMode = value;
+        }
+
+        /// <summary>
+        /// The default I2C address for the peripheral
+        /// </summary>
+        public byte DefaultI2cAddress => (byte)Addresses.Default;
+
+        /// <summary>
         /// Communication bus used to read and write to the BME68x sensor
         /// </summary>
-        /// <remarks>
-        /// The BME has both I2C and SPI interfaces. The ICommunicationBus allows the
-        /// selection to be made in the constructor.
-        /// </remarks>
-        readonly Bme68xComms sensor;
+        readonly IByteCommunications busComms;
 
         /// <summary>
         /// The current temperature
@@ -204,11 +233,11 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// Creates a new instance of the BME68x class
         /// </summary>
         /// <param name="i2cBus">I2C Bus to use for communicating with the sensor</param>
-        /// <param name="address">I2C address of the sensor.</param>
+        /// <param name="address">I2C address</param>
         protected Bme68x(II2cBus i2cBus, byte address = (byte)Addresses.Default)
         {
             configuration = new Configuration();
-            sensor = new Bme68xI2C(i2cBus, address);
+            busComms = new I2cCommunications(i2cBus, address);
 
             Initialize();
         }
@@ -230,11 +259,11 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <param name="configuration">The BMP68x configuration (optional)</param>
         protected Bme68x(ISpiBus spiBus, IDigitalOutputPort chipSelectPort, Configuration? configuration = null)
         {
-            sensor = new Bme68xSPI(spiBus, chipSelectPort);
+            busComms = new Bme68xSpiCommunications(spiBus, chipSelectPort, DefaultSpiBusSpeed, DefaultSpiBusMode);
             this.configuration = configuration ?? new Configuration();
 
-            byte value = sensor.ReadRegister((byte)Registers.STATUS);
-            sensor.WriteRegister((byte)Registers.STATUS, value);
+            byte value = busComms.ReadRegister((byte)Registers.STATUS);
+            busComms.WriteRegister((byte)Registers.STATUS, value);
 
             Initialize();
         }
@@ -247,17 +276,17 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             Reset();
 
             calibration = new Calibration();
-            calibration.LoadCalibrationDataFromSensor(sensor);
+            calibration.LoadCalibrationDataFromSensor(busComms);
 
             // Init the temp and pressure registers
             var status = (byte)((((byte)configuration.TemperatureOversample << 5) & 0xe0) |
                                 (((byte)configuration.PressureOversample << 2) & 0x1c));
 
-            sensor.WriteRegister((byte)Registers.CTRL_MEAS, status);
+            busComms.WriteRegister((byte)Registers.CTRL_MEAS, status);
 
             // Init the humidity registers
             status = (byte)((byte)configuration.HumidityOversample & 0x07);
-            sensor.WriteRegister((byte)Registers.CTRL_HUM, status);
+            busComms.WriteRegister((byte)Registers.CTRL_HUM, status);
 
             //enable gas readings
             GasConversionIsEnabled = true;
@@ -268,7 +297,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         public void Reset()
         {
-            sensor.WriteRegister((byte)Registers.RESET, 0xB6);
+            busComms.WriteRegister((byte)Registers.RESET, 0xB6);
         }
 
         /// <summary>
@@ -284,8 +313,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             var heaterResistance = CalculateHeaterResistance(targetTemperature, ambientTemperature);
             var heaterDuration = CalculateHeaterDuration(duration);
 
-            sensor.WriteRegister((byte)(Registers.GAS_WAIT_0 + (byte)profile), heaterDuration);
-            sensor.WriteRegister((byte)(Registers.RES_HEAT_0 + (byte)profile), heaterResistance);
+            busComms.WriteRegister((byte)(Registers.GAS_WAIT_0 + (byte)profile), heaterDuration);
+            busComms.WriteRegister((byte)(Registers.RES_HEAT_0 + (byte)profile), heaterResistance);
 
             // cache heater configuration
             if (heaterConfigs.Exists(config => config.HeaterProfile == profile))
@@ -302,7 +331,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <returns>The power mode</returns>
         public PowerMode GetPowerMode()
         {
-            var status = sensor.ReadRegister((byte)Registers.CTRL_MEAS);
+            var status = busComms.ReadRegister((byte)Registers.CTRL_MEAS);
 
             return (PowerMode)(status & 0x03);
         }
@@ -313,10 +342,10 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <param name="powerMode">The <see cref="PowerMode"/> to set.</param>
         public void SetPowerMode(PowerMode powerMode)
         {
-            var status = sensor.ReadRegister((byte)Registers.CTRL_MEAS);
+            var status = busComms.ReadRegister((byte)Registers.CTRL_MEAS);
             byte mask = 0x03;
             status = (byte)((status & (byte)~mask) | (byte)powerMode);
-            sensor.WriteRegister((byte)Registers.CTRL_MEAS, status);
+            busComms.WriteRegister((byte)Registers.CTRL_MEAS, status);
         }
 
         /// <summary>
@@ -386,42 +415,42 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// Reads data from the sensor
         /// </summary>
         /// <returns>The latest sensor reading</returns>
-        protected override async Task<(Units.Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure, Resistance? GasResistance)> ReadSensor()
+        protected override Task<(Units.Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure, Resistance? GasResistance)> ReadSensor()
         {
             configuration.TemperatureOversample = TemperatureOversampleMode;
             configuration.PressureOversample = PressureOversampleMode;
             configuration.HumidityOversample = HumidityOversampleMode;
 
-            return await Task.Run(() =>
+            return Task.Run(() =>
             {
-                (Units.Temperature Temperature, RelativeHumidity Humidity, Pressure Pressure, Resistance GasResistance) conditions;
+                (Units.Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure, Resistance? GasResistance) conditions;
 
                 //set onetime measurement
                 SetPowerMode(PowerMode.Forced);
 
                 // Read the current control register
-                var status = sensor.ReadRegister((byte)Registers.CTRL_MEAS);
+                var status = busComms.ReadRegister((byte)Registers.CTRL_MEAS);
 
                 // Force a sample
                 status = BitHelpers.SetBit(status, 0x00, true);
 
-                sensor.WriteRegister((byte)Registers.CTRL_MEAS, status);
+                busComms.WriteRegister((byte)Registers.CTRL_MEAS, status);
                 // Wait for the sample to be taken.
                 do
                 {
-                    status = sensor.ReadRegister((byte)Registers.CTRL_MEAS);
+                    status = busComms.ReadRegister((byte)Registers.CTRL_MEAS);
                 } while (BitHelpers.GetBitValue(status, 0x00));
 
                 //read temperature
                 byte[] data = new byte[3];
-                sensor.ReadRegister((byte)Registers.TEMPDATA, data);
+                busComms.ReadRegister((byte)Registers.TEMPDATA, data);
                 var rawTemperature = (data[0] << 12) | (data[1] << 4) | ((data[2] >> 4) & 0x0);
 
                 //read humidity
-                var rawHumidity = sensor.ReadRegisterAsUShort((byte)Registers.HUMIDITYDATA, ByteOrder.BigEndian);
+                var rawHumidity = busComms.ReadRegisterAsUShort((byte)Registers.HUMIDITYDATA, ByteOrder.BigEndian);
 
                 //read pressure
-                sensor.ReadRegister((byte)Registers.PRESSUREDATA, data);
+                busComms.ReadRegister((byte)Registers.PRESSUREDATA, data);
                 var rawPressure = (data[0] << 12) | (data[1] << 4) | ((data[2] >> 4) & 0x0);
 
                 if (GasConversionIsEnabled)
@@ -429,8 +458,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                     Thread.Sleep(GetMeasurementDuration(HeaterProfile));
 
                     // Read 10 bit gas resistance value from registers
-                    var gasResRaw = sensor.ReadRegister((byte)Registers.GAS_RES);
-                    var gasRange = sensor.ReadRegister((byte)Registers.GAS_RANGE);
+                    var gasResRaw = busComms.ReadRegister((byte)Registers.GAS_RES);
+                    var gasRange = busComms.ReadRegister((byte)Registers.GAS_RANGE);
                     var gasRes = (ushort)((ushort)(gasResRaw << 2) + (byte)(gasRange >> 6));
                     gasRange &= 0x0F;
                     conditions.GasResistance = CalculateGasResistance(gasRes, gasRange);
@@ -443,7 +472,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 conditions.Temperature = CompensateTemperature(rawTemperature);
                 conditions.Pressure = CompensatePressure(rawPressure);
                 conditions.Humidity = CompensateHumidity(rawHumidity);
-
 
                 return conditions;
             });

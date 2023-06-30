@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
 env:
-  version: '0.94.0'
+  version: '0.98.0'
   token: ${{ secrets.NUGET_TOKEN }}
 
 jobs:
@@ -16,6 +16,13 @@ jobs:
       uses: actions/checkout@v2
     - name: Set VERSION variable from env.version
       run: echo "VERSION=${{ env.version }}" >> $GITHUB_ENV
+      
+    - uses: ./.github/actions/build-package
+      with:
+        packageId: Meadow.Foundation.Audio.MicroAudio
+        path: Source/Meadow.Foundation.Libraries_and_Frameworks/Audio.MicroAudio/Driver/Audio.MicroAudio.csproj
+        version: ${{ env.version }}
+        token: ${{ env.token }}
       
     - uses: ./.github/actions/build-package
       with:
@@ -68,8 +75,22 @@ jobs:
 
     - uses: ./.github/actions/build-package
       with:
+        packageId: Meadow.Foundation.Displays.Led.FourteenSegment
+        path: Source/Meadow.Foundation.Peripherals/Displays.Led.FourteenSegment/Driver/Displays.Led.FourteenSegment.csproj
+        version: ${{ env.version }}
+        token: ${{ env.token }}
+
+    - uses: ./.github/actions/build-package
+      with:
         packageId: Meadow.Foundation.Displays.Led.SevenSegment
         path: Source/Meadow.Foundation.Peripherals/Displays.Led.SevenSegment/Driver/Displays.Led.SevenSegment.csproj
+        version: ${{ env.version }}
+        token: ${{ env.token }}
+
+    - uses: ./.github/actions/build-package
+      with:
+        packageId: Meadow.Foundation.Displays.Led.SixteenSegment
+        path: Source/Meadow.Foundation.Peripherals/Displays.Led.SixteenSegment/Driver/Displays.Led.SixteenSegment.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
@@ -110,8 +131,8 @@ jobs:
 
     - uses: ./.github/actions/build-package
       with:
-        packageId: Meadow.Foundation.ICs.IOExpanders.Ht16k33
-        path: Source/Meadow.Foundation.Peripherals/ICs.IOExpanders.Ht16k33/Driver/ICs.IOExpanders.Ht16k33.csproj
+        packageId: Meadow.Foundation.ICs.IOExpanders.Ft232h
+        path: Source/Meadow.Foundation.Peripherals/ICs.IOExpanders.Ft232h/Driver/ICs.IOExpanders.Ft232h.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
@@ -376,8 +397,36 @@ jobs:
 
     - uses: ./.github/actions/build-package
       with:
+        packageId: Meadow.Foundation.Sensors.Environmental.MiniPID2
+        path: Source/Meadow.Foundation.Peripherals/Sensors.Environmental.MiniPID2/Driver/Sensors.Environmental.MiniPID2.csproj
+        version: ${{ env.version }}
+        token: ${{ env.token }}
+
+    - uses: ./.github/actions/build-package
+      with:
+        packageId: Meadow.Foundation.Sensors.Environmental.NextPm
+        path: Source/Meadow.Foundation.Peripherals/Sensors.Environmental.NextPm/Driver/Sensors.Environmental.NextPm.csproj
+        version: ${{ env.version }}
+        token: ${{ env.token }}
+
+    - uses: ./.github/actions/build-package
+      with:
+        packageId: Meadow.Foundation.Sensors.Environmental.Pmsa300i
+        path: Source/Meadow.Foundation.Peripherals/Sensors.Environmental.Pmsa003I/Driver/Sensors.Environmental.Pmsa003i.csproj
+        version: ${{ env.version }}
+        token: ${{ env.token }}
+
+    - uses: ./.github/actions/build-package
+      with:
         packageId: Meadow.Foundation.Sensors.Environmental.SCD4x
         path: Source/Meadow.Foundation.Peripherals/Sensors.Environmental.Scd4x/Driver/Sensors.Environmental.Scd4x.csproj
+        version: ${{ env.version }}
+        token: ${{ env.token }}
+
+    - uses: ./.github/actions/build-package
+      with:
+        packageId: Meadow.Foundation.Sensors.Hid.ANONavigationEncoder
+        path: Source/Meadow.Foundation.Peripherals/Sensors.Hid.ANONavigationEncoder/Driver/Sensors.Hid.ANONavigationEncoder.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
@@ -419,7 +468,7 @@ jobs:
     - uses: ./.github/actions/build-package
       with:
         packageId: Meadow.Foundation.Sensors.Light.AnalogSolarIntensityGauge
-        path: Source/Meadow.Foundation.Peripherals/Sensors.Light.AnalogSolarGauge/Driver/Sensors.Light.AnalogSolarGauge.csproj
+        path: Source/Meadow.Foundation.Peripherals/Sensors.Light.AnalogSolarIntensityGauge/Driver/Sensors.Light.AnalogSolarIntensityGauge.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
@@ -544,6 +593,20 @@ jobs:
 
     - uses: ./.github/actions/build-package
       with:
+        packageId: Meadow.Foundation.Sensors.Motion.Lis2Mdl
+        path: Source/Meadow.Foundation.Peripherals/Sensors.Motion.Lis2Mdl/Driver/Sensors.Motion.Lis2Mdl.csproj
+        version: ${{ env.version }}
+        token: ${{ env.token }}
+
+    - uses: ./.github/actions/build-package
+      with:
+        packageId: Meadow.Foundation.Sensors.Motion.Lsm303agr
+        path: Source/Meadow.Foundation.Peripherals/Sensors.Motion.Lsm303agr/Driver/Sensors.Motion.Lsm303agr.csproj
+        version: ${{ env.version }}
+        token: ${{ env.token }}
+
+    - uses: ./.github/actions/build-package
+      with:
         packageId: Meadow.Foundation.Sensors.Motion.Mag3110
         path: Source/Meadow.Foundation.Peripherals/Sensors.Motion.Mag3110/Driver/Sensors.Motion.Mag3110.csproj
         version: ${{ env.version }}
@@ -607,6 +670,13 @@ jobs:
 
     - uses: ./.github/actions/build-package
       with:
+        packageId: Meadow.Foundation.Sensors.Temperature.Mcp960x
+        path: Source/Meadow.Foundation.Peripherals/Sensors.Temperature.Mcp960x/Driver/Sensors.Temperature.Mcp960x.csproj
+        version: ${{ env.version }}
+        token: ${{ env.token }}
+
+    - uses: ./.github/actions/build-package
+      with:
         packageId: Meadow.Foundation.Sensors.Temperature.Mcp9808
         path: Source/Meadow.Foundation.Peripherals/Sensors.Temperature.Mcp9808/Driver/Sensors.Temperature.Mcp9808.csproj
         version: ${{ env.version }}
@@ -653,4 +723,3 @@ jobs:
         path: Source/Meadow.Foundation.Peripherals/Servos.ServoCore/Driver/Servos.ServoCore.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
-

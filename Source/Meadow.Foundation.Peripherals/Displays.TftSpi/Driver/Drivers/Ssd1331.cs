@@ -12,7 +12,7 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// The default display color mode
         /// </summary>
-        public override ColorMode DefautColorMode => ColorMode.Format16bppRgb565;
+        public override ColorMode DefaultColorMode => ColorMode.Format16bppRgb565;
 
         /// <summary>
         /// The color modes supported by the display
@@ -120,13 +120,11 @@ namespace Meadow.Foundation.Displays
 
             SendCommand(CMD_DISPLAYON);	//--turn on oled panel   
 
-            SetAddressWindow(0, 0, (Width - 1), (Height - 1));
-
             dataCommandPort.State = Data;
         }
 
         /// <summary>
-        /// Set addrees window for display updates
+        /// Set address window for display updates
         /// </summary>
         /// <param name="x0">X start in pixels</param>
         /// <param name="y0">Y start in pixels</param>

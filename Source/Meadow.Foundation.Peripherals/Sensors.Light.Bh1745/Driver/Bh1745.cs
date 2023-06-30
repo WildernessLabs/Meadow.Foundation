@@ -7,25 +7,12 @@ using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Light
 {
-    // TODO: The chip can drive LEDs which will help to identify colors more
-    // accurately by lighting them up. I found this documentation from the
-    // pimoroni site (https://shop.pimoroni.com/products/bh1745-luminance-and-colour-sensor-breakout)
-    // which makes a breakout that has LEDs:
-    //
-    // The LEDs are connected to the BH1745 Interrupt line. This is activated by
-    // a threshold mechanism that is fully documented in the BH1745 chip manual.
-    // You can select which of the four light sensor channels to use and you can
-    // set a high and a low threshold. The Interrupt is enabled when the light
-    // is above the high level or below the low level. Write 0x1D to register
-    // 0x60 to enable Interrupts and select the unfiltered light sensor. Write
-    // 0xFF to the four registers starting at 0x62 to force the LEDs on. With
-    // the default settings in these registers, the LEDS will be off.
-
     /// <summary>
     /// Represents a BH1745 Luminance and Colour Sensor
     /// </summary>
     public partial class Bh1745
-        : ByteCommsSensorBase<(Illuminance? AmbientLight, Color? Color, bool Valid)>, ILightSensor
+        : ByteCommsSensorBase<(Illuminance? AmbientLight, Color? Color, bool Valid)>,
+        ILightSensor, II2cPeripheral
     {
         /// <summary>
         /// Raised when the luminosity changes
@@ -36,7 +23,7 @@ namespace Meadow.Foundation.Sensors.Light
         /// The current Illuminance value
         /// </summary>
         public Illuminance? Illuminance => Conditions.AmbientLight;
-        
+
         /// <summary>
         /// Interrupt reset status
         /// </summary>
@@ -44,7 +31,7 @@ namespace Meadow.Foundation.Sensors.Light
         {
             get
             {
-                var intReset = Peripheral.ReadRegister(Registers.SYSTEM_CONTROL);
+                var intReset = BusComms.ReadRegister(Registers.SYSTEM_CONTROL);
                 intReset = (byte)((intReset & MaskValues.INT_RESET) >> 6);
                 return (InterruptStatus)intReset;
             }
@@ -54,9 +41,9 @@ namespace Meadow.Foundation.Sensors.Light
                 {
                     throw new ArgumentOutOfRangeException();
                 }
-                var intReset = Peripheral.ReadRegister(Registers.SYSTEM_CONTROL);
+                var intReset = BusComms.ReadRegister(Registers.SYSTEM_CONTROL);
                 intReset = (byte)((intReset & ~MaskValues.INT_RESET) | (byte)value << 6);
-                Peripheral?.WriteRegister(Registers.SYSTEM_CONTROL, intReset);
+                BusComms?.WriteRegister(Registers.SYSTEM_CONTROL, intReset);
             }
         }
 
@@ -72,9 +59,9 @@ namespace Meadow.Foundation.Sensors.Light
                 {
                     throw new ArgumentOutOfRangeException();
                 }
-                var time = Peripheral.ReadRegister(Registers.MODE_CONTROL1);
+                var time = BusComms.ReadRegister(Registers.MODE_CONTROL1);
                 time = (byte)((time & ~MaskValues.MEASUREMENT_TIME) | (byte)value);
-                Peripheral?.WriteRegister(Registers.MODE_CONTROL1, time);
+                BusComms?.WriteRegister(Registers.MODE_CONTROL1, time);
                 measurementTime = value;
             }
         }
@@ -88,9 +75,9 @@ namespace Meadow.Foundation.Sensors.Light
             get => isMeasurementActive;
             set
             {
-                var active = Peripheral.ReadRegister(Registers.MODE_CONTROL2);
+                var active = BusComms.ReadRegister(Registers.MODE_CONTROL2);
                 active = (byte)((active & ~MaskValues.RGBC_EN) | Convert.ToByte(value) << 4);
-                Peripheral?.WriteRegister(Registers.MODE_CONTROL2, active);
+                BusComms?.WriteRegister(Registers.MODE_CONTROL2, active);
                 isMeasurementActive = value;
             }
         }
@@ -108,9 +95,9 @@ namespace Meadow.Foundation.Sensors.Light
                 {
                     throw new ArgumentOutOfRangeException();
                 }
-                var adcGain = Peripheral.ReadRegister(Registers.MODE_CONTROL2);
+                var adcGain = BusComms.ReadRegister(Registers.MODE_CONTROL2);
                 adcGain = (byte)((adcGain & ~MaskValues.ADC_GAIN) | (byte)value);
-                Peripheral?.WriteRegister(Registers.MODE_CONTROL2, adcGain);
+                BusComms?.WriteRegister(Registers.MODE_CONTROL2, adcGain);
                 this.adcGain = value;
             }
         }
@@ -123,7 +110,7 @@ namespace Meadow.Foundation.Sensors.Light
         {
             get
             {
-                var intStatus = Peripheral.ReadRegister(Registers.INTERRUPT);
+                var intStatus = BusComms.ReadRegister(Registers.INTERRUPT);
                 intStatus = (byte)((intStatus & MaskValues.INT_STATUS) >> 7);
                 return Convert.ToBoolean(intStatus);
             }
@@ -141,9 +128,9 @@ namespace Meadow.Foundation.Sensors.Light
                 {
                     throw new ArgumentOutOfRangeException();
                 }
-                var intLatch = Peripheral.ReadRegister(Registers.INTERRUPT);
+                var intLatch = BusComms.ReadRegister(Registers.INTERRUPT);
                 intLatch = (byte)((intLatch & ~MaskValues.INT_LATCH) | (byte)value << 4);
-                Peripheral?.WriteRegister(Registers.INTERRUPT, intLatch);
+                BusComms?.WriteRegister(Registers.INTERRUPT, intLatch);
                 latchBehavior = value;
             }
         }
@@ -158,9 +145,9 @@ namespace Meadow.Foundation.Sensors.Light
             set
             {
                 if (!Enum.IsDefined(typeof(InterruptChannels), value)) { throw new ArgumentOutOfRangeException(); }
-                var intSource = Peripheral.ReadRegister(Registers.INTERRUPT);
+                var intSource = BusComms.ReadRegister(Registers.INTERRUPT);
                 intSource = (byte)((intSource & ~MaskValues.INT_SOURCE) | (byte)value << 2);
-                Peripheral?.WriteRegister(Registers.INTERRUPT, intSource);
+                BusComms?.WriteRegister(Registers.INTERRUPT, intSource);
                 interruptSource = value;
             }
         }
@@ -174,9 +161,9 @@ namespace Meadow.Foundation.Sensors.Light
             get => isInterruptEnabled;
             set
             {
-                var intPin = Peripheral.ReadRegister(Registers.INTERRUPT);
+                var intPin = BusComms.ReadRegister(Registers.INTERRUPT);
                 intPin = (byte)((intPin & ~MaskValues.INT_ENABLE) | Convert.ToByte(value));
-                Peripheral?.WriteRegister(Registers.INTERRUPT, intPin);
+                BusComms?.WriteRegister(Registers.INTERRUPT, intPin);
                 isInterruptEnabled = value;
             }
         }
@@ -194,9 +181,9 @@ namespace Meadow.Foundation.Sensors.Light
                 {
                     throw new ArgumentOutOfRangeException();
                 }
-                var intPersistence = Peripheral.ReadRegister(Registers.PERSISTENCE);
+                var intPersistence = BusComms.ReadRegister(Registers.PERSISTENCE);
                 intPersistence = (byte)((intPersistence & ~MaskValues.PERSISTENCE_MASK) | (byte)value);
-                Peripheral?.WriteRegister(Registers.PERSISTENCE, intPersistence);
+                BusComms?.WriteRegister(Registers.PERSISTENCE, intPersistence);
                 interruptPersistence = value;
             }
         }
@@ -210,7 +197,7 @@ namespace Meadow.Foundation.Sensors.Light
             get => lowerInterruptThreshold;
             set
             {
-                Peripheral.WriteRegister(Registers.TL, value);
+                BusComms.WriteRegister(Registers.TL, value);
                 lowerInterruptThreshold = value;
             }
         }
@@ -224,7 +211,7 @@ namespace Meadow.Foundation.Sensors.Light
             get => upperInterruptThreshold;
             set
             {
-                Peripheral.WriteRegister(Registers.TH, value);
+                BusComms.WriteRegister(Registers.TH, value);
                 upperInterruptThreshold = value;
             }
         }
@@ -234,6 +221,11 @@ namespace Meadow.Foundation.Sensors.Light
         /// Gets or sets the channel compensation multipliers which are used to scale the channel measurements
         /// </summary>
         public ChannelMultipliers CompensationMultipliers { get; set; }
+
+        /// <summary>
+        /// The default I2C address for the peripheral
+        /// </summary>
+        public byte DefaultI2cAddress => (byte)Addresses.Default;
 
         /// <summary>
         /// Create a new BH17545 color sensor object
@@ -258,38 +250,31 @@ namespace Meadow.Foundation.Sensors.Light
         /// <returns>The latest sensor reading</returns>
         protected override Task<(Illuminance? AmbientLight, Color? Color, bool Valid)> ReadSensor()
         {
-            return Task.Run(() =>
-            {
-                (Illuminance? AmbientLight, Color? Color, bool Valid) conditions;
+            (Illuminance? AmbientLight, Color? Color, bool Valid) conditions;
 
-                // get the ambient light
-                var clearData = ReadClearDataRegister();
+            // get the ambient light
+            var clearData = ReadClearDataRegister();
 
-                if (clearData == 0) { conditions.Color = Color.Black; }
+            if (clearData == 0) { conditions.Color = Color.Black; }
 
-                // apply channel multipliers and normalize
-                double compensatedRed = ReadRedDataRegister() * CompensationMultipliers.Red / (int)MeasurementTime * 360;
-                double compensatedGreen = ReadGreenDataRegister() * CompensationMultipliers.Green / (int)MeasurementTime * 360;
-                double compensatedBlue = ReadBlueDataRegister() * CompensationMultipliers.Blue / (int)MeasurementTime * 360;
-                double compensatedClear = clearData * CompensationMultipliers.Clear / (int)MeasurementTime * 360;
+            // apply channel multipliers and normalize
+            double compensatedRed = ReadRedDataRegister() * CompensationMultipliers.Red / (int)MeasurementTime * 360;
+            double compensatedGreen = ReadGreenDataRegister() * CompensationMultipliers.Green / (int)MeasurementTime * 360;
+            double compensatedBlue = ReadBlueDataRegister() * CompensationMultipliers.Blue / (int)MeasurementTime * 360;
+            double compensatedClear = clearData * CompensationMultipliers.Clear / (int)MeasurementTime * 360;
 
-                // scale relative to clear
-                int red = (int)Math.Min(255, compensatedRed / compensatedClear * 255);
-                int green = (int)Math.Min(255, compensatedGreen / compensatedClear * 255);
-                int blue = (int)Math.Min(255, compensatedBlue / compensatedClear * 255);
+            // scale relative to clear
+            int red = (int)Math.Min(255, compensatedRed / compensatedClear * 255);
+            int green = (int)Math.Min(255, compensatedGreen / compensatedClear * 255);
+            int blue = (int)Math.Min(255, compensatedBlue / compensatedClear * 255);
 
-                conditions.Color = Color.FromRgb(red, green, blue);
+            conditions.Color = Color.FromRgb(red, green, blue);
 
-                // TODO: honestly, no idea what this comes back as
-                // need to test when i get a sensor and compare to other light
-                // sensors
-                conditions.AmbientLight = new Illuminance(compensatedClear, Units.Illuminance.UnitType.Lux);
+            conditions.AmbientLight = new Illuminance(compensatedClear, Units.Illuminance.UnitType.Lux);
 
-                // WTH
-                conditions.Valid = ReadMeasurementIsValid();
+            conditions.Valid = ReadMeasurementIsValid();
 
-                return conditions;
-            });
+            return Task.FromResult(conditions);
         }
 
         /// <summary>
@@ -313,10 +298,10 @@ namespace Meadow.Foundation.Sensors.Light
         {
             Resolver.Log.Info("Reset");
 
-            var status = Peripheral.ReadRegister(Registers.SYSTEM_CONTROL);
+            var status = BusComms.ReadRegister(Registers.SYSTEM_CONTROL);
             status = (byte)((status & ~MaskValues.SW_RESET) | 0x01 << 7);
 
-            Peripheral.WriteRegister(Registers.SYSTEM_CONTROL, status);
+            BusComms.WriteRegister(Registers.SYSTEM_CONTROL, status);
 
             // set default measurement configuration
             MeasurementTime = MeasurementTimeType.Ms160;
@@ -333,7 +318,7 @@ namespace Meadow.Foundation.Sensors.Light
             upperInterruptThreshold = 0xFFFF;
 
             // write default value to Mode_Control3
-            Peripheral.WriteRegister(Registers.MODE_CONTROL3, 0x02);
+            BusComms.WriteRegister(Registers.MODE_CONTROL3, 0x02);
         }
 
         /// <summary>
@@ -341,7 +326,7 @@ namespace Meadow.Foundation.Sensors.Light
         /// </summary>
         protected bool ReadMeasurementIsValid()
         {
-            var valid = Peripheral.ReadRegister(Registers.MODE_CONTROL2);
+            var valid = BusComms.ReadRegister(Registers.MODE_CONTROL2);
             valid = (byte)(valid & MaskValues.VALID);
             return Convert.ToBoolean(valid);
         }
@@ -350,25 +335,25 @@ namespace Meadow.Foundation.Sensors.Light
         /// Reads the red data register of the sensor
         /// </summary>
         /// <returns></returns>
-        protected ushort ReadRedDataRegister() => Peripheral.ReadRegisterAsUShort(Registers.RED_DATA);
+        protected ushort ReadRedDataRegister() => BusComms.ReadRegisterAsUShort(Registers.RED_DATA);
 
         /// <summary>
         /// Reads the green data register of the sensor
         /// </summary>
         /// <returns></returns>
-        protected ushort ReadGreenDataRegister() => Peripheral.ReadRegisterAsUShort(Registers.GREEN_DATA);
+        protected ushort ReadGreenDataRegister() => BusComms.ReadRegisterAsUShort(Registers.GREEN_DATA);
 
         /// <summary>
         /// Reads the blue data register of the sensor
         /// </summary>
         /// <returns></returns>
-        protected ushort ReadBlueDataRegister() => Peripheral.ReadRegisterAsUShort(Registers.BLUE_DATA);
+        protected ushort ReadBlueDataRegister() => BusComms.ReadRegisterAsUShort(Registers.BLUE_DATA);
 
         /// <summary>
         /// Reads the clear data register of the sensor
         /// </summary>
         /// <returns></returns>
-        protected ushort ReadClearDataRegister() => Peripheral.ReadRegisterAsUShort(Registers.CLEAR_DATA);
+        protected ushort ReadClearDataRegister() => BusComms.ReadRegisterAsUShort(Registers.CLEAR_DATA);
 
         async Task<Illuminance> ISensor<Illuminance>.Read()
             => (await Read()).AmbientLight.Value;

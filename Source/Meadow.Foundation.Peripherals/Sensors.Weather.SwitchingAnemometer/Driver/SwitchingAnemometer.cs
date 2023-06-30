@@ -46,7 +46,8 @@ namespace Meadow.Foundation.Sensors.Weather
                 sampleCount = value;
             }
         }
-        int sampleCount = 3;
+
+        private int sampleCount = 3;
 
         /// <summary>
         /// Calibration for how fast the wind speed is when the switch is hit
@@ -55,46 +56,45 @@ namespace Meadow.Foundation.Sensors.Weather
         /// </summary>
         public float KmhPerSwitchPerSecond { get; set; } = 2.4f;
 
-        readonly IDigitalInputPort inputPort;
-        bool running = false;
-
-        readonly Queue<DigitalPortResult>? samples;
+        private readonly IDigitalInterruptPort inputPort;
+        private bool running = false;
+        private readonly Queue<DigitalPortResult>? samples;
 
         /// <summary>
         /// Creates a new `SwitchingAnemometer` using the specific digital input
         /// on the device.
         /// </summary>
-        /// <param name="device"></param>
         /// <param name="digitalInputPin"></param>
-        public SwitchingAnemometer(IDigitalInputController device, IPin digitalInputPin)
-            : this(device.CreateDigitalInputPort(
-                digitalInputPin, InterruptMode.EdgeFalling,
-                ResistorMode.InternalPullUp, TimeSpan.FromMilliseconds(2), TimeSpan.FromMilliseconds(0)))
+        public SwitchingAnemometer(IPin digitalInputPin)
+            : this(digitalInputPin.CreateDigitalInterruptPort(InterruptMode.EdgeFalling,
+                                                            ResistorMode.InternalPullUp,
+                                                            TimeSpan.FromMilliseconds(2),
+                                                            TimeSpan.FromMilliseconds(0)))
         { }
 
         /// <summary>
         /// Creates a new switching anemometer using the specific `IDigitalInputPort`.
         /// </summary>
         /// <param name="inputPort"></param>
-        public SwitchingAnemometer(IDigitalInputPort inputPort)
+        public SwitchingAnemometer(IDigitalInterruptPort inputPort)
         {
             this.inputPort = inputPort;
 
             samples = new Queue<DigitalPortResult>();
         }
 
-        void SubscribeToInputPortEvents() => inputPort.Changed += HandleInputPortChange;
+        private void SubscribeToInputPortEvents() => inputPort.Changed += HandleInputPortChange;
 
-        void UnsubscribeToInputPortEvents() => inputPort.Changed -= HandleInputPortChange;
+        private void UnsubscribeToInputPortEvents() => inputPort.Changed -= HandleInputPortChange;
 
-        void HandleInputPortChange(object sender, DigitalPortResult result)
+        private void HandleInputPortChange(object sender, DigitalPortResult result)
         {
             if (!running) { return; }
 
             samples?.Enqueue(result);
 
-            if(samples?.Count > sampleCount)
-            {   
+            if (samples?.Count > sampleCount)
+            {
                 samples.Dequeue();
             }
         }
@@ -133,12 +133,12 @@ namespace Meadow.Foundation.Sensors.Weather
         public override void StopUpdating()
         {
             base.StopUpdating();
-         
+
             if (running)
             {
                 UnsubscribeToInputPortEvents();
             }
-           
+
             running = false;
         }
 
@@ -148,14 +148,14 @@ namespace Meadow.Foundation.Sensors.Weather
         /// <returns>The latest sensor reading</returns>
         protected override async Task<Speed> ReadSensor()
         {
-            if(IsSampling == false)
+            if (IsSampling == false)
             {
                 StartUpdating();
                 await Task.Delay(OneTimeReadDuration);
                 StopUpdating();
             }
 
-            if(samples?.Count > 0 && (DateTime.Now - samples?.Peek().New.Time > NoWindTimeout))
+            if (samples?.Count > 0 && (DateTime.Now - samples?.Peek().New.Time > NoWindTimeout))
             {   //we've exceeded the no wind interval time 
                 samples?.Clear(); //will force a zero reading
             }
@@ -174,7 +174,7 @@ namespace Meadow.Foundation.Sensors.Weather
                 }
 
                 // average the speeds
-                float oversampledSpeed = speedSum / (samples.Count -1);
+                float oversampledSpeed = speedSum / (samples.Count - 1);
 
                 return new Speed(oversampledSpeed, SU.KilometersPerHour);
             }

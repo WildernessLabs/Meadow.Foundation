@@ -1,20 +1,20 @@
 ﻿
-using System;
-using System.Threading;
 using Meadow.Hardware;
 using Meadow.Units;
+using System;
+using System.Threading;
 
 namespace Meadow.Foundation.Audio.Radio
 {
     /// <summary>
     /// Represents a TEA5767 radio
     /// </summary>
-    public partial class Tea5767
+    public partial class Tea5767 : II2cPeripheral
     {
         /// <summary>
-        /// TEA5767 radio.
+        /// I2C Communication bus used to communicate with the peripheral
         /// </summary>
-        private readonly II2cPeripheral i2cPeripheral;
+        protected readonly II2cCommunications i2cComms;
 
         byte hiInjection;
         readonly Memory<byte> writeBuffer = new byte[5];
@@ -26,13 +26,18 @@ namespace Meadow.Foundation.Audio.Radio
         public bool IsMuted { get; set; }
 
         /// <summary>
+        /// The default I2C address for the peripheral
+        /// </summary>
+        public byte DefaultI2cAddress => (byte)Addresses.Default;
+
+        /// <summary>
         /// Create a new TEA5767 object using the default parameters
         /// </summary>
         /// <param name="i2cBus">I2Cbus connected to the radio</param>
         /// <param name="address">Address of the bus on the I2C display.</param>
-        public Tea5767(II2cBus i2cBus, byte address = (byte)Address.Default)
+        public Tea5767(II2cBus i2cBus, byte address = (byte)Addresses.Default)
         {
-            i2cPeripheral = new I2cPeripheral(i2cBus, address);
+            i2cComms = new I2cCommunications(i2cBus, address);
 
             InitTEA5767();
         }
@@ -111,7 +116,7 @@ namespace Meadow.Foundation.Audio.Radio
 
         void TransmitData()
         {
-            i2cPeripheral.Exchange(writeBuffer.Span, readBuffer.Span);
+            i2cComms.Exchange(writeBuffer.Span, readBuffer.Span);
 
             Thread.Sleep(100);
         }
@@ -155,7 +160,7 @@ namespace Meadow.Foundation.Audio.Radio
 
         void ReadStatus()
         {
-            i2cPeripheral.Read(readBuffer.Span);
+            i2cComms.Read(readBuffer.Span);
             Thread.Sleep(100);
         }
 

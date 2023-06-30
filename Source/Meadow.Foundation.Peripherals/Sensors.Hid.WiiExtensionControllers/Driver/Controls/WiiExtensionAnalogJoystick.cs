@@ -13,8 +13,7 @@ namespace Meadow.Foundation.Sensors.Hid
         public event EventHandler<IChangeResult<AnalogJoystickPosition>> Updated;
 
         public byte BitsOfPrecision { get; protected set; }
-        
-        //cache values for performance 
+
         readonly float offset;
         readonly float scale;
 
@@ -34,7 +33,7 @@ namespace Meadow.Foundation.Sensors.Hid
                 newPosition.Vertical != Position.Value.Vertical))
             {
                 Updated?.Invoke(this, new ChangeResult<AnalogJoystickPosition>(newPosition, Position));
-                
+
             }
             Position = newPosition;
         }

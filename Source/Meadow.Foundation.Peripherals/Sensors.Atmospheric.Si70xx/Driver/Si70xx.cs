@@ -1,9 +1,9 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
 using Meadow.Peripherals.Sensors;
 using Meadow.Units;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 using HU = Meadow.Units.RelativeHumidity.UnitType;
 using TU = Meadow.Units.Temperature.UnitType;
 
@@ -11,29 +11,24 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 {
     /// <summary>
     /// Provide access to the Si70xx series (Si7020, Si7021, and Si7030)
-    /// temperature and humidity sensors.
+    /// temperature and humidity sensors
     /// </summary>
     public partial class Si70xx :
         ByteCommsSensorBase<(Units.Temperature? Temperature, RelativeHumidity? Humidity)>,
-        ITemperatureSensor, IHumiditySensor
+        ITemperatureSensor, IHumiditySensor, II2cPeripheral
     {
         /// <summary>
         /// Raised when the temperature value changes
         /// </summary>
         public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
-        
+
         /// <summary>
         /// Raised when the humidity value changes
         /// </summary>
         public event EventHandler<IChangeResult<RelativeHumidity>> HumidityUpdated = delegate { };
 
         /// <summary>
-        /// Default SPI bus speed
-        /// </summary>
-        public static Frequency DEFAULT_SPEED = new Frequency(400, Frequency.UnitType.Kilohertz);
-
-        /// <summary>
-        /// The temperature, from the last reading
+        /// The temperature from the last reading
         /// </summary>
         public Units.Temperature? Temperature => Conditions.Temperature;
 
@@ -58,11 +53,16 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         public byte FirmwareRevision { get; private set; }
 
         /// <summary>
+        /// The default I2C address for the peripheral
+        /// </summary>
+        public byte DefaultI2cAddress => (byte)Addresses.Default;
+
+        /// <summary>
         /// Create a new SI7021 temperature and humidity sensor
         /// </summary>
         /// <param name="i2cBus">I2CBus</param>
         /// <param name="address">I2C address (default to 0x40)</param>
-        public Si70xx(II2cBus i2cBus, byte address = (byte)Address.Default)
+        public Si70xx(II2cBus i2cBus, byte address = (byte)Addresses.Default)
             : base(i2cBus, address, 8, 3)
         {
             Initialize();
@@ -72,7 +72,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         protected void Reset()
         {
-            Peripheral?.Write(CMD_RESET);
+            BusComms?.Write(CMD_RESET);
             Thread.Sleep(100);
         }
 
@@ -89,7 +89,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
             tx[0] = READ_ID_PART1;
             tx[1] = READ_ID_PART2;
-            Peripheral?.Exchange(tx, ReadBuffer.Span);
+            BusComms?.Exchange(tx, ReadBuffer.Span);
             for (var index = 0; index < 4; index++)
             {
                 SerialNumber <<= 8;
@@ -98,7 +98,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
             tx[0] = READ_2ND_ID_PART1;
             tx[1] = READ_2ND_ID_PART2;
-            Peripheral?.Exchange(tx, ReadBuffer.Span);
+            BusComms?.Exchange(tx, ReadBuffer.Span);
 
             SerialNumber <<= 8;
             SerialNumber += ReadBuffer.Span[0];
@@ -128,33 +128,30 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         {
             (Units.Temperature Temperature, RelativeHumidity Humidity) conditions;
 
-            return await Task.Run(() =>
+            BusComms?.Write(HUMDITY_MEASURE_NOHOLD);
+            await Task.Delay(25); // Maximum conversion time is 12ms (page 5 of the datasheet).
+            BusComms?.Read(ReadBuffer.Span); // 2 data bytes plus a checksum (we ignore the checksum here)
+            var humidityReading = (ushort)((ReadBuffer.Span[0] << 8) + ReadBuffer.Span[1]);
+            conditions.Humidity = new RelativeHumidity(((125 * (float)humidityReading) / 65536) - 6, HU.Percent);
+            if (conditions.Humidity < new RelativeHumidity(0, HU.Percent))
             {
-                Peripheral?.Write(HUMDITY_MEASURE_NOHOLD);
-                Thread.Sleep(25); // Maximum conversion time is 12ms (page 5 of the datasheet).
-                Peripheral?.Read(ReadBuffer.Span); // 2 data bytes plus a checksum (we ignore the checksum here)
-                var humidityReading = (ushort)((ReadBuffer.Span[0] << 8) + ReadBuffer.Span[1]);
-                conditions.Humidity = new RelativeHumidity(((125 * (float)humidityReading) / 65536) - 6, HU.Percent);
-                if (conditions.Humidity < new RelativeHumidity(0, HU.Percent))
+                conditions.Humidity = new RelativeHumidity(0, HU.Percent);
+            }
+            else
+            {
+                if (conditions.Humidity > new RelativeHumidity(100, HU.Percent))
                 {
-                    conditions.Humidity = new RelativeHumidity(0, HU.Percent);
+                    conditions.Humidity = new RelativeHumidity(100, HU.Percent);
                 }
-                else
-                {
-                    if (conditions.Humidity > new RelativeHumidity(100, HU.Percent))
-                    {
-                        conditions.Humidity = new RelativeHumidity(100, HU.Percent);
-                    }
-                }
+            }
 
-                Peripheral?.Write(TEMPERATURE_MEASURE_NOHOLD);
-                Thread.Sleep(25); // Maximum conversion time is 12ms (page 5 of the datasheet).
-                Peripheral?.Read(ReadBuffer.Span); // 2 data bytes plus a checksum (we ignore the checksum here)
-                var temperatureReading = (short)((ReadBuffer.Span[0] << 8) + ReadBuffer.Span[1]);
-                conditions.Temperature = new Units.Temperature((float)(((175.72 * temperatureReading) / 65536) - 46.85), TU.Celsius);
+            BusComms?.Write(TEMPERATURE_MEASURE_NOHOLD);
+            Thread.Sleep(25); // Maximum conversion time is 12ms (page 5 of the datasheet).
+            BusComms?.Read(ReadBuffer.Span); // 2 data bytes plus a checksum (we ignore the checksum here)
+            var temperatureReading = (short)((ReadBuffer.Span[0] << 8) + ReadBuffer.Span[1]);
+            conditions.Temperature = new Units.Temperature((float)((175.72 * temperatureReading / 65536) - 46.85), TU.Celsius);
 
-                return conditions;
-            });
+            return conditions;
         }
 
         /// <summary>
@@ -181,14 +178,14 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <param name="onOrOff">Heater status, true = turn heater on, false = turn heater off.</param>
         public void Heater(bool onOrOff)
         {
-            var register = Peripheral?.ReadRegister((byte)Register.USER_REG_1) ?? 0;
+            var register = BusComms?.ReadRegister((byte)Register.USER_REG_1) ?? 0;
             register &= 0xfd;
 
             if (onOrOff)
             {
                 register |= 0x02;
             }
-            Peripheral?.WriteRegister((byte)Register.USER_REG_1, register);
+            BusComms?.WriteRegister((byte)Register.USER_REG_1, register);
         }
 
         /// <summary>
@@ -203,7 +200,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <param name="resolution">The resolution to set</param>
         void SetResolution(SensorResolution resolution)
         {
-            var register = Peripheral?.ReadRegister((byte)Register.USER_REG_1) ?? 0;
+            var register = BusComms?.ReadRegister((byte)Register.USER_REG_1) ?? 0;
 
             var res = (byte)resolution;
 
@@ -212,7 +209,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             register |= res; //Mask in the requested resolution bits
 
             //Request a write to user register
-            Peripheral?.WriteRegister((byte)Register.USER_REG_1, register); //Write the new resolution bits
+            BusComms?.WriteRegister((byte)Register.USER_REG_1, register); //Write the new resolution bits
         }
 
         async Task<Units.Temperature> ISensor<Units.Temperature>.Read()

@@ -131,11 +131,11 @@ namespace Meadow.Foundation.Sensors.Hid
             base.Initialize();
             if (useHighResolutionMode)
             {
-                i2cPeripheral.WriteRegister(0xFE, 0x03);
+                i2cComms.WriteRegister(0xFE, 0x03);
             }
             else
             {
-                i2cPeripheral.WriteRegister(0xFE, 0x00);
+                i2cComms.WriteRegister(0xFE, 0x00);
             }
         }
     }

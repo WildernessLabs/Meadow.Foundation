@@ -1,10 +1,10 @@
-﻿using System;
-using System.Threading.Tasks;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Distance;
 using Meadow.Hardware;
 using Meadow.Units;
+using System;
+using System.Threading.Tasks;
 using LU = Meadow.Units.Length.UnitType;
 
 namespace Sensors.Distance.Vl53l0x_Sample
@@ -20,7 +20,7 @@ namespace Sensors.Distance.Vl53l0x_Sample
             Resolver.Log.Info("Initializing hardware...");
 
             var i2cBus = Device.CreateI2cBus(I2cBusSpeed.FastPlus);
-            sensor = new Vl53l0x(Device, i2cBus, (byte)Vl53l0x.Addresses.Default);
+            sensor = new Vl53l0x(i2cBus);
 
             sensor.DistanceUpdated += Sensor_Updated;
 
@@ -39,10 +39,10 @@ namespace Sensors.Distance.Vl53l0x_Sample
             if (result.New == null) { return; }
 
             if (result.New < new Length(0, LU.Millimeters))
-            { 
+            {
                 Resolver.Log.Info("out of range.");
             }
-            else 
+            else
             {
                 Resolver.Log.Info($"{result.New.Millimeters}mm / {result.New.Inches:n3}\"");
             }
@@ -54,7 +54,7 @@ namespace Sensors.Distance.Vl53l0x_Sample
         {
             Resolver.Log.Info("Initialize...");
             var i2cBus = Device.CreateI2cBus(I2cBusSpeed.FastPlus);
-            sensor = new Vl53l0x(Device, i2cBus, Device.Pins.D05, 250);
+            sensor = new Vl53l0x(i2cBus, Device.Pins.D05, 250);
         }
     }
 }

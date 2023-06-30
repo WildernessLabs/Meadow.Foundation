@@ -77,7 +77,7 @@ namespace Meadow.Foundation.Graphics
         public void Fill(Color fillColor, bool updateDisplay = false);
 
         /// <summary>
-        /// Clear the display.
+        /// Clear the display
         /// </summary>
         /// <param name="x">x position in pixels</param>
         /// <param name="y">y position in pixels</param>

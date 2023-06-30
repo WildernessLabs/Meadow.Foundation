@@ -10,7 +10,7 @@
     <PackageProjectUrl>http://developer.wildernesslabs.co/Meadow/Meadow.Foundation/</PackageProjectUrl>
     <PackageId>Meadow.Foundation.Sensors.Motion.Apds9960</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
-    <PackageTags>Meadow.Foundation, Acceleration, Accelerometer, Apds9960</PackageTags>
+    <PackageTags>Meadow.Foundation,Acceleration,Accelerometer,Apds9960</PackageTags>
     <Version>0.1.20</Version>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <Description>APDS9960 I2C proximity, light, color and gesture sensor</Description>

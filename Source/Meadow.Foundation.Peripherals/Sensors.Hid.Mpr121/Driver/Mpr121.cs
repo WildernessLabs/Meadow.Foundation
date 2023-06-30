@@ -9,15 +9,23 @@ namespace Meadow.Foundation.Sensors.Hid
     /// <summary>
     /// Represents the MPR121 12-Key Capacitive Touch Sensor
     /// </summary>
-    public partial class Mpr121
+    public partial class Mpr121 : II2cPeripheral
     {
-        private readonly II2cPeripheral i2cPeripheral;
+        /// <summary>
+        /// The default I2C address for the peripheral
+        /// </summary>
+        public byte DefaultI2cAddress => (byte)Addresses.Default;
+
+        /// <summary>
+        /// I2C Communication bus used to communicate with the peripheral
+        /// </summary>
+        protected readonly II2cCommunications i2cComms;
 
         private int refreshPeriod;
 
-        private Timer timer;
+        private readonly Timer timer;
 
-        private Dictionary<Channels, bool> channelStatus;
+        private readonly Dictionary<Channels, bool> channelStatus;
 
         /// <summary>
         /// Notifies about a the channel statuses have been changed.
@@ -36,7 +44,7 @@ namespace Meadow.Foundation.Sensors.Hid
         public int RefreshPeriod
         {
             get => refreshPeriod;
-  
+
             set
             {
                 refreshPeriod = value;
@@ -60,7 +68,7 @@ namespace Meadow.Foundation.Sensors.Hid
         {
             this.refreshPeriod = refreshPeriod;
 
-            i2cPeripheral = new I2cPeripheral(i2cBus, address);
+            i2cComms = new I2cCommunications(i2cBus, address);
 
             channelStatus = new Dictionary<Channels, bool>();
 
@@ -69,15 +77,15 @@ namespace Meadow.Foundation.Sensors.Hid
                 channelStatus.Add(channel, false);
             }
 
-            configuration = configuration ?? GetDefaultConfiguration();
+            configuration ??= GetDefaultConfiguration();
 
             InitializeController(configuration);
 
-            if(refreshPeriod < 1)
+            if (refreshPeriod < 1)
             {
                 refreshPeriod = Timeout.Infinite;
             }
-            
+
             timer = new Timer(RefreshChannelStatus, this, refreshPeriod, refreshPeriod);
         }
 
@@ -165,7 +173,7 @@ namespace Meadow.Foundation.Sensors.Hid
 
         private void SetRegister(Registers register, byte value)
         {
-            i2cPeripheral.WriteRegister((byte)register, value);
+            i2cComms.WriteRegister((byte)register, value);
         }
 
         private void RefreshChannelStatus(object value)
@@ -182,7 +190,7 @@ namespace Meadow.Foundation.Sensors.Hid
             var period = RefreshPeriod;
             RefreshPeriod = 0;
 
-            var rawStatus = i2cPeripheral.ReadRegisterAsUShort(0x00, ByteOrder.LittleEndian);
+            var rawStatus = i2cComms.ReadRegisterAsUShort(0x00, ByteOrder.LittleEndian);
 
             bool isStatusChanged = false;
 

@@ -26,14 +26,14 @@ namespace Meadow.Foundation
         /// The default is 5 seconds.</param>
         public override void StartUpdating(TimeSpan? updateInterval = null)
         {
-            lock (samplingLock) 
+            lock (samplingLock)
             {
                 if (IsSampling) { return; }
 
                 IsSampling = true;
 
                 // if an update interval has been passed in, override the default
-                if(updateInterval is { } ui) { base.UpdateInterval = ui; }
+                if (updateInterval is { } ui) { base.UpdateInterval = ui; }
 
                 base.SamplingTokenSource = new CancellationTokenSource();
                 CancellationToken ct = SamplingTokenSource.Token;
@@ -41,11 +41,11 @@ namespace Meadow.Foundation
                 UNIT oldConditions;
                 ChangeResult<UNIT> result;
 
-                Task.Run(async () => 
+                var t = new Task(async () =>
                 {
-                    while (true) 
+                    while (true)
                     {
-                        if (ct.IsCancellationRequested) 
+                        if (ct.IsCancellationRequested)
                         {
                             observers.ForEach(x => x.OnCompleted());
                             IsSampling = false;
@@ -61,7 +61,8 @@ namespace Meadow.Foundation
 
                         await Task.Delay(UpdateInterval);
                     }
-                }, SamplingTokenSource.Token);
+                }, SamplingTokenSource.Token, TaskCreationOptions.LongRunning);
+                t.Start();
             }
         }
 
@@ -70,7 +71,7 @@ namespace Meadow.Foundation
         /// </summary>
         public override void StopUpdating()
         {
-            lock (samplingLock) 
+            lock (samplingLock)
             {
                 if (!IsSampling) { return; }
 

@@ -1,22 +1,27 @@
-﻿using System;
-using System.Threading.Tasks;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
 using Meadow.Units;
+using System;
+using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Light
 {
     /// <summary>
     /// Driver for the Max44009 light-to-digital converter
     /// </summary>
-    public partial class Max44009 : ByteCommsSensorBase<Illuminance>
+    public partial class Max44009 : ByteCommsSensorBase<Illuminance>, II2cPeripheral
     {
+        /// <summary>
+        /// The default I2C address for the peripheral
+        /// </summary>
+        public byte DefaultI2cAddress => (byte)Addresses.Default;
+
         /// <summary>
         /// Create a new Max44009 object
         /// </summary>
         /// <param name="i2cBus">The I2C bus</param>
         /// <param name="address">The I2C address</param>
         public Max44009(II2cBus i2cBus, byte address = (byte)Addresses.Default)
-            : base (i2cBus, address)
+                : base(i2cBus, address)
         {
             Initialize();
         }
@@ -26,7 +31,7 @@ namespace Meadow.Foundation.Sensors.Light
         /// </summary>
         protected void Initialize()
         {
-            Peripheral.WriteRegister(0x02, 0x00);
+            BusComms.WriteRegister(0x02, 0x00);
         }
 
         /// <summary>
@@ -35,19 +40,16 @@ namespace Meadow.Foundation.Sensors.Light
         /// <returns>The latest sensor reading</returns>
         protected override Task<Illuminance> ReadSensor()
         {
-            return Task.Run(() => {
+            BusComms.ReadRegister(0x03, ReadBuffer.Span[0..2]);
 
-                Peripheral.ReadRegister(0x03, ReadBuffer.Span[0..2]);
+            var exponent = (ReadBuffer.Span[0] >> 4);
+            if (exponent == 0x0f) throw new Exception("Out of range");
 
-                var exponent = (ReadBuffer.Span[0] >> 4);
-                if (exponent == 0x0f) throw new Exception("Out of range");
+            int mantissa = ((ReadBuffer.Span[0] & 0x0F) >> 4) | (ReadBuffer.Span[1] & 0x0F);
 
-                int mantissa = ((ReadBuffer.Span[0] & 0x0F) >> 4) | (ReadBuffer.Span[1] & 0x0F);
+            var luminance = Math.Pow(2, exponent) * mantissa * 0.72;
 
-                var luminance = Math.Pow(2, exponent) * mantissa * 0.72;
-
-                return new Illuminance(luminance, Illuminance.UnitType.Lux);
-            });
+            return Task.FromResult(new Illuminance(luminance, Illuminance.UnitType.Lux));
         }
     }
 }

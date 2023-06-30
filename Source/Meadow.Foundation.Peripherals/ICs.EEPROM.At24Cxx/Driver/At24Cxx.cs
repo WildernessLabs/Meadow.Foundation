@@ -1,26 +1,31 @@
+using Meadow.Hardware;
 using System;
 using System.Threading;
-using Meadow.Hardware;
 
 namespace Meadow.Foundation.ICs.EEPROM
 {
     /// <summary>
-    /// Encapsulation for EEPROMs based upon the AT24Cxx family of chips.
+    /// Encapsulation for EEPROMs based upon the AT24Cxx family of chips
     /// </summary>
-    public partial class At24Cxx
+    public partial class At24Cxx : II2cPeripheral
     {
         /// <summary>
-        /// Communication bus used to communicate with the EEPROM.
+        /// The default I2C address for the peripheral
         /// </summary>
-        private II2cPeripheral Peripheral { get; }
+        public byte DefaultI2cAddress => (byte)Addresses.Default;
 
         /// <summary>
-        /// Number of bytes in a page.
+        /// I2C Communication bus used to communicate with the peripheral
+        /// </summary>
+        protected readonly II2cCommunications i2cComms;
+
+        /// <summary>
+        /// Number of bytes in a page
         /// </summary>
         public ushort PageSize { get; }
 
         /// <summary>
-        /// Number of bytes in the EEPROM module.
+        /// Number of bytes in the EEPROM module
         /// </summary>
         public ushort MemorySize { get; }
 
@@ -35,12 +40,12 @@ namespace Meadow.Foundation.ICs.EEPROM
         /// <param name="pageSize">Number of bytes in a page (default = 32 - AT24C32).</param>
         /// <param name="memorySize">Total number of bytes in the EEPROM (default = 8192 - AT24C32).</param>
         public At24Cxx(II2cBus i2cBus,
-            byte address = (byte)Address.Default,
+            byte address = (byte)Addresses.Default,
             ushort pageSize = 32,
             ushort memorySize = 8192)
         {
-            var device = new I2cPeripheral(i2cBus, address);
-            Peripheral = device;
+            var device = new I2cCommunications(i2cBus, address);
+            i2cComms = device;
             PageSize = pageSize;
             MemorySize = memorySize;
 
@@ -77,13 +82,13 @@ namespace Meadow.Foundation.ICs.EEPROM
         {
             CheckAddress(startAddress, amount);
             Span<byte> data = WriteBuffer.Span[0..2];
-            data[0] = (byte) ((startAddress >> 8) & 0xff);
-            data[1] = (byte) (startAddress & 0xff);
+            data[0] = (byte)((startAddress >> 8) & 0xff);
+            data[1] = (byte)(startAddress & 0xff);
 
             var results = new byte[amount];
 
-            Peripheral.Write(data);
-            Peripheral.Read(results);
+            i2cComms.Write(data);
+            i2cComms.Read(results);
 
             return results;
         }
@@ -95,18 +100,18 @@ namespace Meadow.Foundation.ICs.EEPROM
         /// <param name="data">Data to be written to the EEPROM.</param>
         public void Write(ushort startAddress, params byte[] data)
         {
-            CheckAddress(startAddress, (ushort) data.Length);
+            CheckAddress(startAddress, (ushort)data.Length);
             //
             //  TODO: Convert to use page writes where possible.
             //
             for (ushort index = 0; index < data.Length; index++)
             {
-                var address = (ushort) (startAddress + index);
+                var address = (ushort)(startAddress + index);
                 var addressAndData = new byte[3];
-                addressAndData[0] = (byte) ((address >> 8) & 0xff);
-                addressAndData[1] = (byte) (address & 0xff);
+                addressAndData[0] = (byte)((address >> 8) & 0xff);
+                addressAndData[1] = (byte)(address & 0xff);
                 addressAndData[2] = data[index];
-                Peripheral.Write(addressAndData);
+                i2cComms.Write(addressAndData);
                 Thread.Sleep(10);
             }
         }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace Meadow.Foundation.Graphics.Buffers
 {
@@ -34,6 +35,7 @@ namespace Meadow.Foundation.Graphics.Buffers
                     ColorMode.Format1bpp => 1,
                     ColorMode.Format2bpp => 2,
                     ColorMode.Format4bppGray => 4,
+                    ColorMode.Format4bppIndexed => 4,
                     ColorMode.Format8bppGray => 8,
                     ColorMode.Format8bppRgb332 => 8,
                     ColorMode.Format12bppRgb444 => 12,
@@ -50,7 +52,7 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// <summary>
         /// Number of bytes in buffer
         /// </summary>
-        public int ByteCount => (Width * Height * BitDepth) / 8;
+        public int ByteCount => (Width * Height * BitDepth) >> 3;
 
         /// <summary>
         /// The buffer that holds the pixel data
@@ -86,7 +88,7 @@ namespace Meadow.Foundation.Graphics.Buffers
         {
             Width = width;
             Height = height;
-            if(buffer.Length != ByteCount)
+            if (buffer.Length != ByteCount)
             {
                 throw new ArgumentException($"Provided buffer length ({buffer.Length}) does not match this buffer's ByteCount ({ByteCount}).");
             }
@@ -100,7 +102,7 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// <param name="replaceIfExists">If true, will recreates the buffer if it already exists</param>
         public void InitializeBuffer(bool replaceIfExists = false)
         {
-            if(Buffer == null || replaceIfExists)
+            if (Buffer == null || replaceIfExists)
             {
                 Buffer = new byte[ByteCount];
             }
@@ -119,7 +121,7 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// </summary>
         /// <param name="color">Fill color</param>
         public abstract void Fill(Color color);
-        
+
         /// <summary>
         /// Fill a region of the pixel buffer with a color
         /// </summary>
@@ -181,7 +183,7 @@ namespace Meadow.Foundation.Graphics.Buffers
         {
             for (var x = 0; x < buffer.Width; x++)
             {
-                for(var y = 0; y < buffer.Height; y++)
+                for (var y = 0; y < buffer.Height; y++)
                 {
                     SetPixel(originX + x, originY + y, buffer.GetPixel(x, y));
                 }
@@ -194,80 +196,73 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// <typeparam name="T">Buffer type</typeparam>
         /// <param name="rotation">Rotation</param>
         /// <returns>The new buffer</returns>
-        public T RotateAndConvert<T>(RotationType rotation) 
+        public T RotateAndConvert<T>(RotationType rotation)
             where T : PixelBufferBase, new()
         {
             T newBuffer;
+            int[] rowLookup;
+            int[] colLookup;
 
             switch (rotation)
             {
                 case RotationType._90Degrees:
-                    newBuffer = new T
-                    {
-                        Width = Height,
-                        Height = Width
-                    };
-                    newBuffer.InitializeBuffer();
-
-                    for (int i = 0; i < Width; i++)
-                    {
-                        for (int j = 0; j < Height; j++)
-                        {
-                            newBuffer.SetPixel(Height - j - 1, i, GetPixel(i, j));
-                        }
-                    }
+                    newBuffer = new T { Width = Height, Height = Width };
+                    rowLookup = Enumerable.Range(0, Height).Reverse().ToArray();
+                    colLookup = Enumerable.Range(0, Width).ToArray();
                     break;
                 case RotationType._270Degrees:
-                    newBuffer = new T
-                    {
-                        Width = Height,
-                        Height = Width
-                    };
-                    newBuffer.InitializeBuffer();
-
-                    for (int i = 0; i < Width; i++)
-                    {
-                        for (int j = 0; j < Height; j++)
-                        {
-                            newBuffer.SetPixel(j, Width - i - 1, GetPixel(i, j));
-                        }
-                    }
+                    newBuffer = new T { Width = Height, Height = Width };
+                    rowLookup = Enumerable.Range(0, Height).ToArray();
+                    colLookup = Enumerable.Range(0, Width).Reverse().ToArray();
                     break;
                 case RotationType._180Degrees:
-                    newBuffer = new T
-                    {
-                        Width = Width,
-                        Height = Height
-                    };
-                    newBuffer.InitializeBuffer();
-
-                    for (int i = 0; i < Width; i++)
-                    {
-                        for (int j = 0; j < Height; j++)
-                        {
-                            newBuffer.SetPixel(Width - i - 1, Height - j - 1, GetPixel(i, j));
-                        }
-                    }
+                    newBuffer = new T { Width = Width, Height = Height };
+                    rowLookup = Enumerable.Range(0, Width).Reverse().ToArray();
+                    colLookup = Enumerable.Range(0, Height).Reverse().ToArray();
                     break;
                 case RotationType.Default:
                 default:
-                    newBuffer = new T
-                    {
-                        Width = Height,
-                        Height = Width
-                    };
-                    newBuffer.InitializeBuffer();
-
-                    for (int i = 0; i < Width; i++)
-                    {
-                        for (int j = 0; j < Height; j++)
-                        {
-                            newBuffer.SetPixel(i, j, GetPixel(i, j));
-                        }
-                    }
-                    break;
+                    return Clone<T>();
             }
 
+            newBuffer.InitializeBuffer();
+
+            for (int i = 0; i < Width; i++)
+            {
+                for (int j = 0; j < Height; j++)
+                {
+                    newBuffer.SetPixel(rowLookup[j], colLookup[i], GetPixel(i, j));
+                }
+            }
+
+            return newBuffer;
+        }
+
+        /// <summary>
+        /// Create a new buffer scaled up from the existing buffer
+        /// </summary>
+        /// <typeparam name="T">Buffer type</typeparam>
+        /// <param name="scaleFactor">Integer scale ratio</param>
+        /// <returns>The new buffer</returns>
+
+        public T ScaleUp<T>(int scaleFactor)
+            where T : PixelBufferBase, new()
+        {
+            T newBuffer = new T
+            {
+                Width = Width * scaleFactor,
+                Height = Height * scaleFactor,
+            };
+            newBuffer.InitializeBuffer(true);
+            newBuffer.Clear();
+
+            for (int i = 0; i < Width; i++)
+            {
+                for (int j = 0; j < Height; j++)
+                {
+                    newBuffer.Fill(i * scaleFactor, j * scaleFactor, scaleFactor, scaleFactor, GetPixel(i, j));
+                }
+            }
             return newBuffer;
         }
 
@@ -277,11 +272,11 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// </summary>
         /// <typeparam name="T">The buffer type to convert to</typeparam>
         /// <returns>A pixel buffer derrived from PixelBufferBase</returns>
-        public T ConvertPixelBuffer<T>() 
+        public T ConvertPixelBuffer<T>()
             where T : PixelBufferBase, new()
         {
-            if(GetType() == typeof(T))
-            {   
+            if (GetType() == typeof(T))
+            {
                 return Clone<T>();
             }
 
@@ -302,7 +297,7 @@ namespace Meadow.Foundation.Graphics.Buffers
 
             return newBuffer;
         }
-        
+
         /// <summary>
         /// Make a copy of the buffer object 
         /// Intentionally private
@@ -319,6 +314,21 @@ namespace Meadow.Foundation.Graphics.Buffers
             Array.Copy(Buffer, newBuffer.Buffer, ByteCount);
 
             return newBuffer;
+        }
+
+        /// <summary>
+        /// Calculate the uncorrected distance between two colors using bytes for red, green, blue
+        /// </summary>
+        /// <param name="color1"></param>
+        /// <param name="color2"></param>
+        /// <returns>The distance as a double</returns>
+        public double GetColorDistance(Color color1, Color color2)
+        {
+            var rDeltaSquared = Math.Abs(color1.R - color2.R) ^ 2;
+            var gDeltaSquared = Math.Abs(color1.G - color2.G) ^ 2;
+            var bDeltaSquared = Math.Abs(color1.B - color2.B) ^ 2;
+
+            return Math.Sqrt(rDeltaSquared + gDeltaSquared + bDeltaSquared);
         }
     }
 }

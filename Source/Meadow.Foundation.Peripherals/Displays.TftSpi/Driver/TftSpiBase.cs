@@ -1,13 +1,19 @@
 using Meadow.Foundation.Graphics;
 using Meadow.Foundation.Graphics.Buffers;
 using Meadow.Hardware;
+using Meadow.Units;
 using System;
 using System.Threading;
 
 namespace Meadow.Foundation.Displays
 {
-    public abstract partial class TftSpiBase : IGraphicsDisplay
+    public abstract partial class TftSpiBase : IGraphicsDisplay, ISpiPeripheral
     {
+        /// <summary>
+        /// Temporary buffer that can be used to batch set address window buffer commands
+        /// </summary>
+        protected byte[] SetAddressBuffer { get; } = new byte[4];
+
         //these displays typically support 16 & 18 bit, some also include 8, 9, 12 and/or 24 bit color 
 
         /// <summary>
@@ -23,12 +29,12 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// The current rotation of the display
         /// </summary>
-        public RotationType Rotation { get; set; } = RotationType.Normal;
+        public RotationType Rotation { get; protected set; } = RotationType.Normal;
 
         /// <summary>
         /// The display default color mode
         /// </summary>
-        public abstract ColorMode DefautColorMode { get; }
+        public abstract ColorMode DefaultColorMode { get; }
 
         /// <summary>
         /// Width of display in pixels
@@ -44,6 +50,34 @@ namespace Meadow.Foundation.Displays
         /// The buffer used to store the pixel data for the display
         /// </summary>
         public IPixelBuffer PixelBuffer => imageBuffer;
+
+        /// <summary>
+        /// The default SPI bus speed for the device
+        /// </summary>
+        public virtual Frequency DefaultSpiBusSpeed => new Frequency(12000, Frequency.UnitType.Kilohertz);
+
+        /// <summary>
+        /// The SPI bus speed for the device
+        /// </summary>
+        public Frequency SpiBusSpeed
+        {
+            get => spiDisplay.BusSpeed;
+            set => spiDisplay.BusSpeed = value;
+        }
+
+        /// <summary>
+        /// The default SPI bus mode for the device
+        /// </summary>
+        public virtual SpiClockConfiguration.Mode DefaultSpiBusMode => SpiClockConfiguration.Mode.Mode0;
+
+        /// <summary>
+        /// The SPI bus mode for the device
+        /// </summary>
+        public SpiClockConfiguration.Mode SpiBusMode
+        {
+            get => spiDisplay.BusMode;
+            set => spiDisplay.BusMode = value;
+        }
 
         /// <summary>
         /// The data command port
@@ -63,7 +97,7 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// The spi peripheral for the display
         /// </summary>
-        protected ISpiPeripheral spiDisplay;
+        protected ISpiCommunications spiDisplay;
 
         /// <summary>
         /// The offscreen image buffer
@@ -91,6 +125,40 @@ namespace Meadow.Foundation.Displays
         protected abstract void Initialize();
 
         /// <summary>
+        /// The display's native height without rotation
+        /// </summary>
+        protected int nativeHeight;
+
+        /// <summary>
+        /// The display's native width without rotation
+        /// </summary>
+        protected int nativeWidth;
+
+        /// <summary>
+        /// Previous x0 value passed to SetAddressWindow
+        /// Used for optimization to avoid unnecessary SPI commands
+        /// </summary>
+        protected int setAddressLastX0 = -1;
+
+        /// <summary>
+        /// Previous x1 value passed to SetAddressWindow
+        /// Used for optimization to avoid unnecessary SPI commands
+        /// </summary>
+        protected int setAddressLastX1 = -1;
+
+        /// <summary>
+        /// Previous y0 value passed to SetAddressWindow
+        /// Used for optimization to avoid unnecessary SPI commands
+        /// </summary>
+        protected int setAddressLastY0 = -1;
+
+        /// <summary>
+        /// Previous y1 value passed to SetAddressWindow
+        /// Used for optimization to avoid unnecessary SPI commands
+        /// </summary>
+        protected int setAddressLastY1 = -1;
+
+        /// <summary>
         /// Represents an abstract TftSpiBase object
         /// </summary>
         /// <param name="spiBus">SPI bus connected to display</param>
@@ -104,9 +172,9 @@ namespace Meadow.Foundation.Displays
             int width, int height, ColorMode colorMode = ColorMode.Format16bppRgb565)
             : this(
                     spiBus,
-                    chipSelectPin.CreateDigitalOutputPort(),
+                    chipSelectPin?.CreateDigitalOutputPort(),
                     dcPin.CreateDigitalOutputPort(),
-                    resetPin.CreateDigitalOutputPort(),
+                    resetPin?.CreateDigitalOutputPort(),
                     width, height, colorMode
                   )
         {
@@ -133,9 +201,9 @@ namespace Meadow.Foundation.Displays
             this.chipSelectPort = chipSelectPort;
             this.resetPort = resetPort;
 
-            spiDisplay = new SpiPeripheral(spiBus, chipSelectPort);
+            spiDisplay = new SpiCommunications(spiBus, chipSelectPort, DefaultSpiBusSpeed, DefaultSpiBusMode);
 
-            CreateBuffer(colorMode, width, height);
+            CreateBuffer(colorMode, nativeWidth = width, nativeHeight = height);
         }
 
         /// <summary>
@@ -146,42 +214,32 @@ namespace Meadow.Foundation.Displays
         public virtual bool IsColorTypeSupported(ColorMode colorType)
         {
             return (SupportedColorModes | colorType) != 0;
-            /*
-            if (SupportedColors)
-
-
-            if (mode == ColorType.Format12bppRgb444 ||
-                mode == ColorType.Format16bppRgb565)
-            {
-                return true;
-            }
-            return false;*/
         }
 
         /// <summary>
         /// Create an offscreen buffer for the display
         /// </summary>
-        /// <param name="mode">The color mode</param>
+        /// <param name="colorMode">The color mode</param>
         /// <param name="width">The width in pixels</param>
         /// <param name="height">The height in pixels</param>
         /// <exception cref="ArgumentException">Throws an exception if the color mode isn't supported</exception>
-        protected void CreateBuffer(ColorMode colorType, int width, int height)
+        protected void CreateBuffer(ColorMode colorMode, int width, int height)
         {
-            if (IsColorTypeSupported(colorType) == false)
+            if (IsColorTypeSupported(colorMode) == false)
             {
-                throw new ArgumentException($"color mode {colorType} not supported");
+                throw new ArgumentException($"color mode {colorMode} not supported");
             }
 
-            if (colorType == ColorMode.Format24bppRgb888)
+            if (colorMode == ColorMode.Format24bppRgb888)
             {
                 imageBuffer = new BufferRgb888(width, height);
             }
 
-            else if (colorType == ColorMode.Format16bppRgb565)
+            else if (colorMode == ColorMode.Format16bppRgb565)
             {
                 imageBuffer = new BufferRgb565(width, height);
             }
-            else //Rgb444
+            else
             {
                 imageBuffer = new BufferRgb444(width, height);
             }
@@ -189,13 +247,40 @@ namespace Meadow.Foundation.Displays
         }
 
         /// <summary>
-        /// Set addrees window for display updates
+        /// Set address window for display updates
         /// </summary>
         /// <param name="x0">X start in pixels</param>
         /// <param name="y0">Y start in pixels</param>
         /// <param name="x1">X end in pixels</param>
         /// <param name="y1">Y end in pixels</param>
-        protected abstract void SetAddressWindow(int x0, int y0, int x1, int y1);
+        protected virtual void SetAddressWindow(int x0, int y0, int x1, int y1)
+        {
+            if (x0 != setAddressLastX0 || x1 != setAddressLastX1 || y0 != setAddressLastY0 || y1 != setAddressLastY1)
+            {
+                setAddressLastX0 = x0;
+                setAddressLastX1 = x1;
+                setAddressLastY0 = y0;
+                setAddressLastY1 = y1;
+
+                SendCommand(LcdCommand.CASET);  // column addr set
+                dataCommandPort.State = Data;
+                SetAddressBuffer[0] = (byte)(x0 >> 8);
+                SetAddressBuffer[1] = (byte)(x0 & 0xff); // XSTART
+                SetAddressBuffer[2] = (byte)(x1 >> 8);
+                SetAddressBuffer[3] = (byte)(x1 & 0xff); // XEND
+                Write(SetAddressBuffer);
+
+                SendCommand(LcdCommand.RASET);  // row addr set
+                dataCommandPort.State = Data;
+                SetAddressBuffer[0] = (byte)(y0 >> 8);
+                SetAddressBuffer[1] = (byte)(y0 & 0xff); // XEND
+                SetAddressBuffer[2] = (byte)(y1 >> 8);
+                SetAddressBuffer[3] = (byte)(y1 & 0xff); // YEND
+                Write(SetAddressBuffer);
+
+                SendCommand(LcdCommand.RAMWR);  // write to RAM
+            }
+        }
 
         /// <summary>
         /// Clear the display.
@@ -298,7 +383,7 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         public void Show()
         {
-            SetAddressWindow(0, 0, Width - 1, Height);
+            SetAddressWindow(0, 0, Width - 1, Height - 1);
 
             dataCommandPort.State = Data;
 
@@ -432,6 +517,31 @@ namespace Meadow.Foundation.Displays
         public void Clear(Color color)
         {
             imageBuffer.Fill(color);
+        }
+
+        /// <summary>
+        /// Update the display buffer if the dimensions change on rotation
+        /// </summary>
+        protected void UpdateBuffer()
+        {
+            var newWidth = Rotation switch
+            {
+                RotationType._90Degrees => nativeHeight,
+                RotationType._270Degrees => nativeHeight,
+                _ => nativeWidth
+            };
+
+            var newHeight = Rotation switch
+            {
+                RotationType._90Degrees => nativeWidth,
+                RotationType._270Degrees => nativeWidth,
+                _ => nativeHeight
+            };
+
+            if (newWidth != Width)
+            {
+                CreateBuffer(ColorMode, newWidth, newHeight);
+            }
         }
     }
 }

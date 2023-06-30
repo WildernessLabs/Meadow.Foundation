@@ -11,7 +11,7 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// The default display color mode
         /// </summary>
-        public override ColorMode DefautColorMode => ColorMode.Format12bppRgb444;
+        public override ColorMode DefaultColorMode => ColorMode.Format12bppRgb444;
 
         /// <summary>
         /// The color modes supported by the display
@@ -135,32 +135,6 @@ namespace Meadow.Foundation.Displays
         }
 
         /// <summary>
-        /// Set addrees window for display updates
-        /// </summary>
-        /// <param name="x0">X start in pixels</param>
-        /// <param name="y0">Y start in pixels</param>
-        /// <param name="x1">X end in pixels</param>
-        /// <param name="y1">Y end in pixels</param>
-        protected override void SetAddressWindow(int x0, int y0, int x1, int y1)
-        {
-            SendCommand(LcdCommand.CASET);  // column addr set
-            dataCommandPort.State = Data;
-            Write((byte)(x0 >> 8));
-            Write((byte)(x0 & 0xff));   // XSTART 
-            Write((byte)(x1 >> 8));
-            Write((byte)(x1 & 0xff));   // XEND
-
-            SendCommand(LcdCommand.RASET);  // row addr set
-            dataCommandPort.State = Data;
-            Write((byte)(y0 >> 8));
-            Write((byte)(y0 & 0xff));    // YSTART
-            Write((byte)(y1 >> 8));
-            Write((byte)(y1 & 0xff));    // YEND
-
-            SendCommand(LcdCommand.RAMWR);  // write to RAM
-        }
-
-        /// <summary>
         /// Set the display rotation
         /// </summary>
         /// <param name="rotation">The rotation value</param>
@@ -168,7 +142,7 @@ namespace Meadow.Foundation.Displays
         {
             SendCommand(Register.MADCTL);
 
-            switch (rotation)
+            switch (Rotation = rotation)
             {
                 case RotationType.Normal:
                     SendData((byte)(Register.MADCTL_SS | Register.MADCTL_BGR));
@@ -183,6 +157,8 @@ namespace Meadow.Foundation.Displays
                     SendData((byte)(Register.MADCTL_MV | Register.MADCTL_BGR | Register.MADCTL_SS | Register.MADCTL_GS));
                     break;
             }
+
+            UpdateBuffer();
         }
     }
 }

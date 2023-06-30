@@ -11,25 +11,30 @@ namespace Meadow.Foundation.Sensors.Motion
     /// <summary>
     /// Represents the Mmc5603 Three-Axis, Digital Magnetometer
     /// </summary>
-    public partial class Mmc5603 :
-        ByteCommsSensorBase<MagneticField3D>, IMagnetometer
+    public partial class Mmc5603 : ByteCommsSensorBase<MagneticField3D>,
+        IMagnetometer, II2cPeripheral
     {
+        /// <summary>
+        /// The default I2C address for the peripheral
+        /// </summary>
+        public byte DefaultI2cAddress => (byte)Addresses.Default;
+
         /// <summary>
         /// Raised when the magnetic field value changes
         /// </summary>
-        public event EventHandler<IChangeResult<MagneticField3D>> MagneticField3dUpdated = delegate { };
+        public event EventHandler<IChangeResult<MagneticField3D>> MagneticField3DUpdated = delegate { };
 
         /// <summary>
         /// The current magnetic field value
         /// </summary>
-        public MagneticField3D? MagneticField3d => Conditions;
+        public MagneticField3D? MagneticField3D => Conditions;
 
         /// <summary>
         /// Get/set continuous sensor reading mode
         /// </summary>
         public bool ContinuousModeEnabled
         {
-            get => (Peripheral.ReadRegister(Registers.CONTROL_2) & 0x10) == 1;
+            get => (BusComms.ReadRegister(Registers.CONTROL_2) & 0x10) == 1;
             set => SetContinuousMode(value);
         }
 
@@ -41,7 +46,7 @@ namespace Meadow.Foundation.Sensors.Motion
         public Mmc5603(II2cBus i2cBus, byte address = (byte)Addresses.Default)
             : base(i2cBus, address, 10, 8)
         {
-            var deviceID = Peripheral.ReadRegister(Registers.WHO_AM_I);
+            var deviceID = BusComms.ReadRegister(Registers.WHO_AM_I);
 
             if (deviceID != 0x10)
             {
@@ -67,18 +72,18 @@ namespace Meadow.Foundation.Sensors.Motion
 
         void SetRegisterBit(byte register, byte bitIndex, bool enabled = true)
         {
-            var value = Peripheral.ReadRegister(register);
+            var value = BusComms.ReadRegister(register);
             value = BitHelpers.SetBit(value, bitIndex, enabled);
-            Peripheral.WriteRegister(register, value);
+            BusComms.WriteRegister(register, value);
         }
 
         void SetContinuousMode(bool on)
         {
-            if(on == true)
+            if (on == true)
             {
                 SetRegisterBit(Registers.CONTROL_0, 7, true);
                 SetRegisterBit(Registers.CONTROL_2, 4, true);
-            }   
+            }
             else
             {
                 SetRegisterBit(Registers.CONTROL_2, 4, false);
@@ -93,7 +98,7 @@ namespace Meadow.Foundation.Sensors.Motion
         {
             if (changeResult is { } mag)
             {
-                MagneticField3dUpdated?.Invoke(this, new ChangeResult<MagneticField3D>(mag.New, changeResult.Old));
+                MagneticField3DUpdated?.Invoke(this, new ChangeResult<MagneticField3D>(mag.New, changeResult.Old));
             }
             base.RaiseEventsAndNotify(changeResult);
         }
@@ -103,18 +108,18 @@ namespace Meadow.Foundation.Sensors.Motion
             SetRegisterBit(Registers.CONTROL_0, 0, true);
             return Task.Delay(10);
         }
-        
+
         Task TriggerTemperatureReading()
         {
             SetRegisterBit(Registers.CONTROL_0, 1, true);
             return Task.Delay(10);
         }
 
-    /// <summary>
-    /// Reads data from the sensor
-    /// </summary>
-    /// <returns>The latest sensor reading</returns>
-    protected override Task<MagneticField3D> ReadSensor()
+        /// <summary>
+        /// Reads data from the sensor
+        /// </summary>
+        /// <returns>The latest sensor reading</returns>
+        protected override Task<MagneticField3D> ReadSensor()
         {
             return Task.Run(async () =>
             {
@@ -128,7 +133,7 @@ namespace Meadow.Foundation.Sensors.Motion
                     }
                 }
 
-                Peripheral.ReadRegister(Registers.OUT_X_L, ReadBuffer.Span[0..9]); //9 bytes
+                BusComms.ReadRegister(Registers.OUT_X_L, ReadBuffer.Span[0..9]);
 
                 int x = (int)((uint)(ReadBuffer.Span[0] << 12) | (uint)(ReadBuffer.Span[1] << 4) | (uint)(ReadBuffer.Span[6] >> 4));
                 int y = (int)((uint)(ReadBuffer.Span[2] << 12) | (uint)(ReadBuffer.Span[3] << 4) | (uint)(ReadBuffer.Span[7] >> 4));
@@ -143,8 +148,7 @@ namespace Meadow.Foundation.Sensors.Motion
                 conditions = new MagneticField3D(
                     new MagneticField(x * 0.00625, MagneticField.UnitType.MicroTesla),
                     new MagneticField(y * 0.00625, MagneticField.UnitType.MicroTesla),
-                    new MagneticField(z * 0.00625, MagneticField.UnitType.MicroTesla)
-                    );
+                    new MagneticField(z * 0.00625, MagneticField.UnitType.MicroTesla));
 
                 return conditions;
             });
@@ -157,28 +161,28 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <returns></returns>
         public async Task<Units.Temperature> ReadTemperature()
         {
-            if(ContinuousModeEnabled)
+            if (ContinuousModeEnabled)
             {
                 throw new Exception("Cannot read temperature while continous sampling mode is enabled");
             }
 
-            if(IsTemperatureDataReady() == false)
+            if (IsTemperatureDataReady() == false)
             {
                 await TriggerTemperatureReading();
             }
 
-            return new Units.Temperature((sbyte)Peripheral.ReadRegister(Registers.TEMPERATURE) * 0.8 - 75, Units.Temperature.UnitType.Celsius);
+            return new Units.Temperature((sbyte)BusComms.ReadRegister(Registers.TEMPERATURE) * 0.8 - 75, Units.Temperature.UnitType.Celsius);
         }
 
         bool IsTemperatureDataReady()
         {
-            var value = Peripheral.ReadRegister(Registers.STATUS);
+            var value = BusComms.ReadRegister(Registers.STATUS);
             return BitHelpers.GetBitValue(value, 7);
         }
 
         bool IsMagneticDataReady()
         {
-            var value = Peripheral.ReadRegister(Registers.STATUS);
+            var value = BusComms.ReadRegister(Registers.STATUS);
             return BitHelpers.GetBitValue(value, 6);
         }
     }

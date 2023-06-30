@@ -1,9 +1,9 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
 using Meadow.Peripherals.Sensors;
 using Meadow.Units;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Atmospheric
 {
@@ -12,22 +12,26 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     /// </summary>
     public partial class Bmp180 :
         ByteCommsSensorBase<(Units.Temperature? Temperature, Pressure? Pressure)>,
-        ITemperatureSensor, IBarometricPressureSensor
+        ITemperatureSensor, IBarometricPressureSensor, II2cPeripheral
     {
         /// <summary>
         /// Raised when the temperature value changes
         /// </summary>
         public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
-        
+
         /// <summary>
         /// Raised when the pressure value changes
         /// </summary>
         public event EventHandler<IChangeResult<Pressure>> PressureUpdated = delegate { };
 
-        // Oversampling for measurements
-        private byte oversamplingSetting;
+        /// <summary>
+        /// Oversampling for measurements 
+        /// </summary>
+        private readonly byte oversamplingSetting;
 
-        // These wait times correspond to the oversampling settings
+        /// <summary>
+        /// These wait times correspond to the oversampling settings 
+        /// </summary>
         private readonly byte[] pressureWaitTime = { 5, 8, 14, 26 };
 
         // Calibration data backing stores
@@ -54,9 +58,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         public Pressure? Pressure => Conditions.Pressure;
 
         /// <summary>
-        /// Default SPI bus speed
+        /// The default I2C address for the peripheral
         /// </summary>
-        public static Frequency DEFAULT_SPEED = new Frequency(40000, Frequency.UnitType.Kilohertz);
+        public byte DefaultI2cAddress => (byte)Addresses.Default;
 
         /// <summary>
         /// Create a new BMP180 object
@@ -95,113 +99,79 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         protected override Task<(Units.Temperature? Temperature, Pressure? Pressure)> ReadSensor()
         {
-            return Task.Run(() =>
+            (Units.Temperature? Temperature, Pressure? Pressure) conditions;
+
+            long x1, x2, x3, b4, b5, b6, b7, p;
+            long ut = ReadUncompensatedTemperature();
+            long up = ReadUncompensatedPressure();
+
+            // calculate the compensated temperature
+            x1 = (ut - _ac6) * _ac5 >> 15;
+            x2 = (_mc << 11) / (x1 + _md);
+            b5 = x1 + x2;
+
+            conditions.Temperature = new Units.Temperature((float)((b5 + 8) >> 4) / 10, Units.Temperature.UnitType.Celsius);
+
+            // calculate the compensated pressure
+            b6 = b5 - 4000;
+            x1 = (_b2 * (b6 * b6 >> 12)) >> 11;
+            x2 = _ac2 * b6 >> 11;
+            x3 = x1 + x2;
+            var b3 = oversamplingSetting switch
             {
-                (Units.Temperature? Temperature, Pressure? Pressure) conditions;
+                0 => ((_ac1 * 4 + x3) + 2) >> 2,
+                1 => ((_ac1 * 4 + x3) + 2) >> 1,
+                2 => ((_ac1 * 4 + x3) + 2),
+                3 => ((_ac1 * 4 + x3) + 2) << 1,
+                _ => throw new Exception("Oversampling setting must be 0-3"),
+            };
+            x1 = _ac3 * b6 >> 13;
+            x2 = (_b1 * (b6 * b6 >> 12)) >> 16;
+            x3 = ((x1 + x2) + 2) >> 2;
+            b4 = (_ac4 * (x3 + 32768)) >> 15;
+            b7 = (up - b3) * (50000 >> oversamplingSetting);
+            p = (b7 < 0x80000000 ? (b7 * 2) / b4 : (b7 / b4) * 2);
+            x1 = (p >> 8) * (p >> 8);
+            x1 = (x1 * 3038) >> 16;
+            x2 = (-7357 * p) >> 16;
 
-                long x1, x2, x3, b3, b4, b5, b6, b7, p;
+            int value = (int)(p + ((x1 + x2 + 3791) >> 4));
 
-                long ut = ReadUncompensatedTemperature();
+            conditions.Pressure = new Pressure(value, Units.Pressure.UnitType.Pascal);
 
-                long up = ReadUncompensatedPressure();
-
-                // calculate the compensated temperature
-                x1 = (ut - _ac6) * _ac5 >> 15;
-                x2 = (_mc << 11) / (x1 + _md);
-                b5 = x1 + x2;
-
-                conditions.Temperature = new Units.Temperature((float)((b5 + 8) >> 4) / 10, Units.Temperature.UnitType.Celsius);
-
-                // calculate the compensated pressure
-                b6 = b5 - 4000;
-                x1 = (_b2 * (b6 * b6 >> 12)) >> 11;
-                x2 = _ac2 * b6 >> 11;
-                x3 = x1 + x2;
-
-                switch (oversamplingSetting)
-                {
-                    case 0:
-                        b3 = ((_ac1 * 4 + x3) + 2) >> 2;
-                        break;
-                    case 1:
-                        b3 = ((_ac1 * 4 + x3) + 2) >> 1;
-                        break;
-                    case 2:
-                        b3 = ((_ac1 * 4 + x3) + 2);
-                        break;
-                    case 3:
-                        b3 = ((_ac1 * 4 + x3) + 2) << 1;
-                        break;
-                    default:
-                        throw new Exception("Oversampling setting must be 0-3");
-                }
-                x1 = _ac3 * b6 >> 13;
-                x2 = (_b1 * (b6 * b6 >> 12)) >> 16;
-                x3 = ((x1 + x2) + 2) >> 2;
-                b4 = (_ac4 * (x3 + 32768)) >> 15;
-                b7 = (up - b3) * (50000 >> oversamplingSetting);
-                p = (b7 < 0x80000000 ? (b7 * 2) / b4 : (b7 / b4) * 2);
-                x1 = (p >> 8) * (p >> 8);
-                x1 = (x1 * 3038) >> 16;
-                x2 = (-7357 * p) >> 16;
-
-                int value = (int)(p + ((x1 + x2 + 3791) >> 4));
-
-                conditions.Pressure = new Pressure(value, Units.Pressure.UnitType.Pascal);
-
-                return conditions;
-            });
+            return Task.FromResult(conditions);
         }
 
         private long ReadUncompensatedTemperature()
         {
-            // write register address
-            // TODO: delete after validating
-            //Peripheral.WriteBytes(new byte[] { 0xF4, 0x2E });
             WriteBuffer.Span[0] = 0xf4;
             WriteBuffer.Span[1] = 0x2e;
-            Peripheral?.Write(WriteBuffer.Span[0..2]);
+            BusComms?.Write(WriteBuffer.Span[0..2]);
 
-            // Required as per datasheet.
             Thread.Sleep(5);
 
-            // write register address
-            // TODO: Delete after validating
-            //Peripheral.WriteBytes(new byte[] { 0xF6 });
             WriteBuffer.Span[0] = 0xf6;
-            Peripheral?.Write(WriteBuffer.Span[0]);
+            BusComms?.Write(WriteBuffer.Span[0]);
 
-            // get MSB and LSB result
-            // TODO: Delete after validating
-            //byte[] data = new byte[2];
-            //data = Peripheral.ReadBytes(2);
-            Peripheral?.Read(ReadBuffer.Span[0..2]);
+            BusComms?.Read(ReadBuffer.Span[0..2]);
 
             return ((ReadBuffer.Span[0] << 8) | ReadBuffer.Span[1]);
         }
 
         private long ReadUncompensatedPressure()
         {
-            // write register address
-            // TODO: Delete after validating
-            //Peripheral.WriteBytes(new byte[] { 0xF4, (byte)(0x34 + (oversamplingSetting << 6)) });
             WriteBuffer.Span[0] = 0xf4;
             WriteBuffer.Span[1] = (byte)(0x34 + (oversamplingSetting << 6));
 
-            // insert pressure waittime using oversampling setting as index.
             Thread.Sleep(pressureWaitTime[oversamplingSetting]);
 
-            // get MSB and LSB result
-            // TODO: delete after validating
-            //byte[] data = new byte[3];
-            //data = Peripheral.ReadRegisters(0xF6, 3);
-            Peripheral?.ReadRegister(0xf6, ReadBuffer.Span[0..3]);
+            BusComms?.ReadRegister(0xf6, ReadBuffer.Span[0..3]);
 
             return ((ReadBuffer.Span[0] << 16) | (ReadBuffer.Span[1] << 8) | (ReadBuffer.Span[2])) >> (8 - oversamplingSetting);
         }
 
         /// <summary>
-        /// Retrieves the factory calibration data stored in the sensor.
+        /// Retrieves the factory calibration data stored in the sensor
         /// </summary>
         private void GetCalibrationData()
         {
@@ -220,14 +190,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
         private short ReadShort(byte address)
         {
-            // TODO: i think we already have a method that does this. I'm just not sure
-            // which endian it is. not sure what the last statement here is dooing
-
-            // get MSB and LSB result
-            // TODO: delete after validating
-            //byte[] data = new byte[2];
-            //data = Peripheral.ReadRegisters(address, 2);
-            Peripheral?.ReadRegister(address, ReadBuffer.Span[0..2]);
+            BusComms?.ReadRegister(address, ReadBuffer.Span[0..2]);
 
             return (short)((ReadBuffer.Span[0] << 8) | ReadBuffer.Span[1]);
         }

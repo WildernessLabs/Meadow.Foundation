@@ -8,7 +8,7 @@
     public abstract partial class DhtBase
     {
         /// <summary>
-		/// Valid addresses for the sensor
+		/// Valid I2C addresses for the sensor
 		/// </summary>
 		public enum Addresses : byte
         {

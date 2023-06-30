@@ -1,8 +1,7 @@
-﻿using System;
+﻿using Meadow.Foundation.Spatial;
+using Meadow.Hardware;
 using System.Threading;
 using System.Threading.Tasks;
-using Meadow.Foundation.Spatial;
-using Meadow.Hardware;
 
 namespace Meadow.Foundation.Sensors.Motion
 {
@@ -37,16 +36,16 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
         override protected void Initialize()
         {
-            Peripheral.WriteRegister(0x0B, 0x01);
+            BusComms.WriteRegister(0x0B, 0x01);
             Thread.Sleep(50);
 
-            Peripheral.WriteRegister(0x20, 0x40);
+            BusComms.WriteRegister(0x20, 0x40);
             Thread.Sleep(50);
 
-            Peripheral.WriteRegister(0x21, 0x01);
+            BusComms.WriteRegister(0x21, 0x01);
             Thread.Sleep(50);
 
-            Peripheral.WriteRegister(0x09, 0x0D);
+            BusComms.WriteRegister(0x09, 0x0D);
         }
 
         /// <summary>
@@ -55,19 +54,17 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <returns>The latest sensor reading</returns>
         protected override Task<Vector> ReadSensor()
         {
-            return Task.Run(() => {
-                Peripheral.ReadRegister(0x00, ReadBuffer.Span[0..6]);
+            BusComms.ReadRegister(0x00, ReadBuffer.Span[0..6]);
 
-                ushort X = (ushort)(ReadBuffer.Span[0] | ReadBuffer.Span[1] << 8);
-                ushort Y = (ushort)(ReadBuffer.Span[2] | ReadBuffer.Span[3] << 8);
-                ushort Z = (ushort)(ReadBuffer.Span[4] | ReadBuffer.Span[5] << 8);
+            ushort X = (ushort)(ReadBuffer.Span[0] | ReadBuffer.Span[1] << 8);
+            ushort Y = (ushort)(ReadBuffer.Span[2] | ReadBuffer.Span[3] << 8);
+            ushort Z = (ushort)(ReadBuffer.Span[4] | ReadBuffer.Span[5] << 8);
 
-                var v = new Vector(X, Y, Z);
+            var v = new Vector(X, Y, Z);
 
-                Resolver.Log.Info($"{X}, {Y}, {Z} : {DirectionToHeading(v)}");
+            Resolver.Log.Info($"{X}, {Y}, {Z} : {DirectionToHeading(v)}");
 
-                return v;
-            });
+            return Task.FromResult(v);
         }
     }
 }

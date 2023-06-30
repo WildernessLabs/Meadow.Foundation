@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
 env:
-  version: '0.94.0'
+  version: '0.98.0'
   token: ${{ secrets.NUGET_TOKEN }}
 
 jobs:
@@ -33,6 +33,13 @@ jobs:
 
     - uses: ./.github/actions/build-package
       with:
+        packageId: Meadow.Foundation.Displays.Ch1115
+        path: Source/Meadow.Foundation.Peripherals/Displays.Ch1115/Driver/Displays.Ch1115.csproj
+        version: ${{ env.version }}
+        token: ${{ env.token }}
+
+    - uses: ./.github/actions/build-package
+      with:
         packageId: Meadow.Foundation.Displays.ePaper
         path: Source/Meadow.Foundation.Peripherals/Displays.ePaper/Driver/Displays.ePaper.csproj
         version: ${{ env.version }}
@@ -40,8 +47,8 @@ jobs:
 
     - uses: ./.github/actions/build-package
       with:
-        packageId: Meadow.Foundation.Displays.ePaperWaveShare
-        path: Source/Meadow.Foundation.Peripherals/Displays.ePaperWaveShare/Driver/Displays.ePaperWaveShare.csproj
+        packageId: Meadow.Foundation.Displays.Gtk
+        path: Source/Meadow.Foundation.Peripherals/Displays.Gtk/Driver/Displays.Gtk.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
@@ -63,6 +70,13 @@ jobs:
       with:
         packageId: Meadow.Foundation.Displays.Pcd8544
         path: Source/Meadow.Foundation.Peripherals/Displays.Pcd8544/Driver/Displays.Pcd8544.csproj
+        version: ${{ env.version }}
+        token: ${{ env.token }}
+
+    - uses: ./.github/actions/build-package
+      with:
+        packageId: Meadow.Foundation.Displays.Sh1106
+        path: Source/Meadow.Foundation.Peripherals/Displays.Sh110x/Driver/Displays.Sh110x.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
@@ -110,8 +124,8 @@ jobs:
 
     - uses: ./.github/actions/build-package
       with:
-        packageId: Meadow.Foundation.ICs.IOExpanders.Ft232h
-        path: Source/Meadow.Foundation.Peripherals/ICs.IOExpanders.Ft232h/Driver/ICs.IOExpanders.Ft232h.csproj
+        packageId: Meadow.Foundation.ICs.IOExpanders.Ht16k33
+        path: Source/Meadow.Foundation.Peripherals/ICs.IOExpanders.Ht16k33/Driver/ICs.IOExpanders.Ht16k33.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
 
@@ -149,4 +163,3 @@ jobs:
         path: Source/Meadow.Foundation.Peripherals/Sensors.Hid.Tsc2004/Driver/Sensors.Hid.Tsc2004.csproj
         version: ${{ env.version }}
         token: ${{ env.token }}
-

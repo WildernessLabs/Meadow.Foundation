@@ -2,7 +2,6 @@
 using Meadow.Devices;
 using Meadow.Foundation;
 using Meadow.Foundation.Leds;
-using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -19,7 +18,7 @@ namespace Leds.APA102_Sample
         public override Task Initialize()
         {
             Resolver.Log.Info("Initialize...");
-            apa102 = new Apa102(Device.CreateSpiBus(Apa102.DefaultSpiBusSpeed), numberOfLeds, Apa102.PixelOrder.BGR);
+            apa102 = new Apa102(Device.CreateSpiBus(), numberOfLeds, Apa102.PixelOrder.BGR);
 
             return base.Initialize();
         }
@@ -65,7 +64,7 @@ namespace Leds.APA102_Sample
         {
             Resolver.Log.Info($"SetColor(color:{color}");
 
-            for (int i = 0; i < apa102.NumberOfLeds; i++) 
+            for (int i = 0; i < apa102.NumberOfLeds; i++)
             {
                 apa102.SetLed(i, color, brightness);
             }
@@ -133,13 +132,13 @@ namespace Leds.APA102_Sample
                 apa102.SetLed(index, color);
                 last = index;
 
-                if(forward) { index++; }
+                if (forward) { index++; }
                 else { index--; }
 
                 apa102.Show();
 
-                if(index == apa102.NumberOfLeds - 1) { forward = false; }
-                if(index == 0) { forward = true; }
+                if (index == apa102.NumberOfLeds - 1) { forward = false; }
+                if (index == 0) { forward = true; }
 
                 Thread.Sleep(50);
             }
@@ -157,13 +156,13 @@ namespace Leds.APA102_Sample
             apa102.SetLed(2, Color.Blue);
             apa102.Show();
             Thread.Sleep(2000);
-            
+
             apa102.SetLed(0, Color.Green);
             apa102.SetLed(1, Color.Yellow);
             apa102.SetLed(2, Color.Pink);
             apa102.Show();
             Thread.Sleep(5000);
-            
+
             apa102.Clear(true);
         }
 

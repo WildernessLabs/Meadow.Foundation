@@ -11,7 +11,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
     /// <summary>
     /// Represents an As1115 led driver and key scanner
     /// </summary>
-    public partial class As1115 : IGraphicsDisplay, IDisposable
+    public partial class As1115 : IGraphicsDisplay, II2cPeripheral, IDisposable
     {
         /// <summary>
         /// Event raised when any key scan button is pressed
@@ -38,12 +38,17 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <summary>
         /// Last button pressed, used internally to raise key up events
         /// </summary>
-        KeyScanButtonType lastButtonPressed = KeyScanButtonType.None;
+        private KeyScanButtonType lastButtonPressed = KeyScanButtonType.None;
 
         /// <summary>
-        /// As1115 I2C driver
+        /// I2C Communication bus used to communicate with the peripheral
         /// </summary>
-        protected II2cPeripheral i2cPeripheral;
+        protected readonly II2cCommunications i2cComms;
+
+        /// <summary>
+        /// The default I2C address for the peripheral
+        /// </summary>
+        public byte DefaultI2cAddress => (byte)Addresses.Default;
 
         /// <summary>
         /// The display color mode (1 bit per pixel)
@@ -73,7 +78,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <summary>
         /// The buffer used to store pixel data
         /// </summary>
-        readonly Buffer1bpp buffer = new Buffer1bpp(8, 8);
+        private readonly Buffer1bpp buffer = new Buffer1bpp(8, 8);
 
         /// <summary>
         /// The display decode mode 
@@ -86,7 +91,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         public bool IsDisposed { get; private set; }
 
-        readonly IDigitalInputPort interruptPort;
+        private readonly IDigitalInterruptPort interruptPort;
 
         /// <summary>
         /// Create a new AS1115 object using the default parameters for
@@ -97,9 +102,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
         public As1115(II2cBus i2cBus, IPin buttonInterruptPin,
             byte address = (byte)Addresses.Default)
         {
-            i2cPeripheral = new I2cPeripheral(i2cBus, address);
+            i2cComms = new I2cCommunications(i2cBus, address);
 
-            interruptPort = buttonInterruptPin.CreateDigitalInputPort(
+            interruptPort = buttonInterruptPin.CreateDigitalInterruptPort(
                 InterruptMode.EdgeFalling,
                 ResistorMode.InternalPullUp);
 
@@ -108,7 +113,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             Initialize();
         }
 
-        void Initialize()
+        private void Initialize()
         {
             var keyDictionary = new Dictionary<KeyScanButtonType, KeyScanButton>();
 
@@ -120,22 +125,22 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
             KeyScanButtons = new ReadOnlyDictionary<KeyScanButtonType, KeyScanButton>(keyDictionary);
 
-            i2cPeripheral.WriteRegister(REG_SHUTDOWN, REG_SHUTDOWN_RUNNING | REG_SHUTDOWN_RESET_FEATUREREG);
+            i2cComms.WriteRegister(REG_SHUTDOWN, REG_SHUTDOWN_RUNNING | REG_SHUTDOWN_RESET_FEATUREREG);
 
-            i2cPeripheral.WriteRegister(REG_SCAN_LIMIT, 0x07);
+            i2cComms.WriteRegister(REG_SCAN_LIMIT, 0x07);
 
             SetDecodeMode(DecodeType.Pixel);
 
             byte[] data = new byte[2];
 
             //read the key scan registers to clear
-            i2cPeripheral.ReadRegister(REG_KEYA, data);
+            i2cComms.ReadRegister(REG_KEYA, data);
         }
 
         private void InterruptPort_Changed(object sender, DigitalPortResult e)
         {
             byte[] data = new byte[2];
-            i2cPeripheral.ReadRegister(REG_KEYA, data);
+            i2cComms.ReadRegister(REG_KEYA, data);
 
             var keyScanButton = GetButtonFromKeyScanRegister(data[0], data[1]);
 
@@ -158,7 +163,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             }
         }
 
-        KeyScanButtonType GetButtonFromKeyScanRegister(byte keyA, byte keyB)
+        private KeyScanButtonType GetButtonFromKeyScanRegister(byte keyA, byte keyB)
         {
             KeyScanButtonType ret;
 
@@ -206,7 +211,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <param name="fastBlink">True for fast blink (period of 1s), False for slow blink (period of 2s)</param>
         public void EnableBlink(bool isEnabled, bool fastBlink = true)
         {
-            var reg = i2cPeripheral.ReadRegister(REG_FEATURE);
+            var reg = i2cComms.ReadRegister(REG_FEATURE);
 
             byte mask = 1 << REG_FEATURE_BLINK;
 
@@ -229,7 +234,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 reg &= (byte)~mask;
             }
 
-            i2cPeripheral.WriteRegister(REG_FEATURE, reg);
+            i2cComms.WriteRegister(REG_FEATURE, reg);
         }
 
         /// <summary>
@@ -238,7 +243,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         /// <param name="mode">The decode mode enum</param>
         /// Not currently supported - driver is pixel mode only
-        void SetDecodeMode(DecodeType mode)
+        private void SetDecodeMode(DecodeType mode)
         {
             DecodeMode = mode;
 
@@ -247,7 +252,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             switch (mode)
             {
                 case DecodeType.Pixel:
-                    i2cPeripheral.WriteRegister(REG_DECODE_MODE, 0);
+                    i2cComms.WriteRegister(REG_DECODE_MODE, 0);
                     break;
             }
         }
@@ -329,7 +334,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         {
             intensity = Math.Max(intensity, (byte)15);
 
-            i2cPeripheral.WriteRegister(REG_GLOBAL_INTEN, intensity);
+            i2cComms.WriteRegister(REG_GLOBAL_INTEN, intensity);
         }
 
         /// <summary>
@@ -338,7 +343,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <param name="testOn">True to enable, false to disable</param>
         public void TestMode(bool testOn)
         {
-            i2cPeripheral.WriteRegister(REG_DECODE_MODE, (byte)(testOn ? 0x01 : 0x00));
+            i2cComms.WriteRegister(REG_DECODE_MODE, (byte)(testOn ? 0x01 : 0x00));
         }
 
         /// <summary>
@@ -346,14 +351,14 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         public void Show()
         {
-            i2cPeripheral.WriteRegister(REG_DIGIT0, buffer.Buffer[0]);
-            i2cPeripheral.WriteRegister(REG_DIGIT1, buffer.Buffer[1]);
-            i2cPeripheral.WriteRegister(REG_DIGIT2, buffer.Buffer[2]);
-            i2cPeripheral.WriteRegister(REG_DIGIT3, buffer.Buffer[3]);
-            i2cPeripheral.WriteRegister(REG_DIGIT4, buffer.Buffer[4]);
-            i2cPeripheral.WriteRegister(REG_DIGIT5, buffer.Buffer[5]);
-            i2cPeripheral.WriteRegister(REG_DIGIT6, buffer.Buffer[6]);
-            i2cPeripheral.WriteRegister(REG_DIGIT7, buffer.Buffer[7]);
+            i2cComms.WriteRegister(REG_DIGIT0, buffer.Buffer[0]);
+            i2cComms.WriteRegister(REG_DIGIT1, buffer.Buffer[1]);
+            i2cComms.WriteRegister(REG_DIGIT2, buffer.Buffer[2]);
+            i2cComms.WriteRegister(REG_DIGIT3, buffer.Buffer[3]);
+            i2cComms.WriteRegister(REG_DIGIT4, buffer.Buffer[4]);
+            i2cComms.WriteRegister(REG_DIGIT5, buffer.Buffer[5]);
+            i2cComms.WriteRegister(REG_DIGIT6, buffer.Buffer[6]);
+            i2cComms.WriteRegister(REG_DIGIT7, buffer.Buffer[7]);
         }
 
         /// <summary>
@@ -464,7 +469,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         }
 
         /// <summary>
-        /// Dispose Peripheral
+        /// Dispose BusComms
         /// </summary>
         public void Dispose()
         {

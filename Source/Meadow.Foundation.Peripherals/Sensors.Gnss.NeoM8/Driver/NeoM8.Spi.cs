@@ -1,28 +1,59 @@
 ﻿using Meadow.Hardware;
+using Meadow.Units;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Gnss
 {
-    public partial class NeoM8
+    public partial class NeoM8 : ISpiPeripheral
     {
-        readonly ISpiPeripheral spiPeripheral;
+        /// <summary>
+        /// The default SPI bus speed for the device
+        /// </summary>
+        public Frequency DefaultSpiBusSpeed => new Frequency(375, Frequency.UnitType.Kilohertz);
 
-        const byte NULL_VALUE = 0xFF;
+        /// <summary>
+        /// The SPI bus speed for the device
+        /// </summary>
+        public Frequency SpiBusSpeed
+        {
+            get => spiComms.BusSpeed;
+            set => spiComms.BusSpeed = value;
+        }
+
+        /// <summary>
+        /// The default SPI bus mode for the device
+        /// </summary>
+        public SpiClockConfiguration.Mode DefaultSpiBusMode => SpiClockConfiguration.Mode.Mode0;
+
+        /// <summary>
+        /// The SPI bus mode for the device
+        /// </summary>
+        public SpiClockConfiguration.Mode SpiBusMode
+        {
+            get => spiComms.BusMode;
+            set => spiComms.BusMode = value;
+        }
+
+        /// <summary>
+        /// SPI Communication bus used to communicate with the peripheral
+        /// </summary>
+        protected ISpiCommunications spiComms;
+        private const byte NULL_VALUE = 0xFF;
 
         /// <summary>
         /// Create a new NEOM8 object using SPI
         /// </summary>
-        public NeoM8(ISpiBus spiBus, 
-            IDigitalOutputPort chipSelectPort, 
-            IDigitalOutputPort resetPort = null, 
+        public NeoM8(ISpiBus spiBus,
+            IDigitalOutputPort chipSelectPort,
+            IDigitalOutputPort resetPort = null,
             IDigitalInputPort ppsPort = null)
         {
             ResetPort = resetPort;
             PulsePerSecondPort = ppsPort;
 
-            spiPeripheral = new SpiPeripheral(spiBus, chipSelectPort);
+            spiComms = new SpiCommunications(spiBus, chipSelectPort, DefaultSpiBusSpeed, DefaultSpiBusMode);
 
             _ = InitializeSpi();
         }
@@ -30,27 +61,21 @@ namespace Meadow.Foundation.Sensors.Gnss
         /// <summary>
         /// Create a new NeoM8 object using SPI
         /// </summary>
-        public NeoM8(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin = null, IPin resetPin = null, IPin ppsPin = null)
+        public NeoM8(ISpiBus spiBus, IPin chipSelectPin = null, IPin resetPin = null, IPin ppsPin = null)
         {
-            var chipSelectPort = device.CreateDigitalOutputPort(chipSelectPin);
+            var chipSelectPort = chipSelectPin.CreateDigitalOutputPort();
 
-            spiPeripheral = new SpiPeripheral(spiBus, chipSelectPort);
+            spiComms = new SpiCommunications(spiBus, chipSelectPort, DefaultSpiBusSpeed, DefaultSpiBusMode);
 
-            if (resetPin != null)
-            {
-                device.CreateDigitalOutputPort(resetPin, true);
-            }
+            resetPin?.CreateDigitalOutputPort(true);
 
-            if (ppsPin != null)
-            {
-                device.CreateDigitalInputPort(ppsPin, InterruptMode.EdgeRising, ResistorMode.InternalPullDown);
-            }
+            ppsPin?.CreateDigitalInterruptPort(InterruptMode.EdgeRising, ResistorMode.InternalPullDown);
 
             _ = InitializeSpi();
         }
 
         //ToDo cancellation for sleep aware 
-        async Task InitializeSpi()
+        private async Task InitializeSpi()
         {
             messageProcessor = new SerialMessageProcessor(suffixDelimiter: Encoding.ASCII.GetBytes("\r\n"),
                                                     preserveDelimiter: true,
@@ -62,18 +87,16 @@ namespace Meadow.Foundation.Sensors.Gnss
             InitDecoders();
 
             await Reset();
-
-            Resolver.Log.Debug("Finish NeoM8 SPI initialization");
         }
 
-        async Task StartUpdatingSpi()
-        { 
+        private async Task StartUpdatingSpi()
+        {
             byte[] data = new byte[BUFFER_SIZE];
 
             static bool HasMoreData(byte[] data)
             {
                 bool hasNullValue = false;
-                for(int i = 1; i < data.Length; i++)
+                for (int i = 1; i < data.Length; i++)
                 {
                     if (data[i] == NULL_VALUE) { hasNullValue = true; }
                     if (data[i - 1] == NULL_VALUE && data[i] != NULL_VALUE)
@@ -84,19 +107,20 @@ namespace Meadow.Foundation.Sensors.Gnss
                 return !hasNullValue;
             }
 
-            await Task.Run(() =>
+            var t = new Task(() =>
             {
                 while (true)
                 {
-                    spiPeripheral.Read(data);
+                    spiComms.Read(data);
                     messageProcessor.Process(data);
 
-                    if(HasMoreData(data) == false)
+                    if (HasMoreData(data) == false)
                     {
                         Thread.Sleep(COMMS_SLEEP_MS);
                     }
                 }
-            });
+            }, TaskCreationOptions.LongRunning);
+            await t;
         }
     }
 }

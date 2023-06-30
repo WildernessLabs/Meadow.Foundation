@@ -9,17 +9,16 @@ namespace Meadow.Foundation.Sensors.Hid
 
         public event EventHandler<ChangeResult<double>> Updated;
 
-        //precision scale multiplier 
-        readonly double scale = 1;
+        readonly double precisionMultiplier = 1;
 
         public WiiExtensionAnalogTrigger(byte precision)
         {
-            scale = 1.0 / Math.Pow(2, precision);
+            precisionMultiplier = 1.0 / Math.Pow(2, precision);
         }
 
         public void Update(byte triggerPosition)
         {
-            var newPosition = triggerPosition * scale;
+            var newPosition = triggerPosition * precisionMultiplier;
 
             if (newPosition != Position)
             {

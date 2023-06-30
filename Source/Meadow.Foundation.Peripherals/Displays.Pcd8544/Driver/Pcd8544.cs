@@ -1,21 +1,16 @@
-﻿using Meadow.Hardware;
+﻿using Meadow.Foundation.Graphics;
 using Meadow.Foundation.Graphics.Buffers;
-using System;
-using Meadow.Foundation.Graphics;
+using Meadow.Hardware;
 using Meadow.Units;
+using System;
 
 namespace Meadow.Foundation.Displays
 {
     /// <summary>
     /// Represents a Pcd8544 monochrome display
     /// </summary>
-    public class Pcd8544 : IGraphicsDisplay
+    public class Pcd8544 : IGraphicsDisplay, ISpiPeripheral
     {
-        /// <summary>
-        /// Default SPI bus speed
-        /// </summary>
-        public static Frequency DEFAULT_SPEED = new Frequency(4000, Frequency.UnitType.Kilohertz);
-
         /// <summary>
         /// Display color mode 
         /// </summary>
@@ -46,9 +41,41 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         public bool IsDisplayInverted { get; private set; } = false;
 
+        /// <summary>
+        /// The default SPI bus speed for the device
+        /// </summary>
+        public Frequency DefaultSpiBusSpeed => new Frequency(4000, Frequency.UnitType.Kilohertz);
+
+        /// <summary>
+        /// The SPI bus speed for the device
+        /// </summary>
+        public Frequency SpiBusSpeed
+        {
+            get => spiComms.BusSpeed;
+            set => spiComms.BusSpeed = value;
+        }
+
+        /// <summary>
+        /// The default SPI bus mode for the device
+        /// </summary>
+        public SpiClockConfiguration.Mode DefaultSpiBusMode => SpiClockConfiguration.Mode.Mode0;
+
+        /// <summary>
+        /// The SPI bus mode for the device
+        /// </summary>
+        public SpiClockConfiguration.Mode SpiBusMode
+        {
+            get => spiComms.BusMode;
+            set => spiComms.BusMode = value;
+        }
+
         readonly IDigitalOutputPort dataCommandPort;
         readonly IDigitalOutputPort resetPort;
-        readonly ISpiPeripheral spiPeripheral;
+
+        /// <summary>
+        /// SPI Communication bus used to communicate with the peripheral
+        /// </summary>
+        protected ISpiCommunications spiComms;
 
         /// <summary>
         /// Buffer to hold display data
@@ -63,14 +90,13 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// Create a Pcd8544 object
         /// </summary>
-        /// <param name="device">Meadow device</param>
         /// <param name="spiBus">SPI bus connected to display</param>
         /// <param name="chipSelectPin">Chip select pin</param>
         /// <param name="dcPin">Data command pin</param>
         /// <param name="resetPin">Reset pin</param>
-        public Pcd8544(IMeadowDevice device, ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin):
-            this(spiBus, device.CreateDigitalOutputPort(chipSelectPin), device.CreateDigitalOutputPort(dcPin, true),
-                device.CreateDigitalOutputPort(resetPin, true))
+        public Pcd8544(ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin) :
+            this(spiBus, chipSelectPin?.CreateDigitalOutputPort(), dcPin.CreateDigitalOutputPort(true),
+                resetPin.CreateDigitalOutputPort(true))
         {
         }
 
@@ -81,18 +107,20 @@ namespace Meadow.Foundation.Displays
         /// <param name="chipSelectPort">Chip select output port</param>
         /// <param name="dataCommandPort">Data command output port</param>
         /// <param name="resetPort">Reset output port</param>
-        public Pcd8544(ISpiBus spiBus, 
+        public Pcd8544(ISpiBus spiBus,
             IDigitalOutputPort chipSelectPort,
             IDigitalOutputPort dataCommandPort,
             IDigitalOutputPort resetPort)
         {
+            imageBuffer = new Buffer1bpp(Width, Height);
+
             dataCommandPort.State = true;
             resetPort.State = true;
 
             this.dataCommandPort = dataCommandPort;
             this.resetPort = resetPort;
 
-            spiPeripheral = new SpiPeripheral(spiBus, chipSelectPort);
+            spiComms = new SpiCommunications(spiBus, chipSelectPort, DefaultSpiBusSpeed, DefaultSpiBusMode);
 
             Initialize();
         }
@@ -112,7 +140,7 @@ namespace Meadow.Foundation.Displays
             commandBuffer.Span[5] = 0x20;
             commandBuffer.Span[6] = 0x0C;
 
-            spiPeripheral.Write(commandBuffer.Span[0..6]);
+            spiComms.Write(commandBuffer.Span[0..6]);
 
             dataCommandPort.State = true;
 
@@ -174,7 +202,7 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         public void Show()
         {
-            spiPeripheral.Write(imageBuffer.Buffer);
+            spiComms.Write(imageBuffer.Buffer);
         }
 
         /// <summary>
@@ -200,7 +228,7 @@ namespace Meadow.Foundation.Displays
             dataCommandPort.State = false;
             commandBuffer.Span[0] = inverse ? (byte)0x0D : (byte)0x0C;
 
-            spiPeripheral.Write(commandBuffer.Span[0]);
+            spiComms.Write(commandBuffer.Span[0]);
             dataCommandPort.State = true;
         }
 
@@ -213,7 +241,7 @@ namespace Meadow.Foundation.Displays
         {
             imageBuffer.Clear(fillColor.Color1bpp);
 
-            if(updateDisplay) { Show(); }
+            if (updateDisplay) { Show(); }
         }
 
         /// <summary>

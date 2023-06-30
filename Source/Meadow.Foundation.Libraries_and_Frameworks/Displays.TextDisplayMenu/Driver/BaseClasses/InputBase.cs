@@ -1,6 +1,6 @@
 using Meadow.Peripherals.Displays;
 
-namespace Meadow.Foundation.Displays.TextDisplayMenu.InputTypes
+namespace Meadow.Foundation.Displays.UI.InputTypes
 {
     /// <summary>
     /// Represents a base input menu item

@@ -7,12 +7,17 @@ using System.Threading.Tasks;
 namespace Meadow.Foundation.Sensors.Motion
 {
     /// <summary>
-    /// Driver for the Hmc5883 digital compass.
+    /// Driver for the Hmc5883 digital compass
     /// 
     /// This driver is untested
     /// </summary>
-    public partial class Hmc5883 : ByteCommsSensorBase<Vector>
+    public partial class Hmc5883 : ByteCommsSensorBase<Vector>, II2cPeripheral
     {
+        /// <summary>
+        /// The default I2C address for the peripheral
+        /// </summary>
+        public byte DefaultI2cAddress => (byte)Addresses.Default;
+
         /// <summary>
         /// Event to be raised when the compass changes
         /// </summary>
@@ -47,21 +52,20 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <param name="gain">Gain</param>
         /// <param name="measuringMode">Measuring mode</param>
         /// <param name="outputRate">Output rate</param>
-        /// <param name="samplesAmount">Samples amount</param>
+        /// <param name="sampleAmount">Sample amount</param>
         /// <param name="measurementConfig">Measurement configuration</param>
         public Hmc5883(II2cBus i2cBus, byte address = (byte)Addresses.Default,
             GainLevels gain = GainLevels.Gain1090,
             MeasuringModes measuringMode = MeasuringModes.Continuous,
             DataOutputRates outputRate = DataOutputRates.Rate15,
-            SampleAmounts samplesAmount = SampleAmounts.One,
+            SampleAmounts sampleAmount = SampleAmounts.One,
             MeasurementConfigurations measurementConfig = MeasurementConfigurations.Normal)
                 : base(i2cBus, address)
         {
-
             this.gain = (byte)gain;
             this.measuringMode = (byte)measuringMode;
             this.outputRate = (byte)outputRate;
-            this.sampleAmount = (byte)samplesAmount;
+            this.sampleAmount = (byte)sampleAmount;
             this.measurementConfig = (byte)measurementConfig;
 
             Initialize();
@@ -75,9 +79,9 @@ namespace Meadow.Foundation.Sensors.Motion
             byte configA = (byte)(sampleAmount | (outputRate << 2) | measurementConfig);
             byte configB = (byte)(gain << 5);
 
-            Peripheral.WriteRegister(Registers.HMC_CONFIG_REG_A_ADDR, configA);
-            Peripheral.WriteRegister(Registers.HMC_CONFIG_REG_B_ADDR, configB);
-            Peripheral.WriteRegister(Registers.HMC_MODE_REG_ADDR, measuringMode);
+            BusComms.WriteRegister(Registers.HMC_CONFIG_REG_A_ADDR, configA);
+            BusComms.WriteRegister(Registers.HMC_CONFIG_REG_B_ADDR, configB);
+            BusComms.WriteRegister(Registers.HMC_MODE_REG_ADDR, measuringMode);
         }
 
         /// <summary>
@@ -86,7 +90,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <param name="changeResult">The updated sensor data</param>
         protected override void RaiseEventsAndNotify(IChangeResult<Vector> changeResult)
         {
-            this.DirectionUpdated?.Invoke(this, changeResult);
+            DirectionUpdated?.Invoke(this, changeResult);
             base.RaiseEventsAndNotify(changeResult);
         }
 
@@ -96,13 +100,10 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <returns>The latest sensor reading</returns>
         protected override Task<Vector> ReadSensor()
         {
-            return Task.Run(() =>
-            {
-                ushort x = Peripheral.ReadRegisterAsUShort(Registers.HMC_X_MSB_REG_ADDR, ByteOrder.BigEndian);
-                ushort y = Peripheral.ReadRegisterAsUShort(Registers.HMC_Y_MSB_REG_ADDR, ByteOrder.BigEndian);
-                ushort z = Peripheral.ReadRegisterAsUShort(Registers.HMC_Z_MSB_REG_ADDR, ByteOrder.BigEndian);
-                return new Vector(x, y, z);
-            });
+            ushort x = BusComms.ReadRegisterAsUShort(Registers.HMC_X_MSB_REG_ADDR, ByteOrder.BigEndian);
+            ushort y = BusComms.ReadRegisterAsUShort(Registers.HMC_Y_MSB_REG_ADDR, ByteOrder.BigEndian);
+            ushort z = BusComms.ReadRegisterAsUShort(Registers.HMC_Z_MSB_REG_ADDR, ByteOrder.BigEndian);
+            return Task.FromResult(new Vector(x, y, z));
         }
 
         /// <summary>
@@ -127,8 +128,8 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
         private Statuses GetStatus()
         {
-            Peripheral.Write(Registers.HMC_STATUS_REG_ADDR);
-            Peripheral.Read(ReadBuffer.Span[0..1]);
+            BusComms.Write(Registers.HMC_STATUS_REG_ADDR);
+            BusComms.Read(ReadBuffer.Span[0..1]);
             return (Statuses)ReadBuffer.Span[0];
         }
     }

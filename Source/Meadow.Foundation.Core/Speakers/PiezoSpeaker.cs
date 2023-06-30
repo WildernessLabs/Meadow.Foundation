@@ -12,6 +12,12 @@ namespace Meadow.Foundation.Audio
     public class PiezoSpeaker : IToneGenerator
     {
         /// <summary>
+        /// The volume from 0-1 
+        /// Defined by the PWM port duty cycle from 0 to 0.5
+        /// </summary>
+        public float Volume { get; protected set; } = 1.0f;
+        
+        /// <summary>
         /// Gets the port that is driving the Piezo Speaker
         /// </summary>
         protected IPwmPort Port { get; set; }
@@ -21,7 +27,6 @@ namespace Meadow.Foundation.Audio
         /// <summary>
         /// Create a new PiezoSpeaker instance
         /// </summary>
-        /// <param name="device">IPwmOutputController to create PWM port</param>
         /// <param name="pin">PWM Pin connected to the PiezoSpeaker</param>
         /// <param name="frequency">PWM frequency</param>
         /// <param name="dutyCycle">Duty cycle</param>
@@ -32,7 +37,6 @@ namespace Meadow.Foundation.Audio
         /// <summary>
         /// Create a new PiezoSpeaker instance
         /// </summary>
-        /// <param name="device">IPwmOutputController to create PWM port</param>
         /// <param name="pin">PWM Pin connected to the PiezoSpeaker</param>
         public PiezoSpeaker(IPin pin) :
             this(pin.CreatePwmPort(new Frequency(100, Frequency.UnitType.Hertz), 0))
@@ -74,7 +78,7 @@ namespace Meadow.Foundation.Audio
                 isPlaying = true;
 
                 Port.Frequency = frequency;
-                Port.DutyCycle = 0.5f;
+                Port.DutyCycle = Volume / 2f;
 
                 if (duration.TotalMilliseconds > 0)
                 {
@@ -92,6 +96,20 @@ namespace Meadow.Foundation.Audio
         public void StopTone()
         {
             Port.DutyCycle = 0f;
+        }
+
+        /// <summary>
+        /// Set the playback volume
+        /// </summary>
+        /// <param name="volume">The volume from 0 (off) to 1 (max volume)</param>
+        public void SetVolume(float volume)
+        {
+            Volume = Math.Clamp(volume, 0, 1);
+
+             if(isPlaying)
+            {
+                Port.DutyCycle = Volume / 2f;
+            }
         }
     }
 }

@@ -1,9 +1,9 @@
 ﻿using Meadow.Peripherals.Displays;
 
-namespace Meadow.Foundation.Displays.TextDisplayMenu
+namespace Meadow.Foundation.Displays.UI
 {
     /// <summary>
-    /// Text display Menu Input abstraction
+    /// Text display TextDisplayMenu Input abstraction
     /// </summary>
     public interface IMenuInputItem : IPage
     {

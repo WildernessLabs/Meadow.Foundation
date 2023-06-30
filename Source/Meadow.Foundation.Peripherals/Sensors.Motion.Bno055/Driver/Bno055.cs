@@ -10,27 +10,6 @@ using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Motion
 {
-    // Sample Reading:
-    // Accel: [X:0.00,Y:-1.15,Z:10.09 (m/s^2)]
-    // Gyro: [X:0.00,Y:-0.06,Z:0.06 (degrees/s)]
-    // Compass: [X:19.38,Y:-36.75,Z:-118.25 (Tesla)]
-    // Gravity: [X:0.00, Y:-1.12, Z:9.74 (meters/s^2)]
-    // Quaternion orientation: [X:-0.06, Y:0.00, Z:0.00]
-    // Euler orientation: [heading: 0.00, Roll: 0.00, Pitch: 0.12]
-    // Linear Accel: [X:0.00, Y:-0.03, Z:0.35 (meters/s^2)]
-    // Temp: 33.00C
-
-    //TODO: the sensor works great as is right now, but there's some room for
-    // improvement. Currently, we basically turn it on full bore and get all
-    // the readings.
-    // However, there's an opportunity here to allow users to selectively turn
-    // on the various features, and then in the `ReadSensor()` method we can
-    // check before we do the reading to see what the user has turned on.
-    // if the feature is turned on, we can read and parse the registers and then
-    // set the `Conditions.[X] = reading`, otherwise set them to `null`, since
-    // all the conditions are nullable. this would provide folks with an
-    // opportunity to use the sensor in a low or lower-power configuration.
-
     /// <summary>
     /// Provide methods / properties to allow an application to control a BNO055 
     /// 9-axis absolute orientation sensor.
@@ -48,8 +27,13 @@ namespace Meadow.Foundation.Sensors.Motion
         MagneticField3D? MagneticField3D, Quaternion? QuaternionOrientation,
         Acceleration3D? LinearAcceleration, Acceleration3D? GravityVector,
         EulerAngles? EulerOrientation, Units.Temperature? Temperature)>,
-        IAccelerometer, IGyroscope, ITemperatureSensor
+        IAccelerometer, IGyroscope, ITemperatureSensor, II2cPeripheral
     {
+        /// <summary>
+        /// The default I2C address for the peripheral
+        /// </summary>
+        public byte DefaultI2cAddress => (byte)Addresses.Default;
+
         /// <summary>
         /// Raised when the acceleration value changes
         /// </summary>
@@ -137,13 +121,13 @@ namespace Meadow.Foundation.Sensors.Motion
         {
             get
             {
-                return (Sensor)Peripheral.ReadRegister(Registers.TemperatureSource);
+                return (Sensor)BusComms.ReadRegister(Registers.TemperatureSource);
             }
             set
             {
                 if ((value == Sensor.Accelerometer) || (value == Sensor.Gyroscope))
                 {
-                    Peripheral.WriteRegister(Registers.TemperatureSource, (byte)value);
+                    BusComms.WriteRegister(Registers.TemperatureSource, (byte)value);
                 }
                 else
                 {
@@ -157,10 +141,10 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
 	    public byte PowerMode
         {
-            get => Peripheral.ReadRegister(Registers.PowerMode);
+            get => BusComms.ReadRegister(Registers.PowerMode);
             set
             {
-                Peripheral.WriteRegister(Registers.PowerMode, value);
+                BusComms.WriteRegister(Registers.PowerMode, value);
                 Thread.Sleep(15);
             }
         }
@@ -173,14 +157,14 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </remarks>
 	    public byte OperatingMode
         {
-            get => Peripheral.ReadRegister(Registers.OperatingMode);
+            get => BusComms.ReadRegister(Registers.OperatingMode);
             set
             {
                 if (value > OperatingModes.MAXIMUM_VALUE)
                 {
                     throw new ArgumentOutOfRangeException();
                 }
-                Peripheral.WriteRegister(Registers.OperatingMode, value);
+                BusComms.WriteRegister(Registers.OperatingMode, value);
                 Thread.Sleep(20);
             }
         }
@@ -197,14 +181,14 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </remarks>
 	    private byte Page
         {
-            get => Peripheral.ReadRegister(Registers.PageID);
+            get => BusComms.ReadRegister(Registers.PageID);
             set
             {
                 if ((value != 0) && (value != 1))
                 {
                     throw new ArgumentOutOfRangeException();
                 }
-                Peripheral.WriteRegister(Registers.PageID, value);
+                BusComms.WriteRegister(Registers.PageID, value);
             }
         }
 
@@ -220,22 +204,22 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         /// Get the system calibration status.
         /// </summary>
-        public bool IsSystemCalibrated => ((Peripheral.ReadRegister(Registers.CalibrationStatus) >> 6) & 0x03) != 0;
+        public bool IsSystemCalibrated => ((BusComms.ReadRegister(Registers.CalibrationStatus) >> 6) & 0x03) != 0;
 
         /// <summary>
         /// Get the accelerometer calibration status.
         /// </summary>
-        public bool IsAccelerometerCalibrated => ((Peripheral.ReadRegister(Registers.CalibrationStatus) >> 2) & 0x03) != 0;
+        public bool IsAccelerometerCalibrated => ((BusComms.ReadRegister(Registers.CalibrationStatus) >> 2) & 0x03) != 0;
 
         /// <summary>
         /// Get the gyroscope calibration status.
         /// </summary>
-        public bool IsGyroscopeCalibrated => ((Peripheral.ReadRegister(Registers.CalibrationStatus) >> 4) & 0x03) != 0;
+        public bool IsGyroscopeCalibrated => ((BusComms.ReadRegister(Registers.CalibrationStatus) >> 4) & 0x03) != 0;
 
         /// <summary>
         /// Get the magnetometer status.
         /// </summary>
-        public bool IsMagnetometerCalibrated => (Peripheral.ReadRegister(Registers.CalibrationStatus) & 0x03) != 0;
+        public bool IsMagnetometerCalibrated => (BusComms.ReadRegister(Registers.CalibrationStatus) & 0x03) != 0;
 
         /// <summary>
         /// Is the system fully calibrated?
@@ -265,7 +249,7 @@ namespace Meadow.Foundation.Sensors.Motion
         public Bno055(II2cBus i2cBus, byte address)
             : base(i2cBus, address, readBufferSize: 256)
         {
-            var id = Peripheral.ReadRegister(Registers.ChipID);
+            var id = BusComms.ReadRegister(Registers.ChipID);
 
             if (id != 0xa0)
             {
@@ -303,78 +287,75 @@ namespace Meadow.Foundation.Sensors.Motion
             Acceleration3D? LinearAcceleration, Acceleration3D? GravityVector,
             EulerAngles? EulerOrientation, Units.Temperature? Temperature)> ReadSensor()
         {
-            return Task.Run(() =>
+            if (PowerMode != PowerModes.NORMAL)
             {
-                if (PowerMode != PowerModes.NORMAL)
-                {
-                    PowerMode = PowerModes.NORMAL;
-                }
+                PowerMode = PowerModes.NORMAL;
+            }
 
-                if (OperatingMode != OperatingModes.NINE_DEGREES_OF_FREEDOM)
-                {
-                    OperatingMode = OperatingModes.NINE_DEGREES_OF_FREEDOM;
-                }
+            if (OperatingMode != OperatingModes.NINE_DEGREES_OF_FREEDOM)
+            {
+                OperatingMode = OperatingModes.NINE_DEGREES_OF_FREEDOM;
+            }
 
-                // The amazing Octple!
-                (Acceleration3D? Acceleration3D, AngularVelocity3D? AngularVelocity3D,
-                MagneticField3D? MagneticField3D, Quaternion? QuaternionOrientation,
-                Acceleration3D? LinearAcceleration, Acceleration3D? GravityVector,
-                EulerAngles? EulerOrientation, Units.Temperature? Temperature) conditions;
+            // The amazing Octple!
+            (Acceleration3D? Acceleration3D, AngularVelocity3D? AngularVelocity3D,
+            MagneticField3D? MagneticField3D, Quaternion? QuaternionOrientation,
+            Acceleration3D? LinearAcceleration, Acceleration3D? GravityVector,
+            EulerAngles? EulerOrientation, Units.Temperature? Temperature) conditions;
 
-                // make all the readings
-                // 	This method reads ony the sensor motion / orientation registers.  When
-                // 	accessing the data from a register it is necessary to subtract the
-                // 	access of the start of the sensor registers from the register required
-                // 	in order to get the correct offset into the _sensorReadings array.
+            // make all the readings
+            // 	This method reads ony the sensor motion / orientation registers.  When
+            // 	accessing the data from a register it is necessary to subtract the
+            // 	access of the start of the sensor registers from the register required
+            // 	in order to get the correct offset into the _sensorReadings array.
 
-                int length = Registers.GravityVectorZMSB + 1 - Registers.AccelerometerXLSB;
-                Peripheral.ReadRegister(Registers.AccelerometerXLSB, ReadBuffer.Span[0..length]);
+            int length = Registers.GravityVectorZMSB + 1 - Registers.AccelerometerXLSB;
+            BusComms.ReadRegister(Registers.AccelerometerXLSB, ReadBuffer.Span[0..length]);
 
-                // for debugging, you can look at the raw data:
-                //DebugInformation.DisplayRegisters(0x00, ReadBuffer.Span[0..length].ToArray());
+            // for debugging, you can look at the raw data:
+            //DebugInformation.DisplayRegisters(0x00, ReadBuffer.Span[0..length].ToArray());
 
-                //---- Acceleration3D
-                double accelDivisor = 100.0; //m/s2
-                var accelData = GetReadings(Registers.AccelerometerXLSB - Registers.StartOfSensorData, accelDivisor);
-                conditions.Acceleration3D = new Acceleration3D(accelData.X, accelData.Y, accelData.Z, Acceleration.UnitType.MetersPerSecondSquared);
+            //---- Acceleration3D
+            double accelDivisor = 100.0; //m/s2
+            var accelData = GetReadings(Registers.AccelerometerXLSB - Registers.StartOfSensorData, accelDivisor);
+            conditions.Acceleration3D = new Acceleration3D(accelData.X, accelData.Y, accelData.Z, Acceleration.UnitType.MetersPerSecondSquared);
 
-                //---- AngularAcceleration3D
-                double angularDivisor = 900.0; //radians
-                var angularData = GetReadings(Registers.GyroscopeXLSB - Registers.StartOfSensorData, angularDivisor);
-                conditions.AngularVelocity3D = new AngularVelocity3D(angularData.X, angularData.Y, angularData.Z, AngularVelocity.UnitType.RadiansPerSecond);
+            //---- AngularAcceleration3D
+            double angularDivisor = 900.0; //radians
+            var angularData = GetReadings(Registers.GyroscopeXLSB - Registers.StartOfSensorData, angularDivisor);
+            conditions.AngularVelocity3D = new AngularVelocity3D(angularData.X, angularData.Y, angularData.Z, AngularVelocity.UnitType.RadiansPerSecond);
 
-                //---- MagneticField3D
-                var magnetometerData = GetReadings(Registers.MagnetometerXLSB - Registers.StartOfSensorData, 16.0);
-                conditions.MagneticField3D = new MagneticField3D(magnetometerData.X, magnetometerData.Y, magnetometerData.Z, MagneticField.UnitType.Tesla);
+            //---- MagneticField3D
+            var magnetometerData = GetReadings(Registers.MagnetometerXLSB - Registers.StartOfSensorData, 16.0);
+            conditions.MagneticField3D = new MagneticField3D(magnetometerData.X, magnetometerData.Y, magnetometerData.Z, MagneticField.UnitType.Tesla);
 
-                //---- Quarternion Orientation
-                int quaternionData = Registers.QuaternionDataWLSB - Registers.StartOfSensorData;
-                short w = (short)((ReadBuffer.Span[quaternionData + 1] << 8) | ReadBuffer.Span[quaternionData]);
-                short x = (short)((ReadBuffer.Span[quaternionData + 3] << 8) | ReadBuffer.Span[quaternionData + 2]);
-                short y = (short)((ReadBuffer.Span[quaternionData + 5] << 8) | ReadBuffer.Span[quaternionData + 4]);
-                short z = (short)((ReadBuffer.Span[quaternionData + 5] << 8) | ReadBuffer.Span[quaternionData + 4]);
-                double factor = 1.0 / (1 << 14);
-                conditions.QuaternionOrientation = new Quaternion(w * factor, x * factor, y * factor, z * factor);
+            //---- Quarternion Orientation
+            int quaternionData = Registers.QuaternionDataWLSB - Registers.StartOfSensorData;
+            short w = (short)((ReadBuffer.Span[quaternionData + 1] << 8) | ReadBuffer.Span[quaternionData]);
+            short x = (short)((ReadBuffer.Span[quaternionData + 3] << 8) | ReadBuffer.Span[quaternionData + 2]);
+            short y = (short)((ReadBuffer.Span[quaternionData + 5] << 8) | ReadBuffer.Span[quaternionData + 4]);
+            short z = (short)((ReadBuffer.Span[quaternionData + 5] << 8) | ReadBuffer.Span[quaternionData + 4]);
+            double factor = 1.0 / (1 << 14);
+            conditions.QuaternionOrientation = new Quaternion(w * factor, x * factor, y * factor, z * factor);
 
-                //---- Linear Acceleration
-                double linearAccellDivisor = 100.0; //m/s2
-                var linearAccelData = GetReadings(Registers.LinearAccelerationXLSB - Registers.StartOfSensorData, linearAccellDivisor);
-                conditions.LinearAcceleration = new Acceleration3D(linearAccelData.X, linearAccelData.Y, linearAccelData.Z, Acceleration.UnitType.MetersPerSecondSquared);
+            //---- Linear Acceleration
+            double linearAccellDivisor = 100.0; //m/s2
+            var linearAccelData = GetReadings(Registers.LinearAccelerationXLSB - Registers.StartOfSensorData, linearAccellDivisor);
+            conditions.LinearAcceleration = new Acceleration3D(linearAccelData.X, linearAccelData.Y, linearAccelData.Z, Acceleration.UnitType.MetersPerSecondSquared);
 
-                //---- Gravity Vector
-                double gravityVectorDivisor = 100.0; //m/s2
-                var gravityVectorData = GetReadings(Registers.GravityVectorXLSB - Registers.StartOfSensorData, gravityVectorDivisor);
-                conditions.GravityVector = new Acceleration3D(gravityVectorData.X, gravityVectorData.Y, gravityVectorData.Z, Acceleration.UnitType.MetersPerSecondSquared);
+            //---- Gravity Vector
+            double gravityVectorDivisor = 100.0; //m/s2
+            var gravityVectorData = GetReadings(Registers.GravityVectorXLSB - Registers.StartOfSensorData, gravityVectorDivisor);
+            conditions.GravityVector = new Acceleration3D(gravityVectorData.X, gravityVectorData.Y, gravityVectorData.Z, Acceleration.UnitType.MetersPerSecondSquared);
 
-                //---- euler
-                double eulerDivisor = 900.0; //radians
-                conditions.EulerOrientation = ConvertReadingToEulerAngles(Registers.EulerAngleXLSB - Registers.StartOfSensorData, eulerDivisor);
+            //---- euler
+            double eulerDivisor = 900.0; //radians
+            conditions.EulerOrientation = ConvertReadingToEulerAngles(Registers.EulerAngleXLSB - Registers.StartOfSensorData, eulerDivisor);
 
-                //---- temperature
-                conditions.Temperature = new Units.Temperature(Peripheral.ReadRegister(Registers.Temperature), Units.Temperature.UnitType.Celsius);
+            //---- temperature
+            conditions.Temperature = new Units.Temperature(BusComms.ReadRegister(Registers.Temperature), Units.Temperature.UnitType.Celsius);
 
-                return conditions;
-            });
+            return Task.FromResult(conditions);
         }
 
         /// <summary>
@@ -460,7 +441,7 @@ namespace Meadow.Foundation.Sensors.Motion
             int length = 0x6A;
             byte[] buffer = new byte[length];
 
-            Peripheral.ReadRegister(Registers.ChipID, buffer);
+            BusComms.ReadRegister(Registers.ChipID, buffer);
             DebugInformation.DisplayRegisters(0x00, buffer);
 
             Resolver.Log.Info("== /REGISTERS =======================================================================");

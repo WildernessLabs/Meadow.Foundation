@@ -38,7 +38,7 @@ namespace MeadowApp
 
             Resolver.Log.Info("Init...");
 
-            var spiBus = Device.CreateSpiBus(Max7219.DefaultSpiBusSpeed);
+            var spiBus = Device.CreateSpiBus();
 
             display = new Max7219(spiBus, Device.Pins.D01, 4, 2, Max7219.Max7219Mode.Display);
 
@@ -53,8 +53,8 @@ namespace MeadowApp
 
         void Show3dCube()
         {
-            int originY = (int)display.Width / 2;
-            int originX = (int)display.Height / 2;
+            int originY = display.Width / 2;
+            int originX = display.Height / 2;
 
             int angle = 0;
             while (true)

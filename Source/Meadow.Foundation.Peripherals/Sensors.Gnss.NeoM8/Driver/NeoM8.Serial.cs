@@ -5,7 +5,7 @@ namespace Meadow.Foundation.Sensors.Gnss
 {
     public partial class NeoM8
     {
-        readonly ISerialMessagePort serialPort;
+        private readonly ISerialMessagePort serialPort;
 
         // TODO: if we want to make this public then we're going to have to add
         // a bunch of checks around baud rate, 8n1, etc.
@@ -34,34 +34,28 @@ namespace Meadow.Foundation.Sensors.Gnss
                 suffixDelimiter: Encoding.ASCII.GetBytes("\r\n"),
                 preserveDelimiter: true,
                 readBufferSize: 512),
-                device.CreateDigitalOutputPort(resetPin, true),
-                device.CreateDigitalInputPort(ppsPin, InterruptMode.EdgeRising, ResistorMode.InternalPullDown))
+                (resetPin != null) ? device.CreateDigitalOutputPort(resetPin, true) : null,
+                (ppsPin != null) ? device.CreateDigitalInterruptPort(ppsPin, InterruptMode.EdgeRising, ResistorMode.InternalPullDown) : null)
         { }
 
-        void InitializeSerial()
+        private void InitializeSerial()
         {
             communicationMode = CommunicationMode.Serial;
             serialPort.MessageReceived += MessageReceived;
             InitDecoders();
 
             Reset().Wait();
-
-            Resolver.Log.Debug("Finish NeoM8 Serial initialization");
         }
 
-        void StartUpdatingSerial()
+        private void StartUpdatingSerial()
         {
             if (serialPort.IsOpen)
             {
-                Resolver.Log.Debug("serial port already open");
                 return;
             }
 
-            Resolver.Log.Debug("opening serial port");
             serialPort.Open();
-            Resolver.Log.Debug("serial port opened");
 
-            Resolver.Log.Debug("Requesting NMEA data");
             serialPort.Write(Encoding.ASCII.GetBytes(Commands.PMTK_SET_NMEA_OUTPUT_ALLDATA));
             serialPort.Write(Encoding.ASCII.GetBytes(Commands.PMTK_Q_RELEASE));
             serialPort.Write(Encoding.ASCII.GetBytes(Commands.PGCMD_ANTENNA));

@@ -12,8 +12,7 @@ namespace Meadow.Foundation.Displays.Led
         CancellationTokenSource cts = null;
 
         readonly IDigitalOutputPort[] digits;
-
-        SevenSegment[] sevenSegments;
+        readonly SevenSegment[] sevenSegments;
 
         /// <summary>
         /// Creates a SevenSegment connected to the especified IPins to a IODevice

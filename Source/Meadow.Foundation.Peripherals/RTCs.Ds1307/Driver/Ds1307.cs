@@ -7,8 +7,13 @@ namespace Meadow.Foundation.RTCs
     /// <summary>
     /// Represents a DS1307 real-time clock
     /// </summary>
-    public partial class Ds1307
+    public partial class Ds1307 : II2cPeripheral
     {
+        /// <summary>
+        /// The default I2C address for the peripheral
+        /// </summary>
+        public byte DefaultI2cAddress => (byte)Addresses.Default;
+
         const int OriginYear = 1980;
 
         readonly II2cBus i2cBus;
@@ -31,15 +36,15 @@ namespace Meadow.Foundation.RTCs
             get
             {   // read 1 byte starting from 0x00
                 var reg = new byte[1];
-                i2cBus.Write((byte)Address.Default, new byte[] { 0 });
-                i2cBus.Read((byte)Address.Default, reg);
+                i2cBus.Write((byte)Addresses.Default, new byte[] { 0 });
+                i2cBus.Read((byte)Addresses.Default, reg);
                 return (reg[0] & (1 << 7)) != 0;
             }
             set
             {   // read the seconds register
                 var reg = new byte[1];
-                i2cBus.Write((byte)Address.Default, new byte[] { 0 });
-                i2cBus.Read((byte)Address.Default, reg);
+                i2cBus.Write((byte)Addresses.Default, new byte[] { 0 });
+                i2cBus.Read((byte)Addresses.Default, reg);
                 var current = (reg[0] & (1 << 7)) != 0;
                 if ((value && current) || (!value && !current)) return;
 
@@ -54,7 +59,7 @@ namespace Meadow.Foundation.RTCs
                 }
 
                 // and write it back to register 0x00
-                i2cBus.Write((byte)Address.Default, reg);
+                i2cBus.Write((byte)Addresses.Default, reg);
             }
         }
 
@@ -65,8 +70,8 @@ namespace Meadow.Foundation.RTCs
         public DateTime GetTime()
         {
             var data = new byte[7];
-            i2cBus.Write((byte)Address.Default, new byte[] { 0 });
-            i2cBus.Read((byte)Address.Default, data);
+            i2cBus.Write((byte)Addresses.Default, new byte[] { 0 });
+            i2cBus.Read((byte)Addresses.Default, data);
             return FromRTCTime(data);
         }
 
@@ -76,11 +81,10 @@ namespace Meadow.Foundation.RTCs
         /// <param name="time">The new time</param>
         public void SetTime(DateTime time)
         {
-            var data = new List<byte>();
-            data.Add(0); 
+            var data = new List<byte> { 0 };
             data.AddRange(ToRTCTime(time));
 
-            i2cBus.Write((byte)Address.Default, data.ToArray());
+            i2cBus.Write((byte)Addresses.Default, data.ToArray());
         }
 
         /// <summary>
@@ -90,9 +94,9 @@ namespace Meadow.Foundation.RTCs
         /// <param name="count">The number of bytes to read</param>
         public byte[] ReadRAM(int offset, int count)
         {
-            var data = new byte[count];            
-            i2cBus.Write((byte)Address.Default, new byte[] { (byte)(0x08 + offset) });
-            i2cBus.Read((byte)Address.Default, data);
+            var data = new byte[count];
+            i2cBus.Write((byte)Addresses.Default, new byte[] { (byte)(0x08 + offset) });
+            i2cBus.Read((byte)Addresses.Default, data);
             return data;
         }
 
@@ -104,11 +108,13 @@ namespace Meadow.Foundation.RTCs
         /// <param name="data"></param>
         public void WriteRAM(int offset, params byte[] data)
         {
-            var d = new List<byte>();
-            d.Add((byte)(0x08 + offset)); // target start register offset
+            var d = new List<byte>
+            {
+                (byte)(0x08 + offset) // target start register offset
+            };
             d.AddRange(data);
 
-            i2cBus.Write((byte)Address.Default, d.ToArray());
+            i2cBus.Write((byte)Addresses.Default, d.ToArray());
         }
 
         /// <summary>
@@ -118,34 +124,19 @@ namespace Meadow.Foundation.RTCs
         /// <exception cref="NotSupportedException">Throw if invalid frequency is selected</exception>
         public void SquareWaveOutput(SquareWaveFrequency freq)
         {
-            byte registerData;
-
-            switch (freq)
+            var registerData = freq switch
             {
-                case SquareWaveFrequency.Wave_1000Hz:
-                    registerData = (1 << 4);
-                    break;
-                case SquareWaveFrequency.Wave_4096Hz:
-                    registerData = (1 << 4) | (1 << 0);
-                    break;
-                case SquareWaveFrequency.Wave_8192Hz:
-                    registerData = (1 << 4) | (1 << 1);
-                    break;
-                case SquareWaveFrequency.Wave_32768Hz:
-                    registerData = (1 << 4) | (1 << 0) | (1 << 1);
-                    break;
-                case SquareWaveFrequency.Wave_Low:
-                    registerData = 0;
-                    break;
-                case SquareWaveFrequency.Wave_High:
-                    registerData = (1 << 7);
-                    break;
-                default:
-                    throw new NotSupportedException();
-            }
+                SquareWaveFrequency.Wave_1000Hz => (byte)(1 << 4),
+                SquareWaveFrequency.Wave_4096Hz => (byte)((1 << 4) | (1 << 0)),
+                SquareWaveFrequency.Wave_8192Hz => (byte)((1 << 4) | (1 << 1)),
+                SquareWaveFrequency.Wave_32768Hz => (byte)((1 << 4) | (1 << 0) | (1 << 1)),
+                SquareWaveFrequency.Wave_Low => (byte)0,
+                SquareWaveFrequency.Wave_High => (byte)(1 << 7),
+                _ => throw new NotSupportedException(),
+            };
 
             // control register is at 0x07
-            i2cBus.Write((byte)Address.Default, new byte[] { 0x07, registerData }); //register and value
+            i2cBus.Write((byte)Addresses.Default, new byte[] { 0x07, registerData }); //register and value
         }
 
         static byte ToBCD(ushort i)

@@ -1,6 +1,6 @@
 using System;
 
-namespace Meadow.Foundation.Displays.TextDisplayMenu.InputTypes
+namespace Meadow.Foundation.Displays.UI.InputTypes
 {
     /// <summary>
     /// A base time input type

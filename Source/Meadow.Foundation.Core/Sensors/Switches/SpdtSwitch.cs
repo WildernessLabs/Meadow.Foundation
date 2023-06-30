@@ -23,7 +23,7 @@ namespace Meadow.Foundation.Sensors.Switches
         /// <summary>
         /// Returns the DigitalInputPort.
         /// </summary>
-        protected IDigitalInputPort DigitalIn { get; set; }
+        protected IDigitalInterruptPort DigitalIn { get; set; }
 
         /// <summary>
         /// Raised when the switch circuit is opened or closed.
@@ -37,7 +37,7 @@ namespace Meadow.Foundation.Sensors.Switches
         /// <param name="interruptMode"></param>
         /// <param name="resistorMode"></param>
         public SpdtSwitch(IPin pin, InterruptMode interruptMode, ResistorMode resistorMode) :
-            this(pin.CreateDigitalInputPort(interruptMode, resistorMode, TimeSpan.FromMilliseconds(20), TimeSpan.Zero))
+            this(pin.CreateDigitalInterruptPort(interruptMode, resistorMode, TimeSpan.FromMilliseconds(20), TimeSpan.Zero))
         { }
 
         /// <summary>
@@ -48,15 +48,15 @@ namespace Meadow.Foundation.Sensors.Switches
         /// <param name="resistorMode"></param>
         /// <param name="debounceDuration"></param>
         /// <param name="glitchFilterCycleCount"></param>
-        public SpdtSwitch(IDigitalInputController device, IPin pin, InterruptMode interruptMode, ResistorMode resistorMode, TimeSpan debounceDuration, TimeSpan glitchFilterCycleCount) :
-            this(pin.CreateDigitalInputPort(interruptMode, resistorMode, debounceDuration, glitchFilterCycleCount))
+        public SpdtSwitch(IPin pin, InterruptMode interruptMode, ResistorMode resistorMode, TimeSpan debounceDuration, TimeSpan glitchFilterCycleCount) :
+            this(pin.CreateDigitalInterruptPort(interruptMode, resistorMode, debounceDuration, glitchFilterCycleCount))
         { }
 
         /// <summary>
         /// Creates a SpdtSwitch on a especified interrupt port
         /// </summary>
         /// <param name="interruptPort"></param>
-        public SpdtSwitch(IDigitalInputPort interruptPort)
+        public SpdtSwitch(IDigitalInterruptPort interruptPort)
         {
             DigitalIn = interruptPort;
             DigitalIn.Changed += DigitalInChanged;

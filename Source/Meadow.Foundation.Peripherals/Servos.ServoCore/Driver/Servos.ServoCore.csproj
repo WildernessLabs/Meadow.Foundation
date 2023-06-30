@@ -9,7 +9,7 @@
     <PackageProjectUrl>http://developer.wildernesslabs.co/Meadow/Meadow.Foundation/</PackageProjectUrl>
     <PackageId>Meadow.Foundation.Servos.ServoCore</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
-    <PackageTags>Meadow, Meadow.Foundation, Servo, Meadow.Foundation.Servo</PackageTags>
+    <PackageTags>Meadow,Meadow.Foundation,Servo,Meadow.Foundation.Servo</PackageTags>
     <Version>0.8.49</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>PWM generic servo controller</Description>

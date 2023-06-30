@@ -16,8 +16,8 @@ namespace Sensors.AirQuality.Ccs811_Sample
         {
             Resolver.Log.Info("Initializing...");
 
-            var i2c = Device.CreateI2cBus(Meadow.Hardware.I2cBusSpeed.Fast);
-            sensor = new Ccs811(i2c);
+            var i2cBus = Device.CreateI2cBus(Meadow.Hardware.I2cBusSpeed.Fast);
+            sensor = new Ccs811(i2cBus);
 
             var consumer = Ccs811.CreateObserver(
                 handler: result =>

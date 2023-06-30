@@ -5,12 +5,17 @@ namespace Meadow.Foundation.Leds
     /// <summary>
     /// Represents a Pca9633 led driver
     /// </summary>
-    public partial class Pca9633
+    public partial class Pca9633 : II2cPeripheral
     {
         /// <summary>
-        /// Pca9633 i2c peripheral object
+        /// The default I2C address for the peripheral
         /// </summary>
-        readonly II2cPeripheral i2CPeripheral;
+        public byte DefaultI2cAddress => (byte)Addresses.Default;
+
+        /// <summary>
+        /// I2C Communication bus used to communicate with the peripheral
+        /// </summary>
+        protected readonly II2cCommunications i2cComms;
 
         /// <summary>
         /// Red LED location - used for RGB control
@@ -31,7 +36,7 @@ namespace Meadow.Foundation.Leds
         public bool IsOn
         {
             get => isOn;
-            set => i2CPeripheral.WriteRegister((byte)Registers.LEDOUT, (byte)(value == true?1:0));
+            set => i2cComms.WriteRegister((byte)Registers.LEDOUT, (byte)(value == true ? 1 : 0));
         }
         bool isOn = true;
 
@@ -40,7 +45,7 @@ namespace Meadow.Foundation.Leds
         /// </summary>
         /// <param name="i2cBus">i2c bus</param>
         /// <param name="address">i2c address</param>
-        public Pca9633(II2cBus i2cBus, Addresses address)
+        public Pca9633(II2cBus i2cBus, Addresses address = Addresses.Default)
             : this(i2cBus, (byte)address)
         {
         }
@@ -50,9 +55,9 @@ namespace Meadow.Foundation.Leds
         /// </summary>
         /// <param name="i2cBus">i2c bus</param>
         /// <param name="address">i2c address</param>
-        public Pca9633(II2cBus i2cBus, byte address = (byte)Addresses.Default)
+        public Pca9633(II2cBus i2cBus, byte address)
         {
-            i2CPeripheral = new I2cPeripheral(i2cBus, address);
+            i2cComms = new I2cCommunications(i2cBus, address);
 
             Initialize();
         }
@@ -60,10 +65,10 @@ namespace Meadow.Foundation.Leds
         void Initialize()
         {
             // backlight init
-            i2CPeripheral.WriteRegister((byte)Registers.MODE1, 0);
+            i2cComms.WriteRegister((byte)Registers.MODE1, 0);
             // set LEDs controllable by both PWM and GRPPWM registers
-            i2CPeripheral.WriteRegister(8, 0xFF);
-            i2CPeripheral.WriteRegister((byte)Registers.MODE2, 20);
+            i2cComms.WriteRegister(8, 0xFF);
+            i2cComms.WriteRegister((byte)Registers.MODE2, 20);
         }
 
         /// <summary>
@@ -71,19 +76,19 @@ namespace Meadow.Foundation.Leds
         /// </summary>
         public void Wake()
         {
-            var value = i2CPeripheral.ReadRegister((byte)Registers.MODE1);
+            var value = i2cComms.ReadRegister((byte)Registers.MODE1);
             value = (byte)(value & ~(1 << BIT_SLEEP));
-            i2CPeripheral.WriteRegister((byte)Registers.MODE1, value);
+            i2cComms.WriteRegister((byte)Registers.MODE1, value);
         }
-        
+
         /// <summary>
         /// Put device into sleep state
         /// </summary>
         public void Sleep()
         {
-            var value = i2CPeripheral.ReadRegister((byte)Registers.MODE1);
+            var value = i2cComms.ReadRegister((byte)Registers.MODE1);
             value = (byte)(value | (1 << BIT_SLEEP));
-            i2CPeripheral.WriteRegister((byte)Registers.MODE1, value);
+            i2cComms.WriteRegister((byte)Registers.MODE1, value);
         }
 
         /// <summary>
@@ -107,15 +112,15 @@ namespace Meadow.Foundation.Leds
         {
             if (LedRed != LedPosition.Undefined)
             {
-                i2CPeripheral.WriteRegister((byte)LedRed, (byte)(255 - color.R));
+                i2cComms.WriteRegister((byte)LedRed, (byte)(255 - color.R));
             }
             if (LedGreen != LedPosition.Undefined)
             {
-                i2CPeripheral.WriteRegister((byte)LedGreen, (byte)(255 - color.G));
+                i2cComms.WriteRegister((byte)LedGreen, (byte)(255 - color.G));
             }
             if (LedBlue != LedPosition.Undefined)
             {
-                i2CPeripheral.WriteRegister((byte)LedBlue, (byte)(255 - color.B));
+                i2cComms.WriteRegister((byte)LedBlue, (byte)(255 - color.B));
             }
         }
 
@@ -126,7 +131,7 @@ namespace Meadow.Foundation.Leds
         /// <param name="brightness">brightness (0-255)</param>
         public void SetLedBrightness(LedPosition led, byte brightness)
         {
-            i2CPeripheral.WriteRegister((byte)led, (byte)(255 - brightness));
+            i2cComms.WriteRegister((byte)led, (byte)(255 - brightness));
         }
 
         /// <summary>
@@ -135,7 +140,7 @@ namespace Meadow.Foundation.Leds
         /// <param name="brightness">brightness (0-255)</param>
         public void SetGroupBrightess(byte brightness)
         {
-            i2CPeripheral.WriteRegister((byte)Registers.GRPPWM, (byte)(255 - brightness));
+            i2cComms.WriteRegister((byte)Registers.GRPPWM, (byte)(255 - brightness));
         }
 
         /// <summary>
@@ -145,10 +150,10 @@ namespace Meadow.Foundation.Leds
         /// <param name="drive"></param>
         public void SetDriveMode(DriveType drive)
         {
-            var value = i2CPeripheral.ReadRegister((byte)Registers.MODE2);
+            var value = i2cComms.ReadRegister((byte)Registers.MODE2);
             value = (byte)(value & ~(1 << BIT_OUTDRV));
             value |= (byte)((byte)drive << BIT_OUTDRV);
-            i2CPeripheral.WriteRegister((byte)Registers.MODE2, value);
+            i2cComms.WriteRegister((byte)Registers.MODE2, value);
         }
 
         /// <summary>
@@ -165,7 +170,7 @@ namespace Meadow.Foundation.Leds
                 AutoIncrement.IndividualAndGlobalRegisters => 1 << 7 | 1 << 6 | 1 << 5,
                 _ => 0,
             };
-            i2CPeripheral.WriteRegister((byte)Registers.MODE1, (byte)value);
+            i2cComms.WriteRegister((byte)Registers.MODE1, (byte)value);
 
         }
 

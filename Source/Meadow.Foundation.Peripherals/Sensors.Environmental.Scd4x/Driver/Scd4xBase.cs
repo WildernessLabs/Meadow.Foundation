@@ -1,10 +1,10 @@
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 using Meadow.Hardware;
 using Meadow.Peripherals.Sensors;
 using Meadow.Peripherals.Sensors.Environmental;
 using Meadow.Units;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Environmental
 {
@@ -12,10 +12,10 @@ namespace Meadow.Foundation.Sensors.Environmental
     /// Base class for SCD4x series of C02 sensors
     /// </summary>
     public abstract partial class Scd4xBase
-        : ByteCommsSensorBase<(Concentration? Concentration, 
+        : ByteCommsSensorBase<(Concentration? Concentration,
                                                         Units.Temperature? Temperature,
                                                         RelativeHumidity? Humidity)>,
-        ITemperatureSensor, IHumiditySensor, IConcentrationSensor
+        ITemperatureSensor, IHumiditySensor, IConcentrationSensor, II2cPeripheral
     {
         /// <summary>
         /// Raised when the concentration changes
@@ -46,6 +46,11 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// The current humidity
         /// </summary>
         public RelativeHumidity? Humidity => Conditions.Humidity;
+
+        /// <summary>
+        /// The default I2C address for the peripheral
+        /// </summary>
+        public byte DefaultI2cAddress => (byte)Addresses.Default;
 
         /// <summary>
         /// Create a new Scd4xBase object
@@ -106,7 +111,7 @@ namespace Meadow.Foundation.Sensors.Environmental
             Thread.Sleep(1);
 
             var data = new byte[9];
-            Peripheral.Read(data);
+            BusComms.Read(data);
 
             var ret = new byte[6];
 
@@ -119,7 +124,7 @@ namespace Meadow.Foundation.Sensors.Environmental
 
             return ret;
         }
-                
+
         /// <summary>
         /// Is there sensor measurement data ready
         /// Sensor returns data ~5 seconds in normal operation and ~30 seconds in low power mode
@@ -130,7 +135,7 @@ namespace Meadow.Foundation.Sensors.Environmental
             SendCommand(Commands.GetDataReadyStatus);
             Thread.Sleep(1);
             var data = new byte[3];
-            Peripheral.Read(data);
+            BusComms.Read(data);
 
             if (data[1] == 0 && (data[0] & 0x07) == 0)
             {
@@ -184,7 +189,7 @@ namespace Meadow.Foundation.Sensors.Environmental
             data[0] = (byte)((ushort)command >> 8);
             data[1] = (byte)(ushort)command;
 
-            Peripheral.Write(data);
+            BusComms.Write(data);
         }
 
         /// <summary>
@@ -193,30 +198,27 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// </summary>
         protected override async Task<(Concentration? Concentration, Units.Temperature? Temperature, RelativeHumidity? Humidity)> ReadSensor()
         {
-            return await Task.Run(() =>
-            { 
-                while(IsDataReady() == false)
-                {
-                    Thread.Sleep(500);
-                }
+            while (IsDataReady() == false)
+            {
+                await Task.Delay(500);
+            }
 
-                (Concentration Concentration, Units.Temperature Temperature, RelativeHumidity Humidity) conditions;
+            (Concentration Concentration, Units.Temperature Temperature, RelativeHumidity Humidity) conditions;
 
-                SendCommand(Commands.ReadMeasurement);
-                Thread.Sleep(1);
-                Peripheral.Read(ReadBuffer.Span[0..9]);
+            SendCommand(Commands.ReadMeasurement);
+            Thread.Sleep(1);
+            BusComms.Read(ReadBuffer.Span[0..9]);
 
-                int value = ReadBuffer.Span[0] << 8 | ReadBuffer.Span[1];
-                conditions.Concentration = new Concentration(value, Units.Concentration.UnitType.PartsPerMillion);
+            int value = ReadBuffer.Span[0] << 8 | ReadBuffer.Span[1];
+            conditions.Concentration = new Concentration(value, Units.Concentration.UnitType.PartsPerMillion);
 
-                conditions.Temperature = CalcTemperature(ReadBuffer.Span[3], ReadBuffer.Span[4]);
+            conditions.Temperature = CalcTemperature(ReadBuffer.Span[3], ReadBuffer.Span[4]);
 
-                value = ReadBuffer.Span[6] << 8 | ReadBuffer.Span[8];
-                double humidiy = 100 * value / 65536.0;
-                conditions.Humidity = new RelativeHumidity(humidiy, RelativeHumidity.UnitType.Percent);
+            value = ReadBuffer.Span[6] << 8 | ReadBuffer.Span[8];
+            double humidiy = 100 * value / 65536.0;
+            conditions.Humidity = new RelativeHumidity(humidiy, RelativeHumidity.UnitType.Percent);
 
-                return conditions;
-            });
+            return conditions;
         }
 
         Units.Temperature CalcTemperature(byte valueHigh, byte valueLow)
@@ -245,28 +247,6 @@ namespace Meadow.Foundation.Sensors.Environmental
                 ConcentrationUpdated?.Invoke(this, new ChangeResult<Concentration>(concentration, changeResult.Old?.Concentration));
             }
             base.RaiseEventsAndNotify(changeResult);
-        }
-
-        byte GetCrc(byte value1, byte value2)
-        {
-            static byte CrcCalc(byte crc, byte value)
-            {
-                crc ^= value;
-                for (byte crcBit = 8; crcBit > 0; --crcBit)
-                {
-                    if ((crc & 0x80) > 0)
-                    {
-                        crc = (byte)((crc << 1) ^ 0x31);
-                    }
-                    else
-                    {
-                        crc <<= 1;
-                    }
-                }
-                return crc;
-            }
-
-            return CrcCalc(CrcCalc(0xFF, value1), value2);
         }
 
         async Task<Units.Temperature> ISensor<Units.Temperature>.Read()

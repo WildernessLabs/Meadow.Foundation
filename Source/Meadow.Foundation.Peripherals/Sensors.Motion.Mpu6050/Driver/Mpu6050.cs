@@ -8,32 +8,28 @@ using TU = Meadow.Units.Temperature.UnitType;
 
 namespace Meadow.Foundation.Sensors.Motion
 {
-    // Sample reading:
-    // Accel: [X:0.24,Y:-0.74,Z:10.49 (m/s^2)]
-    // Angular Velocity: [X:-0.90, Y:-1.24, Z:-0.52 (dps)]
-    // Temp: 33.33C
-
-    // TODO: this sensor has software controlled sensitivity ranges. we should
-    // expose them. note the `AccelScaleBase` will need to change. Right now it's
-    // hard coded to +-2G
-
     /// <summary>
     /// Represents an MPU6050 Six-Axis (Gyro + Accelerometer) MEMS MotionTracking device
     /// </summary>
     public partial class Mpu6050 :
         ByteCommsSensorBase<(Acceleration3D? Acceleration3D, AngularVelocity3D? AngularVelocity3D, Units.Temperature? Temperature)>,
-        IAccelerometer, IGyroscope, ITemperatureSensor
+        IAccelerometer, IGyroscope, ITemperatureSensor, II2cPeripheral
     {
+        /// <summary>
+        /// The default I2C address for the peripheral
+        /// </summary>
+        public byte DefaultI2cAddress => (byte)Addresses.Default;
+
         /// <summary>
         /// Raised when the acceration value changes
         /// </summary>
         public event EventHandler<IChangeResult<Acceleration3D>> Acceleration3DUpdated = delegate { };
-        
+
         /// <summary>
         /// Raised when the angular acceleration value changes
         /// </summary>
         public event EventHandler<IChangeResult<AngularVelocity3D>> AngularVelocity3DUpdated = delegate { };
-        
+
         /// <summary>
         /// Raised when the temperature value changes
         /// </summary>
@@ -85,7 +81,7 @@ namespace Meadow.Foundation.Sensors.Motion
         {
             WriteBuffer.Span[0] = Registers.POWER_MANAGEMENT;
             WriteBuffer.Span[1] = 0x00;
-            Peripheral?.Write(WriteBuffer.Span[0..2]);
+            BusComms?.Write(WriteBuffer.Span[0..2]);
 
             LoadConfiguration();
         }
@@ -96,7 +92,7 @@ namespace Meadow.Foundation.Sensors.Motion
         protected void LoadConfiguration()
         {
             // read all 3 config bytes
-            Peripheral?.ReadRegister(Registers.CONFIG, ReadBuffer.Span[0..3]);
+            BusComms?.ReadRegister(Registers.CONFIG, ReadBuffer.Span[0..3]);
 
             GyroScale = (ReadBuffer.Span[1] & 0b00011000) >> 3;
             AccelerometerScale = (ReadBuffer.Span[2] & 0b00011000) >> 3;
@@ -129,38 +125,29 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <returns>The latest sensor reading</returns>
         protected override Task<(Acceleration3D? Acceleration3D, AngularVelocity3D? AngularVelocity3D, Units.Temperature? Temperature)> ReadSensor()
         {
-            return Task.Run(() =>
-            {
-                (Acceleration3D? Acceleration3D, AngularVelocity3D? AngularVelocity3D, Units.Temperature? Temperature) conditions;
+            (Acceleration3D? Acceleration3D, AngularVelocity3D? AngularVelocity3D, Units.Temperature? Temperature) conditions;
 
-                // we'll just read 14 bytes (7 registers), starting at 0x3b
-                Peripheral?.ReadRegister(Registers.ACCELEROMETER_X, ReadBuffer.Span);
+            // Read 14 bytes (7 registers), starting at 0x3b
+            BusComms?.ReadRegister(Registers.ACCELEROMETER_X, ReadBuffer.Span);
 
-                //---- acceleration
-                // get the acceleration 3d
-                var a_scale = (1 << AccelerometerScale) / AccelScaleBase;
-                var g_scale = (1 << GyroScale) / GyroScaleBase;
-                // note that this comes back as mg (1/10 of m/s^2) which is 0.01m/s^2, so we have to multiply by 10
-                Acceleration3D newAccel = new Acceleration3D(
-                    new Acceleration(ScaleAndOffset(ReadBuffer.Span, 0, a_scale) * 10, Acceleration.UnitType.MetersPerSecondSquared),
-                    new Acceleration(ScaleAndOffset(ReadBuffer.Span, 2, a_scale) * 10, Acceleration.UnitType.MetersPerSecondSquared),
-                    new Acceleration(ScaleAndOffset(ReadBuffer.Span, 4, a_scale) * 10, Acceleration.UnitType.MetersPerSecondSquared)
-                    );
-                conditions.Acceleration3D = newAccel;
+            var a_scale = (1 << AccelerometerScale) / AccelScaleBase;
+            var g_scale = (1 << GyroScale) / GyroScaleBase;
+            // note that this comes back as mg (1/10 of m/s^2) which is 0.01m/s^2, so we have to multiply by 10
+            Acceleration3D newAccel = new Acceleration3D(
+                new Acceleration(ScaleAndOffset(ReadBuffer.Span, 0, a_scale) * 10, Acceleration.UnitType.MetersPerSecondSquared),
+                new Acceleration(ScaleAndOffset(ReadBuffer.Span, 2, a_scale) * 10, Acceleration.UnitType.MetersPerSecondSquared),
+                new Acceleration(ScaleAndOffset(ReadBuffer.Span, 4, a_scale) * 10, Acceleration.UnitType.MetersPerSecondSquared));
+            conditions.Acceleration3D = newAccel;
 
-                //---- temp
-                conditions.Temperature = new Units.Temperature(ScaleAndOffset(ReadBuffer.Span, 6, 1 / 340f, 36.53f), TU.Celsius);
+            conditions.Temperature = new Units.Temperature(ScaleAndOffset(ReadBuffer.Span, 6, 1 / 340f, 36.53f), TU.Celsius);
 
-                //---- angular acceleration
-                AngularVelocity3D angularVelocity = new AngularVelocity3D(
-                    new AngularVelocity(ScaleAndOffset(ReadBuffer.Span, 8, g_scale), AngularVelocity.UnitType.DegreesPerSecond),
-                    new AngularVelocity(ScaleAndOffset(ReadBuffer.Span, 10, g_scale), AngularVelocity.UnitType.DegreesPerSecond),
-                    new AngularVelocity(ScaleAndOffset(ReadBuffer.Span, 12, g_scale), AngularVelocity.UnitType.DegreesPerSecond)
-                    );
-                conditions.AngularVelocity3D = angularVelocity;
+            AngularVelocity3D angularVelocity = new AngularVelocity3D(
+                new AngularVelocity(ScaleAndOffset(ReadBuffer.Span, 8, g_scale), AngularVelocity.UnitType.DegreesPerSecond),
+                new AngularVelocity(ScaleAndOffset(ReadBuffer.Span, 10, g_scale), AngularVelocity.UnitType.DegreesPerSecond),
+                new AngularVelocity(ScaleAndOffset(ReadBuffer.Span, 12, g_scale), AngularVelocity.UnitType.DegreesPerSecond));
+            conditions.AngularVelocity3D = angularVelocity;
 
-                return conditions;
-            });
+            return Task.FromResult(conditions);
         }
 
         private float ScaleAndOffset(Span<byte> data, int index, float scale, float offset = 0)

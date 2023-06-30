@@ -1,9 +1,9 @@
-﻿using System;
-using System.Threading.Tasks;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
 using Meadow.Peripherals.Sensors;
 using Meadow.Peripherals.Sensors.Light;
 using Meadow.Units;
+using System;
+using System.Threading.Tasks;
 using IU = Meadow.Units.Illuminance.UnitType;
 
 namespace Meadow.Foundation.Sensors.Light
@@ -15,7 +15,7 @@ namespace Meadow.Foundation.Sensors.Light
     /// </summary>
     public partial class Tsl2591 :
         ByteCommsSensorBase<(Illuminance? FullSpectrum, Illuminance? Infrared, Illuminance? VisibleLight, Illuminance? Integrated)>,
-        ILightSensor, IDisposable
+        ILightSensor, IDisposable, IPowerControllablePeripheral
     {
         /// <summary>
         /// Raised when Full Spectrum Illuminance value changes
@@ -41,12 +41,12 @@ namespace Meadow.Foundation.Sensors.Light
         /// <summary>
         /// Sensor package ID
         /// </summary>
-        public int PackageID => Peripheral.ReadRegister((byte)(Register.PackageID | Register.Command));
+        public int PackageID => BusComms.ReadRegister((byte)(Register.PackageID | Register.Command));
 
         /// <summary>
         /// Sensor device ID
         /// </summary>
-        public int DeviceID => Peripheral.ReadRegister((byte)(Register.DeviceID | Register.Command));
+        public int DeviceID => BusComms.ReadRegister((byte)(Register.DeviceID | Register.Command));
 
         /// <summary>
         /// Gain of the sensor
@@ -58,7 +58,7 @@ namespace Meadow.Foundation.Sensors.Light
             {
                 PowerOff();
                 gainFactor = value;
-                Peripheral.WriteRegister((byte)(Register.Command | Register.Config), (byte)((byte)integrationTime | (byte)gainFactor));
+                BusComms.WriteRegister((byte)(Register.Command | Register.Config), (byte)((byte)integrationTime | (byte)gainFactor));
                 PowerOn();
             }
         }
@@ -73,7 +73,7 @@ namespace Meadow.Foundation.Sensors.Light
             {
                 PowerOff();
                 integrationTime = value;
-                Peripheral.WriteRegister((byte)(Register.Command | Register.Config), (byte)((byte)integrationTime | (byte)gainFactor));
+                BusComms.WriteRegister((byte)(Register.Command | Register.Config), (byte)((byte)integrationTime | (byte)gainFactor));
                 PowerOn();
             }
         }
@@ -119,34 +119,31 @@ namespace Meadow.Foundation.Sensors.Light
         /// Reads data from the sensor
         /// </summary>
         /// <returns>The latest sensor reading</returns>
-        protected override async Task<(Illuminance? FullSpectrum, Illuminance? Infrared, Illuminance? VisibleLight, Illuminance? Integrated)> ReadSensor()
+        protected override Task<(Illuminance? FullSpectrum, Illuminance? Infrared, Illuminance? VisibleLight, Illuminance? Integrated)> ReadSensor()
         {
-            (Illuminance FullSpectrum, Illuminance Infrared, Illuminance VisibleLight, Illuminance Integrated) conditions;
+            (Illuminance? FullSpectrum, Illuminance? Infrared, Illuminance? VisibleLight, Illuminance? Integrated) conditions;
 
-            return await Task.Run(() =>
+            // data sheet indicates you should always read all 4 bytes, in order, for valid data
+            var channel0 = BusComms.ReadRegisterAsUShort((byte)(Register.CH0DataL | Register.Command));
+            var channel1 = BusComms.ReadRegisterAsUShort((byte)(Register.CH1DataL | Register.Command));
+
+            conditions.FullSpectrum = new Illuminance(channel0, IU.Lux);
+            conditions.Infrared = new Illuminance(channel1, IU.Lux);
+            conditions.VisibleLight = new Illuminance(channel0 - channel1, IU.Lux);
+
+            double countsPerLux;
+
+            if ((channel0 == 0xffff) || (channel1 == 0xffff))
             {
-                // data sheet indicates you should always read all 4 bytes, in order, for valid data
-                var channel0 = Peripheral.ReadRegisterAsUShort((byte)(Register.CH0DataL | Register.Command));
-                var channel1 = Peripheral.ReadRegisterAsUShort((byte)(Register.CH1DataL | Register.Command));
+                conditions.Integrated = new Illuminance(-1, IU.Lux);
+            }
+            else
+            {
+                countsPerLux = (IntegrationTimeInMilliseconds(IntegrationTime) * GainMultiplier(Gain)) / 408.0;
+                conditions.Integrated = new Illuminance((channel0 - channel1) * (1 - (channel1 / channel0)) / countsPerLux, IU.Lux);
+            }
 
-                conditions.FullSpectrum = new Illuminance(channel0, IU.Lux);
-                conditions.Infrared = new Illuminance(channel1, IU.Lux);
-                conditions.VisibleLight = new Illuminance(channel0 - channel1, IU.Lux);
-
-                double countsPerLux;
-
-                if ((channel0 == 0xffff) || (channel1 == 0xffff))
-                {
-                    conditions.Integrated = new Illuminance(-1, IU.Lux);
-                }
-                else
-                {
-                    countsPerLux = (IntegrationTimeInMilliseconds(IntegrationTime) * GainMultiplier(Gain)) / 408.0;
-                    conditions.Integrated = new Illuminance((channel0 - channel1) * (1 - (channel1 / channel0)) / countsPerLux, IU.Lux);
-                }
-
-                return conditions;
-            });
+            return Task.FromResult(conditions);
         }
 
         /// <summary>
@@ -178,17 +175,19 @@ namespace Meadow.Foundation.Sensors.Light
         /// <summary>
         /// Power the sensor on
         /// </summary>
-        public void PowerOn()
+        public Task PowerOn()
         {
-            Peripheral.WriteRegister((byte)(Register.Enable | Register.Command), 3);
+            BusComms.WriteRegister((byte)(Register.Enable | Register.Command), 3);
+            return Task.CompletedTask;
         }
 
         /// <summary>
         /// Power the sensor off
         /// </summary>
-        public void PowerOff()
+        public Task PowerOff()
         {
-            Peripheral.WriteRegister((byte)(Register.Enable | Register.Command), 0);
+            BusComms.WriteRegister((byte)(Register.Enable | Register.Command), 0);
+            return Task.CompletedTask;
         }
 
         /// <summary>

@@ -118,7 +118,7 @@ namespace Meadow.Foundation.Graphics
             source.Seek(-4, SeekOrigin.Current);
             source.Read(dib, 0, dib.Length);
 
-            var width = BitConverter.ToInt32(dib, 18 - 14 );
+            var width = BitConverter.ToInt32(dib, 18 - 14);
             var height = BitConverter.ToInt32(dib, 22 - 14);
             var invertedRows = false;
             if (height < 0)
@@ -150,9 +150,9 @@ namespace Meadow.Foundation.Graphics
                     throw new NotSupportedException("Unsupported bitmap compression");
             }
 
-            var bytesPerRow = (int)(width * (BitsPerPixel / 8f));
+            var bytesPerRow = width * (BitsPerPixel >> 3);
             // BMP row length is evenly divisible by 4
-            var mod = (bytesPerRow % 4);
+            var mod = bytesPerRow % 4;
             var rowPad = mod == 0 ? 0 : 4 - mod;
             var pixelBufferSize = height * bytesPerRow;
             var pixelData = new byte[pixelBufferSize];
@@ -189,7 +189,7 @@ namespace Meadow.Foundation.Graphics
             switch (BitsPerPixel)
             {
                 case 32:
-                    DisplayBuffer = new BufferRgb8888(width, height, pixelData);
+                    DisplayBuffer = new BufferRgba8888(width, height, pixelData);
                     break;
                 case 24:
                     // 24-bit images are stored BGR, not RGB.  Yay.  Time to swap
@@ -222,7 +222,7 @@ namespace Meadow.Foundation.Graphics
         {
             byte temp;
 
-            for (int i = 0; i < buffer.Length; i+=3)
+            for (int i = 0; i < buffer.Length; i += 3)
             {
                 // pull red
                 temp = buffer[i];

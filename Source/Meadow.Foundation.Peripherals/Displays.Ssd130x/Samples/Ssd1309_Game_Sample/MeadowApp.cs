@@ -12,18 +12,17 @@ namespace Displays.Ssd130x.Ssd1309_Game_Sample
 {
     public class MeadowApp : App<F7FeatherV2>
     {
-        MicroGraphics graphics;
-        Ssd1309 display;
+        private MicroGraphics graphics;
+        private Ssd1309 display;
 
-     //   PushButton btnUp, btnDown, btnLeft, btnRight;
+        //   PushButton btnUp, btnDown, btnLeft, btnRight;
 
-        IDigitalInterruptPort portLeft;
-        IDigitalInterruptPort portUp;
-        IDigitalInterruptPort portRight;
-        IDigitalInterruptPort portDown;
-
-        BreakoutGame breakoutGame;
-        SnakeGame snakeGame;
+        private IDigitalInterruptPort portLeft;
+        private IDigitalInterruptPort portUp;
+        private IDigitalInterruptPort portRight;
+        private IDigitalInterruptPort portDown;
+        private BreakoutGame breakoutGame;
+        private SnakeGame snakeGame;
 
         public override Task Initialize()
         {
@@ -37,7 +36,6 @@ namespace Displays.Ssd130x.Ssd1309_Game_Sample
 
             display = new Ssd1309
             (
-                device: Device,
                 spiBus: bus,
                 chipSelectPin: Device.Pins.D02,
                 dcPin: Device.Pins.D01,
@@ -56,10 +54,10 @@ namespace Displays.Ssd130x.Ssd1309_Game_Sample
 
             Resolver.Log.Info("Create buttons...");
 
-            portLeft = Device.CreateDigitalInputPort(Device.Pins.D12, InterruptMode.EdgeFalling, ResistorMode.InternalPullDown);
-            portUp = Device.CreateDigitalInputPort(Device.Pins.D13, InterruptMode.EdgeFalling, ResistorMode.InternalPullDown);
-            portRight = Device.CreateDigitalInputPort(Device.Pins.D07, InterruptMode.EdgeFalling, ResistorMode.InternalPullDown);
-            portDown = Device.CreateDigitalInputPort(Device.Pins.D11, InterruptMode.EdgeFalling, ResistorMode.InternalPullDown);
+            portLeft = Device.CreateDigitalInterruptPort(Device.Pins.D12, InterruptMode.EdgeFalling, ResistorMode.InternalPullDown);
+            portUp = Device.CreateDigitalInterruptPort(Device.Pins.D13, InterruptMode.EdgeFalling, ResistorMode.InternalPullDown);
+            portRight = Device.CreateDigitalInterruptPort(Device.Pins.D07, InterruptMode.EdgeFalling, ResistorMode.InternalPullDown);
+            portDown = Device.CreateDigitalInterruptPort(Device.Pins.D11, InterruptMode.EdgeFalling, ResistorMode.InternalPullDown);
 
             portRight.Changed += PortRight_Changed;
             portLeft.Changed += PortLeft_Changed;
@@ -81,7 +79,7 @@ namespace Displays.Ssd130x.Ssd1309_Game_Sample
             return base.Initialize();
         }
 
-        void StartBreakoutLoop()
+        private void StartBreakoutLoop()
         {
             Resolver.Log.Info("Start breakout");
 
@@ -92,7 +90,7 @@ namespace Displays.Ssd130x.Ssd1309_Game_Sample
                 graphics.Clear(false);
 
                 graphics.DrawCircle(breakoutGame.Ball.X, breakoutGame.Ball.Y, breakoutGame.Ball.Radius, true, true);
-                    
+
 
                 graphics.DrawRectangle(breakoutGame.Paddle.X, breakoutGame.Paddle.Y,
                     breakoutGame.Paddle.Width, breakoutGame.Paddle.Height,
@@ -111,9 +109,9 @@ namespace Displays.Ssd130x.Ssd1309_Game_Sample
             }
         }
 
-        void StartSnakeLoop()
+        private void StartSnakeLoop()
         {
-            while(true)
+            while (true)
             {
                 graphics.Clear();
 
@@ -129,13 +127,13 @@ namespace Displays.Ssd130x.Ssd1309_Game_Sample
                     graphics.DrawPixel(point.X, point.Y);
                 }
 
-             //   if (game.PlaySound)
-             //       speaker.PlayTone(440, 25);
+                //   if (game.PlaySound)
+                //       speaker.PlayTone(440, 25);
 
                 //show
                 graphics.Show();
 
-                Thread.Sleep(250 - snakeGame.Level * 5);
+                Thread.Sleep(250 - (snakeGame.Level * 5));
             }
         }
 
@@ -154,16 +152,16 @@ namespace Displays.Ssd130x.Ssd1309_Game_Sample
             /*  graphics.Clear();
               graphics.DrawText(0, 0, "D" + count++);
               graphics.Show(); */
-      //      snakeGame.Direction = SnakeDirection.Down;
+            //      snakeGame.Direction = SnakeDirection.Down;
         }
 
         private void PortUp_Changed(object sender, DigitalPortResult e)
         {
-          /*  graphics.Clear();
-            graphics.DrawText(0, 0, "U" + count++);
-            graphics.Show(); */
+            /*  graphics.Clear();
+              graphics.DrawText(0, 0, "U" + count++);
+              graphics.Show(); */
 
-        //    snakeGame.Direction = SnakeDirection.Up;
+            //    snakeGame.Direction = SnakeDirection.Up;
 
         }
 
@@ -178,7 +176,7 @@ namespace Displays.Ssd130x.Ssd1309_Game_Sample
             breakoutGame.Left(breakoutGame.Paddle.Width);
         }
 
-        int count = 0;
+        private int count = 0;
         private void BtnRight_Clicked(object sender, EventArgs e)
         {
             graphics.Clear();
@@ -207,7 +205,7 @@ namespace Displays.Ssd130x.Ssd1309_Game_Sample
             graphics.Show();
         }
 
-        void OutputText()
+        private void OutputText()
         {
 
         }

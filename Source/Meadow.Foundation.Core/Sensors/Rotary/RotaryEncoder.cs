@@ -17,12 +17,12 @@ namespace Meadow.Foundation.Sensors.Rotary
         /// <summary>
         /// Returns the pin connected to the A-phase output on the rotary encoder.
         /// </summary>
-        protected IDigitalInputPort APhasePort { get; }
+        protected IDigitalInterruptPort APhasePort { get; }
 
         /// <summary>
         /// Returns the pin connected to the B-phase output on the rotary encoder.
         /// </summary>
-        protected IDigitalInputPort BPhasePort { get; }
+        protected IDigitalInterruptPort BPhasePort { get; }
 
         /// <summary>
         /// Gets the last direction of rotation
@@ -58,14 +58,14 @@ namespace Meadow.Foundation.Sensors.Rotary
                                                 0, 1, -1, 0 };
 
         /// <summary>
-        /// Instantiate a new RotaryEncoder on the specified pins.
+        /// Instantiate a new RotaryEncoder on the specified pins
         /// </summary>
-        /// <param name="device"></param>
-        /// <param name="aPhasePin"></param>
-        /// <param name="bPhasePin"></param>
-        public RotaryEncoder(IPin aPhasePin, IPin bPhasePin) :
-            this(aPhasePin.CreateDigitalInputPort(InterruptMode.EdgeBoth, ResistorMode.InternalPullDown, TimeSpan.Zero, TimeSpan.FromMilliseconds(0.1)),
-                 bPhasePin.CreateDigitalInputPort(InterruptMode.EdgeBoth, ResistorMode.InternalPullDown, TimeSpan.Zero, TimeSpan.FromMilliseconds(0.1)))
+        /// <param name="aPhasePin">Pin A</param>
+        /// <param name="bPhasePin">Pin B</param>
+        /// <param name="isCommonGround">Do the encode pins use a common ground (true) or common positive (false)</param>
+        public RotaryEncoder(IPin aPhasePin, IPin bPhasePin, bool isCommonGround = false) :
+            this(aPhasePin.CreateDigitalInterruptPort(InterruptMode.EdgeBoth, isCommonGround ? ResistorMode.InternalPullUp : ResistorMode.InternalPullDown, TimeSpan.Zero, TimeSpan.FromMilliseconds(0.1)),
+                 bPhasePin.CreateDigitalInterruptPort(InterruptMode.EdgeBoth, isCommonGround ? ResistorMode.InternalPullUp : ResistorMode.InternalPullDown, TimeSpan.Zero, TimeSpan.FromMilliseconds(0.1)))
         { }
 
         /// <summary>
@@ -73,7 +73,7 @@ namespace Meadow.Foundation.Sensors.Rotary
         /// </summary>
         /// <param name="aPhasePort"></param>
         /// <param name="bPhasePort"></param>
-        public RotaryEncoder(IDigitalInputPort aPhasePort, IDigitalInputPort bPhasePort)
+        public RotaryEncoder(IDigitalInterruptPort aPhasePort, IDigitalInterruptPort bPhasePort)
         {
             APhasePort = aPhasePort;
             BPhasePort = bPhasePort;

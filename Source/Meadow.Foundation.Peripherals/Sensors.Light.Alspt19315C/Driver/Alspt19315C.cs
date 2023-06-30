@@ -23,7 +23,6 @@ namespace Meadow.Foundation.Sensors.Light
         /// <summary>
         /// Create a new light sensor object using a static reference voltage
         /// </summary>
-        /// <param name="device">The device connected to the sensor</param>
         /// <param name="pin">The analog pin</param>
         /// <param name="sampleCount">The sample count</param>
         /// <param name="sampleInterval">The sample interval</param>
