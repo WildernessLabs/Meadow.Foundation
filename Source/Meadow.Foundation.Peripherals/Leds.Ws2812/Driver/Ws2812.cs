@@ -143,7 +143,7 @@ namespace Meadow.Foundation.Leds
             // 4 bytes per color and 3 colors
             int position = index * bytesPerColorPart * 3;
 
-            // The on-the-wire format is GRB, the input is RGB
+            // The on-the-wire format is GRB, the input is GRB
             foreach (var theByte in ByteToWs2812Byte(grb[0]))
             {
                 buffer[position++] = theByte;
