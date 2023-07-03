@@ -43,6 +43,7 @@ namespace Meadow.Foundation.Graphics.Buffers
                     ColorMode.Format16bppRgb565 => 16,
                     ColorMode.Format18bppRgb666 => 18,
                     ColorMode.Format24bppRgb888 => 24,
+                    ColorMode.Format24bppGrb888 => 24,
                     ColorMode.Format32bppRgba8888 => 32,
                     _ => throw new NotImplementedException($"Unknown or unsupported ColorMode: {ColorMode}"),
                 };
