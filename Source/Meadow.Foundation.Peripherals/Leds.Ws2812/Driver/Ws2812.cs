@@ -129,6 +129,36 @@ namespace Meadow.Foundation.Leds
         }
 
         /// <summary>
+        /// Set the color of the specified LED
+        /// </summary>
+        /// <param name="index">Index of the LED to change</param>
+        /// <param name="grb">Byte array representing the color RGB values. byte[0] = Green, byte[1] = Red, byte[2] = Blue</param>
+        public void SetLedGrb(int index, byte[] grb)
+        {
+            if (index > numberOfLeds || index < 0)
+            {
+                throw new ArgumentOutOfRangeException("Index must be less than the number of leds specified");
+            }
+
+            // 4 bytes per color and 3 colors
+            int position = index * bytesPerColorPart * 3;
+
+            // The on-the-wire format is GRB, the input is RGB
+            foreach (var theByte in ByteToWs2812Byte(grb[0]))
+            {
+                buffer[position++] = theByte;
+            }
+            foreach (var theByte in ByteToWs2812Byte(grb[1]))
+            {
+                buffer[position++] = theByte;
+            }
+            foreach (var theByte in ByteToWs2812Byte(grb[2]))
+            {
+                buffer[position++] = theByte;
+            }
+        }
+
+        /// <summary>
         /// Transmit the buffer to the LEDs 
         /// </summary>
         public void Show()
