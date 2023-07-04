@@ -91,7 +91,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 SampleCount = sampleCount;
                 ChannelInputType = inputType;
 
-                ReferenceVoltage = new Voltage(3.3, Voltage.UnitType.Millivolts);
+                ReferenceVoltage = new Voltage(3.3, Voltage.UnitType.Volts);
             }
 
             /// <summary>
