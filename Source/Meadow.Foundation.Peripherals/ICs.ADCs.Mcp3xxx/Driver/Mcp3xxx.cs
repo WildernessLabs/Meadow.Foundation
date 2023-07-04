@@ -243,7 +243,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <param name="inputType">The type of input channel to read</param>
         /// <param name="adcResolutionBits">The number of bits in the returned value</param>
         /// <returns>A value corresponding to relative voltage level on specified device channel</returns>
-        protected int ReadInternal(int channel, InputType inputType, int adcResolutionBits)
+        protected virtual int ReadInternal(int channel, InputType inputType, int adcResolutionBits)
         {
             ValidateChannel(channel, ChannelCount);
 
@@ -283,7 +283,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 requestBuffer[i] = (byte)(adcRequest >> (bufferSize - i - 1) * 8);
             }
 
-            spiComms.Exchange(requestBuffer, requestBuffer);
+            spiComms.Exchange(requestBuffer, responseBuffer);
 
             // copy the response from the ADC to the return value
             for (int i = 0; i < bufferSize; i++)
