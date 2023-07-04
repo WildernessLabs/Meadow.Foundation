@@ -27,13 +27,13 @@ namespace ICs.IOExpanders.Mcp3001_Sample
 
             port.Updated += (s, result) =>
             {
-                Console.WriteLine($"Analog event, new voltage: {result.New.Volts:N2}V, old: {result.Old?.Volts:N2}V");
+                Console.WriteLine($"Analog event, new voltage: {result.New.Volts}V, old: {result.Old?.Volts}V");
             };
 
             var observer = IAnalogInputPort.CreateObserver(
                 handler: result =>
                 {
-                    Resolver.Log.Info($"Analog observer triggered; new: {result.New.Volts:n2}V, old: {result.Old?.Volts:n2}V");
+                    Resolver.Log.Info($"Analog observer triggered; new: {result.New.Volts}V, old: {result.Old?.Volts}V");
                 },
                 filter: result =>
                 {
@@ -54,6 +54,8 @@ namespace ICs.IOExpanders.Mcp3001_Sample
             Resolver.Log.Info("Run");
 
             port.StartUpdating();
+
+            Resolver.Log.Info("Run complete");
 
             return Task.CompletedTask;
         }
