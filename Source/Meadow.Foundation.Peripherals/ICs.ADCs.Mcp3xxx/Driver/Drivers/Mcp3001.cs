@@ -63,5 +63,17 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
             return new AnalogInputPort(this, Pins.INPlus, channel, sampleCount);
         }
+
+        /// <summary>
+        /// Reads a value from the device
+        /// </summary>
+        /// <param name="channel">Channel to read - for diffential inputs this represents a channel pair (valid values: 0 - channelcount - 1 or 0 - channelcount / 2 - 1  with differential inputs)</param>
+        /// <param name="inputType">The type of input channel to read</param>
+        /// <param name="adcResolutionBits">The number of bits in the returned value</param>
+        /// <returns>A value corresponding to relative voltage level on specified device channel</returns>
+        protected override int ReadInternal(int channel, InputType inputType, int adcResolutionBits)
+        {
+            return ReadInternalRaw(adcRequest: 0, adcResolutionInBits: 10 + 3, delayBits: 0) >> 3;
+        }
     }
 }
