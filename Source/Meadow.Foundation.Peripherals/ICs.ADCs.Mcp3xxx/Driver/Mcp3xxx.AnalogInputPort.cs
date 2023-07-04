@@ -117,7 +117,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// </summary>
             public void StartUpdating(TimeSpan? updateInterval = null)
             {
-                // the wombat does sampling internally
+                Console.WriteLine("StartUpdating");
+
                 // thread safety
                 lock (_lock)
                 {
@@ -188,7 +189,11 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// </summary>
             public IDisposable Subscribe(IObserver<IChangeResult<Voltage>> observer)
             {
-                if (!Observers.Contains(observer)) Observers.Add(observer);
+                if (!Observers.Contains(observer))
+                {
+                    Observers.Add(observer);
+                }
+
                 return new Unsubscriber(Observers, observer);
             }
 

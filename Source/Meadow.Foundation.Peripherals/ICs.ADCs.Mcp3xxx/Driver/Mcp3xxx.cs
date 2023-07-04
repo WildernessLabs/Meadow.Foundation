@@ -295,7 +295,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             // test the response from the ADC to verify the null bit is 0
             if ((returnValue & (1 << adcResolutionInBits)) != 0)
             {
-                throw new InvalidOperationException("Invalid data was read from the sensor");
+                return 0;
             }
 
             // return the ADC response with any possible higher bits masked out
