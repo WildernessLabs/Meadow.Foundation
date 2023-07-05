@@ -6,6 +6,10 @@ using System.Threading;
 
 namespace Meadow.Foundation.ICs.IOExpanders
 {
+
+    /// <summary>
+    /// Represents a PCA9671 I2C IO Expander
+    /// </summary>
     public partial class Pca9671 : I2cCommunications, IDigitalOutputController, IDigitalInputController, II2cPeripheral, IDisposable
     {
         private ushort _outputs;
@@ -14,17 +18,26 @@ namespace Meadow.Foundation.ICs.IOExpanders
         private bool _isDisposed;
         private IDigitalOutputPort? _resetPort;
 
+        /// <inheritdoc/>
         public byte DefaultI2cAddress => 0x20;
 
+        /// <inheritdoc/>
         public PinDefinitions Pins { get; private set; }
 
-        public Pca9671(II2cBus bus, byte peripheralAddress, IPin? resetPin = default, int readBufferSize = 8, int writeBufferSize = 8)
-            : base(bus, peripheralAddress, readBufferSize, writeBufferSize)
+        /// <summary>
+        /// Creates a new Pca9671 instance
+        /// </summary>
+        /// <param name="bus">The I2C buss the peripheral is connected to</param>
+        /// <param name="peripheralAddress">The bus address of the peripheral</param>
+        /// <param name="resetPin">The optional pin connected tothe peripheral's reset</param>
+        public Pca9671(II2cBus bus, byte peripheralAddress, IPin? resetPin = default)
+            : base(bus, peripheralAddress, 8, 8)
         {
             Pins = new PinDefinitions(this);
             Init(resetPin);
         }
 
+        /// <inheritdoc/>
         public IDigitalOutputPort CreateDigitalOutputPort(IPin pin, bool initialState = false, OutputType initialOutputType = OutputType.PushPull)
         {
             lock (_pinsInUse)
@@ -48,18 +61,14 @@ namespace Meadow.Foundation.ICs.IOExpanders
             }
         }
 
-        public IDigitalInputPort CreateDigitalInputPort(IPin pin, InterruptMode interruptMode, ResistorMode resistorMode, TimeSpan debounceDuration, TimeSpan glitchDuration)
+        /// <inheritdoc/>
+        public IDigitalInputPort CreateDigitalInputPort(IPin pin, ResistorMode resistorMode)
         {
             switch (resistorMode)
             {
                 case ResistorMode.InternalPullUp:
                 case ResistorMode.InternalPullDown:
                     throw new ArgumentException("Internal resistors are not supported");
-            }
-
-            if (interruptMode != InterruptMode.None)
-            {
-                throw new ArgumentException("Interrupts are not supported");
             }
 
             lock (_pinsInUse)
@@ -96,12 +105,17 @@ namespace Meadow.Foundation.ICs.IOExpanders
             AllOff();
         }
 
+        /// <inheritdoc/>
         public IPin GetPin(string pinName)
             => Pins.AllPins.FirstOrDefault(p => p.Name == pinName || p.Key.ToString() == p.Name);
 
+        /// <inheritdoc/>
         protected bool IsValidPin(IPin pin)
             => Pins.AllPins.Contains(pin);
 
+        /// <summary>
+        /// Resets the peripheral
+        /// </summary>
         public void Reset()
         {
             if (_resetPort is null)
@@ -114,16 +128,26 @@ namespace Meadow.Foundation.ICs.IOExpanders
             _resetPort.State = true;
         }
 
+        /// <summary>
+        /// Convenience method to turn all outputs off
+        /// </summary>
         public void AllOff()
         {
             WriteState(0x0000);
         }
 
+        /// <summary>
+        /// Convenience method to turn all outputs on
+        /// </summary>
         public void AllOn()
         {
             WriteState(0xffff);
         }
 
+        /// <summary>
+        /// Retrieves the state of a pin
+        /// </summary>
+        /// <param name="pin">The pin to query</param>
         public bool GetState(IPin pin)
         {
             // if it's an input, read it, otherwise reflect what we wrote
@@ -140,6 +164,11 @@ namespace Meadow.Foundation.ICs.IOExpanders
             return (_outputs & pinMask) != 0;
         }
 
+        /// <summary>
+        /// Sets the state of a pin
+        /// </summary>
+        /// <param name="pin">The pin to affect</param>
+        /// <param name="state"><b>True</b> to set the pin state high, <b>False</b> to set it low</param>
         public void SetState(IPin pin, bool state)
         {
             var offset = (byte)pin.Key;
@@ -161,6 +190,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
             Input = 1
         }
 
+        /// <summary>
+        /// Reads the peripheral state register
+        /// </summary>
         protected ushort ReadState()
         {
             Span<byte> buffer = stackalloc byte[2];
@@ -168,6 +200,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
             return (ushort)((buffer[0] << 8) | buffer[1]);
         }
 
+        /// <summary>
+        /// Writes the peripheral state register
+        /// </summary>
         protected void WriteState(ushort state)
         {
             state |= _directionMask;
@@ -175,6 +210,10 @@ namespace Meadow.Foundation.ICs.IOExpanders
             Bus.Write(Address, buffer);
         }
 
+        /// <summary>
+        /// Disposes the instances resources
+        /// </summary>
+        /// <param name="disposing"></param>
         protected virtual void Dispose(bool disposing)
         {
             if (!_isDisposed)
@@ -192,6 +231,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
             }
         }
 
+        /// <summary>
+        /// Disposes the instances resources
+        /// </summary>
         public void Dispose()
         {
             // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method

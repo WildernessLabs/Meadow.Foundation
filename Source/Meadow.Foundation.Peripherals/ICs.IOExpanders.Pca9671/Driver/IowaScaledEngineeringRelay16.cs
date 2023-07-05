@@ -5,8 +5,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
     // TODO: move this to a separate library
     public class IowaScaledEngineeringRelay16 : Pca9671
     {
-        public IowaScaledEngineeringRelay16(II2cBus bus, bool jumper5, bool jumper6, bool jumper7, IPin resetPin = default, int readBufferSize = 8, int writeBufferSize = 8)
-            : base(bus, CalculateAddress(jumper5, jumper6, jumper7), resetPin, readBufferSize, writeBufferSize)
+        public IowaScaledEngineeringRelay16(II2cBus bus, bool jumper5, bool jumper6, bool jumper7, IPin resetPin = default)
+            : base(bus, CalculateAddress(jumper5, jumper6, jumper7), resetPin)
         {
         }
 
