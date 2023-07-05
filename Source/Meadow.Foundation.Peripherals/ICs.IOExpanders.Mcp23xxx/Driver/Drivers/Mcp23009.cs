@@ -14,7 +14,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <param name="address">The I2C address</param>
         /// <param name="interruptPort">The interrupt port</param>
         /// <param name="resetPort">Optional Meadow output port used to reset the mcp expander</param>
-        public Mcp23009(II2cBus i2cBus, byte address = 32, IDigitalInputPort interruptPort = null, IDigitalOutputPort resetPort = null) :
+        public Mcp23009(II2cBus i2cBus, byte address = 32, IDigitalInterruptPort? interruptPort = null, IDigitalOutputPort? resetPort = null) :
             base(i2cBus, address, interruptPort, resetPort)
         { }
 
@@ -38,7 +38,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <returns>IDigitalOutputPort</returns>
         public override IDigitalOutputPort CreateDigitalOutputPort(IPin pin, bool initialState = false, OutputType outputType = OutputType.OpenDrain)
         {
-            if(outputType != OutputType.OpenDrain)
+            if (outputType != OutputType.OpenDrain)
             {
                 throw new System.ArgumentException("Output type must be OpenDrain for Mcp23009");
             }
