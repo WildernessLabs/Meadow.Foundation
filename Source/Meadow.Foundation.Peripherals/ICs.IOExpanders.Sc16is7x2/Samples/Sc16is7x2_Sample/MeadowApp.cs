@@ -2,6 +2,7 @@
 using Meadow.Devices;
 using Meadow.Foundation.ICs.IOExpanders;
 using Meadow.Hardware;
+using System;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -13,23 +14,46 @@ namespace ICs.IOExpanders.Sc16is7x2_Sample
     {
         //<!=SNIP=>
 
-        private Sc16is7x2 _expander;
-        private ISerialPort _portA;
-        private ISerialPort _portB;
+        private Sc16is7x2? _expander = null;
+        private ISerialPort? _portA = null;
+        private ISerialPort? _portB = null;
 
-        public override Task Initialize()
+        public override async Task Initialize()
         {
             Resolver.Log.Info("Initialize...");
 
-            _expander = new Sc16is7x2(Device.CreateI2cBus(), new Meadow.Units.Frequency(1.8432, Meadow.Units.Frequency.UnitType.Megahertz));
-            _portA = _expander.PortA.CreateSerialPort();
-            _portB = _expander.PortB.CreateSerialPort();
+            var address = 0x48;
+            while (true)
+            {
 
-            return base.Initialize();
+                try
+                {
+                    _expander = new Sc16is7x2(
+                        Device.CreateI2cBus(),
+                        new Meadow.Units.Frequency(1.8432, Meadow.Units.Frequency.UnitType.Megahertz),
+                        (Sc16is7x2.Addresses)address);
+
+                    _portA = _expander.PortA.CreateSerialPort();
+                    _portB = _expander.PortB.CreateSerialPort();
+                }
+                catch (Exception ex)
+                {
+                    Resolver.Log.Error($"Failed to initialize 0x{address:X2}: {ex.Message}");
+                    await Task.Delay(1000);
+                    address++;
+                }
+            }
+
+            //            return base.Initialize();
         }
 
         public override Task Run()
         {
+            if (_expander == null || _portA == null || _portB == null)
+            {
+                return Task.CompletedTask;
+            }
+
             PollingApp();
 
             while (true)
