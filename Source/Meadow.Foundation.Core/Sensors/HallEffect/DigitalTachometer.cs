@@ -24,7 +24,7 @@ namespace Meadow.Foundation.Sensors.HallEffect
         /// <summary>
         /// Input port for the tachometer
         /// </summary>
-        protected IDigitalInputPort InputPort { get; set; }
+        protected IDigitalInterruptPort InputPort { get; set; }
 
         /// <summary>
         /// Returns number of magnets of the sensor.
@@ -62,7 +62,7 @@ namespace Meadow.Foundation.Sensors.HallEffect
         /// <param name="rpmChangeNotificationThreshold"></param>
         public LinearHallEffectTachometer(IPin inputPin, CircuitTerminationType type = CircuitTerminationType.CommonGround,
             ushort numberOfMagnets = 2, float rpmChangeNotificationThreshold = 1.0F) :
-            this(inputPin.CreateDigitalInputPort(InterruptMode.None, ResistorMode.Disabled, TimeSpan.Zero, TimeSpan.Zero), type, numberOfMagnets, rpmChangeNotificationThreshold)
+            this(inputPin.CreateDigitalInterruptPort(InterruptMode.None, ResistorMode.Disabled, TimeSpan.Zero, TimeSpan.Zero), type, numberOfMagnets, rpmChangeNotificationThreshold)
         { }
 
         /// <summary>
@@ -72,7 +72,7 @@ namespace Meadow.Foundation.Sensors.HallEffect
         /// <param name="type"></param>
         /// <param name="numberOfMagnets"></param>
         /// <param name="rpmChangeNotificationThreshold"></param>
-        public LinearHallEffectTachometer(IDigitalInputPort inputPort, CircuitTerminationType type = CircuitTerminationType.CommonGround,
+        public LinearHallEffectTachometer(IDigitalInterruptPort inputPort, CircuitTerminationType type = CircuitTerminationType.CommonGround,
             ushort numberOfMagnets = 2, float rpmChangeNotificationThreshold = 1.0F)
         {
             NumberOfMagnets = numberOfMagnets;
@@ -87,7 +87,7 @@ namespace Meadow.Foundation.Sensors.HallEffect
             InputPort.Changed += InputPortChanged;
         }
 
-        void InputPortChanged(object sender, DigitalPortResult e)
+        private void InputPortChanged(object sender, DigitalPortResult e)
         {
             var time = DateTime.Now;
 
@@ -123,7 +123,7 @@ namespace Meadow.Foundation.Sensors.HallEffect
                 // calculate our rpms
                 // RPSecond = 1000 / revTime.millis
                 // PPMinute = RPSecond * 60
-                rpms = ((float)1000 / (float)revolutionTime.Milliseconds) * (float)60;
+                rpms = 1000 / (float)revolutionTime.Milliseconds * 60;
 
                 //if (revolutionTime.Milliseconds < 5) {
                 //    S.Console.WriteLine("revolution time was < 5. garbage results.");

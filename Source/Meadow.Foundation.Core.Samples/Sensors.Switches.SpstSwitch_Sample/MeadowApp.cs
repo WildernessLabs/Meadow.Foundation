@@ -2,7 +2,6 @@
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Switches;
 using Meadow.Hardware;
-using System;
 using System.Threading.Tasks;
 
 namespace Sensors.Switches.SpstSwitch_Sample
@@ -17,8 +16,8 @@ namespace Sensors.Switches.SpstSwitch_Sample
         {
             Resolver.Log.Info("Initializing...");
 
-            spstSwitch = new SpstSwitch(Device.CreateDigitalInputPort(Device.Pins.D02, InterruptMode.EdgeFalling, ResistorMode.InternalPullDown));
-            spstSwitch.Changed += (s,e) => 
+            spstSwitch = new SpstSwitch(Device.CreateDigitalInterruptPort(Device.Pins.D02, InterruptMode.EdgeFalling, ResistorMode.InternalPullDown));
+            spstSwitch.Changed += (s, e) =>
             {
                 Resolver.Log.Info("Switch Changed");
                 Resolver.Log.Info($"Switch on: {spstSwitch.IsOn}");

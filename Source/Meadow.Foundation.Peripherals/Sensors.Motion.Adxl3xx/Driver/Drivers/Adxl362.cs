@@ -28,18 +28,18 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
         public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated;
 
-        const double ADXL362_MG2G_MULTIPLIER = (0.004);
-        const double AVERAGE_TEMPERATURE_BIAS = 350;
+        private const double ADXL362_MG2G_MULTIPLIER = 0.004;
+        private const double AVERAGE_TEMPERATURE_BIAS = 350;
 
         /// <summary>
         /// Digital input port attached to interrupt pin 1 on the ADXL362
         /// </summary>
-        private IDigitalInputPort digitalInputPort1;
+        private IDigitalInterruptPort digitalInputPort1;
 
         /// <summary>
         /// Digital Input port attached to interrupt pin 2 on the ADXL362
         /// </summary>
-        private IDigitalInputPort digitalInputPort2;
+        private IDigitalInterruptPort digitalInputPort2;
 
         /// <summary>
         /// The current acceleration value
@@ -324,7 +324,7 @@ namespace Meadow.Foundation.Sensors.Motion
             WriteBuffer.Span[1] = Registers.POWER_CONTROL;
             WriteBuffer.Span[2] = 0x02;
             BusComms.Exchange(WriteBuffer.Span[0..3], ReadBuffer.Span[0..1]);
-            byte power = (byte)((ReadBuffer.Span[0] & (~PowerControlMasks.MEASURE)) & 0xff);
+            byte power = (byte)(ReadBuffer.Span[0] & (~PowerControlMasks.MEASURE) & 0xff);
             WriteBuffer.Span[2] = power;
             BusComms.Write(WriteBuffer.Span[0..3]);
         }
@@ -498,7 +498,7 @@ namespace Meadow.Foundation.Sensors.Motion
 
             if (interruptPin1 != null)
             {
-                digitalInputPort1 = interruptPin1.CreateDigitalInputPort(InterruptMode.EdgeRising, MapResistorMode((interruptMap1 & 0xf0) > 0));
+                digitalInputPort1 = interruptPin1.CreateDigitalInterruptPort(InterruptMode.EdgeRising, MapResistorMode((interruptMap1 & 0xf0) > 0));
                 digitalInputPort1.Changed += InterruptChanged;
             }
             else
@@ -508,7 +508,7 @@ namespace Meadow.Foundation.Sensors.Motion
 
             if (interruptPin2 != null)
             {
-                digitalInputPort2 = interruptPin2.CreateDigitalInputPort(InterruptMode.EdgeRising, MapResistorMode((interruptMap2 & 0xf0) > 0));
+                digitalInputPort2 = interruptPin2.CreateDigitalInterruptPort(InterruptMode.EdgeRising, MapResistorMode((interruptMap2 & 0xf0) > 0));
                 digitalInputPort2.Changed += InterruptChanged;
             }
             else
@@ -520,7 +520,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         /// Sensor has generated an interrupt
         /// </summary>
-        void InterruptChanged(object sender, DigitalPortResult e)
+        private void InterruptChanged(object sender, DigitalPortResult e)
         {
             var status = Status;
             if ((status & StatusBitsMasks.ACTIVITY_DETECTED) != 0)
