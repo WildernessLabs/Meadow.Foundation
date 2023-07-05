@@ -5,6 +5,9 @@ using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Buttons
 {
+    /// <summary>
+    /// Contains common push button logic
+    /// </summary>
     public abstract class PushButtonBase : IButton, IDisposable
     {
         /// <summary>
@@ -73,14 +76,11 @@ namespace Meadow.Foundation.Sensors.Buttons
         /// </summary>
         protected bool GetNormalizedState(bool state)
         {
-            switch (DigitalIn.Resistor)
+            return DigitalIn.Resistor switch
             {
-                case ResistorMode.ExternalPullUp:
-                case ResistorMode.InternalPullUp:
-                    return !state;
-                default:
-                    return state;
-            }
+                ResistorMode.ExternalPullUp or ResistorMode.InternalPullUp => !state,
+                _ => state,
+            };
         }
 
         /// <summary>

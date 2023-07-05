@@ -1275,6 +1275,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CurrentTransducer", "Curren
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Power.CurrentTransducer", "Meadow.Foundation.Peripherals\Sensors.Power.CurrentTransducer\Driver\Sensors.Power.CurrentTransducer.csproj", "{6A85DE57-4ED1-4391-AF1B-11C632634461}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{E46710AD-37B9-4259-ADC7-ED84696D2A42}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CurrentTransducer_Sample", "Meadow.Foundation.Peripherals\Sensors.Power.CurrentTransducer\Samples\CurrentTransducer_Sample\CurrentTransducer_Sample.csproj", "{A8357163-F34D-4B81-8F7A-4AE53C1B08BB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -3061,6 +3065,12 @@ Global
 		{6A85DE57-4ED1-4391-AF1B-11C632634461}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6A85DE57-4ED1-4391-AF1B-11C632634461}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6A85DE57-4ED1-4391-AF1B-11C632634461}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{A8357163-F34D-4B81-8F7A-4AE53C1B08BB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A8357163-F34D-4B81-8F7A-4AE53C1B08BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A8357163-F34D-4B81-8F7A-4AE53C1B08BB}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{A8357163-F34D-4B81-8F7A-4AE53C1B08BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A8357163-F34D-4B81-8F7A-4AE53C1B08BB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A8357163-F34D-4B81-8F7A-4AE53C1B08BB}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -3697,6 +3707,8 @@ Global
 		{6731CC68-B1B5-480E-8540-A74D04AF40F3} = {E8FC09F7-3071-4F68-BA50-724A8996B495}
 		{2E5C0DC9-CCA0-4E2D-8A83-639A921AEDB4} = {C95CDA6C-3968-467E-80ED-5A963BE96215}
 		{6A85DE57-4ED1-4391-AF1B-11C632634461} = {2E5C0DC9-CCA0-4E2D-8A83-639A921AEDB4}
+		{E46710AD-37B9-4259-ADC7-ED84696D2A42} = {2E5C0DC9-CCA0-4E2D-8A83-639A921AEDB4}
+		{A8357163-F34D-4B81-8F7A-4AE53C1B08BB} = {E46710AD-37B9-4259-ADC7-ED84696D2A42}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}
