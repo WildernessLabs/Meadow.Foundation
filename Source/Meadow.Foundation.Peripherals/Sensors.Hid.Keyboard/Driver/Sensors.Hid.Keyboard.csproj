@@ -13,7 +13,7 @@
     <PackageTags>Meadow.Foundation,windows,keyboard</PackageTags>
     <Version>0.94.0</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Description>Driver for standard 108-key keyboard</Description>
+    <Description>Standard 108-key PC keyboard</Description>
 	  <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>

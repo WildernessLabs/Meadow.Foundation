@@ -119,7 +119,7 @@
     }
 
     /// <summary>
-    /// Represents the different sound effects that can be played by the <see cref="SystemSounds"/> class
+    /// Represents the sound effects that can be played by the <see cref="SystemSounds"/> class
     /// </summary>
     public enum SystemSoundEffect
     {
@@ -186,7 +186,7 @@
     }
 
     /// <summary>
-    /// Represents the different sound effects that can be played by the <see cref="GameSoundPlayer"/> class
+    /// Represents the sound effects that can be played by the <see cref="GameSounds"/> class
     /// </summary>
     public enum GameSoundEffect
     {

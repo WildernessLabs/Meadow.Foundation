@@ -57,12 +57,11 @@ namespace Meadow.Foundation.RTCs
         /// <summary>
         /// Bit mask to clear the Alarm2 interrupt
         /// </summary>
-        const byte ALARM2_INTERRUPT_OFF = 0xfd;
-
-        AlarmRaised alarm1Delegate;
-        AlarmRaised alarm2Delegate;
-        bool interruptCreatedInternally;
-        readonly Memory<byte> readBuffer;
+        private const byte ALARM2_INTERRUPT_OFF = 0xfd;
+        private AlarmRaised alarm1Delegate;
+        private AlarmRaised alarm2Delegate;
+        private bool interruptCreatedInternally;
+        private readonly Memory<byte> readBuffer;
 
         /// <summary>
         /// Create a new Ds323x object
@@ -73,7 +72,7 @@ namespace Meadow.Foundation.RTCs
 
             if (interruptPin != null)
             {
-                var interruptPort = interruptPin.CreateDigitalInputPort(InterruptMode.EdgeFalling, ResistorMode.InternalPullUp, TimeSpan.FromMilliseconds(10), TimeSpan.FromMilliseconds(10));
+                var interruptPort = interruptPin.CreateDigitalInterruptPort(InterruptMode.EdgeFalling, ResistorMode.InternalPullUp, TimeSpan.FromMilliseconds(10), TimeSpan.FromMilliseconds(10));
                 interruptCreatedInternally = true;
 
                 Initialize(interruptPort);
@@ -85,7 +84,7 @@ namespace Meadow.Foundation.RTCs
         /// <summary>
         /// Create a new Ds323x object
         /// </summary>
-        protected Ds323x(I2cCommunications i2cComms, IDigitalInputPort interruptPort)
+        protected Ds323x(I2cCommunications i2cComms, IDigitalInterruptPort interruptPort)
         {
             this.i2cComms = i2cComms;
 
@@ -104,7 +103,7 @@ namespace Meadow.Foundation.RTCs
             }
         }
 
-        private void Initialize(IDigitalInputPort interruptPort)
+        private void Initialize(IDigitalInterruptPort interruptPort)
         {
             if (interruptPort != null)
             {
@@ -214,7 +213,7 @@ namespace Meadow.Foundation.RTCs
         /// <summary>
         /// Interrupt port attached to the DS323x RTC module.
         /// </summary>
-        protected IDigitalInputPort InterruptPort { get; private set; }
+        protected IDigitalInterruptPort InterruptPort { get; private set; }
 
         /// <summary>
         /// Control register.

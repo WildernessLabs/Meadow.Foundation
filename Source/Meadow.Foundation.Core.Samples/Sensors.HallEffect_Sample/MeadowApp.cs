@@ -11,14 +11,14 @@ namespace Sensors.HallEffect_Sample
     {
         //<!=SNIP=>
 
-        LinearHallEffectTachometer hallSensor;
+        private LinearHallEffectTachometer hallSensor;
 
         public override Task Initialize()
         {
             Resolver.Log.Info("Initializing...");
 
             hallSensor = new LinearHallEffectTachometer(
-                inputPort: Device.CreateDigitalInputPort(Device.Pins.D02, Meadow.Hardware.InterruptMode.EdgeRising, Meadow.Hardware.ResistorMode.InternalPullUp, TimeSpan.Zero, TimeSpan.FromMilliseconds(1)),
+                inputPort: Device.CreateDigitalInterruptPort(Device.Pins.D02, Meadow.Hardware.InterruptMode.EdgeRising, Meadow.Hardware.ResistorMode.InternalPullUp, TimeSpan.Zero, TimeSpan.FromMilliseconds(1)),
                 type: CircuitTerminationType.CommonGround,
                 numberOfMagnets: 2,
                 rpmChangeNotificationThreshold: 1);
@@ -29,7 +29,7 @@ namespace Sensors.HallEffect_Sample
             return Task.CompletedTask;
         }
 
-        void HallSensorRPMsChanged(object sender, ChangeResult<float> e)
+        private void HallSensorRPMsChanged(object sender, ChangeResult<float> e)
         {
             Resolver.Log.Info($"RPM: {e.New}");
         }

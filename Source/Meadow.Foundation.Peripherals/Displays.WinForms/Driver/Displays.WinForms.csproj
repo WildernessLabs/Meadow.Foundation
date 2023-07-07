@@ -17,10 +17,9 @@
 	  <Description>Windows Forms display driver for Meadow</Description>
   </PropertyGroup>
 	<ItemGroup>
-		<None Include="../../../icon.png" Link="icon.png" Pack="true" PackagePath="" />
+		<None Include="..\..\..\icon.png" Link="icon.png" Pack="true" PackagePath="" />
 	</ItemGroup>
 	<ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\Meadow.Contracts\Source\Meadow.Contracts\Meadow.Contracts.csproj" />
     <ProjectReference Include="..\..\..\Meadow.Foundation.Libraries_and_Frameworks\Graphics.MicroGraphics\Driver\Graphics.MicroGraphics.csproj" />
   </ItemGroup>
 </Project>

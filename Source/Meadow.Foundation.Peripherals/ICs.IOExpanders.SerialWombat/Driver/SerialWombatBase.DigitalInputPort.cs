@@ -1,5 +1,4 @@
 ﻿using Meadow.Hardware;
-using System;
 
 namespace Meadow.Foundation.ICs.IOExpanders
 {
@@ -14,23 +13,11 @@ namespace Meadow.Foundation.ICs.IOExpanders
             private ResistorMode _resistor;
 
             /// <summary>
-            /// Debounce filter duration
-            /// </summary>
-            public override TimeSpan DebounceDuration { get; set; }
-
-            /// <summary>
-            /// Glitch filter duration
-            /// </summary>
-            public override TimeSpan GlitchDuration { get; set; }
-
-            /// <summary>
             /// Create a new DigitalInputPort object
             /// </summary>
-            public DigitalInputPort(SerialWombatBase controller, IPin pin, InterruptMode interruptMode, ResistorMode resistorMode)
-                : base(pin, GetChannelInfoForPin(pin), interruptMode)
+            public DigitalInputPort(SerialWombatBase controller, IPin pin, ResistorMode resistorMode)
+                : base(pin, GetChannelInfoForPin(pin))
             {
-                if (interruptMode != InterruptMode.None) throw new NotSupportedException("Interrupts not supported");
-
                 Resistor = resistorMode;
                 _controller = controller;
                 _controller.ConfigureInputPin((byte)pin.Key, Resistor);

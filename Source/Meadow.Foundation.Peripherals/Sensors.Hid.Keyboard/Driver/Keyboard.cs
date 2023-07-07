@@ -11,7 +11,7 @@ namespace Meadow.Foundation.Sensors.Hid;
 /// <summary>
 /// Encapsulates a standard 108-key keyboard as a Meadow IO Extender
 /// </summary>
-public partial class Keyboard : IDigitalInputController, IDigitalInputOutputController, IDisposable
+public partial class Keyboard : IDigitalInterruptController, IDigitalOutputController, IDisposable
 {
     private static Thread? _thread = null;
     private static Dictionary<char, KeyboardKey> _keys = new Dictionary<char, KeyboardKey>();
@@ -51,12 +51,12 @@ public partial class Keyboard : IDigitalInputController, IDigitalInputOutputCont
             {
                 var state = Interop.GetAsyncKeyState(key.Key);
 
-                if (((int)state & 0x8000) != 0)
+                if ((state & 0x8000) != 0)
                 {
                     // key is currently down
                     key.Value.SetState(true);
                 }
-                else if (((int)state & 0x0001) != 0)
+                else if ((state & 0x0001) != 0)
                 {
                     // state was down since last  call (is now up)
                     key.Value.SetState(true);
@@ -76,10 +76,9 @@ public partial class Keyboard : IDigitalInputController, IDigitalInputOutputCont
     /// Creates an input for a keyboard key
     /// </summary>
     /// <param name="pin"></param>
-    /// <returns></returns>
-    public IDigitalInputPort CreateDigitalInputPort(IPin pin)
+    public IDigitalInterruptPort CreateDigitalInterruptPort(IPin pin)
     {
-        return CreateDigitalInputPort(pin, InterruptMode.None);
+        return CreateDigitalInterruptPort(pin, InterruptMode.None);
     }
 
     /// <summary>
@@ -87,10 +86,9 @@ public partial class Keyboard : IDigitalInputController, IDigitalInputOutputCont
     /// </summary>
     /// <param name="pin"></param>
     /// <param name="interruptMode"></param>
-    /// <returns></returns>
-    public IDigitalInputPort CreateDigitalInputPort(IPin pin, InterruptMode interruptMode)
+    public IDigitalInterruptPort CreateDigitalInterruptPort(IPin pin, InterruptMode interruptMode)
     {
-        return CreateDigitalInputPort(pin, interruptMode, ResistorMode.Disabled, TimeSpan.Zero, TimeSpan.Zero);
+        return CreateDigitalInterruptPort(pin, interruptMode, ResistorMode.Disabled, TimeSpan.Zero, TimeSpan.Zero);
     }
 
     /// <summary>
@@ -101,10 +99,7 @@ public partial class Keyboard : IDigitalInputController, IDigitalInputOutputCont
     /// <param name="resistorMode"></param>
     /// <param name="debounceDuration"></param>
     /// <param name="glitchDuration"></param>
-    /// <returns></returns>
-    /// <exception cref="ArgumentException"></exception>
-    /// <exception cref="Exception"></exception>
-    public IDigitalInputPort CreateDigitalInputPort(IPin pin, InterruptMode interruptMode, ResistorMode resistorMode, TimeSpan debounceDuration, TimeSpan glitchDuration)
+    public IDigitalInterruptPort CreateDigitalInterruptPort(IPin pin, InterruptMode interruptMode, ResistorMode resistorMode, TimeSpan debounceDuration, TimeSpan glitchDuration)
     {
         var kp = pin as KeyboardKeyPin;
 
