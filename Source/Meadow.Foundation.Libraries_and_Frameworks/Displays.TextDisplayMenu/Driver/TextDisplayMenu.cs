@@ -65,6 +65,7 @@ namespace Meadow.Foundation.Displays.UI
         /// <param name="showBackOnRoot">True to show Back item on root menu</param>
         public TextDisplayMenu(ITextDisplay display, MenuItem[] menuItems, bool showBackOnRoot = false)
         {
+            this.showBackOnRoot = showBackOnRoot;
             Init(display, CreateMenuPage(menuItems, showBackOnRoot));
         }
 
@@ -212,7 +213,7 @@ namespace Meadow.Foundation.Displays.UI
             if (isSelected || item.HasSubItems)
             {
                 // calculate any neccessary padding to put selector on far right
-                int paddingLength = (display.DisplayConfig.Width - 1 - displayText.Length);
+                int paddingLength = (display.DisplayConfig.Width / display.DisplayConfig.FontScale - 1 - displayText.Length);
                 string padding = string.Empty;
                 if (paddingLength > 0) { padding = new string(' ', paddingLength); }
 
