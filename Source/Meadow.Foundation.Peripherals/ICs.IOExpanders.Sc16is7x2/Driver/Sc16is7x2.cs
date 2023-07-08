@@ -6,9 +6,9 @@ using System;
 namespace Meadow.Foundation.ICs.IOExpanders
 {
     /// <summary>
-    /// Represents an Sc16is7x2 I2C UART
+    /// Represents an Sc16is7x2 SPI/I2C UART
     /// </summary>
-    public partial class Sc16is7x2 : ISerialController
+    public abstract partial class Sc16is7x2 : ISerialController
     {
         /// <summary>
         /// The port name for Port A
@@ -36,7 +36,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             {
                 if (_i2cComms != null) return _i2cComms;
                 if (_spiComms != null) return _spiComms;
-                throw new System.Exception("No comms interface found");
+                throw new Exception("No comms interface found");
             }
         }
 

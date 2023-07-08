@@ -7,13 +7,13 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace ICs.IOExpanders.Sc16is7x2_Sample
+namespace ICs.IOExpanders.Sc16is762_Sample
 {
     public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
 
-        private Sc16is7x2? _expander = null;
+        private Sc16is762? _expander = null;
         private ISerialPort? _portA = null;
         private ISerialPort? _portB = null;
 
@@ -21,11 +21,11 @@ namespace ICs.IOExpanders.Sc16is7x2_Sample
         {
             Resolver.Log.Info("Initialize...");
 
-            var address = Sc16is7x2.Addresses.Address_0x4D;
+            var address = Sc16is762.Addresses.Address_0x4D;
 
             try
             {
-                _expander = new Sc16is7x2(
+                _expander = new Sc16is762(
                     Device.CreateI2cBus(),
                     new Meadow.Units.Frequency(1.8432, Meadow.Units.Frequency.UnitType.Megahertz),
                     address);
@@ -55,14 +55,11 @@ namespace ICs.IOExpanders.Sc16is7x2_Sample
             {
                 Thread.Sleep(1000);
             }
-
-            return base.Run();
         }
 
         private void PollingApp()
         {
             Task.Run(() => PollProc(_portA));
-            //            Task.Run(() => PollProc(_portB));
         }
 
         private async Task PollProc(ISerialPort port)
