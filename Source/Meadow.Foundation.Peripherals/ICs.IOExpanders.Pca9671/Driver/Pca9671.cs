@@ -6,7 +6,6 @@ using System.Threading;
 
 namespace Meadow.Foundation.ICs.IOExpanders
 {
-
     /// <summary>
     /// Represents a PCA9671 I2C IO Expander
     /// </summary>
@@ -14,7 +13,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
     {
         private ushort _outputs;
         private ushort _directionMask; // inputs must be set to logic 1 (data sheet section 8.1)
-        private List<IPin> _pinsInUse = new List<IPin>();
+        private readonly List<IPin> _pinsInUse = new List<IPin>();
         private bool _isDisposed;
         private IDigitalOutputPort? _resetPort;
 

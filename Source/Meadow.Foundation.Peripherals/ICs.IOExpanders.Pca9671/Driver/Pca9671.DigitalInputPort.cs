@@ -27,7 +27,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// <param name="pin">The IPIn to use for the port</param>
             public DigitalInputPort(Pca9671 peripheral, IPin pin)
                 : base(pin, pin.SupportedChannels.OfType<IDigitalChannelInfo>().First())
-
             {
                 Peripheral = peripheral;
             }
