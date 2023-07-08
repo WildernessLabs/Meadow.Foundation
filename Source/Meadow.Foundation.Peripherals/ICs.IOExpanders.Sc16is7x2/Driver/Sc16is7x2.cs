@@ -173,6 +173,12 @@ namespace Meadow.Foundation.ICs.IOExpanders
             WriteChannelRegister(Registers.FCR, channel, fcr);
         }
 
+        internal bool IsTransmitHoldingRegisterEmpty(Channels channel)
+        {
+            var thr = ReadChannelRegister(Registers.LSR, channel);
+            return (thr & RegisterBits.LSR_THR_EMPTY) == RegisterBits.LSR_THR_EMPTY;
+        }
+
         internal bool IsFifoDataAvailable(Channels channel)
         {
             return GetReadFifoCount(channel) > 0;
@@ -258,11 +264,21 @@ namespace Meadow.Foundation.ICs.IOExpanders
             return (int)(divisor1 / divisor / 16);
         }
 
-        internal void Reset(Channels channel)
+        public void Reset()
         {
-            var value = ReadChannelRegister(Registers.IOControl, channel);
+            Resolver.Log.Info($"Resetting...");
+            var value = ReadChannelRegister(Registers.IOControl, Channels.Both);
+            Resolver.Log.Info($"Read {value:X4}");
             value |= RegisterBits.IOCTL_RESET;
-            WriteChannelRegister(Registers.IOControl, channel, value);
+            Resolver.Log.Info($"Write {value:X4}");
+            try
+            {
+                WriteChannelRegister(Registers.IOControl, Channels.Both, value);
+            }
+            catch
+            {
+                // we expect to get a NACK on this.  Very confusing
+            }
         }
 
         internal void EnableFifo(Channels channel)

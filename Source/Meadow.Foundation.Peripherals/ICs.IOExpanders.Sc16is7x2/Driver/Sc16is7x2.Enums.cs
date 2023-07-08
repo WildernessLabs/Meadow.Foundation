@@ -60,6 +60,7 @@
 
         internal enum Channels
         {
+            Both = 0,
             A = 0,
             B = 1
         }

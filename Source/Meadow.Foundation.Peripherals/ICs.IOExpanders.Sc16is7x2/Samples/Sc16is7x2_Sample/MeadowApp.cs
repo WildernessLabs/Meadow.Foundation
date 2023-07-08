@@ -3,7 +3,6 @@ using Meadow.Devices;
 using Meadow.Foundation.ICs.IOExpanders;
 using Meadow.Hardware;
 using System;
-using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -22,29 +21,25 @@ namespace ICs.IOExpanders.Sc16is7x2_Sample
         {
             Resolver.Log.Info("Initialize...");
 
-            var address = 0x48;
-            while (true)
+            var address = Sc16is7x2.Addresses.Address_0x4D;
+
+            try
             {
+                _expander = new Sc16is7x2(
+                    Device.CreateI2cBus(),
+                    new Meadow.Units.Frequency(1.8432, Meadow.Units.Frequency.UnitType.Megahertz),
+                    address);
 
-                try
-                {
-                    _expander = new Sc16is7x2(
-                        Device.CreateI2cBus(),
-                        new Meadow.Units.Frequency(1.8432, Meadow.Units.Frequency.UnitType.Megahertz),
-                        (Sc16is7x2.Addresses)address);
+                _expander.Reset();
 
-                    _portA = _expander.PortA.CreateSerialPort();
-                    _portB = _expander.PortB.CreateSerialPort();
-                }
-                catch (Exception ex)
-                {
-                    Resolver.Log.Error($"Failed to initialize 0x{address:X2}: {ex.Message}");
-                    await Task.Delay(1000);
-                    address++;
-                }
+                _portA = _expander.PortA.CreateSerialPort();
+                _portB = _expander.PortB.CreateSerialPort();
             }
-
-            //            return base.Initialize();
+            catch (Exception ex)
+            {
+                Resolver.Log.Error($"Failed to initialize 0x{(byte)address:X2}: {ex.Message}");
+                await Task.Delay(1000);
+            }
         }
 
         public override Task Run()
@@ -67,9 +62,7 @@ namespace ICs.IOExpanders.Sc16is7x2_Sample
         private void PollingApp()
         {
             Task.Run(() => PollProc(_portA));
-            Task.Run(() => PollProc(_portB));
-
-            _portA.Write(Encoding.ASCII.GetBytes("ping\n"));
+            //            Task.Run(() => PollProc(_portB));
         }
 
         private async Task PollProc(ISerialPort port)
@@ -78,19 +71,23 @@ namespace ICs.IOExpanders.Sc16is7x2_Sample
 
             while (true)
             {
-                port.Read(readBuffer, 0, readBuffer.Length);
-
-                if (readBuffer.Any(b => b == '\n'))
+                try
                 {
-                    var rx = Encoding.ASCII.GetString(readBuffer).Trim('\0', '\n');
-                    if (rx.StartsWith("ping"))
-                    {
-                        port.Write(Encoding.ASCII.GetBytes("pong"));
+                    Resolver.Log.Info($"Writing");
+                    port.Write(Encoding.ASCII.GetBytes("ping\n"));
 
-                        await Task.Delay(1000);
+                    Resolver.Log.Info($"Reading");
+                    var count = port.Read(readBuffer, 0, readBuffer.Length);
+                    Resolver.Log.Info($"Read {count} bytes");
 
-                        port.Write(Encoding.ASCII.GetBytes("ping"));
-                    }
+                    Resolver.Log.Info($"{BitConverter.ToString(readBuffer, 0, count)}");
+
+                    await Task.Delay(5000);
+                }
+                catch (Exception ex)
+                {
+                    Resolver.Log.Error($"Poll error: {ex.Message}");
+                    await Task.Delay(5000);
                 }
             }
         }
