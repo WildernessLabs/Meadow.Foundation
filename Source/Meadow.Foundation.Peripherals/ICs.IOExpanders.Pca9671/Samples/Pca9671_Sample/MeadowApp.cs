@@ -81,25 +81,6 @@ namespace ICs.IOExpanders.Pca9671_Sample
                 outputPorts[i].Dispose();
             }
         }
-
-        /*
-         * this is for the IowaScaledEngineering relay board
-        void TestBulkDigitalOutputPortWrites(int loopCount)
-        {
-            var states = Enumerable.Repeat(false, 16).ToArray();
-
-            for (int l = 0; l < loopCount; l++) 
-            {
-                for (int i = 0; i < 16; i++) 
-                {
-                    states[i] = true;
-
-                    pca.SetStates(states);
-                    Thread.Sleep(5);
-                }
-            }
-        }
-        */
         //<!=SNOP=>
     }
 }
