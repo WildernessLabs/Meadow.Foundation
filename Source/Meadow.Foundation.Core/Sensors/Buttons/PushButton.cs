@@ -40,8 +40,20 @@ namespace Meadow.Foundation.Sensors.Buttons
         /// </summary>
         /// <param name="inputPin">The pin used to create the button port</param>
         /// <param name="resistorMode">The resistor mode</param>
+        /// <param name="debounceDuration">The interrupt debounce duration</param>
+        public PushButton(IPin inputPin, ResistorMode resistorMode, TimeSpan debounceDuration)
+            : this(inputPin.CreateDigitalInterruptPort(InterruptMode.EdgeBoth, resistorMode, debounceDuration, DefaultGlitchDuration))
+        {
+            ShouldDisposeInput = true;
+        }
+
+        /// <summary>
+        /// Creates PushButton with a digital input pin connected on a IIOdevice, specifying if its using an Internal or External PullUp/PullDown resistor.
+        /// </summary>
+        /// <param name="inputPin">The pin used to create the button port</param>
+        /// <param name="resistorMode">The resistor mode</param>
         public PushButton(IPin inputPin, ResistorMode resistorMode = ResistorMode.InternalPullUp)
-            : this(inputPin.CreateDigitalInterruptPort(InterruptMode.EdgeBoth, resistorMode))
+            : this(inputPin.CreateDigitalInterruptPort(InterruptMode.EdgeBoth, resistorMode, DefaultDebounceDuration, DefaultGlitchDuration))
         {
             ShouldDisposeInput = true;
         }
