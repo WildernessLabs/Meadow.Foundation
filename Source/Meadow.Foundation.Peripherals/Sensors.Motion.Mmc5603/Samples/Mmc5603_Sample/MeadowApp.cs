@@ -48,8 +48,6 @@ namespace Sensors.Motion.Mmc5603_Sample
 
         public override async Task Run()
         {
-            Resolver.Log.LogLevel = Meadow.Logging.LogLevel.Trace;
-
             //Read from sensor
             var result = await sensor.Read();
 
