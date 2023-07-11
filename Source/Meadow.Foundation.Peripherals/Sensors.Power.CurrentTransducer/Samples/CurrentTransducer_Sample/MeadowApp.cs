@@ -20,7 +20,7 @@ public class MeadowApp : App<F7FeatherV2>
 
         var bus = Device.CreateI2cBus();
         transducer = new CurrentTransducer(
-            Device.Pins.A00.CreateAnalogInputPort(),
+            Device.Pins.A00.CreateAnalogInputPort(1),
             new Voltage(3.3, Voltage.UnitType.Volts), // a reading of 3.3V
             new Current(10, Current.UnitType.Amps)    // equals 10 amps of current
             );
