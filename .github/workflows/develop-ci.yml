@@ -58,7 +58,6 @@ jobs:
       uses: actions/checkout@v3
       with:
         path: Meadow.Foundation
-        ref: develop
         
     - name: Setup .NET SDK
       uses: actions/setup-dotnet@v1
