@@ -64,13 +64,13 @@ namespace Meadow.Foundation.Sensors.Hid
         /// <param name="portSwitch5">The port for switch 5 (center buttons)</param>
         /// <param name="portEncoderA">The port for rotary encoder A</param>
         /// <param name="portEncoderB">The port for rotary encoder A</param>
-        public ANONavigationEncoder(IDigitalInputPort portSwitch1,
-            IDigitalInputPort portSwitch2,
-            IDigitalInputPort portSwitch3,
-            IDigitalInputPort portSwitch4,
-            IDigitalInputPort portSwitch5,
-            IDigitalInputPort portEncoderA,
-            IDigitalInputPort portEncoderB)
+        public ANONavigationEncoder(IDigitalInterruptPort portSwitch1,
+            IDigitalInterruptPort portSwitch2,
+            IDigitalInterruptPort portSwitch3,
+            IDigitalInterruptPort portSwitch4,
+            IDigitalInterruptPort portSwitch5,
+            IDigitalInterruptPort portEncoderA,
+            IDigitalInterruptPort portEncoderB)
         {
             DirectionalPad = new DigitalJoystick(portSwitch1, portSwitch2, portSwitch3, portSwitch4);
             ButtonCenter = new PushButton(portSwitch5);
