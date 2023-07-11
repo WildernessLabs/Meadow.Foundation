@@ -149,7 +149,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 }
 
                 var available = _controller.GetReadFifoCount(_channel);
-                Resolver.Log.Info($"A) Rx Fifo contains {available}, count is {count}");
 
                 // read either the available or count, whichever is less, unless available is 0, in which case we wait until timeout
                 while (available == 0)
@@ -167,12 +166,10 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 }
 
                 var toRead = available <= count ? available : count;
-                Resolver.Log.Info($"reading {toRead}");
 
                 for (var i = 0; i < toRead; i++)
                 {
                     buffer[i + offset] = _controller.ReadByte(_channel);
-                    Resolver.Log.Info($"read {(buffer[i + offset]):X2}");
                 }
 
                 return toRead;
@@ -241,7 +238,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
                 // write until we're either written all or the THR is full
                 var available = _controller.GetWriteFifoSpace(_channel);
-                Resolver.Log.Info($"Tx Fifo has space for {available}");
 
                 while (remaining > 0)
                 {
@@ -260,7 +256,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
                         }
                     }
 
-                    Resolver.Log.Info($"Writing 0x{buffer[index]:X2}");
                     _controller.WriteByte(_channel, buffer[index]);
                     index++;
                     available--;
@@ -272,7 +267,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
                     }
                 }
 
-                Resolver.Log.Info($"Wrote {count}");
                 return count;
             }
         }

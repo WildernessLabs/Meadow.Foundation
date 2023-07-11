@@ -264,13 +264,10 @@ namespace Meadow.Foundation.ICs.IOExpanders
             return (int)(divisor1 / divisor / 16);
         }
 
-        public void Reset()
+        internal void Reset()
         {
-            Resolver.Log.Info($"Resetting...");
             var value = ReadChannelRegister(Registers.IOControl, Channels.Both);
-            Resolver.Log.Info($"Read {value:X4}");
             value |= RegisterBits.IOCTL_RESET;
-            Resolver.Log.Info($"Write {value:X4}");
             try
             {
                 WriteChannelRegister(Registers.IOControl, Channels.Both, value);
