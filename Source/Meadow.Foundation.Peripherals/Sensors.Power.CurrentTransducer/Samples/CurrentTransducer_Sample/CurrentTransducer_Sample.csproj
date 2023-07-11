@@ -7,10 +7,12 @@
     <TargetFramework>netstandard2.1</TargetFramework>
     <OutputType>Library</OutputType>
     <AssemblyName>App</AssemblyName>
+	  <LangVersion>10</LangVersion>
+	  <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\..\..\Meadow.Core\Source\implementations\f7\Meadow.F7\Meadow.F7.csproj" />
-    <ProjectReference Include="..\..\Driver\ICs.IOExpanders.Sc16is7x2.csproj" />
+    <ProjectReference Include="..\..\Driver\Sensors.Power.CurrentTransducer.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Update="meadow.config.yaml">

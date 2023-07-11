@@ -6,9 +6,9 @@ using System;
 namespace Meadow.Foundation.ICs.IOExpanders
 {
     /// <summary>
-    /// Represents an Sc16is7x2 I2C UART
+    /// Represents an Sc16is7x2 SPI/I2C UART
     /// </summary>
-    public partial class Sc16is7x2 : ISerialController
+    public abstract partial class Sc16is7x2 : ISerialController
     {
         /// <summary>
         /// The port name for Port A
@@ -36,7 +36,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             {
                 if (_i2cComms != null) return _i2cComms;
                 if (_spiComms != null) return _spiComms;
-                throw new System.Exception("No comms interface found");
+                throw new Exception("No comms interface found");
             }
         }
 
@@ -173,6 +173,12 @@ namespace Meadow.Foundation.ICs.IOExpanders
             WriteChannelRegister(Registers.FCR, channel, fcr);
         }
 
+        internal bool IsTransmitHoldingRegisterEmpty(Channels channel)
+        {
+            var thr = ReadChannelRegister(Registers.LSR, channel);
+            return (thr & RegisterBits.LSR_THR_EMPTY) == RegisterBits.LSR_THR_EMPTY;
+        }
+
         internal bool IsFifoDataAvailable(Channels channel)
         {
             return GetReadFifoCount(channel) > 0;
@@ -258,11 +264,18 @@ namespace Meadow.Foundation.ICs.IOExpanders
             return (int)(divisor1 / divisor / 16);
         }
 
-        internal void Reset(Channels channel)
+        internal void Reset()
         {
-            var value = ReadChannelRegister(Registers.IOControl, channel);
+            var value = ReadChannelRegister(Registers.IOControl, Channels.Both);
             value |= RegisterBits.IOCTL_RESET;
-            WriteChannelRegister(Registers.IOControl, channel, value);
+            try
+            {
+                WriteChannelRegister(Registers.IOControl, Channels.Both, value);
+            }
+            catch
+            {
+                // we expect to get a NACK on this.  Very confusing
+            }
         }
 
         internal void EnableFifo(Channels channel)

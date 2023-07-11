@@ -9,14 +9,17 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// The default SPI bus mode for the peripheral
         /// </summary>
         public SpiClockConfiguration.Mode DefaultSpiBusMode => SpiClockConfiguration.Mode.Mode0;
+
         /// <summary>
         /// The default SPI bus frequency for the peripheral
         /// </summary>
-        public Frequency DefaultSpiBusSpeed => throw new System.NotImplementedException();
+        public Frequency DefaultSpiBusSpeed => new (500, Frequency.UnitType.Kilohertz);
+
         /// <summary>
         /// The current SPI bus mode for the peripheral
         /// </summary>
         public SpiClockConfiguration.Mode SpiBusMode { get; set; }
+
         /// <summary>
         /// The current SPI bus frequency for the peripheral
         /// </summary>

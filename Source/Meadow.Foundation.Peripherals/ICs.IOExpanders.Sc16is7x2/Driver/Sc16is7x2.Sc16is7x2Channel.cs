@@ -5,9 +5,11 @@ using System.Threading;
 
 namespace Meadow.Foundation.ICs.IOExpanders
 {
-
     public partial class Sc16is7x2
     {
+        /// <summary>
+        /// Encapsulates a channel of the SC16IS7x2 peripheral as an ISerialPort
+        /// </summary>
         public class Sc16is7x2Channel : ISerialPort
         {
             /// <inheritdoc/>
@@ -35,10 +37,10 @@ namespace Meadow.Foundation.ICs.IOExpanders
             public int ReceiveBufferSize => 64;
 
             /// <inheritdoc/>
-            public TimeSpan ReadTimeout { get; set; } = TimeSpan.Zero;
+            public TimeSpan ReadTimeout { get; set; } = TimeSpan.FromSeconds(5);
 
             /// <inheritdoc/>
-            public TimeSpan WriteTimeout { get; set; } = TimeSpan.Zero;
+            public TimeSpan WriteTimeout { get; set; } = TimeSpan.FromSeconds(5);
 
             private readonly Sc16is7x2 _controller;
             private readonly Channels _channel;
@@ -114,7 +116,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
             private void Initialize(int baudRate, int dataBits, Parity parity, StopBits stopBits)
             {
-                _controller.Reset(_channel);
+                _controller.Reset();
                 _controller.EnableFifo(_channel);
                 _baudRate = _controller.SetBaudRate(_channel, baudRate);
                 _controller.SetLineSettings(_channel, dataBits, parity, stopBits);
@@ -148,32 +150,28 @@ namespace Meadow.Foundation.ICs.IOExpanders
                     timeout = Environment.TickCount + (int)ReadTimeout.TotalMilliseconds;
                 }
 
-                var toRead = _controller.GetReadFifoCount(_channel);
+                var available = _controller.GetReadFifoCount(_channel);
 
-                for (var i = 0; i < count; i++)
+                // read either the available or count, whichever is less, unless available is 0, in which case we wait until timeout
+                while (available == 0)
                 {
-                    while (toRead == 0)
-                    {
-                        Thread.Sleep(1);
-                        toRead = _controller.GetReadFifoCount(_channel);
+                    Thread.Sleep(10);
+                    available = _controller.GetReadFifoCount(_channel);
 
-                        if (timeout > 0)
+                    if (timeout > 0)
+                    {
+                        if (Environment.TickCount >= timeout)
                         {
-                            if (Environment.TickCount > timeout)
-                            {
-                                throw new TimeoutException();
-                            }
+                            throw new TimeoutException();
                         }
                     }
+                }
 
+                var toRead = available <= count ? available : count;
+
+                for (var i = 0; i < toRead; i++)
+                {
                     buffer[i + offset] = _controller.ReadByte(_channel);
-
-                    toRead--;
-
-                    if (toRead == 0)
-                    {
-                        toRead = _controller.GetReadFifoCount(_channel);
-                    }
                 }
 
                 return toRead;
@@ -234,16 +232,22 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 {
                     timeout = Environment.TickCount + (int)ReadTimeout.TotalMilliseconds;
                 }
+                // wait for THR to be empty
+                while (!_controller.IsTransmitHoldingRegisterEmpty(_channel))
+                {
+                    Thread.Sleep(10);
+                }
 
-                // write until we're either written all of the THR is full
-                var available = _controller.GetReadFifoCount(_channel);
+                // write until we're either written all or the THR is full
+                var available = _controller.GetWriteFifoSpace(_channel);
 
                 while (remaining > 0)
                 {
+                    // make sure THR is empty
                     while (available <= 0)
                     {
-                        Thread.Sleep(1);
-                        available = _controller.GetReadFifoCount(_channel);
+                        Thread.Sleep(10);
+                        available = _controller.GetWriteFifoSpace(_channel);
 
                         if (timeout > 0)
                         {
@@ -261,7 +265,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
                     if (available == 0)
                     {
-                        available = _controller.GetReadFifoCount(_channel);
+                        available = _controller.GetWriteFifoSpace(_channel);
                     }
                 }
 
