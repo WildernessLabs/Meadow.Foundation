@@ -5,9 +5,11 @@ using System.Threading;
 
 namespace Meadow.Foundation.ICs.IOExpanders
 {
-
     public partial class Sc16is7x2
     {
+        /// <summary>
+        /// Encapsulates a channel of the SC16IS7x2 peripheral as an ISerialPort
+        /// </summary>
         public class Sc16is7x2Channel : ISerialPort
         {
             /// <inheritdoc/>

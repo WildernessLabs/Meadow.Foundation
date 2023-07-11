@@ -2,24 +2,78 @@
 {
     public partial class Sc16is7x2
     {
+        /// <summary>
+        /// The list of possible I2C addresses for the peripheral
+        /// </summary>
         public enum Addresses : byte
         {
+            /// <summary>
+            /// Bus address 0x48
+            /// </summary>
             Address_0x48 = 0x48,
+            /// <summary>
+            /// Bus address 0x49
+            /// </summary>
             Address_0x49 = 0x49,
+            /// <summary>
+            /// Bus address 0x4A
+            /// </summary>
             Address_0x4A = 0x4A,
+            /// <summary>
+            /// Bus address 0x4B
+            /// </summary>
             Address_0x4B = 0x4B,
+            /// <summary>
+            /// Bus address 0x4C
+            /// </summary>
             Address_0x4C = 0x4C,
+            /// <summary>
+            /// Bus address 0x4D
+            /// </summary>
             Address_0x4D = 0x4D,
+            /// <summary>
+            /// Bus address 0x4E
+            /// </summary>
             Address_0x4E = 0x4E,
+            /// <summary>
+            /// Bus address 0x4F
+            /// </summary>
             Address_0x4F = 0x4F,
+            /// <summary>
+            /// Bus address 0x50
+            /// </summary>
             Address_0x50 = 0x50,
+            /// <summary>
+            /// Bus address 0x51
+            /// </summary>
             Address_0x51 = 0x51,
+            /// <summary>
+            /// Bus address 0x52
+            /// </summary>
             Address_0x52 = 0x52,
+            /// <summary>
+            /// Bus address 0x53
+            /// </summary>
             Address_0x53 = 0x53,
+            /// <summary>
+            /// Bus address 0x54
+            /// </summary>
             Address_0x54 = 0x54,
+            /// <summary>
+            /// Bus address 0x55
+            /// </summary>
             Address_0x55 = 0x55,
+            /// <summary>
+            /// Bus address 0x56
+            /// </summary>
             Address_0x56 = 0x56,
+            /// <summary>
+            /// Bus address 0x57
+            /// </summary>
             Address_0x57 = 0x57,
+            /// <summary>
+            /// The default bus address (0x48)
+            /// </summary>
             Default = Address_0x48,
         }
 
