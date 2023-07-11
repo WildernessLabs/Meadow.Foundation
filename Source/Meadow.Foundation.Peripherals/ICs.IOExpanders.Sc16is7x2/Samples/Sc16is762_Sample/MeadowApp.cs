@@ -30,8 +30,6 @@ namespace ICs.IOExpanders.Sc16is762_Sample
                     new Meadow.Units.Frequency(1.8432, Meadow.Units.Frequency.UnitType.Megahertz),
                     address);
 
-                _expander.Reset();
-
                 _portA = _expander.PortA.CreateSerialPort();
                 _portB = _expander.PortB.CreateSerialPort();
             }
