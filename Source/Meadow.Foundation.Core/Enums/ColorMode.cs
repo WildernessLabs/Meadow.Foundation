@@ -53,8 +53,12 @@ namespace Meadow.Foundation.Graphics
         /// </summary>
         Format24bppRgb888 = 1 << 10,
         /// <summary>
+        /// 24-bit color
+        /// </summary>
+        Format24bppGrb888 = 1 << 11,
+        /// <summary>
         /// 32-bit color
         /// </summary>
-        Format32bppRgba8888 = 1 << 11,
+        Format32bppRgba8888 = 1 << 12,
     }
 }

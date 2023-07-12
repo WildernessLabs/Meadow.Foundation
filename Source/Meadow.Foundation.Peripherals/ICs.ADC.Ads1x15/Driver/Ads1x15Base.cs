@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 namespace Meadow.Foundation.ICs.ADC
 {
     /// <summary>
-    /// Encapsulation for ADCs based upon the Ads1x1x family of chips.
+    /// Base class for the Ads1x15 family of analog-to-digital (ADC) converters
     /// </summary>
     public abstract partial class Ads1x15Base : PollingSensorBase<Voltage>, II2cPeripheral
     {
@@ -37,23 +37,23 @@ namespace Meadow.Foundation.ICs.ADC
         protected virtual int ReadShiftBits { get; } = 0;
 
         /// <summary>
-        /// Create a new Ads1x15Base object using the default parameters for the component.
+        /// Create a new Ads1x15Base object using the default parameters for the component
         /// </summary>
-        /// <param name="address">Address of the At24Cxx (default = 0x50).</param>
-        /// <param name="i2cBus"></param>
-        /// <param name="mode"></param>
-        /// <param name="channel"></param>
+        /// <param name="address">Address of the At24Cxx (default = 0x50)</param>
+        /// <param name="i2cBus">The I2C bus</param>
+        /// <param name="measureMode">The measurement measureMode</param>
+        /// <param name="channelSetting">The channel setting</param>
         protected Ads1x15Base(II2cBus i2cBus,
             Addresses address,
-            MeasureMode mode,
-            ChannelSetting channel)
+            MeasureMode measureMode,
+            ChannelSetting channelSetting)
         {
             i2cComms = new I2cCommunications(i2cBus, (byte)address, 3, 3);
 
             SetConfigRegister(0x8583); // this is the default reset - force it in case it's not been reset
             config = GetConfigRegister();
-            Mode = mode;
-            Channel = channel;
+            Mode = measureMode;
+            Channel = channelSetting;
         }
 
         private ushort GetRegister(Register register)
@@ -136,7 +136,8 @@ namespace Meadow.Foundation.ICs.ADC
         }
 
         /// <summary>
-        /// Sets or gets the Measurement Mode.  One-shot uses less power, but is slower.
+        /// Sets or gets the Measurement Mode
+        /// One-shot uses less power but is slower
         /// </summary>
         public MeasureMode Mode
         {
@@ -162,7 +163,7 @@ namespace Meadow.Foundation.ICs.ADC
         /// <summary>
         /// Reads the last ADC Conversion as a Voltage based on current Gain settings
         /// </summary>
-        /// <returns></returns>
+        /// <returns>The voltage</returns>
         protected override async Task<Voltage> ReadSensor()
         {
             var raw = await ReadRaw();
@@ -189,7 +190,7 @@ namespace Meadow.Foundation.ICs.ADC
                     scale = 0.256d;
                     break;
             }
-            return new Units.Voltage(raw * (scale / (0x8000 >> ReadShiftBits)), Units.Voltage.UnitType.Volts);
+            return new Voltage(raw * (scale / (0x8000 >> ReadShiftBits)), Units.Voltage.UnitType.Volts);
         }
 
         /// <summary>
