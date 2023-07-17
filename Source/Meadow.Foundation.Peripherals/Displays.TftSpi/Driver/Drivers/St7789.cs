@@ -102,7 +102,7 @@ namespace Meadow.Foundation.Displays
             }
             else //1.47", 1.59", 1.9", 2.0" .... 320x240 etc.
             {
-                rowStart = rowStart2 = (byte)((320 - Width) / 2);
+                rowStart = rowStart2 = (byte)((320 - Height) / 2);
                 columnStart = columnStart2 = (byte)((240 - Width) / 2);
             }
 
