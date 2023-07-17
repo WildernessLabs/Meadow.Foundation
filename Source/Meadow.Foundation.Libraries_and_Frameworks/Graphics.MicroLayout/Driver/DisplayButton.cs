@@ -1,7 +1,6 @@
-﻿using Meadow.Foundation;
-using Meadow.Foundation.Graphics;
+﻿using Meadow.Foundation.Graphics;
 
-namespace MicroLayout;
+namespace Meadow.Foundation.Displays.UI;
 
 public class DisplayButton : ClickableDisplayControl
 {
@@ -24,7 +23,7 @@ public class DisplayButton : ClickableDisplayControl
     {
         if (theme != null)
         {
-            if (theme.ForeColor != null) this.ForeColor = theme.ForeColor.Value;
+            if (theme.ForegroundColor != null) this.ForeColor = theme.ForegroundColor.Value;
             if (theme.PressedColor != null) this.PressedColor = theme.PressedColor.Value;
             if (theme.HighlightColor != null) this.HighlightColor = theme.HighlightColor.Value;
             if (theme.ShadowColor != null) this.ShadowColor = theme.ShadowColor.Value;

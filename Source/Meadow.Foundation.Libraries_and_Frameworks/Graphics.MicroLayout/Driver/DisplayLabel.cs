@@ -1,7 +1,6 @@
-﻿using Meadow.Foundation;
-using Meadow.Foundation.Graphics;
+﻿using Meadow.Foundation.Graphics;
 
-namespace MicroLayout;
+namespace Meadow.Foundation.Displays.UI;
 
 public class DisplayLabel : DisplayControl
 {
@@ -22,9 +21,9 @@ public class DisplayLabel : DisplayControl
     {
         if (theme != null)
         {
-            if (theme.TextColor != null) this.TextColor = theme.TextColor.Value;
-            if (theme.BackgroundColor != null) this.BackColor = theme.BackgroundColor.Value;
-            this.Font = theme.Font;
+            if (theme.TextColor != null) TextColor = theme.TextColor.Value;
+            if (theme.BackgroundColor != null) BackColor = theme.BackgroundColor.Value;
+            Font = theme.Font;
         }
     }
 
@@ -76,10 +75,10 @@ public class DisplayLabel : DisplayControl
         switch (HorizontalAlignment)
         {
             case HorizontalAlignment.Center:
-                x = this.Width / 2;
+                x = Width / 2;
                 break;
             case HorizontalAlignment.Right:
-                x = this.Width;
+                x = Width;
                 break;
             default:
                 x = 0;
@@ -88,10 +87,10 @@ public class DisplayLabel : DisplayControl
         switch (VerticalAlignment)
         {
             case VerticalAlignment.Center:
-                y = this.Height / 2;
+                y = Height / 2;
                 break;
             case VerticalAlignment.Bottom:
-                y = this.Height;
+                y = Height;
                 break;
             default:
                 y = 0;

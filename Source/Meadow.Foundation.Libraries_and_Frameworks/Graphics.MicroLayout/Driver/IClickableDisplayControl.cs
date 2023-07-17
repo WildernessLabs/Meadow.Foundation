@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MicroLayout;
+namespace Meadow.Foundation.Displays.UI;
 
 public interface IClickableDisplayControl : IDisplayControl
 {

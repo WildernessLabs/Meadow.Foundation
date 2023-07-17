@@ -1,6 +1,4 @@
-﻿using Meadow.Foundation.Graphics;
-
-namespace MicroLayout;
+﻿namespace Meadow.Foundation.Displays.UI;
 
 public enum LayoutDirection
 {

@@ -1,11 +1,9 @@
-﻿using Meadow;
-using Meadow.Foundation;
-using Meadow.Foundation.Graphics;
+﻿using Meadow.Foundation.Graphics;
 using Meadow.Hardware;
 using System.Linq;
 using System.Threading;
 
-namespace MicroLayout;
+namespace Meadow.Foundation.Displays.UI;
 
 public class DisplayScreen
 {

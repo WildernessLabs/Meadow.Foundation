@@ -1,6 +1,6 @@
 ﻿using Meadow.Foundation.Graphics;
 
-namespace MicroLayout;
+namespace Meadow.Foundation.Displays.UI;
 
 public interface IDisplayControl
 {
@@ -14,10 +14,10 @@ public interface IDisplayControl
 
     public bool Contains(int x, int y)
     {
-        if (x < this.Left) return false;
-        if (x > this.Left + this.Width) return false;
-        if (y < this.Top) return false;
-        if (y > this.Top + this.Height) return false;
+        if (x < Left) return false;
+        if (x > Left + Width) return false;
+        if (y < Top) return false;
+        if (y > Top + Height) return false;
         return true;
     }
 

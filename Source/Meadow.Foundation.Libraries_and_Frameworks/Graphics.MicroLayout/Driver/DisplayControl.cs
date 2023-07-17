@@ -1,6 +1,6 @@
 ﻿using Meadow.Foundation.Graphics;
 
-namespace MicroLayout;
+namespace Meadow.Foundation.Displays.UI;
 
 public abstract class DisplayControl : IDisplayControl
 {
@@ -15,17 +15,12 @@ public abstract class DisplayControl : IDisplayControl
 
     public abstract void ApplyTheme(DisplayTheme theme);
 
-    public DisplayControl()
-        : this(0, 0, 10, 10)
-    {
-    }
-
     public DisplayControl(int left, int top, int width, int height)
     {
-        this.Left = left;
-        this.Top = top;
-        this.Width = width;
-        this.Height = height;
+        Left = left;
+        Top = top;
+        Width = width;
+        Height = height;
 
         IsInvalid = true;
     }

@@ -1,7 +1,6 @@
-﻿using Meadow.Foundation;
-using Meadow.Foundation.Graphics;
+﻿using Meadow.Foundation.Graphics;
 
-namespace MicroLayout;
+namespace Meadow.Foundation.Displays.UI;
 
 public class DisplayImage : DisplayControl
 {
@@ -13,18 +12,18 @@ public class DisplayImage : DisplayControl
     public DisplayImage(int left, int top, int width, int height, Image image)
         : base(left, top, width, height)
     {
-        this.Image = image;
+        Image = image;
     }
 
     public override void ApplyTheme(DisplayTheme theme)
     {
         if (theme != null)
         {
-            if (theme.BackgroundColor != null) this.BackColor = theme.BackgroundColor.Value;
+            if (theme.BackgroundColor != null) BackColor = theme.BackgroundColor.Value;
         }
     }
 
-    public Meadow.Foundation.Graphics.Image Image
+    public Image Image
     {
         get => _image;
         set => SetInvalidatingProperty(ref _image, value);
@@ -55,6 +54,6 @@ public class DisplayImage : DisplayControl
             graphics.DrawRectangle(Left, Top, Width, Height, BackColor, true);
         }
 
-        graphics.DrawImage(Left + (this.Width - Image.Width) / 2, Top + (this.Height - Image.Height) / 2, Image);
+        graphics.DrawImage(Left + (Width - Image.Width) / 2, Top + (Height - Image.Height) / 2, Image);
     }
 }

@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 
-namespace MicroLayout;
+namespace Meadow.Foundation.Displays.UI;
 
 public sealed class ControlsCollection : IEnumerable<IDisplayControl>
 {

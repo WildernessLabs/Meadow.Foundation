@@ -1,7 +1,6 @@
-﻿using Meadow.Foundation;
-using Meadow.Foundation.Graphics;
+﻿using Meadow.Foundation.Graphics;
 
-namespace MicroLayout;
+namespace Meadow.Foundation.Displays.UI;
 
 public class DisplayBox : DisplayControl
 {
@@ -18,7 +17,7 @@ public class DisplayBox : DisplayControl
     {
         if (theme != null)
         {
-            if (theme.ForeColor != null) this.ForeColor = theme.ForeColor.Value;
+            if (theme.ForegroundColor != null) this.ForeColor = theme.ForegroundColor.Value;
         }
     }
 

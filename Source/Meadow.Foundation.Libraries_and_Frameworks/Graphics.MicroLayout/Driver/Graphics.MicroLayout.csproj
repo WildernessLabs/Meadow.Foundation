@@ -7,6 +7,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="StackLayout.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="StackLayout.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\Graphics.MicroGraphics\Driver\Graphics.MicroGraphics.csproj" />
   </ItemGroup>
 
