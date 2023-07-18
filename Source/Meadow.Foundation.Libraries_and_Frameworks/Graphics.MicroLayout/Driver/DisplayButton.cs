@@ -2,10 +2,13 @@
 
 namespace Meadow.Foundation.Displays.UI;
 
+/// <summary>
+/// Represents a clickable display button in the user interface.
+/// </summary>
 public class DisplayButton : ClickableDisplayControl
 {
     private const int ButtonDepth = 3; // TODO: make this settable?
-    private string _text;
+    private string _text = string.Empty;
     private Image? _image;
     private Color _foreColor = Color.Gray;
     private Color _pressedColor;
@@ -14,11 +17,22 @@ public class DisplayButton : ClickableDisplayControl
     private Color _textColor;
     private IFont? _font;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DisplayButton"/> class with the specified dimensions.
+    /// </summary>
+    /// <param name="left">The left coordinate of the button.</param>
+    /// <param name="top">The top coordinate of the button.</param>
+    /// <param name="width">The width of the button.</param>
+    /// <param name="height">The height of the button.</param>
     public DisplayButton(int left, int top, int width, int height)
         : base(left, top, width, height)
     {
     }
 
+    /// <summary>
+    /// Applies the specified display theme to the display button.
+    /// </summary>
+    /// <param name="theme">The display theme to apply.</param>
     public override void ApplyTheme(DisplayTheme theme)
     {
         if (theme != null)
@@ -33,54 +47,82 @@ public class DisplayButton : ClickableDisplayControl
         }
     }
 
+    /// <summary>
+    /// Gets or sets the foreground color of the button when not pressed.
+    /// </summary>
     public Color ForeColor
     {
         get => _foreColor;
         set => SetInvalidatingProperty(ref _foreColor, value);
     }
 
+    /// <summary>
+    /// Gets or sets the foreground color of the button when pressed.
+    /// </summary>
     public Color PressedColor
     {
         get => _pressedColor;
         set => SetInvalidatingProperty(ref _pressedColor, value);
     }
 
+    /// <summary>
+    /// Gets or sets the highlight color of the button.
+    /// </summary>
     public Color HighlightColor
     {
         get => _highlightColor;
         set => SetInvalidatingProperty(ref _highlightColor, value);
     }
 
+    /// <summary>
+    /// Gets or sets the shadow color of the button.
+    /// </summary>
     public Color ShadowColor
     {
         get => _shadowColor;
         set => SetInvalidatingProperty(ref _shadowColor, value);
     }
 
+    /// <summary>
+    /// Gets or sets the text color of the button.
+    /// </summary>
     public Color TextColor
     {
         get => _textColor;
         set => SetInvalidatingProperty(ref _textColor, value);
     }
 
+    /// <summary>
+    /// Gets or sets the text to be displayed on the button.
+    /// </summary>
     public string Text
     {
         get => _text;
         set => SetInvalidatingProperty(ref _text, value);
     }
 
+    /// <summary>
+    /// Gets or sets the image to be displayed on the button.
+    /// </summary>
     public Image? Image
     {
         get => _image;
         set => SetInvalidatingProperty(ref _image, value);
     }
 
+    /// <summary>
+    /// Gets or sets the font used for displaying the text on the button.
+    /// </summary>
     public IFont? Font
     {
         get => _font;
         set => SetInvalidatingProperty(ref _font, value);
     }
 
+    /// <summary>
+    /// Draws the display button on the specified <see cref="MicroGraphics"/> surface.
+    /// </summary>
+    /// <param name="graphics">The <see cref="MicroGraphics"/> surface to draw the button on.</param>
     protected override void OnDraw(MicroGraphics graphics)
     {
         graphics.Stroke = ButtonDepth;
