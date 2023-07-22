@@ -1,10 +1,10 @@
-﻿using System;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
 using Meadow.Units;
+using System;
 
 namespace Meadow.Foundation.Sensors.Distance
 {
-    
+
     public partial class MaxBotix
     {
         //The baud rate is 9600, 8 bits, no parity, with one stop bit
@@ -12,6 +12,8 @@ namespace Meadow.Foundation.Sensors.Distance
 
         static readonly byte[] suffixDelimiter = { 13 }; //ASCII return
         static readonly int portSpeed = 9600; //this is fixed for MaxBotix
+
+        DateTime lastUpdate = DateTime.MinValue;
 
         /// <summary>
         /// Creates a new MaxBotix object communicating over serial
@@ -54,13 +56,13 @@ namespace Meadow.Foundation.Sensors.Distance
             { return; }
 
             //strip the leading R
-            string cleaned = message.Substring(1);
+            string cleaned = message[1..];
 
             // get index of space
             var spaceIndex = message.FirstIndexOf(new char[] { ' ' });
             if (spaceIndex > 0)
             {
-                cleaned = cleaned.Substring(0, spaceIndex);
+                cleaned = cleaned[..spaceIndex];
             }
 
             var value = double.Parse(cleaned);
@@ -72,9 +74,14 @@ namespace Meadow.Foundation.Sensors.Distance
                 New = new Length(value, units),
                 Old = Distance,
             };
-           
+
             Distance = changeResult.New;
-            RaiseEventsAndNotify(changeResult);
+
+            if (updateInterval == null || DateTime.Now - lastUpdate >= updateInterval)
+            {
+                lastUpdate = DateTime.Now;
+                RaiseEventsAndNotify(changeResult);
+            }
         }
     }
 }
