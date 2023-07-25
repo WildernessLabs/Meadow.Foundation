@@ -28,7 +28,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             private readonly int supplyVoltage;
             private readonly object _lock = new object();
 
-            private readonly List<Voltage> buffer = new List<Voltage>();
+            private readonly Voltage[] buffer;
 
             /// <summary>
             /// Is the port sampling
@@ -60,7 +60,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// <summary>
             /// The voltage sampling buffer
             /// </summary>
-            public IList<Voltage> VoltageSampleBuffer => buffer;
+            public Voltage[] VoltageSampleBuffer => buffer;
 
             /// <summary>
             /// The sampling interval
@@ -76,6 +76,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 SampleCount = sampleCount;
 
                 this.controller = controller;
+                buffer = new Voltage[sampleCount];
 
                 supplyVoltage = (int)(controller.GetSupplyVoltage().Millivolts);
                 ReferenceVoltage = new Voltage(supplyVoltage, Voltage.UnitType.Millivolts);
@@ -91,14 +92,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 var data = controller.ReadPublicData((byte)Pin.Key);
                 Voltage = new Voltage((data * supplyVoltage) >> 16, Voltage.UnitType.Millivolts);
 
-                if (buffer.Count == 0)
-                {
-                    buffer.Add(Voltage);
-                }
-                else
-                {
-                    buffer[0] = Voltage;
-                }
+                buffer[0] = Voltage;
 
                 return Task.FromResult(Voltage);
             }

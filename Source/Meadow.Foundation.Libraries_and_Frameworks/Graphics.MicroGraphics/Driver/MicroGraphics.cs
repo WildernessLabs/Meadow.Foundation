@@ -893,8 +893,6 @@ namespace Meadow.Foundation.Graphics
         {
             if (quadrant < 0 || quadrant > 3) { throw new ArgumentOutOfRangeException("DrawCircleQuadrant: quadrant must be between 0 & 3 inclusive"); }
 
-            PenColor = color;
-
             if (filled)
             {
                 DrawCircleQuadrantFilled(centerX, centerY, radius, quadrant, color, centerBetweenPixels);
@@ -1205,11 +1203,11 @@ namespace Meadow.Foundation.Graphics
                 DrawCircleQuadrant(x + width - cornerRadius - 1, y + height - cornerRadius - 1, cornerRadius, 3, color, false);
 
                 //lines
-                DrawLine(x + cornerRadius, y - 1, x + width - cornerRadius, y - 1);
-                DrawLine(x + cornerRadius, y + height, x + width - cornerRadius, y + height);
+                DrawLine(x + cornerRadius, y - 1, x + width - cornerRadius, y - 1, color);
+                DrawLine(x + cornerRadius, y + height, x + width - cornerRadius, y + height, color);
 
-                DrawLine(x, y + cornerRadius, x, y + height - cornerRadius);
-                DrawLine(x + width - 1, y + cornerRadius, x + width - 1, y + height - cornerRadius);
+                DrawLine(x, y + cornerRadius, x, y + height - cornerRadius, color);
+                DrawLine(x + width - 1, y + cornerRadius, x + width - 1, y + height - cornerRadius, color);
             }
         }
 
