@@ -396,6 +396,13 @@ namespace Meadow.Foundation.Sensors.Distance
             return result;
         }
 
+        int Read16(byte address)
+        {
+            //var result = BusComms.ReadRegisters(address, 2);
+            BusComms.ReadRegister(address, ReadBuffer.Span[0..2]);
+            return (ReadBuffer.Span[0] << 8) | ReadBuffer.Span[1];
+        }
+
         async Task<int> GetRawRangeData()
         {
             BusComms.WriteRegister(0x80, 0x01);
@@ -431,7 +438,7 @@ namespace Meadow.Foundation.Sensors.Distance
                 }
             }
 
-            var range_mm = BusComms.ReadRegisterAsUShort((byte)Register.ResultRangeStatus + 10);
+            var range_mm = Read16((byte)Register.ResultRangeStatus + 10);
             BusComms.WriteRegister((byte)Register.GpioHvMuxActiveHigh, 0x01);
 
             return range_mm;
