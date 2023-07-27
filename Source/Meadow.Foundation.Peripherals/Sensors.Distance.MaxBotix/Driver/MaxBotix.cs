@@ -70,7 +70,6 @@ namespace Meadow.Foundation.Sensors.Distance
         /// <param name="updateInterval"></param>
         public override void StartUpdating(TimeSpan? updateInterval)
         {
-            // thread safety
             lock (samplingLock)
             {
                 if (IsSampling) return;
@@ -94,7 +93,7 @@ namespace Meadow.Foundation.Sensors.Distance
         }
 
         /// <summary>
-        /// Stops sampling the temperature.
+        /// Stop sampling
         /// </summary>
         public override void StopUpdating()
         {
