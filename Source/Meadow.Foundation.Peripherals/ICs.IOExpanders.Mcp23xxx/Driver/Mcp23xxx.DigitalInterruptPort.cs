@@ -73,7 +73,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// Update the port value 
             /// </summary>
             /// <param name="newState">The new port state</param>
-            /// <param name="raiseEvents">Raise and notify for a state change</param>
             internal void Update(bool newState)
             {
                 if (DateTime.UtcNow - lastUpdate < DebounceDuration)
