@@ -52,6 +52,14 @@ namespace Meadow.Foundation.Sensors.Distance
         }
 
         /// <summary>
+        /// Start a distance measurement
+        /// </summary>
+        public void MeasureDistance()
+        {
+            _ = ReadSensor();
+        }
+
+        /// <summary>
         /// Read the distance from the sensor
         /// </summary>
         /// <returns></returns>
