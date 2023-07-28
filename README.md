@@ -1,7 +1,7 @@
 [![NuGet Badge](https://buildstats.info/nuget/Meadow.Foundation)](https://www.nuget.org/packages/Meadow.Foundation)
 [![Develop Branch](https://github.com/WildernessLabs/Meadow.Foundation/actions/workflows/develop-ci.yml/badge.svg)](https://github.com/WildernessLabs/Meadow.Foundation/actions/workflows/develop-ci.yml)
 
-<img src="Design/banner.jpg" style="margin-bottom:10px" />
+<img src="Design/meadow.foundation.jpg" alt="iot, dotnet, meadow, meadow-foundation"  style="margin-bottom:10px" />
 
 # Meadow.Foundation
 
