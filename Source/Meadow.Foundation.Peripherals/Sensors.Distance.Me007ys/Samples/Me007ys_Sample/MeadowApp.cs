@@ -8,8 +8,10 @@ using System.Threading.Tasks;
 namespace Me007ys_Sample
 {
     // Change F7FeatherV2 to F7FeatherV1 for V1.x boards
-    public class MeadowApp : App<F7CoreComputeV2>
+    public class MeadowApp : App<F7FeatherV2>
     {
+        //<!=SNIP=>
+
         Me007ys me007ys;
 
         public override Task Initialize()
@@ -51,5 +53,7 @@ namespace Me007ys_Sample
         {
             Resolver.Log.Info($"Length: {e.New.Centimeters}cm");
         }
+
+        //<!=SNOP=>
     }
 }
