@@ -11,7 +11,7 @@ namespace Meadow.Foundation.Sensors.Distance
         readonly ISerialMessagePort serialMessagePort;
 
         static readonly byte[] suffixDelimiter = { 13 }; //ASCII return
-        static readonly int portSpeed = 9600; //this is fixed for MaxBotix
+        static readonly int portSpeed = 9600;
 
         DateTime lastUpdate = DateTime.MinValue;
 
