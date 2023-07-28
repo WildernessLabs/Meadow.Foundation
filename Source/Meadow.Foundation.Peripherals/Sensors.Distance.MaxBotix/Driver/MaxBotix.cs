@@ -113,7 +113,7 @@ namespace Meadow.Foundation.Sensors.Distance
                     serialMessagePort.Close();
                 }
                 else if (communication == CommunicationType.I2C)
-                {   //handled in ByteCommsSensorBase
+                {
                     base.StopUpdating();
                 }
             }
