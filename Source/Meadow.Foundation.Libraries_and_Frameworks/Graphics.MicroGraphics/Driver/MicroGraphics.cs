@@ -46,7 +46,8 @@ namespace Meadow.Foundation.Graphics
                 DisplayConfig.Height = (ushort)(Height / CurrentFont.Height);
             }
         }
-        IFont? currentFont = null;
+
+        private IFont? currentFont = null;
 
         /// <summary>
         /// Current color mode
@@ -70,7 +71,7 @@ namespace Meadow.Foundation.Graphics
             }
         }
 
-        RotationType _rotation = RotationType.Default;
+        private RotationType _rotation = RotationType.Default;
 
         /// <summary>
         /// Stroke / line thickness when drawing lines or shape outlines
@@ -122,15 +123,14 @@ namespace Meadow.Foundation.Graphics
         /// </summary>
         public TimeSpan DelayBetweenFrames { get; set; } = TimeSpan.Zero;
 
-        readonly object _lock = new object();
-
-        bool isUpdating = false;
-        bool isUpdateRequested = false;
+        private readonly object _lock = new object();
+        private bool isUpdating = false;
+        private bool isUpdateRequested = false;
 
         /// <summary>
         /// Time of last display update when callng ShowBuffered
         /// </summary>
-        DateTime lastUpdated;
+        private DateTime lastUpdated;
 
         /// <summary>
         /// Create a new MicroGraphics instance from a display perihperal driver instance
@@ -366,7 +366,7 @@ namespace Meadow.Foundation.Graphics
         }
 
         // Helper method, can be integrated with DrawLine after we add DrawQuad
-        void DrawSingleWidthLine(int x0, int y0, int x1, int y1, Color color)
+        private void DrawSingleWidthLine(int x0, int y0, int x1, int y1, Color color)
         {
             var steep = Math.Abs(y1 - y0) > Math.Abs(x1 - x0);
             if (steep)
@@ -687,7 +687,7 @@ namespace Meadow.Foundation.Graphics
             DrawTriangle(x0, y0, x1, y1, x2, y2, PenColor, filled);
         }
 
-        void Swap(ref int value1, ref int value2)
+        private void Swap(ref int value1, ref int value2)
         {
             (value2, value1) = (value1, value2);
         }
@@ -1255,8 +1255,8 @@ namespace Meadow.Foundation.Graphics
 
             byte[] bitMap = GetBytesForTextBitmap(text, fontToDraw);
 
-            x = GetXForAlignment(x, MeasureText(text, scaleFactor).Width, alignmentH);
-            y = GetYForAlignment(y, MeasureText(text, scaleFactor).Height, alignmentV);
+            x = GetXForAlignment(x, MeasureText(text, fontToDraw, scaleFactor).Width, alignmentH);
+            y = GetYForAlignment(y, MeasureText(text, fontToDraw, scaleFactor).Height, alignmentV);
 
             DrawBitmap(x, y, bitMap.Length / fontToDraw.Height * 8, fontToDraw.Height, bitMap, color, scaleFactor);
         }
@@ -1778,7 +1778,7 @@ namespace Meadow.Foundation.Graphics
             };
         }
 
-        bool IsCoordinateInBounds(int x, int y)
+        private bool IsCoordinateInBounds(int x, int y)
         {
             if (x < 0 || y < 0 || x >= Width || y >= Height)
                 return false;
@@ -1786,7 +1786,7 @@ namespace Meadow.Foundation.Graphics
             return true;
         }
 
-        void Fill(int x, int y, int width, int height, Color color)
+        private void Fill(int x, int y, int width, int height, Color color)
         {
             if (IgnoreOutOfBoundsPixels)
             {
@@ -1828,7 +1828,7 @@ namespace Meadow.Foundation.Graphics
             }
         }
 
-        int GetXForAlignment(int x, int width, HorizontalAlignment alignmentH)
+        private int GetXForAlignment(int x, int width, HorizontalAlignment alignmentH)
         {
             if (alignmentH == HorizontalAlignment.Center)
             {
@@ -1841,7 +1841,7 @@ namespace Meadow.Foundation.Graphics
             return x;
         }
 
-        int GetYForAlignment(int y, int height, VerticalAlignment alignmentV)
+        private int GetYForAlignment(int y, int height, VerticalAlignment alignmentV)
         {
             if (alignmentV == VerticalAlignment.Center)
             {
