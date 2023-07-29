@@ -1,10 +1,27 @@
-<img src="Design/banner.jpg" style="margin-bottom:10px" />
+[![NuGet Badge](https://buildstats.info/nuget/Meadow.Foundation)](https://www.nuget.org/packages/Meadow.Foundation)
+[![Develop Branch](https://github.com/WildernessLabs/Meadow.Foundation/actions/workflows/develop-ci.yml/badge.svg)](https://github.com/WildernessLabs/Meadow.Foundation/actions/workflows/develop-ci.yml)
+
+<img src="Design/meadow.foundation.jpg" alt="iot, dotnet, meadow, meadow-foundation"  style="margin-bottom:10px" />
 
 # Meadow.Foundation
 
 The [Meadow.Foundation](http://developer.wildernesslabs.co/Meadow/Meadow.Foundation/Peripherals/) peripherals library is an open source repository of drivers and libraries that streamline and simplify adding hardware to your .NET Meadow IoT application.
 
 Meadow.Foundation makes the task of building connected things easy with Meadow by providing a unified driver and library framework that includes drivers and abstractions for common peripherals such as: sensors, displays, motors, cameras and more. Additionally, it includes utility functions and helpers for common tasks when building connected things.
+
+## Contents
+
+* [Repositories](#repositories)
+* [Repository Branches](#repository-branches)
+  * [Main](#main)
+  * [Develop](#develop)
+  * [Branch History](#branch-history)
+* [Requesting New Drivers](#requesting-new-drivers)
+* [Documentation](#documentation)
+* [Using Meadow.Foundation](#using-meadowfoundation)
+* [Contributing](#contributing)
+* [License](#license)
+* [Author Credits](#author-credits)
 
 ## Repositories 
 
@@ -34,14 +51,6 @@ To compile the `develop` branch, you'll need to clone other dependency GitHub re
 
 All code changes are committed to the `develop` branch. At the time of release, the references within develop are updated for publishing and then merged to `main`. This ensures a consistent and accurate history across `develop` and `main`. This also allows pull requests targeted to `main` to be easily retargeted to `develop`.
 
-
-## Repository Status
-
-| Feature | Branch | Status |
-| --- | --- | --- |
-| Drivers | `develop` | [![Build Status](https://dev.azure.com/WildernessLabs/Meadow/_apis/build/status/WildernessLabs.Meadow.Foundation?repoName=WildernessLabs%2FMeadow.Foundation&branchName=develop)](https://dev.azure.com/WildernessLabs/Meadow/_build/latest?definitionId=6&repoName=WildernessLabs%2FMeadow.Foundation&branchName=develop) |
-| Maple | `develop` | [![Maple Build](https://github.com/WildernessLabs/Meadow.Foundation/actions/workflows/build_maple.yml/badge.svg?branch=develop)](https://github.com/WildernessLabs/Meadow.Foundation/actions/workflows/build_maple.yml) |
-
 ## Requesting New Drivers
 
 If you have a need for a driver that we don't yet support, you have a couple options:
@@ -49,11 +58,11 @@ If you have a need for a driver that we don't yet support, you have a couple opt
 - Use an existing, similar driver as a template for your new driver.  We accept pull requests, but don't require them.
 - Open a new item on the [Issues Tab](https://github.com/WildernessLabs/Meadow.Foundation/issues) and request the driver so we can prioritize it.
 
-# Documentation
+## Documentation
 
 You can read more Meadow.Foundation and how to get started in our [developer site](http://developer.wildernesslabs.co/Meadow/Meadow.Foundation/).
 
-## Using
+## Using Meadow.Foundation
 
 To use Meadow.Foundation, simply add a Nuget reference to the core library (for core helpers and drivers), or to the specific peripheral driver you'd like to use, and the core will come with it.
 
@@ -69,9 +78,9 @@ Meadow.Foundation, is open source and community powered. We love pull requests, 
  * **Datasheet** - For the peripheral, if applicable.
  * **Sample** - Application illustrating usage of the peripheral.
 
-# License
+## License
 
-Copyright 2019-2022, Wilderness Labs Inc.
+Copyright 2019-2023, Wilderness Labs Inc.
     
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -88,31 +97,3 @@ Copyright 2019-2022, Wilderness Labs Inc.
 ## Author Credits
 
 Authors: Bryan Costanich, Mark Stevens, Adrian Stevens, Jorge Ramirez, Brian Kim, Frank Krueger, Craig Dunn
-
-## Developer Mode
-
-To make local development easier, there's a script to convert all the PackageReferences to ProjectReferences:
-
-```bash
-cd Source
-./denugetize.sh
-```
-
-Make sure the script is executable by running `chmod u+x denugetize.sh`
-
-To change the references back to PackageReferences:
-
-```bash
-cd Source
-./nugetize.sh
-```
-
-Make sure the script is executable by running `chmod u+x nugetize.sh`
-
-# Publishing Nuget Packages
-
-To trigger a new build:  
-- Go to project properties in VS 2019 / 2022 
-- in the `Package` tab, increment either the MAJOR or MINOR `Package version`.  
-
-The CI job will pick up the changes, pack, and push the Nuget package.
