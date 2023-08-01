@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Graphics.MicroGraphics\Driver\Graphics.MicroGraphics.csproj" />
+    <PackageReference Include="Meadow.Foundation.Graphics.MicroGraphics" Version="*" />
   </ItemGroup>
 
 </Project>
