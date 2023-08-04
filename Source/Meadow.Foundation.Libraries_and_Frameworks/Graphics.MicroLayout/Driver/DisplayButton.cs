@@ -1,6 +1,6 @@
 ﻿using Meadow.Foundation.Graphics;
 
-namespace Meadow.Foundation.Displays.UI;
+namespace Meadow.Foundation.Graphics.MicroLayout;
 
 /// <summary>
 /// Represents a clickable display button in the user interface.

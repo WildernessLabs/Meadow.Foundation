@@ -1,4 +1,4 @@
-﻿namespace Meadow.Foundation.Displays.UI;
+﻿namespace Meadow.Foundation.Graphics.MicroLayout;
 
 public enum LayoutDirection
 {
