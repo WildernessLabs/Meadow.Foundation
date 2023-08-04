@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 
-namespace Meadow.Foundation.Displays.UI;
+namespace Meadow.Foundation.Graphics.MicroLayout;
 
 /// <summary>
 /// Represents a collection of display controls on a <see cref="DisplayScreen"/>.

@@ -1305,15 +1305,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Distance.Me007ys", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Me007ys_Sample", "Meadow.Foundation.Peripherals\Sensors.Distance.Me007ys\Samples\Me007ys_Sample\Me007ys_Sample.csproj", "{8F979C0C-CE06-498D-A5EE-800780217138}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Displays.UI.MicroLayout", "Displays.UI.MicroLayout", "{C2417073-703A-4DB2-BA30-45BF4DCC9251}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Graphics.MicroLayout", "Graphics.MicroLayout", "{C2417073-703A-4DB2-BA30-45BF4DCC9251}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Driver", "Driver", "{ABB1D35E-EB7A-4E6F-B0DD-898C554BEFAA}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{E762EEFF-E646-4517-BAE6-4E23A34854DC}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Displays.UI.MicroLayout", "Meadow.Foundation.Libraries_and_Frameworks\Displays.UI.MicroLayout\Driver\Displays.UI.MicroLayout.csproj", "{C20CCF9A-EE61-488E-B5D1-BAF6EC76A9D1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Graphics.MicroLayout", "Meadow.Foundation.Libraries_and_Frameworks\Graphics.MicroLayout\Driver\Graphics.MicroLayout.csproj", "{C20CCF9A-EE61-488E-B5D1-BAF6EC76A9D1}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MAX7219Sample", "Meadow.Foundation.Libraries_and_Frameworks\Displays.UI.MicroLayout\Samples\MAX7219Sample\MAX7219Sample.csproj", "{E0BE68D7-4FF0-462B-9D9F-F2979FBBA7F9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MAX7219Sample", "Meadow.Foundation.Libraries_and_Frameworks\Graphics.MicroLayout\Samples\MAX7219Sample\MAX7219Sample.csproj", "{E0BE68D7-4FF0-462B-9D9F-F2979FBBA7F9}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Keyboard", "Keyboard", "{CB1E057F-3301-4D95-A7B1-814BFF55DC54}"
 EndProject

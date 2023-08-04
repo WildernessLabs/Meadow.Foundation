@@ -3,7 +3,7 @@ using Meadow.Hardware;
 using System.Linq;
 using System.Threading;
 
-namespace Meadow.Foundation.Displays.UI;
+namespace Meadow.Foundation.Graphics.MicroLayout;
 
 public class DisplayScreen
 {

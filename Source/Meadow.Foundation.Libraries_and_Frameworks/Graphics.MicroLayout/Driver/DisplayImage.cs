@@ -1,6 +1,6 @@
 ﻿using Meadow.Foundation.Graphics;
 
-namespace Meadow.Foundation.Displays.UI;
+namespace Meadow.Foundation.Graphics.MicroLayout;
 
 /// <summary>
 /// Represents an image display control in the user interface.
