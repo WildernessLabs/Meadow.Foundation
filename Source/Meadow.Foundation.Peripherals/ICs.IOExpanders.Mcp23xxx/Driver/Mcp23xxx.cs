@@ -17,7 +17,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// This provides raw port state data from the MCP23xxx
         /// It's highly recommended to prefer using the events exposed on the digital input ports instead.
         /// </summary>
-        public event EventHandler<IOExpanderInputChangedEventArgs> InputChanged = delegate { };
+        public event EventHandler<IOExpanderInputChangedEventArgs> InputChanged = null;
 
         /// <summary>
         /// The number of IO pins avaliable on the device
@@ -183,6 +183,11 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
         private void InterruptPortChanged(object sender, DigitalPortResult e)
         {
+            if (interruptPorts.Count == 0 && InputChanged == null)
+            {
+                return;
+            }
+
             // determine which pin caused the interrupt
             byte interruptFlag = mcpDevice.ReadRegister(MapRegister(Registers.INTF_InterruptFlag, PortBank.A));
             byte currentStates = mcpDevice.ReadRegister(MapRegister(Registers.GPIO, PortBank.A));

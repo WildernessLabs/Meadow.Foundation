@@ -5,27 +5,22 @@ using Meadow.Units;
 using System;
 using System.Threading.Tasks;
 
-namespace MaxBotix_Sample
+namespace Me007ys_Sample
 {
     // Change F7FeatherV2 to F7FeatherV1 for V1.x boards
     public class MeadowApp : App<F7FeatherV2>
     {
-        MaxBotix maxBotix;
+        //<!=SNIP=>
+
+        Me007ys me007ys;
 
         public override Task Initialize()
         {
             Resolver.Log.Info("Initialize...");
 
-            //Analog
-            // maxBotix = new MaxBotix(Device, Device.Pins.A00, MaxBotix.SensorType.HR10Meter);
+            me007ys = new Me007ys(Device, Device.PlatformOS.GetSerialPortName("COM4"));
 
-            //Serial
-            //maxBotix = new MaxBotix(Device, Device.PlatformOS.GetSerialPortName("COM4"), MaxBotix.SensorType.XL);
-
-            //I2C - don't forget external pullup resistors 
-            maxBotix = new MaxBotix(Device.CreateI2cBus(), MaxBotix.SensorType.HR10Meter);
-
-            var consumer = MaxBotix.CreateObserver(
+            var consumer = Me007ys.CreateObserver(
                 handler: result =>
                 {
                     Resolver.Log.Info($"Observer: Distance changed by threshold; new distance: {result.New.Centimeters:N2}cm, old: {result.Old?.Centimeters:N2}cm");
@@ -39,24 +34,26 @@ namespace MaxBotix_Sample
                     return false;
                 }
             );
-            maxBotix.Subscribe(consumer);
+            me007ys.Subscribe(consumer);
 
-            maxBotix.DistanceUpdated += MaxBotix_DistanceUpdated;
+            me007ys.DistanceUpdated += Me007y_DistanceUpdated;
 
             return Task.CompletedTask;
         }
 
         public override async Task Run()
         {
-            var distance = await maxBotix.Read();
+            var distance = await me007ys.Read();
             Resolver.Log.Info($"Distance is: {distance.Centimeters}cm");
 
-            maxBotix.StartUpdating(TimeSpan.FromSeconds(1));
+            me007ys.StartUpdating(TimeSpan.FromSeconds(1));
         }
 
-        private void MaxBotix_DistanceUpdated(object sender, IChangeResult<Length> e)
+        private void Me007y_DistanceUpdated(object sender, IChangeResult<Length> e)
         {
             Resolver.Log.Info($"Length: {e.New.Centimeters}cm");
         }
+
+        //<!=SNOP=>
     }
 }

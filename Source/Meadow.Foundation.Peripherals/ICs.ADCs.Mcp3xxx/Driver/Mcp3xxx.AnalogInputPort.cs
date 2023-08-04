@@ -54,7 +54,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// <summary>
             /// The voltage sampling buffer
             /// </summary>
-            public IList<Voltage> VoltageSampleBuffer => buffer;
+            public Voltage[] VoltageSampleBuffer { get; }
 
             /// <summary>
             /// The sampling interval
@@ -65,8 +65,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// The channel input type
             /// </summary>
             public InputType ChannelInputType { get; protected set; }
-
-            private readonly List<Voltage> buffer = new();
 
             private Voltage? _previousVoltageReading;
 
@@ -92,6 +90,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 ChannelInputType = inputType;
 
                 ReferenceVoltage = new Voltage(3.3, Voltage.UnitType.Volts);
+
+                VoltageSampleBuffer = new Voltage[SampleCount];
             }
 
             /// <summary>

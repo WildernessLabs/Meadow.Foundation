@@ -25,6 +25,8 @@ namespace Meadow.Foundation.Sensors.Distance
         /// </summary>
         public double VCC { get; set; } = 3.3;
 
+        TimeSpan? updateInterval;
+
         readonly CommunicationType communication;
         readonly SensorType sensorType;
 
@@ -68,11 +70,12 @@ namespace Meadow.Foundation.Sensors.Distance
         /// <param name="updateInterval"></param>
         public override void StartUpdating(TimeSpan? updateInterval)
         {
-            // thread safety
             lock (samplingLock)
             {
                 if (IsSampling) return;
                 IsSampling = true;
+
+                this.updateInterval = updateInterval;
 
                 switch (communication)
                 {
@@ -90,14 +93,16 @@ namespace Meadow.Foundation.Sensors.Distance
         }
 
         /// <summary>
-        /// Stops sampling the temperature.
+        /// Stop sampling
         /// </summary>
         public override void StopUpdating()
         {
             lock (samplingLock)
             {
                 if (!IsSampling) return;
-                base.IsSampling = false;
+                IsSampling = false;
+
+                updateInterval = null;
 
                 if (communication == CommunicationType.Analog)
                 {
@@ -108,7 +113,7 @@ namespace Meadow.Foundation.Sensors.Distance
                     serialMessagePort.Close();
                 }
                 else if (communication == CommunicationType.I2C)
-                {   //handled in ByteCommsSensorBase
+                {
                     base.StopUpdating();
                 }
             }
@@ -119,14 +124,14 @@ namespace Meadow.Foundation.Sensors.Distance
             switch (sensor)
             {
                 case SensorType.LV:
-                    return Units.Length.UnitType.Inches;
+                    return Length.UnitType.Inches;
                 case SensorType.XL:
                 case SensorType.XLLongRange:
-                    return Units.Length.UnitType.Centimeters;
+                    return Length.UnitType.Centimeters;
                 case SensorType.HR5Meter:
                 case SensorType.HR10Meter:
                 default:
-                    return Units.Length.UnitType.Millimeters;
+                    return Length.UnitType.Millimeters;
             }
         }
     }

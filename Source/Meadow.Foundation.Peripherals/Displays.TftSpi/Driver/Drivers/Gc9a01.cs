@@ -56,6 +56,14 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         protected override void Initialize()
         {
+            if (resetPort != null)
+            {
+                resetPort.State = false;
+                DelayMs(10);
+                resetPort.State = true;
+                DelayMs(120);
+            }
+
             SendCommand(0xEF);
             SendCommand(0xEB);
             SendData(0x14);
@@ -104,7 +112,7 @@ namespace Meadow.Foundation.Displays
 
             SendCommand(0xB6);
             SendData(0x00);
-            SendData(0x20);
+            SendData(0x20); //0x00
 
             SendCommand(0x3A);
             SendData(0x05);

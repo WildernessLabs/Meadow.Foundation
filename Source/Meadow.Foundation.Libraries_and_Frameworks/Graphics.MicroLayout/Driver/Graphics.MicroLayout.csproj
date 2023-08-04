@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <Nullable>enable</Nullable>
+	  <LangVersion>10</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="StackLayout.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="StackLayout.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Meadow.Foundation.Graphics.MicroGraphics" Version="*" />
+  </ItemGroup>
+
+</Project>
