@@ -2,6 +2,8 @@
 using Meadow.Peripherals.Sensors;
 using Meadow.Units;
 using System;
+using System.Net.Http.Headers;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Distance
@@ -9,7 +11,7 @@ namespace Meadow.Foundation.Sensors.Distance
     /// <summary>
     /// Represents the ME007YS serial distance sensor
     /// </summary>
-    public class Me007ys : ByteCommsSensorBase<Length>, IRangeFinder
+    public class Me007ys : PollingSensorBase<Length>, IRangeFinder, ISleepAwarePeripheral
     {
         /// <summary>
         /// Raised when the value of the reading changes
@@ -28,9 +30,10 @@ namespace Meadow.Foundation.Sensors.Distance
 
         static readonly byte[] readBuffer = new byte[16];
 
-        DateTime lastUpdate = DateTime.MinValue;
+        private TaskCompletionSource<Length> dataReceivedTaskCompletionSource;
 
-        TimeSpan? updateInterval;
+        bool createdSerialPort = false;
+
 
         /// <summary>
         /// Creates a new ME007YS object communicating over serial
@@ -39,7 +42,9 @@ namespace Meadow.Foundation.Sensors.Distance
         /// <param name="serialPortName">The serial port</param>
         public Me007ys(IMeadowDevice device, SerialPortName serialPortName)
             : this(device.CreateSerialPort(serialPortName, portSpeed))
-        { }
+        {
+            createdSerialPort = true;
+        }
 
         /// <summary>
         /// Creates a new ME007YS object communicating over serial
@@ -47,8 +52,7 @@ namespace Meadow.Foundation.Sensors.Distance
         /// <param name="serialMessage">The serial message port</param>
         public Me007ys(ISerialPort serialMessage)
         {
-            this.serialPort = serialMessage;
-            this.serialPort.DataReceived += SerialPort_DataReceived;
+            serialPort = serialMessage;
         }
 
         /// <summary>
@@ -56,7 +60,15 @@ namespace Meadow.Foundation.Sensors.Distance
         /// </summary>
         public void MeasureDistance()
         {
-            _ = ReadSensor();
+            _ = Read();
+        }
+
+        /// <summary>
+        /// Convenience method to get the current sensor reading
+        /// </summary>
+        public override Task<Length> Read()
+        {
+            return ReadSensor();
         }
 
         /// <summary>
@@ -65,8 +77,7 @@ namespace Meadow.Foundation.Sensors.Distance
         /// <returns></returns>
         protected override Task<Length> ReadSensor()
         {
-            var len = Distance != null ? Distance.Value : new Length(0);
-            return Task.FromResult(len);
+            return ReadSingleValueAsync();
         }
 
         /// <summary>
@@ -87,12 +98,12 @@ namespace Meadow.Foundation.Sensors.Distance
         {
             lock (samplingLock)
             {
-                if (IsSampling) return;
-                IsSampling = true;
+                if(serialPort.IsOpen == false) 
+                {
+                    serialPort.Open();
+                }
 
-                this.updateInterval = updateInterval;
-
-                serialPort.Open();
+                base.StartUpdating(updateInterval);
             }
         }
 
@@ -103,41 +114,58 @@ namespace Meadow.Foundation.Sensors.Distance
         {
             lock (samplingLock)
             {
-                if (!IsSampling) { return; }
-                IsSampling = false;
-
-                updateInterval = null;
-
-                serialPort.Close();
+                serialPort?.Close();
+                base.StopUpdating();
             }
         }
 
         //This sensor will write a single byte of 0xFF alternating with 
         //3 bytes: 2 bytes for distance and a 3rd for the checksum
         //when 3 bytes are available we know we have a distance reading ready
-        private void SerialPort_DataReceived(object sender, SerialDataReceivedEventArgs e)
+        public async Task<Length> ReadSingleValueAsync()
+        {
+            if (serialPort.IsOpen == false)
+                serialPort.Open();
+
+            dataReceivedTaskCompletionSource = new TaskCompletionSource<Length>();
+
+            serialPort.DataReceived += SerialPortDataReceived;
+
+            var result = await dataReceivedTaskCompletionSource.Task;
+
+            serialPort.DataReceived -= SerialPortDataReceived;
+
+            return result;
+        }
+
+        private void SerialPortDataReceived(object sender, SerialDataReceivedEventArgs e)
         {
             var len = serialPort.BytesToRead;
             serialPort.Read(readBuffer, 0, Math.Min(len, readBuffer.Length));
-
             if (len == 3)
             {
                 var mm = readBuffer[0] << 8 | readBuffer[1];
 
-                ChangeResult<Length> changeResult = new ChangeResult<Length>()
+                if (mm != 0)
                 {
-                    New = new Length(mm, Length.UnitType.Millimeters),
-                    Old = Distance,
-                };
-
-                Distance = changeResult.New;
-
-                if (updateInterval == null || DateTime.Now - lastUpdate >= updateInterval)
-                {
-                    lastUpdate = DateTime.Now;
-                    RaiseEventsAndNotify(changeResult);
+                    var length = new Length(mm, Length.UnitType.Millimeters);
+                    dataReceivedTaskCompletionSource.SetResult(length);
                 }
             }
+        }
+
+        public Task BeforeSleep(CancellationToken cancellationToken)
+        {
+            if(createdSerialPort && serialPort != null && serialPort.IsOpen)
+            {
+                serialPort.Close();
+            }
+            return Task.CompletedTask;
+        }
+
+        public Task AfterWake(CancellationToken cancellationToken)
+        {
+            return Task.CompletedTask;
         }
     }
 }
