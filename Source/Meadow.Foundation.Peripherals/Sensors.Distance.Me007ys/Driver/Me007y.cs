@@ -2,7 +2,6 @@
 using Meadow.Peripherals.Sensors;
 using Meadow.Units;
 using System;
-using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -11,7 +10,7 @@ namespace Meadow.Foundation.Sensors.Distance
     /// <summary>
     /// Represents the ME007YS serial distance sensor
     /// </summary>
-    public class Me007ys : PollingSensorBase<Length>, IRangeFinder, ISleepAwarePeripheral
+    public class Me007ys : PollingSensorBase<Length>, IRangeFinder, ISleepAwarePeripheral, IDisposable
     {
         /// <summary>
         /// Raised when the value of the reading changes
@@ -24,15 +23,17 @@ namespace Meadow.Foundation.Sensors.Distance
         public Length? Distance { get; protected set; }
 
         //The baud rate is 9600, 8 bits, no parity, with one stop bit
-        readonly ISerialPort serialPort;
+        private readonly ISerialPort serialPort;
 
-        static readonly int portSpeed = 9600;
+        private static readonly int portSpeed = 9600;
 
-        static readonly byte[] readBuffer = new byte[16];
+        private readonly byte[] readBuffer = new byte[16];
 
         private TaskCompletionSource<Length> dataReceivedTaskCompletionSource;
 
-        bool createdSerialPort = false;
+        private readonly bool createdSerialPort = false;
+
+        private bool disposed = false;
 
 
         /// <summary>
@@ -154,6 +155,11 @@ namespace Meadow.Foundation.Sensors.Distance
             }
         }
 
+        /// <summary>
+        /// Called before the platform goes into Sleep state
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
         public Task BeforeSleep(CancellationToken cancellationToken)
         {
             if(createdSerialPort && serialPort != null && serialPort.IsOpen)
@@ -163,9 +169,55 @@ namespace Meadow.Foundation.Sensors.Distance
             return Task.CompletedTask;
         }
 
+        /// <summary>
+        /// Called after the platform returns to Wake state
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
         public Task AfterWake(CancellationToken cancellationToken)
         {
             return Task.CompletedTask;
+        }
+
+        /// <summary>
+        /// Disposes of managed and unmanaged resources.
+        /// </summary>
+        /// <param name="disposing">True if called from the public Dispose method, false if from a finalizer.</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposed)
+            {
+                if (disposing)
+                {
+                    if (createdSerialPort && serialPort != null)
+                    {
+                        if (serialPort.IsOpen)
+                        {
+                            serialPort.Close();
+                        }
+                        serialPort.Dispose();
+                    }
+                }
+
+                disposed = true;
+            }
+        }
+
+        /// <summary>
+        /// Disposes of the resources used by the <see cref="Me007ys"/> instance.
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Finalizes an instance of the <see cref="Me007ys"/> class.
+        /// </summary>
+        ~Me007ys()
+        {
+            Dispose(false);
         }
     }
 }
