@@ -5,7 +5,7 @@ namespace Meadow.Foundation.Motors;
 /// <summary>
 /// A generic DC motor whose direction is dictated by two outputs (i.e. a pair of polarity relays)
 /// </summary>
-public class BiDirectionalDcMotor
+public class BidirectionalDcMotor
 {
     private IDigitalOutputPort _outputA;
     private IDigitalOutputPort _outputB;
@@ -22,7 +22,7 @@ public class BiDirectionalDcMotor
     /// <param name="outputA">The IDigitalOutputPort driving control relay A</param>
     /// <param name="outputB">The IDigitalOutputPort driving control relay B</param>
     /// <param name="energizeHigh">True if the relay control is positive logic, false if it's inverse logic</param>
-    public BiDirectionalDcMotor(
+    public BidirectionalDcMotor(
         IDigitalOutputPort outputA,
         IDigitalOutputPort outputB,
         bool energizeHigh = true)

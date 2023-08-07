@@ -1321,6 +1321,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Hid.Keyboard", "Mea
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meadow.Windows", "..\..\Meadow.Core\source\implementations\windows\Meadow.Windows\Meadow.Windows.csproj", "{47C3AC1D-57A8-4144-BFED-263CAB66F4CB}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Motor.BidirectionalDcMotor_Sample", "Meadow.Foundation.Core.Samples\Motor.BidirectionalDcMotor_Sample\Motor.BidirectionalDcMotor_Sample.csproj", "{F79FCA46-1B0E-4537-A139-464FD53DCEF4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -3171,6 +3173,12 @@ Global
 		{47C3AC1D-57A8-4144-BFED-263CAB66F4CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{47C3AC1D-57A8-4144-BFED-263CAB66F4CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{47C3AC1D-57A8-4144-BFED-263CAB66F4CB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F79FCA46-1B0E-4537-A139-464FD53DCEF4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F79FCA46-1B0E-4537-A139-464FD53DCEF4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F79FCA46-1B0E-4537-A139-464FD53DCEF4}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{F79FCA46-1B0E-4537-A139-464FD53DCEF4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F79FCA46-1B0E-4537-A139-464FD53DCEF4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F79FCA46-1B0E-4537-A139-464FD53DCEF4}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -3830,6 +3838,7 @@ Global
 		{CB1E057F-3301-4D95-A7B1-814BFF55DC54} = {818BF624-10A7-45B2-9BEE-4C411CD9CA06}
 		{8A514B3D-9DD0-486B-BC31-1287C2FF09FC} = {CB1E057F-3301-4D95-A7B1-814BFF55DC54}
 		{47C3AC1D-57A8-4144-BFED-263CAB66F4CB} = {65C50059-6C22-43E9-88DE-AD73F7F108C8}
+		{F79FCA46-1B0E-4537-A139-464FD53DCEF4} = {7EBB4434-F29C-4316-BEDC-F28F07CE4AC8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}
