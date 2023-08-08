@@ -23,7 +23,7 @@ namespace Me007ys_Sample
             var consumer = Me007ys.CreateObserver(
                 handler: result =>
                 {
-                    Resolver.Log.Info($"Observer: Distance changed by threshold; new distance: {result.New.Centimeters:N2}cm, old: {result.Old?.Centimeters:N2}cm");
+                    Resolver.Log.Info($"Observer: Distance changed by threshold; new distance: {result.New.Centimeters:N1}cm, old: {result.Old?.Centimeters:N1}cm");
                 },
                 filter: result =>
                 {
@@ -44,14 +44,14 @@ namespace Me007ys_Sample
         public override async Task Run()
         {
             var distance = await me007ys.Read();
-           Resolver.Log.Info($"Initial distance is: {distance.Centimeters:N2}cm / {distance.Inches:N2}in");
+            Resolver.Log.Info($"Initial distance is: {distance.Centimeters:N1}cm / {distance.Inches:N1}in");
 
             me007ys.StartUpdating(TimeSpan.FromSeconds(2));
         }
 
         private void Me007y_DistanceUpdated(object sender, IChangeResult<Length> e)
         {
-            Resolver.Log.Info($"Distance: {e.New.Centimeters:N2}cm / {e.New.Inches:N2}in");
+            Resolver.Log.Info($"Distance: {e.New.Centimeters:N1}cm / {e.New.Inches:N1}in");
         }
 
         //<!=SNOP=>
