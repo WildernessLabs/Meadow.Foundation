@@ -40,7 +40,6 @@ namespace Meadow.Foundation.Sensors.Distance
 
         private bool disposed = false;
 
-
         /// <summary>
         /// Creates a new ME007YS object communicating over serial
         /// </summary>
@@ -105,11 +104,6 @@ namespace Meadow.Foundation.Sensors.Distance
         {
             lock (samplingLock)
             {
-                if (serialPort.IsOpen == false)
-                {
-                    serialPort.Open();
-                }
-
                 base.StartUpdating(updateInterval);
             }
         }
@@ -132,7 +126,9 @@ namespace Meadow.Foundation.Sensors.Distance
         private async Task<Length> ReadSingleValue()
         {
             if (serialPort.IsOpen == false)
+            {
                 serialPort.Open();
+            }
 
             dataReceivedTaskCompletionSource = new TaskCompletionSource<Length>();
 
