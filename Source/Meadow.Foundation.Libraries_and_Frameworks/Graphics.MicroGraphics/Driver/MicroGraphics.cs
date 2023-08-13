@@ -1310,7 +1310,7 @@ namespace Meadow.Foundation.Graphics
                 }
                 if (y < 0)
                 {
-                    yStartIndex = 0 - x;
+                    yStartIndex = 0 - y;
                     isInBounds = false;
                 }
 
