@@ -1,6 +1,4 @@
-﻿using Meadow.Foundation.Graphics;
-
-namespace Meadow.Foundation.Graphics.MicroLayout;
+﻿namespace Meadow.Foundation.Graphics.MicroLayout;
 
 /// <summary>
 /// Represents a label display control in the user interface.
@@ -14,6 +12,7 @@ public class DisplayLabel : DisplayControl
     private VerticalAlignment _verticalAlignment = VerticalAlignment.Center;
     private HorizontalAlignment _horizontalAlignment;
     private IFont? _font;
+    private ScaleFactor _scaleFactor = ScaleFactor.X1;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="DisplayLabel"/> class with the specified dimensions.
@@ -22,9 +21,11 @@ public class DisplayLabel : DisplayControl
     /// <param name="top">The top coordinate of the label display control.</param>
     /// <param name="width">The width of the label display control.</param>
     /// <param name="height">The height of the label display control.</param>
-    public DisplayLabel(int left, int top, int width, int height)
+    /// <param name="scaleFactor">The scale factor used for drawing text</param>
+    public DisplayLabel(int left, int top, int width, int height, ScaleFactor scaleFactor = ScaleFactor.X1)
         : base(left, top, width, height)
     {
+        ScaleFactor = scaleFactor;
     }
 
     /// <summary>
@@ -96,6 +97,15 @@ public class DisplayLabel : DisplayControl
     }
 
     /// <summary>
+    /// ScaleFactor used to calculate drawn text size
+    /// </summary>
+    public ScaleFactor ScaleFactor
+    {
+        get => _scaleFactor;
+        set => SetInvalidatingProperty(ref _scaleFactor, value);
+    }
+
+    /// <summary>
     /// Draws the label display control on the specified <see cref="MicroGraphics"/> surface.
     /// </summary>
     /// <param name="graphics">The <see cref="MicroGraphics"/> surface to draw the label display control on.</param>
@@ -133,6 +143,14 @@ public class DisplayLabel : DisplayControl
                 break;
         }
 
-        graphics.DrawText(Left + x, Top + y, Text, TextColor, alignmentH: HorizontalAlignment, alignmentV: VerticalAlignment, font: Font);
+        graphics.DrawText(
+            Left + x,
+            Top + y,
+            Text,
+            TextColor,
+            scaleFactor: _scaleFactor,
+            alignmentH: HorizontalAlignment,
+            alignmentV: VerticalAlignment,
+            font: Font);
     }
 }
