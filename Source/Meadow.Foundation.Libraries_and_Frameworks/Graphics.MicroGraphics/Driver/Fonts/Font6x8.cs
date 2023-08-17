@@ -131,7 +131,7 @@
             get
             {
                 var index = (byte)character;
-                if ((index < 32) || (index > 127))
+                if ((index < 32) || (index >= 127))
                 {
                     return _fontTable[0x20];
                 }
