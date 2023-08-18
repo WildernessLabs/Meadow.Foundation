@@ -15,6 +15,7 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <PropertyGroup>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageIcon>icon.png</PackageIcon>
     <LangVersion>10.0</LangVersion>

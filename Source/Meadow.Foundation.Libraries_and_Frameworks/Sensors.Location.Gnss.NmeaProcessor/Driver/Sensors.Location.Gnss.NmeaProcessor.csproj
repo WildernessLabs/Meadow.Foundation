@@ -15,8 +15,9 @@
     <Description>GNSS NMEA parsing library</Description>
   </PropertyGroup>
   <PropertyGroup>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <LangVersion>latestmajor</LangVersion>
+    <LangVersion>10.0</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <None Include="..\..\..\icon.png" Pack="true" PackagePath="" />

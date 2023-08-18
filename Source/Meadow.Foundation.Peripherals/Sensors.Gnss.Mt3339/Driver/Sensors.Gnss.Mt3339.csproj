@@ -17,6 +17,7 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <PropertyGroup>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <LangVersion>10.0</LangVersion>
   </PropertyGroup>
   <ItemGroup>

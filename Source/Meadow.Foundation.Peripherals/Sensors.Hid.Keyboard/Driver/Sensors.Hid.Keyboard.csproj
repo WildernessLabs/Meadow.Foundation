@@ -1,5 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
+    <LangVersion>10.0</LangVersion>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageIcon>icon.png</PackageIcon>
     <Authors>Wilderness Labs, Inc</Authors>
@@ -14,7 +16,7 @@
     <Version>0.94.0</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Standard 108-key PC keyboard</Description>
-	  <Nullable>enable</Nullable>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
     <None Include="..\..\..\icon.png" Pack="true" PackagePath="" />

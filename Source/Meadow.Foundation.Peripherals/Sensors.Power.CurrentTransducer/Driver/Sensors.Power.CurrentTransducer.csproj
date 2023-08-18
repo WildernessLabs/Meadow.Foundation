@@ -16,7 +16,8 @@
     <Description>Current transducer library</Description>
   </PropertyGroup>
   <PropertyGroup>
-	  <Nullable>enable</Nullable>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <Nullable>enable</Nullable>
     <LangVersion>10.0</LangVersion>
   </PropertyGroup>
   <ItemGroup>
