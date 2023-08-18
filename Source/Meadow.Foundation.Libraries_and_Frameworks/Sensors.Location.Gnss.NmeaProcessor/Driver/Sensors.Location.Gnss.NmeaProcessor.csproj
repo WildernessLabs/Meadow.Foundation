@@ -15,6 +15,7 @@
     <Description>GNSS NMEA parsing library</Description>
   </PropertyGroup>
   <PropertyGroup>
+    <Nullable>enable</Nullable>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <LangVersion>10.0</LangVersion>

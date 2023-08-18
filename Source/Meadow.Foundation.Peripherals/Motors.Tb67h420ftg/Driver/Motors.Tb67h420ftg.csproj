@@ -16,6 +16,7 @@
     <Description>Tb67h420ftg digital input motor controller</Description>
   </PropertyGroup>
   <PropertyGroup>
+    <Nullable>enable</Nullable>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <LangVersion>10.0</LangVersion>
   </PropertyGroup>
