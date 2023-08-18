@@ -14,7 +14,7 @@
     <PackageTags>Meadow.Foundation,Sc16is7x2,Sc16is752,Sc16is762,I2C,UART,expander</PackageTags>
     <Version>0.1.0</Version>
 	  <Nullable>enable</Nullable>
-    <LangVersion>10</LangVersion>
+    <LangVersion>10.0</LangVersion>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>SC16IS7x2 SPI I2C family of UART expanders (SC16IS752, SC16IS762)</Description>
   </PropertyGroup>
