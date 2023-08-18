@@ -15,6 +15,7 @@
     <Description>GNSS NMEA parsing library</Description>
   </PropertyGroup>
   <PropertyGroup>
+    <Nullable>enable</Nullable>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <LangVersion>latestmajor</LangVersion>
   </PropertyGroup>
