@@ -16,7 +16,7 @@
     <Version>0.94.0</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Standard 108-key PC keyboard</Description>
-	  <Nullable>enable</Nullable>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
     <None Include="..\..\..\icon.png" Pack="true" PackagePath="" />
