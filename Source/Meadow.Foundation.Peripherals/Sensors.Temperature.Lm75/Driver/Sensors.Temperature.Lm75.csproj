@@ -18,6 +18,7 @@
     <RootNamespace>Meadow.Foundation.Sensors.Temperature</RootNamespace>
   </PropertyGroup>
   <PropertyGroup>
+    <PackageLicenceExpression>Apache-2.0</PackageLicenceExpression>
     <LangVersion>10.0</LangVersion>
   </PropertyGroup>
   <ItemGroup>
