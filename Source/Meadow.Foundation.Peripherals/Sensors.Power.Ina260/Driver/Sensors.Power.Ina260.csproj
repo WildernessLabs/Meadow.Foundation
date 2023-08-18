@@ -16,6 +16,7 @@
     <Description>INA260 I2C current and power monitor</Description>
   </PropertyGroup>
   <PropertyGroup>
+    <Nullable>enable</Nullable>
     <LangVersion>10.0</LangVersion>
   </PropertyGroup>
   <ItemGroup>
