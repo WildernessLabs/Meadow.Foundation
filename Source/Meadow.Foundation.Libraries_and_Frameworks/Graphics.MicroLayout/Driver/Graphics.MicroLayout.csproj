@@ -24,4 +24,7 @@
     <None Include="..\..\..\icon.png" Pack="true" PackagePath="" />
     <PackageReference Include="Meadow.Foundation.Graphics.MicroGraphics" Version="*" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="StackLayout.cs" />
+  </ItemGroup>
 </Project>
