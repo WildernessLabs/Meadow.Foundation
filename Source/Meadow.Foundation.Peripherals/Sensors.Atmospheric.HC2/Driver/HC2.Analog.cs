@@ -10,12 +10,12 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <summary>
         /// Analog port connected to Humidity pin
         /// </summary>
-        protected IAnalogInputPort HumidityInputPort;
+        protected IAnalogInputPort? HumidityInputPort;
 
         /// <summary>
         /// Analog port connected to Temperature pin
         /// </summary>
-        protected IAnalogInputPort TemperatureInputPort;
+        protected IAnalogInputPort? TemperatureInputPort;
 
         /// <summary>
         /// Creates a new HC2 Humidity Probe using analog inputs

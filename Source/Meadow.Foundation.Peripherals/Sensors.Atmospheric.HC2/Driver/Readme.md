@@ -18,7 +18,7 @@ public override Task Initialize()
     Resolver.Log.Info("Initializing...");
 
     //Analog
-    //sensor = new HC2(Device, Device.Pins.A00, Device.Pins.A01);
+    //sensor = new HC2(Device.Pins.A00, Device.Pins.A01);
 
     //Serial
     sensor = new HC2(Device, Device.PlatformOS.GetSerialPortName("COM4"));
