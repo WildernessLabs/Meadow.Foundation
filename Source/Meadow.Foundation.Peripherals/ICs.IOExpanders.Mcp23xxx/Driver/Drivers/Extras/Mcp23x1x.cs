@@ -11,7 +11,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <summary>
         /// MCP23x17 pin definitions
         /// </summary>
-        public PinDefinitions Pins { get; }
+        public PinDefinitions Pins { get; } = default!;
 
         /// <summary>
         /// The number of IO pins avaliable on the device

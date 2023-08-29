@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Meadow.Foundation.Displays.UI;
+namespace Meadow.Foundation.Graphics.MicroLayout;
 
 /// <summary>
 /// Represents a base class for clickable display controls in the user interface.

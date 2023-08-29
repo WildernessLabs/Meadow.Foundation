@@ -7,8 +7,8 @@
     <TargetFramework>netstandard2.1</TargetFramework>
     <OutputType>Library</OutputType>
     <AssemblyName>App</AssemblyName>
-	  <LangVersion>10</LangVersion>
-	  <Nullable>enable</Nullable>
+    <LangVersion>10</LangVersion>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Meadow.F7" Version="*" />

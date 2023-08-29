@@ -1,6 +1,4 @@
-﻿using Meadow.Foundation.Graphics;
-
-namespace Meadow.Foundation.Displays.UI;
+﻿namespace Meadow.Foundation.Graphics.MicroLayout;
 
 /// <summary>
 /// Represents a clickable display button in the user interface.
@@ -16,6 +14,7 @@ public class DisplayButton : ClickableDisplayControl
     private Color _shadowColor;
     private Color _textColor;
     private IFont? _font;
+    private ScaleFactor _scaleFactor = ScaleFactor.X1;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="DisplayButton"/> class with the specified dimensions.
@@ -24,9 +23,11 @@ public class DisplayButton : ClickableDisplayControl
     /// <param name="top">The top coordinate of the button.</param>
     /// <param name="width">The width of the button.</param>
     /// <param name="height">The height of the button.</param>
-    public DisplayButton(int left, int top, int width, int height)
+    /// <param name="scaleFactor">The scale factor used for drawing text</param>
+    public DisplayButton(int left, int top, int width, int height, ScaleFactor scaleFactor = ScaleFactor.X1)
         : base(left, top, width, height)
     {
+        ScaleFactor = scaleFactor;
     }
 
     /// <summary>
@@ -120,6 +121,15 @@ public class DisplayButton : ClickableDisplayControl
     }
 
     /// <summary>
+    /// ScaleFactor used to calculate drawn text size
+    /// </summary>
+    public ScaleFactor ScaleFactor
+    {
+        get => _scaleFactor;
+        set => SetInvalidatingProperty(ref _scaleFactor, value);
+    }
+
+    /// <summary>
     /// Draws the display button on the specified <see cref="MicroGraphics"/> surface.
     /// </summary>
     /// <param name="graphics">The <see cref="MicroGraphics"/> surface to draw the button on.</param>
@@ -139,11 +149,19 @@ public class DisplayButton : ClickableDisplayControl
 
             if (Image != null) // image always wins over text
             {
-                graphics.DrawImage(Left + (this.Width - Image.Width) / 2 + ButtonDepth, Top + (this.Height - Image.Height) / 2 + ButtonDepth, Image);
+                graphics.DrawImage(Left + ((this.Width - Image.Width) / 2) + ButtonDepth, Top + ((this.Height - Image.Height) / 2) + ButtonDepth, Image);
             }
             else if (!string.IsNullOrEmpty(Text))
             {
-                graphics.DrawText(Left + ButtonDepth + this.Width / 2, Top + ButtonDepth + this.Height / 2, Text, TextColor, alignmentH: HorizontalAlignment.Center, alignmentV: VerticalAlignment.Center, font: Font);
+                graphics.DrawText(
+                    Left + ButtonDepth + (this.Width / 2),
+                    Top + ButtonDepth + (this.Height / 2),
+                    Text,
+                    TextColor,
+                    scaleFactor: ScaleFactor,
+                    alignmentH: HorizontalAlignment.Center,
+                    alignmentV: VerticalAlignment.Center,
+                    font: Font);
             }
         }
         else
@@ -158,11 +176,22 @@ public class DisplayButton : ClickableDisplayControl
 
             if (Image != null) // image always wins over text
             {
-                graphics.DrawImage(Left + (this.Width - Image.Width) / 2, Top + (this.Height - Image.Height) / 2, Image);
+                graphics.DrawImage(
+                    Left + ((this.Width - Image.Width) / 2),
+                    Top + ((this.Height - Image.Height) / 2),
+                    Image);
             }
             else if (!string.IsNullOrEmpty(Text))
             {
-                graphics.DrawText(Left + this.Width / 2, Top + this.Height / 2, Text, TextColor, alignmentH: HorizontalAlignment.Center, alignmentV: VerticalAlignment.Center, font: Font);
+                graphics.DrawText(
+                    Left + (this.Width / 2),
+                    Top + (this.Height / 2),
+                    Text,
+                    TextColor,
+                    scaleFactor: ScaleFactor,
+                    alignmentH: HorizontalAlignment.Center,
+                    alignmentV: VerticalAlignment.Center,
+                    font: Font);
             }
         }
     }

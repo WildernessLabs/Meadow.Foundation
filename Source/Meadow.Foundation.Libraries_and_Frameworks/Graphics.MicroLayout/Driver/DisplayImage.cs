@@ -1,6 +1,4 @@
-﻿using Meadow.Foundation.Graphics;
-
-namespace Meadow.Foundation.Displays.UI;
+﻿namespace Meadow.Foundation.Graphics.MicroLayout;
 
 /// <summary>
 /// Represents an image display control in the user interface.
@@ -9,7 +7,7 @@ public class DisplayImage : DisplayControl
 {
     private Color _backColor = Color.Transparent;
     private VerticalAlignment _verticalAlignment = VerticalAlignment.Center;
-    private HorizontalAlignment _horizontalAlignment;
+    private HorizontalAlignment _horizontalAlignment = HorizontalAlignment.Center;
     private Image _image = default!;
 
     /// <summary>
@@ -88,7 +86,7 @@ public class DisplayImage : DisplayControl
         int x, y;
         if (HorizontalAlignment == HorizontalAlignment.Center)
         {
-            x = Left + (Width - Image.Width) / 2;
+            x = Left + ((Width - Image.Width) / 2);
         }
         else if (HorizontalAlignment == HorizontalAlignment.Right)
         {
@@ -101,7 +99,7 @@ public class DisplayImage : DisplayControl
 
         if (VerticalAlignment == VerticalAlignment.Center)
         {
-            y = Top + (Height - Image.Height) / 2;
+            y = Top + ((Height - Image.Height) / 2);
         }
         else if (VerticalAlignment == VerticalAlignment.Bottom)
         {

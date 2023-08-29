@@ -12,7 +12,7 @@
     <PackageReference Include="Meadow" Version="*" />
     <PackageReference Include="Meadow.Foundation.Displays.Max7219" Version="*" />
     <PackageReference Include="Meadow.Foundation.ICs.IOExpanders.Ft232h" Version="*" />
-    <ProjectReference Include="..\..\Driver\Graphics.MicroLayout.csproj" />
+    <PackageReference Include="Meadow.Foundation.Graphics.MicroLayout" Version="*" />
   </ItemGroup>
 
   <ItemGroup>

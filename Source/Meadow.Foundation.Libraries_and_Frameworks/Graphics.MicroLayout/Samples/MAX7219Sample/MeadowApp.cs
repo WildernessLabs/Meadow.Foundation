@@ -1,28 +1,22 @@
 ﻿using Meadow;
 using Meadow.Foundation;
 using Meadow.Foundation.Displays;
+using Meadow.Foundation.Graphics.MicroLayout;
 using Meadow.Foundation.ICs.IOExpanders;
 using Meadow.Hardware;
-using MicroLayout;
 
 public class MeadowApp : App<Windows>
 {
     private Ft232h _expander = new Ft232h();
     private DisplayScreen _screen;
 
-    public static async Task Main(string[] args)
-    {
-        await MeadowOS.Start(args);
-    }
-
     public override Task Initialize()
     {
         var display = new Max7219(
-            _expander.CreateSpiBus(Max7219.DefaultSpiBusSpeed),
+            _expander.CreateSpiBus(),
             _expander.Pins.C0.CreateDigitalOutputPort(), // CS
             deviceRows: 4,
             deviceColumns: 1);
-
 
         _screen = new DisplayScreen(display, Meadow.Foundation.Graphics.RotationType._270Degrees);
         _screen.BackgroundColor = Color.Black;
@@ -96,4 +90,8 @@ public class MeadowApp : App<Windows>
 
     }
 
+    public static async Task Main(string[] args)
+    {
+        await MeadowOS.Start(args);
+    }
 }

@@ -3,7 +3,7 @@ using Meadow.Hardware;
 using System.Linq;
 using System.Threading;
 
-namespace Meadow.Foundation.Displays.UI;
+namespace Meadow.Foundation.Graphics.MicroLayout;
 
 public class DisplayScreen
 {
@@ -11,7 +11,7 @@ public class DisplayScreen
     private MicroGraphics _graphics;
     private ITouchScreen? _touchScreen;
 
-    // <summary>
+    /// <summary>
     /// Gets or sets the collection of controls on the display screen.
     /// </summary>
     public ControlsCollection Controls { get; set; }

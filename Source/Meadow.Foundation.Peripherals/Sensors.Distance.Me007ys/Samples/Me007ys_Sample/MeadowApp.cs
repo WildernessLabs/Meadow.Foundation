@@ -18,12 +18,12 @@ namespace Me007ys_Sample
         {
             Resolver.Log.Info("Initialize...");
 
-            me007ys = new Me007ys(Device, Device.PlatformOS.GetSerialPortName("COM4"));
+            me007ys = new Me007ys(Device, Device.PlatformOS.GetSerialPortName("COM1"));
 
             var consumer = Me007ys.CreateObserver(
                 handler: result =>
                 {
-                    Resolver.Log.Info($"Observer: Distance changed by threshold; new distance: {result.New.Centimeters:N2}cm, old: {result.Old?.Centimeters:N2}cm");
+                    Resolver.Log.Info($"Observer: Distance changed by threshold; new distance: {result.New.Centimeters:N1}cm, old: {result.Old?.Centimeters:N1}cm");
                 },
                 filter: result =>
                 {
@@ -44,14 +44,14 @@ namespace Me007ys_Sample
         public override async Task Run()
         {
             var distance = await me007ys.Read();
-            Resolver.Log.Info($"Distance is: {distance.Centimeters}cm");
+            Resolver.Log.Info($"Initial distance is: {distance.Centimeters:N1}cm / {distance.Inches:N1}in");
 
-            me007ys.StartUpdating(TimeSpan.FromSeconds(1));
+            me007ys.StartUpdating(TimeSpan.FromSeconds(2));
         }
 
         private void Me007y_DistanceUpdated(object sender, IChangeResult<Length> e)
         {
-            Resolver.Log.Info($"Length: {e.New.Centimeters}cm");
+            Resolver.Log.Info($"Distance: {e.New.Centimeters:N1}cm / {e.New.Inches:N1}in");
         }
 
         //<!=SNOP=>

@@ -1,5 +1,7 @@
 <Project Sdk="Meadow.Sdk/1.1.0">
   <PropertyGroup>
+    <PackageReadmeFile>Readme.md</PackageReadmeFile>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <Authors>Wilderness Labs, Inc</Authors>
     <TargetFramework>netstandard2.1</TargetFramework>
     <OutputType>Library</OutputType>
@@ -18,9 +20,10 @@
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <Description>Core peripheral drivers for Wilderness Labs Meadow</Description>
     <Nullable>enable</Nullable>
-    <LangVersion>9.0</LangVersion>
+    <LangVersion>10.0</LangVersion>
   </PropertyGroup>
   <ItemGroup>
+    <None Include=".\Readme.md" Pack="true" PackagePath=""/>
     <None Include="..\..\Source\icon.png" Pack="true" PackagePath="" />
   </ItemGroup>
   <ItemGroup>

@@ -1,29 +1,34 @@
 <Project Sdk="Microsoft.NET.Sdk">
- <PropertyGroup>
-	 <TargetFramework>net7.0</TargetFramework>
-	 <OutputType>Library</OutputType>
-	 <ImplicitUsings>enable</ImplicitUsings>
-	 <AssemblyName>Gtk</AssemblyName>
-	 <Nullable>enable</Nullable>
-	 <Authors>Wilderness Labs, Inc</Authors>
-	 <Company>Wilderness Labs, Inc</Company>
-	 <PackageProjectUrl>http://developer.wildernesslabs.co/Meadow/Meadow.Foundation/</PackageProjectUrl>
-	 <PackageId>Meadow.Foundation.Displays.Gtk</PackageId>
-	 <PackageIcon>icon.png</PackageIcon>
-	 <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
-	 <PackageTags>Meadow.Foundation,Display,GTK</PackageTags>
-	 <Version>0.94.0</Version>
-	 <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-	 <Description>Gtk display driver for Meadow</Description>
-	 <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
- </PropertyGroup>
- <ItemGroup>
-   <PackageReference Include="GtkSharp" Version="3.24.24.*" />
- </ItemGroup>
-	<ItemGroup>
-		<None Include="..\..\..\icon.png" Link="icon.png" Pack="true" PackagePath="" />
-	</ItemGroup>
-	<ItemGroup>
+  <PropertyGroup>
+    <PackageReadmeFile>Readme.md</PackageReadmeFile>
+    <LangVersion>10.0</LangVersion>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <TargetFramework>net7.0</TargetFramework>
+    <OutputType>Library</OutputType>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AssemblyName>Gtk</AssemblyName>
+    <Nullable>enable</Nullable>
+    <Authors>Wilderness Labs, Inc</Authors>
+    <Company>Wilderness Labs, Inc</Company>
+    <PackageProjectUrl>http://developer.wildernesslabs.co/Meadow/Meadow.Foundation/</PackageProjectUrl>
+    <PackageId>Meadow.Foundation.Displays.Gtk</PackageId>
+    <PackageIcon>icon.png</PackageIcon>
+    <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
+    <PackageTags>Meadow.Foundation,Display,GTK</PackageTags>
+    <Version>0.94.0</Version>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Description>Gtk display driver for Meadow</Description>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include=".\Readme.md" Pack="true" PackagePath=""/>
+    <PackageReference Include="GtkSharp" Version="3.24.24.*" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\icon.png" Link="icon.png" Pack="true" PackagePath="" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="Meadow.Foundation.Graphics.MicroGraphics" Version="*" />
-	</ItemGroup>
+  </ItemGroup>
 </Project>
