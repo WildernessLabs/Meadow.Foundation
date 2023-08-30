@@ -4,9 +4,9 @@ using System.Linq;
 namespace Meadow.Foundation.ICs.IOExpanders
 {
     /// <summary>
-    /// Represent an MCP23x1x I2C port expander
+    /// Represent an Pcx8575 8 bit I2C port expander
     /// </summary>
-    public abstract partial class Mcp23x1x : Mcp23xxx
+    public abstract partial class Pcx8575 : Pcx857x
     {
         /// <summary>
         /// MCP23x17 pin definitions
@@ -26,14 +26,13 @@ namespace Meadow.Foundation.ICs.IOExpanders
         protected override bool IsValidPin(IPin pin) => Pins.AllPins.Contains(pin);
 
         /// <summary>
-        /// Creates an Mcp23x1x object
+        /// Creates an Pcx8575 object
         /// </summary>
         /// <param name="i2cBus">The I2C bus</param>
         /// <param name="address">The I2C address</param>
-        /// <param name="interruptPort">The interrupt port</param>
-        /// <param name="resetPort">Optional Meadow output port used to reset the mcp expander</param>
-        protected Mcp23x1x(II2cBus i2cBus, byte address, IDigitalInterruptPort? interruptPort = null, IDigitalOutputPort? resetPort = null)
-            : base(i2cBus, address, interruptPort, resetPort)
+        /// <param name="interruptPin">The interrupt pin</param>
+        protected Pcx8575(II2cBus i2cBus, byte address, IPin? interruptPin = null) :
+            base(i2cBus, address, interruptPin)
         {
             Pins = new PinDefinitions(this)
             {
@@ -42,14 +41,13 @@ namespace Meadow.Foundation.ICs.IOExpanders
         }
 
         /// <summary>
-        /// Creates an Mcp23x1x object
+        /// Creates an Pcx8575 object
         /// </summary>
-        /// <param name="spiBus">The SPI bus</param>
-        /// <param name="chipSelectPort">The chip select port</param>
+        /// <param name="i2cBus">The I2C bus</param>
+        /// <param name="address">The I2C address</param>
         /// <param name="interruptPort">The interrupt port</param>
-        /// <param name="resetPort">Optional Meadow output port used to reset the mcp expander</param>
-        protected Mcp23x1x(ISpiBus spiBus, IDigitalOutputPort chipSelectPort, IDigitalInterruptPort? interruptPort = null, IDigitalOutputPort? resetPort = null) :
-            base(spiBus, chipSelectPort, interruptPort, resetPort)
+        protected Pcx8575(II2cBus i2cBus, byte address, IDigitalInterruptPort? interruptPort = null)
+            : base(i2cBus, address, interruptPort)
         {
         }
 
