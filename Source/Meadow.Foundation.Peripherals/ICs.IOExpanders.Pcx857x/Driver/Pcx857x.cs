@@ -18,14 +18,15 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <inheritdoc/>
         public byte DefaultI2cAddress => 0x20;
 
-        private ushort _outputs;
-        private ushort _directionMask;
-        private readonly List<IPin> _pinsInUse = new();
-        private bool _isDisposed;
-        private IDigitalInterruptPort? _interruptPort;
+        private readonly List<IPin> pinsInUse = new();
+        private bool isDisposed;
+        private IDigitalInterruptPort? interruptPort;
         private readonly bool createdPort = false;
 
-        private readonly II2cCommunications i2CCommunications;
+        /// <summary>
+        /// The I2C Communications object
+        /// </summary>
+        protected readonly II2cCommunications i2CCommunications;
         
         /// <summary>
         /// Creates a new Pcx857x instance
@@ -49,7 +50,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         {
             i2CCommunications = new I2cCommunications(i2cBus, address);
 
-            _interruptPort = interruptPort;
+            this.interruptPort = interruptPort;
 
             AllOff();
         }
@@ -57,20 +58,23 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <inheritdoc/>
         public IDigitalOutputPort CreateDigitalOutputPort(IPin pin, bool initialState = false, OutputType initialOutputType = OutputType.PushPull)
         {
-            lock (_pinsInUse)
+            lock (pinsInUse)
             {
-                if (_pinsInUse.Contains(pin))
+                if (pinsInUse.Contains(pin))
                 {
                     throw new PortInUseException($"{GetType().Name} pin {pin.Name} is already in use.");
                 }
                 var port = new DigitalOutputPort(this, pin, initialState);
-                _pinsInUse.Add(pin);
+
+                pinsInUse.Add(pin);
+
+                SetPinDirection(false, (byte)pin.Key);
 
                 port.Disposed += (s, e) =>
                 {
-                    lock (_pinsInUse)
+                    lock (pinsInUse)
                     {
-                        _pinsInUse.Add(pin);
+                        pinsInUse.Add(pin);
                     }
                 };
 
@@ -88,28 +92,35 @@ namespace Meadow.Foundation.ICs.IOExpanders
                     throw new ArgumentException("Internal resistors are not supported");
             }
 
-            lock (_pinsInUse)
+            lock (pinsInUse)
             {
-                if (_pinsInUse.Contains(pin))
+                if (pinsInUse.Contains(pin))
                 {
                     throw new PortInUseException($"{GetType().Name} pin {pin.Name} is already in use.");
                 }
                 var port = new DigitalInputPort(this, pin);
-                _pinsInUse.Add(pin);
+                pinsInUse.Add(pin);
 
-                _directionMask |= (ushort)(1 << (byte)pin.Key);
+                SetPinDirection(true, (byte)pin.Key);
 
                 port.Disposed += (s, e) =>
                 {
-                    lock (_pinsInUse)
+                    lock (pinsInUse)
                     {
-                        _pinsInUse.Add(pin);
+                        pinsInUse.Add(pin);
                     }
                 };
 
                 return port;
             }
         }
+
+        /// <summary>
+        /// Set the pin direction
+        /// </summary>
+        /// <param name="input">true for input, false for output</param>
+        /// <param name="pinKey">The pin key value</param>
+        protected abstract void SetPinDirection(bool input, byte pinKey);
 
         /// <inheritdoc/>
         public abstract IPin GetPin(string pinName);
@@ -153,41 +164,14 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// Retrieves the state of a pin
         /// </summary>
         /// <param name="pin">The pin to query</param>
-        public bool GetState(IPin pin)
-        {
-            // if it's an input, read it, otherwise reflect what we wrote
-
-            var pinMask = 1 << ((byte)pin.Key);
-            if ((pinMask & _directionMask) != 0)
-            {
-                // this is an actual input, so read
-                var state = ReadState();
-                return (state & pinMask) != 0;
-            }
-
-            // this is an output, just reflect what we've been told to write
-            return (_outputs & pinMask) != 0;
-        }
+        protected abstract bool GetState(IPin pin);
 
         /// <summary>
         /// Sets the state of a pin
         /// </summary>
         /// <param name="pin">The pin to affect</param>
         /// <param name="state"><b>True</b> to set the pin state high, <b>False</b> to set it low</param>
-        public void SetState(IPin pin, bool state)
-        {
-            var offset = (byte)pin.Key;
-            if (state)
-            {
-                _outputs |= (ushort)(1 << offset);
-            }
-            else
-            {
-                _outputs &= (ushort)~(1 << offset);
-            }
-
-            WriteState(_outputs);
-        }
+        protected abstract void SetState(IPin pin, bool state);
 
         void WriteUint16(ushort value)
         {
@@ -203,18 +187,18 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <param name="disposing"></param>
         protected virtual void Dispose(bool disposing)
         {
-            if (!_isDisposed)
+            if (!isDisposed)
             {
                 if (disposing)
                 {
-                    if (createdPort && _interruptPort != null) 
+                    if (createdPort && interruptPort != null) 
                     {
-                        _interruptPort.Dispose();
-                        _interruptPort = null;
+                        interruptPort.Dispose();
+                        interruptPort = null;
                     }
                 }
 
-                _isDisposed = true;
+                isDisposed = true;
             }
         }
 

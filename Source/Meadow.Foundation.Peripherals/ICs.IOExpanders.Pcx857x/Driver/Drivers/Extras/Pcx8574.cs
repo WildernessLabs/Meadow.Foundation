@@ -1,4 +1,5 @@
 ﻿using Meadow.Hardware;
+using System;
 using System.Linq;
 
 namespace Meadow.Foundation.ICs.IOExpanders
@@ -24,6 +25,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <param name="pin">The IPin to validate</param>
         /// <returns>True if pin is valid</returns>
         protected override bool IsValidPin(IPin pin) => Pins.AllPins.Contains(pin);
+
+        private byte outputs;
+        private byte directionMask;
 
         /// <summary>
         /// Creates an Pcx8574 object
@@ -63,6 +67,82 @@ namespace Meadow.Foundation.ICs.IOExpanders
         public override IPin GetPin(string pinName)
         {
             return Pins.AllPins.FirstOrDefault(p => p.Name == pinName || p.Key.ToString() == p.Name);
+        }
+
+        /// <summary>
+        /// Set the pin direction
+        /// </summary>
+        /// <param name="input">true for input, false for output</param>
+        /// <param name="pinKey">The pin key value</param>
+        protected override void SetPinDirection(bool input, byte pinKey)
+        {
+            if (input)
+            {
+                directionMask |= (byte)(1 << pinKey);
+            }
+            else
+            {
+                directionMask &= (byte)(1 << pinKey);
+            }
+        }
+
+        /// <summary>
+        /// Retrieves the state of a pin
+        /// </summary>
+        /// <param name="pin">The pin to query</param>
+        protected override bool GetState(IPin pin)
+        {
+            // if it's an input, read it, otherwise reflect what we wrote
+
+            var pinMask = 1 << ((byte)pin.Key);
+            if ((pinMask & directionMask) != 0)
+            {
+                // this is an actual input, so read
+                var state = ReadState();
+                return (state & pinMask) != 0;
+            }
+
+            // this is an output, just reflect what we've been told to write
+            return (outputs & pinMask) != 0;
+        }
+
+        /// <summary>
+        /// Sets the state of a pin
+        /// </summary>
+        /// <param name="pin">The pin to affect</param>
+        /// <param name="state"><b>True</b> to set the pin state high, <b>False</b> to set it low</param>
+        protected override void SetState(IPin pin, bool state)
+        {
+            var offset = (byte)pin.Key;
+            if (state)
+            {
+                outputs |= (byte)(1 << offset);
+            }
+            else
+            {
+                outputs &= (byte)~(1 << offset);
+            }
+
+            WriteState(outputs);
+        }
+
+        /// <summary>
+        /// Reads the peripheral state register for 8 pin devices
+        /// </summary>
+        protected byte ReadState()
+        {
+            Span<byte> buffer = stackalloc byte[1];
+            i2CCommunications.Read(buffer);
+            return buffer[1];
+        }
+
+        /// <summary>
+        /// Writes the peripheral state register for 16 pin devices
+        /// </summary>
+        protected void WriteState(byte state)
+        {
+            state |= directionMask;
+            i2CCommunications.Write(state);
         }
     }
 }
