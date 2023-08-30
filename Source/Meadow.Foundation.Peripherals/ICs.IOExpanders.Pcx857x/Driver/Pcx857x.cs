@@ -1,7 +1,6 @@
 ﻿using Meadow.Hardware;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Meadow.Foundation.ICs.IOExpanders
 {
