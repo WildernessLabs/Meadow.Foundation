@@ -6,7 +6,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
     public partial class Pcx857x
     {
         /// <summary>
-        /// Represents an Pcx857x digital interrupt port
+        /// A Pcx857x-specific implementation of the IDigitalInterruptPort
         /// </summary>
         public class DigitalInterruptPort : DigitalInterruptPortBase
         {

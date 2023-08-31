@@ -24,11 +24,7 @@ namespace ICs.IOExpanders.Pcf8574_Sample
 
         public override Task Run()
         {
-            //  while (true)
-            {
-                //TestBulkDigitalOutputPortWrites(20);
-                TestDigitalOutputPorts(10);
-            }
+            TestDigitalOutputPorts(10);
 
             return Task.CompletedTask;
         }
@@ -62,31 +58,24 @@ namespace ICs.IOExpanders.Pcf8574_Sample
                 // loop through all the outputs
                 for (int i = 0; i < outputPorts.Count; i++)
                 {
-                    /*
-                        // turn them all off
-                        device.AllOff();
+                    // turn them all off
+                    device.AllOff();
 
-                        Thread.Sleep(1000);
+                    Thread.Sleep(1000);
 
-                        // turn them all on
-                        device.AllOn();
-
-                        Thread.Sleep(1000);
-
-                        // turn them all off
-                        device.AllOff();
-
-                        */
+                    // turn them all on
+                    device.AllOn();
+                    Thread.Sleep(1000);
 
                     // turn on just one
                     Console.WriteLine($"Update pin {i} to {true}");
                     outputPorts[i].State = true;
-                    Thread.Sleep(1250);
+                    Thread.Sleep(250);
 
                     // turn off just one
                     Console.WriteLine($"Update pin {i} to {false}");
                     outputPorts[i].State = false;
-                    Thread.Sleep(1250);
+                    Thread.Sleep(250);
                 }
             }
 

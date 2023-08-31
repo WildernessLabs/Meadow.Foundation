@@ -6,7 +6,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
     public partial class Pcx857x
     {
         /// <summary>
-        /// A Pcx857x-specific implementation of the IOutputPort
+        /// A Pcx857x-specific implementation of the IDigitalOutputPort
         /// </summary>
         public class DigitalOutputPort : DigitalOutputPortBase
         {
