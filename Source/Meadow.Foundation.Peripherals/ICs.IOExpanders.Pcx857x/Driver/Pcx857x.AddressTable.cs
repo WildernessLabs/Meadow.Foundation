@@ -8,8 +8,9 @@
         /// <param name="pinA0">State of A0 address pin - true if high</param>
         /// <param name="pinA1">State of A1 address pin - true if high</param>
         /// <param name="pinA2">State of A2 address pin - true if high</param>
+        /// <param name="isATypeDevice">Is an A hardware variant, this shifts the address returned by 24</param>
         /// <returns>The device address</returns>
-        public static byte GetAddressFromPins(bool pinA0, bool pinA1, bool pinA2, bool shiftForA = false)
+        public static byte GetAddressFromPins(bool pinA0, bool pinA1, bool pinA2, bool isATypeDevice = false)
         {
             /*
             0   1	0	0	A2  A1  A0   HexAddr. Dec.Addr.
@@ -27,7 +28,7 @@
             address |= (pinA1 ? 2 : 0);
             address |= (pinA2 ? 4 : 0);
 
-            if(shiftForA)
+            if(isATypeDevice)
             {
                 address += 24;
             }

@@ -6,14 +6,14 @@ namespace Meadow.Foundation.ICs.IOExpanders
     public partial class Pcx857x
     {
         /// <summary>
-        /// A Pca9671-specific implementation of the IOutputPort
+        /// A Pcx857x-specific implementation of the IOutputPort
         /// </summary>
         public class DigitalOutputPort : DigitalOutputPortBase
         {
             internal event EventHandler Disposed = delegate { };
 
             /// <summary>
-            /// The port's containing Pca9671
+            /// The port's containing Pcx857x
             /// </summary>
             public Pcx857x Peripheral { get; }
 

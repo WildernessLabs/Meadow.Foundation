@@ -7,7 +7,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
     /// <summary>
     /// Represents a Pcx857x I2C IO Expander
     /// </summary>
-    public abstract partial class Pcx857x : IDigitalOutputController, IDigitalInputController, II2cPeripheral, IDisposable
+    public abstract partial class Pcx857x : IDigitalOutputController, IDigitalInputController, IDigitalInterruptController, 
+        II2cPeripheral, IDisposable
     {
         /// <summary>
         /// The number of IO pins avaliable on the device
@@ -26,7 +27,10 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// The I2C Communications object
         /// </summary>
         protected readonly II2cCommunications i2CCommunications;
-        
+
+        private readonly IDictionary<IPin, DigitalInputPort> inputPorts;
+        private readonly IDictionary<IPin, DigitalInterruptPort> interruptPorts;
+
         /// <summary>
         /// Creates a new Pcx857x instance
         /// </summary>
@@ -34,7 +38,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <param name="address">The bus address of the peripheral</param>
         /// <param name="interruptPin">The interrupt pin</param>
         public Pcx857x(II2cBus i2cBus, byte address, IPin? interruptPin = default)
-            : this(i2cBus, address, interruptPin?.CreateDigitalInterruptPort(InterruptMode.EdgeBoth))
+            : this(i2cBus, address, interruptPin?.CreateDigitalInterruptPort(InterruptMode.EdgeFalling))
         {
             createdPort = true;
         }
@@ -51,34 +55,47 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
             this.interruptPort = interruptPort;
 
+            if (interruptPort != null)
+            {
+                interruptPort.Changed += InterruptPortChanged;
+            }
+
+            inputPorts = new Dictionary<IPin, DigitalInputPort>();
+            interruptPorts = new Dictionary<IPin, DigitalInterruptPort>();
+
             AllOff();
         }
 
         /// <inheritdoc/>
         public IDigitalOutputPort CreateDigitalOutputPort(IPin pin, bool initialState = false, OutputType initialOutputType = OutputType.PushPull)
         {
-            lock (pinsInUse)
+            if(IsValidPin(pin))
             {
-                if (pinsInUse.Contains(pin))
+                lock (pinsInUse)
                 {
-                    throw new PortInUseException($"{GetType().Name} pin {pin.Name} is already in use.");
-                }
-                var port = new DigitalOutputPort(this, pin, initialState);
-
-                pinsInUse.Add(pin);
-
-                SetPinDirection(false, (byte)pin.Key);
-
-                port.Disposed += (s, e) =>
-                {
-                    lock (pinsInUse)
+                    if (pinsInUse.Contains(pin))
                     {
-                        pinsInUse.Add(pin);
+                        throw new PortInUseException($"{GetType().Name} pin {pin.Name} is already in use.");
                     }
-                };
+                    var port = new DigitalOutputPort(this, pin, initialState);
 
-                return port;
+                    pinsInUse.Add(pin);
+
+                    SetPinDirection(false, (byte)pin.Key);
+
+                    port.Disposed += (s, e) =>
+                    {
+                        lock (pinsInUse)
+                        {
+                            pinsInUse.Remove(pin);
+                        }
+                    };
+
+                    return port;
+                }
             }
+            
+            throw new Exception("Pin is out of range");
         }
 
         /// <inheritdoc/>
@@ -91,27 +108,118 @@ namespace Meadow.Foundation.ICs.IOExpanders
                     throw new ArgumentException("Internal resistors are not supported");
             }
 
-            lock (pinsInUse)
+            if(IsValidPin(pin))
             {
-                if (pinsInUse.Contains(pin))
+                lock (pinsInUse)
                 {
-                    throw new PortInUseException($"{GetType().Name} pin {pin.Name} is already in use.");
-                }
-                var port = new DigitalInputPort(this, pin);
-                pinsInUse.Add(pin);
-
-                SetPinDirection(true, (byte)pin.Key);
-
-                port.Disposed += (s, e) =>
-                {
-                    lock (pinsInUse)
+                    if (pinsInUse.Contains(pin))
                     {
-                        pinsInUse.Add(pin);
+                        throw new PortInUseException($"{GetType().Name} pin {pin.Name} is already in use");
                     }
-                };
+                    var port = new DigitalInputPort(this, pin);
+                    pinsInUse.Add(pin);
 
-                return port;
+                    SetPinDirection(true, (byte)pin.Key);
+
+                    port.Disposed += (s, e) =>
+                    {
+                        lock (pinsInUse)
+                        {
+                            pinsInUse.Remove(pin);
+                        }
+                    };
+
+                    return port;
+                }
             }
+            throw new Exception("Pin is out of range");
+        }
+
+        /// <summary>
+        /// Creates a new DigitalInputPort using the specified pin
+        /// </summary>
+        /// <param name="pin">The pin representing the port</param>
+        /// <param name="interruptMode">The port interrupt mode</param>
+        /// <param name="resistorMode">The port resistor mode</param>
+        /// <returns>IDigitalInterruptPort</returns>
+        public IDigitalInterruptPort CreateDigitalInterruptPort(
+            IPin pin,
+            InterruptMode interruptMode = InterruptMode.None,
+            ResistorMode resistorMode = ResistorMode.Disabled)
+        {
+            return CreateDigitalInterruptPort(pin, interruptMode, resistorMode, TimeSpan.Zero, TimeSpan.Zero);
+        }
+
+        /// <summary>
+        /// Creates a new DigitalInputPort using the specified pin
+        /// </summary>
+        /// <param name="pin">The pin representing the port</param>
+        /// <param name="interruptMode">The port interrupt mode</param>
+        /// <param name="resistorMode">The port resistor mode</param>
+        /// <param name="debounceDuration">The debounce duration</param>
+        /// <returns>IDigitalInterruptPort</returns>
+        public IDigitalInterruptPort CreateDigitalInterruptPort(
+            IPin pin,
+            InterruptMode interruptMode,
+            ResistorMode resistorMode,
+            TimeSpan debounceDuration)
+        {
+            return CreateDigitalInterruptPort(pin, interruptMode, resistorMode, debounceDuration, TimeSpan.Zero);
+        }
+
+        /// <summary>
+        /// Creates a new DigitalInputPort using the specified pin
+        /// </summary>
+        /// <param name="pin">The pin representing the port</param>
+        /// <param name="interruptMode">The port interrupt mode</param>
+        /// <param name="resistorMode">The port resistor mode</param>
+        /// <param name="debounceDuration">The debounce duration</param>
+        /// <param name="glitchDuration">The clitch duration - not configurable on Mcpxxxx</param>
+        /// <returns>IDigitalInterruptPort</returns>
+        public IDigitalInterruptPort CreateDigitalInterruptPort(
+            IPin pin,
+            InterruptMode interruptMode,
+            ResistorMode resistorMode,
+            TimeSpan debounceDuration,
+            TimeSpan glitchDuration)
+        {
+            switch (resistorMode)
+            {
+                case ResistorMode.InternalPullUp:
+                case ResistorMode.InternalPullDown:
+                    throw new ArgumentException("Internal resistors are not supported");
+            }
+
+            if (IsValidPin(pin))
+            {
+
+                lock (pinsInUse)
+                {
+                    if (pinsInUse.Contains(pin))
+                    {
+                        throw new PortInUseException($"{GetType().Name} pin {pin.Name} is already in use");
+                    }
+                    var port = new DigitalInterruptPort(pin, interruptMode, resistorMode)
+                    {
+                        DebounceDuration = debounceDuration,
+                    };
+                    pinsInUse.Add(pin);
+
+                    SetPinDirection(true, (byte)pin.Key);
+
+                    port.Disposed += (s, e) =>
+                    {
+                        lock (pinsInUse)
+                        {
+                            pinsInUse.Remove(pin);
+                        }
+                    };
+
+                    return port;
+                }
+            }
+
+            throw new Exception("Pin is out of range");
         }
 
         /// <summary>
@@ -159,11 +267,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
             }
         }
 
-        public void Write(byte value)
-        {
-            i2CCommunications.Write(value);
-        }
-
         /// <summary>
         /// Retrieves the state of a pin
         /// </summary>
@@ -204,6 +307,11 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
                 isDisposed = true;
             }
+        }
+
+        private void InterruptPortChanged(object sender, DigitalPortResult e)
+        {
+            
         }
 
         /// <summary>
