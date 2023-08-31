@@ -3,45 +3,38 @@ using System;
 
 namespace Meadow.Foundation.ICs.IOExpanders
 {
-    public partial class Mcp23xxx
+    public partial class Pcx857x
     {
         /// <summary>
-        /// Represents an Mcp23xxx digital interrupt port
+        /// A Pcx857x-specific implementation of the IDigitalInterruptPort
         /// </summary>
         public class DigitalInterruptPort : DigitalInterruptPortBase
         {
-            /// <summary>
-            /// Update state function 
-            /// Assign this when the Update method isn't reliable 
-            /// e.g. when not using interrupts/events
-            /// </summary>
-            public Func<IPin, bool> UpdateState;
-
-            /// <summary>
-            /// The port state
-            /// True is high, false is low
-            /// </summary>
-            public override bool State
+            /// <inheritdoc/>
+            public override ResistorMode Resistor
             {
-                get
+                get => resistorMode;
+                set
                 {
-                    if (UpdateState != null) { Update(UpdateState.Invoke(Pin)); }
-                    return state;
+                    switch (value)
+                    {
+                        case ResistorMode.InternalPullUp:
+                        case ResistorMode.InternalPullDown:
+                            throw new NotSupportedException($"This device does not support internal resistors");
+                    }
+                    resistorMode = value;
                 }
             }
+
+            /// <inheritdoc/>
+            public override bool State => state;
             private bool state = false;
 
             private DateTime lastUpdate;
 
-            /// <summary>
-            /// The resistor mode of the port
-            /// </summary>
-            public override ResistorMode Resistor
-            {
-                get => portResistorMode;
-                set => throw new NotSupportedException("Cannot change port resistor mode after the port is created");
-            }
-            private readonly ResistorMode portResistorMode;
+            private ResistorMode resistorMode = ResistorMode.Disabled;
+
+            internal event EventHandler Disposed = delegate { };
 
             /// <summary>
             /// Debouce durration
@@ -66,7 +59,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             public DigitalInterruptPort(IPin pin, InterruptMode interruptMode = InterruptMode.None, ResistorMode resistorMode = ResistorMode.Disabled)
                 : base(pin, (IDigitalChannelInfo)pin.SupportedChannels[0], interruptMode)
             {
-                portResistorMode = resistorMode;
+                this.resistorMode = resistorMode;
             }
 
             /// <summary>
@@ -109,6 +102,13 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
                 state = newState;
                 lastUpdate = now;
+            }
+
+            /// <inheritdoc/>
+            protected override void Dispose(bool disposing)
+            {
+                base.Dispose(disposing);
+                Disposed?.Invoke(this, EventArgs.Empty);
             }
         }
     }

@@ -32,7 +32,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <param name="address">The I2C address</param>
         /// <param name="interruptPort">The interrupt port</param>
         /// <param name="resetPort">Optional Meadow output port used to reset the mcp expander</param>
-        protected Mcp23x0x(II2cBus i2cBus, byte address = 32, IDigitalInterruptPort? interruptPort = null, IDigitalOutputPort? resetPort = null) :
+        protected Mcp23x0x(II2cBus i2cBus, byte address, IDigitalInterruptPort? interruptPort = null, IDigitalOutputPort? resetPort = null) :
             base(i2cBus, address, interruptPort, resetPort)
         {
             Pins = new PinDefinitions(this)
