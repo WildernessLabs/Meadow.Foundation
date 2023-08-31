@@ -39,8 +39,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
             public override bool State
             {
 
-                get => Peripheral.GetState(Pin);
-                set => Peripheral.SetState(Pin, value);
+                get => Peripheral.GetPinState(Pin);
+                set => Peripheral.SetPinState(Pin, value);
             }
         }
     }

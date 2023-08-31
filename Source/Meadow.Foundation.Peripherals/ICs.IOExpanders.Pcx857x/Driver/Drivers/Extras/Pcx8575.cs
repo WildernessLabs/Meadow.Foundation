@@ -87,7 +87,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// Retrieves the state of a pin
         /// </summary>
         /// <param name="pin">The pin to query</param>
-        protected override bool GetState(IPin pin)
+        protected override bool GetPinState(IPin pin)
         {
             // if it's an input, read it, otherwise reflect what we wrote
 
@@ -108,7 +108,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         /// <param name="pin">The pin to affect</param>
         /// <param name="state"><b>True</b> to set the pin state high, <b>False</b> to set it low</param>
-        protected override void SetState(IPin pin, bool state)
+        protected override void SetPinState(IPin pin, bool state)
         {
             var offset = (byte)pin.Key;
             if (state)
@@ -126,7 +126,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <summary>
         /// Reads the peripheral state register for 16 pin devices
         /// </summary>
-        protected ushort ReadState()
+        protected override ushort ReadState()
         {
             Span<byte> buffer = stackalloc byte[2];
             i2CCommunications.Read(buffer);
@@ -136,7 +136,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <summary>
         /// Writes the peripheral state register for 16 pin devices
         /// </summary>
-        protected void WriteState(ushort state)
+        protected override void WriteState(ushort state)
         {
             state |= directionMask;
             Span<byte> buffer = stackalloc byte[] { (byte)(state & 0xff), (byte)(state >> 8) };

@@ -1,6 +1,8 @@
 ﻿using Meadow.Hardware;
+using Meadow.Utilities;
 using System;
 using System.Collections.Generic;
+using System.Net.NetworkInformation;
 
 namespace Meadow.Foundation.ICs.IOExpanders
 {
@@ -18,18 +20,19 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <inheritdoc/>
         public byte DefaultI2cAddress => 0x20;
 
+        private readonly IDictionary<IPin, DigitalInputPort> inputPorts;
+        private readonly IDictionary<IPin, DigitalInterruptPort> interruptPorts;
         private readonly List<IPin> pinsInUse = new();
         private bool isDisposed;
         private IDigitalInterruptPort? interruptPort;
         private readonly bool createdPort = false;
 
+        private ushort lastInputState;
+
         /// <summary>
         /// The I2C Communications object
         /// </summary>
         protected readonly II2cCommunications i2CCommunications;
-
-        private readonly IDictionary<IPin, DigitalInputPort> inputPorts;
-        private readonly IDictionary<IPin, DigitalInterruptPort> interruptPorts;
 
         /// <summary>
         /// Creates a new Pcx857x instance
@@ -60,8 +63,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 interruptPort.Changed += InterruptPortChanged;
             }
 
-            inputPorts = new Dictionary<IPin, DigitalInputPort>();
             interruptPorts = new Dictionary<IPin, DigitalInterruptPort>();
+            inputPorts = new Dictionary<IPin, DigitalInputPort>();
 
             AllOff();
         }
@@ -75,13 +78,11 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 {
                     if (pinsInUse.Contains(pin))
                     {
-                        throw new PortInUseException($"{GetType().Name} pin {pin.Name} is already in use.");
+                        throw new PortInUseException($"{GetType().Name} pin {pin.Name} is already in use");
                     }
                     var port = new DigitalOutputPort(this, pin, initialState);
 
                     pinsInUse.Add(pin);
-
-                    SetPinDirection(false, (byte)pin.Key);
 
                     port.Disposed += (s, e) =>
                     {
@@ -117,15 +118,16 @@ namespace Meadow.Foundation.ICs.IOExpanders
                         throw new PortInUseException($"{GetType().Name} pin {pin.Name} is already in use");
                     }
                     var port = new DigitalInputPort(this, pin);
-                    pinsInUse.Add(pin);
 
-                    SetPinDirection(true, (byte)pin.Key);
+                    pinsInUse.Add(pin);
+                    inputPorts.Add(pin, port);
 
                     port.Disposed += (s, e) =>
                     {
                         lock (pinsInUse)
                         {
                             pinsInUse.Remove(pin);
+                            inputPorts.Remove(pin);
                         }
                     };
 
@@ -204,14 +206,14 @@ namespace Meadow.Foundation.ICs.IOExpanders
                         DebounceDuration = debounceDuration,
                     };
                     pinsInUse.Add(pin);
-
-                    SetPinDirection(true, (byte)pin.Key);
+                    interruptPorts.Add(pin, port);
 
                     port.Disposed += (s, e) =>
                     {
                         lock (pinsInUse)
                         {
                             pinsInUse.Remove(pin);
+                            interruptPorts.Remove(pin);
                         }
                     };
 
@@ -222,13 +224,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
             throw new Exception("Pin is out of range");
         }
 
-        /// <summary>
-        /// Set the pin direction
-        /// </summary>
-        /// <param name="input">true for input, false for output</param>
-        /// <param name="pinKey">The pin key value</param>
-        protected abstract void SetPinDirection(bool input, byte pinKey);
-
         /// <inheritdoc/>
         public abstract IPin GetPin(string pinName);
 
@@ -236,6 +231,23 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// Checks if a pin exists on the Pcx857x
         /// </summary>
         protected abstract bool IsValidPin(IPin pin);
+
+        /// <summary>
+        /// Reads the peripheral state register for 8 pin devices
+        /// </summary>
+        protected abstract ushort ReadState();
+
+        /// <summary>
+        /// Writes the peripheral state register for 8 pin devices
+        /// </summary>
+        protected abstract void WriteState(ushort state);
+
+        /// <summary>
+        /// Set the pin direction
+        /// </summary>
+        /// <param name="input">true for input, false for output</param>
+        /// <param name="pinKey">The pin key value</param>
+        protected abstract void SetPinDirection(bool input, byte pinKey);
 
         /// <summary>
         /// Convenience method to turn all outputs off
@@ -271,14 +283,14 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// Retrieves the state of a pin
         /// </summary>
         /// <param name="pin">The pin to query</param>
-        protected abstract bool GetState(IPin pin);
+        protected abstract bool GetPinState(IPin pin);
 
         /// <summary>
         /// Sets the state of a pin
         /// </summary>
         /// <param name="pin">The pin to affect</param>
         /// <param name="state"><b>True</b> to set the pin state high, <b>False</b> to set it low</param>
-        protected abstract void SetState(IPin pin, bool state);
+        protected abstract void SetPinState(IPin pin, bool state);
 
         void WriteUint16(ushort value)
         {
@@ -286,6 +298,25 @@ namespace Meadow.Foundation.ICs.IOExpanders
             buffer[0] = (byte)value;
             buffer[1] = (byte)(value >> 8);
             i2CCommunications.Write(buffer);
+        }
+
+        private void InterruptPortChanged(object sender, DigitalPortResult e)
+        {
+            if (interruptPorts.Count == 0 && inputPorts.Count == 0)
+            {
+                return;
+            }
+
+            // determine which pin caused the interrupt
+            var currentState = ReadState();
+
+            foreach (var port in interruptPorts)
+            {
+                var pinMask = 1 << ((byte)port.Key.Key);
+                var state = (currentState & pinMask) != 0;
+
+                port.Value.Update(state);
+            }
         }
 
         /// <summary>
@@ -298,7 +329,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             {
                 if (disposing)
                 {
-                    if (createdPort && interruptPort != null) 
+                    if (createdPort && interruptPort != null)
                     {
                         interruptPort.Dispose();
                         interruptPort = null;
@@ -307,11 +338,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
                 isDisposed = true;
             }
-        }
-
-        private void InterruptPortChanged(object sender, DigitalPortResult e)
-        {
-            
         }
 
         /// <summary>
@@ -324,5 +350,4 @@ namespace Meadow.Foundation.ICs.IOExpanders
             GC.SuppressFinalize(this);
         }
     }
-
 }

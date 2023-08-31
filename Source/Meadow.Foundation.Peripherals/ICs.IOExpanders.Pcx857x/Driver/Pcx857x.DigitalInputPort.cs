@@ -28,7 +28,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             }
 
             /// <inheritdoc/>
-            public override bool State => Peripheral.GetState(Pin);
+            public override bool State => Peripheral.GetPinState(Pin);
 
             /// <summary>
             /// The port's containing Pcx857x

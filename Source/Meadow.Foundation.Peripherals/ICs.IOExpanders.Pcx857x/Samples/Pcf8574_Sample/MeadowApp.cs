@@ -19,13 +19,6 @@ namespace ICs.IOExpanders.Pcf8574_Sample
         {
             device = new Pcf8574(Device.CreateI2cBus(1), 0x20, Device.Pins.D01);
 
-            for (byte i = 255; i > 0; i--)
-            {
-                Console.WriteLine($"{i}");
-                device.Write(i);
-                Thread.Sleep(100);
-            }
-
             return base.Initialize();
         }
 

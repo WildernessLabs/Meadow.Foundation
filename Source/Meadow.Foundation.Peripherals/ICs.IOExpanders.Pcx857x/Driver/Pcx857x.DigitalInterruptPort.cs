@@ -26,22 +26,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 }
             }
 
-            /// <summary>
-            /// Update state function 
-            /// Assign this when the Update method isn't reliable 
-            /// e.g. when not using interrupts/events
-            /// </summary>
-            public Func<IPin, bool>? UpdateState;
-
             /// <inheritdoc/>
-            public override bool State
-            {
-                get
-                {
-                    if (UpdateState != null) { Update(UpdateState.Invoke(Pin)); }
-                    return state;
-                }
-            }
+            public override bool State => state;
             private bool state = false;
 
             private DateTime lastUpdate;
