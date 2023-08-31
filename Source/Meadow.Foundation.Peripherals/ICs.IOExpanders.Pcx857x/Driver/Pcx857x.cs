@@ -159,6 +159,11 @@ namespace Meadow.Foundation.ICs.IOExpanders
             }
         }
 
+        public void Write(byte value)
+        {
+            i2CCommunications.Write(value);
+        }
+
         /// <summary>
         /// Retrieves the state of a pin
         /// </summary>

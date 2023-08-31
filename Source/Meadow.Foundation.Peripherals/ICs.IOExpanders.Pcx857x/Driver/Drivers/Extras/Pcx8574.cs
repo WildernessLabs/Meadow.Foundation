@@ -137,10 +137,11 @@ namespace Meadow.Foundation.ICs.IOExpanders
         }
 
         /// <summary>
-        /// Writes the peripheral state register for 16 pin devices
+        /// Writes the peripheral state register for 8 pin devices
         /// </summary>
         protected void WriteState(byte state)
         {
+            Console.WriteLine($"WriteState {state}");
             state |= directionMask;
             i2CCommunications.Write(state);
         }
