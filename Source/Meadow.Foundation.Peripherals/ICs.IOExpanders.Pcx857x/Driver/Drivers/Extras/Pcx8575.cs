@@ -36,7 +36,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <param name="i2cBus">The I2C bus</param>
         /// <param name="address">The I2C address</param>
         /// <param name="interruptPin">The interrupt pin</param>
-        protected Pcx8575(II2cBus i2cBus, byte address, IPin? interruptPin = null) :
+        protected Pcx8575(II2cBus i2cBus, byte address, IPin? interruptPin) :
             base(i2cBus, address, interruptPin)
         {
             Pins = new PinDefinitions(this)

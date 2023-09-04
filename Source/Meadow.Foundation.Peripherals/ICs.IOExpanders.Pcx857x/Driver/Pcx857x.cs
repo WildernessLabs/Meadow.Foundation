@@ -1,8 +1,6 @@
 ﻿using Meadow.Hardware;
-using Meadow.Utilities;
 using System;
 using System.Collections.Generic;
-using System.Net.NetworkInformation;
 
 namespace Meadow.Foundation.ICs.IOExpanders
 {
@@ -27,8 +25,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
         private IDigitalInterruptPort? interruptPort;
         private readonly bool createdPort = false;
 
-        private ushort lastInputState;
-
         /// <summary>
         /// The I2C Communications object
         /// </summary>
@@ -40,7 +36,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <param name="i2cBus">The I2C buss the peripheral is connected to</param>
         /// <param name="address">The bus address of the peripheral</param>
         /// <param name="interruptPin">The interrupt pin</param>
-        public Pcx857x(II2cBus i2cBus, byte address, IPin? interruptPin = default)
+        public Pcx857x(II2cBus i2cBus, byte address, IPin? interruptPin)
             : this(i2cBus, address, interruptPin?.CreateDigitalInterruptPort(InterruptMode.EdgeFalling))
         {
             createdPort = true;

@@ -13,7 +13,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <param name="i2cBus">The I2C bus the peripheral is connected to</param>
         /// <param name="address">The I2C bus address of the peripheral</param>
         /// <param name="interruptPin">The interrupt pin</param>
-        public Pca8575(II2cBus i2cBus, byte address, IPin? interruptPin = default)
+        public Pca8575(II2cBus i2cBus, byte address, IPin? interruptPin)
             : base(i2cBus, address, interruptPin)
         {
         }

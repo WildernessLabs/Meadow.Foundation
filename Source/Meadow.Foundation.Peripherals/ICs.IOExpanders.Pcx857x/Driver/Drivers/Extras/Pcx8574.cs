@@ -35,7 +35,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <param name="i2cBus">The I2C bus</param>
         /// <param name="address">The I2C address</param>
         /// <param name="interruptPin">The interrupt pin</param>
-        protected Pcx8574(II2cBus i2cBus, byte address, IPin? interruptPin = null) :
+        protected Pcx8574(II2cBus i2cBus, byte address, IPin? interruptPin) :
             base(i2cBus, address, interruptPin)
         {
             Pins = new PinDefinitions(this)
@@ -157,7 +157,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         protected void WriteState(byte state)
         {
-            Console.WriteLine($"WriteState {state}");
             state |= directionMask;
             i2CCommunications.Write(state);
         }
