@@ -103,7 +103,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
             if (changed)
             {
-                CheckStatus(Functions.SPI_InitChannel(Handle, ref _channelConfig));
+                CheckStatus(Mpsse.SPI_InitChannel(Handle, ref _channelConfig));
             }
         }
 
@@ -118,11 +118,11 @@ namespace Meadow.Foundation.ICs.IOExpanders
         {
             Configuration = config;
 
-            if (CheckStatus(Functions.SPI_OpenChannel(ChannelNumber, out IntPtr handle)))
+            if (CheckStatus(Mpsse.SPI_OpenChannel(ChannelNumber, out IntPtr handle)))
             {
                 Handle = handle;
 
-                CheckStatus(Functions.SPI_InitChannel(Handle, ref _channelConfig));
+                CheckStatus(Mpsse.SPI_InitChannel(Handle, ref _channelConfig));
             }
         }
 
@@ -130,7 +130,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         {
             if (Handle != IntPtr.Zero)
             {
-                CheckStatus(Functions.SPI_CloseChannel(Handle));
+                CheckStatus(Mpsse.SPI_CloseChannel(Handle));
                 Handle = IntPtr.Zero;
             }
         }
@@ -187,7 +187,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
             chipSelect.State = csMode == ChipSelectMode.ActiveLow ? false : true;
 
-            var status = Functions.SPI_Read(
+            var status = Mpsse.SPI_Read(
                 Handle,
                 MemoryMarshal.GetReference(readBuffer),
                 readBuffer.Length,
@@ -206,7 +206,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
             chipSelect.State = csMode == ChipSelectMode.ActiveLow ? false : true;
 
-            var status = Functions.SPI_Write(
+            var status = Mpsse.SPI_Write(
                 Handle,
                 MemoryMarshal.GetReference(writeBuffer),
                 writeBuffer.Length,
@@ -225,7 +225,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
             chipSelect.State = csMode == ChipSelectMode.ActiveLow ? false : true;
 
-            var status = Functions.SPI_ReadWrite(
+            var status = Mpsse.SPI_ReadWrite(
                 Handle,
                 MemoryMarshal.GetReference(readBuffer),
                 MemoryMarshal.GetReference(writeBuffer),

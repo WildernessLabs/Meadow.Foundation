@@ -31,7 +31,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             get
             {
                 // reads all 8 pis at once
-                Native.Functions.FT_ReadGPIO(_bus.Handle, out byte state);
+                Native.Mpsse.FT_ReadGPIO(_bus.Handle, out byte state);
                 // the pin key is the mask
                 return (state & (byte)Pin.Key) != 0;
             }

@@ -53,7 +53,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
         internal void Open(I2CClockRate clockRate = I2CClockRate.Standard)
         {
-            if (CheckStatus(Functions.I2C_OpenChannel(ChannelNumber, out IntPtr handle)))
+            if (CheckStatus(Mpsse.I2C_OpenChannel(ChannelNumber, out IntPtr handle)))
             {
                 Handle = handle;
 
@@ -64,7 +64,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
                     Options = DefaultChannelOptions
                 };
 
-                CheckStatus(Functions.I2C_InitChannel(Handle, ref config));
+                CheckStatus(Mpsse.I2C_InitChannel(Handle, ref config));
 
                 IsOpen = true;
             }
@@ -74,7 +74,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         {
             if (Handle != IntPtr.Zero)
             {
-                CheckStatus(Functions.I2C_CloseChannel(Handle));
+                CheckStatus(Mpsse.I2C_CloseChannel(Handle));
                 Handle = IntPtr.Zero;
             }
         }
@@ -87,7 +87,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
         public void Read(byte peripheralAddress, Span<byte> readBuffer)
         {
-            var status = Functions.I2C_DeviceRead(
+            var status = Mpsse.I2C_DeviceRead(
                 Handle,
                 peripheralAddress,
                 readBuffer.Length,
@@ -104,7 +104,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
         public void Write(byte peripheralAddress, Span<byte> writeBuffer)
         {
-            var status = Functions.I2C_DeviceWrite(
+            var status = Mpsse.I2C_DeviceWrite(
                 Handle,
                 peripheralAddress,
                 writeBuffer.Length,

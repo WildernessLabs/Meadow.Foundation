@@ -30,7 +30,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             if (Interlocked.Increment(ref _instanceCount) == 1)
             {
                 // only do this one time (no matter how many instances are created instances)
-                Native.Functions.Init_libMPSSE();
+                Native.Mpsse.Init_libMPSSE();
             }
         }
 
@@ -55,13 +55,13 @@ namespace Meadow.Foundation.ICs.IOExpanders
         {
             Dictionary<int, Ft232I2cBus> result = new Dictionary<int, Ft232I2cBus>();
 
-            if (Native.CheckStatus(Native.Functions.I2C_GetNumChannels(out int channels)))
+            if (Native.CheckStatus(Native.Mpsse.I2C_GetNumChannels(out int channels)))
             {
                 if (channels > 0)
                 {
                     for (var c = 0; c < channels; c++)
                     {
-                        if (Native.CheckStatus(Native.Functions.I2C_GetChannelInfo(c, out Native.FT_DEVICE_LIST_INFO_NODE info)))
+                        if (Native.CheckStatus(Native.Mpsse.I2C_GetChannelInfo(c, out Native.FT_DEVICE_LIST_INFO_NODE info)))
                         {
                             result.Add(c, new Ft232I2cBus(c, info));
                         }
@@ -76,13 +76,13 @@ namespace Meadow.Foundation.ICs.IOExpanders
         {
             Dictionary<int, Ft232SpiBus> result = new Dictionary<int, Ft232SpiBus>();
 
-            if (Native.CheckStatus(Native.Functions.SPI_GetNumChannels(out int channels)))
+            if (Native.CheckStatus(Native.Mpsse.SPI_GetNumChannels(out int channels)))
             {
                 if (channels > 0)
                 {
                     for (var c = 0; c < channels; c++)
                     {
-                        if (Native.CheckStatus(Native.Functions.SPI_GetChannelInfo(c, out Native.FT_DEVICE_LIST_INFO_NODE info)))
+                        if (Native.CheckStatus(Native.Mpsse.SPI_GetChannelInfo(c, out Native.FT_DEVICE_LIST_INFO_NODE info)))
                         {
                             result.Add(c, new Ft232SpiBus(c, info));
                         }
@@ -240,7 +240,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             _activeBus.GpioDirectionMask |= (byte)pin.Key;
 
             // update the direction
-            Native.Functions.FT_WriteGPIO(_activeBus.Handle, _activeBus.GpioDirectionMask, 0);
+            Native.Mpsse.FT_WriteGPIO(_activeBus.Handle, _activeBus.GpioDirectionMask, 0);
 
             var info = pin.SupportedChannels?.FirstOrDefault(c => c is IDigitalChannelInfo) as IDigitalChannelInfo;
             return new Ft232DigitalOutputPort(pin, info, initialState, initialOutputType, _activeBus);
@@ -258,7 +258,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 if (Interlocked.Decrement(ref _instanceCount) == 0)
                 {
                     // last instance was disposed, clean house
-                    Native.Functions.Cleanup_libMPSSE();
+                    Native.Mpsse.Cleanup_libMPSSE();
                 }
 
                 _isDisposed = true;

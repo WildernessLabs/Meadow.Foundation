@@ -15,6 +15,13 @@ namespace Meadow.Foundation.ICs.IOExpanders
             throw new Exception($"Native error: {status}");
         }
 
+        public enum FT_OPEN_TYPE
+        {
+            FT_OPEN_BY_SERIAL_NUMBER = 1,
+            FT_OPEN_BY_DESCRIPTION = 2,
+            FT_OPEN_BY_LOCATION = 4
+        }
+
         public enum FT_DEVICE_TYPE
         {
             FT_DEVICE_BM,

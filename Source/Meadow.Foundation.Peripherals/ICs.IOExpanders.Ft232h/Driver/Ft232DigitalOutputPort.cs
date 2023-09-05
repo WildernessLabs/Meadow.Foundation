@@ -53,7 +53,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
                     s &= (byte)~((byte)Pin.Key);
                 }
 
-                var result = Native.Functions.FT_WriteGPIO(_bus.Handle, _bus.GpioDirectionMask, s);
+                var result = Native.Mpsse.FT_WriteGPIO(_bus.Handle, _bus.GpioDirectionMask, s);
                 Native.CheckStatus(result);
 
                 _bus.GpioState = s;
