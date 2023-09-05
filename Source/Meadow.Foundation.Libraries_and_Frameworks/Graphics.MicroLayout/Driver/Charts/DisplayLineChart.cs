@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace Meadow.Foundation.Graphics.MicroLayout;
 
@@ -27,7 +28,42 @@ public class DisplayLineChart : DisplayControl
     {
         graphics.Clear(BackgroundColor);
 
-        DrawXAxis(graphics);
+        // determine overall min/max
+        var minX = Series.Min(s => s.MinX());
+        var maxX = Series.Max(s => s.MaxX());
+
+
+        if (AlwaysShowYOrigin)
+        {
+            var min = Series.Min(s => s.MinY());
+            var max = Series.Max(s => s.MaxY());
+
+            if (min > 0)
+            {
+                VerticalMinimum = 0;
+                VerticalMaximum = max;
+            }
+            else if (max < 0)
+            {
+                VerticalMinimum = min;
+                VerticalMaximum = 0;
+            }
+            else
+            {
+                VerticalMinimum = min;
+                VerticalMaximum = max;
+            }
+        }
+        else
+        {
+            VerticalMinimum = Series.Min(s => s.MinY());
+            VerticalMaximum = Series.Max(s => s.MaxY());
+        }
+
+        ChartAreaHeight = this.Height - (2 * DefaultMargin) - (DefaultAxisStroke / 2);
+        VerticalScale = ChartAreaHeight / (VerticalMaximum - VerticalMinimum); // pixels per vertical unit
+
+        DrawXAxis(graphics, VerticalMinimum, VerticalMaximum);
         DrawYAxis(graphics);
 
         foreach (var series in Series)
@@ -38,17 +74,38 @@ public class DisplayLineChart : DisplayControl
         graphics.Show();
     }
 
-    private void DrawXAxis(MicroGraphics graphics)
+    public bool AlwaysShowYOrigin { get; set; } = true;
+    private double VerticalScale { get; set; } // pixels per Y units
+    private double VerticalMinimum { get; set; } // Y units at bottom of chart
+    private double VerticalMaximum { get; set; } // Y units at top of chart
+    private double HorizontalScale { get; set; } // pixels per X units
+    private double HorizontalMinimum { get; set; } // X units at left of chart
+    private int ChartAreaHeight { get; set; }
+
+    private void DrawXAxis(MicroGraphics graphics, double minY, double maxY)
     {
-        // TODO: deal with chart with negative values
+        int scaledYOffset;
+
+        if (minY < 0 && maxY > 0)
+        {
+            // axis is at 0
+
+            scaledYOffset = Bottom - DefaultMargin - DefaultAxisStroke + (int)(minY * VerticalScale);
+        }
+        else
+        {
+
+            // axis at min Y
+            scaledYOffset = Bottom - DefaultMargin - DefaultAxisStroke;
+        }
 
         // for now it's a fixed line at the bottom
         graphics.Stroke = DefaultAxisStroke;
         graphics.DrawLine(
             Left + DefaultMargin,
-            Bottom - DefaultMargin - DefaultAxisStroke,
+            scaledYOffset,
             Right - DefaultMargin,
-            Bottom - DefaultMargin - DefaultAxisStroke,
+            scaledYOffset,
             AxisColor);
     }
 
@@ -69,7 +126,6 @@ public class DisplayLineChart : DisplayControl
     private void DrawSeries(MicroGraphics graphics, LineChartSeries series)
     {
         var chartWidth = Width - (2 * DefaultMargin);
-        var chartHeight = Height - (2 * DefaultMargin);
 
         var minX = series.MinX();
         var minY = series.MinY();
@@ -84,7 +140,7 @@ public class DisplayLineChart : DisplayControl
         foreach (var point in series.Points)
         {
             var scaledX = (int)((point.X / xRange) * chartWidth) + DefaultMargin;
-            var scaledY = Bottom - (int)(((point.Y / yRange) * chartHeight) + DefaultMargin);
+            var scaledY = Bottom - DefaultMargin - DefaultAxisStroke / 2 - (int)((point.Y - VerticalMinimum) * VerticalScale);
 
             if (series.ShowLines)
             {
