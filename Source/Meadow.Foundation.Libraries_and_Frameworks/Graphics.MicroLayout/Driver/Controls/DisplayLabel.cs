@@ -38,7 +38,11 @@ public class DisplayLabel : DisplayControl
         {
             if (theme.TextColor != null) TextColor = theme.TextColor.Value;
             if (theme.BackgroundColor != null) BackColor = theme.BackgroundColor.Value;
-            Font = theme.Font;
+
+            if (Font == null)
+            {
+                Font = theme.Font;
+            }
         }
     }
 
