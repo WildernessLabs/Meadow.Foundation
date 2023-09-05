@@ -6,7 +6,7 @@ The **Pca9671** library is designed for the [Wilderness Labs](www.wildernesslabs
 
 The **Meadow.Foundation** peripherals library is an open-source repository of drivers and libraries that streamline and simplify adding hardware to your C# .NET Meadow IoT application.
 
-For more information on developing for Meadow, visit [developer.wildernesslabs.co](http://developer.wildernesslabs.co/), to view all of Wilderness Labs open-source projects, including samples, visit [github.com/wildernesslabs](https://github.com/wildernesslabs/)
+For more information on developing for Meadow, visit [developer.wildernesslabs.co](http://developer.wildernesslabs.co/), to view all Wilderness Labs open-source projects, including samples, visit [github.com/wildernesslabs](https://github.com/wildernesslabs/)
 
 ## Usage
 
@@ -48,7 +48,6 @@ private void TestDigitalOutputPorts(int loopCount)
     var out14 = pca.CreateDigitalOutputPort(pca.Pins.R14);
     var out15 = pca.CreateDigitalOutputPort(pca.Pins.R15);
 
-
     var outputPorts = new List<IDigitalOutputPort>()
     {
         out00, out01, out02, out03, out04, out05, out06, out07,
@@ -82,4 +81,3 @@ private void TestDigitalOutputPorts(int loopCount)
 }
         
 ```
-
