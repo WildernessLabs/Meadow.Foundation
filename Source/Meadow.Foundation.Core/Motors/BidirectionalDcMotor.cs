@@ -71,7 +71,7 @@ public class BidirectionalDcMotor
     /// <summary>
     /// Start turning the motor clockwise
     /// </summary>
-    public void Clockwise()
+    public void StartClockwise()
     {
         _outputA.State = !(_outputB.State = _energizeHigh ? true : false);
         StateChanged?.Invoke(this, State);
@@ -80,7 +80,7 @@ public class BidirectionalDcMotor
     /// <summary>
     /// Start turning the motor counter/anti clockwise
     /// </summary>
-    public void CounterClockwise()
+    public void StartCounterClockwise()
     {
         _outputA.State = !(_outputB.State = _energizeHigh ? false : true);
         StateChanged?.Invoke(this, State);
