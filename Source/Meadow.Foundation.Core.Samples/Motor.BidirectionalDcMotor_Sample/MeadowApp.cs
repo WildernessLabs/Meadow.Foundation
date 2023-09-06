@@ -34,7 +34,7 @@ public class MeadowApp : App<F7FeatherV2>
         while (true)
         {
             // Motor clockwise
-            motor.Clockwise();
+            motor.StartClockwise();
             await Task.Delay(1000);
 
             // Motor Stop
@@ -42,7 +42,7 @@ public class MeadowApp : App<F7FeatherV2>
             await Task.Delay(500);
 
             // Motor counter clockwise
-            motor.CounterClockwise();
+            motor.StartCounterClockwise();
             await Task.Delay(1000);
 
             // Motor Stop
