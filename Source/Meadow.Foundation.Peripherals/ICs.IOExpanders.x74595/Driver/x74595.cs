@@ -77,7 +77,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <param name="spiBus">SpiBus object</param>
         /// <param name="pinChipSelect">The chip select pin</param>
         /// <param name="initialStates">An optional list of initial states for the pins.  Omitting this will initialize all pins to low.</param>
-        public x74595(ISpiBus spiBus, IPin pinChipSelect, int pins = 8, bool[]? initialStates = null)
+        /// <param name="outputEnable">An optional pin connected to OE used for initializing startup state</param>
+        public x74595(ISpiBus spiBus, IPin pinChipSelect, int pins = 8, IPin? outputEnable = null, bool[]? initialStates = null)
         {
             if (initialStates != null && initialStates.Length != pins)
             {
@@ -92,8 +93,15 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
                 latchData = new byte[numberOfChips];
 
+                IDigitalOutputPort? oe = null;
+
+                if (outputEnable != null)
+                {
+                    oe = outputEnable.CreateDigitalOutputPort(true);
+                }
+
                 // start with the CS/OE/lath *high* which put the outputs in high-Z while we clear things to a known state
-                spiComms = new SpiCommunications(spiBus, pinChipSelect?.CreateDigitalOutputPort(true), DefaultSpiBusSpeed, DefaultSpiBusMode);
+                spiComms = new SpiCommunications(spiBus, pinChipSelect?.CreateDigitalOutputPort(), DefaultSpiBusSpeed, DefaultSpiBusMode);
 
                 // the chip register is in an unknown state right now - we need to set the data before the initial latch
                 if (initialStates != null)
@@ -120,6 +128,11 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 else
                 {
                     Clear();
+                }
+
+                if (oe != null)
+                {
+                    oe.State = false;
                 }
             }
             else
