@@ -116,9 +116,10 @@ namespace Meadow.Foundation.ICs.IOExpanders
                         {
                             if (initialStates[pin])
                             {
-                                b |= (byte)(1 << pin);
-                                if (++pin >= pins) break;
+                                b |= (byte)(1 << (7 - pin));
+                                if (pin >= pins) break;
                             }
+                            pin++;
                         }
                         latchData[chip] = b;
                     }
