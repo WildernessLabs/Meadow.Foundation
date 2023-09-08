@@ -5,16 +5,25 @@ namespace Meadow.Foundation.Graphics.MicroLayout;
 /// <summary>
 /// An X/Y Line chart
 /// </summary>
-public class DisplayLineChart : DisplayControl
+public class DisplayLineChart : ThemedDisplayControl
 {
+    /// <summary>
+    /// The default color for axis lines
+    /// </summary>
     public static Color DefaultAxisColor = Color.Gray;
+    /// <summary>
+    /// The default color for axis labels
+    /// </summary>
     public static Color DefaultAxisLabelColor = Color.White;
+    /// <summary>
+    /// The default chart background color
+    /// </summary>
     public static Color DefaultBackgroundColor = Color.Black;
 
     private const int DefaultMargin = 5;
     private const int DefaultAxisStroke = 4;
 
-    private IFont _axisFont;
+    private IFont _axisFont = default!;
 
     /// <summary>
     /// When true, Y-value origin (zero) is always displayed, otherwise the Y axis is scaled based on the data range.
@@ -76,10 +85,12 @@ public class DisplayLineChart : DisplayControl
     {
     }
 
+    /// <inheritdoc/>
     public override void ApplyTheme(DisplayTheme theme)
     {
     }
 
+    /// <inheritdoc/>
     protected override void OnDraw(MicroGraphics graphics)
     {
         graphics.DrawRectangle(Left, Top, Width, Height, BackgroundColor, true);
@@ -247,7 +258,7 @@ public class DisplayLineChart : DisplayControl
         LineSeriesPoint lastPoint = new LineSeriesPoint();
         var first = true;
 
-        graphics.Stroke = series.LineWidth;
+        graphics.Stroke = series.LineStroke;
 
         foreach (var point in series.Points)
         {

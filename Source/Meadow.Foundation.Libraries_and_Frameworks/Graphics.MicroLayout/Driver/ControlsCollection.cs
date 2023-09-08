@@ -53,7 +53,7 @@ public sealed class ControlsCollection : IEnumerable<IDisplayControl>
         // Apply screen theme to the added controls, if available.
         if (_screen.Theme != null)
         {
-            foreach (var control in controls)
+            foreach (IThemedDisplayControl control in controls)
             {
                 control.ApplyTheme(_screen.Theme);
             }

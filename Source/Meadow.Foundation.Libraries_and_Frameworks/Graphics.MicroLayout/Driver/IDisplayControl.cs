@@ -1,6 +1,4 @@
-﻿using Meadow.Foundation.Graphics;
-
-namespace Meadow.Foundation.Graphics.MicroLayout;
+﻿namespace Meadow.Foundation.Graphics.MicroLayout;
 
 /// <summary>
 /// Represents a display control in the user interface.
@@ -57,10 +55,4 @@ public interface IDisplayControl
         if (y > Top + Height) return false;
         return true;
     }
-
-    /// <summary>
-    /// Applies the specified display theme to the display control.
-    /// </summary>
-    /// <param name="theme">The display theme to apply.</param>
-    void ApplyTheme(DisplayTheme theme);
 }

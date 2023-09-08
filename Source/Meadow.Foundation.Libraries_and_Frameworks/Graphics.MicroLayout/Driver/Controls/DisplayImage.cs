@@ -3,7 +3,7 @@
 /// <summary>
 /// Represents an image display control in the user interface.
 /// </summary>
-public class DisplayImage : DisplayControl
+public class DisplayImage : ThemedDisplayControl
 {
     private Color _backColor = Color.Transparent;
     private VerticalAlignment _verticalAlignment = VerticalAlignment.Center;

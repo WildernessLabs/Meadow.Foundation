@@ -3,22 +3,49 @@ using System.Collections.Generic;
 
 namespace Meadow.Foundation.Graphics.MicroLayout;
 
+/// <summary>
+/// A COllection of LineSeriesPoints
+/// </summary>
 public class LineSeriesPointCollection : IEnumerable<LineSeriesPoint>
 {
     private List<LineSeriesPoint> _points = new();
 
+    /// <summary>
+    /// Gets the minimum X value in the collection
+    /// </summary>
     public double MinX { get; private set; }
+    /// <summary>
+    /// Gets the minimum Y value in the collection
+    /// </summary>
     public double MinY { get; private set; }
+    /// <summary>
+    /// Gets the maximum X value in the collection
+    /// </summary>
     public double MaxX { get; private set; }
+    /// <summary>
+    /// Gets the maximum Y value in the collection
+    /// </summary>
     public double MaxY { get; private set; }
 
+    /// <summary>
+    /// Gets the number of points in the collection
+    /// </summary>
     public int Count => _points.Count;
 
+    /// <summary>
+    /// Adds a point to the collection
+    /// </summary>
+    /// <param name="x">The point's X value</param>
+    /// <param name="y">The point's Y value</param>
     public void Add(double x, double y)
     {
         Add(new LineSeriesPoint(x, y));
     }
 
+    /// <summary>
+    /// Adds a point to the collection
+    /// </summary>
+    /// <param name="points">The point to add</param>
     public void Add(params LineSeriesPoint[] points)
     {
         lock (_points)
@@ -36,6 +63,7 @@ public class LineSeriesPointCollection : IEnumerable<LineSeriesPoint>
         }
     }
 
+    /// <inheritdoc/>
     public IEnumerator<LineSeriesPoint> GetEnumerator()
     {
         return _points.GetEnumerator();

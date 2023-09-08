@@ -3,7 +3,7 @@
 /// <summary>
 /// Represents a label display control in the user interface.
 /// </summary>
-public class DisplayLabel : DisplayControl
+public class DisplayLabel : ThemedDisplayControl
 {
     private string _text;
 

@@ -1,6 +1,4 @@
-﻿using Meadow.Foundation.Graphics;
-
-namespace Meadow.Foundation.Graphics.MicroLayout;
+﻿namespace Meadow.Foundation.Graphics.MicroLayout;
 
 /// <summary>
 /// Represents a base class for display controls in the user interface.
@@ -22,12 +20,6 @@ public abstract class DisplayControl : IDisplayControl
     /// Gets or sets the context object associated with the control.
     /// </summary>
     public object? Context { get; set; }
-
-    /// <summary>
-    /// Applies the specified display theme to the control.
-    /// </summary>
-    /// <param name="theme">The display theme to apply.</param>
-    public abstract void ApplyTheme(DisplayTheme theme);
 
     /// <summary>
     /// Initializes a new instance of the <see cref="DisplayControl"/> class with the specified dimensions.

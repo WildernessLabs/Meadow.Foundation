@@ -1,4 +1,5 @@
-﻿using Meadow.Foundation.Graphics.MicroLayout;
+﻿using Meadow.Foundation.Graphics;
+using Meadow.Foundation.Graphics.MicroLayout;
 using System.Windows.Forms;
 
 namespace Meadow.Foundation.Displays.UI;
@@ -18,10 +19,20 @@ public class MeadowApp : App<Windows>
         var display = new WinFormsDisplay();
         display.ControlBox = true;
 
+        var labelFont = new Font12x20();
+
         _screen = new DisplayScreen(display);
         _screen.BackgroundColor = Color.AntiqueWhite;
 
-        var chart1 = new DisplayLineChart(0, 0, _screen.Width, _screen.Height / 2)
+        var chart1Label = new DisplayLabel(0, 0, _screen.Width, 16)
+        {
+            Text = "Values for process A",
+            TextColor = Color.Aquamarine,
+            BackColor = Color.Black,
+            Font = labelFont,
+        };
+
+        var chart1 = new DisplayLineChart(0, 16, _screen.Width, (_screen.Height / 2) - 16)
         {
             BackgroundColor = Color.FromHex("111111"),
             ShowYAxisLabels = true
@@ -31,7 +42,15 @@ public class MeadowApp : App<Windows>
             GetSineSeries(),
             GetCosineSeries(4, 4.2, 0));
 
-        var chart2 = new DisplayLineChart(0, _screen.Height / 2, _screen.Width, _screen.Height / 2)
+        var chart2Label = new DisplayLabel(0, _screen.Height / 2, _screen.Width, 16)
+        {
+            Text = "Values for process B",
+            TextColor = Color.BlueViolet,
+            BackColor = Color.Black,
+            Font = labelFont,
+        };
+
+        var chart2 = new DisplayLineChart(0, (_screen.Height / 2) + 16, _screen.Width, (_screen.Height / 2) - 16)
         {
             BackgroundColor = Color.FromHex("222222"),
             ShowYAxisLabels = true
@@ -41,7 +60,7 @@ public class MeadowApp : App<Windows>
             GetSineSeries(2, 2),
             GetCosineSeries(4, 4.2, 4.5));
 
-        _screen.Controls.Add(chart1, chart2);
+        _screen.Controls.Add(chart1Label, chart2Label, chart1, chart2);
 
         chart1.Invalidate();
 
@@ -58,7 +77,7 @@ public class MeadowApp : App<Windows>
         {
             LineColor = Color.Red,
             PointColor = Color.Green,
-            LineWidth = 4,
+            LineStroke = 4,
             PointSize = 6,
             ShowLines = true,
             ShowPoints = true,
@@ -79,7 +98,7 @@ public class MeadowApp : App<Windows>
         {
             LineColor = Color.DarkBlue,
             PointColor = Color.DarkGreen,
-            LineWidth = 4,
+            LineStroke = 4,
             PointSize = 6,
             ShowLines = true,
             ShowPoints = true,

@@ -5,7 +5,7 @@ namespace Meadow.Foundation.Graphics.MicroLayout;
 /// <summary>
 /// Represents a rectangular display box in the user interface.
 /// </summary>
-public class DisplayBox : DisplayControl
+public class DisplayBox : ThemedDisplayControl
 {
     private Color _foreColor;
 
