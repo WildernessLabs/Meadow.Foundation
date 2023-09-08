@@ -51,6 +51,19 @@ public class WinFormsDisplay : Form, IGraphicsDisplay, ITouchScreen
         _buffer = new WinFormsPixelBuffer(Width, Height, colorMode);
     }
 
+    public new bool ControlBox
+    {
+        get => base.ControlBox;
+        set
+        {
+            if (value)
+            {
+                Height = Height + 46;
+            }
+            base.ControlBox = value;
+        }
+    }
+
     protected override void OnMouseDown(MouseEventArgs e)
     {
         TouchDown?.Invoke(e.X, e.Y);

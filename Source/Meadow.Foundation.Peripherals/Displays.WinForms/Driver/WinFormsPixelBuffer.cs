@@ -64,9 +64,12 @@ internal class WinFormsPixelBuffer : IPixelBuffer
     /// </summary>
     public void Clear()
     {
-        using (var g = System.Drawing.Graphics.FromImage(_bmp))
+        lock (_bmp)
         {
-            g.FillRectangle(new SolidBrush(System.Drawing.Color.Black), 0, 0, Width, Height);
+            using (var g = System.Drawing.Graphics.FromImage(_bmp))
+            {
+                g.FillRectangle(new SolidBrush(System.Drawing.Color.Black), 0, 0, Width, Height);
+            }
         }
     }
 
@@ -76,9 +79,12 @@ internal class WinFormsPixelBuffer : IPixelBuffer
     /// <param name="color"></param>
     public void Fill(Foundation.Color color)
     {
-        using (var g = System.Drawing.Graphics.FromImage(_bmp))
+        lock (_bmp)
         {
-            g.FillRectangle(new SolidBrush(System.Drawing.Color.FromArgb(color.R, color.G, color.B)), 0, 0, Width, Height);
+            using (var g = System.Drawing.Graphics.FromImage(_bmp))
+            {
+                g.FillRectangle(new SolidBrush(System.Drawing.Color.FromArgb(color.R, color.G, color.B)), 0, 0, Width, Height);
+            }
         }
     }
 
@@ -92,9 +98,19 @@ internal class WinFormsPixelBuffer : IPixelBuffer
     /// <param name="color"></param>
     public void Fill(int originX, int originY, int width, int height, Foundation.Color color)
     {
-        using (var g = System.Drawing.Graphics.FromImage(_bmp))
+        try
         {
-            g.FillRectangle(new SolidBrush(System.Drawing.Color.FromArgb(color.R, color.G, color.B)), originX, originY, width, height);
+            lock (_bmp)
+            {
+                using (var g = System.Drawing.Graphics.FromImage(_bmp))
+                {
+                    g.FillRectangle(new SolidBrush(System.Drawing.Color.FromArgb(color.R, color.G, color.B)), originX, originY, width, height);
+                }
+            }
+        }
+        catch (InvalidOperationException)
+        {
+            // NOP
         }
     }
 
@@ -130,7 +146,17 @@ internal class WinFormsPixelBuffer : IPixelBuffer
     public void SetPixel(int x, int y, Foundation.Color color)
     {
         // TODO: use lockbits and set the _buffer instead
-        _bmp.SetPixel(x, y, System.Drawing.Color.FromArgb(color.R, color.G, color.B));
+        lock (_bmp)
+        {
+            try
+            {
+                _bmp.SetPixel(x, y, System.Drawing.Color.FromArgb(color.R, color.G, color.B));
+            }
+            catch (InvalidOperationException)
+            {
+                // NOP
+            }
+        }
     }
 
     /// <summary>

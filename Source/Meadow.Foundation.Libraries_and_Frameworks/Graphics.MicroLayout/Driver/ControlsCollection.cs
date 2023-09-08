@@ -21,6 +21,15 @@ public sealed class ControlsCollection : IEnumerable<IDisplayControl>
     }
 
     /// <summary>
+    /// Gets a control from the Controls collection by index
+    /// </summary>
+    /// <param name="index">index of the control to retrieve</param>
+    public IDisplayControl this[int index]
+    {
+        get => _controls[index];
+    }
+
+    /// <summary>
     /// Removes all display controls from the collection.
     /// </summary>
     public void Clear()

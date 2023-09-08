@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Meadow.Foundation.Graphics.MicroLayout;
 
@@ -30,43 +28,4 @@ public static class ChartExtensions
         return series;
     }
 
-    public static double MinX(this LineChartSeries series)
-    {
-        return (series.Points.Count == 0) ? 0 : series.Points.Min(p => p.X);
-    }
-
-    public static double MaxX(this LineChartSeries series)
-    {
-        return (series.Points.Count() == 0) ? 0 : series.Points.Max(p => p.X);
-    }
-
-    public static double MinY(this LineChartSeries series)
-    {
-        return (series.Points.Count() == 0) ? 0 : series.Points.Min(p => p.Y);
-    }
-
-    public static double MaxY(this LineChartSeries series)
-    {
-        return (series.Points.Count() == 0) ? 0 : series.Points.Max(p => p.Y);
-    }
-
-    public static double MinX(this IEnumerable<LineSeriesPoint> points)
-    {
-        return (points.Count() == 0) ? 0 : points.Min(p => p.X);
-    }
-
-    public static double MaxX(this IEnumerable<LineSeriesPoint> points)
-    {
-        return (points.Count() == 0) ? 0 : points.Max(p => p.X);
-    }
-
-    public static double MinY(this IEnumerable<LineSeriesPoint> points)
-    {
-        return (points.Count() == 0) ? 0 : points.Min(p => p.Y);
-    }
-
-    public static double MaxY(this IEnumerable<LineSeriesPoint> points)
-    {
-        return (points.Count() == 0) ? 0 : points.Max(p => p.Y);
-    }
 }

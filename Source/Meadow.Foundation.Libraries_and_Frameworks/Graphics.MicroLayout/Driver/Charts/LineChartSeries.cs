@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Meadow.Foundation.Graphics.MicroLayout;
+﻿namespace Meadow.Foundation.Graphics.MicroLayout;
 
 public class LineChartSeries
 {
@@ -12,5 +10,5 @@ public class LineChartSeries
     public Color PointColor { get; set; }
     public int PointSize { get; set; }
 
-    public List<LineSeriesPoint> Points { get; set; } = new();
+    public LineSeriesPointCollection Points { get; set; } = new();
 }

@@ -1,5 +1,4 @@
-﻿using Meadow.Foundation.Graphics;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
 using System.Linq;
 using System.Threading;
 
@@ -102,7 +101,7 @@ public class DisplayScreen
         {
             Resolver.App.InvokeOnMainThread((_) =>
             {
-                if (Controls.Any(c => c.IsInvalid))
+                if (Controls.Count == 0 || Controls.Any(c => c.IsInvalid))
                 {
                     _graphics.Clear(BackgroundColor);
 
