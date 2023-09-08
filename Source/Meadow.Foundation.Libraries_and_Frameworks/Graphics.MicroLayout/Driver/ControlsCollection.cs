@@ -10,6 +10,7 @@ public sealed class ControlsCollection : IEnumerable<IDisplayControl>
 {
     private DisplayScreen _screen;
     private List<IDisplayControl> _controls = new();
+    private object _syncRoot = new();
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ControlsCollection"/> class.
@@ -19,6 +20,8 @@ public sealed class ControlsCollection : IEnumerable<IDisplayControl>
     {
         _screen = screen;
     }
+
+    internal object SyncRoot => _syncRoot;
 
     /// <summary>
     /// Gets a control from the Controls collection by index
@@ -34,9 +37,11 @@ public sealed class ControlsCollection : IEnumerable<IDisplayControl>
     /// </summary>
     public void Clear()
     {
-        _controls.Clear();
-
-        // _screen.Invalidate();  // TODO: Decide whether to invalidate the screen after clearing controls.
+        lock (SyncRoot)
+        {
+            _controls.Clear();
+            _screen.Invalidate();
+        }
     }
 
     /// <summary>
@@ -59,7 +64,10 @@ public sealed class ControlsCollection : IEnumerable<IDisplayControl>
             }
         }
 
-        _controls.AddRange(controls);
+        lock (SyncRoot)
+        {
+            _controls.AddRange(controls);
+        }
     }
 
     /// <summary>

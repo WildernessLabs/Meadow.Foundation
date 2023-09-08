@@ -30,6 +30,8 @@ public class DisplayScreen
     /// </summary>
     public int Height => _graphics.Height;
 
+    private bool IsInvalid { get; set; }
+
     internal DisplayTheme? Theme { get; }
 
     /// <summary>
@@ -69,13 +71,16 @@ public class DisplayScreen
 
     private void _touchScreen_TouchUp(int x, int y)
     {
-        foreach (var control in Controls)
+        lock (Controls.SyncRoot)
         {
-            if (control is IClickableDisplayControl c)
+            foreach (var control in Controls)
             {
-                if (control.Contains(x, y))
+                if (control is IClickableDisplayControl c)
                 {
-                    c.Pressed = false;
+                    if (control.Contains(x, y))
+                    {
+                        c.Pressed = false;
+                    }
                 }
             }
         }
@@ -83,16 +88,27 @@ public class DisplayScreen
 
     private void _touchScreen_TouchDown(int x, int y)
     {
-        foreach (var control in Controls)
+        lock (Controls.SyncRoot)
         {
-            if (control is IClickableDisplayControl c)
+            foreach (var control in Controls)
             {
-                if (control.Contains(x, y))
+                if (control is IClickableDisplayControl c)
                 {
-                    c.Pressed = true;
+                    if (control.Contains(x, y))
+                    {
+                        c.Pressed = true;
+                    }
                 }
             }
         }
+    }
+
+    /// <summary>
+    /// Invalidates the entire screen, causing all controls to redraw
+    /// </summary>
+    public void Invalidate()
+    {
+        IsInvalid = true;
     }
 
     private void DrawLoop()
@@ -101,18 +117,21 @@ public class DisplayScreen
         {
             Resolver.App.InvokeOnMainThread((_) =>
             {
-                if (Controls.Count == 0 || Controls.Any(c => c.IsInvalid))
+                if (IsInvalid || Controls.Any(c => c.IsInvalid))
                 {
                     _graphics.Clear(BackgroundColor);
 
-                    foreach (var control in Controls)
+                    lock (Controls.SyncRoot)
                     {
-                        // until micrographics supports invalidating regions, we have to invalidate everything when one control needs updating
-                        control.Invalidate();
-                        control.Refresh(_graphics);
+                        foreach (var control in Controls)
+                        {
+                            // until micrographics supports invalidating regions, we have to invalidate everything when one control needs updating
+                            control.Invalidate();
+                            control.Refresh(_graphics);
+                        }
                     }
-
                     _graphics.Show();
+                    IsInvalid = false;
                 }
             });
 
