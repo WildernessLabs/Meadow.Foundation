@@ -4,6 +4,9 @@ using System.Threading;
 
 namespace Meadow.Foundation.Graphics.MicroLayout;
 
+/// <summary>
+/// An abstraction of a physical screen
+/// </summary>
 public class DisplayScreen
 {
     private IGraphicsDisplay _display;
@@ -11,9 +14,9 @@ public class DisplayScreen
     private ITouchScreen? _touchScreen;
 
     /// <summary>
-    /// Gets or sets the collection of controls on the display screen.
+    /// Gets the collection of controls on the display screen.
     /// </summary>
-    public ControlsCollection Controls { get; set; }
+    public ControlsCollection Controls { get; }
 
     /// <summary>
     /// Gets or sets the background color of the display screen.
@@ -111,6 +114,19 @@ public class DisplayScreen
         IsInvalid = true;
     }
 
+    private void RefreshTree(IDisplayControl control)
+    {
+        control.Refresh(_graphics);
+
+        if (control is DisplayLayout l)
+        {
+            foreach (var c in l.Controls)
+            {
+                RefreshTree(c);
+            }
+        }
+    }
+
     private void DrawLoop()
     {
         while (true)
@@ -126,8 +142,7 @@ public class DisplayScreen
                         foreach (var control in Controls)
                         {
                             // until micrographics supports invalidating regions, we have to invalidate everything when one control needs updating
-                            control.Invalidate();
-                            control.Refresh(_graphics);
+                            RefreshTree(control);
                         }
                     }
                     _graphics.Show();

@@ -24,6 +24,13 @@ public class MeadowApp : App<Windows>
         _screen = new DisplayScreen(display);
         _screen.BackgroundColor = Color.AntiqueWhite;
 
+        var splashLayout = new AbsoluteLayout(_screen, 0, 0, _screen.Width, (int)(_screen.Height * 0.66))
+        {
+            BackgroundColor = Color.Blue
+        };
+
+        var chartLayout = new AbsoluteLayout(_screen, 0, 0, _screen.Width, _screen.Height);
+
         var chart1Label = new DisplayLabel(0, 0, _screen.Width, 16)
         {
             Text = "Values for process A",
@@ -60,10 +67,27 @@ public class MeadowApp : App<Windows>
             GetSineSeries(2, 2),
             GetCosineSeries(4, 4.2, 4.5));
 
-        _screen.Controls.Add(chart1Label, chart2Label, chart1, chart2);
+        chartLayout.Controls.Add(chart1Label, chart2Label, chart1, chart2);
 
-        chart1.Invalidate();
+        var splashLabel = new DisplayLabel(0, 0, _screen.Width, _screen.Height / 2)
+        {
+            Text = "SPLASH SCREEN!",
+            BackColor = Color.Red,
+            VerticalAlignment = VerticalAlignment.Center,
+        };
 
+        splashLayout.Controls.Add(splashLabel);
+
+        _screen.Controls.Add(splashLayout, chartLayout);
+
+        chartLayout.Visible = false;
+
+        Task.Run(async () =>
+        {
+            await Task.Delay(5000);
+            splashLayout.Visible = false;
+            chartLayout.Visible = true;
+        });
         Application.Run(display);
 
         return base.Run();

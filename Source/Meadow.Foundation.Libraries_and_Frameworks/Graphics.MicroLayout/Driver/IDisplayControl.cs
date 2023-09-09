@@ -16,6 +16,11 @@ public interface IDisplayControl
     int Top { get; set; }
 
     /// <summary>
+    /// Gets or sets whether the control is visible.
+    /// </summary>
+    bool Visible { get; set; }
+
+    /// <summary>
     /// Gets or sets the width of the display control.
     /// </summary>
     int Width { get; set; }

@@ -14,7 +14,7 @@ public abstract class DisplayControl : IDisplayControl
     /// <summary>
     /// Gets or sets a value indicating whether the control needs to be redrawn.
     /// </summary>
-    public bool IsInvalid { get; private set; }
+    public virtual bool IsInvalid { get; private set; }
 
     /// <summary>
     /// Gets or sets the context object associated with the control.
@@ -53,7 +53,7 @@ public abstract class DisplayControl : IDisplayControl
     /// <summary>
     /// Marks the control as invalid, requiring a redraw.
     /// </summary>
-    public void Invalidate()
+    public virtual void Invalidate()
     {
         IsInvalid = true;
     }
@@ -61,7 +61,7 @@ public abstract class DisplayControl : IDisplayControl
     /// <summary>
     /// Gets or sets a value indicating whether the control is visible.
     /// </summary>
-    public bool Visible
+    public virtual bool Visible
     {
         get => _visible;
         set => SetInvalidatingProperty(ref _visible, value);
