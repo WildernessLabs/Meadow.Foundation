@@ -5,7 +5,7 @@ using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Camera;
 
-namespace Sensors.Camera.Vc0706_Sample
+namespace Sensors.Camera.Arducam_Sample
 {
     public class MeadowApp : App<F7FeatherV2>
     {
