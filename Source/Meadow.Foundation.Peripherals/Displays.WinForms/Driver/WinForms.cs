@@ -51,6 +51,13 @@ public class WinFormsDisplay : Form, IGraphicsDisplay, ITouchScreen
         _buffer = new WinFormsPixelBuffer(Width, Height, colorMode);
     }
 
+    /// <inheritdoc/>
+    protected override void Dispose(bool disposing)
+    {
+        _buffer?.Dispose();
+        base.Dispose(disposing);
+    }
+
     public new bool ControlBox
     {
         get => base.ControlBox;
@@ -117,7 +124,10 @@ public class WinFormsDisplay : Form, IGraphicsDisplay, ITouchScreen
     /// <param name="updateDisplay"></param>
     void IGraphicsDisplay.Clear(bool updateDisplay)
     {
-        _buffer.Clear();
+        lock (_buffer)
+        {
+            _buffer.Clear();
+        }
         if (updateDisplay)
         {
             this.Show();
@@ -131,7 +141,10 @@ public class WinFormsDisplay : Form, IGraphicsDisplay, ITouchScreen
     /// <param name="updateDisplay"></param>
     void IGraphicsDisplay.Fill(Foundation.Color fillColor, bool updateDisplay)
     {
-        _buffer.Fill(fillColor);
+        lock (_buffer)
+        {
+            _buffer.Fill(fillColor);
+        }
         if (updateDisplay)
         {
             this.Show();
@@ -148,7 +161,10 @@ public class WinFormsDisplay : Form, IGraphicsDisplay, ITouchScreen
     /// <param name="fillColor"></param>
     void IGraphicsDisplay.Fill(int x, int y, int width, int height, Foundation.Color fillColor)
     {
-        _buffer.Fill(x, y, width, height, fillColor);
+        lock (_buffer)
+        {
+            _buffer.Fill(x, y, width, height, fillColor);
+        }
     }
 
     /// <summary>
@@ -159,7 +175,10 @@ public class WinFormsDisplay : Form, IGraphicsDisplay, ITouchScreen
     /// <param name="color"></param>
     void IGraphicsDisplay.DrawPixel(int x, int y, Foundation.Color color)
     {
-        _buffer.SetPixel(x, y, color);
+        lock (_buffer)
+        {
+            _buffer.SetPixel(x, y, color);
+        }
     }
 
     /// <summary>
@@ -170,7 +189,10 @@ public class WinFormsDisplay : Form, IGraphicsDisplay, ITouchScreen
     /// <param name="enabled"></param>
     void IGraphicsDisplay.DrawPixel(int x, int y, bool enabled)
     {
-        _buffer.SetPixel(x, y, enabled ? Foundation.Color.White : Foundation.Color.Black);
+        lock (_buffer)
+        {
+            _buffer.SetPixel(x, y, enabled ? Foundation.Color.White : Foundation.Color.Black);
+        }
     }
 
     /// <summary>
@@ -180,7 +202,10 @@ public class WinFormsDisplay : Form, IGraphicsDisplay, ITouchScreen
     /// <param name="y"></param>
     void IGraphicsDisplay.InvertPixel(int x, int y)
     {
-        _buffer.InvertPixel(x, y);
+        lock (_buffer)
+        {
+            _buffer.InvertPixel(x, y);
+        }
     }
 
     /// <summary>
@@ -191,12 +216,18 @@ public class WinFormsDisplay : Form, IGraphicsDisplay, ITouchScreen
     /// <param name="displayBuffer"></param>
     void IGraphicsDisplay.WriteBuffer(int x, int y, IPixelBuffer displayBuffer)
     {
-        _buffer.WriteBuffer(x, y, displayBuffer);
+        lock (_buffer)
+        {
+            _buffer.WriteBuffer(x, y, displayBuffer);
+        }
     }
 
     protected override void OnPaint(PaintEventArgs e)
     {
-        e.Graphics.DrawImage(_buffer.Image, 0, 0);
-        base.OnPaint(e);
+        lock (_buffer)
+        {
+            e.Graphics.DrawImage(_buffer.Image, 0, 0);
+            base.OnPaint(e);
+        }
     }
 }

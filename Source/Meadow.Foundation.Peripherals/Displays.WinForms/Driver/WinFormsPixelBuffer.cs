@@ -6,7 +6,7 @@ namespace Meadow.Foundation.Displays;
 /// <summary>
 /// Represents a System.Drawing.Bimap-backed pixel buffer
 /// </summary>
-internal class WinFormsPixelBuffer : IPixelBuffer
+internal class WinFormsPixelBuffer : IPixelBuffer, IDisposable
 {
     private Bitmap _bmp;
     private byte[] _buffer;
@@ -54,9 +54,9 @@ internal class WinFormsPixelBuffer : IPixelBuffer
 
         // TODO: use this buffer in a future version for improved perf
         _bmp = new Bitmap(Width, Height);
-        var data = _bmp.LockBits(new Rectangle(0, 0, Width, Height), System.Drawing.Imaging.ImageLockMode.ReadWrite, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
-        _buffer = new byte[Math.Abs(data.Stride * Height)];
-        _bmp.UnlockBits(data);
+        //        var data = _bmp.LockBits(new Rectangle(0, 0, Width, Height), System.Drawing.Imaging.ImageLockMode.ReadWrite, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
+        //        _buffer = new byte[Math.Abs(data.Stride * Height)];
+        //        _bmp.UnlockBits(data);
     }
 
     /// <summary>
@@ -119,11 +119,13 @@ internal class WinFormsPixelBuffer : IPixelBuffer
     /// </summary>
     /// <param name="x"></param>
     /// <param name="y"></param>
-    /// <returns></returns>
     public Foundation.Color GetPixel(int x, int y)
     {
-        var p = _bmp.GetPixel(x, y);
-        return Foundation.Color.FromRgba(p.R, p.G, p.B, p.A);
+        lock (_bmp)
+        {
+            var p = _bmp.GetPixel(x, y);
+            return Foundation.Color.FromRgba(p.R, p.G, p.B, p.A);
+        }
     }
 
     /// <summary>
@@ -168,12 +170,20 @@ internal class WinFormsPixelBuffer : IPixelBuffer
     /// <exception cref="NotImplementedException"></exception>
     public void WriteBuffer(int originX, int originY, IPixelBuffer buffer)
     {
-        for (var x = 0; x < buffer.Width; x++)
+        lock (_bmp)
         {
-            for (var y = 0; y < buffer.Height; y++)
+            for (var x = 0; x < buffer.Width; x++)
             {
-                SetPixel(x + originX, y + originY, GetPixel(x, y));
+                for (var y = 0; y < buffer.Height; y++)
+                {
+                    SetPixel(x + originX, y + originY, buffer.GetPixel(x, y));
+                }
             }
         }
+    }
+
+    public void Dispose()
+    {
+        _bmp?.Dispose();
     }
 }
