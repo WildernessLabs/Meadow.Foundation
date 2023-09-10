@@ -3,7 +3,7 @@
 /// <summary>
 /// Represents a clickable display button in the user interface.
 /// </summary>
-public class DisplayButton : ClickableDisplayControl
+public class Button : ClickableControl
 {
     private const int ButtonDepth = 3; // TODO: make this settable?
     private string _text = string.Empty;
@@ -17,14 +17,14 @@ public class DisplayButton : ClickableDisplayControl
     private ScaleFactor _scaleFactor = ScaleFactor.X1;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="DisplayButton"/> class with the specified dimensions.
+    /// Initializes a new instance of the <see cref="Button"/> class with the specified dimensions.
     /// </summary>
     /// <param name="left">The left coordinate of the button.</param>
     /// <param name="top">The top coordinate of the button.</param>
     /// <param name="width">The width of the button.</param>
     /// <param name="height">The height of the button.</param>
     /// <param name="scaleFactor">The scale factor used for drawing text</param>
-    public DisplayButton(int left, int top, int width, int height, ScaleFactor scaleFactor = ScaleFactor.X1)
+    public Button(int left, int top, int width, int height, ScaleFactor scaleFactor = ScaleFactor.X1)
         : base(left, top, width, height)
     {
         ScaleFactor = scaleFactor;

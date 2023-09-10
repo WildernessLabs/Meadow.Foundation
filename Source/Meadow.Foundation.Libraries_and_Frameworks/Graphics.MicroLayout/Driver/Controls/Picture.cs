@@ -1,24 +1,27 @@
-﻿namespace Meadow.Foundation.Graphics.MicroLayout;
+﻿
+using MF = Meadow.Foundation.Graphics;
+
+namespace Meadow.Foundation.Graphics.MicroLayout;
 
 /// <summary>
 /// Represents an image display control in the user interface.
 /// </summary>
-public class DisplayImage : ThemedDisplayControl
+public class Picture : ThemedControl
 {
     private Color _backColor = Color.Transparent;
     private VerticalAlignment _verticalAlignment = VerticalAlignment.Center;
     private HorizontalAlignment _horizontalAlignment = HorizontalAlignment.Center;
-    private Image _image = default!;
+    private MF.Image _image = default!;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="DisplayImage"/> class with the specified dimensions and image.
+    /// Initializes a new instance of the <see cref="MicroLayout.Picture"/> class with the specified dimensions and image.
     /// </summary>
     /// <param name="left">The left coordinate of the image display control.</param>
     /// <param name="top">The top coordinate of the image display control.</param>
     /// <param name="width">The width of the image display control.</param>
     /// <param name="height">The height of the image display control.</param>
     /// <param name="image">The image to be displayed.</param>
-    public DisplayImage(int left, int top, int width, int height, Image image)
+    public Picture(int left, int top, int width, int height, MF.Image image)
         : base(left, top, width, height)
     {
         Image = image;
@@ -39,7 +42,7 @@ public class DisplayImage : ThemedDisplayControl
     /// <summary>
     /// Gets or sets the image to be displayed on the image display control.
     /// </summary>
-    public Image Image
+    public MF.Image Image
     {
         get => _image;
         set => SetInvalidatingProperty(ref _image, value);

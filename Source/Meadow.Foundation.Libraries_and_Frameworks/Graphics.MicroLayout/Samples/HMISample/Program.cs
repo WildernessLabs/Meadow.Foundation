@@ -24,10 +24,27 @@ public class MeadowApp : App<Windows>
         _screen = new DisplayScreen(display);
         _screen.BackgroundColor = Color.AntiqueWhite;
 
-        var splashLayout = new AbsoluteLayout(_screen, 0, 0, _screen.Width, (int)(_screen.Height * 0.66))
+        var splashLayout = new AbsoluteLayout(_screen, 0, 0, _screen.Width, _screen.Height)
         {
-            BackgroundColor = Color.Blue
+            //            BackgroundColor = Color.Blue
         };
+
+        var logo = Graphics.Image.LoadFromFile("logo.bmp");
+        var wlLabel = new DisplayLabel(0, 10, _screen.Width, 32)
+        {
+            TextColor = Color.White,
+            BackColor = Color.DarkRed,
+            Text = "Hello Meadow"
+        };
+        var logoImg = new Graphics.MicroLayout.Picture(
+                0, 0,
+                _screen.Width,
+                _screen.Height,
+                logo
+            );
+        splashLayout.Controls.Add(logoImg, wlLabel);
+
+
 
         var chartLayout = new AbsoluteLayout(_screen, 0, 0, _screen.Width, _screen.Height);
 
@@ -39,7 +56,7 @@ public class MeadowApp : App<Windows>
             Font = labelFont,
         };
 
-        var chart1 = new DisplayLineChart(0, 16, _screen.Width, (_screen.Height / 2) - 16)
+        var chart1 = new LineChart(0, 16, _screen.Width, (_screen.Height / 2) - 16)
         {
             BackgroundColor = Color.FromHex("111111"),
             ShowYAxisLabels = true
@@ -57,7 +74,7 @@ public class MeadowApp : App<Windows>
             Font = labelFont,
         };
 
-        var chart2 = new DisplayLineChart(0, (_screen.Height / 2) + 16, _screen.Width, (_screen.Height / 2) - 16)
+        var chart2 = new LineChart(0, (_screen.Height / 2) + 16, _screen.Width, (_screen.Height / 2) - 16)
         {
             BackgroundColor = Color.FromHex("222222"),
             ShowYAxisLabels = true
@@ -68,15 +85,6 @@ public class MeadowApp : App<Windows>
             GetCosineSeries(4, 4.2, 4.5));
 
         chartLayout.Controls.Add(chart1Label, chart2Label, chart1, chart2);
-
-        var splashLabel = new DisplayLabel(0, 0, _screen.Width, _screen.Height / 2)
-        {
-            Text = "SPLASH SCREEN!",
-            BackColor = Color.Red,
-            VerticalAlignment = VerticalAlignment.Center,
-        };
-
-        splashLayout.Controls.Add(splashLabel);
 
         _screen.Controls.Add(splashLayout, chartLayout);
 

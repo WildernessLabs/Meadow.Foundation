@@ -3,7 +3,7 @@
 /// <summary>
 /// Represents a display control in the user interface.
 /// </summary>
-public interface IDisplayControl
+public interface IControl
 {
     /// <summary>
     /// Gets or sets the left coordinate of the display control.

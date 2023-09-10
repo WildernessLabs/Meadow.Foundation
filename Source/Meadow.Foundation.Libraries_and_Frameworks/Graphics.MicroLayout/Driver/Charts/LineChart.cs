@@ -5,7 +5,7 @@ namespace Meadow.Foundation.Graphics.MicroLayout;
 /// <summary>
 /// An X/Y Line chart
 /// </summary>
-public class DisplayLineChart : ThemedDisplayControl
+public class LineChart : ThemedControl
 {
     /// <summary>
     /// The default color for axis lines
@@ -80,7 +80,7 @@ public class DisplayLineChart : ThemedDisplayControl
     /// <param name="top">The control's top position</param>
     /// <param name="width">The control's width</param>
     /// <param name="height">The control's height</param>
-    public DisplayLineChart(int left, int top, int width, int height)
+    public LineChart(int left, int top, int width, int height)
         : base(left, top, width, height)
     {
     }

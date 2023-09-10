@@ -5,7 +5,7 @@ namespace Meadow.Foundation.Graphics.MicroLayout;
 /// <summary>
 /// Represents a base class for clickable display controls in the user interface.
 /// </summary>
-public abstract class ClickableDisplayControl : ThemedDisplayControl, IClickableDisplayControl
+public abstract class ClickableControl : ThemedControl, IClickableControl
 {
     /// <summary>
     /// Occurs when the clickable control is clicked.
@@ -39,21 +39,21 @@ public abstract class ClickableDisplayControl : ThemedDisplayControl, IClickable
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ClickableDisplayControl"/> class with default dimensions (10x10).
+    /// Initializes a new instance of the <see cref="ClickableControl"/> class with default dimensions (10x10).
     /// </summary>
-    public ClickableDisplayControl()
+    public ClickableControl()
         : base(0, 0, 10, 10)
     {
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ClickableDisplayControl"/> class with the specified dimensions.
+    /// Initializes a new instance of the <see cref="ClickableControl"/> class with the specified dimensions.
     /// </summary>
     /// <param name="left">The left coordinate of the control.</param>
     /// <param name="top">The top coordinate of the control.</param>
     /// <param name="width">The width of the control.</param>
     /// <param name="height">The height of the control.</param>
-    public ClickableDisplayControl(int left, int top, int width, int height)
+    public ClickableControl(int left, int top, int width, int height)
         : base(left, top, width, height)
     {
     }

@@ -78,7 +78,7 @@ public class DisplayScreen
         {
             foreach (var control in Controls)
             {
-                if (control is IClickableDisplayControl c)
+                if (control is IClickableControl c)
                 {
                     if (control.Contains(x, y))
                     {
@@ -95,7 +95,7 @@ public class DisplayScreen
         {
             foreach (var control in Controls)
             {
-                if (control is IClickableDisplayControl c)
+                if (control is IClickableControl c)
                 {
                     if (control.Contains(x, y))
                     {
@@ -114,11 +114,11 @@ public class DisplayScreen
         IsInvalid = true;
     }
 
-    private void RefreshTree(IDisplayControl control)
+    private void RefreshTree(IControl control)
     {
         control.Refresh(_graphics);
 
-        if (control is DisplayLayout l)
+        if (control is Layout l)
         {
             foreach (var c in l.Controls)
             {

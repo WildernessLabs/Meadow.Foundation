@@ -3,7 +3,7 @@
 /// <summary>
 /// Represents a base class for display controls in the user interface.
 /// </summary>
-public abstract class DisplayControl : IDisplayControl
+public abstract class Control : IControl
 {
     private int _left;
     private int _top;
@@ -22,13 +22,13 @@ public abstract class DisplayControl : IDisplayControl
     public object? Context { get; set; }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="DisplayControl"/> class with the specified dimensions.
+    /// Initializes a new instance of the <see cref="Control"/> class with the specified dimensions.
     /// </summary>
     /// <param name="left">The left coordinate of the control.</param>
     /// <param name="top">The top coordinate of the control.</param>
     /// <param name="width">The width of the control.</param>
     /// <param name="height">The height of the control.</param>
-    public DisplayControl(int left, int top, int width, int height)
+    public Control(int left, int top, int width, int height)
     {
         Left = left;
         Top = top;

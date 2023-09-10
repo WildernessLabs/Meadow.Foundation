@@ -5,7 +5,7 @@ namespace Meadow.Foundation.Graphics.MicroLayout;
 /// <summary>
 /// A base class for display layouts
 /// </summary>
-public abstract class DisplayLayout : ThemedDisplayControl
+public abstract class Layout : ThemedControl
 {
     /// <summary>
     /// Creates a DisplayLayout
@@ -15,7 +15,7 @@ public abstract class DisplayLayout : ThemedDisplayControl
     /// <param name="top">The layout's top position</param>
     /// <param name="width">The layout's width</param>
     /// <param name="height">The layout's height</param>
-    protected DisplayLayout(DisplayScreen screen, int left, int top, int width, int height)
+    protected Layout(DisplayScreen screen, int left, int top, int width, int height)
         : base(left, top, width, height)
     {
         Controls = new ControlsCollection(screen);
@@ -34,7 +34,7 @@ public abstract class DisplayLayout : ThemedDisplayControl
     {
         lock (Controls.SyncRoot)
         {
-            foreach (IThemedDisplayControl control in Controls)
+            foreach (IThemedControl control in Controls)
             {
                 control.ApplyTheme(theme);
             }

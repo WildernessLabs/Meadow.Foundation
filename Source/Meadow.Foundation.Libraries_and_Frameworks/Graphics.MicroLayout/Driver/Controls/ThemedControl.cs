@@ -3,7 +3,7 @@
 /// <summary>
 /// Represents a base class for themed display controls in the user interface.
 /// </summary>
-public abstract class ThemedDisplayControl : DisplayControl, IThemedDisplayControl
+public abstract class ThemedControl : Control, IThemedControl
 {
     /// <summary>
     /// Applies the specified display theme to the control.
@@ -12,7 +12,7 @@ public abstract class ThemedDisplayControl : DisplayControl, IThemedDisplayContr
     public abstract void ApplyTheme(DisplayTheme theme);
 
     /// <inheritdoc/>
-    public ThemedDisplayControl(int left, int top, int width, int height)
+    public ThemedControl(int left, int top, int width, int height)
         : base(left, top, width, height)
     {
     }

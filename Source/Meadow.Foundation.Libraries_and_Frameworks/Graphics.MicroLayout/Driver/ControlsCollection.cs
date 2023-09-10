@@ -6,10 +6,10 @@ namespace Meadow.Foundation.Graphics.MicroLayout;
 /// <summary>
 /// Represents a collection of display controls on a <see cref="DisplayScreen"/>.
 /// </summary>
-public sealed class ControlsCollection : IEnumerable<IDisplayControl>
+public sealed class ControlsCollection : IEnumerable<IControl>
 {
     private DisplayScreen _screen;
-    private List<IDisplayControl> _controls = new();
+    private List<IControl> _controls = new();
     private object _syncRoot = new();
 
     /// <summary>
@@ -27,7 +27,7 @@ public sealed class ControlsCollection : IEnumerable<IDisplayControl>
     /// Gets a control from the Controls collection by index
     /// </summary>
     /// <param name="index">index of the control to retrieve</param>
-    public IDisplayControl this[int index]
+    public IControl this[int index]
     {
         get => _controls[index];
     }
@@ -53,12 +53,12 @@ public sealed class ControlsCollection : IEnumerable<IDisplayControl>
     /// Adds one or more display controls to the collection.
     /// </summary>
     /// <param name="controls">The display controls to add.</param>
-    public void Add(params IDisplayControl[] controls)
+    public void Add(params IControl[] controls)
     {
         // Apply screen theme to the added controls, if available.
         if (_screen.Theme != null)
         {
-            foreach (IThemedDisplayControl control in controls)
+            foreach (IThemedControl control in controls)
             {
                 control.ApplyTheme(_screen.Theme);
             }
@@ -74,7 +74,7 @@ public sealed class ControlsCollection : IEnumerable<IDisplayControl>
     /// Returns an enumerator that iterates through the collection of display controls.
     /// </summary>
     /// <returns>An enumerator that can be used to iterate through the collection.</returns>
-    public IEnumerator<IDisplayControl> GetEnumerator()
+    public IEnumerator<IControl> GetEnumerator()
     {
         return _controls.GetEnumerator();
     }

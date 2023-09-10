@@ -3,7 +3,7 @@
 /// <summary>
 /// Represents a display control in the user interface.
 /// </summary>
-public interface IThemedDisplayControl : IDisplayControl
+public interface IThemedControl : IControl
 {
     /// <summary>
     /// Applies the specified display theme to the display control.

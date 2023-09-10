@@ -3,13 +3,13 @@
 /// <summary>
 /// A layout requireing absolute positioning of all child controls
 /// </summary>
-public class DisplayAbsoluteLayout : DisplayLayout
+public class AbsoluteLayout : Layout
 {
     /// <summary>
     /// Creates a full-screen DisplayAbsoluteLayout
     /// </summary>
     /// <param name="screen">The DisplayScreen to associate this layout with</param>
-    public DisplayAbsoluteLayout(DisplayScreen screen)
+    public AbsoluteLayout(DisplayScreen screen)
         : base(screen, 0, 0, screen.Width, screen.Height)
     {
     }
@@ -22,7 +22,7 @@ public class DisplayAbsoluteLayout : DisplayLayout
     /// <param name="top">The layout's top position</param>
     /// <param name="width">The layout's width</param>
     /// <param name="height">The layout's height</param>
-    public DisplayAbsoluteLayout(DisplayScreen screen, int left, int top, int width, int height)
+    public AbsoluteLayout(DisplayScreen screen, int left, int top, int width, int height)
         : base(screen, left, top, width, height)
     {
     }
