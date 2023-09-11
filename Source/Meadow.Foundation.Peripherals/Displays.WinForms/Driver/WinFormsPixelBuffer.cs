@@ -46,6 +46,7 @@ internal class WinFormsPixelBuffer : IPixelBuffer, IDisposable
     /// </summary>
     /// <param name="width"></param>
     /// <param name="height"></param>
+    /// <param name="colorMode"></param>
     public WinFormsPixelBuffer(int width, int height, ColorMode colorMode = ColorMode.Format24bppRgb888)
     {
         Width = width;
@@ -54,9 +55,9 @@ internal class WinFormsPixelBuffer : IPixelBuffer, IDisposable
 
         // TODO: use this buffer in a future version for improved perf
         _bmp = new Bitmap(Width, Height);
-        //        var data = _bmp.LockBits(new Rectangle(0, 0, Width, Height), System.Drawing.Imaging.ImageLockMode.ReadWrite, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
-        //        _buffer = new byte[Math.Abs(data.Stride * Height)];
-        //        _bmp.UnlockBits(data);
+        var data = _bmp.LockBits(new Rectangle(0, 0, Width, Height), System.Drawing.Imaging.ImageLockMode.ReadWrite, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
+        _buffer = new byte[Math.Abs(data.Stride * Height)];
+        _bmp.UnlockBits(data);
     }
 
     /// <summary>

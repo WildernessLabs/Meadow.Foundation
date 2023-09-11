@@ -28,6 +28,10 @@ public class WinFormsDisplay : Form, IGraphicsDisplay, ITouchScreen
     /// Current color mode of display
     /// </summary>
     public ColorMode ColorMode => PixelBuffer.ColorMode;
+
+    /// <summary>
+    /// The display's pixel buffer
+    /// </summary>
     public IPixelBuffer PixelBuffer => _buffer;
 
     /// <summary>
@@ -40,6 +44,7 @@ public class WinFormsDisplay : Form, IGraphicsDisplay, ITouchScreen
     /// </summary>
     /// <param name="width">Width of the display, in pixles</param>
     /// <param name="height">Height of the display, in pixels</param>
+    /// <param name="colorMode">The ColorMode of the display</param>
     public WinFormsDisplay(int width = 800, int height = 600, ColorMode colorMode = ColorMode.Format16bppRgb565)
     {
         this.Width = width;
@@ -58,6 +63,7 @@ public class WinFormsDisplay : Form, IGraphicsDisplay, ITouchScreen
         base.Dispose(disposing);
     }
 
+    ///<inheritdoc/>
     public new bool ControlBox
     {
         get => base.ControlBox;
@@ -71,18 +77,21 @@ public class WinFormsDisplay : Form, IGraphicsDisplay, ITouchScreen
         }
     }
 
+    ///<inheritdoc/>
     protected override void OnMouseDown(MouseEventArgs e)
     {
         TouchDown?.Invoke(e.X, e.Y);
         base.OnMouseDown(e);
     }
 
+    ///<inheritdoc/>
     protected override void OnMouseUp(MouseEventArgs e)
     {
         TouchUp?.Invoke(e.X, e.Y);
         base.OnMouseUp(e);
     }
 
+    ///<inheritdoc/>
     protected override void OnClick(EventArgs e)
     {
         TouchClick?.Invoke(-1, -1);
@@ -222,6 +231,7 @@ public class WinFormsDisplay : Form, IGraphicsDisplay, ITouchScreen
         }
     }
 
+    ///<inheritdoc/>
     protected override void OnPaint(PaintEventArgs e)
     {
         lock (_buffer)
