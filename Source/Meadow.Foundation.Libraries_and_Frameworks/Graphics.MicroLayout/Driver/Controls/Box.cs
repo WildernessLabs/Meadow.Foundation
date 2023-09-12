@@ -1,11 +1,9 @@
-﻿using Meadow.Foundation.Graphics;
-
-namespace Meadow.Foundation.Graphics.MicroLayout;
+﻿namespace Meadow.Foundation.Graphics.MicroLayout;
 
 /// <summary>
 /// Represents a rectangular display box in the user interface.
 /// </summary>
-public class DisplayBox : DisplayControl
+public class Box : ThemedControl
 {
     private Color _foreColor;
 
@@ -15,13 +13,13 @@ public class DisplayBox : DisplayControl
     public bool Filled { get; set; } = true;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="DisplayBox"/> class with the specified dimensions.
+    /// Initializes a new instance of the <see cref="Box"/> class with the specified dimensions.
     /// </summary>
     /// <param name="left">The left coordinate of the display box.</param>
     /// <param name="top">The top coordinate of the display box.</param>
     /// <param name="width">The width of the display box.</param>
     /// <param name="height">The height of the display box.</param>
-    public DisplayBox(int left, int top, int width, int height)
+    public Box(int left, int top, int width, int height)
         : base(left, top, width, height)
     {
     }

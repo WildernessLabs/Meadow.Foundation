@@ -1,11 +1,9 @@
-﻿using Meadow.Foundation.Graphics;
-
-namespace Meadow.Foundation.Graphics.MicroLayout;
+﻿namespace Meadow.Foundation.Graphics.MicroLayout;
 
 /// <summary>
 /// Represents a base class for display controls in the user interface.
 /// </summary>
-public abstract class DisplayControl : IDisplayControl
+public abstract class Control : IControl
 {
     private int _left;
     private int _top;
@@ -16,7 +14,7 @@ public abstract class DisplayControl : IDisplayControl
     /// <summary>
     /// Gets or sets a value indicating whether the control needs to be redrawn.
     /// </summary>
-    public bool IsInvalid { get; private set; }
+    public virtual bool IsInvalid { get; private set; }
 
     /// <summary>
     /// Gets or sets the context object associated with the control.
@@ -24,19 +22,13 @@ public abstract class DisplayControl : IDisplayControl
     public object? Context { get; set; }
 
     /// <summary>
-    /// Applies the specified display theme to the control.
-    /// </summary>
-    /// <param name="theme">The display theme to apply.</param>
-    public abstract void ApplyTheme(DisplayTheme theme);
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="DisplayControl"/> class with the specified dimensions.
+    /// Initializes a new instance of the <see cref="Control"/> class with the specified dimensions.
     /// </summary>
     /// <param name="left">The left coordinate of the control.</param>
     /// <param name="top">The top coordinate of the control.</param>
     /// <param name="width">The width of the control.</param>
     /// <param name="height">The height of the control.</param>
-    public DisplayControl(int left, int top, int width, int height)
+    public Control(int left, int top, int width, int height)
     {
         Left = left;
         Top = top;
@@ -61,7 +53,7 @@ public abstract class DisplayControl : IDisplayControl
     /// <summary>
     /// Marks the control as invalid, requiring a redraw.
     /// </summary>
-    public void Invalidate()
+    public virtual void Invalidate()
     {
         IsInvalid = true;
     }
@@ -69,7 +61,7 @@ public abstract class DisplayControl : IDisplayControl
     /// <summary>
     /// Gets or sets a value indicating whether the control is visible.
     /// </summary>
-    public bool Visible
+    public virtual bool Visible
     {
         get => _visible;
         set => SetInvalidatingProperty(ref _visible, value);
