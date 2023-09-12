@@ -60,5 +60,13 @@ namespace Meadow.Foundation.Sensors.Gnss
             serialPort.Write(Encoding.ASCII.GetBytes(Commands.PMTK_Q_RELEASE));
             serialPort.Write(Encoding.ASCII.GetBytes(Commands.PGCMD_ANTENNA));
         }
+
+        private void StopUpdatingSerial()
+        {
+            if (serialPort.IsOpen)
+            {
+                serialPort.Close();
+            }
+        }
     }
 }

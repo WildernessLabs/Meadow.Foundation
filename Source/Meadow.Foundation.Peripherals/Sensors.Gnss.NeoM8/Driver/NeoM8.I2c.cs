@@ -68,11 +68,13 @@ namespace Meadow.Foundation.Sensors.Gnss
 
         private async Task StartUpdatingI2c()
         {
+            cts = new CancellationTokenSource();
+
             var t = new Task(() =>
             {
                 int len;
 
-                while (true)
+                while (cts.IsCancellationRequested == false)
                 {
                     len = i2cComms.ReadRegisterAsUShort(0xFD, ByteOrder.BigEndian);
 
@@ -91,6 +93,11 @@ namespace Meadow.Foundation.Sensors.Gnss
             }, TaskCreationOptions.LongRunning);
             t.Start();
             await t;
+        }
+
+        private void StopUpdatingI2c()
+        {
+            cts.Cancel();
         }
     }
 }
