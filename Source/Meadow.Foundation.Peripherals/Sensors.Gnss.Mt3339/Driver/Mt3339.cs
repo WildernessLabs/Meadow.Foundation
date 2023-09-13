@@ -30,12 +30,12 @@ namespace Meadow.Foundation.Sensors.Gnss
         public event EventHandler<IGnssResult> GnssDataReceived = delegate { };
 
         /// <summary>
-        /// Raised when GAG data is recieved
+        /// Raised when GGA data is recieved
         /// </summary>
         public event EventHandler<GnssPositionInfo> GgaReceived = delegate { };
 
         /// <summary>
-        /// Raised when GAG data is recieved
+        /// Raised when GLL data is recieved
         /// </summary>
         public event EventHandler<GnssPositionInfo> GllReceived = delegate { };
 
