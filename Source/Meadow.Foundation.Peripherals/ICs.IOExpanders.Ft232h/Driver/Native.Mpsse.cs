@@ -6,17 +6,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
 {
     internal static partial class Native
     {
-        public class Ftd2xx
-        {
-            private const string FTDI_LIB = "ftd2xx";
-
-            [DllImport(FTDI_LIB, CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
-            public static extern FT_STATUS FT_OpenEx(uint pvArg1, FT_OPEN_TYPE dwFlags, out IntPtr ftHandle);
-
-            [DllImport(FTDI_LIB, CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
-            public static extern FT_STATUS FT_Close(IntPtr ftHandle);
-        }
-
         public static class Mpsse
         {
             private const string MPSSE_LIB = "libmpsse";
