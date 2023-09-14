@@ -19,6 +19,7 @@ namespace TextDisplayMenuTft_Sample
         IButton next = null;
         IButton previous = null;
         IButton select = null;
+        IButton back = null;
 
         public override Task Initialize()
         {
@@ -63,6 +64,9 @@ namespace TextDisplayMenuTft_Sample
 
             previous = GetPushButton(Device.Pins.D15);
             previous.Clicked += (s, e) => { menu.Previous(); };
+
+            back = GetPushButton(Device.Pins.D10);
+            back.Clicked += (s, e) => { menu.Back(); };
 
             Resolver.Log.Info("Enable menu...");
 
