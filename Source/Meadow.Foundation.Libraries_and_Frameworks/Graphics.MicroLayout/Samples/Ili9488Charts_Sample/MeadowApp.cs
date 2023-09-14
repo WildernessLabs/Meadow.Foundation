@@ -1,25 +1,32 @@
 ﻿using Meadow;
 using Meadow.Foundation;
 using Meadow.Foundation.Displays;
+using Meadow.Foundation.Graphics;
 using Meadow.Foundation.Graphics.MicroLayout;
 using Meadow.Foundation.ICs.IOExpanders;
-using Meadow.Hardware;
 
 public class MeadowApp : App<Windows>
 {
-    private Ft232h _expander = new Ft232h();
-    private DisplayScreen _screen;
+    private Ft232h expander = new Ft232h();
+    private DisplayScreen screen;
 
     public override Task Initialize()
     {
-        var display = new Max7219(
-            _expander.CreateSpiBus(),
-            _expander.Pins.C0.CreateDigitalOutputPort(), // CS
-            deviceRows: 4,
-            deviceColumns: 1);
+        expander = new Ft232h();
 
-        _screen = new DisplayScreen(display, Meadow.Foundation.Graphics.RotationType._270Degrees);
-        _screen.BackgroundColor = Color.Black;
+        var display = new Ili9341
+        (
+            spiBus: expander.CreateSpiBus(),
+            chipSelectPin: expander.Pins.C0,
+            dcPin: expander.Pins.C2,
+            resetPin: expander.Pins.C1,
+            width: 240, height: 320,
+            colorMode: ColorMode.Format16bppRgb565
+        );
+
+        screen = new DisplayScreen(display, Meadow.Foundation.Graphics.RotationType._270Degrees);
+
+        screen.BackgroundColor = Color.Black;
 
         return base.Initialize();
     }
@@ -33,27 +40,28 @@ public class MeadowApp : App<Windows>
 
     public void Text()
     {
-        var label = new DisplayLabel(0, 0, _screen.Width, _screen.Height);
+        var label = new DisplayLabel(0, 0, screen.Width, screen.Height);
+        label.Font = new Font12x20();
         label.HorizontalAlignment = Meadow.Foundation.Graphics.HorizontalAlignment.Center;
         label.VerticalAlignment = Meadow.Foundation.Graphics.VerticalAlignment.Center;
-        label.TextColor = Color.White;
+        label.TextColor = Color.Red;
         label.Text = "HELLO";
 
-        _screen.Controls.Add(label);
+        screen.Controls.Add(label);
 
     }
 
     public void TextOnBox()
     {
-        var box = new DisplayBox(0, 0, _screen.Width / 4, _screen.Height);
+        var box = new Box(0, 0, screen.Width / 4, screen.Height);
         box.ForeColor = Color.Red;
-        var label = new DisplayLabel(0, 0, _screen.Width / 4, _screen.Height);
+        var label = new DisplayLabel(0, 0, screen.Width / 4, screen.Height);
         label.HorizontalAlignment = Meadow.Foundation.Graphics.HorizontalAlignment.Center;
         label.VerticalAlignment = Meadow.Foundation.Graphics.VerticalAlignment.Center;
         label.TextColor = Color.Black;
         label.Text = "Meadow";
 
-        _screen.Controls.Add(box, label);
+        screen.Controls.Add(box, label);
 
         while (true)
         {
@@ -66,10 +74,10 @@ public class MeadowApp : App<Windows>
 
     public void Sweep()
     {
-        var box = new DisplayBox(0, 0, _screen.Width / 4, _screen.Height);
+        var box = new Box(0, 0, screen.Width / 4, screen.Height);
         box.ForeColor = Color.Red;
 
-        _screen.Controls.Add(box);
+        screen.Controls.Add(box);
 
         var direction = 1;
         var speed = 1;
@@ -80,7 +88,7 @@ public class MeadowApp : App<Windows>
 
             box.Left = left;
 
-            if ((box.Right >= _screen.Width) || box.Left <= 0)
+            if ((box.Right >= screen.Width) || box.Left <= 0)
             {
                 direction *= -1;
             }
