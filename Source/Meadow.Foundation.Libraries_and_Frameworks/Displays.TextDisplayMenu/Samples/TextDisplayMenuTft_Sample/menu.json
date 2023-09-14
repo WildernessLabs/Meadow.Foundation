@@ -1,0 +1,41 @@
+[
+  {
+    "text": "My Temp: {value}",
+    "id": "displayTemp",
+    "value": 77
+  },
+  {
+    "text": "My Age: {value}",
+    "id": "displayAge",
+    "value": 12
+  },
+  {
+    "text": "My OnOff: {value}",
+    "id": "onOffState",
+    "type": "OnOff",
+    "value": "Off"
+  },
+  {
+    "text": "My bool: {value}",
+    "id": "boolState",
+    "type": "Boolean",
+    "value": false
+  },
+  {
+    "text": "My Time",
+    "id": "time",
+    "type": "TimeDetailed"
+  },
+  {
+    "text": "Edit Temp",
+    "id": "temp",
+    "type": "Temperature",
+    "value": 77
+  },
+  {
+    "text": "Edit Age",
+    "id": "age",
+    "type": "Age",
+    "value": 12
+  }
+]

@@ -4,7 +4,7 @@
     Boolean,
     Date,
     Numerical,
-    Onff,
+    OnOff,
     Temperature,
     Time,
     TimeDetailed,
