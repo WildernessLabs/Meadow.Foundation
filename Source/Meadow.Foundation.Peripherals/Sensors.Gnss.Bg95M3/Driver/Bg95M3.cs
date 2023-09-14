@@ -6,15 +6,13 @@ using Meadow.Foundation.Sensors.Location.Gnss;
 using Meadow.Hardware;
 using Meadow.Peripherals.Sensors.Location.Gnss;
 
-namespace Meadow.Foundation.Sensors.Gnss.Bg95M3
+namespace Meadow.Foundation.Sensors.Gnss
 {
     /// <summary>
     /// Represents a BG95-M3 Cellular/GNSS module
     /// </summary>
     public class Bg95M3 : IGnssSensor
     {
-        private bool isGnssUpdateEnabled;
-
         private TimeSpan _updatePeriod = TimeSpan.FromMinutes(30);
 
         private ICellNetworkAdapter _cellAdapter;
@@ -22,7 +20,7 @@ namespace Meadow.Foundation.Sensors.Gnss.Bg95M3
         private CancellationTokenSource cancellationTokenSource;
 
         private NmeaSentenceProcessor nmeaProcessor;
-        
+
         private IGnssResult[] _supportedResultTypes = new IGnssResult[]
         {
             new GnssPositionInfo(),
@@ -46,21 +44,21 @@ namespace Meadow.Foundation.Sensors.Gnss.Bg95M3
                     nmeaProcessor.RegisterDecoder(ggaDecoder);
                     ggaDecoder.PositionReceived += (sender, location) =>
                     {
-                        GnssDataReceived(this, location);
+                        GnssDataReceived?.Invoke(this, location);
                     };
 
                     var gllDecoder = new GllDecoder();
                     nmeaProcessor.RegisterDecoder(gllDecoder);
                     gllDecoder.GeographicLatitudeLongitudeReceived += (sender, location) =>
                     {
-                        GnssDataReceived(this, location);
+                        GnssDataReceived?.Invoke(this, location);
                     };
 
                     var rmcDecoder = new RmcDecoder();
                     nmeaProcessor.RegisterDecoder(rmcDecoder);
                     rmcDecoder.PositionCourseAndTimeReceived += (sender, positionCourseAndTime) =>
                     {
-                        GnssDataReceived(this, positionCourseAndTime);
+                        GnssDataReceived?.Invoke(this, positionCourseAndTime);
                     };
                 }
                 else if (resultType is ActiveSatellites)
@@ -69,7 +67,7 @@ namespace Meadow.Foundation.Sensors.Gnss.Bg95M3
                     nmeaProcessor.RegisterDecoder(gsaDecoder);
                     gsaDecoder.ActiveSatellitesReceived += (sender, activeSatellites) =>
                     {
-                        GnssDataReceived(this, activeSatellites);
+                        GnssDataReceived?.Invoke(this, activeSatellites);
                     };
                 }
                 else if (resultType is CourseOverGround)
@@ -78,7 +76,7 @@ namespace Meadow.Foundation.Sensors.Gnss.Bg95M3
                     nmeaProcessor.RegisterDecoder(vtgDecoder);
                     vtgDecoder.CourseAndVelocityReceived += (sender, courseAndVelocity) =>
                     {
-                        GnssDataReceived(this, courseAndVelocity);
+                        GnssDataReceived?.Invoke(this, courseAndVelocity);
                     };
                 }
                 else if (resultType is SatellitesInView)
@@ -87,7 +85,7 @@ namespace Meadow.Foundation.Sensors.Gnss.Bg95M3
                     nmeaProcessor.RegisterDecoder(gsvDecoder);
                     gsvDecoder.SatellitesInViewReceived += (sender, satellites) =>
                     {
-                        GnssDataReceived(this, satellites);
+                        GnssDataReceived?.Invoke(this, satellites);
                     };
                 }
             }
@@ -146,7 +144,6 @@ namespace Meadow.Foundation.Sensors.Gnss.Bg95M3
         /// </summary>
         public void StartUpdating()
         {
-            isGnssUpdateEnabled = true;
             cancellationTokenSource = new CancellationTokenSource();
 
             Task.Run(async () =>
@@ -172,8 +169,6 @@ namespace Meadow.Foundation.Sensors.Gnss.Bg95M3
         /// </summary>
         public void StopUpdating()
         {
-            isGnssUpdateEnabled = false;
-
             // Request cancellation to stop the updating process gracefully.
             cancellationTokenSource?.Cancel();
             return;
