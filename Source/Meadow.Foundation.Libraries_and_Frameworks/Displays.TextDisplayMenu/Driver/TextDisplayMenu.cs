@@ -12,7 +12,6 @@ namespace Meadow.Foundation.Displays.UI
     /// </summary>
     public class TextDisplayMenu
     {
-        const string INPUT_TYPES_NAMESPACE = "Meadow.Foundation.Displays.TextDisplayMenu.InputTypes.";
         ITextDisplay display;
 
         MenuPage rootMenuPage;
@@ -20,9 +19,9 @@ namespace Meadow.Foundation.Displays.UI
         IMenuInputItem currentInputItem; //also effectively a "page"
         int topDisplayLine;
 
-        Stack<IPage> pageStack = null;
+        Stack<IPage> pageStack;
         bool isEditMode = false;
-        bool showBackOnRoot = false;
+        readonly bool showBackOnRoot = false;
 
         /// <summary>
         /// Raised when the menu receieves a selected input
@@ -407,7 +406,7 @@ namespace Meadow.Foundation.Displays.UI
                 InputType.Boolean => new InputTypes.Boolean(),
                 InputType.Date => new Date(),
                 InputType.Numerical => new Numerical(),
-                InputType.Onff => new OnOff(),
+                InputType.OnOff => new OnOff(),
                 InputType.Temperature => new Temperature(),
                 InputType.Time => new Time(),
                 InputType.TimeDetailed => new TimeDetailed(),
