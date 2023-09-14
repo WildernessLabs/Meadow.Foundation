@@ -129,7 +129,7 @@ internal class MpsseImpl : IFtdiImpl
         return bus;
     }
 
-    public IDigitalInputPort CreateDigitalInputPort(IPin pin, ResistorMode resistorMode)
+    public IDigitalInputPort CreateDigitalInputPort(int channel, IPin pin, ResistorMode resistorMode)
     {
         // MPSSE requires a bus, it can be either I2C or SPI, but that bus must be created before you can use GPIO
         // if no bus is yet open, we'll default to a SPI bus.
@@ -137,7 +137,7 @@ internal class MpsseImpl : IFtdiImpl
 
         if (_activeBus == null)
         {
-            var bus = CreateSpiBus(0, Ft232h.DefaultClockConfiguration);
+            var bus = CreateSpiBus(channel, Ft232h.DefaultClockConfiguration);
             _spiBusAutoCreated = true;
             _activeBus = bus as IFt232Bus;
         }
@@ -145,10 +145,10 @@ internal class MpsseImpl : IFtdiImpl
         // TODO: do we need to set the direction make (see outpuuts) or are they defaulted to input?
 
         var info = pin.SupportedChannels?.FirstOrDefault(c => c is IDigitalChannelInfo) as IDigitalChannelInfo;
-        return new Ft232DigitalInputPort(pin, info, _activeBus);
+        return new MpsseDigitalInputPort(pin, info, _activeBus);
     }
 
-    public IDigitalOutputPort CreateDigitalOutputPort(IPin pin, bool initialState = false, OutputType initialOutputType = OutputType.PushPull)
+    public IDigitalOutputPort CreateDigitalOutputPort(int channel, IPin pin, bool initialState = false, OutputType initialOutputType = OutputType.PushPull)
     {
         // MPSSE requires a bus, it can be either I2C or SPI, but that bus must be created before you can use GPIO
         // if no bus is yet open, we'll default to a SPI bus.
@@ -156,7 +156,7 @@ internal class MpsseImpl : IFtdiImpl
 
         if (_activeBus == null)
         {
-            var bus = CreateSpiBus(0, Ft232h.DefaultClockConfiguration);
+            var bus = CreateSpiBus(channel, Ft232h.DefaultClockConfiguration);
             _spiBusAutoCreated = true;
             _activeBus = bus as IFt232Bus;
         }
@@ -168,7 +168,7 @@ internal class MpsseImpl : IFtdiImpl
         Native.Mpsse.FT_WriteGPIO(_activeBus.Handle, _activeBus.GpioDirectionMask, 0);
 
         var info = pin.SupportedChannels?.FirstOrDefault(c => c is IDigitalChannelInfo) as IDigitalChannelInfo;
-        return new Ft232DigitalOutputPort(pin, info, initialState, initialOutputType, _activeBus);
+        return new MpsseDigitalOutputPort(pin, info, initialState, initialOutputType, _activeBus);
     }
 
     public void Dispose()

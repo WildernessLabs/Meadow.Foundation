@@ -6,20 +6,20 @@ namespace Meadow.Foundation.ICs.IOExpanders
     /// <summary>
     /// Digital output port for FT232 devices.
     /// </summary>
-    public sealed class Ft232DigitalOutputPort : DigitalOutputPortBase
+    public sealed class MpsseDigitalOutputPort : DigitalOutputPortBase
     {
         private IFt232Bus _bus;
         private bool _state;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Ft232DigitalOutputPort"/> class.
+        /// Initializes a new instance of the <see cref="MpsseDigitalOutputPort"/> class.
         /// </summary>
         /// <param name="pin">The pin to use.</param>
         /// <param name="info">The digital channel info.</param>
         /// <param name="initialState">The initial state of the output port.</param>
         /// <param name="initialOutputType">The initial output type.</param>
         /// <param name="bus">The FT232 bus.</param>
-        internal Ft232DigitalOutputPort(IPin pin, IDigitalChannelInfo info, bool initialState, OutputType initialOutputType, IFt232Bus bus)
+        internal MpsseDigitalOutputPort(IPin pin, IDigitalChannelInfo info, bool initialState, OutputType initialOutputType, IFt232Bus bus)
             : base(pin, info, initialState, initialOutputType)
         {
             if (initialOutputType != OutputType.PushPull)
@@ -50,7 +50,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 }
                 else
                 {
-                    s &= (byte)~((byte)Pin.Key);
+                    s &= (byte)~(byte)Pin.Key;
                 }
 
                 var result = Native.Mpsse.FT_WriteGPIO(_bus.Handle, _bus.GpioDirectionMask, s);

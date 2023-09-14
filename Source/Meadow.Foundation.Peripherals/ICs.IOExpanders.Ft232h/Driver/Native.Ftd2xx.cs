@@ -52,6 +52,9 @@ internal static partial class Native
         public static extern FT_STATUS FT_SetBitMode(IntPtr ftHandle, byte ucMask, FT_BITMODE ucMode);
 
         [DllImport(FTDI_LIB, CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        public static extern FT_STATUS FT_GetBitMode(IntPtr ftHandle, ref byte ucMode);
+
+        [DllImport(FTDI_LIB, CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
         public static extern FT_STATUS FT_GetQueueStatus(IntPtr ftHandle, ref uint lpdwAmountInRxQueue);
 
         [DllImport(FTDI_LIB, CallingConvention = CallingConvention.Cdecl, SetLastError = true)]

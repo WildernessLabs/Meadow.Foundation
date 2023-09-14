@@ -4,14 +4,12 @@ using System.IO;
 
 namespace Meadow.Foundation.ICs.IOExpanders;
 
-public sealed class Ft23xxI2cBus : IFt232Bus, II2cBus, IDisposable
+public sealed class Ft23xxI2cBus : II2cBus, IDisposable
 {
     private FtdiDevice _device;
 
     public IntPtr Handle => _device.Handle;
 
-    public byte GpioDirectionMask { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-    public byte GpioState { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
     public I2cBusSpeed BusSpeed { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
     internal Ft23xxI2cBus(FtdiDevice device)

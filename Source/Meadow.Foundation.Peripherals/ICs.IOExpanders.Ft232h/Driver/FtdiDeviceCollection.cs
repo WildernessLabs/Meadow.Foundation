@@ -22,7 +22,16 @@ internal class FtdiDeviceCollection : IEnumerable<FtdiDevice>
     {
         _devices.Clear();
 
-        Native.CheckStatus(FT_CreateDeviceInfoList(out uint count));
+        uint count;
+
+        try
+        {
+            Native.CheckStatus(FT_CreateDeviceInfoList(out count));
+        }
+        catch (DllNotFoundException)
+        {
+            throw new DriverNotInstalledException();
+        }
 
         ReadOnlySpan<byte> serialNumberBuffer = stackalloc byte[16];
         ReadOnlySpan<byte> descriptionBuffer = stackalloc byte[64];

@@ -101,12 +101,14 @@ public partial class Ft232h :
 
     public IDigitalInputPort CreateDigitalInputPort(IPin pin, ResistorMode resistorMode)
     {
-        return _impl.CreateDigitalInputPort(pin, resistorMode);
+        // TODO: need to select the proper channel based on pin
+        return _impl.CreateDigitalInputPort(0, pin, resistorMode);
     }
 
     public IDigitalOutputPort CreateDigitalOutputPort(IPin pin, bool initialState = false, OutputType initialOutputType = OutputType.PushPull)
     {
-        return _impl.CreateDigitalOutputPort(pin, initialState, initialOutputType);
+        // TODO: need to select the proper channel based on pin
+        return _impl.CreateDigitalOutputPort(0, pin, initialState, initialOutputType);
     }
 
 
