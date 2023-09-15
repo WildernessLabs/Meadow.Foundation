@@ -1,7 +1,6 @@
 ﻿using Meadow.Hardware;
 using System;
 using System.Linq;
-using System.Net.NetworkInformation;
 
 namespace Meadow.Foundation.ICs.IOExpanders
 {
@@ -73,7 +72,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <param name="pinKey">The pin key value</param>
         protected override void SetPinDirection(bool input, byte pinKey)
         {
-            if(input)
+            if (input)
             {
                 directionMask |= (ushort)(1 << pinKey);
             }
@@ -141,6 +140,15 @@ namespace Meadow.Foundation.ICs.IOExpanders
             state |= directionMask;
             Span<byte> buffer = stackalloc byte[] { (byte)(state & 0xff), (byte)(state >> 8) };
             i2CCommunications.Write(buffer);
+        }
+
+        /// <summary>
+        /// Writes the peripheral state register and updates driver internal state
+        /// </summary>
+        protected override void SetState(ushort state)
+        {
+            outputs = state;
+            WriteState(outputs);
         }
     }
 }
