@@ -143,6 +143,15 @@ namespace Meadow.Foundation.ICs.IOExpanders
         }
 
         /// <summary>
+        /// Writes the peripheral state register and updates driver internal state
+        /// </summary>
+        protected override void SetState(ushort state)
+        {
+            outputs = (byte)state;
+            WriteState(outputs);
+        }
+
+        /// <summary>
         /// Reads the peripheral state register for 8 pin devices
         /// </summary>
         protected byte ReadState8()
