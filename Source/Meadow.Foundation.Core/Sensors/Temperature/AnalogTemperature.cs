@@ -133,7 +133,7 @@ namespace Meadow.Foundation.Sensors.Temperature
                 case KnownSensorType.LM35:
                 case KnownSensorType.LM45:
                     calibration = new Calibration(
-                        degreesCelciusSampleReading: 25,
+                        degreesCelsiusSampleReading: 25,
                         millivoltsAtSampleReading: 250,
                         millivoltsPerDegreeCentigrade: 10);
                     break;
@@ -141,19 +141,19 @@ namespace Meadow.Foundation.Sensors.Temperature
                 case KnownSensorType.TMP235:
                 case KnownSensorType.TMP36:
                     calibration = new Calibration(
-                        degreesCelciusSampleReading: 25,
+                        degreesCelsiusSampleReading: 25,
                         millivoltsAtSampleReading: 750,
                         millivoltsPerDegreeCentigrade: 10);
                     break;
                 case KnownSensorType.TMP37:
                     calibration = new Calibration(
-                        degreesCelciusSampleReading: 25,
+                        degreesCelsiusSampleReading: 25,
                         millivoltsAtSampleReading: 500,
                         millivoltsPerDegreeCentigrade: 20);
                     break;
                 case KnownSensorType.TMP236:
                     calibration = new Calibration(
-                        degreesCelciusSampleReading: 25,
+                        degreesCelsiusSampleReading: 25,
                         millivoltsAtSampleReading: 887.5,
                         millivoltsPerDegreeCentigrade: 19.5);
                     break;

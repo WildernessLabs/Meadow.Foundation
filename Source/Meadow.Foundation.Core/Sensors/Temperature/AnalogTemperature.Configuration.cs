@@ -19,7 +19,7 @@ namespace Meadow.Foundation.Sensors.Temperature
 
             /// <summary>
             /// Millivolt reading the sensor will generate when the sensor
-            /// is at the Samplereading temperature.  This value can be
+            /// is at the SampleReading temperature.  This value can be
             /// obtained from the data sheet. 
             /// </summary>
             public double MillivoltsAtSampleReading { get; protected set; } = 250;
@@ -41,14 +41,14 @@ namespace Meadow.Foundation.Sensors.Temperature
             /// <summary>
             /// Create a new Calibration object using the specified values.
             /// </summary>
-            /// <param name="degreesCelciusSampleReading">Sample reading from the data sheet.</param>
+            /// <param name="degreesCelsiusSampleReading">Sample reading from the data sheet.</param>
             /// <param name="millivoltsAtSampleReading">Millivolts output at the sample reading (from the data sheet).</param>
             /// <param name="millivoltsPerDegreeCentigrade">Millivolt change per degree centigrade (from the data sheet).</param>
-            public Calibration(double degreesCelciusSampleReading,
+            public Calibration(double degreesCelsiusSampleReading,
                                double millivoltsAtSampleReading,
                                double millivoltsPerDegreeCentigrade)
             {
-                SampleReading = degreesCelciusSampleReading;
+                SampleReading = degreesCelsiusSampleReading;
                 MillivoltsAtSampleReading = millivoltsAtSampleReading;
                 MillivoltsPerDegreeCentigrade = millivoltsPerDegreeCentigrade;
             }
