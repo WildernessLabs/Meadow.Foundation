@@ -17,16 +17,15 @@ namespace Sensors.Atmospheric.HC2_Sample
             Resolver.Log.Info("Initializing...");
 
             // Analog
-            sensor = new HC2(Device.Pins.A00, Device.Pins.A01);
+            //sensor = new HC2(Device.Pins.A00, Device.Pins.A01);
 
             // Serial
-            // TODO: Still needs testing/debugging
-            //sensor = new HC2(Device, Device.PlatformOS.GetSerialPortName("COM4"));
+            sensor = new HC2(Device, Device.PlatformOS.GetSerialPortName("COM4"));
 
             var consumer = HC2.CreateObserver(
                 handler: result =>
                 {
-                    Resolver.Log.Info($"Observer: Temp changed by threshold; new temp: {result.New.Temperature?.Celsius:N2} °C, old: {result.Old?.Temperature?.Celsius:N2} °C");
+                    Resolver.Log.Info($"Observer: Temp changed by threshold; new Temp: {result.New.Temperature?.Celsius:N2} °C, old: {result.Old?.Temperature?.Celsius:N2} °C");
                 },
                 filter: result =>
                 {
@@ -45,7 +44,6 @@ namespace Sensors.Atmospheric.HC2_Sample
             {
                 Resolver.Log.Info($"Relative Humidity: {result.New.Humidity?.Percent:N2} %, Temperature: {result.New.Temperature?.Celsius:N2} °C");
             };
-
             return Task.CompletedTask;
         }
 
@@ -55,7 +53,6 @@ namespace Sensors.Atmospheric.HC2_Sample
             var conditions = await sensor.Read();
             Resolver.Log.Info($"Relative Humidity: {conditions.Humidity?.Percent:N2} %, Temperature: {conditions.Temperature?.Celsius:N2} °C");
 
-            Resolver.Log.Info($"StartUpdating()");
             sensor.StartUpdating(TimeSpan.FromSeconds(5));
         }
 
