@@ -10,7 +10,7 @@ For more information on developing for Meadow, visit [developer.wildernesslabs.c
 
 ## Usage
 
-```
+```csharp
 Vl53l0x sensor;
 
 public override Task Initialize()

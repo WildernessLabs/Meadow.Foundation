@@ -10,7 +10,7 @@ For more information on developing for Meadow, visit [developer.wildernesslabs.c
 
 ## Usage
 
-```
+```csharp
 NextPm nextPm;
 
 public override Task Initialize()

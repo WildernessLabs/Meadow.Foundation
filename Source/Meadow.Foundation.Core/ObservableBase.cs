@@ -66,7 +66,7 @@ namespace Meadow.Foundation
         /// Convenience method to generate a an `FilterableChangeObserver` with
         /// the correct signature.
         /// </summary>
-        /// <param name="handler">The action that is invoked when the filter is satisifed.</param>
+        /// <param name="handler">The action that is invoked when the filter is satisfied.</param>
         /// <param name="filter">An optional filter that determines whether or not the
         /// consumer should be notified.</param>
         /// <returns>A FilterableChangeObserver</returns>

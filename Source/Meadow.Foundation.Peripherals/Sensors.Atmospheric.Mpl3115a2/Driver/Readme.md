@@ -10,7 +10,7 @@ For more information on developing for Meadow, visit [developer.wildernesslabs.c
 
 ## Usage
 
-```
+```csharp
 Mpl3115a2? sensor;
 
 public override Task Initialize()

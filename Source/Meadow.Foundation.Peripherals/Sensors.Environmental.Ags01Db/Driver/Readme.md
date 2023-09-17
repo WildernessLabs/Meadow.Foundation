@@ -10,7 +10,7 @@ For more information on developing for Meadow, visit [developer.wildernesslabs.c
 
 ## Usage
 
-```
+```csharp
 Ags01Db ags10Db;
 
 public override Task Initialize()

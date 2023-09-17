@@ -10,7 +10,7 @@ For more information on developing for Meadow, visit [developer.wildernesslabs.c
 
 ## Usage
 
-```
+```csharp
 Mag3110 sensor;
 
 public override Task Initialize()
@@ -23,7 +23,7 @@ public override Task Initialize()
     sensor.Updated += (sender, result) => {
         Resolver.Log.Info($"Magnetic Field: [X:{result.New.MagneticField3D?.X.MicroTesla:N2}," +
             $"Y:{result.New.MagneticField3D?.Y.MicroTesla:N2}," +
-            $"Z:{result.New.MagneticField3D?.Z.MicroTesla:N2} (MicroTeslas)]");
+            $"Z:{result.New.MagneticField3D?.Z.MicroTesla:N2} (microTeslas)]");
 
         Resolver.Log.Info($"Temp: {result.New.Temperature?.Celsius:N2}C");
     };
@@ -47,9 +47,9 @@ public async override Task Run()
 {
     var result = await sensor.Read();
     Resolver.Log.Info("Initial Readings:");
-    Resolver.Log.Info($"Mangetic field: [X:{result.MagneticField3D?.X.MicroTesla:N2}," +
+    Resolver.Log.Info($"Magnetic field: [X:{result.MagneticField3D?.X.MicroTesla:N2}," +
         $"Y:{result.MagneticField3D?.Y.MicroTesla:N2}," +
-        $"Z:{result.MagneticField3D?.Z.MicroTesla:N2} (microteslas)]");
+        $"Z:{result.MagneticField3D?.Z.MicroTesla:N2} (microTeslas)]");
 
     Resolver.Log.Info($"Temp: {result.Temperature?.Celsius:N2}C");
 

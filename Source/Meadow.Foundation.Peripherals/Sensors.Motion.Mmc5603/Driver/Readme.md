@@ -10,7 +10,7 @@ For more information on developing for Meadow, visit [developer.wildernesslabs.c
 
 ## Usage
 
-```
+```csharp
 private Mmc5603 sensor;
 
 public override Task Initialize()
@@ -24,7 +24,7 @@ public override Task Initialize()
     {
         Resolver.Log.Info($"Magnetic Field: [X:{result.New.X.MicroTesla:N2}," +
             $"Y:{result.New.Y.MicroTesla:N2}," +
-            $"Z:{result.New.Z.MicroTesla:N2} (MicroTeslas)]");
+            $"Z:{result.New.Z.MicroTesla:N2} (microTeslas)]");
     };
 
     // Example that uses an IObservable subscription to only be notified when the filter is satisfied
@@ -53,9 +53,9 @@ public override async Task Run()
     //output initial readings text to console
     Resolver.Log.Info("Initial Readings:");
     Resolver.Log.Info(
-        $"Mangetic field: [X:{result.X.MicroTesla:N2}," +
+        $"Magnetic field: [X:{result.X.MicroTesla:N2}," +
         $"Y:{result.Y.MicroTesla:N2}," +
-        $"Z:{result.Z.MicroTesla:N2} (MicroTeslas)]");
+        $"Z:{result.Z.MicroTesla:N2} (microTeslas)]");
 
     sensor.StartUpdating(TimeSpan.FromMilliseconds(1500));
 }

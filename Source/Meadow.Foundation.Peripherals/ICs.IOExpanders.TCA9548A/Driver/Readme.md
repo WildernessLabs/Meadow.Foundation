@@ -10,7 +10,7 @@ For more information on developing for Meadow, visit [developer.wildernesslabs.c
 
 ## Usage
 
-```
+```csharp
 IDigitalOutputPort bus0Port0;
 IDigitalOutputPort bus1Port0;
 

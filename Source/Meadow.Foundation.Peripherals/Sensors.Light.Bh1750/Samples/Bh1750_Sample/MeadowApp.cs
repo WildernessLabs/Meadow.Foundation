@@ -26,7 +26,7 @@ namespace Sensors.Light.Bh1750_Sample
 
             // Example that uses an IObservable subscription to only be notified when the filter is satisfied
             var consumer = Bh1750.CreateObserver(
-                handler: result => Resolver.Log.Info($"Observer: filter satisifed: {result.New.Lux:N2}Lux, old: {result.Old?.Lux:N2}Lux"),
+                handler: result => Resolver.Log.Info($"Observer: filter satisfied: {result.New.Lux:N2}Lux, old: {result.Old?.Lux:N2}Lux"),
                 
                 // only notify if the visible light changes by 100 lux (put your hand over the sensor to trigger)
                 filter: result => {

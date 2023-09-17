@@ -10,7 +10,7 @@ For more information on developing for Meadow, visit [developer.wildernesslabs.c
 
 ## Usage
 
-```
+```csharp
 Bh1745 sensor;
 RgbPwmLed rgbLed;
 
@@ -29,7 +29,7 @@ public override Task Initialize()
 
     // Example that uses an IObservable subscription to only be notified
     var consumer = Bh1745.CreateObserver(
-        handler: result => Resolver.Log.Info($"Observer: filter satisifed: {result.New.AmbientLight?.Lux:N2}Lux, old: {result.Old?.AmbientLight?.Lux:N2}Lux"),
+        handler: result => Resolver.Log.Info($"Observer: filter satisfied: {result.New.AmbientLight?.Lux:N2}Lux, old: {result.Old?.AmbientLight?.Lux:N2}Lux"),
 
         // only notify if the visible light changes by 100 lux (put your hand over the sensor to trigger)
         filter: result =>
