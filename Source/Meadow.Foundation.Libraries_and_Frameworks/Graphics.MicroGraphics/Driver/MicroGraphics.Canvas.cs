@@ -33,7 +33,7 @@ namespace Meadow.Foundation.Graphics
         /// <summary>
         /// The current canvas state
         /// </summary>
-        protected CanvasState canvasState;
+        protected CanvasState? canvasState;
 
         /// <summary>
         /// Save any state variables

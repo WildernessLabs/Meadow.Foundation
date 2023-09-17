@@ -17,7 +17,7 @@ namespace Meadow.Hardware
         /// <summary>
         /// The chip select mode (active high or active low)
         /// </summary>
-        readonly ChipSelectMode chipSelectMode;
+        private readonly ChipSelectMode chipSelectMode;
 
         /// <summary>
         /// the ISpiBus object
@@ -70,6 +70,12 @@ namespace Meadow.Hardware
             chipSelectMode = csMode;
             WriteBuffer = new byte[writeBufferSize];
             ReadBuffer = new byte[readBufferSize];
+
+            // de-assert the chip select
+            if (chipSelect != null)
+            {
+                chipSelect.State = (chipSelectMode == ChipSelectMode.ActiveLow) ? true : false;
+            }
         }
 
         /// <summary>
@@ -129,7 +135,7 @@ namespace Meadow.Hardware
             }
             else
             {
-                return (ushort)(ReadBuffer.Span[0] << 8 | ReadBuffer.Span[1]);
+                return (ushort)((ReadBuffer.Span[0] << 8) | ReadBuffer.Span[1]);
             }
         }
 

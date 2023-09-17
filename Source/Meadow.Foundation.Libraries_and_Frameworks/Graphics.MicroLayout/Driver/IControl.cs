@@ -1,11 +1,9 @@
-﻿using Meadow.Foundation.Graphics;
-
-namespace Meadow.Foundation.Graphics.MicroLayout;
+﻿namespace Meadow.Foundation.Graphics.MicroLayout;
 
 /// <summary>
 /// Represents a display control in the user interface.
 /// </summary>
-public interface IDisplayControl
+public interface IControl
 {
     /// <summary>
     /// Gets or sets the left coordinate of the display control.
@@ -16,6 +14,11 @@ public interface IDisplayControl
     /// Gets or sets the top coordinate of the display control.
     /// </summary>
     int Top { get; set; }
+
+    /// <summary>
+    /// Gets or sets whether the control is visible.
+    /// </summary>
+    bool Visible { get; set; }
 
     /// <summary>
     /// Gets or sets the width of the display control.
@@ -57,10 +60,4 @@ public interface IDisplayControl
         if (y > Top + Height) return false;
         return true;
     }
-
-    /// <summary>
-    /// Applies the specified display theme to the display control.
-    /// </summary>
-    /// <param name="theme">The display theme to apply.</param>
-    void ApplyTheme(DisplayTheme theme);
 }

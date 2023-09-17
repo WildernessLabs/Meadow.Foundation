@@ -3,7 +3,7 @@
 /// <summary>
 /// Represents a label display control in the user interface.
 /// </summary>
-public class DisplayLabel : DisplayControl
+public class DisplayLabel : ThemedControl
 {
     private string _text;
 
@@ -38,7 +38,11 @@ public class DisplayLabel : DisplayControl
         {
             if (theme.TextColor != null) TextColor = theme.TextColor.Value;
             if (theme.BackgroundColor != null) BackColor = theme.BackgroundColor.Value;
-            Font = theme.Font;
+
+            if (Font == null)
+            {
+                Font = theme.Font;
+            }
         }
     }
 

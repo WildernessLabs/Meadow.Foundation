@@ -5,7 +5,7 @@ namespace Meadow.Foundation.Graphics.MicroLayout;
 /// <summary>
 /// Represents a clickable display control in the user interface.
 /// </summary>
-public interface IClickableDisplayControl : IDisplayControl
+public interface IClickableControl : IControl
 {
     /// <summary>
     /// Occurs when the clickable display control is clicked.

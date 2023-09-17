@@ -13,7 +13,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
     {
         private ushort _outputs;
         private ushort _directionMask; // inputs must be set to logic 1 (data sheet section 8.1)
-        private readonly List<IPin> _pinsInUse = new List<IPin>();
+        private readonly List<IPin> _pinsInUse = new();
         private bool _isDisposed;
         private IDigitalOutputPort? _resetPort;
 
@@ -43,7 +43,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             {
                 if (_pinsInUse.Contains(pin))
                 {
-                    throw new PortInUseException($"{this.GetType().Name} pin {pin.Name} is already in use.");
+                    throw new PortInUseException($"{GetType().Name} pin {pin.Name} is already in use.");
                 }
                 var port = new DigitalOutputPort(this, pin, initialState);
                 _pinsInUse.Add(pin);
@@ -52,7 +52,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 {
                     lock (_pinsInUse)
                     {
-                        _pinsInUse.Add(pin);
+                        _pinsInUse.Remove(pin);
                     }
                 };
 
@@ -74,7 +74,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             {
                 if (_pinsInUse.Contains(pin))
                 {
-                    throw new PortInUseException($"{this.GetType().Name} pin {pin.Name} is already in use.");
+                    throw new PortInUseException($"{GetType().Name} pin {pin.Name} is already in use.");
                 }
                 var port = new DigitalInputPort(this, pin);
                 _pinsInUse.Add(pin);
@@ -85,7 +85,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 {
                     lock (_pinsInUse)
                     {
-                        _pinsInUse.Add(pin);
+                        _pinsInUse.Remove(pin);
                     }
                 };
 

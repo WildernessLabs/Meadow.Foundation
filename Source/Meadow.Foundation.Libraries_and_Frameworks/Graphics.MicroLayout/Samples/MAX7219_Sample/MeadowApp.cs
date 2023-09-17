@@ -7,7 +7,7 @@ using Meadow.Hardware;
 
 public class MeadowApp : App<Windows>
 {
-    private Ft232h _expander = new Ft232h();
+    private readonly Ft232h _expander = new Ft232h();
     private DisplayScreen _screen;
 
     public override Task Initialize()
@@ -45,7 +45,7 @@ public class MeadowApp : App<Windows>
 
     public void TextOnBox()
     {
-        var box = new DisplayBox(0, 0, _screen.Width / 4, _screen.Height);
+        var box = new Box(0, 0, _screen.Width / 4, _screen.Height);
         box.ForeColor = Color.Red;
         var label = new DisplayLabel(0, 0, _screen.Width / 4, _screen.Height);
         label.HorizontalAlignment = Meadow.Foundation.Graphics.HorizontalAlignment.Center;
@@ -66,7 +66,7 @@ public class MeadowApp : App<Windows>
 
     public void Sweep()
     {
-        var box = new DisplayBox(0, 0, _screen.Width / 4, _screen.Height);
+        var box = new Box(0, 0, _screen.Width / 4, _screen.Height);
         box.ForeColor = Color.Red;
 
         _screen.Controls.Add(box);

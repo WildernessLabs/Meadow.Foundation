@@ -86,7 +86,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                     }
 
                     var profile = busComms.ReadRegister((byte)Registers.CTRL_GAS_1);
-                    profile = (byte)((profile & 0x0F) | (byte)value);
+                    profile = (byte)((profile & 0xF0) | (byte)value);
 
                     busComms.WriteRegister((byte)Registers.CTRL_GAS_1, profile);
 
