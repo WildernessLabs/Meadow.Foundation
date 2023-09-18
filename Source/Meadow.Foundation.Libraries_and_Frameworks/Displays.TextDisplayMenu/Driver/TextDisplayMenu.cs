@@ -53,6 +53,7 @@ namespace Meadow.Foundation.Displays.UI
         {
             this.showBackOnRoot = showBackOnRoot;
             var items = ParseMenuData(menuJson);
+
             Init(display, CreateMenuPage(items, showBackOnRoot));
         }
 
@@ -352,7 +353,7 @@ namespace Meadow.Foundation.Displays.UI
             // if there is a command, notify the subscribers 
             else if (menuItem.Command != string.Empty)
             {
-                Selected(this, new MenuSelectedEventArgs(menuItem.Command));
+                Selected?.Invoke(this, new MenuSelectedEventArgs(menuItem.Command));
                 return true;
             }
             // if there is a type, then let the type handle the input
@@ -369,7 +370,7 @@ namespace Meadow.Foundation.Displays.UI
                 {
                     // set the value and notify the eager listeners
                     menuItem.Value = e.Value;
-                    ValueChanged(this, new ValueChangedEventArgs(e.ItemID, e.Value));
+                    ValueChanged?.Invoke(this, new ValueChangedEventArgs(menuItem.Id, menuItem.Value));
 
                     // reload the parent menu
                     var parent = pageStack.Pop() as MenuPage;
