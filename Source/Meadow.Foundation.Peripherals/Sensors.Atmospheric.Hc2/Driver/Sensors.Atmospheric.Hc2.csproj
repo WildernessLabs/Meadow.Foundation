@@ -5,10 +5,10 @@
     <Authors>Wilderness Labs, Inc</Authors>
     <TargetFramework>netstandard2.1</TargetFramework>
     <OutputType>Library</OutputType>
-    <AssemblyName>HC2</AssemblyName>
+    <AssemblyName>Hc2</AssemblyName>
     <Company>Wilderness Labs, Inc</Company>
     <PackageProjectUrl>http://developer.wildernesslabs.co/Meadow/Meadow.Foundation/</PackageProjectUrl>
-    <PackageId>Meadow.Foundation.Sensors.Atmospheric.HC2</PackageId>
+    <PackageId>Meadow.Foundation.Sensors.Atmospheric.Hc2</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow.Foundation,Atmospheric,HC2,Temperature,Humidity</PackageTags>
     <Version>0.1.0</Version>
