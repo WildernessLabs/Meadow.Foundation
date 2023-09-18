@@ -13,7 +13,7 @@
     <PackageTags>Meadow.Foundation,Atmospheric,HC2,Temperature,Humidity</PackageTags>
     <Version>0.1.0</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Description>HC2 Serial humidity and temperature probe</Description>
+    <Description>HC2 Analog and Serial humidity and temperature probe</Description>
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <PropertyGroup>
