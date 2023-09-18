@@ -69,7 +69,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             // The sensor should respond in 500ms or less, but allow some time for the response to get handled before giving up.
             for (int i = 0; i < 100; i++)
             {
-                Thread.Sleep(100);  
+                Thread.Sleep(100);
                 if (!RequestPending)
                     break;
             }
@@ -85,7 +85,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             // {F00rdd 001; 42.47;%rh;000;+; 23.31;°C;000;-;nc;---.- ;°C;000; ;001;V1.4-1;0060257484;HygroClip 2 ;000;R\r
 
             if (message[0] != '{')
-            return;
+                return;
 
             // split response into parsable fields
             string[] fields = message.Split(';');
@@ -120,7 +120,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             int sum = 0;
             char[] trimChars = new char[2] { '}', '\n' };
             foreach (char c in data.TrimEnd(trimChars))
-            { 
+            {
                 sum += (byte)c;
             }
             return (char)(sum % 0x40 + 0x20);

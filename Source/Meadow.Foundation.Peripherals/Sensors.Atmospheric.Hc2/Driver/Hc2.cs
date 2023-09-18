@@ -56,15 +56,15 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         protected async override Task<(Units.RelativeHumidity?, Units.Temperature?)> ReadSensor()
         {
-            (Units.RelativeHumidity ? Humidity, Units.Temperature? Temperature) conditions = Conditions;
+            (Units.RelativeHumidity? Humidity, Units.Temperature? Temperature) conditions = Conditions;
             switch (communicationType)
             {
                 case CommunicationType.Analog:
                     conditions = await ReadSensorAnalog();
-                break;
+                    break;
                 case CommunicationType.Serial:
                     conditions = ReadSensorSerial();
-                break;
+                    break;
             }
             return conditions;
         }

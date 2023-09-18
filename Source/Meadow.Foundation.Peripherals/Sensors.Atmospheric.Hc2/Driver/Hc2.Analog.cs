@@ -41,9 +41,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <param name="sampleInterval">The sample interval</param>
         /// <param name="voltage">The reference voltage</param>
         public HC2(IPin analogInputPinHumidity,
-            IPin analogInputPinTemperature, 
-            int sampleCount = 5, 
-            TimeSpan? sampleInterval = null, 
+            IPin analogInputPinTemperature,
+            int sampleCount = 5,
+            TimeSpan? sampleInterval = null,
             Voltage? voltage = null) :
             this(analogInputPinHumidity.CreateAnalogInputPort(sampleCount, sampleInterval ?? TimeSpan.FromMilliseconds(40), voltage ?? new Voltage(3.3)), analogInputPinTemperature.CreateAnalogInputPort(sampleCount, sampleInterval ?? TimeSpan.FromMilliseconds(40), voltage ?? new Voltage(3.3)))
         { }
@@ -53,7 +53,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             _ = HumidityInputPort?.Subscribe
             (
                 IAnalogInputPort.CreateObserver(
-                    async result => {
+                    async result =>
+                    {
                         var oldConditions = Conditions;
 
                         // Read a new Humidity, combine with previous Temperature (if any)
@@ -78,7 +79,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             _ = TemperatureInputPort?.Subscribe
             (
                 IAnalogInputPort.CreateObserver(
-                    async result => {
+                    async result =>
+                    {
                         var oldConditions = Conditions;
 
                         // Read a new Temperature, combine with previous Humidity (if any)
@@ -101,7 +103,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 )
             );
         }
-        
+
         async Task<(Units.RelativeHumidity? Humidity, Units.Temperature? Temperature)> ReadSensorAnalog()
         {
             var humidity = await ReadHumidityAnalog();
