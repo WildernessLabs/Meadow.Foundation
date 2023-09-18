@@ -10,7 +10,7 @@ For more information on developing for Meadow, visit [developer.wildernesslabs.c
 
 ## Usage
 
-```
+```csharp
 private Sw18AB serialWombat;
 private IAnalogInputPort analogInputPort;
 

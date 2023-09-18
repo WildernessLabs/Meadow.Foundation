@@ -10,7 +10,7 @@ For more information on developing for Meadow, visit [developer.wildernesslabs.c
 
 ## Usage
 
-```
+```csharp
 Si1145 sensor;
 
 public override Task Initialize()
@@ -21,7 +21,7 @@ public override Task Initialize()
 
     // Example that uses an IObservable subscription to only be notified when the filter is satisfied
     var consumer = Si1145.CreateObserver(
-        handler: result => Resolver.Log.Info($"Observer: filter satisifed: {result.New.VisibleLight?.Lux:N2}Lux, old: {result.Old?.VisibleLight?.Lux:N2}Lux"),
+        handler: result => Resolver.Log.Info($"Observer: filter satisfied: {result.New.VisibleLight?.Lux:N2}Lux, old: {result.Old?.VisibleLight?.Lux:N2}Lux"),
    
         // only notify if the visible light changes by 100 lux (put your hand over the sensor to trigger)
         filter: result => {

@@ -10,7 +10,7 @@ For more information on developing for Meadow, visit [developer.wildernesslabs.c
 
 ## Usage
 
-```
+```csharp
 Apa102 apa102;
 int numberOfLeds = 256;
 float maxBrightness = 0.25f;

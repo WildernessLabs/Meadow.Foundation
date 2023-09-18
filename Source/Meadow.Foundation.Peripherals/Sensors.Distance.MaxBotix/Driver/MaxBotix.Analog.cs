@@ -12,11 +12,11 @@ namespace Meadow.Foundation.Sensors.Distance
         /// <summary>
         /// Creates a new MaxBotix object communicating over analog
         /// </summary>
-        /// <param name="analogIntputPort">The port for the analog input pin</param>
+        /// <param name="analogInputPort">The port for the analog input pin</param>
         /// <param name="sensor">The distance sensor type</param>
-        public MaxBotix(IAnalogInputPort analogIntputPort, SensorType sensor)
+        public MaxBotix(IAnalogInputPort analogInputPort, SensorType sensor)
         {
-            analogInputPort = analogIntputPort;
+            analogInputPort = analogInputPort;
 
             communication = CommunicationType.Analog;
             sensorType = sensor;
