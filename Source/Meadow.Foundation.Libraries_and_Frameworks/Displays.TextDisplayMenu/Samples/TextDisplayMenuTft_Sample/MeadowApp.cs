@@ -50,11 +50,12 @@ namespace TextDisplayMenuTft_Sample
 
             Resolver.Log.Info($"Data length: {menuData.Length}...");
 
-            Resolver.Log.Info("Create buttons...");
-
             Resolver.Log.Info("Create menu...");
 
             menu = new TextDisplayMenu(microGraphics, menuData, false);
+            menu.ValueChanged += Menu_ValueChanged;
+
+            Resolver.Log.Info("Create buttons...");
 
             next = GetPushButton(Device.Pins.D02);
             next.Clicked += (s, e) => { menu.Next(); };
@@ -73,6 +74,11 @@ namespace TextDisplayMenuTft_Sample
             menu.Enable();
 
             return Task.CompletedTask;
+        }
+
+        private void Menu_ValueChanged(object sender, ValueChangedEventArgs e)
+        {
+            Resolver.Log.Info($"Value changed for {e.ItemID} to {e.Value}");
         }
 
         byte[] LoadResource(string filename)
