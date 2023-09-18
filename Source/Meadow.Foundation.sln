@@ -1331,13 +1331,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Leds.Ws2812", "Meadow.Found
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ws2812_Sample", "Meadow.Foundation.Peripherals\Leds.Ws2812\Samples\Ws2812_Sample\Ws2812_Sample.csproj", "{812FD962-3C4E-4C29-A2B7-05144233B270}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "HC2", "HC2", "{11B84CD3-84B3-4D66-8F17-1B383B2C3773}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Hc2", "Hc2", "{11B84CD3-84B3-4D66-8F17-1B383B2C3773}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{36112EB4-1498-4590-824B-38234409050C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Atmospheric.HC2", "Meadow.Foundation.Peripherals\Sensors.Atmospheric.HC2\Driver\Sensors.Atmospheric.HC2.csproj", "{6AC9C476-0428-406C-91B8-080A04905CD8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Atmospheric.Hc2", "Meadow.Foundation.Peripherals\Sensors.Atmospheric.Hc2\Driver\Sensors.Atmospheric.Hc2.csproj", "{6AC9C476-0428-406C-91B8-080A04905CD8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HC2_Sample", "Meadow.Foundation.Peripherals\Sensors.Atmospheric.HC2\Samples\HC2_Sample\HC2_Sample.csproj", "{316C3431-AA66-45FD-B92D-3F0A93B309EB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hc2_Sample", "Meadow.Foundation.Peripherals\Sensors.Atmospheric.Hc2\Samples\Hc2_Sample\Hc2_Sample.csproj", "{316C3431-AA66-45FD-B92D-3F0A93B309EB}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Pcx857x", "Pcx857x", "{9129F940-03DA-4D47-9EE7-E4CCE580A3A4}"
 EndProject

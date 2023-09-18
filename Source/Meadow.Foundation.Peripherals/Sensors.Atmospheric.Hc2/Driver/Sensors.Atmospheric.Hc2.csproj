@@ -1,4 +1,4 @@
-<Project Sdk="Meadow.Sdk/1.1.0">
+﻿<Project Sdk="Meadow.Sdk/1.1.0">
   <PropertyGroup>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageIcon>icon.png</PackageIcon>
@@ -10,10 +10,10 @@
     <PackageProjectUrl>http://developer.wildernesslabs.co/Meadow/Meadow.Foundation/</PackageProjectUrl>
     <PackageId>Meadow.Foundation.Sensors.Atmospheric.HC2</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
-    <PackageTags>Meadow.Foundation, Atmospheric, HC2, Temperature, Humidity</PackageTags>
+    <PackageTags>Meadow.Foundation,Atmospheric,HC2,Temperature,Humidity</PackageTags>
     <Version>0.1.0</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Description>HC2 Humidity and Temperature Probe</Description>
+    <Description>HC2 Serial humidity and temperature probe</Description>
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <PropertyGroup>
