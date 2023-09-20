@@ -167,14 +167,7 @@ namespace Meadow.Foundation.Displays.UI.InputTypes
             }
             else
             {
-                var timeSpan = timeMode switch
-                {
-                    TimeMode.HH_MM_SS => new TimeSpan(timeParts[0], timeParts[1], timeParts[2]),
-                    TimeMode.HH_MM => new TimeSpan(timeParts[0], timeParts[1], 0),
-                    TimeMode.MM_SS => new TimeSpan(0, timeParts[0], timeParts[1]),
-                    _ => throw new ArgumentException(),
-                };
-                ValueChanged(this, new ValueChangedEventArgs(itemID, timeSpan));
+                RaiseValueChagedEvent();
             }
 
             return true;
@@ -186,15 +179,30 @@ namespace Meadow.Foundation.Displays.UI.InputTypes
         /// <returns>true</returns>
         public override bool Back()
         {
-            Console.WriteLine("Back");
             if (position > 0)
             {
                 position--;
                 display.SetCursorPosition(CursorPosition, 1);
                 UpdateInputLine(TimeDisplay);
             }
+            else
+            {
+                RaiseValueChagedEvent();
+            }
 
             return true;
+        }
+
+        void RaiseValueChagedEvent()
+        {
+            var timeSpan = timeMode switch
+            {
+                TimeMode.HH_MM_SS => new TimeSpan(timeParts[0], timeParts[1], timeParts[2]),
+                TimeMode.HH_MM => new TimeSpan(timeParts[0], timeParts[1], 0),
+                TimeMode.MM_SS => new TimeSpan(0, timeParts[0], timeParts[1]),
+                _ => throw new ArgumentException(),
+            };
+            ValueChanged(this, new ValueChangedEventArgs(itemID, timeSpan));
         }
 
 

@@ -8,7 +8,7 @@ namespace Meadow.Foundation.Displays.UI.InputTypes
     public abstract class NumericBase : InputBase
     {
         readonly byte scale = 0;
-        int[] numberParts;
+        int[] numberParts = new int[0];
 
         int position = 0;
         readonly int max = 0;
@@ -17,7 +17,7 @@ namespace Meadow.Foundation.Displays.UI.InputTypes
         /// <summary>
         /// Raised when the numeric value changes
         /// </summary>
-        public override event ValueChangedHandler ValueChanged;
+        public override event ValueChangedHandler ValueChanged = delegate { };
 
         /// <summary>
         /// Create a new NumericBase object
@@ -136,6 +136,10 @@ namespace Meadow.Foundation.Displays.UI.InputTypes
             if (position > 0)
             {
                 position--;
+            }
+            else
+            {
+                ValueChanged(this, new ValueChangedEventArgs(itemID, scale == 0 ? numberParts[0] : double.Parse(NumericDisplay)));
             }
             return true;
         }

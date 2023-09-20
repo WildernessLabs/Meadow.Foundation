@@ -11,14 +11,5 @@ namespace Meadow.Foundation.Displays.UI.InputTypes
         public TimeShort() : base(TimeMode.MM_SS)
         {
         }
-
-        /// <summary>
-        /// Parse the value
-        /// </summary>
-        /// <returns></returns>
-        public override string ToString()
-        {
-            return $"{timeParts[0]}:{timeParts[1]}";
-        }
     }
 }

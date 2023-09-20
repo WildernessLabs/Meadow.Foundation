@@ -130,7 +130,6 @@ namespace Meadow.Foundation.Displays.UI.InputTypes
             else
             {
                 DateTime date = new DateTime(dateParts[0], dateParts[1], dateParts[2]);
-
                 ValueChanged(this, new ValueChangedEventArgs(itemID, date));
             }
 
@@ -148,6 +147,11 @@ namespace Meadow.Foundation.Displays.UI.InputTypes
                 position--;
                 display.SetCursorPosition(CursorPosition, 1);
                 UpdateInputLine(DateDisplay);
+            }
+            else
+            {
+                DateTime date = new DateTime(dateParts[0], dateParts[1], dateParts[2]);
+                ValueChanged(this, new ValueChangedEventArgs(itemID, date));
             }
             return true;
         }
