@@ -48,6 +48,7 @@ namespace Meadow.Foundation.Displays.UI.InputTypes
         {
             this.display = display;
             isInitialized = true;
+            display.SetCursorPosition(0, byte.MaxValue);
         }
 
         /// ToDo: this should be an event and moved out of TextDisplayMenu
@@ -79,5 +80,11 @@ namespace Meadow.Foundation.Displays.UI.InputTypes
         /// </summary>
         /// <returns>True if succesful</returns>
         public abstract bool Select();
+
+        /// <summary>
+        /// Back input
+        /// </summary>
+        /// <returns>True if succesful</returns>
+        public abstract bool Back();
     }
 }

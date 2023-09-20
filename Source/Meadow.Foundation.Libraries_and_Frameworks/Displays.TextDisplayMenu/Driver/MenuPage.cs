@@ -70,5 +70,14 @@ namespace Meadow.Foundation.Displays.UI
         {   //gives us the ability to respond to select events
             return true;
         }
+
+        /// <summary>
+        /// Select input
+        /// </summary>
+        /// <returns>True</returns>
+        public bool Back()
+        {   //gives us the ability to respond to select events
+            return true;
+        }
     }
 }

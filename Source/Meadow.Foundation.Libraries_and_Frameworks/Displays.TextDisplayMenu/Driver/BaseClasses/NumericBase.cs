@@ -9,7 +9,7 @@ namespace Meadow.Foundation.Displays.UI.InputTypes
     {
         readonly byte scale = 0;
         int[] numberParts;
-        
+
         int position = 0;
         readonly int max = 0;
         readonly int min = 0;
@@ -39,12 +39,12 @@ namespace Meadow.Foundation.Displays.UI.InputTypes
                 string value = string.Empty;
                 value += numberParts[0].ToString();
 
-                if(scale > 0)
+                if (scale > 0)
                 {
                     value += ".";
                     value += InputHelpers.PadLeft(numberParts[1].ToString(), '0', scale);
                 }
-                
+
                 return InputHelpers.PadLeft(value, ' ', display.DisplayConfig.Width);
             }
         }
@@ -123,6 +123,19 @@ namespace Meadow.Foundation.Displays.UI.InputTypes
             else
             {
                 ValueChanged(this, new ValueChangedEventArgs(itemID, scale == 0 ? numberParts[0] : double.Parse(NumericDisplay)));
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// Send a Back input to the item
+        /// </summary>
+        /// <returns>true</returns>
+        public override bool Back()
+        {
+            if (position > 0)
+            {
+                position--;
             }
             return true;
         }

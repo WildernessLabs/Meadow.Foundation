@@ -7,8 +7,8 @@ namespace Meadow.Foundation.Displays.UI.InputTypes
     /// </summary>
     public abstract class TimeBase : InputBase
     {
-        int[] timeParts;
-        byte position = 0;
+        protected int[] timeParts;
+        protected byte position = 0;
 
         /// <summary>
         /// The time mode
@@ -37,10 +37,23 @@ namespace Meadow.Foundation.Displays.UI.InputTypes
                 string value = string.Empty;
                 for (int i = 0; i < timeParts.Length; i++)
                 {
-                    if (i > 0) { value += ":"; }
+                    if (i > 0)
+                    {
+                        value += ":";
+                    }
                     value += InputHelpers.PadLeft(timeParts[i].ToString(), '0', 2);
                 }
                 return InputHelpers.PadLeft(value, ' ', display.DisplayConfig.Width);
+            }
+        }
+
+        byte CursorPosition
+        {
+            get
+            {
+                int pos = display.DisplayConfig.Width - 1;
+                pos -= ((timeParts.Length - position - 1) * 3);
+                return (byte)pos;
             }
         }
 
@@ -48,13 +61,13 @@ namespace Meadow.Foundation.Displays.UI.InputTypes
         {
             get
             {
-                switch (timeMode)
+                return timeMode switch
                 {
-                    case TimeMode.HH_MM_SS: return "hh:mm:ss";
-                    case TimeMode.HH_MM: return "hh:mm";
-                    case TimeMode.MM_SS: return "mm:ss";
-                    default: throw new ArgumentException();
-                }
+                    TimeMode.HH_MM_SS => "hh:mm:ss",
+                    TimeMode.HH_MM => "hh:mm",
+                    TimeMode.MM_SS => "mm:ss",
+                    _ => throw new ArgumentException(),
+                };
             }
         }
 
@@ -93,10 +106,10 @@ namespace Meadow.Foundation.Displays.UI.InputTypes
             base.itemID = itemID;
             display.ClearLines();
             display.WriteLine("Enter " + TimeModeDisplay, 0);
-            
-            //display.SetCursorPosition(0, 0);
 
             ParseValue(currentValue);
+
+            display.SetCursorPosition(CursorPosition, 1);
             UpdateInputLine(TimeDisplay);
         }
 
@@ -112,7 +125,7 @@ namespace Meadow.Foundation.Displays.UI.InputTypes
             {
                 if (timeMode == TimeMode.HH_MM_SS) { max = 23; }
                 if (timeMode == TimeMode.HH_MM) { max = 23; }
-                if (timeMode == TimeMode.MM_SS) { max = 59; }
+                if (timeMode == TimeMode.MM_SS) { max = 9999; }
             }
             else
             {
@@ -120,6 +133,7 @@ namespace Meadow.Foundation.Displays.UI.InputTypes
             }
 
             if (timeParts[position] < max) { timeParts[position]++; }
+            display.SetCursorPosition(CursorPosition, 1);
             UpdateInputLine(TimeDisplay);
 
             return true;
@@ -133,6 +147,7 @@ namespace Meadow.Foundation.Displays.UI.InputTypes
         {
             int min = 0;
             if (timeParts[position] > min) { timeParts[position]--; }
+            display.SetCursorPosition(CursorPosition, 1);
             UpdateInputLine(TimeDisplay);
 
             return true;
@@ -147,29 +162,41 @@ namespace Meadow.Foundation.Displays.UI.InputTypes
             if (position < timeParts.Length - 1)
             {
                 position++;
+                display.SetCursorPosition(CursorPosition, 1);
+                UpdateInputLine(TimeDisplay);
             }
             else
             {
-                TimeSpan timeSpan;
-
-                switch (timeMode)
+                var timeSpan = timeMode switch
                 {
-                    case TimeMode.HH_MM_SS:
-                        timeSpan = new TimeSpan(timeParts[0], timeParts[1], timeParts[2]);
-                        break;
-                    case TimeMode.HH_MM:
-                        timeSpan = new TimeSpan(timeParts[0], timeParts[1], 0);
-                        break;
-                    case TimeMode.MM_SS:
-                        timeSpan = new TimeSpan(0, timeParts[0], timeParts[1]);
-                        break;
-                    default: throw new ArgumentException();
-                }
+                    TimeMode.HH_MM_SS => new TimeSpan(timeParts[0], timeParts[1], timeParts[2]),
+                    TimeMode.HH_MM => new TimeSpan(timeParts[0], timeParts[1], 0),
+                    TimeMode.MM_SS => new TimeSpan(0, timeParts[0], timeParts[1]),
+                    _ => throw new ArgumentException(),
+                };
                 ValueChanged(this, new ValueChangedEventArgs(itemID, timeSpan));
             }
 
             return true;
         }
+
+        /// <summary>
+        /// Send a Back input to the item
+        /// </summary>
+        /// <returns>true</returns>
+        public override bool Back()
+        {
+            Console.WriteLine("Back");
+            if (position > 0)
+            {
+                position--;
+                display.SetCursorPosition(CursorPosition, 1);
+                UpdateInputLine(TimeDisplay);
+            }
+
+            return true;
+        }
+
 
         /// <summary>
         /// Parse a value for the item
@@ -179,9 +206,8 @@ namespace Meadow.Foundation.Displays.UI.InputTypes
         {
             if (value == null || value.ToString() == string.Empty) return;
 
-            if(value is TimeSpan)
+            if (value is TimeSpan ts)
             {
-                TimeSpan ts = (TimeSpan)value;
                 switch (timeMode)
                 {
                     case TimeMode.HH_MM_SS:

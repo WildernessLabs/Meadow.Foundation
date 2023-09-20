@@ -11,5 +11,14 @@ namespace Meadow.Foundation.Displays.UI.InputTypes
         public Time() : base(TimeMode.HH_MM)
         {
         }
+
+        /// <summary>
+        /// Parse the value
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            return $"{timeParts[0]}:{timeParts[1]}";
+        }
     }
 }

@@ -285,7 +285,7 @@ namespace Meadow.Foundation.Displays.UI
 
             if (currentInputItem != null)
             {
-                currentInputItem.Select();
+                currentInputItem.Back();
                 return true;
             }
             else if (pageStack.Count == 0)
