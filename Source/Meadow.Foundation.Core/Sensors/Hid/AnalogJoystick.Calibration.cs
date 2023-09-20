@@ -34,7 +34,7 @@ namespace Meadow.Foundation.Sensors.Hid
             /// </summary>
             public Voltage VerticalCenter { get; protected set; }
             /// <summary>
-            /// Voltage at vertical minumum position
+            /// Voltage at vertical minimum position
             /// </summary>
             public Voltage VerticalMin { get; protected set; }
             /// <summary>

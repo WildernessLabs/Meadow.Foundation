@@ -56,7 +56,7 @@ namespace Meadow.Foundation.Sensors.Switches
         { }
 
         /// <summary>
-        /// Creates a SpstSwitch on a especified interrupt port
+        /// Creates a SpstSwitch on a specified interrupt port
         /// </summary>
         /// <param name="interruptPort"></param>
         public SpstSwitch(IDigitalInterruptPort interruptPort)

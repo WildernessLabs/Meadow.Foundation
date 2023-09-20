@@ -68,7 +68,7 @@ namespace Meadow.Foundation.Leds
         protected IPwmPort GreenPwm { get; set; }
 
         /// <summary>
-        /// The common type (common annode or common cathode)
+        /// The common type (common anode or common cathode)
         /// </summary>
         public CommonType Common { get; protected set; }
 
@@ -93,7 +93,7 @@ namespace Meadow.Foundation.Leds
         /// <param name="redPwmPort">The PWM port for the red LED</param>
         /// <param name="greenPwmPort">The PWM port for the green LED</param>
         /// <param name="bluePwmPort">The PWM port for the blue LED</param>
-        /// <param name="commonType">Common annode or common cathode</param>
+        /// <param name="commonType">Common anode or common cathode</param>
         public RgbPwmLed(
             IPwmPort redPwmPort,
             IPwmPort greenPwmPort,
@@ -123,7 +123,7 @@ namespace Meadow.Foundation.Leds
         /// <param name="redPwmPin">The PWM pin for the red LED</param>
         /// <param name="greenPwmPin">The PWM pin for the green LED</param>
         /// <param name="bluePwmPin">The PWM pin for the blue LED</param>
-        /// <param name="commonType">Common annode or common cathode</param>
+        /// <param name="commonType">Common anode or common cathode</param>
         public RgbPwmLed(
             IPin redPwmPin,
             IPin greenPwmPin,
@@ -145,7 +145,7 @@ namespace Meadow.Foundation.Leds
         /// <param name="redLedForwardVoltage">The forward voltage for the red LED</param>
         /// <param name="greenLedForwardVoltage">The forward voltage for the green LED</param>
         /// <param name="blueLedForwardVoltage">The forward voltage for the blue LED</param>
-        /// <param name="commonType">Common annode or common cathode</param>
+        /// <param name="commonType">Common anode or common cathode</param>
         public RgbPwmLed(
             IPin redPwmPin,
             IPin greenPwmPin,
@@ -173,7 +173,7 @@ namespace Meadow.Foundation.Leds
         /// <param name="redLedForwardVoltage">The forward voltage for the red LED</param>
         /// <param name="greenLedForwardVoltage">The forward voltage for the green LED</param>
         /// <param name="blueLedForwardVoltage">The forward voltage for the blue LED</param>
-        /// <param name="commonType">Common annode or common cathode</param>
+        /// <param name="commonType">Common anode or common cathode</param>
         public RgbPwmLed(
             IPwmPort redPwmPort,
             IPwmPort greenPwmPort,

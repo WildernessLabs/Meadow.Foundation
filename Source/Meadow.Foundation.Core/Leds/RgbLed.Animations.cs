@@ -46,7 +46,7 @@ namespace Meadow.Foundation.Leds
         }
 
         /// <summary>
-        /// Start the Blink animation which sets turns the LED on and off with the especified durations and color
+        /// Start the Blink animation which sets turns the LED on and off with the specified durations and color
         /// </summary>
         /// <param name="color">The LED color</param>
         /// <param name="onDuration">The duration the LED stays on</param>
@@ -64,7 +64,7 @@ namespace Meadow.Foundation.Leds
         }
 
         /// <summary>
-        /// Start the Blink animation which sets turns the LED on and off with the especified durations and current color
+        /// Start the Blink animation which sets turns the LED on and off with the specified durations and current color
         /// </summary>
         /// <param name="onDuration">The duration the LED stays on</param>
         /// <param name="offDuration">The duration the LED stays off</param>

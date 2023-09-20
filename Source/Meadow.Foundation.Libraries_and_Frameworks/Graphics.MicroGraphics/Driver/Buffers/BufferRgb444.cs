@@ -110,7 +110,7 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// </summary>
         /// <param name="x">X pixel position</param>
         /// <param name="y">Y pixel position</param>
-        /// <param name="color">The pixel color packed as a 12 bbp ushort</param>
+        /// <param name="color">The pixel color packed as a 12 bpp ushort</param>
         public void SetPixel(int x, int y, ushort color)
         {
             int index;
