@@ -7,7 +7,7 @@ namespace Meadow.Foundation.ICs.IOExpanders;
 
 internal partial class FtdiDevice
 {
-    private bool _useMpseeForGpio = false;
+    private bool? _useMpseeForGpio = null;
 
     public byte GpioDirectionMask { get; set; }
     public byte GpioState { get; set; }
@@ -18,9 +18,11 @@ internal partial class FtdiDevice
     {
         // for now we don't support GPIO channels C and D on the FT4232H
 
+        if (Handle == IntPtr.Zero) Open();
+
         _useMpseeForGpio = true;
 
-        if (_useMpseeForGpio)
+        if (_useMpseeForGpio ?? true)
         {
             // Reset
             Native.CheckStatus(
@@ -30,8 +32,8 @@ internal partial class FtdiDevice
             Native.CheckStatus(
                 FT_SetBitMode(Handle, 0x00, Native.FT_BITMODE.FT_BITMODE_MPSSE));
 
-            // 50 ms according to thr doc for all USB to complete
             Thread.Sleep(50);
+
             ClearInputBuffer();
             InitializeMpsse();
         }
@@ -50,7 +52,12 @@ internal partial class FtdiDevice
 
     internal byte GetGpioState(bool lowByte)
     {
-        if (_useMpseeForGpio)
+        if (!_useMpseeForGpio.HasValue)
+        {
+            InitializeGpio();
+        }
+
+        if (_useMpseeForGpio ?? false)
         {
             Span<byte> outBuffer = stackalloc byte[2];
             Span<byte> inBuffer = stackalloc byte[1];
@@ -66,12 +73,17 @@ internal partial class FtdiDevice
 
     internal void SetGpioState(bool lowByte, byte direction, byte state)
     {
-        if (_useMpseeForGpio)
+        if (!_useMpseeForGpio.HasValue)
+        {
+            InitializeGpio();
+        }
+
+        if (_useMpseeForGpio ?? false)
         {
             Span<byte> outBuffer = stackalloc byte[3];
             outBuffer[0] = (byte)(lowByte ? Native.FT_OPCODE.SetDataBitsLowByte : Native.FT_OPCODE.SetDataBitsHighByte);
             outBuffer[1] = state; //data
-            outBuffer[1] = direction; //direction 1 == output, 0 == input
+            outBuffer[2] = direction; //direction 1 == output, 0 == input
             Write(outBuffer);
             return;
         }

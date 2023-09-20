@@ -18,11 +18,14 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
             public IPinController Controller { get; set; }
 
+            private bool UseMpsseKeys { get; }
+
             /// <summary>
             /// Create a new PinDefinitions object
             /// </summary>
             internal PinDefinitions(Ft232h controller)
             {
+                UseMpsseKeys = controller.UsingMpsse;
                 Controller = controller;
                 InitAllPins();
             }
@@ -65,12 +68,42 @@ namespace Meadow.Foundation.ICs.IOExpanders
             public IPin D3 => new Pin(
                 Controller,
                 "D3",
-                (byte)0x12,
+                (byte)0x13,
                 new List<IChannelInfo> {
                     new SpiChannelInfo("SPI_CS0", SpiLineType.ChipSelect)
                 });
 
-            // TODO: D4-D7 can be used as CS, and (probably??) GPIO. The docs are not terribly clear on this.  Maybe just outputs and direct write the CS?
+            public IPin D4 => new Pin(
+                Controller,
+                "D4",
+                UseMpsseKeys ? (byte)0x14 : (ushort)(1 << 4),
+                new List<IChannelInfo> {
+                    new DigitalChannelInfo("D4", interruptCapable: false, pullUpCapable: false, pullDownCapable: false)
+                });
+
+            public IPin D5 => new Pin(
+                Controller,
+                "D5",
+                UseMpsseKeys ? (byte)0x15 : (ushort)(1 << 5),
+                new List<IChannelInfo> {
+                    new DigitalChannelInfo("D5", interruptCapable: false, pullUpCapable: false, pullDownCapable: false)
+                });
+
+            public IPin D6 => new Pin(
+                Controller,
+                "D6",
+                UseMpsseKeys ? (byte)0x16 : (ushort)(1 << 6),
+                new List<IChannelInfo> {
+                    new DigitalChannelInfo("D6", interruptCapable: false, pullUpCapable: false, pullDownCapable: false)
+                });
+
+            public IPin D7 => new Pin(
+                Controller,
+                "D7",
+                UseMpsseKeys ? (byte)0x17 : (ushort)(1 << 7),
+                new List<IChannelInfo> {
+                    new DigitalChannelInfo("D7", interruptCapable: false, pullUpCapable: false, pullDownCapable: false)
+                });
 
             public IPin SPI_COPI_D1 => new Pin(
                 Controller,
@@ -83,7 +116,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             public IPin C0 => new Pin(
                 Controller,
                 "C0",
-                (byte)(1 << 0),
+                UseMpsseKeys ? (byte)(1 << 0) : (ushort)(1 << 8),
                 new List<IChannelInfo> {
                     new DigitalChannelInfo("C0", interruptCapable: false, pullUpCapable: false, pullDownCapable: false)
                 });
@@ -91,7 +124,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             public IPin C1 => new Pin(
                 Controller,
                 "C1",
-                (byte)(1 << 1),
+                UseMpsseKeys ? (byte)(1 << 1) : (ushort)(1 << 9),
                 new List<IChannelInfo> {
                     new DigitalChannelInfo("C1", interruptCapable: false, pullUpCapable: false, pullDownCapable: false)
                 });
@@ -99,7 +132,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             public IPin C2 => new Pin(
                 Controller,
                 "C2",
-                (byte)(1 << 2),
+                UseMpsseKeys ? (byte)(1 << 2) : (ushort)(1 << 10),
                 new List<IChannelInfo> {
                     new DigitalChannelInfo("C2", interruptCapable: false, pullUpCapable: false, pullDownCapable: false)
                 });
@@ -107,7 +140,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             public IPin C3 => new Pin(
                 Controller,
                 "C3",
-                (byte)(1 << 3),
+                UseMpsseKeys ? (byte)(1 << 3) : (ushort)(1 << 11),
                 new List<IChannelInfo> {
                     new DigitalChannelInfo("C3", interruptCapable: false, pullUpCapable: false, pullDownCapable: false)
                 });
@@ -115,7 +148,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             public IPin C4 => new Pin(
                 Controller,
                 "C4",
-                (byte)(1 << 4),
+                UseMpsseKeys ? (byte)(1 << 4) : (ushort)(1 << 12),
                 new List<IChannelInfo> {
                     new DigitalChannelInfo("C4", interruptCapable: false, pullUpCapable: false, pullDownCapable: false)
                 });
@@ -123,7 +156,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             public IPin C5 => new Pin(
                 Controller,
                 "C5",
-                (byte)(1 << 5),
+                UseMpsseKeys ? (byte)(1 << 5) : (ushort)(1 << 13),
                 new List<IChannelInfo> {
                     new DigitalChannelInfo("C5", interruptCapable: false, pullUpCapable: false, pullDownCapable: false)
                 });
@@ -131,7 +164,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             public IPin C6 => new Pin(
                 Controller,
                 "C6",
-                (byte)(1 << 6),
+                UseMpsseKeys ? (byte)(1 << 6) : (ushort)(1 << 14),
                 new List<IChannelInfo> {
                     new DigitalChannelInfo("C6", interruptCapable: false, pullUpCapable: false, pullDownCapable: false)
                 });
@@ -139,7 +172,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             public IPin C7 => new Pin(
                 Controller,
                 "C7",
-                (byte)(1 << 7),
+                UseMpsseKeys ? (byte)(1 << 7) : (ushort)(1 << 15),
                 new List<IChannelInfo> {
                     new DigitalChannelInfo("C7", interruptCapable: false, pullUpCapable: false, pullDownCapable: false)
                 });

@@ -52,52 +52,6 @@ internal partial class FtdiDevice
         }
     }
 
-    private void InitializeClocks()
-    {
-        // Now setup the clock and other elements
-        Span<byte> toSend = stackalloc byte[13];
-        int idx = 0;
-        // Disable clock divide by 5 for 60Mhz master clock
-        toSend[idx++] = (byte)FT_OPCODE.DisableClockDivideBy5;
-        // Turn off adaptive clocking
-        toSend[idx++] = (byte)FT_OPCODE.TurnOffAdaptiveClocking;
-        // Enable 3 phase data clock, used by I2C to allow data on both clock edges
-        toSend[idx++] = (byte)FT_OPCODE.Enable3PhaseDataClocking;
-        // The SK clock frequency can be worked out by below algorithm with divide by 5 set as off
-        // TCK period = 60MHz / (( 1 + [ (0xValueH * 256) OR 0xValueL] ) * 2)
-        // Command to set clock divisor
-        toSend[idx++] = (byte)FT_OPCODE.SetClockDivisor;
-        uint clockDivisor = (60000 / (I2cBusFrequencyKbps * 2)) - 1;
-        toSend[idx++] = (byte)(clockDivisor & 0x00FF);
-        toSend[idx++] = (byte)((clockDivisor >> 8) & 0x00FF);
-        // loopback off
-        toSend[idx++] = (byte)FT_OPCODE.DisconnectTDItoTDOforLoopback;
-        // Enable the FT232H's drive-zero mode with the following enable mask
-        toSend[idx++] = (byte)FT_OPCODE.SetIOOnlyDriveOn0AndTristateOn1;
-        // Low byte (ADx) enables - bits 0, 1 and 2
-        toSend[idx++] = 0x07;
-        // High byte (ACx) enables - all off
-        toSend[idx++] = 0x00;
-        // Command to set directions of lower 8 pins and force value on bits set as output
-        toSend[idx++] = (byte)FT_OPCODE.SetDataBitsLowByte;
-        if (DeviceType == FtDeviceType.Ft232H)
-        {
-            // SDA and SCL both output high(open drain)
-            GpioLowData = (byte)(PinData.SDAhiSCLhi | (GpioLowData & MaskGpio));
-            GpioLowDir = (byte)(PinDirection.SDAoutSCLout | (GpioLowDir & MaskGpio));
-        }
-        else
-        {
-            // SDA and SCL set low but as input to mimic open drain
-            GpioLowData = (byte)(PinData.SDAloSCLlo | (GpioLowData & MaskGpio));
-            GpioLowDir = (byte)(PinDirection.SDAinSCLin | (GpioLowDir & MaskGpio));
-        }
-
-        toSend[idx++] = GpioLowData;
-        toSend[idx++] = GpioLowDir;
-        Write(toSend);
-    }
-
     private void InitializeMpsse()
     {
         Span<byte> writeBuffer = stackalloc byte[1];

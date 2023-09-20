@@ -14,6 +14,8 @@ internal partial class FtdiDevice
     {
         if (_spiConfig != null) return;
 
+        // TODO: make sure we're not already initialized for I2C
+
         _spiConfig = config;
 
         if (Handle == IntPtr.Zero) Open();

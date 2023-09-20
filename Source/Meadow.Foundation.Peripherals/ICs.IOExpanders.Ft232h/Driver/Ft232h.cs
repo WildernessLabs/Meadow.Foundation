@@ -17,6 +17,8 @@ public partial class Ft232h :
     private bool _isDisposed;
     private IFtdiImpl _impl;
 
+    internal bool UsingMpsse { get; }
+
     /// <summary>
     /// The pins
     /// </summary>
@@ -24,7 +26,9 @@ public partial class Ft232h :
 
     public Ft232h(bool useMPSSE = false)
     {
-        _impl = useMPSSE ? new MpsseImpl() : new Ftd2xxImpl();
+        UsingMpsse = useMPSSE;
+
+        _impl = UsingMpsse ? new MpsseImpl() : new Ftd2xxImpl();
         _impl.Initialize();
 
         Pins = new PinDefinitions(this);
