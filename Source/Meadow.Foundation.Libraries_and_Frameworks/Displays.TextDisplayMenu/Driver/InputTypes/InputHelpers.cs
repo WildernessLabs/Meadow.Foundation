@@ -33,7 +33,7 @@ namespace Meadow.Foundation.Displays.UI.InputTypes
 
         public static string Replace(string text, string oldValue, string newValue)
         {
-            StringBuilder temp = new StringBuilder(text);
+            StringBuilder temp = new(text);
             temp.Replace(oldValue, newValue);
             return temp.ToString();
         }

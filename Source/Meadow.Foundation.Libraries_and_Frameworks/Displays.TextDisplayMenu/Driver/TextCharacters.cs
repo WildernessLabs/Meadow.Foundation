@@ -29,7 +29,7 @@ namespace Meadow.Foundation.Displays.UI
         /// <summary>
         /// Character data
         /// </summary>
-        public byte[] CharMap { get; set; }
+        public byte[]? CharMap { get; set; }
 
         /// <summary>
         /// Memory index for the custom character

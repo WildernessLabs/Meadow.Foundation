@@ -22,5 +22,11 @@
         /// </summary>
         /// <returns>true if successful</returns>
         bool Select();
+
+        /// <summary>
+        /// Back input 
+        /// </summary>
+        /// <returns>true if successful</returns>
+        bool Back();
     }
 }
