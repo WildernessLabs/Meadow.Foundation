@@ -41,13 +41,13 @@
         void SetLed(int index, byte[] rgb, float brightness = 1f);
 
         /// <summary>
-        /// Clear all leds in the offscreen buffer
+        /// Clear all leds in the off-screen buffer
         /// </summary>
         /// <param name="update">If true, update the led state</param>
         void Clear(bool update = false);
 
         /// <summary>
-        /// Update from the offscreen buffer
+        /// Update from the off-screen buffer
         /// </summary>
         void Show();
     }

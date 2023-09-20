@@ -55,7 +55,7 @@
         }
 
         /// <summary>
-        /// Add an amount to a Size in both dimentions
+        /// Add an amount to a Size in both dimensions
         /// </summary>
         /// <param name="size">The Size struct</param>
         /// <param name="amount">The amount to add</param>
@@ -66,7 +66,7 @@
         }
 
         /// <summary>
-        /// Subtract an amount from a Size in both dimentions
+        /// Subtract an amount from a Size in both dimensions
         /// </summary>
         /// <param name="size">The Size struct</param>
         /// <param name="amount">The amount to subtract</param>

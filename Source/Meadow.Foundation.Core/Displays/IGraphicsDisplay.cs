@@ -66,14 +66,14 @@ namespace Meadow.Foundation.Graphics
         /// <summary>
         /// Clear the display
         /// </summary>
-        /// <param name="updateDisplay">Update the dipslay once the buffer has been cleared when true</param>
+        /// <param name="updateDisplay">Update the display once the buffer has been cleared when true</param>
         public void Clear(bool updateDisplay = false);
 
         /// <summary>
         /// Clear the display
         /// </summary>
         /// <param name="fillColor">The color used to fill the display buffer</param>
-        /// <param name="updateDisplay">Update the dipslay once the buffer has been cleared when true</param>
+        /// <param name="updateDisplay">Update the display once the buffer has been cleared when true</param>
         public void Fill(Color fillColor, bool updateDisplay = false);
 
         /// <summary>

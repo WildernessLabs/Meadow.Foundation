@@ -108,7 +108,7 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// </summary>
         /// <param name="x">X pixel position</param>
         /// <param name="y">Y pixel position</param>
-        /// <param name="gray">The pixel grey value</param>
+        /// <param name="gray">The pixel gray value</param>
         public void SetPixel(int x, int y, byte gray)
         {
             int index = y * Width / 2 + x / 2;

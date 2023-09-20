@@ -145,7 +145,7 @@ namespace Meadow.Foundation.Graphics
         /// Create a new MicroGraphics instance from a pixel buffer instance
         /// </summary>
         /// <param name="pixelBuffer">The pixel buffer</param>
-        /// <param name="initializeBuffer">Initialize the offscreen buffer if true</param>
+        /// <param name="initializeBuffer">Initialize the off-screen buffer if true</param>
         public MicroGraphics(PixelBufferBase pixelBuffer, bool initializeBuffer)
         {
             _memoryBuffer = pixelBuffer;
@@ -277,7 +277,7 @@ namespace Meadow.Foundation.Graphics
         /// Draw a line using Bresenhams line drawing algorithm
         /// </summary>
         /// <remarks>
-        /// Bresenhams line drawing algoritm:
+        /// Bresenhams line drawing algorithm:
         /// https://en.wikipedia.org/wiki/Bresenham's_line_algorithm
         /// C# Implementation:
         /// https://en.wikipedia.org/wiki/Bresenham's_line_algorithm
@@ -316,7 +316,7 @@ namespace Meadow.Foundation.Graphics
         /// Draw a line using Bresenhams line drawing algorithm
         /// </summary>
         /// <remarks>
-        /// Bresenhams line drawing algoritm:
+        /// Bresenhams line drawing algorithm:
         /// https://en.wikipedia.org/wiki/Bresenham's_line_algorithm
         /// C# Implementation:
         /// https://en.wikipedia.org/wiki/Bresenham's_line_algorithm
@@ -594,7 +594,7 @@ namespace Meadow.Foundation.Graphics
         /// Draw a circular arc between two angles
         /// </summary>
         /// <remarks>
-        /// Note that y axis is inverted so the arc will be flipped from the standard cartesian plain
+        /// Note that y axis is inverted so the arc will be flipped from the standard Cartesian plain
         /// </remarks>
         /// <param name="centerX">Abscissa of the centre point of the circle</param>
         /// <param name="centerY">Ordinate of the centre point of the circle</param>
@@ -612,7 +612,7 @@ namespace Meadow.Foundation.Graphics
         /// Draw a circular arc between two angles using PenColor
         /// </summary>
         /// <remarks>
-        /// Note that y axis is inverted so the arc will be flipped from the standard cartesian plain
+        /// Note that y axis is inverted so the arc will be flipped from the standard Cartesian plain
         /// </remarks>
         /// <param name="centerX">Abscissa of the centre point of the circle</param>
         /// <param name="centerY">Ordinate of the centre point of the circle</param>

@@ -71,7 +71,7 @@ namespace Meadow.Foundation.Displays
         }
 
         /// <summary>
-        /// Initalize the display
+        /// Initialize the display
         /// </summary>
         protected override void Initialize()
         {
@@ -90,7 +90,7 @@ namespace Meadow.Foundation.Displays
             }
 
             if (Width == 135) //135x240 
-            {   //unknown if this is consistant across all displays with this res
+            {   //unknown if this is consistent across all displays with this res
                 rowStart = rowStart2 = 40;
                 columnStart = 53;
                 columnStart2 = 52;
@@ -138,7 +138,7 @@ namespace Meadow.Foundation.Displays
         }
 
         /// <summary>
-        /// Set addrees window for display updates
+        /// Set address window for display updates
         /// </summary>
         /// <param name="x0">X start in pixels</param>
         /// <param name="y0">Y start in pixels</param>
