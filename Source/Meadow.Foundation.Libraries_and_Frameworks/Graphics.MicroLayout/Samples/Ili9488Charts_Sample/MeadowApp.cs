@@ -40,7 +40,7 @@ public class MeadowApp : App<Windows>
 
     public void Text()
     {
-        var label = new DisplayLabel(0, 0, screen.Width, screen.Height);
+        var label = new Label(0, 0, screen.Width, screen.Height);
         label.Font = new Font12x20();
         label.HorizontalAlignment = Meadow.Foundation.Graphics.HorizontalAlignment.Center;
         label.VerticalAlignment = Meadow.Foundation.Graphics.VerticalAlignment.Center;
@@ -55,7 +55,7 @@ public class MeadowApp : App<Windows>
     {
         var box = new Box(0, 0, screen.Width / 4, screen.Height);
         box.ForeColor = Color.Red;
-        var label = new DisplayLabel(0, 0, screen.Width / 4, screen.Height);
+        var label = new Label(0, 0, screen.Width / 4, screen.Height);
         label.HorizontalAlignment = Meadow.Foundation.Graphics.HorizontalAlignment.Center;
         label.VerticalAlignment = Meadow.Foundation.Graphics.VerticalAlignment.Center;
         label.TextColor = Color.Black;
