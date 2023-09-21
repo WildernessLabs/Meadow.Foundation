@@ -29,8 +29,8 @@ public class MeadowApp : App<Windows>
             //            BackgroundColor = Color.Blue
         };
 
-        var logo = Graphics.Image.LoadFromFile("logo.bmp");
-        var wlLabel = new DisplayLabel(0, 10, _screen.Width, 32)
+        var logo = Image.LoadFromFile("logo.bmp");
+        var wlLabel = new Graphics.MicroLayout.Label(0, 10, _screen.Width, 32)
         {
             TextColor = Color.White,
             BackColor = Color.DarkRed,
@@ -48,7 +48,7 @@ public class MeadowApp : App<Windows>
 
         var chartLayout = new AbsoluteLayout(_screen, 0, 0, _screen.Width, _screen.Height);
 
-        var chart1Label = new DisplayLabel(0, 0, _screen.Width, 16)
+        var chart1Label = new Graphics.MicroLayout.Label(0, 0, _screen.Width, 16)
         {
             Text = "Values for process A",
             TextColor = Color.Aquamarine,
@@ -66,7 +66,7 @@ public class MeadowApp : App<Windows>
             GetSineSeries(),
             GetCosineSeries(4, 4.2, 0));
 
-        var chart2Label = new DisplayLabel(0, _screen.Height / 2, _screen.Width, 16)
+        var chart2Label = new Graphics.MicroLayout.Label(0, _screen.Height / 2, _screen.Width, 16)
         {
             Text = "Values for process B",
             TextColor = Color.BlueViolet,

@@ -3,7 +3,7 @@
 /// <summary>
 /// Represents a label display control in the user interface.
 /// </summary>
-public class DisplayLabel : ThemedControl
+public class Label : ThemedControl
 {
     private string _text;
 
@@ -15,14 +15,14 @@ public class DisplayLabel : ThemedControl
     private ScaleFactor _scaleFactor = ScaleFactor.X1;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="DisplayLabel"/> class with the specified dimensions.
+    /// Initializes a new instance of the <see cref="Label"/> class with the specified dimensions.
     /// </summary>
     /// <param name="left">The left coordinate of the label display control.</param>
     /// <param name="top">The top coordinate of the label display control.</param>
     /// <param name="width">The width of the label display control.</param>
     /// <param name="height">The height of the label display control.</param>
     /// <param name="scaleFactor">The scale factor used for drawing text</param>
-    public DisplayLabel(int left, int top, int width, int height, ScaleFactor scaleFactor = ScaleFactor.X1)
+    public Label(int left, int top, int width, int height, ScaleFactor scaleFactor = ScaleFactor.X1)
         : base(left, top, width, height)
     {
         ScaleFactor = scaleFactor;
