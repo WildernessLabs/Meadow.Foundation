@@ -1,9 +1,8 @@
-﻿using System;
-using System.Threading.Tasks;
-using BitMiracle.LibJpeg;
+﻿using BitMiracle.LibJpeg;
 using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Camera;
+using System.Threading.Tasks;
 
 namespace Sensors.Camera.Arducam_Sample
 {
@@ -17,14 +16,15 @@ namespace Sensors.Camera.Arducam_Sample
         {
             Resolver.Log.Info("Initialize...");
 
-            //camera = new Vc0706(Device, Device.PlatformOS.GetSerialPortName("COM4"), 38400);
+            camera = new Arducam(Device.CreateSpiBus(), Device.Pins.D00, Device.CreateI2cBus(), 0x60);
 
             return Task.CompletedTask;
         }
 
         public async override Task Run()
         {
-            await TakePicture();
+
+
         }
 
         async Task TakePicture()

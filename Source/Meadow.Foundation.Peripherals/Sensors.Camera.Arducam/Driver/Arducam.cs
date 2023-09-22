@@ -12,6 +12,10 @@ namespace Meadow.Foundation.Sensors.Camera
     /// </summary>
     public partial class Arducam : ICamera, ISpiPeripheral, II2cPeripheral
     {
+        //ToDo
+        byte m_fmt;
+
+
         /// <summary>
         /// The default SPI bus speed for the device
         /// </summary>
@@ -78,20 +82,20 @@ namespace Meadow.Foundation.Sensors.Camera
 
             Thread.Sleep(100);
 
-            wrSensorRegs8_8(Ov2640Regs.QVGA);
+            wrSensorRegs8_8(Ov2640Regs.OV2640_QVGA);
         }
 
-        void flush_fifo()
+        public void flush_fifo()
         {
             write_reg(ARDUCHIP_FIFO, FIFO_CLEAR_MASK);
         }
 
-        void start_capture()
+        public void start_capture()
         {
             write_reg(ARDUCHIP_FIFO, FIFO_START_MASK);
         }
 
-        void clear_fifo_flag()
+        public void clear_fifo_flag()
         {
             write_reg(ARDUCHIP_FIFO, FIFO_CLEAR_MASK);
         }
@@ -106,10 +110,308 @@ namespace Meadow.Foundation.Sensors.Camera
             return length;
         }
 
+        void set_fifo_burst()
+        {
+            spiComms.Write(BURST_FIFO_READ);
+        }
+
+        byte read_fifo()
+        {
+            return bus_read(SINGLE_FIFO_READ);
+        }
+
+        void set_bit(byte address, byte bit)
+        {
+            byte temp;
+            temp = read_reg(address);
+            write_reg(address, (byte)(temp | bit));
+        }
+
+        void clear_bit(byte address, byte bit)
+        {
+            byte temp;
+            temp = read_reg(address);
+            write_reg(address, (byte)(temp & (~bit)));
+        }
+
         byte read_reg(byte address)
         {
             return bus_read((byte)(address & 0x7F));
         }
+
+        byte get_bit(byte address, byte bit)
+        {
+            byte temp;
+            temp = read_reg(address);
+            temp &= bit;
+            return temp;
+        }
+
+        void set_mode(byte mode)
+        {
+            switch (mode)
+            {
+                case MCU2LCD_MODE:
+                    write_reg(ARDUCHIP_MODE, MCU2LCD_MODE);
+                    break;
+                case CAM2LCD_MODE:
+                    write_reg(ARDUCHIP_MODE, CAM2LCD_MODE);
+                    break;
+                case LCD2MCU_MODE:
+                    write_reg(ARDUCHIP_MODE, LCD2MCU_MODE);
+                    break;
+                default:
+                    write_reg(ARDUCHIP_MODE, MCU2LCD_MODE);
+                    break;
+            }
+        }
+
+        void OV2640_set_JPEG_size(byte size)
+        {
+            switch (size)
+            {
+                case OV2640_160x120:
+                    wrSensorRegs8_8(Ov2640Regs.OV2640_160x120_JPEG);
+                    break;
+                case OV2640_176x144:
+                    wrSensorRegs8_8(Ov2640Regs.OV2640_176x144_JPEG);
+                    break;
+                case OV2640_320x240:
+                    wrSensorRegs8_8(Ov2640Regs.OV2640_320x240_JPEG);
+                    break;
+                case OV2640_352x288:
+                    wrSensorRegs8_8(Ov2640Regs.OV2640_352x288_JPEG);
+                    break;
+                case OV2640_640x480:
+                    wrSensorRegs8_8(Ov2640Regs.OV2640_640x480_JPEG);
+                    break;
+                case OV2640_800x600:
+                    wrSensorRegs8_8(Ov2640Regs.OV2640_800x600_JPEG);
+                    break;
+                case OV2640_1024x768:
+                    wrSensorRegs8_8(Ov2640Regs.OV2640_1024x768_JPEG);
+                    break;
+                case OV2640_1280x1024:
+                    wrSensorRegs8_8(Ov2640Regs.OV2640_1280x1024_JPEG);
+                    break;
+                case OV2640_1600x1200:
+                    wrSensorRegs8_8(Ov2640Regs.OV2640_1600x1200_JPEG);
+                    break;
+                default:
+                    wrSensorRegs8_8(Ov2640Regs.OV2640_320x240_JPEG);
+                    break;
+            }
+        }
+
+        void set_format(byte fmt)
+        {
+            if (fmt == BMP)
+                m_fmt = BMP;
+            else if (fmt == RAW)
+                m_fmt = RAW;
+            else
+                m_fmt = JPEG;
+        }
+
+        //ToDo ... move to OV2640 specific class
+
+        void OV2640_set_Light_Mode(LightMode Light_Mode)
+        {
+            switch (Light_Mode)
+            {
+                case LightMode.Auto:
+                    wrSensorReg8_8(0xff, 0x00);
+                    wrSensorReg8_8(0xc7, 0x00); //AWB on
+                    break;
+                case LightMode.Sunny:
+                    wrSensorReg8_8(0xff, 0x00);
+                    wrSensorReg8_8(0xc7, 0x40); //AWB off
+                    wrSensorReg8_8(0xcc, 0x5e);
+                    wrSensorReg8_8(0xcd, 0x41);
+                    wrSensorReg8_8(0xce, 0x54);
+                    break;
+                case LightMode.Cloudy:
+                    wrSensorReg8_8(0xff, 0x00);
+                    wrSensorReg8_8(0xc7, 0x40); //AWB off
+                    wrSensorReg8_8(0xcc, 0x65);
+                    wrSensorReg8_8(0xcd, 0x41);
+                    wrSensorReg8_8(0xce, 0x4f);
+                    break;
+                case LightMode.Office:
+                    wrSensorReg8_8(0xff, 0x00);
+                    wrSensorReg8_8(0xc7, 0x40); //AWB off
+                    wrSensorReg8_8(0xcc, 0x52);
+                    wrSensorReg8_8(0xcd, 0x41);
+                    wrSensorReg8_8(0xce, 0x66);
+                    break;
+                case LightMode.Home:
+                    wrSensorReg8_8(0xff, 0x00);
+                    wrSensorReg8_8(0xc7, 0x40); //AWB off
+                    wrSensorReg8_8(0xcc, 0x42);
+                    wrSensorReg8_8(0xcd, 0x3f);
+                    wrSensorReg8_8(0xce, 0x71);
+                    break;
+                default:
+                    wrSensorReg8_8(0xff, 0x00);
+                    wrSensorReg8_8(0xc7, 0x00); //AWB on
+                    break;
+            }
+        }
+
+        //ToDo ... move to OV2640 specific class
+        void OV2640_set_Color_Saturation(ColorSaturation saturation)
+        {
+            switch (saturation)
+            {
+                case ColorSaturation.Saturation2:
+
+                    wrSensorReg8_8(0xff, 0x00);
+                    wrSensorReg8_8(0x7c, 0x00);
+                    wrSensorReg8_8(0x7d, 0x02);
+                    wrSensorReg8_8(0x7c, 0x03);
+                    wrSensorReg8_8(0x7d, 0x68);
+                    wrSensorReg8_8(0x7d, 0x68);
+                    break;
+                case ColorSaturation.Saturation1:
+                    wrSensorReg8_8(0xff, 0x00);
+                    wrSensorReg8_8(0x7c, 0x00);
+                    wrSensorReg8_8(0x7d, 0x02);
+                    wrSensorReg8_8(0x7c, 0x03);
+                    wrSensorReg8_8(0x7d, 0x58);
+                    wrSensorReg8_8(0x7d, 0x58);
+                    break;
+                case ColorSaturation.Saturation0:
+                    wrSensorReg8_8(0xff, 0x00);
+                    wrSensorReg8_8(0x7c, 0x00);
+                    wrSensorReg8_8(0x7d, 0x02);
+                    wrSensorReg8_8(0x7c, 0x03);
+                    wrSensorReg8_8(0x7d, 0x48);
+                    wrSensorReg8_8(0x7d, 0x48);
+                    break;
+                case ColorSaturation.Saturation_1:
+                    wrSensorReg8_8(0xff, 0x00);
+                    wrSensorReg8_8(0x7c, 0x00);
+                    wrSensorReg8_8(0x7d, 0x02);
+                    wrSensorReg8_8(0x7c, 0x03);
+                    wrSensorReg8_8(0x7d, 0x38);
+                    wrSensorReg8_8(0x7d, 0x38);
+                    break;
+                case ColorSaturation.Saturation_2:
+                    wrSensorReg8_8(0xff, 0x00);
+                    wrSensorReg8_8(0x7c, 0x00);
+                    wrSensorReg8_8(0x7d, 0x02);
+                    wrSensorReg8_8(0x7c, 0x03);
+                    wrSensorReg8_8(0x7d, 0x28);
+                    wrSensorReg8_8(0x7d, 0x28);
+                    break;
+            }
+        }
+
+        void OV2640_set_Brightness(Brightness brightness)
+        {
+            switch (brightness)
+            {
+                case Brightness.Brightness2:
+                    wrSensorReg8_8(0xff, 0x00);
+                    wrSensorReg8_8(0x7c, 0x00);
+                    wrSensorReg8_8(0x7d, 0x04);
+                    wrSensorReg8_8(0x7c, 0x09);
+                    wrSensorReg8_8(0x7d, 0x40);
+                    wrSensorReg8_8(0x7d, 0x00);
+                    break;
+                case Brightness.Brightness1:
+                    wrSensorReg8_8(0xff, 0x00);
+                    wrSensorReg8_8(0x7c, 0x00);
+                    wrSensorReg8_8(0x7d, 0x04);
+                    wrSensorReg8_8(0x7c, 0x09);
+                    wrSensorReg8_8(0x7d, 0x30);
+                    wrSensorReg8_8(0x7d, 0x00);
+                    break;
+                case Brightness.Brightness0:
+                    wrSensorReg8_8(0xff, 0x00);
+                    wrSensorReg8_8(0x7c, 0x00);
+                    wrSensorReg8_8(0x7d, 0x04);
+                    wrSensorReg8_8(0x7c, 0x09);
+                    wrSensorReg8_8(0x7d, 0x20);
+                    wrSensorReg8_8(0x7d, 0x00);
+                    break;
+                case Brightness.Brightness_1:
+                    wrSensorReg8_8(0xff, 0x00);
+                    wrSensorReg8_8(0x7c, 0x00);
+                    wrSensorReg8_8(0x7d, 0x04);
+                    wrSensorReg8_8(0x7c, 0x09);
+                    wrSensorReg8_8(0x7d, 0x10);
+                    wrSensorReg8_8(0x7d, 0x00);
+                    break;
+                case Brightness.Brightness_2:
+                    wrSensorReg8_8(0xff, 0x00);
+                    wrSensorReg8_8(0x7c, 0x00);
+                    wrSensorReg8_8(0x7d, 0x04);
+                    wrSensorReg8_8(0x7c, 0x09);
+                    wrSensorReg8_8(0x7d, 0x00);
+                    wrSensorReg8_8(0x7d, 0x00);
+                    break;
+            }
+        }
+
+        void OV2640_set_Contrast(Contrast contrast)
+        {
+            switch (contrast)
+            {
+                case Contrast.Contrast2:
+
+                    wrSensorReg8_8(0xff, 0x00);
+                    wrSensorReg8_8(0x7c, 0x00);
+                    wrSensorReg8_8(0x7d, 0x04);
+                    wrSensorReg8_8(0x7c, 0x07);
+                    wrSensorReg8_8(0x7d, 0x20);
+                    wrSensorReg8_8(0x7d, 0x28);
+                    wrSensorReg8_8(0x7d, 0x0c);
+                    wrSensorReg8_8(0x7d, 0x06);
+                    break;
+                case Contrast.Contrast1:
+                    wrSensorReg8_8(0xff, 0x00);
+                    wrSensorReg8_8(0x7c, 0x00);
+                    wrSensorReg8_8(0x7d, 0x04);
+                    wrSensorReg8_8(0x7c, 0x07);
+                    wrSensorReg8_8(0x7d, 0x20);
+                    wrSensorReg8_8(0x7d, 0x24);
+                    wrSensorReg8_8(0x7d, 0x16);
+                    wrSensorReg8_8(0x7d, 0x06);
+                    break;
+                case Contrast.Contrast0:
+                    wrSensorReg8_8(0xff, 0x00);
+                    wrSensorReg8_8(0x7c, 0x00);
+                    wrSensorReg8_8(0x7d, 0x04);
+                    wrSensorReg8_8(0x7c, 0x07);
+                    wrSensorReg8_8(0x7d, 0x20);
+                    wrSensorReg8_8(0x7d, 0x20);
+                    wrSensorReg8_8(0x7d, 0x20);
+                    wrSensorReg8_8(0x7d, 0x06);
+                    break;
+                case Contrast.Contrast_1:
+                    wrSensorReg8_8(0xff, 0x00);
+                    wrSensorReg8_8(0x7c, 0x00);
+                    wrSensorReg8_8(0x7d, 0x04);
+                    wrSensorReg8_8(0x7c, 0x07);
+                    wrSensorReg8_8(0x7d, 0x20);
+                    wrSensorReg8_8(0x7d, 0x20);
+                    wrSensorReg8_8(0x7d, 0x2a);
+                    wrSensorReg8_8(0x7d, 0x06);
+                    break;
+                case Contrast.Contrast_2:
+                    wrSensorReg8_8(0xff, 0x00);
+                    wrSensorReg8_8(0x7c, 0x00);
+                    wrSensorReg8_8(0x7d, 0x04);
+                    wrSensorReg8_8(0x7c, 0x07);
+                    wrSensorReg8_8(0x7d, 0x20);
+                    wrSensorReg8_8(0x7d, 0x18);
+                    wrSensorReg8_8(0x7d, 0x34);
+                    wrSensorReg8_8(0x7d, 0x06);
+                    break;
+            }
+        }
+
 
         void write_reg(byte address, byte data)
         {

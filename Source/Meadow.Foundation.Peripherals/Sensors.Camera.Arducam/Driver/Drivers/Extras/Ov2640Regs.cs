@@ -2,7 +2,7 @@
 {
     internal class Ov2640Regs
     {
-        public static readonly SensorReg[] QVGA = new SensorReg[]
+        public static readonly SensorReg[] OV2640_QVGA = new SensorReg[]
         {
             new SensorReg(0xff, 0x00),
             new SensorReg(0x2c, 0xff),

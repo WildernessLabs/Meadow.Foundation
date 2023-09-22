@@ -18,7 +18,9 @@ write_reg <- something bus
 
 Init on Line 389
 
-Up to 668 ....
+*** SKIPPED OV2640_set_Special_effects on line 2151
+
+Up to 2152 ....
 
 
 
