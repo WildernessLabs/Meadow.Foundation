@@ -174,9 +174,9 @@ namespace Meadow.Foundation.Sensors.Accelerometers
                     break;
             }
 
-            var x = rawX * lsbPerDps;
-            var y = rawY * lsbPerDps;
-            var z = rawZ * lsbPerDps;
+            var x = rawX / lsbPerDps;
+            var y = rawY / lsbPerDps;
+            var z = rawZ / lsbPerDps;
 
             return new AngularVelocity3D(x, y, z, AngularVelocity.UnitType.DegreesPerSecond);
         }
