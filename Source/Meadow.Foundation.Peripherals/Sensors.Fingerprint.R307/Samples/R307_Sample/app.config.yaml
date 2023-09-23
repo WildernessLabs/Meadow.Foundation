@@ -1,0 +1,5 @@
+﻿Logging:
+  LogLevel:
+    Default: Trace
+Lifecycle:
+  ResetOnAppFailure: false
