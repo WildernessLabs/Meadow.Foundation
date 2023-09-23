@@ -50,9 +50,10 @@ namespace Meadow.Foundation.Sensors.Accelerometers
         /// Create a new Lsm6dsox instance
         /// </summary>
         /// <param name="i2cBus">The I2C bus connected to the sensor</param>
-        public Lsm6dsox(II2cBus i2cBus)
+        /// <param name="address">The I2C address</param>
+        public Lsm6dsox(II2cBus i2cBus, byte address = (byte)Addresses.Default)
         {
-            i2cComms = new I2cCommunications(i2cBus, (byte)Addresses.Default);
+            i2cComms = new I2cCommunications(i2cBus, (byte)address);
 
             Initialize();
         }
