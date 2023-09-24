@@ -1,6 +1,6 @@
 ﻿using Meadow;
 using Meadow.Devices;
-using Meadow.Foundation.Sensors.Accelerometers;
+using Meadow.Foundation.Sensors.Motion;
 using Meadow.Units;
 using System;
 using System.Threading.Tasks;
@@ -42,7 +42,7 @@ namespace Lis3Mdl_Sample
         {
             var mag = result.New;
 
-            Resolver.Log.Info($"MagX={mag.X.Gauss:0.##}gauss, MagY={mag.Y.Gauss:0.##}gauss, GyroZ={mag.Z.Gauss:0.##}gauss");
+            Resolver.Log.Info($"MagX={mag.X.Gauss:0.##}gauss, MagY={mag.Y.Gauss:0.##}gauss, MagZ={mag.Z.Gauss:0.##}gauss");
         }
 
         //<!=SNOP=>

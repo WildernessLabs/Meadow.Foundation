@@ -4,7 +4,7 @@ using Meadow.Units;
 using System;
 using System.Threading.Tasks;
 
-namespace Meadow.Foundation.Sensors.Accelerometers
+namespace Meadow.Foundation.Sensors.Motion
 {
     /// <summary>
     /// Represents a LIS2MDL is a low-power, high-performance 3-axis magnetometer from STMicroelectronics

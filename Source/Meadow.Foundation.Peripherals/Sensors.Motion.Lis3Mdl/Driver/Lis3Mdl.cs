@@ -5,15 +5,15 @@ using Meadow.Units;
 using System;
 using System.Threading.Tasks;
 
-namespace Meadow.Foundation.Sensors.Accelerometers
+namespace Meadow.Foundation.Sensors.Motion
 {
     /// <summary>
-    /// Represents a Lis3MDL is a low-power, high-performance 3-axis magnetometer from STMicroelectronics
+    /// Represents a Lis3MDL, a low-power, high-performance 3-axis magnetometer from STMicroelectronics
     /// with a default full range of ±4 gauss and a 16-bit resolution
     /// </summary>
     public partial class Lis3Mdl : PollingSensorBase<MagneticField3D>, IMagnetometer, II2cPeripheral
     {
-        // TODO: Should this also implement ITemperatureSensor and PolingSensorBase<(MagneticField3D, Units.Temperature)>? 
+        // TODO: Should this also implement ITemperatureSensor and PollingSensorBase<(MagneticField3D, Units.Temperature)>? 
         //       It's only a secondary/low resolution feature of the sensor.
 
         /// <summary>
@@ -90,7 +90,14 @@ namespace Meadow.Foundation.Sensors.Accelerometers
         {
             var (x, y, z) = ReadMagnetometerRaw();
 
-            var scaling = GetScaleFactor(currentScale);
+            var scaling = currentScale switch
+            {
+                FullScale.PlusMinus4Gauss => 6842,
+                FullScale.PlusMinus8Gauss => 3421,
+                FullScale.PlusMinus12Gauss => 2281,
+                FullScale.PlusMinus16Gauss => 1711,
+                _ => throw new NotImplementedException(),
+            };
 
             var conditions = new MagneticField3D(x / scaling, y / scaling, z / scaling, MagneticField.UnitType.Gauss);
 
@@ -233,29 +240,6 @@ namespace Meadow.Foundation.Sensors.Accelerometers
                 bduByte &= 0x40; // Clear bit 6
             }
             i2cComms.WriteRegister(CTRL_REG5, bduByte);
-        }
-
-        /// <summary>
-        /// Get the appropriate scaling value for a given scale range
-        /// </summary>
-        /// <param name="scale">a <see cref="FullScale"/> enumeration value</param>
-        /// <returns>the typical scale factor to apply to the raw data in mGauss/LSB</returns>
-        /// <exception cref="ArgumentOutOfRangeException">if <paramref name="scale"/> is not a valid <see cref="FullScale"/></exception>
-        private static double GetScaleFactor(FullScale scale)
-        {
-            switch (scale)
-            {
-                case FullScale.PlusMinus4Gauss:
-                    return 6842;
-                case FullScale.PlusMinus8Gauss:
-                    return 3421;
-                case FullScale.PlusMinus12Gauss:
-                    return 2281;
-                case FullScale.PlusMinus16Gauss:
-                    return 1711;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(scale));
-            }
         }
 
         /// <summary>

@@ -1,13 +1,12 @@
 ﻿using Meadow;
 using Meadow.Devices;
-using Meadow.Foundation.Sensors.Accelerometers;
+using Meadow.Foundation.Sensors.Motion;
 using Meadow.Units;
 using System;
 using System.Threading.Tasks;
 
 namespace Lsm6dsox_Sample
 {
-    // Change F7FeatherV2 to F7FeatherV1 for V1.x boards
     public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
@@ -19,14 +18,14 @@ namespace Lsm6dsox_Sample
             Resolver.Log.Info("Initialize hardware...");
             sensor = new Lsm6dsox(Device.CreateI2cBus());
 
-            // classical .NET events can also be used:
-            sensor.Updated += HandleResult;
-
             // Example that uses an IObservable subscription to only be notified when the filter is satisfied
             var consumer = Lsm6dsox.CreateObserver(handler: result => HandleResult(this, result),
                                                  filter: result => FilterResult(result));
 
             sensor.Subscribe(consumer);
+
+            // classical .NET events can also be used:
+            sensor.Updated += HandleResult;
 
             sensor.StartUpdating(TimeSpan.FromMilliseconds(2000));
 

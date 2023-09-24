@@ -5,7 +5,7 @@ using Meadow.Units;
 using System;
 using System.Threading.Tasks;
 
-namespace Meadow.Foundation.Sensors.Accelerometers
+namespace Meadow.Foundation.Sensors.Motion
 {
     /// <summary>
     /// Represents a LSM6dsox is a system-in-package (SiP) that combines a 3D linear acceleration sensor and a 3D gyroscope sensor
@@ -129,22 +129,14 @@ namespace Meadow.Foundation.Sensors.Accelerometers
 
         Acceleration3D GetAcceleration3D(short rawX, short rawY, short rawZ)
         {
-            float lsbPerG = 0;
-            switch (currentAccelScale)
+            float lsbPerG = currentAccelScale switch
             {
-                case AccelFullScale.G2:
-                    lsbPerG = 16384.0f; // 2^16 / (2 * 2)
-                    break;
-                case AccelFullScale.G4:
-                    lsbPerG = 8192.0f; // 2^16 / (2 * 4)
-                    break;
-                case AccelFullScale.G8:
-                    lsbPerG = 4096.0f; // 2^16 / (2 * 8)
-                    break;
-                case AccelFullScale.G16:
-                    lsbPerG = 2048.0f; // 2^16 / (2 * 16)
-                    break;
-            }
+                AccelFullScale.G2 => 16384.0f, // 2^16 / (2 * 2)
+                AccelFullScale.G4 => 8192.0f, // 2^16 / (2 * 4)
+                AccelFullScale.G8 => 4096.0f, // 2^16 / (2 * 8)
+                AccelFullScale.G16 => 2048.0f, // 2^16 / (2 * 16)
+                _ => throw new NotImplementedException(),
+            };
 
             float x = rawX / lsbPerG;
             float y = rawY / lsbPerG;
@@ -155,25 +147,15 @@ namespace Meadow.Foundation.Sensors.Accelerometers
 
         AngularVelocity3D GetAngularVelocity3D(short rawX, short rawY, short rawZ)
         {
-            float lsbPerDps = 0;
-            switch (currentGyroScale)
+            float lsbPerDps = currentGyroScale switch
             {
-                case GyroFullScale.Dps125:
-                    lsbPerDps = 262.144f; // 2^16 / (2 * 125)
-                    break;
-                case GyroFullScale.Dps250:
-                    lsbPerDps = 131.072f; // 2^16 / (2 * 250)
-                    break;
-                case GyroFullScale.Dps500:
-                    lsbPerDps = 65.536f; // 2^16 / (2 * 500)
-                    break;
-                case GyroFullScale.Dps1000:
-                    lsbPerDps = 32.768f; // 2^16 / (2 * 1000)
-                    break;
-                case GyroFullScale.Dps2000:
-                    lsbPerDps = 16.384f; // 2^16 / (2 * 2000)
-                    break;
-            }
+                GyroFullScale.Dps125 => 262.144f, // 2^16 / (2 * 125)
+                GyroFullScale.Dps250 => 131.072f, // 2^16 / (2 * 250)
+                GyroFullScale.Dps500 => 65.536f, // 2^16 / (2 * 500)
+                GyroFullScale.Dps1000 => 32.768f, // 2^16 / (2 * 1000)
+                GyroFullScale.Dps2000 => 16.384f, // 2^16 / (2 * 2000)
+                _ => throw new NotImplementedException(),
+            };
 
             var x = rawX / lsbPerDps;
             var y = rawY / lsbPerDps;
@@ -188,12 +170,12 @@ namespace Meadow.Foundation.Sensors.Accelerometers
         /// <returns>A tuple containing the X, Y, and Z values of the accelerometer.</returns>
         (short x, short y, short z) ReadAccelerometerRaw()
         {
-            byte[] readBuffer = new byte[6];
-            i2cComms.ReadRegister(OUTX_L_A, readBuffer);
+            Span<byte> rawData = stackalloc byte[6];
+            i2cComms.ReadRegister(OUTX_L_A, rawData);
 
-            short x = BitConverter.ToInt16(new byte[] { readBuffer[0], readBuffer[1] }, 0);
-            short y = BitConverter.ToInt16(new byte[] { readBuffer[2], readBuffer[3] }, 0);
-            short z = BitConverter.ToInt16(new byte[] { readBuffer[4], readBuffer[5] }, 0);
+            short x = BitConverter.ToInt16(rawData.Slice(0, 2));
+            short y = BitConverter.ToInt16(rawData.Slice(2, 2));
+            short z = BitConverter.ToInt16(rawData.Slice(4, 2));
 
             return (x, y, z);
         }
@@ -204,12 +186,12 @@ namespace Meadow.Foundation.Sensors.Accelerometers
         /// <returns>A tuple containing the X, Y, and Z values of the gyroscope.</returns>
         (short x, short y, short z) ReadGyroscopeRaw()
         {
-            byte[] readBuffer = new byte[6];
-            i2cComms.ReadRegister(OUTX_L_G, readBuffer);
+            Span<byte> rawData = stackalloc byte[6];
+            i2cComms.ReadRegister(OUTX_L_G, rawData);
 
-            short x = BitConverter.ToInt16(new byte[] { readBuffer[0], readBuffer[1] }, 0);
-            short y = BitConverter.ToInt16(new byte[] { readBuffer[2], readBuffer[3] }, 0);
-            short z = BitConverter.ToInt16(new byte[] { readBuffer[4], readBuffer[5] }, 0);
+            short x = BitConverter.ToInt16(rawData.Slice(0, 2));
+            short y = BitConverter.ToInt16(rawData.Slice(2, 2));
+            short z = BitConverter.ToInt16(rawData.Slice(4, 2));
 
             return (x, y, z);
         }
