@@ -1,8 +1,8 @@
-# Meadow.Foundation.Sensors.Motion.Lis3Mdl
+# Meadow.Foundation.Sensors.Motion.Lis3mdl
 
-**Lis3MDL I2C 3-axis magnetometer**
+**Lis3mdl I2C 3-axis magnetometer**
 
-The **Lis3Mdl** library is designed for the [Wilderness Labs](www.wildernesslabs.co) Meadow .NET IoT platform and is part of [Meadow.Foundation](https://developer.wildernesslabs.co/Meadow/Meadow.Foundation/).
+The **Lis3mdl** library is designed for the [Wilderness Labs](www.wildernesslabs.co) Meadow .NET IoT platform and is part of [Meadow.Foundation](https://developer.wildernesslabs.co/Meadow/Meadow.Foundation/).
 
 The **Meadow.Foundation** peripherals library is an open-source repository of drivers and libraries that streamline and simplify adding hardware to your C# .NET Meadow IoT application.
 
@@ -13,18 +13,18 @@ To view all Wilderness Labs open-source projects, including samples, visit [gith
 ## Usage
 
 ```csharp
-Lis3Mdl sensor;
+Lis3mdl sensor;
 
 public override Task Initialize()
 {
     Resolver.Log.Info("Initialize hardware...");
-    sensor = new Lis3Mdl(Device.CreateI2cBus());
+    sensor = new Lis3mdl(Device.CreateI2cBus());
 
     // classical .NET events can also be used:
     sensor.Updated += HandleResult;
 
     // Example that uses an IObservable subscription to only be notified when the filter is satisfied
-    var consumer = Lis3Mdl.CreateObserver(handler: result => HandleResult(this, result),
+    var consumer = Lis3mdl.CreateObserver(handler: result => HandleResult(this, result),
                                          filter: result => FilterResult(result));
 
     sensor.Subscribe(consumer);

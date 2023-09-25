@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace Meadow.Foundation.Sensors.Motion
 {
     /// <summary>
-    /// Represents a LSM6dsox is a system-in-package (SiP) that combines a 3D linear acceleration sensor and a 3D gyroscope sensor
+    /// Represents a Lsm6dsox is a system-in-package (SiP) that combines a 3D linear acceleration sensor and a 3D gyroscope sensor
     /// </summary>
     public partial class Lsm6dsox :
         PollingSensorBase<(Acceleration3D? Acceleration3D, AngularVelocity3D? AngularVelocity3D)>,
@@ -47,7 +47,7 @@ namespace Meadow.Foundation.Sensors.Motion
         private GyroFullScale currentGyroScale;
 
         /// <summary>
-        /// Create a new Lsm6dsox instance
+        /// Create a new instance of an Lsm6dsox 3D accelerometer and 3D gyroscope sensor.
         /// </summary>
         /// <param name="i2cBus">The I2C bus connected to the sensor</param>
         /// <param name="address">The I2C address</param>
@@ -99,13 +99,13 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <param name="changeResult">The updated sensor data</param>
         protected override void RaiseEventsAndNotify(IChangeResult<(Acceleration3D? Acceleration3D, AngularVelocity3D? AngularVelocity3D)> changeResult)
         {
-            if (changeResult.New.AngularVelocity3D is { } mag)
-            {
-                AngularVelocity3DUpdated?.Invoke(this, new ChangeResult<AngularVelocity3D>(mag, changeResult.Old?.AngularVelocity3D));
-            }
             if (changeResult.New.Acceleration3D is { } accel)
             {
                 Acceleration3DUpdated?.Invoke(this, new ChangeResult<Acceleration3D>(accel, changeResult.Old?.Acceleration3D));
+            }
+            if (changeResult.New.AngularVelocity3D is { } gyro)
+            {
+                AngularVelocity3DUpdated?.Invoke(this, new ChangeResult<AngularVelocity3D>(gyro, changeResult.Old?.AngularVelocity3D));
             }
             base.RaiseEventsAndNotify(changeResult);
         }
@@ -130,7 +130,7 @@ namespace Meadow.Foundation.Sensors.Motion
         Acceleration3D GetAcceleration3D(short rawX, short rawY, short rawZ)
         {
             float lsbPerG = currentAccelScale switch
-            {
+            {   
                 AccelFullScale.G2 => 16384.0f, // 2^16 / (2 * 2)
                 AccelFullScale.G4 => 8192.0f, // 2^16 / (2 * 4)
                 AccelFullScale.G8 => 4096.0f, // 2^16 / (2 * 8)

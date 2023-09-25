@@ -1,6 +1,6 @@
 ﻿namespace Meadow.Foundation.Sensors.Motion
 {
-    public partial class Lis3Mdl
+    public partial class Lis3mdl
     {
         /// <summary>
         /// Valid I2C addresses for the sensor
@@ -22,9 +22,9 @@
         }
 
         /// <summary>
-        /// Represents the output data rate (ODR) options for the Lis3MDL magnetometer.
+        /// Represents the output data rate options for the Lis3mdl magnetometer.
         /// </summary>
-        /// <remarks>The bit values here are already shifted to align with the [4:2] bits of the register.</remarks>
+        /// <remarks>The bit values here are already shifted to align with the bits of the <c>CTRL_REG1</c> register.</remarks>
         public enum OutputDataRate
         {
             /// <summary>
@@ -59,12 +59,28 @@
             /// Output Data Rate: 80 Hz.
             /// </summary>
             Odr80Hz = 0x1C,
+            /// <summary>
+            /// Output Data Rate: 155 Hz (FAST_ODR:1, OM: UHP)
+            /// </summary>
+            Odr155Hz = 0x62,
+            /// <summary>
+            /// Output Data Rate: 300 Hz (FAST_ODR:1, OM: HP)
+            /// </summary>
+            Odr300Hz = 0x42,
+            /// <summary>
+            /// Output Data Rate: 560 Hz (FAST_ODR:1, OM: MP)
+            /// </summary>
+            Odr560Hz = 0x22,
+            /// <summary>
+            /// Output Data Rate: 1000 Hz (FAST_ODR:1, OM: LP)
+            /// </summary>
+            Odr1kHz = 0x02,
         }
 
         /// <summary>
-        /// Represents the output scaling options for the Lis3MDL magnetometer.
+        /// Represents the output scaling options for the Lis3mdl magnetometer.
         /// </summary>
-        /// <remarks>The bit values here are already shifted to align with the [7:6] bits of the register.</remarks>
+        /// <remarks>The bit values here are already shifted to align with the bits of the <c>CTRL_REG2</c> register.</remarks>
         public enum FullScale
         {
             /// <summary>
@@ -86,8 +102,9 @@
         }
 
         /// <summary>
-        /// Represents the operating mode options for the Lis3MDL magnetometer.
+        /// Represents the operating mode options for the Lis3mdl magnetometer.
         /// </summary>
+        /// <remarks>The bit values here are already shifted to align with the bits of the <c>CTRL_REG3</c> register.</remarks>
         public enum OperatingMode
         {
             /// <summary>

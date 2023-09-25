@@ -9,15 +9,15 @@
     <Authors>Wilderness Labs, Inc</Authors>
     <TargetFramework>netstandard2.1</TargetFramework>
     <OutputType>Library</OutputType>
-    <AssemblyName>Lsm6Dsox</AssemblyName>
+    <AssemblyName>Lsm6dsox</AssemblyName>
     <Company>Wilderness Labs, Inc</Company>
     <PackageProjectUrl>http://developer.wildernesslabs.co/Meadow/Meadow.Foundation/</PackageProjectUrl>
-    <PackageId>Meadow.Foundation.Sensors.Motion.Lsm6Dsox</PackageId>
+    <PackageId>Meadow.Foundation.Sensors.Motion.Lsm6dsox</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
-    <PackageTags>Meadow.Foundation,Acceleration,Accelerometer,magnetometer,IMU,Lsm6Dsox</PackageTags>
+    <PackageTags>Meadow.Foundation,Acceleration,Accelerometer,gyroscope,IMU,Lsm6dsox</PackageTags>
     <Version>0.1.0</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Description>Lsm6Dsox I2C 6-axis accelerometer and magnetometer</Description>
+    <Description>Lsm6Dsox I2C 6-axis accelerometer and gyroscope</Description>
     <RootNamespace>Meadow.Foundation.Sensors.Motion</RootNamespace>
   </PropertyGroup>
   <ItemGroup>

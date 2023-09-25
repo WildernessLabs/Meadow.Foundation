@@ -8,14 +8,12 @@ using System.Threading.Tasks;
 namespace Meadow.Foundation.Sensors.Motion
 {
     /// <summary>
-    /// Represents a Lis3MDL, a low-power, high-performance 3-axis magnetometer from STMicroelectronics
-    /// with a default full range of ±4 gauss and a 16-bit resolution
+    /// Represents a Lis3mdl, a low-power, high-performance 3-axis magnetometer from STMicroelectronics
+    /// with a selectable full range of ±4 to ±16 gauss and a 16-bit resolution
     /// </summary>
-    public partial class Lis3Mdl : PollingSensorBase<MagneticField3D>, IMagnetometer, II2cPeripheral
+    public partial class Lis3mdl 
+        : PollingSensorBase<MagneticField3D>, IMagnetometer, II2cPeripheral
     {
-        // TODO: Should this also implement ITemperatureSensor and PollingSensorBase<(MagneticField3D, Units.Temperature)>? 
-        //       It's only a secondary/low resolution feature of the sensor.
-
         /// <summary>
         /// Event raised when magnetic field changes
         /// </summary>
@@ -32,41 +30,37 @@ namespace Meadow.Foundation.Sensors.Motion
         public byte DefaultI2cAddress => (byte)Addresses.Default;
 
         /// <summary>
-        /// Current Temperature Sensor reading
-        /// </summary>
-        public Units.Temperature? Temperature { get; }
-
-        /// <summary>
         /// I2C Communication bus used to communicate with the peripheral
         /// </summary>
         protected readonly II2cCommunications i2cComms;
 
-        // Local cached copy of the current scaling.
-        private FullScale currentScale;
+        // Local copies of sensor configuration
+        private FullScale currentFullScale = FullScale.PlusMinus4Gauss;
+        private OutputDataRate currentDataRate = OutputDataRate.Odr10Hz;
 
         /// <summary>
-        /// Create a new Lis3Mdl instance
+        /// Create a new instance of an Lis3mdl 3D magnetometer sensor.
         /// </summary>
         /// <param name="i2cBus">The I2C bus connected to the sensor</param>
         /// <param name="address">The I2C address</param>
-        public Lis3Mdl(II2cBus i2cBus, byte address = (byte)Addresses.Default)
+        /// <param name="fullScale">default <see cref="FullScale"/> enumeration value to use during initialization.</param>
+        public Lis3mdl(II2cBus i2cBus, byte address = (byte)Addresses.Default, FullScale fullScale = FullScale.PlusMinus4Gauss, OutputDataRate outputDataRate = OutputDataRate.Odr10Hz)
         {
             i2cComms = new I2cCommunications(i2cBus, address);
-
+            currentFullScale = fullScale;
+            currentDataRate = outputDataRate;
             Initialize();
         }
 
         /// <summary>
-        /// Initializes the LIS3MDL sensor
+        /// Initializes the Lis3mdl sensor
         /// </summary>
         void Initialize()
         {
             // Configure the device
-            i2cComms.WriteRegister(CTRL_REG1, 0x10); // Temperature sensor: ON, Low Power Mode, ODR: 10Hz
-            i2cComms.WriteRegister(CTRL_REG2, 0x00); // Full-scale: ±4 Gauss
-            i2cComms.WriteRegister(CTRL_REG3, 0x00); // Continuous mode
-
-            currentScale = FullScale.PlusMinus4Gauss;
+            i2cComms.WriteRegister(CTRL_REG1, (byte)currentDataRate); // Temperature sensor: Off, Output Data Rate: 10Hz
+            i2cComms.WriteRegister(CTRL_REG2, (byte)currentFullScale); // Full Scale: as configured, other values default
+            i2cComms.WriteRegister(CTRL_REG3, 0x00); // Normal Power, Continuous conversion mode
         }
 
         /// <summary>
@@ -88,20 +82,31 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <returns>The latest sensor reading</returns>
         protected override Task<MagneticField3D> ReadSensor()
         {
-            var (x, y, z) = ReadMagnetometerRaw();
+            MagneticField3D conditions;
+            var mag = ReadMagnetometerRaw();
+ 
+            conditions = GetMagneticField3D(mag.x, mag.y, mag.z);
 
-            var scaling = currentScale switch
+            return Task.FromResult(conditions);
+        }
+
+        MagneticField3D GetMagneticField3D(short rawX, short rawY, short rawZ) 
+        {
+           // Get the appropriate scale factor
+            var scaling = currentFullScale switch
             {
-                FullScale.PlusMinus4Gauss => 6842,
-                FullScale.PlusMinus8Gauss => 3421,
-                FullScale.PlusMinus12Gauss => 2281,
-                FullScale.PlusMinus16Gauss => 1711,
+                FullScale.PlusMinus4Gauss => 6842.0,
+                FullScale.PlusMinus8Gauss => 3421.0,
+                FullScale.PlusMinus12Gauss => 2281.0,
+                FullScale.PlusMinus16Gauss => 1711.0,
                 _ => throw new NotImplementedException(),
             };
 
-            var conditions = new MagneticField3D(x / scaling, y / scaling, z / scaling, MagneticField.UnitType.Gauss);
+            var x = rawX / scaling;
+            var y = rawY / scaling;
+            var z = rawZ / scaling;
 
-            return Task.FromResult(conditions);
+            return new MagneticField3D(x, y, z, MagneticField.UnitType.Gauss);
         }
 
         /// <summary>
@@ -111,7 +116,7 @@ namespace Meadow.Foundation.Sensors.Motion
         (short x, short y, short z) ReadMagnetometerRaw()
         {
             Span<byte> rawData = stackalloc byte[6];
-            i2cComms.ReadRegister(OUTX_L_REG, rawData);
+            i2cComms.ReadRegister(OUT_X_L, rawData);
 
             short x = BitConverter.ToInt16(rawData.Slice(0, 2));
             short y = BitConverter.ToInt16(rawData.Slice(2, 2));
@@ -126,9 +131,9 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <returns>The full scale range as a <see cref="FullScale"/> enum.</returns>
         public FullScale GetFullScale()
         {
-            byte scaleByte = i2cComms.ReadRegister(CTRL_REG2);
-            currentScale = (FullScale)(scaleByte & 0x60);
-            return currentScale;
+            byte registerValue = i2cComms.ReadRegister(CTRL_REG2);
+            currentFullScale = (FullScale)(registerValue & 0x60);
+            return currentFullScale;
         }
 
         /// <summary>
@@ -137,10 +142,10 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <param name="scale">The desired full scale range as a <see cref="FullScale"/> enum.</param>
         public void SetFullScale(FullScale scale)
         {
-            byte scaleByte = i2cComms.ReadRegister(CTRL_REG2);
-            scaleByte &= 0x9F; // Clear bits 6:5
-            scaleByte |= (byte)scale;
-            i2cComms.WriteRegister(CTRL_REG2, scaleByte);
+            byte registerValue = i2cComms.ReadRegister(CTRL_REG2);
+            registerValue &= 0x9F; // Clear bits 6:5
+            registerValue |= (byte)scale;
+            i2cComms.WriteRegister(CTRL_REG2, registerValue);
         }
 
         /// <summary>
@@ -149,8 +154,8 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <returns>The output data rate as a <see cref="OutputDataRate"/> enum.</returns>
         public OutputDataRate GetOutputDataRate()
         {
-            byte odrByte = i2cComms.ReadRegister(CTRL_REG1);
-            return (OutputDataRate)(odrByte & 0x1C);
+            byte registerValue = i2cComms.ReadRegister(CTRL_REG1);
+            return (OutputDataRate)(registerValue & 0x1C);
         }
 
         /// <summary>
@@ -159,10 +164,10 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <param name="odr">The desired output data rate as a <see cref="OutputDataRate"/> enum.</param>
         public void SetOutputDataRate(OutputDataRate odr)
         {
-            byte odrByte = i2cComms.ReadRegister(CTRL_REG1);
-            odrByte &= 0xE3; // Clear bits 4:2
-            odrByte |= (byte)odr;
-            i2cComms.WriteRegister(CTRL_REG1, odrByte);
+            byte registerValue = i2cComms.ReadRegister(CTRL_REG1);
+            registerValue &= 0xE3; // Clear bits 4:2
+            registerValue |= (byte)odr;
+            i2cComms.WriteRegister(CTRL_REG1, registerValue);
         }
 
         /// <summary>
@@ -171,8 +176,8 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <returns>The operating mode as a <see cref="OperatingMode"/> enum.</returns>
         public OperatingMode GetOperatingMode()
         {
-            byte modeByte = i2cComms.ReadRegister(CTRL_REG3);
-            return (OperatingMode)(modeByte & 0x03);
+            byte registerValue = i2cComms.ReadRegister(CTRL_REG3);
+            return (OperatingMode)(registerValue & 0x03);
         }
 
         /// <summary>
@@ -181,10 +186,10 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <param name="mode">The desired operating mode as a <see cref="OperatingMode"/> enum.</param>
         public void SetOperatingMode(OperatingMode mode)
         {
-            byte modeByte = i2cComms.ReadRegister(CTRL_REG3);
-            modeByte &= 0xFC; // Clear bits 0 and 1
-            modeByte |= (byte)mode;
-            i2cComms.WriteRegister(CTRL_REG3, modeByte);
+            byte registerValue = i2cComms.ReadRegister(CTRL_REG3);
+            registerValue &= 0xFC; // Clear bits 0 and 1
+            registerValue |= (byte)mode;
+            i2cComms.WriteRegister(CTRL_REG3, registerValue);
         }
         /// <summary>
         /// Gets the status of the Fast Read feature.
@@ -202,16 +207,16 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <param name="enable">true to enable Fast Read, false to disable it.</param>
         public void SetFastRead(bool enable)
         {
-            byte fastReadByte = i2cComms.ReadRegister(CTRL_REG1);
+            byte registerValue = i2cComms.ReadRegister(CTRL_REG1);
             if (enable)
             {
-                fastReadByte |= 0x02; // Set bit 1
+                registerValue |= 0x02; // Set bit 1
             }
             else
             {
-                fastReadByte &= 0xFD; // Clear bit 1
+                registerValue &= 0xFD; // Clear bit 1
             }
-            i2cComms.WriteRegister(CTRL_REG1, fastReadByte);
+            i2cComms.WriteRegister(CTRL_REG1, registerValue);
         }
 
         /// <summary>
@@ -220,8 +225,8 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <returns>true if BDU is enabled, false otherwise.</returns>
         public bool GetBlockDataUpdate()
         {
-            byte bduByte = i2cComms.ReadRegister(CTRL_REG5);
-            return (bduByte & 0x40) == 0x40;
+            byte registerValue = i2cComms.ReadRegister(CTRL_REG5);
+            return (registerValue & 0x40) == 0x40;
         }
 
         /// <summary>
@@ -230,16 +235,16 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <param name="enable">true to enable BDU, false to disable it.</param>
         public void SetBlockDataUpdate(bool enable)
         {
-            byte bduByte = i2cComms.ReadRegister(CTRL_REG5);
+            byte registerValue = i2cComms.ReadRegister(CTRL_REG5);
             if (enable)
             {
-                bduByte |= 0x40; // Set bit 6
+                registerValue |= 0x40; // Set bit 6
             }
             else
             {
-                bduByte &= 0x40; // Clear bit 6
+                registerValue &= 0xBF; // Clear bit 6
             }
-            i2cComms.WriteRegister(CTRL_REG5, bduByte);
+            i2cComms.WriteRegister(CTRL_REG5, registerValue);
         }
 
         /// <summary>
@@ -248,8 +253,8 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <returns>true if temperature sensor is enabled, false otherwise.</returns>
         public bool GetTemperatureSensorEnable()
         {
-            byte tempSenseByte = i2cComms.ReadRegister(CTRL_REG1);
-            return (tempSenseByte & 0x80) == 0x80;
+            byte registerValue = i2cComms.ReadRegister(CTRL_REG1);
+            return (registerValue & 0x80) == 0x80;
         }
 
         /// <summary>
@@ -258,44 +263,18 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <param name="enable">true to enable the temperature sensor, false to disable it.</param>
         public void SetTemperatureSensorEnable(bool enable)
         {
-            byte tempSenseByte = i2cComms.ReadRegister(CTRL_REG1);
+            byte registerValue = i2cComms.ReadRegister(CTRL_REG1);
             if (enable)
             {
-                tempSenseByte |= 0x80; // Set bit 7
+                registerValue |= 0x80; // Set bit 7
             }
             else
             {
-                tempSenseByte &= 0x7F; // Clear bit 7
+                registerValue &= 0x7F; // Clear bit 7
             }
-            i2cComms.WriteRegister(CTRL_REG1, tempSenseByte);
+            i2cComms.WriteRegister(CTRL_REG1, registerValue);
         }
 
-        /// <summary>
-        /// Reads raw temperature data
-        /// </summary>
-        /// <returns>Raw temperature reported by the magnetometer.</returns>
-        short ReadTemperatureRaw()
-        {
-            Span<byte> rawData = stackalloc byte[2];
-            i2cComms.ReadRegister(TEMP_L_REG, rawData);
-
-            short t = BitConverter.ToInt16(rawData);
-
-            return t;
-        }
-
-        /// <summary>
-        /// Reads temperature data from the sensor
-        /// </summary>
-        /// <returns>The latest sensor reading</returns>
-        protected Task<Units.Temperature> ReadTemperature()
-        {
-            var raw = ReadTemperatureRaw();
-
-            var temperature = new Units.Temperature(raw / 8.0, Units.Temperature.UnitType.Celsius);
-
-            return Task.FromResult(temperature);
-        }
-
+        async Task<MagneticField3D> ISensor<MagneticField3D>.Read() => await Read();
     }
 }

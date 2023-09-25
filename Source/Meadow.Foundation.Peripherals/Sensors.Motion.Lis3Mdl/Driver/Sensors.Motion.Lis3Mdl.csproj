@@ -9,15 +9,15 @@
     <Authors>Wilderness Labs, Inc</Authors>
     <TargetFramework>netstandard2.1</TargetFramework>
     <OutputType>Library</OutputType>
-    <AssemblyName>Lis3Mdl</AssemblyName>
+    <AssemblyName>Lis3mdl</AssemblyName>
     <Company>Wilderness Labs, Inc</Company>
     <PackageProjectUrl>http://developer.wildernesslabs.co/Meadow/Meadow.Foundation/</PackageProjectUrl>
-    <PackageId>Meadow.Foundation.Sensors.Motion.Lis3Mdl</PackageId>
+    <PackageId>Meadow.Foundation.Sensors.Motion.Lis3mdl</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
-    <PackageTags>Meadow.Foundation,magnetometer,Lis3Mdl</PackageTags>
+    <PackageTags>Meadow.Foundation,magnetometer,Lis3mdl</PackageTags>
     <Version>0.1.0</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Description>LIS3MDL I2C 3-axis magnetometer</Description>
+    <Description>Lis3mdl I2C 3-axis magnetometer</Description>
     <RootNamespace>Meadow.Foundation.Sensors.Motion</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
