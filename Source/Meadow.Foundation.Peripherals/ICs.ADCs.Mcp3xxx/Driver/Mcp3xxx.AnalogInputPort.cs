@@ -117,8 +117,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// </summary>
             public void StartUpdating(TimeSpan? updateInterval = null)
             {
-                Console.WriteLine("StartUpdating");
-
                 // thread safety
                 lock (_lock)
                 {

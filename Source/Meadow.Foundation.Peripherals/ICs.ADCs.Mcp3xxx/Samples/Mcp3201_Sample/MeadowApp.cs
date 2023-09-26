@@ -2,7 +2,6 @@
 using Meadow.Devices;
 using Meadow.Foundation.ICs.IOExpanders;
 using Meadow.Hardware;
-using System;
 using System.Threading.Tasks;
 
 namespace ICs.IOExpanders.Mcp3001_Sample
@@ -27,7 +26,7 @@ namespace ICs.IOExpanders.Mcp3001_Sample
 
             port.Updated += (s, result) =>
             {
-                Console.WriteLine($"Analog event, new voltage: {result.New.Volts}V, old: {result.Old?.Volts}V");
+                Resolver.Log.Info($"Analog event, new voltage: {result.New.Volts}V, old: {result.Old?.Volts}V");
             };
 
             var observer = IAnalogInputPort.CreateObserver(

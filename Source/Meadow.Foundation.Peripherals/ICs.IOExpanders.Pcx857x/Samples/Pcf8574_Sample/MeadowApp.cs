@@ -2,7 +2,6 @@
 using Meadow.Devices;
 using Meadow.Foundation.ICs.IOExpanders;
 using Meadow.Hardware;
-using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -68,12 +67,12 @@ namespace ICs.IOExpanders.Pcf8574_Sample
                     Thread.Sleep(1000);
 
                     // turn on just one
-                    Console.WriteLine($"Update pin {i} to {true}");
+                    Resolver.Log.Info($"Update pin {i} to {true}");
                     outputPorts[i].State = true;
                     Thread.Sleep(250);
 
                     // turn off just one
-                    Console.WriteLine($"Update pin {i} to {false}");
+                    Resolver.Log.Info($"Update pin {i} to {false}");
                     outputPorts[i].State = false;
                     Thread.Sleep(250);
                 }

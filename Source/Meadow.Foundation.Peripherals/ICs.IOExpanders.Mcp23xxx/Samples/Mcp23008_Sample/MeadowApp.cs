@@ -2,7 +2,6 @@
 using Meadow.Devices;
 using Meadow.Foundation.ICs.IOExpanders;
 using Meadow.Hardware;
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
@@ -54,7 +53,7 @@ namespace ICs.IOExpanders.Mcp23008_Sample
 
             var state = false;
             var stopwatch = new Stopwatch();
-            Console.WriteLine("Starting benchmark");
+            Resolver.Log.Info("Starting benchmark");
 
             for (var x = 0; x < 10; x++)
             {
@@ -70,10 +69,10 @@ namespace ICs.IOExpanders.Mcp23008_Sample
                 }
                 stopwatch.Stop();
 
-                Console.WriteLine($"{100 * outputPorts.Count} pins toggled in {stopwatch.ElapsedMilliseconds}ms");
+                Resolver.Log.Info($"{100 * outputPorts.Count} pins toggled in {stopwatch.ElapsedMilliseconds}ms");
             }
 
-            Console.WriteLine("Benchmark finished");
+            Resolver.Log.Info("Benchmark finished");
         }
 
         private void TestDigitalOutputPorts(int loopCount)

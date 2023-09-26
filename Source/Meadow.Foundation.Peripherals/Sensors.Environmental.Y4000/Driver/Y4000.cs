@@ -133,7 +133,6 @@ namespace Meadow.Foundation.Sensors.Environmental
 
             if (enablePin != null)
             {
-                Console.WriteLine("Create enable pin");
                 var enablePort = device.CreateDigitalOutputPort(enablePin, false);
                 modbusClient = new ModbusRtuClient(serialPort, enablePort);
             }
