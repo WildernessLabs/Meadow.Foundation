@@ -46,6 +46,12 @@ public abstract class Control : IControl
     /// <param name="value">The new value to assign to the property.</param>
     protected void SetInvalidatingProperty<T>(ref T field, T value)
     {
+        if (field != null && field.Equals(value))
+        {
+            // do nothing if they are equal
+            return;
+        }
+
         field = value;
         Invalidate();
     }
