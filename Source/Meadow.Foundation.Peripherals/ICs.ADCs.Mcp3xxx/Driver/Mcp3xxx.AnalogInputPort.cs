@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Meadow.Foundation.ICs.IOExpanders
 {
-    abstract partial class Mcp3xxx
+    public abstract partial class Mcp3xxx
     {
         /// <summary>
         /// Represents an Mcp3xxx analog input port
@@ -73,6 +73,27 @@ namespace Meadow.Foundation.ICs.IOExpanders
             private CancellationTokenSource? SamplingTokenSource;
 
             private readonly object _lock = new();
+
+            /// <summary>
+            /// Create a new AnalogInputPort object
+            /// </summary>
+            public AnalogInputPort(Mcp3xxx controller,
+                IPin pin,
+                IAnalogChannelInfo channel,
+                int sampleCount,
+                Voltage referenceVoltage,
+                InputType inputType = InputType.SingleEnded)
+                : base(pin, channel)
+            {
+                this.controller = controller;
+
+                SampleCount = sampleCount;
+                ChannelInputType = inputType;
+
+                ReferenceVoltage = referenceVoltage;
+
+                VoltageSampleBuffer = new Voltage[SampleCount];
+            }
 
             /// <summary>
             /// Create a new AnalogInputPort object
