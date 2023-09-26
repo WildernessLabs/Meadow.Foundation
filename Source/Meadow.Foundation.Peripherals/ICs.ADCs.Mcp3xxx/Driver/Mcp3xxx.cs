@@ -288,8 +288,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
             SpiComms.Exchange(requestBuffer, responseBuffer);
 
-            Console.WriteLine($"response: {BitConverter.ToString(responseBuffer.ToArray())}");
-
             // copy the response from the ADC to the return value
             for (int i = 0; i < bufferSize; i++)
             {
