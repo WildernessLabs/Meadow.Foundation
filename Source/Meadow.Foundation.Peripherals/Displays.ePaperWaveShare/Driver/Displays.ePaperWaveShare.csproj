@@ -22,6 +22,6 @@
   <ItemGroup>
     <None Include=".\Readme.md" Pack="true" PackagePath=""/>
     <None Include="..\..\..\icon.png" Pack="true" PackagePath="" />
-    <ProjectReference Include="..\..\Displays.ePaper\Driver\Displays.ePaper.csproj" />
+    <PackageReference Include="Meadow.Foundation.Displays.ePaper" Version="*" />
   </ItemGroup>
 </Project>

@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Driver\ICs.IOExpanders.Ft232h.csproj" />
+    <PackageReference Include="Meadow.Foundation.ICs.IOExpanders.Ft232h" Version="*" />
   </ItemGroup>
 
 </Project>
