@@ -11,7 +11,7 @@
     <AssemblyName>Mcp3xxx</AssemblyName>
     <Company>Wilderness Labs, Inc</Company>
     <PackageProjectUrl>http://developer.wildernesslabs.co/Meadow/Meadow.Foundation/</PackageProjectUrl>
-    <PackageId>Meadow.Foundation.ADCs.Mcp3xxx</PackageId>
+    <PackageId>Meadow.Foundation.ICs.ADCs.Mcp3xxx</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow.Foundation,Meadow,ADC,analog,digital,Mcp3001,Mcp3002,Mcp3004,Mcp3008,Mcp3201,Mcp3202,Mcp3204,Mcp3208</PackageTags>
     <Version>0.1.0</Version>

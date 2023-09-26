@@ -1,13 +1,12 @@
 ﻿using Meadow;
 using Meadow.Devices;
-using Meadow.Foundation.Sensors.Accelerometers;
+using Meadow.Foundation.Sensors.Motion;
 using Meadow.Units;
 using System;
 using System.Threading.Tasks;
 
 namespace Lis2Mdl_Sample
 {
-    // Change F7FeatherV2 to F7FeatherV1 for V1.x boards
     public class MeadowApp : App<F7CoreComputeV2>
     {
         //<!=SNIP=>

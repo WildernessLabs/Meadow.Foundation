@@ -1,4 +1,4 @@
-# Meadow.Foundation.ADCs.Mcp3xxx
+# Meadow.Foundation.ICs.ADCs.Mcp3xxx
 
 **Mcp3xxx SPI analog-to-digital converter (MCP3001, MCP3002, MCP3004, MCP3008, MCP3201, MCP3202, MCP3204, MCP3208)**
 
@@ -29,7 +29,7 @@ public override Task Initialize()
 
     port.Updated += (s, result) =>
     {
-        Console.WriteLine($"Analog event, new voltage: {result.New.Volts:N2}V, old: {result.Old?.Volts:N2}V");
+        Resolver.Log.Info($"Analog event, new voltage: {result.New.Volts:N2}V, old: {result.Old?.Volts:N2}V");
     };
 
     var observer = IAnalogInputPort.CreateObserver(

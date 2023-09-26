@@ -94,7 +94,6 @@ namespace Meadow.Foundation.Sensors.HallEffect
             // if it's the very first read, set the time and bail out
             if (numberOfReads == 0 && revolutionTimeStart == DateTime.MinValue)
             {
-                //S.Console.WriteLine("First reading.");
                 revolutionTimeStart = time;
                 numberOfReads++;
                 return;
@@ -106,31 +105,18 @@ namespace Meadow.Foundation.Sensors.HallEffect
             // if we've made a full revolution
             if (numberOfReads == NumberOfMagnets)
             {
-                //S.Console.WriteLine("Viva La Revolucion!");
                 // calculate how much time has elapsed since the start of the revolution 
                 var revolutionTime = time - revolutionTimeStart;
 
-                //S.Console.WriteLine("RevTime Milliseconds: " + revolutionTime.Milliseconds.ToString());
-
                 if (revolutionTime.Milliseconds < 3)
                 {
-                    //S.Console.WriteLine("rev time < 3. Garbage, bailing.");
                     numberOfReads = 0;
                     revolutionTimeStart = time;
                     return;
                 }
 
                 // calculate our rpms
-                // RPSecond = 1000 / revTime.millis
-                // PPMinute = RPSecond * 60
                 rpms = 1000 / (float)revolutionTime.Milliseconds * 60;
-
-                //if (revolutionTime.Milliseconds < 5) {
-                //    S.Console.WriteLine("revolution time was < 5. garbage results.");
-                //} else {
-                //    S.Console.WriteLine("RPMs: " + _RPMs);
-                //}
-
 
                 // reset our number of reads and store our revolution time start
                 numberOfReads = 0;
