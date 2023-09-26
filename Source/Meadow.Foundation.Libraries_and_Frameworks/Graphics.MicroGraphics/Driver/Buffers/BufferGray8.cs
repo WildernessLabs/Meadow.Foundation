@@ -3,7 +3,7 @@
 namespace Meadow.Foundation.Graphics.Buffers
 {
     /// <summary>
-    /// Represents a 8bpp greyscale pixel buffer
+    /// Represents a 8bpp grayscale pixel buffer
     /// </summary>
     public class BufferGray8 : PixelBufferBase
     {

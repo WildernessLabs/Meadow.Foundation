@@ -20,11 +20,8 @@
     <LangVersion>10.0</LangVersion>
   </PropertyGroup>
   <ItemGroup>
-    <None Include=".\Readme.md" Pack="true" PackagePath=""/>
+    <None Include=".\Readme.md" Pack="true" PackagePath="" />
     <None Include="..\..\..\icon.png" Pack="true" PackagePath="" />
     <PackageReference Include="Meadow.Foundation.Graphics.MicroGraphics" Version="*" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="StackLayout.cs" />
   </ItemGroup>
 </Project>

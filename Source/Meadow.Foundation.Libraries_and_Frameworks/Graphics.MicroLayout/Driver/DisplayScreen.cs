@@ -1,10 +1,12 @@
-﻿using Meadow.Foundation.Graphics;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
 using System.Linq;
 using System.Threading;
 
 namespace Meadow.Foundation.Graphics.MicroLayout;
 
+/// <summary>
+/// An abstraction of a physical screen
+/// </summary>
 public class DisplayScreen
 {
     private IGraphicsDisplay _display;
@@ -12,9 +14,9 @@ public class DisplayScreen
     private ITouchScreen? _touchScreen;
 
     /// <summary>
-    /// Gets or sets the collection of controls on the display screen.
+    /// Gets the collection of controls on the display screen.
     /// </summary>
-    public ControlsCollection Controls { get; set; }
+    public ControlsCollection Controls { get; }
 
     /// <summary>
     /// Gets or sets the background color of the display screen.
@@ -30,6 +32,8 @@ public class DisplayScreen
     /// Gets the height of the display screen.
     /// </summary>
     public int Height => _graphics.Height;
+
+    private bool IsInvalid { get; set; }
 
     internal DisplayTheme? Theme { get; }
 
@@ -70,13 +74,16 @@ public class DisplayScreen
 
     private void _touchScreen_TouchUp(int x, int y)
     {
-        foreach (var control in Controls)
+        lock (Controls.SyncRoot)
         {
-            if (control is IClickableDisplayControl c)
+            foreach (var control in Controls)
             {
-                if (control.Contains(x, y))
+                if (control is IClickableControl c)
                 {
-                    c.Pressed = false;
+                    if (control.Contains(x, y))
+                    {
+                        c.Pressed = false;
+                    }
                 }
             }
         }
@@ -84,14 +91,38 @@ public class DisplayScreen
 
     private void _touchScreen_TouchDown(int x, int y)
     {
-        foreach (var control in Controls)
+        lock (Controls.SyncRoot)
         {
-            if (control is IClickableDisplayControl c)
+            foreach (var control in Controls)
             {
-                if (control.Contains(x, y))
+                if (control is IClickableControl c)
                 {
-                    c.Pressed = true;
+                    if (control.Contains(x, y))
+                    {
+                        c.Pressed = true;
+                    }
                 }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Invalidates the entire screen, causing all controls to redraw
+    /// </summary>
+    public void Invalidate()
+    {
+        IsInvalid = true;
+    }
+
+    private void RefreshTree(IControl control)
+    {
+        control.Refresh(_graphics);
+
+        if (control is Layout l)
+        {
+            foreach (var c in l.Controls)
+            {
+                RefreshTree(c);
             }
         }
     }
@@ -102,18 +133,20 @@ public class DisplayScreen
         {
             Resolver.App.InvokeOnMainThread((_) =>
             {
-                if (Controls.Any(c => c.IsInvalid))
+                if (IsInvalid || Controls.Any(c => c.IsInvalid))
                 {
                     _graphics.Clear(BackgroundColor);
 
-                    foreach (var control in Controls)
+                    lock (Controls.SyncRoot)
                     {
-                        // until micrographics supports invalidating regions, we have to invalidate everything when one control needs updating
-                        control.Invalidate();
-                        control.Refresh(_graphics);
+                        foreach (var control in Controls)
+                        {
+                            // until micrographics supports invalidating regions, we have to invalidate everything when one control needs updating
+                            RefreshTree(control);
+                        }
                     }
-
                     _graphics.Show();
+                    IsInvalid = false;
                 }
             });
 

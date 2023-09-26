@@ -34,23 +34,23 @@ namespace Leds.RgbPwmLed_Onboard_Sample
         {
             while (true)
             {
-                Console.WriteLine("SetColor(RgbLedColors.Red);");
+                Resolver.Log.Info("SetColor(RgbLedColors.Red);");
                 onboardLed.SetColor(Color.Red);
                 await Task.Delay(3000);
 
-                Console.WriteLine("StartPulse();");
+                Resolver.Log.Info("StartPulse();");
                 await onboardLed.StartPulse();
                 await Task.Delay(3000);
 
-                Console.WriteLine("StartPulse(RgbLedColors.Green);");
+                Resolver.Log.Info("StartPulse(RgbLedColors.Green);");
                 await onboardLed.StartPulse(Color.Green);
                 await Task.Delay(3000);
 
-                Console.WriteLine("SetColor(RgbLedColors.Yellow);");
+                Resolver.Log.Info("SetColor(RgbLedColors.Yellow);");
                 onboardLed.SetColor(Color.Yellow);
                 await Task.Delay(3000);
 
-                Console.WriteLine("StartPulse(RgbLedColors.Cyan, 200, 200);");
+                Resolver.Log.Info("StartPulse(RgbLedColors.Cyan, 200, 200);");
                 await onboardLed.StartPulse(Color.Cyan, TimeSpan.FromMilliseconds(400));
                 await Task.Delay(3000);
 

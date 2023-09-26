@@ -17,7 +17,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// This provides raw port state data from the MCP23xxx
         /// It's highly recommended to prefer using the events exposed on the digital input ports instead.
         /// </summary>
-        public event EventHandler<IOExpanderInputChangedEventArgs> InputChanged = null;
+        public event EventHandler<IOExpanderInputChangedEventArgs>? InputChanged = null;
 
         /// <summary>
         /// The number of IO pins avaliable on the device
@@ -60,7 +60,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
         private readonly IByteCommunications mcpDevice;
         private IDigitalOutputPort resetPort;
 
-        private IDictionary<IPin, DigitalInputPort> inputPorts;
         private IDictionary<IPin, DigitalInterruptPort> interruptPorts;
 
         private byte ioDirA, ioDirB;
@@ -69,7 +68,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <summary>
         /// object for using lock() to do thread sync
         /// </summary>
-        protected object _lock = new object();
+        protected object _lock = new();
 
         /// <summary>
         /// Mcpxxx base class contructor
@@ -115,7 +114,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 ResetMcp();
             }
 
-            inputPorts = new Dictionary<IPin, DigitalInputPort>();
             interruptPorts = new Dictionary<IPin, DigitalInterruptPort>();
 
             mcpDevice.WriteRegister(MapRegister(Registers.IODIR_IODirection, PortBank.A), 0xFF);
@@ -256,11 +254,13 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <returns>IDigitalInputPort</returns>
         public IDigitalInputPort CreateDigitalInputPort(IPin pin, ResistorMode resistorMode = ResistorMode.Disabled)
         {
-            var port = new DigitalInputPort(pin, resistorMode);
-            ConfigureMcpInputPort(pin, resistorMode == ResistorMode.InternalPullUp, InterruptMode.None);
-            inputPorts.Add(pin, port);
-            return port;
-
+            if (IsValidPin(pin))
+            {
+                var port = new DigitalInputPort(pin, resistorMode);
+                ConfigureMcpInputPort(pin, resistorMode == ResistorMode.InternalPullUp, InterruptMode.None);
+                return port;
+            }
+            throw new Exception("Pin is out of range");
         }
 
         /// <summary>
@@ -269,7 +269,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <param name="pin">The pin representing the port</param>
         /// <param name="interruptMode">The port interrupt mode</param>
         /// <param name="resistorMode">The port resistor mode</param>
-        /// <returns>IDigitalInputPort</returns>
+        /// <returns>IDigitalInterruptPort</returns>
         public IDigitalInterruptPort CreateDigitalInterruptPort(
             IPin pin,
             InterruptMode interruptMode = InterruptMode.None,
@@ -285,7 +285,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <param name="interruptMode">The port interrupt mode</param>
         /// <param name="resistorMode">The port resistor mode</param>
         /// <param name="debounceDuration">The debounce duration</param>
-        /// <returns>IDigitalInputPort</returns>
+        /// <returns>IDigitalInterruptPort</returns>
         public IDigitalInterruptPort CreateDigitalInterruptPort(
             IPin pin,
             InterruptMode interruptMode,
@@ -303,7 +303,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <param name="resistorMode">The port resistor mode</param>
         /// <param name="debounceDuration">The debounce duration</param>
         /// <param name="glitchDuration">The clitch duration - not configurable on Mcpxxxx</param>
-        /// <returns>IDigitalInputPort</returns>
+        /// <returns>IDigitalInterruptPort</returns>
         public IDigitalInterruptPort CreateDigitalInterruptPort(
             IPin pin,
             InterruptMode interruptMode,

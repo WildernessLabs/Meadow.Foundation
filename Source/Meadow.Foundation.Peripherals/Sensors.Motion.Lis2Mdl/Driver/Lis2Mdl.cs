@@ -4,7 +4,7 @@ using Meadow.Units;
 using System;
 using System.Threading.Tasks;
 
-namespace Meadow.Foundation.Sensors.Accelerometers
+namespace Meadow.Foundation.Sensors.Motion
 {
     /// <summary>
     /// Represents a LIS2MDL is a low-power, high-performance 3-axis magnetometer from STMicroelectronics
@@ -22,9 +22,7 @@ namespace Meadow.Foundation.Sensors.Accelerometers
         /// </summary>
         public MagneticField3D? MagneticField3D => Conditions;
 
-        /// <summary>
-        /// The default I2C address for the peripheral
-        /// </summary>
+        /// <inheritdoc/>
         public byte DefaultI2cAddress => (byte)Addresses.Default;
 
         /// <summary>
@@ -45,18 +43,18 @@ namespace Meadow.Foundation.Sensors.Accelerometers
         }
 
         /// <summary>
-        /// Initializes the LSM303AGR sensor
+        /// Initializes the LIS2MDL sensor
         /// </summary>
         void Initialize()
         {
             // Configure the device
-            i2cComms.WriteRegister(CTRL_REG1, 0x10); // Temperature compensation: ON, ODR: 10Hz, Mode: Continuous
-            i2cComms.WriteRegister(CTRL_REG2, 0x00); // Full-scale: ±50 Gauss
-            i2cComms.WriteRegister(CTRL_REG3, 0x00); // Continuous mode
+            i2cComms.WriteRegister(CFG_REG_A, 0x10); // Temperature compensation: ON, ODR: 10Hz, Mode: Continuous
+            i2cComms.WriteRegister(CFG_REG_B, 0x00); // Full-scale: ±50 Gauss
+            i2cComms.WriteRegister(CFG_REG_C, 0x00); // Continuous mode
         }
 
         /// <summary>
-        /// Raise events for subcribers and notify of value changes
+        /// Raise events for subscribers and notify of value changes
         /// </summary>
         /// <param name="changeResult">The updated sensor data</param>
         protected override void RaiseEventsAndNotify(IChangeResult<MagneticField3D> changeResult)
@@ -76,7 +74,8 @@ namespace Meadow.Foundation.Sensors.Accelerometers
         {
             var (x, y, z) = ReadMagnetometerRaw();
 
-            var conditions = new MagneticField3D(x / 1500.0, y / 1500.0, z / 1500.0, MagneticField.UnitType.Gauss);
+            var sensitivity = 0.0015; // 1.5 mGauss / LSB
+            var conditions = new MagneticField3D(x * sensitivity, y / 1500.0, z / 1500.0, MagneticField.UnitType.Gauss);
 
             return Task.FromResult(conditions);
         }
@@ -103,7 +102,7 @@ namespace Meadow.Foundation.Sensors.Accelerometers
         /// <returns>The output data rate as a <see cref="OutputDataRate"/> enum.</returns>
         public OutputDataRate GetOutputDataRate()
         {
-            byte odrByte = i2cComms.ReadRegister(CTRL_REG1);
+            byte odrByte = i2cComms.ReadRegister(CFG_REG_A);
             return (OutputDataRate)(odrByte & 0x0C);
         }
 
@@ -113,10 +112,10 @@ namespace Meadow.Foundation.Sensors.Accelerometers
         /// <param name="odr">The desired output data rate as a <see cref="OutputDataRate"/> enum.</param>
         public void SetOutputDataRate(OutputDataRate odr)
         {
-            byte odrByte = i2cComms.ReadRegister(CTRL_REG1);
+            byte odrByte = i2cComms.ReadRegister(CFG_REG_A);
             odrByte &= 0xF3; // Clear bits 2 and 3
             odrByte |= (byte)odr;
-            i2cComms.WriteRegister(CTRL_REG1, odrByte);
+            i2cComms.WriteRegister(CFG_REG_A, odrByte);
         }
 
         /// <summary>
@@ -125,7 +124,7 @@ namespace Meadow.Foundation.Sensors.Accelerometers
         /// <returns>The operating mode as a <see cref="OperatingMode"/> enum.</returns>
         public OperatingMode GetOperatingMode()
         {
-            byte modeByte = i2cComms.ReadRegister(CTRL_REG3);
+            byte modeByte = i2cComms.ReadRegister(CFG_REG_C);
             return (OperatingMode)(modeByte & 0x03);
         }
 
@@ -135,10 +134,10 @@ namespace Meadow.Foundation.Sensors.Accelerometers
         /// <param name="mode">The desired operating mode as a <see cref="OperatingMode"/> enum.</param>
         public void SetOperatingMode(OperatingMode mode)
         {
-            byte modeByte = i2cComms.ReadRegister(CTRL_REG3);
+            byte modeByte = i2cComms.ReadRegister(CFG_REG_C);
             modeByte &= 0xFC; // Clear bits 0 and 1
             modeByte |= (byte)mode;
-            i2cComms.WriteRegister(CTRL_REG3, modeByte);
+            i2cComms.WriteRegister(CFG_REG_C, modeByte);
         }
 
         /// <summary>
@@ -147,7 +146,7 @@ namespace Meadow.Foundation.Sensors.Accelerometers
         /// <returns>true if temperature compensation is enabled, false otherwise.</returns>
         public bool GetTemperatureCompensation()
         {
-            byte tempCompByte = i2cComms.ReadRegister(CTRL_REG1);
+            byte tempCompByte = i2cComms.ReadRegister(CFG_REG_A);
             return (tempCompByte & 0x80) == 0x80;
         }
 
@@ -157,7 +156,7 @@ namespace Meadow.Foundation.Sensors.Accelerometers
         /// <param name="enable">true to enable temperature compensation, false to disable it.</param>
         public void SetTemperatureCompensation(bool enable)
         {
-            byte tempCompByte = i2cComms.ReadRegister(CTRL_REG1);
+            byte tempCompByte = i2cComms.ReadRegister(CFG_REG_A);
             if (enable)
             {
                 tempCompByte |= 0x80; // Set bit 7
@@ -166,7 +165,7 @@ namespace Meadow.Foundation.Sensors.Accelerometers
             {
                 tempCompByte &= 0x7F; // Clear bit 7
             }
-            i2cComms.WriteRegister(CTRL_REG1, tempCompByte);
+            i2cComms.WriteRegister(CFG_REG_A, tempCompByte);
         }
 
         /// <summary>
@@ -175,7 +174,7 @@ namespace Meadow.Foundation.Sensors.Accelerometers
         /// <returns>true if Fast Read is enabled, false otherwise.</returns>
         public bool GetFastRead()
         {
-            byte fastReadByte = i2cComms.ReadRegister(CTRL_REG1);
+            byte fastReadByte = i2cComms.ReadRegister(CFG_REG_A);
             return (fastReadByte & 0x02) == 0x02;
         }
 
@@ -185,7 +184,7 @@ namespace Meadow.Foundation.Sensors.Accelerometers
         /// <param name="enable">true to enable Fast Read, false to disable it.</param>
         public void SetFastRead(bool enable)
         {
-            byte fastReadByte = i2cComms.ReadRegister(CTRL_REG1);
+            byte fastReadByte = i2cComms.ReadRegister(CFG_REG_A);
             if (enable)
             {
                 fastReadByte |= 0x02; // Set bit 1
@@ -194,7 +193,7 @@ namespace Meadow.Foundation.Sensors.Accelerometers
             {
                 fastReadByte &= 0xFD; // Clear bit 1
             }
-            i2cComms.WriteRegister(CTRL_REG1, fastReadByte);
+            i2cComms.WriteRegister(CFG_REG_A, fastReadByte);
         }
 
         /// <summary>
@@ -203,7 +202,7 @@ namespace Meadow.Foundation.Sensors.Accelerometers
         /// <returns>true if BDU is enabled, false otherwise.</returns>
         public bool GetBlockDataUpdate()
         {
-            byte bduByte = i2cComms.ReadRegister(CTRL_REG1);
+            byte bduByte = i2cComms.ReadRegister(CFG_REG_A);
             return (bduByte & 0x01) == 0x01;
         }
 
@@ -213,7 +212,7 @@ namespace Meadow.Foundation.Sensors.Accelerometers
         /// <param name="enable">true to enable BDU, false to disable it.</param>
         public void SetBlockDataUpdate(bool enable)
         {
-            byte bduByte = i2cComms.ReadRegister(CTRL_REG1);
+            byte bduByte = i2cComms.ReadRegister(CFG_REG_A);
             if (enable)
             {
                 bduByte |= 0x01; // Set bit 0
@@ -222,7 +221,7 @@ namespace Meadow.Foundation.Sensors.Accelerometers
             {
                 bduByte &= 0xFE; // Clear bit 0
             }
-            i2cComms.WriteRegister(CTRL_REG1, bduByte);
+            i2cComms.WriteRegister(CFG_REG_A, bduByte);
         }
     }
 }

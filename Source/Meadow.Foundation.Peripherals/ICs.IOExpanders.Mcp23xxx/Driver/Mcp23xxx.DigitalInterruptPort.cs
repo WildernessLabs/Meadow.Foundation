@@ -58,7 +58,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             }
 
             /// <summary>
-            /// Create a new DigitalInputPort object
+            /// Create a new DigitalInterruptPort object
             /// </summary>
             /// <param name="pin">The interrupt pin</param>
             /// <param name="interruptMode">The interrupt mode used for the interrupt pin</param>

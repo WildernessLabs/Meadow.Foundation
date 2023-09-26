@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+	  <TargetFramework>net7.0-windows</TargetFramework>
+	  <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Meadow.Windows" Version="*" />
+    <PackageReference Include="Meadow.Foundation.Displays.WinForms" Version="*" />
+    <PackageReference Include="Meadow.Foundation.Graphics.MicroLayout" Version="*" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="libmpsse.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="logo.bmp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

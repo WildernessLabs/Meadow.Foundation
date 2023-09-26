@@ -8,7 +8,7 @@ namespace Meadow.Foundation.Displays
     public abstract partial class Ssd130xBase
     {
         //The buffers below are instantiated on demand so we're not creating unused buffers 
-        //These should only be accessed once so no perf penalty 
+        //These should only be accessed once so no performance penalty 
 
         /// <summary>
         /// Sequence of bytes that should be sent to a 128x64 OLED display to setup the device.

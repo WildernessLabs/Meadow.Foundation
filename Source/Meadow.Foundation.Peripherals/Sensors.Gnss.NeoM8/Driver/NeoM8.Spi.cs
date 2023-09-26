@@ -91,6 +91,8 @@ namespace Meadow.Foundation.Sensors.Gnss
 
         private async Task StartUpdatingSpi()
         {
+            cts = new CancellationTokenSource();
+
             byte[] data = new byte[BUFFER_SIZE];
 
             static bool HasMoreData(byte[] data)
@@ -109,7 +111,7 @@ namespace Meadow.Foundation.Sensors.Gnss
 
             var t = new Task(() =>
             {
-                while (true)
+                while (cts.Token.IsCancellationRequested == false) { }
                 {
                     spiComms.Read(data);
                     messageProcessor.Process(data);
@@ -121,6 +123,11 @@ namespace Meadow.Foundation.Sensors.Gnss
                 }
             }, TaskCreationOptions.LongRunning);
             await t;
+        }
+
+        void StopUpdatingSpi()
+        {
+            cts?.Cancel();
         }
     }
 }

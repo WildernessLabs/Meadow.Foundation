@@ -1,0 +1,10 @@
+Settings:
+    APN: virtueyes.com.br # Access Point Name
+    Module: BG95M3 # Module model (BG770A, BG95M3 or M95)
+    User: virtu # APN user (optional)
+    Password: virtu # APN password (optional)
+    Operator: 72410 # Carrier numeric operator code (optional)
+    Mode: NBIOT # Network mode (CATM1, NBIOT or GSM) (optional)
+    Interface: /dev/ttyS1 # Serial interface (UART1 (COM1) = /dev/ttyS0, UART4 (COM4) = /dev/ttyS1, UART6 = /dev/ttyS3) (optional)
+    TurnOnPin: D10 # Pin used to turn on the Cell module (optional)
+    ScanMode: false # Activate the cell network scanning mode (optional)

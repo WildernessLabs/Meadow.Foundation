@@ -1,4 +1,4 @@
-﻿namespace Meadow.Foundation.Sensors.Accelerometers
+﻿namespace Meadow.Foundation.Sensors.Motion
 {
     public partial class Lsm303agr
     {

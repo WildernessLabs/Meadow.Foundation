@@ -20,7 +20,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <summary>
         /// Set a single 14-segment display to a specific character
         /// </summary>
-        /// <param name="character">The ascii chracter</param>
+        /// <param name="character">The ASCII chracter</param>
         /// <param name="displayIndex">The display index (0-3)</param>
         public void Set14SegmentDisplay(char character, int displayIndex)
         {

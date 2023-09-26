@@ -10,7 +10,7 @@ namespace Meadow.Foundation.Displays.UI.InputTypes
         /// <summary>
         /// The ITextDisplay object
         /// </summary>
-        protected ITextDisplay display = null;
+        protected ITextDisplay? display = null;
 
         /// <summary>
         /// Is the item initialized
@@ -20,7 +20,7 @@ namespace Meadow.Foundation.Displays.UI.InputTypes
         /// <summary>
         /// The item id
         /// </summary>
-        protected string itemID;
+        protected string itemID = string.Empty;
 
         /// <summary>
         /// The event raised when the menu item value changes
@@ -48,6 +48,7 @@ namespace Meadow.Foundation.Displays.UI.InputTypes
         {
             this.display = display;
             isInitialized = true;
+            display.SetCursorPosition(0, byte.MaxValue);
         }
 
         /// ToDo: this should be an event and moved out of TextDisplayMenu
@@ -57,9 +58,9 @@ namespace Meadow.Foundation.Displays.UI.InputTypes
         /// <param name="text">The new text to display</param>
         protected void UpdateInputLine(string text)
         {
-            display.ClearLine(1);
-            display.WriteLine(text, 1, true);
-            display.Show();
+            display?.ClearLine(1);
+            display?.WriteLine(text, 1, true);
+            display?.Show();
         }
 
         /// <summary>
@@ -79,5 +80,11 @@ namespace Meadow.Foundation.Displays.UI.InputTypes
         /// </summary>
         /// <returns>True if succesful</returns>
         public abstract bool Select();
+
+        /// <summary>
+        /// Back input
+        /// </summary>
+        /// <returns>True if succesful</returns>
+        public abstract bool Back();
     }
 }
