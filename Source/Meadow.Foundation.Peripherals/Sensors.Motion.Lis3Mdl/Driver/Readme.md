@@ -25,7 +25,7 @@ public override Task Initialize()
 
     // Example that uses an IObservable subscription to only be notified when the filter is satisfied
     var consumer = Lis3mdl.CreateObserver(handler: result => HandleResult(this, result),
-                                            filter: result => FilterResult(result));
+                                         filter: result => FilterResult(result));
 
     sensor.Subscribe(consumer);
 
@@ -45,8 +45,8 @@ void HandleResult(object sender, IChangeResult<MagneticField3D> result)
 
     Resolver.Log.Info($"Magnetometer (gauss): X = {mag.X.Gauss:0.##}, Y = {mag.Y.Gauss:0.##}, Z = {mag.Z.Gauss:0.##}");
 }
-```
 
+```
 ## How to Contribute
 
 - **Found a bug?** [Report an issue](https://github.com/WildernessLabs/Meadow_Issues/issues)

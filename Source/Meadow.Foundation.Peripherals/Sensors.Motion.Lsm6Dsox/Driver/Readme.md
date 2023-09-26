@@ -1,6 +1,6 @@
 # Meadow.Foundation.Sensors.Motion.Lsm6dsox
 
-**Lsm6dsox I2C 6-axis accelerometer and gyroscope**
+**Lsm6Dsox I2C 6-axis accelerometer and gyroscope**
 
 The **Lsm6dsox** library is designed for the [Wilderness Labs](www.wildernesslabs.co) Meadow .NET IoT platform and is part of [Meadow.Foundation](https://developer.wildernesslabs.co/Meadow/Meadow.Foundation/).
 
@@ -22,7 +22,7 @@ public override Task Initialize()
 
     // Example that uses an IObservable subscription to only be notified when the filter is satisfied
     var consumer = Lsm6dsox.CreateObserver(handler: result => HandleResult(this, result),
-                                            filter: result => FilterResult(result));
+                                         filter: result => FilterResult(result));
 
     sensor.Subscribe(consumer);
 
@@ -46,10 +46,10 @@ void HandleResult(object sender,
     var accel = result.New.Acceleration3D.GetValueOrDefault();
     var gyro = result.New.AngularVelocity3D.GetValueOrDefault();
 
-    Resolver.Log.Info($"Accelerometer (g): X = {accel.X.Gravity:0.##}, Y = {accel.Y.Gravity:0.##}, Z = {accel.Z.Gravity:0.##}; Gyro (°/s): X = {gyro.X.DegreesPerSecond:0.##}, Y = {gyro.Y.DegreesPerSecond:0.##}, Z = {gyro.Z.DegreesPerSecond:0.##}");
+    Resolver.Log.Info($"Accelerometer (g): X = {accel.X.Gravity:0.##}, Y = {accel.Y.Gravity:0.##}, Z = {accel.Z.Gravity:0.##}; Gyro (Â°/s): X = {gyro.X.DegreesPerSecond:0.##}, Y = {gyro.Y.DegreesPerSecond:0.##}, Z = {gyro.Z.DegreesPerSecond:0.##}");
 }
-```
 
+```
 ## How to Contribute
 
 - **Found a bug?** [Report an issue](https://github.com/WildernessLabs/Meadow_Issues/issues)
