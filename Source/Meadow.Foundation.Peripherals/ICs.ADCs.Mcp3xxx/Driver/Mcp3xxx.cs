@@ -8,8 +8,13 @@ namespace Meadow.Foundation.ICs.IOExpanders
     /// <summary>
     /// Provide an interface to connect to a MCP3xxx analog to digital converter (ADC)
     /// </summary>
-    abstract partial class Mcp3xxx : IAnalogInputController, ISpiPeripheral
+    public abstract partial class Mcp3xxx : IAnalogInputController, ISpiPeripheral
     {
+        /// <summary>
+        /// Gets the underlying ISpiCommunications instance
+        /// </summary>
+        protected ISpiCommunications SpiComms { get; }
+
         /// <summary>
         /// the number of input channels on the ADC
         /// </summary>
@@ -25,8 +30,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         public Frequency SpiBusSpeed
         {
-            get => spiComms.BusSpeed;
-            set => spiComms.BusSpeed = value;
+            get => SpiComms.BusSpeed;
+            set => SpiComms.BusSpeed = value;
         }
 
         /// <summary>
@@ -39,8 +44,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         public SpiClockConfiguration.Mode SpiBusMode
         {
-            get => spiComms.BusMode;
-            set => spiComms.BusMode = value;
+            get => SpiComms.BusMode;
+            set => SpiComms.BusMode = value;
         }
 
         /// <summary>
@@ -53,8 +58,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// The maximum raw value returned by the ADC
         /// </summary>
         internal int AdcMaxValue { get; set; }
-
-        private readonly ISpiCommunications spiComms;
 
         /// <summary>
         /// Mcp3xxx base class contructor
@@ -86,7 +89,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
             ChannelCount = channelCount;
 
-            spiComms = new SpiCommunications(spiBus, chipSelectPort, DefaultSpiBusSpeed, DefaultSpiBusMode);
+            SpiComms = new SpiCommunications(spiBus, chipSelectPort, DefaultSpiBusSpeed, DefaultSpiBusMode);
         }
 
         /// <summary>
@@ -283,13 +286,13 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 requestBuffer[i] = (byte)(adcRequest >> (bufferSize - i - 1) * 8);
             }
 
-            spiComms.Exchange(requestBuffer, responseBuffer);
+            SpiComms.Exchange(requestBuffer, responseBuffer);
 
             // copy the response from the ADC to the return value
             for (int i = 0; i < bufferSize; i++)
             {
                 returnValue <<= 8;
-                returnValue += responseBuffer[i];
+                returnValue |= responseBuffer[i];
             }
 
             // test the response from the ADC to verify the null bit is 0
