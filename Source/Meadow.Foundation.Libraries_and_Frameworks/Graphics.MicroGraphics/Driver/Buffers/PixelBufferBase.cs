@@ -24,7 +24,7 @@ namespace Meadow.Foundation.Graphics.Buffers
         public virtual ColorMode ColorMode { get; protected set; }
 
         /// <summary>
-        /// Bitdepth of display as an integer
+        /// Bit depth of display as an integer
         /// </summary>
         public int BitDepth
         {
@@ -272,7 +272,7 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// copy/convert pixel data from existing buffer
         /// </summary>
         /// <typeparam name="T">The buffer type to convert to</typeparam>
-        /// <returns>A pixel buffer derrived from PixelBufferBase</returns>
+        /// <returns>A pixel buffer derived from PixelBufferBase</returns>
         public T ConvertPixelBuffer<T>()
             where T : PixelBufferBase, new()
         {

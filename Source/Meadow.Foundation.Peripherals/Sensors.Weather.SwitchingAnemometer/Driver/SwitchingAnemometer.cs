@@ -9,7 +9,7 @@ using SU = Meadow.Units.Speed.UnitType;
 namespace Meadow.Foundation.Sensors.Weather
 {
     /// <summary>
-    /// Driver for a "switching" anememoter (wind speed gauge) that has an
+    /// Driver for a "switching" anemometer (wind speed gauge) that has an
     /// internal switch that is triggered during every revolution.
     /// </summary>
     public partial class SwitchingAnemometer : PollingSensorBase<Speed>, IAnemometer
@@ -100,7 +100,7 @@ namespace Meadow.Foundation.Sensors.Weather
         }
 
         /// <summary>
-        /// Raise events for subcribers and notify of value changes
+        /// Raise events for subscribers and notify of value changes
         /// </summary>
         /// <param name="changeResult">The updated sensor data</param>
         protected override void RaiseEventsAndNotify(IChangeResult<Speed> changeResult)

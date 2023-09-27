@@ -26,7 +26,7 @@ namespace Meadow.Foundation.Motors.Stepper
         }
 
         /// <summary>
-        /// Divisor used to adjust rotaional speed of the stepper motor
+        /// Divisor used to adjust rotational speed of the stepper motor
         /// </summary>
         public int RotationSpeedDivisor
         {

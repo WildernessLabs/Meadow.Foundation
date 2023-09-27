@@ -30,32 +30,32 @@ namespace Meadow.Foundation.Sensors.Gnss
         public event EventHandler<IGnssResult> GnssDataReceived = delegate { };
 
         /// <summary>
-        /// Raised when GGA data is recieved
+        /// Raised when GGA data is received
         /// </summary>
         public event EventHandler<GnssPositionInfo> GgaReceived = delegate { };
 
         /// <summary>
-        /// Raised when GLL data is recieved
+        /// Raised when GLL data is received
         /// </summary>
         public event EventHandler<GnssPositionInfo> GllReceived = delegate { };
 
         /// <summary>
-        /// Raised when GSA data is recieved
+        /// Raised when GSA data is received
         /// </summary>
         public event EventHandler<ActiveSatellites> GsaReceived = delegate { };
 
         /// <summary>
-        /// Raised when RMC data is recieved
+        /// Raised when RMC data is received
         /// </summary>
         public event EventHandler<GnssPositionInfo> RmcReceived = delegate { };
 
         /// <summary>
-        /// Raised when VTG data is recieved
+        /// Raised when VTG data is received
         /// </summary>
         public event EventHandler<CourseOverGround> VtgReceived = delegate { };
 
         /// <summary>
-        /// Raised when GSV data is recieved
+        /// Raised when GSV data is received
         /// </summary>
         public event EventHandler<SatellitesInView> GsvReceived = delegate { };
 

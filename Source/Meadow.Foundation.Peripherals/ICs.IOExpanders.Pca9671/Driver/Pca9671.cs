@@ -28,7 +28,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         /// <param name="bus">The I2C buss the peripheral is connected to</param>
         /// <param name="peripheralAddress">The bus address of the peripheral</param>
-        /// <param name="resetPin">The optional pin connected tothe peripheral's reset</param>
+        /// <param name="resetPin">The optional pin connected to the peripheral's reset</param>
         public Pca9671(II2cBus bus, byte peripheralAddress, IPin? resetPin = default)
             : base(bus, peripheralAddress, 8, 8)
         {

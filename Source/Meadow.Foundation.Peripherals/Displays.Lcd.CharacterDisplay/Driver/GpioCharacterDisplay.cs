@@ -168,8 +168,8 @@ namespace Meadow.Foundation.Displays.Lcd
 
         private void Initialize()
         {
-            SendByte(0x33, LCD_INSTRUCTION); // 110011 Initialise
-            SendByte(0x32, LCD_INSTRUCTION); // 110010 Initialise
+            SendByte(0x33, LCD_INSTRUCTION); // 110011 Initialize
+            SendByte(0x32, LCD_INSTRUCTION); // 110010 Initialize
             SendByte(0x06, LCD_INSTRUCTION); // 000110 Cursor move direction
             SendByte(0x0C, LCD_INSTRUCTION); // 001100 Display On,Cursor Off, Blink Off
             SendByte(0x28, LCD_INSTRUCTION); // 101000 Data length, number of lines, font size
@@ -234,7 +234,7 @@ namespace Meadow.Foundation.Displays.Lcd
         /// <summary>
         /// Write text to a line
         /// </summary>
-        /// <param name="text">The text to dislay</param>
+        /// <param name="text">The text to display</param>
         /// <param name="lineNumber">The target line</param>
         /// <param name="showCursor">If true, show the cursor</param>
         public void WriteLine(string text, byte lineNumber, bool showCursor = false)
@@ -321,9 +321,9 @@ namespace Meadow.Foundation.Displays.Lcd
 
 
         /// <summary>
-        /// Set the displa conrtast
+        /// Set the display contrast
         /// </summary>
-        /// <param name="contrast">The constrast as a float (0-1)</param>
+        /// <param name="contrast">The contrast as a float (0-1)</param>
         /// <exception cref="ArgumentOutOfRangeException"></exception>
         public void SetContrast(float contrast = 0.5f)
         {
@@ -337,7 +337,7 @@ namespace Meadow.Foundation.Displays.Lcd
         }
 
         /// <summary>
-        /// Save a custom character to the dislay
+        /// Save a custom character to the display
         /// </summary>
         /// <param name="characterMap">The character data</param>
         /// <param name="address">The display character address (0-7)</param>

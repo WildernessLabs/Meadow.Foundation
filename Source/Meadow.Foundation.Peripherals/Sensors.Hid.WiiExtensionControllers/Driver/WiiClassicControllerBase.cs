@@ -5,7 +5,7 @@ namespace Meadow.Foundation.Sensors.Hid
     /// <summary>
     /// Abstract base class that represents 
     /// Nintendo Wiimote I2C extension controllers 
-    /// Based on the Wii classic contoller including:
+    /// Based on the Wii classic controller including:
     /// Classic Pro, Snes classic, and Nes classic controllers
     /// </summary>
     public abstract class WiiClassicControllerBase : WiiExtensionControllerBase

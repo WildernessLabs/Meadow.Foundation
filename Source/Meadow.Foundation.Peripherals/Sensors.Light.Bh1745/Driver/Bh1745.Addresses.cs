@@ -16,7 +16,7 @@
             /// </summary>
             Address_0x39 = 0x39,
             /// <summary>
-            /// Defulat bus address
+            /// Default bus address
             /// </summary>
             Default = Address_0x38
         }

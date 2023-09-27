@@ -16,7 +16,7 @@
             /// </summary>
             Differential = 1,
             /// <summary>
-            /// The value is measured asthe difference in voltage between two pins with the second pin positive
+            /// The value is measured as the difference in voltage between two pins with the second pin positive
             /// </summary>
             InvertedDifferential = 2
         }

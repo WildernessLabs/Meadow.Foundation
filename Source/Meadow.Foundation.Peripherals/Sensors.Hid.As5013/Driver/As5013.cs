@@ -34,7 +34,7 @@ namespace Meadow.Foundation.Sensors.Hid
         public bool IsVerticalInverted { get; set; }
 
         /// <summary>
-        /// Swap horizonal and vertical
+        /// Swap horizontal and vertical
         /// </summary>
         public bool IsVerticalHorizonalSwapped { get; set; } = false;
 

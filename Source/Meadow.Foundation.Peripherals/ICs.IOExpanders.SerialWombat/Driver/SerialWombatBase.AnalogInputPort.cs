@@ -169,7 +169,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             }
 
             /// <summary>
-            /// Subscribe an obersver for update events
+            /// Subscribe an observer for update events
             /// </summary>
             public IDisposable Subscribe(IObserver<IChangeResult<Voltage>> observer)
             {

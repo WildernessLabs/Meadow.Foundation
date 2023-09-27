@@ -37,7 +37,7 @@ namespace Meadow.Foundation.Sensors.HallEffect
         public int RPMs => (int)rpms;
 
         /// <summary>
-        /// Revolutions pers minute 
+        /// Revolutions per minute 
         /// </summary>
         protected float rpms = 0.0F;
         /// <summary>

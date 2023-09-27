@@ -123,7 +123,7 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// <summary>
         /// Get the sensor app / firmware version
         /// </summary>
-        /// <returns>The major, minor, release values as a ttuple of bytes</returns>
+        /// <returns>The major, minor, release values as a tuple of bytes</returns>
         public (byte Major, byte Minor, byte Release) GetFirmwareVersion()
         {
             BusComms.WriteRegister((byte)Registers.COMMAND, (byte)Commands.GET_APPVER);

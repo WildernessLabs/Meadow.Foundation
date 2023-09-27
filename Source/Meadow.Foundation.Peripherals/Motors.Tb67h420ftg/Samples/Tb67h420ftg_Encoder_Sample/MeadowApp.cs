@@ -24,7 +24,7 @@ namespace Motors.Tb67h420ftg_Encoder_Sample
         {
             Resolver.Log.Info("Initialize...");
 
-            // this causes unterrupts to fail, for some reason:
+            // this causes interrupts to fail, for some reason:
             //IDigitalInputPort test = Device.CreateDigitalInputPort(Device.Pins.D07);
             // this does not.
             IDigitalOutputPort test = Device.CreateDigitalOutputPort(Device.Pins.D07);

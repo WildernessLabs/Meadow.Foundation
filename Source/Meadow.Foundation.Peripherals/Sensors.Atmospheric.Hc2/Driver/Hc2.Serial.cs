@@ -57,9 +57,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             if (!serialPort.IsOpen)
                 serialPort.Open();
 
-            // Reqest already pending, don't queue a new one yet. 
+            // Request already pending, don't queue a new one yet. 
             if (RequestPending)
-                return (null, null);  // Could alro respond with current Conditions?
+                return (null, null);  // Could also respond with current Conditions?
             // Send command to request data
             var readRequest = $"{{{DeviceID}{DeviceAdress}{ReadCommand}}}\r";
             var buffer = Encoding.ASCII.GetBytes(readRequest);
@@ -111,7 +111,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             {
                 lastUpdate = DateTime.Now;
                 if (!IsSampling)
-                    RaiseEventsAndNotify(changeResult); // Only raise events directly if perodic sampling is not enabled, as sampling will also raise the event.
+                    RaiseEventsAndNotify(changeResult); // Only raise events directly if periodic sampling is not enabled, as sampling will also raise the event.
             }
         }
 

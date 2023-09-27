@@ -22,7 +22,7 @@
         /// </summary>
         /// <param name="index">Led index</param>
         /// <param name="color">Led color</param>
-        /// <param name="brightness">Led brightnes (0-1)</param>
+        /// <param name="brightness">Led brightness (0-1)</param>
         void SetLed(int index, Color color, float brightness = 1f);
 
         /// <summary>
@@ -37,7 +37,7 @@
         /// </summary>
         /// <param name="index">Led index</param>
         /// <param name="rgb">red, green, blue byte array</param>
-        /// <param name="brightness">Led brightnes (0-1)</param>
+        /// <param name="brightness">Led brightness (0-1)</param>
         void SetLed(int index, byte[] rgb, float brightness = 1f);
 
         /// <summary>

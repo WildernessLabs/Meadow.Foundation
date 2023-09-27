@@ -37,7 +37,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         public RelativeHumidity? Humidity => Conditions.Humidity;
 
         /// <summary>
-        /// Was the last sensor read succesful, true for success, false for failure
+        /// Was the last sensor read successful, true for success, false for failure
         /// </summary>
         public bool WasLastReadSuccessful { get; internal set; }
 
@@ -109,7 +109,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         internal abstract float GetTemperature();
 
         /// <summary>
-        /// Raise events for subcribers and notify of value changes
+        /// Raise events for subscribers and notify of value changes
         /// </summary>
         /// <param name="changeResult">The updated sensor data</param>
         protected override void RaiseEventsAndNotify(IChangeResult<(Units.Temperature? Temperature, RelativeHumidity? Humidity)> changeResult)

@@ -179,7 +179,7 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// Set a single character
         /// </summary>
-        /// <param name="character">the chracter to display</param>
+        /// <param name="character">the character to display</param>
         /// <param name="digit">the digit index starting from the left</param>
         /// <param name="showDecimal">show the decimal with the character</param>
         /// <param name="deviceId">the cascaded device id</param>

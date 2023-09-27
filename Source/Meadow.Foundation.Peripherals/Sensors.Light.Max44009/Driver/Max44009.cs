@@ -27,7 +27,7 @@ namespace Meadow.Foundation.Sensors.Light
         }
 
         /// <summary>
-        /// Initalize the sensor
+        /// Initialize the sensor
         /// </summary>
         protected void Initialize()
         {

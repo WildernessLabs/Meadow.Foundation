@@ -50,7 +50,7 @@ namespace Meadow.Foundation.Displays
         protected override bool IsColorInverted => false;
 
         /// <summary>
-        /// Initalize the display
+        /// Initialize the display
         /// </summary>
         protected override void Initialize()
         {
@@ -83,7 +83,7 @@ namespace Meadow.Foundation.Displays
         /// <param name="bufferBlack">The buffer with black pixel data</param>
         /// <param name="bufferColor">The buffer with color pixel data</param>
         /// <param name="x">The x start position in pixels</param>
-        /// <param name="y">The y stary position in pixels</param>
+        /// <param name="y">The y start position in pixels</param>
         /// <param name="width">The width to update in pixels</param>
         /// <param name="height">The height to update in pixels</param>
         protected void SetPartialWindow(byte[] bufferBlack, byte[] bufferColor, int x, int y, int width, int height)
@@ -130,7 +130,7 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         /// <param name="bufferBlack">The buffer with black pixel data</param>
         /// <param name="x">The x start position in pixels</param>
-        /// <param name="y">The y stary position in pixels</param>
+        /// <param name="y">The y start position in pixels</param>
         /// <param name="width">The width to update in pixels</param>
         /// <param name="height">The height to update in pixels</param>
         protected void SetPartialWindowBlack(byte[] bufferBlack, int x, int y, int width, int height)
@@ -166,7 +166,7 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         /// <param name="bufferColor">The buffer with color pixel data</param>
         /// <param name="x">The x start position in pixels</param>
-        /// <param name="y">The y stary position in pixels</param>
+        /// <param name="y">The y start position in pixels</param>
         /// <param name="width">The width to update in pixels</param>
         /// <param name="height">The height to update in pixels</param>
         protected void SetPartialWindowColor(byte[] bufferColor, int x, int y, int width, int height)

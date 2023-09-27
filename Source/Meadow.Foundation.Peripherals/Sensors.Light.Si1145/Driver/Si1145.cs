@@ -34,7 +34,7 @@ namespace Meadow.Foundation.Sensors.Light
         /// <summary>
         /// Read data from the sensor
         /// </summary>
-        /// <returns>Returns visible, ultraviolet index and ifrared data</returns>
+        /// <returns>Returns visible, ultraviolet index and infrared data</returns>
         protected override Task<(Illuminance? VisibleLight, double? UltravioletIndex, Illuminance? Infrared)> ReadSensor()
         {
             (Illuminance? VisibleLight, double? UltravioletIndex, Illuminance? Infrared) conditions;

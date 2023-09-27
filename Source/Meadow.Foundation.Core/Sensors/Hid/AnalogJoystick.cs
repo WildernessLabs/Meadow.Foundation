@@ -25,7 +25,7 @@ namespace Meadow.Foundation.Sensors.Hid
         protected int sampleIntervalMs;
 
         /// <summary>
-        /// Analog port connected to horizonal joystick pin
+        /// Analog port connected to horizontal joystick pin
         /// </summary>
         protected IAnalogInputPort HorizontalInputPort { get; set; }
 
@@ -55,7 +55,7 @@ namespace Meadow.Foundation.Sensors.Hid
         public DigitalJoystickPosition? DigitalPosition => GetDigitalJoystickPosition();
 
         /// <summary>
-        /// Callibration for 2-axis analog joystick
+        /// Calibration for 2-axis analog joystick
         /// </summary>
         public JoystickCalibration Calibration { get; protected set; }
 
@@ -341,7 +341,7 @@ namespace Meadow.Foundation.Sensors.Hid
         /// </summary>
         /// <param name="value"></param>
         /// <param name="isHorizontal"></param>
-        /// <returns>A postion value between -1.0 and 1.0</returns>
+        /// <returns>A position value between -1.0 and 1.0</returns>
         float GetNormalizedPosition(Voltage value, bool isHorizontal)
         {
             double normalized;

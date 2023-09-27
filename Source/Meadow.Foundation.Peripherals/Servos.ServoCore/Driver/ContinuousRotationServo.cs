@@ -12,7 +12,7 @@ namespace Meadow.Foundation.Servos
         /// Instantiates a new continuous rotation servo on the specified pin, with the specified configuration.
         /// </summary>
         /// <param name="pwm">The PWM port</param>
-        /// <param name="config">The servor config</param>
+        /// <param name="config">The servo config</param>
         public ContinuousRotationServo(IPwmPort pwm, ServoConfig config) : base (pwm, config)
         {
         }

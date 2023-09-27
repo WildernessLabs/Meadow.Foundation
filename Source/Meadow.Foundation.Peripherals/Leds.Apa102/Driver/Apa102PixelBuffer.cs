@@ -26,7 +26,7 @@ namespace Meadow.Foundation.Leds
         public void Fill(Color color) => Fill(color, false);
 
         /// <summary>
-        /// Get the color of pixel at at given coordinate
+        /// Get the color of a pixel for a given coordinate
         /// </summary>
         /// <param name="x">X position in pixels</param>
         /// <param name="y">Y position in pixels</param>
@@ -41,7 +41,7 @@ namespace Meadow.Foundation.Leds
         }
 
         /// <summary>
-        /// Set the pixel for a given coordindate
+        /// Set the color of a pixel for a given coordinate
         /// </summary>
         /// <param name="x">X position in pixels</param>
         /// <param name="y">Y position in pixels</param>

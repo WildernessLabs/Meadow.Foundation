@@ -35,7 +35,7 @@
             /// </summary>
             DataLow = 0x02,
             /// <summary>
-            /// Addess of the configuration register
+            /// Address of the configuration register
             /// </summary>
             Config = 0x03,
             /// <summary>

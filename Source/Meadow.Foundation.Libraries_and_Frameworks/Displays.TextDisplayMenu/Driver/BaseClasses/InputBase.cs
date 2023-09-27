@@ -66,25 +66,25 @@ namespace Meadow.Foundation.Displays.UI.InputTypes
         /// <summary>
         /// Previous input
         /// </summary>
-        /// <returns>True if succesful</returns>
+        /// <returns>True if successful</returns>
         public abstract bool Previous();
 
         /// <summary>
         /// Next input
         /// </summary>
-        /// <returns>True if succesful</returns>
+        /// <returns>True if successful</returns>
         public abstract bool Next();
 
         /// <summary>
         /// Select input
         /// </summary>
-        /// <returns>True if succesful</returns>
+        /// <returns>True if successful</returns>
         public abstract bool Select();
 
         /// <summary>
         /// Back input
         /// </summary>
-        /// <returns>True if succesful</returns>
+        /// <returns>True if successful</returns>
         public abstract bool Back();
     }
 }

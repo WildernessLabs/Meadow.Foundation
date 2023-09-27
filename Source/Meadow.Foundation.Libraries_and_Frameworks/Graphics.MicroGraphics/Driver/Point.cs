@@ -82,7 +82,7 @@
         /// Translates the specified Point by the negative of the specified Size.
         /// </summary>
         /// <param name="point">The Point instance to translate</param>
-        /// <param name="amount">Point amount to substract</param>
+        /// <param name="amount">Point amount to subtract</param>
         /// <returns>A new Point instance translated by size</returns>
         public static Point operator -(Point point, Point amount)
         {
@@ -136,7 +136,7 @@
         }
 
         /// <summary>
-        /// Get a string represetnation of the point
+        /// Get a string representation of the point
         /// </summary>
         /// <returns>The x and y values as a string</returns>
         public override string ToString()

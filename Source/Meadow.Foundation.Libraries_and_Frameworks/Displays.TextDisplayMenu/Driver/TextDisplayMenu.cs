@@ -24,7 +24,7 @@ namespace Meadow.Foundation.Displays.UI
         readonly bool showBackOnRoot = false;
 
         /// <summary>
-        /// Raised when the menu receieves a selected input
+        /// Raised when the menu receives a selected input
         /// </summary>
         public event MenuSelectedHandler Selected = delegate { };
 
@@ -212,7 +212,7 @@ namespace Meadow.Foundation.Displays.UI
 
             if (isSelected || item.HasSubItems)
             {
-                // calculate any neccessary padding to put selector on far right
+                // calculate any necessary padding to put selector on far right
                 int paddingLength = (display.DisplayConfig.Width / display.DisplayConfig.FontScale - 1 - displayText.Length);
                 string padding = string.Empty;
                 if (paddingLength > 0) { padding = new string(' ', paddingLength); }

@@ -98,7 +98,7 @@ namespace Meadow.Foundation.ICs.FanControllers
         }
 
         /// <summary>
-        /// Get / set the amount of hysteresis applied to the temerateure readings
+        /// Get / set the amount of hysteresis applied to the temperature readings
         /// used in the fan speed lookup table
         /// </summary>
         /// <returns>The hysteresis temperature value</returns>
@@ -229,7 +229,7 @@ namespace Meadow.Foundation.ICs.FanControllers
         /// <summary>
         /// Enable the TACH/ALERT pin as an input to read the fan speed (for 4 wire fans)
         /// </summary>
-        /// <param name="enable">true to renable, false to disable</param>
+        /// <param name="enable">true to enable, false to disable</param>
         public void EnableTachInput(bool enable)
         {
             byte config = i2cComms.ReadRegister((byte)Registers.Configuration);
@@ -287,7 +287,7 @@ namespace Meadow.Foundation.ICs.FanControllers
         /// Set a temperature and fan duty cycle to the lookup table
         /// </summary>
         /// <param name="index">The LUT index to set</param>
-        /// <param name="temperatureThreshhold">the temperature threshhold</param>
+        /// <param name="temperatureThreshhold">the temperature threshold</param>
         /// <param name="pwmDutyCycle">the fan PWM duty cycle</param>
         public void SetLookupTable(LutIndex index,
             Temperature temperatureThreshhold,

@@ -20,7 +20,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         public event EventHandler<IOExpanderInputChangedEventArgs>? InputChanged = null;
 
         /// <summary>
-        /// The number of IO pins avaliable on the device
+        /// The number of IO pins available on the device
         /// </summary>
         public abstract int NumberOfPins { get; }
 
@@ -71,11 +71,11 @@ namespace Meadow.Foundation.ICs.IOExpanders
         protected object _lock = new();
 
         /// <summary>
-        /// Mcpxxx base class contructor
+        /// Mcpxxx base class constructor
         /// </summary>
         /// <param name="i2cBus">The I2C bus</param>
         /// <param name="address">The I2C address</param>
-        /// <param name="interruptPort">Optional interupt port, needed for input interrupts (pins 1-8)</param>
+        /// <param name="interruptPort">Optional interrupt port, needed for input interrupts (pins 1-8)</param>
         /// <param name="resetPort">Optional Meadow output port used to reset the mcp expander</param>
         protected Mcp23xxx(II2cBus i2cBus, byte address,
             IDigitalInterruptPort? interruptPort = null, IDigitalOutputPort? resetPort = null)
@@ -85,11 +85,11 @@ namespace Meadow.Foundation.ICs.IOExpanders
         }
 
         /// <summary>
-        /// Mcpxxx base class contructor
+        /// Mcpxxx base class constructor
         /// </summary>
         /// <param name="spiBus">The SPI bus</param>
         /// <param name="chipSelectPort">Chip select port</param>
-        /// <param name="interruptPort">Optional interupt port, needed for input interrupts (pins 1-8)</param>
+        /// <param name="interruptPort">Optional interrupt port, needed for input interrupts (pins 1-8)</param>
         /// <param name="resetPort">Optional Meadow output port used to reset the mcp expander</param>
         protected Mcp23xxx(ISpiBus spiBus,
             IDigitalOutputPort chipSelectPort,
@@ -103,7 +103,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <summary>
         /// Initializes the Mcp23xxx
         /// </summary>
-        /// <param name="interruptPort">optional interupt port, needed for input interrupts (pins 1-8)</param>
+        /// <param name="interruptPort">optional interrupt port, needed for input interrupts (pins 1-8)</param>
         /// <param name="resetPort">Optional Meadow output port used to reset the mcp expander</param>
         private void Initialize(IDigitalInterruptPort? interruptPort = null,
                         IDigitalOutputPort? resetPort = null)
@@ -302,7 +302,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <param name="interruptMode">The port interrupt mode</param>
         /// <param name="resistorMode">The port resistor mode</param>
         /// <param name="debounceDuration">The debounce duration</param>
-        /// <param name="glitchDuration">The clitch duration - not configurable on Mcpxxxx</param>
+        /// <param name="glitchDuration">The glitch duration - not configurable on Mcpxxxx</param>
         /// <returns>IDigitalInterruptPort</returns>
         public IDigitalInterruptPort CreateDigitalInterruptPort(
             IPin pin,
@@ -395,9 +395,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// Configure the hardware port settings on the MCP23xxx
         /// </summary>
         /// <param name="pin">The MCP pin associated with the port</param>
-        /// <param name="enablePullUp">Enable the internal pullup if true</param>
+        /// <param name="enablePullUp">Enable the internal pull-up if true</param>
         /// <param name="interruptMode">Interrupt mode of port</param>
-        /// <exception cref="Exception">Throw execption if pin is out of range</exception>
+        /// <exception cref="Exception">Throw exception if pin is out of range</exception>
         private void ConfigureMcpInputPort(IPin pin, bool enablePullUp = false, InterruptMode interruptMode = InterruptMode.None)
         {
             if (IsValidPin(pin))

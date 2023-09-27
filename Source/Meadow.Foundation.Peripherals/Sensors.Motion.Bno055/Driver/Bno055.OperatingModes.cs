@@ -49,7 +49,7 @@ namespace Meadow.Foundation.Sensors.Motion
             public const byte ACCELEROMETER_MAGNETOMETER_GYROSCOPE = 0x07;
 
             /// <summary>
-            /// Put the sensor into fusion mode intertial measurement unit mode.
+            /// Put the sensor into fusion mode inertial measurement unit mode.
             /// </summary>
             public const byte INERTIAL_MEASUREMENT_UNIT = 0x08;
 

@@ -108,7 +108,7 @@ namespace Meadow.Foundation.Sensors.Environmental
 
             // dev note:
             // this offset doesn't match the data sheet.  The data sheet says there should be 1 byte of response data, but I'm seeing 2 bytes.
-            // data sheet also says the value range should be 30-100, but with 2 bytes I see a value of 290, so totally guessing on this reponse here
+            // data sheet also says the value range should be 30-100, but with 2 bytes I see a value of 290, so totally guessing on this response here
             // the data sheet also says it should be 5 bytes, but the sensor requires 6 or it will give an error
             return _readBuffer[4];
         }

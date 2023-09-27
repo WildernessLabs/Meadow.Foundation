@@ -14,7 +14,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         public PinDefinitions Pins { get; }
 
         /// <summary>
-        /// The number of IO pins avaliable on the device
+        /// The number of IO pins available on the device
         /// </summary>
         public override int NumberOfPins => 8;
 
@@ -46,7 +46,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         /// <param name="spiBus">The SPI bus connected to the Mcp23x08</param>
         /// <param name="chipSelectPort">Chip select port</param>
-        /// <param name="interruptPort">optional interupt port, needed for input interrupts</param>
+        /// <param name="interruptPort">optional interrupt port, needed for input interrupts</param>
         /// <param name="resetPort">Optional Meadow output port used to reset the mcp expander</param>
         protected Mcp23x0x(ISpiBus spiBus, IDigitalOutputPort chipSelectPort, IDigitalInterruptPort? interruptPort = null, IDigitalOutputPort? resetPort = null) :
             base(spiBus, chipSelectPort, interruptPort, resetPort)

@@ -43,7 +43,7 @@ namespace Meadow.Foundation.Sensors.Moisture
         public Voltage MaximumVoltageCalibration { get; set; } = new Voltage(3.3);
 
         /// <summary>
-        /// Creates a FC28 soil moisture sensor object with the especified analog pin, digital pin and IO device
+        /// Creates a FC28 soil moisture sensor object with the specified analog pin, digital pin and IO device
         /// </summary>
         /// <param name="analogInputPin">Analog input pin connected</param>
         /// <param name="digitalOutputPin">Digital output pin connected</param>
@@ -72,7 +72,7 @@ namespace Meadow.Foundation.Sensors.Moisture
         }
 
         /// <summary>
-        /// Creates a FC28 soil moisture sensor object with the especified analog pin and digital pin
+        /// Creates a FC28 soil moisture sensor object with the specified analog pin and digital pin
         /// </summary>
         /// <param name="analogInputPort">Analog input port connected</param>
         /// <param name="digitalOutputPort">Digital output port connected</param>

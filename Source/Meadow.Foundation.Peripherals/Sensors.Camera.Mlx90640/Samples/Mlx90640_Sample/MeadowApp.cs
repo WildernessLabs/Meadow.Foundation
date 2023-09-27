@@ -67,7 +67,7 @@ namespace Sensors.Temperature.MLX90640_Sample
                     for (byte w = 0; w < 32; w++)
                     {
                         float t = frame[h * 32 + w];
-                        //View sensor data as ascii art. It is easier to see shapes, like your fingers.
+                        //View sensor data as ASCII art. It is easier to see shapes, like your fingers.
                         if (!showTempArrayAsAsciiArt)
                         {
                             //Write the Temp value
@@ -75,7 +75,7 @@ namespace Sensors.Temperature.MLX90640_Sample
                         }
                         else
                         {
-                            //Write the ascii art character
+                            //Write the ASCII art character
                             char c = '&';
                             if (t < 68) c = ' ';
                             else if (t < 73.4) c = '.';

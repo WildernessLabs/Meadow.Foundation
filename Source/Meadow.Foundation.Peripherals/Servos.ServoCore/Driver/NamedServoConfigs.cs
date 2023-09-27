@@ -35,7 +35,7 @@ namespace Meadow.Foundation.Servos
         public static ServoConfig HiTecStandard = new ServoConfig(minimumPulseDuration: 900, maximumPulseDuration: 2100, maximumAngle: new Angle(180, AU.Degrees));
 
         /// <summary>
-        /// Represents HiTec Digitial servo models with their default settings. Angle: 0-180, Pulse: 900 - 1,200
+        /// Represents HiTec Digital servo models with their default settings. Angle: 0-180, Pulse: 900 - 1,200
         /// </summary>0
         public static ServoConfig HiTechDigital = new ServoConfig(minimumPulseDuration: 900, maximumPulseDuration: 1200, maximumAngle: new Angle(180, AU.Degrees));
 

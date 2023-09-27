@@ -72,7 +72,7 @@ namespace Meadow.Foundation.Sensors.Buttons
 
         /// <summary>
         /// Returns the sanitized state of the button
-        /// Inverts the state when using a pullup resistor
+        /// Inverts the state when using a pull-up resistor
         /// </summary>
         protected bool GetNormalizedState(bool state)
         {

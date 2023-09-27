@@ -123,7 +123,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         /// <param name="peripheralAddress">Device address</param>
         /// <param name="data">Data to write</param>
-        /// <param name="length">Length of daa to write</param>
+        /// <param name="length">Length of data to write</param>
         public void WriteData(byte peripheralAddress, Span<byte> data, int length)
         {
             _tca9548a.BusSelectorSemaphore.Wait(TimeSpan.FromSeconds(10));

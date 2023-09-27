@@ -55,7 +55,7 @@ public override async Task Run()
     //output initial readings text to console
     Resolver.Log.Info("Initial Readings:");
     Resolver.Log.Info(
-        $"Mangetic field: [X:{result.X.MicroTesla:N2}," +
+        $"Magnetic field: [X:{result.X.MicroTesla:N2}," +
         $"Y:{result.Y.MicroTesla:N2}," +
         $"Z:{result.Z.MicroTesla:N2} (MicroTeslas)]");
 

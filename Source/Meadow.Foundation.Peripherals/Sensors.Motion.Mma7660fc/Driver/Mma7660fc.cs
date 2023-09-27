@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Meadow.Foundation.Sensors.Motion
 {
     /// <summary>
-    /// Represents Mma7660fc 3-axis acclerometer
+    /// Represents Mma7660fc 3-axis accelerometer
     /// </summary>
     public partial class Mma7660fc : ByteCommsSensorBase<Acceleration3D>, IAccelerometer, II2cPeripheral
     {

@@ -44,12 +44,12 @@ namespace Meadow.Foundation.ICs.IOExpanders
             private readonly ResistorMode portResistorMode;
 
             /// <summary>
-            /// Debouce durration
+            /// Debouce duration
             /// </summary>
             public override TimeSpan DebounceDuration { get; set; } = TimeSpan.Zero;
 
             /// <summary>
-            /// Glitch durration
+            /// Glitch duration
             /// </summary>
             public override TimeSpan GlitchDuration
             {

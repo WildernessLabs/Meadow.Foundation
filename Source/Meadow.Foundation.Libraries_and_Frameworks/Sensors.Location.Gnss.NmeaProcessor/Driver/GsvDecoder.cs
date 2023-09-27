@@ -8,8 +8,8 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
     /// </summary>
     /// <remarks>
     /// The satellites in view messages can contain multiple sentences; one for
-    /// each satelite. There can also be multiple messages making up the total list
-    /// of satelites.
+    /// each satellite. There can also be multiple messages making up the total list
+    /// of satellites.
     /// This class brings all of the messages together in a single message for the
     /// consumer.
     /// </remarks>

@@ -93,7 +93,7 @@
             SystemError = 0x01,
 
             /// <summary>
-            /// BusComms initialization in progess.
+            /// BusComms initialization in progress.
             /// </summary>
             PeripheralInitializationInProgess = 0x02,
 

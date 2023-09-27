@@ -5,7 +5,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
     public partial class x74595
     {
         /// <summary>
-        /// Represents a digtial output port on the x74595
+        /// Represents a digital output port on the x74595
         /// </summary>
         public class DigitalOutputPort : DigitalOutputPortBase
         {

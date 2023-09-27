@@ -12,7 +12,7 @@ namespace Meadow.Foundation.Graphics
     public partial class MicroGraphics
     {
         /// <summary>
-        /// Display object reponsible for managing the buffer and rendering
+        /// Display object responsible for managing the buffer and rendering
         /// </summary>
         protected readonly IGraphicsDisplay display;
 
@@ -119,7 +119,7 @@ namespace Meadow.Foundation.Graphics
         public TextDisplayConfig DisplayConfig { get; private set; } = new TextDisplayConfig();
 
         /// <summary>
-        /// Optional enforced deplay between updates when calling ShowBuffered
+        /// Optional enforced delay between updates when calling ShowBuffered
         /// </summary>
         public TimeSpan DelayBetweenFrames { get; set; } = TimeSpan.Zero;
 
@@ -128,12 +128,12 @@ namespace Meadow.Foundation.Graphics
         private bool isUpdateRequested = false;
 
         /// <summary>
-        /// Time of last display update when callng ShowBuffered
+        /// Time of last display update when calling ShowBuffered
         /// </summary>
         private DateTime lastUpdated;
 
         /// <summary>
-        /// Create a new MicroGraphics instance from a display perihperal driver instance
+        /// Create a new MicroGraphics instance from a display peripheral driver instance
         /// </summary>
         /// <param name="display">An IGraphicsDisplay object</param>
         public MicroGraphics(IGraphicsDisplay display)
@@ -522,8 +522,8 @@ namespace Meadow.Foundation.Graphics
         /// <remarks>
         /// Note that y axis is inverted so the arc will be flipped from the standard cartesian plain
         /// </remarks>
-        /// <param name="centerX">Abscissa of the centre point of the circle</param>
-        /// <param name="centerY">Ordinate of the centre point of the circle</param>
+        /// <param name="centerX">Abscissa of the center point of the circle</param>
+        /// <param name="centerY">Ordinate of the center point of the circle</param>
         /// <param name="radius">Radius of the circle</param>
         /// <param name="startAngle">The arc starting angle</param>
         /// <param name="endAngle">The arc ending angle</param>
@@ -596,8 +596,8 @@ namespace Meadow.Foundation.Graphics
         /// <remarks>
         /// Note that y axis is inverted so the arc will be flipped from the standard Cartesian plain
         /// </remarks>
-        /// <param name="centerX">Abscissa of the centre point of the circle</param>
-        /// <param name="centerY">Ordinate of the centre point of the circle</param>
+        /// <param name="centerX">Abscissa of the center point of the circle</param>
+        /// <param name="centerY">Ordinate of the center point of the circle</param>
         /// <param name="radius">Radius of the circle</param>
         /// <param name="startAngle">The arc starting angle</param>
         /// <param name="endAngle">The arc ending angle</param>
@@ -614,8 +614,8 @@ namespace Meadow.Foundation.Graphics
         /// <remarks>
         /// Note that y axis is inverted so the arc will be flipped from the standard Cartesian plain
         /// </remarks>
-        /// <param name="centerX">Abscissa of the centre point of the circle</param>
-        /// <param name="centerY">Ordinate of the centre point of the circle</param>
+        /// <param name="centerX">Abscissa of the center point of the circle</param>
+        /// <param name="centerY">Ordinate of the center point of the circle</param>
         /// <param name="radius">Radius of the circle</param>
         /// <param name="startAngle">The arc starting angle</param>
         /// <param name="endAngle">The arc ending angle</param>
@@ -784,8 +784,8 @@ namespace Meadow.Foundation.Graphics
         /// A C# implementation can be found here:
         /// https://rosettacode.org/wiki/Bitmap/Midpoint_circle_algorithm#C.23
         /// </remarks>
-        /// <param name="centerX">Abscissa of the centre point of the circle</param>
-        /// <param name="centerY">Ordinate of the centre point of the circle</param>
+        /// <param name="centerX">Abscissa of the center point of the circle</param>
+        /// <param name="centerY">Ordinate of the center point of the circle</param>
         /// <param name="radius">Radius of the circle</param>
         /// <param name="enabled">Show the circle when true</param>
         /// <param name="filled">Draw a filled circle?</param>
@@ -806,8 +806,8 @@ namespace Meadow.Foundation.Graphics
         /// A C# implementation can be found here:
         /// https://rosettacode.org/wiki/Bitmap/Midpoint_circle_algorithm#C.23
         /// </remarks>
-        /// <param name="centerX">Abscissa of the centre point of the circle</param>
-        /// <param name="centerY">Ordinate of the centre point of the circle</param>
+        /// <param name="centerX">Abscissa of the center point of the circle</param>
+        /// <param name="centerY">Ordinate of the center point of the circle</param>
         /// <param name="radius">Radius of the circle</param>
         /// <param name="color">The color of the circle</param>
         /// <param name="filled">Draw a filled circle</param>
@@ -840,8 +840,8 @@ namespace Meadow.Foundation.Graphics
         /// A C# implementation can be found here:
         /// https://rosettacode.org/wiki/Bitmap/Midpoint_circle_algorithm#C.23
         /// </remarks>
-        /// <param name="centerX">Abscissa of the centre point of the circle</param>
-        /// <param name="centerY">Ordinate of the centre point of the circle</param>
+        /// <param name="centerX">Abscissa of the center point of the circle</param>
+        /// <param name="centerY">Ordinate of the center point of the circle</param>
         /// <param name="radius">Radius of the circle</param>
         /// <param name="filled">Draw a filled circle?</param>
         /// <param name="centerBetweenPixels">If true, the center of the circle is between the assigned pixel and the next pixel, false it's directly on the center pixel</param>
@@ -1215,7 +1215,7 @@ namespace Meadow.Foundation.Graphics
         /// Get the size in pixels of a string using the current font
         /// </summary>
         /// <param name="text">The string to measure</param>
-        /// <param name="scaleFactor">Scalefactor used to calculate the size</param>
+        /// <param name="scaleFactor">Scale factor used to calculate the size</param>
         public Size MeasureText(string text, ScaleFactor scaleFactor = ScaleFactor.X1)
         {
             return MeasureText(text, CurrentFont, scaleFactor);
@@ -1226,7 +1226,7 @@ namespace Meadow.Foundation.Graphics
         /// </summary>
         /// <param name="text">The string to measure</param>
         /// <param name="font">The font used to calculate the text size</param>
-        /// <param name="scaleFactor">Scalefactor used to calculate the size</param>
+        /// <param name="scaleFactor">Scale factor used to calculate the size</param>
         public Size MeasureText(string text, IFont font, ScaleFactor scaleFactor = ScaleFactor.X1)
         {
             return new Size(text.Length * (int)scaleFactor * font.Width, (int)scaleFactor * font.Height);
@@ -1239,7 +1239,7 @@ namespace Meadow.Foundation.Graphics
         /// <param name="y">Ordinate of the location of the text</param>
         /// <param name="text">Text to display</param>
         /// <param name="color">Color of the text</param>
-        /// <param name="scaleFactor">Scalefactor used to calculate the size</param>
+        /// <param name="scaleFactor">Scale factor used to calculate the size</param>
         /// <param name="alignmentH">Horizontal alignment: Left, Center or right aligned text</param>
         /// <param name="alignmentV">Vertical alignment: Top, Center or bottom aligned text</param>
         /// <param name="font">Optional font used to draw the text</param>
@@ -1381,7 +1381,7 @@ namespace Meadow.Foundation.Graphics
         /// <param name="x">Abscissa of the location of the text</param>
         /// <param name="y">Ordinate of the location of the text</param>
         /// <param name="text">Text to display</param>
-        /// <param name="scaleFactor">Scalefactor used to calculate the size</param>
+        /// <param name="scaleFactor">Scale factor used to calculate the size</param>
         /// <param name="alignmentH">Horizontal alignment: Left, Center or right aligned text</param>
         /// <param name="alignmentV">Vertical alignment: Top, Center or bottom aligned text</param>
         public void DrawText(int x, int y, string text,
@@ -1421,7 +1421,7 @@ namespace Meadow.Foundation.Graphics
                 byte[] charMap1, charMap2;
                 int index = 0;
 
-                for (int i = 0; i < text.Length; i += 2) //2 chracters, 3 bytes ... 24 bytes total so the math is good
+                for (int i = 0; i < text.Length; i += 2) //2 characters, 3 bytes ... 24 bytes total so the math is good
                 {
                     //grab two characters at once
                     charMap1 = font[text[i]];
@@ -1451,7 +1451,7 @@ namespace Meadow.Foundation.Graphics
 
                 if (text.Length % 4 != 0)
                 {
-                    len += 4 - (text.Length % 4); //chacter length
+                    len += 4 - (text.Length % 4); //character length
                 }
                 len = len * 3 / 4; //length in bytes
 

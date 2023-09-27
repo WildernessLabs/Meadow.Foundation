@@ -16,16 +16,16 @@ namespace Meadow.Foundation.Sensors.Hid
         public class JoystickCalibration
         {
             /// <summary>
-            /// Voltage at horizonal center
+            /// Voltage at horizontal center
             /// </summary>
             public Voltage HorizontalCenter { get; protected set; }
 
             /// <summary>
-            /// Voltage at minimum horizonal position
+            /// Voltage at minimum horizontal position
             /// </summary>
             public Voltage HorizontalMin { get; protected set; }
             /// <summary>
-            /// Voltage at maximum horizonal postion
+            /// Voltage at maximum horizontal position
             /// </summary>
             public Voltage HorizontalMax { get; protected set; }
 
@@ -48,7 +48,7 @@ namespace Meadow.Foundation.Sensors.Hid
             public Voltage DeadZone { get; protected set; }
 
             /// <summary>
-            /// Joystick callibation
+            /// Joystick calibration
             /// </summary>
             /// <param name="voltage">VCC or maximum voltage</param>
             public JoystickCalibration(Voltage voltage)
@@ -65,7 +65,7 @@ namespace Meadow.Foundation.Sensors.Hid
             }
 
             /// <summary>
-            /// Joystick callibation
+            /// Joystick calibration
             /// </summary>
             /// <param name="horizontalCenter"></param>
             /// <param name="horizontalMin"></param>

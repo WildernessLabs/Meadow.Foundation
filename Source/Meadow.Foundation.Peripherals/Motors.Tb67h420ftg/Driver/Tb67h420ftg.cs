@@ -10,7 +10,7 @@ namespace Meadow.Foundation.Motors
     ///
     /// With the ability to drive up to `50V` at `9A`, it's a very powerful driver.
     /// It can also be put into single H-Bridge mode in which two motors are driven
-    /// in synch, or one motor is driven with both outputs, allowing twice the power.
+    /// in sync, or one motor is driven with both outputs, allowing twice the power.
     /// </summary>
     /// <remarks>
     /// Pololu makes a breakout of this chip to get you started: https://www.pololu.com/product/2999

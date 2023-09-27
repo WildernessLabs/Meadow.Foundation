@@ -56,27 +56,27 @@ namespace Meadow.Foundation.Sensors.Environmental
         public event EventHandler<IChangeResult<Density>> EnvironmentalPM_10micronUpdated = delegate { };
 
         /// <summary>
-        /// Raised when the number of of 0-0.3 micron particles (in 0.1 liters of air) changes
+        /// Raised when the number of 0-0.3 micron particles (in 0.1 liters of air) changes
         /// </summary>
         public event EventHandler<IChangeResult<ParticleDensity>> CountOf0_3micronParticlesUpdated = delegate { };
 
         /// <summary>
-        /// Raised when the number of of 0.3-0.5 micron particles (in 0.1 liters of air) changes
+        /// Raised when the number of 0.3-0.5 micron particles (in 0.1 liters of air) changes
         /// </summary>
         public event EventHandler<IChangeResult<ParticleDensity>> CountOf0_5micronParticlesUpdated = delegate { };
 
         /// <summary>
-        /// Raised when the number of of 0.5-10 micron particles changes
+        /// Raised when the number of 0.5-10 micron particles changes
         /// </summary>
         public event EventHandler<IChangeResult<ParticleDensity>> CountOf10micronParticlesUpdated = delegate { };
 
         /// <summary>
-        /// Raised when the number of of 10-25 micron particles (in 0.1 liters of air) changes
+        /// Raised when the number of 10-25 micron particles (in 0.1 liters of air) changes
         /// </summary>
         public event EventHandler<IChangeResult<ParticleDensity>> CountOf25micronParticlesUpdated = delegate { };
 
         /// <summary>
-        /// Raised when the number of of 25-50 micron particles (in 0.1 liters of air) changes
+        /// Raised when the number of 25-50 micron particles (in 0.1 liters of air) changes
         /// </summary>
         public event EventHandler<IChangeResult<ParticleDensity>> CountOf50micronParticlesUpdated = delegate { };
 
@@ -116,27 +116,27 @@ namespace Meadow.Foundation.Sensors.Environmental
         public Density? PM10_0Env => Conditions.EnvironmentalParticulateMatter_10micron;
 
         /// <summary>
-        /// Particle density of 0 - 0.3 micron particles inair
+        /// Particle density of 0 - 0.3 micron particles in air
         /// </summary>
         public ParticleDensity? CountOf0_3micronParticles => Conditions.ParticleDensity_0_3microns;
         /// <summary>
-        /// Particle density of of 0.3 - 0.5 micron particles in air
+        /// Particle density of 0.3 - 0.5 micron particles in air
         /// </summary>
         public ParticleDensity? CountOf0_5micronParticles => Conditions.ParticleDensity_0_5microns;
         /// <summary>
-        /// Particle density of of 0.5 - 10 micron particles in air
+        /// Particle density of 0.5 - 10 micron particles in air
         /// </summary>
         public ParticleDensity? CountOf10micronParticles => Conditions.ParticleDensity_10microns;
         /// <summary>
-        /// Particle density of of 0.5 - 10 micron particles in air
+        /// Particle density of 0.5 - 10 micron particles in air
         /// </summary>
         public ParticleDensity? CountOf25micronParticles => Conditions.ParticleDensity_25microns;
         /// <summary>
-        /// Particle density of of 10 - 50 micron particles in air
+        /// Particle density of 10 - 50 micron particles in air
         /// </summary>
         public ParticleDensity? CountOf50micronParticles => Conditions.ParticleDensity_50microns;
         /// <summary>
-        /// Particle density of of 50 - 100 micron particles in  air
+        /// Particle density of 50 - 100 micron particles in  air
         /// </summary>
         public ParticleDensity? CountOf100micronParticles => Conditions.ParticleDensity_100microns;
 

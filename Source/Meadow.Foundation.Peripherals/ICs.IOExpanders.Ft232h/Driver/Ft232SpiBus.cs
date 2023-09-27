@@ -137,7 +137,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
         private SpiChannelConfig CreateChannelConfig(SpiClockConfiguration config)
         {
-            // for now we supprt CS on D3 and that's it
+            // for now we support CS on D3 and that's it
             Ft232h.SpiConfigOptions opts = SpiConfigOptions.CS_ACTIVELOW | SpiConfigOptions.CS_DBUS3;
 
             switch (config.SpiMode)

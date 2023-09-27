@@ -15,7 +15,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         public PinDefinitions Pins { get; }
 
         /// <summary>
-        /// The number of IO pins avaliable on the device
+        /// The number of IO pins available on the device
         /// </summary>
         public override int NumberOfPins => 8;
 

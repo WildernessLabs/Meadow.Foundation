@@ -18,7 +18,7 @@ namespace Meadow.Foundation.Sensors.Distance
         /// <summary>
         /// Creates a new MaxBotix object communicating over serial
         /// </summary>
-        /// <param name="device">The device conected to the sensor</param>
+        /// <param name="device">The device connected to the sensor</param>
         /// <param name="serialPort">The serial port</param>
         /// <param name="sensor">The distance sensor type</param>
         public MaxBotix(IMeadowDevice device, SerialPortName serialPort, SensorType sensor)

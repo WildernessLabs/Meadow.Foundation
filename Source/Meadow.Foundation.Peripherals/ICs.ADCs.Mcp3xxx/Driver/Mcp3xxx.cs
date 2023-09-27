@@ -50,7 +50,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
         /// <summary>
         /// The resolution of the analog-to-digital converter in the Mcp3xxx
-        /// This is model-specific and not confiruable 
+        /// This is model-specific and not configurable 
         /// </summary>
         public int AdcResolutionInBits { get; protected set; }
 
@@ -60,7 +60,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         internal int AdcMaxValue { get; set; }
 
         /// <summary>
-        /// Mcp3xxx base class contructor
+        /// Mcp3xxx base class constructor
         /// </summary>
         /// <param name="spiBus">The SPI bus</param>
         /// <param name="chipSelectPin">Chip select pin</param>
@@ -74,7 +74,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         }
 
         /// <summary>
-        /// Mcp3xxx base class contructor
+        /// Mcp3xxx base class constructor
         /// </summary>
         /// <param name="spiBus">The SPI bus</param>
         /// <param name="chipSelectPort">Chip select port</param>
@@ -242,7 +242,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <summary>
         /// Reads a value from the device
         /// </summary>
-        /// <param name="channel">Channel to read - for diffential inputs this represents a channel pair (valid values: 0 - channelcount - 1 or 0 - channelcount / 2 - 1  with differential inputs)</param>
+        /// <param name="channel">Channel to read - for differential inputs this represents a channel pair (valid values: 0 - channelcount - 1 or 0 - channelcount / 2 - 1  with differential inputs)</param>
         /// <param name="inputType">The type of input channel to read</param>
         /// <param name="adcResolutionBits">The number of bits in the returned value</param>
         /// <returns>A value corresponding to relative voltage level on specified device channel</returns>
