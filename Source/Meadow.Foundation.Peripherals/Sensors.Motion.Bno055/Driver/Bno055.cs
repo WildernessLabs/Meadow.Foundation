@@ -225,7 +225,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// Is the system fully calibrated?
         /// </summary>
         /// <remarks>
-        /// The sensor is fully calibrated if the system, accelerometer, gyroscope and megnetometer
+        /// The sensor is fully calibrated if the system, accelerometer, gyroscope and magnetometer
         /// are all calibrated.
         /// </remarks>
         public bool IsFullyCalibrated => IsAccelerometerCalibrated && IsGyroscopeCalibrated && IsSystemCalibrated &&

@@ -69,7 +69,7 @@ namespace Meadow.Foundation.Sensors.Motion
             public const byte NINE_DEGREES_OF_FREEDOM_MAGNETOMETER_CALIBRATION_OFF = 0x0b;
 
             /// <summary>
-            /// Fusion of the accelerometer, gyroscope and megnetometer readings (fusion mode).
+            /// Fusion of the accelerometer, gyroscope and magnetometer readings (fusion mode).
             /// </summary>
             public const byte NINE_DEGREES_OF_FREEDOM = 0x0c;
 
