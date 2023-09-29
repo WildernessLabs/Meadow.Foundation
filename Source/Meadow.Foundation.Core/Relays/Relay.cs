@@ -1,3 +1,4 @@
+using System;
 using Meadow.Hardware;
 using Meadow.Peripherals.Relays;
 
@@ -8,6 +9,9 @@ namespace Meadow.Foundation.Relays
     /// </summary>
     public class Relay : IRelay
     {
+        /// <inheritdoc/>
+        public event EventHandler<bool> OnRelayChanged = delegate { };
+        
         /// <summary>
         /// Returns digital output port
         /// </summary>
@@ -28,6 +32,7 @@ namespace Meadow.Foundation.Relays
             {
                 isOn = value;
                 DigitalOut.State = isOn ? onValue : !onValue;
+                OnRelayChanged?.Invoke(this, isOn);
             }
         }
         bool isOn = false;
