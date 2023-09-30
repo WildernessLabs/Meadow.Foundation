@@ -71,13 +71,13 @@ namespace Meadow.Foundation.Sensors.Camera
 
             Resolver.Log.Info("Adrucam init...");
 
-            Initialize();
+            //  Initialize();
         }
 
         /// <summary>
         /// Init for OV2640 + Mini + Mini 2mp Plus
         /// </summary>
-        void Initialize()
+        public void Initialize()
         {
             wrSensorReg8_8(0xff, 0x01);
             wrSensorReg8_8(0x12, 0x80);
@@ -138,7 +138,7 @@ namespace Meadow.Foundation.Sensors.Camera
 
         public byte read_reg(byte address)
         {
-            return bus_read((byte)(address & 0x7F));
+            return bus_read(address);
         }
 
         byte get_bit(byte address, byte bit)
@@ -417,18 +417,19 @@ namespace Meadow.Foundation.Sensors.Camera
 
         public void write_reg(byte address, byte data)
         {
-            bus_write((byte)(address | 0x80), data);
+            bus_write(address, data);
         }
 
         byte bus_read(byte address)
         {
-            return spiComms.ReadRegister(address);
+            return spiComms.ReadRegister((byte)(address & 0x7F));
         }
 
         void bus_write(byte address, byte data)
         {
-            spiComms.Write(address);
-            spiComms.Write(data);
+            spiComms.WriteRegister((byte)(address | 0x80), data);
+            //   spiComms.Write(address);
+            //   spiComms.Write(data);
         }
 
         int wrSensorReg8_8(byte register, byte value)

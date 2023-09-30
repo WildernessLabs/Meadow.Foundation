@@ -32,7 +32,9 @@ namespace Sensors.Camera.Arducam_Sample
             camera.write_reg(0x07, 0x00);
             Thread.Sleep(100);
 
+            Thread.Sleep(1000);
             camera.write_reg(0x00  /*ARDUCHIP_TEST1 */, 0x55);
+            Thread.Sleep(5000);
             var temp = camera.read_reg(0x00);
 
             Resolver.Log.Info($"temp: {temp}");
