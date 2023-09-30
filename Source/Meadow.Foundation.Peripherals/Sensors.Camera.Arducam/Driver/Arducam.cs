@@ -67,7 +67,9 @@ namespace Meadow.Foundation.Sensors.Camera
         public Arducam(ISpiBus spiBus, IDigitalOutputPort chipSelectPort, II2cBus i2cBus, byte i2cAddress)
         {
             i2cComms = new I2cCommunications(i2cBus, i2cAddress);
-            spiComms = new SpiCommunications(spiBus, chipSelectPort, SpiBusSpeed, SpiBusMode);
+            spiComms = new SpiCommunications(spiBus, chipSelectPort, DefaultSpiBusSpeed, DefaultSpiBusMode);
+
+            Resolver.Log.Info("Adrucam init...");
 
             Initialize();
         }
@@ -134,7 +136,7 @@ namespace Meadow.Foundation.Sensors.Camera
             write_reg(address, (byte)(temp & (~bit)));
         }
 
-        byte read_reg(byte address)
+        public byte read_reg(byte address)
         {
             return bus_read((byte)(address & 0x7F));
         }
@@ -413,7 +415,7 @@ namespace Meadow.Foundation.Sensors.Camera
         }
 
 
-        void write_reg(byte address, byte data)
+        public void write_reg(byte address, byte data)
         {
             bus_write((byte)(address | 0x80), data);
         }
