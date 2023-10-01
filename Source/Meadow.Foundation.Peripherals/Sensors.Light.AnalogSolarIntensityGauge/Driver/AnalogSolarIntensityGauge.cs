@@ -1,4 +1,5 @@
 ﻿using Meadow.Hardware;
+using Meadow.Peripherals.Sensors.Light;
 using Meadow.Units;
 using System;
 using System.Threading.Tasks;
@@ -9,15 +10,14 @@ namespace Meadow.Foundation.Sensors.Light
     /// <summary>
     /// Driver to measure solar panel input
     /// </summary>
-    public class AnalogSolarIntensityGauge : SamplingSensorBase<float>,
-        ISolarIntensityGauge
+    public class AnalogSolarIntensityGauge : SamplingSensorBase<float>, ISolarIntensityGauge
     {
         /// <summary>
         /// Raised when the solar intensity changes
         /// </summary>
         public event EventHandler<IChangeResult<float>> SolarIntensityUpdated = delegate { };
 
-        IAnalogInputPort analogInputPort;
+        readonly IAnalogInputPort analogInputPort;
 
         /// <summary>
         /// Minimum voltage reference
