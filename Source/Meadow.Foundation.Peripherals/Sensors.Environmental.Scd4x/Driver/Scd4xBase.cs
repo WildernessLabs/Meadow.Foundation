@@ -1,5 +1,6 @@
 using Meadow.Hardware;
 using Meadow.Peripherals.Sensors;
+using Meadow.Peripherals.Sensors.Atmospheric;
 using Meadow.Peripherals.Sensors.Environmental;
 using Meadow.Units;
 using System;
