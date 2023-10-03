@@ -25,7 +25,7 @@ namespace MeadowApp
                 },
                 filter: result =>
                 {
-                    //c# 8 pattern match syntax. checks for !null and assigns var.
+                 
                     if (result.Old?.Temperature is { } oldTemp &&
                         result.Old?.Humidity is { } oldHumidity &&
                         result.New.Temperature is { } newTemp &&

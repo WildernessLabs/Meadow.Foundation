@@ -27,7 +27,7 @@ namespace MeadowApp
                 filter: result =>
                 {
                     if (result.Old is { } old)
-                    { //c# 8 pattern match syntax. checks for !null and assigns var.
+                    {
                         return (result.New - old).Abs().Volts > 0.5; // returns true if > 0.5V change.
                     }
                     return false;

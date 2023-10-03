@@ -29,7 +29,7 @@ public override Task Initialize()
     var consumer = Capacitive.CreateObserver(
         handler: result =>
         {
-            string oldValue = (result.Old is { } old) ? $"{old:n2}" : "n/a"; // C# 8 pattern matching
+            string oldValue = (result.Old is { } old) ? $"{old:n2}" : "n/a"; 
             Resolver.Log.Info($"Subscribed - " +
                 $"new: {result.New}, " +
                 $"old: {oldValue}");
@@ -41,7 +41,7 @@ public override Task Initialize()
     // classical .NET events can also be used:
     capacitive.HumidityUpdated += (sender, result) =>
     {
-        string oldValue = (result.Old is { } old) ? $"{old:n2}" : "n/a"; // C# 8 pattern matching
+        string oldValue = (result.Old is { } old) ? $"{old:n2}" : "n/a"; 
         Resolver.Log.Info($"Updated - New: {result.New}, Old: {oldValue}");
     };
 
