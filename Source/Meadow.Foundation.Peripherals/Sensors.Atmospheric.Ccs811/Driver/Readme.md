@@ -31,7 +31,6 @@ public override Task Initialize()
         },
         filter: result =>
         {
-            //c# 8 pattern match syntax. checks for !null and assigns var.
             if (result.Old is { } old)
             {
                 return (

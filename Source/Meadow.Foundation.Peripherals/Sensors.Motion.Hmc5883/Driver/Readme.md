@@ -36,7 +36,7 @@ public override Task Initialize()
                 $" old: X:{((result.Old != null) ? Hmc5883.DirectionToHeading(result.Old.Value) : "n/a"):N2} degrees"),
         // only notify if there's a greater than 5° of heading change
         filter: result => {
-            if (result.Old is { } old) { //c# 8 pattern match syntax. checks for !null and assigns var.
+            if (result.Old is { } old) { 
                 return (Hmc5883.DirectionToHeading(result.New - old) > new Azimuth(5));
             }
             return false;

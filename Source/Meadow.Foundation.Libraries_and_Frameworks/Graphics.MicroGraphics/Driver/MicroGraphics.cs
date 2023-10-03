@@ -279,8 +279,6 @@ namespace Meadow.Foundation.Graphics
         /// <remarks>
         /// Bresenhams line drawing algorithm:
         /// https://en.wikipedia.org/wiki/Bresenham's_line_algorithm
-        /// C# Implementation:
-        /// https://en.wikipedia.org/wiki/Bresenham's_line_algorithm
         /// </remarks>
         /// <param name="x0">Abscissa of the starting point of the line</param>
         /// <param name="y0">Ordinate of the starting point of the line</param>
@@ -317,8 +315,6 @@ namespace Meadow.Foundation.Graphics
         /// </summary>
         /// <remarks>
         /// Bresenhams line drawing algorithm:
-        /// https://en.wikipedia.org/wiki/Bresenham's_line_algorithm
-        /// C# Implementation:
         /// https://en.wikipedia.org/wiki/Bresenham's_line_algorithm
         /// </remarks>
         /// <param name="x0">Abscissa of the starting point of the line</param>
@@ -777,12 +773,9 @@ namespace Meadow.Foundation.Graphics
         /// Draw a circle
         /// </summary>
         /// <remarks>
-        /// This algorithm draws the circle by splitting the full circle into eight
-        /// segments.
+        /// This algorithm draws the circle by splitting the full circle into eight segments.
         /// This method uses the Midpoint algorithm:
         /// https://en.wikipedia.org/wiki/Midpoint_circle_algorithm
-        /// A C# implementation can be found here:
-        /// https://rosettacode.org/wiki/Bitmap/Midpoint_circle_algorithm#C.23
         /// </remarks>
         /// <param name="centerX">Abscissa of the centre point of the circle</param>
         /// <param name="centerY">Ordinate of the centre point of the circle</param>
@@ -799,12 +792,9 @@ namespace Meadow.Foundation.Graphics
         /// Draw a circle
         /// </summary>
         /// <remarks>
-        /// This algorithm draws the circle by splitting the full circle into eight
-        /// segments
+        /// This algorithm draws the circle by splitting the full circle into eight segments
         /// This method uses the Midpoint algorithm:
         /// https://en.wikipedia.org/wiki/Midpoint_circle_algorithm
-        /// A C# implementation can be found here:
-        /// https://rosettacode.org/wiki/Bitmap/Midpoint_circle_algorithm#C.23
         /// </remarks>
         /// <param name="centerX">Abscissa of the centre point of the circle</param>
         /// <param name="centerY">Ordinate of the centre point of the circle</param>
@@ -833,12 +823,9 @@ namespace Meadow.Foundation.Graphics
         /// Draw a circle
         /// </summary>
         /// <remarks>
-        /// This algorithm draws the circle by splitting the full circle into eight
-        /// segments
+        /// This algorithm draws the circle by splitting the full circle into eight segments
         /// This method uses the Midpoint algorithm:
         /// https://en.wikipedia.org/wiki/Midpoint_circle_algorithm
-        /// A C# implementation can be found here:
-        /// https://rosettacode.org/wiki/Bitmap/Midpoint_circle_algorithm#C.23
         /// </remarks>
         /// <param name="centerX">Abscissa of the centre point of the circle</param>
         /// <param name="centerY">Ordinate of the centre point of the circle</param>

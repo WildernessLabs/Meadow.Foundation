@@ -35,7 +35,7 @@ namespace Sensors.Motion.Mmc5603_Sample
                 filter: result =>
                 {
                     if (result.Old is { } old)
-                    { //c# 8 pattern match syntax. checks for !null and assigns var
+                    {
                         return (result.New - old).Y > new MagneticField(1, MU.MicroTesla);
                     }
                     return false;

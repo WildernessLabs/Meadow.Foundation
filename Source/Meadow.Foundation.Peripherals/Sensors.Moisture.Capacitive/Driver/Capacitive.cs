@@ -22,7 +22,7 @@ namespace Meadow.Foundation.Sensors.Moisture
         protected IAnalogInputPort AnalogInputPort { get; }
 
         /// <summary>
-        /// Last value read from the moisture sensor.
+        /// Last value read from the moisture sensor
         /// </summary>
         public double? Moisture { get; protected set; }
 
@@ -77,7 +77,7 @@ namespace Meadow.Foundation.Sensors.Moisture
                 IAnalogInputPort.CreateObserver(
                     result =>
                     {
-                        ChangeResult<double> changeResult = new ChangeResult<double>()
+                        ChangeResult<double> changeResult = new()
                         {
                             New = VoltageToMoisture(result.New),
                             Old = Moisture
@@ -147,7 +147,6 @@ namespace Meadow.Foundation.Sensors.Moisture
             {
                 return (1f - voltage.Volts.Map(MaximumVoltageCalibration.Volts, MinimumVoltageCalibration.Volts, 0f, 1.0f));
             }
-
             return (1f - voltage.Volts.Map(MinimumVoltageCalibration.Volts, MaximumVoltageCalibration.Volts, 0f, 1.0f));
         }
     }

@@ -36,7 +36,7 @@ public override Task Initialize()
         filter: result =>
         {
             if (result.Old is { } old)
-            { //c# 8 pattern match syntax. checks for !null and assigns var
+            {
                 return (result.New - old).Y > new MagneticField(1, MU.MicroTesla);
             }
             return false;

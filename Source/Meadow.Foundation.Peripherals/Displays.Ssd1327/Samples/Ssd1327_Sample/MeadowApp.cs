@@ -48,7 +48,7 @@ namespace MeadowApp
         //<!=SNOP=>
 
         void TestDisplay()
-        { 
+        {
             while (true)
             {
                 PolarLineTest();

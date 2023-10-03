@@ -27,7 +27,7 @@ public override Task Initialize()
         handler: result => Resolver.Log.Info($"Observer filter satisfied: {result.New.Volts:N2}V, old: {result.Old?.Volts:N2}V"),
         // only notify if the change is greater than 0.5V
         filter: result => {
-            if (result.Old is { } old) { //c# 8 pattern match syntax. checks for !null and assigns var.
+            if (result.Old is { } old) { 
                 return (result.New - old).Abs().Volts > 0.5; // returns true if > 0.5V change.
             }
             return false;

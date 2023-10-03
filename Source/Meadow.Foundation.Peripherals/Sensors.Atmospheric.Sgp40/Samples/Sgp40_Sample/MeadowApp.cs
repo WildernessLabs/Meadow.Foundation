@@ -36,7 +36,6 @@ namespace BasicSensors.Atmospheric.SI7021_Sample
                 },
                 filter: result =>
                 {
-                    //c# 8 pattern match syntax. checks for !null and assigns var.
                     return Math.Abs(result.New - result.Old ?? 0) > 10;
                 }
             );

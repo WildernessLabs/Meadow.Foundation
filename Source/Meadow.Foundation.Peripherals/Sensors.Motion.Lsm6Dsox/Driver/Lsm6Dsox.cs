@@ -130,7 +130,7 @@ namespace Meadow.Foundation.Sensors.Motion
         Acceleration3D GetAcceleration3D(short rawX, short rawY, short rawZ)
         {
             float lsbPerG = currentAccelScale switch
-            {   
+            {
                 AccelFullScale.G2 => 16384.0f, // 2^16 / (2 * 2)
                 AccelFullScale.G4 => 8192.0f, // 2^16 / (2 * 4)
                 AccelFullScale.G8 => 4096.0f, // 2^16 / (2 * 8)
