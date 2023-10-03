@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 namespace Meadow.Foundation.Sensors.Environmental;
 
 /// <summary>
-/// Atlas Scientific Analog Gravity Disolved Oxygen Meter
+/// Atlas Scientific Analog Gravity Dissolved Oxygen Meter
 /// </summary>
 public partial class AtlasScientificGravityDOMeter : SamplingSensorBase<double>
 {
