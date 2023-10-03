@@ -1,9 +1,8 @@
-﻿using System;
-using System.Threading.Tasks;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Servos;
 using Meadow.Units;
+using System.Threading.Tasks;
 using AU = Meadow.Units.Angle.UnitType;
 
 namespace Servos.Servo_Sample
@@ -24,7 +23,7 @@ namespace Servos.Servo_Sample
         }
 
         public async override Task Run()
-        { 
+        {
             await servo.RotateTo(new Angle(0, AU.Degrees));
 
             while (true)

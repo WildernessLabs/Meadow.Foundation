@@ -2,7 +2,7 @@
 {
     public partial class SixteenSegment
     {
-        static uint[] sixteenSegmentASCII = {
+        static readonly uint[] sixteenSegmentASCII = {
             0b00000000000000000, /* (space) */
 			0b10000000000001100, /* ! */
 			0b00000001000000100, /* " */

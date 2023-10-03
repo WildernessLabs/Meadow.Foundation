@@ -25,7 +25,7 @@ namespace Meadow.Foundation.Sensors.Light
         /// Creates a new Temt6000 driver
         /// </summary>
         /// <param name="port"></param>
-        public Temt6000(IAnalogInputPort port) : base(port) 
+        public Temt6000(IAnalogInputPort port) : base(port)
         { }
     }
 }

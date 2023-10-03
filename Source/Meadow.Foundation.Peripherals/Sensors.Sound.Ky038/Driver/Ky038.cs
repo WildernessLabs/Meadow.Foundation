@@ -9,8 +9,8 @@ namespace Meadow.Foundation.Sensors.Sound
     /// </summary>
     public class Ky038
     {
-        private IAnalogInputPort analogPort;
-        private IDigitalInputPort digitalInputPort;
+        private readonly IAnalogInputPort analogPort;
+        private readonly IDigitalInputPort digitalInputPort;
 
         /// <summary>
         /// Create a new Ky038 object

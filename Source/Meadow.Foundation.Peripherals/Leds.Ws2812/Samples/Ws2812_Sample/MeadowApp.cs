@@ -3,7 +3,6 @@ using Meadow.Devices;
 using Meadow.Foundation;
 using Meadow.Foundation.Leds;
 using Meadow.Units;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace MeadowApp
@@ -12,9 +11,9 @@ namespace MeadowApp
     {
         private Ws2812 _ws2812;
 
-        private int ledCount = 10;
+        private readonly int ledCount = 10;
 
-        public override Task Initialize() 
+        public override Task Initialize()
         {
             var _spiBus = Device.CreateSpiBus(new Frequency(3.2, Frequency.UnitType.Megahertz));
             _ws2812 = new Ws2812(_spiBus, ledCount);
@@ -24,9 +23,9 @@ namespace MeadowApp
 
         public override Task Run()
         {
-            for(var i = 0; i < ledCount; i++)
+            for (var i = 0; i < ledCount; i++)
             {
-                if(i % 2 == 0)
+                if (i % 2 == 0)
                 {
                     _ws2812.SetLed(i, Color.Blue);
                 }

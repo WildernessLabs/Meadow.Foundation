@@ -9,7 +9,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         public class BiDirectionalPort : BiDirectionalPortBase
         {
-            private SerialWombatBase _controller;
+            private readonly SerialWombatBase _controller;
 
             /// <summary>
             /// The port direction

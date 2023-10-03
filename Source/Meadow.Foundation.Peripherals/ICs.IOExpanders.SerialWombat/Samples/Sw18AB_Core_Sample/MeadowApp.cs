@@ -11,7 +11,7 @@ namespace ICs.IOExpanders.Sw18AB_Samples
         //<!=SNIP=>
 
         private Sw18AB _wombat;
-        
+
         public override Task Initialize()
         {
             Resolver.Log.Info("Initialize...");

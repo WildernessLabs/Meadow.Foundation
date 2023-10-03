@@ -1,7 +1,6 @@
-﻿using System;
-using Meadow.Foundation.Displays;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
+using Meadow.Foundation.Displays;
 using System.Threading.Tasks;
 
 namespace MeadowApp

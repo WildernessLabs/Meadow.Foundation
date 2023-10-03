@@ -1,6 +1,6 @@
-using System;
 using Meadow.Hardware;
 using Meadow.Peripherals.Relays;
+using System;
 
 namespace Meadow.Foundation.Relays
 {
@@ -11,7 +11,7 @@ namespace Meadow.Foundation.Relays
     {
         /// <inheritdoc/>
         public event EventHandler<bool> OnRelayChanged = delegate { };
-        
+
         /// <summary>
         /// Returns digital output port
         /// </summary>

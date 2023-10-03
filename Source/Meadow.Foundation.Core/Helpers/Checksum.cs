@@ -72,7 +72,7 @@ namespace Meadow.Foundation.Helpers
                         temp <<= 1;
                     }
                 }
-                _lookupTable[outer] = (byte) temp;            
+                _lookupTable[outer] = (byte)temp;
             }
             _polynomial = polynomial;
 

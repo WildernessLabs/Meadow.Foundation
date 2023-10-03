@@ -2,7 +2,6 @@
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Rotary;
 using Meadow.Peripherals.Sensors.Rotary;
-using System;
 using System.Threading.Tasks;
 
 namespace Sensors.Rotary.RotaryEncoder_Sample

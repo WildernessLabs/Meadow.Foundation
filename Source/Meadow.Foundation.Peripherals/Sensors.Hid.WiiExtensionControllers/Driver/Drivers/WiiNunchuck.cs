@@ -2,7 +2,6 @@
 using Meadow.Peripherals.Sensors.Buttons;
 using Meadow.Peripherals.Sensors.Hid;
 using Meadow.Units;
-using System;
 
 namespace Meadow.Foundation.Sensors.Hid
 {

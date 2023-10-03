@@ -38,7 +38,7 @@ namespace Meadow.Foundation.Displays
                 value.CopyTo(_segmentOrder, 0);
             }
         }
-        private byte[] _segmentOrder = { 0, 1, 2, 3, 4, 5 };
+        private readonly byte[] _segmentOrder = { 0, 1, 2, 3, 4, 5 };
 
         /// <summary>
         /// Set the screen on or off

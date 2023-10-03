@@ -1,5 +1,5 @@
-﻿using System;
-using Meadow.Peripherals.Sensors.Location;
+﻿using Meadow.Peripherals.Sensors.Location;
+using System;
 
 namespace Meadow.Foundation.Sensors.Location.Gnss
 {
@@ -21,34 +21,34 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
             var year = 2000;
             double d = 0;
 
-            if (date != null) 
+            if (date != null)
             {
                 if (double.TryParse(date, out d))
                 {
                     day = (int)(d / 10000);
                     month = (int)((d - (day * 10000)) / 100);
                     year = 2000 + ((int)d - (day * 10000) - (month * 100));
-                } 
-                else 
+                }
+                else
                 {
                     return null;
                 }
             }
-        
+
             int hour;
             int minute;
             int second;
             int milliseconds;
             double t = 0;
 
-            if (double.TryParse(time, out t)) 
+            if (double.TryParse(time, out t))
             {
                 hour = (int)(t / 10000);
                 minute = (int)((t - (hour * 10000)) / 100);
                 second = (int)(t - (hour * 10000) - (minute * 100));
                 milliseconds = (int)(t - (int)t) * 100;
-            } 
-            else 
+            }
+            else
             {
                 return null;
             }
@@ -67,7 +67,8 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
             decimal loc = 0;
             var position = new DegreesMinutesSecondsPosition();
 
-            if (decimal.TryParse(location, out loc)) {
+            if (decimal.TryParse(location, out loc))
+            {
                 position.Degrees = (int)(loc / 100);
                 position.Minutes = loc - (position.Degrees * 100);
                 position.Direction = direction.ToLower() switch
@@ -78,8 +79,8 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
                     "w" => CardinalDirection.West,
                     _ => CardinalDirection.Unknown,
                 };
-            } 
-            else 
+            }
+            else
             {
                 return null;
             }

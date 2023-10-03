@@ -1,11 +1,10 @@
-﻿using System;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Camera;
 using Meadow.Hardware;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Sensors.Temperature.MLX90640_Sample
 {

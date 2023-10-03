@@ -1,5 +1,4 @@
-﻿using System;
-namespace Meadow.Foundation
+﻿namespace Meadow.Foundation
 {
     ///<Summary>
     /// Wilderness Labs brand colors

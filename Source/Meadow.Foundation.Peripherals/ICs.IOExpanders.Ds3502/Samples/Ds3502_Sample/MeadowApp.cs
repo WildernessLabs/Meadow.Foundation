@@ -1,7 +1,6 @@
 ﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.ICs.IOExpanders;
-using System;
 using System.Threading;
 using System.Threading.Tasks;
 

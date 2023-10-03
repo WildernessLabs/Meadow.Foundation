@@ -2,7 +2,6 @@
 using Meadow.Devices;
 using Meadow.Foundation.Audio.Radio;
 using Meadow.Units;
-using System;
 using System.Threading.Tasks;
 
 namespace Audio.Radio.Tea5767_Sample
@@ -16,7 +15,7 @@ namespace Audio.Radio.Tea5767_Sample
         public override Task Initialize()
         {
             Resolver.Log.Info("Initializing...");
-            
+
             radio = new Tea5767(Device.CreateI2cBus());
 
             return Task.CompletedTask;

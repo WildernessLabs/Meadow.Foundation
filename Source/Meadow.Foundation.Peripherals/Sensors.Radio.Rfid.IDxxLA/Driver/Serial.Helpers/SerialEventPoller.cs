@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Meadow.Hardware;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Meadow.Hardware;
 
 namespace Meadow.Foundation.Sensors.Radio.Rfid.Serial.Helpers
 {

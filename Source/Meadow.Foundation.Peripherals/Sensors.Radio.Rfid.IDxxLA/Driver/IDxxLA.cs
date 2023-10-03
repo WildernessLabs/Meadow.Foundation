@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Meadow.Hardware;
+using Meadow.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using Meadow.Hardware;
-using Meadow.Utilities;
 
 namespace Meadow.Foundation.Sensors.Radio.Rfid
 {
@@ -82,12 +82,14 @@ namespace Meadow.Foundation.Sensors.Radio.Rfid
         /// </summary>
         public void Dispose()
         {
-            foreach (var observer in _observers) {
+            foreach (var observer in _observers)
+            {
                 observer?.OnCompleted();
             }
             _observers.Clear();
 
-            if (SerialPort.IsOpen) {
+            if (SerialPort.IsOpen)
+            {
                 SerialPort.Close();
             }
         }
@@ -116,8 +118,10 @@ namespace Meadow.Foundation.Sensors.Radio.Rfid
         {
             // Ensure thread safety
             // See https://docs.microsoft.com/en-us/dotnet/standard/events/observer-design-pattern-best-practices
-            lock (_observers) {
-                if (!_observers.Contains(observer)) {
+            lock (_observers)
+            {
+                if (!_observers.Contains(observer))
+                {
                     _observers.Add(observer);
                 }
             }
@@ -127,14 +131,16 @@ namespace Meadow.Foundation.Sensors.Radio.Rfid
 
         private static byte[] AsciiHexByteArrayToBytes(Span<byte> hexBytes)
         {
-            if (hexBytes.Length % 2 != 0) {
+            if (hexBytes.Length % 2 != 0)
+            {
                 throw new ArgumentException(
                     "Byte array must contain an event number of bytes to be parsed",
                     nameof(hexBytes));
             }
 
             var result = new byte[hexBytes.Length / 2];
-            for (var i = 0; i < hexBytes.Length; i += 2) {
+            for (var i = 0; i < hexBytes.Length; i += 2)
+            {
                 result[i / 2] = (byte)((AsciiHexByteToByte(hexBytes[i]) << 4) | AsciiHexByteToByte(hexBytes[i + 1]));
             }
 
@@ -143,7 +149,8 @@ namespace Meadow.Foundation.Sensors.Radio.Rfid
 
         private static byte AsciiHexByteToByte(byte hexByte)
         {
-            switch (hexByte) {
+            switch (hexByte)
+            {
                 case 48:
                     return 0;
                 case 49:
@@ -198,19 +205,22 @@ namespace Meadow.Foundation.Sensors.Radio.Rfid
             const int checksumStartByte = 11;
             const int checksumLength = 2;
 
-            if (data.Length != validLength) {
+            if (data.Length != validLength)
+            {
                 Debug.WriteLine(
                     $"Serial data is not of expected length for RFID tag format. Expected {validLength}, actual {data.Length}");
                 return (tag: null, status: RfidValidationStatus.InvalidDataFormat);
             }
 
-            if (data[startByte] != StartToken) {
+            if (data[startByte] != StartToken)
+            {
                 Debug.WriteLine(
                     $"Invalid start byte in serial data for RFID tag format. Expected '{StartToken}', actual '{data[startByte]}'");
                 return (tag: null, status: RfidValidationStatus.InvalidDataFormat);
             }
 
-            if (data[endByte] != EndToken) {
+            if (data[endByte] != EndToken)
+            {
                 Debug.WriteLine(
                     $"Invalid end byte in serial data for RFID tag format. Expected '{EndToken}', actual '{data[endByte]}'");
                 return (tag: null, status: RfidValidationStatus.InvalidDataFormat);
@@ -218,7 +228,8 @@ namespace Meadow.Foundation.Sensors.Radio.Rfid
 
             // verify tag is hexadecimal
             var tagSlice = data.Slice(tagStartByte, tagLength);
-            if (!IsHexChars(tagSlice)) {
+            if (!IsHexChars(tagSlice))
+            {
                 Debug.WriteLine(
                     "Invalid end byte in serial data for RFID tag format. Expected hex ASCII character (48-57, 65-70)");
                 return (tag: null, status: RfidValidationStatus.InvalidDataFormat);
@@ -226,7 +237,8 @@ namespace Meadow.Foundation.Sensors.Radio.Rfid
 
             // verify checksum is hexadecimal
             var checksumSlice = data.Slice(checksumStartByte, checksumLength);
-            if (!IsHexChars(checksumSlice)) {
+            if (!IsHexChars(checksumSlice))
+            {
                 Debug.WriteLine(
                     "Invalid end byte in serial data for RFID tag format. Expected hex ASCII character (48-57, 65-70)");
                 return (tag: null, status: RfidValidationStatus.InvalidDataFormat);
@@ -242,8 +254,10 @@ namespace Meadow.Foundation.Sensors.Radio.Rfid
 
         private static bool IsHexChars(Span<byte> asciiBytes)
         {
-            foreach (var asciiByte in asciiBytes) {
-                if (!(asciiByte >= 48 && asciiByte <= 57) && !(asciiByte >= 65 && asciiByte <= 70)) {
+            foreach (var asciiByte in asciiBytes)
+            {
+                if (!(asciiByte >= 48 && asciiByte <= 57) && !(asciiByte >= 65 && asciiByte <= 70))
+                {
                     return false;
                 }
             }
@@ -253,15 +267,20 @@ namespace Meadow.Foundation.Sensors.Radio.Rfid
 
         private void OnTagReadEvent(RfidValidationStatus status, byte[] tag)
         {
-            if (status == RfidValidationStatus.Ok) {
+            if (status == RfidValidationStatus.Ok)
+            {
                 LastRead = tag;
             }
 
             RfidRead(this, new RfidReadResult { Status = status, RfidTag = tag });
-            foreach (var observer in _observers) {
-                if (status == RfidValidationStatus.Ok) {
+            foreach (var observer in _observers)
+            {
+                if (status == RfidValidationStatus.Ok)
+                {
                     observer?.OnNext(tag);
-                } else {
+                }
+                else
+                {
                     observer?.OnError(new RfidValidationException(status));
                 }
             }
@@ -282,8 +301,10 @@ namespace Meadow.Foundation.Sensors.Radio.Rfid
             {
                 // Ensure thread safety
                 // See https://docs.microsoft.com/en-us/dotnet/standard/events/observer-design-pattern-best-practices
-                lock (_observers) {
-                    if (_observer != null) {
+                lock (_observers)
+                {
+                    if (_observer != null)
+                    {
                         _observers?.Remove(_observer);
                     }
                 }
