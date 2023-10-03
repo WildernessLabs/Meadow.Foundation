@@ -26,7 +26,6 @@ namespace Sensors.Atmospheric.Dht12_Sample
                 },
                 filter: result =>
                 {
-                 
                     if (result.Old?.Temperature is { } oldTemp &&
                         result.Old?.Humidity is { } oldHumidity &&
                         result.New.Temperature is { } newTemp &&
@@ -51,7 +50,7 @@ namespace Sensors.Atmospheric.Dht12_Sample
 
         public override async Task Run()
         {
-            if(sensor == null) { return; }
+            if (sensor == null) { return; }
 
             var conditions = await sensor.Read();
             Resolver.Log.Info("Initial Readings:");
