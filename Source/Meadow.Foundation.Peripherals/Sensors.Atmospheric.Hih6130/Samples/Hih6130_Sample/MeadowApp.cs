@@ -25,7 +25,7 @@ namespace MeadowApp
                 },
                 filter: result =>
                 {
-                 
+
                     if (result.Old?.Temperature is { } oldTemp &&
                         result.Old?.Humidity is { } oldHumidity &&
                         result.New.Temperature is { } newTemp &&
@@ -50,7 +50,7 @@ namespace MeadowApp
 
         public override async Task Run()
         {
-            if(sensor == null) { return; }
+            if (sensor == null) { return; }
 
             var result = await sensor.Read();
             Resolver.Log.Info("Initial Readings:");

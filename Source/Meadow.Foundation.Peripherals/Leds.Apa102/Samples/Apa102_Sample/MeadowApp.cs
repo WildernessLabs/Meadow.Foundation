@@ -12,8 +12,8 @@ namespace Leds.APA102_Sample
         //<!=SNIP=>
 
         Apa102 apa102;
-        int numberOfLeds = 256;
-        float maxBrightness = 0.25f;
+        readonly int numberOfLeds = 256;
+        readonly float maxBrightness = 0.25f;
 
         public override Task Initialize()
         {

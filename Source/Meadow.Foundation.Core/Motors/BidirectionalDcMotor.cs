@@ -17,9 +17,9 @@ public class BidirectionalDcMotor
 
     public event EventHandler<MotorState> StateChanged = default!;
 
-    private IDigitalOutputPort _outputA;
-    private IDigitalOutputPort _outputB;
-    private bool _energizeHigh;
+    private readonly IDigitalOutputPort _outputA;
+    private readonly IDigitalOutputPort _outputB;
+    private readonly bool _energizeHigh;
 
     /// <summary>
     /// Gets the current run state of the motor

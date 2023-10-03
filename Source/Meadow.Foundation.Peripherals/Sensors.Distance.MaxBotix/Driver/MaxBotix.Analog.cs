@@ -32,10 +32,10 @@ namespace Meadow.Foundation.Sensors.Distance
         /// <param name="sampleCount">The sample count for reading</param>
         /// <param name="sampleInterval">The sample interval</param>
         /// <param name="voltage">The reference voltage</param>
-        public MaxBotix(SensorType sensor, 
-            IPin analogInputPin, 
-            int sampleCount = 5, 
-            TimeSpan? sampleInterval = null, 
+        public MaxBotix(SensorType sensor,
+            IPin analogInputPin,
+            int sampleCount = 5,
+            TimeSpan? sampleInterval = null,
             Voltage? voltage = null) :
             this(analogInputPin.CreateAnalogInputPort(sampleCount, sampleInterval ?? TimeSpan.FromMilliseconds(40), voltage ?? new Voltage(3.3)), sensor)
         { }
@@ -49,7 +49,8 @@ namespace Meadow.Foundation.Sensors.Distance
             analogInputPort.Subscribe
             (
                 IAnalogInputPort.CreateObserver(
-                    async result => {
+                    async result =>
+                    {
                         // create a new change result from the new value
                         ChangeResult<Length> changeResult = new ChangeResult<Length>()
                         {
@@ -65,7 +66,7 @@ namespace Meadow.Foundation.Sensors.Distance
            );
         }
 
-        
+
         async Task<Length> ReadSensorAnalog()
         {
             var volts = (await analogInputPort.Read()).Volts;

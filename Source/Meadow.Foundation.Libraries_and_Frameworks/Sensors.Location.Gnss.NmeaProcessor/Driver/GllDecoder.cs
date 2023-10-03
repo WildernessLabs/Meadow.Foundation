@@ -1,5 +1,5 @@
-﻿using System;
-using Meadow.Peripherals.Sensors.Location.Gnss;
+﻿using Meadow.Peripherals.Sensors.Location.Gnss;
+using System;
 
 namespace Meadow.Foundation.Sensors.Location.Gnss
 {

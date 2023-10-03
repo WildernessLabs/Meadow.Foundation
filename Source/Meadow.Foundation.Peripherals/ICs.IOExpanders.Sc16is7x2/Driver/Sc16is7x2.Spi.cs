@@ -13,7 +13,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <summary>
         /// The default SPI bus frequency for the peripheral
         /// </summary>
-        public Frequency DefaultSpiBusSpeed => new (500, Frequency.UnitType.Kilohertz);
+        public Frequency DefaultSpiBusSpeed => new(500, Frequency.UnitType.Kilohertz);
 
         /// <summary>
         /// The current SPI bus mode for the peripheral

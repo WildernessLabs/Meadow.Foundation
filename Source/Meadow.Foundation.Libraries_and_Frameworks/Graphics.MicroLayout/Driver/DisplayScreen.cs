@@ -9,9 +9,9 @@ namespace Meadow.Foundation.Graphics.MicroLayout;
 /// </summary>
 public class DisplayScreen
 {
-    private IGraphicsDisplay _display;
-    private MicroGraphics _graphics;
-    private ITouchScreen? _touchScreen;
+    private readonly IGraphicsDisplay _display;
+    private readonly MicroGraphics _graphics;
+    private readonly ITouchScreen? _touchScreen;
 
     /// <summary>
     /// Gets the collection of controls on the display screen.

@@ -1,7 +1,6 @@
 ﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Displays.Led;
-using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -46,7 +45,7 @@ namespace Displays.Led.SevenSegment_Sample
 
         //<!=SNOP=>
 
-        protected void Test() 
+        protected void Test()
         {
             Resolver.Log.Info("Test...");
 

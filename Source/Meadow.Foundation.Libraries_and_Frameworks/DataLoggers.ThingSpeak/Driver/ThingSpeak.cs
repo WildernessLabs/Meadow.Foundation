@@ -19,7 +19,7 @@ namespace Meadow.Foundation.DataLoggers
         /// <summary>
         /// URI of the ThingSpeak api
         /// </summary>
-        public string URI { get; set;  }
+        public string URI { get; set; }
 
         /// <summary>
         /// Create a new ThingSpeak object
@@ -73,7 +73,7 @@ namespace Meadow.Foundation.DataLoggers
                 try
                 {
                     var request = (HttpWebRequest)WebRequest.Create(URI);
-                    
+
                     request.Headers.Add("X-THINGSPEAKAPIKEY: " + WriteKey);
                     request.Method = "POST";
                     request.ContentType = "application/x-www-form-urlencoded";
@@ -85,12 +85,12 @@ namespace Meadow.Foundation.DataLoggers
                         stream.Write(bytesToSend, 0, bytesToSend.Length);
                     }
 
-                    var response = (HttpWebResponse) request.GetResponse();
+                    var response = (HttpWebResponse)request.GetResponse();
 
                     var responseString = new StreamReader(response.GetResponseStream()).ReadToEnd();
                     result = int.Parse(responseString);
                     retryCount = 4;
-                    
+
                 }
                 catch
                 {
@@ -102,7 +102,7 @@ namespace Meadow.Foundation.DataLoggers
                     Thread.Sleep(1000);
                 }
             }
-            return(result);
+            return (result);
         }
     }
 }

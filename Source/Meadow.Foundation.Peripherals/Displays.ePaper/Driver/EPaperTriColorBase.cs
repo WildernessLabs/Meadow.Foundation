@@ -62,7 +62,7 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         public IPixelBuffer PixelBuffer => imageBuffer;
 
-        int width, height;
+        readonly int width, height;
 
         /// <summary>
         /// Create a new color ePaper display object

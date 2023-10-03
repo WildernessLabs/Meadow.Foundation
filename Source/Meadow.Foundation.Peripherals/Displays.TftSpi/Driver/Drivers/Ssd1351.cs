@@ -159,25 +159,25 @@ namespace Meadow.Foundation.Displays
             SendCommand(invert ? CMD_INVERTDISPLAY : CMD_NORMALDISPLAY);
         }
 
-        static byte CMD_SETCOLUMN = 0x15;
-        static byte CMD_SETROW = 0x75;
-        static byte CMD_WRITERAM = 0x5C;
-        static byte CMD_SETREMAP = 0xA0;
-        static byte CMD_DISPLAYOFFSET = 0xA2;
-        static byte CMD_NORMALDISPLAY = 0xA6;
-        static byte CMD_INVERTDISPLAY = 0xA7;
-        static byte CMD_FUNCTIONSELECT = 0xAB;
-        static byte CMD_DISPLAYOFF = 0xAE;
-        static byte CMD_DISPLAYON = 0xAF;
-        static byte CMD_PRECHARGE = 0xB1;
-        static byte CMD_CLOCKDIV = 0xB3;
-        static byte CMD_SETVSL = 0xB4;
-        static byte CMD_SETGPIO = 0xB5;
-        static byte CMD_PRECHARGE2 = 0xB6;
-        static byte CMD_VCOMH = 0xBE;
-        static byte CMD_CONTRASTABC = 0xC1;
-        static byte CMD_CONTRASTMASTER = 0xC7;
-        static byte CMD_MUXRATIO = 0xCA;
-        static byte CMD_COMMANDLOCK = 0xFD;
+        static readonly byte CMD_SETCOLUMN = 0x15;
+        static readonly byte CMD_SETROW = 0x75;
+        static readonly byte CMD_WRITERAM = 0x5C;
+        static readonly byte CMD_SETREMAP = 0xA0;
+        static readonly byte CMD_DISPLAYOFFSET = 0xA2;
+        static readonly byte CMD_NORMALDISPLAY = 0xA6;
+        static readonly byte CMD_INVERTDISPLAY = 0xA7;
+        static readonly byte CMD_FUNCTIONSELECT = 0xAB;
+        static readonly byte CMD_DISPLAYOFF = 0xAE;
+        static readonly byte CMD_DISPLAYON = 0xAF;
+        static readonly byte CMD_PRECHARGE = 0xB1;
+        static readonly byte CMD_CLOCKDIV = 0xB3;
+        static readonly byte CMD_SETVSL = 0xB4;
+        static readonly byte CMD_SETGPIO = 0xB5;
+        static readonly byte CMD_PRECHARGE2 = 0xB6;
+        static readonly byte CMD_VCOMH = 0xBE;
+        static readonly byte CMD_CONTRASTABC = 0xC1;
+        static readonly byte CMD_CONTRASTMASTER = 0xC7;
+        static readonly byte CMD_MUXRATIO = 0xCA;
+        static readonly byte CMD_COMMANDLOCK = 0xFD;
     }
 }

@@ -1,5 +1,5 @@
-﻿using System;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
+using System;
 
 namespace Meadow.Foundation.Displays.Led
 {
@@ -98,7 +98,7 @@ namespace Meadow.Foundation.Displays.Led
 
         private readonly bool isCommonCathode;
 
-        private byte[,] segments =
+        private readonly byte[,] segments =
         {
              {1, 1, 1, 1, 1, 1, 0}, //0
              {0, 1, 1, 0, 0, 0, 0}, //1
@@ -145,7 +145,8 @@ namespace Meadow.Foundation.Displays.Led
                  pinF.CreateDigitalOutputPort(),
                  pinG.CreateDigitalOutputPort(),
                  pinDecimal.CreateDigitalOutputPort(),
-                 isCommonCathode) { }
+                 isCommonCathode)
+        { }
 
         /// <summary>
         /// Creates a SevenSegment connected to the especified IDigitalOutputPorts
@@ -163,7 +164,7 @@ namespace Meadow.Foundation.Displays.Led
             IDigitalOutputPort portA, IDigitalOutputPort portB,
             IDigitalOutputPort portC, IDigitalOutputPort portD,
             IDigitalOutputPort portE, IDigitalOutputPort portF,
-            IDigitalOutputPort portG, IDigitalOutputPort portDecimal, 
+            IDigitalOutputPort portG, IDigitalOutputPort portDecimal,
             bool isCommonCathode)
         {
             this.portA = portA;
@@ -196,7 +197,7 @@ namespace Meadow.Foundation.Displays.Led
             portG.State = IsEnabled(segments[index, 6]);
         }
 
-        bool IsEnabled (byte value)
+        bool IsEnabled(byte value)
         {
             return isCommonCathode ? value == 1 : value == 0;
         }

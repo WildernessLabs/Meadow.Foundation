@@ -8,7 +8,7 @@ namespace Meadow.Foundation.Graphics.MicroLayout;
 /// </summary>
 public class LineSeriesPointCollection : IEnumerable<LineSeriesPoint>
 {
-    private List<LineSeriesPoint> _points = new();
+    private readonly List<LineSeriesPoint> _points = new();
 
     /// <summary>
     /// Gets the minimum X value in the collection

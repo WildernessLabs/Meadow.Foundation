@@ -91,7 +91,7 @@ namespace Meadow.Foundation.Leds
 
         private static IEnumerable<byte> ByteToWs2812Byte(byte theByte)
         {
-            for (int counter = 0;counter < 4;++counter)
+            for (int counter = 0; counter < 4; ++counter)
             {
                 yield return ws2812Bytes[(theByte & 0b1100_0000) >> 6];
                 theByte <<= 2;

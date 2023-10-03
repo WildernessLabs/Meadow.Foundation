@@ -16,7 +16,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// </summary>
             public static readonly Frequency DefaultFrequency = new Frequency(100f, Units.Frequency.UnitType.Hertz);
 
-            private SerialWombatBase _controller;
+            private readonly SerialWombatBase _controller;
             private Frequency _frequency;
             private bool _running;
             private float _dutyCycle;

@@ -19,7 +19,7 @@ namespace Meadow.Foundation.Sensors.Light
             /// Linear change in the sensor output
             /// change in temperature.
             /// </summary>
-            public Voltage VoltsPerLuminance{ get; protected set; } = new Voltage(0.25, VU.Volts);
+            public Voltage VoltsPerLuminance { get; protected set; } = new Voltage(0.25, VU.Volts);
 
             /// <summary>
             /// Default constructor. Create a new Calibration object with default values
