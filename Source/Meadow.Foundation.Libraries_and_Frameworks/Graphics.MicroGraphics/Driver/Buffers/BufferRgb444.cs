@@ -141,9 +141,9 @@ namespace Meadow.Foundation.Graphics.Buffers
         public override void Fill(Color color)
         {
             // could do a minor optimization by caching the ushort 444 value 
-            Buffer[0] = (byte)  (color.Color12bppRgb444 >> 4);
-            Buffer[1] = (byte) ((color.Color12bppRgb444 << 4) | (color.Color12bppRgb444 >> 8));
-            Buffer[2] = (byte)   color.Color12bppRgb444;
+            Buffer[0] = (byte)(color.Color12bppRgb444 >> 4);
+            Buffer[1] = (byte)((color.Color12bppRgb444 << 4) | (color.Color12bppRgb444 >> 8));
+            Buffer[2] = (byte)color.Color12bppRgb444;
 
             int arrayMidPoint = Buffer.Length / 2;
             int copyLength;
@@ -230,7 +230,7 @@ namespace Meadow.Foundation.Graphics.Buffers
         {
             if (buffer.ColorMode == ColorMode &&
                 Width % 2 == 0 &&
-                x % 2 == 0 && 
+                x % 2 == 0 &&
                 buffer.Width % 2 == 0)
             {
                 //we have a happy path

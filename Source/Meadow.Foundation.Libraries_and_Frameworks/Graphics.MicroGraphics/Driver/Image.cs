@@ -134,7 +134,7 @@ namespace Meadow.Foundation.Graphics
 
             //compression masks
             uint redMask = 0;
-;           uint greenMask = 0;
+            uint greenMask = 0;
             uint blueMask = 0;
             uint alphaMask = 0;
 
@@ -165,7 +165,7 @@ namespace Meadow.Foundation.Graphics
 
             // bitmaps are, by default, stored with rows bottom up (though top down is supported)
             // we need to read row-by-row and put these into the pixel buffer
-            if(compression == 3)
+            if (compression == 3)
             {
                 var index = bytesPerRow * (height - 1);
                 int dataIndex = 0;
@@ -181,9 +181,9 @@ namespace Meadow.Foundation.Graphics
                         // Apply bit masks to the pixel data
                         var a = (byte)(pixel[3] & alphaMask >> 24);
                         var b = (byte)(pixel[0] & redMask >> 16);
-                        var g = (byte)(pixel[1] & greenMask >> 8); 
+                        var g = (byte)(pixel[1] & greenMask >> 8);
                         var r = (byte)(pixel[2] & blueMask);
-                        
+
                         // Write the adjusted pixel data to the output buffer
                         pixelData[dataIndex++] = r;
                         pixelData[dataIndex++] = g;

@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Meadow.Hardware;
+using Meadow.Peripherals.Sensors.Weather;
+using Meadow.Units;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
-using Meadow.Hardware;
-using Meadow.Peripherals.Sensors.Weather;
-using Meadow.Units;
 
 namespace Meadow.Foundation.Sensors.Weather
 {
@@ -71,13 +71,13 @@ namespace Meadow.Foundation.Sensors.Weather
         {
             this.inputPort = inputPort;
 
-            
+
             Initialize(azimuthVoltages);
         }
 
         void Initialize(IDictionary<Voltage, Azimuth> azimuthVoltages)
         {   // if no lookup has been provided, load the defaults
-            AzimuthVoltages = (azimuthVoltages == null) ? 
+            AzimuthVoltages = (azimuthVoltages == null) ?
                 GetDefaultAzimuthVoltages() : new ReadOnlyDictionary<Voltage, Azimuth>(azimuthVoltages);
 
             inputPort.Subscribe(
@@ -99,7 +99,7 @@ namespace Meadow.Foundation.Sensors.Weather
         /// </param>
         public override void StartUpdating(TimeSpan? updateInterval)
         {
-            lock (samplingLock) 
+            lock (samplingLock)
             {
                 if (IsSampling) { return; }
 
@@ -113,7 +113,7 @@ namespace Meadow.Foundation.Sensors.Weather
         /// </summary>
         public override void StopUpdating()
         {
-            lock (samplingLock) 
+            lock (samplingLock)
             {
                 if (!IsSampling) { return; }
 
@@ -128,7 +128,7 @@ namespace Meadow.Foundation.Sensors.Weather
         /// </summary>
         /// <returns>A float value that's an average value of all the samples taken</returns>
         protected override async Task<Azimuth> ReadSensor()
-        {  
+        {
             Voltage voltage = await inputPort.Read();
             return LookupWindDirection(voltage);
         }
@@ -140,7 +140,8 @@ namespace Meadow.Foundation.Sensors.Weather
         protected void HandleAnalogUpdate(IChangeResult<Voltage> result)
         {
             var windAzimuth = LookupWindDirection(result.New);
-            ChangeResult<Azimuth> windChangeResult = new ChangeResult<Azimuth>() {
+            ChangeResult<Azimuth> windChangeResult = new ChangeResult<Azimuth>()
+            {
                 Old = WindAzimuth,
                 New = windAzimuth
             };
@@ -163,7 +164,7 @@ namespace Meadow.Foundation.Sensors.Weather
             foreach (var a in AzimuthVoltages)
             {
                 difference = (a.Key - voltage).Abs();
- 
+
                 if (closestFit == null || closestFit.Item2 > difference)
                 {
                     closestFit = new Tuple<Azimuth, Voltage>(a.Value, difference);
@@ -180,8 +181,8 @@ namespace Meadow.Foundation.Sensors.Weather
         protected ReadOnlyDictionary<Voltage, Azimuth> GetDefaultAzimuthVoltages()
         {
             Resolver.Log.Info("Loading default azimuth voltages");
-            
-            return new ReadOnlyDictionary<Voltage, Azimuth>(new Dictionary<Voltage, Azimuth> 
+
+            return new ReadOnlyDictionary<Voltage, Azimuth>(new Dictionary<Voltage, Azimuth>
             {
                 { new Voltage(2.9f), new Azimuth(Azimuth16PointCardinalNames.N) },
                 { new Voltage(2.04f), new Azimuth(Azimuth16PointCardinalNames.NNE) },

@@ -17,8 +17,8 @@ namespace Meadow.Foundation.Motors
             /// </summary>
             public event EventHandler<MotorOvercurrentEventArgs> MotorOvercurrentFault = delegate { };
 
-            private Tb67h420ftg driver;
-            private IDigitalInterruptPort? fault;
+            private readonly Tb67h420ftg driver;
+            private readonly IDigitalInterruptPort? fault;
 
             internal Motor(
                 Tb67h420ftg driver, IPwmPort in1, IPwmPort in2,
