@@ -1,5 +1,4 @@
-﻿using System;
-using Meadow.Units;
+﻿using Meadow.Units;
 using VU = Meadow.Units.Voltage.UnitType;
 
 namespace Meadow.Foundation.Sensors.Hid

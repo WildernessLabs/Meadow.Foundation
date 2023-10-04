@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Meadow.Peripherals.Sensors.Location.Gnss;
+using System;
 using System.Collections.Generic;
-using Meadow.Peripherals.Sensors.Location.Gnss;
 
 namespace Meadow.Foundation.Sensors.Location.Gnss
 {
@@ -47,7 +47,8 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
         public void RegisterDecoder(INmeaDecoder decoder)
         {
             Resolver.Log.Info($"Registering decoder: {decoder.Prefix}");
-            if (decoders.ContainsKey(decoder.Prefix)) {
+            if (decoders.ContainsKey(decoder.Prefix))
+            {
                 throw new Exception(decoder.Prefix + " already registered.");
             }
             decoders.Add(decoder.Prefix, decoder);
@@ -65,25 +66,27 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
             if (DebugMode) { Resolver.Log.Info("NmeaSentenceProcessor.ProcessNmeaMessage"); }
 
             NmeaSentence sentence;
-            try 
+            try
             {
                 sentence = NmeaSentence.From(line);
-            } 
-            catch (Exception e) 
+            }
+            catch (Exception e)
             {
                 if (DebugMode) { Resolver.Log.Warn($"Could not parse message. {e.Message}"); }
                 return;
             }
 
             INmeaDecoder decoder;
-            if (decoders.ContainsKey(sentence.Prefix)) 
+            if (decoders.ContainsKey(sentence.Prefix))
             {
                 decoder = decoders[sentence.Prefix];
-                if (decoder != null) {
+                if (decoder != null)
+                {
                     if (DebugMode) { Resolver.Log.Info($"Found appropriate decoder:{decoder.Prefix}"); }
                     decoder.Process(sentence);
                 }
-            } else 
+            }
+            else
             {
                 if (DebugMode) { Resolver.Log.Warn($"Could not find appropriate decoder for {sentence.Prefix}"); }
             }

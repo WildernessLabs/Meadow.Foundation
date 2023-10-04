@@ -1,4 +1,5 @@
 ﻿using Meadow.Hardware;
+using Meadow.Peripherals.Sensors.Cameras;
 using System;
 using System.IO;
 using System.Text;

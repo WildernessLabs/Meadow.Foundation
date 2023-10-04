@@ -11,7 +11,7 @@
             /// The temperature oversampling mode
             /// </summary>
             public Oversample TemperatureOversample { get; set; } = Oversample.OversampleX8;
-            
+
             /// <summary>
             /// The pressure oversampling mode
             /// </summary>

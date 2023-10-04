@@ -10,10 +10,10 @@ namespace Meadow.Foundation.Displays.Lcd
     /// </summary>
     public class GpioCharacterDisplay : ICharacterDisplay
     {
-        private byte LCD_LINE_1 = 0x80; // # LCD RAM address for the 1st line
-        private byte LCD_LINE_2 = 0xC0; // # LCD RAM address for the 2nd line
-        private byte LCD_LINE_3 = 0x94; // # LCD RAM address for the 3rd line
-        private byte LCD_LINE_4 = 0xD4; // # LCD RAM address for the 4th line
+        private readonly byte LCD_LINE_1 = 0x80; // # LCD RAM address for the 1st line
+        private readonly byte LCD_LINE_2 = 0xC0; // # LCD RAM address for the 2nd line
+        private readonly byte LCD_LINE_3 = 0x94; // # LCD RAM address for the 3rd line
+        private readonly byte LCD_LINE_4 = 0xD4; // # LCD RAM address for the 4th line
 
         private byte cursorLine = 0;
         private byte cursorColumn = 0;
@@ -29,9 +29,9 @@ namespace Meadow.Foundation.Displays.Lcd
         readonly IDigitalOutputPort LCD_D6;
         readonly IDigitalOutputPort LCD_D7;
 
-        bool LCD_INSTRUCTION = false;
-        bool LCD_DATA = true;
-        static object _lock = new object();
+        readonly bool LCD_INSTRUCTION = false;
+        readonly bool LCD_DATA = true;
+        static readonly object _lock = new object();
 
         /// <summary>
         /// The text display menu configuration

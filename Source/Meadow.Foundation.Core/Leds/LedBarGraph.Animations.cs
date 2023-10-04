@@ -6,7 +6,7 @@ namespace Meadow.Foundation.Leds
 {
     public partial class LedBarGraph
     {
-        private object syncRoot = new object();
+        private readonly object syncRoot = new object();
 
         private Task? animationTask;
         private CancellationTokenSource? cancellationTokenSource;

@@ -154,14 +154,14 @@ namespace Meadow.Foundation.Graphics
                    Contains(rect.Right, rect.Top) ||
                    Contains(rect.Right, rect.Bottom);
         }
-        
+
         /// <summary>
         /// Combine two rects (take the minimum values in all directions)
         /// </summary>
         /// <param name="rect">The rect to intersect</param>
         public void Intersect(Rect rect)
         {
-            if(Intersects(rect) == false)
+            if (Intersects(rect) == false)
             {
                 Left = 0;
                 Right = 0;

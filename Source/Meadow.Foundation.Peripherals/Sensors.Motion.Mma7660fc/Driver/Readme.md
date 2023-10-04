@@ -36,7 +36,7 @@ public override Task Initialize()
         handler: result => Resolver.Log.Info($"Observer: [x] changed by threshold; new [x]: X:{result.New.X:N2}, old: X:{result.Old?.X:N2}"),
         // only notify if there's a greater than 0.5G change in the Z direction
         filter: result => {
-            if (result.Old is { } old) { //c# 8 pattern match syntax. checks for !null and assigns var.
+            if (result.Old is { } old) { 
                 return ((result.New - old).Z > new Acceleration(0.5, AU.Gravity));
             }
             return false;

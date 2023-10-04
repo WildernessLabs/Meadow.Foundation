@@ -25,7 +25,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// Creates a new Nxp74HC4051 object using the default parameters
         /// </summary>
         public Nxp74HC4051(IAnalogInputPort z, IDigitalOutputPort s0, IDigitalOutputPort? s1 = null, IDigitalOutputPort? s2 = null, IDigitalOutputPort? enable = null)
-            : base (z, enable)
+            : base(z, enable)
         {
             S0 = s0;
             S1 = s1;

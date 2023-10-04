@@ -1,5 +1,5 @@
-﻿using System.Threading;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
+using System.Threading;
 
 namespace Meadow.Foundation.Communications
 {
@@ -54,7 +54,7 @@ namespace Meadow.Foundation.Communications
         /// <summary>
         /// A complete line of text has been read, send this to the event subscriber.
         /// </summary>
-        public event LineReceived OnLineReceived = delegate {};
+        public event LineReceived OnLineReceived = delegate { };
 
         #endregion Events and delegates
 
@@ -99,7 +99,7 @@ namespace Meadow.Foundation.Communications
             this.serialPort = serialPort;
             LINE_END = endOfLine;
 
-            if(useSerialEvents)
+            if (useSerialEvents)
             {
                 serialPort.DataReceived += SerialPortDataReceived;
             }
@@ -160,9 +160,9 @@ namespace Meadow.Foundation.Communications
                 ReadDataFromSerialPort();
             }
         }
-        
+
         private void ReadDataFromSerialPort()
-        { 
+        {
             lock (buffer)
             {
                 int amount = serialPort.Read(staticBuffer, 0, MAXIMUM_BUFFER_SIZE);
@@ -173,7 +173,7 @@ namespace Meadow.Foundation.Communications
                 {
                     for (var index = 0; index < amount; index++)
                     {
-                        buffer += (char) staticBuffer[index];
+                        buffer += (char)staticBuffer[index];
                     }
                 }
                 var eolMarkerPosition = buffer.IndexOf(LINE_END);

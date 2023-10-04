@@ -8,8 +8,8 @@ namespace Meadow.Foundation.Displays;
 /// </summary>
 internal class WinFormsPixelBuffer : IPixelBuffer, IDisposable
 {
-    private Bitmap _bmp;
-    private byte[] _buffer;
+    private readonly Bitmap _bmp;
+    private readonly byte[] _buffer;
 
     /// <summary>
     /// Gets the buffer width, in pixels

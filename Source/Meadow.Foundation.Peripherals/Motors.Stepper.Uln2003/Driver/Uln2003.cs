@@ -14,7 +14,7 @@ namespace Meadow.Foundation.Motors.Stepper
         /// </summary>
         /// <remarks>Default revolutions per minute for 28BYJ-48 is approximately 15.</remarks>
         public Units.AngularVelocity AngularVelocity { get; set; } = new Units.AngularVelocity(15, Units.AngularVelocity.UnitType.RevolutionsPerMinute);
-        
+
         double RPM => AngularVelocity.RevolutionsPerMinute;
 
         /// <summary>
@@ -39,14 +39,6 @@ namespace Meadow.Foundation.Motors.Stepper
                 {
                     currentSwitchingSequence = halfStepSequence;
                 }
-
-                // C# 8
-                //currentSwitchingSequence = mode switch
-                //{
-                //    StepperMode.FullStepSinglePhase => fullStepSinglePhaseSequence,
-                //    StepperMode.FullStepDualPhase => fullStepDualPhaseSequence,
-                //    _ => halfStepSequence
-                //};
             }
         }
 

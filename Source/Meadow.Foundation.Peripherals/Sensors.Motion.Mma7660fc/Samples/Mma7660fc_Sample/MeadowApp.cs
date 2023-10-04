@@ -1,9 +1,9 @@
-﻿using System;
-using System.Threading.Tasks;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Motion;
 using Meadow.Units;
+using System;
+using System.Threading.Tasks;
 using AU = Meadow.Units.Acceleration.UnitType;
 
 namespace Sensors.Motion.Mma7660fc_Sample
@@ -20,9 +20,10 @@ namespace Sensors.Motion.Mma7660fc_Sample
 
             // create the sensor driver
             sensor = new Mma7660fc(Device.CreateI2cBus());
-                    
+
             // classical .NET events can also be used:
-            sensor.Updated += (sender, result) => {
+            sensor.Updated += (sender, result) =>
+            {
                 Resolver.Log.Info($"Accel: [X:{result.New.X.MetersPerSecondSquared:N2}," +
                     $"Y:{result.New.Y.MetersPerSecondSquared:N2}," +
                     $"Z:{result.New.Z.MetersPerSecondSquared:N2} (m/s^2)]" +
@@ -34,8 +35,10 @@ namespace Sensors.Motion.Mma7660fc_Sample
             var consumer = Mma7660fc.CreateObserver(
                 handler: result => Resolver.Log.Info($"Observer: [x] changed by threshold; new [x]: X:{result.New.X:N2}, old: X:{result.Old?.X:N2}"),
                 // only notify if there's a greater than 0.5G change in the Z direction
-                filter: result => {
-                    if (result.Old is { } old) { //c# 8 pattern match syntax. checks for !null and assigns var.
+                filter: result =>
+                {
+                    if (result.Old is { } old)
+                    {
                         return ((result.New - old).Z > new Acceleration(0.5, AU.Gravity));
                     }
                     return false;

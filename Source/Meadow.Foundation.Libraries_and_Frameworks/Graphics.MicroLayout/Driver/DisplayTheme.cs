@@ -1,6 +1,4 @@
-﻿using Meadow.Foundation.Graphics;
-
-namespace Meadow.Foundation.Graphics.MicroLayout;
+﻿namespace Meadow.Foundation.Graphics.MicroLayout;
 
 /// <summary>
 /// Represents a theme for display controls in the user interface.

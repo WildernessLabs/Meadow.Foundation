@@ -1,9 +1,9 @@
-﻿using System;
-using System.Threading.Tasks;
-using Meadow;
-using Meadow.Units;
+﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Motion;
+using Meadow.Units;
+using System;
+using System.Threading.Tasks;
 
 namespace MeadowApp
 {
@@ -20,7 +20,8 @@ namespace MeadowApp
             sensor = new Qmc5883(Device.CreateI2cBus());
 
             // classical .NET events can be used
-            sensor.Updated += (sender, result) => {
+            sensor.Updated += (sender, result) =>
+            {
                 Resolver.Log.Info($"Direction: [X:{result.New.X:N2}," +
                     $"Y:{result.New.Y:N2}," +
                     $"Z:{result.New.Z:N2}]");
@@ -34,7 +35,7 @@ namespace MeadowApp
                         $" old: X:{((result.Old != null) ? Qmc5883.DirectionToHeading(result.Old.Value) : "n/a"):N2} degrees"),
                 // only notify if there's a greater than 5° of heading change
                 filter: result => result.Old is { } old && Qmc5883.DirectionToHeading(result.New - old) > new Azimuth(5));
-               
+
             sensor.Subscribe(consumer);
 
             return Task.CompletedTask;
@@ -53,7 +54,7 @@ namespace MeadowApp
             // start updating
             sensor.StartUpdating(TimeSpan.FromMilliseconds(1000));
         }
-    
+
         //<!=SNOP=>
     }
 }

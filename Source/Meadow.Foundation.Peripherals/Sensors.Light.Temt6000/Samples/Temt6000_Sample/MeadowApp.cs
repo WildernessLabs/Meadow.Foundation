@@ -1,8 +1,8 @@
-﻿using System;
-using System.Threading.Tasks;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Light;
+using System;
+using System.Threading.Tasks;
 
 namespace MeadowApp
 {
@@ -23,8 +23,10 @@ namespace MeadowApp
             var consumer = Temt6000.CreateObserver(
                 handler: result => Resolver.Log.Info($"Observer filter satisfied: {result.New.Volts:N2}V, old: {result.Old?.Volts:N2}V"),
                 // only notify if the change is greater than 0.5V
-                filter: result => {
-                    if (result.Old is { } old) { //c# 8 pattern match syntax. checks for !null and assigns var.
+                filter: result =>
+                {
+                    if (result.Old is { } old)
+                    {
                         return (result.New - old).Abs().Volts > 0.5; // returns true if > 0.5V change.
                     }
                     return false;
@@ -33,7 +35,8 @@ namespace MeadowApp
             sensor.Subscribe(consumer);
 
             // classical .NET events can also be used:
-            sensor.Updated += (sender, result) => {
+            sensor.Updated += (sender, result) =>
+            {
                 Resolver.Log.Info($"Voltage Changed, new: {result.New.Volts:N2}V, old: {result.Old?.Volts:N2}V");
             };
 

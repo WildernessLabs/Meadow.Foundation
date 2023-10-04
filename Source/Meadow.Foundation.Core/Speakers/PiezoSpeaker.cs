@@ -16,7 +16,7 @@ namespace Meadow.Foundation.Audio
         /// Defined by the PWM port duty cycle from 0 to 0.5
         /// </summary>
         public float Volume { get; protected set; } = 1.0f;
-        
+
         /// <summary>
         /// Gets the port that is driving the Piezo Speaker
         /// </summary>
@@ -106,7 +106,7 @@ namespace Meadow.Foundation.Audio
         {
             Volume = Math.Clamp(volume, 0, 1);
 
-             if(isPlaying)
+            if (isPlaying)
             {
                 Port.DutyCycle = Volume / 2f;
             }

@@ -32,7 +32,6 @@ namespace ADC.Ads1015_Sample
                 },
                 filter: result =>
                 {
-                    //c# 8 pattern match syntax. checks for !null and assigns var.
                     if (result.Old is { } old)
                     {
                         // TODO: you can check to see if the voltage change is > your desired threshold.

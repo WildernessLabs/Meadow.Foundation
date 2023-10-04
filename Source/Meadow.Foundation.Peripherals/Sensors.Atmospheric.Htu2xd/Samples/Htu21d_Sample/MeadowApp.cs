@@ -19,13 +19,12 @@ namespace MeadowApp
             sensor = new Htu21d(Device.CreateI2cBus());
 
             var consumer = Htu21d.CreateObserver(
-                handler: result => 
+                handler: result =>
                 {
                     Resolver.Log.Info($"Observer: Temp changed by threshold; new temp: {result.New.Temperature?.Celsius:N2}C, old: {result.Old?.Temperature?.Celsius:N2}C");
                 },
                 filter: result =>
                 {
-                    //c# 8 pattern match syntax. checks for !null and assigns var.
                     if (result.Old?.Temperature is { } oldTemp &&
                         result.Old?.Humidity is { } oldHumidity &&
                         result.New.Temperature is { } newTemp &&

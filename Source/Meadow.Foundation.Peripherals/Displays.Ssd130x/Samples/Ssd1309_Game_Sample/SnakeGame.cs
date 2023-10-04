@@ -46,7 +46,7 @@ namespace Displays.Ssd130x.Ssd1309_Game_Sample
 
         public bool PlaySound { get; private set; }
 
-        Random rand = new Random((int)DateTime.Now.Ticks);
+        readonly Random rand = new Random((int)DateTime.Now.Ticks);
 
         enum CellType : byte
         {

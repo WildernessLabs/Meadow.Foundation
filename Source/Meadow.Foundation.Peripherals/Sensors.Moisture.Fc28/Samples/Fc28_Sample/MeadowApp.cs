@@ -26,9 +26,10 @@ namespace Sensors.Moisture.FC28_Sample
             );
 
             var consumer = Fc28.CreateObserver(
-                handler: result => {
+                handler: result =>
+                {
                     // the first time through, old will be null.
-                    string oldValue = (result.Old is { } old) ? $"{old:n2}" : "n/a"; // C# 8 pattern matching
+                    string oldValue = (result.Old is { } old) ? $"{old:n2}" : "n/a";
                     Resolver.Log.Info($"Subscribed - " +
                         $"new: {result.New}, " +
                         $"old: {oldValue}");
@@ -48,7 +49,7 @@ namespace Sensors.Moisture.FC28_Sample
         public async override Task Run()
         {
             var moisture = await fc28.Read();
-            Resolver.Log.Info($"Moisture Value { moisture}");
+            Resolver.Log.Info($"Moisture Value {moisture}");
 
             fc28.StartUpdating(TimeSpan.FromMilliseconds(5000));
         }

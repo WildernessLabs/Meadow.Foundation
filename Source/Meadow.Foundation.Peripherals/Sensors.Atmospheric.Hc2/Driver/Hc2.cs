@@ -1,4 +1,5 @@
 ﻿using Meadow.Peripherals.Sensors;
+using Meadow.Peripherals.Sensors.Atmospheric;
 using Meadow.Units;
 using System;
 using System.Threading.Tasks;

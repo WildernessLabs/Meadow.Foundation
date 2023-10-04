@@ -26,8 +26,8 @@
         const byte CFG_OVERFLOW_ON = (1 << 0);
         const byte CFG_OVERFLOW_INT = (1 << 1);
         const byte CFG_CAPSLOCK_INT = (1 << 2);
-        const byte CFG_NUMLOCK_INT  = (1 << 3);
-        const byte CFG_KEY_INT      = (1 << 4);
+        const byte CFG_NUMLOCK_INT = (1 << 3);
+        const byte CFG_KEY_INT = (1 << 4);
         const byte CFG_PANIC_INT = (1 << 5);
 
         const byte INT_OVERFLOW = (1 << 0);

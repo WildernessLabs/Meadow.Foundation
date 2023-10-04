@@ -1,10 +1,8 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Motors;
 using Meadow.Units;
+using System.Threading.Tasks;
 
 namespace Motor.HBridgeMotor_Sample
 {

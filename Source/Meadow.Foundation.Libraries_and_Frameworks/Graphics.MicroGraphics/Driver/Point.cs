@@ -30,7 +30,7 @@
         /// </summary>
         /// <param name="x">The x value</param>
         /// <param name="y">The y value</param>
-        public Point (int x = 0, int y = 0)
+        public Point(int x = 0, int y = 0)
         {
             X = x;
             Y = y;

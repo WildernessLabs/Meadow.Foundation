@@ -1,7 +1,7 @@
 ﻿using Meadow.Foundation.Servos;
 using Meadow.Hardware;
 using Meadow.Logging;
-using Meadow.Peripherals.Sensors;
+using Meadow.Peripherals.Sensors.Distance;
 using Meadow.Units;
 using System;
 using System.Linq;

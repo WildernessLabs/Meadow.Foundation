@@ -22,7 +22,7 @@ public class WinFormsDisplay : Form, IGraphicsDisplay, ITouchScreen
     /// </summary>
     public event TouchEventHandler TouchClick = delegate { };
 
-    private WinFormsPixelBuffer _buffer;
+    private readonly WinFormsPixelBuffer _buffer;
 
     /// <summary>
     /// Current color mode of display

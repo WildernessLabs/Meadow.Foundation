@@ -18,7 +18,7 @@ namespace MeadowApp
         double rotationXX, rotationYY, rotationZZ;
         double rotationXXX, rotationYYY, rotationZZZ;
 
-        int[,] cubeWireframe = new int[12, 3];
+        readonly int[,] cubeWireframe = new int[12, 3];
         int[,] cubeVertices;
 
         public override Task Initialize()

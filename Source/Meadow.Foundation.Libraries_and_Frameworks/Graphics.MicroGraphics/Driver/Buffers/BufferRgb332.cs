@@ -56,8 +56,8 @@ namespace Meadow.Foundation.Graphics.Buffers
 
             r = (byte)(Buffer[index] >> 5 & 0x07);
             g = (byte)(Buffer[index] >> 2 & 0x07);
-            b = (byte)(Buffer[index]      & 0x03);
-            
+            b = (byte)(Buffer[index] & 0x03);
+
             r = (byte)(r * 255 / 7);
             g = (byte)(g * 255 / 7);
             b = (byte)(b * 255 / 3);

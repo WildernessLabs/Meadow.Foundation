@@ -89,7 +89,7 @@ namespace Meadow.Foundation.Sensors.Hid
         {
             this.useHighResolutionMode = useHighResolutionMode;
 
-            LeftAnalogStick = new WiiExtensionAnalogJoystick((byte)(useHighResolutionMode? 8 : 6));
+            LeftAnalogStick = new WiiExtensionAnalogJoystick((byte)(useHighResolutionMode ? 8 : 6));
             RightAnalogStick = new WiiExtensionAnalogJoystick((byte)(useHighResolutionMode ? 8 : 5));
             LeftTrigger = new WiiExtensionAnalogTrigger((byte)(useHighResolutionMode ? 8 : 5));
             RightTrigger = new WiiExtensionAnalogTrigger((byte)(useHighResolutionMode ? 8 : 5));
@@ -100,7 +100,7 @@ namespace Meadow.Foundation.Sensors.Hid
         /// </summary>
         public override void Update()
         {
-            if(useHighResolutionMode)
+            if (useHighResolutionMode)
             {
                 i2cComms.WriteRegister(0, 0);
                 i2cComms.Read(readBuffer[..8]);

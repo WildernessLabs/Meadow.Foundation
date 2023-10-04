@@ -17,13 +17,7 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Si70xx I2C humidity and temperature sensors</Description>
     <Nullable>enable</Nullable>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <LangVersion>10.0</LangVersion>
-    <DefineConstants>TRACE;JETSON</DefineConstants>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <LangVersion>8.0</LangVersion>
+	<LangVersion>10.0</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <None Include=".\Readme.md" Pack="true" PackagePath=""/>

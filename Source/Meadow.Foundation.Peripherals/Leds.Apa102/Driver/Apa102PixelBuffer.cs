@@ -36,7 +36,7 @@ namespace Meadow.Foundation.Leds
             var index = 3 * GetIndexForCoordinate(x, y);
 
             return new Color(red: buffer[index + pixelOrder[0]],
-                             green: buffer[index + pixelOrder[1]], 
+                             green: buffer[index + pixelOrder[1]],
                              blue: buffer[index + pixelOrder[2]]);
         }
 
