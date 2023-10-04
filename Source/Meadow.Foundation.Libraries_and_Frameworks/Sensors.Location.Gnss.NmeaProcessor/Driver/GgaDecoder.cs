@@ -22,7 +22,7 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
         /// <summary>
         /// Friendly name for the GGA messages.
         /// </summary>
-        public string Name => "Global Postioning System Fix Data";
+        public string Name => "Global Positioning System Fix Data"; 
 
         /// <summary>
         /// Process the data from a GGA message

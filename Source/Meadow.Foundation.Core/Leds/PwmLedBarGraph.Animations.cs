@@ -96,7 +96,7 @@ namespace Meadow.Foundation.Leds
         /// </summary>
         /// <param name="highBrightnessDuration">On duration.</param>
         /// <param name="lowBrightnessDuration">Off duration.</param>
-        /// <param name="highBrightness">High brigtness.</param>
+        /// <param name="highBrightness">High brightness.</param>
         /// <param name="lowBrightness">Low brightness.</param>
         public async Task StartBlink(
             TimeSpan highBrightnessDuration,
@@ -198,7 +198,7 @@ namespace Meadow.Foundation.Leds
                 {
                     float brightness = lowBrightness;
                     bool ascending = true;
-                    var intervalTime = TimeSpan.FromMilliseconds(60); // 60 miliseconds is probably the fastest update we want to do, given that threads are given 20 miliseconds by default. 
+                    var intervalTime = TimeSpan.FromMilliseconds(60); // 60 milliseconds is probably the fastest update we want to do, given that threads are given 20 milliseconds by default. 
                     float steps = (float)(pulseDuration.TotalMilliseconds / intervalTime.TotalMilliseconds);
                     float delta = (highBrightness - lowBrightness) / steps;
 
@@ -235,7 +235,7 @@ namespace Meadow.Foundation.Leds
         }
 
         /// <summary>
-        /// Validates LED brightness to ensure they're within the range 0 (off) - 1 (full brighness)
+        /// Validates LED brightness to ensure they're within the range 0 (off) - 1 (full brightness)
         /// </summary>
         /// <param name="highBrightness">The maximum brightness of the animation</param>
         /// <param name="lowBrightness">The minimum brightness of the animation</param>

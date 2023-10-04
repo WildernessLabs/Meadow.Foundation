@@ -57,7 +57,7 @@ namespace Meadow.Foundation.Sensors.Moisture
         { }
 
         /// <summary>
-        /// Creates a Capacitive soil moisture sensor object with the especified AnalogInputPort
+        /// Creates a Capacitive soil moisture sensor object with the specified AnalogInputPort
         /// </summary>
         /// <param name="analogInputPort">The port for the analog input pin</param>
         /// <param name="minimumVoltageCalibration">Minimum calibration voltage</param>

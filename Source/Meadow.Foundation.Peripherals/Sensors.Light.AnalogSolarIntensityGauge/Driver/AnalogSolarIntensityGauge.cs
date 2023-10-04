@@ -40,7 +40,7 @@ namespace Meadow.Foundation.Sensors.Light
         /// </summary>
         /// <param name="analogPin">Analog pin the temperature sensor is connected to</param>
         /// <param name="minVoltageReference">The minimum voltage expected when the solar panel isn't receiving light - Default is 0</param>
-        /// <param name="maxVoltageReference">The maxmimu voltage expected when the solar panel is in full sun. Default is 3.3V</param>
+        /// <param name="maxVoltageReference">The maximum voltage expected when the solar panel is in full sun. Default is 3.3V</param>
         /// <param name="updateInterval">The time to wait
         /// between sets of sample readings. This value determines how often
         /// `Changed` events are raised and `IObservable` consumers are notified</param>
@@ -67,7 +67,7 @@ namespace Meadow.Foundation.Sensors.Light
         /// </summary>
         /// <param name="analogIn">The `IAnalogInputPort` connected to the solar panel.</param>
         /// <param name="minVoltageReference">The minimum voltage expected when the solar panel isn't receiving light. Default is 0.</param>
-        /// <param name="maxVoltageReference">The maxmimu voltage expected when the solar panel is in full sun. Default is 3.3V.</param>
+        /// <param name="maxVoltageReference">The maximum voltage expected when the solar panel is in full sun. Default is 3.3V.</param>
         public AnalogSolarIntensityGauge(
             IAnalogInputPort analogIn,
             Voltage? minVoltageReference = null, Voltage? maxVoltageReference = null)
@@ -147,7 +147,7 @@ namespace Meadow.Foundation.Sensors.Light
         }
 
         /// <summary>
-        /// Raise events for subcribers and notify of value changes
+        /// Raise events for subscribers and notify of value changes
         /// </summary>
         /// <param name="changeResult">The updated sensor data</param>
         protected override void RaiseEventsAndNotify(IChangeResult<float> changeResult)

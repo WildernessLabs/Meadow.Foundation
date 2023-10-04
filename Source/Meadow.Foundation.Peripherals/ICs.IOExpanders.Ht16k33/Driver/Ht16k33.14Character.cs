@@ -8,7 +8,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <summary>
         /// Set a message on a 14-segment display array
         /// </summary>
-        /// <param name="message">The message (up to 4 chracters)</param>
+        /// <param name="message">The message (up to 4 characters)</param>
         public void Set14SegmentMessage(string message)
         {
             for (int i = 0; i < Math.Max(message.Length, 4); i++)
@@ -20,7 +20,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <summary>
         /// Set a single 14-segment display to a specific character
         /// </summary>
-        /// <param name="character">The ASCII chracter</param>
+        /// <param name="character">The ASCII character</param>
         /// <param name="displayIndex">The display index (0-3)</param>
         public void Set14SegmentDisplay(char character, int displayIndex)
         {

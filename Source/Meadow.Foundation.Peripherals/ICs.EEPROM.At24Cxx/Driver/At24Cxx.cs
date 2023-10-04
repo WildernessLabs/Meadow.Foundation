@@ -55,10 +55,10 @@ namespace Meadow.Foundation.ICs.EEPROM
 
         /// <summary>
         /// Check the startAddress and the amount of data being accessed to make sure that the
-        /// addresss and the startAddress plus the amount remain within the bounds of the memory chip.
+        /// address and the startAddress plus the amount remain within the bounds of the memory chip.
         /// </summary>
         /// <param name="address">Start startAddress for the memory activity.</param>
-        /// <param name="amount">Amunt of data to be accessed.</param>
+        /// <param name="amount">Amount of data to be accessed.</param>
         private void CheckAddress(ushort address, ushort amount)
         {
             if (address > MemorySize)

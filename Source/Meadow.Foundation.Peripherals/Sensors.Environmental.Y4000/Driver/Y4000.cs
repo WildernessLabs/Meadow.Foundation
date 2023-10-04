@@ -11,7 +11,7 @@ namespace Meadow.Foundation.Sensors.Environmental
     /// <summary>
     /// Represents a Yosemitech Y4000 Multiparameter Sonde water quality sensor 
     /// for dissolved oxygen, conductivity, turbidity, pH, chlorophyll, 
-    /// blue green algae, chlorophyl, and temperature
+    /// blue green algae, chlorophyll, and temperature
     /// </summary>
     public partial class Y4000 : PollingSensorBase<(ConcentrationInWater? DissolvedOxygen,
                                                     ConcentrationInWater? Chlorophyl,
@@ -28,7 +28,7 @@ namespace Meadow.Foundation.Sensors.Environmental
         public event EventHandler<IChangeResult<ConcentrationInWater>> DissolvedOxygenUpdated = delegate { };
 
         /// <summary>
-        /// Raised when the Chlorophyl value changes
+        /// Raised when the Chlorophyll value changes
         /// </summary>
         public event EventHandler<IChangeResult<ConcentrationInWater>> ChlorophylUpdated = delegate { };
 
@@ -68,7 +68,7 @@ namespace Meadow.Foundation.Sensors.Environmental
         public ConcentrationInWater? DissolvedOxygen => Conditions.DissolvedOxygen;
 
         /// <summary>
-        /// The current Chlorophyl concentration
+        /// The current Chlorophyll concentration
         /// </summary>
         public ConcentrationInWater? Chlorophyl => Conditions.Chlorophyl;
 

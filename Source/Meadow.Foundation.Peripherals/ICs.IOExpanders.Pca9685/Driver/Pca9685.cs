@@ -138,8 +138,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// Set the values for specified output pin.
         /// </summary>
         /// <param name="pin">The pwm Pin</param>
-        /// <param name="on">LED{X}_ON_L and LED{X}_ON_H registier value</param>
-        /// <param name="off">LED{X}_OFF_L and LED{X}_OFF_H registier value</param>
+        /// <param name="on">LED{X}_ON_L and LED{X}_ON_H register value</param>
+        /// <param name="off">LED{X}_OFF_L and LED{X}_OFF_H register value</param>
         /// <remarks>On parameter is an inverted pwm signal</remarks>
         public virtual void SetPwm(byte pin, int on, int off)
         {

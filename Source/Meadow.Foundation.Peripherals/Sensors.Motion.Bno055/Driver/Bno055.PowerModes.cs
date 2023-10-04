@@ -21,7 +21,7 @@
             public const byte LOWPOWER = 0x00;
 
             /// <summary>
-            /// Put the sensor into Suspoend mode.  In this more no values in
+            /// Put the sensor into Suspend mode.  In this more no values in
             /// the register map will be updated.
             /// </summary>
             public const byte SUSPENDED = 0x00;

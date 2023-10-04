@@ -42,7 +42,7 @@ public class WinFormsDisplay : Form, IGraphicsDisplay, ITouchScreen
     /// <summary>
     /// Create a new WinFormsDisplay
     /// </summary>
-    /// <param name="width">Width of the display, in pixles</param>
+    /// <param name="width">Width of the display, in pixels</param>
     /// <param name="height">Height of the display, in pixels</param>
     /// <param name="colorMode">The ColorMode of the display</param>
     public WinFormsDisplay(int width = 800, int height = 600, ColorMode colorMode = ColorMode.Format16bppRgb565)

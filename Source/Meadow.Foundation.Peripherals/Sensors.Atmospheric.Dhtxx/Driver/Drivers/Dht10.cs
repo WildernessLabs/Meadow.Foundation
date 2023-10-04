@@ -6,7 +6,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 {
     /// <summary>
     /// Represents a DHT10 temp / humidity sensor
-    /// -40 - 80 celius +/- 0.5
+    /// -40 - 80 celsius +/- 0.5
     /// 0 - 99.9% humidity +/- 3%
     /// </summary>
     public class Dht10 : DhtBase

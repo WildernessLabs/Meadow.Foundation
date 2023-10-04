@@ -171,7 +171,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         }
 
         /// <summary>
-        /// Raise events for subcribers and notify of value changes
+        /// Raise events for subscribers and notify of value changes
         /// </summary>
         /// <param name="changeResult">The updated sensor data</param>
         protected override void RaiseEventsAndNotify(IChangeResult<(Units.Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure)> changeResult)
@@ -202,7 +202,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// Register locations and formulas taken from the Bosch BME280 datasheet revision 1.1, May 2015.
         /// Register locations - section 5.3 Memory Map
         /// Formulas - section 4.2.3 Compensation Formulas
-        /// The integer formulas have been used to try and keep the calculations performant.
+        /// The integer formulas have been used to try and keep the calculations per formant.
         /// </remarks>
         protected override async Task<(Units.Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure)> ReadSensor()
         {
@@ -373,7 +373,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <summary>
         /// Start updating 
         /// </summary>
-        /// <param name="updateInterval">The update inveral</param>
+        /// <param name="updateInterval">The update inverval</param>
         public override void StartUpdating(TimeSpan? updateInterval = null)
         {
             configuration.Mode = Modes.Normal;

@@ -88,7 +88,7 @@ namespace Meadow.Foundation.Sensors.Radio.Rfid.Serial.Helpers
     }
 
     /// <summary>
-    /// Polled Serial Data Recived Event Args class
+    /// Polled Serial Data Received Event Args class
     /// </summary>
     public class PolledSerialDataReceivedEventArgs : EventArgs
     {

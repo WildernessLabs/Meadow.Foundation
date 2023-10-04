@@ -32,7 +32,7 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         /// <summary>
-        /// Initalize the sensor
+        /// Initialize the sensor
         /// </summary>
         override protected void Initialize()
         {

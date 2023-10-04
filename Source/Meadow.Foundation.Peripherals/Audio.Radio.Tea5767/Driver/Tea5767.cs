@@ -64,7 +64,7 @@ namespace Meadow.Foundation.Audio.Radio
             //XTAL: 1 - 32.768 kHz
             //SMUTE: 0 - soft mute is OFF
             //HCC: 0 - high cut control is OFF
-            //SNC: 0 - stereo noise cancelling is OFF
+            //SNC: 0 - stereo noise canceling is OFF
             //SI: 0 - pin SWPORT1 is software programmable port 1
 
             writeBuffer.Span[(byte)Command.FIFTH_DATA] = 0x00;         //PLLREF: 0 - the 6.5 MHz reference frequency for the PLL is disabled
@@ -90,9 +90,9 @@ namespace Meadow.Foundation.Audio.Radio
         }
 
         /// <summary>
-        /// Frequency in Mhz
+        /// Frequency in MHz
         /// </summary>
-        /// <param name="frequency">frequency in Mhz</param>
+        /// <param name="frequency">frequency in MHz</param>
         void SetFrequency(double frequency)
         {
             uint frequencyW;
@@ -451,7 +451,7 @@ namespace Meadow.Foundation.Audio.Radio
         /// <summary>
         /// Unmute the right channel
         /// </summary>
-        public void UnuteRight()
+        public void UnmuteRight()
         {
             writeBuffer.Span[(byte)Command.THIRD_DATA] &= 251;
             TransmitData();
@@ -511,7 +511,7 @@ namespace Meadow.Foundation.Audio.Radio
         }
 
         /// <summary>
-        /// Enable stereo noise cancelling
+        /// Enable stereo noise canceling
         /// </summary>
         public void SetStereoNoiseCancellingOn()
         {
@@ -520,7 +520,7 @@ namespace Meadow.Foundation.Audio.Radio
         }
 
         /// <summary>
-        /// Disable stereo noise cancelling
+        /// Disable stereo noise canceling
         /// </summary>
         public void SetStereoNoiseCancellingOff()
         {

@@ -225,7 +225,7 @@ namespace Meadow.Hardware
             {
                 throw new ArgumentException("Data to write is too large for the write buffer. " +
                     "Must be less than WriteBuffer.Length + 1 (to allow for address). " +
-                    "Instantiate this class with a larger WriteBuffer, or send a smaller" +
+                    "Instantiate this class with a larger WriteBuffer, or send a smaller " +
                     "amount of data to fix.");
             }
 
@@ -268,7 +268,7 @@ namespace Meadow.Hardware
         /// Exchange data over the SPI bus
         /// </summary>
         /// <param name="writeBuffer">The buffer holding the data to write</param>
-        /// <param name="readBuffer">The buffer to receieve data</param>
+        /// <param name="readBuffer">The buffer to receive data</param>
         /// <param name="duplex">The duplex mode - half or full</param>
         public virtual void Exchange(Span<byte> writeBuffer, Span<byte> readBuffer, DuplexType duplex = DuplexType.Half)
         {

@@ -24,7 +24,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             public IPwmChannelInfo Channel => throw new NotImplementedException();
 
             /// <summary>
-            /// Durration
+            /// Duration
             /// </summary>
             public float Duration { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 

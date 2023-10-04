@@ -84,7 +84,7 @@ namespace Meadow.Foundation.Sensors.Power
         }
 
         /// <summary>
-        /// Raise events for subcribers and notify of value changes
+        /// Raise events for subscribers and notify of value changes
         /// </summary>
         /// <param name="changeResult">The updated sensor data</param>
         protected override void RaiseEventsAndNotify(IChangeResult<(Units.Power? Power, Voltage? Voltage, Current? Current)> changeResult)

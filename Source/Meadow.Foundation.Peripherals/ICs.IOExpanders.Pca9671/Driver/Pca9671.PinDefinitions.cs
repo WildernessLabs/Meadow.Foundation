@@ -33,7 +33,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             );
 
             /// <summary>
-            /// Pin R1
+            /// Pin R01
             /// </summary>
             public IPin R01 => new Pin(
                 Controller,
@@ -44,7 +44,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             );
 
             /// <summary>
-            /// Pin R2
+            /// Pin R02
             /// </summary>
             public IPin R02 => new Pin(
                 Controller,
@@ -56,7 +56,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
 
             /// <summary>
-            /// Pin R3
+            /// Pin R03
             /// </summary>
             public IPin R03 => new Pin(
                 Controller,
@@ -68,7 +68,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
 
             /// <summary>
-            /// Pin R4
+            /// Pin R04
             /// </summary>
             public IPin R04 => new Pin(
                 Controller,
@@ -79,7 +79,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             );
 
             /// <summary>
-            /// Pin R5
+            /// Pin R05
             /// </summary>
             public IPin R05 => new Pin(
                 Controller,
@@ -90,7 +90,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             );
 
             /// <summary>
-            /// Pin R6
+            /// Pin R06
             /// </summary>
             public IPin R06 => new Pin(
                 Controller,
@@ -101,7 +101,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             );
 
             /// <summary>
-            /// Pin R7
+            /// Pin R07
             /// </summary>
             public IPin R07 => new Pin(
                 Controller,
@@ -113,7 +113,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
 
             /// <summary>
-            /// Pin R8
+            /// Pin R08
             /// </summary>
             public IPin R08 => new Pin(
                 Controller,
@@ -124,7 +124,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             );
 
             /// <summary>
-            /// Pin R9
+            /// Pin R09
             /// </summary>
             public IPin R09 => new Pin(
                 Controller,
@@ -133,7 +133,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
                     new DigitalChannelInfo(nameof(R09)),
                 }
             );
-
 
             /// <summary>
             /// Pin R10
@@ -159,7 +158,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
 
             /// <summary>
-            /// Pin R1
+            /// Pin R12
             /// </summary>
             public IPin R12 => new Pin(
                 Controller,

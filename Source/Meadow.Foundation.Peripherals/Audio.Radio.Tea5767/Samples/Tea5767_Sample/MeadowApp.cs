@@ -23,7 +23,7 @@ namespace Audio.Radio.Tea5767_Sample
 
         public async override Task Run()
         {
-            //scan through avaliable stations
+            //scan through available stations
             for (int i = 0; i < 8; i++)
             {
                 await Task.Delay(1000);

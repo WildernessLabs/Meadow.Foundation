@@ -11,7 +11,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         II2cPeripheral, IDisposable
     {
         /// <summary>
-        /// The number of IO pins avaliable on the device
+        /// The number of IO pins available on the device
         /// </summary>
         public abstract int NumberOfPins { get; }
 
@@ -170,7 +170,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <param name="interruptMode">The port interrupt mode</param>
         /// <param name="resistorMode">The port resistor mode</param>
         /// <param name="debounceDuration">The debounce duration</param>
-        /// <param name="glitchDuration">The clitch duration - not configurable on Mcpxxxx</param>
+        /// <param name="glitchDuration">The glitch duration - not configurable on Mcpxxxx</param>
         /// <returns>IDigitalInterruptPort</returns>
         public IDigitalInterruptPort CreateDigitalInterruptPort(
             IPin pin,

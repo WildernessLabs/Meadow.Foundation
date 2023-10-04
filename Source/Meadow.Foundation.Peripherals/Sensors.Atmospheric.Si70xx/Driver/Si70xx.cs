@@ -78,7 +78,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         }
 
         /// <summary>
-        /// Initalize the sensor
+        /// Initialize the sensor
         /// </summary>
         protected void Initialize()
         {

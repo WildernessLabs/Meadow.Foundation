@@ -8,7 +8,7 @@
         public enum LatchBehaviorTypes : byte
         {
             /// <summary>
-            /// Lach until read or initialized
+            /// Latch until read or initialized
             /// </summary>
             LatchUntilReadOrInitialized = 0,
             /// <summary>

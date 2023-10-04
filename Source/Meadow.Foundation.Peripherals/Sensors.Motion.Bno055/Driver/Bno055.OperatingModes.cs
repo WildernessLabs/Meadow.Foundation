@@ -48,7 +48,7 @@
             public const byte ACCELEROMETER_MAGNETOMETER_GYROSCOPE = 0x07;
 
             /// <summary>
-            /// Put the sensor into fusion mode intertial measurement unit mode.
+            /// Put the sensor into fusion mode inertial measurement unit mode.
             /// </summary>
             public const byte INERTIAL_MEASUREMENT_UNIT = 0x08;
 
@@ -68,7 +68,7 @@
             public const byte NINE_DEGREES_OF_FREEDOM_MAGNETOMETER_CALIBRATION_OFF = 0x0b;
 
             /// <summary>
-            /// Fusion of the accelerometer, gyroscope and megnetometer readings (fusion mode).
+            /// Fusion of the accelerometer, gyroscope and magnetometer readings (fusion mode).
             /// </summary>
             public const byte NINE_DEGREES_OF_FREEDOM = 0x0c;
 

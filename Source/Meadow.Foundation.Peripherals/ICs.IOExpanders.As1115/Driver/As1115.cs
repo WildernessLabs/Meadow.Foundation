@@ -239,7 +239,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
         /// <summary>
         /// Set the display decode mode
-        /// Hexidecimal for matrix leds, or character for 7-segment displays
+        /// Hexadecimal for matrix leds, or character for 7-segment displays
         /// </summary>
         /// <param name="mode">The decode mode enum</param>
         /// Not currently supported - driver is pixel mode only
@@ -293,7 +293,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <summary>
         /// Set a single character
         /// </summary>
-        /// <param name="character">the chracter to display</param>
+        /// <param name="character">the character to display</param>
         /// <param name="digit">the digit index starting from the left</param>
         /// <param name="showDecimal">show the decimal with the character</param>
         public void SetCharacter(BcdCharacterType character, int digit, bool showDecimal = false)
@@ -311,14 +311,14 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <summary>
         /// Set a single character
         /// </summary>
-        /// <param name="character">the chracter to display</param>
+        /// <param name="character">the character to display</param>
         /// <param name="digit">the digit index starting from the left</param>
         /// <param name="showDecimal">show the decimal with the character</param>
         public void SetCharacter(HexCharacterType character, int digit, bool showDecimal = false)
         {
             if (DecodeMode != DecodeType.Hexidecimal)
             {
-                throw new Exception("SetCharacterBcd requires DecodeMode to be Hexidecimal");
+                throw new Exception("SetCharacterBcd requires DecodeMode to be Hexadecimal");
             }
 
             var data = (byte)((byte)character + (showDecimal ? 0x10000000 : 0));
@@ -329,7 +329,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <summary>
         /// Set display intensity (0-15)
         /// </summary>
-        /// <param name="intensity">Instensity from 0-15 (clamps above 15)</param>
+        /// <param name="intensity">Intensity from 0-15 (clamps above 15)</param>
         public void SetIntensity(byte intensity)
         {
             intensity = Math.Max(intensity, (byte)15);
@@ -399,7 +399,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// Fill a region of the display buffer with a color
         /// Black will clear the display, any other color will turn on all leds
         /// </summary>
-        /// <param name="x">X postion in pixels</param>
+        /// <param name="x">X position in pixels</param>
         /// <param name="y">Y position in pixels</param>
         /// <param name="width">Width in pixels</param>
         /// <param name="height">Height in pixels</param>
@@ -412,7 +412,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <summary>
         /// Draw a pixel at a given location
         /// </summary>
-        /// <param name="x">X postion in pixels</param>
+        /// <param name="x">X position in pixels</param>
         /// <param name="y">Y position in pixels</param>
         /// <param name="color">Color to draw - Black will turn pixels off, any color will turn pixels on</param>
         public void DrawPixel(int x, int y, Color color)
@@ -423,7 +423,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <summary>
         /// Draw a pixel at a given location
         /// </summary>
-        /// <param name="x">X postion in pixels</param>
+        /// <param name="x">X position in pixels</param>
         /// <param name="y">Y position in pixels</param>
         /// <param name="enabled">If true, turn led on at location</param>
         public void DrawPixel(int x, int y, bool enabled)
@@ -434,7 +434,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <summary>
         /// Invert pixel at location (switch on/off)
         /// </summary>
-        /// <param name="x">X postion in pixels</param>
+        /// <param name="x">X position in pixels</param>
         /// <param name="y">Y position in pixels</param>
         public void InvertPixel(int x, int y)
         {
@@ -444,7 +444,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <summary>
         /// Write a pixel buffer to the display buffer
         /// </summary>
-        /// <param name="x">X postion in pixels</param>
+        /// <param name="x">X position in pixels</param>
         /// <param name="y">Y position in pixels</param>
         /// <param name="displayBuffer">Display buffer to write</param>
         public void WriteBuffer(int x, int y, IPixelBuffer displayBuffer)

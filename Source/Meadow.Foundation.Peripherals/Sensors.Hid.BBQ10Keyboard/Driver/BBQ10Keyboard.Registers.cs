@@ -4,7 +4,7 @@
     {
         enum Registers : byte
         {
-            VER = 0x01, // fw version
+            VER = 0x01, // firmware version
             CFG = 0x02, // config
             INT = 0x03, // interrupt status
             KEY = 0x04, // key status

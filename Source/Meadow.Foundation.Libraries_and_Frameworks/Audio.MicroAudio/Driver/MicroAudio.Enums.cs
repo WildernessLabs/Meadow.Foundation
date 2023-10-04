@@ -271,7 +271,7 @@
         /// </summary>
         SecretFound,
         /// <summary>
-        /// A sound effect indicating a spash in water
+        /// A sound effect indicating a splash in water
         /// </summary>
         Splash,
         /// <summary>

@@ -76,7 +76,7 @@ namespace Meadow.Foundation.Displays
             SetLookupTable();
         }
 
-        //for 4-shade greyscale ... not supported yet
+        //for 4-shade grayscale ... not supported yet
         void InitializeGrey()
         {
             Reset();
@@ -170,7 +170,7 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// Set partial address window to update display
         /// </summary>
-        /// <param name="buffer">The interal display buffer</param>
+        /// <param name="buffer">The internal display buffer</param>
         /// <param name="x">X start position in pixels</param>
         /// <param name="y">Y start position in pixels</param>
         /// <param name="width">Width in pixels</param>

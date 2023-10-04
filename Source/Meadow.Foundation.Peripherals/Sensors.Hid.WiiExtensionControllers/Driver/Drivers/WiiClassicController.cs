@@ -62,12 +62,12 @@ namespace Meadow.Foundation.Sensors.Hid
         public IButton HomeButton { get; } = new WiiExtensionButton();
 
         /// <summary>
-        /// Left analog jostick (6 or 8 bits of precision)
+        /// Left analog joystick (6 or 8 bits of precision)
         /// </summary>
         public IAnalogJoystick LeftAnalogStick { get; }
 
         /// <summary>
-        /// Right analog jostick (5 or 8 bits of precision)
+        /// Right analog joystick (5 or 8 bits of precision)
         /// </summary>
         public IAnalogJoystick RightAnalogStick { get; }
 

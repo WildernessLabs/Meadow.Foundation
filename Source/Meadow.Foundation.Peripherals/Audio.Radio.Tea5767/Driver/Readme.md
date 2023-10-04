@@ -26,7 +26,7 @@ public override Task Initialize()
 
 public async override Task Run()
 {
-    //scan through avaliable stations
+    //scan through available stations
     for (int i = 0; i < 8; i++)
     {
         await Task.Delay(1000);

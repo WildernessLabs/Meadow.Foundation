@@ -1,7 +1,7 @@
 ﻿namespace Meadow.Foundation.Graphics.MicroLayout;
 
 /// <summary>
-/// A layout requireing absolute positioning of all child controls
+/// A layout requiring absolute positioning of all child controls
 /// </summary>
 public class AbsoluteLayout : Layout
 {

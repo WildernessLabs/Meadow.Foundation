@@ -20,7 +20,7 @@ namespace Leds.Apa102_Display_Sample
             display = new Apa102(Device.CreateSpiBus(), 32, 8, Apa102.PixelOrder.BGR);
             canvas = new MicroGraphics(display);
 
-            Resolver.Log.Info("Hardware intitialized.");
+            Resolver.Log.Info("Hardware initialized.");
 
             return base.Initialize();
         }

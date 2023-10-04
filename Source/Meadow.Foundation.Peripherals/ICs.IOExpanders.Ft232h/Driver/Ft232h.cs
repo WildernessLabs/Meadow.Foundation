@@ -217,7 +217,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 _activeBus = bus as IFt232Bus;
             }
 
-            // TODO: do we need to set the direction make (see outpuuts) or are they defaulted to input?
+            // TODO: do we need to set the direction make (see outputs) or are they defaulted to input?
 
             var info = pin.SupportedChannels?.FirstOrDefault(c => c is IDigitalChannelInfo) as IDigitalChannelInfo;
             return new Ft232DigitalInputPort(pin, info, _activeBus);

@@ -11,7 +11,7 @@
         const byte DEVICECONFIG = 0x06;  // Device config like sleep mode
         const byte DEVICEID = 0x20;      // Device ID/Revision
         const byte ALERTCONFIG_1 = 0x08; // The first alert's config
-        const byte ALERTHYST_1 = 0x0C;   // The first alert's hystersis
+        const byte ALERTHYST_1 = 0x0C;   // The first alert's hysteresis
         const byte ALERTLIMIT_1 = 0x10;  // the first alert's limitval
 
         const byte STATUS_ALERT1 = 0x01;     // Bit flag for alert 1 status

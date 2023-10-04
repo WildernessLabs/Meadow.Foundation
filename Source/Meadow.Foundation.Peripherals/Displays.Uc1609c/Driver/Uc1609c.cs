@@ -135,7 +135,7 @@ namespace Meadow.Foundation.Displays
             Thread.Sleep(100);
 
             SendCommand(UC1609_GN_PM, 0);
-            SendCommand(UC1609_GN_PM, 0x1E); //  changed by user default = 0x49 //Constrast 00 to FE
+            SendCommand(UC1609_GN_PM, 0x1E); //  changed by user default = 0x49 //Contrast 00 to FE
 
             SendCommand(UC1609_DISPLAY_ON, 0x01); // turn on display
             SendCommand(UC1609_LCD_CONTROL, UC1609_ROTATION_NORMAL); // rotate to normal 

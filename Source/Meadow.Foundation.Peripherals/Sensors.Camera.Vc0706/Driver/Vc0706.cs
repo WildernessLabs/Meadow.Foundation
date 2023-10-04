@@ -26,14 +26,14 @@ namespace Meadow.Foundation.Sensors.Camera
         ushort framePointer;
 
         /// <summary>
-        /// Number of bytes avaliable in the camera buffer
+        /// Number of bytes available in the camera buffer
         /// </summary>
         public byte BytesAvailable => bufferLength;
 
         /// <summary>
         /// Create a new VC0706 serial camera object
         /// </summary>
-        /// <param name="device">The device conected to the sensor</param>
+        /// <param name="device">The device connected to the sensor</param>
         /// <param name="portName"></param>
         /// <param name="baudRate"></param>
         public Vc0706(ISerialController device, SerialPortName portName, int baudRate)
@@ -100,7 +100,7 @@ namespace Meadow.Foundation.Sensors.Camera
         /// Enable or disable motion detection
         /// </summary>
         /// <param name="enable">true to enable</param>
-        /// <returns>true if succesful</returns>
+        /// <returns>true if successful</returns>
         public bool SetMotionDetect(bool enable)
         {
             if (!SetMotionStatus(MOTIONCONTROL, UARTMOTION, ACTIVATEMOTION))
@@ -146,7 +146,7 @@ namespace Meadow.Foundation.Sensors.Camera
         /// Set the image resolution
         /// </summary>
         /// <param name="resolution">the new image capture resolution</param>
-        /// <returns>true if succesful</returns>
+        /// <returns>true if successful</returns>
         public bool SetCaptureResolution(ImageResolution resolution)
         {
             byte[] args = { 0x05, 0x04, 0x01, 0x00, 0x19, (byte)resolution };
@@ -207,7 +207,7 @@ namespace Meadow.Foundation.Sensors.Camera
         /// Set the serial baud rate for the camera
         /// </summary>
         /// <param name="baudRate">the baud rate</param>
-        /// <returns>true if succesful</returns>
+        /// <returns>true if successful</returns>
         bool SetBaud(BaudRate baudRate)
         {
             byte[] args = baudRate switch
@@ -233,7 +233,7 @@ namespace Meadow.Foundation.Sensors.Camera
         /// Enable onscreen display for composite output (may not work)
         /// </summary>
         /// <param name="x">x location of display in pixels</param>
-        /// <param name="y">y location of dispaly in pixels</param>
+        /// <param name="y">y location of display in pixels</param>
         /// <param name="message">text to display</param>
         public void SetOnScreenDisplay(byte x, byte y, string message)
         {
@@ -274,7 +274,7 @@ namespace Meadow.Foundation.Sensors.Camera
         /// Set compression (0-255)
         /// </summary>
         /// <param name="compression"></param>
-        /// <returns>true if succesful</returns>
+        /// <returns>true if successful</returns>
         public bool SetCompression(byte compression)
         {
             byte[] args = { 0x5, 0x1, 0x1, 0x12, 0x04, compression };
@@ -362,14 +362,14 @@ namespace Meadow.Foundation.Sensors.Camera
         /// <summary>
         /// Check if there is picture data on the camera
         /// </summary>
-        /// <returns>true is data is avaliable</returns>
+        /// <returns>true is data is available</returns>
         public bool IsPhotoAvailable()
         {
             return GetFrameLength() != 0;
         }
 
         /// <summary>
-        /// Retreive the image data from the camera
+        /// Retrieve the image data from the camera
         /// </summary>
         /// <returns>The image data as a jpeg in a MemoryStream</returns>
         public Task<MemoryStream> GetPhotoStream()
@@ -407,7 +407,7 @@ namespace Meadow.Foundation.Sensors.Camera
         }
 
         /// <summary>
-        /// Retreive the image data from the camera
+        /// Retrieve the image data from the camera
         /// </summary>
         /// <returns>The image data as a jpeg in a byte array</returns>
         public async Task<byte[]> GetPhotoData()

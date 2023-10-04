@@ -69,7 +69,7 @@ namespace Meadow.Foundation.Sensors.Light
         }
 
         /// <summary>
-        /// Read the current luminocity 
+        /// Read the current luminosity 
         /// </summary>
         /// <returns>The current Illuminance value</returns>
         protected async override Task<Illuminance> ReadSensor()
@@ -133,7 +133,7 @@ namespace Meadow.Foundation.Sensors.Light
         }
 
         /// <summary>
-        /// Raise events for subcribers and notify of value changes
+        /// Raise events for subscribers and notify of value changes
         /// </summary>
         /// <param name="changeResult">The updated sensor data</param>
         protected override void RaiseEventsAndNotify(IChangeResult<Illuminance> changeResult)

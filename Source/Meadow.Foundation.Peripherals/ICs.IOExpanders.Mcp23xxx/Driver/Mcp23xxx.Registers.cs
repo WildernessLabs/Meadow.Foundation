@@ -62,21 +62,21 @@
             /// </summary>
             /// <remarks>
             /// The IOCON register contains several bits for configuring the device:
-            /// * TheSequentialOperation(SEQOP)controlsthe incrementing function
+            /// * The SequentialOperation (SEQOP) controls the incrementing function
             /// of the address pointer.If the address pointer is disabled, the
             /// address pointer does not automatically increment after each byte
             /// is clocked during a serial transfer.This feature is useful when
             /// it is desired to continuously poll(read) or modify(write) a register.
-            /// * TheSlewRate(DISSLW) bitcontrolstheslew rate function on the
+            /// * The SlewRate (DISSLW) bit controls the slew rate function on the
             /// SDA pin. If enabled, the SDA slew rate will be controlled when
             /// driving from a high to a low.
-            /// * TheHardwareAddressEnable(HAEN)controlbit enables/disables the
+            /// * The HardwareAddressEnable (HAEN) control bit enables/disables the
             /// hardware address pins (A1, A0) on the MCP23S08. This bit is not
             /// used on the MCP23008. The address pins are always enabled on the
             /// MCP23008.
-            /// * TheOpen-Drain(ODR)controlbitenables/ disables the INT pin for
+            /// * The Open-Drain (ODR) control bit enables/disables the INT pin for
             /// open-drain configuration.
-            /// * The InterruptPolarity(INTPOL) controlbitsets the polarity of
+            /// * The InterruptPolarity (INTPOL) control bit sets the polarity of
             /// the INT pin. This bit is functional only when the ODR bit is
             /// cleared, configuring the INT pin as active push-pull.
             /// </remarks>

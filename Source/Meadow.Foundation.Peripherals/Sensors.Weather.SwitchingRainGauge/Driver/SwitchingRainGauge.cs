@@ -26,7 +26,7 @@ namespace Meadow.Foundation.Sensors.Weather
         public Length RainDepth => DepthPerClick * ClickCount;
 
         /// <summary>
-        /// The amount of rain recorded per raingauge event
+        /// The amount of rain recorded per rain-gauge event
         /// </summary>
         public Length DepthPerClick { get; set; }
 

@@ -65,7 +65,7 @@ namespace Meadow.Foundation.Audio
         /// Play a frequency for a specified duration
         /// </summary>
         /// <param name="frequency">The frequency in hertz of the tone to be played</param>
-        /// <param name="duration">How long the note is played in milliseconds, if durration is 0, tone plays indefinitely</param>
+        /// <param name="duration">How long the note is played in milliseconds, if duration is 0, tone plays indefinitely</param>
         public async Task PlayTone(Frequency frequency, TimeSpan duration)
         {
             if (frequency.Hertz <= 1)

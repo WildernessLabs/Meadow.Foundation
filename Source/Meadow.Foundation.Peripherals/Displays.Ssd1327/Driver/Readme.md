@@ -1,6 +1,6 @@
 # Meadow.Foundation.Displays.Ssd1327
 
-**SSD1327 SPI OLED 4bpp greyscale display**
+**SSD1327 SPI OLED 4bpp grayscale display**
 
 The **Ssd1327** library is designed for the [Wilderness Labs](www.wildernesslabs.co) Meadow .NET IoT platform and is part of [Meadow.Foundation](https://developer.wildernesslabs.co/Meadow/Meadow.Foundation/).
 
@@ -36,7 +36,7 @@ public override Task Run()
     graphics.Clear();
 
     for (int i = 10; i > 0; i--)
-    {   //interate across different brightnesses
+    {   //iterate across different brightnesses
         graphics.DrawText(0, i * 11, "SSD1327", Color.FromRgb(i * 0.1, i * 0.1, i * 0.1));
     }
 

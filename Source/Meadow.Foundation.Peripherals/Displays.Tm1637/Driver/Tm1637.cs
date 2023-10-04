@@ -241,8 +241,8 @@ namespace Meadow.Foundation.Displays
         }
 
         /// <summary>
-        /// Displays a series of prebuild characters including the dot or not
-        /// You can build yourwwon characters with the primitives like Bottom, Top, Dot
+        /// Displays a series of prebuilt characters including the dot or not
+        /// You can build your own characters with the primitives like Bottom, Top, Dot
         /// </summary>
         /// <param name="data">The Character to display</param>
         public void Show(ReadOnlySpan<Character> data)
@@ -254,7 +254,7 @@ namespace Meadow.Foundation.Displays
         /// Displays a raw data at a specific segment position from 0 to 5
         /// </summary>
         /// <param name="index">The segment position from 0 to 5</param>
-        /// <param name="character">The segemnet characters to display</param>
+        /// <param name="character">The segment characters to display</param>
         public void Show(byte index, Character character)
         {
             if (index > MAX_SEGMENTS)

@@ -3,10 +3,10 @@
 namespace Meadow.Foundation.Motors
 {
     /// <summary>
-    /// Driver for Electornic Speed Controllers used, typically, to drive
+    /// Driver for Electronic Speed Controllers used, typically, to drive
     /// motors via a PWM signal. To use, you generally have to first _calibrate_
     /// the ESC via the following steps:
-    /// 1. Depower the ESC, set power to intended max point (e.g. `1.0` power)
+    /// 1. De-power the ESC, set power to intended max point (e.g. `1.0` power)
     /// 2. Power the ESC, wait for "happy tones" to indicate good power supply
     /// then (possibly) two beeps to indicate max power limit set.
     /// 3. Set the ESC power to intended minimum power point (e.g. `0.0` power)
@@ -20,7 +20,7 @@ namespace Meadow.Foundation.Motors
         readonly IPwmPort pwmPort;
 
         /// <summary>
-        /// The pulse duration, in milliseconds, neccessary to "arm" the ESC.
+        /// The pulse duration, in milliseconds, necessary to "arm" the ESC.
         /// Default value is 0.5ms.
         /// </summary>
         public float ArmingPulseDuration { get; set; } = 0.5f;

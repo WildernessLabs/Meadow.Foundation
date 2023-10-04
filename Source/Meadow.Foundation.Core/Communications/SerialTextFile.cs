@@ -62,7 +62,7 @@ namespace Meadow.Foundation.Communications
 
         /// <summary>
         /// Default constructor for the SerialTextFile class, made private to prevent the
-        /// programmer from using this method of construcing an object.
+        /// programmer from using this method of constructing an object.
         /// </summary>
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         private SerialTextFile()
@@ -71,7 +71,7 @@ namespace Meadow.Foundation.Communications
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
         /// <summary>
-        /// Create a new SerialTextFile and attach the instance to the specfied serial port.
+        /// Create a new SerialTextFile and attach the instance to the specified serial port.
         /// </summary>
         /// <param name="device">ISerialController used to instantiate serial port.</param>
         /// <param name="port">Serial port name.</param>
@@ -89,7 +89,7 @@ namespace Meadow.Foundation.Communications
         }
 
         /// <summary>
-        /// Create a new SerialTextFile and attach the instance to the specfied serial port.
+        /// Create a new SerialTextFile and attach the instance to the specified serial port.
         /// </summary>
         /// <param name="serialPort">Serial port object.</param>
         /// <param name="endOfLine">Text indicating the end of a line of text.</param>

@@ -147,7 +147,7 @@ namespace Meadow.Foundation.Leds
         }
 
         /// <summary>
-        /// Set the color of the specified LED using the global brightness balue
+        /// Set the color of the specified LED using the global brightness value
         /// </summary>
         /// <param name="index">Index of the LED to change</param>
         /// <param name="color">The color</param>
@@ -161,7 +161,7 @@ namespace Meadow.Foundation.Leds
         /// </summary>
         /// <param name="index">Index of the LED to change</param>
         /// <param name="color">The color</param>
-        /// <param name="brightness">The brighrness 0.0 - 1.0f</param>
+        /// <param name="brightness">The brightness 0.0 - 1.0f</param>
         public virtual void SetLed(int index, Color color, float brightness = 1f)
         {
             SetLed(index, new byte[] { color.R, color.G, color.B }, brightness);
@@ -182,7 +182,7 @@ namespace Meadow.Foundation.Leds
         /// </summary>
         /// <param name="index">Index of the LED to change</param>
         /// <param name="rgb">Byte array representing the color RGB values. byte[0] = Red, byte[1] = Green, byte[2] = Blue</param>
-        /// <param name="brightness">The brighrness 0.0 - 1.0f</param>
+        /// <param name="brightness">The brightness 0.0 - 1.0f</param>
         public virtual void SetLed(int index, byte[] rgb, float brightness = 1f)
         {
             if (index > numberOfLeds || index < 0)

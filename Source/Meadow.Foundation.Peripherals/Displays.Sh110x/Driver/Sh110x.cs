@@ -334,7 +334,7 @@ namespace Meadow.Foundation.Displays
             const int pageHeight = 8;
 
             //must update in pages (area of 128x8 pixels)
-            //so interate over all 8 pages and check if they're in range
+            //so iterate over all 8 pages and check if they're in range
             for (int page = 0; page < 8; page++)
             {
                 if (top > pageHeight * page || bottom < (page + 1) * pageHeight)
@@ -397,7 +397,7 @@ namespace Meadow.Foundation.Displays
         }
 
         /// <summary>
-        /// Start the display scrollling in the specified direction.
+        /// Start the display scrolling in the specified direction.
         /// </summary>
         /// <param name="direction">Direction that the display should scroll</param>
         public void StartScrolling(ScrollDirection direction)
@@ -414,7 +414,7 @@ namespace Meadow.Foundation.Displays
         /// </remarks>
         /// <param name="direction">Direction that the display should scroll</param>
         /// <param name="startPage">Start page for the scroll</param>
-        /// <param name="endPage">End oage for the scroll</param>
+        /// <param name="endPage">End page for the scroll</param>
         public void StartScrolling(ScrollDirection direction, byte startPage, byte endPage)
         {
             StopScrolling();

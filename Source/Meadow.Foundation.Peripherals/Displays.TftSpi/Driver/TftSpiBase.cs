@@ -110,7 +110,7 @@ namespace Meadow.Foundation.Displays
         protected Memory<byte> readBuffer;
 
         /// <summary>
-        /// Data convience bool
+        /// Data convenience bool
         /// </summary>
         protected const bool Data = true;
 
