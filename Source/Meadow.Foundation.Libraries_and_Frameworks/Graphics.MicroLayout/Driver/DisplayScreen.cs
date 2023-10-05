@@ -116,6 +116,7 @@ public class DisplayScreen
 
     private void RefreshTree(IControl control)
     {
+        control.Invalidate();
         control.Refresh(_graphics);
 
         if (control is Layout l)
