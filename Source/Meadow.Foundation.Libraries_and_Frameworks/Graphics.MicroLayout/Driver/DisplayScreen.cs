@@ -12,6 +12,7 @@ public class DisplayScreen
     private readonly IGraphicsDisplay _display;
     private readonly MicroGraphics _graphics;
     private readonly ITouchScreen? _touchScreen;
+    private bool _updateInProgress = false;
 
     /// <summary>
     /// Gets the collection of controls on the display screen.
@@ -128,13 +129,30 @@ public class DisplayScreen
         }
     }
 
+    /// <summary>
+    /// Begins an update process for the display screen, indicating that no drawing should take place until EndUpdate is called
+    /// </summary>
+    public void BeginUpdate()
+    {
+        _updateInProgress = true;
+    }
+
+    /// <summary>
+    /// End an update process for the display screen, indicating that drawing should resume and ivalidating the DisplayScreen
+    /// </summary>
+    public void EndUpdate()
+    {
+        _updateInProgress = false;
+        IsInvalid = true;
+    }
+
     private void DrawLoop()
     {
         while (true)
         {
             Resolver.App.InvokeOnMainThread((_) =>
             {
-                if (IsInvalid || Controls.Any(c => c.IsInvalid))
+                if (!_updateInProgress && (IsInvalid || Controls.Any(c => c.IsInvalid)))
                 {
                     _graphics.Clear(BackgroundColor);
 
