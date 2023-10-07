@@ -6,7 +6,7 @@ namespace Meadow.Foundation.Graphics.Buffers
     /// <summary>
     /// Represents a pixel buffer
     /// </summary>
-    public abstract class PixelBufferBase : IPixelBuffer
+    public abstract class PixelBufferBase : IPixelBuffer, IDisposable
     {
         /// <summary>
         /// Width of buffer in pixels
@@ -61,6 +61,12 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// </summary>
         public byte[] Buffer { get; protected set; }
 
+        /// <summary>
+        /// Did we create the buffer (true) or was it passed in (false)
+        /// </summary>
+        readonly bool createdBuffer = true;
+
+        bool isDisposed = false;
 
         /// <summary>
         /// Create a new PixelBufferBase object
@@ -94,6 +100,8 @@ namespace Meadow.Foundation.Graphics.Buffers
                 throw new ArgumentException($"Provided buffer length ({buffer.Length}) does not match this buffer's ByteCount ({ByteCount}).");
             }
             Buffer = buffer;
+
+            createdBuffer = false;
         }
 
         /// <summary>
@@ -330,6 +338,34 @@ namespace Meadow.Foundation.Graphics.Buffers
             var bDeltaSquared = Math.Abs(color1.B - color2.B) ^ 2;
 
             return Math.Sqrt(rDeltaSquared + gDeltaSquared + bDeltaSquared);
+        }
+
+        /// <summary>
+        /// Disposes the instances resources
+        /// </summary>
+        /// <param name="disposing"></param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if(!isDisposed)
+            {
+                if (createdBuffer)
+                {
+                    if (disposing)
+                    {
+                        Buffer = null;
+                    }
+                }
+            }
+            isDisposed = true;
+        }
+
+        /// <summary>
+        /// Disposes the instances resources
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }
