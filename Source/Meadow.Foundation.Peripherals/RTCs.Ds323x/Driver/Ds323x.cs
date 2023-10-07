@@ -426,7 +426,7 @@ namespace Meadow.Foundation.RTCs
                     data[3] |= 0x40;
                     break;
                 //
-                //  Alarm 2 interupts.
+                //  Alarm 2 interrupts.
                 //
                 case AlarmType.OncePerMinute:
                     data[0] |= 0x80;

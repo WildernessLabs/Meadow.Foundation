@@ -1,5 +1,6 @@
 ﻿using Meadow.Hardware;
 using Meadow.Peripherals.Sensors;
+using Meadow.Peripherals.Sensors.Atmospheric;
 using Meadow.Units;
 using System;
 using System.Threading;
@@ -9,7 +10,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 {
     /// <summary>
     /// Represents a TH02 temperature and relative humidity sensor by Seeed Studio
-    /// Found in the Grove Temperature and Humidiy Sensor (High-Accuracy and Mini)
+    /// Found in the Grove Temperature and Humidity Sensor (High-Accuracy and Mini)
     /// </summary>
     public partial class Th02 :
         ByteCommsSensorBase<(Units.Temperature? Temperature, RelativeHumidity? Humidity)>,
@@ -26,7 +27,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         public event EventHandler<IChangeResult<RelativeHumidity>> HumidityUpdated = delegate { };
 
         /// <summary>
-        /// The current temperatute
+        /// The current temperature
         /// </summary>
         public Units.Temperature? Temperature => Conditions.Temperature;
 

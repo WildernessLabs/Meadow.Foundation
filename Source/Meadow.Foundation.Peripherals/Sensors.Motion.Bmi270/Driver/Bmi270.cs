@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace Meadow.Foundation.Sensors.Accelerometers
 {
     /// <summary>
-    /// Represents a BMI270 interial measurement unit (IMU) 
+    /// Represents a BMI270 inertial measurement unit (IMU) 
     /// </summary>
     public partial class Bmi270 :
         PollingSensorBase<(Acceleration3D? Acceleration3D, AngularVelocity3D? AngularVelocity3D, Units.Temperature? Temperature)>,
@@ -130,7 +130,7 @@ namespace Meadow.Foundation.Sensors.Accelerometers
 
                 if (status == 0x01) { break; }
             }
-            //Afer initialization - power mode is set to "configuration mode"
+            //After initialization - power mode is set to "configuration mode"
             //Need to change power modes before you can sample data
         }
 
@@ -154,7 +154,7 @@ namespace Meadow.Foundation.Sensors.Accelerometers
         }
 
         /// <summary>
-        /// Raise events for subcribers and notify of value changes
+        /// Raise events for subscribers and notify of value changes
         /// </summary>
         /// <param name="changeResult">The updated sensor data</param>
         protected override void RaiseEventsAndNotify(IChangeResult<(Acceleration3D? Acceleration3D, AngularVelocity3D? AngularVelocity3D, Units.Temperature? Temperature)> changeResult)
@@ -236,7 +236,7 @@ namespace Meadow.Foundation.Sensors.Accelerometers
             ushort tempRaw = (ushort)(i2cComms.ReadRegister(TEMPERATURE_1) << 8 | i2cComms.ReadRegister(TEMPERATURE_0));
             double tempC;
 
-            double degreePerByte = 0.001953125; //in celcius
+            double degreePerByte = 0.001953125; //in celsius
 
             if (tempRaw < 0x8000)
             {

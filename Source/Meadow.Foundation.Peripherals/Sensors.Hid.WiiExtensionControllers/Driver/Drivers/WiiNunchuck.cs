@@ -2,7 +2,6 @@
 using Meadow.Peripherals.Sensors.Buttons;
 using Meadow.Peripherals.Sensors.Hid;
 using Meadow.Units;
-using System;
 
 namespace Meadow.Foundation.Sensors.Hid
 {
@@ -21,7 +20,7 @@ namespace Meadow.Foundation.Sensors.Hid
         public IButton ZButton { get; } = new WiiExtensionButton();
 
         /// <summary>
-        /// Analog jostick (8 bits of precision)
+        /// Analog joystick (8 bits of precision)
         /// </summary>
         public IAnalogJoystick AnalogStick { get; } = new WiiExtensionAnalogJoystick(8);
 

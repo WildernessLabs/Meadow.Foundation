@@ -1,5 +1,5 @@
-﻿using System;
-using Meadow.Peripherals.Sensors.Location.Gnss;
+﻿using Meadow.Peripherals.Sensors.Location.Gnss;
+using System;
 
 namespace Meadow.Foundation.Sensors.Location.Gnss
 {
@@ -22,7 +22,7 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
         /// <summary>
         /// Friendly name for the GGA messages.
         /// </summary>
-        public string Name => "Global Postioning System Fix Data"; 
+        public string Name => "Global Positioning System Fix Data"; 
 
         /// <summary>
         /// Process the data from a GGA message
@@ -31,8 +31,10 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
         public void Process(NmeaSentence sentence)
         {
             // make sure all fields are present
-            for (var index = 0; index <= 7; index++) {
-                if (string.IsNullOrEmpty(sentence.DataElements[index])) {
+            for (var index = 0; index <= 7; index++)
+            {
+                if (string.IsNullOrEmpty(sentence.DataElements[index]))
+                {
                     //Resolver.Log.Warn("Not all elements present");
                     // TODO: should we throw an exception and have callers wrap in a try/catch?
                     // problem today is that it just quietly returns
@@ -48,15 +50,18 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
             location.FixQuality = (FixType)int.Parse(sentence.DataElements[5]);
 
             int numberOfSatellites;
-            if (int.TryParse(sentence.DataElements[6], out numberOfSatellites)) {
+            if (int.TryParse(sentence.DataElements[6], out numberOfSatellites))
+            {
                 location.NumberOfSatellites = numberOfSatellites;
             }
             decimal horizontalDilutionOfPrecision;
-            if (decimal.TryParse(sentence.DataElements[7], out horizontalDilutionOfPrecision)) {
+            if (decimal.TryParse(sentence.DataElements[7], out horizontalDilutionOfPrecision))
+            {
                 location.HorizontalDilutionOfPrecision = horizontalDilutionOfPrecision;
             }
             decimal altitude;
-            if (decimal.TryParse(sentence.DataElements[8], out altitude)) {
+            if (decimal.TryParse(sentence.DataElements[8], out altitude))
+            {
                 location.Position.Altitude = altitude;
             }
             PositionReceived(this, location);

@@ -36,7 +36,7 @@
             /// Determine the time constant for the IIR filter
             /// </summary>
             /// <remarks>
-            /// See section 3.44 of the datasheet for more informaiton
+            /// See section 3.44 of the datasheet for more information
             /// </remarks>
             public FilterCoefficient Filter { get; set; }
         }

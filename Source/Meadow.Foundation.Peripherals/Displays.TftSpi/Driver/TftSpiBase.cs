@@ -100,7 +100,7 @@ namespace Meadow.Foundation.Displays
         protected ISpiCommunications spiDisplay;
 
         /// <summary>
-        /// The offscreen image buffer
+        /// The off-screen image buffer
         /// </summary>
         protected IPixelBuffer imageBuffer;
 
@@ -110,7 +110,7 @@ namespace Meadow.Foundation.Displays
         protected Memory<byte> readBuffer;
 
         /// <summary>
-        /// Data convience bool
+        /// Data convenience bool
         /// </summary>
         protected const bool Data = true;
 
@@ -120,7 +120,7 @@ namespace Meadow.Foundation.Displays
         protected const bool Command = false;
 
         /// <summary>
-        /// Initalize the display
+        /// Initialize the display
         /// </summary>
         protected abstract void Initialize();
 
@@ -217,7 +217,7 @@ namespace Meadow.Foundation.Displays
         }
 
         /// <summary>
-        /// Create an offscreen buffer for the display
+        /// Create an off-screen buffer for the display
         /// </summary>
         /// <param name="colorMode">The color mode</param>
         /// <param name="width">The width in pixels</param>
@@ -285,7 +285,7 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// Clear the display.
         /// </summary>
-        /// <param name="updateDisplay">Update the dipslay once the buffer has been cleared when true.</param>
+        /// <param name="updateDisplay">Update the display once the buffer has been cleared when true.</param>
         public void Clear(bool updateDisplay = false)
         {
             imageBuffer.Clear();
@@ -309,7 +309,7 @@ namespace Meadow.Foundation.Displays
         }
 
         /// <summary>
-        /// Write a buffer to the display offscreen buffer
+        /// Write a buffer to the display off-screen buffer
         /// </summary>
         /// <param name="x">The x position in pixels to write the buffer</param>
         /// <param name="y">The y position in pixels to write the buffer</param>

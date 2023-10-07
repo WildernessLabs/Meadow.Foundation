@@ -23,7 +23,7 @@
         public enum DecodeType : byte
         {
             /// <summary>
-            /// Hexicemial charcter encoding  for 7-segment displays
+            /// Hexadecimal character encoding  for 7-segment displays
             /// characters 0 to 9, E, H, L, P, and -
             /// </summary>
             Hexidecimal,

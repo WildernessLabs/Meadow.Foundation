@@ -29,7 +29,7 @@ namespace Meadow.Foundation.Leds
         protected IDigitalOutputPort BluePort { get; set; }
 
         /// <summary>
-        /// The common type (common annode or common cathode)
+        /// The common type (common anode or common cathode)
         /// </summary>
         public CommonType Common { get; protected set; }
 

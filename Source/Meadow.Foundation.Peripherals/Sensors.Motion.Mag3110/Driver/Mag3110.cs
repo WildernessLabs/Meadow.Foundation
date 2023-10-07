@@ -40,7 +40,7 @@ namespace Meadow.Foundation.Sensors.Motion
         public MagneticField3D? MagneticField3D => Conditions.MagneticField3D;
 
         /// <summary>
-        /// Current emperature of the die
+        /// Current temperature of the die
         /// </summary>
         public Units.Temperature? Temperature => Conditions.Temperature;
 
@@ -120,7 +120,7 @@ namespace Meadow.Foundation.Sensors.Motion
             var deviceID = BusComms.ReadRegister(Registers.WHO_AM_I);
             if (deviceID != 0xc4)
             {
-                throw new Exception("Unknown device ID, " + deviceID + " retruend, 0xc4 expected");
+                throw new Exception("Unknown device ID, " + deviceID + " returned, 0xc4 expected");
             }
 
             if (interruptPort != null)
@@ -147,7 +147,7 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         /// <summary>
-        /// Raise events for subcribers and notify of value changes
+        /// Raise events for subscribers and notify of value changes
         /// </summary>
         /// <param name="changeResult">The updated sensor data</param>
         protected override void RaiseEventsAndNotify(IChangeResult<(MagneticField3D? MagneticField3D, Units.Temperature? Temperature)> changeResult)

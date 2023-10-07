@@ -8,7 +8,7 @@ using IU = Meadow.Units.Illuminance.UnitType;
 
 namespace Meadow.Foundation.Sensors.Light
 {
-    // TODO: This sensor has an interr
+    // TODO: This sensor has an interrupt
 
     /// <summary>
     /// Driver for the TSL2591 light-to-digital converter
@@ -147,7 +147,7 @@ namespace Meadow.Foundation.Sensors.Light
         }
 
         /// <summary>
-        /// Raise events for subcribers and notify of value changes
+        /// Raise events for subscribers and notify of value changes
         /// </summary>
         /// <param name="changeResult">The updated sensor data</param>
         protected override void RaiseEventsAndNotify(IChangeResult<(Illuminance? FullSpectrum, Illuminance? Infrared, Illuminance? VisibleLight, Illuminance? Integrated)> changeResult)

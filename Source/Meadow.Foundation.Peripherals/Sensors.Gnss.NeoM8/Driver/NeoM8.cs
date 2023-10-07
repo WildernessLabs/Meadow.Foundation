@@ -3,6 +3,7 @@ using Meadow.Hardware;
 using Meadow.Peripherals.Sensors.Location.Gnss;
 using System;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Gnss
@@ -10,9 +11,24 @@ namespace Meadow.Foundation.Sensors.Gnss
     /// <summary>
     /// Represents a NEO-M8 GNSS module
     /// </summary>
-    public partial class NeoM8
+    public partial class NeoM8 : IGnssSensor
     {
         NmeaSentenceProcessor nmeaProcessor;
+
+        /// <summary>
+        /// Raised when GNSS data is received
+        /// </summary>
+        public event EventHandler<IGnssResult> GnssDataReceived = delegate { };
+
+        /// <summary>
+        /// Supported GNSS result types
+        /// </summary>
+        public IGnssResult[] SupportedResultTypes { get; } = new IGnssResult[]
+        {
+            new GnssPositionInfo(),
+            new ActiveSatellites(),
+            new CourseOverGround()
+        };
 
         /// <summary>
         /// Raised when GGA position data is received
@@ -59,6 +75,8 @@ namespace Meadow.Foundation.Sensors.Gnss
 
         SerialMessageProcessor messageProcessor;
 
+        CancellationTokenSource cts;
+
         const byte BUFFER_SIZE = 128;
         const byte COMMS_SLEEP_MS = 200;
 
@@ -67,7 +85,7 @@ namespace Meadow.Foundation.Sensors.Gnss
         /// </summary>
         public async Task Reset()
         {
-            if(ResetPort != null)
+            if (ResetPort != null)
             {
                 ResetPort.State = false;
                 await Task.Delay(TimeSpan.FromMilliseconds(10));
@@ -80,7 +98,7 @@ namespace Meadow.Foundation.Sensors.Gnss
         /// </summary>
         public void StartUpdating()
         {
-            switch(communicationMode)
+            switch (communicationMode)
             {
                 case CommunicationMode.Serial:
                     StartUpdatingSerial();
@@ -94,6 +112,25 @@ namespace Meadow.Foundation.Sensors.Gnss
             }
         }
 
+        /// <summary>
+        /// Stop updating
+        /// </summary>
+        public void StopUpdating()
+        {
+            switch (communicationMode)
+            {
+                case CommunicationMode.Serial:
+                    StopUpdatingSerial();
+                    break;
+                case CommunicationMode.SPI:
+                    StopUpdatingSpi();
+                    break;
+                case CommunicationMode.I2C:
+                    StopUpdatingI2c();
+                    break;
+            }
+        }
+
         void InitDecoders()
         {
             nmeaProcessor = new NmeaSentenceProcessor();
@@ -102,42 +139,48 @@ namespace Meadow.Foundation.Sensors.Gnss
             nmeaProcessor.RegisterDecoder(ggaDecoder);
             ggaDecoder.PositionReceived += (object sender, GnssPositionInfo location) =>
             {
-                GgaReceived(this, location);
+                GgaReceived?.Invoke(this, location);
+                GnssDataReceived?.Invoke(this, location);
             };
 
             var gllDecoder = new GllDecoder();
             nmeaProcessor.RegisterDecoder(gllDecoder);
             gllDecoder.GeographicLatitudeLongitudeReceived += (object sender, GnssPositionInfo location) =>
             {
-                GllReceived(this, location);
+                GllReceived?.Invoke(this, location);
+                GnssDataReceived?.Invoke(this, location);
             };
 
             var gsaDecoder = new GsaDecoder();
             nmeaProcessor.RegisterDecoder(gsaDecoder);
             gsaDecoder.ActiveSatellitesReceived += (object sender, ActiveSatellites activeSatellites) =>
             {
-                GsaReceived(this, activeSatellites);
+                GsaReceived?.Invoke(this, activeSatellites);
+                GnssDataReceived?.Invoke(this, activeSatellites);
             };
 
             var rmcDecoder = new RmcDecoder();
             nmeaProcessor.RegisterDecoder(rmcDecoder);
             rmcDecoder.PositionCourseAndTimeReceived += (object sender, GnssPositionInfo positionCourseAndTime) =>
             {
-                RmcReceived(this, positionCourseAndTime);
+                RmcReceived?.Invoke(this, positionCourseAndTime);
+                GnssDataReceived?.Invoke(this, positionCourseAndTime);
             };
 
             var vtgDecoder = new VtgDecoder();
             nmeaProcessor.RegisterDecoder(vtgDecoder);
             vtgDecoder.CourseAndVelocityReceived += (object sender, CourseOverGround courseAndVelocity) =>
             {
-                VtgReceived(this, courseAndVelocity);
+                VtgReceived?.Invoke(this, courseAndVelocity);
+                GnssDataReceived?.Invoke(this, courseAndVelocity);
             };
 
             var gsvDecoder = new GsvDecoder();
             nmeaProcessor.RegisterDecoder(gsvDecoder);
             gsvDecoder.SatellitesInViewReceived += (object sender, SatellitesInView satellites) =>
             {
-                GsvReceived(this, satellites);
+                GsvReceived?.Invoke(this, satellites);
+                GnssDataReceived?.Invoke(this, satellites);
             };
         }
 

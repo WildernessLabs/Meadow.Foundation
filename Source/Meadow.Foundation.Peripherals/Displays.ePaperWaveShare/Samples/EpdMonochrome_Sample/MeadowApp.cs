@@ -30,7 +30,7 @@ namespace Displays.ePaper.EpdMonochrome_Sample
 
             Resolver.Log.Info($"{displayType} selected - change displayType to select a different display");
 
-            //Intialize the display based on the displayType enum
+            //Initialize the display based on the displayType enum
             display = GetDisplay(displayType);
 
             graphics = new MicroGraphics(display)

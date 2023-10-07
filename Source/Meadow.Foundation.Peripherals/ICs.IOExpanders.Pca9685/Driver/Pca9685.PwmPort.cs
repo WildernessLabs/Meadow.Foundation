@@ -24,10 +24,10 @@ namespace Meadow.Foundation.ICs.IOExpanders
             public IPwmChannelInfo Channel => throw new NotImplementedException();
 
             /// <summary>
-            /// Durration
+            /// Duration
             /// </summary>
             public float Duration { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-            
+
             /// <summary>
             /// Period
             /// </summary>
@@ -122,7 +122,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
             private void Write(byte register, byte ledXOnL, byte ledXOnH, byte ledXOffL, byte ledXOffH)
             {
-                i2cBus.Write(address, new byte[] {register, ledXOnL, ledXOnH, ledXOffL, ledXOffH });
+                i2cBus.Write(address, new byte[] { register, ledXOnL, ledXOnH, ledXOffL, ledXOffH });
             }
 
             /// <summary>

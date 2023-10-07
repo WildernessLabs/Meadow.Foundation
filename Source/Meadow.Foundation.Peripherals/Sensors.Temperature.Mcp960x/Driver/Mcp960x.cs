@@ -277,7 +277,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         }
 
         /// <summary>
-        /// Raise events for subcribers and notify of value changes
+        /// Raise events for subscribers and notify of value changes
         /// </summary>
         /// <param name="changeResult">The updated sensor data</param>
         protected override void RaiseEventsAndNotify(IChangeResult<(Units.Temperature? TemperatureHot, Units.Temperature? TemperatureCold)> changeResult)

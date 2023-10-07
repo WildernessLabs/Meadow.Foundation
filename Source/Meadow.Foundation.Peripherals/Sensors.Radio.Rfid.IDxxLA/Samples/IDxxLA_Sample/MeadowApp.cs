@@ -1,7 +1,7 @@
-﻿using System;
-using System.Threading.Tasks;
-using Meadow.Devices;
+﻿using Meadow.Devices;
 using Meadow.Foundation.Helpers;
+using System;
+using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Radio.Rfid.IDxxLA_Sample
 {
@@ -27,7 +27,7 @@ namespace Meadow.Foundation.Sensors.Radio.Rfid.IDxxLA_Sample
         }
 
         public override Task Run()
-        { 
+        {
             rfidReader.StartReading();
 
             return Task.CompletedTask;
@@ -35,7 +35,8 @@ namespace Meadow.Foundation.Sensors.Radio.Rfid.IDxxLA_Sample
 
         private void RfidReaderOnTagRead(object sender, RfidReadResult e)
         {
-            if (e.Status == RfidValidationStatus.Ok) {
+            if (e.Status == RfidValidationStatus.Ok)
+            {
                 Resolver.Log.Info($"From event - Tag value is {DebugInformation.Hexadecimal(e.RfidTag)}");
                 return;
             }
@@ -49,7 +50,7 @@ namespace Meadow.Foundation.Sensors.Radio.Rfid.IDxxLA_Sample
             {
                 Resolver.Log.Info("From IObserver - RfidReader has terminated, no more events will be emitted.");
             }
-     
+
             public void OnError(Exception error)
             {
                 Resolver.Log.Error($"From IObserver - {error}");

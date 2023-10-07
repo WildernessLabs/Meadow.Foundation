@@ -12,7 +12,7 @@ namespace Meadow.Foundation.Graphics
     public partial class MicroGraphics
     {
         /// <summary>
-        /// Display object reponsible for managing the buffer and rendering
+        /// Display object responsible for managing the buffer and rendering
         /// </summary>
         protected readonly IGraphicsDisplay display;
 
@@ -20,7 +20,7 @@ namespace Meadow.Foundation.Graphics
         /// PixelBuffer draw target
         /// </summary>
         protected IPixelBuffer PixelBuffer => (display != null) ? display.PixelBuffer : _memoryBuffer;
-        private readonly IPixelBuffer _memoryBuffer;
+        private readonly IPixelBuffer _memoryBuffer = default!;
 
         /// <summary>
         /// ignore pixels that are outside of the pixel buffer coordinate space
@@ -119,7 +119,7 @@ namespace Meadow.Foundation.Graphics
         public TextDisplayConfig DisplayConfig { get; private set; } = new TextDisplayConfig();
 
         /// <summary>
-        /// Optional enforced deplay between updates when calling ShowBuffered
+        /// Optional enforced delay between updates when calling ShowBuffered
         /// </summary>
         public TimeSpan DelayBetweenFrames { get; set; } = TimeSpan.Zero;
 
@@ -128,12 +128,12 @@ namespace Meadow.Foundation.Graphics
         private bool isUpdateRequested = false;
 
         /// <summary>
-        /// Time of last display update when callng ShowBuffered
+        /// Time of last display update when calling ShowBuffered
         /// </summary>
         private DateTime lastUpdated;
 
         /// <summary>
-        /// Create a new MicroGraphics instance from a display perihperal driver instance
+        /// Create a new MicroGraphics instance from a display peripheral driver instance
         /// </summary>
         /// <param name="display">An IGraphicsDisplay object</param>
         public MicroGraphics(IGraphicsDisplay display)
@@ -145,7 +145,7 @@ namespace Meadow.Foundation.Graphics
         /// Create a new MicroGraphics instance from a pixel buffer instance
         /// </summary>
         /// <param name="pixelBuffer">The pixel buffer</param>
-        /// <param name="initializeBuffer">Initialize the offscreen buffer if true</param>
+        /// <param name="initializeBuffer">Initialize the off-screen buffer if true</param>
         public MicroGraphics(PixelBufferBase pixelBuffer, bool initializeBuffer)
         {
             _memoryBuffer = pixelBuffer;
@@ -277,9 +277,7 @@ namespace Meadow.Foundation.Graphics
         /// Draw a line using Bresenhams line drawing algorithm
         /// </summary>
         /// <remarks>
-        /// Bresenhams line drawing algoritm:
-        /// https://en.wikipedia.org/wiki/Bresenham's_line_algorithm
-        /// C# Implementation:
+        /// Bresenhams line drawing algorithm:
         /// https://en.wikipedia.org/wiki/Bresenham's_line_algorithm
         /// </remarks>
         /// <param name="x0">Abscissa of the starting point of the line</param>
@@ -316,9 +314,7 @@ namespace Meadow.Foundation.Graphics
         /// Draw a line using Bresenhams line drawing algorithm
         /// </summary>
         /// <remarks>
-        /// Bresenhams line drawing algoritm:
-        /// https://en.wikipedia.org/wiki/Bresenham's_line_algorithm
-        /// C# Implementation:
+        /// Bresenhams line drawing algorithm:
         /// https://en.wikipedia.org/wiki/Bresenham's_line_algorithm
         /// </remarks>
         /// <param name="x0">Abscissa of the starting point of the line</param>
@@ -522,8 +518,8 @@ namespace Meadow.Foundation.Graphics
         /// <remarks>
         /// Note that y axis is inverted so the arc will be flipped from the standard cartesian plain
         /// </remarks>
-        /// <param name="centerX">Abscissa of the centre point of the circle</param>
-        /// <param name="centerY">Ordinate of the centre point of the circle</param>
+        /// <param name="centerX">Abscissa of the center point of the circle</param>
+        /// <param name="centerY">Ordinate of the center point of the circle</param>
         /// <param name="radius">Radius of the circle</param>
         /// <param name="startAngle">The arc starting angle</param>
         /// <param name="endAngle">The arc ending angle</param>
@@ -531,7 +527,7 @@ namespace Meadow.Foundation.Graphics
         /// <param name="centerBetweenPixels">If true, the center of the arc is between the assigned pixel and the next pixel, false it's directly on the center pixel</param>
         public void DrawArc(int centerX, int centerY, int radius, Angle startAngle, Angle endAngle, Color color, bool centerBetweenPixels = true)
         {
-            var d = 3 - 2 * radius;
+            var d = 3 - (2 * radius);
             var x = 0;
             var y = radius;
 
@@ -594,10 +590,10 @@ namespace Meadow.Foundation.Graphics
         /// Draw a circular arc between two angles
         /// </summary>
         /// <remarks>
-        /// Note that y axis is inverted so the arc will be flipped from the standard cartesian plain
+        /// Note that y axis is inverted so the arc will be flipped from the standard Cartesian plain
         /// </remarks>
-        /// <param name="centerX">Abscissa of the centre point of the circle</param>
-        /// <param name="centerY">Ordinate of the centre point of the circle</param>
+        /// <param name="centerX">Abscissa of the center point of the circle</param>
+        /// <param name="centerY">Ordinate of the center point of the circle</param>
         /// <param name="radius">Radius of the circle</param>
         /// <param name="startAngle">The arc starting angle</param>
         /// <param name="endAngle">The arc ending angle</param>
@@ -612,10 +608,10 @@ namespace Meadow.Foundation.Graphics
         /// Draw a circular arc between two angles using PenColor
         /// </summary>
         /// <remarks>
-        /// Note that y axis is inverted so the arc will be flipped from the standard cartesian plain
+        /// Note that y axis is inverted so the arc will be flipped from the standard Cartesian plain
         /// </remarks>
-        /// <param name="centerX">Abscissa of the centre point of the circle</param>
-        /// <param name="centerY">Ordinate of the centre point of the circle</param>
+        /// <param name="centerX">Abscissa of the center point of the circle</param>
+        /// <param name="centerY">Ordinate of the center point of the circle</param>
         /// <param name="radius">Radius of the circle</param>
         /// <param name="startAngle">The arc starting angle</param>
         /// <param name="endAngle">The arc ending angle</param>
@@ -745,8 +741,8 @@ namespace Meadow.Foundation.Graphics
             int a, b, y;
             for (y = y0; y <= last; y++)
             {
-                a = x0 + sa / dy01;
-                b = x0 + sb / dy02;
+                a = x0 + (sa / dy01);
+                b = x0 + (sb / dy02);
                 sa += dx01;
                 sb += dx02;
 
@@ -763,8 +759,8 @@ namespace Meadow.Foundation.Graphics
             sb = dx02 * (y - y0);
             for (; y <= y2; y++)
             {
-                a = x1 + sa / dy12;
-                b = x0 + sb / dy02;
+                a = x1 + (sa / dy12);
+                b = x0 + (sb / dy02);
                 sa += dx12;
                 sb += dx02;
 
@@ -777,15 +773,12 @@ namespace Meadow.Foundation.Graphics
         /// Draw a circle
         /// </summary>
         /// <remarks>
-        /// This algorithm draws the circle by splitting the full circle into eight
-        /// segments.
+        /// This algorithm draws the circle by splitting the full circle into eight segments.
         /// This method uses the Midpoint algorithm:
         /// https://en.wikipedia.org/wiki/Midpoint_circle_algorithm
-        /// A C# implementation can be found here:
-        /// https://rosettacode.org/wiki/Bitmap/Midpoint_circle_algorithm#C.23
         /// </remarks>
-        /// <param name="centerX">Abscissa of the centre point of the circle</param>
-        /// <param name="centerY">Ordinate of the centre point of the circle</param>
+        /// <param name="centerX">Abscissa of the center point of the circle</param>
+        /// <param name="centerY">Ordinate of the center point of the circle</param>
         /// <param name="radius">Radius of the circle</param>
         /// <param name="enabled">Show the circle when true</param>
         /// <param name="filled">Draw a filled circle?</param>
@@ -799,15 +792,12 @@ namespace Meadow.Foundation.Graphics
         /// Draw a circle
         /// </summary>
         /// <remarks>
-        /// This algorithm draws the circle by splitting the full circle into eight
-        /// segments
+        /// This algorithm draws the circle by splitting the full circle into eight segments
         /// This method uses the Midpoint algorithm:
         /// https://en.wikipedia.org/wiki/Midpoint_circle_algorithm
-        /// A C# implementation can be found here:
-        /// https://rosettacode.org/wiki/Bitmap/Midpoint_circle_algorithm#C.23
         /// </remarks>
-        /// <param name="centerX">Abscissa of the centre point of the circle</param>
-        /// <param name="centerY">Ordinate of the centre point of the circle</param>
+        /// <param name="centerX">Abscissa of the center point of the circle</param>
+        /// <param name="centerY">Ordinate of the center point of the circle</param>
         /// <param name="radius">Radius of the circle</param>
         /// <param name="color">The color of the circle</param>
         /// <param name="filled">Draw a filled circle</param>
@@ -833,15 +823,12 @@ namespace Meadow.Foundation.Graphics
         /// Draw a circle
         /// </summary>
         /// <remarks>
-        /// This algorithm draws the circle by splitting the full circle into eight
-        /// segments
+        /// This algorithm draws the circle by splitting the full circle into eight segments
         /// This method uses the Midpoint algorithm:
         /// https://en.wikipedia.org/wiki/Midpoint_circle_algorithm
-        /// A C# implementation can be found here:
-        /// https://rosettacode.org/wiki/Bitmap/Midpoint_circle_algorithm#C.23
         /// </remarks>
-        /// <param name="centerX">Abscissa of the centre point of the circle</param>
-        /// <param name="centerY">Ordinate of the centre point of the circle</param>
+        /// <param name="centerX">Abscissa of the center point of the circle</param>
+        /// <param name="centerY">Ordinate of the center point of the circle</param>
         /// <param name="radius">Radius of the circle</param>
         /// <param name="filled">Draw a filled circle?</param>
         /// <param name="centerBetweenPixels">If true, the center of the circle is between the assigned pixel and the next pixel, false it's directly on the center pixel</param>
@@ -910,7 +897,7 @@ namespace Meadow.Foundation.Graphics
 
         private void DrawCircleQuadrantFilled(int centerX, int centerY, int radius, int quadrant, Color color, bool centerBetweenPixels = false)
         {
-            var d = 3 - 2 * radius;
+            var d = 3 - (2 * radius);
             var x = 0;
             var y = radius;
 
@@ -952,7 +939,7 @@ namespace Meadow.Foundation.Graphics
 
         private void DrawCircleQuadrantOutline(int centerX, int centerY, int radius, int quadrant, Color color, bool centerBetweenPixels = false)
         {
-            var d = 3 - 2 * radius; // (5 - (radius * 4)) / 4;
+            var d = 3 - (2 * radius); // (5 - (radius * 4)) / 4;
             var x = 0;
             var y = radius;
 
@@ -996,7 +983,7 @@ namespace Meadow.Foundation.Graphics
         private void DrawCircleOutline(int centerX, int centerY, int radius, bool centerBetweenPixels, Color color)
         {
             //I prefer the look of the original Bresenham’s decision param calculation
-            var d = 3 - 2 * radius;
+            var d = 3 - (2 * radius);
             var x = 0;
             var y = radius;
 
@@ -1031,7 +1018,7 @@ namespace Meadow.Foundation.Graphics
 
         private void DrawCircleFilled(int centerX, int centerY, int radius, bool centerBetweenPixels, Color color)
         {
-            var d = 3 - 2 * radius;
+            var d = 3 - (2 * radius);
             var x = 0;
             var y = radius;
 
@@ -1039,10 +1026,10 @@ namespace Meadow.Foundation.Graphics
 
             while (x <= y)
             {
-                DrawHorizontalLine(centerX - x, centerY + y - offset, 2 * x - offset + 1, color);
-                DrawHorizontalLine(centerX - x, centerY - y, 2 * x - offset + 1, color);
-                DrawHorizontalLine(centerX - y, centerY + x - offset, 2 * y - offset + 1, color);
-                DrawHorizontalLine(centerX - y, centerY - x, 2 * y - offset + 1, color);
+                DrawHorizontalLine(centerX - x, centerY + y - offset, (2 * x) - offset + 1, color);
+                DrawHorizontalLine(centerX - x, centerY - y, (2 * x) - offset + 1, color);
+                DrawHorizontalLine(centerX - y, centerY + x - offset, (2 * y) - offset + 1, color);
+                DrawHorizontalLine(centerX - y, centerY - x, (2 * y) - offset + 1, color);
 
                 if (d < 0)
                 {
@@ -1190,8 +1177,8 @@ namespace Meadow.Foundation.Graphics
                 DrawCircleQuadrant(x + cornerRadius, y + height - cornerRadius - 1, cornerRadius, 2, color, true);
                 DrawCircleQuadrant(x + width - cornerRadius - 1, y + height - cornerRadius - 1, cornerRadius, 3, color, true);
 
-                DrawRectangle(x, y + cornerRadius, width, height - 2 * cornerRadius, color, filled);
-                DrawRectangle(x + cornerRadius, y, width - 2 * cornerRadius, height, color, filled);
+                DrawRectangle(x, y + cornerRadius, width, height - (2 * cornerRadius), color, filled);
+                DrawRectangle(x + cornerRadius, y, width - (2 * cornerRadius), height, color, filled);
             }
             else
             {
@@ -1215,7 +1202,7 @@ namespace Meadow.Foundation.Graphics
         /// Get the size in pixels of a string using the current font
         /// </summary>
         /// <param name="text">The string to measure</param>
-        /// <param name="scaleFactor">Scalefactor used to calculate the size</param>
+        /// <param name="scaleFactor">Scale factor used to calculate the size</param>
         public Size MeasureText(string text, ScaleFactor scaleFactor = ScaleFactor.X1)
         {
             return MeasureText(text, CurrentFont, scaleFactor);
@@ -1226,7 +1213,7 @@ namespace Meadow.Foundation.Graphics
         /// </summary>
         /// <param name="text">The string to measure</param>
         /// <param name="font">The font used to calculate the text size</param>
-        /// <param name="scaleFactor">Scalefactor used to calculate the size</param>
+        /// <param name="scaleFactor">Scale factor used to calculate the size</param>
         public Size MeasureText(string text, IFont font, ScaleFactor scaleFactor = ScaleFactor.X1)
         {
             return new Size(text.Length * (int)scaleFactor * font.Width, (int)scaleFactor * font.Height);
@@ -1239,7 +1226,7 @@ namespace Meadow.Foundation.Graphics
         /// <param name="y">Ordinate of the location of the text</param>
         /// <param name="text">Text to display</param>
         /// <param name="color">Color of the text</param>
-        /// <param name="scaleFactor">Scalefactor used to calculate the size</param>
+        /// <param name="scaleFactor">Scale factor used to calculate the size</param>
         /// <param name="alignmentH">Horizontal alignment: Left, Center or right aligned text</param>
         /// <param name="alignmentV">Vertical alignment: Top, Center or bottom aligned text</param>
         /// <param name="font">Optional font used to draw the text</param>
@@ -1381,7 +1368,7 @@ namespace Meadow.Foundation.Graphics
         /// <param name="x">Abscissa of the location of the text</param>
         /// <param name="y">Ordinate of the location of the text</param>
         /// <param name="text">Text to display</param>
-        /// <param name="scaleFactor">Scalefactor used to calculate the size</param>
+        /// <param name="scaleFactor">Scale factor used to calculate the size</param>
         /// <param name="alignmentH">Horizontal alignment: Left, Center or right aligned text</param>
         /// <param name="alignmentV">Vertical alignment: Top, Center or bottom aligned text</param>
         public void DrawText(int x, int y, string text,
@@ -1415,13 +1402,13 @@ namespace Meadow.Foundation.Graphics
             }
             else if (font.Width == 12)
             {
-                var len = ((text.Length + text.Length % 2) * 3) >> 1;
+                var len = ((text.Length + (text.Length % 2)) * 3) >> 1;
                 bitmap = new byte[len * font.Height];
 
                 byte[] charMap1, charMap2;
                 int index = 0;
 
-                for (int i = 0; i < text.Length; i += 2) //2 chracters, 3 bytes ... 24 bytes total so the math is good
+                for (int i = 0; i < text.Length; i += 2) //2 characters, 3 bytes ... 24 bytes total so the math is good
                 {
                     //grab two characters at once
                     charMap1 = font[text[i]];
@@ -1431,14 +1418,14 @@ namespace Meadow.Foundation.Graphics
                     for (int j = 0; j < font.Height; j += 2)
                     {
                         //first row - spans 3 bytes (for 2 chars)
-                        bitmap[index + (j) * len + 0] = charMap1[cIndex]; //good
-                        bitmap[index + (j) * len + 1] = (byte)((charMap1[cIndex + 1] & 0x0F) | (charMap2[cIndex] << 4));
-                        bitmap[index + (j) * len + 2] = (byte)((charMap2[cIndex] >> 4) | (charMap2[cIndex + 1] << 4)); //good
+                        bitmap[index + (j * len) + 0] = charMap1[cIndex]; //good
+                        bitmap[index + (j * len) + 1] = (byte)((charMap1[cIndex + 1] & 0x0F) | (charMap2[cIndex] << 4));
+                        bitmap[index + (j * len) + 2] = (byte)((charMap2[cIndex] >> 4) | (charMap2[cIndex + 1] << 4)); //good
 
                         //2nd row
-                        bitmap[index + (j + 1) * len + 0] = (byte)((charMap1[cIndex + 1] >> 4) | charMap1[cIndex + 2] << 4); //good
-                        bitmap[index + (j + 1) * len + 1] = (byte)((charMap1[cIndex + 2] >> 4) | charMap2[cIndex + 1] & 0xF0);
-                        bitmap[index + (j + 1) * len + 2] = charMap2[cIndex + 2]; //good
+                        bitmap[index + ((j + 1) * len) + 0] = (byte)((charMap1[cIndex + 1] >> 4) | (charMap1[cIndex + 2] << 4)); //good
+                        bitmap[index + ((j + 1) * len) + 1] = (byte)((charMap1[cIndex + 2] >> 4) | (charMap2[cIndex + 1] & 0xF0));
+                        bitmap[index + ((j + 1) * len) + 2] = charMap2[cIndex + 2]; //good
 
                         cIndex += 3;
                     }
@@ -1451,7 +1438,7 @@ namespace Meadow.Foundation.Graphics
 
                 if (text.Length % 4 != 0)
                 {
-                    len += 4 - text.Length % 4; //chacter length
+                    len += 4 - (text.Length % 4); //character length
                 }
                 len = len * 3 / 4; //length in bytes
 
@@ -1472,24 +1459,24 @@ namespace Meadow.Foundation.Graphics
                     for (int j = 0; j < font.Height; j += 4)
                     {
                         //first row
-                        bitmap[i + (j + 0) * len + 0] = (byte)((charMap1[cIndex] & 0x3F) | (charMap2[cIndex] << 6));
-                        bitmap[i + (j + 0) * len + 1] = (byte)((charMap2[cIndex] >> 2) & 0x0F | charMap3[cIndex] << 4);
-                        bitmap[i + (j + 0) * len + 2] = (byte)((charMap3[cIndex] >> 4 & 0x03) | charMap4[cIndex] << 2);
+                        bitmap[i + ((j + 0) * len) + 0] = (byte)((charMap1[cIndex] & 0x3F) | (charMap2[cIndex] << 6));
+                        bitmap[i + ((j + 0) * len) + 1] = (byte)(((charMap2[cIndex] >> 2) & 0x0F) | (charMap3[cIndex] << 4));
+                        bitmap[i + ((j + 0) * len) + 2] = (byte)(((charMap3[cIndex] >> 4) & 0x03) | (charMap4[cIndex] << 2));
 
                         //2nd row
-                        bitmap[i + (j + 1) * len + 0] = (byte)((charMap1[cIndex] >> 6) | ((charMap1[cIndex + 1] << 2) & 0x3C) | charMap2[cIndex] & 0xC0);
-                        bitmap[i + (j + 1) * len + 1] = (byte)((charMap2[cIndex + 1] & 0x0F) | (charMap3[cIndex] >> 2) & 0x30 | (charMap3[cIndex + 1] << 6) & 0xC0);
-                        bitmap[i + (j + 1) * len + 2] = (byte)((charMap3[cIndex + 1] >> 2) & 0x03 | (charMap4[cIndex] >> 4) & 0x0C | (charMap4[cIndex + 1] << 4));
+                        bitmap[i + ((j + 1) * len) + 0] = (byte)((charMap1[cIndex] >> 6) | ((charMap1[cIndex + 1] << 2) & 0x3C) | (charMap2[cIndex] & 0xC0));
+                        bitmap[i + ((j + 1) * len) + 1] = (byte)((charMap2[cIndex + 1] & 0x0F) | ((charMap3[cIndex] >> 2) & 0x30) | ((charMap3[cIndex + 1] << 6) & 0xC0));
+                        bitmap[i + ((j + 1) * len) + 2] = (byte)(((charMap3[cIndex + 1] >> 2) & 0x03) | ((charMap4[cIndex] >> 4) & 0x0C) | (charMap4[cIndex + 1] << 4));
 
                         //3rd row
-                        bitmap[i + (j + 2) * len + 0] = (byte)((charMap1[cIndex + 1] >> 4) | ((charMap1[cIndex + 2] << 4) & 0x30) | (charMap2[cIndex + 1] << 2) & 0xC0); //good
-                        bitmap[i + (j + 2) * len + 1] = (byte)((charMap2[cIndex + 1] >> 6) | ((charMap2[cIndex + 2] << 2) & 0x0C) | charMap3[cIndex + 1] & 0xF0); //good
-                        bitmap[i + (j + 2) * len + 2] = (byte)((charMap3[cIndex + 2] & 0x03) | (charMap4[cIndex + 1] >> 2) & 0x3C | charMap4[cIndex + 2] << 6); //good
+                        bitmap[i + ((j + 2) * len) + 0] = (byte)((charMap1[cIndex + 1] >> 4) | ((charMap1[cIndex + 2] << 4) & 0x30) | ((charMap2[cIndex + 1] << 2) & 0xC0)); //good
+                        bitmap[i + ((j + 2) * len) + 1] = (byte)((charMap2[cIndex + 1] >> 6) | ((charMap2[cIndex + 2] << 2) & 0x0C) | (charMap3[cIndex + 1] & 0xF0)); //good
+                        bitmap[i + ((j + 2) * len) + 2] = (byte)((charMap3[cIndex + 2] & 0x03) | ((charMap4[cIndex + 1] >> 2) & 0x3C) | (charMap4[cIndex + 2] << 6)); //good
 
                         //4th row
-                        bitmap[i + (j + 3) * len + 0] = (byte)((charMap1[cIndex + 2] >> 2) | (charMap2[cIndex + 2] << 4) & 0xC0);  //g
-                        bitmap[i + (j + 3) * len + 1] = (byte)((charMap2[cIndex + 2] >> 4) | (charMap3[cIndex + 2] << 2) & 0xF0); //g
-                        bitmap[i + (j + 3) * len + 2] = (byte)((charMap3[cIndex + 2] >> 6) | charMap4[cIndex + 2] & 0xFC);
+                        bitmap[i + ((j + 3) * len) + 0] = (byte)((charMap1[cIndex + 2] >> 2) | ((charMap2[cIndex + 2] << 4) & 0xC0));  //g
+                        bitmap[i + ((j + 3) * len) + 1] = (byte)((charMap2[cIndex + 2] >> 4) | ((charMap3[cIndex + 2] << 2) & 0xF0)); //g
+                        bitmap[i + ((j + 3) * len) + 2] = (byte)((charMap3[cIndex + 2] >> 6) | (charMap4[cIndex + 2] & 0xFC));
 
                         cIndex += 3;
                     }
@@ -1497,7 +1484,7 @@ namespace Meadow.Foundation.Graphics
             }
             else if (font.Width == 4)
             {
-                var len = (text.Length + text.Length % 2) >> 1;
+                var len = (text.Length + (text.Length % 2)) >> 1;
                 bitmap = new byte[len * font.Height];
                 byte[] charMap1, charMap2;
 
@@ -1505,12 +1492,12 @@ namespace Meadow.Foundation.Graphics
                 {
                     //grab two characters at once to fill a complete byte
                     charMap1 = font[text[2 * i]];
-                    charMap2 = (2 * i + 1 < text.Length) ? font[text[2 * i + 1]] : font[' '];
+                    charMap2 = ((2 * i) + 1 < text.Length) ? font[text[(2 * i) + 1]] : font[' '];
 
                     for (int j = 0; j < charMap1.Length; j++)
                     {
-                        bitmap[i + (j * 2 + 0) * len] = (byte)((charMap1[j] & 0x0F) | (charMap2[j] << 4));
-                        bitmap[i + (j * 2 + 1) * len] = (byte)((charMap1[j] >> 4) | (charMap2[j] & 0xF0));
+                        bitmap[i + (((j * 2) + 0) * len)] = (byte)((charMap1[j] & 0x0F) | (charMap2[j] << 4));
+                        bitmap[i + (((j * 2) + 1) * len)] = (byte)((charMap1[j] >> 4) | (charMap2[j] & 0xF0));
                     }
                 }
             }
@@ -1709,8 +1696,8 @@ namespace Meadow.Foundation.Graphics
                         {
                             if (scaleFactor != ScaleFactor.X1)
                             {
-                                Fill(x: x + (8 * abscissa) * scale + pixel * scale,
-                                    y: y + ordinate * scale,
+                                Fill(x: x + (8 * abscissa * scale) + (pixel * scale),
+                                    y: y + (ordinate * scale),
                                     width: scale,
                                     height: scale,
                                     color: color);

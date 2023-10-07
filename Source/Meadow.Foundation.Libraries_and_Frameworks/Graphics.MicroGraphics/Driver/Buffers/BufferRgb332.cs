@@ -56,8 +56,8 @@ namespace Meadow.Foundation.Graphics.Buffers
 
             r = (byte)(Buffer[index] >> 5 & 0x07);
             g = (byte)(Buffer[index] >> 2 & 0x07);
-            b = (byte)(Buffer[index]      & 0x03);
-            
+            b = (byte)(Buffer[index] & 0x03);
+
             r = (byte)(r * 255 / 7);
             g = (byte)(g * 255 / 7);
             b = (byte)(b * 255 / 3);
@@ -70,7 +70,7 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// </summary>
         /// <param name="x">X pixel position</param>
         /// <param name="y">Y pixel position</param>
-        /// <param name="gray">The pixel grey value</param>
+        /// <param name="gray">The pixel gray value</param>
         public void SetPixel(int x, int y, byte gray)
         {
             Buffer[y * Width + x] = gray;

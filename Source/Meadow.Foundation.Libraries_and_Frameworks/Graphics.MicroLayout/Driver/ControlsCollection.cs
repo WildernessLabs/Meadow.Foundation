@@ -6,10 +6,11 @@ namespace Meadow.Foundation.Graphics.MicroLayout;
 /// <summary>
 /// Represents a collection of display controls on a <see cref="DisplayScreen"/>.
 /// </summary>
-public sealed class ControlsCollection : IEnumerable<IDisplayControl>
+public sealed class ControlsCollection : IEnumerable<IControl>
 {
-    private DisplayScreen _screen;
-    private List<IDisplayControl> _controls = new();
+    private readonly DisplayScreen _screen;
+    private readonly List<IControl> _controls = new();
+    private readonly object _syncRoot = new();
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ControlsCollection"/> class.
@@ -20,14 +21,27 @@ public sealed class ControlsCollection : IEnumerable<IDisplayControl>
         _screen = screen;
     }
 
+    internal object SyncRoot => _syncRoot;
+
+    /// <summary>
+    /// Gets a control from the Controls collection by index
+    /// </summary>
+    /// <param name="index">index of the control to retrieve</param>
+    public IControl this[int index]
+    {
+        get => _controls[index];
+    }
+
     /// <summary>
     /// Removes all display controls from the collection.
     /// </summary>
     public void Clear()
     {
-        _controls.Clear();
-
-        // _screen.Invalidate();  // TODO: Decide whether to invalidate the screen after clearing controls.
+        lock (SyncRoot)
+        {
+            _controls.Clear();
+            _screen.Invalidate();
+        }
     }
 
     /// <summary>
@@ -39,25 +53,28 @@ public sealed class ControlsCollection : IEnumerable<IDisplayControl>
     /// Adds one or more display controls to the collection.
     /// </summary>
     /// <param name="controls">The display controls to add.</param>
-    public void Add(params IDisplayControl[] controls)
+    public void Add(params IControl[] controls)
     {
         // Apply screen theme to the added controls, if available.
         if (_screen.Theme != null)
         {
-            foreach (var control in controls)
+            foreach (IThemedControl control in controls)
             {
                 control.ApplyTheme(_screen.Theme);
             }
         }
 
-        _controls.AddRange(controls);
+        lock (SyncRoot)
+        {
+            _controls.AddRange(controls);
+        }
     }
 
     /// <summary>
     /// Returns an enumerator that iterates through the collection of display controls.
     /// </summary>
     /// <returns>An enumerator that can be used to iterate through the collection.</returns>
-    public IEnumerator<IDisplayControl> GetEnumerator()
+    public IEnumerator<IControl> GetEnumerator()
     {
         return _controls.GetEnumerator();
     }

@@ -8,7 +8,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
     /// </summary>
     public sealed class MpsseDigitalInputPort : DigitalInterruptPortBase
     {
-        private IFt232Bus _bus;
+        private readonly IFt232Bus _bus;
 
         /// <summary>
         /// Instantiates a <see cref="MpsseDigitalInputPort"/>.

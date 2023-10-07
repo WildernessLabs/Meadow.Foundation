@@ -326,7 +326,7 @@ namespace Meadow.Foundation.Displays
         }
 
         /// <summary>
-        /// Start the display scrollling in the specified direction
+        /// Start the display scrolling in the specified direction
         /// </summary>
         /// <param name="direction">Direction that the display should scroll</param>
         public void StartScrolling(ScrollDirection direction)
@@ -343,7 +343,7 @@ namespace Meadow.Foundation.Displays
         /// </remarks>
         /// <param name="direction">Direction that the display should scroll</param>
         /// <param name="startPage">Start page for the scroll</param>
-        /// <param name="endPage">End oage for the scroll</param>
+        /// <param name="endPage">End page for the scroll</param>
         public void StartScrolling(ScrollDirection direction, byte startPage, byte endPage)
         {
             StopScrolling();
@@ -389,7 +389,7 @@ namespace Meadow.Foundation.Displays
         /// Fill the display with a normalized color 
         /// </summary>
         /// <param name="color">The color used to fill the display, will normalize to black/off or white/on</param>
-        /// <param name="updateDisplay">If true, update the display, if false, only update the offscreen buffer</param>
+        /// <param name="updateDisplay">If true, update the display, if false, only update the off-screen buffer</param>
         public virtual void Fill(Color color, bool updateDisplay = false)
         {
             imageBuffer.Clear(color.Color1bpp);

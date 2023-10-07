@@ -1,5 +1,6 @@
 ﻿using Meadow.Hardware;
 using Meadow.Peripherals.Sensors;
+using Meadow.Peripherals.Sensors.Atmospheric;
 using Meadow.Units;
 using System;
 using System.Threading.Tasks;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 namespace Meadow.Foundation.Sensors.Atmospheric
 {
     /// <summary>
-    /// Represents a SHT31 Dtemperature and humidity sensor
+    /// Represents a SHT31 Temperature and humidity sensor
     /// </summary>
     public partial class Sht31d :
         ByteCommsSensorBase<(Units.Temperature? Temperature, RelativeHumidity? Humidity)>,
@@ -48,7 +49,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         { }
 
         /// <summary>
-        /// Raise events for subcribers and notify of value changes
+        /// Raise events for subscribers and notify of value changes
         /// </summary>
         /// <param name="changeResult">The updated sensor data</param>
         protected override void RaiseEventsAndNotify(IChangeResult<(Units.Temperature? Temperature, RelativeHumidity? Humidity)> changeResult)

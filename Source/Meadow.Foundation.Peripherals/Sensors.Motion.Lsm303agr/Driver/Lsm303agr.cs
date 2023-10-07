@@ -5,7 +5,7 @@ using Meadow.Units;
 using System;
 using System.Threading.Tasks;
 
-namespace Meadow.Foundation.Sensors.Accelerometers
+namespace Meadow.Foundation.Sensors.Motion
 {
     /// <summary>
     /// Represents a LSM303AGR is a system-in-package (SiP) that combines a 3D linear acceleration sensor and a 3D magnetic sensor
@@ -93,7 +93,7 @@ namespace Meadow.Foundation.Sensors.Accelerometers
         }
 
         /// <summary>
-        /// Raise events for subcribers and notify of value changes
+        /// Raise events for subscribers and notify of value changes
         /// </summary>
         /// <param name="changeResult">The updated sensor data</param>
         protected override void RaiseEventsAndNotify(IChangeResult<(Acceleration3D? Acceleration3D, MagneticField3D? MagneticField3D)> changeResult)
@@ -167,12 +167,12 @@ namespace Meadow.Foundation.Sensors.Accelerometers
         /// <returns>A tuple containing the X, Y, and Z values of the accelerometer.</returns>
         (short x, short y, short z) ReadAccelerometerRaw()
         {
-            byte[] readBuffer = new byte[6];
-            i2cCommsAccel.ReadRegister(ACC_OUT_X_L_A, readBuffer);
+            Span<byte> rawData = stackalloc byte[6];
+            i2cCommsAccel.ReadRegister(ACC_OUT_X_L_A, rawData);
 
-            short x = BitConverter.ToInt16(new byte[] { readBuffer[0], readBuffer[1] }, 0);
-            short y = BitConverter.ToInt16(new byte[] { readBuffer[2], readBuffer[3] }, 0);
-            short z = BitConverter.ToInt16(new byte[] { readBuffer[4], readBuffer[5] }, 0);
+            short x = BitConverter.ToInt16(rawData.Slice(0, 2));
+            short y = BitConverter.ToInt16(rawData.Slice(2, 2));
+            short z = BitConverter.ToInt16(rawData.Slice(4, 2));
 
             return (x, y, z);
         }
@@ -183,12 +183,12 @@ namespace Meadow.Foundation.Sensors.Accelerometers
         /// <returns>A tuple containing the X, Y, and Z values of the magnetometer.</returns>
         (short x, short y, short z) ReadMagnetometerRaw()
         {
-            byte[] readBuffer = new byte[6];
-            i2cCommsMag.ReadRegister(MAG_OUTX_L_REG_M, readBuffer);
+            Span<byte> rawData = stackalloc byte[6];
+            i2cCommsMag.ReadRegister(MAG_OUTX_L_REG_M, rawData);
 
-            short x = BitConverter.ToInt16(new byte[] { readBuffer[0], readBuffer[1] }, 0);
-            short y = BitConverter.ToInt16(new byte[] { readBuffer[2], readBuffer[3] }, 0);
-            short z = BitConverter.ToInt16(new byte[] { readBuffer[4], readBuffer[5] }, 0);
+            short x = BitConverter.ToInt16(rawData.Slice(0, 2));
+            short y = BitConverter.ToInt16(rawData.Slice(2, 2));
+            short z = BitConverter.ToInt16(rawData.Slice(4, 2));
 
             return (x, y, z);
         }

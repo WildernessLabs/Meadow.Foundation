@@ -15,7 +15,7 @@ namespace Meadow.Foundation.Displays.Led
         readonly SevenSegment[] sevenSegments;
 
         /// <summary>
-        /// Creates a SevenSegment connected to the especified IPins to a IODevice
+        /// Creates a SevenSegment connected to the specified IPins to a IODevice
         /// </summary>
         /// <param name="pinDigit1">Digit 1 pin</param>
         /// <param name="pinDigit2">Digit 2 pin</param>
@@ -55,7 +55,7 @@ namespace Meadow.Foundation.Displays.Led
         { }
 
         /// <summary>
-        /// Creates a SevenSegment connected to the especified IDigitalOutputPorts
+        /// Creates a SevenSegment connected to the specified IDigitalOutputPorts
         /// </summary>
         /// <param name="portDigit1">Port for digit 1</param>
         /// <param name="portDigit2">Port for digit 2</param>
@@ -97,7 +97,7 @@ namespace Meadow.Foundation.Displays.Led
         /// <summary>
         /// Displays the specified characters
         /// </summary>
-        /// <param name="characters">The chracters to display</param>
+        /// <param name="characters">The characters to display</param>
         /// <param name="decimalLocation">The decimal position (0 indexed)</param>
         public void SetDisplay(string characters, int decimalLocation = -1)
         {
@@ -107,7 +107,7 @@ namespace Meadow.Foundation.Displays.Led
         /// <summary>
         /// Displays the specified characters
         /// </summary>
-        /// <param name="characters">The chracters to display</param>
+        /// <param name="characters">The characters to display</param>
         /// <param name="decimalLocation">The decimal position (0 indexed)</param>
         public void SetDisplay(char[] characters, int decimalLocation = -1)
         {

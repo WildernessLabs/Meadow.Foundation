@@ -1,5 +1,5 @@
 ﻿using Meadow.Hardware;
-using Meadow.Peripherals.Sensors;
+using Meadow.Peripherals.Sensors.Distance;
 using Meadow.Units;
 using System;
 using System.Threading;
@@ -43,7 +43,7 @@ namespace Meadow.Foundation.Sensors.Distance
         /// <summary>
         /// Creates a new ME007YS object communicating over serial
         /// </summary>
-        /// <param name="device">The device conected to the sensor</param>
+        /// <param name="device">The device connected to the sensor</param>
         /// <param name="serialPortName">The serial port</param>
         public Me007ys(IMeadowDevice device, SerialPortName serialPortName)
             : this(device.CreateSerialPort(serialPortName, portSpeed))

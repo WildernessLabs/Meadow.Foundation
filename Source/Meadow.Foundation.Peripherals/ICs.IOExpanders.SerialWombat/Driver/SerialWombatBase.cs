@@ -1,7 +1,7 @@
 ﻿using Meadow.Foundation.Servos;
 using Meadow.Hardware;
 using Meadow.Logging;
-using Meadow.Peripherals.Sensors;
+using Meadow.Peripherals.Sensors.Distance;
 using Meadow.Units;
 using System;
 using System.Linq;
@@ -472,7 +472,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         }
 
         /// <summary>
-        /// Create a ditance sensor for a pin
+        /// Create a distance sensor for a pin
         /// </summary>
         public IRangeFinder CreateDistanceSensor(IPin trigger, IPin echo)
         {
@@ -480,7 +480,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         }
 
         /// <summary>
-        /// Create a ditance sensor for a pin
+        /// Create a distance sensor for a pin
         /// </summary>
         public IRangeFinder CreateDistanceSensor(IPin trigger, IPin echo, TimeSpan readPeriod)
         {

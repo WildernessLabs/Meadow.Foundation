@@ -14,7 +14,7 @@ namespace Meadow.Foundation.Sensors.Motion
         private readonly IDigitalInterruptPort _digitalInputPort;
 
         /// <summary>
-        /// Delgate for the motion start and end events.
+        /// Delegate for the motion start and end events.
         /// </summary>
         public delegate void MotionChange(object sender);
 

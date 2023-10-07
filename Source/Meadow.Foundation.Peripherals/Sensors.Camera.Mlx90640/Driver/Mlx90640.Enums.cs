@@ -23,7 +23,7 @@
         public enum Mode
         {
             /// <summary>
-            /// Interved
+            /// Inverted
             /// </summary>
             Interleaved,
             /// <summary>

@@ -7,11 +7,11 @@ namespace Meadow.Foundation.ICs.IOExpanders
     /// <summary>
     /// Represents a Pcx857x I2C IO Expander
     /// </summary>
-    public abstract partial class Pcx857x : IDigitalOutputController, IDigitalInputController, IDigitalInterruptController, 
+    public abstract partial class Pcx857x : IDigitalOutputController, IDigitalInputController, IDigitalInterruptController,
         II2cPeripheral, IDisposable
     {
         /// <summary>
-        /// The number of IO pins avaliable on the device
+        /// The number of IO pins available on the device
         /// </summary>
         public abstract int NumberOfPins { get; }
 
@@ -61,14 +61,12 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
             interruptPorts = new Dictionary<IPin, DigitalInterruptPort>();
             inputPorts = new Dictionary<IPin, DigitalInputPort>();
-
-            AllOff();
         }
 
         /// <inheritdoc/>
         public IDigitalOutputPort CreateDigitalOutputPort(IPin pin, bool initialState = false, OutputType initialOutputType = OutputType.PushPull)
         {
-            if(IsValidPin(pin))
+            if (IsValidPin(pin))
             {
                 lock (pinsInUse)
                 {
@@ -91,7 +89,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
                     return port;
                 }
             }
-            
+
             throw new Exception("Pin is out of range");
         }
 
@@ -105,7 +103,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
                     throw new ArgumentException("Internal resistors are not supported");
             }
 
-            if(IsValidPin(pin))
+            if (IsValidPin(pin))
             {
                 lock (pinsInUse)
                 {
@@ -172,7 +170,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <param name="interruptMode">The port interrupt mode</param>
         /// <param name="resistorMode">The port resistor mode</param>
         /// <param name="debounceDuration">The debounce duration</param>
-        /// <param name="glitchDuration">The clitch duration - not configurable on Mcpxxxx</param>
+        /// <param name="glitchDuration">The glitch duration - not configurable on Mcpxxxx</param>
         /// <returns>IDigitalInterruptPort</returns>
         public IDigitalInterruptPort CreateDigitalInterruptPort(
             IPin pin,
@@ -234,9 +232,14 @@ namespace Meadow.Foundation.ICs.IOExpanders
         protected abstract ushort ReadState();
 
         /// <summary>
-        /// Writes the peripheral state register for 8 pin devices
+        /// Writes to the peripheral state register
         /// </summary>
         protected abstract void WriteState(ushort state);
+
+        /// <summary>
+        /// Writes to the peripheral state register and saves internal output state
+        /// </summary>
+        protected abstract void SetState(ushort state);
 
         /// <summary>
         /// Set the pin direction
@@ -250,14 +253,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         public void AllOff()
         {
-            if(NumberOfPins == 8)
-            {
-                i2CCommunications.Write(0x00);
-            }
-            else // 16
-            {
-                WriteUint16(0x0000);
-            }
+            SetState(0x0000);
         }
 
         /// <summary>
@@ -265,14 +261,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         public void AllOn()
         {
-            if (NumberOfPins == 8)
-            {
-                i2CCommunications.Write(0xFF);
-            }
-            else // 16
-            {
-                WriteUint16(0xFFFF);
-            }
+            SetState(0xFFFF);
         }
 
         /// <summary>

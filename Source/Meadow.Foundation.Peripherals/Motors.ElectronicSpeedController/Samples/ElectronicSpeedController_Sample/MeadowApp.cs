@@ -13,7 +13,7 @@ namespace ElectronicSpeedController_Sample
     {
         //<!=SNIP=>
 
-        Frequency frequency = new Frequency(50, Frequency.UnitType.Hertz);
+        readonly Frequency frequency = new Frequency(50, Frequency.UnitType.Hertz);
         const float armMs = 0.5f;
         const float powerIncrement = 0.05f;
 

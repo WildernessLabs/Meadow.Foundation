@@ -23,7 +23,7 @@ namespace Meadow.Foundation.Sensors.Light
         public event EventHandler<IChangeResult<Illuminance>> LuminosityUpdated = delegate { };
 
         /// <summary>
-        /// Illuminance sensor callibration
+        /// Illuminance sensor calibration
         /// </summary>
         public Calibration LuminanceCalibration { get; protected set; }
 
@@ -70,7 +70,7 @@ namespace Meadow.Foundation.Sensors.Light
                 IAnalogInputPort.CreateObserver(
                     h =>
                     {
-                        // capture the old water leve.
+                        // capture the old water level.
                         var oldLuminance = illuminance;
                         //var oldWaterLevel = VoltageToWaterLevel(h.Old);
 
@@ -121,7 +121,7 @@ namespace Meadow.Foundation.Sensors.Light
         }
 
         /// <summary>
-        /// Notify subscibers of LuminosityUpdated event hander
+        /// Notify subscribers of LuminosityUpdated event hander
         /// </summary>
         /// <param name="changeResult">Change result with old and new Illuminance</param>
         protected override void RaiseEventsAndNotify(IChangeResult<Illuminance> changeResult)

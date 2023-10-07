@@ -8,8 +8,13 @@ namespace Meadow.Foundation.ICs.IOExpanders
     /// <summary>
     /// Provide an interface to connect to a MCP3xxx analog to digital converter (ADC)
     /// </summary>
-    abstract partial class Mcp3xxx : IAnalogInputController, ISpiPeripheral
+    public abstract partial class Mcp3xxx : IAnalogInputController, ISpiPeripheral
     {
+        /// <summary>
+        /// Gets the underlying ISpiCommunications instance
+        /// </summary>
+        protected ISpiCommunications SpiComms { get; }
+
         /// <summary>
         /// the number of input channels on the ADC
         /// </summary>
@@ -25,8 +30,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         public Frequency SpiBusSpeed
         {
-            get => spiComms.BusSpeed;
-            set => spiComms.BusSpeed = value;
+            get => SpiComms.BusSpeed;
+            set => SpiComms.BusSpeed = value;
         }
 
         /// <summary>
@@ -39,13 +44,13 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         public SpiClockConfiguration.Mode SpiBusMode
         {
-            get => spiComms.BusMode;
-            set => spiComms.BusMode = value;
+            get => SpiComms.BusMode;
+            set => SpiComms.BusMode = value;
         }
 
         /// <summary>
         /// The resolution of the analog-to-digital converter in the Mcp3xxx
-        /// This is model-specific and not confiruable 
+        /// This is model-specific and not configurable 
         /// </summary>
         public int AdcResolutionInBits { get; protected set; }
 
@@ -54,10 +59,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         internal int AdcMaxValue { get; set; }
 
-        private readonly ISpiCommunications spiComms;
-
         /// <summary>
-        /// Mcp3xxx base class contructor
+        /// Mcp3xxx base class constructor
         /// </summary>
         /// <param name="spiBus">The SPI bus</param>
         /// <param name="chipSelectPin">Chip select pin</param>
@@ -71,7 +74,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         }
 
         /// <summary>
-        /// Mcp3xxx base class contructor
+        /// Mcp3xxx base class constructor
         /// </summary>
         /// <param name="spiBus">The SPI bus</param>
         /// <param name="chipSelectPort">Chip select port</param>
@@ -86,7 +89,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
             ChannelCount = channelCount;
 
-            spiComms = new SpiCommunications(spiBus, chipSelectPort, DefaultSpiBusSpeed, DefaultSpiBusMode);
+            SpiComms = new SpiCommunications(spiBus, chipSelectPort, DefaultSpiBusSpeed, DefaultSpiBusMode);
         }
 
         /// <summary>
@@ -239,7 +242,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <summary>
         /// Reads a value from the device
         /// </summary>
-        /// <param name="channel">Channel to read - for diffential inputs this represents a channel pair (valid values: 0 - channelcount - 1 or 0 - channelcount / 2 - 1  with differential inputs)</param>
+        /// <param name="channel">Channel to read - for differential inputs this represents a channel pair (valid values: 0 - channelcount - 1 or 0 - channelcount / 2 - 1  with differential inputs)</param>
         /// <param name="inputType">The type of input channel to read</param>
         /// <param name="adcResolutionBits">The number of bits in the returned value</param>
         /// <returns>A value corresponding to relative voltage level on specified device channel</returns>
@@ -283,13 +286,13 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 requestBuffer[i] = (byte)(adcRequest >> (bufferSize - i - 1) * 8);
             }
 
-            spiComms.Exchange(requestBuffer, responseBuffer);
+            SpiComms.Exchange(requestBuffer, responseBuffer);
 
             // copy the response from the ADC to the return value
             for (int i = 0; i < bufferSize; i++)
             {
                 returnValue <<= 8;
-                returnValue += responseBuffer[i];
+                returnValue |= responseBuffer[i];
             }
 
             // test the response from the ADC to verify the null bit is 0

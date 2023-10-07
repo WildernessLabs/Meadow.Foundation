@@ -8,7 +8,7 @@ using System.Threading;
 namespace Meadow.Foundation.Displays
 {
     /// <summary>
-    /// Provides an interface to the Ssd1327 greyscale OLED display
+    /// Provides an interface to the Ssd1327 grayscale OLED display
     /// </summary>
     public partial class Ssd1327 : IGraphicsDisplay, ISpiPeripheral
     {
@@ -113,9 +113,9 @@ namespace Meadow.Foundation.Displays
         }
 
         /// <summary>
-        /// Set the disply contrast
+        /// Set the display contrast
         /// </summary>
-        /// <param name="contrast">The constrast value (0-255)</param>
+        /// <param name="contrast">The contrast value (0-255)</param>
         public void SetContrast(byte contrast)
         {
             SendCommand(0x81);  //set contrast control
@@ -123,7 +123,7 @@ namespace Meadow.Foundation.Displays
         }
 
         /// <summary>
-        /// Initalize the display
+        /// Initialize the display
         /// </summary>
         protected void Initialize()
         {
@@ -157,7 +157,7 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         /// <param name="x">x location in pixels</param>
         /// <param name="y">y location in pixels</param>
-        /// <param name="color">The pixel color which will be transformed to 4bpp greyscale</param>
+        /// <param name="color">The pixel color which will be transformed to 4bpp grayscale</param>
         public void DrawPixel(int x, int y, Color color)
         {
             DrawPixel(x, y, color.Color4bppGray);

@@ -8,7 +8,7 @@ namespace Meadow.Foundation.Sensors.Environmental
     {
         //pass in the float array
         //check for infinity and switch to zero
-        //polulate all of the properties 
+        //populate all of the properties 
 
         enum Measurement
         {
@@ -54,7 +54,7 @@ namespace Meadow.Foundation.Sensors.Environmental
             public Voltage OxidationReductionPotential { get; private set; }
 
             /// <summary>
-            /// Chlorophyl Concentration (CHL)
+            /// Chlorophyll Concentration (CHL)
             /// </summary>
             public ConcentrationInWater Chlorophyl { get; private set; }
 
@@ -118,7 +118,7 @@ namespace Meadow.Foundation.Sensors.Environmental
                 sb.AppendLine($"ElectricalConductivity: {ElectricalConductivity.MilliSiemensPerCentimeter} mS/cm");
                 sb.AppendLine($"PH: {PH}");
                 sb.AppendLine($"OxidationReductionPotential: {OxidationReductionPotential.Millivolts} mV");
-                sb.AppendLine($"Chlorophyl: {Chlorophyl.MicrogramsPerLiter} ug/L");
+                sb.AppendLine($"Chlorophyll: {Chlorophyl.MicrogramsPerLiter} ug/L");
                 sb.AppendLine($"BlueGreenAlgae: {BlueGreenAlgae.PartsPerMillion} ppm");
                 sb.AppendLine($"Temperature: {Temperature.Celsius} C");
 

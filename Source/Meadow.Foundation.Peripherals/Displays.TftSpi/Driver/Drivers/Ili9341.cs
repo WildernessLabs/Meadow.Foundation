@@ -60,7 +60,7 @@ namespace Meadow.Foundation.Displays
         }
 
         /// <summary>
-        /// Initalize the display
+        /// Initialize the display
         /// </summary>
         protected override void Initialize()
         {
@@ -152,16 +152,16 @@ namespace Meadow.Foundation.Displays
             UpdateBuffer();
         }
 
-        static byte ILI9341_GAMMASET = 0x26;
+        static readonly byte ILI9341_GAMMASET = 0x26;
 
-        static byte ILI9341_DFUNCTR = 0xB6;
+        static readonly byte ILI9341_DFUNCTR = 0xB6;
 
-        static byte ILI9341_PWCTR1 = 0xC0;
-        static byte ILI9341_PWCTR2 = 0xC1;
-        static byte ILI9341_VMCTR1 = 0xC5;
-        static byte ILI9341_VMCTR2 = 0xC7;
+        static readonly byte ILI9341_PWCTR1 = 0xC0;
+        static readonly byte ILI9341_PWCTR2 = 0xC1;
+        static readonly byte ILI9341_VMCTR1 = 0xC5;
+        static readonly byte ILI9341_VMCTR2 = 0xC7;
 
-        static byte ILI9341_GMCTRP1 = 0xE0;
-        static byte ILI9341_GMCTRN1 = 0xE1;
+        static readonly byte ILI9341_GMCTRP1 = 0xE0;
+        static readonly byte ILI9341_GMCTRN1 = 0xE1;
     }
 }

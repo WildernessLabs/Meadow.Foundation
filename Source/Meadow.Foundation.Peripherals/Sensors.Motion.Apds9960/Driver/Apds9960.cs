@@ -46,7 +46,7 @@ namespace Meadow.Foundation.Sensors.Motion
         public Color? Color => Conditions.Color;
 
         /// <summary>
-        /// The current abient light value
+        /// The current ambient light value
         /// </summary>
         public Illuminance? AmbientLight => Conditions.AmbientLight;
 
@@ -97,7 +97,7 @@ namespace Meadow.Foundation.Sensors.Motion
 
             //---- ambient light
             // TODO: someone needs to verify this
-            // have no idea if this conversion is correct. the exten of the datasheet documentation is:
+            // have no idea if this conversion is correct. the extent of the datasheet documentation is:
             // "RGBC results can be used to calculate ambient light levels (i.e. Lux) and color temperature (i.e. Kelvin)."
             // NOTE: looks correct, actually. reading ~600 lux in my office and went to 4k LUX when i moved the sensor to the window
             var ambient = ReadAmbientLight();
@@ -117,7 +117,7 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         /// <summary>
-        /// Raise events for subcribers and notify of value changes
+        /// Raise events for subscribers and notify of value changes
         /// </summary>
         /// <param name="changeResult">The updated sensor data</param>
         protected override void RaiseEventsAndNotify(IChangeResult<(Color? Color, Illuminance? AmbientLight)> changeResult)
@@ -368,7 +368,7 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         /// <summary>
-        /// Read the current gesure
+        /// Read the current gesture
         /// </summary>
         /// <returns>The direction</returns>
         /// <exception cref="Exception">Throws if reading gesture data failed</exception>

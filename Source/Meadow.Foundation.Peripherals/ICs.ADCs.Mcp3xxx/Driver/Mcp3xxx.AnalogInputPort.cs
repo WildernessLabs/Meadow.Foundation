@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Meadow.Foundation.ICs.IOExpanders
 {
-    abstract partial class Mcp3xxx
+    public abstract partial class Mcp3xxx
     {
         /// <summary>
         /// Represents an Mcp3xxx analog input port
@@ -81,6 +81,27 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 IPin pin,
                 IAnalogChannelInfo channel,
                 int sampleCount,
+                Voltage referenceVoltage,
+                InputType inputType = InputType.SingleEnded)
+                : base(pin, channel)
+            {
+                this.controller = controller;
+
+                SampleCount = sampleCount;
+                ChannelInputType = inputType;
+
+                ReferenceVoltage = referenceVoltage;
+
+                VoltageSampleBuffer = new Voltage[SampleCount];
+            }
+
+            /// <summary>
+            /// Create a new AnalogInputPort object
+            /// </summary>
+            public AnalogInputPort(Mcp3xxx controller,
+                IPin pin,
+                IAnalogChannelInfo channel,
+                int sampleCount,
                 InputType inputType = InputType.SingleEnded)
                 : base(pin, channel)
             {
@@ -117,8 +138,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// </summary>
             public void StartUpdating(TimeSpan? updateInterval = null)
             {
-                Console.WriteLine("StartUpdating");
-
                 // thread safety
                 lock (_lock)
                 {
@@ -185,7 +204,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             }
 
             /// <summary>
-            /// Subscribe an obersver for update events
+            /// Subscribe an observer for update events
             /// </summary>
             public IDisposable Subscribe(IObserver<IChangeResult<Voltage>> observer)
             {

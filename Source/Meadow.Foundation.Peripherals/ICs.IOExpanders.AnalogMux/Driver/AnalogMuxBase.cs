@@ -10,7 +10,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <summary>
         /// Get the sync root
         /// </summary>
-        protected object SyncRoot { get; }  = new object();
+        protected object SyncRoot { get; } = new object();
 
         /// <summary>
         /// The port connected to the Enable pin of the mux (otherwise must be tied low)

@@ -16,7 +16,7 @@ namespace Meadow.Foundation.Audio
         /// Defined by the PWM port duty cycle from 0 to 0.5
         /// </summary>
         public float Volume { get; protected set; } = 1.0f;
-        
+
         /// <summary>
         /// Gets the port that is driving the Piezo Speaker
         /// </summary>
@@ -65,7 +65,7 @@ namespace Meadow.Foundation.Audio
         /// Play a frequency for a specified duration
         /// </summary>
         /// <param name="frequency">The frequency in hertz of the tone to be played</param>
-        /// <param name="duration">How long the note is played in milliseconds, if durration is 0, tone plays indefinitely</param>
+        /// <param name="duration">How long the note is played in milliseconds, if duration is 0, tone plays indefinitely</param>
         public async Task PlayTone(Frequency frequency, TimeSpan duration)
         {
             if (frequency.Hertz <= 1)
@@ -106,7 +106,7 @@ namespace Meadow.Foundation.Audio
         {
             Volume = Math.Clamp(volume, 0, 1);
 
-             if(isPlaying)
+            if (isPlaying)
             {
                 Port.DutyCycle = Volume / 2f;
             }

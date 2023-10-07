@@ -15,7 +15,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         public PinDefinitions Pins { get; }
 
         /// <summary>
-        /// The number of IO pins avaliable on the device
+        /// The number of IO pins available on the device
         /// </summary>
         public override int NumberOfPins => 8;
 
@@ -140,6 +140,15 @@ namespace Meadow.Foundation.ICs.IOExpanders
         protected override void WriteState(ushort state)
         {
             WriteState((byte)state);
+        }
+
+        /// <summary>
+        /// Writes the peripheral state register and updates driver internal state
+        /// </summary>
+        protected override void SetState(ushort state)
+        {
+            outputs = (byte)state;
+            WriteState(outputs);
         }
 
         /// <summary>

@@ -1,5 +1,5 @@
-﻿using System;
-using Meadow.Peripherals.Sensors.Location.Gnss;
+﻿using Meadow.Peripherals.Sensors.Location.Gnss;
+using System;
 
 namespace Meadow.Foundation.Sensors.Location.Gnss
 {
@@ -22,7 +22,7 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
         /// <summary>
         /// Friendly name for the GLL messages.
         /// </summary>
-        public string Name => "GLL - Global Postioning System Fix Data";
+        public string Name => "GLL - Global Positioning System Fix Data";
 
         /// <summary>
         /// Process the data from a GLL message.

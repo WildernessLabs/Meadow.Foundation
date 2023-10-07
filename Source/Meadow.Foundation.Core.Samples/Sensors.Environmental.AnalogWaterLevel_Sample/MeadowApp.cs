@@ -29,7 +29,8 @@ namespace Sensors.Temperature.AnalogWaterLevel_Sample
             ));
 
             // classical .NET events can also be used:
-            analogWaterLevel.Updated += (object sender, IChangeResult<float> e) => {
+            analogWaterLevel.Updated += (object sender, IChangeResult<float> e) =>
+            {
                 Resolver.Log.Info($"Level Changed, level: {e.New}cm");
             };
 
@@ -45,7 +46,7 @@ namespace Sensors.Temperature.AnalogWaterLevel_Sample
         protected async Task ReadLevel()
         {
             var conditions = await analogWaterLevel.Read();
-            Resolver.Log.Info($"Initial level: { conditions }");
+            Resolver.Log.Info($"Initial level: {conditions}");
         }
 
         //<!=SNOP=>

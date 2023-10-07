@@ -37,12 +37,12 @@ namespace Meadow.Foundation.ICs.IOExpanders
             internal event EventHandler Disposed = delegate { };
 
             /// <summary>
-            /// Debouce durration
+            /// Debouce duration
             /// </summary>
             public override TimeSpan DebounceDuration { get; set; } = TimeSpan.Zero;
 
             /// <summary>
-            /// Glitch durration
+            /// Glitch duration
             /// </summary>
             public override TimeSpan GlitchDuration
             {

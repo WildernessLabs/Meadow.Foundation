@@ -20,7 +20,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <summary>
         /// Create a new IOExpanderInputChangedEventArgs object
         /// </summary>
-        /// <param name="interruptPins">The interupt pins</param>
+        /// <param name="interruptPins">The interrupt pins</param>
         /// <param name="inputState">The input state</param>
         public IOExpanderInputChangedEventArgs(byte interruptPins, ushort inputState)
         {

@@ -1,9 +1,8 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Motors.Stepper;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace MeadowApp
 {

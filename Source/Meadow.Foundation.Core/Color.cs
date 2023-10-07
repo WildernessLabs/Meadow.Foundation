@@ -121,7 +121,7 @@ namespace Meadow.Foundation
         /// <param name="red">red component of color</param>
         /// <param name="green">green component of color</param>
         /// <param name="blue">blue component of color</param>
-        /// <param name="alpha">transparancy of color</param>
+        /// <param name="alpha">transparency of color</param>
         public Color(byte red, byte green, byte blue, byte alpha = 255)
         {
             R = red;
@@ -186,7 +186,7 @@ namespace Meadow.Foundation
         }
 
         /// <summary>
-        /// Create a new color stucts from current color with new saturation
+        /// Create a new color structs from current color with new saturation
         /// </summary>
         /// <param name="saturation">saturation of new color (0-1.0)</param>
         /// <returns>new color object</returns>

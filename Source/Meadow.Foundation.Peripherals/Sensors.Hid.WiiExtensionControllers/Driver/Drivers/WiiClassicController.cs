@@ -62,12 +62,12 @@ namespace Meadow.Foundation.Sensors.Hid
         public IButton HomeButton { get; } = new WiiExtensionButton();
 
         /// <summary>
-        /// Left analog jostick (6 or 8 bits of precision)
+        /// Left analog joystick (6 or 8 bits of precision)
         /// </summary>
         public IAnalogJoystick LeftAnalogStick { get; }
 
         /// <summary>
-        /// Right analog jostick (5 or 8 bits of precision)
+        /// Right analog joystick (5 or 8 bits of precision)
         /// </summary>
         public IAnalogJoystick RightAnalogStick { get; }
 
@@ -89,7 +89,7 @@ namespace Meadow.Foundation.Sensors.Hid
         {
             this.useHighResolutionMode = useHighResolutionMode;
 
-            LeftAnalogStick = new WiiExtensionAnalogJoystick((byte)(useHighResolutionMode? 8 : 6));
+            LeftAnalogStick = new WiiExtensionAnalogJoystick((byte)(useHighResolutionMode ? 8 : 6));
             RightAnalogStick = new WiiExtensionAnalogJoystick((byte)(useHighResolutionMode ? 8 : 5));
             LeftTrigger = new WiiExtensionAnalogTrigger((byte)(useHighResolutionMode ? 8 : 5));
             RightTrigger = new WiiExtensionAnalogTrigger((byte)(useHighResolutionMode ? 8 : 5));
@@ -100,7 +100,7 @@ namespace Meadow.Foundation.Sensors.Hid
         /// </summary>
         public override void Update()
         {
-            if(useHighResolutionMode)
+            if (useHighResolutionMode)
             {
                 i2cComms.WriteRegister(0, 0);
                 i2cComms.Read(readBuffer[..8]);

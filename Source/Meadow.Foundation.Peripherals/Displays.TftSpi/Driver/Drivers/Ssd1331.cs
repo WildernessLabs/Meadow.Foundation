@@ -53,7 +53,7 @@ namespace Meadow.Foundation.Displays
         }
 
         /// <summary>
-        /// Initalize the display
+        /// Initialize the display
         /// </summary>
         protected override void Initialize()
         {
@@ -142,24 +142,24 @@ namespace Meadow.Foundation.Displays
         }
 
         // SSD1331 Commands
-        static byte CMD_CONTRASTA = 0x81;
-        static byte CMD_CONTRASTB = 0x82;
-        static byte CMD_CONTRASTC = 0x83;
-        static byte CMD_MASTERCURRENT = 0x87;
-        static byte CMD_SETREMAP = 0xA0;
-        static byte CMD_STARTLINE = 0xA1;
-        static byte CMD_DISPLAYOFFSET = 0xA2;
-        static byte CMD_NORMALDISPLAY = 0xA4;
-        static byte CMD_SETMULTIPLEX = 0xA8;
-        static byte CMD_SETMASTER = 0xAD;
-        static byte CMD_DISPLAYOFF = 0xAE;
-        static byte CMD_DISPLAYON = 0xAF;
-        static byte CMD_POWERMODE = 0xB0;
-        static byte CMD_PRECHARGE = 0xB1;
-        static byte CMD_CLOCKDIV = 0xB3;
-        static byte CMD_PRECHARGEA = 0x8A;
-        static byte CMD_PRECHARGEB = 0x8B;
-        static byte CMD_PRECHARGELEVEL = 0xBB;
-        static byte CMD_VCOMH = 0xBE;
+        static readonly byte CMD_CONTRASTA = 0x81;
+        static readonly byte CMD_CONTRASTB = 0x82;
+        static readonly byte CMD_CONTRASTC = 0x83;
+        static readonly byte CMD_MASTERCURRENT = 0x87;
+        static readonly byte CMD_SETREMAP = 0xA0;
+        static readonly byte CMD_STARTLINE = 0xA1;
+        static readonly byte CMD_DISPLAYOFFSET = 0xA2;
+        static readonly byte CMD_NORMALDISPLAY = 0xA4;
+        static readonly byte CMD_SETMULTIPLEX = 0xA8;
+        static readonly byte CMD_SETMASTER = 0xAD;
+        static readonly byte CMD_DISPLAYOFF = 0xAE;
+        static readonly byte CMD_DISPLAYON = 0xAF;
+        static readonly byte CMD_POWERMODE = 0xB0;
+        static readonly byte CMD_PRECHARGE = 0xB1;
+        static readonly byte CMD_CLOCKDIV = 0xB3;
+        static readonly byte CMD_PRECHARGEA = 0x8A;
+        static readonly byte CMD_PRECHARGEB = 0x8B;
+        static readonly byte CMD_PRECHARGELEVEL = 0xBB;
+        static readonly byte CMD_VCOMH = 0xBE;
     }
 }

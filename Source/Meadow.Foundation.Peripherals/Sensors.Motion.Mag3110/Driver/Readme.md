@@ -2,15 +2,17 @@
 
 **Freescale MAG3110 I2C 3 axis magnetometer**
 
-The **MAG3110** library is designed for the [Wilderness Labs](www.wildernesslabs.co) Meadow .NET IoT platform and is part of [Meadow.Foundation](https://developer.wildernesslabs.co/Meadow/Meadow.Foundation/)
+The **MAG3110** library is designed for the [Wilderness Labs](www.wildernesslabs.co) Meadow .NET IoT platform and is part of [Meadow.Foundation](https://developer.wildernesslabs.co/Meadow/Meadow.Foundation/).
 
 The **Meadow.Foundation** peripherals library is an open-source repository of drivers and libraries that streamline and simplify adding hardware to your C# .NET Meadow IoT application.
 
-For more information on developing for Meadow, visit [developer.wildernesslabs.co](http://developer.wildernesslabs.co/), to view all of Wilderness Labs open-source projects, including samples, visit [github.com/wildernesslabs](https://github.com/wildernesslabs/)
+For more information on developing for Meadow, visit [developer.wildernesslabs.co](http://developer.wildernesslabs.co/).
+
+To view all Wilderness Labs open-source projects, including samples, visit [github.com/wildernesslabs](https://github.com/wildernesslabs/).
 
 ## Usage
 
-```
+```csharp
 Mag3110 sensor;
 
 public override Task Initialize()
@@ -23,7 +25,7 @@ public override Task Initialize()
     sensor.Updated += (sender, result) => {
         Resolver.Log.Info($"Magnetic Field: [X:{result.New.MagneticField3D?.X.MicroTesla:N2}," +
             $"Y:{result.New.MagneticField3D?.Y.MicroTesla:N2}," +
-            $"Z:{result.New.MagneticField3D?.Z.MicroTesla:N2} (MicroTeslas)]");
+            $"Z:{result.New.MagneticField3D?.Z.MicroTesla:N2} (microTeslas)]");
 
         Resolver.Log.Info($"Temp: {result.New.Temperature?.Celsius:N2}C");
     };
@@ -33,7 +35,7 @@ public override Task Initialize()
         handler: result => Resolver.Log.Info($"Observer: [x] changed by threshold; new [x]: X:{result.New.MagneticField3D?.X.MicroTesla:N2}, old: X:{result.Old?.MagneticField3D?.X.MicroTesla:N2}"),
         // only notify if there's a greater than 1 micro tesla on the Y axis
         filter: result => {
-            if (result.Old is { } old) { //c# 8 pattern match syntax. checks for !null and assigns var.
+            if (result.Old is { } old) { 
                 return ((result.New.MagneticField3D - old.MagneticField3D)?.Y > new MagneticField(1, MU.MicroTesla));
             }
             return false;
@@ -47,15 +49,23 @@ public async override Task Run()
 {
     var result = await sensor.Read();
     Resolver.Log.Info("Initial Readings:");
-    Resolver.Log.Info($"Mangetic field: [X:{result.MagneticField3D?.X.MicroTesla:N2}," +
+    Resolver.Log.Info($"Magnetic field: [X:{result.MagneticField3D?.X.MicroTesla:N2}," +
         $"Y:{result.MagneticField3D?.Y.MicroTesla:N2}," +
-        $"Z:{result.MagneticField3D?.Z.MicroTesla:N2} (microteslas)]");
+        $"Z:{result.MagneticField3D?.Z.MicroTesla:N2} (microTeslas)]");
 
     Resolver.Log.Info($"Temp: {result.Temperature?.Celsius:N2}C");
 
     sensor.StartUpdating(TimeSpan.FromMilliseconds(500));
 }
 
-        
 ```
+## How to Contribute
 
+- **Found a bug?** [Report an issue](https://github.com/WildernessLabs/Meadow_Issues/issues)
+- Have a **feature idea or driver request?** [Open a new feature request](https://github.com/WildernessLabs/Meadow_Issues/issues)
+- Want to **contribute code?** Fork the [Meadow.Foundation](https://github.com/WildernessLabs/Meadow.Foundation) repository and submit a pull request against the `develop` branch
+
+
+## Need Help?
+
+If you have questions or need assistance, please join the Wilderness Labs [community on Slack](http://slackinvite.wildernesslabs.co/).

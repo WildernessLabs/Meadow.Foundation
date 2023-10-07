@@ -11,9 +11,9 @@ namespace Meadow.Foundation.Sensors.Environmental
     /// <summary>
     /// Represents a Yosemitech Y4000 Multiparameter Sonde water quality sensor 
     /// for dissolved oxygen, conductivity, turbidity, pH, chlorophyll, 
-    /// blue green algae, chlorophyl, and temperature
+    /// blue green algae, chlorophyll, and temperature
     /// </summary>
-    public partial class Y4000 : PollingSensorBase<(ConcentrationInWater? DisolvedOxygen,
+    public partial class Y4000 : PollingSensorBase<(ConcentrationInWater? DissolvedOxygen,
                                                     ConcentrationInWater? Chlorophyl,
                                                     ConcentrationInWater? BlueGreenAlgae,
                                                     Conductivity? ElectricalConductivity,
@@ -23,12 +23,12 @@ namespace Meadow.Foundation.Sensors.Environmental
                                                     Voltage? OxidationReductionPotential)>
     {
         /// <summary>
-        /// Raised when the DisolvedOxygen value changes
+        /// Raised when the DissolvedOxygen value changes
         /// </summary>
-        public event EventHandler<IChangeResult<ConcentrationInWater>> DisolvedOxygenUpdated = delegate { };
+        public event EventHandler<IChangeResult<ConcentrationInWater>> DissolvedOxygenUpdated = delegate { };
 
         /// <summary>
-        /// Raised when the Chlorophyl value changes
+        /// Raised when the Chlorophyll value changes
         /// </summary>
         public event EventHandler<IChangeResult<ConcentrationInWater>> ChlorophylUpdated = delegate { };
 
@@ -63,12 +63,12 @@ namespace Meadow.Foundation.Sensors.Environmental
         public event EventHandler<IChangeResult<Voltage>> OxidationReductionPotentialUpdated = delegate { };
 
         /// <summary>
-        /// The current Disolved Oxygen concentration
+        /// The current Dissolved Oxygen concentration
         /// </summary>
-        public ConcentrationInWater? DisolvedOxygen => Conditions.DisolvedOxygen;
+        public ConcentrationInWater? DissolvedOxygen => Conditions.DissolvedOxygen;
 
         /// <summary>
-        /// The current Chlorophyl concentration
+        /// The current Chlorophyll concentration
         /// </summary>
         public ConcentrationInWater? Chlorophyl => Conditions.Chlorophyl;
 
@@ -133,7 +133,6 @@ namespace Meadow.Foundation.Sensors.Environmental
 
             if (enablePin != null)
             {
-                Console.WriteLine("Create enable pin");
                 var enablePort = device.CreateDigitalOutputPort(enablePin, false);
                 modbusClient = new ModbusRtuClient(serialPort, enablePort);
             }
@@ -296,7 +295,7 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// Reads data from the sensor
         /// </summary>
         /// <returns>The latest sensor reading</returns>
-        protected override async Task<(ConcentrationInWater? DisolvedOxygen,
+        protected override async Task<(ConcentrationInWater? DissolvedOxygen,
             ConcentrationInWater? Chlorophyl,
             ConcentrationInWater? BlueGreenAlgae,
             Conductivity? ElectricalConductivity,
@@ -306,7 +305,7 @@ namespace Meadow.Foundation.Sensors.Environmental
             Voltage? OxidationReductionPotential)>
             ReadSensor()
         {
-            (ConcentrationInWater? DisolvedOxygen,
+            (ConcentrationInWater? DissolvedOxygen,
             ConcentrationInWater? Chlorophyl,
             ConcentrationInWater? BlueGreenAlgae,
             Conductivity? ElectricalConductivity,
@@ -320,7 +319,7 @@ namespace Meadow.Foundation.Sensors.Environmental
 
             conditions.BlueGreenAlgae = measurements.BlueGreenAlgae;
             conditions.Chlorophyl = measurements.Chlorophyl;
-            conditions.DisolvedOxygen = measurements.DissolvedOxygen;
+            conditions.DissolvedOxygen = measurements.DissolvedOxygen;
             conditions.ElectricalConductivity = measurements.ElectricalConductivity;
             conditions.OxidationReductionPotential = measurements.OxidationReductionPotential;
             conditions.PH = measurements.PH;
@@ -336,7 +335,7 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// <param name="changeResult">The updated sensor data</param>
         protected override void RaiseEventsAndNotify(
             IChangeResult<
-            (ConcentrationInWater? DisolvedOxygen,
+            (ConcentrationInWater? DissolvedOxygen,
             ConcentrationInWater? Chlorophyl,
             ConcentrationInWater? BlueGreenAlgae,
             Conductivity? ElectricalConductivity,
@@ -346,9 +345,9 @@ namespace Meadow.Foundation.Sensors.Environmental
             Voltage? OxidationReductionPotential)
             > changeResult)
         {
-            if (changeResult.New.DisolvedOxygen is { } DO)
+            if (changeResult.New.DissolvedOxygen is { } DO)
             {
-                DisolvedOxygenUpdated?.Invoke(this, new ChangeResult<ConcentrationInWater>(DO, changeResult.Old?.DisolvedOxygen));
+                DissolvedOxygenUpdated?.Invoke(this, new ChangeResult<ConcentrationInWater>(DO, changeResult.Old?.DissolvedOxygen));
             }
             if (changeResult.New.Chlorophyl is { } Chl)
             {

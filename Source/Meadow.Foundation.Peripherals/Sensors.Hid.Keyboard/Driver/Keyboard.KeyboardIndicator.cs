@@ -11,7 +11,7 @@ public partial class Keyboard
     /// </summary>
     public class KeyboardIndicator : DigitalOutputPortBase
     {
-        private KeyboardIndicatorPin _pin;
+        private readonly KeyboardIndicatorPin _pin;
 
         /// <summary>
         /// Sets the state of the indicator

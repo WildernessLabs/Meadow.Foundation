@@ -3,7 +3,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
     public partial class Mcp23xxx
     {
         /// <summary>
-        /// Help method to get address from address pin configuation
+        /// Help method to get address from address pin configuration
         /// </summary>
         /// <param name="pinA0">State of A0 address pin - true if high</param>
         /// <param name="pinA1">State of A1 address pin - true if high</param>

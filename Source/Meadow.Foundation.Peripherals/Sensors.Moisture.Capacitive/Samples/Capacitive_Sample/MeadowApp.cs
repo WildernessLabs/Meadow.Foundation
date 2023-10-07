@@ -27,7 +27,7 @@ namespace Sensors.Moisture.Capacitive_Sample
             var consumer = Capacitive.CreateObserver(
                 handler: result =>
                 {
-                    string oldValue = (result.Old is { } old) ? $"{old:n2}" : "n/a"; // C# 8 pattern matching
+                    string oldValue = (result.Old is { } old) ? $"{old:n2}" : "n/a";
                     Resolver.Log.Info($"Subscribed - " +
                         $"new: {result.New}, " +
                         $"old: {oldValue}");
@@ -39,7 +39,7 @@ namespace Sensors.Moisture.Capacitive_Sample
             // classical .NET events can also be used:
             capacitive.HumidityUpdated += (sender, result) =>
             {
-                string oldValue = (result.Old is { } old) ? $"{old:n2}" : "n/a"; // C# 8 pattern matching
+                string oldValue = (result.Old is { } old) ? $"{old:n2}" : "n/a";
                 Resolver.Log.Info($"Updated - New: {result.New}, Old: {oldValue}");
             };
 
@@ -54,7 +54,7 @@ namespace Sensors.Moisture.Capacitive_Sample
         protected async Task ReadSensor()
         {
             var humidity = await capacitive.Read();
-            Resolver.Log.Info($"Initial humidity: {humidity:N2}C");
+            Resolver.Log.Info($"Initial humidity: {humidity:n2}");
         }
 
         //<!=SNOP=>

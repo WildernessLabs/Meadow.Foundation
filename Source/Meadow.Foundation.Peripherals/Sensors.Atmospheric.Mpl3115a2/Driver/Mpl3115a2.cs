@@ -1,5 +1,6 @@
 ﻿using Meadow.Hardware;
 using Meadow.Peripherals.Sensors;
+using Meadow.Peripherals.Sensors.Atmospheric;
 using Meadow.Units;
 using System;
 using System.Threading.Tasks;
@@ -107,7 +108,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
             await Task.Delay(100);
             BusComms?.ReadRegister(Registers.PressureMSB, ReadBuffer.Span);
-            conditions.Pressure = new Pressure(DecodePresssure(ReadBuffer.Span[0], ReadBuffer.Span[1], ReadBuffer.Span[2]), Units.Pressure.UnitType.Pascal);
+            conditions.Pressure = new Pressure(DecodePressure(ReadBuffer.Span[0], ReadBuffer.Span[1], ReadBuffer.Span[2]), Units.Pressure.UnitType.Pascal);
             conditions.Temperature = new Units.Temperature(DecodeTemperature(ReadBuffer.Span[3], ReadBuffer.Span[4]), Units.Temperature.UnitType.Celsius);
 
             return conditions;
@@ -132,14 +133,14 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         }
 
         /// <summary>
-        /// Decode the three data bytes representing the pressure into a doubleing
+        /// Decode the three data bytes representing the pressure into a doubling
         /// point pressure value.
         /// </summary>
         /// <param name="msb">MSB for the pressure sensor reading.</param>
         /// <param name="csb">CSB for the pressure sensor reading.</param>
         /// <param name="lsb">LSB of the pressure sensor reading.</param>
         /// <returns>Pressure in Pascals.</returns>
-        private float DecodePresssure(byte msb, byte csb, byte lsb)
+        private float DecodePressure(byte msb, byte csb, byte lsb)
         {
             uint pressure = msb;
             pressure <<= 8;

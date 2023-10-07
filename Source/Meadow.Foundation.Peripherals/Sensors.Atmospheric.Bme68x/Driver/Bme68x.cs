@@ -1,5 +1,6 @@
 ﻿using Meadow.Hardware;
 using Meadow.Peripherals.Sensors;
+using Meadow.Peripherals.Sensors.Atmospheric;
 using Meadow.Units;
 using Meadow.Utilities;
 using System;
@@ -86,7 +87,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                     }
 
                     var profile = busComms.ReadRegister((byte)Registers.CTRL_GAS_1);
-                    profile = (byte)((profile & 0x0F) | (byte)value);
+                    profile = (byte)((profile & 0xF0) | (byte)value);
 
                     busComms.WriteRegister((byte)Registers.CTRL_GAS_1, profile);
 
@@ -387,7 +388,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         }
 
         /// <summary>
-        /// Raise events for subcribers and notify of value changes
+        /// Raise events for subscribers and notify of value changes
         /// </summary>
         /// <param name="changeResult">The updated sensor data</param>
         protected override void RaiseEventsAndNotify(IChangeResult<(Units.Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure, Resistance? GasResistance)> changeResult)

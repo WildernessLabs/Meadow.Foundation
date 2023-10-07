@@ -35,7 +35,7 @@
             /// <summary>
             /// Wiper value register
             /// </summary>
-            DS3502_WIPER = 0, 
+            DS3502_WIPER = 0,
             /// <summary>
             /// Mode selection register (change wiper or set default wiper)
             /// </summary>

@@ -1,7 +1,6 @@
 ﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.ICs.FanControllers;
-using System;
 using System.Threading.Tasks;
 
 namespace Emc2101_Sample

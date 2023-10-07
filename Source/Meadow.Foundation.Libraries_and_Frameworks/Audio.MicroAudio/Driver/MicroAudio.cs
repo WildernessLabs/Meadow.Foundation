@@ -1,5 +1,4 @@
 ﻿using Meadow.Peripherals.Speakers;
-using System;
 using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Audio
@@ -41,7 +40,7 @@ namespace Meadow.Foundation.Audio
         {
             systemSounds ??= new SystemSounds(speaker);
 
-            for(int i = 0; i < numberOfLoops; i++)
+            for (int i = 0; i < numberOfLoops; i++)
             {
                 await systemSounds.PlayEffect(effect);
             }

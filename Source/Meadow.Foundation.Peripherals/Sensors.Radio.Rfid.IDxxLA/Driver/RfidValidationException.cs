@@ -8,10 +8,10 @@ namespace Meadow.Foundation.Sensors.Radio.Rfid
     public class RfidValidationException : Exception
     {
         /// <summary>
-        /// Create a new RfidValidationException objec
+        /// Create a new RfidValidationException object
         /// </summary>
         /// <param name="status">The exception status message</param>
-        public RfidValidationException(RfidValidationStatus status) 
+        public RfidValidationException(RfidValidationStatus status)
             : base($"Failed to read RFID from serial data with error {status}")
         {
             Status = status;

@@ -9,7 +9,7 @@ namespace Meadow.Foundation.Leds
     /// </summary>
     public partial class Led
     {
-        private object syncRoot = new object();
+        private readonly object syncRoot = new object();
 
         private Task? animationTask = null;
         private CancellationTokenSource? cancellationTokenSource = null;
@@ -38,7 +38,7 @@ namespace Meadow.Foundation.Leds
         }
 
         /// <summary>
-        /// Start the Blink animation which sets turns the LED on and off with the especified durations
+        /// Start the Blink animation which sets turns the LED on and off with the specified durations
         /// </summary>
         /// <param name="onDuration">The duration the LED stays on</param>
         /// <param name="offDuration">The duration the LED stays off</param>

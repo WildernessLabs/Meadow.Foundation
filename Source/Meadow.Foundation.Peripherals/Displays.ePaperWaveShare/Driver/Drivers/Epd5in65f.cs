@@ -5,7 +5,7 @@ using Meadow.Hardware;
 namespace Meadow.Foundation.Displays
 {
     /// <summary>
-    /// Represents a WaveShare 5.65" ACeP 7 color epaper display
+    /// Represents a WaveShare 5.65" ACeP 7 color e-Paper display
     /// </summary>
     public class Epd5in65f : EPaperBase, IGraphicsDisplay
     {
@@ -253,7 +253,7 @@ namespace Meadow.Foundation.Displays
         /// Clear the display
         /// </summary>
         /// <param name="fillColor">The color used to fill the display buffer</param>
-        /// <param name="updateDisplay">Update the dipslay once the buffer has been cleared when true</param>
+        /// <param name="updateDisplay">Update the display once the buffer has been cleared when true</param>
         public void Fill(Color fillColor, bool updateDisplay = false)
         {
             Fill(fillColor);
@@ -305,7 +305,7 @@ namespace Meadow.Foundation.Displays
         }
 
         /// <summary>
-        /// Wait until the display busy state is sey
+        /// Wait until the display busy state is set
         /// </summary>
         protected virtual void WaitForBusyState(bool state)
         {

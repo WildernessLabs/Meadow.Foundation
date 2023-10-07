@@ -21,7 +21,7 @@ namespace Meadow.Foundation.Sensors.Motion
         public byte DefaultI2cAddress => (byte)Addresses.Default;
 
         /// <summary>
-        /// Raised when the acceration value changes
+        /// Raised when the acceleration value changes
         /// </summary>
         public event EventHandler<IChangeResult<Acceleration3D>> Acceleration3DUpdated = delegate { };
 
@@ -45,7 +45,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
         public Acceleration3D? Acceleration3D => Conditions.Acceleration3D;
         /// <summary>
-        /// Angualar acceleration 3D
+        /// Angular acceleration 3D
         /// </summary>
         public AngularVelocity3D? AngularVelocity3D => Conditions.AngularVelocity3D;
 
@@ -99,7 +99,7 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         /// <summary>
-        /// Raise events for subcribers and notify of value changes
+        /// Raise events for subscribers and notify of value changes
         /// </summary>
         /// <param name="changeResult">The updated sensor data</param>
         protected override void RaiseEventsAndNotify(IChangeResult<(Acceleration3D? Acceleration3D, AngularVelocity3D? AngularVelocity3D, Units.Temperature? Temperature)> changeResult)

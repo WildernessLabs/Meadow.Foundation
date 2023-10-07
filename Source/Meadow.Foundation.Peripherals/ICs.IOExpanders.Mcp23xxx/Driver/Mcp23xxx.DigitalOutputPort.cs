@@ -10,7 +10,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         public class DigitalOutputPort : DigitalOutputPortBase
         {
             /// <summary>
-            /// Enabable the caller to receive pin state updates
+            /// Enable the caller to receive pin state updates
             /// </summary>
             /// <param name="pin"></param>
             /// <param name="state"></param>
