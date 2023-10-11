@@ -44,7 +44,7 @@ namespace Meadow.Foundation.Sensors.Power
         /// <summary>
         /// The minimum output voltage
         /// </summary>
-        protected Current MinVoltgeDelta { get; private set; } = default!;
+        protected Current MinVoltageDelta { get; private set; } = default!;
 
         /// <summary>
         /// The last sensed Current

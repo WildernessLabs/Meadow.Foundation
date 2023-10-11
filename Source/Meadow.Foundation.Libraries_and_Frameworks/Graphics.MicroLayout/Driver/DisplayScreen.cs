@@ -138,7 +138,7 @@ public class DisplayScreen
     }
 
     /// <summary>
-    /// End an update process for the display screen, indicating that drawing should resume and ivalidating the DisplayScreen
+    /// End an update process for the display screen, indicating that drawing should resume and invalidating the DisplayScreen
     /// </summary>
     public void EndUpdate()
     {
