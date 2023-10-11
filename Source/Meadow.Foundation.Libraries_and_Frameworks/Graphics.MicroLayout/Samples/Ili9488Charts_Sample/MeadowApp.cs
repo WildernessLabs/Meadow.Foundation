@@ -42,8 +42,8 @@ public class MeadowApp : App<Windows>
     {
         var label = new Label(0, 0, screen.Width, screen.Height);
         label.Font = new Font12x20();
-        label.HorizontalAlignment = Meadow.Foundation.Graphics.HorizontalAlignment.Center;
-        label.VerticalAlignment = Meadow.Foundation.Graphics.VerticalAlignment.Center;
+        label.HorizontalAlignment = HorizontalAlignment.Center;
+        label.VerticalAlignment = VerticalAlignment.Center;
         label.TextColor = Color.Red;
         label.Text = "HELLO";
 
@@ -56,8 +56,8 @@ public class MeadowApp : App<Windows>
         var box = new Box(0, 0, screen.Width / 4, screen.Height);
         box.ForeColor = Color.Red;
         var label = new Label(0, 0, screen.Width / 4, screen.Height);
-        label.HorizontalAlignment = Meadow.Foundation.Graphics.HorizontalAlignment.Center;
-        label.VerticalAlignment = Meadow.Foundation.Graphics.VerticalAlignment.Center;
+        label.HorizontalAlignment = HorizontalAlignment.Center;
+        label.VerticalAlignment = VerticalAlignment.Center;
         label.TextColor = Color.Black;
         label.Text = "Meadow";
 
