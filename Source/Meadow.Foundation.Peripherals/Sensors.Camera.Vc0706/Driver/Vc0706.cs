@@ -133,7 +133,7 @@ namespace Meadow.Foundation.Sensors.Camera
         /// <returns>the image resolution as an ImageResolution enum</returns>
         public ImageResolution GetCaptureResolution()
         {
-            byte[] args = { 0x4, 0x4, 0x1, 0x00, 0x19 };
+            byte[] args = { 0x04, 0x04, 0x01, 0x00, 0x19 };
             if (!RunCommand(READ_DATA, args, (byte)args.Length, 6))
             {
                 return ImageResolution.Unknown;
@@ -162,7 +162,7 @@ namespace Meadow.Foundation.Sensors.Camera
         /// <returns></returns>
         public byte GetDownsize()
         {
-            byte[] args = { 0x0 };
+            byte[] args = { 0x00 };
             if (RunCommand(DOWNSIZE_STATUS, args, 1, 6) == false)
             {
                 return 0;
