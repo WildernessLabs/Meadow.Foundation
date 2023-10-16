@@ -27,7 +27,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <summary>
         /// The default SPI bus speed for the device
         /// </summary>
-        public Frequency DefaultSpiBusSpeed => new Frequency(375, Frequency.UnitType.Kilohertz);
+        public Frequency DefaultSpiBusSpeed => new(375, Frequency.UnitType.Kilohertz);
 
         /// <summary>
         /// The SPI bus speed for the device
@@ -59,6 +59,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
         private readonly IByteCommunications mcpDevice;
         private IDigitalOutputPort resetPort;
+        private IDigitalInterruptPort? interruptPort;
 
         private IDictionary<IPin, DigitalInterruptPort> interruptPorts;
 
@@ -113,6 +114,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 this.resetPort = resetPort;
                 ResetMcp();
             }
+
+            this.interruptPort = interruptPort;
 
             interruptPorts = new Dictionary<IPin, DigitalInterruptPort>();
 
@@ -311,6 +314,11 @@ namespace Meadow.Foundation.ICs.IOExpanders
             TimeSpan debounceDuration,
             TimeSpan glitchDuration)
         {
+            if (interruptPort == null)
+            {
+                throw new Exception("Must provide an interrupt pin for the Mcp23xxx to create digital interrupt ports");
+            }
+
             if (IsValidPin(pin))
             {
                 if (resistorMode == ResistorMode.InternalPullDown)

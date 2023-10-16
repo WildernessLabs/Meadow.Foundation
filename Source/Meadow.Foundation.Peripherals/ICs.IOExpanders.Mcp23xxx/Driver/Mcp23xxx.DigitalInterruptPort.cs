@@ -10,32 +10,13 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         public class DigitalInterruptPort : DigitalInterruptPortBase
         {
-            /// <summary>
-            /// Update state function 
-            /// Assign this when the Update method isn't reliable 
-            /// e.g. when not using interrupts/events
-            /// </summary>
-            public Func<IPin, bool> UpdateState;
-
-            /// <summary>
-            /// The port state
-            /// True is high, false is low
-            /// </summary>
-            public override bool State
-            {
-                get
-                {
-                    if (UpdateState != null) { Update(UpdateState.Invoke(Pin)); }
-                    return state;
-                }
-            }
+            /// <inheritdoc/>
+            public override bool State => state;
             private bool state = false;
 
             private DateTime lastUpdate;
 
-            /// <summary>
-            /// The resistor mode of the port
-            /// </summary>
+            /// <inheritdoc/>
             public override ResistorMode Resistor
             {
                 get => portResistorMode;
@@ -43,14 +24,10 @@ namespace Meadow.Foundation.ICs.IOExpanders
             }
             private readonly ResistorMode portResistorMode;
 
-            /// <summary>
-            /// Debouce duration
-            /// </summary>
+            /// <inheritdoc/>
             public override TimeSpan DebounceDuration { get; set; } = TimeSpan.Zero;
 
-            /// <summary>
-            /// Glitch duration
-            /// </summary>
+            /// <inheritdoc/>
             public override TimeSpan GlitchDuration
             {
                 get => TimeSpan.FromMilliseconds(0.00015);
