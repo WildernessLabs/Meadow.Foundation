@@ -1,7 +1,6 @@
 ﻿using Meadow.Peripherals.Sensors;
 using System;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace Meadow.Foundation
 {
@@ -10,9 +9,52 @@ namespace Meadow.Foundation
     /// </summary>
     /// <typeparam name="UNIT"></typeparam>
     public abstract class PollingSensorBase<UNIT>
-        : SamplingSensorBase<UNIT>, ISamplingSensor<UNIT>
+        : SamplingSensorBase<UNIT>, ISamplingSensor<UNIT>, IPollingSensor
         where UNIT : struct
     {
+        private UNIT? _previousConditions = null;
+        private ISensorMonitor? _sensorMonitor;
+
+        public PollingSensorBase()
+        {
+            SensorMonitor = new PollingSensorMonitor<UNIT>(this, base.SamplingTokenSource);
+        }
+
+        /// <summary>
+        /// The monitor being used to poll the sensor value
+        /// </summary>
+        public ISensorMonitor? SensorMonitor
+        {
+            get => _sensorMonitor;
+            set
+            {
+                if (_sensorMonitor != null)
+                {
+                    _sensorMonitor.SampleAvailable -= OnSensorSampleAvailable;
+                }
+                _sensorMonitor = value;
+                if (_sensorMonitor != null)
+                {
+                    _sensorMonitor.SampleAvailable += OnSensorSampleAvailable;
+                }
+            }
+        }
+
+        private void OnSensorSampleAvailable(object sender, object value)
+        {
+            if (sender != this) return;
+
+            Resolver.Log.Info($"Sample Available. Value is a {value.GetType().Name}. UNIT is a {typeof(UNIT).Name}");
+
+            _previousConditions = Conditions;
+
+            Conditions = (UNIT)value;
+
+            var result = new ChangeResult<UNIT>(Conditions, _previousConditions);
+
+            RaiseEventsAndNotify(result);
+        }
+
         /// <summary>
         /// Starts updating the sensor on the updateInterval frequency specified.
         ///
@@ -36,33 +78,8 @@ namespace Meadow.Foundation
                 if (updateInterval is { } ui) { base.UpdateInterval = ui; }
 
                 base.SamplingTokenSource = new CancellationTokenSource();
-                CancellationToken ct = SamplingTokenSource.Token;
 
-                UNIT oldConditions;
-                ChangeResult<UNIT> result;
-
-                var t = new Task(async () =>
-                {
-                    while (true)
-                    {
-                        if (ct.IsCancellationRequested)
-                        {
-                            observers.ForEach(x => x.OnCompleted());
-                            IsSampling = false;
-                            break;
-                        }
-                        oldConditions = Conditions;
-
-                        Conditions = await Read();
-
-                        result = new ChangeResult<UNIT>(Conditions, oldConditions);
-
-                        RaiseEventsAndNotify(result);
-
-                        await Task.Delay(UpdateInterval);
-                    }
-                }, SamplingTokenSource.Token, TaskCreationOptions.LongRunning);
-                t.Start();
+                _sensorMonitor?.StartSampling(this);
             }
         }
 
@@ -75,6 +92,7 @@ namespace Meadow.Foundation
             {
                 if (!IsSampling) { return; }
 
+                _sensorMonitor?.StopSampling(this);
                 SamplingTokenSource?.Cancel();
 
                 IsSampling = false;

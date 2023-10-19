@@ -24,6 +24,11 @@ namespace Meadow.Foundation
         public event EventHandler<IChangeResult<UNIT>> Updated = delegate { };
 
         /// <summary>
+        /// An event raised when an unhandled exception occurs during the sensor update process
+        /// </summary>
+        public event EventHandler<Exception> UnhandledSensorUpdateException = default!;
+
+        /// <summary>
         /// Sampling cancellation token source
         /// </summary>
         protected CancellationTokenSource? SamplingTokenSource { get; set; }
@@ -69,7 +74,15 @@ namespace Meadow.Foundation
         /// </summary>
         public virtual Task<UNIT> Read()
         {
-            return ReadSensor();
+            try
+            {
+                return ReadSensor();
+            }
+            catch (Exception ex)
+            {
+                UnhandledSensorUpdateException?.Invoke(this, ex);
+                return default!;
+            }
         }
 
         /// <summary>
