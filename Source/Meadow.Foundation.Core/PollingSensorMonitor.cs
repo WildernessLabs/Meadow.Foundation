@@ -34,8 +34,6 @@ internal class PollingSensorMonitor<UNIT> : ISensorMonitor
 
                 try
                 {
-                    Resolver.Log.Info($"Task reading {_sensor.GetType().Name}");
-
                     var c = await _sensor.Read();
                     SampleAvailable?.Invoke(_sensor, c);
                 }
@@ -49,15 +47,12 @@ internal class PollingSensorMonitor<UNIT> : ISensorMonitor
                 await Task.Delay(sensor.UpdateInterval);
             }
             _isSampling = false;
-            Resolver.Log.Info($"TASK ENDED");
         }, _cancellationSource.Token, TaskCreationOptions.LongRunning);
         t.Start();
     }
 
     public void StopSampling(ISamplingSensor sensor)
     {
-        Resolver.Log.Info($"{_sensor.GetType().Name} STOP SAMPLING");
-
         _cancellationSource.Cancel();
     }
 }

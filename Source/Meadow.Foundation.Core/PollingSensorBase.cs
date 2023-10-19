@@ -44,8 +44,6 @@ namespace Meadow.Foundation
         {
             if (sender != this) return;
 
-            Resolver.Log.Info($"Sample Available. Value is a {value.GetType().Name}. UNIT is a {typeof(UNIT).Name}");
-
             _previousConditions = Conditions;
 
             Conditions = (UNIT)value;
