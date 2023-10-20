@@ -10,30 +10,21 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         public class DigitalInputPort : DigitalInputPortBase
         {
-            /// <summary>
-            /// Update state function 
-            /// Assign this when the Update method isn't reliable 
-            /// e.g. when not using interrupts/events
-            /// </summary>
-            public Func<IPin, bool> UpdateState;
-
-            /// <summary>
-            /// The port state
-            /// True is high, false is low
-            /// </summary>
+            /// <inheritdoc/>
             public override bool State
             {
                 get
                 {
-                    if (UpdateState != null) { Update(UpdateState.Invoke(Pin)); }
+                    if (Pin.Controller is Mcp23xxx mcp)
+                    {
+                        Update(mcp.ReadPort(Pin));
+                    }
                     return state;
                 }
             }
             private bool state = false;
 
-            /// <summary>
-            /// The resistor mode of the port
-            /// </summary>
+            /// <inheritdoc/>
             public override ResistorMode Resistor
             {
                 get => portResistorMode;
@@ -45,7 +36,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// Create a new DigitalInputPort object
             /// </summary>
             /// <param name="pin">The interrupt pin</param>
-            /// <param name="interruptMode">The interrupt mode used for the interrupt pin</param>
             /// <param name="resistorMode">The resistor mode used by the interrupt pin</param>
             public DigitalInputPort(IPin pin, ResistorMode resistorMode = ResistorMode.Disabled)
                 : base(pin, (IDigitalChannelInfo)pin.SupportedChannels[0])
