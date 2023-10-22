@@ -148,6 +148,45 @@ public class DisplayScreen
 
     private void DrawLoop()
     {
+        if(Resolver.App != null)
+        {
+            DrawLoopThreaded(); ;
+        }
+        else
+        {
+            DrawLoopOnCaller();
+        }
+    }
+
+    private void DrawLoopOnCaller()
+    {
+        while (true)
+        {
+            {
+                if (!_updateInProgress && (IsInvalid || Controls.Any(c => c.IsInvalid)))
+                {
+                    _graphics.Clear(BackgroundColor);
+
+                    lock (Controls.SyncRoot)
+                    {
+                        foreach (var control in Controls)
+                        {
+                            if (control != null)
+                                // until micrographics supports invalidating regions, we have to invalidate everything when one control needs updating
+                                RefreshTree(control);
+                        }
+                    }
+                    _graphics.Show();
+                    IsInvalid = false;
+                }
+            }
+
+            Thread.Sleep(50);
+        }
+    }
+
+    private void DrawLoopThreaded()
+    {
         while (true)
         {
             Resolver.App.InvokeOnMainThread((_) =>
@@ -160,14 +199,17 @@ public class DisplayScreen
                     {
                         foreach (var control in Controls)
                         {
+                            if(control != null)
                             // until micrographics supports invalidating regions, we have to invalidate everything when one control needs updating
-                            RefreshTree(control);
+                                RefreshTree(control);
                         }
                     }
                     _graphics.Show();
                     IsInvalid = false;
                 }
-            });
+            }
+            
+            );
 
             Thread.Sleep(50);
         }
