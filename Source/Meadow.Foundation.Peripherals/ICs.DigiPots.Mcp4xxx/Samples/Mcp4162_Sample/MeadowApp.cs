@@ -2,42 +2,44 @@
 using Meadow.Devices;
 using Meadow.Foundation.ICs.DigiPots;
 using Meadow.Hardware;
+using Meadow.Units;
 using System.Threading.Tasks;
 
-namespace ICs.DigiPots.Ds3502_Sample
+namespace ICs.DigiPots.Mcp4162_Sample;
+
+public class MeadowApp : App<F7FeatherV1>
 {
-    public class MeadowApp : App<F7FeatherV1>
+    //<!=SNIP=>
+
+    protected Mcp4162 mcp;
+
+    public override Task Initialize()
     {
-        //<!=SNIP=>
+        Resolver.Log.Info("Initialize...");
 
-        protected Mcp4162 mcp;
+        mcp = new Mcp4162(
+            Device.CreateSpiBus(),
+            Device.Pins.D15.CreateDigitalOutputPort(),
+            new Resistance(5, Resistance.UnitType.Kiloohms)
+            );
 
-        public override Task Initialize()
-        {
-            Resolver.Log.Info("Initialize...");
-
-            mcp = new Mcp4162(
-                Device.CreateSpiBus(),
-                Device.Pins.D15.CreateDigitalOutputPort(),
-                new Meadow.Units.Resistance(5000, Meadow.Units.Resistance.UnitType.Ohms)
-                );
-
-            return base.Initialize();
-        }
-
-        public override async Task Run()
-        {
-            for (var r = 0; r <= 5000; r += 100)
-            {
-                Resolver.Log.Info($"Writing {r} ohms:0");
-                mcp.Rheostats[0].Resistance = new Meadow.Units.Resistance(r);
-                await Task.Delay(1000);
-
-                Resolver.Log.Info($"Read {mcp.Rheostats[0].Resistance.Ohms} ohms:0");
-                await Task.Delay(1000);
-            }
-        }
-
-        //<!=SNOP=>
+        return base.Initialize();
     }
+
+    public override async Task Run()
+    {
+        Resolver.Log.Info("Run");
+
+        for (var i = 0; i <= mcp.MaxResistance.Ohms; i += 100)
+        {
+            var r = new Resistance(i, Resistance.UnitType.Ohms);
+            Resolver.Log.Info($"Setting resistance to {r.Ohms:0} ohms");
+            mcp.Resistors[0].Resistance = r;
+            await Task.Delay(1000);
+        }
+
+        Resolver.Log.Info("Done");
+    }
+
+    //<!=SNOP=>
 }
