@@ -34,7 +34,7 @@ public class MeadowApp : App<F7FeatherV1>
         {
             var r = new Resistance(i, Resistance.UnitType.Ohms);
             Resolver.Log.Info($"Setting resistance to {r.Ohms:0} ohms");
-            mcp.Resistors[0].Resistance = r;
+            mcp.Rheostats[0].Resistance = r;
             await Task.Delay(1000);
         }
 

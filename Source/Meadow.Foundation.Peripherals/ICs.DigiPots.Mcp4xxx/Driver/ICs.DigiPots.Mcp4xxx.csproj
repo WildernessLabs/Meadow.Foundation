@@ -8,15 +8,15 @@
     <Authors>Wilderness Labs, Inc</Authors>
     <TargetFramework>netstandard2.1</TargetFramework>
     <OutputType>Library</OutputType>
-    <AssemblyName>Ds3502</AssemblyName>
+    <AssemblyName>Mcp4xxx</AssemblyName>
     <Company>Wilderness Labs, Inc</Company>
     <PackageProjectUrl>http://developer.wildernesslabs.co/Meadow/Meadow.Foundation/</PackageProjectUrl>
-    <PackageId>Meadow.Foundation.ICs.DigiPots.Ds3502</PackageId>
+    <PackageId>Meadow.Foundation.ICs.DigiPots.Mcp4xxx</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
-    <PackageTags>Meadow.Foundation, DigiPots, Ds3502</PackageTags>
+    <PackageTags>Meadow.Foundation, DigiPots, Mcp4101, Mcp4102, Mcp41xx, Mcp42xx, Mcp41x1, Mcp41x2, Mcp42x1, Mcp42x2</PackageTags>
     <Version>0.1.5</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Description>Ds3502 I2C digital potentiometer</Description>
+    <Description>Mcp4xxx SPI digital rheostats and potentiometers</Description>
   </PropertyGroup>
   <ItemGroup>
     <None Include="..\..\..\icon.png" Pack="true" PackagePath="" />

@@ -6,7 +6,10 @@ namespace Meadow.Foundation.ICs.DigiPots;
 
 public abstract partial class Mcp4xxx
 {
-    public class Resistor : IPotentiometer
+    /// <summary>
+    /// Represents a resistor array in an MCP4xxx digital potentiometer or rheostat.
+    /// </summary>
+    public class ResistorArray : IPotentiometer, IRheostat
     {
         private const int ReadData = (0x03 << 10);
         private const int WriteData = (0x00 << 10);
@@ -18,8 +21,10 @@ public abstract partial class Mcp4xxx
         private int _index;
         private ISpiCommunications _spiComms;
 
+        /// <inheritdoc/>
         public Resistance MaxResistance => _parent.MaxResistance;
 
+        /// <inheritdoc/>
         public Resistance Resistance
         {
             get
@@ -34,7 +39,7 @@ public abstract partial class Mcp4xxx
             }
         }
 
-        internal Resistor(Mcp4xxx parent, int index, ISpiCommunications spiComms, Resistance maxResistance, int resolutionSteps)
+        internal ResistorArray(Mcp4xxx parent, int index, ISpiCommunications spiComms)
         {
             if (index < 0 && index > 1) throw new ArgumentException();
 
