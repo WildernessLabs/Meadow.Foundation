@@ -29,7 +29,7 @@ public override Task Initialize()
     var consumer = Capacitive.CreateObserver(
         handler: result =>
         {
-            string oldValue = (result.Old is { } old) ? $"{old:n2}" : "n/a"; 
+            string oldValue = (result.Old is { } old) ? $"{old:n2}" : "n/a";
             Resolver.Log.Info($"Subscribed - " +
                 $"new: {result.New}, " +
                 $"old: {oldValue}");
@@ -41,7 +41,7 @@ public override Task Initialize()
     // classical .NET events can also be used:
     capacitive.HumidityUpdated += (sender, result) =>
     {
-        string oldValue = (result.Old is { } old) ? $"{old:n2}" : "n/a"; 
+        string oldValue = (result.Old is { } old) ? $"{old:n2}" : "n/a";
         Resolver.Log.Info($"Updated - New: {result.New}, Old: {oldValue}");
     };
 
@@ -56,7 +56,7 @@ public override Task Initialize()
 protected async Task ReadSensor()
 {
     var humidity = await capacitive.Read();
-    Resolver.Log.Info($"Initial humidity: {humidity:N2}C");
+    Resolver.Log.Info($"Initial humidity: {humidity:n2}");
 }
 
 ```

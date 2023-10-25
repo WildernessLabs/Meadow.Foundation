@@ -34,7 +34,7 @@ public override Task Initialize()
     return base.Initialize();
 }
 
-bool FilterResult(IChangeResult<MagneticField3D> result) 
+bool FilterResult(IChangeResult<MagneticField3D> result)
 {
     return result.New.Z > new MagneticField(0.1, MagneticField.UnitType.Gauss);
 }

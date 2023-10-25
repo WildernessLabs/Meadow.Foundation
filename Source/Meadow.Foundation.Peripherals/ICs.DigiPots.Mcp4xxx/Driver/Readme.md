@@ -1,8 +1,8 @@
-# Meadow.Foundation.Sensors.Temperature.Tmp102
+# Meadow.Foundation.ICs.DigiPots.Mcp4xxx
 
-**TMP102 I2C temperature sensor**
+**Mcp4xxx SPI digital rheostats and potentiometers**
 
-The **Tmp102** library is designed for the [Wilderness Labs](www.wildernesslabs.co) Meadow .NET IoT platform and is part of [Meadow.Foundation](https://developer.wildernesslabs.co/Meadow/Meadow.Foundation/).
+The **Mcp4xxx** library is designed for the [Wilderness Labs](www.wildernesslabs.co) Meadow .NET IoT platform and is part of [Meadow.Foundation](https://developer.wildernesslabs.co/Meadow/Meadow.Foundation/).
 
 The **Meadow.Foundation** peripherals library is an open-source repository of drivers and libraries that streamline and simplify adding hardware to your C# .NET Meadow IoT application.
 
@@ -13,38 +13,34 @@ To view all Wilderness Labs open-source projects, including samples, visit [gith
 ## Usage
 
 ```csharp
-Tmp102 tmp102;
+protected Mcp4162 mcp;
 
 public override Task Initialize()
 {
     Resolver.Log.Info("Initialize...");
 
-    tmp102 = new Tmp102(Device.CreateI2cBus());
+    mcp = new Mcp4162(
+        Device.CreateSpiBus(),
+        Device.Pins.D15.CreateDigitalOutputPort(),
+        new Resistance(5, Resistance.UnitType.Kiloohms)
+        );
 
-    var consumer = Tmp102.CreateObserver(
-        handler: result =>
-        {
-            Resolver.Log.Info($"Temperature New Value {result.New.Celsius}C");
-            Resolver.Log.Info($"Temperature Old Value {result.Old?.Celsius}C");
-        },
-        filter: null
-    );
-    tmp102.Subscribe(consumer);
-
-    tmp102.TemperatureUpdated += (object sender, IChangeResult<Meadow.Units.Temperature> e) =>
-    {
-        Resolver.Log.Info($"Temperature Updated: {e.New.Celsius:N2}C");
-    };
-
-    return Task.CompletedTask;
+    return base.Initialize();
 }
 
 public override async Task Run()
 {
-    var temp = await tmp102.Read();
-    Resolver.Log.Info($"Current temperature: {temp.Celsius} C");
+    Resolver.Log.Info("Run");
 
-    tmp102.StartUpdating(TimeSpan.FromSeconds(1));
+    for (var i = 0; i <= mcp.MaxResistance.Ohms; i += 100)
+    {
+        var r = new Resistance(i, Resistance.UnitType.Ohms);
+        Resolver.Log.Info($"Setting resistance to {r.Ohms:0} ohms");
+        mcp.Rheostats[0].Resistance = r;
+        await Task.Delay(1000);
+    }
+
+    Resolver.Log.Info("Done");
 }
 
 ```

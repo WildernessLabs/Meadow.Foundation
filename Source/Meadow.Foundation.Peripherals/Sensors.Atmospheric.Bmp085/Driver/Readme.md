@@ -28,7 +28,6 @@ public override Task Initialize()
         },
         filter: result =>
         {
-         
             if (result.Old?.Temperature is { } oldTemp &&
                 result.New.Temperature is { } newTemp)
             {
@@ -50,7 +49,7 @@ public override Task Initialize()
 
 public override async Task Run()
 {
-    if(sensor == null) { return; }
+    if (sensor == null) { return; }
 
     var conditions = await sensor.Read();
     Resolver.Log.Info($"Temperature: {conditions.Temperature?.Celsius}°C, Pressure: {conditions.Pressure?.Pascal}Pa");

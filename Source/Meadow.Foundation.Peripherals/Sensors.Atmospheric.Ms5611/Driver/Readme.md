@@ -41,7 +41,8 @@ public override Task Initialize()
     );
     sensor.Subscribe(consumer);
 
-    sensor.Updated += (sender, result) => {
+    sensor.Updated += (sender, result) =>
+    {
         Resolver.Log.Info($"  Temperature: {result.New.Temperature?.Celsius:N2}C");
         Resolver.Log.Info($"  Pressure: {result.New.Pressure?.Millibar:N2}mbar ({result.New.Pressure?.Pascal:N2}Pa)");
     };

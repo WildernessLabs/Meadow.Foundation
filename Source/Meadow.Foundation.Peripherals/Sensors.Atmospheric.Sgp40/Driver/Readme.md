@@ -39,7 +39,6 @@ public override Task Initialize()
         },
         filter: result =>
         {
-         
             return Math.Abs(result.New - result.Old ?? 0) > 10;
         }
     );
