@@ -23,15 +23,13 @@ namespace Meadow.Foundation.Controllers.Pid
         /// <returns></returns>
         public override float CalculateControlOutput()
         {
-            // init vars
-            float control = 0.0f;
-            var now = DateTime.Now;
+            var now = DateTime.UtcNow;
 
             // time delta (how long since last calculation)
             var dt = now - _lastUpdateTime;
             // seconds is better than ticks to bring our calculations into perspective
             //var seconds = (float)(dt.Ticks / 10000 / 1000);
-            var seconds = ((float)dt.Ticks / 10000f / 1000f);
+            var seconds = (dt.Ticks / 10000f / 1000f);
 
             // if no time has passed, don't make any changes.
             if (dt.Ticks <= 0.0) return _lastControlOutputValue;
@@ -53,7 +51,7 @@ namespace Meadow.Foundation.Controllers.Pid
             var derivative = (DerivativeComponent * 60) * diff;
 
             // add the appropriate corrections
-            control = ProportionalComponent * (error + integral + derivative);
+            var control = ProportionalComponent * (error + integral + derivative);
 
             //
             //Resolver.Log.Info("PID Control (preclamp): " + control.ToString("N4"));

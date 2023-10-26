@@ -42,13 +42,13 @@ namespace Meadow.Foundation.Sensors.Hid
         {
             if (state == true && State == false)
             {
-                buttonPressStart = DateTime.Now;
+                buttonPressStart = DateTime.UtcNow;
 
                 RaisePressStarted();
             }
             else if (state == false && State == true)
             {
-                TimeSpan pressDuration = DateTime.Now - buttonPressStart;
+                TimeSpan pressDuration = DateTime.UtcNow - buttonPressStart;
 
                 buttonPressStart = DateTime.MaxValue;
 

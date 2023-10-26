@@ -53,13 +53,13 @@ namespace Meadow.Foundation.ICs.IOExpanders
         {
             if (state == true && State == false)
             {   // save our press start time (for long press event)
-                buttonPressStart = DateTime.Now;
+                buttonPressStart = DateTime.UtcNow;
 
                 RaisePressStarted();
             }
             else if (state == false && State == true)
             {   // calculate the press duration
-                TimeSpan pressDuration = DateTime.Now - buttonPressStart;
+                TimeSpan pressDuration = DateTime.UtcNow - buttonPressStart;
 
                 // reset press start time
                 buttonPressStart = DateTime.MaxValue;

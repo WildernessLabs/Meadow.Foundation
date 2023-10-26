@@ -155,7 +155,7 @@ namespace Meadow.Foundation.Sensors.Weather
                 StopUpdating();
             }
 
-            if (samples?.Count > 0 && (DateTime.Now - samples?.Peek().New.Time > NoWindTimeout))
+            if (samples?.Count > 0 && (DateTime.UtcNow - samples?.Peek().New.Time > NoWindTimeout))
             {   //we've exceeded the no wind interval time 
                 samples?.Clear(); //will force a zero reading
             }
