@@ -107,9 +107,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             Conditions = newConditions;
             RequestPending = false;
 
-            if (UpdateInterval == null || DateTime.Now - lastUpdate >= UpdateInterval)
+            if (UpdateInterval == null || DateTime.UtcNow - lastUpdate >= UpdateInterval)
             {
-                lastUpdate = DateTime.Now;
+                lastUpdate = DateTime.UtcNow;
                 if (!IsSampling)
                     RaiseEventsAndNotify(changeResult); // Only raise events directly if periodic sampling is not enabled, as sampling will also raise the event.
             }

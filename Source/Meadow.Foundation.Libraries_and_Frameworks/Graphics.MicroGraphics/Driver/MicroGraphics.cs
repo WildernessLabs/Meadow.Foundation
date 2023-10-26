@@ -1544,7 +1544,7 @@ namespace Meadow.Foundation.Graphics
 
             isUpdating = true;
 
-            var timeSinceLastUpdate = DateTime.Now - lastUpdated;
+            var timeSinceLastUpdate = DateTime.UtcNow - lastUpdated;
 
             if (timeSinceLastUpdate < DelayBetweenFrames)
             {
@@ -1552,7 +1552,7 @@ namespace Meadow.Foundation.Graphics
             }
 
             await Task.Run(() => display.Show());
-            lastUpdated = DateTime.Now;
+            lastUpdated = DateTime.UtcNow;
 
             if (isUpdateRequested)
             {

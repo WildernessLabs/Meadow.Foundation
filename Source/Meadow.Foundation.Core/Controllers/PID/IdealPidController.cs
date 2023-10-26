@@ -13,7 +13,7 @@ namespace Meadow.Foundation.Controllers.Pid
         /// <returns></returns>
         public override float CalculateControlOutput()
         {
-            var now = DateTime.Now;
+            var now = DateTime.UtcNow;
 
             // time delta (how long since last calculation)
             var dt = now - _lastUpdateTime;

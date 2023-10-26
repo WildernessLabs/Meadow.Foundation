@@ -89,7 +89,7 @@ namespace Meadow.Foundation.Sensors.HallEffect
 
         private void InputPortChanged(object sender, DigitalPortResult e)
         {
-            var time = DateTime.Now;
+            var time = DateTime.UtcNow;
 
             // if it's the very first read, set the time and bail out
             if (numberOfReads == 0 && revolutionTimeStart == DateTime.MinValue)

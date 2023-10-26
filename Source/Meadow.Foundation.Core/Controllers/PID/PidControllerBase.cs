@@ -80,7 +80,7 @@ namespace Meadow.Foundation.Controllers.Pid
         /// </summary>
         public PidControllerBase()
         {
-            _lastUpdateTime = DateTime.Now;
+            _lastUpdateTime = DateTime.UtcNow;
             _lastError = 0;
             _integral = 0;
         }
