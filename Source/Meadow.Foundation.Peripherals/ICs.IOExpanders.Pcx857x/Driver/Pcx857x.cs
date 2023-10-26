@@ -33,7 +33,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <summary>
         /// Creates a new Pcx857x instance
         /// </summary>
-        /// <param name="i2cBus">The I2C buss the peripheral is connected to</param>
+        /// <param name="i2cBus">The I2C bus the peripheral is connected to</param>
         /// <param name="address">The bus address of the peripheral</param>
         /// <param name="interruptPin">The interrupt pin</param>
         public Pcx857x(II2cBus i2cBus, byte address, IPin? interruptPin)

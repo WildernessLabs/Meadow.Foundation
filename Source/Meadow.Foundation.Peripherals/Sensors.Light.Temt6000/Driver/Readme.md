@@ -26,8 +26,10 @@ public override Task Initialize()
     var consumer = Temt6000.CreateObserver(
         handler: result => Resolver.Log.Info($"Observer filter satisfied: {result.New.Volts:N2}V, old: {result.Old?.Volts:N2}V"),
         // only notify if the change is greater than 0.5V
-        filter: result => {
-            if (result.Old is { } old) { 
+        filter: result =>
+        {
+            if (result.Old is { } old)
+            {
                 return (result.New - old).Abs().Volts > 0.5; // returns true if > 0.5V change.
             }
             return false;
@@ -36,7 +38,8 @@ public override Task Initialize()
     sensor.Subscribe(consumer);
 
     // classical .NET events can also be used:
-    sensor.Updated += (sender, result) => {
+    sensor.Updated += (sender, result) =>
+    {
         Resolver.Log.Info($"Voltage Changed, new: {result.New.Volts:N2}V, old: {result.Old?.Volts:N2}V");
     };
 

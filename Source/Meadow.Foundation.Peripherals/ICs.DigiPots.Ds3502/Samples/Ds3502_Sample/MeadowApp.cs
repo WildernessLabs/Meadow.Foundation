@@ -1,10 +1,10 @@
 ﻿using Meadow;
 using Meadow.Devices;
-using Meadow.Foundation.ICs.IOExpanders;
+using Meadow.Foundation.ICs.DigiPots;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace ICs.IOExpanders.Ds3502_Sample
+namespace ICs.DigiPots.Ds3502_Sample
 {
     public class MeadowApp : App<F7FeatherV2>
     {

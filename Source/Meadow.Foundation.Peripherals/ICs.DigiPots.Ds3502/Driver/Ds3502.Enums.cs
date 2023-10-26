@@ -1,4 +1,4 @@
-﻿namespace Meadow.Foundation.ICs.IOExpanders
+﻿namespace Meadow.Foundation.ICs.DigiPots
 {
     public partial class Ds3502
     {
@@ -30,7 +30,7 @@
             Default = Address_0x28
         }
 
-        enum Register : byte
+        private enum Register : byte
         {
             /// <summary>
             /// Wiper value register

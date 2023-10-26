@@ -26,8 +26,10 @@ public override Task Initialize()
         handler: result => Resolver.Log.Info($"Observer: filter satisfied: {result.New.Lux:N2}Lux, old: {result.Old?.Lux:N2}Lux"),
 
         // only notify if the visible light changes by 100 lux (put your hand over the sensor to trigger)
-        filter: result => {
-            if (result.Old is { } old) { 
+        filter: result =>
+        {
+            if (result.Old is { } old)
+            {
                 // returns true if > 100lux change
                 return (result.New - old).Abs().Lux > 100;
             }

@@ -37,7 +37,7 @@ public override Task Initialize()
         filter: result =>
         {
             if (result.Old is { } old)
-            { 
+            {
                 // returns true if > 100lux change
                 return ((result.New.AmbientLight.Value - old.AmbientLight.Value).Abs().Lux > 100);
             }

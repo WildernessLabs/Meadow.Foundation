@@ -13,7 +13,7 @@ To view all Wilderness Labs open-source projects, including samples, visit [gith
 ## Usage
 
 ```csharp
-Frequency frequency = new Frequency(50, Frequency.UnitType.Hertz);
+readonly Frequency frequency = new Frequency(50, Frequency.UnitType.Hertz);
 const float armMs = 0.5f;
 const float powerIncrement = 0.05f;
 

@@ -37,7 +37,7 @@ public override Task Initialize()
         filter: result =>
         {
             if (result.Old is { } old)
-            { 
+            {
                 return ((result.New - old).Z > new Acceleration(1, AU.Gravity));
             }
             return false;

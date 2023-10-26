@@ -24,8 +24,8 @@ public override Task Initialize()
     var consumer = Tmp102.CreateObserver(
         handler: result =>
         {
-            Resolver.Log.Info($"Temperature New Value { result.New.Celsius}C");
-            Resolver.Log.Info($"Temperature Old Value { result.Old?.Celsius}C");
+            Resolver.Log.Info($"Temperature New Value {result.New.Celsius}C");
+            Resolver.Log.Info($"Temperature Old Value {result.Old?.Celsius}C");
         },
         filter: null
     );

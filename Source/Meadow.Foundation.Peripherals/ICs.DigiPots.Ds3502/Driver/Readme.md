@@ -1,4 +1,4 @@
-# Meadow.Foundation.ICs.IOExpanders.Ds3502
+# Meadow.Foundation.ICs.DigiPots.Ds3502
 
 **Ds3502 I2C digital potentiometer**
 

@@ -18,7 +18,7 @@ Tea5767 radio;
 public override Task Initialize()
 {
     Resolver.Log.Info("Initializing...");
-    
+
     radio = new Tea5767(Device.CreateI2cBus());
 
     return Task.CompletedTask;

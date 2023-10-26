@@ -31,7 +31,7 @@ public override Task Initialize()
 }
 
 public override Task Run()
-{ 
+{
     rfidReader.StartReading();
 
     return Task.CompletedTask;
@@ -39,7 +39,8 @@ public override Task Run()
 
 private void RfidReaderOnTagRead(object sender, RfidReadResult e)
 {
-    if (e.Status == RfidValidationStatus.Ok) {
+    if (e.Status == RfidValidationStatus.Ok)
+    {
         Resolver.Log.Info($"From event - Tag value is {DebugInformation.Hexadecimal(e.RfidTag)}");
         return;
     }
@@ -53,7 +54,7 @@ private class RfidObserver : IObserver<byte[]>
     {
         Resolver.Log.Info("From IObserver - RfidReader has terminated, no more events will be emitted.");
     }
-     
+
     public void OnError(Exception error)
     {
         Resolver.Log.Error($"From IObserver - {error}");
