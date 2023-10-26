@@ -35,8 +35,7 @@ namespace Meadow.Foundation.Sensors.Light
         /// <summary>
         /// Raised when Luminosity value changes
         /// </summary>
-        public event EventHandler<IChangeResult<Illuminance>> LuminosityUpdated = delegate { };
-
+        public event EventHandler<IChangeResult<Illuminance>> IlluminanceUpdated = delegate { };
 
         /// <summary>
         /// Sensor package ID
@@ -166,7 +165,7 @@ namespace Meadow.Foundation.Sensors.Light
             }
             if (changeResult.New.Integrated is { } integrated)
             {
-                LuminosityUpdated?.Invoke(this, new ChangeResult<Illuminance>(integrated, changeResult.Old?.Integrated));
+                IlluminanceUpdated?.Invoke(this, new ChangeResult<Illuminance>(integrated, changeResult.Old?.Integrated));
             }
 
             base.RaiseEventsAndNotify(changeResult);

@@ -17,7 +17,7 @@ namespace Meadow.Foundation.Sensors.Light
         /// <summary>
         /// Raised when the luminosity changes
         /// </summary>
-        public event EventHandler<IChangeResult<Illuminance>> LuminosityUpdated = delegate { };
+        public event EventHandler<IChangeResult<Illuminance>> IlluminanceUpdated = delegate { };
 
         /// <summary>
         /// The current Illuminance value
@@ -285,7 +285,7 @@ namespace Meadow.Foundation.Sensors.Light
         {
             if (changeResult.New.AmbientLight is { } ambient)
             {
-                LuminosityUpdated?.Invoke(this, new ChangeResult<Illuminance>(ambient, changeResult.Old?.AmbientLight));
+                IlluminanceUpdated?.Invoke(this, new ChangeResult<Illuminance>(ambient, changeResult.Old?.AmbientLight));
             }
             base.RaiseEventsAndNotify(changeResult);
         }
