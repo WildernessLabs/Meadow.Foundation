@@ -91,7 +91,7 @@ namespace Meadow.Foundation.Sensors.Buttons
         {
             if (state)
             {
-                ButtonPressStart = DateTime.Now;
+                ButtonPressStart = DateTime.UtcNow;
                 RaisePressStarted();
             }
             else
@@ -101,7 +101,7 @@ namespace Meadow.Foundation.Sensors.Buttons
                     return;
                 }
 
-                TimeSpan pressDuration = DateTime.Now - ButtonPressStart;
+                TimeSpan pressDuration = DateTime.UtcNow - ButtonPressStart;
                 ButtonPressStart = DateTime.MaxValue;
 
                 if (LongClickedThreshold > TimeSpan.Zero && pressDuration > LongClickedThreshold)

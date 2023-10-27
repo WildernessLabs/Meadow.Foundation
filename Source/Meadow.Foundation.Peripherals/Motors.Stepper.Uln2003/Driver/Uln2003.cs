@@ -149,7 +149,7 @@ namespace Meadow.Foundation.Motors.Stepper
         {
             double lastStepTime = 0;
 
-            startTime = DateTime.Now;
+            startTime = DateTime.UtcNow;
 
             var isClockwise = steps >= 0;
             this.steps = Math.Abs(steps);
@@ -160,7 +160,7 @@ namespace Meadow.Foundation.Motors.Stepper
 
             while (currentStep < this.steps)
             {
-                double elapsedMicroseconds = (DateTime.Now - startTime).TotalMilliseconds * 1000;
+                double elapsedMicroseconds = (DateTime.UtcNow - startTime).TotalMilliseconds * 1000;
 
                 if (elapsedMicroseconds - lastStepTime >= stepMicrosecondsDelay)
                 {

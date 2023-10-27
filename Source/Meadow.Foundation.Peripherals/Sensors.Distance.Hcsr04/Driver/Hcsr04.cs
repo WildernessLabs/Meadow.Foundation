@@ -85,7 +85,7 @@ namespace Meadow.Foundation.Sensors.Distance
             Thread.Sleep(1); //smallest amount of time we can wait
 
             // Start Clock
-            tickStart = DateTime.Now.Ticks;
+            tickStart = DateTime.UtcNow.Ticks;
             // Trigger device to measure distance via sonic pulse
             triggerPort.State = false;
         }
@@ -94,12 +94,12 @@ namespace Meadow.Foundation.Sensors.Distance
         {
             if (e.New.State)
             {
-                tickStart = DateTime.Now.Ticks;
+                tickStart = DateTime.UtcNow.Ticks;
                 return;
             }
 
             // Calculate Difference
-            var elapsed = DateTime.Now.Ticks - tickStart;
+            var elapsed = DateTime.UtcNow.Ticks - tickStart;
 
             // Return elapsed ticks
             // x10 for ticks to micro sec
@@ -109,9 +109,6 @@ namespace Meadow.Foundation.Sensors.Distance
             var oldDistance = Distance;
             var newDistance = new Length(curDis, Length.UnitType.Centimeters);
             Distance = newDistance;
-
-            //debug - remove 
-            Resolver.Log.Info($"{elapsed}, {curDis}, {Distance}, {DateTime.Now.Ticks}");
 
             //restore this before publishing to hide false results 
             //    if (CurrentDistance < MinimumDistance || CurrentDistance > MaximumDistance)

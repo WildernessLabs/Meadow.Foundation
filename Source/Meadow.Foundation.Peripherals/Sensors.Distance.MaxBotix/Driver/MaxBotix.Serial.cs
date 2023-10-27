@@ -69,7 +69,7 @@ namespace Meadow.Foundation.Sensors.Distance
 
             Length.UnitType units = GetUnitsForSensor(sensorType);
 
-            ChangeResult<Length> changeResult = new ChangeResult<Length>()
+            ChangeResult<Length> changeResult = new()
             {
                 New = new Length(value, units),
                 Old = Distance,
@@ -77,9 +77,9 @@ namespace Meadow.Foundation.Sensors.Distance
 
             Distance = changeResult.New;
 
-            if (updateInterval == null || DateTime.Now - lastUpdate >= updateInterval)
+            if (updateInterval == null || DateTime.UtcNow - lastUpdate >= updateInterval)
             {
-                lastUpdate = DateTime.Now;
+                lastUpdate = DateTime.UtcNow;
                 RaiseEventsAndNotify(changeResult);
             }
         }

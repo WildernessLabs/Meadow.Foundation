@@ -76,9 +76,9 @@ namespace Meadow.Foundation.Sensors.Weather
                 Old = RainDepth - DepthPerClick, //last reading, ClickCount will always be at least 1
             };
 
-            if (DateTime.Now - lastUpdated >= UpdateInterval)
+            if (DateTime.UtcNow - lastUpdated >= UpdateInterval)
             {
-                lastUpdated = DateTime.Now;
+                lastUpdated = DateTime.UtcNow;
                 RaiseEventsAndNotify(changeResult);
             }
         }
