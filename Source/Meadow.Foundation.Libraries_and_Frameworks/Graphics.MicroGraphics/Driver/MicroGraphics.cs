@@ -1625,7 +1625,7 @@ namespace Meadow.Foundation.Graphics
         /// <param name="updateDisplay">Update the display immediately when true</param>
         public virtual void Clear(bool updateDisplay = false)
         {
-            if (display.DisabledColor == Color.Black)
+            if (display == null || display.DisabledColor == Color.Black)
             {
                 PixelBuffer.Clear();
             }
