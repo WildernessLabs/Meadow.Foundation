@@ -19,8 +19,8 @@ namespace Meadow.Foundation.Graphics
         /// <summary>
         /// PixelBuffer draw target
         /// </summary>
-        protected IPixelBuffer PixelBuffer => (display != null) ? display.PixelBuffer : _memoryBuffer;
-        private readonly IPixelBuffer _memoryBuffer = default!;
+        protected IPixelBuffer PixelBuffer => (display != null) ? display.PixelBuffer : memoryBuffer;
+        private readonly IPixelBuffer memoryBuffer = default!;
 
         /// <summary>
         /// ignore pixels that are outside of the pixel buffer coordinate space
@@ -123,7 +123,7 @@ namespace Meadow.Foundation.Graphics
         /// </summary>
         public TimeSpan DelayBetweenFrames { get; set; } = TimeSpan.Zero;
 
-        private readonly object _lock = new object();
+        private readonly object _lock = new();
         private bool isUpdating = false;
         private bool isUpdateRequested = false;
 
@@ -148,7 +148,7 @@ namespace Meadow.Foundation.Graphics
         /// <param name="initializeBuffer">Initialize the off-screen buffer if true</param>
         public MicroGraphics(PixelBufferBase pixelBuffer, bool initializeBuffer)
         {
-            _memoryBuffer = pixelBuffer;
+            memoryBuffer = pixelBuffer;
 
             if (initializeBuffer)
             {
@@ -810,11 +810,18 @@ namespace Meadow.Foundation.Graphics
             }
             else
             {
-                int offset = Stroke >> 1;
-
-                for (int i = 0; i < Stroke; i++)
+                if (Stroke == 1)
                 {
-                    DrawCircleOutline(centerX, centerY, radius - offset + i, centerBetweenPixels, color);
+                    DrawCircleOutline(centerX, centerY, radius, centerBetweenPixels, color);
+                }
+                else
+                {
+                    int offset = (Stroke - 1) >> 1;
+
+                    for (int i = 0; i < Stroke; i++)
+                    {
+                        DrawCircleOutline(centerX, centerY, radius - offset + i, centerBetweenPixels, color);
+                    }
                 }
             }
         }
@@ -1018,11 +1025,20 @@ namespace Meadow.Foundation.Graphics
 
         private void DrawCircleFilled(int centerX, int centerY, int radius, bool centerBetweenPixels, Color color)
         {
+            if (Stroke > 1)
+            {
+                radius += Stroke >> 1;
+            }
+
             var d = 3 - (2 * radius);
             var x = 0;
             var y = radius;
 
             int offset = centerBetweenPixels ? 1 : 0;
+
+            //override the stroke behavior 
+            var stroke = Stroke;
+            Stroke = 1;
 
             while (x <= y)
             {
@@ -1043,15 +1059,7 @@ namespace Meadow.Foundation.Graphics
                 x++;
             }
 
-            if (Stroke > 1)
-            {
-                offset = Stroke >> 1;
-
-                for (int i = 0; i < Stroke; i++)
-                {
-                    DrawCircleOutline(centerX, centerY, radius - offset + i, centerBetweenPixels, color);
-                }
-            }
+            Stroke = stroke;
         }
 
         /// <summary>
