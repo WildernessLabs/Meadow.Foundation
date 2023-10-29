@@ -47,10 +47,8 @@ namespace Meadow.Foundation.Sensors.Buttons
         protected DateTime ButtonPressStart { get; set; } = DateTime.MaxValue;
 
         /// <summary>
-        /// The button port resistor mode
+        /// The digital input port used by the button
         /// </summary>
-//        protected ResistorMode resistorMode => DigitalIn.Resistor;
-
         protected IDigitalInputPort DigitalIn { get; private set; }
 
         /// <summary>
@@ -58,6 +56,10 @@ namespace Meadow.Foundation.Sensors.Buttons
         /// </summary>
         public TimeSpan LongClickedThreshold { get; set; } = TimeSpan.Zero;
 
+        /// <summary>
+        /// Initializes a new instance of the PushButtonBase class with the specified digital input port
+        /// </summary>
+        /// <param name="inputPort">The digital input port to associate with the push button</param>
         protected PushButtonBase(IDigitalInputPort inputPort)
         {
             LongClickedThreshold = DefaultLongPressThreshold;

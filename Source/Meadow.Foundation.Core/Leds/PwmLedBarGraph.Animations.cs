@@ -224,7 +224,7 @@ namespace Meadow.Foundation.Leds
                             brightness = highBrightness;
                         }
 
-                        SetBrightness(brightness);
+                        _ = SetBrightness(brightness);
 
                         Thread.Sleep(intervalTime);
                     }
