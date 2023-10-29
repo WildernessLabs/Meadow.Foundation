@@ -148,16 +148,18 @@ namespace Meadow.Foundation.Displays
             UpdateBuffer();
         }
 
-        void SendCommand(byte command, byte[] data)
+        void SendCommand(byte command, byte[]? data)
         {
-            dataCommandPort.State = (Command);
+            dataCommandPort.State = Command;
             Write(command);
 
             if (data != null)
             {
-                dataCommandPort.State = (Data);
+                dataCommandPort.State = Data;
                 for (int i = 0; i < data.Length; i++)
+                {
                     Write(data[i]);
+                }
             }
         }
     }

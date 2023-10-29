@@ -95,7 +95,7 @@ namespace Meadow.Foundation.Displays
             SendData(0x01);
 
             SendCommand(0xE0);
-            dataCommandPort.State = (Data);
+            dataCommandPort.State = Data;
             Write(0x04);
             Write(0x3F);
             Write(0x25);

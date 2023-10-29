@@ -87,12 +87,12 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// The reset port
         /// </summary>
-        protected IDigitalOutputPort resetPort;
+        protected IDigitalOutputPort? resetPort;
 
         /// <summary>
         /// The chip select port
         /// </summary>
-        protected IDigitalOutputPort chipSelectPort;
+        protected IDigitalOutputPort? chipSelectPort;
 
         /// <summary>
         /// The spi peripheral for the display
@@ -168,11 +168,11 @@ namespace Meadow.Foundation.Displays
         /// <param name="width">Width of display in pixels</param>
         /// <param name="height">Height of display in pixels</param>
         /// <param name="colorMode">The color mode to use for the display buffer</param>
-        public TftSpiBase(ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
+        public TftSpiBase(ISpiBus spiBus, IPin? chipSelectPin, IPin dcPin, IPin? resetPin,
             int width, int height, ColorMode colorMode = ColorMode.Format16bppRgb565)
             : this(
                     spiBus,
-                    chipSelectPin?.CreateDigitalOutputPort(),
+                    chipSelectPin?.CreateDigitalOutputPort() ?? null,
                     dcPin.CreateDigitalOutputPort(),
                     resetPin?.CreateDigitalOutputPort(),
                     width, height, colorMode
@@ -191,9 +191,9 @@ namespace Meadow.Foundation.Displays
         /// <param name="height">Height of display in pixels</param>
         /// <param name="colorMode">The color mode to use for the display buffer</param>
         public TftSpiBase(ISpiBus spiBus,
-            IDigitalOutputPort chipSelectPort,
+            IDigitalOutputPort? chipSelectPort,
             IDigitalOutputPort dataCommandPort,
-            IDigitalOutputPort resetPort,
+            IDigitalOutputPort? resetPort,
             int width, int height,
             ColorMode colorMode = ColorMode.Format16bppRgb565)
         {
