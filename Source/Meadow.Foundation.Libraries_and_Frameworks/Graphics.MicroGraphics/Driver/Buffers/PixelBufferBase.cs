@@ -122,7 +122,10 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// </summary>
         public virtual void Clear()
         {
-            Array.Clear(Buffer, 0, Buffer.Length);
+            if (Buffer != null)
+            {
+                Array.Clear(Buffer, 0, Buffer.Length);
+            }
         }
 
         /// <summary>
@@ -257,7 +260,7 @@ namespace Meadow.Foundation.Graphics.Buffers
         public T ScaleUp<T>(int scaleFactor)
             where T : PixelBufferBase, new()
         {
-            T newBuffer = new T
+            T newBuffer = new()
             {
                 Width = Width * scaleFactor,
                 Height = Height * scaleFactor,
@@ -289,7 +292,7 @@ namespace Meadow.Foundation.Graphics.Buffers
                 return Clone<T>();
             }
 
-            T newBuffer = new T()
+            T newBuffer = new()
             {
                 Width = Width,
                 Height = Height,
@@ -346,7 +349,7 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// <param name="disposing"></param>
         protected virtual void Dispose(bool disposing)
         {
-            if(!isDisposed)
+            if (!isDisposed)
             {
                 if (createdBuffer)
                 {

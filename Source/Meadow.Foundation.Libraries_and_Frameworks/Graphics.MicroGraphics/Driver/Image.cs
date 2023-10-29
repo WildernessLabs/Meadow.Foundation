@@ -13,7 +13,7 @@ namespace Meadow.Foundation.Graphics
         /// <summary>
         /// The image pixel data
         /// </summary>
-        public IPixelBuffer DisplayBuffer { get; private set; }
+        public IPixelBuffer? DisplayBuffer { get; private set; }
 
         /// <summary>
         /// The image width in pixels

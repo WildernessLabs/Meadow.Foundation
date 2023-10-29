@@ -14,7 +14,7 @@ namespace Meadow.Foundation.Graphics
         /// <summary>
         /// Display object responsible for managing the buffer and rendering
         /// </summary>
-        protected readonly IGraphicsDisplay display;
+        protected readonly IGraphicsDisplay? display;
 
         /// <summary>
         /// PixelBuffer draw target
@@ -26,6 +26,16 @@ namespace Meadow.Foundation.Graphics
         /// ignore pixels that are outside of the pixel buffer coordinate space
         /// </summary>
         public bool IgnoreOutOfBoundsPixels = true;
+
+        /// <summary>
+        /// The color used when a pixel is enabled (on)
+        /// </summary>
+        public Color EnabledColor => display != null ? display.EnabledColor : Color.White;
+
+        /// <summary>
+        /// The color used when a pixel is not enabled (off)
+        /// </summary>
+        public Color DisabledColor => display != null ? display.EnabledColor : Color.Black;
 
         /// <summary>
         /// Font used for drawing text to the display
@@ -187,7 +197,7 @@ namespace Meadow.Foundation.Graphics
         /// <param name="enabled">Turn the pixel on (true) or off (false)</param>
         public void DrawPixel(int x, int y, bool enabled)
         {
-            DrawPixel(x, y, enabled ? display.EnabledColor : display.DisabledColor);
+            DrawPixel(x, y, enabled ? EnabledColor : DisabledColor);
         }
 
         /// <summary>
@@ -257,7 +267,7 @@ namespace Meadow.Foundation.Graphics
         /// <param name="enabled">Turn the pixel on (true) or off (false)</param>
         public void DrawLine(int x0, int y0, int x1, int y1, bool enabled)
         {
-            DrawLine(x0, y0, x1, y1, enabled ? display.EnabledColor : display.DisabledColor);
+            DrawLine(x0, y0, x1, y1, enabled ? EnabledColor : DisabledColor);
         }
 
         /// <summary>
@@ -270,7 +280,7 @@ namespace Meadow.Foundation.Graphics
         /// <param name="enabled">Turn the pixel on (true) or off (false)</param>
         public void DrawLine(int x, int y, int length, float angle, bool enabled)
         {
-            DrawLine(x, y, length, angle, enabled ? display.EnabledColor : display.DisabledColor);
+            DrawLine(x, y, length, angle, enabled ? EnabledColor : DisabledColor);
         }
 
         /// <summary>
@@ -402,7 +412,7 @@ namespace Meadow.Foundation.Graphics
         /// <param name="enabled">Turn the pixel on (true) or off (false)</param>
         public void DrawHorizontalLine(int x, int y, int length, bool enabled)
         {
-            DrawHorizontalLine(x, y, length, enabled ? display.EnabledColor : display.DisabledColor);
+            DrawHorizontalLine(x, y, length, enabled ? EnabledColor : DisabledColor);
         }
 
         /// <summary>
@@ -457,7 +467,7 @@ namespace Meadow.Foundation.Graphics
         /// <param name="enabled">Show the line when (true) or off (false)</param>
         public void DrawVerticalLine(int x, int y, int length, bool enabled)
         {
-            DrawVerticalLine(x, y, length, enabled ? display.EnabledColor : display.DisabledColor);
+            DrawVerticalLine(x, y, length, enabled ? EnabledColor : DisabledColor);
         }
 
         /// <summary>
@@ -601,7 +611,7 @@ namespace Meadow.Foundation.Graphics
         /// <param name="centerBetweenPixels">If true, the center of the arc is between the assigned pixel and the next pixel, false it's directly on the center pixel</param>
         public void DrawArc(int centerX, int centerY, int radius, Angle startAngle, Angle endAngle, bool enabled = true, bool centerBetweenPixels = true)
         {
-            DrawArc(centerX, centerY, radius, startAngle, endAngle, enabled ? display.EnabledColor : display.DisabledColor, centerBetweenPixels);
+            DrawArc(centerX, centerY, radius, startAngle, endAngle, enabled ? EnabledColor : DisabledColor, centerBetweenPixels);
         }
 
         /// <summary>
@@ -662,7 +672,7 @@ namespace Meadow.Foundation.Graphics
         /// <param name="filled">Draw a filled triangle?</param>
         public void DrawTriangle(int x0, int y0, int x1, int y1, int x2, int y2, bool enabled = true, bool filled = false)
         {
-            DrawTriangle(x0, y0, x1, y1, x2, y2, enabled ? display.EnabledColor : display.DisabledColor, filled);
+            DrawTriangle(x0, y0, x1, y1, x2, y2, enabled ? EnabledColor : DisabledColor, filled);
         }
 
         /// <summary>
@@ -785,7 +795,7 @@ namespace Meadow.Foundation.Graphics
         /// <param name="centerBetweenPixels">Set center between pixels</param>
         public void DrawCircle(int centerX, int centerY, int radius, bool enabled, bool filled = false, bool centerBetweenPixels = false)
         {
-            DrawCircle(centerX, centerY, radius, enabled ? display.EnabledColor : display.DisabledColor, filled, centerBetweenPixels);
+            DrawCircle(centerX, centerY, radius, enabled ? EnabledColor : DisabledColor, filled, centerBetweenPixels);
         }
 
         /// <summary>
@@ -856,7 +866,7 @@ namespace Meadow.Foundation.Graphics
         /// <param name="centerBetweenPixels"></param>
         public void DrawCircleQuadrant(int centerX, int centerY, int radius, int quadrant, bool enabled = true, bool filled = false, bool centerBetweenPixels = false)
         {
-            DrawCircleQuadrant(centerX, centerY, radius, quadrant, enabled ? display.EnabledColor : display.DisabledColor, filled, centerBetweenPixels);
+            DrawCircleQuadrant(centerX, centerY, radius, quadrant, enabled ? EnabledColor : DisabledColor, filled, centerBetweenPixels);
         }
 
         /// <summary>
@@ -1073,7 +1083,7 @@ namespace Meadow.Foundation.Graphics
         /// <param name="filled">Fill the rectangle (true) or draw the outline (false, default)</param>
         public void DrawRectangle(int x, int y, int width, int height, bool enabled, bool filled = false)
         {
-            DrawRectangle(x, y, width, height, enabled ? display.EnabledColor : display.DisabledColor, filled);
+            DrawRectangle(x, y, width, height, enabled ? EnabledColor : DisabledColor, filled);
         }
 
         /// <summary>
@@ -1140,7 +1150,7 @@ namespace Meadow.Foundation.Graphics
         /// <param name="filled">Fill the rectangle (true) or draw the outline (false, default)</param>
         public void DrawRoundedRectangle(int x, int y, int width, int height, int cornerRadius, bool enabled, bool filled = false)
         {
-            DrawRoundedRectangle(x, y, width, height, cornerRadius, enabled ? display.EnabledColor : display.DisabledColor, filled);
+            DrawRoundedRectangle(x, y, width, height, cornerRadius, enabled ? EnabledColor : DisabledColor, filled);
         }
 
         /// <summary>
@@ -1531,7 +1541,7 @@ namespace Meadow.Foundation.Graphics
                 isUpdating = true;
             }
 
-            display.Show();
+            display?.Show();
 
             isUpdating = false;
         }
@@ -1559,7 +1569,7 @@ namespace Meadow.Foundation.Graphics
                 await Task.Delay(DelayBetweenFrames - timeSinceLastUpdate);
             }
 
-            await Task.Run(() => display.Show());
+            await Task.Run(() => display?.Show());
             lastUpdated = DateTime.UtcNow;
 
             if (isUpdateRequested)
@@ -1577,7 +1587,7 @@ namespace Meadow.Foundation.Graphics
         /// </summary>
         public virtual void ShowUnsafe()
         {
-            display.Show();
+            display?.Show();
         }
 
         /// <summary>
@@ -1586,7 +1596,7 @@ namespace Meadow.Foundation.Graphics
         /// </summary>
         public virtual void ShowUnsafe(int left, int top, int right, int bottom)
         {
-            display.Show(left, top, right, bottom);
+            display?.Show(left, top, right, bottom);
         }
 
         /// <summary>
@@ -1605,7 +1615,7 @@ namespace Meadow.Foundation.Graphics
                 isUpdating = true;
             }
 
-            display.Show(left, top, right, bottom);
+            display?.Show(left, top, right, bottom);
 
             isUpdating = false;
         }
@@ -1650,7 +1660,7 @@ namespace Meadow.Foundation.Graphics
         /// <param name="updateDisplay">Update the display immediately when true</param>
         public virtual void Clear(int originX, int originY, int width, int height, bool updateDisplay = false)
         {
-            PixelBuffer.Fill(originX, originY, width, height, display.DisabledColor);
+            PixelBuffer.Fill(originX, originY, width, height, DisabledColor);
 
             if (updateDisplay)
             {

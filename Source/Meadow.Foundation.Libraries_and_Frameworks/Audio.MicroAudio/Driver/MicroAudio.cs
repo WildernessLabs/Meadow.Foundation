@@ -10,8 +10,8 @@ namespace Meadow.Foundation.Audio
     {
         readonly IToneGenerator speaker;
 
-        SystemSounds systemSounds;
-        GameSounds gameSounds;
+        SystemSounds? systemSounds;
+        GameSounds? gameSounds;
 
         /// <summary>
         /// Create a new MicroAudio instance from a IToneGenerator driver instance
