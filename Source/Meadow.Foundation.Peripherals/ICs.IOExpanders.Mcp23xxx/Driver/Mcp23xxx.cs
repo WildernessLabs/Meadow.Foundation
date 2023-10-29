@@ -58,10 +58,10 @@ namespace Meadow.Foundation.ICs.IOExpanders
         public byte DefaultI2cAddress => (byte)Addresses.Default;
 
         private readonly IByteCommunications mcpDevice;
-        private IDigitalOutputPort resetPort;
+        private IDigitalOutputPort? resetPort;
         private IDigitalInterruptPort? interruptPort;
 
-        private IDictionary<IPin, DigitalInterruptPort> interruptPorts;
+        private IDictionary<IPin, DigitalInterruptPort>? interruptPorts;
 
         private byte ioDirA, ioDirB;
         private byte olatA, olatB;
