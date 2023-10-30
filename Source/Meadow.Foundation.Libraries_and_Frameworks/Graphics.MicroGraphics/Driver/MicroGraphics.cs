@@ -156,7 +156,7 @@ namespace Meadow.Foundation.Graphics
         /// </summary>
         /// <param name="pixelBuffer">The pixel buffer</param>
         /// <param name="initializeBuffer">Initialize the off-screen buffer if true</param>
-        public MicroGraphics(PixelBufferBase pixelBuffer, bool initializeBuffer)
+        public MicroGraphics(IPixelBuffer pixelBuffer, bool initializeBuffer)
         {
             memoryBuffer = pixelBuffer;
 

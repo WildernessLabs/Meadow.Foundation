@@ -104,11 +104,7 @@ namespace Meadow.Foundation.Graphics.Buffers
             createdBuffer = false;
         }
 
-        /// <summary>
-        /// Initialize the pixel buffer based on the current
-        /// width, height and color depth
-        /// </summary>
-        /// <param name="replaceIfExists">If true, will recreates the buffer if it already exists</param>
+        /// <inheritdoc/>
         public void InitializeBuffer(bool replaceIfExists = false)
         {
             if (Buffer == null || replaceIfExists)
