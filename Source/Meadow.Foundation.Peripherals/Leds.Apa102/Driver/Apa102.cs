@@ -81,8 +81,8 @@ namespace Meadow.Foundation.Leds
         /// <param name="chipSelectPin">Chip select pin</param>
         /// <param name="numberOfLeds">Number of leds</param>
         /// <param name="pixelOrder">Pixel color order</param>
-        public Apa102(ISpiBus spiBus, IPin chipSelectPin, int numberOfLeds, PixelOrder pixelOrder = PixelOrder.BGR)
-        : this(spiBus, numberOfLeds, pixelOrder, chipSelectPin.CreateDigitalOutputPort())
+        public Apa102(ISpiBus spiBus, IPin? chipSelectPin, int numberOfLeds, PixelOrder pixelOrder = PixelOrder.BGR)
+        : this(spiBus, numberOfLeds, pixelOrder, chipSelectPin?.CreateDigitalOutputPort() ?? null)
         {
         }
 
@@ -93,7 +93,7 @@ namespace Meadow.Foundation.Leds
         /// <param name="numberOfLeds">Number of leds</param>
         /// <param name="pixelOrder">Pixel color order</param>
         /// <param name="chipSelectPort">SPI chip select port (optional)</param>
-        public Apa102(ISpiBus spiBus, int numberOfLeds, PixelOrder pixelOrder = PixelOrder.BGR, IDigitalOutputPort chipSelectPort = null)
+        public Apa102(ISpiBus spiBus, int numberOfLeds, PixelOrder pixelOrder = PixelOrder.BGR, IDigitalOutputPort? chipSelectPort = null)
         {
             spiComms = new SpiCommunications(spiBus, chipSelectPort, DefaultSpiBusSpeed, DefaultSpiBusMode);
             this.numberOfLeds = numberOfLeds;
@@ -108,28 +108,15 @@ namespace Meadow.Foundation.Leds
             buffer = new byte[this.numberOfLeds * 4 + StartHeaderSize + endHeaderSize];
             endHeaderIndex = buffer.Length - endHeaderSize;
 
-            switch (pixelOrder)
+            this.pixelOrder = pixelOrder switch
             {
-                case PixelOrder.RGB:
-                    this.pixelOrder = RGB;
-                    break;
-                case PixelOrder.RBG:
-                    this.pixelOrder = RBG;
-                    break;
-                case PixelOrder.GRB:
-                    this.pixelOrder = GRB;
-                    break;
-                case PixelOrder.GBR:
-                    this.pixelOrder = GBR;
-                    break;
-                case PixelOrder.BRG:
-                    this.pixelOrder = BRG;
-                    break;
-                case PixelOrder.BGR:
-                    this.pixelOrder = BGR;
-                    break;
-            }
-
+                PixelOrder.RGB => RGB,
+                PixelOrder.RBG => RBG,
+                PixelOrder.GRB => GRB,
+                PixelOrder.GBR => GBR,
+                PixelOrder.BRG => BRG,
+                _ => BGR,
+            };
             for (int i = 0; i < StartHeaderSize; i++)
             {
                 buffer[i] = 0x00;

@@ -9,7 +9,7 @@ namespace Meadow.Foundation.Displays.Led
     /// </summary>
     public class FourDigitSevenSegment
     {
-        CancellationTokenSource cts = null;
+        CancellationTokenSource? cts = null;
 
         readonly IDigitalOutputPort[] digits;
         readonly SevenSegment[] sevenSegments;
@@ -111,7 +111,7 @@ namespace Meadow.Foundation.Displays.Led
         /// <param name="decimalLocation">The decimal position (0 indexed)</param>
         public void SetDisplay(char[] characters, int decimalLocation = -1)
         {
-            if (!cts.Token.IsCancellationRequested)
+            if (cts != null && !cts.Token.IsCancellationRequested)
             {
                 cts.Cancel();
             }

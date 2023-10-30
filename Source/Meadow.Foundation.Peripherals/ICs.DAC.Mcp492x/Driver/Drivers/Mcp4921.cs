@@ -41,10 +41,8 @@ public class Mcp4921 : Mcp492x
         /// </summary>
         public IList<IPin> AllPins { get; } = new List<IPin>();
 
-        /// <summary>
-        /// The pin controller
-        /// </summary>
-        public IPinController Controller { get; set; }
+        /// <inheritdoc/>
+        public IPinController? Controller { get; set; }
 
         /// <summary>
         /// Create a new PinDefinitions object

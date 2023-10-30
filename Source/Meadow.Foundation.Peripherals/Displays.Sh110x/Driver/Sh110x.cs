@@ -135,8 +135,8 @@ namespace Meadow.Foundation.Displays
         /// <param name="resetPin">Reset pin</param>
         /// <param name="width">Display width in pixels</param>
         /// <param name="height">Display height in pixels</param>
-        public Sh110x(ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, int width, int height) :
-            this(spiBus, chipSelectPin?.CreateDigitalOutputPort(), dcPin.CreateDigitalOutputPort(),
+        public Sh110x(ISpiBus spiBus, IPin? chipSelectPin, IPin dcPin, IPin resetPin, int width, int height) :
+            this(spiBus, chipSelectPin?.CreateDigitalOutputPort() ?? null, dcPin.CreateDigitalOutputPort(),
                 resetPin.CreateDigitalOutputPort(), width, height)
         {
         }
@@ -151,7 +151,7 @@ namespace Meadow.Foundation.Displays
         /// <param name="width">Display width in pixels</param>
         /// <param name="height">Display height in pixels</param>
         public Sh110x(ISpiBus spiBus,
-            IDigitalOutputPort chipSelectPort,
+            IDigitalOutputPort? chipSelectPort,
             IDigitalOutputPort dataCommandPort,
             IDigitalOutputPort resetPort,
             int width, int height)
