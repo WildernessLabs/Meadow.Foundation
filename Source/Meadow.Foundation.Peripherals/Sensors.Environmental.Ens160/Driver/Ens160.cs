@@ -288,6 +288,6 @@ namespace Meadow.Foundation.Sensors.Environmental
         }
 
         async Task<Concentration> ISensor<Concentration>.Read()
-            => (await Read()).CO2Concentration.Value;
+            => (await Read()).CO2Concentration!.Value;
     }
 }

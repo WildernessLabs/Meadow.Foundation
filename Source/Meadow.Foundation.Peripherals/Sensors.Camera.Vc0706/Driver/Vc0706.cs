@@ -372,7 +372,7 @@ namespace Meadow.Foundation.Sensors.Camera
         /// Retrieve the image data from the camera
         /// </summary>
         /// <returns>The image data as a jpeg in a MemoryStream</returns>
-        public Task<MemoryStream> GetPhotoStream()
+        public Task<MemoryStream?> GetPhotoStream()
         {
             return Task.Run(() =>
             {

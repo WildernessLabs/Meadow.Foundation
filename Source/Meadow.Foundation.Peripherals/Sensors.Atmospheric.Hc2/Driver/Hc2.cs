@@ -71,9 +71,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         }
 
         async Task<Units.Temperature> ISensor<Units.Temperature>.Read()
-            => (await Read()).Temperature.Value;
+            => (await Read()).Temperature!.Value;
 
         async Task<Units.RelativeHumidity> ISensor<Units.RelativeHumidity>.Read()
-            => (await Read()).Humidity.Value;
+            => (await Read()).Humidity!.Value;
     }
 }

@@ -285,7 +285,7 @@ namespace Meadow.Foundation.Sensors.Motion
             (Acceleration3D? Acceleration3D, AngularVelocity3D? AngularVelocity3D,
             MagneticField3D? MagneticField3D, Quaternion? QuaternionOrientation,
             Acceleration3D? LinearAcceleration, Acceleration3D? GravityVector,
-            EulerAngles? EulerOrientation, Units.Temperature? Temperature)?> ReadSensor()
+            EulerAngles? EulerOrientation, Units.Temperature? Temperature)> ReadSensor()
         {
             if (PowerMode != PowerModes.NORMAL)
             {
@@ -448,12 +448,12 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         async Task<AngularVelocity3D> ISensor<AngularVelocity3D>.Read()
-            => (await Read()).AngularVelocity3D.Value;
+            => (await Read()).AngularVelocity3D!.Value;
 
         async Task<Acceleration3D> ISensor<Acceleration3D>.Read()
-            => (await Read()).Acceleration3D.Value;
+            => (await Read()).Acceleration3D!.Value;
 
         async Task<Units.Temperature> ISensor<Units.Temperature>.Read()
-            => (await Read()).Temperature.Value;
+            => (await Read()).Temperature!.Value;
     }
 }

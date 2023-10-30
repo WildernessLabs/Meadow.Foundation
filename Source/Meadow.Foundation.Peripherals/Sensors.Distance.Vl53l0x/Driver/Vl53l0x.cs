@@ -258,7 +258,7 @@ namespace Meadow.Foundation.Sensors.Distance
         /// Returns the current distance/range
         /// </summary>
         /// <returns>The distance in the specified Units. Default mm. Returns -1 if the shutdown pin is used and is off</returns>
-        protected override async Task<Length?> ReadSensor()
+        protected override async Task<Length> ReadSensor()
         {
             //Resolver.Log.Info("ReadSensor");
 
