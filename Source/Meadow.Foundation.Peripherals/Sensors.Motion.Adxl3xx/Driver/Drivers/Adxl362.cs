@@ -555,6 +555,6 @@ namespace Meadow.Foundation.Sensors.Motion
             => (await Read()).Acceleration3D.Value;
 
         async Task<Units.Temperature> ISensor<Units.Temperature>.Read()
-            => (await Read()).Temperature;
+            => (await Read()).Temperature.Value;
     }
 }
