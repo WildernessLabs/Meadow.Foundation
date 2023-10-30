@@ -55,7 +55,7 @@ namespace Meadow.Foundation.Sensors.Distance
         /// </summary>
         public byte DefaultI2cAddress => (byte)Addresses.Default;
 
-        readonly IDigitalOutputPort shutdownPort;
+        readonly IDigitalOutputPort? shutdownPort;
 
         byte stopVariable;
 
@@ -75,12 +75,12 @@ namespace Meadow.Foundation.Sensors.Distance
         /// <param name="shutdownPin">Shutdown pin</param>
         /// <param name="address">VL53L0X address</param>
 
-        public Vl53l0x(II2cBus i2cBus, IPin shutdownPin, byte address = (byte)Addresses.Default)
+        public Vl53l0x(II2cBus i2cBus, IPin? shutdownPin, byte address = (byte)Addresses.Default)
                 : base(i2cBus, address)
         {
             if (shutdownPin != null)
             {
-                shutdownPort = shutdownPin.CreateDigitalOutputPort(true);
+                shutdownPort = shutdownPin?.CreateDigitalOutputPort(true);
             }
             Initialize().Wait();
         }
@@ -258,7 +258,7 @@ namespace Meadow.Foundation.Sensors.Distance
         /// Returns the current distance/range
         /// </summary>
         /// <returns>The distance in the specified Units. Default mm. Returns -1 if the shutdown pin is used and is off</returns>
-        protected override async Task<Length> ReadSensor()
+        protected override async Task<Length?> ReadSensor()
         {
             //Resolver.Log.Info("ReadSensor");
 

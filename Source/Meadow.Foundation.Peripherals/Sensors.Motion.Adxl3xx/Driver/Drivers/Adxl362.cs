@@ -34,12 +34,12 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         /// Digital input port attached to interrupt pin 1 on the ADXL362
         /// </summary>
-        private IDigitalInterruptPort digitalInputPort1;
+        private IDigitalInterruptPort? digitalInputPort1;
 
         /// <summary>
         /// Digital Input port attached to interrupt pin 2 on the ADXL362
         /// </summary>
-        private IDigitalInterruptPort digitalInputPort2;
+        private IDigitalInterruptPort? digitalInputPort2;
 
         /// <summary>
         /// The current acceleration value
@@ -62,8 +62,8 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
         public Frequency SpiBusSpeed
         {
-            get => ((SpiCommunications)BusComms).BusSpeed;
-            set => ((SpiCommunications)BusComms).BusSpeed = value;
+            get => (BusComms as ISpiCommunications)!.BusSpeed;
+            set => (BusComms as ISpiCommunications)!.BusSpeed = value;
         }
 
         /// <summary>
@@ -77,8 +77,8 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
         public SpiClockConfiguration.Mode SpiBusMode
         {
-            get => ((SpiCommunications)BusComms).BusMode;
-            set => ((SpiCommunications)BusComms).BusMode = value;
+            get => (BusComms as ISpiCommunications)!.BusMode;
+            set => (BusComms as ISpiCommunications)!.BusMode = value;
         }
 
         /// <summary>
@@ -333,7 +333,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// Read data from the sensor
         /// </summary>
         /// <returns>The sensor data</returns>
-        public override Task<(Acceleration3D? Acceleration3D, Units.Temperature? Temperature)> Read()
+        public override Task<(Acceleration3D? Acceleration3D, Units.Temperature? Temperature)?> Read()
         {
             Start();
             return base.Read();
@@ -489,7 +489,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <param name="interruptPin1">Pin connected to interrupt pin 1 on the ADXL362</param>
         /// <param name="interruptMap2">Bit mask for interrupt pin 2</param>
         /// <param name="interruptPin2">Pin connected to interrupt pin 2 on the ADXL362</param>
-        private void ConfigureInterrupts(byte interruptMap1, IPin interruptPin1, byte interruptMap2 = 0, IPin interruptPin2 = null) // TODO: interrupPin2 = IDigitalPin.GPIO_NONE
+        private void ConfigureInterrupts(byte interruptMap1, IPin interruptPin1, byte interruptMap2 = 0, IPin? interruptPin2 = null) // TODO: interrupPin2 = IDigitalPin.GPIO_NONE
         {
             WriteBuffer.Span[0] = Commands.WRITE_REGISTER;
             WriteBuffer.Span[1] = interruptMap1;
@@ -551,10 +551,10 @@ namespace Meadow.Foundation.Sensors.Motion
             DebugInformation.DisplayRegisters(Registers.X_AXIS_8BITS, ReadBuffer.Span[2..].ToArray());
         }
 
-        async Task<Acceleration3D> ISensor<Acceleration3D>.Read()
-            => (await Read()).Acceleration3D.Value;
+        async Task<Acceleration3D?> ISensor<Acceleration3D>.Read()
+            => (await Read()).Acceleration3D;
 
-        async Task<Units.Temperature> ISensor<Units.Temperature>.Read()
-            => (await Read()).Temperature.Value;
+        async Task<Units.Temperature?> ISensor<Units.Temperature>.Read()
+            => (await Read()).Temperature;
     }
 }

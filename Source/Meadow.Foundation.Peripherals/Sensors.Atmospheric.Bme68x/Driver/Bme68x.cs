@@ -159,7 +159,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <summary>
         /// The default SPI bus speed for the device
         /// </summary>
-        public Frequency DefaultSpiBusSpeed => new Frequency(10000, Frequency.UnitType.Kilohertz);
+        public Frequency DefaultSpiBusSpeed => new(10000, Frequency.UnitType.Kilohertz);
 
         /// <summary>
         /// The SPI bus speed for the device
