@@ -285,7 +285,7 @@ namespace Meadow.Foundation.Sensors.Motion
             (Acceleration3D? Acceleration3D, AngularVelocity3D? AngularVelocity3D,
             MagneticField3D? MagneticField3D, Quaternion? QuaternionOrientation,
             Acceleration3D? LinearAcceleration, Acceleration3D? GravityVector,
-            EulerAngles? EulerOrientation, Units.Temperature? Temperature)?> ReadSensor()
+            EulerAngles? EulerOrientation, Units.Temperature? Temperature)> ReadSensor()
         {
             if (PowerMode != PowerModes.NORMAL)
             {

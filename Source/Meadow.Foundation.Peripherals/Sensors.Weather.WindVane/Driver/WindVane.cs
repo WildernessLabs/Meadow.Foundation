@@ -129,7 +129,7 @@ namespace Meadow.Foundation.Sensors.Weather
         /// StartSampling() and StopSampling() in conjunction with the SampleBuffer
         /// </summary>
         /// <returns>A float value that's an average value of all the samples taken</returns>
-        protected override async Task<Azimuth?> ReadSensor()
+        protected override async Task<Azimuth> ReadSensor()
         {
             Voltage voltage = await inputPort.Read();
             return LookupWindDirection(voltage);
@@ -142,7 +142,7 @@ namespace Meadow.Foundation.Sensors.Weather
         protected void HandleAnalogUpdate(IChangeResult<Voltage> result)
         {
             var windAzimuth = LookupWindDirection(result.New);
-            ChangeResult<Azimuth> windChangeResult = new ChangeResult<Azimuth>()
+            ChangeResult<Azimuth> windChangeResult = new()
             {
                 Old = WindAzimuth,
                 New = windAzimuth

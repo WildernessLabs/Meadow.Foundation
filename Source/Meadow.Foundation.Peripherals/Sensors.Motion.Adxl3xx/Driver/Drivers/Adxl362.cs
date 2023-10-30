@@ -333,7 +333,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// Read data from the sensor
         /// </summary>
         /// <returns>The sensor data</returns>
-        public override Task<(Acceleration3D? Acceleration3D, Units.Temperature? Temperature)?> Read()
+        public override Task<(Acceleration3D? Acceleration3D, Units.Temperature? Temperature)> Read()
         {
             Start();
             return base.Read();
@@ -551,10 +551,10 @@ namespace Meadow.Foundation.Sensors.Motion
             DebugInformation.DisplayRegisters(Registers.X_AXIS_8BITS, ReadBuffer.Span[2..].ToArray());
         }
 
-        async Task<Acceleration3D?> ISensor<Acceleration3D>.Read()
-            => (await Read()).Acceleration3D;
+        async Task<Acceleration3D> ISensor<Acceleration3D>.Read()
+            => (await Read()).Acceleration3D!.Value;
 
-        async Task<Units.Temperature?> ISensor<Units.Temperature>.Read()
-            => (await Read()).Temperature;
+        async Task<Units.Temperature> ISensor<Units.Temperature>.Read()
+            => (await Read()).Temperature!.Value;
     }
 }
