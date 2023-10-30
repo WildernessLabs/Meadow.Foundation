@@ -18,7 +18,7 @@ namespace Meadow.Foundation.Sensors.Hid
         /// I2C Communication bus used to communicate with the peripheral
         /// </summary>
         protected readonly II2cCommunications i2cComms;
-        private readonly IDigitalInterruptPort interruptPort;
+        private readonly IDigitalInterruptPort? interruptPort;
 
         /// <summary>
         /// Raised when a key press is detected
@@ -53,7 +53,7 @@ namespace Meadow.Foundation.Sensors.Hid
         /// <param name="i2cBus">The I2C bus</param>
         /// <param name="interruptPin">The interrupt pin</param>
         /// <param name="address">The I2C address</param>
-        public BBQ10Keyboard(II2cBus i2cBus, IPin interruptPin = null, byte address = (byte)Addresses.Default)
+        public BBQ10Keyboard(II2cBus i2cBus, IPin? interruptPin = null, byte address = (byte)Addresses.Default)
         {
             i2cComms = new I2cCommunications(i2cBus, address);
 

@@ -71,7 +71,7 @@ namespace Meadow.Foundation.Leds
         /// <param name="spiBus">SPI bus</param>
         /// <param name="numberOfLeds">Number of leds</param>
         /// <param name="chipSelectPort">SPI chip select port (optional)</param>
-        public Ws2812(ISpiBus spiBus, int numberOfLeds, IDigitalOutputPort chipSelectPort = null)
+        public Ws2812(ISpiBus spiBus, int numberOfLeds, IDigitalOutputPort? chipSelectPort = null)
         {
             spiComms = new SpiCommunications(spiBus, chipSelectPort, DefaultSpiBusSpeed, DefaultSpiBusMode);
             this.numberOfLeds = numberOfLeds;

@@ -206,9 +206,9 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         async Task<Units.Temperature> ISensor<Units.Temperature>.Read()
-            => (await Read()).Temperature.Value;
+            => (await Read()).Temperature!.Value;
 
         async Task<MagneticField3D> ISensor<MagneticField3D>.Read()
-            => (await Read()).MagneticField3D.Value;
+            => (await Read()).MagneticField3D!.Value;
     }
 }

@@ -99,7 +99,7 @@ public abstract partial class Mcp492x : ISpiPeripheral, IAnalogOutputController
     /// <inheritdoc/>
     public IAnalogOutputPort CreateAnalogOutputPort(IPin pin, Gain gain = Gain.Gain1x, bool bufferedInput = false)
     {
-        if (!pin.Controller.Equals(this))
+        if (pin.Controller == null || !pin.Controller.Equals(this))
         {
             throw new ArgumentException("The provided pin must be on this controller");
         }

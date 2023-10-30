@@ -64,7 +64,7 @@ namespace Meadow.Foundation.Sensors.Hid
         /// <summary>
         /// Create a new MPR121 keypad object.
         /// </summary>
-        public Mpr121(II2cBus i2cBus, byte address = (byte)Addresses.Default, int refreshPeriod = -1, Mpr121Configuration configuration = null)
+        public Mpr121(II2cBus i2cBus, byte address = (byte)Addresses.Default, int refreshPeriod = -1, Mpr121Configuration? configuration = null)
         {
             this.refreshPeriod = refreshPeriod;
 

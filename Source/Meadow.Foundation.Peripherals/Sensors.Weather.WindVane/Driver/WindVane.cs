@@ -55,7 +55,7 @@ namespace Meadow.Foundation.Sensors.Weather
         /// <param name="sampleCount">Sample couple</param>
         /// <param name="sampleInterval">Sample interval</param>
         public WindVane(IPin analogInputPin,
-            IDictionary<Voltage, Azimuth> azimuthVoltages = null,
+            IDictionary<Voltage, Azimuth>? azimuthVoltages = null,
             TimeSpan? updateInterval = null,
             int sampleCount = 1, TimeSpan? sampleInterval = null)
             : this(analogInputPin.CreateAnalogInputPort(sampleCount, sampleInterval ?? TimeSpan.FromMilliseconds(40), new Voltage(3.3))
@@ -70,14 +70,14 @@ namespace Meadow.Foundation.Sensors.Weather
         /// </summary>
         /// <param name="inputPort">The analog input</param>
         /// <param name="azimuthVoltages">Optional. Supply if you have custom azimuth voltages</param>
-        public WindVane(IAnalogInputPort inputPort, IDictionary<Voltage, Azimuth> azimuthVoltages = null)
+        public WindVane(IAnalogInputPort inputPort, IDictionary<Voltage, Azimuth>? azimuthVoltages = null)
         {
             this.inputPort = inputPort;
 
             Initialize(azimuthVoltages);
         }
 
-        void Initialize(IDictionary<Voltage, Azimuth> azimuthVoltages)
+        void Initialize(IDictionary<Voltage, Azimuth>? azimuthVoltages)
         {   // if no lookup has been provided, load the defaults
             AzimuthVoltages = (azimuthVoltages == null) ?
                 GetDefaultAzimuthVoltages() : new ReadOnlyDictionary<Voltage, Azimuth>(azimuthVoltages);
@@ -142,7 +142,7 @@ namespace Meadow.Foundation.Sensors.Weather
         protected void HandleAnalogUpdate(IChangeResult<Voltage> result)
         {
             var windAzimuth = LookupWindDirection(result.New);
-            ChangeResult<Azimuth> windChangeResult = new ChangeResult<Azimuth>()
+            ChangeResult<Azimuth> windChangeResult = new()
             {
                 Old = WindAzimuth,
                 New = windAzimuth
@@ -159,7 +159,7 @@ namespace Meadow.Foundation.Sensors.Weather
         /// <returns>The Azimuth value</returns>
         protected Azimuth LookupWindDirection(Voltage voltage)
         {
-            Tuple<Azimuth, Voltage> closestFit = null;
+            Tuple<Azimuth, Voltage>? closestFit = null;
 
             Voltage difference;
             foreach (var a in AzimuthVoltages)
@@ -172,7 +172,7 @@ namespace Meadow.Foundation.Sensors.Weather
                 }
             }
 
-            return closestFit.Item1;
+            return closestFit!.Item1;
         }
 
         /// <summary>

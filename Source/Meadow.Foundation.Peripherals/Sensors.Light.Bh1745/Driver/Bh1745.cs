@@ -356,6 +356,6 @@ namespace Meadow.Foundation.Sensors.Light
         protected ushort ReadClearDataRegister() => BusComms.ReadRegisterAsUShort(Registers.CLEAR_DATA);
 
         async Task<Illuminance> ISensor<Illuminance>.Read()
-            => (await Read()).AmbientLight.Value;
+            => (await Read()).AmbientLight!.Value;
     }
 }

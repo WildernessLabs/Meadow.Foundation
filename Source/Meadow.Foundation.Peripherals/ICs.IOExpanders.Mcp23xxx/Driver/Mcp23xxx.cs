@@ -34,8 +34,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         public Frequency SpiBusSpeed
         {
-            get => (mcpDevice as ISpiCommunications).BusSpeed;
-            set => (mcpDevice as ISpiCommunications).BusSpeed = value;
+            get => (mcpDevice as ISpiCommunications)!.BusSpeed;
+            set => (mcpDevice as ISpiCommunications)!.BusSpeed = value;
         }
 
         /// <summary>
@@ -48,8 +48,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         public SpiClockConfiguration.Mode SpiBusMode
         {
-            get => (mcpDevice as ISpiCommunications).BusMode;
-            set => (mcpDevice as ISpiCommunications).BusMode = value;
+            get => (mcpDevice as ISpiCommunications)!.BusMode;
+            set => (mcpDevice as ISpiCommunications)!.BusMode = value;
         }
 
         /// <summary>
