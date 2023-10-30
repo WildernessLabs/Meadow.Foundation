@@ -39,7 +39,7 @@ public override Task Initialize()
     );
     fc28.Subscribe(consumer);
 
-    fc28.HumidityUpdated += (object sender, IChangeResult<double> e) =>
+    fc28.MoistureUpdated += (object sender, IChangeResult<double> e) =>
     {
         Resolver.Log.Info($"Moisture Updated: {e.New}");
     };
