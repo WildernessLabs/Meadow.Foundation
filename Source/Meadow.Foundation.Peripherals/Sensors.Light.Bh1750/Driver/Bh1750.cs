@@ -16,7 +16,7 @@ namespace Meadow.Foundation.Sensors.Light
         /// <summary>
         /// Raised when a new Illuminance value is read by the sensor
         /// </summary>
-        public event EventHandler<IChangeResult<Illuminance>> LuminosityUpdated = delegate { };
+        public event EventHandler<IChangeResult<Illuminance>> IlluminanceUpdated = delegate { };
 
         /// <summary>
         /// BH1750 Light Transmittance (27.20-222.50%)
@@ -138,7 +138,7 @@ namespace Meadow.Foundation.Sensors.Light
         /// <param name="changeResult">The updated sensor data</param>
         protected override void RaiseEventsAndNotify(IChangeResult<Illuminance> changeResult)
         {
-            this.LuminosityUpdated?.Invoke(this, changeResult);
+            this.IlluminanceUpdated?.Invoke(this, changeResult);
             base.RaiseEventsAndNotify(changeResult);
         }
     }

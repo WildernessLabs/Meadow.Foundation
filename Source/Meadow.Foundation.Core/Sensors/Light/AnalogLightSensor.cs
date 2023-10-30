@@ -20,7 +20,7 @@ namespace Meadow.Foundation.Sensors.Light
         /// <summary>
         /// Raised when the value of the reading changes.
         /// </summary>
-        public event EventHandler<IChangeResult<Illuminance>> LuminosityUpdated = delegate { };
+        public event EventHandler<IChangeResult<Illuminance>> IlluminanceUpdated = delegate { };
 
         /// <summary>
         /// Illuminance sensor calibration
@@ -72,7 +72,6 @@ namespace Meadow.Foundation.Sensors.Light
                     {
                         // capture the old water level.
                         var oldLuminance = illuminance;
-                        //var oldWaterLevel = VoltageToWaterLevel(h.Old);
 
                         // get the new one
                         var newLuminance = VoltageToLuminance(h.New);
@@ -121,12 +120,12 @@ namespace Meadow.Foundation.Sensors.Light
         }
 
         /// <summary>
-        /// Notify subscribers of LuminosityUpdated event hander
+        /// Notify subscribers of IlluminanceUpdated event handler
         /// </summary>
         /// <param name="changeResult">Change result with old and new Illuminance</param>
         protected override void RaiseEventsAndNotify(IChangeResult<Illuminance> changeResult)
         {
-            LuminosityUpdated?.Invoke(this, changeResult);
+            IlluminanceUpdated?.Invoke(this, changeResult);
             base.RaiseEventsAndNotify(changeResult);
         }
 
