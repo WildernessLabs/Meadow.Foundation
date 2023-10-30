@@ -190,6 +190,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         }
 
         async Task<Concentration> ISensor<Concentration>.Read()
-            => (await Read()).Voc.Value;
+            => (await Read()).Voc!.Value;
     }
 }

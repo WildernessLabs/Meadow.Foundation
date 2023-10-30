@@ -53,7 +53,7 @@ namespace Meadow.Foundation.Sensors.Environmental
             WriteBuffer.Span[0] = ASG_DATA_MSB;
             WriteBuffer.Span[1] = ASG_DATA_LSB;
 
-            BusComms.Exchange(WriteBuffer.Span[0..1], ReadBuffer.Span);
+            BusComms!.Exchange(WriteBuffer.Span[0..1], ReadBuffer.Span);
 
             var value = ReadBuffer.Span[0] << 8 | ReadBuffer.Span[1];
 
@@ -75,7 +75,7 @@ namespace Meadow.Foundation.Sensors.Environmental
             WriteBuffer.Span[0] = ASG_VERSION_MSB;
             WriteBuffer.Span[1] = ASG_VERSION_LSB;
 
-            BusComms.Exchange(WriteBuffer.Span[0..1], ReadBuffer.Span[0..1]);
+            BusComms!.Exchange(WriteBuffer.Span[0..1], ReadBuffer.Span[0..1]);
 
             // CRC check
             if (!CheckCrc8(ReadBuffer[..1].ToArray(), 1, ReadBuffer.Span[1]))

@@ -250,6 +250,6 @@ namespace Meadow.Foundation.Sensors.Light
         }
 
         async Task<Illuminance> ISensor<Illuminance>.Read()
-            => (await Read()).FullSpectrum.Value;
+            => (await Read()).FullSpectrum!.Value;
     }
 }

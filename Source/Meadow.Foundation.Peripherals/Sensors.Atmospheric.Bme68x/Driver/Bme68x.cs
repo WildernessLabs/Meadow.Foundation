@@ -615,12 +615,12 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         }
 
         async Task<Units.Temperature> ISensor<Units.Temperature>.Read()
-            => (await Read()).Temperature.Value;
+            => (await Read()).Temperature!.Value;
 
         async Task<RelativeHumidity> ISensor<RelativeHumidity>.Read()
-            => (await Read()).Humidity.Value;
+            => (await Read()).Humidity!.Value;
 
         async Task<Pressure> ISensor<Pressure>.Read()
-            => (await Read()).Pressure.Value;
+            => (await Read()).Pressure!.Value;
     }
 }

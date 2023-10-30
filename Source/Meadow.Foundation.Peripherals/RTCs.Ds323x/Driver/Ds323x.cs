@@ -86,11 +86,14 @@ namespace Meadow.Foundation.RTCs
         /// <summary>
         /// Create a new Ds323x object
         /// </summary>
-        protected Ds323x(I2cCommunications i2cComms, IDigitalInterruptPort interruptPort)
+        protected Ds323x(I2cCommunications i2cComms, IDigitalInterruptPort? interruptPort)
         {
             this.i2cComms = i2cComms;
 
-            Initialize(interruptPort);
+            if (interruptPort != null)
+            {
+                Initialize(interruptPort);
+            }
         }
 
         /// <summary>
@@ -107,36 +110,33 @@ namespace Meadow.Foundation.RTCs
 
         private void Initialize(IDigitalInterruptPort interruptPort)
         {
-            if (interruptPort != null)
+            switch (interruptPort.InterruptMode)
             {
-                switch (interruptPort.InterruptMode)
-                {
-                    case InterruptMode.EdgeFalling:
-                    case InterruptMode.EdgeBoth:
-                        // we need a rising edge, so all good;
-                        break;
-                    default:
-                        throw new DeviceConfigurationException("RTC alarms require a falling-edge enabled interrupt port");
-                }
-
-                InterruptPort = interruptPort;
-                InterruptPort.Changed += (s, cr) =>
-                {
-                    //Alarm interrupt has been raised, work out which one and raise the necessary event.
-                    if ((alarm1Delegate != null) || (alarm2Delegate != null))
-                    {
-                        var alarm = WhichAlarm;
-                        if (((alarm == Alarm.Alarm1Raised) || (alarm == Alarm.BothAlarmsRaised)) && (alarm1Delegate != null))
-                        {
-                            alarm1Delegate(this);
-                        }
-                        if (((alarm == Alarm.Alarm2Raised) || (alarm == Alarm.BothAlarmsRaised)) && (alarm2Delegate != null))
-                        {
-                            alarm2Delegate(this);
-                        }
-                    }
-                };
+                case InterruptMode.EdgeFalling:
+                case InterruptMode.EdgeBoth:
+                    // we need a rising edge, so all good;
+                    break;
+                default:
+                    throw new DeviceConfigurationException("RTC alarms require a falling-edge enabled interrupt port");
             }
+
+            InterruptPort = interruptPort;
+            InterruptPort.Changed += (s, cr) =>
+            {
+                //Alarm interrupt has been raised, work out which one and raise the necessary event.
+                if ((alarm1Delegate != null) || (alarm2Delegate != null))
+                {
+                    var alarm = WhichAlarm;
+                    if (((alarm == Alarm.Alarm1Raised) || (alarm == Alarm.BothAlarmsRaised)) && (alarm1Delegate != null))
+                    {
+                        alarm1Delegate(this);
+                    }
+                    if (((alarm == Alarm.Alarm2Raised) || (alarm == Alarm.BothAlarmsRaised)) && (alarm2Delegate != null))
+                    {
+                        alarm2Delegate(this);
+                    }
+                }
+            };
         }
 
         /// <summary>
