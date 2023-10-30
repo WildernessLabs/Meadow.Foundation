@@ -35,7 +35,7 @@ namespace Meadow.Foundation.Sensors.Gnss
                 preserveDelimiter: true,
                 readBufferSize: 512),
                 resetPin?.CreateDigitalOutputPort(true) ?? null,
-                (ppsPin?.CreateDigitalInterruptPort(InterruptMode.EdgeRising, ResistorMode.InternalPullDown) ?? null)
+                ppsPin?.CreateDigitalInterruptPort(InterruptMode.EdgeRising, ResistorMode.InternalPullDown) ?? null)
         { }
 
         private void InitializeSerial()
