@@ -65,7 +65,7 @@ namespace Meadow.Foundation.Sensors.Motion
 
         void SetMode(SensorPowerMode mode)
         {
-            BusComms.WriteRegister((byte)Registers.Mode, (byte)mode);
+            BusComms?.WriteRegister((byte)Registers.Mode, (byte)mode);
         }
 
         /// <summary>
@@ -74,7 +74,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <param name="rate">sample rate</param>
         public void SetSampleRate(SampleRate rate)
         {
-            BusComms.WriteRegister((byte)Registers.SleepRate, (byte)rate);
+            BusComms?.WriteRegister((byte)Registers.SleepRate, (byte)rate);
         }
 
         /// <summary>

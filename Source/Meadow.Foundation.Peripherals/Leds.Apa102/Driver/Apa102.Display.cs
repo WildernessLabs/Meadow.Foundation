@@ -45,7 +45,7 @@ namespace Meadow.Foundation.Leds
                      int width,
                      int height,
                      PixelOrder pixelOrder = PixelOrder.BGR,
-                     IDigitalOutputPort chipSelectPort = null) : this(spiBus, width * height, pixelOrder, chipSelectPort)
+                     IDigitalOutputPort? chipSelectPort = null) : this(spiBus, width * height, pixelOrder, chipSelectPort)
         {
             this.width = width;
             this.height = height;

@@ -40,7 +40,7 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// The default SPI bus speed for the device
         /// </summary>
-        public Frequency DefaultSpiBusSpeed => new Frequency(10000, Frequency.UnitType.Kilohertz);
+        public Frequency DefaultSpiBusSpeed => new(10000, Frequency.UnitType.Kilohertz);
 
         /// <summary>
         /// The SPI bus speed for the device
@@ -71,7 +71,7 @@ namespace Meadow.Foundation.Displays
         protected ISpiCommunications spiComms;
 
         readonly IDigitalOutputPort dataCommandPort;
-        readonly IDigitalOutputPort resetPort;
+        readonly IDigitalOutputPort? resetPort;
 
         readonly BufferGray4 imageBuffer;
 
@@ -85,8 +85,8 @@ namespace Meadow.Foundation.Displays
         /// <param name="chipSelectPin">Chip select pin</param>
         /// <param name="dcPin">Data command pin</param>
         /// <param name="resetPin">Reset pin</param>
-        public Ssd1327(ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin)
-            : this(spiBus, chipSelectPin?.CreateDigitalOutputPort(false), dcPin?.CreateDigitalOutputPort(false), resetPin?.CreateDigitalOutputPort(true))
+        public Ssd1327(ISpiBus spiBus, IPin? chipSelectPin, IPin dcPin, IPin? resetPin)
+            : this(spiBus, chipSelectPin?.CreateDigitalOutputPort(false) ?? null, dcPin.CreateDigitalOutputPort(false), resetPin?.CreateDigitalOutputPort(true) ?? null)
         {
         }
 
@@ -98,9 +98,9 @@ namespace Meadow.Foundation.Displays
         /// <param name="dataCommandPort">Data command output port</param>
         /// <param name="resetPort">Reset output port</param>
         public Ssd1327(ISpiBus spiBus,
-            IDigitalOutputPort chipSelectPort,
+            IDigitalOutputPort? chipSelectPort,
             IDigitalOutputPort dataCommandPort,
-            IDigitalOutputPort resetPort)
+            IDigitalOutputPort? resetPort)
         {
             imageBuffer = new BufferGray4(Width, Height);
 

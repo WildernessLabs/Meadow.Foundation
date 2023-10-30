@@ -27,7 +27,7 @@ public partial class Keyboard
         /// <summary>
         /// The Keyboard associated with the pin collection
         /// </summary>
-        public IPinController Controller { get; set; }
+        public IPinController? Controller { get; set; }
 
         internal PinDefinitions(Keyboard controller)
         {

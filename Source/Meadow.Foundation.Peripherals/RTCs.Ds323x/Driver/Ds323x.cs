@@ -58,8 +58,10 @@ namespace Meadow.Foundation.RTCs
         /// Bit mask to clear the Alarm2 interrupt
         /// </summary>
         private const byte ALARM2_INTERRUPT_OFF = 0xfd;
-        private AlarmRaised alarm1Delegate;
-        private AlarmRaised alarm2Delegate;
+
+        private AlarmRaised alarm1Delegate = delegate { };
+        private AlarmRaised alarm2Delegate = delegate { };
+
         private bool interruptCreatedInternally;
         private readonly Memory<byte> readBuffer;
 

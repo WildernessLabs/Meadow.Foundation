@@ -94,8 +94,8 @@ namespace Meadow.Foundation.Displays
         /// <param name="chipSelectPin">Chip select pin</param>
         /// <param name="dcPin">Data command pin</param>
         /// <param name="resetPin">Reset pin</param>
-        public Pcd8544(ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin) :
-            this(spiBus, chipSelectPin?.CreateDigitalOutputPort(), dcPin.CreateDigitalOutputPort(true),
+        public Pcd8544(ISpiBus spiBus, IPin? chipSelectPin, IPin dcPin, IPin resetPin) :
+            this(spiBus, chipSelectPin?.CreateDigitalOutputPort() ?? null, dcPin.CreateDigitalOutputPort(true),
                 resetPin.CreateDigitalOutputPort(true))
         {
         }
@@ -108,7 +108,7 @@ namespace Meadow.Foundation.Displays
         /// <param name="dataCommandPort">Data command output port</param>
         /// <param name="resetPort">Reset output port</param>
         public Pcd8544(ISpiBus spiBus,
-            IDigitalOutputPort chipSelectPort,
+            IDigitalOutputPort? chipSelectPort,
             IDigitalOutputPort dataCommandPort,
             IDigitalOutputPort resetPort)
         {

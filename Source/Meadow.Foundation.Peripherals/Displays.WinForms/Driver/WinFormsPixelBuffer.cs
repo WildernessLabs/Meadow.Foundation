@@ -120,7 +120,7 @@ internal class WinFormsPixelBuffer : IPixelBuffer, IDisposable
     /// </summary>
     /// <param name="x"></param>
     /// <param name="y"></param>
-    public Foundation.Color GetPixel(int x, int y)
+    public Color GetPixel(int x, int y)
     {
         lock (_bmp)
         {
@@ -146,7 +146,7 @@ internal class WinFormsPixelBuffer : IPixelBuffer, IDisposable
     /// <param name="x"></param>
     /// <param name="y"></param>
     /// <param name="color"></param>
-    public void SetPixel(int x, int y, Foundation.Color color)
+    public void SetPixel(int x, int y, Color color)
     {
         // TODO: use lockbits and set the _buffer instead
         lock (_bmp)

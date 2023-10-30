@@ -11,26 +11,29 @@ namespace Meadow.Foundation.ICs.DAC;
 /// </summary>
 public abstract partial class Mcp492x : ISpiPeripheral, IAnalogOutputController
 {
-    private int OffsetChannelSelect = 15;
-    private int OffsetBufferControl = 14;
-    private int OffsetGain = 13;
-    private int OffsetPower = 12;
+    private readonly int OffsetChannelSelect = 15;
+    private readonly int OffsetBufferControl = 14;
+    private readonly int OffsetGain = 13;
+    private readonly int OffsetPower = 12;
 
-    private ISpiBus _bus;
-    private IDigitalOutputPort? _chipSelect;
+    private readonly ISpiBus _bus;
+    private readonly IDigitalOutputPort? _chipSelect;
 
     /// <summary>
     /// Gets the default SPI bus mode (Mode0).
     /// </summary>
     public SpiClockConfiguration.Mode DefaultSpiBusMode => SpiClockConfiguration.Mode.Mode0;
+
     /// <summary>
     /// Gets the default SPI bus speed (20 MHz).
     /// </summary>
     public Frequency DefaultSpiBusSpeed => new Frequency(20, Frequency.UnitType.Megahertz);
+
     /// <summary>
     /// Gets or sets the SPI bus mode.
     /// </summary>
     public SpiClockConfiguration.Mode SpiBusMode { get; set; }
+
     /// <summary>
     /// Gets or sets the SPI bus speed.
     /// </summary>
@@ -43,11 +46,17 @@ public abstract partial class Mcp492x : ISpiPeripheral, IAnalogOutputController
     }
 
     /// <summary>
-    /// Enumeration for gain settings.
+    /// Enumeration for gain settings
     /// </summary>
     public enum Gain
     {
+        /// <summary>
+        /// 2x gain
+        /// </summary>
         Gain2x = 0,
+        /// <summary>
+        /// 1x gain
+        /// </summary>
         Gain1x = 1
     }
 

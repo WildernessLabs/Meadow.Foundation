@@ -24,9 +24,10 @@ public class MeadowApp : App<Windows>
             colorMode: ColorMode.Format16bppRgb565
         );
 
-        screen = new DisplayScreen(display, Meadow.Foundation.Graphics.RotationType._270Degrees);
-
-        screen.BackgroundColor = Color.Black;
+        screen = new DisplayScreen(display, RotationType._270Degrees)
+        {
+            BackgroundColor = Color.Black
+        };
 
         return base.Initialize();
     }
@@ -42,8 +43,8 @@ public class MeadowApp : App<Windows>
     {
         var label = new Label(0, 0, screen.Width, screen.Height);
         label.Font = new Font12x20();
-        label.HorizontalAlignment = Meadow.Foundation.Graphics.HorizontalAlignment.Center;
-        label.VerticalAlignment = Meadow.Foundation.Graphics.VerticalAlignment.Center;
+        label.HorizontalAlignment = HorizontalAlignment.Center;
+        label.VerticalAlignment = VerticalAlignment.Center;
         label.TextColor = Color.Red;
         label.Text = "HELLO";
 

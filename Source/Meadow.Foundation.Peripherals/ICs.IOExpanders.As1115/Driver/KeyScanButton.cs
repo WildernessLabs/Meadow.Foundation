@@ -22,22 +22,22 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <summary>
         /// Raised when a press starts (the button is pushed down)
         /// </summary>
-        public event EventHandler PressStarted;
+        public event EventHandler PressStarted = delegate { };
 
         /// <summary>
         /// Raised when a press ends (the button is released)
         /// </summary>
-        public event EventHandler PressEnded;
+        public event EventHandler PressEnded = delegate { };
 
         /// <summary>
         /// Raised when the button circuit is re-opened after it has been closed (at the end of a press)
         /// </summary>
-        public event EventHandler Clicked;
+        public event EventHandler Clicked = delegate { };
 
         /// <summary>
         /// Raised when the button circuit is pressed for LongPressDuration
         /// </summary>
-        public event EventHandler LongClicked;
+        public event EventHandler LongClicked = delegate { };
 
         /// <summary>
         /// Maximum DateTime value when the button was just pushed

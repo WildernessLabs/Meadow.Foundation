@@ -57,7 +57,7 @@ namespace Meadow.Foundation.DataLoggers
         /// <param name="userName">Adafruit username</param>
         /// <param name="iokey">Write key</param>
         /// <param name="group">group</param>
-        public AdafruitIO(string userName, string iokey, string group = null)
+        public AdafruitIO(string userName, string iokey, string group = "")
         {
             Group = group;
             UserName = userName;
