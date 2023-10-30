@@ -16,7 +16,7 @@ namespace Meadow.Foundation.Sensors.Distance
         /// <param name="sensor">The distance sensor type</param>
         public MaxBotix(IAnalogInputPort analogInputPort, SensorType sensor)
         {
-            analogInputPort = analogInputPort;
+            this.analogInputPort = analogInputPort;
 
             communication = CommunicationType.Analog;
             sensorType = sensor;

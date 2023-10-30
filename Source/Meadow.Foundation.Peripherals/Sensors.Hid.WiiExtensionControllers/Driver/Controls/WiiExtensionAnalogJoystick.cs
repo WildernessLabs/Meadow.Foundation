@@ -10,7 +10,7 @@ namespace Meadow.Foundation.Sensors.Hid
 
         public AnalogJoystickPosition? Position { get; private set; } = null;
 
-        public event EventHandler<IChangeResult<AnalogJoystickPosition>> Updated;
+        public event EventHandler<IChangeResult<AnalogJoystickPosition>> Updated = delegate { };
 
         public byte BitsOfPrecision { get; protected set; }
 

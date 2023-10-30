@@ -63,13 +63,13 @@ namespace Meadow.Foundation.Sensors.Gnss
         /// <summary>
         /// NeoM8 pulse per second port
         /// </summary>
-        public IDigitalInputPort PulsePerSecondPort { get; }
+        public IDigitalInputPort? PulsePerSecondPort { get; }
 
         /// <summary>
         /// NeoM8 reset port
         /// Initialize high to enable the device
         /// </summary>
-        protected IDigitalOutputPort ResetPort { get; }
+        protected IDigitalOutputPort? ResetPort { get; }
 
         CommunicationMode communicationMode;
 

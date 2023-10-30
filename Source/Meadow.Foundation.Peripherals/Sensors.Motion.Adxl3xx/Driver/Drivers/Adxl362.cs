@@ -12,7 +12,7 @@ using TU = Meadow.Units.Temperature.UnitType;
 namespace Meadow.Foundation.Sensors.Motion
 {
     /// <summary>
-    /// Driver for the ADXL362 triple axis accelerometer.
+    /// Driver for the ADXL362 triple axis accelerometer
     /// </summary>
     public partial class Adxl362
         : ByteCommsSensorBase<(Acceleration3D? Acceleration3D, Units.Temperature? Temperature)>,
@@ -21,12 +21,12 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         /// Raised when the acceleration value changes
         /// </summary>
-        public event EventHandler<IChangeResult<Acceleration3D>> Acceleration3DUpdated;
+        public event EventHandler<IChangeResult<Acceleration3D>> Acceleration3DUpdated = delegate { };
 
         /// <summary>
         /// Raised when the temperature value changes
         /// </summary>
-        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated;
+        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
 
         private const double ADXL362_MG2G_MULTIPLIER = 0.004;
         private const double AVERAGE_TEMPERATURE_BIAS = 350;
@@ -555,6 +555,6 @@ namespace Meadow.Foundation.Sensors.Motion
             => (await Read()).Acceleration3D.Value;
 
         async Task<Units.Temperature> ISensor<Units.Temperature>.Read()
-            => (await Read()).Temperature.Value;
+            => (await Read()).Temperature;
     }
 }

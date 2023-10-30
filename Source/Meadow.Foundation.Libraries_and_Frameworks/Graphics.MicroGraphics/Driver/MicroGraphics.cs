@@ -1371,7 +1371,7 @@ namespace Meadow.Foundation.Graphics
         /// <param name="y">x location of target to draw buffer</param>
         /// <param name="image">the source image to write to the display buffer</param>
         public void DrawImage(int x, int y, Image image)
-            => DrawBuffer(x, y, image?.DisplayBuffer);
+            => DrawBuffer(x, y, image.DisplayBuffer);
 
         /// <summary>
         /// Draw an Image onto the display buffer at (0, 0)

@@ -21,12 +21,12 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         /// Event raised when motion is detected.
         /// </summary>
-        public event MotionChange OnMotionStart;
+        public event MotionChange OnMotionStart = delegate { };
 
         /// <summary>
         /// Event raised when the PIR indicates that there is not longer any motion.
         /// </summary>
-        public event MotionChange OnMotionEnd;
+        public event MotionChange OnMotionEnd = delegate { };
 
         /// <summary>
         /// Create a new Parallax PIR object connected to an input pin and IO Device.
