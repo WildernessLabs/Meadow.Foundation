@@ -68,7 +68,7 @@ namespace Meadow.Foundation.RTCs
         /// <summary>
         /// Create a new Ds323x object
         /// </summary>
-        protected Ds323x(I2cCommunications i2cComms, IPin interruptPin)
+        protected Ds323x(I2cCommunications i2cComms, IPin? interruptPin)
         {
             this.i2cComms = i2cComms;
 
@@ -215,7 +215,7 @@ namespace Meadow.Foundation.RTCs
         /// <summary>
         /// Interrupt port attached to the DS323x RTC module.
         /// </summary>
-        protected IDigitalInterruptPort InterruptPort { get; private set; }
+        protected IDigitalInterruptPort? InterruptPort { get; private set; }
 
         /// <summary>
         /// Control register.

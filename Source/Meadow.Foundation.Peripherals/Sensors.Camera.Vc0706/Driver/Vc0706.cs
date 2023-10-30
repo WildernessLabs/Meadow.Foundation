@@ -557,13 +557,16 @@ namespace Meadow.Foundation.Sensors.Camera
             return true;
         }
 
-        void SendCommand(byte cmd, byte[] args = null, byte argn = 0)
+        void SendCommand(byte cmd, byte[]? args = null, byte argn = 0)
         {
             serialPort.Write(new byte[] { 0x56, SerialNumber, cmd });
 
-            for (byte i = 0; i < argn; i++)
+            if (args != null)
             {
-                serialPort.Write(new byte[] { args[i] });
+                for (byte i = 0; i < argn; i++)
+                {
+                    serialPort.Write(new byte[] { args[i] });
+                }
             }
         }
 
