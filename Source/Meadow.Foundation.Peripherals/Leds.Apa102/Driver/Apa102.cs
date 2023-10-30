@@ -12,7 +12,7 @@ namespace Meadow.Foundation.Leds
         /// <summary>
         /// The default SPI bus speed for the device
         /// </summary>
-        public Frequency DefaultSpiBusSpeed => new Frequency(6000, Frequency.UnitType.Kilohertz);
+        public Frequency DefaultSpiBusSpeed => new(6000, Frequency.UnitType.Kilohertz);
 
         /// <summary>
         /// The SPI bus speed for the device

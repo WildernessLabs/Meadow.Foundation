@@ -47,13 +47,6 @@
         byte[] Buffer { get; }
 
         /// <summary>
-        /// Initialize the pixel buffer based on the current
-        /// width, height and color depth
-        /// </summary>
-        /// <param name="replaceIfExists">If true, will recreates the buffer if it already exists</param>
-        public void InitializeBuffer(bool replaceIfExists = false);
-
-        /// <summary>
         /// Set the color of the pixel at the provided coordinates
         /// </summary>
         /// <param name="x">X coordinate of the pixel: 0,0 at top left</param>
