@@ -73,7 +73,6 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// </summary>
         public PixelBufferBase()
         {
-            Buffer = new byte[0];
         }
 
         /// <summary>
@@ -85,7 +84,6 @@ namespace Meadow.Foundation.Graphics.Buffers
         {
             Width = width;
             Height = height;
-            Buffer = new byte[0];
             InitializeBuffer();
         }
 
@@ -359,7 +357,7 @@ namespace Meadow.Foundation.Graphics.Buffers
                 {
                     if (disposing)
                     {
-                        Buffer = new byte[0];
+                        Buffer = null;
                     }
                 }
             }
