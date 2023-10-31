@@ -1,4 +1,5 @@
 ﻿using Meadow.Hardware;
+using Meadow.Peripherals;
 using Meadow.Units;
 using System;
 using System.Linq;
@@ -38,7 +39,8 @@ namespace Meadow.Foundation.Motors.Stepper
                 rotationSpeedDivisor = value;
             }
         }
-        int rotationSpeedDivisor;
+
+        private int rotationSpeedDivisor;
 
         /// <summary>
         /// Sets or gets the direction of rotation used for Step or Rotate methods
@@ -102,16 +104,15 @@ namespace Meadow.Foundation.Motors.Stepper
             }
         }
 
-        readonly IDigitalOutputPort stepPort;
-        readonly IDigitalOutputPort directionPort;
-        readonly IDigitalOutputPort? enablePort;
-        readonly IDigitalOutputPort? ms1Port;
-        readonly IDigitalOutputPort? ms2Port;
-        readonly IDigitalOutputPort? ms3Port;
-        readonly object syncRoot = new object();
-
-        StepDivisor divisor;
-        Angle stepAngle;
+        private readonly IDigitalOutputPort stepPort;
+        private readonly IDigitalOutputPort directionPort;
+        private readonly IDigitalOutputPort enablePort;
+        private readonly IDigitalOutputPort ms1Port;
+        private readonly IDigitalOutputPort ms2Port;
+        private readonly IDigitalOutputPort ms3Port;
+        private readonly object syncRoot = new object();
+        private StepDivisor divisor;
+        private Angle stepAngle;
 
         /// <summary>
         /// Creates an instance of the A4988 Stepper Motor Driver
@@ -156,7 +157,7 @@ namespace Meadow.Foundation.Motors.Stepper
         /// <param name="ms2Pin">The (optional) Meadow pin connected to the MS2 pin of the A4988</param>
         /// <param name="ms3Pin">The (optional) Meadow pin connected to the MS3 pin of the A4988</param>
         /// <remarks>You must provide either all of the micro-step (MS) lines or none of them</remarks>
-        public A4988(IPin step, IPin direction, IPin? enablePin, IPin? ms1Pin, IPin? ms2Pin, IPin? ms3Pin)
+        public A4988(IPin step, IPin direction, IPin enablePin, IPin ms1Pin, IPin ms2Pin, IPin ms3Pin)
         {
             stepPort = step.CreateDigitalOutputPort();
 
@@ -168,13 +169,13 @@ namespace Meadow.Foundation.Motors.Stepper
             }
 
             // micro-step lines (for now) are all-or-nothing TODO: rethink this?
-            if (new IPin?[] { ms1Pin, ms2Pin, ms3Pin }.All(p => p != null))
+            if (new IPin[] { ms1Pin, ms2Pin, ms3Pin }.All(p => p != null))
             {
-                ms1Port = ms1Pin?.CreateDigitalOutputPort();
-                ms2Port = ms2Pin?.CreateDigitalOutputPort();
-                ms3Port = ms3Pin?.CreateDigitalOutputPort();
+                ms1Port = ms1Pin.CreateDigitalOutputPort();
+                ms2Port = ms2Pin.CreateDigitalOutputPort();
+                ms3Port = ms3Pin.CreateDigitalOutputPort();
             }
-            else if (new IPin?[] { ms1Pin, ms2Pin, ms3Pin }.All(p => p == null))
+            else if (new IPin[] { ms1Pin, ms2Pin, ms3Pin }.All(p => p == null))
             {    // nop
             }
             else

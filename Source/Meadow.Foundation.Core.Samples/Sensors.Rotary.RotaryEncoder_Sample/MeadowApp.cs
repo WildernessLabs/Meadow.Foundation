@@ -1,6 +1,7 @@
 ﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Rotary;
+using Meadow.Peripherals;
 using Meadow.Peripherals.Sensors.Rotary;
 using System.Threading.Tasks;
 
@@ -37,7 +38,7 @@ namespace Sensors.Rotary.RotaryEncoder_Sample
             return Task.CompletedTask;
         }
 
-        void RotaryEncoder_Rotated(object sender, RotaryChangeResult e)
+        private void RotaryEncoder_Rotated(object sender, RotaryChangeResult e)
         {
             switch (e.New)
             {
