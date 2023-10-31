@@ -1,6 +1,5 @@
 <Project Sdk="Meadow.Sdk/1.1.0">
   <PropertyGroup>
-    <PackageReadmeFile>Readme.md</PackageReadmeFile>
     <Nullable>enable</Nullable>
     <LangVersion>10.0</LangVersion>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
@@ -9,18 +8,17 @@
     <Authors>Wilderness Labs, Inc</Authors>
     <TargetFramework>netstandard2.1</TargetFramework>
     <OutputType>Library</OutputType>
-    <AssemblyName>A4988</AssemblyName>
+    <AssemblyName>Em542s</AssemblyName>
     <Company>Wilderness Labs, Inc</Company>
     <PackageProjectUrl>http://developer.wildernesslabs.co/Meadow/Meadow.Foundation/</PackageProjectUrl>
-    <PackageId>Meadow.Foundation.Motors.Stepper.A4988</PackageId>
+    <PackageId>Meadow.Foundation.Motors.Stepper.Em542s</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
-    <PackageTags>Meadow, Meadow.Foundation, Motor, Stepper, A4988</PackageTags>
+    <PackageTags>Meadow, Meadow.Foundation, Motor, Stepper, Leadshine, Em542s</PackageTags>
     <Version>0.1.49</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Description>A4988 digital input stepper motor controller</Description>
+    <Description>The Leadshine EM542S Stepper Motor Drive</Description>
   </PropertyGroup>
   <ItemGroup>
-    <None Include=".\Readme.md" Pack="true" PackagePath=""/>
     <None Include="..\..\..\icon.png" Pack="true" PackagePath="" />
     <ProjectReference Include="..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
   </ItemGroup>
