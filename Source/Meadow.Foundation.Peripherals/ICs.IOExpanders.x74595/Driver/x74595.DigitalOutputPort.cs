@@ -32,7 +32,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 IPin pin,
                 bool initialState,
                 OutputType outputType)
-                : base(pin, (IDigitalChannelInfo)pin.SupportedChannels[0], initialState, outputType)
+                : base(pin, (IDigitalChannelInfo)pin.SupportedChannels![0], initialState, outputType)
             {
                 this.x74595 = x74595;
             }

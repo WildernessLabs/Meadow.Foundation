@@ -102,7 +102,7 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// <summary>
         /// 9600 baud 8-N-1
         /// </summary>
-        readonly ISerialPort serialPort;
+        readonly ISerialPort? serialPort;
 
         /// <summary>
         /// The current modbus address

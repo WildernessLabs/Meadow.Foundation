@@ -14,7 +14,7 @@ namespace Meadow.Foundation
         /// <summary>
         /// Bus communications object, i.e. an I2cCommunications or SpiCommunications
         /// </summary>
-        protected IByteCommunications? BusComms { get; set; }
+        protected IByteCommunications BusComms { get; set; }
 
         /// <summary>
         /// The read buffer
@@ -69,8 +69,7 @@ namespace Meadow.Foundation
         /// </summary>
         /// <param name="readBufferSize">Read buffer size</param>
         /// <param name="writeBufferSize">Write buffer size</param>
-        protected ByteCommsSensorBase(
-            int readBufferSize = 8, int writeBufferSize = 8)
+        protected ByteCommsSensorBase(int readBufferSize = 8, int writeBufferSize = 8)
         {
             Init(readBufferSize, writeBufferSize);
         }

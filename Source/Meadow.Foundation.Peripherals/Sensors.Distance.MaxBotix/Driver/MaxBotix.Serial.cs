@@ -8,7 +8,7 @@ namespace Meadow.Foundation.Sensors.Distance
     public partial class MaxBotix
     {
         //The baud rate is 9600, 8 bits, no parity, with one stop bit
-        readonly ISerialMessagePort serialMessagePort;
+        readonly ISerialMessagePort? serialMessagePort;
 
         static readonly byte[] suffixDelimiter = { 13 }; //ASCII return
         static readonly int portSpeed = 9600;

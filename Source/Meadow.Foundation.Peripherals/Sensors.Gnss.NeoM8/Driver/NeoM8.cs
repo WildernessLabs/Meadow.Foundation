@@ -13,7 +13,7 @@ namespace Meadow.Foundation.Sensors.Gnss
     /// </summary>
     public partial class NeoM8 : IGnssSensor
     {
-        NmeaSentenceProcessor nmeaProcessor;
+        NmeaSentenceProcessor? nmeaProcessor;
 
         /// <summary>
         /// Raised when GNSS data is received
@@ -73,9 +73,9 @@ namespace Meadow.Foundation.Sensors.Gnss
 
         CommunicationMode communicationMode;
 
-        SerialMessageProcessor messageProcessor;
+        SerialMessageProcessor? messageProcessor;
 
-        CancellationTokenSource cts;
+        CancellationTokenSource? cts;
 
         const byte BUFFER_SIZE = 128;
         const byte COMMS_SLEEP_MS = 200;

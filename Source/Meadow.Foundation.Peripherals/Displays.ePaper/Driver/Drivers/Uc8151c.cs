@@ -113,20 +113,20 @@ namespace Meadow.Foundation.Displays
             DelayMs(2);
             SendCommand(Command.DATA_START_TRANSMISSION_1);
 
-            dataCommandPort.State = DataState;
+            dataCommandPort!.State = DataState;
 
             if (bufferBlack != null)
             {
                 for (int i = 0; i < width / 8 * height; i++)
                 {
-                    spiComms.Write(bufferBlack[i]);
+                    spiComms!.Write(bufferBlack[i]);
                 }
             }
             else
             {
                 for (int i = 0; i < width / 8 * height; i++)
                 {
-                    spiComms.Write(0x00);
+                    spiComms!.Write(0x00);
                 }
             }
             DelayMs(2);
@@ -138,14 +138,14 @@ namespace Meadow.Foundation.Displays
             {
                 for (int i = 0; i < width / 8 * height; i++)
                 {
-                    spiComms.Write(bufferColor[i]);
+                    spiComms!.Write(bufferColor[i]);
                 }
             }
             else
             {
                 for (int i = 0; i < width / 8 * height; i++)
                 {
-                    spiComms.Write(0x00);
+                    spiComms!.Write(0x00);
                 }
             }
             DelayMs(2);

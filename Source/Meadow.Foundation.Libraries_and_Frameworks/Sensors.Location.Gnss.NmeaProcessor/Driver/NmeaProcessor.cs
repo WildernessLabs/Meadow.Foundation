@@ -77,9 +77,9 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
             }
 
             INmeaDecoder decoder;
-            if (decoders.ContainsKey(sentence.Prefix))
+            if (decoders.ContainsKey(sentence.Prefix!))
             {
-                decoder = decoders[sentence.Prefix];
+                decoder = decoders[sentence.Prefix!];
                 if (decoder != null)
                 {
                     if (DebugMode) { Resolver.Log.Info($"Found appropriate decoder:{decoder.Prefix}"); }

@@ -34,7 +34,7 @@ namespace Meadow.Foundation.Sensors.Distance
 
         private readonly byte[] readBuffer = new byte[16];
 
-        private TaskCompletionSource<Length> dataReceivedTaskCompletionSource;
+        private TaskCompletionSource<Length>? dataReceivedTaskCompletionSource;
 
         private readonly bool createdSerialPort = false;
 
@@ -149,7 +149,7 @@ namespace Meadow.Foundation.Sensors.Distance
                 if (mm != 0)
                 {
                     var length = new Length(mm, Length.UnitType.Millimeters);
-                    dataReceivedTaskCompletionSource.SetResult(length);
+                    dataReceivedTaskCompletionSource?.SetResult(length);
                 }
             }
         }

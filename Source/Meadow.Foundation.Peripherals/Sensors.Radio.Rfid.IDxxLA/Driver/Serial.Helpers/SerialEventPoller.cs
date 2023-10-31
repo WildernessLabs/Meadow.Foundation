@@ -11,7 +11,7 @@ namespace Meadow.Foundation.Sensors.Radio.Rfid.Serial.Helpers
     /// </summary>
     public class SerialEventPoller : IDisposable
     {
-        private CancellationTokenSource _cancellationTokenSource;
+        private CancellationTokenSource? _cancellationTokenSource;
 
         /// <summary>
         /// Event for if there is data in the serial port buffer to read.
@@ -96,7 +96,7 @@ namespace Meadow.Foundation.Sensors.Radio.Rfid.Serial.Helpers
         /// The serial port with data in it's buffer.
         /// You should check there is still data in the buffer before consuming.
         /// </summary>
-        public ISerialPort SerialPort { get; set; }
+        public ISerialPort? SerialPort { get; set; }
     }
 
     /// <summary>

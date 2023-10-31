@@ -281,10 +281,10 @@ namespace Meadow.Foundation.Displays
             SendCommand(Command.WRITE_RAM);
             /* send the image data */
 
-            dataCommandPort.State = DataState;
+            dataCommandPort!.State = DataState;
             for (int i = 0; i < Width / 8 * Height; i++)
             {
-                spiComms.Write(buffer[i]);
+                spiComms?.Write(buffer[i]);
             }
         }
 

@@ -245,52 +245,52 @@ namespace Meadow.Foundation.Sensors.Environmental
         {
             if (changeResult.New.StandardParticulateMatter_1micron is { } SPM0_1)
             {
-                StandardPM_1micronUpdated?.Invoke(this, new ChangeResult<Density>(SPM0_1, changeResult.Old.Value.StandardParticulateMatter_1micron));
+                StandardPM_1micronUpdated?.Invoke(this, new ChangeResult<Density>(SPM0_1, changeResult.Old!.Value.StandardParticulateMatter_1micron));
             }
             if (changeResult.New.StandardParticulateMatter_2_5micron is { } SPM0_2_5)
             {
-                StandardPM_1micronUpdated?.Invoke(this, new ChangeResult<Density>(SPM0_2_5, changeResult.Old.Value.StandardParticulateMatter_2_5micron));
+                StandardPM_1micronUpdated?.Invoke(this, new ChangeResult<Density>(SPM0_2_5, changeResult.Old!.Value.StandardParticulateMatter_2_5micron));
             }
             if (changeResult.New.StandardParticulateMatter_10micron is { } SPM0_10)
             {
-                StandardPM_1micronUpdated?.Invoke(this, new ChangeResult<Density>(SPM0_10, changeResult.Old.Value.StandardParticulateMatter_10micron));
+                StandardPM_1micronUpdated?.Invoke(this, new ChangeResult<Density>(SPM0_10, changeResult.Old!.Value.StandardParticulateMatter_10micron));
             }
             if (changeResult.New.EnvironmentalParticulateMatter_1micron is { } EM0_1)
             {
-                StandardPM_1micronUpdated?.Invoke(this, new ChangeResult<Density>(EM0_1, changeResult.Old.Value.EnvironmentalParticulateMatter_1micron));
+                StandardPM_1micronUpdated?.Invoke(this, new ChangeResult<Density>(EM0_1, changeResult.Old!.Value.EnvironmentalParticulateMatter_1micron));
             }
             if (changeResult.New.EnvironmentalParticulateMatter_2_5micron is { } EM0_2_5)
             {
-                StandardPM_1micronUpdated?.Invoke(this, new ChangeResult<Density>(EM0_2_5, changeResult.Old.Value.EnvironmentalParticulateMatter_2_5micron));
+                StandardPM_1micronUpdated?.Invoke(this, new ChangeResult<Density>(EM0_2_5, changeResult.Old!.Value.EnvironmentalParticulateMatter_2_5micron));
             }
             if (changeResult.New.EnvironmentalParticulateMatter_10micron is { } EM0_10)
             {
-                StandardPM_1micronUpdated?.Invoke(this, new ChangeResult<Density>(EM0_10, changeResult.Old.Value.EnvironmentalParticulateMatter_10micron));
+                StandardPM_1micronUpdated?.Invoke(this, new ChangeResult<Density>(EM0_10, changeResult.Old!.Value.EnvironmentalParticulateMatter_10micron));
             }
 
             if (changeResult.New.ParticleDensity_0_3microns is { } P_0_3)
             {
-                CountOf0_3micronParticlesUpdated?.Invoke(this, new ChangeResult<ParticleDensity>(P_0_3, changeResult.Old.Value.ParticleDensity_0_3microns));
+                CountOf0_3micronParticlesUpdated?.Invoke(this, new ChangeResult<ParticleDensity>(P_0_3, changeResult.Old!.Value.ParticleDensity_0_3microns));
             }
             if (changeResult.New.ParticleDensity_0_5microns is { } P_0_5)
             {
-                CountOf0_5micronParticlesUpdated?.Invoke(this, new ChangeResult<ParticleDensity>(P_0_5, changeResult.Old.Value.ParticleDensity_0_5microns));
+                CountOf0_5micronParticlesUpdated?.Invoke(this, new ChangeResult<ParticleDensity>(P_0_5, changeResult.Old!.Value.ParticleDensity_0_5microns));
             }
             if (changeResult.New.ParticleDensity_10microns is { } P_10)
             {
-                CountOf10micronParticlesUpdated?.Invoke(this, new ChangeResult<ParticleDensity>(P_10, changeResult.Old.Value.ParticleDensity_10microns));
+                CountOf10micronParticlesUpdated?.Invoke(this, new ChangeResult<ParticleDensity>(P_10, changeResult.Old!.Value.ParticleDensity_10microns));
             }
             if (changeResult.New.ParticleDensity_25microns is { } P_25)
             {
-                CountOf25micronParticlesUpdated?.Invoke(this, new ChangeResult<ParticleDensity>(P_25, changeResult.Old.Value.ParticleDensity_25microns));
+                CountOf25micronParticlesUpdated?.Invoke(this, new ChangeResult<ParticleDensity>(P_25, changeResult.Old!.Value.ParticleDensity_25microns));
             }
             if (changeResult.New.ParticleDensity_50microns is { } P_50)
             {
-                CountOf50micronParticlesUpdated?.Invoke(this, new ChangeResult<ParticleDensity>(P_50, changeResult.Old.Value.ParticleDensity_50microns));
+                CountOf50micronParticlesUpdated?.Invoke(this, new ChangeResult<ParticleDensity>(P_50, changeResult.Old!.Value.ParticleDensity_50microns));
             }
             if (changeResult.New.ParticleDensity_100microns is { } P_100)
             {
-                CountOf100micronParticlesUpdated?.Invoke(this, new ChangeResult<ParticleDensity>(P_100, changeResult.Old.Value.ParticleDensity_100microns));
+                CountOf100micronParticlesUpdated?.Invoke(this, new ChangeResult<ParticleDensity>(P_100, changeResult.Old!.Value.ParticleDensity_100microns));
             }
 
             base.RaiseEventsAndNotify(changeResult);

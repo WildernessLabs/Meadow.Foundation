@@ -36,7 +36,7 @@ namespace Meadow.Foundation.Sensors.Environmental
         ///</Summary>
         protected IAnalogInputPort AnalogInputPort { get; }
 
-        SensorCalibration[] calibrations;
+        SensorCalibration[]? calibrations;
 
         /// <summary>
         /// Create a new MiniPID2 object
@@ -76,7 +76,7 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// <param name="sensorType">The sensor to change</param>
         public void SetOffsetForSensor(Voltage offset, MiniPID2Type sensorType)
         {
-            calibrations[(int)sensorType].Offset = offset;
+            calibrations![(int)sensorType].Offset = offset;
         }
 
         /// <summary>
@@ -85,7 +85,7 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// <param name="sensorType">The sensor</param>
         /// <returns>The offset as voltage</returns>
         public Voltage GetOffsetForSensor(MiniPID2Type sensorType)
-            => calibrations[(int)sensorType].Offset;
+            => calibrations![(int)sensorType].Offset;
 
         /// <summary>
         /// Initialize the sensor
@@ -184,7 +184,7 @@ namespace Meadow.Foundation.Sensors.Environmental
         {
             int i = (int)MiniPID2DeviceType;
 
-            var ppm = (voltage.Millivolts - calibrations[i].Offset.Millivolts) / calibrations[i].Sensitivity.Millivolts;
+            var ppm = (voltage.Millivolts - calibrations![i].Offset.Millivolts) / calibrations[i].Sensitivity.Millivolts;
 
             if (ppm < calibrations[i].MinimumDetectionLimit.PartsPerMillion)
             {

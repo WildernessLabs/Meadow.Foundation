@@ -19,7 +19,7 @@ namespace Meadow.Foundation.Sensors.Radio.Rfid
         /// <returns>
         /// The last read RFID tag.
         /// </returns>
-        byte[] LastRead { get; }
+        byte[]? LastRead { get; }
 
         /// <summary>
         /// Start reading for RFID tags.

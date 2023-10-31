@@ -273,11 +273,11 @@ namespace Meadow.Foundation.Displays
             {
                 SendCommand(Command.DATA_START_TRANSMISSION_1);
 
-                dataCommandPort.State = DataState;
+                dataCommandPort!.State = DataState;
 
                 for (int i = 0; i < Width * Height / 8; i++)
                 {
-                    spiComms.Write(bufferBlack[i]);
+                    spiComms!.Write(bufferBlack[i]);
                 }
             }
 
@@ -285,11 +285,11 @@ namespace Meadow.Foundation.Displays
             {
                 SendCommand(Command.DATA_START_TRANSMISSION_2);
 
-                dataCommandPort.State = DataState;
+                dataCommandPort!.State = DataState;
 
                 for (int i = 0; i < Width * Height / 8; i++)
                 {
-                    spiComms.Write((byte)~bufferRed[i]);
+                    spiComms!.Write((byte)~bufferRed[i]);
                 }
             }
 

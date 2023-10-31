@@ -1362,7 +1362,13 @@ namespace Meadow.Foundation.Graphics
         public void DrawImage(int x, int y, Image image,
             HorizontalAlignment alignmentH = HorizontalAlignment.Left,
             VerticalAlignment alignmentV = VerticalAlignment.Top)
-            => DrawBuffer(x, y, image.DisplayBuffer, alignmentH, alignmentV);
+        {
+            if (image.DisplayBuffer is not null)
+            {
+                DrawBuffer(x, y, image.DisplayBuffer, alignmentH, alignmentV);
+            }
+            throw new Exception("Image does not have a display buffer");
+        }
 
         /// <summary>
         /// Draw an Image onto the display buffer at the specified location
@@ -1371,7 +1377,13 @@ namespace Meadow.Foundation.Graphics
         /// <param name="y">x location of target to draw buffer</param>
         /// <param name="image">the source image to write to the display buffer</param>
         public void DrawImage(int x, int y, Image image)
-            => DrawBuffer(x, y, image.DisplayBuffer);
+        {
+            if (image.DisplayBuffer is not null)
+            {
+                DrawBuffer(x, y, image.DisplayBuffer);
+            }
+            throw new Exception("Image does not have a display buffer");
+        }
 
         /// <summary>
         /// Draw an Image onto the display buffer at (0, 0)

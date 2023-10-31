@@ -46,8 +46,8 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         public Frequency SpiBusSpeed
         {
-            get => spiComms.BusSpeed;
-            set => spiComms.BusSpeed = value;
+            get => spiComms!.BusSpeed;
+            set => spiComms!.BusSpeed = value;
         }
 
         /// <summary>
@@ -65,29 +65,29 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         public SpiClockConfiguration.Mode SpiBusMode
         {
-            get => spiComms.BusMode;
-            set => spiComms.BusMode = value;
+            get => spiComms!.BusMode;
+            set => spiComms!.BusMode = value;
         }
 
         /// <summary>
         /// SPI Communication bus used to communicate with the peripheral
         /// </summary>
-        protected ISpiCommunications spiComms;
+        protected ISpiCommunications? spiComms;
 
         /// <summary>
         /// The data command port
         /// </summary>
-        protected IDigitalOutputPort dataCommandPort;
+        protected IDigitalOutputPort? dataCommandPort;
 
         /// <summary>
         /// The reset port
         /// </summary>
-        protected IDigitalOutputPort resetPort;
+        protected IDigitalOutputPort? resetPort;
 
         /// <summary>
         /// The chip select port
         /// </summary>
-        protected IDigitalOutputPort chipSelectPort;
+        protected IDigitalOutputPort? chipSelectPort;
 
         /// <summary>
         /// The connection type (I2C or SPI)
@@ -112,7 +112,7 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// I2C Communication bus used to communicate with the peripheral
         /// </summary>
-        protected II2cCommunications i2cComms;
+        protected II2cCommunications? i2cComms;
 
         /// <summary>
         /// Buffer holding the pixels in the display
@@ -208,14 +208,14 @@ namespace Meadow.Foundation.Displays
         {
             if (connectionType == ConnectionType.SPI)
             {
-                dataCommandPort.State = Command;
-                spiComms.Write(command);
+                dataCommandPort!.State = Command;
+                spiComms!.Write(command);
             }
             else
             {
                 commandBuffer.Span[0] = 0x00;
                 commandBuffer.Span[1] = command;
-                i2cComms.Write(commandBuffer.Span);
+                i2cComms!.Write(commandBuffer.Span);
             }
         }
 
@@ -227,8 +227,8 @@ namespace Meadow.Foundation.Displays
         {
             if (connectionType == ConnectionType.SPI)
             {
-                dataCommandPort.State = Command;
-                spiComms.Write(commands);
+                dataCommandPort!.State = Command;
+                spiComms?.Write(commands);
             }
             else
             {   //a little heavy but this is only used a couple of times
@@ -236,7 +236,7 @@ namespace Meadow.Foundation.Displays
                 Span<byte> data = new byte[commands.Length + 1];
                 data[0] = 0x00;
                 commands.CopyTo(data.Slice(1, commands.Length));
-                i2cComms.Write(data);
+                i2cComms?.Write(data);
             }
         }
 
@@ -249,8 +249,8 @@ namespace Meadow.Foundation.Displays
 
             if (connectionType == ConnectionType.SPI)
             {
-                dataCommandPort.State = Data;
-                spiComms.Bus.Exchange(chipSelectPort, imageBuffer.Buffer, readBuffer);
+                dataCommandPort!.State = Data;
+                spiComms!.Bus.Exchange(chipSelectPort, imageBuffer.Buffer, readBuffer);
             }
             else//  I2C
             {   //  Send the buffer page by page
@@ -262,7 +262,7 @@ namespace Meadow.Foundation.Displays
                     if (imageBuffer.ByteCount - index < PAGE_SIZE) { break; }
 
                     Array.Copy(imageBuffer.Buffer, index, pageBuffer, 1, PAGE_SIZE);
-                    i2cComms.Write(pageBuffer);
+                    i2cComms?.Write(pageBuffer);
                 }
             }
         }

@@ -70,11 +70,11 @@ namespace Meadow.Foundation.Sensors.Radio.Rfid
         private void SerialPort_MessageReceived(object sender, SerialMessageData e)
         {
             var (tag, status) = GetValidatedRfidTag(e.Message);
-            OnTagReadEvent(status, tag);
+            OnTagReadEvent(status, tag!);
         }
 
         /// <inheritdoc />
-        public byte[] LastRead { get; private set; }
+        public byte[]? LastRead { get; private set; }
 
         /// <summary>
         /// Dispose of this instance.
@@ -173,7 +173,7 @@ namespace Meadow.Foundation.Sensors.Radio.Rfid
             };
         }
 
-        private static (byte[] tag, RfidValidationStatus status) GetValidatedRfidTag(Span<byte> data)
+        private static (byte[]? tag, RfidValidationStatus status) GetValidatedRfidTag(Span<byte> data)
         {
             // Valid format is as follows:
             // STX, 0-F x10 tag, 0-F x2 checksum, CR, LF, ETX

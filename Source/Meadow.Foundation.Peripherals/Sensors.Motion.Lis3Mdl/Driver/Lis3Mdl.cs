@@ -44,6 +44,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <param name="i2cBus">The I2C bus connected to the sensor</param>
         /// <param name="address">The I2C address</param>
         /// <param name="fullScale">default <see cref="FullScale"/> enumeration value to use during initialization.</param>
+        /// <param name="outputDataRate">The output data rate</param>
         public Lis3mdl(II2cBus i2cBus, byte address = (byte)Addresses.Default, FullScale fullScale = FullScale.PlusMinus4Gauss, OutputDataRate outputDataRate = OutputDataRate.Odr10Hz)
         {
             i2cComms = new I2cCommunications(i2cBus, address);

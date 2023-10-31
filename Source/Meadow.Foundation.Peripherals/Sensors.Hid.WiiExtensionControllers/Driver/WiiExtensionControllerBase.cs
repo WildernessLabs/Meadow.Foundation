@@ -40,7 +40,7 @@ namespace Meadow.Foundation.Sensors.Hid
         /// <summary>
         /// Sampling cancellation token source
         /// </summary>
-        protected CancellationTokenSource SamplingTokenSource { get; set; }
+        protected CancellationTokenSource? SamplingTokenSource { get; set; }
 
         /// <summary>
         /// Are we actively reading data from the extension controller

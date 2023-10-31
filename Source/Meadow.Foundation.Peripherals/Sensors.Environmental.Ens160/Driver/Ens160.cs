@@ -93,8 +93,8 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// </summary>
         protected async Task Initialize()
         {
-            BusComms.WriteRegister((byte)Registers.COMMAND, (byte)Commands.NOP);
-            BusComms.WriteRegister((byte)Registers.COMMAND, (byte)Commands.CLRGPR);
+            BusComms?.WriteRegister((byte)Registers.COMMAND, (byte)Commands.NOP);
+            BusComms?.WriteRegister((byte)Registers.COMMAND, (byte)Commands.CLRGPR);
 
             await Task.Delay(10);
             await Reset();
@@ -106,7 +106,7 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// <returns></returns>
         public Task Reset()
         {
-            BusComms.WriteRegister((byte)Registers.OPMODE, (byte)OperatingMode.Reset);
+            BusComms?.WriteRegister((byte)Registers.OPMODE, (byte)OperatingMode.Reset);
             return Task.Delay(10);
         }
 

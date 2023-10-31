@@ -19,7 +19,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// <summary>
             /// The SetPinState delegate 
             /// </summary>
-            public SetPinStateDelegate SetPinState;
+            public SetPinStateDelegate SetPinState = delegate { };
 
             /// <summary>
             /// The port state
@@ -42,7 +42,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 IPin pin,
                 bool initialState = false,
                 OutputType outputType = OutputType.OpenDrain)
-                : base(pin, (IDigitalChannelInfo)pin.SupportedChannels[0], initialState, outputType)
+                : base(pin, (IDigitalChannelInfo)pin.SupportedChannels![0], initialState, outputType)
             {
             }
         }

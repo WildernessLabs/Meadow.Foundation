@@ -157,7 +157,13 @@ namespace Meadow.Foundation.RTCs
                 }
                 alarm1Delegate += value;
             }
-            remove => alarm1Delegate -= value;
+            remove
+            {
+                if (alarm1Delegate != null)
+                {
+                    alarm1Delegate -= value;
+                }
+            }
         }
 
         /// <summary>
@@ -173,7 +179,13 @@ namespace Meadow.Foundation.RTCs
                 }
                 alarm2Delegate += value;
             }
-            remove => alarm2Delegate -= value;
+            remove
+            {
+                if (alarm2Delegate != null)
+                {
+                    alarm2Delegate -= value;
+                }
+            }
         }
 
         /// <summary>

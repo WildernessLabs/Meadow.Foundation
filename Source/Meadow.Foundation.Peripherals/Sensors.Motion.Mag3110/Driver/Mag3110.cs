@@ -32,7 +32,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         /// Interrupt port used to detect then end of a conversion
         /// </summary>
-        protected readonly IDigitalInterruptPort interruptPort;
+        protected readonly IDigitalInterruptPort? interruptPort;
 
         /// <summary>
         /// The current magnetic field value
@@ -114,7 +114,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <param name="interruptPort">Interrupt port used to detect end of conversions</param>
         /// <param name="address">Address of the MAG3110 (default = 0x0e)</param>
         /// <param name="i2cBus">I2C bus object - default = 400 KHz)</param>        
-        public Mag3110(II2cBus i2cBus, IDigitalInterruptPort interruptPort = null, byte address = (byte)Addresses.Default)
+        public Mag3110(II2cBus i2cBus, IDigitalInterruptPort? interruptPort = null, byte address = (byte)Addresses.Default)
             : base(i2cBus, address)
         {
             var deviceID = BusComms.ReadRegister(Registers.WHO_AM_I);

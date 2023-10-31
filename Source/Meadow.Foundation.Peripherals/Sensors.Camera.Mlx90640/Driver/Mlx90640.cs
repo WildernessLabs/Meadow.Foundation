@@ -13,7 +13,7 @@ namespace Meadow.Foundation.Sensors.Camera
         /// <summary>
         /// Camera serial number as a string
         /// </summary>
-        public string SerialNumber { get; private set; }
+        public string SerialNumber { get; private set; } = "";
 
         /// <summary>
         /// Emissivity

@@ -198,9 +198,9 @@ namespace Meadow.Foundation.Displays
             SendData(0xC0);
             SendCommand(0x10);
 
-            dataCommandPort.State = DataState;
+            dataCommandPort!.State = DataState;
 
-            spiComms.Write(imageBuffer.Buffer);
+            spiComms!.Write(imageBuffer.Buffer);
 
             SendCommand(0x04);
             WaitForBusyState(true);
@@ -232,7 +232,7 @@ namespace Meadow.Foundation.Displays
                 {
                     if (i < bottom && i >= top && j < right / 2 && j >= left / 2)
                     {
-                        spiComms.Write(imageBuffer.Buffer[j + ((Width / 2) * i)]);
+                        spiComms!.Write(imageBuffer.Buffer[j + ((Width / 2) * i)]);
                     }
                     else
                     {   //no-op 
@@ -310,6 +310,13 @@ namespace Meadow.Foundation.Displays
         protected virtual void WaitForBusyState(bool state)
         {
             int count = 0;
+
+            if (busyPort is null)
+            {
+                DelayMs(200);
+                return;
+            }
+
             while (busyPort.State != state && count < 20)
             {
                 DelayMs(50);
@@ -327,7 +334,7 @@ namespace Meadow.Foundation.Displays
             SendCommand(0x07);
             SendData(0xA5);
             DelayMs(100);
-            resetPort.State = false;
+            resetPort!.State = false;
         }
     }
 }

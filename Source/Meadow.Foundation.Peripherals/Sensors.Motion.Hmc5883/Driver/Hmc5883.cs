@@ -100,9 +100,9 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <returns>The latest sensor reading</returns>
         protected override Task<Vector> ReadSensor()
         {
-            ushort x = BusComms!.ReadRegisterAsUShort(Registers.HMC_X_MSB_REG_ADDR, ByteOrder.BigEndian);
-            ushort y = BusComms!.ReadRegisterAsUShort(Registers.HMC_Y_MSB_REG_ADDR, ByteOrder.BigEndian);
-            ushort z = BusComms!.ReadRegisterAsUShort(Registers.HMC_Z_MSB_REG_ADDR, ByteOrder.BigEndian);
+            ushort x = BusComms.ReadRegisterAsUShort(Registers.HMC_X_MSB_REG_ADDR, ByteOrder.BigEndian);
+            ushort y = BusComms.ReadRegisterAsUShort(Registers.HMC_Y_MSB_REG_ADDR, ByteOrder.BigEndian);
+            ushort z = BusComms.ReadRegisterAsUShort(Registers.HMC_Z_MSB_REG_ADDR, ByteOrder.BigEndian);
             return Task.FromResult(new Vector(x, y, z));
         }
 
@@ -128,8 +128,8 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
         private Statuses GetStatus()
         {
-            BusComms!.Write(Registers.HMC_STATUS_REG_ADDR);
-            BusComms!.Read(ReadBuffer.Span[0..1]);
+            BusComms.Write(Registers.HMC_STATUS_REG_ADDR);
+            BusComms.Read(ReadBuffer.Span[0..1]);
             return (Statuses)ReadBuffer.Span[0];
         }
     }

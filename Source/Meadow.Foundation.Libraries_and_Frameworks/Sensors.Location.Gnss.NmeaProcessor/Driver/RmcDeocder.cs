@@ -55,7 +55,7 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
 
             //if (position.Valid) {
             //Resolver.Log.Info($"will attempt to parse latitude; element[2]:{sentence.DataElements[2]}, element[3]:{sentence.DataElements[3]}");
-            position.Position.Latitude = NmeaUtilities.DegreesMinutesDecode(sentence.DataElements[2], sentence.DataElements[3]);
+            position.Position!.Latitude = NmeaUtilities.DegreesMinutesDecode(sentence.DataElements[2], sentence.DataElements[3]);
             //Resolver.Log.Info($"will attempt to parse longitude; element[4]:{sentence.DataElements[4]}, element[5]:{sentence.DataElements[5]}");
             position.Position.Longitude = NmeaUtilities.DegreesMinutesDecode(sentence.DataElements[4], sentence.DataElements[5]);
             //Resolver.Log.Info("40");

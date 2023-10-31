@@ -35,12 +35,12 @@ namespace Meadow.Foundation.Sensors.Distance
         /// <summary>
         /// Port for trigger Pin
         /// </summary>
-        protected IDigitalOutputPort triggerPort;
+        protected IDigitalOutputPort? triggerPort;
 
         /// <summary>
         /// Port for echo Pin
         /// </summary>
-        protected IDigitalInterruptPort echoPort;
+        protected IDigitalInterruptPort? echoPort;
 
         private long tickStart;
 
@@ -78,6 +78,8 @@ namespace Meadow.Foundation.Sensors.Distance
         /// </summary>
         public virtual void MeasureDistance()
         {
+            if (triggerPort == null) { throw new NullReferenceException("Trigger port is null"); }
+
             //Distance = -1;
 
             // Raise trigger port to high for 10+ micro-seconds

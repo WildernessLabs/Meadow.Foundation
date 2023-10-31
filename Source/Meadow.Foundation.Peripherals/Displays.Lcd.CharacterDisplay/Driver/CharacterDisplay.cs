@@ -13,7 +13,7 @@ namespace Meadow.Foundation.Displays.Lcd
         /// <summary>
         /// The display configuration for text display menu
         /// </summary>
-        public TextDisplayConfig DisplayConfig => characterDisplay?.DisplayConfig;
+        public TextDisplayConfig? DisplayConfig => characterDisplay?.DisplayConfig;
 
         /// <summary>
         /// Create a new character display object using GPIO

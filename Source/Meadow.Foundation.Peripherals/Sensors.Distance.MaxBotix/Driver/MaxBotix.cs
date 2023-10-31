@@ -80,10 +80,10 @@ namespace Meadow.Foundation.Sensors.Distance
                 switch (communication)
                 {
                     case CommunicationType.Analog:
-                        analogInputPort.StartUpdating(updateInterval);
+                        analogInputPort?.StartUpdating(updateInterval);
                         break;
                     case CommunicationType.Serial:
-                        serialMessagePort.Open();
+                        serialMessagePort?.Open();
                         break;
                     case CommunicationType.I2C:
                         base.StartUpdating(updateInterval);
@@ -106,11 +106,11 @@ namespace Meadow.Foundation.Sensors.Distance
 
                 if (communication == CommunicationType.Analog)
                 {
-                    analogInputPort.StopUpdating();
+                    analogInputPort?.StopUpdating();
                 }
                 else if (communication != CommunicationType.Serial)
                 {
-                    serialMessagePort.Close();
+                    serialMessagePort?.Close();
                 }
                 else if (communication == CommunicationType.I2C)
                 {

@@ -449,7 +449,10 @@ namespace Meadow.Foundation.Sensors.Distance
         /// </summary>
         public void ShutDown()
         {
-            shutdownPort.State = true;
+            if (shutdownPort != null)
+            {
+                shutdownPort.State = true;
+            }
         }
     }
 }

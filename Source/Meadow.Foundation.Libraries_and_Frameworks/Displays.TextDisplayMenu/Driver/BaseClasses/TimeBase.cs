@@ -7,7 +7,14 @@ namespace Meadow.Foundation.Displays.UI.InputTypes
     /// </summary>
     public abstract class TimeBase : InputBase
     {
+        /// <summary>
+        /// Value for each time part
+        /// </summary>
         protected int[] timeParts;
+
+        /// <summary>
+        /// The current position
+        /// </summary>
         protected byte position = 0;
 
         /// <summary>

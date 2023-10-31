@@ -13,7 +13,7 @@ namespace Meadow.Foundation.Displays.UI.InputTypes
         /// <summary>
         /// Raised when the date value changes
         /// </summary>
-        public override event ValueChangedHandler ValueChanged;
+        public override event ValueChangedHandler ValueChanged = delegate { };
 
         /// <summary>
         /// Create a new Date input object
@@ -39,6 +39,11 @@ namespace Meadow.Foundation.Displays.UI.InputTypes
         {
             get
             {
+                if (display == null)
+                {
+                    return 0;
+                }
+
                 return position switch
                 {
                     0 => (byte)(display.DisplayConfig.Width - 7),

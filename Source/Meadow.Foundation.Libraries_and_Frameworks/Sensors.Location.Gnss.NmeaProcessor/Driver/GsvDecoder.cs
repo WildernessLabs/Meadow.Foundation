@@ -34,7 +34,7 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
         /// <summary>
         /// List of satellites.
         /// </summary>
-        protected Satellite[] _satellites;
+        protected Satellite[]? _satellites;
 
         /// <summary>
         /// Current index of the satellite we're processing
@@ -64,53 +64,34 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
         public void Process(NmeaSentence sentence)
         {
             // Sentence number, 1-9 of this GSV message within current sentence group
-            int thisSentenceNumber;
-            if (!int.TryParse(sentence.DataElements[1], out thisSentenceNumber))
+            if (!int.TryParse(sentence.DataElements[1], out int thisSentenceNumber))
             {
-                //if (DebugMode) { Resolver.Log.Warn("Could not parse sentence number"); }
                 return;
             }
 
-            // if it's the first time we've gotten a sentence in this sequence
             if (_currentSentence == 0)
             {
-                // if it's the first sentence, it'll have the total number of sentences
-                // in the group
                 if (thisSentenceNumber == 1)
-                { // 1-based index. 
-                    // create our collection
-                    //this._satelliteList = new List<Satellite>();
-
-                    // total number of satellites
-                    int totalNumberOfSatellites;
-                    if (!int.TryParse(sentence.DataElements[2], out totalNumberOfSatellites))
+                {
+                    if (!int.TryParse(sentence.DataElements[2], out int totalNumberOfSatellites))
                     {
-                        //
-                        //if (DebugMode) { Resolver.Log.Warn("Could not parse total number of satellites, bailing out."); }
                         CleanUp();
                         return;
                     }
-                    // new up our satellite array
                     _satellites = new Satellite[totalNumberOfSatellites];
 
-                    // iterate our sentence count so we don't parse this out again
                     _currentSentence = 1;
-                    // how many sentences to expect in this group
                     _totalSentences = int.Parse(sentence.DataElements[0]);
 
-                    // start our index
                     _currentSatelliteIndex = 0;
                 }
             }
-            // make sure we're getting these in order (BryanC note: i'm not sure this is necessary)
             if (thisSentenceNumber == _currentSentence)
             {
                 _currentSentence++;
 
-                int id, elevation, azimuth, signalToNoiseRatio;
                 Satellite sat;
 
-                // for each satellite within the sentence
                 int currentSatIndex = 0;
                 int numberOfSatsInSentence = (sentence.DataElements.Count - 3) / 4;
 
@@ -121,38 +102,34 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
 
                     sat = new Satellite();
 
-                    if (int.TryParse(sentence.DataElements[currentSatIndex + 0], out id))
+                    if (int.TryParse(sentence.DataElements[currentSatIndex + 0], out int id))
                     {
                         sat.ID = id;
                     }
-                    if (int.TryParse(sentence.DataElements[currentSatIndex + 1], out elevation))
+                    if (int.TryParse(sentence.DataElements[currentSatIndex + 1], out int elevation))
                     {
                         sat.Elevation = elevation;
                     }
-                    if (int.TryParse(sentence.DataElements[currentSatIndex + 2], out azimuth))
+                    if (int.TryParse(sentence.DataElements[currentSatIndex + 2], out int azimuth))
                     {
                         sat.Azimuth = azimuth;
                     }
-                    if (int.TryParse(sentence.DataElements[currentSatIndex + 3], out signalToNoiseRatio))
+                    if (int.TryParse(sentence.DataElements[currentSatIndex + 3], out int signalToNoiseRatio))
                     {
                         sat.SignalTolNoiseRatio = signalToNoiseRatio;
                     }
 
-
-                    _satellites[_currentSatelliteIndex] = sat;
+                    _satellites![_currentSatelliteIndex] = sat;
 
                     _currentSatelliteIndex++;
 
-                    // if we got them all, we need to break out of the loop, because
-                    // even though a sentence might contain room for 4 satellites,
-                    // they might be blank.
                     if (_currentSatelliteIndex == _satellites.Length)
                     {
                         break;
                     }
                 }
 
-                if (_currentSatelliteIndex == _satellites.Length)
+                if (_currentSatelliteIndex == _satellites!.Length)
                 {
 
                     SatellitesInViewReceived(this, new SatellitesInView(_satellites) { TalkerID = sentence.TalkerID });

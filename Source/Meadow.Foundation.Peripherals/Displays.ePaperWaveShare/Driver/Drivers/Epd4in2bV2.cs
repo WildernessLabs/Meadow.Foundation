@@ -67,14 +67,15 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         protected override void Reset()
         {
-            Resolver.Log.Info("Reset");
-
-            resetPort.State = true;
-            DelayMs(200);
-            resetPort.State = false;
-            DelayMs(2);
-            resetPort.State = true;
-            DelayMs(200);
+            if (resetPort != null)
+            {
+                resetPort.State = true;
+                DelayMs(200);
+                resetPort.State = false;
+                DelayMs(2);
+                resetPort.State = true;
+                DelayMs(200);
+            }
         }
 
         /// <summary>
