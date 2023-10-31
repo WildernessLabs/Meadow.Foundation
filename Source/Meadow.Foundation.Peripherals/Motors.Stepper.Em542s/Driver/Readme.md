@@ -1,8 +1,8 @@
-# Meadow.Foundation.Motors.Stepper.A4988
+# Meadow.Foundation.Motors.Stepper.Em542s
 
-**A4988 digital input stepper motor controller**
+**The Leadshine EM542S Stepper Motor Drive**
 
-The **A4988** library is designed for the [Wilderness Labs](www.wildernesslabs.co) Meadow .NET IoT platform and is part of [Meadow.Foundation](https://developer.wildernesslabs.co/Meadow/Meadow.Foundation/).
+The **Em542s** library is designed for the [Wilderness Labs](www.wildernesslabs.co) Meadow .NET IoT platform and is part of [Meadow.Foundation](https://developer.wildernesslabs.co/Meadow/Meadow.Foundation/).
 
 The **Meadow.Foundation** peripherals library is an open-source repository of drivers and libraries that streamline and simplify adding hardware to your C# .NET Meadow IoT application.
 
@@ -13,38 +13,37 @@ To view all Wilderness Labs open-source projects, including samples, visit [gith
 ## Usage
 
 ```csharp
-private A4988 a4988;
+private IStepperMotor stepper;
 
 public override Task Initialize()
 {
-    a4988 = new A4988(
-        step: Device.Pins.D01,
-        direction: Device.Pins.D00,
-        ms1Pin: Device.Pins.D04,
-        ms2Pin: Device.Pins.D03,
-        ms3Pin: Device.Pins.D02);
+    stepper = new Em542s(
+        Device.Pins.D15.CreateDigitalOutputPort(),
+        Device.Pins.D14.CreateDigitalOutputPort(),
+        inverseLogic: true);
 
     return base.Initialize();
 }
 
 public override Task Run()
 {
-    var stepDivisors = (StepDivisor[])Enum.GetValues(typeof(StepDivisor));
+    var direction = RotationDirection.Clockwise;
+
+    // max rate for this drive
+    var rate = new Meadow.Units.Frequency(200, Meadow.Units.Frequency.UnitType.Kilohertz);
+
     while (true)
     {
-        foreach (var step in stepDivisors)
-        {
-            for (var d = 2; d < 5; d++)
-            {
-                Resolver.Log.Info($"180 degrees..Speed divisor = {d}..1/{(int)step} Steps..{a4988.Direction}...");
-                a4988.RotationSpeedDivisor = d;
-                a4988.StepDivisor = step;
-                a4988.Rotate(180);
+        Resolver.Log.Info($"{direction}");
 
-                Thread.Sleep(500);
-            }
-        }
-        a4988.Direction = (a4988.Direction == RotationDirection.Clockwise) ? RotationDirection.CounterClockwise : RotationDirection.Clockwise;
+        stepper.Rotate(360f, direction, rate);
+        Thread.Sleep(1000);
+
+        direction = direction switch
+        {
+            RotationDirection.CounterClockwise => RotationDirection.Clockwise,
+            _ => RotationDirection.CounterClockwise
+        };
     }
 }
 
