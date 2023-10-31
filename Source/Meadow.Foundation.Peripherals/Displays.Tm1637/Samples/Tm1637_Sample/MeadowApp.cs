@@ -15,7 +15,7 @@ namespace MeadowApp
         {
             Resolver.Log.Info("Initialize...");
 
-            display = new Tm1637(Device, Device.Pins.D02, Device.Pins.D01);
+            display = new Tm1637(Device.Pins.D02, Device.Pins.D01);
 
             display.Brightness = 7;
             display.ScreenOn = true;

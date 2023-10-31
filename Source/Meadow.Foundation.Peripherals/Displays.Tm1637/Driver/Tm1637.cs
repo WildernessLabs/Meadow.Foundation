@@ -102,13 +102,12 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// Initialize a TM1637
         /// </summary>
-        /// <param name="device">The device connected to the display</param>
         /// <param name="pinClock">The clock pin</param>
         /// <param name="pinData">The data pin</param>
-        public Tm1637(IMeadowDevice device, IPin pinClock, IPin pinData)
+        public Tm1637(IPin pinClock, IPin pinData)
         {
             portClock = pinClock.CreateDigitalOutputPort();
-            portData = device.CreateBiDirectionalInterruptPort(pinData);
+            portData = pinData.CreateBiDirectionalPort();
 
             _brightness = 7;
         }
