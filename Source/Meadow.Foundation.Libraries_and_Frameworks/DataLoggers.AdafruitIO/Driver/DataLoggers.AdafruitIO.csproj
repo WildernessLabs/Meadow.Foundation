@@ -22,6 +22,6 @@
   <ItemGroup>
     <None Include=".\Readme.md" Pack="true" PackagePath=""/>
     <None Include="..\..\..\icon.png" Pack="true" PackagePath="" />
-    <ProjectReference Include="..\..\DataLoggers.SensorReading\Driver\DataLoggers.SensorReading.csproj" />
+    <PackageReference Include="Meadow.Foundation.DataLoggers.SensorReading" Version="*" />
   </ItemGroup>
 </Project>
