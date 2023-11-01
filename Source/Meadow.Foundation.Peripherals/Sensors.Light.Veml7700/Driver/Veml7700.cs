@@ -15,17 +15,17 @@ namespace Meadow.Foundation.Sensors.Light
         /// <summary>
         /// Raised when the luminosity value changes
         /// </summary>
-        public event EventHandler<IChangeResult<Illuminance>> IlluminanceUpdated = delegate { };
+        public event EventHandler<IChangeResult<Illuminance>> IlluminanceUpdated = default!;
 
         /// <summary>
         /// Raised when the high range is exceeded
         /// </summary>
-        public event EventHandler RangeExceededHigh = delegate { };
+        public event EventHandler RangeExceededHigh = default!;
 
         /// <summary>
         /// Raised when the low range is exceeded
         /// </summary>
-        public event EventHandler RangeExceededLow = delegate { };
+        public event EventHandler RangeExceededLow = default!;
 
         ushort config;
 

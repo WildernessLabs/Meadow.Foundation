@@ -20,7 +20,7 @@ namespace Meadow.Foundation.Sensors.Light
         /// <summary>
         /// Raised when the value of the reading changes.
         /// </summary>
-        public event EventHandler<IChangeResult<Illuminance>> IlluminanceUpdated = delegate { };
+        public event EventHandler<IChangeResult<Illuminance>> IlluminanceUpdated = default!;
 
         /// <summary>
         /// Illuminance sensor calibration

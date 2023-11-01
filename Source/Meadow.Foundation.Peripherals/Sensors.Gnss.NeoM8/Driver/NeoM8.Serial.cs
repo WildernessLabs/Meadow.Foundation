@@ -5,7 +5,7 @@ namespace Meadow.Foundation.Sensors.Gnss
 {
     public partial class NeoM8
     {
-        private readonly ISerialMessagePort serialPort;
+        private readonly ISerialMessagePort? serialPort;
 
         // TODO: if we want to make this public then we're going to have to add
         // a bunch of checks around baud rate, 8n1, etc.
@@ -41,7 +41,8 @@ namespace Meadow.Foundation.Sensors.Gnss
         private void InitializeSerial()
         {
             communicationMode = CommunicationMode.Serial;
-            serialPort.MessageReceived += MessageReceived;
+
+            serialPort!.MessageReceived += MessageReceived;
             InitDecoders();
 
             Reset().Wait();
@@ -49,7 +50,7 @@ namespace Meadow.Foundation.Sensors.Gnss
 
         private void StartUpdatingSerial()
         {
-            if (serialPort.IsOpen)
+            if (serialPort!.IsOpen)
             {
                 return;
             }
@@ -63,7 +64,7 @@ namespace Meadow.Foundation.Sensors.Gnss
 
         private void StopUpdatingSerial()
         {
-            if (serialPort.IsOpen)
+            if (serialPort!.IsOpen)
             {
                 serialPort.Close();
             }

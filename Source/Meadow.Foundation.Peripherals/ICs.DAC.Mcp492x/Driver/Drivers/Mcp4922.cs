@@ -43,7 +43,7 @@ public class Mcp4922 : Mcp492x
         /// <summary>
         /// The pin controller
         /// </summary>
-        public IPinController Controller { get; set; }
+        public IPinController? Controller { get; set; }
 
         /// <summary>
         /// Create a new PinDefinitions object

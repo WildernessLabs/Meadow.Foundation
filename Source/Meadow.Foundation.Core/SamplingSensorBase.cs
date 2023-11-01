@@ -21,7 +21,7 @@ namespace Meadow.Foundation
         /// <summary>
         /// Event handler for updated values
         /// </summary>
-        public event EventHandler<IChangeResult<UNIT>> Updated = delegate { };
+        public event EventHandler<IChangeResult<UNIT>> Updated = default!;
 
         /// <summary>
         /// Sampling cancellation token source

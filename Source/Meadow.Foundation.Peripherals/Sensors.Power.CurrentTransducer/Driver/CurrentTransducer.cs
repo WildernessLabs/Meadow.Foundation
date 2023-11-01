@@ -14,7 +14,7 @@ namespace Meadow.Foundation.Sensors.Power
         /// <summary>
         /// Raised when the value of the reading changes
         /// </summary>
-        public event EventHandler<IChangeResult<Current>> CurrentUpdated = delegate { };
+        public event EventHandler<IChangeResult<Current>> CurrentUpdated = default!;
 
         /// <summary>
         /// The analog input port connected to the transducer

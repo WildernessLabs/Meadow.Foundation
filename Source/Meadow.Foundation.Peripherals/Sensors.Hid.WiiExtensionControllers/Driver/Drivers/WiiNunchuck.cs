@@ -55,10 +55,10 @@ namespace Meadow.Foundation.Sensors.Hid
         {
             base.Update();
 
-            (CButton as WiiExtensionButton).Update(CButtonPressed);
-            (ZButton as WiiExtensionButton).Update(ZButtonPressed);
+            (CButton as WiiExtensionButton)!.Update(CButtonPressed);
+            (ZButton as WiiExtensionButton)!.Update(ZButtonPressed);
 
-            (AnalogStick as WiiExtensionAnalogJoystick).Update(JoystickX, JoystickY);
+            (AnalogStick as WiiExtensionAnalogJoystick)!.Update(JoystickX, JoystickY);
 
             Acceleration3D = new Acceleration3D((XAcceleration - 512) * 0.5,
                                                 (YAcceleration - 512) * 0.5,

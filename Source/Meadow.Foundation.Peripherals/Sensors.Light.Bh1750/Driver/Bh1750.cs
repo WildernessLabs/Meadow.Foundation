@@ -16,7 +16,7 @@ namespace Meadow.Foundation.Sensors.Light
         /// <summary>
         /// Raised when a new Illuminance value is read by the sensor
         /// </summary>
-        public event EventHandler<IChangeResult<Illuminance>> IlluminanceUpdated = delegate { };
+        public event EventHandler<IChangeResult<Illuminance>> IlluminanceUpdated = default!;
 
         /// <summary>
         /// BH1750 Light Transmittance (27.20-222.50%)

@@ -21,7 +21,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         /// Event raised when acceleration changes
         /// </summary>
-        public event EventHandler<IChangeResult<Acceleration3D>> Acceleration3DUpdated = delegate { };
+        public event EventHandler<IChangeResult<Acceleration3D>> Acceleration3DUpdated = default!;
 
         readonly double ADXL345_MG2G_MULTIPLIER = 0.004;
 

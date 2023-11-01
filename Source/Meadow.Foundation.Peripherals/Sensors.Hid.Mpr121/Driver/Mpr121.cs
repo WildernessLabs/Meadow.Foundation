@@ -31,7 +31,7 @@ namespace Meadow.Foundation.Sensors.Hid
         /// Notifies about a the channel statuses have been changed.
         /// Refresh period can be changed by setting PeriodRefresh property.
         /// </summary>
-        public event EventHandler<ChannelStatusChangedEventArgs> ChannelStatusesChanged = delegate { };
+        public event EventHandler<ChannelStatusChangedEventArgs> ChannelStatusesChanged = default!;
 
         private static readonly int NumberOfChannels = Enum.GetValues(typeof(Channels)).Length;
 

@@ -51,6 +51,6 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// <summary>
         /// Raised when the temperature is updated
         /// </summary>
-        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
+        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = default!;
     }
 }

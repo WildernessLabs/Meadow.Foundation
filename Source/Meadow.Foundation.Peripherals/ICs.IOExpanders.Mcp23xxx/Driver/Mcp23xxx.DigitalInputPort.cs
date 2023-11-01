@@ -38,7 +38,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// <param name="pin">The interrupt pin</param>
             /// <param name="resistorMode">The resistor mode used by the interrupt pin</param>
             public DigitalInputPort(IPin pin, ResistorMode resistorMode = ResistorMode.Disabled)
-                : base(pin, (IDigitalChannelInfo)pin.SupportedChannels[0])
+                : base(pin, (IDigitalChannelInfo)pin.SupportedChannels![0])
             {
                 portResistorMode = resistorMode;
             }

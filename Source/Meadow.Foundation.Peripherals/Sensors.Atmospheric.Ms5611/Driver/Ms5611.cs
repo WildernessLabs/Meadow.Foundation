@@ -18,12 +18,12 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <summary>
         /// Temperature changed event
         /// </summary>
-        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
+        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = default!;
 
         /// <summary>
         /// Pressure changed event
         /// </summary>
-        public event EventHandler<IChangeResult<Pressure>> PressureUpdated = delegate { };
+        public event EventHandler<IChangeResult<Pressure>> PressureUpdated = default!;
 
         /// <summary>
         /// The current temperature

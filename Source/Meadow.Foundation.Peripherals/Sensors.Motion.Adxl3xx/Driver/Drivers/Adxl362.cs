@@ -21,12 +21,12 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         /// Raised when the acceleration value changes
         /// </summary>
-        public event EventHandler<IChangeResult<Acceleration3D>> Acceleration3DUpdated = delegate { };
+        public event EventHandler<IChangeResult<Acceleration3D>> Acceleration3DUpdated = default!;
 
         /// <summary>
         /// Raised when the temperature value changes
         /// </summary>
-        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
+        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = default!;
 
         private const double ADXL362_MG2G_MULTIPLIER = 0.004;
         private const double AVERAGE_TEMPERATURE_BIAS = 350;

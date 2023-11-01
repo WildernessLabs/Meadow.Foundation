@@ -26,7 +26,7 @@ namespace Meadow.Foundation.Sensors.Switches
         /// <summary>
         /// Raised when the switch circuit is opened or closed.
         /// </summary>
-        public event EventHandler Changed = delegate { };
+        public event EventHandler Changed = default!;
 
         /// <summary>
         /// Returns the DigitalInputPort.

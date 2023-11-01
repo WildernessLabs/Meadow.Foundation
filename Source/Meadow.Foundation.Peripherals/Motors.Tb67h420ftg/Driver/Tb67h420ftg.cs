@@ -65,8 +65,8 @@ namespace Meadow.Foundation.Motors
                 pwmB: pwmB?.CreateDigitalOutputPort(),
                 fault1: fault1?.CreateDigitalInputPort(),
                 fault2: null,
-                hbMode: hbMode.CreateDigitalOutputPort(),
-                tblkab: tblkab.CreateDigitalOutputPort()
+                hbMode: hbMode?.CreateDigitalOutputPort(),
+                tblkab: tblkab?.CreateDigitalOutputPort()
                 )
         { }
 

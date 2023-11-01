@@ -19,8 +19,8 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         public Frequency SpiBusSpeed
         {
-            get => spiComms.BusSpeed;
-            set => spiComms.BusSpeed = value;
+            get => spiComms!.BusSpeed;
+            set => spiComms!.BusSpeed = value;
         }
 
         /// <summary>
@@ -33,8 +33,8 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         public SpiClockConfiguration.Mode SpiBusMode
         {
-            get => spiComms.BusMode;
-            set => spiComms.BusMode = value;
+            get => spiComms!.BusMode;
+            set => spiComms!.BusMode = value;
         }
 
         /// <summary>
@@ -45,27 +45,27 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// Data command port
         /// </summary>
-        protected IDigitalOutputPort dataCommandPort;
+        protected IDigitalOutputPort? dataCommandPort;
 
         /// <summary>
         /// Reset port
         /// </summary>
-        protected IDigitalOutputPort resetPort;
+        protected IDigitalOutputPort? resetPort;
 
         /// <summary>
         /// Chip select port
         /// </summary>
-        protected IDigitalOutputPort chipSelectPort;
+        protected IDigitalOutputPort? chipSelectPort;
 
         /// <summary>
         /// Busy indicator port
         /// </summary>
-        protected IDigitalInputPort busyPort;
+        protected IDigitalInputPort? busyPort;
 
         /// <summary>
         /// SPI Communication bus used to communicate with the peripheral
         /// </summary>
-        protected ISpiCommunications spiComms;
+        protected ISpiCommunications? spiComms;
 
         /// <summary>
         /// Const bool representing the data state
@@ -84,7 +84,7 @@ namespace Meadow.Foundation.Displays
         protected void Write(byte value)
         {
             commandBuffer[0] = value;
-            spiComms.Write(commandBuffer);
+            spiComms?.Write(commandBuffer);
         }
 
         /// <summary>
@@ -92,10 +92,13 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         protected virtual void Reset()
         {
-            resetPort.State = false;
-            DelayMs(200);
-            resetPort.State = true;
-            DelayMs(200);
+            if (resetPort != null)
+            {
+                resetPort.State = false;
+                DelayMs(200);
+                resetPort.State = true;
+                DelayMs(200);
+            }
         }
 
         /// <summary>
@@ -113,7 +116,7 @@ namespace Meadow.Foundation.Displays
         /// <param name="command">The command value</param>
         protected void SendCommand(byte command)
         {
-            dataCommandPort.State = CommandState;
+            dataCommandPort!.State = CommandState;
             Write(command);
         }
 
@@ -132,7 +135,7 @@ namespace Meadow.Foundation.Displays
         /// <param name="data">The data</param>
         protected void SendData(byte data)
         {
-            dataCommandPort.State = DataState;
+            dataCommandPort!.State = DataState;
             Write(data);
         }
 
@@ -142,8 +145,8 @@ namespace Meadow.Foundation.Displays
         /// <param name="data">The data</param>
         protected void SendData(byte[] data)
         {
-            dataCommandPort.State = DataState;
-            spiComms.Write(data);
+            dataCommandPort!.State = DataState;
+            spiComms!.Write(data);
         }
 
         /// <summary>
@@ -152,6 +155,13 @@ namespace Meadow.Foundation.Displays
         protected virtual void WaitUntilIdle()
         {
             int count = 0;
+
+            if (busyPort == null)
+            {
+                DelayMs(200);
+                return;
+            }
+
             while (busyPort.State == false && count < 20)
             {
                 DelayMs(50);

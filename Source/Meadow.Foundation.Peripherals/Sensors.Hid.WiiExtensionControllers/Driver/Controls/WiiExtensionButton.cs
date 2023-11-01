@@ -16,22 +16,22 @@ namespace Meadow.Foundation.Sensors.Hid
         /// <summary>
         /// Raised when a press starts (the button is pushed down)
         /// </summary>
-        public event EventHandler PressStarted = delegate { };
+        public event EventHandler PressStarted = default!;
 
         /// <summary>
         /// Raised when a press ends (the button is released)
         /// </summary>
-        public event EventHandler PressEnded = delegate { };
+        public event EventHandler PressEnded = default!;
 
         /// <summary>
         /// Raised when the button circuit is re-opened after it has been closed (at the end of a press)
         /// </summary>
-        public event EventHandler Clicked = delegate { };
+        public event EventHandler Clicked = default!;
 
         /// <summary>
         /// Raised when the button circuit is pressed for LongPressDuration
         /// </summary>
-        public event EventHandler LongClicked = delegate { };
+        public event EventHandler LongClicked = default!;
 
         /// <summary>
         /// Maximum DateTime value when the button was just pushed

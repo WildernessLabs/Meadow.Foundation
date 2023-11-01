@@ -19,7 +19,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// <summary>
         /// Raised when the temperature value changes
         /// </summary>
-        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
+        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = default!;
 
         /// <summary>
         /// The temperature, in degrees celsius (°C), from the last reading.

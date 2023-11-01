@@ -17,7 +17,7 @@ namespace Meadow.Foundation.Sensors.Light
         /// <summary>
         /// Raised when the luminosity changes
         /// </summary>
-        public event EventHandler<IChangeResult<Illuminance>> IlluminanceUpdated = delegate { };
+        public event EventHandler<IChangeResult<Illuminance>> IlluminanceUpdated = default!;
 
         /// <summary>
         /// The current Illuminance value

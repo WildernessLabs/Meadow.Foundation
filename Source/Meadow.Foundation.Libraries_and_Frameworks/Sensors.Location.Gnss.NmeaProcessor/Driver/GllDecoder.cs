@@ -12,7 +12,7 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
         /// <summary>
         /// Event raised when valid GLL data is received.
         /// </summary>
-        public event EventHandler<GnssPositionInfo> GeographicLatitudeLongitudeReceived = delegate { };
+        public event EventHandler<GnssPositionInfo> GeographicLatitudeLongitudeReceived = default!;
 
         /// <summary>
         /// Prefix for the GLL (Geographic position Latitude / Longitude) decoder.
@@ -35,7 +35,7 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
             //
             var location = new GnssPositionInfo();
             location.TalkerID = sentence.TalkerID;
-            location.Position.Latitude = NmeaUtilities.DegreesMinutesDecode(sentence.DataElements[0], sentence.DataElements[1]);
+            location.Position!.Latitude = NmeaUtilities.DegreesMinutesDecode(sentence.DataElements[0], sentence.DataElements[1]);
             location.Position.Longitude = NmeaUtilities.DegreesMinutesDecode(sentence.DataElements[2], sentence.DataElements[3]);
             location.TimeOfReading = NmeaUtilities.TimeOfReading(null, sentence.DataElements[4]);
             location.Valid = (sentence.DataElements[5].ToLower() == "a");

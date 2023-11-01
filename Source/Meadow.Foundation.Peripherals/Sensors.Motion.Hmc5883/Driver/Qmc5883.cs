@@ -36,16 +36,16 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
         override protected void Initialize()
         {
-            BusComms.WriteRegister(0x0B, 0x01);
+            BusComms?.WriteRegister(0x0B, 0x01);
             Thread.Sleep(50);
 
-            BusComms.WriteRegister(0x20, 0x40);
+            BusComms?.WriteRegister(0x20, 0x40);
             Thread.Sleep(50);
 
-            BusComms.WriteRegister(0x21, 0x01);
+            BusComms?.WriteRegister(0x21, 0x01);
             Thread.Sleep(50);
 
-            BusComms.WriteRegister(0x09, 0x0D);
+            BusComms?.WriteRegister(0x09, 0x0D);
         }
 
         /// <summary>

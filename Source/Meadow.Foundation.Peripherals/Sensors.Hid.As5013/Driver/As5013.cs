@@ -16,7 +16,7 @@ namespace Meadow.Foundation.Sensors.Hid
         /// <summary>
         /// Event if interrupt port is provided for interrupt pin
         /// </summary>
-        public event EventHandler Interrupt = delegate { };
+        public event EventHandler Interrupt = default!;
 
         /// <summary>
         /// Default I2C bus speed
@@ -91,7 +91,7 @@ namespace Meadow.Foundation.Sensors.Hid
         {
             Update();
 
-            return Task.FromResult(Position.Value);
+            return Task.FromResult(Position!.Value);
         }
 
         /// <summary>
@@ -250,8 +250,8 @@ namespace Meadow.Foundation.Sensors.Hid
 
         DigitalJoystickPosition GetDigitalJoystickPosition()
         {
-            var h = Position.Value.Horizontal;
-            var v = Position.Value.Vertical;
+            var h = Position!.Value.Horizontal;
+            var v = Position!.Value.Vertical;
 
             var threshold = 0.5f;
 

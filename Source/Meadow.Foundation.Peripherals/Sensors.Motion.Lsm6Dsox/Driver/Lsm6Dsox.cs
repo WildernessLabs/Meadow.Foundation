@@ -17,12 +17,12 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         /// Event raised when acceleration changes
         /// </summary>
-        public event EventHandler<IChangeResult<Acceleration3D>> Acceleration3DUpdated = delegate { };
+        public event EventHandler<IChangeResult<Acceleration3D>> Acceleration3DUpdated = default!;
 
         /// <summary>
         /// Event raised when magnetic field changes
         /// </summary>
-        public event EventHandler<IChangeResult<AngularVelocity3D>> AngularVelocity3DUpdated = delegate { };
+        public event EventHandler<IChangeResult<AngularVelocity3D>> AngularVelocity3DUpdated = default!;
 
         /// <summary>
         /// Current Acceleration 3D

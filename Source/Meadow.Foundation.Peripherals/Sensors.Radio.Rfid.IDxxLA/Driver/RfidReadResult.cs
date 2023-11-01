@@ -15,6 +15,6 @@ namespace Meadow.Foundation.Sensors.Radio.Rfid
         /// <summary>
         /// RFIS tag
         /// </summary>
-        public byte[] RfidTag { get; set; }
+        public byte[]? RfidTag { get; set; }
     }
 }

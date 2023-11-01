@@ -25,42 +25,42 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// <summary>
         /// Raised when the DissolvedOxygen value changes
         /// </summary>
-        public event EventHandler<IChangeResult<ConcentrationInWater>> DissolvedOxygenUpdated = delegate { };
+        public event EventHandler<IChangeResult<ConcentrationInWater>> DissolvedOxygenUpdated = default!;
 
         /// <summary>
         /// Raised when the Chlorophyll value changes
         /// </summary>
-        public event EventHandler<IChangeResult<ConcentrationInWater>> ChlorophylUpdated = delegate { };
+        public event EventHandler<IChangeResult<ConcentrationInWater>> ChlorophylUpdated = default!;
 
         /// <summary>
         /// Raised when the BlueGreenAlgae value changes
         /// </summary>
-        public event EventHandler<IChangeResult<ConcentrationInWater>> BlueGreenAlgaeUpdated = delegate { };
+        public event EventHandler<IChangeResult<ConcentrationInWater>> BlueGreenAlgaeUpdated = default!;
 
         /// <summary>
         /// Raised when the ElectricalConductivity value changes
         /// </summary>
-        public event EventHandler<IChangeResult<Conductivity>> ElectricalConductivityUpdated = delegate { };
+        public event EventHandler<IChangeResult<Conductivity>> ElectricalConductivityUpdated = default!;
 
         /// <summary>
         /// Raised when the PotentialHydrogen (pH) value changes
         /// </summary>
-        public event EventHandler<IChangeResult<PotentialHydrogen>> PHUpdated = delegate { };
+        public event EventHandler<IChangeResult<PotentialHydrogen>> PHUpdated = default!;
 
         /// <summary>
         /// Raised when the Turbidity value changes
         /// </summary>
-        public event EventHandler<IChangeResult<Turbidity>> TurbidityUpdated = delegate { };
+        public event EventHandler<IChangeResult<Turbidity>> TurbidityUpdated = default!;
 
         /// <summary>
         /// Raised when the Temperature value changes
         /// </summary>
-        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
+        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = default!;
 
         /// <summary>
         /// Raised when the OxidationReductionPotential (redux) value changes
         /// </summary>
-        public event EventHandler<IChangeResult<Voltage>> OxidationReductionPotentialUpdated = delegate { };
+        public event EventHandler<IChangeResult<Voltage>> OxidationReductionPotentialUpdated = default!;
 
         /// <summary>
         /// The current Dissolved Oxygen concentration
@@ -102,7 +102,7 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// <summary>
         /// 9600 baud 8-N-1
         /// </summary>
-        readonly ISerialPort serialPort;
+        readonly ISerialPort? serialPort;
 
         /// <summary>
         /// The current modbus address

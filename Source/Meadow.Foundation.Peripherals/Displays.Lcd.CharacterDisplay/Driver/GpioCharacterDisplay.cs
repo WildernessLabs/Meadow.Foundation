@@ -21,7 +21,7 @@ namespace Meadow.Foundation.Displays.Lcd
         private const byte LCD_SETDDRAMADDR = 0x80;
         private const byte LCD_SETCGRAMADDR = 0x40;
 
-        readonly IPwmPort LCD_V0;
+        readonly IPwmPort? LCD_V0;
         readonly IDigitalOutputPort LCD_E;
         readonly IDigitalOutputPort LCD_RS;
         readonly IDigitalOutputPort LCD_D4;
@@ -333,7 +333,11 @@ namespace Meadow.Foundation.Displays.Lcd
             }
 
             Resolver.Log.Info($"Contrast: {contrast}");
-            LCD_V0.DutyCycle = contrast;
+
+            if (LCD_V0 != null)
+            {
+                LCD_V0.DutyCycle = contrast;
+            }
         }
 
         /// <summary>

@@ -12,7 +12,7 @@ namespace Meadow.Hardware
         /// <summary>
         /// The SPI chip select port
         /// </summary>
-        public IDigitalOutputPort ChipSelect { get; }
+        public IDigitalOutputPort? ChipSelect { get; }
 
         /// <summary>
         /// The chip select mode (active high or active low)

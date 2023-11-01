@@ -35,7 +35,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// <summary>
         /// Raised when the value of the reading changes.
         /// </summary>
-        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
+        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = default!;
 
         ///<Summary>
         /// AnalogInputPort connected to temperature sensor

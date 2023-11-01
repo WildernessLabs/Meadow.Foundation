@@ -16,12 +16,12 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <summary>
         /// Event raised when any key scan button is pressed
         /// </summary>
-        public event EventHandler<KeyScanEventArgs> KeyScanPressStarted = delegate { };
+        public event EventHandler<KeyScanEventArgs> KeyScanPressStarted = default!;
 
         /// <summary>
         /// Event raised when any key scan button is released
         /// </summary>
-        public event EventHandler<KeyScanEventArgs> KeyScanPressEnded = delegate { };
+        public event EventHandler<KeyScanEventArgs> KeyScanPressEnded = default!;
 
         /// <summary>
         /// Readonly collection that contains all 16 key scan button objects

@@ -18,7 +18,7 @@ namespace Meadow.Foundation.Sensors.Hid
         /// <summary>
         /// Raised when the digital joystick position changes
         /// </summary>
-        public event EventHandler<ChangeResult<DigitalJoystickPosition>> Updated = delegate { };
+        public event EventHandler<ChangeResult<DigitalJoystickPosition>> Updated = default!;
 
         /// <summary>
         /// The PushButton class for the up digital joystick switch

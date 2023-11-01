@@ -37,42 +37,42 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         /// Raised when the acceleration value changes
         /// </summary>
-        public event EventHandler<IChangeResult<Acceleration3D>> Acceleration3DUpdated = delegate { };
+        public event EventHandler<IChangeResult<Acceleration3D>> Acceleration3DUpdated = default!;
 
         /// <summary>
         /// Raised when the angular velocity value changes
         /// </summary>
-        public event EventHandler<IChangeResult<AngularVelocity3D>> AngularVelocity3DUpdated = delegate { };
+        public event EventHandler<IChangeResult<AngularVelocity3D>> AngularVelocity3DUpdated = default!;
 
         /// <summary>
         /// Raised when the magnetic field value changes
         /// </summary>
-        public event EventHandler<IChangeResult<MagneticField3D>> MagneticField3DUpdated = delegate { };
+        public event EventHandler<IChangeResult<MagneticField3D>> MagneticField3DUpdated = default!;
 
         /// <summary>
         /// Raised when the quaternion orientation value changes
         /// </summary>
-        public event EventHandler<IChangeResult<Quaternion>> QuaternionOrientationUpdated = delegate { };
+        public event EventHandler<IChangeResult<Quaternion>> QuaternionOrientationUpdated = default!;
 
         /// <summary>
         /// Raised when the linear acceleration value changes
         /// </summary>
-        public event EventHandler<IChangeResult<Acceleration3D>> LinearAccelerationUpdated = delegate { };
+        public event EventHandler<IChangeResult<Acceleration3D>> LinearAccelerationUpdated = default!;
 
         /// <summary>
         /// Raised when the gravity vector acceleration value changes
         /// </summary>
-        public event EventHandler<IChangeResult<Acceleration3D>> GravityVectorUpdated = delegate { };
+        public event EventHandler<IChangeResult<Acceleration3D>> GravityVectorUpdated = default!;
 
         /// <summary>
         /// Raised when the euler orientation value changes
         /// </summary>
-        public event EventHandler<IChangeResult<EulerAngles>> EulerOrientationUpdated = delegate { };
+        public event EventHandler<IChangeResult<EulerAngles>> EulerOrientationUpdated = default!;
 
         /// <summary>
         /// Raised when the temperature value changes
         /// </summary>
-        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
+        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = default!;
 
         /// <summary>
         /// Current Acceleration
@@ -115,19 +115,19 @@ namespace Meadow.Foundation.Sensors.Motion
         public Units.Temperature? Temperature => Conditions.Temperature;
 
         /// <summary>
-        /// Select the source of the Temperature property.
+        /// Select the source of the Temperature property
         /// </summary>
         public Sensor TemperatureSource
         {
             get
             {
-                return (Sensor)BusComms!.ReadRegister(Registers.TemperatureSource);
+                return (Sensor)BusComms.ReadRegister(Registers.TemperatureSource);
             }
             set
             {
                 if ((value == Sensor.Accelerometer) || (value == Sensor.Gyroscope))
                 {
-                    BusComms?.WriteRegister(Registers.TemperatureSource, (byte)value);
+                    BusComms.WriteRegister(Registers.TemperatureSource, (byte)value);
                 }
                 else
                 {
@@ -141,10 +141,10 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
 	    public byte PowerMode
         {
-            get => BusComms!.ReadRegister(Registers.PowerMode);
+            get => BusComms.ReadRegister(Registers.PowerMode);
             set
             {
-                BusComms?.WriteRegister(Registers.PowerMode, value);
+                BusComms.WriteRegister(Registers.PowerMode, value);
                 Thread.Sleep(15);
             }
         }
@@ -157,14 +157,14 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </remarks>
 	    public byte OperatingMode
         {
-            get => BusComms!.ReadRegister(Registers.OperatingMode);
+            get => BusComms.ReadRegister(Registers.OperatingMode);
             set
             {
                 if (value > OperatingModes.MAXIMUM_VALUE)
                 {
                     throw new ArgumentOutOfRangeException();
                 }
-                BusComms?.WriteRegister(Registers.OperatingMode, value);
+                BusComms.WriteRegister(Registers.OperatingMode, value);
                 Thread.Sleep(20);
             }
         }
@@ -181,14 +181,14 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </remarks>
 	    private byte Page
         {
-            get => BusComms!.ReadRegister(Registers.PageID);
+            get => BusComms.ReadRegister(Registers.PageID);
             set
             {
                 if ((value != 0) && (value != 1))
                 {
                     throw new ArgumentOutOfRangeException();
                 }
-                BusComms?.WriteRegister(Registers.PageID, value);
+                BusComms.WriteRegister(Registers.PageID, value);
             }
         }
 
@@ -204,22 +204,22 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         /// Get the system calibration status.
         /// </summary>
-        public bool IsSystemCalibrated => ((BusComms!.ReadRegister(Registers.CalibrationStatus) >> 6) & 0x03) != 0;
+        public bool IsSystemCalibrated => ((BusComms.ReadRegister(Registers.CalibrationStatus) >> 6) & 0x03) != 0;
 
         /// <summary>
         /// Get the accelerometer calibration status.
         /// </summary>
-        public bool IsAccelerometerCalibrated => ((BusComms!.ReadRegister(Registers.CalibrationStatus) >> 2) & 0x03) != 0;
+        public bool IsAccelerometerCalibrated => ((BusComms.ReadRegister(Registers.CalibrationStatus) >> 2) & 0x03) != 0;
 
         /// <summary>
         /// Get the gyroscope calibration status.
         /// </summary>
-        public bool IsGyroscopeCalibrated => ((BusComms!.ReadRegister(Registers.CalibrationStatus) >> 4) & 0x03) != 0;
+        public bool IsGyroscopeCalibrated => ((BusComms.ReadRegister(Registers.CalibrationStatus) >> 4) & 0x03) != 0;
 
         /// <summary>
         /// Get the magnetometer status.
         /// </summary>
-        public bool IsMagnetometerCalibrated => (BusComms!.ReadRegister(Registers.CalibrationStatus) & 0x03) != 0;
+        public bool IsMagnetometerCalibrated => (BusComms.ReadRegister(Registers.CalibrationStatus) & 0x03) != 0;
 
         /// <summary>
         /// Is the system fully calibrated?
@@ -249,7 +249,7 @@ namespace Meadow.Foundation.Sensors.Motion
         public Bno055(II2cBus i2cBus, byte address)
             : base(i2cBus, address, readBufferSize: 256)
         {
-            var id = BusComms!.ReadRegister(Registers.ChipID);
+            var id = BusComms.ReadRegister(Registers.ChipID);
 
             if (id != 0xa0)
             {
@@ -310,7 +310,7 @@ namespace Meadow.Foundation.Sensors.Motion
             // 	in order to get the correct offset into the _sensorReadings array.
 
             int length = Registers.GravityVectorZMSB + 1 - Registers.AccelerometerXLSB;
-            BusComms!.ReadRegister(Registers.AccelerometerXLSB, ReadBuffer.Span[0..length]);
+            BusComms.ReadRegister(Registers.AccelerometerXLSB, ReadBuffer.Span[0..length]);
 
             // for debugging, you can look at the raw data:
             //DebugInformation.DisplayRegisters(0x00, ReadBuffer.Span[0..length].ToArray());
@@ -441,7 +441,7 @@ namespace Meadow.Foundation.Sensors.Motion
             int length = 0x6A;
             byte[] buffer = new byte[length];
 
-            BusComms!.ReadRegister(Registers.ChipID, buffer);
+            BusComms.ReadRegister(Registers.ChipID, buffer);
             DebugInformation.DisplayRegisters(0x00, buffer);
 
             Resolver.Log.Info("== /REGISTERS =======================================================================");

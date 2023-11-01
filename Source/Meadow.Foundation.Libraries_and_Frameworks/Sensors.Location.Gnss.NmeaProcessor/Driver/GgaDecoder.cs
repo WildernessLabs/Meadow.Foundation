@@ -12,7 +12,7 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
         /// <summary>
         /// Position update received event.
         /// </summary>
-        public event EventHandler<GnssPositionInfo> PositionReceived = delegate { };
+        public event EventHandler<GnssPositionInfo> PositionReceived = default!;
 
         /// <summary>
         /// Prefix for the GGA decoder.
@@ -22,7 +22,7 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
         /// <summary>
         /// Friendly name for the GGA messages.
         /// </summary>
-        public string Name => "Global Positioning System Fix Data"; 
+        public string Name => "Global Positioning System Fix Data";
 
         /// <summary>
         /// Process the data from a GGA message
@@ -45,7 +45,7 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
             var location = new GnssPositionInfo();
             location.TalkerID = sentence.TalkerID;
             location.TimeOfReading = NmeaUtilities.TimeOfReading(null, sentence.DataElements[0]);
-            location.Position.Latitude = NmeaUtilities.DegreesMinutesDecode(sentence.DataElements[1], sentence.DataElements[2]);
+            location.Position!.Latitude = NmeaUtilities.DegreesMinutesDecode(sentence.DataElements[1], sentence.DataElements[2]);
             location.Position.Longitude = NmeaUtilities.DegreesMinutesDecode(sentence.DataElements[3], sentence.DataElements[4]);
             location.FixQuality = (FixType)int.Parse(sentence.DataElements[5]);
 

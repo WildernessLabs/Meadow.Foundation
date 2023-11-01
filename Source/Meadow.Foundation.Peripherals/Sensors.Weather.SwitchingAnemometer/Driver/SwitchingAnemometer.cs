@@ -17,7 +17,7 @@ namespace Meadow.Foundation.Sensors.Weather
         /// <summary>
         /// Raised when the speed of the wind changes
         /// </summary>
-        public event EventHandler<IChangeResult<Speed>> WindSpeedUpdated = delegate { };
+        public event EventHandler<IChangeResult<Speed>> WindSpeedUpdated = default!;
 
         /// <summary>
         /// The current wind speed

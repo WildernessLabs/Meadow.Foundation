@@ -413,7 +413,7 @@ namespace Meadow.Foundation.Sensors.Camera
         public async Task<byte[]> GetPhotoData()
         {
             using var stream = await GetPhotoStream();
-            return stream.ToArray();
+            return stream?.ToArray() ?? new byte[0];
         }
 
         /// <summary>

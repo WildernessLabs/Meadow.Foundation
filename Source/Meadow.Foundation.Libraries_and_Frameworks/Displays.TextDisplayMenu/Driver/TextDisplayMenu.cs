@@ -26,12 +26,12 @@ namespace Meadow.Foundation.Displays.UI
         /// <summary>
         /// Raised when the menu receives a selected input
         /// </summary>
-        public event MenuSelectedHandler Selected = delegate { };
+        public event MenuSelectedHandler Selected = default!;
 
         /// <summary>
         /// Raised when a value changes
         /// </summary>
-        public event ValueChangedHandler ValueChanged = delegate { };
+        public event ValueChangedHandler ValueChanged = default!;
 
         /// <summary>
         /// Raised when the user exits the menu

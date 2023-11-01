@@ -15,19 +15,19 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         /// Raised when the ambient light value changes
         /// </summary>
-        public event EventHandler<IChangeResult<Illuminance>> AmbientLightUpdated = delegate { };
+        public event EventHandler<IChangeResult<Illuminance>> AmbientLightUpdated = default!;
 
         /// <summary>
         /// Raised when the color value changes
         /// </summary>
-        public event EventHandler<IChangeResult<Color>> ColorUpdated = delegate { };
+        public event EventHandler<IChangeResult<Color>> ColorUpdated = default!;
 
         /// <summary>
         /// The default I2C address for the peripheral
         /// </summary>
         public byte DefaultI2cAddress => (byte)Addresses.Default;
 
-        private readonly IDigitalInterruptPort interruptPort;
+        private readonly IDigitalInterruptPort? interruptPort;
         private readonly GestureData gestureData;
         private int gestureUdDelta;
         private int gestureLrDelta;
@@ -57,7 +57,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
         /// <param name="i2cBus">SI2C bus object</param>
         /// <param name="interruptPin">The interrupt pin</param>
-        public Apds9960(II2cBus i2cBus, IPin interruptPin)
+        public Apds9960(II2cBus i2cBus, IPin? interruptPin)
             : base(i2cBus, (byte)Addresses.Default)
         {
             if (interruptPin != null)

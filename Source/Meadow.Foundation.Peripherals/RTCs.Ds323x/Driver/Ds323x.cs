@@ -59,8 +59,8 @@ namespace Meadow.Foundation.RTCs
         /// </summary>
         private const byte ALARM2_INTERRUPT_OFF = 0xfd;
 
-        private AlarmRaised alarm1Delegate = delegate { };
-        private AlarmRaised alarm2Delegate = delegate { };
+        private AlarmRaised alarm1Delegate = default!;
+        private AlarmRaised alarm2Delegate = default!;
 
         private bool interruptCreatedInternally;
         private readonly Memory<byte> readBuffer;
@@ -157,7 +157,13 @@ namespace Meadow.Foundation.RTCs
                 }
                 alarm1Delegate += value;
             }
-            remove => alarm1Delegate -= value;
+            remove
+            {
+                if (alarm1Delegate != null)
+                {
+                    alarm1Delegate -= value;
+                }
+            }
         }
 
         /// <summary>
@@ -173,7 +179,13 @@ namespace Meadow.Foundation.RTCs
                 }
                 alarm2Delegate += value;
             }
-            remove => alarm2Delegate -= value;
+            remove
+            {
+                if (alarm2Delegate != null)
+                {
+                    alarm2Delegate -= value;
+                }
+            }
         }
 
         /// <summary>

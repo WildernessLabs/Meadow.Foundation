@@ -111,7 +111,7 @@ namespace Meadow.Foundation.Displays
             int bufferWidth = width % 8 > 0 ? width + 8 - (width % 8) : width;
 
             CreateBuffer(bufferWidth, height);
-            imageBuffer.Clear();
+            imageBuffer?.Clear();
 
             Initialize();
         }

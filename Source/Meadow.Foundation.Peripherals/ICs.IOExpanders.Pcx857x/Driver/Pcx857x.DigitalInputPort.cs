@@ -37,7 +37,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
             private ResistorMode resistorMode = ResistorMode.Disabled;
 
-            internal event EventHandler Disposed = delegate { };
+            internal event EventHandler Disposed = default!;
 
             /// <summary>
             /// Creates a DigitalInputPort instance

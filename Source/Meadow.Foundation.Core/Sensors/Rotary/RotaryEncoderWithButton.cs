@@ -24,22 +24,22 @@ public class RotaryEncoderWithButton : RotaryEncoder, IRotaryEncoderWithButton
     /// <summary>
     /// Raised when the button circuit is re-opened after it has been closed
     /// </summary>
-    public event EventHandler Clicked = delegate { };
+    public event EventHandler Clicked = default!;
 
     /// <summary>
     /// Raised when a press ends
     /// </summary>
-    public event EventHandler PressEnded = delegate { };
+    public event EventHandler PressEnded = default!;
 
     /// <summary>
     /// Raised when a press starts
     /// </summary>
-    public event EventHandler PressStarted = delegate { };
+    public event EventHandler PressStarted = default!;
 
     /// <summary>
     /// Raised when the button circuit is pressed for LongPressDuration
     /// </summary>
-    public event EventHandler LongClicked = delegate { };
+    public event EventHandler LongClicked = default!;
 
     /// <summary>
     /// The minimum duration for a long press

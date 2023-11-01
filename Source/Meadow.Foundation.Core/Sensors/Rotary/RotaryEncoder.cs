@@ -13,7 +13,7 @@ public class RotaryEncoder : IRotaryEncoder
     /// <summary>
     /// Raised when the rotary encoder is rotated and returns a RotaryTurnedEventArgs object which describes the direction of rotation.
     /// </summary>
-    public event EventHandler<RotaryChangeResult> Rotated = delegate { };
+    public event EventHandler<RotaryChangeResult> Rotated = default!;
 
     /// <summary>
     /// Returns the pin connected to the A-phase output on the rotary encoder.

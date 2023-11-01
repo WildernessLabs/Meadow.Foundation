@@ -16,9 +16,9 @@ namespace Meadow.Foundation.Displays
         /// <param name="dcPin">Data command pin</param>
         /// <param name="resetPin">Reset pin</param>
         /// <param name="displayType">Type of SSD1306 display (default = 128x64 pixel display)</param>
-        public Ssd1306(ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
+        public Ssd1306(ISpiBus spiBus, IPin? chipSelectPin, IPin dcPin, IPin resetPin,
             DisplayType displayType = DisplayType.OLED128x64) :
-            this(spiBus, chipSelectPin?.CreateDigitalOutputPort(false), dcPin.CreateDigitalOutputPort(true),
+            this(spiBus, chipSelectPin?.CreateDigitalOutputPort(false) ?? null, dcPin.CreateDigitalOutputPort(true),
                 resetPin.CreateDigitalOutputPort(false), displayType)
         { }
 
@@ -31,7 +31,7 @@ namespace Meadow.Foundation.Displays
         /// <param name="resetPort">Reset output port</param>
         /// <param name="displayType">Type of SSD1306 display (default = 128x64 pixel display)</param>
         public Ssd1306(ISpiBus spiBus,
-            IDigitalOutputPort chipSelectPort,
+            IDigitalOutputPort? chipSelectPort,
             IDigitalOutputPort dataCommandPort,
             IDigitalOutputPort resetPort,
             DisplayType displayType = DisplayType.OLED128x64)

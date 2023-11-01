@@ -184,7 +184,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
         private void InterruptPortChanged(object sender, DigitalPortResult e)
         {
-            if (interruptPorts.Count == 0 && InputChanged == null)
+            if ((interruptPorts == null || interruptPorts.Count == 0) && InputChanged == null)
             {
                 return;
             }
@@ -201,17 +201,20 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
             bool state;
 
-            foreach (var port in interruptPorts)
-            {   //looks ugly but it's correct
-                if (GetPortBankForPin(port.Key) == PortBank.A)
-                {
-                    state = BitHelpers.GetBitValue(currentStates, (byte)port.Key.Key);
+            if (interruptPorts != null)
+            {
+                foreach (var port in interruptPorts)
+                {   //looks ugly but it's correct
+                    if (GetPortBankForPin(port.Key) == PortBank.A)
+                    {
+                        state = BitHelpers.GetBitValue(currentStates, (byte)port.Key.Key);
+                    }
+                    else
+                    {
+                        state = BitHelpers.GetBitValue(currentStatesB, (byte)((byte)port.Key.Key - 8));
+                    }
+                    port.Value.Update(state);
                 }
-                else
-                {
-                    state = BitHelpers.GetBitValue(currentStatesB, (byte)((byte)port.Key.Key - 8));
-                }
-                port.Value.Update(state);
             }
 
             InputChanged?.Invoke(this, new IOExpanderInputChangedEventArgs(interruptFlag, (ushort)((currentStatesB << 8) | currentStates)));
@@ -333,7 +336,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
                     DebounceDuration = debounceDuration,
                 };
 
-                interruptPorts.Add(pin, port);
+                interruptPorts?.Add(pin, port);
                 return port;
             }
             throw new Exception("Pin is out of range");

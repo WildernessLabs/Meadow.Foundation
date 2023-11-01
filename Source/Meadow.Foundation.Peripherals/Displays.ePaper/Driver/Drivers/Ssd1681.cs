@@ -137,11 +137,11 @@ namespace Meadow.Foundation.Displays
             SetRamAddress();
             SendCommand(SSD1681_WRITE_RAM2);
 
-            dataCommandPort.State = DataState;
+            dataCommandPort!.State = DataState;
 
             for (int i = 0; i < colorBuffer.Length; i++)
             {   //invert the color data
-                spiComms.Write((byte)~colorBuffer[i]);
+                spiComms!.Write((byte)~colorBuffer[i]);
             }
 
             DisplayFrame();

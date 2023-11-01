@@ -21,7 +21,7 @@ namespace Meadow.Foundation.Sensors.Weather
     public partial class WindVane : SamplingSensorBase<Azimuth>, IWindVane
     {
         /// <inheritdoc/>
-        public event EventHandler<IChangeResult<Azimuth>> WindAzimuthUpdated;
+        public event EventHandler<IChangeResult<Azimuth>> WindAzimuthUpdated = default!;
 
         /// <summary>
         /// The last recorded azimuth of the wind
@@ -41,7 +41,7 @@ namespace Meadow.Foundation.Sensors.Weather
         /// <summary>
         /// Voltage -> wind azimuth lookup dictionary
         /// </summary>
-        public ReadOnlyDictionary<Voltage, Azimuth> AzimuthVoltages { get; protected set; }
+        public ReadOnlyDictionary<Voltage, Azimuth>? AzimuthVoltages { get; protected set; }
 
         readonly IAnalogInputPort inputPort;
 
@@ -148,6 +148,7 @@ namespace Meadow.Foundation.Sensors.Weather
                 New = windAzimuth
             };
             WindAzimuth = windAzimuth;
+            WindAzimuthUpdated?.Invoke(this, windChangeResult);
             base.RaiseEventsAndNotify(windChangeResult);
         }
 
@@ -162,7 +163,7 @@ namespace Meadow.Foundation.Sensors.Weather
             Tuple<Azimuth, Voltage>? closestFit = null;
 
             Voltage difference;
-            foreach (var a in AzimuthVoltages)
+            foreach (var a in AzimuthVoltages!)
             {
                 difference = (a.Key - voltage).Abs();
 
