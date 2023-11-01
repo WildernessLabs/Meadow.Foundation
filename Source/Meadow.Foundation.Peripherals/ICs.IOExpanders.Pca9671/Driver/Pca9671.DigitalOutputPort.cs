@@ -10,7 +10,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         public class DigitalOutputPort : DigitalOutputPortBase
         {
-            internal event EventHandler Disposed = delegate { };
+            internal event EventHandler Disposed = default!;
 
             /// <summary>
             /// The port's containing Pca9671

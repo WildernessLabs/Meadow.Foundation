@@ -13,7 +13,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     {
         /// <summary>
         /// </summary>
-        public event EventHandler<ChangeResult<int>> VocIndexUpdated = delegate { };
+        public event EventHandler<ChangeResult<int>> VocIndexUpdated = default!;
 
         /// <summary>
         /// The VOC Index, from the last reading

@@ -59,8 +59,8 @@ namespace Meadow.Foundation.RTCs
         /// </summary>
         private const byte ALARM2_INTERRUPT_OFF = 0xfd;
 
-        private AlarmRaised alarm1Delegate = delegate { };
-        private AlarmRaised alarm2Delegate = delegate { };
+        private AlarmRaised alarm1Delegate = default!;
+        private AlarmRaised alarm2Delegate = default!;
 
         private bool interruptCreatedInternally;
         private readonly Memory<byte> readBuffer;

@@ -33,7 +33,7 @@ namespace Meadow.Foundation.Sensors.Radio.Rfid
         readonly IList<IObserver<byte[]>> _observers = new List<IObserver<byte[]>>();
 
         /// <inheritdoc />
-        public event RfidReadEventHandler RfidRead = delegate { };
+        public event RfidReadEventHandler RfidRead = default!;
 
         /// <summary>
         /// Create an IDxxLA RFID reader

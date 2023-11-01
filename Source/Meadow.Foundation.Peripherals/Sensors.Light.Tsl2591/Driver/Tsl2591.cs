@@ -20,22 +20,22 @@ namespace Meadow.Foundation.Sensors.Light
         /// <summary>
         /// Raised when Full Spectrum Illuminance value changes
         /// </summary>
-        public event EventHandler<IChangeResult<Illuminance>> FullSpectrumUpdated = delegate { };
+        public event EventHandler<IChangeResult<Illuminance>> FullSpectrumUpdated = default!;
 
         /// <summary>
         /// Raised when Infrared Illuminance value changes
         /// </summary>
-        public event EventHandler<IChangeResult<Illuminance>> InfraredUpdated = delegate { };
+        public event EventHandler<IChangeResult<Illuminance>> InfraredUpdated = default!;
 
         /// <summary>
         /// Raised when Visible Light value changes
         /// </summary>
-        public event EventHandler<IChangeResult<Illuminance>> VisibleLightUpdated = delegate { };
+        public event EventHandler<IChangeResult<Illuminance>> VisibleLightUpdated = default!;
 
         /// <summary>
         /// Raised when Luminosity value changes
         /// </summary>
-        public event EventHandler<IChangeResult<Illuminance>> IlluminanceUpdated = delegate { };
+        public event EventHandler<IChangeResult<Illuminance>> IlluminanceUpdated = default!;
 
         /// <summary>
         /// Sensor package ID

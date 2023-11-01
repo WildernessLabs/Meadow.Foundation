@@ -11,7 +11,7 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
         /// <summary>
         /// Event raised when valid GSA data is received
         /// </summary>
-        public event EventHandler<ActiveSatellites> ActiveSatellitesReceived = delegate { };
+        public event EventHandler<ActiveSatellites> ActiveSatellitesReceived = default!;
 
         /// <summary>
         /// Prefix for the GSA decoder

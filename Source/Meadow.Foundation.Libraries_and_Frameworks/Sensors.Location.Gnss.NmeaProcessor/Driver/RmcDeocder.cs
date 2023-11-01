@@ -12,7 +12,7 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
         /// <summary>
         /// Position update received event.
         /// </summary>
-        public event EventHandler<GnssPositionInfo> PositionCourseAndTimeReceived = delegate { };
+        public event EventHandler<GnssPositionInfo> PositionCourseAndTimeReceived = default!;
 
         /// <summary>
         /// Prefix for the RMBC decoder.

@@ -52,7 +52,7 @@ namespace Meadow.Foundation.Sensors.LoadCell
         /// <summary>
         /// Mass changed event
         /// </summary>
-        public event EventHandler<IChangeResult<Mass>> MassUpdated = delegate { };
+        public event EventHandler<IChangeResult<Mass>> MassUpdated = default!;
 
         /// <summary>
         /// Gets default sample period (1 Second)

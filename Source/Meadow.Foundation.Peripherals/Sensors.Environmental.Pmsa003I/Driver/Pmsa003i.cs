@@ -28,62 +28,62 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// <summary>
         /// Raised when the Standard particulate matter PM1.0 density changes
         /// </summary>
-        public event EventHandler<IChangeResult<Density>> StandardPM_1micronUpdated = delegate { };
+        public event EventHandler<IChangeResult<Density>> StandardPM_1micronUpdated = default!;
 
         /// <summary>
         /// Raised when the Standard particulate matter PM2.5 density changes
         /// </summary>
-        public event EventHandler<IChangeResult<Density>> StandardPM_2_5micronUpdated = delegate { };
+        public event EventHandler<IChangeResult<Density>> StandardPM_2_5micronUpdated = default!;
 
         /// <summary>
         /// Raised when the Standard particulate matter PM10.0 density changes
         /// </summary>
-        public event EventHandler<IChangeResult<Density>> StandardPM_10micronUpdated = delegate { };
+        public event EventHandler<IChangeResult<Density>> StandardPM_10micronUpdated = default!;
 
         /// <summary>
         /// Raised when the Environment particulate matter PM1.0 density changes
         /// </summary>
-        public event EventHandler<IChangeResult<Density>> EnvironmentalPM_1micronUpdated = delegate { };
+        public event EventHandler<IChangeResult<Density>> EnvironmentalPM_1micronUpdated = default!;
 
         /// <summary>
         /// Raised when the Environment particulate matter PM2.5 density changes
         /// </summary>
-        public event EventHandler<IChangeResult<Density>> EnvironmentalPM_2_5micronUpdated = delegate { };
+        public event EventHandler<IChangeResult<Density>> EnvironmentalPM_2_5micronUpdated = default!;
 
         /// <summary>
         /// Raised when the Environment particulate matter PM10.0 density changes
         /// </summary>
-        public event EventHandler<IChangeResult<Density>> EnvironmentalPM_10micronUpdated = delegate { };
+        public event EventHandler<IChangeResult<Density>> EnvironmentalPM_10micronUpdated = default!;
 
         /// <summary>
         /// Raised when the number of 0-0.3 micron particles (in 0.1 liters of air) changes
         /// </summary>
-        public event EventHandler<IChangeResult<ParticleDensity>> CountOf0_3micronParticlesUpdated = delegate { };
+        public event EventHandler<IChangeResult<ParticleDensity>> CountOf0_3micronParticlesUpdated = default!;
 
         /// <summary>
         /// Raised when the number of 0.3-0.5 micron particles (in 0.1 liters of air) changes
         /// </summary>
-        public event EventHandler<IChangeResult<ParticleDensity>> CountOf0_5micronParticlesUpdated = delegate { };
+        public event EventHandler<IChangeResult<ParticleDensity>> CountOf0_5micronParticlesUpdated = default!;
 
         /// <summary>
         /// Raised when the number of 0.5-10 micron particles changes
         /// </summary>
-        public event EventHandler<IChangeResult<ParticleDensity>> CountOf10micronParticlesUpdated = delegate { };
+        public event EventHandler<IChangeResult<ParticleDensity>> CountOf10micronParticlesUpdated = default!;
 
         /// <summary>
         /// Raised when the number of 10-25 micron particles (in 0.1 liters of air) changes
         /// </summary>
-        public event EventHandler<IChangeResult<ParticleDensity>> CountOf25micronParticlesUpdated = delegate { };
+        public event EventHandler<IChangeResult<ParticleDensity>> CountOf25micronParticlesUpdated = default!;
 
         /// <summary>
         /// Raised when the number of 25-50 micron particles (in 0.1 liters of air) changes
         /// </summary>
-        public event EventHandler<IChangeResult<ParticleDensity>> CountOf50micronParticlesUpdated = delegate { };
+        public event EventHandler<IChangeResult<ParticleDensity>> CountOf50micronParticlesUpdated = default!;
 
         /// <summary>
         /// Raised when the number of 50-100 micron particles (in 0.1 liters of air) changes
         /// </summary>
-        public event EventHandler<IChangeResult<ParticleDensity>> CountOf100micronParticlesUpdated = delegate { };
+        public event EventHandler<IChangeResult<ParticleDensity>> CountOf100micronParticlesUpdated = default!;
 
         /// <summary>
         /// Standard particulate matter PM1.0 density

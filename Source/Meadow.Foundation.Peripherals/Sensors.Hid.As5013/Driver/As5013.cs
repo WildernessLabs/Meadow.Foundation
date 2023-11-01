@@ -16,7 +16,7 @@ namespace Meadow.Foundation.Sensors.Hid
         /// <summary>
         /// Event if interrupt port is provided for interrupt pin
         /// </summary>
-        public event EventHandler Interrupt = delegate { };
+        public event EventHandler Interrupt = default!;
 
         /// <summary>
         /// Default I2C bus speed

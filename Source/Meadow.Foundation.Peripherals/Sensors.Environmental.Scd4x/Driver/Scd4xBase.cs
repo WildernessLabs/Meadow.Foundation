@@ -21,17 +21,17 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// <summary>
         /// Raised when the concentration changes
         /// </summary>
-        public event EventHandler<IChangeResult<Concentration>> ConcentrationUpdated = delegate { };
+        public event EventHandler<IChangeResult<Concentration>> ConcentrationUpdated = default!;
 
         /// <summary>
         /// Raised when the temperature value changes
         /// </summary>
-        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
+        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = default!;
 
         /// <summary>
         /// Raised when the humidity value changes
         /// </summary>
-        public event EventHandler<IChangeResult<RelativeHumidity>> HumidityUpdated = delegate { };
+        public event EventHandler<IChangeResult<RelativeHumidity>> HumidityUpdated = default!;
 
         /// <summary>
         /// The current C02 concentration value

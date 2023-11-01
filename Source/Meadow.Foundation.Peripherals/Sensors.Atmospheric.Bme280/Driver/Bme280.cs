@@ -24,17 +24,17 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <summary>
         /// Temperature changed event
         /// </summary>
-        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
+        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = default!;
 
         /// <summary>
         /// Pressure changed event
         /// </summary>
-        public event EventHandler<IChangeResult<Pressure>> PressureUpdated = delegate { };
+        public event EventHandler<IChangeResult<Pressure>> PressureUpdated = default!;
 
         /// <summary>
         /// Humidity changed event
         /// </summary>
-        public event EventHandler<IChangeResult<RelativeHumidity>> HumidityUpdated = delegate { };
+        public event EventHandler<IChangeResult<RelativeHumidity>> HumidityUpdated = default!;
 
         /// <summary>
         /// The read buffer

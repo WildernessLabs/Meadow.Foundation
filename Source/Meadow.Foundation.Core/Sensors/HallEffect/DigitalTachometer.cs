@@ -12,7 +12,7 @@ namespace Meadow.Foundation.Sensors.HallEffect
         /// Event raised when the RPM change is greater than the 
         /// RPMChangeNotificationThreshold value.
         /// </summary>
-        public event EventHandler<ChangeResult<float>> RPMsChanged = delegate { };
+        public event EventHandler<ChangeResult<float>> RPMsChanged = default!;
 
         /// <summary>
         /// Any changes to the RPMs that are greater than the RPM change

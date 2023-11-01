@@ -26,7 +26,7 @@ namespace Meadow.Foundation.Displays.UI.InputTypes
         /// Raised if the input value changes
         /// </summary>
 
-        public override event ValueChangedHandler ValueChanged = delegate { };
+        public override event ValueChangedHandler ValueChanged = default!;
 
         /// <summary>
         /// Create a new TimeBase object

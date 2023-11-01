@@ -14,12 +14,12 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// <summary>
         /// Raised when the VOC concentration changes
         /// </summary>
-        public event EventHandler<IChangeResult<Concentration>> ConcentrationUpdated = delegate { };
+        public event EventHandler<IChangeResult<Concentration>> ConcentrationUpdated = default!;
 
         /// <summary>
         /// Raised when the VOC concentration changes
         /// </summary>
-        public event EventHandler<IChangeResult<Concentration>> VOCConcentrationUpdated = delegate { };
+        public event EventHandler<IChangeResult<Concentration>> VOCConcentrationUpdated = default!;
 
         /// <summary>
         /// The current VOC concentration value

@@ -20,22 +20,22 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// <summary>
         /// Raised when the CO2 concentration changes
         /// </summary>
-        public event EventHandler<IChangeResult<Concentration>> ConcentrationUpdated = delegate { };
+        public event EventHandler<IChangeResult<Concentration>> ConcentrationUpdated = default!;
 
         /// <summary>
         /// Raised when the CO2 concentration changes
         /// </summary>
-        public event EventHandler<IChangeResult<Concentration>> CO2ConcentrationUpdated = delegate { };
+        public event EventHandler<IChangeResult<Concentration>> CO2ConcentrationUpdated = default!;
 
         /// <summary>
         /// Raised when the ethanol concentration changes
         /// </summary>
-        public event EventHandler<IChangeResult<Concentration>> EthanolConcentrationUpdated = delegate { };
+        public event EventHandler<IChangeResult<Concentration>> EthanolConcentrationUpdated = default!;
 
         /// <summary>
         /// Raised when the Total Volatile Organic Compounds (TVOC) concentration changes
         /// </summary>
-        public event EventHandler<IChangeResult<Concentration>> TVOCConcentrationUpdated = delegate { };
+        public event EventHandler<IChangeResult<Concentration>> TVOCConcentrationUpdated = default!;
 
         /// <summary>
         /// The current C02 concentration value

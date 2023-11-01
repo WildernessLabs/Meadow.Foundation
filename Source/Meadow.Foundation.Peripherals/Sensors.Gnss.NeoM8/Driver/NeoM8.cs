@@ -18,7 +18,7 @@ namespace Meadow.Foundation.Sensors.Gnss
         /// <summary>
         /// Raised when GNSS data is received
         /// </summary>
-        public event EventHandler<IGnssResult> GnssDataReceived = delegate { };
+        public event EventHandler<IGnssResult> GnssDataReceived = default!;
 
         /// <summary>
         /// Supported GNSS result types
@@ -33,32 +33,32 @@ namespace Meadow.Foundation.Sensors.Gnss
         /// <summary>
         /// Raised when GGA position data is received
         /// </summary>
-        public event EventHandler<GnssPositionInfo> GgaReceived = delegate { };
+        public event EventHandler<GnssPositionInfo> GgaReceived = default!;
 
         /// <summary>
         /// Raised when GLL position data is received
         /// </summary>
-        public event EventHandler<GnssPositionInfo> GllReceived = delegate { };
+        public event EventHandler<GnssPositionInfo> GllReceived = default!;
 
         /// <summary>
         /// Raised when GSA satellite data is received
         /// </summary>
-        public event EventHandler<ActiveSatellites> GsaReceived = delegate { };
+        public event EventHandler<ActiveSatellites> GsaReceived = default!;
 
         /// <summary>
         /// Raised when RMC position data is received
         /// </summary>
-        public event EventHandler<GnssPositionInfo> RmcReceived = delegate { };
+        public event EventHandler<GnssPositionInfo> RmcReceived = default!;
 
         /// <summary>
         /// Raised when VTG course over ground data is received
         /// </summary>
-        public event EventHandler<CourseOverGround> VtgReceived = delegate { };
+        public event EventHandler<CourseOverGround> VtgReceived = default!;
 
         /// <summary>
         /// Raised when GSV satellite data is received
         /// </summary>
-        public event EventHandler<SatellitesInView> GsvReceived = delegate { };
+        public event EventHandler<SatellitesInView> GsvReceived = default!;
 
         /// <summary>
         /// NeoM8 pulse per second port

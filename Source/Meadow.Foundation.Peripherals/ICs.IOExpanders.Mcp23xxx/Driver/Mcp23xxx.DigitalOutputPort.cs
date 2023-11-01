@@ -19,7 +19,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// <summary>
             /// The SetPinState delegate 
             /// </summary>
-            public SetPinStateDelegate SetPinState = delegate { };
+            public SetPinStateDelegate SetPinState = default!;
 
             /// <summary>
             /// The port state

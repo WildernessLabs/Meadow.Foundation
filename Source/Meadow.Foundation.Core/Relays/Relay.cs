@@ -10,7 +10,7 @@ namespace Meadow.Foundation.Relays
     public class Relay : IRelay
     {
         /// <inheritdoc/>
-        public event EventHandler<bool> OnRelayChanged = delegate { };
+        public event EventHandler<bool> OnRelayChanged = default!;
 
         /// <summary>
         /// Returns digital output port

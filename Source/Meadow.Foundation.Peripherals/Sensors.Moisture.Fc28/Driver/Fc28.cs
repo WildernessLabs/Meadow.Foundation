@@ -15,7 +15,7 @@ namespace Meadow.Foundation.Sensors.Moisture
         /// <summary>
         /// Raised when a new sensor reading has been made. To enable, call StartUpdating().
         /// </summary>
-        public event EventHandler<IChangeResult<double>> MoistureUpdated = delegate { };
+        public event EventHandler<IChangeResult<double>> MoistureUpdated = default!;
 
         /// <summary>
         /// Returns the analog input port

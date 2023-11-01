@@ -15,12 +15,12 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         /// Raised when the ambient light value changes
         /// </summary>
-        public event EventHandler<IChangeResult<Illuminance>> AmbientLightUpdated = delegate { };
+        public event EventHandler<IChangeResult<Illuminance>> AmbientLightUpdated = default!;
 
         /// <summary>
         /// Raised when the color value changes
         /// </summary>
-        public event EventHandler<IChangeResult<Color>> ColorUpdated = delegate { };
+        public event EventHandler<IChangeResult<Color>> ColorUpdated = default!;
 
         /// <summary>
         /// The default I2C address for the peripheral

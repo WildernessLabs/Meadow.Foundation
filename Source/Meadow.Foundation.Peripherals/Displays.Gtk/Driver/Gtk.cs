@@ -15,15 +15,15 @@ public class GtkDisplay : IGraphicsDisplay, ITouchScreen
     /// <summary>
     /// Event fired when the display gets a mouse down
     /// </summary>
-    public event Hardware.TouchEventHandler TouchDown = delegate { };
+    public event Hardware.TouchEventHandler TouchDown = default!;
     /// <summary>
     /// Event fired when the display gets a mouse up
     /// </summary>
-    public event Hardware.TouchEventHandler TouchUp = delegate { };
+    public event Hardware.TouchEventHandler TouchUp = default!;
     /// <summary>
     /// Event fired when the display gets a mouse click
     /// </summary>
-    public event Hardware.TouchEventHandler TouchClick = delegate { };
+    public event Hardware.TouchEventHandler TouchClick = default!;
 
     private Window _window = default!;
     private IPixelBuffer _pixelBuffer = default!;

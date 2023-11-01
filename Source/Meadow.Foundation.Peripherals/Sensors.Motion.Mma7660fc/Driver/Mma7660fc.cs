@@ -19,7 +19,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         /// Raised when new acceleration data is processed
         /// </summary>
-        public event EventHandler<IChangeResult<Acceleration3D>> Acceleration3DUpdated = delegate { };
+        public event EventHandler<IChangeResult<Acceleration3D>> Acceleration3DUpdated = default!;
 
         /// <summary>
         /// Current Acceleration3d value

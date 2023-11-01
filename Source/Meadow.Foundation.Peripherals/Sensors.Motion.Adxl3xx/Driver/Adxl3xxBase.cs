@@ -14,7 +14,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         /// Raised when the acceleration value changes
         /// </summary>
-        public event EventHandler<IChangeResult<Acceleration3D>> Acceleration3DUpdated = delegate { };
+        public event EventHandler<IChangeResult<Acceleration3D>> Acceleration3DUpdated = default!;
 
         /// <summary>
         /// The X analog input port

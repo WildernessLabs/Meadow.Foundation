@@ -26,7 +26,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// while the driver is updating. To start, call the `StartUpdating()`
         /// method.
         /// </summary>
-        public event EventHandler<IChangeResult<Pressure>> PressureUpdated = delegate { };
+        public event EventHandler<IChangeResult<Pressure>> PressureUpdated = default!;
 
         /// <summary>
         /// Set by the sensor, to tell us it has power.

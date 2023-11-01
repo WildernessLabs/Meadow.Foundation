@@ -22,12 +22,12 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         /// Raised when the magnetic field value changes
         /// </summary>
-        public event EventHandler<IChangeResult<MagneticField3D>> MagneticField3DUpdated = delegate { };
+        public event EventHandler<IChangeResult<MagneticField3D>> MagneticField3DUpdated = default!;
 
         /// <summary>
         /// Raised when the temperature value changes
         /// </summary>
-        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
+        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = default!;
 
         /// <summary>
         /// Interrupt port used to detect then end of a conversion

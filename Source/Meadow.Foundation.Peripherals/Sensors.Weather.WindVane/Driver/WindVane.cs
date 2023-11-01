@@ -21,7 +21,7 @@ namespace Meadow.Foundation.Sensors.Weather
     public partial class WindVane : SamplingSensorBase<Azimuth>, IWindVane
     {
         /// <inheritdoc/>
-        public event EventHandler<IChangeResult<Azimuth>> WindAzimuthUpdated = delegate { };
+        public event EventHandler<IChangeResult<Azimuth>> WindAzimuthUpdated = default!;
 
         /// <summary>
         /// The last recorded azimuth of the wind

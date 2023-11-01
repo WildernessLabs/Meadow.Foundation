@@ -18,22 +18,22 @@ namespace Meadow.Foundation.Sensors.Buttons
         /// <summary>
         /// Raised when a press starts
         /// </summary>
-        public event EventHandler PressStarted = delegate { };
+        public event EventHandler PressStarted = default!;
 
         /// <summary>
         /// Raised when a press ends
         /// </summary>
-        public event EventHandler PressEnded = delegate { };
+        public event EventHandler PressEnded = default!;
 
         /// <summary>
         /// Raised when the button is released after a press
         /// </summary>
-        public event EventHandler Clicked = delegate { };
+        public event EventHandler Clicked = default!;
 
         /// <summary>
         /// Raised when the button is pressed for LongClickedThreshold or longer and then releases
         /// </summary>
-        public event EventHandler LongClicked = delegate { };
+        public event EventHandler LongClicked = default!;
 
         /// <summary>
         /// Track if we created the input port in the PushButton instance (true)

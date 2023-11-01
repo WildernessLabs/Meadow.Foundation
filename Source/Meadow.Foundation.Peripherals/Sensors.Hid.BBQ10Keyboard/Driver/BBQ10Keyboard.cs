@@ -23,7 +23,7 @@ namespace Meadow.Foundation.Sensors.Hid
         /// <summary>
         /// Raised when a key press is detected
         /// </summary>
-        public event EventHandler<KeyEvent> OnKeyEvent = delegate { };
+        public event EventHandler<KeyEvent> OnKeyEvent = default!;
 
         private byte Status => i2cComms.ReadRegister((byte)Registers.KEY);
 

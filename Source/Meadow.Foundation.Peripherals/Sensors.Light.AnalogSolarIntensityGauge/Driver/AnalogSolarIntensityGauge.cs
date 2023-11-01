@@ -15,7 +15,7 @@ namespace Meadow.Foundation.Sensors.Light
         /// <summary>
         /// Raised when the solar intensity changes
         /// </summary>
-        public event EventHandler<IChangeResult<float>> SolarIntensityUpdated = delegate { };
+        public event EventHandler<IChangeResult<float>> SolarIntensityUpdated = default!;
 
         readonly IAnalogInputPort analogInputPort;
 

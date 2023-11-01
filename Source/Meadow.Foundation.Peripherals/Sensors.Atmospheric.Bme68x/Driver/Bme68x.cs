@@ -27,22 +27,22 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <summary>
         /// Raised when the temperature value changes
         /// </summary>
-        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
+        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = default!;
 
         /// <summary>
         /// Raised when the pressure value changes
         /// </summary>
-        public event EventHandler<IChangeResult<Pressure>> PressureUpdated = delegate { };
+        public event EventHandler<IChangeResult<Pressure>> PressureUpdated = default!;
 
         /// <summary>
         /// Raised when the humidity value changes
         /// </summary>
-        public event EventHandler<IChangeResult<RelativeHumidity>> HumidityUpdated = delegate { };
+        public event EventHandler<IChangeResult<RelativeHumidity>> HumidityUpdated = default!;
 
         /// <summary>
         /// Raised when the gas resistance value changes
         /// </summary>
-        public event EventHandler<IChangeResult<Resistance>> GasResistanceUpdated = delegate { };
+        public event EventHandler<IChangeResult<Resistance>> GasResistanceUpdated = default!;
 
         /// <summary>
         /// The temperature oversampling mode

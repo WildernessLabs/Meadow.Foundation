@@ -7,7 +7,7 @@ namespace Meadow.Foundation.Sensors.Hid
     {
         public double? Position { get; protected set; } = 0;
 
-        public event EventHandler<ChangeResult<double>> Updated = delegate { };
+        public event EventHandler<ChangeResult<double>> Updated = default!;
 
         readonly double precisionMultiplier = 1;
 

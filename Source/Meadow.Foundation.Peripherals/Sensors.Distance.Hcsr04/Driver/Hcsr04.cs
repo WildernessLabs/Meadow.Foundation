@@ -15,7 +15,7 @@ namespace Meadow.Foundation.Sensors.Distance
         /// <summary>
         /// Raised when an received a rebound trigger signal
         /// </summary>
-        public event EventHandler<IChangeResult<Length>> DistanceUpdated = delegate { };
+        public event EventHandler<IChangeResult<Length>> DistanceUpdated = default!;
 
         /// <summary>
         /// Returns current distance

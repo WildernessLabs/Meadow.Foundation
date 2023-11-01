@@ -54,7 +54,7 @@ namespace Meadow.Foundation.Communications
         /// <summary>
         /// A complete line of text has been read, send this to the event subscriber.
         /// </summary>
-        public event LineReceived OnLineReceived = delegate { };
+        public event LineReceived OnLineReceived = default!;
 
         #endregion Events and delegates
 

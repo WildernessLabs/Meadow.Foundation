@@ -15,7 +15,7 @@ namespace Meadow.Foundation.Sensors.Distance
         /// <summary>
         /// Distance updated event
         /// </summary>
-        public event EventHandler<IChangeResult<Length>> DistanceUpdated = delegate { };
+        public event EventHandler<IChangeResult<Length>> DistanceUpdated = default!;
 
         /// <summary>
         /// Is the hardware shutdown / off

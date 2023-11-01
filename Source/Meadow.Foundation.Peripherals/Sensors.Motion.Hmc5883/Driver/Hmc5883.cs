@@ -21,7 +21,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         /// Event to be raised when the compass changes
         /// </summary>
-        public event EventHandler<IChangeResult<Vector>> DirectionUpdated = delegate { };
+        public event EventHandler<IChangeResult<Vector>> DirectionUpdated = default!;
 
         internal byte measuringMode;
         internal byte outputRate;

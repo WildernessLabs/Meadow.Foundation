@@ -16,7 +16,7 @@ namespace Meadow.Foundation.Sensors.Radio.Rfid.Serial.Helpers
         /// <summary>
         /// Event for if there is data in the serial port buffer to read.
         /// </summary>
-        public event DataReceivedEventHandler DataReceived = delegate { };
+        public event DataReceivedEventHandler DataReceived = default!;
 
         /// <summary>
         /// Creates a new event poller for the provided <see cref="ISerialPort" />.

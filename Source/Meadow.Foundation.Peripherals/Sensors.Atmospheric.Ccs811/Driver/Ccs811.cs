@@ -24,11 +24,11 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <summary>
         /// Event raised when the CO2 concentration value changes
         /// </summary>
-        public event EventHandler<ChangeResult<Concentration>> Co2Updated = delegate { };
+        public event EventHandler<ChangeResult<Concentration>> Co2Updated = default!;
         /// <summary>
         /// Event raised when the VOC concentration value changes
         /// </summary>
-        public event EventHandler<ChangeResult<Concentration>> VocUpdated = delegate { };
+        public event EventHandler<ChangeResult<Concentration>> VocUpdated = default!;
 
         /// <summary>
         /// The measured CO2 concentration

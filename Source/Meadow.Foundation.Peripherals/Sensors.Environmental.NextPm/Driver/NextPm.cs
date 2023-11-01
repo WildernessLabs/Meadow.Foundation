@@ -20,23 +20,23 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// <summary>
         /// Raised when a new 10-second average reading is taken
         /// </summary>
-        public event EventHandler<IChangeResult<ParticulateReading>> Readings10sUpdated = delegate { };
+        public event EventHandler<IChangeResult<ParticulateReading>> Readings10sUpdated = default!;
         /// <summary>
         /// Raised when a new 1-minute average reading is taken
         /// </summary>
-        public event EventHandler<IChangeResult<ParticulateReading>> Readings1minUpdated = delegate { };
+        public event EventHandler<IChangeResult<ParticulateReading>> Readings1minUpdated = default!;
         /// <summary>
         /// Raised when a new 15-minute average reading is taken
         /// </summary>
-        public event EventHandler<IChangeResult<ParticulateReading>> Readings15minUpdated = delegate { };
+        public event EventHandler<IChangeResult<ParticulateReading>> Readings15minUpdated = default!;
         /// <summary>
         /// Raised when a new temperature reading is taken
         /// </summary>
-        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
+        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = default!;
         /// <summary>
         /// Raised when a new humidity reading is taken
         /// </summary>
-        public event EventHandler<IChangeResult<RelativeHumidity>> HumidityUpdated = delegate { };
+        public event EventHandler<IChangeResult<RelativeHumidity>> HumidityUpdated = default!;
 
         /// <summary>
         /// Returns true if the object is disposed, otherwise false

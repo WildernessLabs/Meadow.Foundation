@@ -37,42 +37,42 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         /// Raised when the acceleration value changes
         /// </summary>
-        public event EventHandler<IChangeResult<Acceleration3D>> Acceleration3DUpdated = delegate { };
+        public event EventHandler<IChangeResult<Acceleration3D>> Acceleration3DUpdated = default!;
 
         /// <summary>
         /// Raised when the angular velocity value changes
         /// </summary>
-        public event EventHandler<IChangeResult<AngularVelocity3D>> AngularVelocity3DUpdated = delegate { };
+        public event EventHandler<IChangeResult<AngularVelocity3D>> AngularVelocity3DUpdated = default!;
 
         /// <summary>
         /// Raised when the magnetic field value changes
         /// </summary>
-        public event EventHandler<IChangeResult<MagneticField3D>> MagneticField3DUpdated = delegate { };
+        public event EventHandler<IChangeResult<MagneticField3D>> MagneticField3DUpdated = default!;
 
         /// <summary>
         /// Raised when the quaternion orientation value changes
         /// </summary>
-        public event EventHandler<IChangeResult<Quaternion>> QuaternionOrientationUpdated = delegate { };
+        public event EventHandler<IChangeResult<Quaternion>> QuaternionOrientationUpdated = default!;
 
         /// <summary>
         /// Raised when the linear acceleration value changes
         /// </summary>
-        public event EventHandler<IChangeResult<Acceleration3D>> LinearAccelerationUpdated = delegate { };
+        public event EventHandler<IChangeResult<Acceleration3D>> LinearAccelerationUpdated = default!;
 
         /// <summary>
         /// Raised when the gravity vector acceleration value changes
         /// </summary>
-        public event EventHandler<IChangeResult<Acceleration3D>> GravityVectorUpdated = delegate { };
+        public event EventHandler<IChangeResult<Acceleration3D>> GravityVectorUpdated = default!;
 
         /// <summary>
         /// Raised when the euler orientation value changes
         /// </summary>
-        public event EventHandler<IChangeResult<EulerAngles>> EulerOrientationUpdated = delegate { };
+        public event EventHandler<IChangeResult<EulerAngles>> EulerOrientationUpdated = default!;
 
         /// <summary>
         /// Raised when the temperature value changes
         /// </summary>
-        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
+        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = default!;
 
         /// <summary>
         /// Current Acceleration

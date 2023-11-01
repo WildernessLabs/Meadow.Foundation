@@ -12,7 +12,7 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
         /// <summary>
         /// Event raised when valid GLL data is received.
         /// </summary>
-        public event EventHandler<GnssPositionInfo> GeographicLatitudeLongitudeReceived = delegate { };
+        public event EventHandler<GnssPositionInfo> GeographicLatitudeLongitudeReceived = default!;
 
         /// <summary>
         /// Prefix for the GLL (Geographic position Latitude / Longitude) decoder.

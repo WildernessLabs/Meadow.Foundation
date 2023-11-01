@@ -17,7 +17,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         /// Event raised when magnetic field changes
         /// </summary>
-        public event EventHandler<IChangeResult<MagneticField3D>> MagneticField3DUpdated = delegate { };
+        public event EventHandler<IChangeResult<MagneticField3D>> MagneticField3DUpdated = default!;
 
         /// <summary>
         /// Current Magnetic Field 3D

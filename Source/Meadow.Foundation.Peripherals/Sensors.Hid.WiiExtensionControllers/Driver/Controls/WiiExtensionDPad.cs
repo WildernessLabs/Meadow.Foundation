@@ -7,7 +7,7 @@ namespace Meadow.Foundation.Sensors.Hid
     {
         public DigitalJoystickPosition? Position { get; protected set; } = DigitalJoystickPosition.Center;
 
-        public event EventHandler<ChangeResult<DigitalJoystickPosition>> Updated = delegate { };
+        public event EventHandler<ChangeResult<DigitalJoystickPosition>> Updated = default!;
 
         public void Update(bool isLeftPressed, bool isRightPressed, bool isUpPressed, bool isDownPressed)
         {

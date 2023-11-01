@@ -15,7 +15,7 @@ namespace Meadow.Foundation.Sensors.LoadCell
         /// <summary>
         /// Raised when the mass value changes
         /// </summary>
-        public event EventHandler<IChangeResult<Mass>> MassUpdated = delegate { };
+        public event EventHandler<IChangeResult<Mass>> MassUpdated = default!;
 
         private readonly byte[] readBuffer = new byte[3];
         private double gramsPerAdcUnit = 0;

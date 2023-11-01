@@ -18,7 +18,7 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
         /// <summary>
         /// Event raised when valid GSV data is received.
         /// </summary>
-        public event EventHandler<SatellitesInView> SatellitesInViewReceived = delegate { };
+        public event EventHandler<SatellitesInView> SatellitesInViewReceived = default!;
 
         /// <summary>
         /// Current sentence being processed, 0 indicates nothing being processed.

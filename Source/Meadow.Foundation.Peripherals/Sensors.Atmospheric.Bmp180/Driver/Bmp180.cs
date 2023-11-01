@@ -18,12 +18,12 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <summary>
         /// Raised when the temperature value changes
         /// </summary>
-        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
+        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = default!;
 
         /// <summary>
         /// Raised when the pressure value changes
         /// </summary>
-        public event EventHandler<IChangeResult<Pressure>> PressureUpdated = delegate { };
+        public event EventHandler<IChangeResult<Pressure>> PressureUpdated = default!;
 
         /// <summary>
         /// Oversampling for measurements 

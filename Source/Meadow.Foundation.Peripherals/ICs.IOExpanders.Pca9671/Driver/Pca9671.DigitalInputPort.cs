@@ -13,7 +13,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         {
             private ResistorMode _resistorMode = ResistorMode.Disabled;
 
-            internal event EventHandler Disposed = delegate { };
+            internal event EventHandler Disposed = default!;
 
             /// <summary>
             /// The port's containing Pca9671

@@ -23,7 +23,7 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// <summary>
         /// Raised when the concentration changes
         /// </summary>
-        public event EventHandler<IChangeResult<Concentration>> ConcentrationUpdated = delegate { };
+        public event EventHandler<IChangeResult<Concentration>> ConcentrationUpdated = default!;
 
         /// <summary>
         /// The current concentration value

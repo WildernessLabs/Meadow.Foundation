@@ -12,7 +12,7 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
         /// <summary>
         /// Position update received event.
         /// </summary>
-        public event EventHandler<GnssPositionInfo> PositionReceived = delegate { };
+        public event EventHandler<GnssPositionInfo> PositionReceived = default!;
 
         /// <summary>
         /// Prefix for the GGA decoder.
