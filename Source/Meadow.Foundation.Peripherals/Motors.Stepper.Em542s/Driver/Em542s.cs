@@ -138,8 +138,6 @@ public class Em542s : IStepperMotor
 
             for (var step = 0; step < steps; step++)
             {
-                Resolver.Log.Info($"STEP us = {us}");
-
                 _pulsePort.State = InverseLogic; // low means "step"
 
                 if (us > 1000)
