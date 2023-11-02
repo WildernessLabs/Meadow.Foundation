@@ -138,10 +138,9 @@ public class Em542s : IStepperMotor
             {
                 _pulsePort.State = InverseLogic; // low means "step"
 
-                if (us > 1000)
+                if (us > MinimumStartupDwellMicroseconds)
                 {
-                    Thread.Sleep(us / 1000);
-                    MicrosecondSleep(us % 1000);
+                    MicrosecondSleep(MinimumStartupDwellMicroseconds);
                 }
                 else
                 {
@@ -150,10 +149,18 @@ public class Em542s : IStepperMotor
 
                 _pulsePort.State = !InverseLogic;
 
-                if (us > 1000)
+                if (us > MinimumStartupDwellMicroseconds)
                 {
-                    Thread.Sleep(us / 1000);
-                    MicrosecondSleep(us % 1000);
+                    var dc = (us * 2) - MinimumStartupDwellMicroseconds;
+                    if (us > 1000)
+                    {
+                        Thread.Sleep(dc / 1000);
+                        MicrosecondSleep(dc % 1000);
+                    }
+                    else
+                    {
+                        MicrosecondSleep(dc % 1000);
+                    }
                 }
                 else
                 {
