@@ -5,7 +5,6 @@ using Meadow.Units;
 using System;
 using System.Runtime.CompilerServices;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Motors.Stepper;
 
@@ -14,15 +13,24 @@ namespace Meadow.Foundation.Motors.Stepper;
 /// </summary>
 public class Em542s : IStepperMotor
 {
+    private const int MinimumMicrosecondDelayRequiredByDrive = 5; // per the data sheet
+
     private readonly IDigitalOutputPort _pulsePort;
     private readonly IDigitalOutputPort _directionPort;
     private readonly IDigitalOutputPort? _enablePort;
-    private const int MinimumStartupDelayMicroseconds = 50;
-    private const int LinearAccelerationConstant = 40;
-    private const int MinimumMicrosecondDelayRequiredByDrive = 5;
     private float _usPerCall;
-
     private readonly object _syncRoot = new();
+
+    /// <summary>
+    /// Gets or sets the minimum step dwell time when motor changes from stationary to moving. Motors with more mass or larger steps require more dwell.
+    /// </summary>
+    public int MinimumStartupDwellMicroseconds { get; set; } = 50;
+
+    /// <summary>
+    /// Gets or sets a constant that affects the rate of linear acceleration for the motor. A lower value yields faster acceleration.
+    /// Motors with more mass or larger steps require slower acceleration
+    /// </summary>
+    public int LinearAccelerationConstant { get; set; } = 40;
 
     /// <inheritdoc/>
     public RotationDirection Direction { get; set; }
@@ -31,7 +39,7 @@ public class Em542s : IStepperMotor
     public int StepsPerRevolution { get; }
 
     /// <summary>
-    /// Gets a value indicating whether the logic for the stepper motor driver is inverted.
+    /// Gets a value indicating whether or not the logic for the stepper motor driver is inverted.
     /// </summary>
     public bool InverseLogic { get; }
 
@@ -43,7 +51,6 @@ public class Em542s : IStepperMotor
     /// <param name="enable">The optional digital output port for enabling or disabling the motor (if available).</param>
     /// <param name="stepsPerRevolution">The number of steps per revolution for the stepper motor (default is 200).</param>
     /// <param name="inverseLogic">A value indicating whether the logic for the stepper motor driver is inverted (default is false).</param>
-
     public Em542s(
         IDigitalOutputPort pulse,
         IDigitalOutputPort direction,
@@ -73,24 +80,23 @@ public class Em542s : IStepperMotor
     [MethodImpl(MethodImplOptions.NoOptimization | MethodImplOptions.NoInlining)]
     private void CalculateCallDuration()
     {
-        Task.Run(() =>
+        // this estimates how long a method call takes on the current platform.
+        // this is used below to provide a sub-millisecond "delay" used for step dwell
+        var temp = 0;
+        var calls = 100000;
+
+        var start = Environment.TickCount;
+
+        for (var i = 0; i < calls; i++)
         {
-            var temp = 0;
-            var calls = 100000;
+            temp = i;
+        }
 
-            var start = Environment.TickCount;
+        var et = Environment.TickCount - start;
 
-            for (var i = 0; i < calls; i++)
-            {
-                temp = i;
-            }
+        _usPerCall = et * 1000 / (float)calls;
 
-            var et = Environment.TickCount - start;
-
-            _usPerCall = et * 1000 / (float)calls;
-
-            Resolver.Log.Info($"us per call: {calls} / {et} = {_usPerCall}");
-        });
+        Resolver.Log.Info($"us per call: {calls} / {et} = {_usPerCall}");
     }
 
     [MethodImpl(MethodImplOptions.NoOptimization | MethodImplOptions.NoInlining)]
@@ -128,7 +134,7 @@ public class Em542s : IStepperMotor
             if (targetus < MinimumMicrosecondDelayRequiredByDrive) throw new ArgumentOutOfRangeException(
                 "Rate cannot have pulses shorter than 5us. Use 200KHz or less.");
 
-            var us = targetus < MinimumStartupDelayMicroseconds ? MinimumStartupDelayMicroseconds : targetus;
+            var us = targetus < MinimumStartupDwellMicroseconds ? MinimumStartupDwellMicroseconds : targetus;
 
             for (var step = 0; step < steps; step++)
             {
