@@ -95,8 +95,6 @@ public class Em542s : IStepperMotor
         var et = Environment.TickCount - start;
 
         _usPerCall = et * 1000 / (float)calls;
-
-        Resolver.Log.Info($"us per call: {calls} / {et} = {_usPerCall}");
     }
 
     [MethodImpl(MethodImplOptions.NoOptimization | MethodImplOptions.NoInlining)]
