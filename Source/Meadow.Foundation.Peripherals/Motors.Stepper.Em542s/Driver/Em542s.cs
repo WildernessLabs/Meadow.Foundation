@@ -143,6 +143,7 @@ public class Em542s : IStepperMotor
                 if (us > 1000)
                 {
                     Thread.Sleep(us / 1000);
+                    MicrosecondSleep(us % 1000);
                 }
                 else
                 {
@@ -154,6 +155,7 @@ public class Em542s : IStepperMotor
                 if (us > 1000)
                 {
                     Thread.Sleep(us / 1000);
+                    MicrosecondSleep(us % 1000);
                 }
                 else
                 {
