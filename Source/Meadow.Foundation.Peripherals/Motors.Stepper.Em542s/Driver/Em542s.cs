@@ -129,22 +129,38 @@ public class Em542s : IStepperMotor
                 _enablePort.State = !InverseLogic;
             }
 
-            var targetus = (int)(1000000d / rate.Hertz);
+            var targetus = (int)(500000d / rate.Hertz); // we divide by 2 because this is the half-wave length
 
             if (targetus < MinimumMicrosecondDelayRequiredByDrive) throw new ArgumentOutOfRangeException(
-                "Rate cannot have pulses shorter than 5us. Use 200KHz or less.");
+                "Rate cannot have pulses shorter than 5us. Use 100KHz or less.");
 
             var us = targetus < MinimumStartupDwellMicroseconds ? MinimumStartupDwellMicroseconds : targetus;
 
             for (var step = 0; step < steps; step++)
             {
+                Resolver.Log.Info($"STEP us = {us}");
+
                 _pulsePort.State = InverseLogic; // low means "step"
 
-                MicrosecondSleep(us);
+                if (us > 1000)
+                {
+                    Thread.Sleep(us / 1000);
+                }
+                else
+                {
+                    MicrosecondSleep(us);
+                }
 
                 _pulsePort.State = !InverseLogic;
 
-                MicrosecondSleep(us);
+                if (us > 1000)
+                {
+                    Thread.Sleep(us / 1000);
+                }
+                else
+                {
+                    MicrosecondSleep(us);
+                }
 
                 // DEV NOTE:
                 // naive linear acceleration tested only with STP-MTR-34066 motor
