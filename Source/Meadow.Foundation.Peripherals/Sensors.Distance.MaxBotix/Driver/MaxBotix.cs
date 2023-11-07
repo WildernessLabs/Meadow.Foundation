@@ -147,7 +147,10 @@ namespace Meadow.Foundation.Sensors.Distance
             GC.SuppressFinalize(this);
         }
 
-        ///<inheritdoc/>
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        /// <param name="disposing">Is disposing</param>
         protected override void Dispose(bool disposing)
         {
             base.Dispose(disposing);

@@ -9,7 +9,7 @@ namespace Meadow.Foundation.Sensors.Moisture
     /// <summary>
     /// Capacitive Soil Moisture Sensor
     /// </summary>
-    public class Capacitive : SamplingSensorBase<double>, IMoistureSensor
+    public class Capacitive : SamplingSensorBase<double>, IMoistureSensor, IDisposable
     {
         /// <summary>
         /// Raised when a new sensor reading has been made
@@ -37,6 +37,16 @@ namespace Meadow.Foundation.Sensors.Moisture
         public Voltage MaximumVoltageCalibration { get; set; } = new Voltage(3.3);
 
         /// <summary>
+        /// Is the object disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
+
+        /// <summary>
+        /// Did we create the port(s) used by the peripheral
+        /// </summary>
+        readonly bool createdPort = false;
+
+        /// <summary>
         /// Creates a Capacitive soil moisture sensor object with the specified analog pin and a IO device
         /// </summary>
         /// <param name="analogInputPin">Analog pin the temperature sensor is connected to</param>
@@ -54,7 +64,9 @@ namespace Meadow.Foundation.Sensors.Moisture
                     analogInputPin.CreateAnalogInputPort(sampleCount, sampleInterval ?? TimeSpan.FromMilliseconds(40), new Voltage(3.3)),
                     minimumVoltageCalibration,
                     maximumVoltageCalibration)
-        { }
+        {
+            createdPort = true;
+        }
 
         /// <summary>
         /// Creates a Capacitive soil moisture sensor object with the specified AnalogInputPort
@@ -148,6 +160,31 @@ namespace Meadow.Foundation.Sensors.Moisture
                 return (1f - voltage.Volts.Map(MaximumVoltageCalibration.Volts, MinimumVoltageCalibration.Volts, 0f, 1.0f));
             }
             return (1f - voltage.Volts.Map(MinimumVoltageCalibration.Volts, MaximumVoltageCalibration.Volts, 0f, 1.0f));
+        }
+
+        ///<inheritdoc/>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        /// <param name="disposing">Is disposing</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && createdPort)
+                {
+                    AnalogInputPort?.StopUpdating();
+                    AnalogInputPort?.Dispose();
+                }
+
+                IsDisposed = true;
+            }
         }
     }
 }

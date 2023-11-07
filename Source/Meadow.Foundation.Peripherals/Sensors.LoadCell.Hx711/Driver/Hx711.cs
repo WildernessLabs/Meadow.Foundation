@@ -320,7 +320,10 @@ namespace Meadow.Foundation.Sensors.LoadCell
             }
         }
 
-        ///<inheritdoc/>
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        /// <param name="disposing">Is disposing</param>
         protected virtual void Dispose(bool disposing)
         {
             if (createdPorts)

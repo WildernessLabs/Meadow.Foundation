@@ -123,7 +123,10 @@ namespace Meadow.Foundation.Sensors.Hid
             GC.SuppressFinalize(this);
         }
 
-        ///<inheritdoc/>
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        /// <param name="disposing">Is disposing</param>
         protected virtual void Dispose(bool disposing)
         {
             if (!IsDisposed)

@@ -50,7 +50,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 Peripheral = peripheral;
             }
 
-            /// <inheritdoc/>
+            ///<inheritdoc/>
             protected override void Dispose(bool disposing)
             {
                 base.Dispose(disposing);

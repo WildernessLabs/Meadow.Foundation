@@ -635,7 +635,10 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             GC.SuppressFinalize(this);
         }
 
-        ///<inheritdoc/>
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        /// <param name="disposing">Is disposing</param>
         protected virtual void Dispose(bool disposing)
         {
             if (!IsDisposed)

@@ -178,7 +178,10 @@ namespace Meadow.Foundation.Sensors.Distance
             return Task.CompletedTask;
         }
 
-        ///<inheritdoc/>
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        /// <param name="disposing">Is disposing</param>
         protected virtual void Dispose(bool disposing)
         {
             if (!isDisposed)

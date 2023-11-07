@@ -43,6 +43,16 @@ namespace Meadow.Foundation.Sensors.Moisture
         public Voltage MaximumVoltageCalibration { get; set; } = new Voltage(3.3);
 
         /// <summary>
+        /// Is the object disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
+
+        /// <summary>
+        /// Did we create the port(s) used by the peripheral
+        /// </summary>
+        readonly bool createdPorts = false;
+
+        /// <summary>
         /// Creates a FC28 soil moisture sensor object with the specified analog pin, digital pin and IO device
         /// </summary>
         /// <param name="analogInputPin">Analog input pin connected</param>
@@ -69,6 +79,7 @@ namespace Meadow.Foundation.Sensors.Moisture
                     maximumVoltageCalibration)
         {
             UpdateInterval = updateInterval ?? TimeSpan.FromSeconds(5);
+            createdPorts = true;
         }
 
         /// <summary>
@@ -188,6 +199,32 @@ namespace Meadow.Foundation.Sensors.Moisture
             }
 
             return (1f - voltage.Volts.Map(MinimumVoltageCalibration.Volts, MaximumVoltageCalibration.Volts, 0d, 1.0d));
+        }
+
+        ///<inheritdoc/>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        /// <param name="disposing">Is disposing</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && createdPorts)
+                {
+                    AnalogInputPort?.StopUpdating();
+                    AnalogInputPort?.Dispose();
+                    DigitalOutputPort?.Dispose();
+                }
+
+                IsDisposed = true;
+            }
         }
     }
 }
