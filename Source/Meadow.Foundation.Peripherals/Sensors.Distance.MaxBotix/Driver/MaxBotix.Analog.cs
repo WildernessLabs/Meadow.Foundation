@@ -38,7 +38,9 @@ namespace Meadow.Foundation.Sensors.Distance
             TimeSpan? sampleInterval = null,
             Voltage? voltage = null) :
             this(analogInputPin.CreateAnalogInputPort(sampleCount, sampleInterval ?? TimeSpan.FromMilliseconds(40), voltage ?? new Voltage(3.3)), sensor)
-        { }
+        {
+            createdPorts = true;
+        }
 
         void AnalogInitialize()
         {

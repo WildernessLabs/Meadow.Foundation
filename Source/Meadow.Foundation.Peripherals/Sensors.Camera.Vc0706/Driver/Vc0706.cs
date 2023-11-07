@@ -11,7 +11,7 @@ namespace Meadow.Foundation.Sensors.Camera
     /// <summary>
     /// Class that represents a VC0706 serial VGA camera
     /// </summary>
-    public partial class Vc0706 : ICamera
+    public partial class Vc0706 : ICamera, IDisposable
     {
         /// <summary>
         /// The camera serial number
@@ -31,6 +31,16 @@ namespace Meadow.Foundation.Sensors.Camera
         public byte BytesAvailable => bufferLength;
 
         /// <summary>
+        /// Is the object disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
+
+        /// <summary>
+        /// Did we create the port(s) used by the peripheral
+        /// </summary>
+        readonly bool createdPort = false;
+
+        /// <summary>
         /// Create a new VC0706 serial camera object
         /// </summary>
         /// <param name="device">The device connected to the sensor</param>
@@ -38,11 +48,22 @@ namespace Meadow.Foundation.Sensors.Camera
         /// <param name="baudRate"></param>
         public Vc0706(ISerialController device, SerialPortName portName, int baudRate)
         {
+            createdPort = true;
+
             serialPort = device.CreateSerialPort(portName, baudRate);
 
             serialPort.Open();
 
             SetBaud((BaudRate)baudRate);
+        }
+
+        /// <summary>
+        /// Create a new VC0706 serial camera object
+        /// </summary>
+        /// <param name="serialPort">The serial port for the camera</param>
+        public Vc0706(ISerialPort serialPort)
+        {
+            this.serialPort = serialPort;
         }
 
         bool Reset()
@@ -601,6 +622,36 @@ namespace Meadow.Foundation.Sensors.Camera
                 return false;
             }
             return true;
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        /// <param name="disposing">Is disposing</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && createdPort)
+                {
+                    if (serialPort.IsOpen)
+                    {
+                        serialPort.Close();
+                    }
+                    serialPort.Dispose();
+                }
+
+                IsDisposed = true;
+            }
         }
     }
 }
