@@ -10,7 +10,7 @@ namespace Meadow.Foundation.Displays
     /// <summary>
     /// Represents a UC1609C single color LCD display
     /// </summary>
-    public partial class Uc1609c : IGraphicsDisplay, ISpiPeripheral
+    public partial class Uc1609c : IGraphicsDisplay, ISpiPeripheral, IDisposable
     {
         /// <summary>
         /// The display color mode - 1 bit per pixel monochrome
@@ -66,12 +66,23 @@ namespace Meadow.Foundation.Displays
         }
 
         /// <summary>
+        /// Is the object disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
+
+        /// <summary>
+        /// Did we create the port(s) used by the peripheral
+        /// </summary>
+        readonly bool createdPorts = false;
+
+        /// <summary>
         /// SPI Communication bus used to communicate with the peripheral
         /// </summary>
         protected readonly ISpiCommunications spiComms;
 
         readonly IDigitalOutputPort dataCommandPort;
         readonly IDigitalOutputPort resetPort;
+        readonly IDigitalOutputPort? chipSelectPort;
 
         const bool Data = true;
         const bool Command = false;
@@ -91,7 +102,9 @@ namespace Meadow.Foundation.Displays
             int width = 192, int height = 64) :
             this(spiBus, chipSelectPin?.CreateDigitalOutputPort() ?? null, dcPin.CreateDigitalOutputPort(),
                 resetPin.CreateDigitalOutputPort(), width, height)
-        { }
+        {
+            createdPorts = true;
+        }
 
         /// <summary>
         /// Create a new Uc1609c display object
@@ -284,6 +297,32 @@ namespace Meadow.Foundation.Displays
         public void InvertDisplay(bool invert)
         {
             SendCommand(UC1609_INVERSE_DISPLAY, (byte)(invert ? 1 : 0));
+        }
+
+        ///<inheritdoc/>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        /// <param name="disposing">Is disposing</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && createdPorts)
+                {
+                    chipSelectPort?.Dispose();
+                    dataCommandPort?.Dispose();
+                    resetPort?.Dispose();
+                }
+
+                IsDisposed = true;
+            }
         }
     }
 }

@@ -8,7 +8,7 @@ namespace Meadow.Foundation.Displays
     /// <summary>
     /// Represents Tm1637 segment display
     /// </summary>
-    public class Tm1637
+    public class Tm1637 : IDisposable
     {
         /// <summary>
         /// Max segments for a TM1637 controller
@@ -64,7 +64,9 @@ namespace Meadow.Foundation.Displays
             set
             {
                 if (value > 7)
-                { throw new ArgumentException($"{nameof(Brightness)} must be between 0 and 7 inclusive"); }
+                {
+                    throw new ArgumentException($"{nameof(Brightness)} must be between 0 and 7 inclusive");
+                }
 
                 _brightness = value;
                 Show(0, displayBuffer[0]);
@@ -72,8 +74,18 @@ namespace Meadow.Foundation.Displays
         }
         private byte _brightness;
 
-        private readonly IDigitalOutputPort portClock;
-        private readonly IBiDirectionalInterruptPort portData;
+        /// <summary>
+        /// Is the object disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
+
+        /// <summary>
+        /// Did we create the port(s) used by the peripheral
+        /// </summary>
+        readonly bool createdPorts = false;
+
+        private readonly IDigitalOutputPort clockPort;
+        private readonly IBiDirectionalInterruptPort dataPort;
 
         private byte[] displayBuffer = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 
@@ -106,8 +118,10 @@ namespace Meadow.Foundation.Displays
         /// <param name="pinData">The data pin</param>
         public Tm1637(IPin pinClock, IPin pinData)
         {
-            portClock = pinClock.CreateDigitalOutputPort();
-            portData = pinData.CreateBiDirectionalPort();
+            clockPort = pinClock.CreateDigitalOutputPort();
+            dataPort = pinData.CreateBiDirectionalPort();
+
+            createdPorts = true;
 
             _brightness = 7;
         }
@@ -116,68 +130,65 @@ namespace Meadow.Foundation.Displays
         {
             for (byte i = 0; i < 8; i++)
             {
-                portClock.State = false;
-                Thread.Sleep(1); //wait at least 1 micro second
+                clockPort.State = false;
+                Thread.Sleep(1);
 
-                // LSB first
                 if ((data & 0x01) == 0x01)
                 {
-                    portData.State = true;
+                    dataPort.State = true;
                 }
                 else
                 {
-                    portData.State = false;
+                    dataPort.State = false;
                 }
 
-                // LSB first
                 data >>= 1;
-                portClock.State = true;
-                Thread.Sleep(1); // wait 1 micro second
+                clockPort.State = true;
+                Thread.Sleep(1);
             }
 
-            // Wait for acknowledge
-            portClock.State = false;
-            portData.State = true;
-            portClock.State = true;
-            Thread.Sleep(1); //wait 1 micro second
+            clockPort.State = false;
+            dataPort.State = true;
+            clockPort.State = true;
+            Thread.Sleep(1);
 
-            portData.Direction = PortDirectionType.Input;
-            Thread.Sleep(1); // at least 1 micro second
+            dataPort.Direction = PortDirectionType.Input;
+            Thread.Sleep(1);
 
-            var response = portData.State;
+            var response = dataPort.State;
 
             if (response == false)
             {
-                portData.Direction = PortDirectionType.Output;
-                portData.State = false;
+                dataPort.Direction = PortDirectionType.Output;
+                dataPort.State = false;
             }
 
-            portClock.State = true;
+            clockPort.State = true;
             Thread.Sleep(1);
-            portClock.State = false;
+            clockPort.State = false;
             Thread.Sleep(1);
 
-            portData.Direction = PortDirectionType.Output;
+            dataPort.Direction = PortDirectionType.Output;
 
             return response;
         }
 
         private void StartTransmission()
         {
-            portClock.State = true;
-            portData.State = true;
+            clockPort.State = true;
+            dataPort.State = true;
             Thread.Sleep(1);
-            portData.State = false;
+            dataPort.State = false;
         }
 
         private void StopTransmission()
         {
-            portClock.State = false;
-            portData.State = false;
+            clockPort.State = false;
+            dataPort.State = false;
             Thread.Sleep(1);
-            portData.State = false;
-            portClock.State = true;
-            portData.State = true;
+            dataPort.State = false;
+            clockPort.State = true;
+            dataPort.State = true;
         }
 
         /// <summary>
@@ -205,7 +216,6 @@ namespace Meadow.Foundation.Displays
                 throw new ArgumentException($"Maximum number of segments for TM1637 is {MAX_SEGMENTS}");
             }
 
-            // Prepare the buffer with the right order to transfer
             var toTransfer = new byte[MAX_SEGMENTS];
 
             for (int i = 0; i < data.Length; i++)
@@ -220,11 +230,9 @@ namespace Meadow.Foundation.Displays
             displayBuffer = toTransfer;
 
             StartTransmission();
-            // First command is set data
             WriteByte((byte)DataCommand.DataCommandSetting);
             StopTransmission();
             StartTransmission();
-            // Second command is set address to automatic
             WriteByte((byte)DataCommand.DataCommandSetting);
 
             for (int i = 0; i < MAX_SEGMENTS; i++)
@@ -234,7 +242,6 @@ namespace Meadow.Foundation.Displays
 
             StopTransmission();
             StartTransmission();
-            // Set the display on/off and the brightness
             WriteByte((byte)((ScreenOn ? DisplayCommand.DisplayOn : DisplayCommand.DisplayOff) + _brightness));
             StopTransmission();
         }
@@ -261,7 +268,6 @@ namespace Meadow.Foundation.Displays
                 throw new ArgumentException($"Max segments supported by TM1637 is {MAX_SEGMENTS}");
             }
 
-            // Recreate the buffer in correct order
             displayBuffer[_segmentOrder[index]] = (byte)character;
 
             Show(_segmentOrder[index], (byte)character);
@@ -270,17 +276,13 @@ namespace Meadow.Foundation.Displays
         private void Show(byte segmentAddress, byte show)
         {
             StartTransmission();
-            // First command for fix address
             WriteByte((byte)DataCommand.FixAddress);
             StopTransmission();
             StartTransmission();
-            // Fix address with the address
             WriteByte((byte)(DataCommand.FixAddress + segmentAddress));
-            // Transfer the byte
             WriteByte(show);
             StopTransmission();
             StartTransmission();
-            // Set the display on/off and the brightness
             WriteByte((byte)((ScreenOn ? DisplayCommand.DisplayOn : DisplayCommand.DisplayOff) + _brightness));
             StopTransmission();
         }
@@ -290,7 +292,6 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         public void Clear()
         {
-            // 6 segments with nothing/space displayed
             Span<byte> clearDisplay = stackalloc byte[]
             {
                 (byte)Character.None,
@@ -301,6 +302,31 @@ namespace Meadow.Foundation.Displays
                 (byte)Character.None,
             };
             Show(clearDisplay);
+        }
+
+        ///<inheritdoc/>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        /// <param name="disposing">Is disposing</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && createdPorts)
+                {
+                    clockPort.Dispose();
+                    dataPort.Dispose();
+                }
+
+                IsDisposed = true;
+            }
         }
     }
 }

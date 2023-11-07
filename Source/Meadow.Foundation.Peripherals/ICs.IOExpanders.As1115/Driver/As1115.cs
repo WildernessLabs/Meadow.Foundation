@@ -453,9 +453,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
         }
 
         /// <summary>
-        /// Dispose peripheral
+        /// Dispose of the object
         /// </summary>
-        /// <param name="disposing"></param>
+        /// <param name="disposing">Is disposing</param>
         protected virtual void Dispose(bool disposing)
         {
             if (!IsDisposed)
@@ -468,9 +468,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             }
         }
 
-        /// <summary>
-        /// Dispose BusComms
-        /// </summary>
+        ///<inheritdoc/>
         public void Dispose()
         {
             Dispose(disposing: true);

@@ -6,8 +6,18 @@ namespace Meadow.Foundation.Displays.Led
     /// <summary>
     /// Seven Segment Display
     /// </summary>
-    public class SevenSegment
+    public class SevenSegment : IDisposable
     {
+        /// <summary>
+        /// Is the object disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
+
+        /// <summary>
+        /// Did we create the port(s) used by the peripheral
+        /// </summary>
+        readonly bool createdPorts = false;
+
         /// <summary>
         /// Valid Characters to display
         /// </summary>
@@ -146,7 +156,9 @@ namespace Meadow.Foundation.Displays.Led
                  pinG.CreateDigitalOutputPort(),
                  pinDecimal.CreateDigitalOutputPort(),
                  isCommonCathode)
-        { }
+        {
+            createdPorts = true;
+        }
 
         /// <summary>
         /// Creates a SevenSegment connected to the specified IDigitalOutputPorts
@@ -219,6 +231,37 @@ namespace Meadow.Foundation.Displays.Led
                 throw new ArgumentOutOfRangeException();
 
             SetDisplay(charType, showDecimal);
+        }
+
+        ///<inheritdoc/>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        /// <param name="disposing">Is disposing</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && createdPorts)
+                {
+                    portA.Dispose();
+                    portB.Dispose();
+                    portC.Dispose();
+                    portD.Dispose();
+                    portE.Dispose();
+                    portF.Dispose();
+                    portG.Dispose();
+                    portDecimal.Dispose();
+                }
+
+                IsDisposed = true;
+            }
         }
     }
 }

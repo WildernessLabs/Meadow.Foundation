@@ -6,7 +6,7 @@ namespace Meadow.Foundation.Sensors.Motion
     /// <summary>
     /// Create a new Hscens0040 object
     /// </summary>
-    public class Hcsens0040
+    public class Hcsens0040 : IDisposable
     {
         /// <summary>
         /// Digital input port
@@ -24,12 +24,24 @@ namespace Meadow.Foundation.Sensors.Motion
         public event MotionChange OnMotionDetected = default!;
 
         /// <summary>
+        /// Is the object disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
+
+        /// <summary>
+        /// Did we create the port(s) used by the peripheral
+        /// </summary>
+        readonly bool createdPort = false;
+
+        /// <summary>
         /// Create a new Parallax PIR object connected to an input pin and IO Device
         /// </summary>
         /// <param name="inputPin">The input pin</param>        
         public Hcsens0040(IPin inputPin) :
             this(inputPin.CreateDigitalInterruptPort(InterruptMode.EdgeRising, ResistorMode.InternalPullDown))
-        { }
+        {
+            createdPort = true;
+        }
 
         /// <summary>
         /// Create a new Parallax PIR object connected to a interrupt port
@@ -56,6 +68,30 @@ namespace Meadow.Foundation.Sensors.Motion
             if (digitalInputPort.State == true)
             {
                 OnMotionDetected?.Invoke(this);
+            }
+        }
+
+        ///<inheritdoc/>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        /// <param name="disposing">Is disposing</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && createdPort)
+                {
+                    digitalInputPort?.Dispose();
+                }
+
+                IsDisposed = true;
             }
         }
     }

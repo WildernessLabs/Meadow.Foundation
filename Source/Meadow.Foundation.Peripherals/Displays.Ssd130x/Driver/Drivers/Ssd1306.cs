@@ -20,7 +20,9 @@ namespace Meadow.Foundation.Displays
             DisplayType displayType = DisplayType.OLED128x64) :
             this(spiBus, chipSelectPin?.CreateDigitalOutputPort(false) ?? null, dcPin.CreateDigitalOutputPort(true),
                 resetPin.CreateDigitalOutputPort(false), displayType)
-        { }
+        {
+            createdPorts = true;
+        }
 
         /// <summary>
         /// Create a new Ssd1306 display object

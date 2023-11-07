@@ -40,6 +40,9 @@ namespace Meadow.Foundation.Sensors.Gnss
         /// SPI Communication bus used to communicate with the peripheral
         /// </summary>
         protected ISpiCommunications? spiComms;
+
+        IDigitalOutputPort? chipSelectPort;
+
         private const byte NULL_VALUE = 0xFF;
 
         /// <summary>
@@ -53,7 +56,7 @@ namespace Meadow.Foundation.Sensors.Gnss
             ResetPort = resetPort;
             PulsePerSecondPort = ppsPort;
 
-            spiComms = new SpiCommunications(spiBus, chipSelectPort, DefaultSpiBusSpeed, DefaultSpiBusMode);
+            spiComms = new SpiCommunications(spiBus, this.chipSelectPort = chipSelectPort, DefaultSpiBusSpeed, DefaultSpiBusMode);
 
             _ = InitializeSpi();
         }
@@ -63,6 +66,8 @@ namespace Meadow.Foundation.Sensors.Gnss
         /// </summary>
         public NeoM8(ISpiBus spiBus, IPin? chipSelectPin = null, IPin? resetPin = null, IPin? ppsPin = null)
         {
+            createdPorts = true;
+
             var chipSelectPort = chipSelectPin?.CreateDigitalOutputPort();
 
             spiComms = new SpiCommunications(spiBus, chipSelectPort, DefaultSpiBusSpeed, DefaultSpiBusMode);

@@ -8,8 +8,15 @@ namespace Meadow.Foundation.Displays.Lcd
     /// <summary>
     /// Represents a GPIO character display
     /// </summary>
-    public class GpioCharacterDisplay : ICharacterDisplay
+    public class GpioCharacterDisplay : ICharacterDisplay, IDisposable
     {
+        /// <summary>
+        /// Is the object disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
+
+        readonly bool createdPorts = false;
+
         private readonly byte LCD_LINE_1 = 0x80; // # LCD RAM address for the 1st line
         private readonly byte LCD_LINE_2 = 0xC0; // # LCD RAM address for the 2nd line
         private readonly byte LCD_LINE_3 = 0x94; // # LCD RAM address for the 3rd line
@@ -31,7 +38,7 @@ namespace Meadow.Foundation.Displays.Lcd
 
         readonly bool LCD_INSTRUCTION = false;
         readonly bool LCD_DATA = true;
-        static readonly object _lock = new object();
+        static readonly object _lock = new();
 
         /// <summary>
         /// The text display menu configuration
@@ -65,7 +72,9 @@ namespace Meadow.Foundation.Displays.Lcd
                 pinD6.CreateDigitalOutputPort(),
                 pinD7.CreateDigitalOutputPort(),
                 rows, columns)
-        { }
+        {
+            createdPorts = true;
+        }
 
         /// <summary>
         /// Create a new GpioCharacterDisplay object
@@ -212,18 +221,14 @@ namespace Meadow.Foundation.Displays.Lcd
 
         private byte GetLineAddress(int line)
         {
-            switch (line)
+            return line switch
             {
-                case 0:
-                    return LCD_LINE_1;
-                case 1:
-                    return LCD_LINE_2;
-                case 2:
-                    return LCD_LINE_3;
-                case 3:
-                    return LCD_LINE_4;
-                default: throw new ArgumentOutOfRangeException();
-            }
+                0 => LCD_LINE_1,
+                1 => LCD_LINE_2,
+                2 => LCD_LINE_3,
+                3 => LCD_LINE_4,
+                _ => throw new ArgumentOutOfRangeException(),
+            };
         }
 
         private void SetLineAddress(int line)
@@ -362,5 +367,34 @@ namespace Meadow.Foundation.Displays.Lcd
         public void Show()
         {   //can safely ignore
         }   //required for ITextDisplayMenu
+
+        ///<inheritdoc/>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        /// <param name="disposing">Is disposing</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && createdPorts)
+                {
+                    LCD_E.Dispose();
+                    LCD_RS.Dispose();
+                    LCD_D4.Dispose();
+                    LCD_D5.Dispose();
+                    LCD_D6.Dispose();
+                    LCD_D7.Dispose();
+                }
+
+                IsDisposed = true;
+            }
+        }
     }
 }

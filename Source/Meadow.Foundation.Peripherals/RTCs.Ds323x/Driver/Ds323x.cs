@@ -15,6 +15,11 @@ namespace Meadow.Foundation.RTCs
         public byte DefaultI2cAddress => (byte)Addresses.Default;
 
         /// <summary>
+        /// Is the object disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
+
+        /// <summary>
         /// Number of registers that hold the date and time information.
         /// </summary>
         private const int DATE_TIME_REGISTERS_SIZE = 0x07;
@@ -62,7 +67,11 @@ namespace Meadow.Foundation.RTCs
         private AlarmRaised alarm1Delegate = default!;
         private AlarmRaised alarm2Delegate = default!;
 
-        private bool interruptCreatedInternally;
+        /// <summary>
+        /// Did we create the port(s) used by the peripheral
+        /// </summary>
+        private bool createdPort;
+
         private readonly Memory<byte> readBuffer;
 
         /// <summary>
@@ -75,7 +84,7 @@ namespace Meadow.Foundation.RTCs
             if (interruptPin != null)
             {
                 var interruptPort = interruptPin.CreateDigitalInterruptPort(InterruptMode.EdgeFalling, ResistorMode.InternalPullUp, TimeSpan.FromMilliseconds(10), TimeSpan.FromMilliseconds(10));
-                interruptCreatedInternally = true;
+                createdPort = true;
 
                 Initialize(interruptPort);
             }
@@ -93,18 +102,6 @@ namespace Meadow.Foundation.RTCs
             if (interruptPort != null)
             {
                 Initialize(interruptPort);
-            }
-        }
-
-        /// <summary>
-        /// Dispose
-        /// </summary>
-        public void Dispose()
-        {
-            if (interruptCreatedInternally)
-            {
-                InterruptPort?.Dispose();
-                InterruptPort = null;
             }
         }
 
@@ -539,6 +536,30 @@ namespace Meadow.Foundation.RTCs
             var data = readBuffer.Span[0..0x12];
             i2cComms.ReadRegister(0, data);
             DebugInformation.DisplayRegisters(0, data);
+        }
+
+        ///<inheritdoc/>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        /// <param name="disposing">Is disposing</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && createdPort)
+                {
+                    InterruptPort?.Dispose();
+                }
+
+                IsDisposed = true;
+            }
         }
     }
 }

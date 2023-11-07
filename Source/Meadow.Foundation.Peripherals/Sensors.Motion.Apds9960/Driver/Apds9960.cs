@@ -10,7 +10,7 @@ namespace Meadow.Foundation.Sensors.Motion
     /// Represents the APDS9960 Proximity, Light, RGB, and Gesture Sensor
     /// </summary>
     public partial class Apds9960 : ByteCommsSensorBase<(Color? Color, Illuminance? AmbientLight)>,
-        II2cPeripheral
+        II2cPeripheral, IDisposable
     {
         /// <summary>
         /// Raised when the ambient light value changes
@@ -26,6 +26,16 @@ namespace Meadow.Foundation.Sensors.Motion
         /// The default I2C address for the peripheral
         /// </summary>
         public byte DefaultI2cAddress => (byte)Addresses.Default;
+
+        /// <summary>
+        /// Is the object disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
+
+        /// <summary>
+        /// Did we create the port(s) used by the peripheral
+        /// </summary>
+        readonly bool createdPort = false;
 
         private readonly IDigitalInterruptPort? interruptPort;
         private readonly GestureData gestureData;
@@ -62,6 +72,7 @@ namespace Meadow.Foundation.Sensors.Motion
         {
             if (interruptPin != null)
             {
+                createdPort = true;
                 interruptPort = interruptPin.CreateDigitalInterruptPort(InterruptMode.EdgeRising, ResistorMode.Disabled);
                 interruptPort.Changed += InterruptPort_Changed;
             }
@@ -1582,6 +1593,30 @@ namespace Meadow.Foundation.Sensors.Motion
             public byte TotalGestures { get; set; }
             public byte InThreshold { get; set; }
             public byte OutThreshold { get; set; }
+        }
+
+        ///<inheritdoc/>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        /// <param name="disposing">Is disposing</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && createdPort)
+                {
+                    interruptPort?.Dispose();
+                }
+
+                IsDisposed = true;
+            }
         }
     }
 }

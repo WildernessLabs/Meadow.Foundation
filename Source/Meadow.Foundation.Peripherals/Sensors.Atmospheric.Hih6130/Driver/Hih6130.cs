@@ -25,12 +25,12 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         public event EventHandler<IChangeResult<RelativeHumidity>> HumidityUpdated = default!;
 
         /// <summary>
-        /// The temperature, from the last reading.
+        /// The temperature, from the last reading
         /// </summary>
         public Units.Temperature? Temperature => Conditions.Temperature;
 
         /// <summary>
-        /// The humidity, in percent relative humidity, from the last reading..
+        /// The humidity, in percent relative humidity, from the last reading
         /// </summary>
         public RelativeHumidity? Humidity => Conditions.Humidity;
 

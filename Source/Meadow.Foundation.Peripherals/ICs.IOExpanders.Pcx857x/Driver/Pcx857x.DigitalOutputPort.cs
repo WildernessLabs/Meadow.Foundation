@@ -28,7 +28,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 State = initialState;
             }
 
-            /// <inheritdoc/>
+            ///<inheritdoc/>
             protected override void Dispose(bool disposing)
             {
                 base.Dispose(disposing);

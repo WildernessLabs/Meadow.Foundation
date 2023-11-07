@@ -10,7 +10,7 @@ namespace Meadow.Foundation.Displays
     /// <summary>
     /// Provides an interface to the Ssd1327 grayscale OLED display
     /// </summary>
-    public partial class Ssd1327 : IGraphicsDisplay, ISpiPeripheral
+    public partial class Ssd1327 : IGraphicsDisplay, ISpiPeripheral, IDisposable
     {
         /// <summary>
         /// The display color mode (4 bit per pixel grayscale)
@@ -66,12 +66,23 @@ namespace Meadow.Foundation.Displays
         }
 
         /// <summary>
+        /// Is the object disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
+
+        /// <summary>
+        /// Did we create the port(s) used by the peripheral
+        /// </summary>
+        bool createdPorts = false;
+
+        /// <summary>
         /// SPI Communication bus used to communicate with the peripheral
         /// </summary>
         protected ISpiCommunications spiComms;
 
         readonly IDigitalOutputPort dataCommandPort;
         readonly IDigitalOutputPort? resetPort;
+        readonly IDigitalOutputPort? chipSelectPort;
 
         readonly BufferGray4 imageBuffer;
 
@@ -88,6 +99,7 @@ namespace Meadow.Foundation.Displays
         public Ssd1327(ISpiBus spiBus, IPin? chipSelectPin, IPin dcPin, IPin? resetPin)
             : this(spiBus, chipSelectPin?.CreateDigitalOutputPort(false) ?? null, dcPin.CreateDigitalOutputPort(false), resetPin?.CreateDigitalOutputPort(true) ?? null)
         {
+            createdPorts = true;
         }
 
         /// <summary>
@@ -275,6 +287,32 @@ namespace Meadow.Foundation.Displays
         public void WriteBuffer(int x, int y, IPixelBuffer displayBuffer)
         {
             imageBuffer.WriteBuffer(x, y, displayBuffer);
+        }
+
+        ///<inheritdoc/>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        /// <param name="disposing">Is disposing</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && createdPorts)
+                {
+                    chipSelectPort?.Dispose();
+                    dataCommandPort?.Dispose();
+                    resetPort?.Dispose();
+                }
+
+                IsDisposed = true;
+            }
         }
 
         // Init sequence, make sure its under 32 bytes, or split into multiples

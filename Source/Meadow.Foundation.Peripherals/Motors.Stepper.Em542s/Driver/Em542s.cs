@@ -9,17 +9,17 @@ using System.Threading;
 namespace Meadow.Foundation.Motors.Stepper;
 
 /// <summary>
-/// This class is for the A4988 Stepper Motor Driver
+/// This class is for the Em542s Stepper Motor Driver
 /// </summary>
 public class Em542s : IStepperMotor
 {
     private const int MinimumMicrosecondDelayRequiredByDrive = 5; // per the data sheet
 
-    private readonly IDigitalOutputPort _pulsePort;
-    private readonly IDigitalOutputPort _directionPort;
-    private readonly IDigitalOutputPort? _enablePort;
-    private float _usPerCall;
-    private readonly object _syncRoot = new();
+    private readonly IDigitalOutputPort pulsePort;
+    private readonly IDigitalOutputPort directionPort;
+    private readonly IDigitalOutputPort? enablePort;
+    private float usPerCall;
+    private readonly object syncRoot = new();
 
     /// <summary>
     /// Gets or sets the minimum step dwell time when motor changes from stationary to moving. Motors with more mass or larger steps require more dwell.
@@ -62,16 +62,16 @@ public class Em542s : IStepperMotor
         StepsPerRevolution = stepsPerRevolution;
         InverseLogic = inverseLogic;
 
-        _pulsePort = pulse;
-        _directionPort = direction;
-        _enablePort = enable;
+        pulsePort = pulse;
+        directionPort = direction;
+        enablePort = enable;
 
-        _pulsePort.State = !InverseLogic;
-        _directionPort.State = InverseLogic;
+        pulsePort.State = !InverseLogic;
+        directionPort.State = InverseLogic;
 
-        if (_enablePort != null)
+        if (enablePort != null)
         {
-            _enablePort.State = false;
+            enablePort.State = false;
         }
 
         CalculateCallDuration();
@@ -94,9 +94,9 @@ public class Em542s : IStepperMotor
 
         var et = Environment.TickCount - start;
 
-        _usPerCall = et * 1000 / (float)calls;
+        usPerCall = et * 1000 / (float)calls;
 
-        Resolver.Log.Info($"us per call: {calls} / {et} = {_usPerCall}");
+        Resolver.Log.Info($"us per call: {calls} / {et} = {usPerCall}");
     }
 
     [MethodImpl(MethodImplOptions.NoOptimization | MethodImplOptions.NoInlining)]
@@ -104,7 +104,7 @@ public class Em542s : IStepperMotor
     {
         var temp = 0;
 
-        for (var i = 0; i < microseconds / _usPerCall; i++)
+        for (var i = 0; i < microseconds / usPerCall; i++)
         {
             temp = i;
         }
@@ -113,20 +113,20 @@ public class Em542s : IStepperMotor
     /// <inheritdoc/>
     public void Step(int steps, RotationDirection direction, Frequency rate)
     {
-        while (_usPerCall == 0)
+        while (usPerCall == 0)
         {
             Thread.Sleep(10);
         }
 
-        lock (_syncRoot)
+        lock (syncRoot)
         {
             var directionState = direction == RotationDirection.Clockwise;
             if (InverseLogic) directionState = !directionState;
-            _directionPort.State = directionState;
+            directionPort.State = directionState;
 
-            if (_enablePort != null)
+            if (enablePort != null)
             {
-                _enablePort.State = !InverseLogic;
+                enablePort.State = !InverseLogic;
             }
 
             var targetus = (int)(1000000d / rate.Hertz);
@@ -138,11 +138,11 @@ public class Em542s : IStepperMotor
 
             for (var step = 0; step < steps; step++)
             {
-                _pulsePort.State = InverseLogic; // low means "step"
+                pulsePort.State = InverseLogic; // low means "step"
 
                 MicrosecondSleep(us);
 
-                _pulsePort.State = !InverseLogic;
+                pulsePort.State = !InverseLogic;
 
                 MicrosecondSleep(us);
 
@@ -154,9 +154,9 @@ public class Em542s : IStepperMotor
                 }
             }
 
-            if (_enablePort != null)
+            if (enablePort != null)
             {
-                _enablePort.State = !InverseLogic;
+                enablePort.State = !InverseLogic;
             }
         }
     }

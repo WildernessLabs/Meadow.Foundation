@@ -18,7 +18,7 @@ namespace Meadow.Foundation.Sensors.Weather
     /// 4.7kΩ / 1kΩ, as can be found in the SparkFun weather shield, or Wilderness
     /// Labs Clima Pro board.
     /// </summary>
-    public partial class WindVane : SamplingSensorBase<Azimuth>, IWindVane
+    public partial class WindVane : SamplingSensorBase<Azimuth>, IWindVane, IDisposable
     {
         /// <inheritdoc/>
         public event EventHandler<IChangeResult<Azimuth>> WindAzimuthUpdated = default!;
@@ -46,6 +46,16 @@ namespace Meadow.Foundation.Sensors.Weather
         readonly IAnalogInputPort inputPort;
 
         /// <summary>
+        /// Is the object disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
+
+        /// <summary>
+        /// Did we create the port(s) used by the peripheral
+        /// </summary>
+        readonly bool createdPort = false;
+
+        /// <summary>
         /// Creates a new `WindVane` on the specified IO Device's analog input
         /// Optionally, with a custom voltage to azimuth lookup
         /// </summary>
@@ -61,6 +71,7 @@ namespace Meadow.Foundation.Sensors.Weather
             : this(analogInputPin.CreateAnalogInputPort(sampleCount, sampleInterval ?? TimeSpan.FromMilliseconds(40), new Voltage(3.3))
                   , azimuthVoltages)
         {
+            createdPort = true;
             UpdateInterval = updateInterval ?? new TimeSpan(0, 0, 1);
         }
 
@@ -203,6 +214,30 @@ namespace Meadow.Foundation.Sensors.Weather
                 { new Voltage(3.08f), new Azimuth(Azimuth16PointCardinalNames.NW) },
                 { new Voltage(2.74f), new Azimuth(Azimuth16PointCardinalNames.NNW) },
             });
+        }
+
+        ///<inheritdoc/>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        /// <param name="disposing">Is disposing</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && createdPort)
+                {
+                    inputPort?.Dispose();
+                }
+
+                IsDisposed = true;
+            }
         }
     }
 }

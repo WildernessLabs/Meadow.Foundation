@@ -79,7 +79,9 @@ namespace Meadow.Foundation.Displays
             this(spiBus, chipSelectPin.CreateDigitalOutputPort(), dcPin.CreateDigitalOutputPort(false),
                 resetPin.CreateDigitalOutputPort(true), busyPin.CreateDigitalInputPort(),
                 width, height)
-        { }
+        {
+            createdPorts = true;
+        }
 
         /// <summary>
         /// Create a new ePaper display object

@@ -9,36 +9,62 @@ namespace Meadow.Foundation.Sensors.Environmental
     /// </summary>
     public partial class NextPm
     {
-        private ISerialPort _port;
-        // dev note: these common buffers are used to minimize heap allocations during serial communications with the sensor
-        private byte[] _readBuffer = new byte[16];
-        private byte[] _writeBuffer = new byte[16];
+        private readonly ISerialPort? serialPort;
 
-        private ISerialPort InitializePort(ISerialPort port)
+        /// <summary>
+        /// Creates a NextPm instance
+        /// </summary>
+        /// <param name="portName">The serial serialPort name</param>
+        public NextPm(SerialPortName portName)
+            : this(portName.CreateSerialPort())
         {
-            if (port.IsOpen)
+            createdPort = true;
+        }
+
+        /// <summary>
+        /// Creates a NextPm instance
+        /// </summary>
+        /// <param name="serialPort">The serial serialPort</param>
+        public NextPm(ISerialPort serialPort)
+        {
+            InitializeSerialPort();
+
+            if (serialPort != null)
             {
-                port.Close();
+                this.serialPort = serialPort;
+                serialPort.Open();
+            }
+        }
+
+        // dev note: these common buffers are used to minimize heap allocations during serial communications with the sensor
+        private readonly byte[] _readBuffer = new byte[16];
+        private readonly byte[] _writeBuffer = new byte[16];
+
+        private ISerialPort InitializeSerialPort()
+        {
+            if (serialPort!.IsOpen)
+            {
+                serialPort.Close();
             }
 
-            port.BaudRate = 115200;
-            port.DataBits = 8;
-            port.Parity = Parity.Even;
-            port.StopBits = StopBits.One;
+            serialPort.BaudRate = 115200;
+            serialPort.DataBits = 8;
+            serialPort.Parity = Parity.Even;
+            serialPort.StopBits = StopBits.One;
 
-            return port;
+            return serialPort;
         }
 
         private async Task SendCommand(CommandByte command, params byte[] payload)
         {
             var parameters = CommandManager.GenerateCommand(command, _writeBuffer, payload);
 
-            if (!_port.IsOpen)
+            if (serialPort!.IsOpen)
             {
-                _port.Open();
+                serialPort.Open();
             }
 
-            _port.Write(_writeBuffer, 0, parameters.commandLength);
+            serialPort.Write(_writeBuffer, 0, parameters.commandLength);
 
             var read = 0;
             var expected = parameters.expectedResponseLength;
@@ -51,7 +77,7 @@ namespace Meadow.Foundation.Sensors.Environmental
 
             do
             {
-                read += _port.Read(_readBuffer, read, _readBuffer.Length - read);
+                read += serialPort.Read(_readBuffer, read, _readBuffer.Length - read);
                 if (read >= expected) break;
 
                 if (read > 2 && _readBuffer[1] != (byte)command && _readBuffer[1] == 0x16)

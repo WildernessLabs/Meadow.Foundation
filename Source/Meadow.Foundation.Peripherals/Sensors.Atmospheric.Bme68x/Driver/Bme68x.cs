@@ -22,7 +22,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                             RelativeHumidity? Humidity,
                             Pressure? Pressure,
                             Resistance? GasResistance)>,
-        ITemperatureSensor, IHumiditySensor, IBarometricPressureSensor, ISpiPeripheral, II2cPeripheral
+        ITemperatureSensor, IHumiditySensor, IBarometricPressureSensor, ISpiPeripheral, II2cPeripheral, IDisposable
     {
         /// <summary>
         /// Raised when the temperature value changes
@@ -214,6 +214,16 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         public Resistance? GasResistance => Conditions.GasResistance;
 
+        /// <summary>
+        /// Is the object disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
+
+        /// <summary>
+        /// Did we create the port(s) used by the peripheral
+        /// </summary>
+        readonly bool createdPort = false;
+
         readonly Configuration configuration;
 
         /// <summary>
@@ -229,6 +239,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         private static readonly double[] k2Lookup = { 0.0, 0.0, 0.0, 0.0, 0.1, 0.7, 0.0, -0.8, -0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
 
         private readonly List<HeaterProfileConfiguration> heaterConfigs = new();
+
+        IDigitalOutputPort? chipSelectPort;
 
         /// <summary>
         /// Creates a new instance of the BME68x class
@@ -250,7 +262,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <param name="chipSelectPin">The chip select pin</param>
         protected Bme68x(ISpiBus spiBus, IPin chipSelectPin) :
             this(spiBus, chipSelectPin.CreateDigitalOutputPort())
-        { }
+        {
+            createdPort = true;
+        }
 
         /// <summary>
         /// Creates a new instance of the BME68x class
@@ -260,7 +274,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <param name="configuration">The BMP68x configuration (optional)</param>
         protected Bme68x(ISpiBus spiBus, IDigitalOutputPort chipSelectPort, Configuration? configuration = null)
         {
-            busComms = new Bme68xSpiCommunications(spiBus, chipSelectPort, DefaultSpiBusSpeed, DefaultSpiBusMode);
+            busComms = new Bme68xSpiCommunications(spiBus, this.chipSelectPort = chipSelectPort, DefaultSpiBusSpeed, DefaultSpiBusMode);
             this.configuration = configuration ?? new Configuration();
 
             byte value = busComms.ReadRegister((byte)Registers.STATUS);
@@ -612,6 +626,30 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 durationValue = (byte)(shortDuration + factor * 64);
             }
             return durationValue;
+        }
+
+        ///<inheritdoc/>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        /// <param name="disposing">Is disposing</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && createdPort)
+                {
+                    chipSelectPort?.Dispose();
+                }
+
+                IsDisposed = true;
+            }
         }
 
         async Task<Units.Temperature> ISensor<Units.Temperature>.Read()

@@ -10,7 +10,7 @@ namespace Meadow.Foundation.Sensors.Distance
     /// <summary>
     /// HCSR04 Distance Sensor - driver not complete
     /// </summary>
-    public class Hcsr04 : SamplingSensorBase<Length>, IRangeFinder
+    public class Hcsr04 : SamplingSensorBase<Length>, IRangeFinder, IDisposable
     {
         /// <summary>
         /// Raised when an received a rebound trigger signal
@@ -42,6 +42,16 @@ namespace Meadow.Foundation.Sensors.Distance
         /// </summary>
         protected IDigitalInterruptPort? echoPort;
 
+        /// <summary>
+        /// Is the object disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
+
+        /// <summary>
+        /// Did we create the port(s) used by the peripheral
+        /// </summary>
+        readonly bool createdPorts = false;
+
         private long tickStart;
 
         /// <summary>
@@ -52,7 +62,9 @@ namespace Meadow.Foundation.Sensors.Distance
         public Hcsr04(IPin triggerPin, IPin echoPin) :
             this(triggerPin.CreateDigitalOutputPort(false),
                   echoPin.CreateDigitalInterruptPort(InterruptMode.EdgeBoth))
-        { }
+        {
+            createdPorts = true;
+        }
 
         /// <summary>
         /// Create a new HCSR04 object
@@ -156,6 +168,31 @@ namespace Meadow.Foundation.Sensors.Distance
         public override void StopUpdating()
         {
             throw new NotImplementedException();
+        }
+
+        ///<inheritdoc/>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        /// <param name="disposing">Is disposing</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && createdPorts)
+                {
+                    triggerPort?.Dispose();
+                    echoPort?.Dispose();
+                }
+
+                IsDisposed = true;
+            }
         }
     }
 }

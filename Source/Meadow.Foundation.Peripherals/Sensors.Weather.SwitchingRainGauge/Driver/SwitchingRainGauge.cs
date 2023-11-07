@@ -8,7 +8,7 @@ namespace Meadow.Foundation.Sensors.Weather
     /// <summary>
     /// Represents a simple switching rain gauge
     /// </summary>
-    public partial class SwitchingRainGauge : SamplingSensorBase<Length>
+    public class SwitchingRainGauge : SamplingSensorBase<Length>, IDisposable
     {
         private readonly IDigitalInterruptPort rainGaugePort;
         private DateTime lastUpdated = DateTime.MinValue;
@@ -31,12 +31,24 @@ namespace Meadow.Foundation.Sensors.Weather
         public Length DepthPerClick { get; set; }
 
         /// <summary>
+        /// Is the object disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
+
+        /// <summary>
+        /// Did we create the port(s) used by the peripheral
+        /// </summary>
+        readonly bool createdPort = false;
+
+        /// <summary>
         /// Create a new SwitchingRainGauge object with a default depth of 0.2794 per click
         /// </summary>
         /// <param name="rainSensorPin">The rain sensor pin</param>
         public SwitchingRainGauge(IPin rainSensorPin) :
             this(rainSensorPin, new Length(0.2794, Length.UnitType.Millimeters))
-        { }
+        {
+            createdPort = true;
+        }
 
         /// <summary>
         /// Create a new SwitchingRainGauge object
@@ -45,7 +57,9 @@ namespace Meadow.Foundation.Sensors.Weather
         /// <param name="depthPerClick">The depth per click</param>
         public SwitchingRainGauge(IPin rainSensorPin, Length depthPerClick) :
             this(rainSensorPin.CreateDigitalInterruptPort(InterruptMode.EdgeRising, ResistorMode.InternalPullUp, TimeSpan.FromMilliseconds(100), TimeSpan.Zero), depthPerClick)
-        { }
+        {
+            createdPort = true;
+        }
 
         /// <summary>
         /// Create a new SwitchingRainGauge object
@@ -121,6 +135,30 @@ namespace Meadow.Foundation.Sensors.Weather
                 throw new Exception("You must call StartUpdating before SwitchingRainGauge can track rain depth");
             }
             return Task.FromResult(RainDepth);
+        }
+
+        ///<inheritdoc/>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        /// <param name="disposing">Is disposing</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && createdPort)
+                {
+                    rainGaugePort?.Dispose();
+                }
+
+                IsDisposed = true;
+            }
         }
     }
 }

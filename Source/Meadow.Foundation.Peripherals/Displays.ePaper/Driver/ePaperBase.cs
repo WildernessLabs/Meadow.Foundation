@@ -1,5 +1,6 @@
 using Meadow.Hardware;
 using Meadow.Units;
+using System;
 using System.Threading;
 
 namespace Meadow.Foundation.Displays
@@ -7,7 +8,7 @@ namespace Meadow.Foundation.Displays
     /// <summary>
     /// Represents a base ePaper display driver
     /// </summary>
-    public abstract class EPaperBase : ISpiPeripheral
+    public abstract class EPaperBase : ISpiPeripheral, IDisposable
     {
         /// <summary>
         /// The default SPI bus speed for the device
@@ -36,6 +37,11 @@ namespace Meadow.Foundation.Displays
             get => spiComms!.BusMode;
             set => spiComms!.BusMode = value;
         }
+
+        /// <summary>
+        /// Is the object disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
 
         /// <summary>
         /// The command buffer
@@ -76,6 +82,11 @@ namespace Meadow.Foundation.Displays
         /// Const bool representing the command state
         /// </summary>
         protected const bool CommandState = false;
+
+        /// <summary>
+        /// Did we create the port(s) used by the peripheral
+        /// </summary>
+        protected bool createdPorts = false;
 
         /// <summary>
         /// Write a value to the display
@@ -166,6 +177,33 @@ namespace Meadow.Foundation.Displays
             {
                 DelayMs(50);
                 count++;
+            }
+        }
+
+        ///<inheritdoc/>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        /// <param name="disposing">Is disposing</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && createdPorts)
+                {
+                    chipSelectPort?.Dispose();
+                    resetPort?.Dispose();
+                    dataCommandPort?.Dispose();
+                    busyPort?.Dispose();
+                }
+
+                IsDisposed = true;
             }
         }
     }

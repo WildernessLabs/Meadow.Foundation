@@ -10,7 +10,7 @@ namespace Meadow.Foundation.Displays
     /// <summary>
     /// Provide an interface to the Ch1115 family of displays
     /// </summary>
-    public partial class Ch1115 : IGraphicsDisplay, ISpiPeripheral
+    public partial class Ch1115 : IGraphicsDisplay, ISpiPeripheral, IDisposable
     {
         /// <summary>
         /// The display color mode - 1 bit per pixel monochrome
@@ -40,7 +40,7 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// The default SPI bus speed for the device
         /// </summary>
-        public Frequency DefaultSpiBusSpeed => new Frequency(375, Frequency.UnitType.Kilohertz);
+        public Frequency DefaultSpiBusSpeed => new(375, Frequency.UnitType.Kilohertz);
 
         /// <summary>
         /// The SPI bus speed for the device
@@ -66,18 +66,26 @@ namespace Meadow.Foundation.Displays
         }
 
         /// <summary>
+        /// Is the object disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
+
+        /// <summary>
         /// SPI Communication bus used to communicate with the peripheral
         /// </summary>
         protected readonly ISpiCommunications spiComms;
 
         readonly IDigitalOutputPort dataCommandPort;
         readonly IDigitalOutputPort resetPort;
+        readonly IDigitalOutputPort? chipSelectPort;
 
         const bool Data = true;
         const bool Command = false;
 
         readonly Buffer1bpp imageBuffer;
         readonly byte[] pageBuffer;
+
+        readonly bool createdPorts = false;
 
         /// <summary>
         /// Create a new Ch1115 object
@@ -93,6 +101,7 @@ namespace Meadow.Foundation.Displays
             this(spiBus, chipSelectPin?.CreateDigitalOutputPort() ?? null, dcPin.CreateDigitalOutputPort(),
                 resetPin.CreateDigitalOutputPort(), width, height)
         {
+            createdPorts = true;
         }
 
         /// <summary>
@@ -112,6 +121,7 @@ namespace Meadow.Foundation.Displays
         {
             this.dataCommandPort = dataCommandPort;
             this.resetPort = resetPort;
+            this.chipSelectPort = chipSelectPort;
 
             spiComms = new SpiCommunications(spiBus, chipSelectPort, DefaultSpiBusSpeed, DefaultSpiBusMode);
 
@@ -431,6 +441,32 @@ namespace Meadow.Foundation.Displays
         public void WriteBuffer(int x, int y, IPixelBuffer displayBuffer)
         {
             imageBuffer.WriteBuffer(x, y, displayBuffer);
+        }
+
+        ///<inheritdoc/>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        /// <param name="disposing">Is disposing</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && createdPorts)
+                {
+                    chipSelectPort?.Dispose();
+                    resetPort?.Dispose();
+                    dataCommandPort?.Dispose();
+                }
+
+                IsDisposed = true;
+            }
         }
     }
 }

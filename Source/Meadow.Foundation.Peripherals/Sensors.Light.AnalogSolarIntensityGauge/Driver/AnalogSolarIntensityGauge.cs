@@ -10,7 +10,7 @@ namespace Meadow.Foundation.Sensors.Light
     /// <summary>
     /// Driver to measure solar panel input
     /// </summary>
-    public class AnalogSolarIntensityGauge : SamplingSensorBase<float>, ISolarIntensityGauge
+    public class AnalogSolarIntensityGauge : SamplingSensorBase<float>, ISolarIntensityGauge, IDisposable
     {
         /// <summary>
         /// Raised when the solar intensity changes
@@ -36,6 +36,16 @@ namespace Meadow.Foundation.Sensors.Light
         public float? SolarIntensity { get; protected set; }
 
         /// <summary>
+        /// Is the object disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
+
+        /// <summary>
+        /// Did we create the port(s) used by the peripheral
+        /// </summary>
+        readonly bool createdPort = false;
+
+        /// <summary>
         /// Creates a new instance of an analog solar intensity driver.
         /// </summary>
         /// <param name="analogPin">Analog pin the temperature sensor is connected to</param>
@@ -59,24 +69,25 @@ namespace Meadow.Foundation.Sensors.Light
                                                  maxVoltageReference ?? new Voltage(3.3)),
                    minVoltageReference, maxVoltageReference)
         {
+            createdPort = true;
             base.UpdateInterval = updateInterval ?? new TimeSpan(0, 0, 10);
         }
 
         /// <summary>
         /// Creates a new instance of an analog solar intensity driver.
         /// </summary>
-        /// <param name="analogIn">The `IAnalogInputPort` connected to the solar panel.</param>
+        /// <param name="analogPort">The `IAnalogInputPort` connected to the solar panel.</param>
         /// <param name="minVoltageReference">The minimum voltage expected when the solar panel isn't receiving light. Default is 0.</param>
         /// <param name="maxVoltageReference">The maximum voltage expected when the solar panel is in full sun. Default is 3.3V.</param>
         public AnalogSolarIntensityGauge(
-            IAnalogInputPort analogIn,
+            IAnalogInputPort analogPort,
             Voltage? minVoltageReference = null, Voltage? maxVoltageReference = null)
         {
             if (minVoltageReference is { } minV) { MinVoltageReference = minV; }
             if (maxVoltageReference is { } maxV) { MaxVoltageReference = maxV; }
 
-            // TODO: input port validation if any (is it constructed all right?)
-            analogInputPort = analogIn;
+            // TODO: input port validation
+            analogInputPort = analogPort;
             Initialize();
         }
 
@@ -85,19 +96,15 @@ namespace Meadow.Foundation.Sensors.Light
         /// </summary>
         protected void Initialize()
         {
-            // wire up our analog input observer
             var observer = IAnalogInputPort.CreateObserver(
                 handler: result =>
                 {
-                    // create a new change result from the new value
                     ChangeResult<float> changeResult = new ChangeResult<float>()
                     {
                         New = ConvertVoltageToIntensity(result.New),
                         Old = SolarIntensity
                     };
-                    // save state
                     SolarIntensity = changeResult.New;
-                    // notify
                     RaiseEventsAndNotify(changeResult);
                 },
                 null);
@@ -110,13 +117,10 @@ namespace Meadow.Foundation.Sensors.Light
         /// <returns>The latest sensor reading</returns>
         protected override async Task<float> ReadSensor()
         {
-            // read the voltage
             Voltage voltage = await analogInputPort.Read();
 
-            // convert the voltage
             var newSolarIntensity = ConvertVoltageToIntensity(voltage);
 
-            // save our value
             SolarIntensity = newSolarIntensity;
 
             return newSolarIntensity;
@@ -165,6 +169,31 @@ namespace Meadow.Foundation.Sensors.Light
         protected float ConvertVoltageToIntensity(Voltage voltage)
         {
             return (float)voltage.Volts.Map(MinVoltageReference.Volts, MaxVoltageReference.Volts, 0.0, 1.0);
+        }
+
+        ///<inheritdoc/>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        /// <param name="disposing">Is disposing</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && createdPort)
+                {
+                    analogInputPort?.StopUpdating();
+                    analogInputPort?.Dispose();
+                }
+
+                IsDisposed = true;
+            }
         }
     }
 }

@@ -8,7 +8,7 @@ namespace Meadow.Foundation.Displays
     /// <summary>
     /// Max7219 LED matrix driver
     /// </summary>
-    public partial class Max7219 : ISpiPeripheral
+    public partial class Max7219 : ISpiPeripheral, IDisposable
     {
         /// <summary>
         /// Number of digits per Module
@@ -38,7 +38,7 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// The default SPI bus speed for the device
         /// </summary>
-        public Frequency DefaultSpiBusSpeed => new Frequency(10000, Frequency.UnitType.Kilohertz);
+        public Frequency DefaultSpiBusSpeed => new(10000, Frequency.UnitType.Kilohertz);
 
         /// <summary>
         /// The SPI bus speed for the device
@@ -64,9 +64,21 @@ namespace Meadow.Foundation.Displays
         }
 
         /// <summary>
+        /// Is the object disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
+
+        /// <summary>
+        /// Did we create the port(s) used by the peripheral
+        /// </summary>
+        readonly bool createdPort = false;
+
+        /// <summary>
         /// SPI Communication bus used to communicate with the peripheral
         /// </summary>
         protected ISpiCommunications spiComms;
+
+        IDigitalOutputPort chipSelectPort;
 
         /// <summary>
         /// internal buffer used to write to registers for all devices.
@@ -84,25 +96,24 @@ namespace Meadow.Foundation.Displays
         /// Create a new Max7219 object
         /// </summary>
         /// <param name="spiBus">SPI bus</param>
-        /// <param name="chipselectPort">Chip select port</param>
+        /// <param name="chipSelectPort">Chip select port</param>
         /// <param name="deviceCount">Number of cascaded devices</param>
         /// <param name="maxMode">Display mode</param>
-        public Max7219(ISpiBus spiBus, IDigitalOutputPort chipselectPort, int deviceCount = 1, Max7219Mode maxMode = Max7219Mode.Display)
-            : this(spiBus, chipselectPort, deviceCount, 1, maxMode)
-        {
-        }
+        public Max7219(ISpiBus spiBus, IDigitalOutputPort chipSelectPort, int deviceCount = 1, Max7219Mode maxMode = Max7219Mode.Display)
+            : this(spiBus, chipSelectPort, deviceCount, 1, maxMode)
+        { }
 
         /// <summary>
         /// Create a new Max7219 object
         /// </summary>
         /// <param name="spiBus">SPI bus</param>
-        /// <param name="chipselectPort">Chip select port</param>
+        /// <param name="chipSelectPort">Chip select port</param>
         /// <param name="deviceRows">Number of devices cascaded vertically</param>
         /// <param name="deviceColumns">Number of devices cascaded horizontally</param>
         /// <param name="maxMode">Display mode</param>
-        public Max7219(ISpiBus spiBus, IDigitalOutputPort chipselectPort, int deviceRows, int deviceColumns, Max7219Mode maxMode = Max7219Mode.Display)
+        public Max7219(ISpiBus spiBus, IDigitalOutputPort chipSelectPort, int deviceRows, int deviceColumns, Max7219Mode maxMode = Max7219Mode.Display)
         {
-            spiComms = new SpiCommunications(spiBus, chipselectPort, DefaultSpiBusSpeed, DefaultSpiBusMode);
+            spiComms = new SpiCommunications(spiBus, this.chipSelectPort = chipSelectPort, DefaultSpiBusSpeed, DefaultSpiBusMode);
 
             DigitRows = deviceRows;
             DigitColumns = deviceColumns * DigitsPerDevice;
@@ -124,7 +135,9 @@ namespace Meadow.Foundation.Displays
         /// <param name="maxMode">Display mode</param>
         public Max7219(ISpiBus spiBus, IPin chipSelectPin, int deviceRows = 1, int deviceColumns = 1, Max7219Mode maxMode = Max7219Mode.Display)
             : this(spiBus, chipSelectPin.CreateDigitalOutputPort(), deviceRows, deviceColumns, maxMode)
-        { }
+        {
+            createdPort = true;
+        }
 
         /// <summary>
         /// Create a new Max7219 object
@@ -135,7 +148,9 @@ namespace Meadow.Foundation.Displays
         /// <param name="maxMode">Display mode</param>
         public Max7219(ISpiBus spiBus, IPin chipSelectPin, int deviceCount = 1, Max7219Mode maxMode = Max7219Mode.Display)
             : this(spiBus, chipSelectPin.CreateDigitalOutputPort(), deviceCount, 1, maxMode)
-        { }
+        {
+            createdPort = true;
+        }
 
         /// <summary>
         /// Standard initialization routine.
@@ -368,6 +383,30 @@ namespace Meadow.Foundation.Displays
                 {
                     SetDigit(0, digit, deviceId);
                 }
+            }
+        }
+
+        ///<inheritdoc/>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        /// <param name="disposing">Is disposing</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && createdPort)
+                {
+                    chipSelectPort?.Dispose();
+                }
+
+                IsDisposed = true;
             }
         }
     }

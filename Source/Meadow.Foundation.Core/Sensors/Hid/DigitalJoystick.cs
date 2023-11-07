@@ -8,7 +8,7 @@ namespace Meadow.Foundation.Sensors.Hid
     /// <summary>
     /// Represents a 4 switch digital joystick / directional pad (D-pad)
     /// </summary>
-    public class DigitalJoystick : IDigitalJoystick
+    public class DigitalJoystick : IDigitalJoystick, IDisposable
     {
         /// <summary>
         /// Get the current digital joystick position
@@ -38,6 +38,21 @@ namespace Meadow.Foundation.Sensors.Hid
         public PushButton ButtonRight { get; protected set; }
 
         /// <summary>
+        /// Is the object disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
+
+        /// <summary>
+        /// Did we create the port(s) used by the peripheral
+        /// </summary>
+        readonly bool createdPorts = false;
+
+        readonly IDigitalInterruptPort portUp;
+        readonly IDigitalInterruptPort portDown;
+        readonly IDigitalInterruptPort portLeft;
+        readonly IDigitalInterruptPort portRight;
+
+        /// <summary>
         /// Create a new DigitalJoystick object
         /// </summary>
         /// <param name="pinUp">The pin connected to the up switch</param>
@@ -50,7 +65,9 @@ namespace Meadow.Foundation.Sensors.Hid
                    pinDown.CreateDigitalInterruptPort(InterruptMode.EdgeBoth, resistorMode),
                    pinLeft.CreateDigitalInterruptPort(InterruptMode.EdgeBoth, resistorMode),
                    pinRight.CreateDigitalInterruptPort(InterruptMode.EdgeBoth, resistorMode))
-        { }
+        {
+            createdPorts = true;
+        }
 
         /// <summary>
         /// Create a new DigitalJoystick object
@@ -64,10 +81,10 @@ namespace Meadow.Foundation.Sensors.Hid
                                 IDigitalInterruptPort portLeft,
                                 IDigitalInterruptPort portRight)
         {
-            ButtonUp = new PushButton(portUp);
-            ButtonDown = new PushButton(portDown);
-            ButtonLeft = new PushButton(portLeft);
-            ButtonRight = new PushButton(portRight);
+            ButtonUp = new PushButton(this.portUp = portUp);
+            ButtonDown = new PushButton(this.portDown = portDown);
+            ButtonLeft = new PushButton(this.portLeft = portLeft);
+            ButtonRight = new PushButton(this.portRight = portRight);
 
             ButtonUp.PressStarted += PressStarted;
             ButtonDown.PressStarted += PressStarted;
@@ -139,6 +156,33 @@ namespace Meadow.Foundation.Sensors.Hid
             else
             {   //Center
                 return DigitalJoystickPosition.Center;
+            }
+        }
+
+        ///<inheritdoc/>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        /// <param name="disposing">Is disposing</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && createdPorts)
+                {
+                    portDown?.Dispose();
+                    portLeft?.Dispose();
+                    portRight?.Dispose();
+                    portUp?.Dispose();
+                }
+
+                IsDisposed = true;
             }
         }
     }

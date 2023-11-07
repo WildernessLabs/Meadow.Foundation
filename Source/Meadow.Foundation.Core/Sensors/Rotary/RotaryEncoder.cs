@@ -8,7 +8,7 @@ namespace Meadow.Foundation.Sensors.Rotary;
 /// <summary>
 /// Digital rotary encoder that uses two-bit Gray Code to encode rotation.
 /// </summary>
-public class RotaryEncoder : IRotaryEncoder
+public class RotaryEncoder : IRotaryEncoder, IDisposable
 {
     /// <summary>
     /// Raised when the rotary encoder is rotated and returns a RotaryTurnedEventArgs object which describes the direction of rotation.
@@ -59,6 +59,16 @@ public class RotaryEncoder : IRotaryEncoder
                                             0, 1, -1, 0 };
 
     /// <summary>
+    /// Is the object disposed
+    /// </summary>
+    public bool IsDisposed { get; private set; }
+
+    /// <summary>
+    /// Did we create the port(s) used by the peripheral
+    /// </summary>
+    readonly bool createdPorts = false;
+
+    /// <summary>
     /// Instantiate a new RotaryEncoder on the specified pins
     /// </summary>
     /// <param name="aPhasePin">Pin A</param>
@@ -67,7 +77,9 @@ public class RotaryEncoder : IRotaryEncoder
     public RotaryEncoder(IPin aPhasePin, IPin bPhasePin, bool isCommonGround = false) :
         this(aPhasePin.CreateDigitalInterruptPort(InterruptMode.EdgeBoth, isCommonGround ? ResistorMode.InternalPullUp : ResistorMode.InternalPullDown, TimeSpan.Zero, TimeSpan.FromMilliseconds(0.1)),
              bPhasePin.CreateDigitalInterruptPort(InterruptMode.EdgeBoth, isCommonGround ? ResistorMode.InternalPullUp : ResistorMode.InternalPullDown, TimeSpan.Zero, TimeSpan.FromMilliseconds(0.1)))
-    { }
+    {
+        createdPorts = true;
+    }
 
     /// <summary>
     /// Instantiate a new RotaryEncoder on the specified ports
@@ -138,5 +150,30 @@ public class RotaryEncoder : IRotaryEncoder
     private void RaiseRotatedAndNotify(RotaryChangeResult result)
     {
         Rotated?.Invoke(this, result);
+    }
+
+    ///<inheritdoc/>
+    public void Dispose()
+    {
+        Dispose(disposing: true);
+        GC.SuppressFinalize(this);
+    }
+
+    /// <summary>
+    /// Dispose of the object
+    /// </summary>
+    /// <param name="disposing">Is disposing</param>
+    protected virtual void Dispose(bool disposing)
+    {
+        if (!IsDisposed)
+        {
+            if (disposing && createdPorts)
+            {
+                APhasePort?.Dispose();
+                BPhasePort?.Dispose();
+            }
+
+            IsDisposed = true;
+        }
     }
 }

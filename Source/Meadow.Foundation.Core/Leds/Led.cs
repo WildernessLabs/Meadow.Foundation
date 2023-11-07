@@ -54,9 +54,7 @@ namespace Meadow.Foundation.Leds
             Port = port;
         }
 
-        /// <summary>
-        /// Dispose of the object
-        /// </summary>
+        ///<inheritdoc/>
         public void Dispose()
         {
             Dispose(disposing: true);

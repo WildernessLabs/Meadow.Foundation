@@ -7,14 +7,16 @@ using System.Threading;
 
 namespace Meadow.Foundation.Displays
 {
-    public abstract partial class TftSpiBase : IGraphicsDisplay, ISpiPeripheral
+    /// <summary>
+    /// Base class for TFT SPI displays
+    /// These displays typically support 16 & 18 bit, some also include 8, 9, 12 and/or 24 bit color 
+    /// </summary>
+    public abstract partial class TftSpiBase : IGraphicsDisplay, ISpiPeripheral, IDisposable
     {
         /// <summary>
         /// Temporary buffer that can be used to batch set address window buffer commands
         /// </summary>
         protected byte[] SetAddressBuffer { get; } = new byte[4];
-
-        //these displays typically support 16 & 18 bit, some also include 8, 9, 12 and/or 24 bit color 
 
         /// <summary>
         /// The current display color mode
@@ -78,6 +80,16 @@ namespace Meadow.Foundation.Displays
             get => spiDisplay.BusMode;
             set => spiDisplay.BusMode = value;
         }
+
+        /// <summary>
+        /// Is the object disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
+
+        /// <summary>
+        /// Did we create the port(s) used by the peripheral
+        /// </summary>
+        readonly bool createdPorts = false;
 
         /// <summary>
         /// The data command port
@@ -178,6 +190,7 @@ namespace Meadow.Foundation.Displays
                     width, height, colorMode
                   )
         {
+            createdPorts = true;
         }
 
         /// <summary>
@@ -541,6 +554,32 @@ namespace Meadow.Foundation.Displays
             if (newWidth != Width)
             {
                 CreateBuffer(ColorMode, newWidth, newHeight);
+            }
+        }
+
+        ///<inheritdoc/>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        /// <param name="disposing">Is disposing</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && createdPorts)
+                {
+                    chipSelectPort?.Dispose();
+                    dataCommandPort?.Dispose();
+                    resetPort?.Dispose();
+                }
+
+                IsDisposed = true;
             }
         }
     }
