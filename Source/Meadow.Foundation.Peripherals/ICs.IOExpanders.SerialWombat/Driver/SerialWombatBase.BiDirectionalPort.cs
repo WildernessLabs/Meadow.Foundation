@@ -12,7 +12,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// <summary>
             /// Serial Wombat controller
             /// </summary>
-            private readonly SerialWombatBase _controller;
+            private readonly SerialWombatBase? _controller;
 
             /// <summary>
             /// The port direction
@@ -36,8 +36,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// </summary>
             public override bool State
             {
-                get => _controller.ReadPublicData((byte)Pin.Key) != 0;
-                set => _controller.ConfigureOutputPin((byte)Pin.Key, value, OutputType.PushPull);
+                get => _controller!.ReadPublicData((byte)Pin.Key) != 0;
+                set => _controller!.ConfigureOutputPin((byte)Pin.Key, value, OutputType.PushPull);
             }
         }
     }

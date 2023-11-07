@@ -10,7 +10,7 @@ namespace Meadow.Foundation.Displays.UI.InputTypes
         /// <summary>
         /// The ITextDisplay object
         /// </summary>
-        protected ITextDisplay? display = null;
+        protected ITextDisplay display;
 
         /// <summary>
         /// Is the item initialized
@@ -58,9 +58,9 @@ namespace Meadow.Foundation.Displays.UI.InputTypes
         /// <param name="text">The new text to display</param>
         protected void UpdateInputLine(string text)
         {
-            display?.ClearLine(1);
-            display?.WriteLine(text, 1, true);
-            display?.Show();
+            display.ClearLine(1);
+            display.WriteLine(text, 1, true);
+            display.Show();
         }
 
         /// <summary>

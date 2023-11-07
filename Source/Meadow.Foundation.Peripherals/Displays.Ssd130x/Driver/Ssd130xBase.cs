@@ -24,12 +24,12 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// The width of the display in pixels
         /// </summary>
-        public int Width => imageBuffer.Width;
+        public int Width => imageBuffer!.Width;
 
         /// <summary>
         /// The height of the display in pixels
         /// </summary>
-        public int Height => imageBuffer.Height;
+        public int Height => imageBuffer!.Height;
 
         /// <summary>
         /// The buffer the holds the pixel data for the display
@@ -122,7 +122,7 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// Read buffer
         /// </summary>
-        protected byte[] readBuffer;
+        protected byte[]? readBuffer;
 
         /// <summary>
         /// Display command buffer
@@ -132,12 +132,12 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// Page buffer to hold one page of data
         /// </summary>
-        protected byte[] pageBuffer;
+        protected byte[]? pageBuffer;
 
         /// <summary>
         /// Sequence of command bytes that must be sent to the display before
         /// </summary>
-        protected byte[] showPreamble;
+        protected byte[]? showPreamble;
 
         /// <summary>
         /// Invert the entire display (true) or return to normal mode (false)
@@ -255,7 +255,7 @@ namespace Meadow.Foundation.Displays
             else//  I2C
             {   //  Send the buffer page by page
                 //  This can be optimized when we move to Memory<byte>
-                pageBuffer[0] = 0x40;
+                pageBuffer![0] = 0x40;
 
                 for (ushort index = 0; index < imageBuffer.ByteCount; index += PAGE_SIZE)
                 {

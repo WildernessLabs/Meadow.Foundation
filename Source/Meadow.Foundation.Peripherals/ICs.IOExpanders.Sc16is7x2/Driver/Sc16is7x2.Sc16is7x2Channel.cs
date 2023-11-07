@@ -14,6 +14,7 @@ public partial class Sc16is7x2
     {
         /// <inheritdoc/>
         public event SerialDataReceivedEventHandler DataReceived = default!;
+
         /// <inheritdoc/>
         public event EventHandler BufferOverrun = default!;
 
