@@ -452,10 +452,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             buffer.WriteBuffer(x, y, displayBuffer);
         }
 
-        /// <summary>
-        /// Dispose peripheral
-        /// </summary>
-        /// <param name="disposing"></param>
+        ///<inheritdoc/>
         protected virtual void Dispose(bool disposing)
         {
             if (!IsDisposed)
@@ -468,9 +465,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             }
         }
 
-        /// <summary>
-        /// Dispose BusComms
-        /// </summary>
+        ///<inheritdoc/>
         public void Dispose()
         {
             Dispose(disposing: true);

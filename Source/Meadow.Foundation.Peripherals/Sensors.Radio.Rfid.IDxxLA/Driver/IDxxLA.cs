@@ -76,9 +76,7 @@ namespace Meadow.Foundation.Sensors.Radio.Rfid
         /// <inheritdoc />
         public byte[]? LastRead { get; private set; }
 
-        /// <summary>
-        /// Dispose of this instance.
-        /// </summary>
+        ///<inheritdoc/>
         public void Dispose()
         {
             foreach (var observer in _observers)
@@ -279,6 +277,7 @@ namespace Meadow.Foundation.Sensors.Radio.Rfid
                 _observer = observer;
             }
 
+            ///<inheritdoc/>
             public void Dispose()
             {
                 // Ensure thread safety

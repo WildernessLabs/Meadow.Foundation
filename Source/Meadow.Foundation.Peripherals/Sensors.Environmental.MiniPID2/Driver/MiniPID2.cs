@@ -9,7 +9,7 @@ namespace Meadow.Foundation.Sensors.Environmental
     /// <summary>
     /// Represents an IonScience MiniPID2 analog photoionisation (PID) Volatile Organic Compounds (VOC) sensor
     /// </summary>
-    public partial class MiniPID2 : SamplingSensorBase<Concentration>, IConcentrationSensor
+    public partial class MiniPID2 : SamplingSensorBase<Concentration>, IConcentrationSensor, IDisposable
     {
         /// <summary>
         /// Raised when the VOC concentration changes
@@ -36,6 +36,16 @@ namespace Meadow.Foundation.Sensors.Environmental
         ///</Summary>
         protected IAnalogInputPort AnalogInputPort { get; }
 
+        /// <summary>
+        /// Is the object disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
+
+        /// <summary>
+        /// Did we create the port(s) used by the peripheral
+        /// </summary>
+        readonly bool createdPort = false;
+
         SensorCalibration[]? calibrations;
 
         /// <summary>
@@ -54,6 +64,7 @@ namespace Meadow.Foundation.Sensors.Environmental
                 sampleInterval ?? TimeSpan.FromMilliseconds(40),
                 new Voltage(3.3, Voltage.UnitType.Volts)), pid2Type)
         {
+            createdPort = true;
         }
 
         /// <summary>
@@ -114,7 +125,7 @@ namespace Meadow.Foundation.Sensors.Environmental
                 IAnalogInputPort.CreateObserver(
                     result =>
                     {
-                        ChangeResult<Concentration> changeResult = new ChangeResult<Concentration>()
+                        ChangeResult<Concentration> changeResult = new()
                         {
                             New = VoltageToConcentration(result.New),
                             Old = Concentration
@@ -217,6 +228,27 @@ namespace Meadow.Foundation.Sensors.Environmental
             /// The minimum concentration returned by the sensor
             /// </summary>
             public Concentration MinimumDetectionLimit { get; set; }
+        }
+
+        ///<inheritdoc/>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        ///<inheritdoc/>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && createdPort)
+                {
+                    AnalogInputPort?.Dispose();
+                }
+
+                IsDisposed = true;
+            }
         }
     }
 }

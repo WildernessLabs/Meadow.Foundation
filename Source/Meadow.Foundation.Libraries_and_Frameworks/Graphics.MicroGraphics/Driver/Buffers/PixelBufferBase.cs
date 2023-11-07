@@ -346,10 +346,7 @@ namespace Meadow.Foundation.Graphics.Buffers
             return Math.Sqrt(rDeltaSquared + gDeltaSquared + bDeltaSquared);
         }
 
-        /// <summary>
-        /// Disposes the instances resources
-        /// </summary>
-        /// <param name="disposing"></param>
+        ///<inheritdoc/>
         protected virtual void Dispose(bool disposing)
         {
             if (!isDisposed)
@@ -365,9 +362,7 @@ namespace Meadow.Foundation.Graphics.Buffers
             isDisposed = true;
         }
 
-        /// <summary>
-        /// Disposes the instances resources
-        /// </summary>
+        ///<inheritdoc/>
         public void Dispose()
         {
             Dispose(disposing: true);

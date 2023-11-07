@@ -178,10 +178,7 @@ namespace Meadow.Foundation.Sensors.Distance
             return Task.CompletedTask;
         }
 
-        /// <summary>
-        /// Disposes of managed and unmanaged resources
-        /// </summary>
-        /// <param name="disposing">True if called from the public Dispose method, false if from a finalizer</param>
+        ///<inheritdoc/>
         protected virtual void Dispose(bool disposing)
         {
             if (!isDisposed)
@@ -202,9 +199,7 @@ namespace Meadow.Foundation.Sensors.Distance
             }
         }
 
-        /// <summary>
-        /// Disposes of the resources used by the <see cref="Me007ys"/> instance
-        /// </summary>
+        ////<inheritdoc/>
         public void Dispose()
         {
             Dispose(true);

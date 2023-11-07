@@ -320,10 +320,7 @@ namespace Meadow.Foundation.Sensors.LoadCell
             }
         }
 
-        /// <summary>
-        /// Dispose managed resources
-        /// </summary>
-        /// <param name="disposing">Is disposing</param>
+        ///<inheritdoc/>
         protected virtual void Dispose(bool disposing)
         {
             if (createdPorts)
@@ -334,12 +331,11 @@ namespace Meadow.Foundation.Sensors.LoadCell
             IsDisposed = true;
         }
 
-        /// <summary>
-        /// Dispose managed resources
-        /// </summary>
+        ///<inheritdoc/>
         public void Dispose()
         {
-            Dispose(true);
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }

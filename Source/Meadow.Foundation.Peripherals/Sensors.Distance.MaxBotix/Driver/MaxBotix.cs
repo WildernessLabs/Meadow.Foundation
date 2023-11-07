@@ -139,27 +139,23 @@ namespace Meadow.Foundation.Sensors.Distance
             };
         }
 
-        /// <summary>
-        /// Dispose of the object
-        /// </summary>
-        public void Dispose()
+        ///<inheritdoc/>
+        public override void Dispose()
         {
+            base.Dispose();
             Dispose(disposing: true);
             GC.SuppressFinalize(this);
         }
 
-        /// <summary>
-        /// Dispose of the object
-        /// </summary>
-        /// <param name="disposing">Is disposing</param>
-        protected virtual void Dispose(bool disposing)
+        ///<inheritdoc/>
+        protected override void Dispose(bool disposing)
         {
+            base.Dispose(disposing);
             if (!IsDisposed)
             {
                 if (disposing && createdPorts)
                 {
                     analogInputPort?.Dispose();
-                    serialMessagePort?.Dispose();
                 }
 
                 IsDisposed = true;

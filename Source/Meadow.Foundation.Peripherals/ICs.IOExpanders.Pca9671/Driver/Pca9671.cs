@@ -226,10 +226,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             Bus.Write(Address, buffer);
         }
 
-        /// <summary>
-        /// Disposes the instances resources
-        /// </summary>
-        /// <param name="disposing"></param>
+        ///<inheritdoc/>
         protected virtual void Dispose(bool disposing)
         {
             if (!IsDisposed)
@@ -247,9 +244,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             }
         }
 
-        /// <summary>
-        /// Disposes the instances resources
-        /// </summary>
+        ///<inheritdoc/>
         public void Dispose()
         {
             // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method

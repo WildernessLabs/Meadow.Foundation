@@ -1,5 +1,4 @@
-﻿using Meadow.Hardware;
-using Meadow.Units;
+﻿using Meadow.Units;
 using System;
 using System.Threading.Tasks;
 
@@ -44,24 +43,9 @@ namespace Meadow.Foundation.Sensors.Environmental
         public bool IsDisposed { get; private set; }
 
         /// <summary>
-        /// Creates a NextPm instance
+        /// Did we create the port(s) used by the peripheral
         /// </summary>
-        /// <param name="portName"></param>
-        public NextPm(SerialPortName portName)
-            : this(portName.CreateSerialPort())
-        {
-        }
-
-        /// <summary>
-        /// Creates a NextPm instance
-        /// </summary>
-        /// <param name="port"></param>
-        public NextPm(ISerialPort port)
-        {
-            _port = InitializePort(port);
-
-            _port.Open();
-        }
+        readonly bool createdPort = false;
 
         /// <summary>
         /// Gets the sensor's firmware
@@ -199,7 +183,7 @@ namespace Meadow.Foundation.Sensors.Environmental
             }
             if (changeResult.New.humidity is { } humidity)
             {
-                HumidityUpdated?.Invoke(this._port, new ChangeResult<RelativeHumidity>(humidity, changeResult.Old?.humidity));
+                HumidityUpdated?.Invoke(this.serialPort, new ChangeResult<RelativeHumidity>(humidity, changeResult.Old?.humidity));
             }
             base.RaiseEventsAndNotify(changeResult);
         }
@@ -266,9 +250,9 @@ namespace Meadow.Foundation.Sensors.Environmental
         {
             if (!IsDisposed)
             {
-                if (disposing)
+                if (disposing && createdPort)
                 {
-                    _port?.Dispose();
+                    serialPort?.Dispose();
                 }
                 IsDisposed = true;
             }

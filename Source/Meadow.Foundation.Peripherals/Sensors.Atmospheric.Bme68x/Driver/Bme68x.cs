@@ -222,7 +222,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <summary>
         /// Did we create the port(s) used by the peripheral
         /// </summary>
-        readonly bool createdPorts = false;
+        readonly bool createdPort = false;
 
         readonly Configuration configuration;
 
@@ -628,19 +628,14 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             return durationValue;
         }
 
-        /// <summary>
-        /// Dispose of the object
-        /// </summary>
+        ///<inheritdoc/>
         public void Dispose()
         {
             Dispose(disposing: true);
             GC.SuppressFinalize(this);
         }
 
-        /// <summary>
-        /// Dispose of the object
-        /// </summary>
-        /// <param name="disposing">Is disposing</param>
+        ///<inheritdoc/>
         protected virtual void Dispose(bool disposing)
         {
             if (!IsDisposed)

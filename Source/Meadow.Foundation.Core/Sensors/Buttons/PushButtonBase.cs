@@ -155,9 +155,7 @@ namespace Meadow.Foundation.Sensors.Buttons
         /// </summary>
         public Task<bool> Read() => Task.FromResult(State);
 
-        /// <summary>
-        /// Disposes the Digital Input resources
-        /// </summary>
+        ///<inheritdoc/>
         public virtual void Dispose()
         {
             if (ShouldDisposeInput)

@@ -267,19 +267,14 @@ namespace Meadow.Foundation.Motors.Stepper
             }
         }
 
-        /// <summary>
-        /// Dispose of the object
-        /// </summary>
+        ///<inheritdoc/>
         public void Dispose()
         {
             Dispose(disposing: true);
             GC.SuppressFinalize(this);
         }
 
-        /// <summary>
-        /// Dispose of the object
-        /// </summary>
-        /// <param name="disposing">Is disposing</param>
+        ///<inheritdoc/>
         protected virtual void Dispose(bool disposing)
         {
             if (!IsDisposed)

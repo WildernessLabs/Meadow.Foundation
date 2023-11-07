@@ -86,10 +86,7 @@ namespace Meadow.Foundation
             WriteBuffer = new byte[writeBufferSize];
         }
 
-        /// <summary>
-        /// Dispose object
-        /// </summary>
-        /// <param name="disposing">is disposing</param>
+        ///<inheritdoc/>
 
         protected virtual void Dispose(bool disposing)
         {
@@ -99,9 +96,7 @@ namespace Meadow.Foundation
             }
         }
 
-        /// <summary>
-        /// Dispose managed resources
-        /// </summary>
+        ///<inheritdoc/>
         public virtual void Dispose()
         {
             Dispose(true);
