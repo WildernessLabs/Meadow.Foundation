@@ -27,6 +27,8 @@ namespace Meadow.Foundation.Sensors.Gnss
         /// </summary>
         public NeoM8(II2cBus i2cBus, byte address = (byte)Addresses.Default, IPin? resetPin = null, IPin? ppsPin = null)
         {
+            createdPorts = true;
+
             if (resetPin != null)
             {
                 resetPort = resetPin.CreateDigitalOutputPort(true);

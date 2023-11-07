@@ -7,12 +7,22 @@ namespace Meadow.Foundation.Sensors.Hid
     /// <summary>
     /// Represents a BBQ10Keyboard Featherwing
     /// </summary>
-    public partial class BBQ10Keyboard : II2cPeripheral
+    public partial class BBQ10Keyboard : II2cPeripheral, IDisposable
     {
         /// <summary>
         /// The default I2C address for the peripheral
         /// </summary>
         public byte DefaultI2cAddress => (byte)Addresses.Default;
+
+        /// <summary>
+        /// Is the object disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
+
+        /// <summary>
+        /// Did we create the port(s) used by the peripheral
+        /// </summary>
+        readonly bool createdPort = false;
 
         /// <summary>
         /// I2C Communication bus used to communicate with the peripheral
@@ -59,6 +69,8 @@ namespace Meadow.Foundation.Sensors.Hid
 
             if (interruptPin != null)
             {
+                createdPort = true;
+
                 interruptPort = interruptPin.CreateDigitalInterruptPort(InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
                 interruptPort.Changed += InterruptPort_Changed;
             }
@@ -102,6 +114,27 @@ namespace Meadow.Foundation.Sensors.Hid
         private void InterruptPort_Changed(object sender, DigitalPortResult e)
         {
             OnKeyEvent?.Invoke(this, GetLastKeyEvent());
+        }
+
+        ///<inheritdoc/>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        ///<inheritdoc/>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && createdPort)
+                {
+                    interruptPort?.Dispose();
+                }
+
+                IsDisposed = true;
+            }
         }
     }
 }
