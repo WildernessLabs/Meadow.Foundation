@@ -19,7 +19,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     /// </remarks>
     public partial class Bme280 :
         PollingSensorBase<(Units.Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure)>,
-        ITemperatureSensor, IHumiditySensor, IBarometricPressureSensor, ISpiPeripheral, II2cPeripheral
+        ITemperatureSensor, IHumiditySensor, IBarometricPressureSensor, ISpiPeripheral, II2cPeripheral, IDisposable
     {
         /// <summary>
         /// Temperature changed event
@@ -35,6 +35,16 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// Humidity changed event
         /// </summary>
         public event EventHandler<IChangeResult<RelativeHumidity>> HumidityUpdated = default!;
+
+        /// <summary>
+        /// Is the object disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
+
+        /// <summary>
+        /// Did we create the port(s) used by the peripheral
+        /// </summary>
+        readonly bool createdPort = false;
 
         /// <summary>
         /// The read buffer
@@ -125,6 +135,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         public byte DefaultI2cAddress => (byte)Addresses.Default;
 
+        IDigitalOutputPort? chipSelectPort;
+
         /// <summary>
         /// Initializes a new instance of the BME280 class
         /// </summary>
@@ -144,7 +156,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <param name="chipSelectPin">The chip select pin</param>
         public Bme280(ISpiBus spiBus, IPin chipSelectPin) :
             this(spiBus, chipSelectPin.CreateDigitalOutputPort())
-        { }
+        {
+            createdPort = true;
+        }
 
         /// <summary>
         /// Initializes a new instance of the BME280 class
@@ -153,7 +167,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <param name="chipSelectPort">The port for the chip select pin</param>
         public Bme280(ISpiBus spiBus, IDigitalOutputPort chipSelectPort)
         {
-            bme280Comms = new SpiCommunications(spiBus, chipSelectPort, DefaultSpiBusSpeed, DefaultSpiBusMode);
+            bme280Comms = new SpiCommunications(spiBus, this.chipSelectPort = chipSelectPort, DefaultSpiBusSpeed, DefaultSpiBusMode);
             configuration = new Configuration(); // here to avoid the warning
             Initialize();
         }
@@ -380,6 +394,32 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             UpdateConfiguration(configuration);
 
             base.StartUpdating(updateInterval);
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        /// <param name="disposing">Is disposing</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && createdPort)
+                {
+                    chipSelectPort?.Dispose();
+                }
+
+                IsDisposed = true;
+            }
         }
 
         async Task<Units.Temperature> ISensor<Units.Temperature>.Read()
