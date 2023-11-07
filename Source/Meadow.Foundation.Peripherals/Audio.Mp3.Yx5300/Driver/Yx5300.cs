@@ -8,9 +8,16 @@ namespace Meadow.Foundation.Audio.Mp3
     /// <summary>
     /// Represents a Yx5300 serial MP3 player
     /// </summary>
-    public partial class Yx5300
+    public partial class Yx5300 : IDisposable
     {
+        /// <summary>
+        /// Is the object disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
+
         readonly ISerialPort serialPort;
+
+        readonly bool createdPort = false;
 
         /// <summary>
         /// Create a YX5300 mp3 player object
@@ -38,7 +45,9 @@ namespace Meadow.Foundation.Audio.Mp3
         /// <param name="serialPortName">Name of serial port connected to YX5300</param>
         public Yx5300(IMeadowDevice device, SerialPortName serialPortName)
             : this(device.CreateSerialPort(serialPortName))
-        { }
+        {
+            createdPort = true;
+        }
 
         /// <summary>
         /// Reset the YX5300 hardware
@@ -272,6 +281,32 @@ namespace Meadow.Foundation.Audio.Mp3
         Tuple<Responses, byte> ParseResponse(byte[] data)
         {
             return new Tuple<Responses, byte>((Responses)(data[3]), data[6]);
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        /// <param name="disposing">Is disposing</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && createdPort)
+                {
+                    serialPort?.Dispose();
+                }
+
+                IsDisposed = true;
+            }
         }
     }
 }

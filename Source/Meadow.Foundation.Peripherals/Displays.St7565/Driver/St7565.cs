@@ -10,7 +10,7 @@ namespace Meadow.Foundation.Displays
     /// <summary>
     /// Provide an interface to the ST7565 family of displays
     /// </summary>
-    public partial class St7565 : IGraphicsDisplay, ISpiPeripheral
+    public partial class St7565 : IGraphicsDisplay, ISpiPeripheral, IDisposable
     {
         /// <summary>
         /// The display color mode - 1 bit per pixel monochrome
@@ -66,12 +66,23 @@ namespace Meadow.Foundation.Displays
         }
 
         /// <summary>
+        /// Is the object disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
+
+        /// <summary>
+        /// Did we create the IO ports or where they passed in
+        /// </summary>
+        readonly bool createdPorts = false;
+
+        /// <summary>
         /// SPI Communication bus used to communicate with the peripheral
         /// </summary>
         protected ISpiCommunications spiComms;
 
         readonly IDigitalOutputPort dataCommandPort;
         readonly IDigitalOutputPort resetPort;
+        readonly IDigitalOutputPort? chipSelectPort;
 
         const bool Data = true;
         const bool Command = false;
@@ -93,6 +104,7 @@ namespace Meadow.Foundation.Displays
             this(spiBus, chipSelectPin?.CreateDigitalOutputPort() ?? null, dcPin.CreateDigitalOutputPort(),
                 resetPin.CreateDigitalOutputPort(), width, height)
         {
+            createdPorts = true;
         }
 
         /// <summary>
@@ -113,7 +125,7 @@ namespace Meadow.Foundation.Displays
             this.dataCommandPort = dataCommandPort;
             this.resetPort = resetPort;
 
-            spiComms = new SpiCommunications(spiBus, chipSelectPort, DefaultSpiBusSpeed, DefaultSpiBusMode);
+            spiComms = new SpiCommunications(spiBus, this.chipSelectPort = chipSelectPort, DefaultSpiBusSpeed, DefaultSpiBusMode);
 
             imageBuffer = new Buffer1bpp(width, height);
             pageBuffer = new byte[PageSize];
@@ -401,6 +413,34 @@ namespace Meadow.Foundation.Displays
         public void WriteBuffer(int x, int y, IPixelBuffer displayBuffer)
         {
             imageBuffer.WriteBuffer(x, y, displayBuffer);
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        /// <param name="disposing">Is disposing</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && createdPorts)
+                {
+                    chipSelectPort?.Dispose();
+                    dataCommandPort?.Dispose();
+                    resetPort?.Dispose();
+                }
+
+                IsDisposed = true;
+            }
         }
     }
 }

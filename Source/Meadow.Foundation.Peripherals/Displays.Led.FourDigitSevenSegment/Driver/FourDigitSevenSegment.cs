@@ -1,4 +1,5 @@
 ﻿using Meadow.Hardware;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -7,8 +8,18 @@ namespace Meadow.Foundation.Displays.Led
     /// <summary>
     /// Four Digit Seven Segment Display
     /// </summary>
-    public class FourDigitSevenSegment
+    public class FourDigitSevenSegment : IDisposable
     {
+        /// <summary>
+        /// Is the object disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
+
+        /// <summary>
+        /// Did we create the IO ports or where they passed in
+        /// </summary>
+        readonly bool createdPorts = false;
+
         CancellationTokenSource? cts = null;
 
         readonly IDigitalOutputPort[] digits;
@@ -52,7 +63,9 @@ namespace Meadow.Foundation.Displays.Led
                 pinG.CreateDigitalOutputPort(),
                 pinDecimal.CreateDigitalOutputPort(),
                 isCommonCathode)
-        { }
+        {
+            createdPorts = true;
+        }
 
         /// <summary>
         /// Creates a SevenSegment connected to the specified IDigitalOutputPorts
@@ -139,6 +152,35 @@ namespace Meadow.Foundation.Displays.Led
                 }
 
                 await Task.Delay(7);
+            }
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        /// <param name="disposing">Is disposing</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && createdPorts)
+                {
+                    foreach (var port in digits)
+                    {
+                        port.Dispose();
+                    }
+                }
+
+                IsDisposed = true;
             }
         }
     }

@@ -9,7 +9,7 @@ namespace Meadow.Foundation.Displays
     /// <summary>
     /// Represents the SSD130x family of OLED displays
     /// </summary>
-    public abstract partial class Ssd130xBase : IGraphicsDisplay, ISpiPeripheral, II2cPeripheral
+    public abstract partial class Ssd130xBase : IGraphicsDisplay, ISpiPeripheral, II2cPeripheral, IDisposable
     {
         /// <summary>
         /// The display color mode
@@ -68,6 +68,16 @@ namespace Meadow.Foundation.Displays
             get => spiComms!.BusMode;
             set => spiComms!.BusMode = value;
         }
+
+        /// <summary>
+        /// Is the object disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
+
+        /// <summary>
+        /// Did we create the IO ports or where they passed in
+        /// </summary>
+        protected bool createdPorts = false;
 
         /// <summary>
         /// SPI Communication bus used to communicate with the peripheral
@@ -422,6 +432,34 @@ namespace Meadow.Foundation.Displays
         public virtual void WriteBuffer(int x, int y, IPixelBuffer displayBuffer)
         {
             imageBuffer.WriteBuffer(x, y, displayBuffer);
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        /// <param name="disposing">Is disposing</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && createdPorts)
+                {
+                    chipSelectPort?.Dispose();
+                    dataCommandPort?.Dispose();
+                    resetPort?.Dispose();
+                }
+
+                IsDisposed = true;
+            }
         }
     }
 }
