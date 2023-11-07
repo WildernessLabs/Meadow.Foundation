@@ -18,7 +18,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         private byte selectedBus = 0xff;
 
         /// <summary>
-        /// The address of this device on the <see cref="Bus"/>.
+        /// The address of this device on the <see cref="Bus"/>
         /// </summary>
         public byte Address { get; }
 

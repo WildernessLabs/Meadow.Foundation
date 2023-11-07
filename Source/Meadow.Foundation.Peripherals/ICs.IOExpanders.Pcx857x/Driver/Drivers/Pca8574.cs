@@ -15,8 +15,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <param name="interruptPin">The interrupt pin</param>
         public Pca8574(II2cBus i2cBus, byte address, IPin? interruptPin)
             : base(i2cBus, address, interruptPin)
-        {
-        }
+        { }
 
         /// <summary>
         /// Initializes a new instance of the Pca8574 device
@@ -26,7 +25,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <param name="interruptPort">The interrupt port</param>
         public Pca8574(II2cBus i2cBus, byte address, IDigitalInterruptPort? interruptPort = default)
             : base(i2cBus, address, interruptPort)
-        {
-        }
+        { }
     }
 }
