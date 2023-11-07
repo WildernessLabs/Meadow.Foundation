@@ -5,12 +5,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 
-#nullable enable
-
 namespace Meadow.Foundation.ICs.IOExpanders
 {
     /// <summary>
-    /// Represents a DS3502 digital potentiometer
+    /// Represents an FT232H IO expander
     /// </summary>
     public partial class Ft232h :
         IDisposable,
@@ -34,6 +32,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
             }
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Ft232h"/> class.
+        /// </summary>
         public Ft232h()
         {
             Pins = new PinDefinitions(this);
@@ -93,17 +94,34 @@ namespace Meadow.Foundation.ICs.IOExpanders
             return result;
         }
 
+        /// <summary>
+        /// Creates an I2C bus with the specified bus number and clock rate.
+        /// </summary>
+        /// <param name="busNumber">The bus number.</param>
+        /// <returns>The I2C bus.</returns>
         public II2cBus CreateI2cBus(int busNumber = 0)
         {
             return CreateI2cBus(busNumber, I2CClockRate.Standard);
         }
 
+        /// <summary>
+        /// Creates an I2C bus with the specified bus number and clock rate.
+        /// </summary>
+        /// <param name="busNumber">The bus number.</param>
+        /// <param name="busSpeed">The I2C bus speed.</param>
+        /// <returns>The I2C bus.</returns>
         public II2cBus CreateI2cBus(int busNumber, I2cBusSpeed busSpeed)
         {
             // TODO: convert frequency
             return CreateI2cBus(busNumber, I2CClockRate.Standard);
         }
 
+        /// <summary>
+        /// Creates an I2C bus with the specified pins and bus speed.
+        /// </summary>
+        /// <param name="pins">The I2C clock and data pins.</param>
+        /// <param name="busSpeed">The I2C bus speed.</param>
+        /// <returns>The I2C bus.</returns>
         public II2cBus CreateI2cBus(IPin[] pins, I2cBusSpeed busSpeed)
         {
             // TODO: map the pins to the bus number
@@ -111,6 +129,13 @@ namespace Meadow.Foundation.ICs.IOExpanders
             return CreateI2cBus(0, I2CClockRate.Standard);
         }
 
+        /// <summary>
+        /// Creates an I2C bus with the specified clock and data pins and bus speed.
+        /// </summary>
+        /// <param name="clock">The clock pin.</param>
+        /// <param name="data">The data pin.</param>
+        /// <param name="busSpeed">The I2C bus speed.</param>
+        /// <returns>The I2C bus.</returns>
         public II2cBus CreateI2cBus(IPin clock, IPin data, I2cBusSpeed busSpeed)
         {
             // TODO: map the pins to the bus number
@@ -143,11 +168,23 @@ namespace Meadow.Foundation.ICs.IOExpanders
             return bus;
         }
 
+        /// <summary>
+        /// Creates an SPI bus with the default configuration.
+        /// </summary>
+        /// <returns>The SPI bus.</returns>
         public ISpiBus CreateSpiBus()
         {
             return CreateSpiBus(0, DefaultClockConfiguration);
         }
 
+        /// <summary>
+        /// Creates an SPI bus with the specified clock, MOSI, MISO pins, and configuration.
+        /// </summary>
+        /// <param name="clock">The clock pin.</param>
+        /// <param name="mosi">The MOSI (Master Out Slave In) pin.</param>
+        /// <param name="miso">The MISO (Master In Slave Out) pin.</param>
+        /// <param name="config">The SPI configuration.</param>
+        /// <returns>The SPI bus.</returns>
         public ISpiBus CreateSpiBus(IPin clock, IPin mosi, IPin miso, SpiClockConfiguration config)
         {
             if (!clock.Supports<ISpiChannelInfo>(c => c.LineTypes.HasFlag(SpiLineType.Clock)))
@@ -159,6 +196,14 @@ namespace Meadow.Foundation.ICs.IOExpanders
             return CreateSpiBus(0, config);
         }
 
+        /// <summary>
+        /// Creates an SPI bus with the specified clock, MOSI, MISO pins, and configuration.
+        /// </summary>
+        /// <param name="clock">The clock pin.</param>
+        /// <param name="mosi">The MOSI (Master Out Slave In) pin.</param>
+        /// <param name="miso">The MISO (Master In Slave Out) pin.</param>
+        /// <param name="speed">The SPI frequency.</param>
+        /// <returns>The SPI bus.</returns>
         public ISpiBus CreateSpiBus(IPin clock, IPin mosi, IPin miso, Frequency speed)
         {
             // TODO: map the pins to the bus number

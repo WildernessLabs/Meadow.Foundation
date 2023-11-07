@@ -57,7 +57,7 @@ namespace Meadow.Foundation.Graphics
         /// <summary>
         /// The collection of points 
         /// </summary>
-        public Point[] Points;
+        public Point[]? Points;
 
         /// <summary>
         /// The number of verbs/actions used
@@ -76,6 +76,11 @@ namespace Meadow.Foundation.Graphics
         {
             get
             {
+                if (Points == null)
+                {
+                    return new Rect(0, 0, 0, 0);
+                }
+
                 Point min = Points[0];
                 Point max = Points[0];
 
