@@ -84,7 +84,7 @@ namespace Meadow.Foundation.Displays
         protected const bool CommandState = false;
 
         /// <summary>
-        /// Did we create the IO ports or where they passed in
+        /// Did we create the port(s) used by the peripheral
         /// </summary>
         protected bool createdPorts = false;
 

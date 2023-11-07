@@ -69,7 +69,7 @@ namespace Meadow.Foundation.Displays
         public bool IsDisposed { get; private set; }
 
         /// <summary>
-        /// Did we create the IO ports or where they passed in
+        /// Did we create the port(s) used by the peripheral
         /// </summary>
         readonly bool createdPort = false;
 
