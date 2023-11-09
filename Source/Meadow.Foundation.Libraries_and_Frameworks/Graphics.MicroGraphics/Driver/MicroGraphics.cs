@@ -1367,7 +1367,10 @@ namespace Meadow.Foundation.Graphics
             {
                 DrawBuffer(x, y, image.DisplayBuffer, alignmentH, alignmentV);
             }
-            throw new Exception("Image does not have a display buffer");
+            else
+            {
+                throw new Exception("Image does not have a display buffer");
+            }
         }
 
         /// <summary>
@@ -1377,20 +1380,14 @@ namespace Meadow.Foundation.Graphics
         /// <param name="y">x location of target to draw buffer</param>
         /// <param name="image">the source image to write to the display buffer</param>
         public void DrawImage(int x, int y, Image image)
-        {
-            if (image.DisplayBuffer is not null)
-            {
-                DrawBuffer(x, y, image.DisplayBuffer);
-            }
-            throw new Exception("Image does not have a display buffer");
-        }
+            => DrawImage(x, y, image, HorizontalAlignment.Left, VerticalAlignment.Top);
 
         /// <summary>
         /// Draw an Image onto the display buffer at (0, 0)
         /// </summary>
         /// <param name="image">the source image to write to the display buffer</param>
         public void DrawImage(Image image)
-            => DrawImage(0, 0, image);
+            => DrawImage(0, 0, image, HorizontalAlignment.Left, VerticalAlignment.Top);
 
         /// <summary>
         /// Draw a text message on the display using the current font
