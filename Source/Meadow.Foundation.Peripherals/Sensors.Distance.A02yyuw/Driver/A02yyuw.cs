@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 namespace Meadow.Foundation.Sensors.Distance
 {
     /// <summary>
-    /// Represents the ME007YS serial distance sensor
+    /// Represents the A02YYUW serial distance sensor
     /// </summary>
-    public class Me007ys : PollingSensorBase<Length>, IRangeFinder, ISleepAwarePeripheral, IDisposable
+    public class A02yyuw : PollingSensorBase<Length>, IRangeFinder, ISleepAwarePeripheral, IDisposable
     {
         /// <summary>
         /// Raised when the value of the reading changes
@@ -41,21 +41,21 @@ namespace Meadow.Foundation.Sensors.Distance
         private bool isDisposed = false;
 
         /// <summary>
-        /// Creates a new ME007YS object communicating over serial
+        /// Creates a new A02YYUW object communicating over serial
         /// </summary>
         /// <param name="device">The device connected to the sensor</param>
         /// <param name="serialPortName">The serial port</param>
-        public Me007ys(IMeadowDevice device, SerialPortName serialPortName)
+        public A02yyuw(IMeadowDevice device, SerialPortName serialPortName)
             : this(device.CreateSerialPort(serialPortName, portSpeed))
         {
             createdPort = true;
         }
 
         /// <summary>
-        /// Creates a new ME007YS object communicating over serial
+        /// Creates a new A02YYUW object communicating over serial
         /// </summary>
         /// <param name="serialMessage">The serial message port</param>
-        public Me007ys(ISerialPort serialMessage)
+        public A02yyuw(ISerialPort serialMessage)
         {
             serialPort = serialMessage;
             serialPort.DataReceived += SerialPortDataReceived;
