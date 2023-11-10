@@ -141,6 +141,7 @@ namespace Meadow.Foundation.Sensors.Distance
         private void SerialPortDataReceived(object sender, SerialDataReceivedEventArgs e)
         {
             var len = serialPort.BytesToRead;
+
             serialPort.Read(readBuffer, 0, Math.Min(len, readBuffer.Length));
             if (len == 3)
             {

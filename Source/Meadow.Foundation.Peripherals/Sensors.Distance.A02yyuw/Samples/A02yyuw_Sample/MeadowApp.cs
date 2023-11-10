@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace A02yyuw_Sample
 {
     // Change F7FeatherV2 to F7FeatherV1 for V1.x boards
-    public class MeadowApp : App<F7CoreComputeV2>
+    public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
 
@@ -36,20 +36,22 @@ namespace A02yyuw_Sample
             );
             a02yyuw.Subscribe(consumer);
 
-            a02yyuw.DistanceUpdated += Me007y_DistanceUpdated;
+            a02yyuw.DistanceUpdated += A02yyuw_DistanceUpdated;
 
             return Task.CompletedTask;
         }
 
         public override async Task Run()
         {
+            Resolver.Log.Info("Run...");
+
             var distance = await a02yyuw.Read();
             Resolver.Log.Info($"Initial distance is: {distance.Centimeters:N1}cm / {distance.Inches:N1}in");
 
             a02yyuw.StartUpdating(TimeSpan.FromSeconds(2));
         }
 
-        private void Me007y_DistanceUpdated(object sender, IChangeResult<Length> e)
+        private void A02yyuw_DistanceUpdated(object sender, IChangeResult<Length> e)
         {
             Resolver.Log.Info($"Distance: {e.New.Centimeters:N1}cm / {e.New.Inches:N1}in");
         }
