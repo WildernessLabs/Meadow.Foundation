@@ -1,4 +1,6 @@
 ﻿using Meadow.Hardware;
+using Meadow.Peripherals.Sensors;
+using Meadow.Peripherals.Sensors.Motion;
 using Meadow.Units;
 using System;
 using System.Linq;
@@ -12,7 +14,7 @@ namespace Meadow.Foundation.Sensors.Accelerometers
     /// </summary>
     public partial class Bmi270 :
         PollingSensorBase<(Acceleration3D? Acceleration3D, AngularVelocity3D? AngularVelocity3D, Units.Temperature? Temperature)>,
-        II2cPeripheral
+        II2cPeripheral, IGyroscope, IAccelerometer, ITemperatureSensor
     {
         /// <summary>
         /// Event raised when linear acceleration changes
@@ -301,5 +303,14 @@ namespace Meadow.Foundation.Sensors.Accelerometers
             i2cComms.ReadRegister(0x0C, readBuffer);
             return readBuffer;
         }
+
+        async Task<AngularVelocity3D> ISensor<AngularVelocity3D>.Read()
+            => (await Read()).AngularVelocity3D!.Value;
+
+        async Task<Acceleration3D> ISensor<Acceleration3D>.Read()
+            => (await Read()).Acceleration3D!.Value;
+
+        async Task<Units.Temperature> ISensor<Units.Temperature>.Read()
+            => (await Read()).Temperature!.Value;
     }
 }
