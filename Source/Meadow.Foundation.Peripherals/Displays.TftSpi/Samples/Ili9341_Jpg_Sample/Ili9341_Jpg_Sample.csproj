@@ -13,8 +13,8 @@
     <None Remove="meadow.jpg" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\..\Meadow.Core\Source\implementations\f7\Meadow.F7\Meadow.F7.csproj" />
-    <ProjectReference Include="..\..\Driver\Displays.TftSpi.csproj" />
+    <PackageReference Include="Meadow.F7" Version="1.4.0.3" />
+    <PackageReference Include="Meadow.Foundation.Displays.TftSpi" Version="1.4.0.3" />
     <PackageReference Include="SimpleJpegDecoder" Version="0.4.0" />
   </ItemGroup>
   <ItemGroup>

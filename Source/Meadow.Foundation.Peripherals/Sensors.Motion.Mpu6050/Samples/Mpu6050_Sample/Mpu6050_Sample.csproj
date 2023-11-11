@@ -12,8 +12,8 @@
     <LangVersion>8.0</LangVersion>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\..\Meadow.Core\Source\implementations\f7\Meadow.F7\Meadow.F7.csproj" />
-    <ProjectReference Include="..\..\Driver\Sensors.Motion.Mpu6050.csproj" />
+    <PackageReference Include="Meadow.F7" Version="1.4.0.3" />
+    <PackageReference Include="Meadow.Foundation.Sensors.Motion.Mpu6050" Version="1.4.0.3" />
   </ItemGroup>
   <ItemGroup>
     <None Update="meadow.config.yaml">

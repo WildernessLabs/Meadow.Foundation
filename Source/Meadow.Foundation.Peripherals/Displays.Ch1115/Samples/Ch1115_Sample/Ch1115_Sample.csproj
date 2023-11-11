@@ -9,8 +9,8 @@
     <AssemblyName>App</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\..\Meadow.Core\Source\implementations\f7\Meadow.F7\Meadow.F7.csproj" />
-    <ProjectReference Include="..\..\Driver\Displays.Ch1115.csproj" />
+    <PackageReference Include="Meadow.F7" Version="1.4.0.3" />
+    <PackageReference Include="Meadow.Foundation.Displays.Ch1115" Version="1.4.0.3" />
   </ItemGroup>
   <ItemGroup>
     <None Update="meadow.config.yaml">
