@@ -471,6 +471,12 @@ namespace Meadow.Foundation.ICs.IOExpanders
             return new AnalogInputPort(this, pin, channel, sampleCount);
         }
 
+        ///<inheritdoc/>
+        public IAnalogInputArray CreateAnalogInputArray(params IPin[] pins)
+        {
+            throw new NotImplementedException();
+        }
+
         /// <summary>
         /// Create a distance sensor for a pin
         /// </summary>

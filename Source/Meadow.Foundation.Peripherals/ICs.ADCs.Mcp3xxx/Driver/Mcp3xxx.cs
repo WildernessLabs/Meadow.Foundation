@@ -166,6 +166,12 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 : (IAnalogInputPort)new AnalogInputPort(this, pin, channel, sampleCount, inputType);
         }
 
+        ///<inheritdoc/>
+        public IAnalogInputArray CreateAnalogInputArray(params IPin[] pins)
+        {
+            throw new NotImplementedException();
+        }
+
         /// <summary>
         /// Is the input type supported on this MCP3xxx version
         /// </summary>
