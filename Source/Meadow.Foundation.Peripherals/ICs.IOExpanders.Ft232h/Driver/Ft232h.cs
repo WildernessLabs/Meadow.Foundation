@@ -211,6 +211,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
             return CreateSpiBus(0, config);
         }
 
+        /// <summary>
+        /// The default SPI clock configuration
+        /// </summary>
         public static SpiClockConfiguration DefaultClockConfiguration
         {
             get => new SpiClockConfiguration(
@@ -249,6 +252,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
         private bool _spiBusAutoCreated = false;
 
+        ///<inheritdoc/>
         public IDigitalInputPort CreateDigitalInputPort(IPin pin, ResistorMode resistorMode)
         {
             // MPSSE requires a bus, it can be either I2C or SPI, but that bus must be created before you can use GPIO
@@ -265,9 +269,10 @@ namespace Meadow.Foundation.ICs.IOExpanders
             // TODO: do we need to set the direction make (see outputs) or are they defaulted to input?
 
             var info = pin.SupportedChannels?.FirstOrDefault(c => c is IDigitalChannelInfo) as IDigitalChannelInfo;
-            return new Ft232DigitalInputPort(pin, info, _activeBus);
+            return new Ft232DigitalInputPort(pin, info!, _activeBus!);
         }
 
+        ///<inheritdoc/>
         public IDigitalOutputPort CreateDigitalOutputPort(IPin pin, bool initialState = false, OutputType initialOutputType = OutputType.PushPull)
         {
             // MPSSE requires a bus, it can be either I2C or SPI, but that bus must be created before you can use GPIO
@@ -282,15 +287,16 @@ namespace Meadow.Foundation.ICs.IOExpanders
             }
 
             // update the global mask to make this an output
-            _activeBus.GpioDirectionMask |= (byte)pin.Key;
+            _activeBus!.GpioDirectionMask |= (byte)pin.Key;
 
             // update the direction
             Native.Functions.FT_WriteGPIO(_activeBus.Handle, _activeBus.GpioDirectionMask, 0);
 
             var info = pin.SupportedChannels?.FirstOrDefault(c => c is IDigitalChannelInfo) as IDigitalChannelInfo;
-            return new Ft232DigitalOutputPort(pin, info, initialState, initialOutputType, _activeBus);
+            return new Ft232DigitalOutputPort(pin, info!, initialState, initialOutputType, _activeBus);
         }
 
+        ///<inheritdoc/>
         protected virtual void Dispose(bool disposing)
         {
             if (!_isDisposed)
