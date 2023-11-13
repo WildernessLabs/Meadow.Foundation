@@ -42,7 +42,7 @@ namespace Meadow.Foundation.Displays.UI
         /// The menu item value
         /// </summary>
         [JsonPropertyName("value")]
-        public object Value { get; set; }
+        public object? Value { get; set; }
 
         /// <summary>
         /// Does the item have sub items

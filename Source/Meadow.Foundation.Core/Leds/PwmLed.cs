@@ -136,9 +136,7 @@ namespace Meadow.Foundation.Leds
             }
         }
 
-        /// <summary>
-        /// Dispose of the object
-        /// </summary>
+        ///<inheritdoc/>
         public void Dispose()
         {
             Dispose(disposing: true);

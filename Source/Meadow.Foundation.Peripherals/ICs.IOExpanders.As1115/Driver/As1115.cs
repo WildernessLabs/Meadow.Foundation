@@ -26,14 +26,14 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <summary>
         /// Readonly collection that contains all 16 key scan button objects
         /// </summary>
-        public ReadOnlyDictionary<KeyScanButtonType, KeyScanButton> KeyScanButtons { get; protected set; }
+        public ReadOnlyDictionary<KeyScanButtonType, KeyScanButton>? KeyScanButtons { get; protected set; }
 
         /// <summary>
         /// Helper method to get IButton object references for keyscan buttons
         /// </summary>
         /// <param name="buttonType">The button type</param>
         /// <returns>The button object reference</returns>
-        public IButton GetButton(KeyScanButtonType buttonType) => KeyScanButtons[buttonType];
+        public IButton GetButton(KeyScanButtonType buttonType) => KeyScanButtons![buttonType];
 
         /// <summary>
         /// Last button pressed, used internally to raise key up events
@@ -148,7 +148,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             {
                 KeyScanPressStarted?.Invoke(this, new KeyScanEventArgs(keyScanButton, data[0], data[1]));
 
-                KeyScanButtons[keyScanButton].Update(true);
+                KeyScanButtons![keyScanButton].Update(true);
 
                 lastButtonPressed = keyScanButton;
             }
@@ -158,7 +158,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
                 if (lastButtonPressed != KeyScanButtonType.None)
                 {
-                    KeyScanButtons[lastButtonPressed].Update(false);
+                    KeyScanButtons![lastButtonPressed].Update(false);
                 }
             }
         }
@@ -453,9 +453,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
         }
 
         /// <summary>
-        /// Dispose peripheral
+        /// Dispose of the object
         /// </summary>
-        /// <param name="disposing"></param>
+        /// <param name="disposing">Is disposing</param>
         protected virtual void Dispose(bool disposing)
         {
             if (!IsDisposed)
@@ -468,9 +468,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             }
         }
 
-        /// <summary>
-        /// Dispose BusComms
-        /// </summary>
+        ///<inheritdoc/>
         public void Dispose()
         {
             Dispose(disposing: true);

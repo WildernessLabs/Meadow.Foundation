@@ -4,23 +4,37 @@ using System.Collections.Generic;
 
 namespace Meadow.Foundation.ICs.IOExpanders
 {
+    /// <summary>
+    /// Represents the pin definitions for the Ft232h IC.
+    /// </summary>
     public partial class Ft232h
     {
+        /// <summary>
+        /// Defines the pin definitions for the Ft232h IC.
+        /// </summary>
         public class PinDefinitions : IPinDefinitions
         {
+            /// <summary>
+            /// Gets an enumerator for all the pins.
+            /// </summary>
             public IEnumerator<IPin> GetEnumerator() => AllPins.GetEnumerator();
+
             IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
             /// <summary>
-            /// Collection of pins
+            /// Collection of all pins.
             /// </summary>
             public IList<IPin> AllPins { get; } = new List<IPin>();
 
-            public IPinController Controller { get; set; }
+            /// <summary>
+            /// The pin controller
+            /// </summary>
+            public IPinController? Controller { get; set; }
 
             /// <summary>
-            /// Create a new PinDefinitions object
+            /// Creates a new PinDefinitions object.
             /// </summary>
+            /// <param name="controller">The Ft232h controller associated with the pins.</param>
             internal PinDefinitions(Ft232h controller)
             {
                 Controller = controller;
@@ -28,14 +42,40 @@ namespace Meadow.Foundation.ICs.IOExpanders
             }
 
             // Aliases
+            /// <summary>
+            /// Gets the IPin representing the SPI clock (SCK) pin.
+            /// </summary>
             public IPin SPI_SCK => D0;
+
+            /// <summary>
+            /// Gets the IPin representing the SPI data out (COPI) pin.
+            /// </summary>
             public IPin SPI_COPI => D1;
+
+            /// <summary>
+            /// Gets the IPin representing the SPI data in (CIPO) pin.
+            /// </summary>
             public IPin SPI_CIPO => D2;
+
+            /// <summary>
+            /// Gets the IPin representing the SPI chip select (CS0) pin.
+            /// </summary>
             public IPin SPI_CS0 => D3;
 
+            /// <summary>
+            /// Gets the IPin representing the I2C clock (SCL) pin.
+            /// </summary>
             public IPin I2C_SCL => D0;
+
+            /// <summary>
+            /// Gets the IPin representing the I2C data (SDA) pin.
+            /// </summary>
             public IPin I2C_SDA => D1;
 
+
+            /// <summary>
+            /// Pin D0 definition.
+            /// </summary>
             public IPin D0 => new Pin(
                 Controller,
                 "D0",
@@ -45,6 +85,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
                     new I2cChannelInfo("I2C_SCL", I2cChannelFunctionType.Clock)
                 });
 
+            /// <summary>
+            /// Pin D1 definition.
+            /// </summary>
             public IPin D1 => new Pin(
                 Controller,
                 "D1",
@@ -54,6 +97,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
                     new I2cChannelInfo("I2C_SDA", I2cChannelFunctionType.Data)
                 });
 
+            /// <summary>
+            /// Pin D2 definition.
+            /// </summary>
             public IPin D2 => new Pin(
                 Controller,
                 "D2",
@@ -62,6 +108,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
                     new SpiChannelInfo("SPI_CIPO", SpiLineType.CIPO)
                 });
 
+            /// <summary>
+            /// Pin D3 definition.
+            /// </summary>
             public IPin D3 => new Pin(
                 Controller,
                 "D3",
@@ -72,6 +121,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
             // TODO: D4-D7 can be used as CS, and (probably??) GPIO. The docs are not terribly clear on this.  Maybe just outputs and direct write the CS?
 
+            /// <summary>
+            /// Pin SPI_COPI_D1 definition.
+            /// </summary>
             public IPin SPI_COPI_D1 => new Pin(
                 Controller,
                 "SPI_COPI_D1",
@@ -80,6 +132,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
                     new DigitalChannelInfo("D1", interruptCapable: false, pullUpCapable: false, pullDownCapable: false)
                 });
 
+            /// <summary>
+            /// Pin C0 definition.
+            /// </summary>
             public IPin C0 => new Pin(
                 Controller,
                 "C0",
@@ -88,6 +143,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
                     new DigitalChannelInfo("C0", interruptCapable: false, pullUpCapable: false, pullDownCapable: false)
                 });
 
+            /// <summary>
+            /// Pin C1 definition.
+            /// </summary>
             public IPin C1 => new Pin(
                 Controller,
                 "C1",
@@ -96,6 +154,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
                     new DigitalChannelInfo("C1", interruptCapable: false, pullUpCapable: false, pullDownCapable: false)
                 });
 
+            /// <summary>
+            /// Pin C2 definition.
+            /// </summary>
             public IPin C2 => new Pin(
                 Controller,
                 "C2",
@@ -104,6 +165,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
                     new DigitalChannelInfo("C2", interruptCapable: false, pullUpCapable: false, pullDownCapable: false)
                 });
 
+            /// <summary>
+            /// Pin C3 definition.
+            /// </summary>
             public IPin C3 => new Pin(
                 Controller,
                 "C3",
@@ -112,6 +176,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
                     new DigitalChannelInfo("C3", interruptCapable: false, pullUpCapable: false, pullDownCapable: false)
                 });
 
+            /// <summary>
+            /// Pin C4 definition.
+            /// </summary>
             public IPin C4 => new Pin(
                 Controller,
                 "C4",
@@ -120,6 +187,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
                     new DigitalChannelInfo("C4", interruptCapable: false, pullUpCapable: false, pullDownCapable: false)
                 });
 
+            /// <summary>
+            /// Pin C5 definition.
+            /// </summary>
             public IPin C5 => new Pin(
                 Controller,
                 "C5",
@@ -128,6 +198,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
                     new DigitalChannelInfo("C5", interruptCapable: false, pullUpCapable: false, pullDownCapable: false)
                 });
 
+            /// <summary>
+            /// Pin C6 definition.
+            /// </summary>
             public IPin C6 => new Pin(
                 Controller,
                 "C6",
@@ -136,6 +209,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
                     new DigitalChannelInfo("C6", interruptCapable: false, pullUpCapable: false, pullDownCapable: false)
                 });
 
+            /// <summary>
+            /// Pin C7 definition.
+            /// </summary>
             public IPin C7 => new Pin(
                 Controller,
                 "C7",
@@ -145,11 +221,11 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 });
 
             /// <summary>
-            /// Pin Initialize all serial wombat pins
+            /// Initializes all serial wombat pins.
             /// </summary>
             protected void InitAllPins()
             {
-                // add all our pins to the collection
+                // Add all our pins to the collection
                 AllPins.Add(D0);
                 AllPins.Add(D1);
                 AllPins.Add(D2);

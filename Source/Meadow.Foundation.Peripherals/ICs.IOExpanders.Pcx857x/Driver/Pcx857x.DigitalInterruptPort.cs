@@ -104,7 +104,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 lastUpdate = now;
             }
 
-            /// <inheritdoc/>
+            ///<inheritdoc/>
             protected override void Dispose(bool disposing)
             {
                 base.Dispose(disposing);

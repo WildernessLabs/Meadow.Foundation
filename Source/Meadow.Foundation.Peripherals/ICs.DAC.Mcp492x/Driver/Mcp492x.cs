@@ -16,8 +16,8 @@ public abstract partial class Mcp492x : ISpiPeripheral, IAnalogOutputController
     private readonly int OffsetGain = 13;
     private readonly int OffsetPower = 12;
 
-    private readonly ISpiBus _bus;
-    private readonly IDigitalOutputPort? _chipSelect;
+    private readonly ISpiBus spiBus;
+    private readonly IDigitalOutputPort? chipSelectPort;
 
     /// <summary>
     /// Gets the default SPI bus mode (Mode0).
@@ -65,10 +65,10 @@ public abstract partial class Mcp492x : ISpiPeripheral, IAnalogOutputController
     /// </summary>
     /// <param name="spiBus">The SPI bus.</param>
     /// <param name="chipSelect">The chip select port (can be null).</param>
-    public Mcp492x(ISpiBus spiBus, IDigitalOutputPort? chipSelect)
+    public Mcp492x(ISpiBus spiBus, IDigitalOutputPort? chipSelectPort)
     {
-        _bus = spiBus;
-        _chipSelect = chipSelect;
+        this.spiBus = spiBus;
+        this.chipSelectPort = chipSelectPort;
         SpiBusMode = DefaultSpiBusMode;
         SpiBusSpeed = DefaultSpiBusSpeed;
     }
@@ -87,7 +87,7 @@ public abstract partial class Mcp492x : ISpiPeripheral, IAnalogOutputController
             (byte)(register & 0xff)
         };
 
-        _bus.Write(_chipSelect, data);
+        spiBus.Write(chipSelectPort, data);
     }
 
     /// <inheritdoc/>

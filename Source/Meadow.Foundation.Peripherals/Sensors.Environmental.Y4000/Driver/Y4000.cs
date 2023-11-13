@@ -20,7 +20,7 @@ namespace Meadow.Foundation.Sensors.Environmental
                                                     PotentialHydrogen? PH,
                                                     Turbidity? Turbidity,
                                                     Units.Temperature? Temperature,
-                                                    Voltage? OxidationReductionPotential)>
+                                                    Voltage? OxidationReductionPotential)>, IDisposable
     {
         /// <summary>
         /// Raised when the DissolvedOxygen value changes
@@ -97,6 +97,16 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// </summary>
         public Voltage? OxidationReductionPotential => Conditions.OxidationReductionPotential;
 
+        /// <summary>
+        /// Is the object disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
+
+        /// <summary>
+        /// Did we create the port(s) used by the peripheral
+        /// </summary>
+        readonly bool createdPort = false;
+
         readonly IModbusBusClient modbusClient;
 
         /// <summary>
@@ -128,6 +138,8 @@ namespace Meadow.Foundation.Sensors.Environmental
             byte modbusAddress = 0x01,
             IPin? enablePin = null)
         {
+            createdPort = true;
+
             serialPort = device.CreateSerialPort(serialPortName, 9600, 8, Parity.None, StopBits.One);
             serialPort.WriteTimeout = serialPort.ReadTimeout = TimeSpan.FromSeconds(5);
 
@@ -379,6 +391,38 @@ namespace Meadow.Foundation.Sensors.Environmental
             }
 
             base.RaiseEventsAndNotify(changeResult);
+        }
+
+        ///<inheritdoc/>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        /// <param name="disposing">Is disposing</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && createdPort)
+                {
+                    if (serialPort is { })
+                    {
+                        if (serialPort.IsOpen)
+                        {
+                            serialPort.Close();
+                        }
+
+                        serialPort.Dispose();
+                    }
+                }
+
+                IsDisposed = true;
+            }
         }
     }
 }

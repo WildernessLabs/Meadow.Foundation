@@ -64,9 +64,7 @@ namespace Meadow.Foundation.Sensors.Buttons
             t.Start();
         }
 
-        /// <summary>
-        /// Disposes the Digital Input resources
-        /// </summary>
+        ///<inheritdoc/>
         public override void Dispose()
         {
             base.Dispose();

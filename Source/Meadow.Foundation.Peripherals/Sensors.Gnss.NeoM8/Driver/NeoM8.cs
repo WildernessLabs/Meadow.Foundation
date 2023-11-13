@@ -11,7 +11,7 @@ namespace Meadow.Foundation.Sensors.Gnss
     /// <summary>
     /// Represents a NEO-M8 GNSS module
     /// </summary>
-    public partial class NeoM8 : IGnssSensor
+    public partial class NeoM8 : IGnssSensor, IDisposable
     {
         NmeaSentenceProcessor? nmeaProcessor;
 
@@ -70,6 +70,16 @@ namespace Meadow.Foundation.Sensors.Gnss
         /// Initialize high to enable the device
         /// </summary>
         protected IDigitalOutputPort? ResetPort { get; }
+
+        /// <summary>
+        /// Is the object disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
+
+        /// <summary>
+        /// Did we create the port(s) used by the peripheral
+        /// </summary>
+        readonly bool createdPorts = false;
 
         CommunicationMode communicationMode;
 
@@ -189,6 +199,32 @@ namespace Meadow.Foundation.Sensors.Gnss
             string msg = e.GetMessageString(Encoding.ASCII);
 
             nmeaProcessor?.ProcessNmeaMessage(msg);
+        }
+
+        ///<inheritdoc/>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        /// <param name="disposing">Is disposing</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && createdPorts)
+                {
+                    resetPort?.Dispose();
+                    ppsPort?.Dispose();
+                    chipSelectPort?.Dispose();
+                }
+
+                IsDisposed = true;
+            }
         }
     }
 }

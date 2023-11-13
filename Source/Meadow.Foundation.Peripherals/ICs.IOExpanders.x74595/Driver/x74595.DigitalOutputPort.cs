@@ -37,10 +37,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 this.x74595 = x74595;
             }
 
-            /// <summary>
-            /// Dispose
-            /// </summary>
-            /// <param name="disposing"></param>
+            ///<inheritdoc/>
             protected override void Dispose(bool disposing)
             {
                 if (!disposed)

@@ -1,12 +1,23 @@
 ﻿using Meadow.Hardware;
+using System;
 
 namespace Meadow.Foundation.Displays.Led
 {
     /// <summary>
     /// Sixteen Segment Display
     /// </summary>
-    public partial class SixteenSegment
+    public partial class SixteenSegment : IDisposable
     {
+        /// <summary>
+        /// Is the object disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
+
+        /// <summary>
+        /// Did we create the port(s) used by the peripheral
+        /// </summary>
+        readonly bool createdPorts = false;
+
         private readonly IDigitalOutputPort portA;
         private readonly IDigitalOutputPort portB;
         private readonly IDigitalOutputPort portC;
@@ -178,6 +189,46 @@ namespace Meadow.Foundation.Displays.Led
             var data = sixteenSegmentASCII[asciiCharacter - 32];
 
             return (data & 1 << (int)segment) != 0;
+        }
+
+        ///<inheritdoc/>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        /// <param name="disposing">Is disposing</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && createdPorts)
+                {
+                    portA.Dispose();
+                    portB.Dispose();
+                    portC.Dispose();
+                    portD.Dispose();
+                    portE.Dispose();
+                    portF.Dispose();
+                    portG.Dispose();
+                    portH.Dispose();
+                    portK.Dispose();
+                    portM.Dispose();
+                    portN.Dispose();
+                    portP.Dispose();
+                    portR.Dispose();
+                    portS.Dispose();
+                    portT.Dispose();
+                    portU.Dispose();
+                    portDecimal.Dispose();
+                }
+
+                IsDisposed = true;
+            }
         }
     }
 }

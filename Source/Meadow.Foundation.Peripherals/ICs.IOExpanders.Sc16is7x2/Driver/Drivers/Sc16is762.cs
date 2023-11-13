@@ -14,8 +14,7 @@ public class Sc16is762 : Sc16is7x2
     /// <param name="oscillatorFrequency">The oscillator frequency of the device.</param>
     /// <param name="irq">An optional digital interrupt port for IRQ (Interrupt Request).</param>
     public Sc16is762(Frequency oscillatorFrequency, IDigitalInterruptPort? irq) : base(oscillatorFrequency, irq)
-    {
-    }
+    { }
 
     /// <summary>
     /// Initializes a new instance of the Sc16is762 class using an I2C bus, oscillator frequency, an address, and an optional IRQ digital interrupt port.

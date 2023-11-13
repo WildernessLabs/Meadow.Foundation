@@ -10,7 +10,7 @@ namespace Meadow.Foundation.Motors.Stepper
     /// <summary>
     /// This class is for the A4988 Stepper Motor Driver
     /// </summary>
-    public class A4988
+    public class A4988 : IDisposable
     {
         /// <summary>
         /// Gets or sets the angle, in degrees, of one step for the connected stepper motor
@@ -68,22 +68,30 @@ namespace Meadow.Foundation.Motors.Stepper
                     switch (value)
                     {
                         case StepDivisor.Divisor_2:
-                            ms1Port.State = true;
-                            ms2Port.State = ms3Port.State = false;
+                            if (ms1Port != null)
+                                ms1Port.State = true;
+                            if (ms2Port != null && ms3Port != null)
+                                ms2Port.State = ms3Port.State = false;
                             break;
                         case StepDivisor.Divisor_4:
-                            ms2Port.State = true;
-                            ms1Port.State = ms3Port.State = false;
+                            if (ms2Port != null)
+                                ms2Port.State = true;
+                            if (ms1Port != null && ms3Port != null)
+                                ms1Port.State = ms3Port.State = false;
                             break;
                         case StepDivisor.Divisor_8:
-                            ms1Port.State = ms2Port.State = true;
-                            ms3Port.State = false;
+                            if (ms1Port != null && ms2Port != null)
+                                ms1Port.State = ms2Port.State = true;
+                            if (ms3Port != null)
+                                ms3Port.State = false;
                             break;
                         case StepDivisor.Divisor_16:
-                            ms1Port.State = ms2Port.State = ms3Port.State = true;
+                            if (ms1Port != null && ms2Port != null && ms3Port != null)
+                                ms1Port.State = ms2Port.State = ms3Port.State = true;
                             break;
                         default:
-                            ms1Port.State = ms2Port.State = ms3Port.State = false;
+                            if (ms1Port != null && ms2Port != null && ms3Port != null)
+                                ms1Port.State = ms2Port.State = ms3Port.State = false;
                             break;
                     }
 
@@ -104,13 +112,23 @@ namespace Meadow.Foundation.Motors.Stepper
             }
         }
 
+        /// <summary>
+        /// Is the object disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
+
+        /// <summary>
+        /// Did we create the port(s) used by the peripheral
+        /// </summary>
+        readonly bool createdPorts = false;
+
         private readonly IDigitalOutputPort stepPort;
         private readonly IDigitalOutputPort directionPort;
-        private readonly IDigitalOutputPort enablePort;
-        private readonly IDigitalOutputPort ms1Port;
-        private readonly IDigitalOutputPort ms2Port;
-        private readonly IDigitalOutputPort ms3Port;
-        private readonly object syncRoot = new object();
+        private readonly IDigitalOutputPort? enablePort;
+        private readonly IDigitalOutputPort? ms1Port;
+        private readonly IDigitalOutputPort? ms2Port;
+        private readonly IDigitalOutputPort? ms3Port;
+        private readonly object syncRoot = new();
         private StepDivisor divisor;
         private Angle stepAngle;
 
@@ -157,8 +175,10 @@ namespace Meadow.Foundation.Motors.Stepper
         /// <param name="ms2Pin">The (optional) Meadow pin connected to the MS2 pin of the A4988</param>
         /// <param name="ms3Pin">The (optional) Meadow pin connected to the MS3 pin of the A4988</param>
         /// <remarks>You must provide either all of the micro-step (MS) lines or none of them</remarks>
-        public A4988(IPin step, IPin direction, IPin enablePin, IPin ms1Pin, IPin ms2Pin, IPin ms3Pin)
+        public A4988(IPin step, IPin direction, IPin? enablePin, IPin? ms1Pin, IPin? ms2Pin, IPin? ms3Pin)
         {
+            createdPorts = true;
+
             stepPort = step.CreateDigitalOutputPort();
 
             directionPort = direction.CreateDigitalOutputPort();
@@ -169,13 +189,13 @@ namespace Meadow.Foundation.Motors.Stepper
             }
 
             // micro-step lines (for now) are all-or-nothing TODO: rethink this?
-            if (new IPin[] { ms1Pin, ms2Pin, ms3Pin }.All(p => p != null))
+            if (new IPin?[] { ms1Pin, ms2Pin, ms3Pin }.All(p => p != null))
             {
-                ms1Port = ms1Pin.CreateDigitalOutputPort();
-                ms2Port = ms2Pin.CreateDigitalOutputPort();
-                ms3Port = ms3Pin.CreateDigitalOutputPort();
+                ms1Port = ms1Pin?.CreateDigitalOutputPort();
+                ms2Port = ms2Pin?.CreateDigitalOutputPort();
+                ms3Port = ms3Pin?.CreateDigitalOutputPort();
             }
-            else if (new IPin[] { ms1Pin, ms2Pin, ms3Pin }.All(p => p == null))
+            else if (new IPin?[] { ms1Pin, ms2Pin, ms3Pin }.All(p => p == null))
             {    // nop
             }
             else
@@ -244,6 +264,35 @@ namespace Meadow.Foundation.Motors.Stepper
                     stepPort.State = false;
                 }
                 // TODO: add deceleration
+            }
+        }
+
+        ///<inheritdoc/>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        /// <param name="disposing">Is disposing</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && createdPorts)
+                {
+                    stepPort?.Dispose();
+                    directionPort?.Dispose();
+                    enablePort?.Dispose();
+                    ms1Port?.Dispose();
+                    ms2Port?.Dispose();
+                    ms3Port?.Dispose();
+                }
+
+                IsDisposed = true;
             }
         }
     }

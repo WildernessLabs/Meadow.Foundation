@@ -126,9 +126,9 @@ public partial class Keyboard : IDigitalInterruptController, IDigitalOutputContr
     public PinDefinitions Pins { get; }
 
     /// <summary>
-    /// Releases resources created by the Keyboard instance
+    /// Dispose of the object
     /// </summary>
-    /// <param name="disposing"></param>
+    /// <param name="disposing">Is disposing</param>
     protected virtual void Dispose(bool disposing)
     {
         if (!_isDisposed)

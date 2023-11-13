@@ -73,6 +73,7 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// </summary>
         public PixelBufferBase()
         {
+            Buffer = new byte[0];
         }
 
         /// <summary>
@@ -113,7 +114,7 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// <param name="replaceIfExists">If true, will recreates the buffer if it already exists</param>
         public void InitializeBuffer(bool replaceIfExists = false)
         {
-            if (Buffer == null || replaceIfExists)
+            if (Buffer == null || Buffer.Length == 0 || replaceIfExists)
             {
                 Buffer = new byte[ByteCount];
             }
@@ -346,9 +347,9 @@ namespace Meadow.Foundation.Graphics.Buffers
         }
 
         /// <summary>
-        /// Disposes the instances resources
+        /// Dispose of the object
         /// </summary>
-        /// <param name="disposing"></param>
+        /// <param name="disposing">Is disposing</param>
         protected virtual void Dispose(bool disposing)
         {
             if (!isDisposed)
@@ -357,16 +358,14 @@ namespace Meadow.Foundation.Graphics.Buffers
                 {
                     if (disposing)
                     {
-                        Buffer = null;
+                        Buffer = new byte[0];
                     }
                 }
             }
             isDisposed = true;
         }
 
-        /// <summary>
-        /// Disposes the instances resources
-        /// </summary>
+        ///<inheritdoc/>
         public void Dispose()
         {
             Dispose(disposing: true);

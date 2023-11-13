@@ -8,7 +8,7 @@ using System.Threading;
 namespace Meadow.Foundation.ICs.IOExpanders
 {
     /// <summary>
-    /// Provide an interface to connect to a MCP2xxx port expander
+    /// Provide an interface to connect to a MCP23xxx port expander
     /// </summary>
     public abstract partial class Mcp23xxx : IDigitalInputOutputController, ISpiPeripheral, II2cPeripheral, IDigitalInterruptController
     {
@@ -17,7 +17,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// This provides raw port state data from the MCP23xxx
         /// It's highly recommended to prefer using the events exposed on the digital input ports instead.
         /// </summary>
-        public event EventHandler<IOExpanderInputChangedEventArgs>? InputChanged = null;
+        public event EventHandler<IOExpanderInputChangedEventArgs> InputChanged = default!;
 
         /// <summary>
         /// The number of IO pins available on the device
@@ -72,7 +72,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         protected object _lock = new();
 
         /// <summary>
-        /// Mcpxxx base class constructor
+        /// Mcp23xxx base class constructor using I2C
         /// </summary>
         /// <param name="i2cBus">The I2C bus</param>
         /// <param name="address">The I2C address</param>
@@ -86,7 +86,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         }
 
         /// <summary>
-        /// Mcpxxx base class constructor
+        /// Mcp23xxx base class constructor using SPI
         /// </summary>
         /// <param name="spiBus">The SPI bus</param>
         /// <param name="chipSelectPort">Chip select port</param>
@@ -221,7 +221,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         }
 
         /// <summary>
-        /// Checks if a pin exists on the Mcpxxxxx
+        /// Checks if a pin exists on the Mcp23xxx
         /// </summary>
         protected abstract bool IsValidPin(IPin pin);
 
@@ -308,7 +308,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <param name="interruptMode">The port interrupt mode</param>
         /// <param name="resistorMode">The port resistor mode</param>
         /// <param name="debounceDuration">The debounce duration</param>
-        /// <param name="glitchDuration">The glitch duration - not configurable on Mcpxxxx</param>
+        /// <param name="glitchDuration">The glitch duration - not configurable on Mcp23xxx</param>
         /// <returns>IDigitalInterruptPort</returns>
         public IDigitalInterruptPort CreateDigitalInterruptPort(
             IPin pin,

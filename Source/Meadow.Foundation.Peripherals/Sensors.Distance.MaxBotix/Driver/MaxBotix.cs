@@ -8,7 +8,7 @@ namespace Meadow.Foundation.Sensors.Distance
     /// <summary>
     /// Represents the MaxBotix series of distance sensors
     /// </summary>
-    public partial class MaxBotix : ByteCommsSensorBase<Length>, IRangeFinder
+    public partial class MaxBotix : ByteCommsSensorBase<Length>, IRangeFinder, IDisposable
     {
         /// <summary>
         /// Raised when the value of the reading changes
@@ -24,6 +24,16 @@ namespace Meadow.Foundation.Sensors.Distance
         /// voltage common collector (VCC) typically 3.3V
         /// </summary>
         public double VCC { get; set; } = 3.3;
+
+        /// <summary>
+        /// Is the object disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
+
+        /// <summary>
+        /// Did we create the port(s) used by the peripheral
+        /// </summary>
+        readonly bool createdPorts = false;
 
         TimeSpan? updateInterval;
 
@@ -121,17 +131,37 @@ namespace Meadow.Foundation.Sensors.Distance
 
         Length.UnitType GetUnitsForSensor(SensorType sensor)
         {
-            switch (sensor)
+            return sensor switch
             {
-                case SensorType.LV:
-                    return Length.UnitType.Inches;
-                case SensorType.XL:
-                case SensorType.XLLongRange:
-                    return Length.UnitType.Centimeters;
-                case SensorType.HR5Meter:
-                case SensorType.HR10Meter:
-                default:
-                    return Length.UnitType.Millimeters;
+                SensorType.LV => Length.UnitType.Inches,
+                SensorType.XL or SensorType.XLLongRange => Length.UnitType.Centimeters,
+                _ => Length.UnitType.Millimeters,
+            };
+        }
+
+        ///<inheritdoc/>
+        public override void Dispose()
+        {
+            base.Dispose();
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        /// <param name="disposing">Is disposing</param>
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+            if (!IsDisposed)
+            {
+                if (disposing && createdPorts)
+                {
+                    analogInputPort?.Dispose();
+                }
+
+                IsDisposed = true;
             }
         }
     }

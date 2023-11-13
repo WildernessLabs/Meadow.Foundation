@@ -68,6 +68,7 @@ namespace Meadow.Foundation.Displays
                 busyPin.CreateDigitalInputPort(),
                 width, height)
         {
+            createdPorts = true;
         }
 
         /// <summary>

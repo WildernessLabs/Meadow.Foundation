@@ -87,9 +87,9 @@ namespace Meadow.Foundation
         }
 
         /// <summary>
-        /// Dispose object
+        /// Dispose of the object
         /// </summary>
-        /// <param name="disposing">is disposing</param>
+        /// <param name="disposing">Is disposing</param>
 
         protected virtual void Dispose(bool disposing)
         {
@@ -99,9 +99,7 @@ namespace Meadow.Foundation
             }
         }
 
-        /// <summary>
-        /// Dispose managed resources
-        /// </summary>
+        ///<inheritdoc/>
         public virtual void Dispose()
         {
             Dispose(true);

@@ -7,7 +7,7 @@ namespace Meadow.Foundation.Leds
     /// <summary>
     /// Represents APA102/Dotstar Led(s)
     /// </summary>
-    public partial class Apa102 : IApa102, ISpiPeripheral
+    public partial class Apa102 : IApa102, ISpiPeripheral, IDisposable
     {
         /// <summary>
         /// The default SPI bus speed for the device
@@ -36,6 +36,16 @@ namespace Meadow.Foundation.Leds
             get => spiComms.BusMode;
             set => spiComms.BusMode = value;
         }
+
+        /// <summary>
+        /// Is the object disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
+
+        /// <summary>
+        /// Did we create the port(s) used by the peripheral
+        /// </summary>
+        readonly bool createdPort = false;
 
         /// <summary>
         /// SPI Communication bus used to communicate with the peripheral
@@ -74,6 +84,8 @@ namespace Meadow.Foundation.Leds
         }
         float brightness = 0.5f;
 
+        IDigitalOutputPort? chipSelectPort;
+
         /// <summary>
         /// Creates a new APA102 object
         /// </summary>
@@ -84,6 +96,7 @@ namespace Meadow.Foundation.Leds
         public Apa102(ISpiBus spiBus, IPin? chipSelectPin, int numberOfLeds, PixelOrder pixelOrder = PixelOrder.BGR)
         : this(spiBus, numberOfLeds, pixelOrder, chipSelectPin?.CreateDigitalOutputPort() ?? null)
         {
+            createdPort = true;
         }
 
         /// <summary>
@@ -95,7 +108,7 @@ namespace Meadow.Foundation.Leds
         /// <param name="chipSelectPort">SPI chip select port (optional)</param>
         public Apa102(ISpiBus spiBus, int numberOfLeds, PixelOrder pixelOrder = PixelOrder.BGR, IDigitalOutputPort? chipSelectPort = null)
         {
-            spiComms = new SpiCommunications(spiBus, chipSelectPort, DefaultSpiBusSpeed, DefaultSpiBusMode);
+            spiComms = new SpiCommunications(spiBus, this.chipSelectPort = chipSelectPort, DefaultSpiBusSpeed, DefaultSpiBusMode);
             this.numberOfLeds = numberOfLeds;
             endHeaderSize = this.numberOfLeds / 16;
             Brightness = 1.0f;
@@ -228,6 +241,30 @@ namespace Meadow.Foundation.Leds
         public void Show(int left, int top, int right, int bottom)
         {
             Show();
+        }
+
+        ///<inheritdoc/>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        /// <param name="disposing">Is disposing</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && createdPort)
+                {
+                    chipSelectPort?.Dispose();
+                }
+
+                IsDisposed = true;
+            }
         }
     }
 }

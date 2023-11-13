@@ -33,9 +33,7 @@ namespace Meadow.Foundation.Sensors.Radio.Rfid.Serial.Helpers
         /// </summary>
         public ISerialPort SerialPort { get; }
 
-        /// <summary>
-        /// Dispose
-        /// </summary>
+        ///<inheritdoc/>
         public void Dispose()
         {
             Stop();

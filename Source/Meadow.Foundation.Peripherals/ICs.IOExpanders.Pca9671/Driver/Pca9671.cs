@@ -11,11 +11,20 @@ namespace Meadow.Foundation.ICs.IOExpanders
     /// </summary>
     public partial class Pca9671 : I2cCommunications, IDigitalOutputController, IDigitalInputController, II2cPeripheral, IDisposable
     {
+        /// <summary>
+        /// Is the object disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
+
+        /// <summary>
+        /// Did we create the port(s) used by the peripheral
+        /// </summary>
+        readonly bool createdPort = false;
+
         private ushort _outputs;
         private ushort _directionMask; // inputs must be set to logic 1 (data sheet section 8.1)
         private readonly List<IPin> _pinsInUse = new();
-        private bool _isDisposed;
-        private IDigitalOutputPort? _resetPort;
+        private IDigitalOutputPort? resetPort;
 
         /// <inheritdoc/>
         public byte DefaultI2cAddress => 0x20;
@@ -26,14 +35,27 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <summary>
         /// Creates a new Pca9671 instance
         /// </summary>
-        /// <param name="bus">The I2C buss the peripheral is connected to</param>
-        /// <param name="peripheralAddress">The bus address of the peripheral</param>
+        /// <param name="i2cBus">The I2C buss the peripheral is connected to</param>
+        /// <param name="peripheralAddress">The i2cBus address of the peripheral</param>
         /// <param name="resetPin">The optional pin connected to the peripheral's reset</param>
-        public Pca9671(II2cBus bus, byte peripheralAddress, IPin? resetPin = default)
-            : base(bus, peripheralAddress, 8, 8)
+        public Pca9671(II2cBus i2cBus, byte peripheralAddress, IPin? resetPin = default)
+            : this(i2cBus, peripheralAddress, resetPin?.CreateDigitalOutputPort())
         {
+            createdPort = true;
+        }
+
+        /// <summary>
+        /// Creates a new Pca9671 instance
+        /// </summary>
+        /// <param name="i2cBus">The I2C buss the peripheral is connected to</param>
+        /// <param name="peripheralAddress">The i2cBus address of the peripheral</param>
+        /// <param name="resetPort">The optional pin connected to the peripheral's reset</param>
+        public Pca9671(II2cBus i2cBus, byte peripheralAddress, IDigitalOutputPort? resetPort = default)
+            : base(i2cBus, peripheralAddress, 8, 8)
+        {
+            this.resetPort = resetPort;
             Pins = new PinDefinitions(this);
-            Init(resetPin);
+            Initialize();
         }
 
         /// <inheritdoc/>
@@ -93,13 +115,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
             }
         }
 
-        private void Init(IPin? resetPin = default)
+        private void Initialize(IPin? resetPin = default)
         {
-            if (resetPin != null)
-            {
-                _resetPort = resetPin.CreateDigitalOutputPort(true);
-            }
-
             Reset();
             AllOff();
         }
@@ -117,14 +134,14 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         public void Reset()
         {
-            if (_resetPort is null)
+            if (resetPort is null)
             {
                 return;
             }
 
-            _resetPort.State = false;
+            resetPort.State = false;
             Thread.Sleep(1);
-            _resetPort.State = true;
+            resetPort.State = true;
         }
 
         /// <summary>
@@ -210,29 +227,27 @@ namespace Meadow.Foundation.ICs.IOExpanders
         }
 
         /// <summary>
-        /// Disposes the instances resources
+        /// Dispose of the object
         /// </summary>
-        /// <param name="disposing"></param>
+        /// <param name="disposing">Is disposing</param>
         protected virtual void Dispose(bool disposing)
         {
-            if (!_isDisposed)
+            if (!IsDisposed)
             {
                 if (disposing)
                 {
-                    if (_resetPort != null)
+                    if (createdPort)
                     {
-                        _resetPort.Dispose();
-                        _resetPort = null;
+                        resetPort?.Dispose();
+                        resetPort = null;
                     }
                 }
 
-                _isDisposed = true;
+                IsDisposed = true;
             }
         }
 
-        /// <summary>
-        /// Disposes the instances resources
-        /// </summary>
+        ///<inheritdoc/>
         public void Dispose()
         {
             // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method

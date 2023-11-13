@@ -1,12 +1,23 @@
 ﻿using Meadow.Hardware;
+using System;
 
 namespace Meadow.Foundation.Displays.Led
 {
     /// <summary>
     /// Fourteen Segment Display
     /// </summary>
-    public partial class FourteenSegment
+    public partial class FourteenSegment : IDisposable
     {
+        /// <summary>
+        /// Is the object disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
+
+        /// <summary>
+        /// Did we create the port(s) used by the peripheral
+        /// </summary>
+        readonly bool createdPorts = false;
+
         private readonly IDigitalOutputPort portA;
         private readonly IDigitalOutputPort portB;
         private readonly IDigitalOutputPort portC;
@@ -65,7 +76,9 @@ namespace Meadow.Foundation.Displays.Led
                  pinN.CreateDigitalOutputPort(),
                  pinDecimal.CreateDigitalOutputPort(),
                  isCommonCathode)
-        { }
+        {
+            createdPorts = true;
+        }
 
         /// <summary>
         /// Creates a FourteenSegment connected to the specified IDigitalOutputPorts
@@ -164,6 +177,44 @@ namespace Meadow.Foundation.Displays.Led
             var data = fourteenSegmentASCII[asciiCharacter - 32];
 
             return (data & 1 << (int)segment) != 0;
+        }
+
+        ///<inheritdoc/>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        /// <param name="disposing">Is disposing</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && createdPorts)
+                {
+                    portA.Dispose();
+                    portB.Dispose();
+                    portC.Dispose();
+                    portD.Dispose();
+                    portE.Dispose();
+                    portF.Dispose();
+                    portG.Dispose();
+                    portG2.Dispose();
+                    portH.Dispose();
+                    portJ.Dispose();
+                    portK.Dispose();
+                    portL.Dispose();
+                    portM.Dispose();
+                    portN.Dispose();
+                    portDecimal.Dispose();
+                }
+
+                IsDisposed = true;
+            }
         }
     }
 }

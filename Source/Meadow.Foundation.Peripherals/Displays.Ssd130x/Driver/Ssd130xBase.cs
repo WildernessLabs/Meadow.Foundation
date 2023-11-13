@@ -9,7 +9,7 @@ namespace Meadow.Foundation.Displays
     /// <summary>
     /// Represents the SSD130x family of OLED displays
     /// </summary>
-    public abstract partial class Ssd130xBase : IGraphicsDisplay, ISpiPeripheral, II2cPeripheral
+    public abstract partial class Ssd130xBase : IGraphicsDisplay, ISpiPeripheral, II2cPeripheral, IDisposable
     {
         /// <summary>
         /// The display color mode
@@ -24,12 +24,12 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// The width of the display in pixels
         /// </summary>
-        public int Width => imageBuffer.Width;
+        public int Width => imageBuffer!.Width;
 
         /// <summary>
         /// The height of the display in pixels
         /// </summary>
-        public int Height => imageBuffer.Height;
+        public int Height => imageBuffer!.Height;
 
         /// <summary>
         /// The buffer the holds the pixel data for the display
@@ -68,6 +68,16 @@ namespace Meadow.Foundation.Displays
             get => spiComms!.BusMode;
             set => spiComms!.BusMode = value;
         }
+
+        /// <summary>
+        /// Is the object disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
+
+        /// <summary>
+        /// Did we create the port(s) used by the peripheral
+        /// </summary>
+        protected bool createdPorts = false;
 
         /// <summary>
         /// SPI Communication bus used to communicate with the peripheral
@@ -122,7 +132,7 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// Read buffer
         /// </summary>
-        protected byte[] readBuffer;
+        protected byte[]? readBuffer;
 
         /// <summary>
         /// Display command buffer
@@ -132,12 +142,12 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// Page buffer to hold one page of data
         /// </summary>
-        protected byte[] pageBuffer;
+        protected byte[]? pageBuffer;
 
         /// <summary>
         /// Sequence of command bytes that must be sent to the display before
         /// </summary>
-        protected byte[] showPreamble;
+        protected byte[]? showPreamble;
 
         /// <summary>
         /// Invert the entire display (true) or return to normal mode (false)
@@ -255,7 +265,7 @@ namespace Meadow.Foundation.Displays
             else//  I2C
             {   //  Send the buffer page by page
                 //  This can be optimized when we move to Memory<byte>
-                pageBuffer[0] = 0x40;
+                pageBuffer![0] = 0x40;
 
                 for (ushort index = 0; index < imageBuffer.ByteCount; index += PAGE_SIZE)
                 {
@@ -422,6 +432,32 @@ namespace Meadow.Foundation.Displays
         public virtual void WriteBuffer(int x, int y, IPixelBuffer displayBuffer)
         {
             imageBuffer.WriteBuffer(x, y, displayBuffer);
+        }
+
+        ///<inheritdoc/>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        /// <param name="disposing">Is disposing</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && createdPorts)
+                {
+                    chipSelectPort?.Dispose();
+                    dataCommandPort?.Dispose();
+                    resetPort?.Dispose();
+                }
+
+                IsDisposed = true;
+            }
         }
     }
 }
