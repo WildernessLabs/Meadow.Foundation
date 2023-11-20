@@ -19,6 +19,23 @@ public class LineChartSeriesCollection : IEnumerable<LineChartSeries>
         _series.AddRange(series);
     }
 
+    /// <summary>
+    /// Removes a LineChartSeries from the collection
+    /// </summary>
+    /// <param name="series"></param>
+    public void Remove(LineChartSeries series)
+    {
+        _series.Remove(series);
+    }
+
+    /// <summary>
+    /// Removes all LineChartSeries from the collection
+    /// </summary>
+    public void Clear()
+    {
+        _series.Clear();
+    }
+
     /// <inheritdoc/>
     public IEnumerator<LineChartSeries> GetEnumerator()
     {

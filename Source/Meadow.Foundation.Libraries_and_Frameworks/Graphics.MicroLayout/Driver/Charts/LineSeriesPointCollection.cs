@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace Meadow.Foundation.Graphics.MicroLayout;
 
 /// <summary>
-/// A COllection of LineSeriesPoints
+/// A Collection of LineSeriesPoints
 /// </summary>
 public class LineSeriesPointCollection : IEnumerable<LineSeriesPoint>
 {
@@ -60,6 +60,41 @@ public class LineSeriesPointCollection : IEnumerable<LineSeriesPoint>
 
                 _points.Add(point);
             }
+        }
+    }
+
+    /// <summary>
+    /// Removes a point to the collection
+    /// </summary>
+    /// <param name="point">The point to remove</param>
+    public void Remove(LineSeriesPoint point)
+    {
+        Remove(point);
+    }
+
+    /// <summary>
+    /// Removes a point to the collection
+    /// </summary>
+    /// <param name="points">The points to remove</param>
+    public void Remove(params LineSeriesPoint[] points)
+    {
+        lock (_points)
+        {
+            foreach (var point in points)
+            {
+                _points.Remove(point);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Removes all points to the collection
+    /// </summary>
+    public void Clear()
+    {
+        lock (_points)
+        {
+            _points.Clear();
         }
     }
 
