@@ -79,7 +79,9 @@ namespace Meadow.Foundation.Displays
             this(spiBus, chipSelectPin.CreateDigitalOutputPort(), dcPin.CreateDigitalOutputPort(false),
                 resetPin.CreateDigitalOutputPort(true), busyPin.CreateDigitalInputPort(),
                 width, height)
-        { }
+        {
+            createdPorts = true;
+        }
 
         /// <summary>
         /// Create a new ePaper display object
@@ -111,7 +113,7 @@ namespace Meadow.Foundation.Displays
             int bufferWidth = width % 8 > 0 ? width + 8 - (width % 8) : width;
 
             CreateBuffer(bufferWidth, height);
-            imageBuffer.Clear();
+            imageBuffer?.Clear();
 
             Initialize();
         }
@@ -127,7 +129,7 @@ namespace Meadow.Foundation.Displays
         }
 
         /// <summary>
-        /// Initalize the display
+        /// Initialize the display
         /// </summary>
         protected abstract void Initialize();
 
@@ -261,7 +263,7 @@ namespace Meadow.Foundation.Displays
         /// <exception cref="NotImplementedException"></exception>
         public virtual void Show()
         {
-            throw new NotImplementedException("Show must be implimented in the ePaper display driver");
+            throw new NotImplementedException("Show must be implemented in the ePaper display driver");
         }
 
         /// <summary>
@@ -273,7 +275,7 @@ namespace Meadow.Foundation.Displays
         /// <param name="bottom">Bottom bounds in pixels</param>
         public virtual void Show(int left, int top, int right, int bottom)
         {
-            throw new NotImplementedException("Show must be implimented in the ePaper display driver");
+            throw new NotImplementedException("Show must be implemented in the ePaper display driver");
         }
 
         /// <summary>

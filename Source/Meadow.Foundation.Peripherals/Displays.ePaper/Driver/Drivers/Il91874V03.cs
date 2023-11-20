@@ -4,7 +4,7 @@ namespace Meadow.Foundation.Displays
 {
     //similar to IL91874 ... appears to be an old version v0.3
     //GxGDEW027W3
-    //currently hard coded to the avaliable display size
+    //currently hard coded to the available display size
     /// <summary>
     /// Represents the older v0.3 Il91874V03 ePaper color displays
     /// 264x176, 2.7inch tri color e-Ink display / SPI interface 
@@ -47,7 +47,7 @@ namespace Meadow.Foundation.Displays
         }
 
         /// <summary>
-        /// Initalize the display
+        /// Initialize the display
         /// </summary>
         protected override void Initialize()
         {

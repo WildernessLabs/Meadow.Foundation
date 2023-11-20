@@ -11,7 +11,7 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
         /// <summary>
         /// Event to be raised when a course and velocity message is received and decoded.
         /// </summary>
-        public event EventHandler<CourseOverGround> CourseAndVelocityReceived = delegate { };
+        public event EventHandler<CourseOverGround> CourseAndVelocityReceived = default!;
 
         /// <summary>
         /// Prefix for the VTG decoder.

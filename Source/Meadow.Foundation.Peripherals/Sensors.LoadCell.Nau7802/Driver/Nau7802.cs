@@ -10,12 +10,12 @@ namespace Meadow.Foundation.Sensors.LoadCell
     /// <summary>
     /// 24-Bit Dual-Channel ADC For Bridge Sensors
     /// </summary>
-    public partial class Nau7802 : ByteCommsSensorBase<Mass>, IMassSensor, II2cPeripheral, IDisposable
+    public partial class Nau7802 : ByteCommsSensorBase<Mass>, IMassSensor, II2cPeripheral
     {
         /// <summary>
         /// Raised when the mass value changes
         /// </summary>
-        public event EventHandler<IChangeResult<Mass>> MassUpdated = delegate { };
+        public event EventHandler<IChangeResult<Mass>> MassUpdated = default!;
 
         private readonly byte[] readBuffer = new byte[3];
         private double gramsPerAdcUnit = 0;

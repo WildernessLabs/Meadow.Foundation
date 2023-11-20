@@ -28,7 +28,7 @@ public override Task Initialize()
         },
         filter: result =>
         {
-         
+
             if (result.Old?.Temperature is { } oldTemp &&
                 result.New.Temperature is { } newTemp)
             {
@@ -39,7 +39,8 @@ public override Task Initialize()
     );
     sensor.Subscribe(consumer);
 
-    sensor.Updated += (sender, result) => {
+    sensor.Updated += (sender, result) =>
+    {
         Resolver.Log.Info($"  Temperature: {result.New.Temperature?.Celsius:N2}C");
         Resolver.Log.Info($"  Pressure: {result.New.Pressure?.Bar:N2}bar");
     };
@@ -49,7 +50,7 @@ public override Task Initialize()
 
 public override async Task Run()
 {
-    if(sensor == null) { return; }
+    if (sensor == null) { return; }
 
     var conditions = await sensor.Read();
     Resolver.Log.Info($"Temperature: {conditions.Temperature?.Celsius}°C, Pressure: {conditions.Pressure?.Pascal}Pa");

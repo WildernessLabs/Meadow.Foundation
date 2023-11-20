@@ -22,7 +22,8 @@ public override Task Initialize()
     sensor = new Mpu6050(Device.CreateI2cBus());
 
     // classical .NET events can also be used:
-    sensor.Updated += (sender, result) => {
+    sensor.Updated += (sender, result) =>
+    {
         Resolver.Log.Info($"Accel: [X:{result.New.Acceleration3D?.X.MetersPerSecondSquared:N2}," +
             $"Y:{result.New.Acceleration3D?.Y.MetersPerSecondSquared:N2}," +
             $"Z:{result.New.Acceleration3D?.Z.MetersPerSecondSquared:N2} (m/s^2)]");
@@ -38,8 +39,10 @@ public override Task Initialize()
     var consumer = Mpu6050.CreateObserver(
         handler: result => Resolver.Log.Info($"Observer: [x] changed by threshold; new [x]: X:{result.New.Acceleration3D?.X:N2}, old: X:{result.Old?.Acceleration3D?.X:N2}"),
         // only notify if there's a greater than 1G change in the Z direction
-        filter: result => {
-            if (result.Old is { } old) { 
+        filter: result =>
+        {
+            if (result.Old is { } old)
+            {
                 return ((result.New.Acceleration3D.Value - old.Acceleration3D.Value).Z > new Acceleration(1, AU.Gravity));
             }
             return false;

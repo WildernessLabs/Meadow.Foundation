@@ -7,7 +7,7 @@ namespace Meadow.Foundation.Sensors.Distance
 {
     public partial class MaxBotix
     {
-        readonly IAnalogInputPort analogInputPort;
+        readonly IAnalogInputPort? analogInputPort;
 
         /// <summary>
         /// Creates a new MaxBotix object communicating over analog
@@ -16,7 +16,7 @@ namespace Meadow.Foundation.Sensors.Distance
         /// <param name="sensor">The distance sensor type</param>
         public MaxBotix(IAnalogInputPort analogInputPort, SensorType sensor)
         {
-            analogInputPort = analogInputPort;
+            this.analogInputPort = analogInputPort;
 
             communication = CommunicationType.Analog;
             sensorType = sensor;
@@ -38,7 +38,9 @@ namespace Meadow.Foundation.Sensors.Distance
             TimeSpan? sampleInterval = null,
             Voltage? voltage = null) :
             this(analogInputPin.CreateAnalogInputPort(sampleCount, sampleInterval ?? TimeSpan.FromMilliseconds(40), voltage ?? new Voltage(3.3)), sensor)
-        { }
+        {
+            createdPorts = true;
+        }
 
         void AnalogInitialize()
         {
@@ -46,7 +48,7 @@ namespace Meadow.Foundation.Sensors.Distance
             // have to convert from voltage to length units for our consumers
             // this is where the magic is: this allows us to extend the IObservable
             // pattern through the sensor driver
-            analogInputPort.Subscribe
+            analogInputPort?.Subscribe
             (
                 IAnalogInputPort.CreateObserver(
                     async result =>
@@ -69,7 +71,7 @@ namespace Meadow.Foundation.Sensors.Distance
 
         async Task<Length> ReadSensorAnalog()
         {
-            var volts = (await analogInputPort.Read()).Volts;
+            var volts = (await analogInputPort!.Read()).Volts;
             Length.UnitType unit = GetUnitsForSensor(sensorType);
 
             return sensorType switch

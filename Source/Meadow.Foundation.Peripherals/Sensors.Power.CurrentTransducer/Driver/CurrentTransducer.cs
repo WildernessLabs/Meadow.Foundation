@@ -14,7 +14,7 @@ namespace Meadow.Foundation.Sensors.Power
         /// <summary>
         /// Raised when the value of the reading changes
         /// </summary>
-        public event EventHandler<IChangeResult<Current>> CurrentUpdated = delegate { };
+        public event EventHandler<IChangeResult<Current>> CurrentUpdated = default!;
 
         /// <summary>
         /// The analog input port connected to the transducer
@@ -44,7 +44,7 @@ namespace Meadow.Foundation.Sensors.Power
         /// <summary>
         /// The minimum output voltage
         /// </summary>
-        protected Current MinVoltgeDelta { get; private set; } = default!;
+        protected Current MinVoltageDelta { get; private set; } = default!;
 
         /// <summary>
         /// The last sensed Current

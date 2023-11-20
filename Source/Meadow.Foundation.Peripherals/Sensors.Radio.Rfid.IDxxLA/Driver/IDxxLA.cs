@@ -2,7 +2,6 @@
 using Meadow.Utilities;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace Meadow.Foundation.Sensors.Radio.Rfid
 {
@@ -34,7 +33,7 @@ namespace Meadow.Foundation.Sensors.Radio.Rfid
         readonly IList<IObserver<byte[]>> _observers = new List<IObserver<byte[]>>();
 
         /// <inheritdoc />
-        public event RfidReadEventHandler RfidRead = delegate { };
+        public event RfidReadEventHandler RfidRead = default!;
 
         /// <summary>
         /// Create an IDxxLA RFID reader
@@ -71,15 +70,13 @@ namespace Meadow.Foundation.Sensors.Radio.Rfid
         private void SerialPort_MessageReceived(object sender, SerialMessageData e)
         {
             var (tag, status) = GetValidatedRfidTag(e.Message);
-            OnTagReadEvent(status, tag);
+            OnTagReadEvent(status, tag!);
         }
 
         /// <inheritdoc />
-        public byte[] LastRead { get; private set; }
+        public byte[]? LastRead { get; private set; }
 
-        /// <summary>
-        /// Dispose of this instance.
-        /// </summary>
+        ///<inheritdoc/>
         public void Dispose()
         {
             foreach (var observer in _observers)
@@ -149,49 +146,32 @@ namespace Meadow.Foundation.Sensors.Radio.Rfid
 
         private static byte AsciiHexByteToByte(byte hexByte)
         {
-            switch (hexByte)
+            return hexByte switch
             {
-                case 48:
-                    return 0;
-                case 49:
-                    return 1;
-                case 50:
-                    return 2;
-                case 51:
-                    return 3;
-                case 52:
-                    return 4;
-                case 53:
-                    return 5;
-                case 54:
-                    return 6;
-                case 55:
-                    return 7;
-                case 56:
-                    return 8;
-                case 57:
-                    return 9;
-                case 65:
-                    return 10;
-                case 66:
-                    return 11;
-                case 67:
-                    return 12;
-                case 68:
-                    return 13;
-                case 69:
-                    return 14;
-                case 70:
-                    return 15;
-                default:
-                    throw new ArgumentOutOfRangeException(
-                        nameof(hexByte),
-                        hexByte,
-                        "Value must be a valid ASCII representation of a hex character (0-F)");
-            }
+                48 => 0,
+                49 => 1,
+                50 => 2,
+                51 => 3,
+                52 => 4,
+                53 => 5,
+                54 => 6,
+                55 => 7,
+                56 => 8,
+                57 => 9,
+                65 => 10,
+                66 => 11,
+                67 => 12,
+                68 => 13,
+                69 => 14,
+                70 => 15,
+                _ => throw new ArgumentOutOfRangeException(
+                                        nameof(hexByte),
+                                        hexByte,
+                                        "Value must be a valid ASCII representation of a hex character (0-F)"),
+            };
         }
 
-        private static (byte[] tag, RfidValidationStatus status) GetValidatedRfidTag(Span<byte> data)
+        private static (byte[]? tag, RfidValidationStatus status) GetValidatedRfidTag(Span<byte> data)
         {
             // Valid format is as follows:
             // STX, 0-F x10 tag, 0-F x2 checksum, CR, LF, ETX
@@ -207,21 +187,21 @@ namespace Meadow.Foundation.Sensors.Radio.Rfid
 
             if (data.Length != validLength)
             {
-                Debug.WriteLine(
+                Console.WriteLine(
                     $"Serial data is not of expected length for RFID tag format. Expected {validLength}, actual {data.Length}");
                 return (tag: null, status: RfidValidationStatus.InvalidDataFormat);
             }
 
             if (data[startByte] != StartToken)
             {
-                Debug.WriteLine(
+                Console.WriteLine(
                     $"Invalid start byte in serial data for RFID tag format. Expected '{StartToken}', actual '{data[startByte]}'");
                 return (tag: null, status: RfidValidationStatus.InvalidDataFormat);
             }
 
             if (data[endByte] != EndToken)
             {
-                Debug.WriteLine(
+                Console.WriteLine(
                     $"Invalid end byte in serial data for RFID tag format. Expected '{EndToken}', actual '{data[endByte]}'");
                 return (tag: null, status: RfidValidationStatus.InvalidDataFormat);
             }
@@ -230,7 +210,7 @@ namespace Meadow.Foundation.Sensors.Radio.Rfid
             var tagSlice = data.Slice(tagStartByte, tagLength);
             if (!IsHexChars(tagSlice))
             {
-                Debug.WriteLine(
+                Console.WriteLine(
                     "Invalid end byte in serial data for RFID tag format. Expected hex ASCII character (48-57, 65-70)");
                 return (tag: null, status: RfidValidationStatus.InvalidDataFormat);
             }
@@ -239,7 +219,7 @@ namespace Meadow.Foundation.Sensors.Radio.Rfid
             var checksumSlice = data.Slice(checksumStartByte, checksumLength);
             if (!IsHexChars(checksumSlice))
             {
-                Debug.WriteLine(
+                Console.WriteLine(
                     "Invalid end byte in serial data for RFID tag format. Expected hex ASCII character (48-57, 65-70)");
                 return (tag: null, status: RfidValidationStatus.InvalidDataFormat);
             }
@@ -297,6 +277,7 @@ namespace Meadow.Foundation.Sensors.Radio.Rfid
                 _observer = observer;
             }
 
+            ///<inheritdoc/>
             public void Dispose()
             {
                 // Ensure thread safety

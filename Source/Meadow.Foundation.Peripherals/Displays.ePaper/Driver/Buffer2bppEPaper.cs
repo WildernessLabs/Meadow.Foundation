@@ -29,7 +29,7 @@
         public ColorMode ColorMode => ColorMode.Format2bpp;
 
         /// <summary>
-        /// Bitdepth of display as an integer
+        /// Bit depth of display as an integer
         /// </summary>
         public int BitDepth => 2;
 

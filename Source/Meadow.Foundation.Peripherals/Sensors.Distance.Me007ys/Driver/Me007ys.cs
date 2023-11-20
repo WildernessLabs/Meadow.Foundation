@@ -15,7 +15,7 @@ namespace Meadow.Foundation.Sensors.Distance
         /// <summary>
         /// Raised when the value of the reading changes
         /// </summary>
-        public event EventHandler<IChangeResult<Length>> DistanceUpdated = delegate { };
+        public event EventHandler<IChangeResult<Length>> DistanceUpdated = default!;
 
         /// <summary>
         /// Distance from sensor to object
@@ -34,21 +34,21 @@ namespace Meadow.Foundation.Sensors.Distance
 
         private readonly byte[] readBuffer = new byte[16];
 
-        private TaskCompletionSource<Length> dataReceivedTaskCompletionSource;
+        private TaskCompletionSource<Length>? dataReceivedTaskCompletionSource;
 
-        private readonly bool createdSerialPort = false;
+        private readonly bool createdPort = false;
 
-        private bool disposed = false;
+        private bool isDisposed = false;
 
         /// <summary>
         /// Creates a new ME007YS object communicating over serial
         /// </summary>
-        /// <param name="device">The device conected to the sensor</param>
+        /// <param name="device">The device connected to the sensor</param>
         /// <param name="serialPortName">The serial port</param>
         public Me007ys(IMeadowDevice device, SerialPortName serialPortName)
             : this(device.CreateSerialPort(serialPortName, portSpeed))
         {
-            createdSerialPort = true;
+            createdPort = true;
         }
 
         /// <summary>
@@ -149,7 +149,7 @@ namespace Meadow.Foundation.Sensors.Distance
                 if (mm != 0)
                 {
                     var length = new Length(mm, Length.UnitType.Millimeters);
-                    dataReceivedTaskCompletionSource.SetResult(length);
+                    dataReceivedTaskCompletionSource?.SetResult(length);
                 }
             }
         }
@@ -161,7 +161,7 @@ namespace Meadow.Foundation.Sensors.Distance
         /// <returns></returns>
         public Task BeforeSleep(CancellationToken cancellationToken)
         {
-            if (createdSerialPort && serialPort != null && serialPort.IsOpen)
+            if (createdPort && serialPort != null && serialPort.IsOpen)
             {
                 serialPort.Close();
             }
@@ -179,16 +179,16 @@ namespace Meadow.Foundation.Sensors.Distance
         }
 
         /// <summary>
-        /// Disposes of managed and unmanaged resources
+        /// Dispose of the object
         /// </summary>
-        /// <param name="disposing">True if called from the public Dispose method, false if from a finalizer</param>
+        /// <param name="disposing">Is disposing</param>
         protected virtual void Dispose(bool disposing)
         {
-            if (!disposed)
+            if (!isDisposed)
             {
                 if (disposing)
                 {
-                    if (createdSerialPort && serialPort != null)
+                    if (createdPort && serialPort != null)
                     {
                         if (serialPort.IsOpen)
                         {
@@ -198,25 +198,15 @@ namespace Meadow.Foundation.Sensors.Distance
                     }
                 }
 
-                disposed = true;
+                isDisposed = true;
             }
         }
 
-        /// <summary>
-        /// Disposes of the resources used by the <see cref="Me007ys"/> instance
-        /// </summary>
+        ///<inheritdoc/>
         public void Dispose()
         {
             Dispose(true);
             GC.SuppressFinalize(this);
-        }
-
-        /// <summary>
-        /// Finalizes an instance of the <see cref="Me007ys"/> class
-        /// </summary>
-        ~Me007ys()
-        {
-            Dispose(false);
         }
     }
 }

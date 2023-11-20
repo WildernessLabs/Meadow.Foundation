@@ -18,7 +18,7 @@ Tea5767 radio;
 public override Task Initialize()
 {
     Resolver.Log.Info("Initializing...");
-    
+
     radio = new Tea5767(Device.CreateI2cBus());
 
     return Task.CompletedTask;
@@ -26,7 +26,7 @@ public override Task Initialize()
 
 public async override Task Run()
 {
-    //scan through avaliable stations
+    //scan through available stations
     for (int i = 0; i < 8; i++)
     {
         await Task.Delay(1000);

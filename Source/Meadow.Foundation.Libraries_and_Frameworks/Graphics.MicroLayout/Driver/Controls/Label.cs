@@ -5,7 +5,7 @@
 /// </summary>
 public class Label : ThemedControl
 {
-    private string _text;
+    private string _text = string.Empty;
 
     private Color _textColor = Color.White;
     private Color _backColor = Color.Transparent;

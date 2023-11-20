@@ -6,79 +6,89 @@ namespace Meadow.Foundation.Displays.Led
     /// <summary>
     /// Seven Segment Display
     /// </summary>
-    public class SevenSegment
+    public class SevenSegment : IDisposable
     {
+        /// <summary>
+        /// Is the object disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
+
+        /// <summary>
+        /// Did we create the port(s) used by the peripheral
+        /// </summary>
+        readonly bool createdPorts = false;
+
         /// <summary>
         /// Valid Characters to display
         /// </summary>
         public enum CharacterType
         {
             /// <summary>
-            /// Zero (0) chracter
+            /// Zero (0) character
             /// </summary>
             Zero,
             /// <summary>
-            /// One (1) chracter
+            /// One (1) character
             /// </summary>
             One,
             /// <summary>
-            /// Two (2) chracter
+            /// Two (2) character
             /// </summary>
             Two,
             /// <summary>
-            /// Three (3) chracter
+            /// Three (3) character
             /// </summary>
             Three,
             /// <summary>
-            /// Four (4) chracter
+            /// Four (4) character
             /// </summary>
             Four,
             /// <summary>
-            /// Five (5) chracter
+            /// Five (5) character
             /// </summary>
             Five,
             /// <summary>
-            /// Six (6) chracter
+            /// Six (6) character
             /// </summary>
             Six,
             /// <summary>
-            /// Seven (7) chracter
+            /// Seven (7) character
             /// </summary>
             Seven,
             /// <summary>
-            /// Eight (8) chracter
+            /// Eight (8) character
             /// </summary>
             Eight,
             /// <summary>
-            /// Nine (9) chracter
+            /// Nine (9) character
             /// </summary>
             Nine,
             /// <summary>
-            /// A chracter
+            /// A character
             /// </summary>
             A,
             /// <summary>
-            /// B chracter
+            /// B character
             /// </summary>
             B,
             /// <summary>
-            /// C chracter
+            /// C character
             /// </summary>
             C,
             /// <summary>
-            /// D chracter
+            /// D character
             /// </summary>
             D,
             /// <summary>
-            /// E chracter
+            /// E character
             /// </summary>
             E,
             /// <summary>
-            /// F chracter
+            /// F character
             /// </summary>
             F,
             /// <summary>
-            /// Blank chracter
+            /// Blank character
             /// </summary>
             Blank,
             /// <summary>
@@ -120,7 +130,7 @@ namespace Meadow.Foundation.Displays.Led
         };
 
         /// <summary>
-        /// Creates a SevenSegment connected to the especified IPins to a IODevice
+        /// Creates a SevenSegment connected to the specified IPins to a IODevice
         /// </summary>
         /// <param name="pinA">Pin A</param>
         /// <param name="pinB">Pin B</param>
@@ -130,7 +140,7 @@ namespace Meadow.Foundation.Displays.Led
         /// <param name="pinF">Pin F</param>
         /// <param name="pinG">Pin G</param>
         /// <param name="pinDecimal">Pin decimal</param>
-        /// <param name="isCommonCathode">Is the display using common cathod (true) or common annode (false)</param>
+        /// <param name="isCommonCathode">Is the display using common cathode (true) or common anode (false)</param>
         public SevenSegment(
             IPin pinA, IPin pinB,
             IPin pinC, IPin pinD,
@@ -146,10 +156,12 @@ namespace Meadow.Foundation.Displays.Led
                  pinG.CreateDigitalOutputPort(),
                  pinDecimal.CreateDigitalOutputPort(),
                  isCommonCathode)
-        { }
+        {
+            createdPorts = true;
+        }
 
         /// <summary>
-        /// Creates a SevenSegment connected to the especified IDigitalOutputPorts
+        /// Creates a SevenSegment connected to the specified IDigitalOutputPorts
         /// </summary>
         /// <param name="portA">Digital input port for pin A</param>
         /// <param name="portB">Digital input port for pin B</param>
@@ -159,7 +171,7 @@ namespace Meadow.Foundation.Displays.Led
         /// <param name="portF">Digital input port for pin F</param>
         /// <param name="portG">Digital input port for pin G</param>
         /// <param name="portDecimal">Digital input port for decimal pin</param>
-        /// <param name="isCommonCathode">Is the display using common cathod (true) or common annode (false)</param>
+        /// <param name="isCommonCathode">Is the display using common cathode (true) or common anode (false)</param>
         public SevenSegment(
             IDigitalOutputPort portA, IDigitalOutputPort portB,
             IDigitalOutputPort portC, IDigitalOutputPort portD,
@@ -203,7 +215,7 @@ namespace Meadow.Foundation.Displays.Led
         }
 
         /// <summary>
-        /// Displays the especified valid character
+        /// Displays the specified valid character
         /// </summary>
         public void SetDisplay(char character, bool showDecimal = false)
         {
@@ -219,6 +231,37 @@ namespace Meadow.Foundation.Displays.Led
                 throw new ArgumentOutOfRangeException();
 
             SetDisplay(charType, showDecimal);
+        }
+
+        ///<inheritdoc/>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        /// <param name="disposing">Is disposing</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && createdPorts)
+                {
+                    portA.Dispose();
+                    portB.Dispose();
+                    portC.Dispose();
+                    portD.Dispose();
+                    portE.Dispose();
+                    portF.Dispose();
+                    portG.Dispose();
+                    portDecimal.Dispose();
+                }
+
+                IsDisposed = true;
+            }
         }
     }
 }

@@ -7,14 +7,16 @@ using System.Threading;
 
 namespace Meadow.Foundation.Displays
 {
-    public abstract partial class TftSpiBase : IGraphicsDisplay, ISpiPeripheral
+    /// <summary>
+    /// Base class for TFT SPI displays
+    /// These displays typically support 16 & 18 bit, some also include 8, 9, 12 and/or 24 bit color 
+    /// </summary>
+    public abstract partial class TftSpiBase : IGraphicsDisplay, ISpiPeripheral, IDisposable
     {
         /// <summary>
         /// Temporary buffer that can be used to batch set address window buffer commands
         /// </summary>
         protected byte[] SetAddressBuffer { get; } = new byte[4];
-
-        //these displays typically support 16 & 18 bit, some also include 8, 9, 12 and/or 24 bit color 
 
         /// <summary>
         /// The current display color mode
@@ -80,6 +82,16 @@ namespace Meadow.Foundation.Displays
         }
 
         /// <summary>
+        /// Is the object disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
+
+        /// <summary>
+        /// Did we create the port(s) used by the peripheral
+        /// </summary>
+        readonly bool createdPorts = false;
+
+        /// <summary>
         /// The data command port
         /// </summary>
         protected IDigitalOutputPort dataCommandPort;
@@ -87,12 +99,12 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// The reset port
         /// </summary>
-        protected IDigitalOutputPort resetPort;
+        protected IDigitalOutputPort? resetPort;
 
         /// <summary>
         /// The chip select port
         /// </summary>
-        protected IDigitalOutputPort chipSelectPort;
+        protected IDigitalOutputPort? chipSelectPort;
 
         /// <summary>
         /// The spi peripheral for the display
@@ -110,7 +122,7 @@ namespace Meadow.Foundation.Displays
         protected Memory<byte> readBuffer;
 
         /// <summary>
-        /// Data convience bool
+        /// Data convenience bool
         /// </summary>
         protected const bool Data = true;
 
@@ -168,16 +180,17 @@ namespace Meadow.Foundation.Displays
         /// <param name="width">Width of display in pixels</param>
         /// <param name="height">Height of display in pixels</param>
         /// <param name="colorMode">The color mode to use for the display buffer</param>
-        public TftSpiBase(ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
+        public TftSpiBase(ISpiBus spiBus, IPin? chipSelectPin, IPin dcPin, IPin? resetPin,
             int width, int height, ColorMode colorMode = ColorMode.Format16bppRgb565)
             : this(
                     spiBus,
-                    chipSelectPin?.CreateDigitalOutputPort(),
+                    chipSelectPin?.CreateDigitalOutputPort() ?? null,
                     dcPin.CreateDigitalOutputPort(),
                     resetPin?.CreateDigitalOutputPort(),
                     width, height, colorMode
                   )
         {
+            createdPorts = true;
         }
 
         /// <summary>
@@ -191,9 +204,9 @@ namespace Meadow.Foundation.Displays
         /// <param name="height">Height of display in pixels</param>
         /// <param name="colorMode">The color mode to use for the display buffer</param>
         public TftSpiBase(ISpiBus spiBus,
-            IDigitalOutputPort chipSelectPort,
+            IDigitalOutputPort? chipSelectPort,
             IDigitalOutputPort dataCommandPort,
-            IDigitalOutputPort resetPort,
+            IDigitalOutputPort? resetPort,
             int width, int height,
             ColorMode colorMode = ColorMode.Format16bppRgb565)
         {
@@ -541,6 +554,32 @@ namespace Meadow.Foundation.Displays
             if (newWidth != Width)
             {
                 CreateBuffer(ColorMode, newWidth, newHeight);
+            }
+        }
+
+        ///<inheritdoc/>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        /// <param name="disposing">Is disposing</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && createdPorts)
+                {
+                    chipSelectPort?.Dispose();
+                    dataCommandPort?.Dispose();
+                    resetPort?.Dispose();
+                }
+
+                IsDisposed = true;
             }
         }
     }

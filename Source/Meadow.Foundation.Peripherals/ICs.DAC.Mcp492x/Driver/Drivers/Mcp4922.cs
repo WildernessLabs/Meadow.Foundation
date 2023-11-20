@@ -19,8 +19,8 @@ public class Mcp4922 : Mcp492x
     /// Initializes a new instance of the <see cref="Mcp4922"/> class.
     /// </summary>
     /// <param name="spiBus">The SPI bus.</param>
-    /// <param name="chipSelect">The chip select port.</param>
-    public Mcp4922(ISpiBus spiBus, IDigitalOutputPort chipSelect) : base(spiBus, chipSelect)
+    /// <param name="chipSelectPort">The chip select port.</param>
+    public Mcp4922(ISpiBus spiBus, IDigitalOutputPort chipSelectPort) : base(spiBus, chipSelectPort)
     {
         Pins = new PinDefinitions(this);
     }
@@ -43,7 +43,7 @@ public class Mcp4922 : Mcp492x
         /// <summary>
         /// The pin controller
         /// </summary>
-        public IPinController Controller { get; set; }
+        public IPinController? Controller { get; set; }
 
         /// <summary>
         /// Create a new PinDefinitions object

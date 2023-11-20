@@ -8,7 +8,7 @@ namespace Meadow.Foundation.Sensors.Distance
     public partial class MaxBotix
     {
         //The baud rate is 9600, 8 bits, no parity, with one stop bit
-        readonly ISerialMessagePort serialMessagePort;
+        readonly ISerialMessagePort? serialMessagePort;
 
         static readonly byte[] suffixDelimiter = { 13 }; //ASCII return
         static readonly int portSpeed = 9600;
@@ -18,12 +18,14 @@ namespace Meadow.Foundation.Sensors.Distance
         /// <summary>
         /// Creates a new MaxBotix object communicating over serial
         /// </summary>
-        /// <param name="device">The device conected to the sensor</param>
-        /// <param name="serialPort">The serial port</param>
-        /// <param name="sensor">The distance sensor type</param>
-        public MaxBotix(IMeadowDevice device, SerialPortName serialPort, SensorType sensor)
-            : this(device.CreateSerialMessagePort(serialPort, suffixDelimiter, false, baudRate: portSpeed), sensor)
-        { }
+        /// <param name="device">The device connected to the sensor</param>
+        /// <param name="serialPortName">The serial port name</param>
+        /// <param name="sensor">The MaxBotix distance sensor type</param>
+        public MaxBotix(IMeadowDevice device, SerialPortName serialPortName, SensorType sensor) :
+            this(device.CreateSerialMessagePort(serialPortName, suffixDelimiter, false, baudRate: portSpeed), sensor)
+        {
+            createdPorts = true;
+        }
 
         /// <summary>
         /// Creates a new MaxBotix object communicating over serial
@@ -69,7 +71,7 @@ namespace Meadow.Foundation.Sensors.Distance
 
             Length.UnitType units = GetUnitsForSensor(sensorType);
 
-            ChangeResult<Length> changeResult = new ChangeResult<Length>()
+            ChangeResult<Length> changeResult = new()
             {
                 New = new Length(value, units),
                 Old = Distance,
@@ -77,9 +79,9 @@ namespace Meadow.Foundation.Sensors.Distance
 
             Distance = changeResult.New;
 
-            if (updateInterval == null || DateTime.Now - lastUpdate >= updateInterval)
+            if (updateInterval == null || DateTime.UtcNow - lastUpdate >= updateInterval)
             {
-                lastUpdate = DateTime.Now;
+                lastUpdate = DateTime.UtcNow;
                 RaiseEventsAndNotify(changeResult);
             }
         }

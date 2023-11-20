@@ -12,7 +12,7 @@ namespace Meadow.Foundation.Sensors.Gnss
         /// <summary>
         /// Event raised when a message is received 
         /// </summary>
-        public event EventHandler<string> MessageReceived = delegate { };
+        public event EventHandler<string> MessageReceived = default!;
 
         /// <summary>
         /// Friendly name for the MTK messages.

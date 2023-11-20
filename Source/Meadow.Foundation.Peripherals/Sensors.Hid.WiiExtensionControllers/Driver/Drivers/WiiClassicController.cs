@@ -62,12 +62,12 @@ namespace Meadow.Foundation.Sensors.Hid
         public IButton HomeButton { get; } = new WiiExtensionButton();
 
         /// <summary>
-        /// Left analog jostick (6 or 8 bits of precision)
+        /// Left analog joystick (6 or 8 bits of precision)
         /// </summary>
         public IAnalogJoystick LeftAnalogStick { get; }
 
         /// <summary>
-        /// Right analog jostick (5 or 8 bits of precision)
+        /// Right analog joystick (5 or 8 bits of precision)
         /// </summary>
         public IAnalogJoystick RightAnalogStick { get; }
 
@@ -103,7 +103,7 @@ namespace Meadow.Foundation.Sensors.Hid
             if (useHighResolutionMode)
             {
                 i2cComms.WriteRegister(0, 0);
-                i2cComms.Read(readBuffer[..8]);
+                i2cComms.Read(ReadBuffer[..8]);
             }
             else
             {
@@ -111,32 +111,32 @@ namespace Meadow.Foundation.Sensors.Hid
             }
 
             //DPad
-            (DPad as WiiExtensionDPad).Update(DPadLeftPressed, DPadRightPressed, DPadUpPressed, DPadDownPressed);
+            (DPad as WiiExtensionDPad)!.Update(DPadLeftPressed, DPadRightPressed, DPadUpPressed, DPadDownPressed);
 
             //Analog sticks
-            (LeftAnalogStick as WiiExtensionAnalogJoystick).Update(LeftJoystickX, LeftJoystickY);
-            (RightAnalogStick as WiiExtensionAnalogJoystick).Update(RightJoystickX, RightJoystickY);
+            (LeftAnalogStick as WiiExtensionAnalogJoystick)!.Update(LeftJoystickX, LeftJoystickY);
+            (RightAnalogStick as WiiExtensionAnalogJoystick)!.Update(RightJoystickX, RightJoystickY);
 
             //A, B, X, Y
-            (XButton as WiiExtensionButton).Update(XButtonPressed);
-            (YButton as WiiExtensionButton).Update(YButtonPressed);
-            (AButton as WiiExtensionButton).Update(AButtonPressed);
-            (BButton as WiiExtensionButton).Update(BButtonPressed);
+            (XButton as WiiExtensionButton)!.Update(XButtonPressed);
+            (YButton as WiiExtensionButton)!.Update(YButtonPressed);
+            (AButton as WiiExtensionButton)!.Update(AButtonPressed);
+            (BButton as WiiExtensionButton)!.Update(BButtonPressed);
 
             //+, -, home
-            (PlusButton as WiiExtensionButton).Update(PlusButtonPressed);
-            (MinusButton as WiiExtensionButton).Update(MinusButtonPressed);
-            (HomeButton as WiiExtensionButton).Update(HomeButtonPressed);
+            (PlusButton as WiiExtensionButton)!.Update(PlusButtonPressed);
+            (MinusButton as WiiExtensionButton)!.Update(MinusButtonPressed);
+            (HomeButton as WiiExtensionButton)!.Update(HomeButtonPressed);
 
             //L, R, ZL, ZR
-            (LButton as WiiExtensionButton).Update(LButtonPressed);
-            (RButton as WiiExtensionButton).Update(RButtonPressed);
-            (ZLButton as WiiExtensionButton).Update(ZLButtonPressed);
-            (ZRButton as WiiExtensionButton).Update(ZRButtonPressed);
+            (LButton as WiiExtensionButton)!.Update(LButtonPressed);
+            (RButton as WiiExtensionButton)!.Update(RButtonPressed);
+            (ZLButton as WiiExtensionButton)!.Update(ZLButtonPressed);
+            (ZRButton as WiiExtensionButton)!.Update(ZRButtonPressed);
 
             //analog triggers
-            (LeftTrigger as WiiExtensionAnalogTrigger).Update(LeftTriggerPosition);
-            (RightTrigger as WiiExtensionAnalogTrigger).Update(RightTriggerPosition);
+            (LeftTrigger as WiiExtensionAnalogTrigger)!.Update(LeftTriggerPosition);
+            (RightTrigger as WiiExtensionAnalogTrigger)!.Update(RightTriggerPosition);
         }
     }
 }

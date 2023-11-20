@@ -539,7 +539,7 @@
             /// 5: Register map address out of range
             /// 6: Register map write error
             /// 7: Low power mode not available for selected operation mode
-            /// 8: Accelerometer mor not available
+            /// 8: Accelerometer power mode not available
             /// 9: Fusion algorithm configuration error
             /// a: Sensor configuration error
             /// </summary>
@@ -586,7 +586,7 @@
             public static readonly byte TemperatureSource = 0x40;
 
             /// <summary>
-            /// Remap the axis to take into consideration the mlounting of the sensor.
+            /// Remap the axis to take into consideration the mounting of the sensor.
             /// 
             /// b0-b1: Remap the X axis
             /// b2-b3: Remap the Y axis

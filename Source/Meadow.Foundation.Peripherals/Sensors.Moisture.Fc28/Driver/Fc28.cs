@@ -15,7 +15,7 @@ namespace Meadow.Foundation.Sensors.Moisture
         /// <summary>
         /// Raised when a new sensor reading has been made. To enable, call StartUpdating().
         /// </summary>
-        public event EventHandler<IChangeResult<double>> HumidityUpdated = delegate { };
+        public event EventHandler<IChangeResult<double>> MoistureUpdated = default!;
 
         /// <summary>
         /// Returns the analog input port
@@ -43,7 +43,17 @@ namespace Meadow.Foundation.Sensors.Moisture
         public Voltage MaximumVoltageCalibration { get; set; } = new Voltage(3.3);
 
         /// <summary>
-        /// Creates a FC28 soil moisture sensor object with the especified analog pin, digital pin and IO device
+        /// Is the object disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
+
+        /// <summary>
+        /// Did we create the port(s) used by the peripheral
+        /// </summary>
+        readonly bool createdPorts = false;
+
+        /// <summary>
+        /// Creates a FC28 soil moisture sensor object with the specified analog pin, digital pin and IO device
         /// </summary>
         /// <param name="analogInputPin">Analog input pin connected</param>
         /// <param name="digitalOutputPin">Digital output pin connected</param>
@@ -69,10 +79,11 @@ namespace Meadow.Foundation.Sensors.Moisture
                     maximumVoltageCalibration)
         {
             UpdateInterval = updateInterval ?? TimeSpan.FromSeconds(5);
+            createdPorts = true;
         }
 
         /// <summary>
-        /// Creates a FC28 soil moisture sensor object with the especified analog pin and digital pin
+        /// Creates a FC28 soil moisture sensor object with the specified analog pin and digital pin
         /// </summary>
         /// <param name="analogInputPort">Analog input port connected</param>
         /// <param name="digitalOutputPort">Digital output port connected</param>
@@ -172,7 +183,7 @@ namespace Meadow.Foundation.Sensors.Moisture
         /// <param name="changeResult">The change result with the current sensor data</param>
         protected void RaiseChangedAndNotify(IChangeResult<double> changeResult)
         {
-            HumidityUpdated?.Invoke(this, changeResult);
+            MoistureUpdated?.Invoke(this, changeResult);
             NotifyObservers(changeResult);
         }
 
@@ -188,6 +199,32 @@ namespace Meadow.Foundation.Sensors.Moisture
             }
 
             return (1f - voltage.Volts.Map(MinimumVoltageCalibration.Volts, MaximumVoltageCalibration.Volts, 0d, 1.0d));
+        }
+
+        ///<inheritdoc/>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        /// <param name="disposing">Is disposing</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && createdPorts)
+                {
+                    AnalogInputPort?.StopUpdating();
+                    AnalogInputPort?.Dispose();
+                    DigitalOutputPort?.Dispose();
+                }
+
+                IsDisposed = true;
+            }
         }
     }
 }

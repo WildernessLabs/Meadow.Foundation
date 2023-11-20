@@ -2,7 +2,7 @@
 using System;
 using System.Threading.Tasks;
 
-namespace Meadow.Foundation.ICs.IOExpanders
+namespace Meadow.Foundation.ICs.DigiPots
 {
     /// <summary>
     /// Represents a DS3502 digital potentiometer

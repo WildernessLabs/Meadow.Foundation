@@ -21,38 +21,44 @@ public override Task Initialize()
 
     gps = new Mt3339(Device, Device.PlatformOS.GetSerialPortName("COM4"));
 
-    gps.GgaReceived += (object sender, GnssPositionInfo location) => {
+    gps.GgaReceived += (object sender, GnssPositionInfo location) =>
+    {
         Resolver.Log.Info("*********************************************");
         Resolver.Log.Info(location.ToString());
         Resolver.Log.Info("*********************************************");
     };
     // GLL
-    gps.GllReceived += (object sender, GnssPositionInfo location) => {
+    gps.GllReceived += (object sender, GnssPositionInfo location) =>
+    {
         Resolver.Log.Info("*********************************************");
         Resolver.Log.Info(location.ToString());
         Resolver.Log.Info("*********************************************");
     };
     // GSA
-    gps.GsaReceived += (object sender, ActiveSatellites activeSatellites) => {
+    gps.GsaReceived += (object sender, ActiveSatellites activeSatellites) =>
+    {
         Resolver.Log.Info("*********************************************");
         Resolver.Log.Info(activeSatellites.ToString());
         Resolver.Log.Info("*********************************************");
     };
     // RMC (recommended minimum)
-    gps.RmcReceived += (object sender, GnssPositionInfo positionCourseAndTime) => {
+    gps.RmcReceived += (object sender, GnssPositionInfo positionCourseAndTime) =>
+    {
         Resolver.Log.Info("*********************************************");
         Resolver.Log.Info(positionCourseAndTime.ToString());
         Resolver.Log.Info("*********************************************");
 
     };
     // VTG (course made good)
-    gps.VtgReceived += (object sender, CourseOverGround courseAndVelocity) => {
+    gps.VtgReceived += (object sender, CourseOverGround courseAndVelocity) =>
+    {
         Resolver.Log.Info("*********************************************");
         Resolver.Log.Info($"{courseAndVelocity}");
         Resolver.Log.Info("*********************************************");
     };
     // GSV (satellites in view)
-    gps.GsvReceived += (object sender, SatellitesInView satellites) => {
+    gps.GsvReceived += (object sender, SatellitesInView satellites) =>
+    {
         Resolver.Log.Info("*********************************************");
         Resolver.Log.Info($"{satellites}");
         Resolver.Log.Info("*********************************************");

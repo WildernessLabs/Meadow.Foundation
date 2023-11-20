@@ -7,13 +7,13 @@ using System.Threading.Tasks;
 namespace Meadow.Foundation.Sensors.Atmospheric
 {
     /// <summary>
-    /// Provides access to the Sensiron SGP40 VOC sensor
+    /// Provides access to the Sensirion SGP40 VOC sensor
     /// </summary>
     public partial class Sgp40 : ByteCommsSensorBase<int>, II2cPeripheral
     {
         /// <summary>
         /// </summary>
-        public event EventHandler<ChangeResult<int>> VocIndexUpdated = delegate { };
+        public event EventHandler<ChangeResult<int>> VocIndexUpdated = default!;
 
         /// <summary>
         /// The VOC Index, from the last reading
@@ -44,7 +44,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         }
 
         /// <summary>
-        /// Initalize the sensor
+        /// Initialize the sensor
         /// </summary>
         protected void Initialize()
         {
@@ -62,7 +62,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <summary>
         /// This command triggers the built-in self-test checking for integrity of both hotplate and MOX material
         /// </summary>
-        /// <returns>true on sucessful test, otherwise false</returns>
+        /// <returns>true on successful test, otherwise false</returns>
         public bool RunSelfTest()
         {
             BusComms?.Write(sgp40_execute_self_test);

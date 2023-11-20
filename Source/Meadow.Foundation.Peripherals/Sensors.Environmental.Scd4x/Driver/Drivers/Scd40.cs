@@ -12,7 +12,7 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// </summary>
         /// <param name="i2cBus">The I2C bus</param>
         /// <param name="address">The I2C address</param>
-        public Scd40(II2cBus i2cBus, byte address = 98)
+        public Scd40(II2cBus i2cBus, byte address = (byte)Addresses.Default)
             : base(i2cBus, address)
         { }
     }

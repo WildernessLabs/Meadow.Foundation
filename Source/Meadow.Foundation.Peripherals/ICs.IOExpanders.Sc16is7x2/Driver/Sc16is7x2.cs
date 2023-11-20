@@ -14,6 +14,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// The port name for Port A
         /// </summary>
         public Sc16SerialPortName PortA => new Sc16SerialPortName("PortA", "A", this);
+
         /// <summary>
         /// The port name for Port B
         /// </summary>

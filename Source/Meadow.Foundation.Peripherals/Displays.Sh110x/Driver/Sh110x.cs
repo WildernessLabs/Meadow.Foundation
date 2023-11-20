@@ -10,7 +10,7 @@ namespace Meadow.Foundation.Displays
     /// <summary>
     /// Provide an interface to the Sh110x family of displays
     /// </summary>
-    public abstract partial class Sh110x : IGraphicsDisplay, ISpiPeripheral, II2cPeripheral
+    public abstract partial class Sh110x : IGraphicsDisplay, ISpiPeripheral, II2cPeripheral, IDisposable
     {
         /// <summary>
         /// The display color mode - 1 bit per pixel monochrome
@@ -35,15 +35,15 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// The default SPI bus speed for the device
         /// </summary>
-        public Frequency DefaultSpiBusSpeed => new Frequency(4000, Frequency.UnitType.Kilohertz);
+        public Frequency DefaultSpiBusSpeed => new(4000, Frequency.UnitType.Kilohertz);
 
         /// <summary>
         /// The SPI bus speed for the device
         /// </summary>
         public Frequency SpiBusSpeed
         {
-            get => spiComms.BusSpeed;
-            set => spiComms.BusSpeed = value;
+            get => spiComms!.BusSpeed;
+            set => spiComms!.BusSpeed = value;
         }
 
         /// <summary>
@@ -56,8 +56,8 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         public SpiClockConfiguration.Mode SpiBusMode
         {
-            get => spiComms.BusMode;
-            set => spiComms.BusMode = value;
+            get => spiComms!.BusMode;
+            set => spiComms!.BusMode = value;
         }
 
         /// <summary>
@@ -76,17 +76,28 @@ namespace Meadow.Foundation.Displays
         public IPixelBuffer PixelBuffer => imageBuffer;
 
         /// <summary>
+        /// Is the object disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
+
+        /// <summary>
+        /// Did we create the port(s) used by the peripheral
+        /// </summary>
+        readonly bool createdPorts = false;
+
+        /// <summary>
         /// I2C Communication bus used to communicate with the peripheral
         /// </summary>
-        protected readonly II2cCommunications i2cComms;
+        protected readonly II2cCommunications? i2cComms;
 
         /// <summary>
         /// SPI Communication bus used to communicate with the peripheral
         /// </summary>
-        protected ISpiCommunications spiComms;
+        protected ISpiCommunications? spiComms;
 
-        readonly IDigitalOutputPort dataCommandPort;
-        readonly IDigitalOutputPort resetPort;
+        readonly IDigitalOutputPort? dataCommandPort;
+        readonly IDigitalOutputPort? resetPort;
+        readonly IDigitalOutputPort? chipSelectPort;
 
         const int StartColumnOffset = 0;
         readonly int PAGE_SIZE;
@@ -135,10 +146,11 @@ namespace Meadow.Foundation.Displays
         /// <param name="resetPin">Reset pin</param>
         /// <param name="width">Display width in pixels</param>
         /// <param name="height">Display height in pixels</param>
-        public Sh110x(ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, int width, int height) :
-            this(spiBus, chipSelectPin?.CreateDigitalOutputPort(), dcPin.CreateDigitalOutputPort(),
+        public Sh110x(ISpiBus spiBus, IPin? chipSelectPin, IPin dcPin, IPin resetPin, int width, int height) :
+            this(spiBus, chipSelectPin?.CreateDigitalOutputPort() ?? null, dcPin.CreateDigitalOutputPort(),
                 resetPin.CreateDigitalOutputPort(), width, height)
         {
+            createdPorts = true;
         }
 
         /// <summary>
@@ -151,7 +163,7 @@ namespace Meadow.Foundation.Displays
         /// <param name="width">Display width in pixels</param>
         /// <param name="height">Display height in pixels</param>
         public Sh110x(ISpiBus spiBus,
-            IDigitalOutputPort chipSelectPort,
+            IDigitalOutputPort? chipSelectPort,
             IDigitalOutputPort dataCommandPort,
             IDigitalOutputPort resetPort,
             int width, int height)
@@ -161,7 +173,7 @@ namespace Meadow.Foundation.Displays
             this.dataCommandPort = dataCommandPort;
             this.resetPort = resetPort;
 
-            spiComms = new SpiCommunications(spiBus, chipSelectPort, DefaultSpiBusSpeed, DefaultSpiBusMode);
+            spiComms = new SpiCommunications(spiBus, this.chipSelectPort = chipSelectPort, DefaultSpiBusSpeed, DefaultSpiBusMode);
 
             Width = width;
             Height = height;
@@ -212,12 +224,15 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         protected void Reset()
         {
-            resetPort.State = true;
-            Thread.Sleep(10);
-            resetPort.State = false;
-            Thread.Sleep(10);
-            resetPort.State = true;
-            Thread.Sleep(100);
+            if (resetPort != null)
+            {
+                resetPort.State = true;
+                Thread.Sleep(10);
+                resetPort.State = false;
+                Thread.Sleep(10);
+                resetPort.State = true;
+                Thread.Sleep(100);
+            }
         }
 
         /// <summary>
@@ -243,14 +258,14 @@ namespace Meadow.Foundation.Displays
         {
             if (connectionType == ConnectionType.SPI)
             {
-                dataCommandPort.State = Command;
-                spiComms.Write(command);
+                dataCommandPort!.State = Command;
+                spiComms?.Write(command);
             }
             else
             {
                 commandBuffer.Span[0] = 0x00;
                 commandBuffer.Span[1] = command;
-                i2cComms.Write(commandBuffer.Span);
+                i2cComms?.Write(commandBuffer.Span);
             }
         }
 
@@ -271,15 +286,15 @@ namespace Meadow.Foundation.Displays
         {
             if (connectionType == ConnectionType.SPI)
             {
-                dataCommandPort.State = Command;
-                spiComms.Write(commands);
+                dataCommandPort!.State = Command;
+                spiComms?.Write(commands);
             }
             else
             {
                 Span<byte> data = new byte[commands.Length + 1];
                 data[0] = 0x00;
                 commands.CopyTo(data.Slice(1, commands.Length));
-                i2cComms.Write(data);
+                i2cComms?.Write(data);
             }
         }
 
@@ -298,10 +313,10 @@ namespace Meadow.Foundation.Displays
                         SendCommand(DisplayCommand.ColumnAddressHigh);
                         SendCommand((byte)((byte)DisplayCommand.SetPageAddress | page));
 
-                        dataCommandPort.State = Data;
+                        dataCommandPort!.State = Data;
 
                         Array.Copy(imageBuffer.Buffer, Width * page, pageBuffer, 0, PAGE_SIZE);
-                        spiComms.Write(pageBuffer);
+                        spiComms?.Write(pageBuffer);
                     }
                 }
             }
@@ -317,7 +332,7 @@ namespace Meadow.Foundation.Displays
                     SendCommand((byte)(0x10 & 0xF));
 
                     Array.Copy(imageBuffer.Buffer, Width * page, pageBuffer, 1, PAGE_SIZE);
-                    i2cComms.Write(pageBuffer);
+                    i2cComms?.Write(pageBuffer);
                 }
             }
         }
@@ -334,7 +349,7 @@ namespace Meadow.Foundation.Displays
             const int pageHeight = 8;
 
             //must update in pages (area of 128x8 pixels)
-            //so interate over all 8 pages and check if they're in range
+            //so iterate over all 8 pages and check if they're in range
             for (int page = 0; page < 8; page++)
             {
                 if (top > pageHeight * page || bottom < (page + 1) * pageHeight)
@@ -346,10 +361,10 @@ namespace Meadow.Foundation.Displays
                 SendCommand((DisplayCommand.ColumnAddressLow) | (StartColumnOffset & 0x0F));
                 SendCommand((int)DisplayCommand.ColumnAddressHigh | 0);
 
-                dataCommandPort.State = Data;
+                dataCommandPort!.State = Data;
 
                 Array.Copy(imageBuffer.Buffer, Width * page, pageBuffer, 0, PAGE_SIZE);
-                spiComms.Write(pageBuffer);
+                spiComms?.Write(pageBuffer);
             }
         }
 
@@ -397,7 +412,7 @@ namespace Meadow.Foundation.Displays
         }
 
         /// <summary>
-        /// Start the display scrollling in the specified direction.
+        /// Start the display scrolling in the specified direction.
         /// </summary>
         /// <param name="direction">Direction that the display should scroll</param>
         public void StartScrolling(ScrollDirection direction)
@@ -414,7 +429,7 @@ namespace Meadow.Foundation.Displays
         /// </remarks>
         /// <param name="direction">Direction that the display should scroll</param>
         /// <param name="startPage">Start page for the scroll</param>
-        /// <param name="endPage">End oage for the scroll</param>
+        /// <param name="endPage">End page for the scroll</param>
         public void StartScrolling(ScrollDirection direction, byte startPage, byte endPage)
         {
             StopScrolling();
@@ -492,6 +507,32 @@ namespace Meadow.Foundation.Displays
         public void WriteBuffer(int x, int y, IPixelBuffer displayBuffer)
         {
             imageBuffer.WriteBuffer(x, y, displayBuffer);
+        }
+
+        ///<inheritdoc/>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        /// <param name="disposing">Is disposing</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && createdPorts)
+                {
+                    chipSelectPort?.Dispose();
+                    dataCommandPort?.Dispose();
+                    resetPort?.Dispose();
+                }
+
+                IsDisposed = true;
+            }
         }
     }
 }

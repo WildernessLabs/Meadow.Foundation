@@ -20,17 +20,17 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// <summary>
         /// Raised when the Hot temperature value changes
         /// </summary>
-        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
+        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = default!;
 
         /// <summary>
         /// Raised when the Hot temperature value changes
         /// </summary>
-        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureHotUpdated = delegate { };
+        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureHotUpdated = default!;
 
         /// <summary>
         /// Raised when the Cold / ambient temperature value changes
         /// </summary>
-        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureColdUpdated = delegate { };
+        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureColdUpdated = default!;
 
         /// <summary>
         /// The Hot Temperature value from the last reading
@@ -277,7 +277,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         }
 
         /// <summary>
-        /// Raise events for subcribers and notify of value changes
+        /// Raise events for subscribers and notify of value changes
         /// </summary>
         /// <param name="changeResult">The updated sensor data</param>
         protected override void RaiseEventsAndNotify(IChangeResult<(Units.Temperature? TemperatureHot, Units.Temperature? TemperatureCold)> changeResult)

@@ -13,7 +13,7 @@ To view all Wilderness Labs open-source projects, including samples, visit [gith
 ## Usage
 
 ```csharp
-A4988 a4988;
+private A4988 a4988;
 
 public override Task Initialize()
 {

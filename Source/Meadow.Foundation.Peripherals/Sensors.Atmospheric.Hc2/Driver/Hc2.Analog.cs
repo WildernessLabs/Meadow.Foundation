@@ -112,15 +112,15 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             return conditions;
         }
 
-        async Task<Units.RelativeHumidity> ReadHumidityAnalog()
+        async Task<RelativeHumidity> ReadHumidityAnalog()
         {
-            var volts = (await HumidityInputPort.Read()).Volts;
-            var result = new Units.RelativeHumidity(volts * 100); // Assumes default scaling for HC2 probes.
+            var volts = (await HumidityInputPort!.Read()).Volts;
+            var result = new RelativeHumidity(volts * 100); // Assumes default scaling for HC2 probes.
             return result;
         }
         async Task<Units.Temperature> ReadTemperatureAnalog()
         {
-            var volts = (await TemperatureInputPort.Read()).Volts;
+            var volts = (await TemperatureInputPort!.Read()).Volts;
             var result = new Units.Temperature((volts * 100) - 40, Units.Temperature.UnitType.Celsius); // Assumes default scaling for HC2 probes.
             return result;
         }

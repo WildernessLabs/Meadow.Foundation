@@ -58,7 +58,7 @@ namespace Meadow.Foundation.Graphics
         public bool IsEmpty => Bottom == 0 && Top == 0 && Left == 0 && Right == 0;
 
         /// <summary>
-        /// Create a new rect struct with inital values
+        /// Create a new rect struct with initial values
         /// </summary>
         /// <param name="left">Left value</param>
         /// <param name="top">Top value</param>
@@ -77,7 +77,7 @@ namespace Meadow.Foundation.Graphics
         /// </summary>
         /// <param name="x">X position</param>
         /// <param name="y">Y position</param>
-        /// <returns>True if the corrindate is within the rect</returns>
+        /// <returns>True if the coordinate is within the rect</returns>
         public bool Contains(int x, int y)
         {
             return (x >= Left &&
@@ -108,7 +108,7 @@ namespace Meadow.Foundation.Graphics
 
         /// <summary>
         /// Increase the size in both dimensions
-        /// This makes the rect wider by increasign the right value
+        /// This makes the rect wider by increasing the right value
         /// And taller by increasing the top value
         /// </summary>
         /// <param name="width">The amount to increase horizontally (right)</param>
@@ -284,7 +284,7 @@ namespace Meadow.Foundation.Graphics
         }
 
         /// <summary>
-        /// Get a string represention of the rect values
+        /// Get a string representation of the rect values
         /// </summary>
         /// <returns>The string with left, top, right and bottom values</returns>
         public override string ToString()

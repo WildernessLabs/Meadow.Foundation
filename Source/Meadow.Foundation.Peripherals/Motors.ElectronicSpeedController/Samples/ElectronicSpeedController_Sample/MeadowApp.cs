@@ -3,6 +3,7 @@ using Meadow.Devices;
 using Meadow.Foundation;
 using Meadow.Foundation.Motors;
 using Meadow.Foundation.Sensors.Rotary;
+using Meadow.Peripherals;
 using Meadow.Peripherals.Sensors.Rotary;
 using Meadow.Units;
 using System.Threading.Tasks;
@@ -13,12 +14,11 @@ namespace ElectronicSpeedController_Sample
     {
         //<!=SNIP=>
 
-        readonly Frequency frequency = new Frequency(50, Frequency.UnitType.Hertz);
-        const float armMs = 0.5f;
-        const float powerIncrement = 0.05f;
-
-        ElectronicSpeedController esc;
-        RotaryEncoderWithButton rotary;
+        private readonly Frequency frequency = new Frequency(50, Frequency.UnitType.Hertz);
+        private const float armMs = 0.5f;
+        private const float powerIncrement = 0.05f;
+        private ElectronicSpeedController esc;
+        private RotaryEncoderWithButton rotary;
 
         public override Task Initialize()
         {
@@ -44,7 +44,7 @@ namespace ElectronicSpeedController_Sample
             esc.Power += (e.New == RotationDirection.Clockwise) ? powerIncrement : -powerIncrement;
             DisplayPowerOnLed(esc.Power);
 
-            Resolver.Log.Info($"New Power: {esc.Power * (float)100:n0}%");
+            Resolver.Log.Info($"New Power: {esc.Power * 100:n0}%");
         }
 
         /// <summary>
@@ -52,7 +52,7 @@ namespace ElectronicSpeedController_Sample
         /// blue @ `0%`, and a proportional mix, in between those speeds.
         /// </summary>
         /// <param name="power"></param>
-        void DisplayPowerOnLed(float power)
+        private void DisplayPowerOnLed(float power)
         {
             // `0.0` - `1.0`
             int r = (int)ExtensionMethods.Map(power, 0f, 1f, 0f, 255f);

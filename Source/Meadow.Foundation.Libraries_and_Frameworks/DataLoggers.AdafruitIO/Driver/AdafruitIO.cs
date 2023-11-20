@@ -9,8 +9,8 @@ namespace Meadow.Foundation.DataLoggers
     /// AdafruitIO DataLogger
     /// </summary>
     /// <remarks>
-    /// The X-AIO-Key needs to be incuded in the header
-    /// The data should be JSON ecoded as follows:
+    /// The X-AIO-Key needs to be included in the header
+    /// The data should be JSON encoded as follows:
     /// {
     /// "value": "12",
     /// "created_at": "2017-12-27T13:20:00Z"
@@ -57,7 +57,7 @@ namespace Meadow.Foundation.DataLoggers
         /// <param name="userName">Adafruit username</param>
         /// <param name="iokey">Write key</param>
         /// <param name="group">group</param>
-        public AdafruitIO(string userName, string iokey, string group = null)
+        public AdafruitIO(string userName, string iokey, string group = "")
         {
             Group = group;
             UserName = userName;

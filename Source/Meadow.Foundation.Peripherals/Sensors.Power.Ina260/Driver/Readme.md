@@ -34,7 +34,7 @@ public override Task Initialize()
 }
 
 public override Task Run()
-{ 
+{
     ina260.StartUpdating(TimeSpan.FromSeconds(2));
     return Task.CompletedTask;
 }

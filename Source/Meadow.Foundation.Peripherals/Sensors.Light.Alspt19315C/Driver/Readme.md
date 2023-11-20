@@ -30,7 +30,7 @@ public override Task Initialize()
         filter: result =>
         {
             if (result.Old is { } old)
-            { 
+            {
                 return (result.New - old).Abs().Volts > 0.5; // returns true if > 0.5V change.
             }
             return false;

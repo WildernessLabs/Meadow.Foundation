@@ -64,7 +64,7 @@ namespace Meadow.Foundation.Sensors.Environmental
                 IAnalogInputPort.CreateObserver(
                     h =>
                     {
-                        // capture the old water leve.
+                        // capture the old water level.
                         var oldWaterLevel = WaterLevel;
                         //var oldWaterLevel = VoltageToWaterLevel(h.Old);
 

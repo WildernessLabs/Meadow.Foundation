@@ -22,22 +22,22 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <summary>
         /// Raised when a press starts (the button is pushed down)
         /// </summary>
-        public event EventHandler PressStarted;
+        public event EventHandler PressStarted = default!;
 
         /// <summary>
         /// Raised when a press ends (the button is released)
         /// </summary>
-        public event EventHandler PressEnded;
+        public event EventHandler PressEnded = default!;
 
         /// <summary>
         /// Raised when the button circuit is re-opened after it has been closed (at the end of a press)
         /// </summary>
-        public event EventHandler Clicked;
+        public event EventHandler Clicked = default!;
 
         /// <summary>
         /// Raised when the button circuit is pressed for LongPressDuration
         /// </summary>
-        public event EventHandler LongClicked;
+        public event EventHandler LongClicked = default!;
 
         /// <summary>
         /// Maximum DateTime value when the button was just pushed
@@ -53,13 +53,13 @@ namespace Meadow.Foundation.ICs.IOExpanders
         {
             if (state == true && State == false)
             {   // save our press start time (for long press event)
-                buttonPressStart = DateTime.Now;
+                buttonPressStart = DateTime.UtcNow;
 
                 RaisePressStarted();
             }
             else if (state == false && State == true)
             {   // calculate the press duration
-                TimeSpan pressDuration = DateTime.Now - buttonPressStart;
+                TimeSpan pressDuration = DateTime.UtcNow - buttonPressStart;
 
                 // reset press start time
                 buttonPressStart = DateTime.MaxValue;

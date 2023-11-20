@@ -32,7 +32,6 @@ public override Task Initialize()
         },
         filter: result =>
         {
-         
             if (result.Old?.Temperature is { } oldTemp &&
                 result.Old?.Humidity is { } oldHumidity &&
                 result.New.Temperature is { } newTemp &&

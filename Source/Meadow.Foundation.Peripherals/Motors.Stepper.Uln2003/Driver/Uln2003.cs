@@ -7,7 +7,7 @@ namespace Meadow.Foundation.Motors.Stepper
     /// This class is for controlling stepper motors that are controlled by a 4 pin controller board.
     /// </summary>
     /// <remarks>It is tested and developed using the 28BYJ-48 stepper motor and the ULN2003 driver board.</remarks>
-    public class Uln2003
+    public class Uln2003 : IDisposable
     {
         /// <summary>
         /// Sets the motor speed to revolutions per minute.
@@ -58,6 +58,16 @@ namespace Meadow.Foundation.Motors.Stepper
         }
 
         /// <summary>
+        /// Is the object disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
+
+        /// <summary>
+        /// Did we create the port(s) used by the peripheral
+        /// </summary>
+        readonly bool createdPorts = false;
+
+        /// <summary>
         /// Default delay in microseconds.
         /// </summary>
         private const long StepperMotorDefaultDelay = 1000;
@@ -105,12 +115,10 @@ namespace Meadow.Foundation.Motors.Stepper
         /// <param name="pin2">The GPIO pin number which corresponds pin B on ULN2003 driver board</param>
         /// <param name="pin3">The GPIO pin number which corresponds pin C on ULN2003 driver board</param>
         /// <param name="pin4">The GPIO pin number which corresponds pin D on ULN2003 driver board</param>
-        public Uln2003(IPin pin1, IPin pin2, IPin pin3, IPin pin4)
+        public Uln2003(IPin pin1, IPin pin2, IPin pin3, IPin pin4) :
+            this(pin1.CreateDigitalOutputPort(), pin2.CreateDigitalOutputPort(), pin3.CreateDigitalOutputPort(), pin4.CreateDigitalOutputPort())
         {
-            outputPort1 = pin1.CreateDigitalOutputPort();
-            outputPort2 = pin2.CreateDigitalOutputPort();
-            outputPort3 = pin3.CreateDigitalOutputPort();
-            outputPort4 = pin4.CreateDigitalOutputPort();
+            createdPorts = true;
         }
 
         /// <summary>
@@ -123,9 +131,9 @@ namespace Meadow.Foundation.Motors.Stepper
         public Uln2003(IDigitalOutputPort outputPort1, IDigitalOutputPort outputPort2, IDigitalOutputPort outputPort3, IDigitalOutputPort outputPort4)
         {
             this.outputPort1 = outputPort1;
-            this.outputPort2 = outputPort1;
-            this.outputPort3 = outputPort1;
-            this.outputPort4 = outputPort1;
+            this.outputPort2 = outputPort2;
+            this.outputPort3 = outputPort3;
+            this.outputPort4 = outputPort4;
         }
 
         /// <summary>
@@ -149,7 +157,7 @@ namespace Meadow.Foundation.Motors.Stepper
         {
             double lastStepTime = 0;
 
-            startTime = DateTime.Now;
+            startTime = DateTime.UtcNow;
 
             var isClockwise = steps >= 0;
             this.steps = Math.Abs(steps);
@@ -160,7 +168,7 @@ namespace Meadow.Foundation.Motors.Stepper
 
             while (currentStep < this.steps)
             {
-                double elapsedMicroseconds = (DateTime.Now - startTime).TotalMilliseconds * 1000;
+                double elapsedMicroseconds = (DateTime.UtcNow - startTime).TotalMilliseconds * 1000;
 
                 if (elapsedMicroseconds - lastStepTime >= stepMicrosecondsDelay)
                 {
@@ -187,6 +195,33 @@ namespace Meadow.Foundation.Motors.Stepper
             outputPort2.State = currentSwitchingSequence[1, engineStep - 1];
             outputPort3.State = currentSwitchingSequence[2, engineStep - 1];
             outputPort4.State = currentSwitchingSequence[3, engineStep - 1];
+        }
+
+        ///<inheritdoc/>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        /// <param name="disposing">Is disposing</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && createdPorts)
+                {
+                    outputPort1?.Dispose();
+                    outputPort2?.Dispose();
+                    outputPort3?.Dispose();
+                    outputPort4?.Dispose();
+                }
+
+                IsDisposed = true;
+            }
         }
     }
 }

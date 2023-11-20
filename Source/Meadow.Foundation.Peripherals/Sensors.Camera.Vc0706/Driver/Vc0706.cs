@@ -11,7 +11,7 @@ namespace Meadow.Foundation.Sensors.Camera
     /// <summary>
     /// Class that represents a VC0706 serial VGA camera
     /// </summary>
-    public partial class Vc0706 : ICamera
+    public partial class Vc0706 : ICamera, IDisposable
     {
         /// <summary>
         /// The camera serial number
@@ -26,23 +26,44 @@ namespace Meadow.Foundation.Sensors.Camera
         ushort framePointer;
 
         /// <summary>
-        /// Number of bytes avaliable in the camera buffer
+        /// Number of bytes available in the camera buffer
         /// </summary>
         public byte BytesAvailable => bufferLength;
 
         /// <summary>
+        /// Is the object disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
+
+        /// <summary>
+        /// Did we create the port(s) used by the peripheral
+        /// </summary>
+        readonly bool createdPort = false;
+
+        /// <summary>
         /// Create a new VC0706 serial camera object
         /// </summary>
-        /// <param name="device">The device conected to the sensor</param>
+        /// <param name="device">The device connected to the sensor</param>
         /// <param name="portName"></param>
         /// <param name="baudRate"></param>
         public Vc0706(ISerialController device, SerialPortName portName, int baudRate)
         {
+            createdPort = true;
+
             serialPort = device.CreateSerialPort(portName, baudRate);
 
             serialPort.Open();
 
             SetBaud((BaudRate)baudRate);
+        }
+
+        /// <summary>
+        /// Create a new VC0706 serial camera object
+        /// </summary>
+        /// <param name="serialPort">The serial port for the camera</param>
+        public Vc0706(ISerialPort serialPort)
+        {
+            this.serialPort = serialPort;
         }
 
         bool Reset()
@@ -100,7 +121,7 @@ namespace Meadow.Foundation.Sensors.Camera
         /// Enable or disable motion detection
         /// </summary>
         /// <param name="enable">true to enable</param>
-        /// <returns>true if succesful</returns>
+        /// <returns>true if successful</returns>
         public bool SetMotionDetect(bool enable)
         {
             if (!SetMotionStatus(MOTIONCONTROL, UARTMOTION, ACTIVATEMOTION))
@@ -133,7 +154,7 @@ namespace Meadow.Foundation.Sensors.Camera
         /// <returns>the image resolution as an ImageResolution enum</returns>
         public ImageResolution GetCaptureResolution()
         {
-            byte[] args = { 0x4, 0x4, 0x1, 0x00, 0x19 };
+            byte[] args = { 0x04, 0x04, 0x01, 0x00, 0x19 };
             if (!RunCommand(READ_DATA, args, (byte)args.Length, 6))
             {
                 return ImageResolution.Unknown;
@@ -146,7 +167,7 @@ namespace Meadow.Foundation.Sensors.Camera
         /// Set the image resolution
         /// </summary>
         /// <param name="resolution">the new image capture resolution</param>
-        /// <returns>true if succesful</returns>
+        /// <returns>true if successful</returns>
         public bool SetCaptureResolution(ImageResolution resolution)
         {
             byte[] args = { 0x05, 0x04, 0x01, 0x00, 0x19, (byte)resolution };
@@ -162,7 +183,7 @@ namespace Meadow.Foundation.Sensors.Camera
         /// <returns></returns>
         public byte GetDownsize()
         {
-            byte[] args = { 0x0 };
+            byte[] args = { 0x00 };
             if (RunCommand(DOWNSIZE_STATUS, args, 1, 6) == false)
             {
                 return 0;
@@ -207,7 +228,7 @@ namespace Meadow.Foundation.Sensors.Camera
         /// Set the serial baud rate for the camera
         /// </summary>
         /// <param name="baudRate">the baud rate</param>
-        /// <returns>true if succesful</returns>
+        /// <returns>true if successful</returns>
         bool SetBaud(BaudRate baudRate)
         {
             byte[] args = baudRate switch
@@ -233,7 +254,7 @@ namespace Meadow.Foundation.Sensors.Camera
         /// Enable onscreen display for composite output (may not work)
         /// </summary>
         /// <param name="x">x location of display in pixels</param>
-        /// <param name="y">y location of dispaly in pixels</param>
+        /// <param name="y">y location of display in pixels</param>
         /// <param name="message">text to display</param>
         public void SetOnScreenDisplay(byte x, byte y, string message)
         {
@@ -274,7 +295,7 @@ namespace Meadow.Foundation.Sensors.Camera
         /// Set compression (0-255)
         /// </summary>
         /// <param name="compression"></param>
-        /// <returns>true if succesful</returns>
+        /// <returns>true if successful</returns>
         public bool SetCompression(byte compression)
         {
             byte[] args = { 0x5, 0x1, 0x1, 0x12, 0x04, compression };
@@ -362,17 +383,17 @@ namespace Meadow.Foundation.Sensors.Camera
         /// <summary>
         /// Check if there is picture data on the camera
         /// </summary>
-        /// <returns>true is data is avaliable</returns>
+        /// <returns>true is data is available</returns>
         public bool IsPhotoAvailable()
         {
             return GetFrameLength() != 0;
         }
 
         /// <summary>
-        /// Retreive the image data from the camera
+        /// Retrieve the image data from the camera
         /// </summary>
         /// <returns>The image data as a jpeg in a MemoryStream</returns>
-        public Task<MemoryStream> GetPhotoStream()
+        public Task<MemoryStream?> GetPhotoStream()
         {
             return Task.Run(() =>
             {
@@ -407,13 +428,13 @@ namespace Meadow.Foundation.Sensors.Camera
         }
 
         /// <summary>
-        /// Retreive the image data from the camera
+        /// Retrieve the image data from the camera
         /// </summary>
         /// <returns>The image data as a jpeg in a byte array</returns>
         public async Task<byte[]> GetPhotoData()
         {
             using var stream = await GetPhotoStream();
-            return stream.ToArray();
+            return stream?.ToArray() ?? new byte[0];
         }
 
         /// <summary>
@@ -557,13 +578,16 @@ namespace Meadow.Foundation.Sensors.Camera
             return true;
         }
 
-        void SendCommand(byte cmd, byte[] args = null, byte argn = 0)
+        void SendCommand(byte cmd, byte[]? args = null, byte argn = 0)
         {
             serialPort.Write(new byte[] { 0x56, SerialNumber, cmd });
 
-            for (byte i = 0; i < argn; i++)
+            if (args != null)
             {
-                serialPort.Write(new byte[] { args[i] });
+                for (byte i = 0; i < argn; i++)
+                {
+                    serialPort.Write(new byte[] { args[i] });
+                }
             }
         }
 
@@ -598,6 +622,34 @@ namespace Meadow.Foundation.Sensors.Camera
                 return false;
             }
             return true;
+        }
+
+        ///<inheritdoc/>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        /// <param name="disposing">Is disposing</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && createdPort)
+                {
+                    if (serialPort.IsOpen)
+                    {
+                        serialPort.Close();
+                    }
+                    serialPort.Dispose();
+                }
+
+                IsDisposed = true;
+            }
         }
     }
 }

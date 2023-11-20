@@ -1,5 +1,6 @@
 using Meadow.Hardware;
 using Meadow.Units;
+using System;
 using System.Threading;
 
 namespace Meadow.Foundation.Displays
@@ -7,7 +8,7 @@ namespace Meadow.Foundation.Displays
     /// <summary>
     /// Represents a base ePaper display driver
     /// </summary>
-    public abstract class EPaperBase : ISpiPeripheral
+    public abstract class EPaperBase : ISpiPeripheral, IDisposable
     {
         /// <summary>
         /// The default SPI bus speed for the device
@@ -19,8 +20,8 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         public Frequency SpiBusSpeed
         {
-            get => spiComms.BusSpeed;
-            set => spiComms.BusSpeed = value;
+            get => spiComms!.BusSpeed;
+            set => spiComms!.BusSpeed = value;
         }
 
         /// <summary>
@@ -33,9 +34,14 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         public SpiClockConfiguration.Mode SpiBusMode
         {
-            get => spiComms.BusMode;
-            set => spiComms.BusMode = value;
+            get => spiComms!.BusMode;
+            set => spiComms!.BusMode = value;
         }
+
+        /// <summary>
+        /// Is the object disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
 
         /// <summary>
         /// The command buffer
@@ -45,27 +51,27 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// Data command port
         /// </summary>
-        protected IDigitalOutputPort dataCommandPort;
+        protected IDigitalOutputPort? dataCommandPort;
 
         /// <summary>
         /// Reset port
         /// </summary>
-        protected IDigitalOutputPort resetPort;
+        protected IDigitalOutputPort? resetPort;
 
         /// <summary>
         /// Chip select port
         /// </summary>
-        protected IDigitalOutputPort chipSelectPort;
+        protected IDigitalOutputPort? chipSelectPort;
 
         /// <summary>
         /// Busy indicator port
         /// </summary>
-        protected IDigitalInputPort busyPort;
+        protected IDigitalInputPort? busyPort;
 
         /// <summary>
         /// SPI Communication bus used to communicate with the peripheral
         /// </summary>
-        protected ISpiCommunications spiComms;
+        protected ISpiCommunications? spiComms;
 
         /// <summary>
         /// Const bool representing the data state
@@ -78,13 +84,18 @@ namespace Meadow.Foundation.Displays
         protected const bool CommandState = false;
 
         /// <summary>
+        /// Did we create the port(s) used by the peripheral
+        /// </summary>
+        protected bool createdPorts = false;
+
+        /// <summary>
         /// Write a value to the display
         /// </summary>
         /// <param name="value">The value as a byte</param>
         protected void Write(byte value)
         {
             commandBuffer[0] = value;
-            spiComms.Write(commandBuffer);
+            spiComms?.Write(commandBuffer);
         }
 
         /// <summary>
@@ -92,10 +103,13 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         protected virtual void Reset()
         {
-            resetPort.State = false;
-            DelayMs(200);
-            resetPort.State = true;
-            DelayMs(200);
+            if (resetPort != null)
+            {
+                resetPort.State = false;
+                DelayMs(200);
+                resetPort.State = true;
+                DelayMs(200);
+            }
         }
 
         /// <summary>
@@ -113,7 +127,7 @@ namespace Meadow.Foundation.Displays
         /// <param name="command">The command value</param>
         protected void SendCommand(byte command)
         {
-            dataCommandPort.State = CommandState;
+            dataCommandPort!.State = CommandState;
             Write(command);
         }
 
@@ -132,7 +146,7 @@ namespace Meadow.Foundation.Displays
         /// <param name="data">The data</param>
         protected void SendData(byte data)
         {
-            dataCommandPort.State = DataState;
+            dataCommandPort!.State = DataState;
             Write(data);
         }
 
@@ -142,8 +156,8 @@ namespace Meadow.Foundation.Displays
         /// <param name="data">The data</param>
         protected void SendData(byte[] data)
         {
-            dataCommandPort.State = DataState;
-            spiComms.Write(data);
+            dataCommandPort!.State = DataState;
+            spiComms!.Write(data);
         }
 
         /// <summary>
@@ -152,10 +166,44 @@ namespace Meadow.Foundation.Displays
         protected virtual void WaitUntilIdle()
         {
             int count = 0;
+
+            if (busyPort == null)
+            {
+                DelayMs(200);
+                return;
+            }
+
             while (busyPort.State == false && count < 20)
             {
                 DelayMs(50);
                 count++;
+            }
+        }
+
+        ///<inheritdoc/>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        /// <param name="disposing">Is disposing</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && createdPorts)
+                {
+                    chipSelectPort?.Dispose();
+                    resetPort?.Dispose();
+                    dataCommandPort?.Dispose();
+                    busyPort?.Dispose();
+                }
+
+                IsDisposed = true;
             }
         }
     }

@@ -20,7 +20,7 @@ namespace Meadow.Foundation.Sensors.Hid
         public IButton ZButton { get; } = new WiiExtensionButton();
 
         /// <summary>
-        /// Analog jostick (8 bits of precision)
+        /// Analog joystick (8 bits of precision)
         /// </summary>
         public IAnalogJoystick AnalogStick { get; } = new WiiExtensionAnalogJoystick(8);
 
@@ -29,16 +29,16 @@ namespace Meadow.Foundation.Sensors.Hid
         /// </summary>
         public Acceleration3D? Acceleration3D { get; protected set; } = null;
 
-        bool CButtonPressed => (readBuffer[5] >> 1 & 0x01) == 0;
-        bool ZButtonPressed => (readBuffer[5] & 0x01) == 0;
+        bool CButtonPressed => (ReadBuffer[5] >> 1 & 0x01) == 0;
+        bool ZButtonPressed => (ReadBuffer[5] & 0x01) == 0;
 
-        byte JoystickX => readBuffer[0];
-        byte JoystickY => readBuffer[1];
+        byte JoystickX => ReadBuffer[0];
+        byte JoystickY => ReadBuffer[1];
 
         //appears to be 10 bits +/- 2g
-        int XAcceleration => (readBuffer[2] << 2) | ((readBuffer[5] >> 2) & 3);
-        int YAcceleration => (readBuffer[3] << 2) | ((readBuffer[5] >> 4) & 3);
-        int ZAcceleration => (readBuffer[4] << 2) | ((readBuffer[5] >> 6) & 3);
+        int XAcceleration => (ReadBuffer[2] << 2) | ((ReadBuffer[5] >> 2) & 3);
+        int YAcceleration => (ReadBuffer[3] << 2) | ((ReadBuffer[5] >> 4) & 3);
+        int ZAcceleration => (ReadBuffer[4] << 2) | ((ReadBuffer[5] >> 6) & 3);
 
         /// <summary>
         /// Creates a Wii Nunchuck object
@@ -55,10 +55,10 @@ namespace Meadow.Foundation.Sensors.Hid
         {
             base.Update();
 
-            (CButton as WiiExtensionButton).Update(CButtonPressed);
-            (ZButton as WiiExtensionButton).Update(ZButtonPressed);
+            (CButton as WiiExtensionButton)!.Update(CButtonPressed);
+            (ZButton as WiiExtensionButton)!.Update(ZButtonPressed);
 
-            (AnalogStick as WiiExtensionAnalogJoystick).Update(JoystickX, JoystickY);
+            (AnalogStick as WiiExtensionAnalogJoystick)!.Update(JoystickX, JoystickY);
 
             Acceleration3D = new Acceleration3D((XAcceleration - 512) * 0.5,
                                                 (YAcceleration - 512) * 0.5,

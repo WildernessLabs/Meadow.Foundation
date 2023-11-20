@@ -23,7 +23,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <summary>
         /// The default SPI bus speed for the device
         /// </summary>
-        public Frequency DefaultSpiBusSpeed => new Frequency(10000, Frequency.UnitType.Kilohertz);
+        public Frequency DefaultSpiBusSpeed => new(10000, Frequency.UnitType.Kilohertz);
 
         /// <summary>
         /// The SPI bus speed for the device
@@ -59,16 +59,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// SPI Communication bus used to communicate with the peripheral
         /// </summary>
         protected ISpiCommunications spiComms = default!;
-
-        /// <summary>
-        /// Default constructor.
-        /// </summary>
-        /// <remarks>
-        /// This is private to prevent the programmer from calling it explicitly
-        /// </remarks>
-        private x74595()
-        {
-        }
 
         /// <summary>
         /// Creates a new ShiftRegister 74595 object

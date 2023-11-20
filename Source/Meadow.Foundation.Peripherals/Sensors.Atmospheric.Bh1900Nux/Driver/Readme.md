@@ -41,7 +41,7 @@ public override Task Initialize()
     {
         Resolver.Log.Info($"  Temperature: {result.New.Celsius:N2}C");
     };
-   
+
     return Task.CompletedTask;
 }
 

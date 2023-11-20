@@ -52,7 +52,7 @@ namespace Meadow.Foundation.Sensors.LoadCell
         /// <summary>
         /// Mass changed event
         /// </summary>
-        public event EventHandler<IChangeResult<Mass>> MassUpdated = delegate { };
+        public event EventHandler<IChangeResult<Mass>> MassUpdated = default!;
 
         /// <summary>
         /// Gets default sample period (1 Second)
@@ -321,7 +321,7 @@ namespace Meadow.Foundation.Sensors.LoadCell
         }
 
         /// <summary>
-        /// Dispose managed resources
+        /// Dispose of the object
         /// </summary>
         /// <param name="disposing">Is disposing</param>
         protected virtual void Dispose(bool disposing)
@@ -334,12 +334,11 @@ namespace Meadow.Foundation.Sensors.LoadCell
             IsDisposed = true;
         }
 
-        /// <summary>
-        /// Dispose managed resources
-        /// </summary>
+        ///<inheritdoc/>
         public void Dispose()
         {
-            Dispose(true);
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }

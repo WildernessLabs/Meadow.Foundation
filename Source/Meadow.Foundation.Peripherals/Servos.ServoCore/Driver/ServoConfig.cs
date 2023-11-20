@@ -38,7 +38,7 @@ namespace Meadow.Foundation.Servos
         /// <param name="minimumAngle">The minimum angle, in degrees, that the servo can move to. Default is `0°`.</param>
         /// <param name="maximumAngle">The maximum angle, in degrees, that the servo can move to. Default is `180°`.</param>
         /// <param name="minimumPulseDuration">The minimum angle's pulse duration (in microseconds). Default is 1,000 (1.0 millisecond).</param>
-        /// <param name="maximumPulseDuration">The maximum angle's pulse duratino (in microseconds). Default is 2,000 (2.0 milleseconds).</param>
+        /// <param name="maximumPulseDuration">The maximum angle's pulse duration (in microseconds). Default is 2,000 (2.0 milliseconds).</param>
         /// <param name="frequency">PWM frequency</param>
         public ServoConfig(
             Frequency frequency,
@@ -58,7 +58,7 @@ namespace Meadow.Foundation.Servos
         /// <param name="minimumAngle">The minimum angle, in degrees, that the servo can move to. Default is `0°`.</param>
         /// <param name="maximumAngle">The maximum angle, in degrees, that the servo can move to. Default is `180°`.</param>
         /// <param name="minimumPulseDuration">The minimum angle's pulse duration (in microseconds). Default is 1,000 (1.0 millisecond).</param>
-        /// <param name="maximumPulseDuration">The maximum angle's pulse duratino (in microseconds). Default is 2,000 (2.0 milleseconds).</param>
+        /// <param name="maximumPulseDuration">The maximum angle's pulse duration (in microseconds). Default is 2,000 (2.0 milliseconds).</param>
 
         public ServoConfig(
             Angle? minimumAngle = null, Angle? maximumAngle = null,

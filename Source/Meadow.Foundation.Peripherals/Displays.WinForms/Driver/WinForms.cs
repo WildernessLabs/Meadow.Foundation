@@ -12,15 +12,15 @@ public class WinFormsDisplay : Form, IGraphicsDisplay, ITouchScreen
     /// <summary>
     /// Event fired when the display gets a mouse down
     /// </summary>
-    public event TouchEventHandler TouchDown = delegate { };
+    public event TouchEventHandler TouchDown = default!;
     /// <summary>
     /// Event fired when the display gets a mouse up
     /// </summary>
-    public event TouchEventHandler TouchUp = delegate { };
+    public event TouchEventHandler TouchUp = default!;
     /// <summary>
     /// Event fired when the display gets a mouse click
     /// </summary>
-    public event TouchEventHandler TouchClick = delegate { };
+    public event TouchEventHandler TouchClick = default!;
 
     private readonly WinFormsPixelBuffer _buffer;
 
@@ -42,7 +42,7 @@ public class WinFormsDisplay : Form, IGraphicsDisplay, ITouchScreen
     /// <summary>
     /// Create a new WinFormsDisplay
     /// </summary>
-    /// <param name="width">Width of the display, in pixles</param>
+    /// <param name="width">Width of the display, in pixels</param>
     /// <param name="height">Height of the display, in pixels</param>
     /// <param name="colorMode">The ColorMode of the display</param>
     public WinFormsDisplay(int width = 800, int height = 600, ColorMode colorMode = ColorMode.Format16bppRgb565)

@@ -94,7 +94,7 @@ namespace Meadow.Foundation.Sensors.Light
         /// Convenience method to get the current temperature. For frequent reads, use
         /// StartSampling() and StopSampling() in conjunction with the SampleBuffer.
         /// </summary>
-        /// <returns>A float value that's ann average value of all the samples taken.</returns>
+        /// <returns>A float value that's an average value of all the samples taken.</returns>
         protected override async Task<Voltage> ReadSensor()
         {
             Voltage = await AnalogInputPort.Read();

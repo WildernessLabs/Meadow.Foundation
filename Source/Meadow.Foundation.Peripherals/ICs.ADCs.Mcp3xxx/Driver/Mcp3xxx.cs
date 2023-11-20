@@ -8,8 +8,18 @@ namespace Meadow.Foundation.ICs.IOExpanders
     /// <summary>
     /// Provide an interface to connect to a MCP3xxx analog to digital converter (ADC)
     /// </summary>
-    public abstract partial class Mcp3xxx : IAnalogInputController, ISpiPeripheral
+    public abstract partial class Mcp3xxx : IAnalogInputController, ISpiPeripheral, IDisposable
     {
+        /// <summary>
+        /// Is the object disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
+
+        /// <summary>
+        /// Did we create the port(s) used by the peripheral
+        /// </summary>
+        readonly bool createdPort = false;
+
         /// <summary>
         /// Gets the underlying ISpiCommunications instance
         /// </summary>
@@ -50,7 +60,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
         /// <summary>
         /// The resolution of the analog-to-digital converter in the Mcp3xxx
-        /// This is model-specific and not confiruable 
+        /// This is model-specific and not configurable 
         /// </summary>
         public int AdcResolutionInBits { get; protected set; }
 
@@ -59,8 +69,10 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         internal int AdcMaxValue { get; set; }
 
+        IDigitalOutputPort chipSelectPort;
+
         /// <summary>
-        /// Mcp3xxx base class contructor
+        /// Mcp3xxx base class constructor
         /// </summary>
         /// <param name="spiBus">The SPI bus</param>
         /// <param name="chipSelectPin">Chip select pin</param>
@@ -71,10 +83,11 @@ namespace Meadow.Foundation.ICs.IOExpanders
             int channelCount, int adcResolutionInBits) :
             this(spiBus, chipSelectPin.CreateDigitalOutputPort(), channelCount, adcResolutionInBits)
         {
+            createdPort = true;
         }
 
         /// <summary>
-        /// Mcp3xxx base class contructor
+        /// Mcp3xxx base class constructor
         /// </summary>
         /// <param name="spiBus">The SPI bus</param>
         /// <param name="chipSelectPort">Chip select port</param>
@@ -89,7 +102,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
             ChannelCount = channelCount;
 
-            SpiComms = new SpiCommunications(spiBus, chipSelectPort, DefaultSpiBusSpeed, DefaultSpiBusMode);
+            SpiComms = new SpiCommunications(spiBus, this.chipSelectPort = chipSelectPort, DefaultSpiBusSpeed, DefaultSpiBusMode);
         }
 
         /// <summary>
@@ -151,6 +164,12 @@ namespace Meadow.Foundation.ICs.IOExpanders
             return channel == null
                 ? throw new NotSupportedException($"Pin {pin.Name} Does not support ADC")
                 : (IAnalogInputPort)new AnalogInputPort(this, pin, channel, sampleCount, inputType);
+        }
+
+        ///<inheritdoc/>
+        public IAnalogInputArray CreateAnalogInputArray(params IPin[] pins)
+        {
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -242,7 +261,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <summary>
         /// Reads a value from the device
         /// </summary>
-        /// <param name="channel">Channel to read - for diffential inputs this represents a channel pair (valid values: 0 - channelcount - 1 or 0 - channelcount / 2 - 1  with differential inputs)</param>
+        /// <param name="channel">Channel to read - for differential inputs this represents a channel pair (valid values: 0 - channelcount - 1 or 0 - channelcount / 2 - 1  with differential inputs)</param>
         /// <param name="inputType">The type of input channel to read</param>
         /// <param name="adcResolutionBits">The number of bits in the returned value</param>
         /// <returns>A value corresponding to relative voltage level on specified device channel</returns>
@@ -303,6 +322,30 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
             // return the ADC response with any possible higher bits masked out
             return returnValue & (1 << adcResolutionInBits) - 1;
+        }
+
+        ///<inheritdoc/>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        /// <param name="disposing">Is disposing</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && createdPort)
+                {
+                    chipSelectPort?.Dispose();
+                }
+
+                IsDisposed = true;
+            }
         }
     }
 }

@@ -29,7 +29,7 @@ namespace Meadow.Foundation.Sensors.Hid
         /// <summary>
         /// Data buffer returned by the controller
         /// </summary>
-        protected Span<byte> readBuffer => _readBuffer;
+        protected Span<byte> ReadBuffer => _readBuffer;
         byte[] _readBuffer = new byte[8];
 
         /// <summary>
@@ -40,7 +40,7 @@ namespace Meadow.Foundation.Sensors.Hid
         /// <summary>
         /// Sampling cancellation token source
         /// </summary>
-        protected CancellationTokenSource SamplingTokenSource { get; set; }
+        protected CancellationTokenSource? SamplingTokenSource { get; set; }
 
         /// <summary>
         /// Are we actively reading data from the extension controller
@@ -76,7 +76,7 @@ namespace Meadow.Foundation.Sensors.Hid
         {
             i2cComms.Write(0);
 
-            i2cComms.Read(readBuffer[..6]);
+            i2cComms.Read(ReadBuffer[..6]);
         }
 
         /// <summary>
@@ -86,18 +86,18 @@ namespace Meadow.Foundation.Sensors.Hid
         public byte[] GetIdentification()
         {
             i2cComms.Write(0xFA);
-            i2cComms.Read(readBuffer[..6]);
+            i2cComms.Read(ReadBuffer[..6]);
 
-            Resolver.Log.Info(BitConverter.ToString(readBuffer[..6].ToArray()));
+            Resolver.Log.Info(BitConverter.ToString(ReadBuffer[..6].ToArray()));
 
-            return readBuffer[..6].ToArray();
+            return ReadBuffer[..6].ToArray();
         }
 
         /// <summary>
         /// Starts continuously sampling the sensor
         /// </summary>
         /// <param name="updateInterval">interval between samples</param>
-        public void StartUpdating(TimeSpan? updateInterval)
+        public void StartUpdating(TimeSpan updateInterval)
         {
             lock (samplingLock)
             {
@@ -112,7 +112,7 @@ namespace Meadow.Foundation.Sensors.Hid
                     while (ct.IsCancellationRequested == false)
                     {
                         Update();
-                        Thread.Sleep(updateInterval.Value);
+                        Thread.Sleep(updateInterval);
                     }
                 }, ct, TaskCreationOptions.LongRunning);
                 t.Start();
