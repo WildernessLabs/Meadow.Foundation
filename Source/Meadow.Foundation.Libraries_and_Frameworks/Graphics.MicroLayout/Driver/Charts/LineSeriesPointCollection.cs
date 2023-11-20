@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Meadow.Foundation.Graphics.MicroLayout;
 
@@ -84,6 +85,18 @@ public class LineSeriesPointCollection : IEnumerable<LineSeriesPoint>
             {
                 _points.Remove(point);
             }
+
+            if (_points.Count > 0)
+            {
+                MinX = _points.Min(p => p.X);
+                MinY = _points.Min(p => p.Y);
+                MaxX = _points.Max(p => p.X);
+                MaxY = _points.Max(p => p.Y);
+            }
+            else
+            {
+                MinX = MaxX = MinY = MaxY = 0;
+            }
         }
     }
 
@@ -95,6 +108,8 @@ public class LineSeriesPointCollection : IEnumerable<LineSeriesPoint>
         lock (_points)
         {
             _points.Clear();
+
+            MinX = MaxX = MinY = MaxY = 0;
         }
     }
 
