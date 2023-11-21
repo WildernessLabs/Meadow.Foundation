@@ -135,8 +135,8 @@ public class LineChart : ThemedControl
         ChartAreaHeight = Height - (2 * DefaultMargin) - (DefaultAxisStroke / 2);
         VerticalScale = ChartAreaHeight / (YMaximumValue - YMinimumValue); // pixels per vertical unit
 
-        DrawXAxis(graphics, YMinimumValue, YMaximumValue);
         DrawYAxis(graphics);
+        DrawXAxis(graphics, YMinimumValue, YMaximumValue);
 
         foreach (var series in Series)
         {
@@ -203,7 +203,7 @@ public class LineChart : ThemedControl
         // for now it's a fixed line at the bottom
         graphics.Stroke = DefaultAxisStroke;
         graphics.DrawLine(
-            Left + DefaultMargin,
+            ChartAreaLeft,
             XAxisScaledPosition,
             Right - DefaultMargin,
             XAxisScaledPosition,
