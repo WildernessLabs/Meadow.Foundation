@@ -8,7 +8,7 @@ namespace Meadow.Foundation.Leds
     /// <summary>
     /// Represents a Pulse-Width-Modulation (PWM) controlled RGB LED
     /// </summary>
-    public partial class RgbPwmLed
+    public partial class RgbPwmLed : IRgbPwmLed
     {
         static readonly Frequency DefaultFrequency = new Frequency(200, Frequency.UnitType.Hertz);
 
