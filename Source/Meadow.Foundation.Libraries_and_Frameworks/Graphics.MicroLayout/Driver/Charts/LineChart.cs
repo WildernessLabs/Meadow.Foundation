@@ -125,8 +125,11 @@ public class LineChart : ThemedControl
         }
         else
         {
-            YMinimumValue = Series.Min(s => s.Points.MinY);
-            YMaximumValue = Series.Max(s => s.Points.MaxY);
+            // set chart top/bottom at 10% above/below the min/max
+            var ymin = Series.Min(s => s.Points.MinY);
+            YMinimumValue = (ymin > 0) ? ymin * 0.9 : ymin * 1.1;
+            var ymax = Series.Max(s => s.Points.MaxY);
+            YMaximumValue = (ymax > 0) ? ymax * 1.1 : ymax * 0.9;
         }
 
         ChartAreaHeight = Height - (2 * DefaultMargin) - (DefaultAxisStroke / 2);

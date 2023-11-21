@@ -53,14 +53,14 @@ public class LineSeriesPointCollection : IEnumerable<LineSeriesPoint>
         {
             foreach (var point in points)
             {
-                // do this now so we don't have to calculate during drawing
-                if (point.X < MinX) MinX = point.X;
-                if (point.X > MaxX) MaxX = point.X;
-                if (point.Y < MinY) MinY = point.Y;
-                if (point.Y > MaxY) MaxY = point.Y;
-
                 _points.Add(point);
             }
+
+            // do this now so we don't have to calculate during drawing
+            MinX = _points.Min(p => p.X);
+            MinY = _points.Min(p => p.Y);
+            MaxX = _points.Max(p => p.X);
+            MaxY = _points.Max(p => p.Y);
         }
     }
 
@@ -111,6 +111,12 @@ public class LineSeriesPointCollection : IEnumerable<LineSeriesPoint>
 
             MinX = MaxX = MinY = MaxY = 0;
         }
+    }
+
+    /// <inheritdoc/>
+    public LineSeriesPoint this[int index]
+    {
+        get => _points[index];
     }
 
     /// <inheritdoc/>

@@ -37,6 +37,12 @@ public class LineChartSeriesCollection : IEnumerable<LineChartSeries>
     }
 
     /// <inheritdoc/>
+    public LineChartSeries this[int index]
+    {
+        get => _series[index];
+    }
+
+    /// <inheritdoc/>
     public IEnumerator<LineChartSeries> GetEnumerator()
     {
         return _series.GetEnumerator();
