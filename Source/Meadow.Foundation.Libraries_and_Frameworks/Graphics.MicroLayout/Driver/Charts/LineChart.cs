@@ -234,7 +234,7 @@ public class LineChart : ThemedControl
         // TODO: deal with chart with negative values
 
         ChartAreaLeft = Left + leftMargin;
-        ChartAreaWidth = Width - ChartAreaLeft - DefaultMargin;
+        ChartAreaWidth = Width - ChartAreaLeft - DefaultMargin - DefaultAxisStroke * 2;
 
         // for now it's a fixed line at the left
         graphics.Stroke = DefaultAxisStroke;
@@ -258,11 +258,11 @@ public class LineChart : ThemedControl
 
         graphics.Stroke = series.LineStroke;
 
-        //graphics.DrawRectangle(ChartAreaLeft + DefaultAxisStroke + DefaultMargin, ChartAreaTop - DefaultAxisStroke, ChartAreaWidth, ChartAreaHeight, Color.Red, true);
+        //graphics.DrawRectangle(ChartAreaLeft + DefaultAxisStroke * 2 + DefaultMargin, ChartAreaTop - DefaultAxisStroke, ChartAreaWidth, ChartAreaHeight, Color.Red, true);
 
         foreach (var point in series.Points)
         {
-            var scaledX = ChartAreaLeft + DefaultAxisStroke + DefaultMargin + (int)(point.X / xRange * ChartAreaWidth);
+            var scaledX = ChartAreaLeft + DefaultAxisStroke * 2 + DefaultMargin + (int)(point.X / xRange * ChartAreaWidth);
             var scaledY = Bottom - DefaultMargin - (DefaultAxisStroke / 2) - (int)((point.Y - YMinimumValue) * VerticalScale);
 
             if (series.ShowLines)
