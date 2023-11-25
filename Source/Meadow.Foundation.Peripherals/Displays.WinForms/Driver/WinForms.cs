@@ -47,13 +47,15 @@ public class WinFormsDisplay : Form, IGraphicsDisplay, ITouchScreen
     /// <param name="colorMode">The ColorMode of the display</param>
     public WinFormsDisplay(int width = 800, int height = 600, ColorMode colorMode = ColorMode.Format16bppRgb565)
     {
-        this.Width = width;
-        this.Height = height;
+        this.Width = width + (Width - ClientSize.Width);
+        this.Height = height + (Height - ClientSize.Height);
 
+        this.Text = "Meadow WinFormsDisplay";
         this.DoubleBuffered = true;
-        this.FormBorderStyle = FormBorderStyle.FixedSingle;
-        this.ControlBox = false;
-        _buffer = new WinFormsPixelBuffer(Width, Height, colorMode);
+        this.FormBorderStyle = FormBorderStyle.FixedDialog;
+        this.StartPosition = FormStartPosition.CenterScreen;
+        this.Icon = new Icon("icon.ico");
+        _buffer = new WinFormsPixelBuffer(width, height, colorMode);
     }
 
     /// <inheritdoc/>
@@ -61,20 +63,6 @@ public class WinFormsDisplay : Form, IGraphicsDisplay, ITouchScreen
     {
         _buffer?.Dispose();
         base.Dispose(disposing);
-    }
-
-    ///<inheritdoc/>
-    public new bool ControlBox
-    {
-        get => base.ControlBox;
-        set
-        {
-            if (value)
-            {
-                Height = Height + 46;
-            }
-            base.ControlBox = value;
-        }
     }
 
     ///<inheritdoc/>
