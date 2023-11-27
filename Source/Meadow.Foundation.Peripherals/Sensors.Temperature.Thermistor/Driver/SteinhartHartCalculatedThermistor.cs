@@ -91,10 +91,10 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// </summary>
         protected override async Task<Units.Temperature> ReadSensor()
         {
-            var voltageReading = await AnalogInput.Read();
+            var voltageReading = await AnalogInputPort.Read();
 
             // ohms
-            var measuredResistance = (SeriesResistance.Ohms * voltageReading.Volts) / (AnalogInput.ReferenceVoltage.Volts - voltageReading.Volts);
+            var measuredResistance = (SeriesResistance.Ohms * voltageReading.Volts) / (AnalogInputPort.ReferenceVoltage.Volts - voltageReading.Volts);
 
             double steinhart;
             steinhart = measuredResistance / NominalResistance.Ohms;
