@@ -92,7 +92,9 @@ namespace Meadow.Foundation.Sensors.Camera
 
             SerialNumber = string.Empty;
             foreach (var b in serialNumber)
+            {
                 SerialNumber = SerialNumber + " " + b.ToString("X2");
+            }
 
             ushort[] eeMLX90640 = new ushort[832];
 

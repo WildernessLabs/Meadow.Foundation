@@ -15,19 +15,18 @@ namespace Meadow.Foundation.Sensors.Temperature
     ///                        |
     ///                        +---[ TM ]--- &lt; GND
     /// </remarks>
-    public abstract class Thermistor : PollingSensorBase<Units.Temperature>,
-        ITemperatureSensor
+    public abstract class Thermistor : SamplingSensorBase<Units.Temperature>, ITemperatureSensor
     {
         /// <summary>
         /// The analog input port used to determine output voltage of the voltage divider circuit
         /// </summary>
-        protected IAnalogInputPort AnalogInput { get; }
+        protected IAnalogInputPort AnalogInputPort { get; }
         /// <summary>
         /// The nominal resistance of the thermistor (e.g. 10kOhm for a 10k thermistor)
         /// </summary>
         public abstract Resistance NominalResistance { get; }
         /// <summary>
-        /// The nominal temperature for the nominal resistance, typically 25C.
+        /// The nominal temperature for the nominal resistance, typically 25C
         /// </summary>
         public virtual Units.Temperature NominalTemperature => new Units.Temperature(25, Units.Temperature.UnitType.Celsius);
 
@@ -37,14 +36,36 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// <param name="analogInput">The analog input reading the thermistor voltage divider output</param>
         protected Thermistor(IAnalogInputPort analogInput)
         {
-            AnalogInput = analogInput;
-            AnalogInput.StartUpdating();
+            AnalogInputPort = analogInput;
+            AnalogInputPort.StartUpdating();
 
             Updated += (s, e) => TemperatureUpdated?.Invoke(this, e);
         }
 
+        /// <inheritdoc/>
+        public override void StartUpdating(TimeSpan? updateInterval = null)
+        {
+            lock (samplingLock)
+            {
+                if (IsSampling) { return; }
+                IsSampling = true;
+                AnalogInputPort.StartUpdating(updateInterval);
+            }
+        }
+
+        /// <inheritdoc/>
+        public override void StopUpdating()
+        {
+            lock (samplingLock)
+            {
+                if (!IsSampling) { return; }
+                IsSampling = false;
+                AnalogInputPort.StopUpdating();
+            }
+        }
+
         /// <summary>
-        /// The temperature from the last reading.
+        /// The temperature from the last reading
         /// </summary>
         public Units.Temperature? Temperature { get; protected set; }
 
