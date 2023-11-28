@@ -142,7 +142,11 @@ namespace Meadow.Foundation.Sensors.Distance
         {
             var len = serialPort.BytesToRead;
 
-            serialPort.Read(readBuffer, 0, Math.Min(len, readBuffer.Length));
+            if (len > 3)
+            {
+                serialPort.Read(readBuffer, 0, Math.Min(len, readBuffer.Length));
+            }
+
             if (len == 3)
             {
                 var mm = readBuffer[0] << 8 | readBuffer[1];
