@@ -35,16 +35,6 @@ namespace Meadow.Foundation.Sensors.Motion
         public byte DefaultI2cAddress => (byte)Addresses.Default;
 
         /// <summary>
-        /// Raised when the acceleration value changes
-        /// </summary>
-        public event EventHandler<IChangeResult<Acceleration3D>> Acceleration3DUpdated = default!;
-
-        /// <summary>
-        /// Raised when the angular velocity value changes
-        /// </summary>
-        public event EventHandler<IChangeResult<AngularVelocity3D>> AngularVelocity3DUpdated = default!;
-
-        /// <summary>
         /// Raised when the magnetic field value changes
         /// </summary>
         public event EventHandler<IChangeResult<MagneticField3D>> MagneticField3DUpdated = default!;
@@ -69,10 +59,27 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
         public event EventHandler<IChangeResult<EulerAngles>> EulerOrientationUpdated = default!;
 
-        /// <summary>
-        /// Raised when the temperature value changes
-        /// </summary>
-        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = default!;
+        private event EventHandler<IChangeResult<Units.Temperature>> _temperatureHandlers;
+        private event EventHandler<IChangeResult<AngularVelocity3D>> _velocityHandlers;
+        private event EventHandler<IChangeResult<Acceleration3D>> _accelerationHandlers;
+
+        event EventHandler<IChangeResult<Units.Temperature>> ISamplingSensor<Units.Temperature>.Updated
+        {
+            add => _temperatureHandlers += value;
+            remove => _temperatureHandlers -= value;
+        }
+
+        event EventHandler<IChangeResult<AngularVelocity3D>> ISamplingSensor<AngularVelocity3D>.Updated
+        {
+            add => _velocityHandlers += value;
+            remove => _velocityHandlers -= value;
+        }
+
+        event EventHandler<IChangeResult<Acceleration3D>> ISamplingSensor<Acceleration3D>.Updated
+        {
+            add => _accelerationHandlers += value;
+            remove => _accelerationHandlers -= value;
+        }
 
         /// <summary>
         /// Current Acceleration
@@ -370,11 +377,11 @@ namespace Meadow.Foundation.Sensors.Motion
         {
             if (changeResult.New.Acceleration3D is { } accel)
             {
-                Acceleration3DUpdated?.Invoke(this, new ChangeResult<Acceleration3D>(accel, changeResult.Old?.Acceleration3D));
+                _accelerationHandlers?.Invoke(this, new ChangeResult<Acceleration3D>(accel, changeResult.Old?.Acceleration3D));
             }
             if (changeResult.New.AngularVelocity3D is { } angular)
             {
-                AngularVelocity3DUpdated?.Invoke(this, new ChangeResult<AngularVelocity3D>(angular, changeResult.Old?.AngularVelocity3D));
+                _velocityHandlers?.Invoke(this, new ChangeResult<AngularVelocity3D>(angular, changeResult.Old?.AngularVelocity3D));
             }
             if (changeResult.New.MagneticField3D is { } magnetic)
             {
@@ -398,7 +405,7 @@ namespace Meadow.Foundation.Sensors.Motion
             }
             if (changeResult.New.Temperature is { } temp)
             {
-                TemperatureUpdated?.Invoke(this, new ChangeResult<Units.Temperature>(temp, changeResult.Old?.Temperature));
+                _temperatureHandlers?.Invoke(this, new ChangeResult<Units.Temperature>(temp, changeResult.Old?.Temperature));
             }
             base.RaiseEventsAndNotify(changeResult);
         }

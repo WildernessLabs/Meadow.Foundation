@@ -35,7 +35,7 @@ namespace Meadow.Foundation.Sensors.Light
         /// <summary>
         /// Raised when Luminosity value changes
         /// </summary>
-        public event EventHandler<IChangeResult<Illuminance>> IlluminanceUpdated = default!;
+        public event EventHandler<IChangeResult<Illuminance>> Updated = default!;
 
         /// <summary>
         /// Sensor package ID
@@ -77,8 +77,8 @@ namespace Meadow.Foundation.Sensors.Light
             }
         }
 
-        IntegrationTimes integrationTime;
-        GainFactor gainFactor;
+        private IntegrationTimes integrationTime;
+        private GainFactor gainFactor;
 
         /// <summary>
         /// Full spectrum luminosity (visible and infrared light combined)
@@ -165,7 +165,7 @@ namespace Meadow.Foundation.Sensors.Light
             }
             if (changeResult.New.Integrated is { } integrated)
             {
-                IlluminanceUpdated?.Invoke(this, new ChangeResult<Illuminance>(integrated, changeResult.Old?.Integrated));
+                Updated?.Invoke(this, new ChangeResult<Illuminance>(integrated, changeResult.Old?.Integrated));
             }
 
             base.RaiseEventsAndNotify(changeResult);
