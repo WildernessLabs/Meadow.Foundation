@@ -24,9 +24,9 @@ public override Task Initialize()
     var consumer = Lm75.CreateObserver(
         handler: result =>
         {
-            Resolver.Log.Info($"Temperature New Value { result.New.Celsius}C");
-            Resolver.Log.Info($"Temperature Old Value { result.Old?.Celsius}C");
-              },
+            Resolver.Log.Info($"Temperature New Value {result.New.Celsius}C");
+            Resolver.Log.Info($"Temperature Old Value {result.Old?.Celsius}C");
+        },
         filter: null
     );
     lm75.Subscribe(consumer);

@@ -18,8 +18,8 @@ namespace Meadow.Foundation.Sensors.Gnss
         /// </summary>
         public Frequency SpiBusSpeed
         {
-            get => spiComms.BusSpeed;
-            set => spiComms.BusSpeed = value;
+            get => spiComms!.BusSpeed;
+            set => spiComms!.BusSpeed = value;
         }
 
         /// <summary>
@@ -32,14 +32,17 @@ namespace Meadow.Foundation.Sensors.Gnss
         /// </summary>
         public SpiClockConfiguration.Mode SpiBusMode
         {
-            get => spiComms.BusMode;
-            set => spiComms.BusMode = value;
+            get => spiComms!.BusMode;
+            set => spiComms!.BusMode = value;
         }
 
         /// <summary>
         /// SPI Communication bus used to communicate with the peripheral
         /// </summary>
-        protected ISpiCommunications spiComms;
+        protected ISpiCommunications? spiComms;
+
+        IDigitalOutputPort? chipSelectPort;
+
         private const byte NULL_VALUE = 0xFF;
 
         /// <summary>
@@ -47,13 +50,13 @@ namespace Meadow.Foundation.Sensors.Gnss
         /// </summary>
         public NeoM8(ISpiBus spiBus,
             IDigitalOutputPort chipSelectPort,
-            IDigitalOutputPort resetPort = null,
-            IDigitalInputPort ppsPort = null)
+            IDigitalOutputPort? resetPort = null,
+            IDigitalInputPort? ppsPort = null)
         {
             ResetPort = resetPort;
             PulsePerSecondPort = ppsPort;
 
-            spiComms = new SpiCommunications(spiBus, chipSelectPort, DefaultSpiBusSpeed, DefaultSpiBusMode);
+            spiComms = new SpiCommunications(spiBus, this.chipSelectPort = chipSelectPort, DefaultSpiBusSpeed, DefaultSpiBusMode);
 
             _ = InitializeSpi();
         }
@@ -61,15 +64,17 @@ namespace Meadow.Foundation.Sensors.Gnss
         /// <summary>
         /// Create a new NeoM8 object using SPI
         /// </summary>
-        public NeoM8(ISpiBus spiBus, IPin chipSelectPin = null, IPin resetPin = null, IPin ppsPin = null)
+        public NeoM8(ISpiBus spiBus, IPin? chipSelectPin = null, IPin? resetPin = null, IPin? ppsPin = null)
         {
-            var chipSelectPort = chipSelectPin.CreateDigitalOutputPort();
+            createdPorts = true;
+
+            var chipSelectPort = chipSelectPin?.CreateDigitalOutputPort();
 
             spiComms = new SpiCommunications(spiBus, chipSelectPort, DefaultSpiBusSpeed, DefaultSpiBusMode);
 
-            resetPin?.CreateDigitalOutputPort(true);
+            resetPort = resetPin?.CreateDigitalOutputPort(true);
 
-            ppsPin?.CreateDigitalInterruptPort(InterruptMode.EdgeRising, ResistorMode.InternalPullDown);
+            ppsPort = ppsPin?.CreateDigitalInterruptPort(InterruptMode.EdgeRising, ResistorMode.InternalPullDown);
 
             _ = InitializeSpi();
         }
@@ -113,8 +118,8 @@ namespace Meadow.Foundation.Sensors.Gnss
             {
                 while (cts.Token.IsCancellationRequested == false) { }
                 {
-                    spiComms.Read(data);
-                    messageProcessor.Process(data);
+                    spiComms!.Read(data);
+                    messageProcessor!.Process(data);
 
                     if (HasMoreData(data) == false)
                     {

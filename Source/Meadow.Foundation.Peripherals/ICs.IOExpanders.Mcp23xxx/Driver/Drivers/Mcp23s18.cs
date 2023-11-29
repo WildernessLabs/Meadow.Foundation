@@ -12,7 +12,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         /// <param name="spiBus">The SPI bus</param>
         /// <param name="chipSelectPort">Chip select port</param>
-        /// <param name="interruptPort">optional interupt port, needed for input interrupts</param>
+        /// <param name="interruptPort">optional interrupt port, needed for input interrupts</param>
         /// <param name="resetPort">Optional Meadow output port used to reset the mcp expander</param>
         public Mcp23s18(ISpiBus spiBus, IDigitalOutputPort chipSelectPort, IDigitalInterruptPort? interruptPort = null, IDigitalOutputPort? resetPort = null) :
             base(spiBus, chipSelectPort, interruptPort, resetPort)
@@ -24,7 +24,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         /// <param name="spiBus">The SPI bus</param>
         /// <param name="chipSelectPin">Chip select pin</param>
-        /// <param name="interruptPin">optional interupt pin, needed for input interrupts (InterruptMode: EdgeRising, ResistorMode.InternalPullDown)</param>
+        /// <param name="interruptPin">optional interrupt pin, needed for input interrupts (InterruptMode: EdgeRising, ResistorMode.InternalPullDown)</param>
         public Mcp23s18(ISpiBus spiBus, IPin chipSelectPin, IPin? interruptPin = null) :
             this(spiBus, chipSelectPin.CreateDigitalOutputPort(), (interruptPin == null) ? null : interruptPin.CreateDigitalInterruptPort(InterruptMode.EdgeRising, ResistorMode.InternalPullDown))
         {

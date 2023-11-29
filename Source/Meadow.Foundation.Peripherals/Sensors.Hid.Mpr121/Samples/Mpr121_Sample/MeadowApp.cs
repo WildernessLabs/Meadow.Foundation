@@ -1,8 +1,7 @@
-﻿using System;
-using System.Threading.Tasks;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Hid;
+using System.Threading.Tasks;
 
 namespace Sensors.Distance.Mpr121_Sample
 {
@@ -24,9 +23,9 @@ namespace Sensors.Distance.Mpr121_Sample
         {
             string pads = string.Empty;
 
-            for(int i = 0; i < e.ChannelStatus.Count; i++)
+            for (int i = 0; i < e.ChannelStatus.Count; i++)
             {
-                if(e.ChannelStatus[(Mpr121.Channels)i] == true)
+                if (e.ChannelStatus[(Mpr121.Channels)i] == true)
                 {
                     pads += i + ", ";
                 }

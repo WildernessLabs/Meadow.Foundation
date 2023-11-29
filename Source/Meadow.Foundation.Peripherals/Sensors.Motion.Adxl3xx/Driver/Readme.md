@@ -37,7 +37,7 @@ public override Task Initialize()
         filter: result =>
         {
             if (result.Old is { } old)
-            { //c# 8 pattern match syntax. checks for !null and assigns var.
+            {
                 return ((result.New - old).Z > new Acceleration(1, AU.Gravity));
             }
             return false;

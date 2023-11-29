@@ -48,15 +48,15 @@ namespace Meadow.Foundation.Sensors.Hid
             base.Update();
 
             //DPad
-            (DPad as WiiExtensionDPad).Update(DPadLeftPressed, DPadRightPressed, DPadUpPressed, DPadDownPressed);
+            ((WiiExtensionDPad)DPad).Update(DPadLeftPressed, DPadRightPressed, DPadUpPressed, DPadDownPressed);
 
             //A, B
-            (AButton as WiiExtensionButton).Update(AButtonPressed);
-            (BButton as WiiExtensionButton).Update(BButtonPressed);
+            ((WiiExtensionButton)AButton).Update(AButtonPressed);
+            ((WiiExtensionButton)BButton).Update(BButtonPressed);
 
             //Start, Select
-            (StartButton as WiiExtensionButton).Update(PlusButtonPressed);
-            (SelectButton as WiiExtensionButton).Update(MinusButtonPressed);
+            ((WiiExtensionButton)StartButton).Update(PlusButtonPressed);
+            ((WiiExtensionButton)SelectButton).Update(MinusButtonPressed);
         }
     }
 }

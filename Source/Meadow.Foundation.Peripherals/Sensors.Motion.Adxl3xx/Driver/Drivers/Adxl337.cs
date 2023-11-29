@@ -18,7 +18,6 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <param name="supplyVoltage">The voltage supplied to the sensor. Defaults to 3.3V if null</param>
         public Adxl337(IPin xPin, IPin yPin, IPin zPin, Voltage? supplyVoltage)
                 : base(xPin, yPin, zPin, 6, supplyVoltage)
-        {
-        }
+        { }
     }
 }

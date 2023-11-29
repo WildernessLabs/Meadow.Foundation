@@ -230,11 +230,11 @@
                 {
                     return _fontTable[0];
                 }
-                if(index > 126 && index < 160)
+                if (index > 126 && index < 160)
                 {
                     return _fontTable[0];//space
                 }
-                if(index > 159)
+                if (index > 159)
                 {
                     return _fontTable[index - 55];
                 }

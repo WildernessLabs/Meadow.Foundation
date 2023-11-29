@@ -9,20 +9,30 @@ namespace Meadow.Foundation.Audio
     /// <summary>
     /// Represents a 2 pin piezo-electric speaker capable of generating tones
     /// </summary>
-    public class PiezoSpeaker : IToneGenerator
+    public class PiezoSpeaker : IToneGenerator, IDisposable
     {
         /// <summary>
         /// The volume from 0-1 
         /// Defined by the PWM port duty cycle from 0 to 0.5
         /// </summary>
         public float Volume { get; protected set; } = 1.0f;
-        
+
         /// <summary>
         /// Gets the port that is driving the Piezo Speaker
         /// </summary>
         protected IPwmPort Port { get; set; }
 
         private bool isPlaying = false;
+
+        /// <summary>
+        /// Is the object disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
+
+        /// <summary>
+        /// Did we create the port(s) used by the peripheral
+        /// </summary>
+        readonly bool createdPort = false;
 
         /// <summary>
         /// Create a new PiezoSpeaker instance
@@ -32,7 +42,9 @@ namespace Meadow.Foundation.Audio
         /// <param name="dutyCycle">Duty cycle</param>
         public PiezoSpeaker(IPin pin, Frequency frequency, float dutyCycle = 0) :
             this(pin.CreatePwmPort(frequency, dutyCycle))
-        { }
+        {
+            createdPort = true;
+        }
 
         /// <summary>
         /// Create a new PiezoSpeaker instance
@@ -40,7 +52,9 @@ namespace Meadow.Foundation.Audio
         /// <param name="pin">PWM Pin connected to the PiezoSpeaker</param>
         public PiezoSpeaker(IPin pin) :
             this(pin.CreatePwmPort(new Frequency(100, Frequency.UnitType.Hertz), 0))
-        { }
+        {
+            createdPort = true;
+        }
 
         /// <summary>
         /// Create a new PiezoSpeaker instance
@@ -65,7 +79,7 @@ namespace Meadow.Foundation.Audio
         /// Play a frequency for a specified duration
         /// </summary>
         /// <param name="frequency">The frequency in hertz of the tone to be played</param>
-        /// <param name="duration">How long the note is played in milliseconds, if durration is 0, tone plays indefinitely</param>
+        /// <param name="duration">How long the note is played in milliseconds, if duration is 0, tone plays indefinitely</param>
         public async Task PlayTone(Frequency frequency, TimeSpan duration)
         {
             if (frequency.Hertz <= 1)
@@ -106,9 +120,34 @@ namespace Meadow.Foundation.Audio
         {
             Volume = Math.Clamp(volume, 0, 1);
 
-             if(isPlaying)
+            if (isPlaying)
             {
                 Port.DutyCycle = Volume / 2f;
+            }
+        }
+
+        ///<inheritdoc/>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        /// <param name="disposing">Is disposing</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && createdPort)
+                {
+                    Port?.Stop();
+                    Port?.Dispose();
+                }
+
+                IsDisposed = true;
             }
         }
     }

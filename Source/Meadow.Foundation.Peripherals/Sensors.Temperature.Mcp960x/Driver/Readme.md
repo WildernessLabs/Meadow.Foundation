@@ -39,9 +39,10 @@ private void Sensor_Updated(object sender, IChangeResult<(Meadow.Units.Temperatu
     Resolver.Log.Info($"Temperature hot: {e.New.TemperatureHot.Value.Celsius:n2}C, Temperature cold: {e.New.TemperatureCold.Value.Celsius:n2}C");
 }
 
-public override async Task Run()
+public override Task Run()
 {
     sensor.StartUpdating();
+    return Task.CompletedTask;
 }
 
 ```

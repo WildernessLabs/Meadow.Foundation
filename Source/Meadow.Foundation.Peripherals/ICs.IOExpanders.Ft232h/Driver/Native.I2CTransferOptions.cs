@@ -35,11 +35,11 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// Fast transfers prepare a buffer containing commands to generate START/STOP/ADDRESS
             /// conditions and commands to read/write data. This buffer is sent to the MPSSE in one shot,
             /// hence delays between different phases of the I2C transfer are eliminated. Fast transfers
-            /// canhave data length in terms of bits or bytes. The user application should call
+            /// can have data length in terms of bits or bytes. The user application should call
             /// I2C_DeviceWrite or I2C_DeviceRead with either
             /// I2C_TRANSFER_OPTIONS_FAST_TRANSFER_BYTES or
             /// I2C_TRANSFER_OPTIONS_FAST_TRANSFER_BITS bit set to perform a fast transfer.
-            /// IC_TRANSFER_OPTIONS_START_BIT and I2C_TRANSFER_OPTIONS_STOP_BIT hav e
+            /// IC_TRANSFER_OPTIONS_START_BIT and I2C_TRANSFER_OPTIONS_STOP_BIT have
             /// their usual meanings when used in fast transfers, however
             /// IC_TRANSFER_OPTIONS_BREAK_ON_NACK and
             /// I2C_TRANSFER_OPTIONS_NACK_LAST_BYTE are not applicable in fast transfers.
@@ -50,7 +50,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// When the user calls I2C_DeviceWrite or I2C_DeviceRead with this bit set then libMPSSE
             /// packs commands to transfer sizeToTransfer number of bytes, and to read/write
             /// izeToTransfer number of ack bits. If data is written then the read ack bits are ignored, if
-            /// data is being read then an acknowledgement bit(SDA=LOW) is given to the I2C slave            ///after each byte read.
+            /// data is being read then an acknowledgment bit(SDA=LOW) is given to the I2C slave            ///after each byte read.
             /// </summary>
 
             FAST_TRANSFER_BYTES = 0x00000010,
@@ -67,7 +67,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// the address is either a part of the data or this is a special I2C frame that doesn't require
             /// an address. However if this bit is not set then 7bit address and 1bit direction will be
             /// written to the I2C bus each time I2C_DeviceWrite or I2C_DeviceRead is called and a
-            /// 1bit acknowledgement will be read after that.
+            /// 1bit acknowledgment will be read after that.
             /// </summary>
             NO_ADDRESS = 0x00000040
         }

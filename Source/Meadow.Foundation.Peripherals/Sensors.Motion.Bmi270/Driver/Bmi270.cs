@@ -1,4 +1,6 @@
 ﻿using Meadow.Hardware;
+using Meadow.Peripherals.Sensors;
+using Meadow.Peripherals.Sensors.Motion;
 using Meadow.Units;
 using System;
 using System.Linq;
@@ -8,26 +10,26 @@ using System.Threading.Tasks;
 namespace Meadow.Foundation.Sensors.Accelerometers
 {
     /// <summary>
-    /// Represents a BMI270 interial measurement unit (IMU) 
+    /// Represents a BMI270 inertial measurement unit (IMU) 
     /// </summary>
     public partial class Bmi270 :
         PollingSensorBase<(Acceleration3D? Acceleration3D, AngularVelocity3D? AngularVelocity3D, Units.Temperature? Temperature)>,
-        II2cPeripheral
+        II2cPeripheral, IGyroscope, IAccelerometer, ITemperatureSensor
     {
         /// <summary>
         /// Event raised when linear acceleration changes
         /// </summary>
-        public event EventHandler<IChangeResult<Acceleration3D>> Acceleration3DUpdated = delegate { };
+        public event EventHandler<IChangeResult<Acceleration3D>> Acceleration3DUpdated = default!;
 
         /// <summary>
         /// Event raised when angular velocity (gyro) changes
         /// </summary>
-        public event EventHandler<IChangeResult<AngularVelocity3D>> AngularVelocity3DUpdated = delegate { };
+        public event EventHandler<IChangeResult<AngularVelocity3D>> AngularVelocity3DUpdated = default!;
 
         /// <summary>
         /// Event raised when temperature changes
         /// </summary>
-        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
+        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = default!;
 
         /// <summary>
         /// Current Acceleration 3D
@@ -130,7 +132,7 @@ namespace Meadow.Foundation.Sensors.Accelerometers
 
                 if (status == 0x01) { break; }
             }
-            //Afer initialization - power mode is set to "configuration mode"
+            //After initialization - power mode is set to "configuration mode"
             //Need to change power modes before you can sample data
         }
 
@@ -154,7 +156,7 @@ namespace Meadow.Foundation.Sensors.Accelerometers
         }
 
         /// <summary>
-        /// Raise events for subcribers and notify of value changes
+        /// Raise events for subscribers and notify of value changes
         /// </summary>
         /// <param name="changeResult">The updated sensor data</param>
         protected override void RaiseEventsAndNotify(IChangeResult<(Acceleration3D? Acceleration3D, AngularVelocity3D? AngularVelocity3D, Units.Temperature? Temperature)> changeResult)
@@ -236,7 +238,7 @@ namespace Meadow.Foundation.Sensors.Accelerometers
             ushort tempRaw = (ushort)(i2cComms.ReadRegister(TEMPERATURE_1) << 8 | i2cComms.ReadRegister(TEMPERATURE_0));
             double tempC;
 
-            double degreePerByte = 0.001953125; //in celcius
+            double degreePerByte = 0.001953125; //in celsius
 
             if (tempRaw < 0x8000)
             {
@@ -301,5 +303,14 @@ namespace Meadow.Foundation.Sensors.Accelerometers
             i2cComms.ReadRegister(0x0C, readBuffer);
             return readBuffer;
         }
+
+        async Task<AngularVelocity3D> ISensor<AngularVelocity3D>.Read()
+            => (await Read()).AngularVelocity3D!.Value;
+
+        async Task<Acceleration3D> ISensor<Acceleration3D>.Read()
+            => (await Read()).Acceleration3D!.Value;
+
+        async Task<Units.Temperature> ISensor<Units.Temperature>.Read()
+            => (await Read()).Temperature!.Value;
     }
 }

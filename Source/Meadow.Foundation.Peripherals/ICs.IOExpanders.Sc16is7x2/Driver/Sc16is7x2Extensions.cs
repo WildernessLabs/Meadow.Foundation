@@ -26,7 +26,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             StopBits stopBits = StopBits.One,
             bool invertDE = false)
         {
-            return (portName.SerialController as Sc16is7x2).CreateRs485SerialPort(portName, baudRate, dataBits, parity, stopBits, invertDE);
+            return (portName.SerialController as Sc16is7x2)!.CreateRs485SerialPort(portName, baudRate, dataBits, parity, stopBits, invertDE);
         }
     }
 }

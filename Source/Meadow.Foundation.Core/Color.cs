@@ -18,34 +18,34 @@ namespace Meadow.Foundation
         /// <summary>
         /// Get the 4bpp grayscale value for current color
         /// </summary>
-        public byte Color4bppGray => (byte)((byte)(0.2989 * R + 0.5870 * G + 0.114 * B) >> 4);
+        public readonly byte Color4bppGray => (byte)((byte)(0.2989 * R + 0.5870 * G + 0.114 * B) >> 4);
 
         /// <summary>
         /// Get the 8bpp grayscale value for current color
         /// </summary>
-        public byte Color8bppGray => (byte)(0.2989 * R + 0.5870 * G + 0.114 * B);
+        public readonly byte Color8bppGray => (byte)(0.2989 * R + 0.5870 * G + 0.114 * B);
 
         /// <summary>
         /// Get the 8bpp (332) color value for current color
         /// </summary>
-        public byte Color8bppRgb332 => (byte)((R & 0b11100000) | (G & 0b1110000) >> 3 | ((B & 0b11000000) >> 6));
+        public readonly byte Color8bppRgb332 => (byte)((R & 0b11100000) | (G & 0b1110000) >> 3 | ((B & 0b11000000) >> 6));
 
         /// <summary>
         /// Get the 12bpp (444) color value for current color
         /// </summary>
-        public ushort Color12bppRgb444 =>
+        public readonly ushort Color12bppRgb444 =>
             (ushort)(((R & 0b11110000) << 4) | (G & 0b11110000) | ((B & 0b11110000) >> 4));
 
         /// <summary>
         /// Get the 16bpp (565) color value for current color
         /// </summary>
-        public ushort Color16bppRgb565 =>
+        public readonly ushort Color16bppRgb565 =>
             (ushort)(((R & 0b11111000) << 8) | ((G & 0b11111100) << 3) | (B >> 3));
 
         /// <summary>
         /// Get the 1bpp (on or off) value for current color
         /// </summary>
-        public bool Color1bpp => R > 0 || G > 0 || B > 0;
+        public readonly bool Color1bpp => R > 0 || G > 0 || B > 0;
 
         /// <summary>
         /// Current alpha value (0-255)
@@ -121,7 +121,7 @@ namespace Meadow.Foundation
         /// <param name="red">red component of color</param>
         /// <param name="green">green component of color</param>
         /// <param name="blue">blue component of color</param>
-        /// <param name="alpha">transparancy of color</param>
+        /// <param name="alpha">transparency of color</param>
         public Color(byte red, byte green, byte blue, byte alpha = 255)
         {
             R = red;
@@ -186,7 +186,7 @@ namespace Meadow.Foundation
         }
 
         /// <summary>
-        /// Create a new color stucts from current color with new saturation
+        /// Create a new color structs from current color with new saturation
         /// </summary>
         /// <param name="saturation">saturation of new color (0-1.0)</param>
         /// <returns>new color object</returns>
@@ -273,7 +273,7 @@ namespace Meadow.Foundation
         /// Get hash of color
         /// </summary>
         /// <returns>hash as 32bit int</returns>
-        public override int GetHashCode()
+        public override readonly int GetHashCode()
         {
             return HashCode.Combine(R, G, B, A);
         }
@@ -283,7 +283,7 @@ namespace Meadow.Foundation
         /// </summary>
         /// <param name="obj"></param>
         /// <returns>true if equals</returns>
-        public override bool Equals(object obj)
+        public override readonly bool Equals(object obj)
         {
             if (obj is Color color)
             {

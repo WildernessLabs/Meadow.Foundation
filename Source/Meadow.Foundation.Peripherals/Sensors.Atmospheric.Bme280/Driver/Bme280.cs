@@ -1,5 +1,6 @@
 ﻿using Meadow.Hardware;
 using Meadow.Peripherals.Sensors;
+using Meadow.Peripherals.Sensors.Atmospheric;
 using Meadow.Units;
 using System;
 using System.Threading.Tasks;
@@ -18,22 +19,32 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     /// </remarks>
     public partial class Bme280 :
         PollingSensorBase<(Units.Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure)>,
-        ITemperatureSensor, IHumiditySensor, IBarometricPressureSensor, ISpiPeripheral, II2cPeripheral
+        ITemperatureSensor, IHumiditySensor, IBarometricPressureSensor, ISpiPeripheral, II2cPeripheral, IDisposable
     {
         /// <summary>
         /// Temperature changed event
         /// </summary>
-        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
+        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = default!;
 
         /// <summary>
         /// Pressure changed event
         /// </summary>
-        public event EventHandler<IChangeResult<Pressure>> PressureUpdated = delegate { };
+        public event EventHandler<IChangeResult<Pressure>> PressureUpdated = default!;
 
         /// <summary>
         /// Humidity changed event
         /// </summary>
-        public event EventHandler<IChangeResult<RelativeHumidity>> HumidityUpdated = delegate { };
+        public event EventHandler<IChangeResult<RelativeHumidity>> HumidityUpdated = default!;
+
+        /// <summary>
+        /// Is the object disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
+
+        /// <summary>
+        /// Did we create the port(s) used by the peripheral
+        /// </summary>
+        readonly bool createdPort = false;
 
         /// <summary>
         /// The read buffer
@@ -124,6 +135,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         public byte DefaultI2cAddress => (byte)Addresses.Default;
 
+        IDigitalOutputPort? chipSelectPort;
+
         /// <summary>
         /// Initializes a new instance of the BME280 class
         /// </summary>
@@ -143,7 +156,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <param name="chipSelectPin">The chip select pin</param>
         public Bme280(ISpiBus spiBus, IPin chipSelectPin) :
             this(spiBus, chipSelectPin.CreateDigitalOutputPort())
-        { }
+        {
+            createdPort = true;
+        }
 
         /// <summary>
         /// Initializes a new instance of the BME280 class
@@ -152,7 +167,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <param name="chipSelectPort">The port for the chip select pin</param>
         public Bme280(ISpiBus spiBus, IDigitalOutputPort chipSelectPort)
         {
-            bme280Comms = new SpiCommunications(spiBus, chipSelectPort, DefaultSpiBusSpeed, DefaultSpiBusMode);
+            bme280Comms = new SpiCommunications(spiBus, this.chipSelectPort = chipSelectPort, DefaultSpiBusSpeed, DefaultSpiBusMode);
             configuration = new Configuration(); // here to avoid the warning
             Initialize();
         }
@@ -170,7 +185,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         }
 
         /// <summary>
-        /// Raise events for subcribers and notify of value changes
+        /// Raise events for subscribers and notify of value changes
         /// </summary>
         /// <param name="changeResult">The updated sensor data</param>
         protected override void RaiseEventsAndNotify(IChangeResult<(Units.Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure)> changeResult)
@@ -201,7 +216,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// Register locations and formulas taken from the Bosch BME280 datasheet revision 1.1, May 2015.
         /// Register locations - section 5.3 Memory Map
         /// Formulas - section 4.2.3 Compensation Formulas
-        /// The integer formulas have been used to try and keep the calculations performant.
+        /// The integer formulas have been used to try and keep the calculations per formant.
         /// </remarks>
         protected override async Task<(Units.Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure)> ReadSensor()
         {
@@ -372,7 +387,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <summary>
         /// Start updating 
         /// </summary>
-        /// <param name="updateInterval">The update inveral</param>
+        /// <param name="updateInterval">The update inverval</param>
         public override void StartUpdating(TimeSpan? updateInterval = null)
         {
             configuration.Mode = Modes.Normal;
@@ -381,13 +396,37 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             base.StartUpdating(updateInterval);
         }
 
+        ///<inheritdoc/>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        /// <param name="disposing">Is disposing</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && createdPort)
+                {
+                    chipSelectPort?.Dispose();
+                }
+
+                IsDisposed = true;
+            }
+        }
+
         async Task<Units.Temperature> ISensor<Units.Temperature>.Read()
-            => (await Read()).Temperature.Value;
+            => (await Read()).Temperature!.Value;
 
         async Task<RelativeHumidity> ISensor<RelativeHumidity>.Read()
-            => (await Read()).Humidity.Value;
+            => (await Read()).Humidity!.Value;
 
         async Task<Pressure> ISensor<Pressure>.Read()
-            => (await Read()).Pressure.Value;
+            => (await Read()).Pressure!.Value;
     }
 }

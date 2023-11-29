@@ -1,9 +1,9 @@
-﻿using System;
-using System.Threading.Tasks;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Weather;
 using Meadow.Units;
+using System;
+using System.Threading.Tasks;
 
 namespace MeadowApp
 {
@@ -21,7 +21,7 @@ namespace MeadowApp
             windVane = new WindVane(Device.Pins.A00);
 
             //==== Classic event example:
-            windVane.Updated += (sender, result) => Resolver.Log.Info($"Updated event {result.New.DecimalDegrees}");
+            windVane.WindAzimuthUpdated += (sender, result) => Resolver.Log.Info($"Updated event {result.New.DecimalDegrees}");
 
             //==== IObservable Pattern
             var observer = WindVane.CreateObserver(

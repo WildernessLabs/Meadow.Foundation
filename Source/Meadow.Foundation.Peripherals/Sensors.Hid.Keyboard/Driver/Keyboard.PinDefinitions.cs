@@ -10,7 +10,7 @@ public partial class Keyboard
     /// </summary>
     public class PinDefinitions : IPinDefinitions
     {
-        private List<IPin> _keys = new List<IPin>();
+        private readonly List<IPin> _keys = new List<IPin>();
 
         /// <summary>
         /// Enumerates all pins in the keyboard
@@ -27,7 +27,7 @@ public partial class Keyboard
         /// <summary>
         /// The Keyboard associated with the pin collection
         /// </summary>
-        public IPinController Controller { get; set; }
+        public IPinController? Controller { get; set; }
 
         internal PinDefinitions(Keyboard controller)
         {

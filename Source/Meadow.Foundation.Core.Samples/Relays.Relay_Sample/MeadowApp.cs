@@ -1,9 +1,8 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Relays;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Relays.Relay_Sample
 {

@@ -1,8 +1,8 @@
-﻿using System;
-using System.Threading.Tasks;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Motion;
+using System;
+using System.Threading.Tasks;
 
 namespace Sensors.Motion.Adxl345_Sample
 {

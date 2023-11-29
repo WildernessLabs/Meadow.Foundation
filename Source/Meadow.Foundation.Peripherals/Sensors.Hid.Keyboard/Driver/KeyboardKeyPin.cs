@@ -14,14 +14,14 @@ public class KeyboardKeyPin : Pin
     /// </summary>
     public new char Key => Convert.ToChar(base.Key);
 
-    internal KeyboardKeyPin(IPinController controller, string name, char key)
+    internal KeyboardKeyPin(IPinController? controller, string name, char key)
         : base(controller, name, char.ToUpper(key),
         new List<IChannelInfo>()
         {
             new DigitalChannelInfo(name, interruptCapable: true, pullUpCapable: false, pullDownCapable: false)
         })
     {
-        if (!(controller is Keyboard))
+        if (controller is not Keyboard)
         {
             throw new ArgumentException("KeyboardKeyPins are only supported on a Keyboard");
         }

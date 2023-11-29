@@ -79,7 +79,7 @@ namespace Displays.Tft.ST7789_Sample
 
         //<!=SNOP=>
 
-        int sleepDuration = 500;
+        readonly int sleepDuration = 500;
         void DisplayTest()
         {
             Thread.Sleep(sleepDuration);

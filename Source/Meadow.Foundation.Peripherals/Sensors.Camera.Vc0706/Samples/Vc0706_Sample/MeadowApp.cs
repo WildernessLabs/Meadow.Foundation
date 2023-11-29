@@ -1,9 +1,8 @@
-﻿using System;
-using System.Threading.Tasks;
-using BitMiracle.LibJpeg;
+﻿using BitMiracle.LibJpeg;
 using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Camera;
+using System.Threading.Tasks;
 
 namespace Sensors.Camera.Vc0706_Sample
 {

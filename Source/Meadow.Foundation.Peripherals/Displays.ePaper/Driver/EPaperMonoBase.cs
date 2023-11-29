@@ -68,6 +68,7 @@ namespace Meadow.Foundation.Displays
                 busyPin.CreateDigitalInputPort(),
                 width, height)
         {
+            createdPorts = true;
         }
 
         /// <summary>
@@ -119,7 +120,7 @@ namespace Meadow.Foundation.Displays
         /// Clear the display
         /// </summary>
         /// <param name="color">Color to set the display (not used on ePaper displays)</param>
-        /// <param name="updateDisplay">Update the dipslay once the buffer has been cleared when true</param>
+        /// <param name="updateDisplay">Update the display once the buffer has been cleared when true</param>
         public void Fill(Color color, bool updateDisplay = false)
         {
             Clear(color.Color1bpp, updateDisplay);
@@ -142,7 +143,7 @@ namespace Meadow.Foundation.Displays
         /// Clear the display
         /// </summary>
         /// <param name="enabled">Set the display to the enabled or disabled color (defaults are black and white)</param>
-        /// <param name="updateDisplay">Update the dipslay once the buffer has been cleared when true</param>
+        /// <param name="updateDisplay">Update the display once the buffer has been cleared when true</param>
         public void Clear(bool enabled, bool updateDisplay = false)
         {
             imageBuffer.Clear(enabled);
@@ -281,10 +282,10 @@ namespace Meadow.Foundation.Displays
             SendCommand(Command.WRITE_RAM);
             /* send the image data */
 
-            dataCommandPort.State = DataState;
+            dataCommandPort!.State = DataState;
             for (int i = 0; i < Width / 8 * Height; i++)
             {
-                spiComms.Write(buffer[i]);
+                spiComms?.Write(buffer[i]);
             }
         }
 
@@ -408,7 +409,7 @@ namespace Meadow.Foundation.Displays
             /// </summary>
             SET_GATE_TIME = 0x3B,
             /// <summary>
-            /// Border wavefrom control
+            /// Border waveform control
             /// </summary>
             BORDER_WAVEFORM_CONTROL = 0x3C,
             /// <summary>
@@ -428,7 +429,7 @@ namespace Meadow.Foundation.Displays
             /// </summary>
             SET_RAM_Y_ADDRESS_COUNTER = 0x4F,
             /// <summary>
-            /// Terminiate frame read and write
+            /// Terminate frame read and write
             /// </summary>
             TERMINATE_FRAME_READ_WRITE = 0xFF,
         }

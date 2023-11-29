@@ -38,7 +38,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         public byte Frame { get; private set; }
 
         /// <summary>
-        /// Creaete a new Is31fl3731 object
+        /// Create a new Is31fl3731 object
         /// </summary>
         /// <param name="i2cBus">The I2C bus</param>
         /// <param name="address">The I2C address</param>

@@ -60,12 +60,15 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         protected override void Initialize()
         {
-            resetPort.State = true;
-            DelayMs(5);
-            resetPort.State = false;
-            DelayMs(120);
-            resetPort.State = true;
-            DelayMs(150);
+            if (resetPort != null)
+            {
+                resetPort.State = true;
+                DelayMs(5);
+                resetPort.State = false;
+                DelayMs(120);
+                resetPort.State = true;
+                DelayMs(150);
+            }
 
             SendCommand(0xE0); // Positive Gamma Control
             SendData(0x00);

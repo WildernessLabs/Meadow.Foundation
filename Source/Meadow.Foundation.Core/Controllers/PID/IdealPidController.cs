@@ -13,7 +13,7 @@ namespace Meadow.Foundation.Controllers.Pid
         /// <returns></returns>
         public override float CalculateControlOutput()
         {
-            var now = DateTime.Now;
+            var now = DateTime.UtcNow;
 
             // time delta (how long since last calculation)
             var dt = now - _lastUpdateTime;
@@ -38,7 +38,7 @@ namespace Meadow.Foundation.Controllers.Pid
 
             // calculate the integral
             _integral += error * seconds; // add to the integral history
-            var integral = IntegralComponent * _integral; // calcuate the integral action
+            var integral = IntegralComponent * _integral; // calculate the integral action
 
             // calculate the derivative (rate of change, slop of line) term
             var diff = error - _lastError / seconds;

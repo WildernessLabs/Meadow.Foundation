@@ -5,7 +5,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
     public partial class x74595
     {
         /// <summary>
-        /// Represents a digtial output port on the x74595
+        /// Represents a digital output port on the x74595
         /// </summary>
         public class DigitalOutputPort : DigitalOutputPortBase
         {
@@ -32,15 +32,12 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 IPin pin,
                 bool initialState,
                 OutputType outputType)
-                : base(pin, (IDigitalChannelInfo)pin.SupportedChannels[0], initialState, outputType)
+                : base(pin, (IDigitalChannelInfo)pin.SupportedChannels![0], initialState, outputType)
             {
                 this.x74595 = x74595;
             }
 
-            /// <summary>
-            /// Dispose
-            /// </summary>
-            /// <param name="disposing"></param>
+            ///<inheritdoc/>
             protected override void Dispose(bool disposing)
             {
                 if (!disposed)

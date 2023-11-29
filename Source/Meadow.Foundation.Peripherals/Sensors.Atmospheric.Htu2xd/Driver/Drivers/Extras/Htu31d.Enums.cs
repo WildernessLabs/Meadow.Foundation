@@ -28,13 +28,13 @@
             /** Read serial number command. */
             ReadSerial = 0x0A,
 
-           /** Enable heater */
+            /** Enable heater */
             HeaterOn = 0x04,
 
             /** Disable heater */
             HeaterOff = 0x02,
 
-           /** Reset command. */
+            /** Reset command. */
             Reset = 0x1e,
         }
     }

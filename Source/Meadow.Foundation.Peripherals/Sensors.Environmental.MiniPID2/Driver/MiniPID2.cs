@@ -9,17 +9,17 @@ namespace Meadow.Foundation.Sensors.Environmental
     /// <summary>
     /// Represents an IonScience MiniPID2 analog photoionisation (PID) Volatile Organic Compounds (VOC) sensor
     /// </summary>
-    public partial class MiniPID2 : SamplingSensorBase<Concentration>, IConcentrationSensor
+    public partial class MiniPID2 : SamplingSensorBase<Concentration>, IConcentrationSensor, IDisposable
     {
         /// <summary>
         /// Raised when the VOC concentration changes
         /// </summary>
-        public event EventHandler<IChangeResult<Concentration>> ConcentrationUpdated = delegate { };
+        public event EventHandler<IChangeResult<Concentration>> ConcentrationUpdated = default!;
 
         /// <summary>
         /// Raised when the VOC concentration changes
         /// </summary>
-        public event EventHandler<IChangeResult<Concentration>> VOCConcentrationUpdated = delegate { };
+        public event EventHandler<IChangeResult<Concentration>> VOCConcentrationUpdated = default!;
 
         /// <summary>
         /// The current VOC concentration value
@@ -36,7 +36,17 @@ namespace Meadow.Foundation.Sensors.Environmental
         ///</Summary>
         protected IAnalogInputPort AnalogInputPort { get; }
 
-        SensorCalibration[] calibrations;
+        /// <summary>
+        /// Is the object disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
+
+        /// <summary>
+        /// Did we create the port(s) used by the peripheral
+        /// </summary>
+        readonly bool createdPort = false;
+
+        SensorCalibration[]? calibrations;
 
         /// <summary>
         /// Create a new MiniPID2 object
@@ -54,6 +64,7 @@ namespace Meadow.Foundation.Sensors.Environmental
                 sampleInterval ?? TimeSpan.FromMilliseconds(40),
                 new Voltage(3.3, Voltage.UnitType.Volts)), pid2Type)
         {
+            createdPort = true;
         }
 
         /// <summary>
@@ -76,7 +87,7 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// <param name="sensorType">The sensor to change</param>
         public void SetOffsetForSensor(Voltage offset, MiniPID2Type sensorType)
         {
-            calibrations[(int)sensorType].Offset = offset;
+            calibrations![(int)sensorType].Offset = offset;
         }
 
         /// <summary>
@@ -85,7 +96,7 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// <param name="sensorType">The sensor</param>
         /// <returns>The offset as voltage</returns>
         public Voltage GetOffsetForSensor(MiniPID2Type sensorType)
-            => calibrations[(int)sensorType].Offset;
+            => calibrations![(int)sensorType].Offset;
 
         /// <summary>
         /// Initialize the sensor
@@ -114,7 +125,7 @@ namespace Meadow.Foundation.Sensors.Environmental
                 IAnalogInputPort.CreateObserver(
                     result =>
                     {
-                        ChangeResult<Concentration> changeResult = new ChangeResult<Concentration>()
+                        ChangeResult<Concentration> changeResult = new()
                         {
                             New = VoltageToConcentration(result.New),
                             Old = Concentration
@@ -184,7 +195,7 @@ namespace Meadow.Foundation.Sensors.Environmental
         {
             int i = (int)MiniPID2DeviceType;
 
-            var ppm = (voltage.Millivolts - calibrations[i].Offset.Millivolts) / calibrations[i].Sensitivity.Millivolts;
+            var ppm = (voltage.Millivolts - calibrations![i].Offset.Millivolts) / calibrations[i].Sensitivity.Millivolts;
 
             if (ppm < calibrations[i].MinimumDetectionLimit.PartsPerMillion)
             {
@@ -217,6 +228,30 @@ namespace Meadow.Foundation.Sensors.Environmental
             /// The minimum concentration returned by the sensor
             /// </summary>
             public Concentration MinimumDetectionLimit { get; set; }
+        }
+
+        ///<inheritdoc/>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        /// <param name="disposing">Is disposing</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && createdPort)
+                {
+                    AnalogInputPort?.Dispose();
+                }
+
+                IsDisposed = true;
+            }
         }
     }
 }

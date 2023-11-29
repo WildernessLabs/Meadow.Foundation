@@ -6,6 +6,7 @@ using Meadow.Foundation.Motors;
 using Meadow.Foundation.Sensors.Buttons;
 using Meadow.Foundation.Sensors.Rotary;
 using Meadow.Hardware;
+using Meadow.Peripherals;
 using System;
 using System.Threading.Tasks;
 
@@ -13,18 +14,17 @@ namespace Motors.Tb67h420ftg_Encoder_Sample
 {
     public class MeadowApp : App<F7FeatherV2>
     {
-        Tb67h420ftg motorDriver;
-        RotaryEncoder encoder;
-        MicroGraphics display;
-
-        PushButton button1;
-        PushButton button2;
+        private Tb67h420ftg motorDriver;
+        private RotaryEncoder encoder;
+        private MicroGraphics display;
+        private PushButton button1;
+        private PushButton button2;
 
         public override Task Initialize()
         {
             Resolver.Log.Info("Initialize...");
 
-            // this causes unterrupts to fail, for some reason:
+            // this causes interrupts to fail, for some reason:
             //IDigitalInputPort test = Device.CreateDigitalInputPort(Device.Pins.D07);
             // this does not.
             IDigitalOutputPort test = Device.CreateDigitalOutputPort(Device.Pins.D07);
@@ -64,11 +64,11 @@ namespace Motors.Tb67h420ftg_Encoder_Sample
             return base.Initialize();
         }
 
-        int forwardCount = 0;
-        int backwardsCount = 0;
-        private void Encoder_Rotated(object sender, Meadow.Peripherals.Sensors.Rotary.RotaryChangeResult e)
+        private int forwardCount = 0;
+        private int backwardsCount = 0;
+        private void Encoder_Rotated(object _, Meadow.Peripherals.Sensors.Rotary.RotaryChangeResult e)
         {
-            if (e.New == Meadow.Peripherals.Sensors.Rotary.RotationDirection.Clockwise)
+            if (e.New == RotationDirection.Clockwise)
             {
                 forwardCount++;
             }
@@ -83,7 +83,7 @@ namespace Motors.Tb67h420ftg_Encoder_Sample
             //   Resolver.Log.Info($"{++count} - {e.Direction}");
         }
 
-        void UpdateDisplay(string line1, string line2)
+        private void UpdateDisplay(string line1, string line2)
         {
             display.Clear();
             display.DrawText(0, 0, line1);
@@ -91,8 +91,8 @@ namespace Motors.Tb67h420ftg_Encoder_Sample
             display.Show();
         }
 
-        long pressed;
-        int count;
+        private long pressed;
+        private int count;
         private void Button1_PressStarted(object sender, EventArgs e)
         {
             count = forwardCount + backwardsCount;

@@ -399,7 +399,7 @@ namespace Meadow.Foundation.Displays.Lcd
         }
 
         /// <summary>
-        /// Enable or disable auto scroll if the text length exeeds the display width
+        /// Enable or disable auto scroll if the text length exceeds the display width
         /// </summary>
         /// <param name="scroll">Auto scroll if true</param>
         public void Autoscroll(bool scroll)
@@ -417,10 +417,10 @@ namespace Meadow.Foundation.Displays.Lcd
         }
 
         /// <summary>
-        /// Save a custom character to the dislay
+        /// Save a custom character to the display
         /// </summary>
         /// <param name="characterMap">The character data</param>
-        /// <param name="address">The chracter address</param>
+        /// <param name="address">The character address</param>
         public void SaveCustomCharacter(byte[] characterMap, byte address)
         {
             address &= 0x7; // we only have 8 locations 0-7

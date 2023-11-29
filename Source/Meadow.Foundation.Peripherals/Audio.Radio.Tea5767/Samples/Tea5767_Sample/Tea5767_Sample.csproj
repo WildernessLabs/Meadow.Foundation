@@ -9,10 +9,10 @@
     <AssemblyName>App</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.F7" Version="*" />
+    <PackageReference Include="Meadow.F7" Version="1.5.0" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.Foundation.Audio.Radio.Tea5767" Version="*" />
+    <PackageReference Include="Meadow.Foundation.Audio.Radio.Tea5767" Version="1.5.0" />
   </ItemGroup>
   <ItemGroup>
     <None Update="meadow.config.yaml">

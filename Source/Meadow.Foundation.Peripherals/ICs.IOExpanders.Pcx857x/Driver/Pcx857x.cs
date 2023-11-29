@@ -11,7 +11,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         II2cPeripheral, IDisposable
     {
         /// <summary>
-        /// The number of IO pins avaliable on the device
+        /// The number of IO pins available on the device
         /// </summary>
         public abstract int NumberOfPins { get; }
 
@@ -21,25 +21,34 @@ namespace Meadow.Foundation.ICs.IOExpanders
         private readonly IDictionary<IPin, DigitalInputPort> inputPorts;
         private readonly IDictionary<IPin, DigitalInterruptPort> interruptPorts;
         private readonly List<IPin> pinsInUse = new();
-        private bool isDisposed;
         private IDigitalInterruptPort? interruptPort;
-        private readonly bool createdPort = false;
+
+        /// <summary>
+        /// Is the object disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
+
+        /// <summary>
+        /// Did we create the port(s) used by the peripheral
+        /// </summary>
+        protected bool createdPorts = false;
+
 
         /// <summary>
         /// The I2C Communications object
         /// </summary>
-        protected readonly II2cCommunications i2CCommunications;
+        protected readonly II2cCommunications i2cComms;
 
         /// <summary>
         /// Creates a new Pcx857x instance
         /// </summary>
-        /// <param name="i2cBus">The I2C buss the peripheral is connected to</param>
+        /// <param name="i2cBus">The I2C bus the peripheral is connected to</param>
         /// <param name="address">The bus address of the peripheral</param>
         /// <param name="interruptPin">The interrupt pin</param>
         public Pcx857x(II2cBus i2cBus, byte address, IPin? interruptPin)
             : this(i2cBus, address, interruptPin?.CreateDigitalInterruptPort(InterruptMode.EdgeFalling))
         {
-            createdPort = true;
+            createdPorts = true;
         }
 
         /// <summary>
@@ -50,7 +59,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <param name="interruptPort">The interrupt port</param>
         public Pcx857x(II2cBus i2cBus, byte address, IDigitalInterruptPort? interruptPort = default)
         {
-            i2CCommunications = new I2cCommunications(i2cBus, address);
+            i2cComms = new I2cCommunications(i2cBus, address);
 
             this.interruptPort = interruptPort;
 
@@ -170,7 +179,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <param name="interruptMode">The port interrupt mode</param>
         /// <param name="resistorMode">The port resistor mode</param>
         /// <param name="debounceDuration">The debounce duration</param>
-        /// <param name="glitchDuration">The clitch duration - not configurable on Mcpxxxx</param>
+        /// <param name="glitchDuration">The glitch duration - not configurable on Mcpxxxx</param>
         /// <returns>IDigitalInterruptPort</returns>
         public IDigitalInterruptPort CreateDigitalInterruptPort(
             IPin pin,
@@ -282,7 +291,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             Span<byte> buffer = stackalloc byte[2];
             buffer[0] = (byte)value;
             buffer[1] = (byte)(value >> 8);
-            i2CCommunications.Write(buffer);
+            i2cComms.Write(buffer);
         }
 
         private void InterruptPortChanged(object sender, DigitalPortResult e)
@@ -305,32 +314,29 @@ namespace Meadow.Foundation.ICs.IOExpanders
         }
 
         /// <summary>
-        /// Disposes the instances resources
+        /// Dispose of the object
         /// </summary>
-        /// <param name="disposing"></param>
+        /// <param name="disposing">Is disposing</param>
         protected virtual void Dispose(bool disposing)
         {
-            if (!isDisposed)
+            if (!IsDisposed)
             {
                 if (disposing)
                 {
-                    if (createdPort && interruptPort != null)
+                    if (createdPorts)
                     {
-                        interruptPort.Dispose();
+                        interruptPort?.Dispose();
                         interruptPort = null;
                     }
                 }
 
-                isDisposed = true;
+                IsDisposed = true;
             }
         }
 
-        /// <summary>
-        /// Disposes the instances resources
-        /// </summary>
+        ///<inheritdoc/>
         public void Dispose()
         {
-            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
             Dispose(disposing: true);
             GC.SuppressFinalize(this);
         }

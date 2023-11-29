@@ -15,7 +15,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         public PinDefinitions Pins { get; } = default!;
 
         /// <summary>
-        /// The number of IO pins avaliable on the device
+        /// The number of IO pins available on the device
         /// </summary>
         public override int NumberOfPins => 16;
 
@@ -128,7 +128,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         protected override ushort ReadState()
         {
             Span<byte> buffer = stackalloc byte[2];
-            i2CCommunications.Read(buffer);
+            i2cComms.Read(buffer);
             return (ushort)((buffer[0] << 8) | buffer[1]);
         }
 
@@ -139,7 +139,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         {
             state |= directionMask;
             Span<byte> buffer = stackalloc byte[] { (byte)(state & 0xff), (byte)(state >> 8) };
-            i2CCommunications.Write(buffer);
+            i2cComms.Write(buffer);
         }
 
         /// <summary>

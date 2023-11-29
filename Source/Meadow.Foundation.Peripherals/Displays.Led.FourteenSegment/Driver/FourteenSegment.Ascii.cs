@@ -2,7 +2,7 @@
 {
     public partial class FourteenSegment
     {
-        static ushort[] fourteenSegmentASCII = {
+        static readonly ushort[] fourteenSegmentASCII = {
             0b000000000000000, /* (space) */
 			0b100000000000110, /* ! */
 			0b000001000000010, /* " */

@@ -23,7 +23,7 @@ public override Task Initialize()
     windVane = new WindVane(Device.Pins.A00);
 
     //==== Classic event example:
-    windVane.Updated += (sender, result) => Resolver.Log.Info($"Updated event {result.New.DecimalDegrees}");
+    windVane.WindAzimuthUpdated += (sender, result) => Resolver.Log.Info($"Updated event {result.New.DecimalDegrees}");
 
     //==== IObservable Pattern
     var observer = WindVane.CreateObserver(

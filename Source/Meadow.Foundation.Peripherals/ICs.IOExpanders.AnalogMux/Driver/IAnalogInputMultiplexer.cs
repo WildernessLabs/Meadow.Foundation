@@ -22,7 +22,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// Disables the multiplexer (if an enable port was provided)
         /// </summary>
         void Disable();
-        
+
         /// <summary>
         /// Enables the multiplexer (if an enable port was provided)
         /// </summary>

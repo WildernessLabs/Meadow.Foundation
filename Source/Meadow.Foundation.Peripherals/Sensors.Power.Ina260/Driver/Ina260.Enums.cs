@@ -1,9 +1,4 @@
-﻿using Meadow.Hardware;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
-
-namespace Meadow.Foundation.Sensors.Power
+﻿namespace Meadow.Foundation.Sensors.Power
 {
     public partial class Ina260
     {

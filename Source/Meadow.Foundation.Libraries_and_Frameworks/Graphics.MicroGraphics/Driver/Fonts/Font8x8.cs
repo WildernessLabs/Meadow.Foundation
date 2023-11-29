@@ -14,7 +14,7 @@
         /// Height of a character in the font.
         /// </summary>
         public int Height => 8;
-        
+
         /// <summary>
         /// Font table containing the binary representation of ASCII characters.
         /// </summary>
@@ -131,12 +131,12 @@
         {
             get
             {
-                var index = (byte) character;
+                var index = (byte)character;
                 if ((index < 32) || (index > 127))
                 {
                     return _fontTable[0x20];
                 }
-                return _fontTable[(byte) character - 0x20];
+                return _fontTable[(byte)character - 0x20];
             }
         }
     }

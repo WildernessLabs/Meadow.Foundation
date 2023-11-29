@@ -14,7 +14,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// <summary>
             /// The controller for the pin definitions
             /// </summary>
-            public IPinController Controller { get; set; }
+            public IPinController? Controller { get; set; }
 
             /// <summary>
             /// All pins
@@ -61,7 +61,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// </summary>
             public IPin GP7 => GetPin(Controller, "GP7", 0x07);
 
-            private static IPin GetPin(IPinController controller, string name, byte key)
+            private static IPin GetPin(IPinController? controller, string name, byte key)
             {
                 return new Pin(
                     controller,

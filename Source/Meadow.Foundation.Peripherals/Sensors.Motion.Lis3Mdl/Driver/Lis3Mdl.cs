@@ -11,13 +11,13 @@ namespace Meadow.Foundation.Sensors.Motion
     /// Represents a Lis3mdl, a low-power, high-performance 3-axis magnetometer from STMicroelectronics
     /// with a selectable full range of ±4 to ±16 gauss and a 16-bit resolution
     /// </summary>
-    public partial class Lis3mdl 
+    public partial class Lis3mdl
         : PollingSensorBase<MagneticField3D>, IMagnetometer, II2cPeripheral
     {
         /// <summary>
         /// Event raised when magnetic field changes
         /// </summary>
-        public event EventHandler<IChangeResult<MagneticField3D>> MagneticField3DUpdated = delegate { };
+        public event EventHandler<IChangeResult<MagneticField3D>> MagneticField3DUpdated = default!;
 
         /// <summary>
         /// Current Magnetic Field 3D
@@ -44,6 +44,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <param name="i2cBus">The I2C bus connected to the sensor</param>
         /// <param name="address">The I2C address</param>
         /// <param name="fullScale">default <see cref="FullScale"/> enumeration value to use during initialization.</param>
+        /// <param name="outputDataRate">The output data rate</param>
         public Lis3mdl(II2cBus i2cBus, byte address = (byte)Addresses.Default, FullScale fullScale = FullScale.PlusMinus4Gauss, OutputDataRate outputDataRate = OutputDataRate.Odr10Hz)
         {
             i2cComms = new I2cCommunications(i2cBus, address);
@@ -84,15 +85,15 @@ namespace Meadow.Foundation.Sensors.Motion
         {
             MagneticField3D conditions;
             var mag = ReadMagnetometerRaw();
- 
+
             conditions = GetMagneticField3D(mag.x, mag.y, mag.z);
 
             return Task.FromResult(conditions);
         }
 
-        MagneticField3D GetMagneticField3D(short rawX, short rawY, short rawZ) 
+        MagneticField3D GetMagneticField3D(short rawX, short rawY, short rawZ)
         {
-           // Get the appropriate scale factor
+            // Get the appropriate scale factor
             var scaling = currentFullScale switch
             {
                 FullScale.PlusMinus4Gauss => 6842.0,

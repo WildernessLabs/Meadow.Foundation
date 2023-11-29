@@ -7,12 +7,12 @@ namespace Meadow.Foundation.Leds
     /// <summary>
     /// Represents APA102/Dotstar Led(s)
     /// </summary>
-    public partial class Apa102 : IApa102, ISpiPeripheral
+    public partial class Apa102 : IApa102, ISpiPeripheral, IDisposable
     {
         /// <summary>
         /// The default SPI bus speed for the device
         /// </summary>
-        public Frequency DefaultSpiBusSpeed => new Frequency(6000, Frequency.UnitType.Kilohertz);
+        public Frequency DefaultSpiBusSpeed => new(6000, Frequency.UnitType.Kilohertz);
 
         /// <summary>
         /// The SPI bus speed for the device
@@ -36,6 +36,16 @@ namespace Meadow.Foundation.Leds
             get => spiComms.BusMode;
             set => spiComms.BusMode = value;
         }
+
+        /// <summary>
+        /// Is the object disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
+
+        /// <summary>
+        /// Did we create the port(s) used by the peripheral
+        /// </summary>
+        readonly bool createdPort = false;
 
         /// <summary>
         /// SPI Communication bus used to communicate with the peripheral
@@ -74,6 +84,8 @@ namespace Meadow.Foundation.Leds
         }
         float brightness = 0.5f;
 
+        IDigitalOutputPort? chipSelectPort;
+
         /// <summary>
         /// Creates a new APA102 object
         /// </summary>
@@ -81,9 +93,10 @@ namespace Meadow.Foundation.Leds
         /// <param name="chipSelectPin">Chip select pin</param>
         /// <param name="numberOfLeds">Number of leds</param>
         /// <param name="pixelOrder">Pixel color order</param>
-        public Apa102(ISpiBus spiBus, IPin chipSelectPin, int numberOfLeds, PixelOrder pixelOrder = PixelOrder.BGR)
-        : this(spiBus, numberOfLeds, pixelOrder, chipSelectPin.CreateDigitalOutputPort())
+        public Apa102(ISpiBus spiBus, IPin? chipSelectPin, int numberOfLeds, PixelOrder pixelOrder = PixelOrder.BGR)
+        : this(spiBus, numberOfLeds, pixelOrder, chipSelectPin?.CreateDigitalOutputPort() ?? null)
         {
+            createdPort = true;
         }
 
         /// <summary>
@@ -93,9 +106,9 @@ namespace Meadow.Foundation.Leds
         /// <param name="numberOfLeds">Number of leds</param>
         /// <param name="pixelOrder">Pixel color order</param>
         /// <param name="chipSelectPort">SPI chip select port (optional)</param>
-        public Apa102(ISpiBus spiBus, int numberOfLeds, PixelOrder pixelOrder = PixelOrder.BGR, IDigitalOutputPort chipSelectPort = null)
+        public Apa102(ISpiBus spiBus, int numberOfLeds, PixelOrder pixelOrder = PixelOrder.BGR, IDigitalOutputPort? chipSelectPort = null)
         {
-            spiComms = new SpiCommunications(spiBus, chipSelectPort, DefaultSpiBusSpeed, DefaultSpiBusMode);
+            spiComms = new SpiCommunications(spiBus, this.chipSelectPort = chipSelectPort, DefaultSpiBusSpeed, DefaultSpiBusMode);
             this.numberOfLeds = numberOfLeds;
             endHeaderSize = this.numberOfLeds / 16;
             Brightness = 1.0f;
@@ -108,28 +121,15 @@ namespace Meadow.Foundation.Leds
             buffer = new byte[this.numberOfLeds * 4 + StartHeaderSize + endHeaderSize];
             endHeaderIndex = buffer.Length - endHeaderSize;
 
-            switch (pixelOrder)
+            this.pixelOrder = pixelOrder switch
             {
-                case PixelOrder.RGB:
-                    this.pixelOrder = RGB;
-                    break;
-                case PixelOrder.RBG:
-                    this.pixelOrder = RBG;
-                    break;
-                case PixelOrder.GRB:
-                    this.pixelOrder = GRB;
-                    break;
-                case PixelOrder.GBR:
-                    this.pixelOrder = GBR;
-                    break;
-                case PixelOrder.BRG:
-                    this.pixelOrder = BRG;
-                    break;
-                case PixelOrder.BGR:
-                    this.pixelOrder = BGR;
-                    break;
-            }
-
+                PixelOrder.RGB => RGB,
+                PixelOrder.RBG => RBG,
+                PixelOrder.GRB => GRB,
+                PixelOrder.GBR => GBR,
+                PixelOrder.BRG => BRG,
+                _ => BGR,
+            };
             for (int i = 0; i < StartHeaderSize; i++)
             {
                 buffer[i] = 0x00;
@@ -147,7 +147,7 @@ namespace Meadow.Foundation.Leds
         }
 
         /// <summary>
-        /// Set the color of the specified LED using the global brightness balue
+        /// Set the color of the specified LED using the global brightness value
         /// </summary>
         /// <param name="index">Index of the LED to change</param>
         /// <param name="color">The color</param>
@@ -161,7 +161,7 @@ namespace Meadow.Foundation.Leds
         /// </summary>
         /// <param name="index">Index of the LED to change</param>
         /// <param name="color">The color</param>
-        /// <param name="brightness">The brighrness 0.0 - 1.0f</param>
+        /// <param name="brightness">The brightness 0.0 - 1.0f</param>
         public virtual void SetLed(int index, Color color, float brightness = 1f)
         {
             SetLed(index, new byte[] { color.R, color.G, color.B }, brightness);
@@ -182,7 +182,7 @@ namespace Meadow.Foundation.Leds
         /// </summary>
         /// <param name="index">Index of the LED to change</param>
         /// <param name="rgb">Byte array representing the color RGB values. byte[0] = Red, byte[1] = Green, byte[2] = Blue</param>
-        /// <param name="brightness">The brighrness 0.0 - 1.0f</param>
+        /// <param name="brightness">The brightness 0.0 - 1.0f</param>
         public virtual void SetLed(int index, byte[] rgb, float brightness = 1f)
         {
             if (index > numberOfLeds || index < 0)
@@ -241,6 +241,30 @@ namespace Meadow.Foundation.Leds
         public void Show(int left, int top, int right, int bottom)
         {
             Show();
+        }
+
+        ///<inheritdoc/>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        /// <param name="disposing">Is disposing</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && createdPort)
+                {
+                    chipSelectPort?.Dispose();
+                }
+
+                IsDisposed = true;
+            }
         }
     }
 }

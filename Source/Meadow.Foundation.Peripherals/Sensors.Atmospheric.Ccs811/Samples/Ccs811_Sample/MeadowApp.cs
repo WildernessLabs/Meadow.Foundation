@@ -28,7 +28,6 @@ namespace Sensors.AirQuality.Ccs811_Sample
                 },
                 filter: result =>
                 {
-                    //c# 8 pattern match syntax. checks for !null and assigns var.
                     if (result.Old is { } old)
                     {
                         return (

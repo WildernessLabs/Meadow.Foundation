@@ -1,7 +1,6 @@
 ﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Audio.Mp3;
-using System;
 using System.Threading.Tasks;
 
 namespace Audio.Mp3.Yx5300_Sample

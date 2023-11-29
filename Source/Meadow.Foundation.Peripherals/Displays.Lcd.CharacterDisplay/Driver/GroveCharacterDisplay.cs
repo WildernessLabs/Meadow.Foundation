@@ -4,12 +4,12 @@ using System.Threading;
 namespace Meadow.Foundation.Displays.Lcd
 {
     /// <summary>
-    /// Represents a Grove chracter display
+    /// Represents a Grove character display
     /// </summary>
     public class GroveCharacterDisplay : I2cCharacterDisplay
     {
         /// <summary>
-        /// Create a new Grove chracter display object
+        /// Create a new Grove character display object
         /// </summary>
         /// <param name="i2cBus">The I2C bus connected to the display</param>
         /// <param name="address">The I2C address</param>

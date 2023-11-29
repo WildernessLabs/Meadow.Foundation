@@ -20,7 +20,7 @@ public override Task Initialize()
     Resolver.Log.Info("Initializing...");
 
     var i2cBus = Device.CreateI2cBus(Meadow.Hardware.I2cBusSpeed.Standard);
-      
+
     sensor = new Scd40(i2cBus);
     var serialNum = sensor.GetSerialNumber();
     Resolver.Log.Info($"Serial: {BitConverter.ToString(serialNum)}");

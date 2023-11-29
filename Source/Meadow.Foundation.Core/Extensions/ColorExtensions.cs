@@ -18,7 +18,31 @@
         {
             Converters.HsvToRgb(hue, saturation, value, out double red, out double green, out double blue);
 
-            return new Color((byte)(red*255), (byte)(green*255), (byte)(blue*255), (byte)(alpha*255));
+            return new Color((byte)(red * 255), (byte)(green * 255), (byte)(blue * 255), (byte)(alpha * 255));
+        }
+
+        /// <summary>
+        /// Blend a new color with the current color
+        /// </summary>
+        /// <param name="color">The source color</param>
+        /// <param name="blendColor">The color to blend</param>
+        /// <param name="ratio">The ratio of the blend color to source color</param>
+        /// <returns>The resulting blended color</returns>
+        public static Color Blend(this Color color, Color blendColor, double ratio)
+        {
+            if (ratio == 0)
+            {
+                return color;
+            }
+            if (ratio == 1)
+            {
+                return blendColor;
+            }
+
+            byte r = (byte)(color.R * (1 - ratio) + blendColor.R * ratio);
+            byte g = (byte)(color.G * (1 - ratio) + blendColor.G * ratio);
+            byte b = (byte)(color.B * (1 - ratio) + blendColor.B * ratio);
+            return Color.FromRgb(r, g, b);
         }
     }
 }
