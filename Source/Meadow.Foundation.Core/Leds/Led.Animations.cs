@@ -9,7 +9,7 @@ namespace Meadow.Foundation.Leds
     /// </summary>
     public partial class Led
     {
-        private object syncRoot = new object();
+        private readonly object syncRoot = new object();
 
         private Task? animationTask = null;
         private CancellationTokenSource? cancellationTokenSource = null;

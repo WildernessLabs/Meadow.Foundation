@@ -2,7 +2,6 @@
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Atmospheric;
 using System;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace Ms5611_Sample
@@ -26,7 +25,6 @@ namespace Ms5611_Sample
                 },
                 filter: result =>
                 {
-                    //c# 8 pattern match syntax. checks for !null and assigns var.
                     if (result.Old is { } old)
                     {
                         return (
@@ -40,7 +38,8 @@ namespace Ms5611_Sample
             );
             sensor.Subscribe(consumer);
 
-            sensor.Updated += (sender, result) => {
+            sensor.Updated += (sender, result) =>
+            {
                 Resolver.Log.Info($"  Temperature: {result.New.Temperature?.Celsius:N2}C");
                 Resolver.Log.Info($"  Pressure: {result.New.Pressure?.Millibar:N2}mbar ({result.New.Pressure?.Pascal:N2}Pa)");
             };

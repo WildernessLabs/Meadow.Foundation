@@ -27,9 +27,9 @@ private void Sensor_ChannelStatusesChanged(object sender, ChannelStatusChangedEv
 {
     string pads = string.Empty;
 
-    for(int i = 0; i < e.ChannelStatus.Count; i++)
+    for (int i = 0; i < e.ChannelStatus.Count; i++)
     {
-        if(e.ChannelStatus[(Mpr121.Channels)i] == true)
+        if (e.ChannelStatus[(Mpr121.Channels)i] == true)
         {
             pads += i + ", ";
         }

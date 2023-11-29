@@ -6,7 +6,7 @@ namespace Meadow.Foundation.Displays.UI;
 
 public class MeadowApp : App<Windows>
 {
-    private DisplayScreen _screen;
+    private DisplayScreen? _screen;
 
     public static async Task Main(string[] args)
     {

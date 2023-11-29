@@ -28,8 +28,8 @@
         /// <summary>
         /// Create a new size struct
         /// </summary>
-        /// <param name="width">The intial width</param>
-        /// <param name="height">The intial height</param>
+        /// <param name="width">The initial width</param>
+        /// <param name="height">The initial height</param>
         public Size(int width, int height)
         {
             Width = width;

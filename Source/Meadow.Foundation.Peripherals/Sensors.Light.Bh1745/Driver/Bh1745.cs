@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace Meadow.Foundation.Sensors.Light
 {
     /// <summary>
-    /// Represents a BH1745 Luminance and Colour Sensor
+    /// Represents a BH1745 Luminance and Color Sensor
     /// </summary>
     public partial class Bh1745
         : ByteCommsSensorBase<(Illuminance? AmbientLight, Color? Color, bool Valid)>,
@@ -17,7 +17,7 @@ namespace Meadow.Foundation.Sensors.Light
         /// <summary>
         /// Raised when the luminosity changes
         /// </summary>
-        public event EventHandler<IChangeResult<Illuminance>> LuminosityUpdated = delegate { };
+        public event EventHandler<IChangeResult<Illuminance>> IlluminanceUpdated = default!;
 
         /// <summary>
         /// The current Illuminance value
@@ -278,14 +278,14 @@ namespace Meadow.Foundation.Sensors.Light
         }
 
         /// <summary>
-        /// Raise events for subcribers and notify of value changes
+        /// Raise events for subscribers and notify of value changes
         /// </summary>
         /// <param name="changeResult">The updated sensor data</param>
         protected override void RaiseEventsAndNotify(IChangeResult<(Illuminance? AmbientLight, Color? Color, bool Valid)> changeResult)
         {
             if (changeResult.New.AmbientLight is { } ambient)
             {
-                LuminosityUpdated?.Invoke(this, new ChangeResult<Illuminance>(ambient, changeResult.Old?.AmbientLight));
+                IlluminanceUpdated?.Invoke(this, new ChangeResult<Illuminance>(ambient, changeResult.Old?.AmbientLight));
             }
             base.RaiseEventsAndNotify(changeResult);
         }
@@ -356,6 +356,6 @@ namespace Meadow.Foundation.Sensors.Light
         protected ushort ReadClearDataRegister() => BusComms.ReadRegisterAsUShort(Registers.CLEAR_DATA);
 
         async Task<Illuminance> ISensor<Illuminance>.Read()
-            => (await Read()).AmbientLight.Value;
+            => (await Read()).AmbientLight!.Value;
     }
 }

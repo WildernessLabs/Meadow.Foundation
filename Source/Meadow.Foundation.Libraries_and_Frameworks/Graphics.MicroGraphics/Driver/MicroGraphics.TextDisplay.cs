@@ -47,9 +47,12 @@ namespace Meadow.Foundation.Graphics
 
         void DrawCursor()
         {
-            InvertRectangle(CursorColumn * currentFont.Width * DisplayConfig.FontScale,
-                CursorLine * currentFont.Height * DisplayConfig.FontScale,
-                currentFont.Width, currentFont.Height);
+            if (currentFont != null)
+            {
+                InvertRectangle(CursorColumn * currentFont.Width * DisplayConfig.FontScale,
+                    CursorLine * currentFont.Height * DisplayConfig.FontScale,
+                    currentFont.Width, currentFont.Height);
+            }
         }
 
         /// <summary>

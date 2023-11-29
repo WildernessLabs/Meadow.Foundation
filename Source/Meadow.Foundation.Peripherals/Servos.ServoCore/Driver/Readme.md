@@ -25,7 +25,7 @@ public override Task Initialize()
 }
 
 public async override Task Run()
-{ 
+{
     await servo.RotateTo(new Angle(0, AU.Degrees));
 
     while (true)

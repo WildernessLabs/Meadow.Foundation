@@ -49,7 +49,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <summary>
         /// The I2C bus connected to the pca9685
         /// </summary>
-        protected II2cBus i2CBus { get; set; }
+        protected II2cBus i2cBus { get; set; }
 
         readonly byte address;
 
@@ -61,9 +61,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <param name="address">The I2C address</param>
         public Pca9685(II2cBus i2cBus, Frequency frequency, byte address = (byte)Addresses.Default)
         {
-            i2CBus = i2cBus;
+            this.i2cBus = i2cBus;
             this.address = address;
-            i2cComms = new I2cCommunications(i2CBus, address);
+            i2cComms = new I2cCommunications(this.i2cBus, address);
             this.frequency = frequency;
         }
 
@@ -81,8 +81,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         public virtual void Initialize()
         {
-            i2CBus.Write(address, new byte[] { Mode1, 0x00 });
-            i2CBus.Write(address, new byte[] { Mode1 });
+            i2cBus.Write(address, new byte[] { Mode1, 0x00 });
+            i2cBus.Write(address, new byte[] { Mode1 });
 
             Thread.Sleep(5);
 
@@ -107,7 +107,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 throw new ArgumentException("Value must be between 0 and 15", "portNumber");
             }
 
-            var pwmPort = new PwmPort(i2CBus, address, Led0OnL, frequency, portNumber, dutyCycle);
+            var pwmPort = new PwmPort(i2cBus, address, Led0OnL, frequency, portNumber, dutyCycle);
 
             return pwmPort;
         }
@@ -138,8 +138,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// Set the values for specified output pin.
         /// </summary>
         /// <param name="pin">The pwm Pin</param>
-        /// <param name="on">LED{X}_ON_L and LED{X}_ON_H registier value</param>
-        /// <param name="off">LED{X}_OFF_L and LED{X}_OFF_H registier value</param>
+        /// <param name="on">LED{X}_ON_L and LED{X}_ON_H register value</param>
+        /// <param name="off">LED{X}_OFF_L and LED{X}_OFF_H register value</param>
         /// <remarks>On parameter is an inverted pwm signal</remarks>
         public virtual void SetPwm(byte pin, int on, int off)
         {
@@ -163,7 +163,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
         void Write(byte register, byte ledXOnL, byte ledXOnH, byte ledXOffL, byte ledXOffH)
         {
-            i2CBus.Write(address, new byte[] { register, ledXOnL, ledXOnH, ledXOffL, ledXOffH });
+            i2cBus.Write(address, new byte[] { register, ledXOnL, ledXOnH, ledXOffL, ledXOffH });
         }
 
         void Write(byte register, byte value)

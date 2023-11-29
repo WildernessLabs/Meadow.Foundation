@@ -1,5 +1,8 @@
 <Project Sdk="Meadow.Sdk/1.1.0">
   <PropertyGroup>
+    <PackageReadmeFile>Readme.md</PackageReadmeFile>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <LangVersion>10.0</LangVersion>
     <Nullable>enable</Nullable>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageIcon>icon.png</PackageIcon>
@@ -17,7 +20,8 @@
     <Description>BG95-M3 Cellular / GNSS controller</Description>
   </PropertyGroup>
   <ItemGroup>
+    <None Include=".\Readme.md" Pack="true" PackagePath=""/>
   <None Include="..\..\..\icon.png" Pack="true" PackagePath="" />
-    <PackageReference Include="Meadow.Foundation.Sensors.Location.Gnss.NmeaProcessor" Version="*" />
+    <PackageReference Include="Meadow.Foundation.Sensors.Location.Gnss.NmeaProcessor" Version="1.5.0" />
   </ItemGroup>
 </Project>

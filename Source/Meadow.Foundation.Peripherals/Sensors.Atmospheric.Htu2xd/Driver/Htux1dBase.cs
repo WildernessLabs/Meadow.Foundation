@@ -1,5 +1,6 @@
 ﻿using Meadow.Hardware;
 using Meadow.Peripherals.Sensors;
+using Meadow.Peripherals.Sensors.Atmospheric;
 using Meadow.Units;
 using System;
 using System.Threading.Tasks;
@@ -31,12 +32,12 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <summary>
         /// Temperature changed event
         /// </summary>
-        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
+        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = default!;
 
         /// <summary>
         /// Humidity changed event
         /// </summary>
-        public event EventHandler<IChangeResult<RelativeHumidity>> HumidityUpdated = delegate { };
+        public event EventHandler<IChangeResult<RelativeHumidity>> HumidityUpdated = default!;
 
         /// <summary>
         /// The default I2C address for the peripheral
@@ -92,9 +93,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         }
 
         async Task<Units.Temperature> ISensor<Units.Temperature>.Read()
-            => (await Read()).Temperature.Value;
+            => (await Read()).Temperature!.Value;
 
         async Task<RelativeHumidity> ISensor<RelativeHumidity>.Read()
-            => (await Read()).Humidity.Value;
+            => (await Read()).Humidity!.Value;
     }
 }

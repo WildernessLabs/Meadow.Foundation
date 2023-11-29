@@ -1,4 +1,5 @@
 ﻿using Meadow.Hardware;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -7,15 +8,25 @@ namespace Meadow.Foundation.Displays.Led
     /// <summary>
     /// Four Digit Seven Segment Display
     /// </summary>
-    public class FourDigitSevenSegment
+    public class FourDigitSevenSegment : IDisposable
     {
-        CancellationTokenSource cts = null;
+        /// <summary>
+        /// Is the object disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
+
+        /// <summary>
+        /// Did we create the port(s) used by the peripheral
+        /// </summary>
+        readonly bool createdPorts = false;
+
+        CancellationTokenSource? cts = null;
 
         readonly IDigitalOutputPort[] digits;
         readonly SevenSegment[] sevenSegments;
 
         /// <summary>
-        /// Creates a SevenSegment connected to the especified IPins to a IODevice
+        /// Creates a SevenSegment connected to the specified IPins to a IODevice
         /// </summary>
         /// <param name="pinDigit1">Digit 1 pin</param>
         /// <param name="pinDigit2">Digit 2 pin</param>
@@ -52,10 +63,12 @@ namespace Meadow.Foundation.Displays.Led
                 pinG.CreateDigitalOutputPort(),
                 pinDecimal.CreateDigitalOutputPort(),
                 isCommonCathode)
-        { }
+        {
+            createdPorts = true;
+        }
 
         /// <summary>
-        /// Creates a SevenSegment connected to the especified IDigitalOutputPorts
+        /// Creates a SevenSegment connected to the specified IDigitalOutputPorts
         /// </summary>
         /// <param name="portDigit1">Port for digit 1</param>
         /// <param name="portDigit2">Port for digit 2</param>
@@ -97,7 +110,7 @@ namespace Meadow.Foundation.Displays.Led
         /// <summary>
         /// Displays the specified characters
         /// </summary>
-        /// <param name="characters">The chracters to display</param>
+        /// <param name="characters">The characters to display</param>
         /// <param name="decimalLocation">The decimal position (0 indexed)</param>
         public void SetDisplay(string characters, int decimalLocation = -1)
         {
@@ -107,11 +120,11 @@ namespace Meadow.Foundation.Displays.Led
         /// <summary>
         /// Displays the specified characters
         /// </summary>
-        /// <param name="characters">The chracters to display</param>
+        /// <param name="characters">The characters to display</param>
         /// <param name="decimalLocation">The decimal position (0 indexed)</param>
         public void SetDisplay(char[] characters, int decimalLocation = -1)
         {
-            if (!cts.Token.IsCancellationRequested)
+            if (cts != null && !cts.Token.IsCancellationRequested)
             {
                 cts.Cancel();
             }
@@ -139,6 +152,33 @@ namespace Meadow.Foundation.Displays.Led
                 }
 
                 await Task.Delay(7);
+            }
+        }
+
+        ///<inheritdoc/>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        /// <param name="disposing">Is disposing</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && createdPorts)
+                {
+                    foreach (var port in digits)
+                    {
+                        port.Dispose();
+                    }
+                }
+
+                IsDisposed = true;
             }
         }
     }

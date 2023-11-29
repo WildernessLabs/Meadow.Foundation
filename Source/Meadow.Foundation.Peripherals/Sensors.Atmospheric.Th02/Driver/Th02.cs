@@ -1,5 +1,6 @@
 ﻿using Meadow.Hardware;
 using Meadow.Peripherals.Sensors;
+using Meadow.Peripherals.Sensors.Atmospheric;
 using Meadow.Units;
 using System;
 using System.Threading;
@@ -9,7 +10,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 {
     /// <summary>
     /// Represents a TH02 temperature and relative humidity sensor by Seeed Studio
-    /// Found in the Grove Temperature and Humidiy Sensor (High-Accuracy and Mini)
+    /// Found in the Grove Temperature and Humidity Sensor (High-Accuracy and Mini)
     /// </summary>
     public partial class Th02 :
         ByteCommsSensorBase<(Units.Temperature? Temperature, RelativeHumidity? Humidity)>,
@@ -18,15 +19,15 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <summary>
         /// Event raised when the temperature changes
         /// </summary>
-        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
+        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = default!;
 
         /// <summary>
         /// Event raised when the humidity changes 
         /// </summary>
-        public event EventHandler<IChangeResult<RelativeHumidity>> HumidityUpdated = delegate { };
+        public event EventHandler<IChangeResult<RelativeHumidity>> HumidityUpdated = default!;
 
         /// <summary>
-        /// The current temperatute
+        /// The current temperature
         /// </summary>
         public Units.Temperature? Temperature => Conditions.Temperature;
 
@@ -109,9 +110,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         }
 
         async Task<Units.Temperature> ISensor<Units.Temperature>.Read()
-            => (await Read()).Temperature.Value;
+            => (await Read()).Temperature!.Value;
 
         async Task<RelativeHumidity> ISensor<RelativeHumidity>.Read()
-            => (await Read()).Humidity.Value;
+            => (await Read()).Humidity!.Value;
     }
 }

@@ -29,7 +29,6 @@ namespace Sensors.Atmospheric.HC2_Sample
                 },
                 filter: result =>
                 {
-                    // C# 8 pattern match syntax. checks for !null and assigns var.
                     if (result.Old is { } old)
                     {
                         if (result.New.Temperature.HasValue && old.Temperature.HasValue)

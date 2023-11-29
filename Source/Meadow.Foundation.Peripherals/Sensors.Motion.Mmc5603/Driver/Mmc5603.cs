@@ -22,7 +22,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         /// Raised when the magnetic field value changes
         /// </summary>
-        public event EventHandler<IChangeResult<MagneticField3D>> MagneticField3DUpdated = delegate { };
+        public event EventHandler<IChangeResult<MagneticField3D>> MagneticField3DUpdated = default!;
 
         /// <summary>
         /// The current magnetic field value
@@ -50,7 +50,7 @@ namespace Meadow.Foundation.Sensors.Motion
 
             if (deviceID != 0x10)
             {
-                throw new Exception("Unknown device ID, " + deviceID + " retruend, 0xc4 expected");
+                throw new Exception("Unknown device ID, " + deviceID + " returned, 0xc4 expected");
             }
 
             Reset();
@@ -91,7 +91,7 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         /// <summary>
-        /// Raise events for subcribers and notify of value changes
+        /// Raise events for subscribers and notify of value changes
         /// </summary>
         /// <param name="changeResult">The updated sensor data</param>
         protected override void RaiseEventsAndNotify(IChangeResult<MagneticField3D> changeResult)
@@ -163,7 +163,7 @@ namespace Meadow.Foundation.Sensors.Motion
         {
             if (ContinuousModeEnabled)
             {
-                throw new Exception("Cannot read temperature while continous sampling mode is enabled");
+                throw new Exception("Cannot read temperature while continuous sampling mode is enabled");
             }
 
             if (IsTemperatureDataReady() == false)

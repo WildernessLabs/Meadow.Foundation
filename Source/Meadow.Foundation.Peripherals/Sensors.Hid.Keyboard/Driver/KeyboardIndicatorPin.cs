@@ -10,14 +10,14 @@ namespace Meadow.Foundation.Sensors.Hid;
 /// </summary>
 public class KeyboardIndicatorPin : Pin
 {
-    internal KeyboardIndicatorPin(IPinController controller, string name, Indicators key)
+    internal KeyboardIndicatorPin(IPinController? controller, string name, Indicators key)
         : base(controller, name, key,
         new List<IChannelInfo>()
         {
             new DigitalChannelInfo(name, inputCapable: false, outputCapable: true, interruptCapable: false, pullUpCapable: false, pullDownCapable: false)
         })
     {
-        if (!(controller is Keyboard))
+        if (controller is not Keyboard)
         {
             throw new ArgumentException("KeyboardIndicatorPins are only supported on a Keyboard");
         }
@@ -30,7 +30,10 @@ public class KeyboardIndicatorPin : Pin
     /// <returns></returns>
     public override bool Equals(IPin? other)
     {
-        if (other == null) return false;
-        return this.Key.Equals(other.Key);
+        if (other == null)
+        {
+            return false;
+        }
+        return Key.Equals(other.Key);
     }
 }

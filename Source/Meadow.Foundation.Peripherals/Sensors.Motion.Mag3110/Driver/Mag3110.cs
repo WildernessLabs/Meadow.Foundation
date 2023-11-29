@@ -22,17 +22,17 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         /// Raised when the magnetic field value changes
         /// </summary>
-        public event EventHandler<IChangeResult<MagneticField3D>> MagneticField3DUpdated = delegate { };
+        public event EventHandler<IChangeResult<MagneticField3D>> MagneticField3DUpdated = default!;
 
         /// <summary>
         /// Raised when the temperature value changes
         /// </summary>
-        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
+        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = default!;
 
         /// <summary>
         /// Interrupt port used to detect then end of a conversion
         /// </summary>
-        protected readonly IDigitalInterruptPort interruptPort;
+        protected readonly IDigitalInterruptPort? interruptPort;
 
         /// <summary>
         /// The current magnetic field value
@@ -40,7 +40,7 @@ namespace Meadow.Foundation.Sensors.Motion
         public MagneticField3D? MagneticField3D => Conditions.MagneticField3D;
 
         /// <summary>
-        /// Current emperature of the die
+        /// Current temperature of the die
         /// </summary>
         public Units.Temperature? Temperature => Conditions.Temperature;
 
@@ -114,13 +114,13 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <param name="interruptPort">Interrupt port used to detect end of conversions</param>
         /// <param name="address">Address of the MAG3110 (default = 0x0e)</param>
         /// <param name="i2cBus">I2C bus object - default = 400 KHz)</param>        
-        public Mag3110(II2cBus i2cBus, IDigitalInterruptPort interruptPort = null, byte address = (byte)Addresses.Default)
+        public Mag3110(II2cBus i2cBus, IDigitalInterruptPort? interruptPort = null, byte address = (byte)Addresses.Default)
             : base(i2cBus, address)
         {
             var deviceID = BusComms.ReadRegister(Registers.WHO_AM_I);
             if (deviceID != 0xc4)
             {
-                throw new Exception("Unknown device ID, " + deviceID + " retruend, 0xc4 expected");
+                throw new Exception("Unknown device ID, " + deviceID + " returned, 0xc4 expected");
             }
 
             if (interruptPort != null)
@@ -147,7 +147,7 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         /// <summary>
-        /// Raise events for subcribers and notify of value changes
+        /// Raise events for subscribers and notify of value changes
         /// </summary>
         /// <param name="changeResult">The updated sensor data</param>
         protected override void RaiseEventsAndNotify(IChangeResult<(MagneticField3D? MagneticField3D, Units.Temperature? Temperature)> changeResult)
@@ -206,9 +206,9 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         async Task<Units.Temperature> ISensor<Units.Temperature>.Read()
-            => (await Read()).Temperature.Value;
+            => (await Read()).Temperature!.Value;
 
         async Task<MagneticField3D> ISensor<MagneticField3D>.Read()
-            => (await Read()).MagneticField3D.Value;
+            => (await Read()).MagneticField3D!.Value;
     }
 }

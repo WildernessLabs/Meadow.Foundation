@@ -27,17 +27,20 @@ public override Task Initialize()
     var consumer = Tsl2591.CreateObserver(
         handler: result => Resolver.Log.Info($"Observer: filter satisfied: {result.New.VisibleLight?.Lux:N2}Lux, old: {result.Old?.VisibleLight?.Lux:N2}Lux"),
         // only notify if the visible light changes by 100 lux (put your hand over the sensor to trigger)
-        filter: result => {
-            if (result.Old is { } old) { //c# 8 pattern match syntax. checks for !null and assigns var.
+        filter: result =>
+        {
+            if (result.Old is { } old)
+            {
                 // returns true if > 100lux change
-                return ( (result.New.VisibleLight.Value - old.VisibleLight.Value).Abs().Lux > 100 ); 
+                return ((result.New.VisibleLight.Value - old.VisibleLight.Value).Abs().Lux > 100);
             }
             return false;
         });
     sensor.Subscribe(consumer);
 
     // classical .NET events can also be used:
-    sensor.Updated += (sender, result) => {
+    sensor.Updated += (sender, result) =>
+    {
         Resolver.Log.Info($"  Full Spectrum Light: {result.New.FullSpectrum?.Lux:N2}Lux");
         Resolver.Log.Info($"  Infrared Light: {result.New.Infrared?.Lux:N2}Lux");
         Resolver.Log.Info($"  Visible Light: {result.New.VisibleLight?.Lux:N2}Lux");

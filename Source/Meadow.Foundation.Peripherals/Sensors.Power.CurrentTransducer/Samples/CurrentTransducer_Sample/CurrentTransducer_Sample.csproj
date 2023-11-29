@@ -11,8 +11,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.F7" Version="*" />
-    <PackageReference Include="Meadow.Foundation.Sensors.Power.CurrentTransducer" Version="*" />
+    <PackageReference Include="Meadow.F7" Version="1.5.0" />
+    <PackageReference Include="Meadow.Foundation.Sensors.Power.CurrentTransducer" Version="1.5.0" />
   </ItemGroup>
   <ItemGroup>
     <None Update="meadow.config.yaml">

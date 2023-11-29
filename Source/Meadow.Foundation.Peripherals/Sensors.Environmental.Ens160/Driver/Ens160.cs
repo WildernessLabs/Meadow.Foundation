@@ -20,22 +20,22 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// <summary>
         /// Raised when the CO2 concentration changes
         /// </summary>
-        public event EventHandler<IChangeResult<Concentration>> ConcentrationUpdated = delegate { };
+        public event EventHandler<IChangeResult<Concentration>> ConcentrationUpdated = default!;
 
         /// <summary>
         /// Raised when the CO2 concentration changes
         /// </summary>
-        public event EventHandler<IChangeResult<Concentration>> CO2ConcentrationUpdated = delegate { };
+        public event EventHandler<IChangeResult<Concentration>> CO2ConcentrationUpdated = default!;
 
         /// <summary>
         /// Raised when the ethanol concentration changes
         /// </summary>
-        public event EventHandler<IChangeResult<Concentration>> EthanolConcentrationUpdated = delegate { };
+        public event EventHandler<IChangeResult<Concentration>> EthanolConcentrationUpdated = default!;
 
         /// <summary>
         /// Raised when the Total Volatile Organic Compounds (TVOC) concentration changes
         /// </summary>
-        public event EventHandler<IChangeResult<Concentration>> TVOCConcentrationUpdated = delegate { };
+        public event EventHandler<IChangeResult<Concentration>> TVOCConcentrationUpdated = default!;
 
         /// <summary>
         /// The current C02 concentration value
@@ -93,8 +93,8 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// </summary>
         protected async Task Initialize()
         {
-            BusComms.WriteRegister((byte)Registers.COMMAND, (byte)Commands.NOP);
-            BusComms.WriteRegister((byte)Registers.COMMAND, (byte)Commands.CLRGPR);
+            BusComms?.WriteRegister((byte)Registers.COMMAND, (byte)Commands.NOP);
+            BusComms?.WriteRegister((byte)Registers.COMMAND, (byte)Commands.CLRGPR);
 
             await Task.Delay(10);
             await Reset();
@@ -106,7 +106,7 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// <returns></returns>
         public Task Reset()
         {
-            BusComms.WriteRegister((byte)Registers.OPMODE, (byte)OperatingMode.Reset);
+            BusComms?.WriteRegister((byte)Registers.OPMODE, (byte)OperatingMode.Reset);
             return Task.Delay(10);
         }
 
@@ -123,7 +123,7 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// <summary>
         /// Get the sensor app / firmware version
         /// </summary>
-        /// <returns>The major, minor, release values as a ttuple of bytes</returns>
+        /// <returns>The major, minor, release values as a tuple of bytes</returns>
         public (byte Major, byte Minor, byte Release) GetFirmwareVersion()
         {
             BusComms.WriteRegister((byte)Registers.COMMAND, (byte)Commands.GET_APPVER);
@@ -288,6 +288,6 @@ namespace Meadow.Foundation.Sensors.Environmental
         }
 
         async Task<Concentration> ISensor<Concentration>.Read()
-            => (await Read()).CO2Concentration.Value;
+            => (await Read()).CO2Concentration!.Value;
     }
 }

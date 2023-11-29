@@ -11,14 +11,14 @@ namespace Meadow.Foundation.Sensors.Gnss
     /// <summary>
     /// Represents a NEO-M8 GNSS module
     /// </summary>
-    public partial class NeoM8 : IGnssSensor
+    public partial class NeoM8 : IGnssSensor, IDisposable
     {
-        NmeaSentenceProcessor nmeaProcessor;
+        NmeaSentenceProcessor? nmeaProcessor;
 
         /// <summary>
         /// Raised when GNSS data is received
         /// </summary>
-        public event EventHandler<IGnssResult> GnssDataReceived = delegate { };
+        public event EventHandler<IGnssResult> GnssDataReceived = default!;
 
         /// <summary>
         /// Supported GNSS result types
@@ -33,49 +33,59 @@ namespace Meadow.Foundation.Sensors.Gnss
         /// <summary>
         /// Raised when GGA position data is received
         /// </summary>
-        public event EventHandler<GnssPositionInfo> GgaReceived = delegate { };
+        public event EventHandler<GnssPositionInfo> GgaReceived = default!;
 
         /// <summary>
         /// Raised when GLL position data is received
         /// </summary>
-        public event EventHandler<GnssPositionInfo> GllReceived = delegate { };
+        public event EventHandler<GnssPositionInfo> GllReceived = default!;
 
         /// <summary>
         /// Raised when GSA satellite data is received
         /// </summary>
-        public event EventHandler<ActiveSatellites> GsaReceived = delegate { };
+        public event EventHandler<ActiveSatellites> GsaReceived = default!;
 
         /// <summary>
         /// Raised when RMC position data is received
         /// </summary>
-        public event EventHandler<GnssPositionInfo> RmcReceived = delegate { };
+        public event EventHandler<GnssPositionInfo> RmcReceived = default!;
 
         /// <summary>
         /// Raised when VTG course over ground data is received
         /// </summary>
-        public event EventHandler<CourseOverGround> VtgReceived = delegate { };
+        public event EventHandler<CourseOverGround> VtgReceived = default!;
 
         /// <summary>
         /// Raised when GSV satellite data is received
         /// </summary>
-        public event EventHandler<SatellitesInView> GsvReceived = delegate { };
+        public event EventHandler<SatellitesInView> GsvReceived = default!;
 
         /// <summary>
         /// NeoM8 pulse per second port
         /// </summary>
-        public IDigitalInputPort PulsePerSecondPort { get; }
+        public IDigitalInputPort? PulsePerSecondPort { get; }
 
         /// <summary>
         /// NeoM8 reset port
         /// Initialize high to enable the device
         /// </summary>
-        protected IDigitalOutputPort ResetPort { get; }
+        protected IDigitalOutputPort? ResetPort { get; }
+
+        /// <summary>
+        /// Is the object disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
+
+        /// <summary>
+        /// Did we create the port(s) used by the peripheral
+        /// </summary>
+        readonly bool createdPorts = false;
 
         CommunicationMode communicationMode;
 
-        SerialMessageProcessor messageProcessor;
+        SerialMessageProcessor? messageProcessor;
 
-        CancellationTokenSource cts;
+        CancellationTokenSource? cts;
 
         const byte BUFFER_SIZE = 128;
         const byte COMMS_SLEEP_MS = 200;
@@ -189,6 +199,32 @@ namespace Meadow.Foundation.Sensors.Gnss
             string msg = e.GetMessageString(Encoding.ASCII);
 
             nmeaProcessor?.ProcessNmeaMessage(msg);
+        }
+
+        ///<inheritdoc/>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        /// <param name="disposing">Is disposing</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && createdPorts)
+                {
+                    resetPort?.Dispose();
+                    ppsPort?.Dispose();
+                    chipSelectPort?.Dispose();
+                }
+
+                IsDisposed = true;
+            }
         }
     }
 }

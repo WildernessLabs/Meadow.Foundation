@@ -35,9 +35,10 @@ namespace Sensors.Temperature.MCP9601_Sample
             Resolver.Log.Info($"Temperature hot: {e.New.TemperatureHot.Value.Celsius:n2}C, Temperature cold: {e.New.TemperatureCold.Value.Celsius:n2}C");
         }
 
-        public override async Task Run()
+        public override Task Run()
         {
             sensor.StartUpdating();
+            return Task.CompletedTask;
         }
 
         //<!=SNOP=>

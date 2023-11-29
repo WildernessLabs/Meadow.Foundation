@@ -72,27 +72,21 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 Distance = newDistance;
             }
 
-            /// <summary>
-            /// Dispose
-            /// </summary>
-            /// <param name="disposing">True if disposing</param>
-            protected virtual void Dispose(bool disposing)
+            ///<inheritdoc/>
+            protected override void Dispose(bool disposing)
             {
                 if (!disposed)
                 {
                     if (disposing)
                     {
-                        // TODO: dispose managed state (managed objects)
                     }
 
                     disposed = true;
                 }
             }
 
-            /// <summary>
-            /// Dispose
-            /// </summary>
-            public void Dispose()
+            ///<inheritdoc/>
+            public new void Dispose()
             {
                 Dispose(disposing: true);
                 GC.SuppressFinalize(this);

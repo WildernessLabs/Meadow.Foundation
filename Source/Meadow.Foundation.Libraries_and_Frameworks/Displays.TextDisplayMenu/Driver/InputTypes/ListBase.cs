@@ -20,7 +20,7 @@ namespace Meadow.Foundation.Displays.UI.InputTypes
         /// <summary>
         /// The value changed event handler
         /// </summary>
-        public override event ValueChangedHandler ValueChanged = delegate { };
+        public override event ValueChangedHandler ValueChanged = default!;
 
         /// <summary>
         /// The output display text

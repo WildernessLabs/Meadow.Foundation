@@ -3,7 +3,7 @@
     public partial class Pcx857x
     {
         /// <summary>
-        /// Helper method to get address from address pin configuation
+        /// Helper method to get address from address pin configuration
         /// </summary>
         /// <param name="pinA0">State of A0 address pin - true if high</param>
         /// <param name="pinA1">State of A1 address pin - true if high</param>

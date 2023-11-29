@@ -8,16 +8,11 @@
     <OutputType>Library</OutputType>
     <AssemblyName>App</AssemblyName>
     <Nullable>enable</Nullable>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <LangVersion>8.0</LangVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <LangVersion>8.0</LangVersion>
+    <LangVersion>10.0</LangVersion>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.F7" Version="*" />
-    <PackageReference Include="Meadow.Foundation.Sensors.Atmospheric.Bmp085" Version="*" />
+    <PackageReference Include="Meadow.F7" Version="1.5.0" />
+    <PackageReference Include="Meadow.Foundation.Sensors.Atmospheric.Bmp085" Version="1.5.0" />
   </ItemGroup>
   <ItemGroup>
     <None Update="meadow.config.yaml">

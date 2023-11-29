@@ -38,7 +38,7 @@ namespace Meadow.Foundation
         /// <summary>
         /// HSL to RGB 
         /// </summary>
-        /// <param name="hue">Hue in degress (0-359°)</param>
+        /// <param name="hue">Hue in degrees (0-359°)</param>
         /// <param name="saturation">Saturation</param>
         /// <param name="lightness">Brightness value</param>
         /// <param name="r">The red component (0-1)</param>
@@ -125,7 +125,7 @@ namespace Meadow.Foundation
         /// <summary>
         /// HSV to RGB 
         /// </summary>
-        /// <param name="hue">Hue in degress (0-359°)</param>
+        /// <param name="hue">Hue in degrees (0-359°)</param>
         /// <param name="saturation">Saturation</param>
         /// <param name="brightValue">Brightness value</param>
         /// <param name="r">The red component (0-1)</param>

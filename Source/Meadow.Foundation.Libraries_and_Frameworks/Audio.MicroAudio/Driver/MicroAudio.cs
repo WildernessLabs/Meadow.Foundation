@@ -1,5 +1,4 @@
 ﻿using Meadow.Peripherals.Speakers;
-using System;
 using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Audio
@@ -11,8 +10,8 @@ namespace Meadow.Foundation.Audio
     {
         readonly IToneGenerator speaker;
 
-        SystemSounds systemSounds;
-        GameSounds gameSounds;
+        SystemSounds? systemSounds;
+        GameSounds? gameSounds;
 
         /// <summary>
         /// Create a new MicroAudio instance from a IToneGenerator driver instance
@@ -41,7 +40,7 @@ namespace Meadow.Foundation.Audio
         {
             systemSounds ??= new SystemSounds(speaker);
 
-            for(int i = 0; i < numberOfLoops; i++)
+            for (int i = 0; i < numberOfLoops; i++)
             {
                 await systemSounds.PlayEffect(effect);
             }

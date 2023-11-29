@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Meadow.Foundation.Sensors.Motion
 {
     /// <summary>
-    /// Represents Mma7660fc 3-axis acclerometer
+    /// Represents Mma7660fc 3-axis accelerometer
     /// </summary>
     public partial class Mma7660fc : ByteCommsSensorBase<Acceleration3D>, IAccelerometer, II2cPeripheral
     {
@@ -19,7 +19,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         /// Raised when new acceleration data is processed
         /// </summary>
-        public event EventHandler<IChangeResult<Acceleration3D>> Acceleration3DUpdated = delegate { };
+        public event EventHandler<IChangeResult<Acceleration3D>> Acceleration3DUpdated = default!;
 
         /// <summary>
         /// Current Acceleration3d value
@@ -65,7 +65,7 @@ namespace Meadow.Foundation.Sensors.Motion
 
         void SetMode(SensorPowerMode mode)
         {
-            BusComms.WriteRegister((byte)Registers.Mode, (byte)mode);
+            BusComms?.WriteRegister((byte)Registers.Mode, (byte)mode);
         }
 
         /// <summary>
@@ -74,7 +74,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <param name="rate">sample rate</param>
         public void SetSampleRate(SampleRate rate)
         {
-            BusComms.WriteRegister((byte)Registers.SleepRate, (byte)rate);
+            BusComms?.WriteRegister((byte)Registers.SleepRate, (byte)rate);
         }
 
         /// <summary>

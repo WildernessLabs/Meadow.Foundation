@@ -8,9 +8,9 @@ namespace Meadow.Foundation.Graphics.MicroLayout;
 /// </summary>
 public sealed class ControlsCollection : IEnumerable<IControl>
 {
-    private DisplayScreen _screen;
-    private List<IControl> _controls = new();
-    private object _syncRoot = new();
+    private readonly DisplayScreen _screen;
+    private readonly List<IControl> _controls = new();
+    private readonly object _syncRoot = new();
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ControlsCollection"/> class.

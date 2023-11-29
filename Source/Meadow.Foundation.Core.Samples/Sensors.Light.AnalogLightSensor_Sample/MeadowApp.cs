@@ -9,7 +9,7 @@ namespace Sensors.Light.AnalogLightSensor_Sample
     public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
-        
+
         AnalogLightSensor analogLightSensor;
 
         public override Task Initialize()
@@ -25,9 +25,10 @@ namespace Sensors.Light.AnalogLightSensor_Sample
                 handler: result => Resolver.Log.Info($"Observer filter satisfied: {result.New.Lux:N2} lux, old: {result.Old.Value.Lux:N2} lux"),
 
                 // only notify if the change is greater than 0.5
-                filter: result => {
-                    if (result.Old is { } old) 
-                    {   //c# 8 pattern match syntax. checks for !null and assigns var.
+                filter: result =>
+                {
+                    if (result.Old is { } old)
+                    {
                         return (result.New - old).Abs().Lux > 0.5; // returns true if > 0.5  change.
                     }
                     return false;
@@ -38,7 +39,7 @@ namespace Sensors.Light.AnalogLightSensor_Sample
             analogLightSensor.Subscribe(consumer);
 
             // classical .NET events can also be used:
-            analogLightSensor.LuminosityUpdated += (sender, result) => 
+            analogLightSensor.IlluminanceUpdated += (sender, result) =>
                 Resolver.Log.Info($"Lux changed: {result.New.Lux:N2} lux, old: {result.Old?.Lux:N2} lux");
 
             //==== One-off reading use case/pattern

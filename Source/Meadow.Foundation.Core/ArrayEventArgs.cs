@@ -25,7 +25,7 @@ namespace Meadow.Foundation
         {
             ItemIndex = itemIndex;
             Item = item;
-        }        
+        }
     }
 
     /// <summary>

@@ -1,7 +1,7 @@
 ﻿namespace Meadow.Foundation.Sensors.Light
 {
-	public partial class Bh1750
-	{
+    public partial class Bh1750
+    {
         internal enum Commands : byte
         {
             PowerDown = 0b_0000_0000,

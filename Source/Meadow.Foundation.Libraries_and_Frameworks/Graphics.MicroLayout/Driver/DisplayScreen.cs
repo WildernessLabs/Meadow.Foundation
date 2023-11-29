@@ -9,9 +9,10 @@ namespace Meadow.Foundation.Graphics.MicroLayout;
 /// </summary>
 public class DisplayScreen
 {
-    private IGraphicsDisplay _display;
-    private MicroGraphics _graphics;
-    private ITouchScreen? _touchScreen;
+    private readonly IGraphicsDisplay _display;
+    private readonly MicroGraphics _graphics;
+    private readonly ITouchScreen? _touchScreen;
+    private bool _updateInProgress = false;
 
     /// <summary>
     /// Gets the collection of controls on the display screen.
@@ -116,6 +117,7 @@ public class DisplayScreen
 
     private void RefreshTree(IControl control)
     {
+        control.Invalidate();
         control.Refresh(_graphics);
 
         if (control is Layout l)
@@ -127,13 +129,41 @@ public class DisplayScreen
         }
     }
 
+    /// <summary>
+    /// Begins an update process for the display screen, indicating that no drawing should take place until EndUpdate is called
+    /// </summary>
+    public void BeginUpdate()
+    {
+        _updateInProgress = true;
+    }
+
+    /// <summary>
+    /// End an update process for the display screen, indicating that drawing should resume and invalidating the DisplayScreen
+    /// </summary>
+    public void EndUpdate()
+    {
+        _updateInProgress = false;
+        IsInvalid = true;
+    }
+
     private void DrawLoop()
+    {
+        if(Resolver.App != null)
+        {
+            DrawLoopThreaded(); ;
+        }
+        else
+        {
+            DrawLoopOnCaller();
+        }
+    }
+
+    private void DrawLoopOnCaller()
     {
         while (true)
         {
-            Resolver.App.InvokeOnMainThread((_) =>
             {
-                if (IsInvalid || Controls.Any(c => c.IsInvalid))
+                if (!_updateInProgress && (IsInvalid || Controls.Any(c => c.IsInvalid)))
                 {
                     _graphics.Clear(BackgroundColor);
 
@@ -141,14 +171,45 @@ public class DisplayScreen
                     {
                         foreach (var control in Controls)
                         {
-                            // until micrographics supports invalidating regions, we have to invalidate everything when one control needs updating
-                            RefreshTree(control);
+                            if (control != null)
+                                // until micrographics supports invalidating regions, we have to invalidate everything when one control needs updating
+                                RefreshTree(control);
                         }
                     }
                     _graphics.Show();
                     IsInvalid = false;
                 }
-            });
+            }
+
+            Thread.Sleep(50);
+        }
+    }
+
+    private void DrawLoopThreaded()
+    {
+        while (true)
+        {
+            Resolver.App.InvokeOnMainThread((_) =>
+            {
+                if (!_updateInProgress && (IsInvalid || Controls.Any(c => c.IsInvalid)))
+                {
+                    _graphics.Clear(BackgroundColor);
+
+                    lock (Controls.SyncRoot)
+                    {
+                        foreach (var control in Controls)
+                        {
+                            if(control != null)
+                            // until micrographics supports invalidating regions, we have to invalidate everything when one control needs updating
+                                RefreshTree(control);
+                        }
+                    }
+                    _graphics.Show();
+                    IsInvalid = false;
+                }
+            }
+            
+            );
 
             Thread.Sleep(50);
         }

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Meadow.Foundation.Sensors.Atmospheric
+﻿namespace Meadow.Foundation.Sensors.Atmospheric
 {
     public partial class Bme280
     {

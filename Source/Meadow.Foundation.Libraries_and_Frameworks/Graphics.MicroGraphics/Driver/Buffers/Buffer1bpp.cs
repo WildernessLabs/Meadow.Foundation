@@ -192,7 +192,7 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// <param name="buffer">buffer to write</param>
         public override void WriteBuffer(int x, int y, IPixelBuffer buffer)
         {
-            if (buffer.ColorMode == ColorMode)
+            if (buffer is Buffer1bpp buf1bpp)
             {
                 for (int i = 0; i < buffer.Width; i++)
                 {
@@ -207,7 +207,7 @@ namespace Meadow.Foundation.Graphics.Buffers
                         }
                         else
                         {   //else 1 bit at a time 
-                            SetPixel(x + i, y + j, (buffer as Buffer1bpp).GetPixelIsEnabled(i, j));
+                            SetPixel(x + i, y + j, buf1bpp.GetPixelIsEnabled(i, j));
                         }
                     }
                 }

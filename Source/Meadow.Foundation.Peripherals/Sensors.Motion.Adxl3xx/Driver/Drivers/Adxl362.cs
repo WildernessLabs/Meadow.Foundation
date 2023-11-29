@@ -12,7 +12,7 @@ using TU = Meadow.Units.Temperature.UnitType;
 namespace Meadow.Foundation.Sensors.Motion
 {
     /// <summary>
-    /// Driver for the ADXL362 triple axis accelerometer.
+    /// Driver for the ADXL362 triple axis accelerometer
     /// </summary>
     public partial class Adxl362
         : ByteCommsSensorBase<(Acceleration3D? Acceleration3D, Units.Temperature? Temperature)>,
@@ -21,12 +21,12 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         /// Raised when the acceleration value changes
         /// </summary>
-        public event EventHandler<IChangeResult<Acceleration3D>> Acceleration3DUpdated;
+        public event EventHandler<IChangeResult<Acceleration3D>> Acceleration3DUpdated = default!;
 
         /// <summary>
         /// Raised when the temperature value changes
         /// </summary>
-        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated;
+        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = default!;
 
         private const double ADXL362_MG2G_MULTIPLIER = 0.004;
         private const double AVERAGE_TEMPERATURE_BIAS = 350;
@@ -34,12 +34,12 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         /// Digital input port attached to interrupt pin 1 on the ADXL362
         /// </summary>
-        private IDigitalInterruptPort digitalInputPort1;
+        private IDigitalInterruptPort? digitalInputPort1;
 
         /// <summary>
         /// Digital Input port attached to interrupt pin 2 on the ADXL362
         /// </summary>
-        private IDigitalInterruptPort digitalInputPort2;
+        private IDigitalInterruptPort? digitalInputPort2;
 
         /// <summary>
         /// The current acceleration value
@@ -62,8 +62,8 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
         public Frequency SpiBusSpeed
         {
-            get => ((SpiCommunications)BusComms).BusSpeed;
-            set => ((SpiCommunications)BusComms).BusSpeed = value;
+            get => (BusComms as ISpiCommunications)!.BusSpeed;
+            set => (BusComms as ISpiCommunications)!.BusSpeed = value;
         }
 
         /// <summary>
@@ -77,8 +77,8 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
         public SpiClockConfiguration.Mode SpiBusMode
         {
-            get => ((SpiCommunications)BusComms).BusMode;
-            set => ((SpiCommunications)BusComms).BusMode = value;
+            get => (BusComms as ISpiCommunications)!.BusMode;
+            set => (BusComms as ISpiCommunications)!.BusMode = value;
         }
 
         /// <summary>
@@ -90,7 +90,7 @@ namespace Meadow.Foundation.Sensors.Motion
             {
                 WriteBuffer.Span[0] = Commands.READ_REGISTER;
                 WriteBuffer.Span[1] = Registers.DEVICE_ID;
-                BusComms.Exchange(WriteBuffer.Span[0..2], ReadBuffer.Span[0..1]);
+                BusComms?.Exchange(WriteBuffer.Span[0..2], ReadBuffer.Span[0..1]);
                 return (ReadBuffer.Span[0] & StatusBitsMasks.DATA_READY) != 0;
             }
         }
@@ -104,7 +104,7 @@ namespace Meadow.Foundation.Sensors.Motion
             {
                 WriteBuffer.Span[0] = Commands.READ_REGISTER;
                 WriteBuffer.Span[1] = Registers.DEVICE_ID;
-                BusComms.Exchange(WriteBuffer.Span[0..2], ReadBuffer.Span[0..1]);
+                BusComms?.Exchange(WriteBuffer.Span[0..2], ReadBuffer.Span[0..1]);
                 return (ReadBuffer.Span[0] & StatusBitsMasks.FIFO_READY) != 0;
             }
         }
@@ -118,7 +118,7 @@ namespace Meadow.Foundation.Sensors.Motion
             {
                 WriteBuffer.Span[0] = Commands.READ_REGISTER;
                 WriteBuffer.Span[1] = Registers.DEVICE_ID;
-                BusComms.Exchange(WriteBuffer.Span[0..2], ReadBuffer.Span[0..1]);
+                BusComms?.Exchange(WriteBuffer.Span[0..2], ReadBuffer.Span[0..1]);
                 return (ReadBuffer.Span[0] & StatusBitsMasks.FIFO_WATERMARK) != 0;
             }
         }
@@ -133,7 +133,7 @@ namespace Meadow.Foundation.Sensors.Motion
             {
                 WriteBuffer.Span[0] = Commands.READ_REGISTER;
                 WriteBuffer.Span[1] = Registers.DEVICE_ID;
-                BusComms.Exchange(WriteBuffer.Span[0..2], ReadBuffer.Span[0..1]);
+                BusComms?.Exchange(WriteBuffer.Span[0..2], ReadBuffer.Span[0..1]);
                 return (ReadBuffer.Span[0] & StatusBitsMasks.FIFO_OVERRUN) != 0;
             }
         }
@@ -147,7 +147,7 @@ namespace Meadow.Foundation.Sensors.Motion
             {
                 WriteBuffer.Span[0] = Commands.READ_REGISTER;
                 WriteBuffer.Span[1] = Registers.DEVICE_ID;
-                BusComms.Exchange(WriteBuffer.Span[0..2], ReadBuffer.Span[0..1]);
+                BusComms?.Exchange(WriteBuffer.Span[0..2], ReadBuffer.Span[0..1]);
                 return (ReadBuffer.Span[0] & StatusBitsMasks.ACTIVITY_DETECTED) != 0;
             }
         }
@@ -161,7 +161,7 @@ namespace Meadow.Foundation.Sensors.Motion
             {
                 WriteBuffer.Span[0] = Commands.READ_REGISTER;
                 WriteBuffer.Span[1] = Registers.DEVICE_ID;
-                BusComms.Exchange(WriteBuffer.Span[0..2], ReadBuffer.Span[0..1]);
+                BusComms?.Exchange(WriteBuffer.Span[0..2], ReadBuffer.Span[0..1]);
                 return (ReadBuffer.Span[0] & StatusBitsMasks.INACTIVITY_DETECTED) != 0;
             }
         }
@@ -175,7 +175,7 @@ namespace Meadow.Foundation.Sensors.Motion
             {
                 WriteBuffer.Span[0] = Commands.READ_REGISTER;
                 WriteBuffer.Span[1] = Registers.DEVICE_ID;
-                BusComms.Exchange(WriteBuffer.Span[0..2], ReadBuffer.Span[0..1]);
+                BusComms?.Exchange(WriteBuffer.Span[0..2], ReadBuffer.Span[0..1]);
                 return (ReadBuffer.Span[0] & StatusBitsMasks.AWAKE) != 0;
             }
         }
@@ -190,7 +190,7 @@ namespace Meadow.Foundation.Sensors.Motion
             {
                 WriteBuffer.Span[0] = Commands.READ_REGISTER;
                 WriteBuffer.Span[1] = Registers.DEVICE_ID;
-                BusComms.Exchange(WriteBuffer.Span[0..2], ReadBuffer.Span[0..6]);
+                BusComms?.Exchange(WriteBuffer.Span[0..2], ReadBuffer.Span[0..6]);
                 int result = WriteBuffer.Span[0];
                 result |= WriteBuffer.Span[1] << 8;
                 result |= WriteBuffer.Span[2] << 16;
@@ -208,7 +208,7 @@ namespace Meadow.Foundation.Sensors.Motion
             {
                 WriteBuffer.Span[0] = Commands.READ_REGISTER;
                 WriteBuffer.Span[1] = Registers.DEVICE_ID;
-                BusComms.Exchange(WriteBuffer.Span[0..2], ReadBuffer.Span[0..1]);
+                BusComms?.Exchange(WriteBuffer.Span[0..2], ReadBuffer.Span[0..1]);
                 return ReadBuffer.Span[0];
             }
         }
@@ -222,12 +222,12 @@ namespace Meadow.Foundation.Sensors.Motion
             {
                 WriteBuffer.Span[0] = Commands.READ_REGISTER;
                 WriteBuffer.Span[1] = Registers.ACTIVITY_INACTIVITY_CONTROL;
-                BusComms.Exchange(WriteBuffer.Span[0..2], ReadBuffer.Span[0..1]);
+                BusComms?.Exchange(WriteBuffer.Span[0..2], ReadBuffer.Span[0..1]);
                 return ReadBuffer.Span[0];
             }
             set
             {
-                BusComms.WriteRegister(Commands.WRITE_REGISTER, value);
+                BusComms?.WriteRegister(Commands.WRITE_REGISTER, value);
             }
         }
 
@@ -244,7 +244,7 @@ namespace Meadow.Foundation.Sensors.Motion
                 {
                     selfTest = 1;
                 }
-                BusComms.WriteRegister(Commands.WRITE_REGISTER, selfTest);
+                BusComms?.WriteRegister(Commands.WRITE_REGISTER, selfTest);
             }
         }
 
@@ -257,12 +257,12 @@ namespace Meadow.Foundation.Sensors.Motion
             {
                 WriteBuffer.Span[0] = Commands.READ_REGISTER;
                 WriteBuffer.Span[1] = Registers.FILTER_CONTROL;
-                BusComms.Exchange(WriteBuffer.Span[0..2], ReadBuffer.Span[0..1]);
+                BusComms?.Exchange(WriteBuffer.Span[0..2], ReadBuffer.Span[0..1]);
                 return ReadBuffer.Span[0];
             }
             set
             {
-                BusComms.WriteRegister(Commands.WRITE_REGISTER, value);
+                BusComms?.WriteRegister(Commands.WRITE_REGISTER, value);
             }
         }
 
@@ -276,7 +276,7 @@ namespace Meadow.Foundation.Sensors.Motion
         { }
 
         /// <summary>
-        /// Raise events for subcribers and notify of value changes
+        /// Raise events for subscribers and notify of value changes
         /// </summary>
         /// <param name="changeResult">The updated sensor data</param>
         protected override void RaiseEventsAndNotify(IChangeResult<(Acceleration3D? Acceleration3D, Units.Temperature? Temperature)> changeResult)
@@ -300,7 +300,7 @@ namespace Meadow.Foundation.Sensors.Motion
             WriteBuffer.Span[0] = Commands.WRITE_REGISTER;
             WriteBuffer.Span[1] = Registers.SOFT_RESET;
             WriteBuffer.Span[2] = 0x52;
-            BusComms.Write(WriteBuffer.Span[0..3]);
+            BusComms?.Write(WriteBuffer.Span[0..3]);
             Thread.Sleep(10);
         }
 
@@ -312,7 +312,7 @@ namespace Meadow.Foundation.Sensors.Motion
             WriteBuffer.Span[0] = Commands.WRITE_REGISTER;
             WriteBuffer.Span[1] = Registers.POWER_CONTROL;
             WriteBuffer.Span[2] = 0x02;
-            BusComms.Write(WriteBuffer.Span[0..3]);
+            BusComms?.Write(WriteBuffer.Span[0..3]);
         }
 
         /// <summary>
@@ -323,10 +323,10 @@ namespace Meadow.Foundation.Sensors.Motion
             WriteBuffer.Span[0] = Commands.READ_REGISTER;
             WriteBuffer.Span[1] = Registers.POWER_CONTROL;
             WriteBuffer.Span[2] = 0x02;
-            BusComms.Exchange(WriteBuffer.Span[0..3], ReadBuffer.Span[0..1]);
+            BusComms?.Exchange(WriteBuffer.Span[0..3], ReadBuffer.Span[0..1]);
             byte power = (byte)(ReadBuffer.Span[0] & (~PowerControlMasks.MEASURE) & 0xff);
             WriteBuffer.Span[2] = power;
-            BusComms.Write(WriteBuffer.Span[0..3]);
+            BusComms?.Write(WriteBuffer.Span[0..3]);
         }
 
         /// <summary>
@@ -369,7 +369,7 @@ namespace Meadow.Foundation.Sensors.Motion
             // read the XYZ and Temp registers in one go
             WriteBuffer.Span[0] = Commands.READ_REGISTER;
             WriteBuffer.Span[1] = Registers.X_AXIS_LSB;
-            BusComms.Exchange(WriteBuffer.Span[0..2], ReadBuffer.Span[0..8]);
+            BusComms?.Exchange(WriteBuffer.Span[0..2], ReadBuffer.Span[0..8]);
 
             // milli-gravity (1/1000 G)
             conditions.Acceleration3D = new Acceleration3D(
@@ -415,7 +415,7 @@ namespace Meadow.Foundation.Sensors.Motion
             WriteBuffer.Span[2] = (byte)(threshold & 0xff);
             WriteBuffer.Span[3] = (byte)((threshold >> 8) & 0xff);
             WriteBuffer.Span[4] = numberOfSamples;
-            BusComms.Write(WriteBuffer.Span[0..5]);
+            BusComms?.Write(WriteBuffer.Span[0..5]);
         }
 
         /// <summary>
@@ -449,7 +449,7 @@ namespace Meadow.Foundation.Sensors.Motion
             WriteBuffer.Span[3] = (byte)((threshold >> 8) & 0xff);
             WriteBuffer.Span[4] = (byte)(numberOfSamples & 0xff);
             WriteBuffer.Span[5] = (byte)((threshold >> 8) & 0xff);
-            BusComms.Write(WriteBuffer.Span[0..6]);
+            BusComms?.Write(WriteBuffer.Span[0..6]);
         }
 
         /// <summary>
@@ -489,12 +489,12 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <param name="interruptPin1">Pin connected to interrupt pin 1 on the ADXL362</param>
         /// <param name="interruptMap2">Bit mask for interrupt pin 2</param>
         /// <param name="interruptPin2">Pin connected to interrupt pin 2 on the ADXL362</param>
-        private void ConfigureInterrupts(byte interruptMap1, IPin interruptPin1, byte interruptMap2 = 0, IPin interruptPin2 = null) // TODO: interrupPin2 = IDigitalPin.GPIO_NONE
+        private void ConfigureInterrupts(byte interruptMap1, IPin interruptPin1, byte interruptMap2 = 0, IPin? interruptPin2 = null) // TODO: interrupPin2 = IDigitalPin.GPIO_NONE
         {
             WriteBuffer.Span[0] = Commands.WRITE_REGISTER;
             WriteBuffer.Span[1] = interruptMap1;
             WriteBuffer.Span[2] = interruptMap2;
-            BusComms.Write(WriteBuffer.Span[0..3]);
+            BusComms?.Write(WriteBuffer.Span[0..3]);
 
             if (interruptPin1 != null)
             {
@@ -540,21 +540,21 @@ namespace Meadow.Foundation.Sensors.Motion
 
             WriteBuffer.Span[0] = Commands.READ_REGISTER;
             WriteBuffer.Span[1] = 0x00;
-            BusComms.Exchange(WriteBuffer.Span[0..2], rxBuffer[0..6]);
+            BusComms?.Exchange(WriteBuffer.Span[0..2], rxBuffer[0..6]);
 
             DebugInformation.DisplayRegisters(0x00, rxBuffer[2..6].ToArray());
 
             WriteBuffer.Span[1] = Registers.X_AXIS_8BITS;
 
-            BusComms.Exchange(WriteBuffer.Span[0..2], rxBuffer);
+            BusComms?.Exchange(WriteBuffer.Span[0..2], rxBuffer);
 
             DebugInformation.DisplayRegisters(Registers.X_AXIS_8BITS, ReadBuffer.Span[2..].ToArray());
         }
 
         async Task<Acceleration3D> ISensor<Acceleration3D>.Read()
-            => (await Read()).Acceleration3D.Value;
+            => (await Read()).Acceleration3D!.Value;
 
         async Task<Units.Temperature> ISensor<Units.Temperature>.Read()
-            => (await Read()).Temperature.Value;
+            => (await Read()).Temperature!.Value;
     }
 }

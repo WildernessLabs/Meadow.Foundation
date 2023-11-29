@@ -6,13 +6,13 @@ namespace Meadow.Foundation.Sensors.HallEffect
     /// <summary>
     /// Represents a Lineal Hall Effect tachometer.
     /// </summary>
-    public class LinearHallEffectTachometer
+    public class LinearHallEffectTachometer : IDisposable
     {
         /// <summary>
         /// Event raised when the RPM change is greater than the 
         /// RPMChangeNotificationThreshold value.
         /// </summary>
-        public event EventHandler<ChangeResult<float>> RPMsChanged = delegate { };
+        public event EventHandler<ChangeResult<float>> RPMsChanged = default!;
 
         /// <summary>
         /// Any changes to the RPMs that are greater than the RPM change
@@ -37,21 +37,34 @@ namespace Meadow.Foundation.Sensors.HallEffect
         public int RPMs => (int)rpms;
 
         /// <summary>
-        /// Revolutions pers minute 
+        /// Revolutions per minute 
         /// </summary>
         protected float rpms = 0.0F;
+
         /// <summary>
         /// Last notified RPM value
         /// </summary>
         protected float lastNotifiedRPMs = 0.0F;
+
         /// <summary>
         /// Revolution start time
         /// </summary>
         protected DateTime revolutionTimeStart = DateTime.MinValue;
+
         /// <summary>
         /// Number of reads
         /// </summary>
         protected ushort numberOfReads = 0;
+
+        /// <summary>
+        /// Is the object disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
+
+        /// <summary>
+        /// Did we create the port(s) used by the peripheral
+        /// </summary>
+        readonly bool createdPort = false;
 
         /// <summary>
         /// LinearHallEffectTachometer driver
@@ -63,7 +76,9 @@ namespace Meadow.Foundation.Sensors.HallEffect
         public LinearHallEffectTachometer(IPin inputPin, CircuitTerminationType type = CircuitTerminationType.CommonGround,
             ushort numberOfMagnets = 2, float rpmChangeNotificationThreshold = 1.0F) :
             this(inputPin.CreateDigitalInterruptPort(InterruptMode.None, ResistorMode.Disabled, TimeSpan.Zero, TimeSpan.Zero), type, numberOfMagnets, rpmChangeNotificationThreshold)
-        { }
+        {
+            createdPort = true;
+        }
 
         /// <summary>
         /// LinearHallEffectTachometer driver
@@ -89,7 +104,7 @@ namespace Meadow.Foundation.Sensors.HallEffect
 
         private void InputPortChanged(object sender, DigitalPortResult e)
         {
-            var time = DateTime.Now;
+            var time = DateTime.UtcNow;
 
             // if it's the very first read, set the time and bail out
             if (numberOfReads == 0 && revolutionTimeStart == DateTime.MinValue)
@@ -137,6 +152,30 @@ namespace Meadow.Foundation.Sensors.HallEffect
         {
             RPMsChanged(this, new ChangeResult<float>(lastNotifiedRPMs, rpms));
             lastNotifiedRPMs = rpms;
+        }
+
+        ///<inheritdoc/>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        /// <param name="disposing">Is disposing</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && createdPort)
+                {
+                    InputPort?.Dispose();
+                }
+
+                IsDisposed = true;
+            }
         }
     }
 }

@@ -1,10 +1,8 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Gnss;
 using Meadow.Peripherals.Sensors.Location.Gnss;
+using System.Threading.Tasks;
 
 namespace Sensors.Gnss.NeoM8_Sample
 {

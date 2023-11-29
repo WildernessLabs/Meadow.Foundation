@@ -20,17 +20,17 @@ namespace Meadow.Foundation.Sensors.Power
         /// <summary>
         /// Raised when the power value changes
         /// </summary>
-        public event EventHandler<IChangeResult<Units.Power>> PowerUpdated = delegate { };
+        public event EventHandler<IChangeResult<Units.Power>> PowerUpdated = default!;
 
         /// <summary>
         /// Raised when the voltage value changes
         /// </summary>
-        public event EventHandler<IChangeResult<Voltage>> VoltageUpdated = delegate { };
+        public event EventHandler<IChangeResult<Voltage>> VoltageUpdated = default!;
 
         /// <summary>
         /// Raised when the current value changes
         /// </summary>
-        public event EventHandler<IChangeResult<Current>> CurrentUpdated = delegate { };
+        public event EventHandler<IChangeResult<Current>> CurrentUpdated = default!;
 
         private const float MeasurementScale = 0.00125f;
 
@@ -84,7 +84,7 @@ namespace Meadow.Foundation.Sensors.Power
         }
 
         /// <summary>
-        /// Raise events for subcribers and notify of value changes
+        /// Raise events for subscribers and notify of value changes
         /// </summary>
         /// <param name="changeResult">The updated sensor data</param>
         protected override void RaiseEventsAndNotify(IChangeResult<(Units.Power? Power, Voltage? Voltage, Current? Current)> changeResult)

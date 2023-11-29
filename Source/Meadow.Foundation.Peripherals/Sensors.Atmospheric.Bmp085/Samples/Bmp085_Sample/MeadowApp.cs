@@ -25,7 +25,6 @@ namespace Sensors.Atmospheric.Bmp085_Sample
                 },
                 filter: result =>
                 {
-                    //c# 8 pattern match syntax. checks for !null and assigns var.
                     if (result.Old?.Temperature is { } oldTemp &&
                         result.New.Temperature is { } newTemp)
                     {
@@ -47,7 +46,7 @@ namespace Sensors.Atmospheric.Bmp085_Sample
 
         public override async Task Run()
         {
-            if(sensor == null) { return; }
+            if (sensor == null) { return; }
 
             var conditions = await sensor.Read();
             Resolver.Log.Info($"Temperature: {conditions.Temperature?.Celsius}°C, Pressure: {conditions.Pressure?.Pascal}Pa");

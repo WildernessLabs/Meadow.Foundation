@@ -1,10 +1,4 @@
 ﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Meadow.Hardware;
-using Meadow.Peripherals.Sensors.Light;
-using Meadow.Units;
-using IU = Meadow.Units.Illuminance.UnitType;
 
 namespace Meadow.Foundation.Sensors.Light
 {
@@ -61,7 +55,7 @@ namespace Meadow.Foundation.Sensors.Light
             /// <summary>
             /// 100 milliseconds
             /// </summary>
-            Time_100Ms = 0x00, 
+            Time_100Ms = 0x00,
             /// <summary>
             /// 200 milliseconds
             /// </summary>
@@ -97,15 +91,15 @@ namespace Meadow.Foundation.Sensors.Light
             /// <summary>
             /// /// Medium gain (25x)
             /// </summary>
-            Medium = 0x10,  
+            Medium = 0x10,
             /// <summary>
             /// /// High gain (428x)
             /// </summary>
-            High = 0x20,    
+            High = 0x20,
             /// <summary>
             ///  /// Maximum gain (9876x)
             /// </summary>
-            Maximum = 0x30 
+            Maximum = 0x30
         }
 
         /// <summary>

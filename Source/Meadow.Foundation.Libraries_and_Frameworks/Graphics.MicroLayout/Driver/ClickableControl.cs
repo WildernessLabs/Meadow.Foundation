@@ -10,7 +10,7 @@ public abstract class ClickableControl : ThemedControl, IClickableControl
     /// <summary>
     /// Occurs when the clickable control is clicked.
     /// </summary>
-    public event EventHandler Clicked = delegate { };
+    public event EventHandler Clicked = default!;
 
     private bool _pressed = false;
 

@@ -8,7 +8,7 @@ namespace Meadow.Foundation.Sensors.Environmental
     /// <summary>
     /// Represents an AGS01DB MEMS VOC gas / air quality sensor
     /// Pinout (left to right, label side down): VDD, SDA, GND, SCL
-    /// Note: requires pullup resistors on SDA/SCL
+    /// Note: requires pull-up resistors on SDA/SCL
     /// </summary>
     public partial class Ags01Db : ByteCommsSensorBase<Concentration>, II2cPeripheral
     {
@@ -23,7 +23,7 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// <summary>
         /// Raised when the concentration changes
         /// </summary>
-        public event EventHandler<IChangeResult<Concentration>> ConcentrationUpdated = delegate { };
+        public event EventHandler<IChangeResult<Concentration>> ConcentrationUpdated = default!;
 
         /// <summary>
         /// The current concentration value

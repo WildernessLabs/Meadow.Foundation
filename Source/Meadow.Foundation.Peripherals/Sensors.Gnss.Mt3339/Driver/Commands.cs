@@ -35,27 +35,27 @@
         /// <summary>
         /// GPRMC only
         /// </summary>
-        public const string PMTK_SET_NMEA_OUTPUT_RMCONLY = 
+        public const string PMTK_SET_NMEA_OUTPUT_RMCONLY =
             "$PMTK314,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0*29";
         /// <summary>
         /// GPVTG only
         /// </summary>
-        public const string PMTK_SET_NMEA_OUTPUT_VTGONLY = 
+        public const string PMTK_SET_NMEA_OUTPUT_VTGONLY =
             "$PMTK314,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0*29";
         /// <summary>
         /// GPGGA only
         /// </summary>
-        public const string PMTK_SET_NMEA_OUTPUT_GGAONLY = 
+        public const string PMTK_SET_NMEA_OUTPUT_GGAONLY =
             "$PMTK314,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0*29";
         /// <summary>
         /// GPGSA only
         /// </summary>
-        public const string PMTK_SET_NMEA_OUTPUT_GSAONLY = 
+        public const string PMTK_SET_NMEA_OUTPUT_GSAONLY =
             "$PMTK314,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0*29";
         /// <summary>
         /// GPGSV only
         /// </summary>
-        public const string PMTK_SET_NMEA_OUTPUT_GSVONLY = 
+        public const string PMTK_SET_NMEA_OUTPUT_GSVONLY =
             "$PMTK314,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0*29";
         /// <summary>
         /// GPRMC + GPGGA

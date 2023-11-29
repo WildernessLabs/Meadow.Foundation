@@ -1,14 +1,15 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Meadow.Foundation.Graphics.MicroLayout;
 
 /// <summary>
-/// A COllection of LineSeriesPoints
+/// A Collection of LineSeriesPoints
 /// </summary>
 public class LineSeriesPointCollection : IEnumerable<LineSeriesPoint>
 {
-    private List<LineSeriesPoint> _points = new();
+    private readonly List<LineSeriesPoint> _points = new();
 
     /// <summary>
     /// Gets the minimum X value in the collection
@@ -52,15 +53,70 @@ public class LineSeriesPointCollection : IEnumerable<LineSeriesPoint>
         {
             foreach (var point in points)
             {
-                // do this now so we don't have to calculate during drawing
-                if (point.X < MinX) MinX = point.X;
-                if (point.X > MaxX) MaxX = point.X;
-                if (point.Y < MinY) MinY = point.Y;
-                if (point.Y > MaxY) MaxY = point.Y;
-
                 _points.Add(point);
             }
+
+            // do this now so we don't have to calculate during drawing
+            MinX = _points.Min(p => p.X);
+            MinY = _points.Min(p => p.Y);
+            MaxX = _points.Max(p => p.X);
+            MaxY = _points.Max(p => p.Y);
         }
+    }
+
+    /// <summary>
+    /// Removes a point to the collection
+    /// </summary>
+    /// <param name="point">The point to remove</param>
+    public void Remove(LineSeriesPoint point)
+    {
+        Remove(point);
+    }
+
+    /// <summary>
+    /// Removes a point to the collection
+    /// </summary>
+    /// <param name="points">The points to remove</param>
+    public void Remove(params LineSeriesPoint[] points)
+    {
+        lock (_points)
+        {
+            foreach (var point in points)
+            {
+                _points.Remove(point);
+            }
+
+            if (_points.Count > 0)
+            {
+                MinX = _points.Min(p => p.X);
+                MinY = _points.Min(p => p.Y);
+                MaxX = _points.Max(p => p.X);
+                MaxY = _points.Max(p => p.Y);
+            }
+            else
+            {
+                MinX = MaxX = MinY = MaxY = 0;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Removes all points to the collection
+    /// </summary>
+    public void Clear()
+    {
+        lock (_points)
+        {
+            _points.Clear();
+
+            MinX = MaxX = MinY = MaxY = 0;
+        }
+    }
+
+    /// <inheritdoc/>
+    public LineSeriesPoint this[int index]
+    {
+        get => _points[index];
     }
 
     /// <inheritdoc/>

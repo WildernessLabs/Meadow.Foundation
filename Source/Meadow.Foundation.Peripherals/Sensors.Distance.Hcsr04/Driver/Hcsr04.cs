@@ -1,5 +1,5 @@
 ﻿using Meadow.Hardware;
-using Meadow.Peripherals.Sensors;
+using Meadow.Peripherals.Sensors.Distance;
 using Meadow.Units;
 using System;
 using System.Threading;
@@ -10,12 +10,12 @@ namespace Meadow.Foundation.Sensors.Distance
     /// <summary>
     /// HCSR04 Distance Sensor - driver not complete
     /// </summary>
-    public class Hcsr04 : SamplingSensorBase<Length>, IRangeFinder
+    public class Hcsr04 : SamplingSensorBase<Length>, IRangeFinder, IDisposable
     {
         /// <summary>
         /// Raised when an received a rebound trigger signal
         /// </summary>
-        public event EventHandler<IChangeResult<Length>> DistanceUpdated;
+        public event EventHandler<IChangeResult<Length>> DistanceUpdated = default!;
 
         /// <summary>
         /// Returns current distance
@@ -35,12 +35,22 @@ namespace Meadow.Foundation.Sensors.Distance
         /// <summary>
         /// Port for trigger Pin
         /// </summary>
-        protected IDigitalOutputPort triggerPort;
+        protected IDigitalOutputPort? triggerPort;
 
         /// <summary>
         /// Port for echo Pin
         /// </summary>
-        protected IDigitalInterruptPort echoPort;
+        protected IDigitalInterruptPort? echoPort;
+
+        /// <summary>
+        /// Is the object disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
+
+        /// <summary>
+        /// Did we create the port(s) used by the peripheral
+        /// </summary>
+        readonly bool createdPorts = false;
 
         private long tickStart;
 
@@ -52,7 +62,9 @@ namespace Meadow.Foundation.Sensors.Distance
         public Hcsr04(IPin triggerPin, IPin echoPin) :
             this(triggerPin.CreateDigitalOutputPort(false),
                   echoPin.CreateDigitalInterruptPort(InterruptMode.EdgeBoth))
-        { }
+        {
+            createdPorts = true;
+        }
 
         /// <summary>
         /// Create a new HCSR04 object
@@ -78,6 +90,8 @@ namespace Meadow.Foundation.Sensors.Distance
         /// </summary>
         public virtual void MeasureDistance()
         {
+            if (triggerPort == null) { throw new NullReferenceException("Trigger port is null"); }
+
             //Distance = -1;
 
             // Raise trigger port to high for 10+ micro-seconds
@@ -85,7 +99,7 @@ namespace Meadow.Foundation.Sensors.Distance
             Thread.Sleep(1); //smallest amount of time we can wait
 
             // Start Clock
-            tickStart = DateTime.Now.Ticks;
+            tickStart = DateTime.UtcNow.Ticks;
             // Trigger device to measure distance via sonic pulse
             triggerPort.State = false;
         }
@@ -94,12 +108,12 @@ namespace Meadow.Foundation.Sensors.Distance
         {
             if (e.New.State)
             {
-                tickStart = DateTime.Now.Ticks;
+                tickStart = DateTime.UtcNow.Ticks;
                 return;
             }
 
             // Calculate Difference
-            var elapsed = DateTime.Now.Ticks - tickStart;
+            var elapsed = DateTime.UtcNow.Ticks - tickStart;
 
             // Return elapsed ticks
             // x10 for ticks to micro sec
@@ -109,9 +123,6 @@ namespace Meadow.Foundation.Sensors.Distance
             var oldDistance = Distance;
             var newDistance = new Length(curDis, Length.UnitType.Centimeters);
             Distance = newDistance;
-
-            //debug - remove 
-            Resolver.Log.Info($"{elapsed}, {curDis}, {Distance}, {DateTime.Now.Ticks}");
 
             //restore this before publishing to hide false results 
             //    if (CurrentDistance < MinimumDistance || CurrentDistance > MaximumDistance)
@@ -133,7 +144,7 @@ namespace Meadow.Foundation.Sensors.Distance
         }
 
         /// <summary>
-        /// Raise events for subcribers and notify of value changes
+        /// Raise events for subscribers and notify of value changes
         /// </summary>
         /// <param name="changeResult">The updated sensor data</param>
         protected override void RaiseEventsAndNotify(IChangeResult<Length> changeResult)
@@ -157,6 +168,31 @@ namespace Meadow.Foundation.Sensors.Distance
         public override void StopUpdating()
         {
             throw new NotImplementedException();
+        }
+
+        ///<inheritdoc/>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        /// <param name="disposing">Is disposing</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && createdPorts)
+                {
+                    triggerPort?.Dispose();
+                    echoPort?.Dispose();
+                }
+
+                IsDisposed = true;
+            }
         }
     }
 }

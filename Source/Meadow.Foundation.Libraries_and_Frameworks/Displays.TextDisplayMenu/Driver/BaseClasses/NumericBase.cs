@@ -17,7 +17,7 @@ namespace Meadow.Foundation.Displays.UI.InputTypes
         /// <summary>
         /// Raised when the numeric value changes
         /// </summary>
-        public override event ValueChangedHandler ValueChanged = delegate { };
+        public override event ValueChangedHandler ValueChanged = default!;
 
         /// <summary>
         /// Create a new NumericBase object

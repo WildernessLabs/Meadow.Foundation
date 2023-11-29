@@ -1,12 +1,23 @@
 ﻿using Meadow.Hardware;
+using System;
 
 namespace Meadow.Foundation.Displays.Led
 {
     /// <summary>
     /// Sixteen Segment Display
     /// </summary>
-    public partial class SixteenSegment
+    public partial class SixteenSegment : IDisposable
     {
+        /// <summary>
+        /// Is the object disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
+
+        /// <summary>
+        /// Did we create the port(s) used by the peripheral
+        /// </summary>
+        readonly bool createdPorts = false;
+
         private readonly IDigitalOutputPort portA;
         private readonly IDigitalOutputPort portB;
         private readonly IDigitalOutputPort portC;
@@ -28,7 +39,7 @@ namespace Meadow.Foundation.Displays.Led
         private readonly bool isCommonCathode;
 
         /// <summary>
-        /// Creates a SixteenSegment connected to the especified IPins to a IODevice
+        /// Creates a SixteenSegment connected to the specified IPins to a IODevice
         /// </summary>
         /// <param name="pinA">Pin A</param>
         /// <param name="pinB">Pin B</param>
@@ -47,7 +58,7 @@ namespace Meadow.Foundation.Displays.Led
         /// <param name="pinT">Pin T</param>
         /// <param name="pinU">Pin U</param>
         /// <param name="pinDecimal">Pin decimal</param>
-        /// <param name="isCommonCathode">Is the display using common cathod (true) or common annode (false)</param>
+        /// <param name="isCommonCathode">Is the display using common cathode (true) or common anode (false)</param>
         public SixteenSegment(
             IPin pinA, IPin pinB, IPin pinC, IPin pinD,
             IPin pinE, IPin pinF, IPin pinG, IPin pinH,
@@ -76,7 +87,7 @@ namespace Meadow.Foundation.Displays.Led
         { }
 
         /// <summary>
-        /// Creates a SixteenSegment connected to the especified IDigitalOutputPorts
+        /// Creates a SixteenSegment connected to the specified IDigitalOutputPorts
         /// </summary>
         /// <param name="portA">Digital input port for pin A</param>
         /// <param name="portB">Digital input port for pin B</param>
@@ -95,7 +106,7 @@ namespace Meadow.Foundation.Displays.Led
         /// <param name="portT">Digital input port for pin T</param>
         /// <param name="portU">Digital input port for pin U</param>
         /// <param name="portDecimal">Digital input port for decimal pin</param>
-        /// <param name="isCommonCathode">Is the display using common cathod (true) or common annode (false)</param>
+        /// <param name="isCommonCathode">Is the display using common cathode (true) or common anode (false)</param>
         public SixteenSegment(
             IDigitalOutputPort portA, IDigitalOutputPort portB, IDigitalOutputPort portC, IDigitalOutputPort portD,
             IDigitalOutputPort portE, IDigitalOutputPort portF, IDigitalOutputPort portG, IDigitalOutputPort portH,
@@ -126,8 +137,8 @@ namespace Meadow.Foundation.Displays.Led
         }
 
         /// <summary>
-        /// Displays the specified ascii character (from 32 to 126)
-        /// Unsupported ascii values will be blank
+        /// Displays the specified ASCII character (from 32 to 126)
+        /// Unsupported ASCII values will be blank
         /// </summary>
         public void SetDisplay(char asciiCharacter, bool? showDecimal = null)
         {
@@ -163,10 +174,10 @@ namespace Meadow.Foundation.Displays.Led
         }
 
         /// <summary>
-        /// Is a specific led segment enabled for an ascii character
+        /// Is a specific led segment enabled for an ASCII character
         /// </summary>
         /// <param name="segment">The led segment</param>
-        /// <param name="asciiCharacter">The ascii character</param>
+        /// <param name="asciiCharacter">The ASCII character</param>
         /// <returns></returns>
         public static bool IsEnabled(Segment segment, char asciiCharacter)
         {
@@ -178,6 +189,46 @@ namespace Meadow.Foundation.Displays.Led
             var data = sixteenSegmentASCII[asciiCharacter - 32];
 
             return (data & 1 << (int)segment) != 0;
+        }
+
+        ///<inheritdoc/>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        /// <param name="disposing">Is disposing</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && createdPorts)
+                {
+                    portA.Dispose();
+                    portB.Dispose();
+                    portC.Dispose();
+                    portD.Dispose();
+                    portE.Dispose();
+                    portF.Dispose();
+                    portG.Dispose();
+                    portH.Dispose();
+                    portK.Dispose();
+                    portM.Dispose();
+                    portN.Dispose();
+                    portP.Dispose();
+                    portR.Dispose();
+                    portS.Dispose();
+                    portT.Dispose();
+                    portU.Dispose();
+                    portDecimal.Dispose();
+                }
+
+                IsDisposed = true;
+            }
         }
     }
 }

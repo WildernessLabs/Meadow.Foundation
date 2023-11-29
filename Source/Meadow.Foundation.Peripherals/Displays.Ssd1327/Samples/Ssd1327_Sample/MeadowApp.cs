@@ -36,7 +36,7 @@ namespace MeadowApp
             graphics.Clear();
 
             for (int i = 10; i > 0; i--)
-            {   //interate across different brightnesses
+            {   //iterate across different brightnesses
                 graphics.DrawText(0, i * 11, "SSD1327", Color.FromRgb(i * 0.1, i * 0.1, i * 0.1));
             }
 
@@ -48,7 +48,7 @@ namespace MeadowApp
         //<!=SNOP=>
 
         void TestDisplay()
-        { 
+        {
             while (true)
             {
                 PolarLineTest();

@@ -17,12 +17,12 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         /// Event raised when acceleration changes
         /// </summary>
-        public event EventHandler<IChangeResult<Acceleration3D>> Acceleration3DUpdated = delegate { };
+        public event EventHandler<IChangeResult<Acceleration3D>> Acceleration3DUpdated = default!;
 
         /// <summary>
         /// Event raised when magnetic field changes
         /// </summary>
-        public event EventHandler<IChangeResult<MagneticField3D>> MagneticField3DUpdated = delegate { };
+        public event EventHandler<IChangeResult<MagneticField3D>> MagneticField3DUpdated = default!;
 
         /// <summary>
         /// Current Acceleration 3D
@@ -93,7 +93,7 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         /// <summary>
-        /// Raise events for subcribers and notify of value changes
+        /// Raise events for subscribers and notify of value changes
         /// </summary>
         /// <param name="changeResult">The updated sensor data</param>
         protected override void RaiseEventsAndNotify(IChangeResult<(Acceleration3D? Acceleration3D, MagneticField3D? MagneticField3D)> changeResult)
@@ -242,9 +242,9 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         async Task<Acceleration3D> ISensor<Acceleration3D>.Read()
-        => (await Read()).Acceleration3D.Value;
+        => (await Read()).Acceleration3D!.Value;
 
         async Task<MagneticField3D> ISensor<MagneticField3D>.Read()
-        => (await Read()).MagneticField3D.Value;
+        => (await Read()).MagneticField3D!.Value;
     }
 }

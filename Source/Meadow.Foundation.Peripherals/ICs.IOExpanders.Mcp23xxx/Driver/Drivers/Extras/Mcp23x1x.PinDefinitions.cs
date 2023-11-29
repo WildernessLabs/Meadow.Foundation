@@ -14,7 +14,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// <summary>
             /// The controller for the pins
             /// </summary>
-            public IPinController Controller { get; set; }
+            public IPinController? Controller { get; set; }
 
             /// <summary>
             /// List of pins
@@ -207,7 +207,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             }
 
             /// <summary>
-            /// Initalize all pins
+            /// Initialize all pins
             /// </summary>
             protected void InitAllPins()
             {

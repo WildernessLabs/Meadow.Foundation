@@ -36,7 +36,7 @@ public override Task Initialize()
         filter: result =>
         {
             if (result.Old is { } old)
-            { //c# 8 pattern match syntax. checks for !null and assigns var
+            {
                 return (result.New - old).Y > new MagneticField(1, MU.MicroTesla);
             }
             return false;
@@ -55,7 +55,7 @@ public override async Task Run()
     //output initial readings text to console
     Resolver.Log.Info("Initial Readings:");
     Resolver.Log.Info(
-        $"Mangetic field: [X:{result.X.MicroTesla:N2}," +
+        $"Magnetic field: [X:{result.X.MicroTesla:N2}," +
         $"Y:{result.Y.MicroTesla:N2}," +
         $"Z:{result.Z.MicroTesla:N2} (MicroTeslas)]");
 

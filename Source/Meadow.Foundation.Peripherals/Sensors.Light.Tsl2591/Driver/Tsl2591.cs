@@ -8,7 +8,7 @@ using IU = Meadow.Units.Illuminance.UnitType;
 
 namespace Meadow.Foundation.Sensors.Light
 {
-    // TODO: This sensor has an interr
+    // TODO: This sensor has an interrupt
 
     /// <summary>
     /// Driver for the TSL2591 light-to-digital converter
@@ -20,23 +20,22 @@ namespace Meadow.Foundation.Sensors.Light
         /// <summary>
         /// Raised when Full Spectrum Illuminance value changes
         /// </summary>
-        public event EventHandler<IChangeResult<Illuminance>> FullSpectrumUpdated = delegate { };
+        public event EventHandler<IChangeResult<Illuminance>> FullSpectrumUpdated = default!;
 
         /// <summary>
         /// Raised when Infrared Illuminance value changes
         /// </summary>
-        public event EventHandler<IChangeResult<Illuminance>> InfraredUpdated = delegate { };
+        public event EventHandler<IChangeResult<Illuminance>> InfraredUpdated = default!;
 
         /// <summary>
         /// Raised when Visible Light value changes
         /// </summary>
-        public event EventHandler<IChangeResult<Illuminance>> VisibleLightUpdated = delegate { };
+        public event EventHandler<IChangeResult<Illuminance>> VisibleLightUpdated = default!;
 
         /// <summary>
         /// Raised when Luminosity value changes
         /// </summary>
-        public event EventHandler<IChangeResult<Illuminance>> LuminosityUpdated = delegate { };
-
+        public event EventHandler<IChangeResult<Illuminance>> IlluminanceUpdated = default!;
 
         /// <summary>
         /// Sensor package ID
@@ -147,7 +146,7 @@ namespace Meadow.Foundation.Sensors.Light
         }
 
         /// <summary>
-        /// Raise events for subcribers and notify of value changes
+        /// Raise events for subscribers and notify of value changes
         /// </summary>
         /// <param name="changeResult">The updated sensor data</param>
         protected override void RaiseEventsAndNotify(IChangeResult<(Illuminance? FullSpectrum, Illuminance? Infrared, Illuminance? VisibleLight, Illuminance? Integrated)> changeResult)
@@ -166,7 +165,7 @@ namespace Meadow.Foundation.Sensors.Light
             }
             if (changeResult.New.Integrated is { } integrated)
             {
-                LuminosityUpdated?.Invoke(this, new ChangeResult<Illuminance>(integrated, changeResult.Old?.Integrated));
+                IlluminanceUpdated?.Invoke(this, new ChangeResult<Illuminance>(integrated, changeResult.Old?.Integrated));
             }
 
             base.RaiseEventsAndNotify(changeResult);
@@ -251,6 +250,6 @@ namespace Meadow.Foundation.Sensors.Light
         }
 
         async Task<Illuminance> ISensor<Illuminance>.Read()
-            => (await Read()).FullSpectrum.Value;
+            => (await Read()).FullSpectrum!.Value;
     }
 }

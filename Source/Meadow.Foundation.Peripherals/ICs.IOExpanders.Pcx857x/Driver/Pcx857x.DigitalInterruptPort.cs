@@ -34,15 +34,15 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
             private ResistorMode resistorMode = ResistorMode.Disabled;
 
-            internal event EventHandler Disposed = delegate { };
+            internal event EventHandler Disposed = default!;
 
             /// <summary>
-            /// Debouce durration
+            /// Debouce duration
             /// </summary>
             public override TimeSpan DebounceDuration { get; set; } = TimeSpan.Zero;
 
             /// <summary>
-            /// Glitch durration
+            /// Glitch duration
             /// </summary>
             public override TimeSpan GlitchDuration
             {
@@ -57,7 +57,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// <param name="interruptMode">The interrupt mode used for the interrupt pin</param>
             /// <param name="resistorMode">The resistor mode used by the interrupt pin</param>
             public DigitalInterruptPort(IPin pin, InterruptMode interruptMode = InterruptMode.None, ResistorMode resistorMode = ResistorMode.Disabled)
-                : base(pin, (IDigitalChannelInfo)pin.SupportedChannels[0], interruptMode)
+                : base(pin, (IDigitalChannelInfo)pin.SupportedChannels![0], interruptMode)
             {
                 this.resistorMode = resistorMode;
             }
@@ -104,7 +104,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 lastUpdate = now;
             }
 
-            /// <inheritdoc/>
+            ///<inheritdoc/>
             protected override void Dispose(bool disposing)
             {
                 base.Dispose(disposing);

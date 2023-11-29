@@ -13,9 +13,10 @@ public partial class Sc16is7x2
     public class Sc16is7x2Channel : ISerialPort
     {
         /// <inheritdoc/>
-        public event SerialDataReceivedEventHandler DataReceived = delegate { };
+        public event SerialDataReceivedEventHandler DataReceived = default!;
+
         /// <inheritdoc/>
-        public event EventHandler BufferOverrun = delegate { };
+        public event EventHandler BufferOverrun = default!;
 
         private int _baudRate;
         private int _dataBits;

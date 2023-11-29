@@ -22,7 +22,7 @@ namespace MaxBotix_Sample
             //Serial
             //maxBotix = new MaxBotix(Device, Device.PlatformOS.GetSerialPortName("COM4"), MaxBotix.SensorType.XL);
 
-            //I2C - don't forget external pullup resistors 
+            //I2C - don't forget external pull-up resistors 
             maxBotix = new MaxBotix(Device.CreateI2cBus(), MaxBotix.SensorType.HR10Meter);
 
             var consumer = MaxBotix.CreateObserver(

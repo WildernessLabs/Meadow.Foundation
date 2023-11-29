@@ -21,7 +21,7 @@ public override Task Initialize()
 
     sensor = new Veml7700(Device.CreateI2cBus());
     sensor.DataSource = Veml7700.SensorTypes.Ambient;
-    
+
     sensor.RangeExceededHigh += (s, a) => Resolver.Log.Info("Too bright to measure");
     sensor.RangeExceededLow += (s, a) => Resolver.Log.Info("Too dim to measure");
 
@@ -40,7 +40,7 @@ public override async Task Run()
 
     sensor.StartUpdating(TimeSpan.FromSeconds(1));
 }
-    
+
 ```
 ## How to Contribute
 

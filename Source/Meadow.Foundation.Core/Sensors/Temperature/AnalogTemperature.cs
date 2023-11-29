@@ -30,12 +30,12 @@ namespace Meadow.Foundation.Sensors.Temperature
     /// TMP37                   500                     20                
     /// TMP236                  887.5                   19.5                    
     /// </remarks>
-    public partial class AnalogTemperature : SamplingSensorBase<Units.Temperature>, ITemperatureSensor
+    public partial class AnalogTemperature : SamplingSensorBase<Units.Temperature>, ITemperatureSensor, IDisposable
     {
         /// <summary>
         /// Raised when the value of the reading changes.
         /// </summary>
-        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
+        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = default!;
 
         ///<Summary>
         /// AnalogInputPort connected to temperature sensor
@@ -96,6 +96,16 @@ namespace Meadow.Foundation.Sensors.Temperature
         public Units.Temperature? Temperature { get; protected set; }
 
         /// <summary>
+        /// Is the object disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
+
+        /// <summary>
+        /// Did we create the port(s) used by the peripheral
+        /// </summary>
+        readonly bool createdPort = false;
+
+        /// <summary>
         /// Creates a new instance of the AnalogTemperature class.
         /// </summary>
         /// <param name="analogPin">Analog pin the temperature sensor is connected to</param>
@@ -113,7 +123,9 @@ namespace Meadow.Foundation.Sensors.Temperature
                 : this(
                       analogPin.CreateAnalogInputPort(sampleCount, sampleInterval ?? TimeSpan.FromMilliseconds(40), new Voltage(3.3, Voltage.UnitType.Volts)),
                       sensorType, calibration)
-        { }
+        {
+            createdPort = true;
+        }
 
         /// <summary>
         /// Creates a new instance of the AnalogTemperature class.
@@ -260,6 +272,30 @@ namespace Meadow.Foundation.Sensors.Temperature
             return new Units.Temperature(SensorCalibration.SampleReading +
                 (voltage.Millivolts - SensorCalibration.MillivoltsAtSampleReading) / SensorCalibration.MillivoltsPerDegreeCentigrade,
                 Units.Temperature.UnitType.Celsius);
+        }
+
+        ///<inheritdoc/>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        /// <param name="disposing">Is disposing</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && createdPort)
+                {
+                    AnalogInputPort?.Dispose();
+                }
+
+                IsDisposed = true;
+            }
         }
     }
 }

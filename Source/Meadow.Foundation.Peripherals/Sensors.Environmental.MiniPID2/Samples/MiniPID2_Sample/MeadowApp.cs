@@ -40,7 +40,7 @@ namespace Sensors.Environmental.Ens160_Sample
             {
                 sensor.Updated += (sender, result) =>
                 {
-                    Resolver.Log.Info($"  VOC Concentraion: {result.New.PartsPerMillion:N1}ppm");
+                    Resolver.Log.Info($"  VOC Concentration: {result.New.PartsPerMillion:N1}ppm");
                 };
             }
 

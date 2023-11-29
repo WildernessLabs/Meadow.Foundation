@@ -8,7 +8,7 @@ using Meadow.Foundation.ICs.IOExpanders;
 public class MeadowApp : App<Windows>
 {
     private Ft232h expander = new Ft232h();
-    private DisplayScreen screen;
+    private DisplayScreen? screen;
 
     public override Task Initialize()
     {
@@ -24,9 +24,10 @@ public class MeadowApp : App<Windows>
             colorMode: ColorMode.Format16bppRgb565
         );
 
-        screen = new DisplayScreen(display, Meadow.Foundation.Graphics.RotationType._270Degrees);
-
-        screen.BackgroundColor = Color.Black;
+        screen = new DisplayScreen(display, RotationType._270Degrees)
+        {
+            BackgroundColor = Color.Black
+        };
 
         return base.Initialize();
     }
@@ -40,10 +41,10 @@ public class MeadowApp : App<Windows>
 
     public void Text()
     {
-        var label = new Label(0, 0, screen.Width, screen.Height);
+        var label = new Label(0, 0, screen!.Width, screen.Height);
         label.Font = new Font12x20();
-        label.HorizontalAlignment = Meadow.Foundation.Graphics.HorizontalAlignment.Center;
-        label.VerticalAlignment = Meadow.Foundation.Graphics.VerticalAlignment.Center;
+        label.HorizontalAlignment = HorizontalAlignment.Center;
+        label.VerticalAlignment = VerticalAlignment.Center;
         label.TextColor = Color.Red;
         label.Text = "HELLO";
 
@@ -53,11 +54,11 @@ public class MeadowApp : App<Windows>
 
     public void TextOnBox()
     {
-        var box = new Box(0, 0, screen.Width / 4, screen.Height);
+        var box = new Box(0, 0, screen!.Width / 4, screen.Height);
         box.ForeColor = Color.Red;
         var label = new Label(0, 0, screen.Width / 4, screen.Height);
-        label.HorizontalAlignment = Meadow.Foundation.Graphics.HorizontalAlignment.Center;
-        label.VerticalAlignment = Meadow.Foundation.Graphics.VerticalAlignment.Center;
+        label.HorizontalAlignment = HorizontalAlignment.Center;
+        label.VerticalAlignment = VerticalAlignment.Center;
         label.TextColor = Color.Black;
         label.Text = "Meadow";
 
@@ -74,7 +75,7 @@ public class MeadowApp : App<Windows>
 
     public void Sweep()
     {
-        var box = new Box(0, 0, screen.Width / 4, screen.Height);
+        var box = new Box(0, 0, screen!.Width / 4, screen.Height);
         box.ForeColor = Color.Red;
 
         screen.Controls.Add(box);

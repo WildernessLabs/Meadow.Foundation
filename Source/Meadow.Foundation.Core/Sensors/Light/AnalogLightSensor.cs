@@ -10,7 +10,7 @@ namespace Meadow.Foundation.Sensors.Light
     /// Represents an analog light sensor
     /// </summary>
     public partial class AnalogLightSensor
-        : SamplingSensorBase<Illuminance>, ILightSensor
+        : SamplingSensorBase<Illuminance>, ILightSensor, IDisposable
     {
         /// <summary>
         /// Analog port connected to sensor
@@ -20,10 +20,10 @@ namespace Meadow.Foundation.Sensors.Light
         /// <summary>
         /// Raised when the value of the reading changes.
         /// </summary>
-        public event EventHandler<IChangeResult<Illuminance>> LuminosityUpdated = delegate { };
+        public event EventHandler<IChangeResult<Illuminance>> IlluminanceUpdated = default!;
 
         /// <summary>
-        /// Illuminance sensor callibration
+        /// Illuminance sensor calibration
         /// </summary>
         public Calibration LuminanceCalibration { get; protected set; }
 
@@ -32,6 +32,16 @@ namespace Meadow.Foundation.Sensors.Light
         /// </summary>
         public Illuminance? Illuminance => illuminance;
         private Illuminance illuminance;
+
+        /// <summary>
+        /// Is the object disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
+
+        /// <summary>
+        /// Did we create the port(s) used by the peripheral
+        /// </summary>
+        readonly bool createdPort = false;
 
         /// <summary>
         /// New instance of the AnalogLightSensor class.
@@ -47,7 +57,9 @@ namespace Meadow.Foundation.Sensors.Light
             Calibration? calibration = null,
             int sampleCount = 5, TimeSpan? sampleInterval = null)
                 : this(analogPin.CreateAnalogInputPort(sampleCount, sampleInterval ?? new TimeSpan(0, 0, 40), new Voltage(3.3)), calibration)
-        { }
+        {
+            createdPort = true;
+        }
 
         /// <summary>
         /// New instance of the AnalogLightSensor class.
@@ -59,24 +71,17 @@ namespace Meadow.Foundation.Sensors.Light
         {
             AnalogInputPort = analogInputPort;
 
-            //
-            //  If the calibration object is null use the defaults for TMP35.
-            //
             LuminanceCalibration = calibration ?? new Calibration();
 
-            // wire up our observable
             AnalogInputPort.Subscribe
             (
                 IAnalogInputPort.CreateObserver(
                     h =>
                     {
-                        // capture the old water leve.
                         var oldLuminance = illuminance;
-                        //var oldWaterLevel = VoltageToWaterLevel(h.Old);
 
-                        // get the new one
                         var newLuminance = VoltageToLuminance(h.New);
-                        illuminance = newLuminance; // save state
+                        illuminance = newLuminance;
 
                         RaiseEventsAndNotify(
                             new ChangeResult<Illuminance>(newLuminance, oldLuminance)
@@ -121,12 +126,12 @@ namespace Meadow.Foundation.Sensors.Light
         }
 
         /// <summary>
-        /// Notify subscibers of LuminosityUpdated event hander
+        /// Notify subscribers of IlluminanceUpdated event handler
         /// </summary>
         /// <param name="changeResult">Change result with old and new Illuminance</param>
         protected override void RaiseEventsAndNotify(IChangeResult<Illuminance> changeResult)
         {
-            LuminosityUpdated?.Invoke(this, changeResult);
+            IlluminanceUpdated?.Invoke(this, changeResult);
             base.RaiseEventsAndNotify(changeResult);
         }
 
@@ -143,6 +148,30 @@ namespace Meadow.Foundation.Sensors.Light
                 return new Illuminance(0);
             }
             return new Illuminance((voltage.Volts - LuminanceCalibration.VoltsAtZero.Volts) / LuminanceCalibration.VoltsPerLuminance.Volts);
+        }
+
+        ///<inheritdoc/>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        /// <param name="disposing">Is disposing</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && createdPort)
+                {
+                    AnalogInputPort?.Dispose();
+                }
+
+                IsDisposed = true;
+            }
         }
     }
 }

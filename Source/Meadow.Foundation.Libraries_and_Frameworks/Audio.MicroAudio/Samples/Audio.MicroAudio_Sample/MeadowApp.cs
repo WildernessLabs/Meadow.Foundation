@@ -2,7 +2,6 @@
 using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Audio;
-using Meadow.Gateways.Bluetooth;
 using Meadow.Peripherals.Speakers;
 using System;
 using System.Threading.Tasks;
@@ -47,7 +46,7 @@ namespace MicroAudio_Sample
         }
 
         Task HappyBirthDay(IToneGenerator speaker)
-        { 
+        {
             var happyBirthday = new Song();
             happyBirthday.AddNote(new Note(Pitch.C, 3, NoteDuration.Quarter));
             happyBirthday.AddNote(new Note(Pitch.C, 3, NoteDuration.Quarter));
