@@ -1,6 +1,6 @@
 # Meadow.Foundation.Motors.Stepper.Em542s
 
-**The Leadshine EM542S Stepper Motor Drive**
+**Leadshine EM542S digital input stepper motor controller**
 
 The **Em542s** library is designed for the [Wilderness Labs](www.wildernesslabs.co) Meadow .NET IoT platform and is part of [Meadow.Foundation](https://developer.wildernesslabs.co/Meadow/Meadow.Foundation/).
 

@@ -13,10 +13,10 @@
     <PackageProjectUrl>http://developer.wildernesslabs.co/Meadow/Meadow.Foundation/</PackageProjectUrl>
     <PackageId>Meadow.Foundation.Motors.Stepper.Em542s</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
-    <PackageTags>Meadow, Meadow.Foundation, Motor, Stepper, Leadshine, Em542s</PackageTags>
-    <Version>0.1.49</Version>
+    <PackageTags>Meadow,Meadow.Foundation,Motor,Stepper,controller,Leadshine,Em542s</PackageTags>
+    <Version>0.1.0</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Description>The Leadshine EM542S Stepper Motor Drive</Description>
+    <Description>Leadshine EM542S digital input stepper motor controller</Description>
   </PropertyGroup>
   <ItemGroup>
     <None Include="..\..\..\icon.png" Pack="true" PackagePath="" />
