@@ -10,6 +10,7 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\..\..\Meadow.Core\Source\implementations\f7\Meadow.F7\Meadow.F7.csproj" />
+    <ProjectReference Include="..\..\Driver\Motors.GpioStepper.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Update="meadow.config.yaml">

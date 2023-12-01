@@ -9,37 +9,52 @@ namespace Meadow.Foundation.Motors.Stepper;
 
 public abstract class GpioStepper : IPositionalMotor
 {
-    protected double _positionDegrees = 0;
     private double _stepsPerDegree;
 
     /// <inheritdoc/>
     public RotationDirection Direction { get; protected set; }
-    public abstract Angle Position { get; }
-    public bool IsMoving { get; protected set; }
 
+    public abstract Angle Position { get; }
+    public abstract bool IsMoving { get; }
     protected abstract Task Rotate(int steps, RotationDirection direction, Frequency rate, CancellationToken cancellationToken = default);
+    public abstract Task Stop(CancellationToken cancellationToken = default);
+    public abstract Task ResetPosition(CancellationToken cancellationToken = default);
 
     public abstract int StepsPerRevolution { get; }
 
     protected GpioStepper()
     {
-        _stepsPerDegree = StepsPerRevolution / 360f;
     }
 
     protected Frequency GetFrequencyForVelocity(AngularVelocity velocity)
     {
-        return new Frequency(velocity.DegreesPerSecond * _stepsPerDegree, Frequency.UnitType.Hertz);
+        if (StepsPerRevolution <= 0) throw new Exception("StepsPerRevolution must be greater than 0");
+
+        if (_stepsPerDegree == 0)
+        {
+            _stepsPerDegree = StepsPerRevolution / 360f;
+        }
+
+        return new Frequency(velocity.DegreesPerSecond * _stepsPerDegree * 4, Frequency.UnitType.Hertz);
     }
 
     public Task GoTo(Angle position, AngularVelocity velocity, CancellationToken cancellationToken = default)
     {
         RotationDirection shortestDirection;
 
+        if (Position == position)
+        {
+            // no move required
+            return Task.CompletedTask;
+        }
+
+        Resolver.Log.Info($"Currently at: {Position.Degrees} moving to: {position.Degrees}");
+
         // determine shortest path to destination
         double totalDistance;
-        if (position.Degrees < _positionDegrees)
+        if (position.Degrees < Position.Degrees)
         {
-            totalDistance = _positionDegrees - position.Degrees;
+            totalDistance = Position.Degrees - position.Degrees;
             if (totalDistance < 180)
             {
                 shortestDirection = RotationDirection.CounterClockwise;
@@ -52,8 +67,8 @@ public abstract class GpioStepper : IPositionalMotor
         }
         else
         {
-            totalDistance = position.Degrees - _positionDegrees;
-            if (totalDistance >= 180)
+            totalDistance = position.Degrees - Position.Degrees;
+            if (totalDistance > 180)
             {
                 totalDistance = totalDistance - 180;
                 shortestDirection = RotationDirection.CounterClockwise;
@@ -64,51 +79,63 @@ public abstract class GpioStepper : IPositionalMotor
             }
         }
 
-        return Rotate(new Angle(totalDistance, Angle.UnitType.Degrees), velocity, shortestDirection, cancellationToken);
+        Resolver.Log.Info($"Distance to move: {totalDistance} degrees");
+
+        return Rotate(new Angle(totalDistance, Angle.UnitType.Degrees), shortestDirection, velocity, cancellationToken);
     }
 
-    public Task GoTo(Angle position, AngularVelocity velocity, RotationDirection direction, CancellationToken cancellationToken = default)
+    public Task GoTo(Angle position, RotationDirection direction, AngularVelocity velocity, CancellationToken cancellationToken = default)
     {
+        if (Position == position)
+        {
+            // no move required
+            return Task.CompletedTask;
+        }
+
+        var dest = position.Degrees;
+        var start = Position.Degrees;
+
+        while (dest < 0) dest += 360;
+        dest %= 360;
+
         // convert velocity into frequency based on drive parameters
         var freq = GetFrequencyForVelocity(velocity);
 
+        Resolver.Log.Info($"Currently at: {start} moving to: {dest}");
+
         double totalDistance;
 
-        if (position.Degrees < _positionDegrees)
+        if (dest < start)
         {
             totalDistance = direction switch
             {
-                RotationDirection.CounterClockwise => _positionDegrees - position.Degrees,
-                _ => 360 - _positionDegrees + 360 + position.Degrees
+                RotationDirection.CounterClockwise => start - dest,
+                _ => 360 - start + dest
             };
         }
         else
         {
             totalDistance = direction switch
             {
-                RotationDirection.Clockwise => position.Degrees - _positionDegrees,
-                _ => 360 - _positionDegrees + 360 - position.Degrees
+                RotationDirection.Clockwise => dest - start,
+                _ => start + 360 - dest
             };
         }
 
-        return Rotate((int)(totalDistance * _stepsPerDegree), direction, freq);
+        Resolver.Log.Info($"Distance to move: {totalDistance} degrees");
+
+        return Rotate((int)(totalDistance * _stepsPerDegree), direction, freq, cancellationToken);
     }
 
-    public Task Rotate(Angle amountToRotate, AngularVelocity velocity, RotationDirection direction, CancellationToken cancellationToken = default)
+    public Task Rotate(Angle amountToRotate, RotationDirection direction, AngularVelocity velocity, CancellationToken cancellationToken = default)
     {
         // convert velocity into frequency based on drive parameters
         var freq = GetFrequencyForVelocity(velocity);
+        var steps = (int)(amountToRotate.Degrees * _stepsPerDegree);
 
-        return Rotate((int)(amountToRotate.Degrees * _stepsPerDegree), direction, freq, cancellationToken);
-    }
+        Resolver.Log.Info($"Rotating {steps} at {freq.Hertz}");
 
-    public Task ResetPosition(CancellationToken cancellationToken = default)
-    {
-        if (IsMoving) throw new Exception("Cannot reset position while the motor is moving.");
-
-        _positionDegrees = 0;
-
-        return Task.CompletedTask;
+        return Rotate(steps, direction, freq, cancellationToken);
     }
 
     public Task Run(RotationDirection direction, AngularVelocity velocity, CancellationToken cancellationToken = default)
@@ -122,28 +149,29 @@ public abstract class GpioStepper : IPositionalMotor
 
     public Task Run(RotationDirection direction, float power, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        throw new NotSupportedException("This driver does not support requesting run power");
     }
 
-    public Task RunFor(RotationDirection direction, TimeSpan runTime, AngularVelocity velocity, CancellationToken cancellationToken = default)
+    public Task RunFor(TimeSpan runTime, RotationDirection direction, AngularVelocity velocity, CancellationToken cancellationToken = default)
     {
         var timeoutTask = Task.Delay(runTime);
         var motorTask = Run(direction, velocity, cancellationToken);
+        var t = Task.WaitAny(timeoutTask, motorTask);
 
-        Task.WaitAny(timeoutTask, motorTask);
+        if (t == 0)
+        {
+            // tell the motor to stop
+            Stop();
+
+            // wait for the motor to finish
+            motorTask.Wait();
+        }
 
         return Task.CompletedTask;
     }
 
-    public Task RunFor(RotationDirection direction, TimeSpan runTime, float power, CancellationToken cancellationToken = default)
+    public virtual Task RunFor(TimeSpan runTime, RotationDirection direction, float power, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
-    }
-
-    public Task Stop(CancellationToken cancellationToken = default)
-    {
-        if (!IsMoving) return Task.CompletedTask;
-
-        throw new NotImplementedException();
+        throw new NotSupportedException("This driver does not support requesting run power");
     }
 }

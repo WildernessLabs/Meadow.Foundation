@@ -21,6 +21,8 @@ public class StepDirStepper : GpioStepper
     private float _usPerCall;
     private readonly object _syncRoot = new();
     private int _positionStep;
+    private bool _stopRequested = false;
+    private bool _isMoving = false;
 
     /// <summary>
     /// Gets or sets the minimum step dwell time when motor changes from stationary to moving. Motors with more mass or larger steps require more dwell.
@@ -44,7 +46,18 @@ public class StepDirStepper : GpioStepper
     /// </remarks>
     public bool InverseLogic { get; }
 
-    public override Angle Position => new Angle(_positionStep * (360 / StepsPerRevolution), Angle.UnitType.Degrees);
+    public override bool IsMoving => _isMoving;
+
+    public override Angle Position => new Angle(_positionStep * (360d / StepsPerRevolution), Angle.UnitType.Degrees);
+
+    public override Task ResetPosition(CancellationToken cancellationToken = default)
+    {
+        if (IsMoving) throw new Exception("Cannot reset position while the motor is moving.");
+
+        _positionStep = 0;
+
+        return Task.CompletedTask;
+    }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="StepDirStepper"/> class with the specified parameters.
@@ -98,8 +111,6 @@ public class StepDirStepper : GpioStepper
         var et = Environment.TickCount - start;
 
         _usPerCall = et * 1000 / (float)calls;
-
-        Resolver.Log.Info($"us per call: {calls} / {et} = {_usPerCall}");
     }
 
     [MethodImpl(MethodImplOptions.NoOptimization | MethodImplOptions.NoInlining)]
@@ -117,78 +128,122 @@ public class StepDirStepper : GpioStepper
     {
         if (steps < -1) throw new ArgumentOutOfRangeException(nameof(steps));
 
+        Resolver.Log.Info($"Moving {steps} steps at {rate.Hertz}Hz");
+
         // usPerCall is calculated async at startup.  This loop is to make sure it's calculated before the first Rotate is run
         while (_usPerCall == 0)
         {
             Thread.Sleep(10);
         }
 
-        lock (_syncRoot)
+        if (steps == 0)
         {
-            var directionState = direction == RotationDirection.Clockwise;
-            if (InverseLogic) directionState = !directionState;
-            _directionPort.State = directionState;
-
-            if (_enablePort != null)
-            {
-                _enablePort.State = !InverseLogic;
-            }
-
-            var targetus = (int)(1000000d / rate.Hertz);
-
-            if (targetus < MinimumMicrosecondDelayRequiredByDrive) throw new ArgumentOutOfRangeException(
-                "Rate cannot have pulses shorter than 5us. Use 200KHz or less.");
-
-            var us = targetus < MinimumStartupDwellMicroseconds ? MinimumStartupDwellMicroseconds : targetus;
-
-            int step;
-
-            var infiniteRun = steps == -1;
-            if (infiniteRun)
-            {
-                steps = 10;
-            }
-
-            for (step = 0; step < steps; step++)
-            {
-                if (cancellationToken.IsCancellationRequested)
-                {
-                    break;
-                }
-
-                _stepPort.State = InverseLogic; // low means "step"
-
-                MicrosecondSleep(us);
-
-                _stepPort.State = !InverseLogic;
-
-                MicrosecondSleep(us);
-
-                // DEV NOTE:
-                // naive linear acceleration tested only with STP-MTR-34066 motor
-                if (us > targetus && step % LinearAccelerationConstant == 0)
-                {
-                    us--;
-                }
-
-                if (direction == RotationDirection.Clockwise)
-                {
-                    _positionStep += step;
-                }
-                else
-                {
-                    _positionStep -= step;
-                }
-
-                if (infiniteRun) step = 0;
-            }
-
-            if (_enablePort != null)
-            {
-                _enablePort.State = !InverseLogic;
-            }
-
+            Resolver.Log.Info($"no move required");
             return Task.CompletedTask;
         }
+
+        return Task.Run(() =>
+        {
+            lock (_syncRoot)
+            {
+                _isMoving = true;
+
+                try
+                {
+                    var directionState = direction == RotationDirection.Clockwise;
+                    if (InverseLogic) directionState = !directionState;
+                    _directionPort.State = directionState;
+
+                    if (_enablePort != null)
+                    {
+                        _enablePort.State = !InverseLogic;
+                    }
+
+                    var targetus = (int)(1000000d / rate.Hertz);
+
+                    if (targetus < MinimumMicrosecondDelayRequiredByDrive) throw new ArgumentOutOfRangeException(
+                        "Rate cannot have pulses shorter than 5us. Use 200KHz or less.");
+
+                    var us = targetus < MinimumStartupDwellMicroseconds ? MinimumStartupDwellMicroseconds : targetus;
+
+                    int step;
+
+                    var infiniteRun = steps == -1;
+                    if (infiniteRun)
+                    {
+                        steps = 10;
+                    }
+
+                    for (step = 0; step < steps; step++)
+                    {
+                        if (cancellationToken.IsCancellationRequested || _stopRequested)
+                        {
+                            break;
+                        }
+
+                        _stepPort.State = InverseLogic; // low means "step"
+
+                        MicrosecondSleep(us);
+
+                        _stepPort.State = !InverseLogic;
+
+                        MicrosecondSleep(us);
+
+                        // DEV NOTE:
+                        // naive linear acceleration tested only with STP-MTR-34066 motor
+                        if (us > targetus && step % LinearAccelerationConstant == 0)
+                        {
+                            us--;
+                        }
+
+                        if (direction == RotationDirection.Clockwise)
+                        {
+                            _positionStep++;
+
+                            if (_positionStep > StepsPerRevolution)
+                            {
+                                _positionStep -= StepsPerRevolution;
+                            }
+                        }
+                        else
+                        {
+                            _positionStep--;
+
+                            if (_positionStep < 0)
+                            {
+                                _positionStep += StepsPerRevolution;
+                            }
+                        }
+
+                        if (infiniteRun) step = 0;
+                    }
+
+                    Resolver.Log.Info($"done stepping. At position {_positionStep}");
+
+                    if (_enablePort != null)
+                    {
+                        _enablePort.State = !InverseLogic;
+                    }
+
+                    return Task.CompletedTask;
+                }
+                finally
+                {
+                    _stopRequested = false;
+                    _isMoving = false;
+                }
+            }
+        });
     }
+
+    public override Task Stop(CancellationToken cancellationToken = default)
+    {
+        if (IsMoving)
+        {
+            _stopRequested = true;
+        }
+
+        return Task.CompletedTask;
+    }
+
 }
