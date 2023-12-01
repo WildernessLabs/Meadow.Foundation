@@ -11,7 +11,7 @@ namespace Meadow.Foundation.Motors.Stepper;
 /// <summary>
 /// A stepper motor that uses a GPIO pulse for step and a GPIO for travel direction
 /// </summary>
-public class StepDirStepper : GpioStepper
+public class StepDirStepper : GpioStepperBase
 {
     private const int MinimumMicrosecondDelayRequiredByDrive = 5; // per the data sheet
 
@@ -46,10 +46,16 @@ public class StepDirStepper : GpioStepper
     /// </remarks>
     public bool InverseLogic { get; }
 
+    /// <inheritdoc/>
     public override bool IsMoving => _isMoving;
 
+    /// <inheritdoc/>
     public override Angle Position => new Angle(_positionStep * (360d / StepsPerRevolution), Angle.UnitType.Degrees);
 
+    /// <inheritdoc/>
+    public override AngularVelocity MaxVelocity { get; }
+
+    /// <inheritdoc/>
     public override Task ResetPosition(CancellationToken cancellationToken = default)
     {
         if (IsMoving) throw new Exception("Cannot reset position while the motor is moving.");
@@ -76,6 +82,8 @@ public class StepDirStepper : GpioStepper
         )
     {
         StepsPerRevolution = stepsPerRevolution;
+        MaxVelocity = new AngularVelocity(1 / (StepsPerRevolution * 0.0000010), AngularVelocity.UnitType.RevolutionsPerSecond); // 10us per step minimum speed
+
         InverseLogic = inverseLogic;
 
         _stepPort = step;
@@ -124,7 +132,8 @@ public class StepDirStepper : GpioStepper
         }
     }
 
-    protected override Task Rotate(int steps, RotationDirection direction, Frequency rate, CancellationToken cancellationToken = default)
+    /// <inheritdoc/>
+    public override Task Rotate(int steps, RotationDirection direction, Frequency rate, CancellationToken cancellationToken = default)
     {
         if (steps < -1) throw new ArgumentOutOfRangeException(nameof(steps));
 
@@ -236,6 +245,7 @@ public class StepDirStepper : GpioStepper
         });
     }
 
+    /// <inheritdoc/>
     public override Task Stop(CancellationToken cancellationToken = default)
     {
         if (IsMoving)

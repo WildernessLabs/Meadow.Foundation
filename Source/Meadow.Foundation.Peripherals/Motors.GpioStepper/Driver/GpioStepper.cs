@@ -7,25 +7,49 @@ using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Motors.Stepper;
 
-public abstract class GpioStepper : IPositionalMotor
+/// <summary>
+/// Represents an abstract GPIO-based stepper motor.
+/// </summary>
+public abstract class GpioStepperBase : IStepperMotor
 {
     private double _stepsPerDegree;
 
     /// <inheritdoc/>
     public RotationDirection Direction { get; protected set; }
 
+    /// <inheritdoc/>
     public abstract Angle Position { get; }
+
+    /// <inheritdoc/>
     public abstract bool IsMoving { get; }
-    protected abstract Task Rotate(int steps, RotationDirection direction, Frequency rate, CancellationToken cancellationToken = default);
+
+    /// <inheritdoc/>
+    public abstract Task Rotate(int steps, RotationDirection direction, Frequency rate, CancellationToken cancellationToken = default);
+
+    /// <inheritdoc/>
     public abstract Task Stop(CancellationToken cancellationToken = default);
+
+    /// <inheritdoc/>
     public abstract Task ResetPosition(CancellationToken cancellationToken = default);
 
+    /// <inheritdoc/>
+    public abstract AngularVelocity MaxVelocity { get; }
+
+    /// <inheritdoc/>
     public abstract int StepsPerRevolution { get; }
 
-    protected GpioStepper()
+    /// <summary>
+    /// Initializes a new instance of the <see cref="GpioStepperBase"/> class.
+    /// </summary>
+    protected GpioStepperBase()
     {
     }
 
+    /// <summary>
+    /// Gets the frequency corresponding to the specified angular velocity.
+    /// </summary>
+    /// <param name="velocity">The angular velocity.</param>
+    /// <returns>The frequency required for the specified angular velocity.</returns>
     protected Frequency GetFrequencyForVelocity(AngularVelocity velocity)
     {
         if (StepsPerRevolution <= 0) throw new Exception("StepsPerRevolution must be greater than 0");
@@ -38,6 +62,7 @@ public abstract class GpioStepper : IPositionalMotor
         return new Frequency(velocity.DegreesPerSecond * _stepsPerDegree * 4, Frequency.UnitType.Hertz);
     }
 
+    /// <inheritdoc/>
     public Task GoTo(Angle position, AngularVelocity velocity, CancellationToken cancellationToken = default)
     {
         RotationDirection shortestDirection;
@@ -84,6 +109,7 @@ public abstract class GpioStepper : IPositionalMotor
         return Rotate(new Angle(totalDistance, Angle.UnitType.Degrees), shortestDirection, velocity, cancellationToken);
     }
 
+    /// <inheritdoc/>
     public Task GoTo(Angle position, RotationDirection direction, AngularVelocity velocity, CancellationToken cancellationToken = default)
     {
         if (Position == position)
@@ -127,6 +153,7 @@ public abstract class GpioStepper : IPositionalMotor
         return Rotate((int)(totalDistance * _stepsPerDegree), direction, freq, cancellationToken);
     }
 
+    /// <inheritdoc/>
     public Task Rotate(Angle amountToRotate, RotationDirection direction, AngularVelocity velocity, CancellationToken cancellationToken = default)
     {
         // convert velocity into frequency based on drive parameters
@@ -138,6 +165,7 @@ public abstract class GpioStepper : IPositionalMotor
         return Rotate(steps, direction, freq, cancellationToken);
     }
 
+    /// <inheritdoc/>
     public Task Run(RotationDirection direction, AngularVelocity velocity, CancellationToken cancellationToken = default)
     {
         // run until cancelled in the specified direction
@@ -147,11 +175,7 @@ public abstract class GpioStepper : IPositionalMotor
         return Rotate(-1, direction, freq, cancellationToken);
     }
 
-    public Task Run(RotationDirection direction, float power, CancellationToken cancellationToken = default)
-    {
-        throw new NotSupportedException("This driver does not support requesting run power");
-    }
-
+    /// <inheritdoc/>
     public Task RunFor(TimeSpan runTime, RotationDirection direction, AngularVelocity velocity, CancellationToken cancellationToken = default)
     {
         var timeoutTask = Task.Delay(runTime);
@@ -170,8 +194,35 @@ public abstract class GpioStepper : IPositionalMotor
         return Task.CompletedTask;
     }
 
-    public virtual Task RunFor(TimeSpan runTime, RotationDirection direction, float power, CancellationToken cancellationToken = default)
+    /// <inheritdoc/>
+    public Task Run(RotationDirection direction, float speed, CancellationToken cancellationToken = default)
     {
-        throw new NotSupportedException("This driver does not support requesting run power");
+        if (speed < 0 || speed > 100) throw new ArgumentOutOfRangeException(nameof(speed));
+
+        var velocity = new AngularVelocity(MaxVelocity.RevolutionsPerSecond * (speed / 100));
+
+        return Run(direction, velocity, cancellationToken);
+    }
+
+    /// <inheritdoc/>
+    public virtual Task RunFor(TimeSpan runTime, RotationDirection direction, float speed, CancellationToken cancellationToken = default)
+    {
+        if (speed < 0 || speed > 100) throw new ArgumentOutOfRangeException(nameof(speed));
+
+        var velocity = new AngularVelocity(MaxVelocity.RevolutionsPerSecond * (speed / 100));
+
+        return RunFor(runTime, direction, velocity, cancellationToken);
+    }
+
+    /// <inheritdoc/>
+    public Task RunFor(TimeSpan runTime, RotationDirection direction, CancellationToken cancellationToken = default)
+    {
+        return RunFor(runTime, direction, 100f, cancellationToken);
+    }
+
+    /// <inheritdoc/>
+    public Task Run(RotationDirection direction, CancellationToken cancellationToken = default)
+    {
+        return Run(direction, 100f, cancellationToken);
     }
 }

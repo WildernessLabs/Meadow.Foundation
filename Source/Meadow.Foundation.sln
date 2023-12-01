@@ -1405,7 +1405,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "A02yyuw_Sample", "Meadow.Fo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Motors.GpioStepper", "Meadow.Foundation.Peripherals\Motors.GpioStepper\Driver\Motors.GpioStepper.csproj", "{88E00348-9C4D-49A2-A927-5923A2A93159}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StepDir_Sample", "Meadow.Foundation.Peripherals\Motors.GpioStepper\Samples\StepDir_Sample\StepDir_Sample.csproj", "{AF408FEB-E8F1-4735-8B7B-69FDD43C5D6A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GpioStepper_Sample", "Meadow.Foundation.Peripherals\Motors.GpioStepper\Samples\GpioStepper_Sample\GpioStepper_Sample.csproj", "{F570058D-E943-44C6-B0C7-A914009D996F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -3391,12 +3391,12 @@ Global
 		{88E00348-9C4D-49A2-A927-5923A2A93159}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{88E00348-9C4D-49A2-A927-5923A2A93159}.Release|Any CPU.Build.0 = Release|Any CPU
 		{88E00348-9C4D-49A2-A927-5923A2A93159}.Release|Any CPU.Deploy.0 = Release|Any CPU
-		{AF408FEB-E8F1-4735-8B7B-69FDD43C5D6A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{AF408FEB-E8F1-4735-8B7B-69FDD43C5D6A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{AF408FEB-E8F1-4735-8B7B-69FDD43C5D6A}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
-		{AF408FEB-E8F1-4735-8B7B-69FDD43C5D6A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AF408FEB-E8F1-4735-8B7B-69FDD43C5D6A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{AF408FEB-E8F1-4735-8B7B-69FDD43C5D6A}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{F570058D-E943-44C6-B0C7-A914009D996F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F570058D-E943-44C6-B0C7-A914009D996F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F570058D-E943-44C6-B0C7-A914009D996F}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{F570058D-E943-44C6-B0C7-A914009D996F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F570058D-E943-44C6-B0C7-A914009D996F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F570058D-E943-44C6-B0C7-A914009D996F}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -4098,7 +4098,7 @@ Global
 		{590C063A-A14B-47F9-A296-89A17A94CD59} = {E193E8A8-A7E0-43C2-821D-CC67D7846D34}
 		{0E21293E-DB39-4B2F-BD3F-639A3C4E521F} = {02E85B22-EA80-46B8-BD76-10926D1D00A3}
 		{88E00348-9C4D-49A2-A927-5923A2A93159} = {FC63A488-29DD-4E30-89BB-507923BC2392}
-		{AF408FEB-E8F1-4735-8B7B-69FDD43C5D6A} = {91F3576B-CD16-4364-84E6-3F205F6D9A37}
+		{F570058D-E943-44C6-B0C7-A914009D996F} = {91F3576B-CD16-4364-84E6-3F205F6D9A37}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}

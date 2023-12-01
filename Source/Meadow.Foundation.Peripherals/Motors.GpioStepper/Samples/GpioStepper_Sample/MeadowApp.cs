@@ -15,12 +15,26 @@ namespace MeadowApp
         //<!=SNIP=>
         private IPositionalMotor stepper;
 
+        private bool UseStepDirConfiguration { get; set; } = true;
+
         public override Task Initialize()
         {
-            stepper = new StepDirStepper(
-                Device.Pins.D15.CreateDigitalOutputPort(),
-                Device.Pins.D14.CreateDigitalOutputPort(),
-                stepsPerRevolution: 200);
+            if (UseStepDirConfiguration)
+            {
+                // use a drive configured for STEP/DIR GPIOs
+                stepper = new StepDirStepper(
+                    Device.Pins.D15.CreateDigitalOutputPort(),
+                    Device.Pins.D14.CreateDigitalOutputPort(),
+                    stepsPerRevolution: 200);
+            }
+            else
+            {
+                // use a drive configured for CW/CCW GPIOs
+                stepper = new CwCcwStepper(
+                    Device.Pins.D15.CreateDigitalOutputPort(),
+                    Device.Pins.D14.CreateDigitalOutputPort(),
+                    stepsPerRevolution: 200);
+            }
 
             return base.Initialize();
         }
