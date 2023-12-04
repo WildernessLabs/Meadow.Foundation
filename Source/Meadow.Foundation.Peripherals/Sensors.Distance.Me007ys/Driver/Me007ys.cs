@@ -27,12 +27,20 @@ namespace Meadow.Foundation.Sensors.Distance
         /// </summary>
         public Length OutOfRangeValue { get; } = new Length(25, Length.UnitType.Centimeters);
 
+        /// <summary>
+        /// The maximum time to wait for a sensor reading
+        /// </summary>
+        public TimeSpan SensorReadTimeOut { get; set; } = TimeSpan.FromSeconds(1000);
+
         //The baud rate is 9600, 8 bits, no parity, with one stop bit
         private readonly ISerialPort serialPort;
 
         private static readonly int portSpeed = 9600;
 
-        private readonly byte[] readBuffer = new byte[16];
+        //Serial read variables 
+        readonly byte[] readBuffer = new byte[16];
+        int serialDataBytesRead = 0;
+        byte serialDataFirstByte;
 
         private TaskCompletionSource<Length>? dataReceivedTaskCompletionSource;
 
@@ -58,6 +66,7 @@ namespace Meadow.Foundation.Sensors.Distance
         public Me007ys(ISerialPort serialMessage)
         {
             serialPort = serialMessage;
+            serialPort.ReadTimeout = TimeSpan.FromSeconds(5);
             serialPort.DataReceived += SerialPortDataReceived;
         }
 
@@ -125,31 +134,59 @@ namespace Meadow.Foundation.Sensors.Distance
         //when 3 bytes are available we know we have a distance reading ready
         private async Task<Length> ReadSingleValue()
         {
+            dataReceivedTaskCompletionSource = new TaskCompletionSource<Length>();
+
             if (serialPort.IsOpen == false)
             {
                 serialPort.Open();
             }
 
-            dataReceivedTaskCompletionSource = new TaskCompletionSource<Length>();
+            var timeOutTask = Task.Delay(SensorReadTimeOut);
 
-            var result = await dataReceivedTaskCompletionSource.Task;
+            await Task.WhenAny(dataReceivedTaskCompletionSource.Task, timeOutTask);
+
             serialPort.Close();
 
-            return result;
+            if (dataReceivedTaskCompletionSource.Task.IsCompletedSuccessfully == true)
+            {
+                return dataReceivedTaskCompletionSource.Task.Result;
+            }
+            return Length.Zero;
         }
 
         private void SerialPortDataReceived(object sender, SerialDataReceivedEventArgs e)
         {
-            var len = serialPort.BytesToRead;
-            serialPort.Read(readBuffer, 0, Math.Min(len, readBuffer.Length));
-            if (len == 3)
+            if (serialPort.IsOpen == false || serialPort.BytesToRead == 0 || dataReceivedTaskCompletionSource?.Task.IsCompletedSuccessfully == true)
             {
-                var mm = readBuffer[0] << 8 | readBuffer[1];
+                return;
+            }
 
-                if (mm != 0)
+            var len = serialPort.BytesToRead;
+
+            serialPort.Read(readBuffer, 0, Math.Min(len, readBuffer.Length));
+
+            for (int i = 0; i < len; i++)
+            {
+                if (readBuffer[i] == 0xFF)
                 {
-                    var length = new Length(mm, Length.UnitType.Millimeters);
-                    dataReceivedTaskCompletionSource?.SetResult(length);
+                    serialDataBytesRead = 0;
+                }
+                else if (serialDataBytesRead == 0)
+                {
+                    serialDataFirstByte = readBuffer[i];
+                    serialDataBytesRead++;
+                }
+                else if (serialDataBytesRead == 1)
+                {
+                    serialDataBytesRead = 2;
+                    var lengthInMillimeters = serialDataFirstByte << 8 | readBuffer[i];
+
+                    if (lengthInMillimeters != 0) //device should never return 0
+                    {
+                        var length = new Length(lengthInMillimeters, Length.UnitType.Millimeters);
+                        dataReceivedTaskCompletionSource?.SetResult(length);
+                        return;
+                    }
                 }
             }
         }

@@ -20,7 +20,7 @@ namespace Displays.Tft.St7796s_Sample
 
             Resolver.Log.Info("Create display driver instance");
 
-            var display = new Ssd1331
+            var display = new St7796s
             (
                 spiBus: spiBus,
                 resetPin: Device.Pins.D00,

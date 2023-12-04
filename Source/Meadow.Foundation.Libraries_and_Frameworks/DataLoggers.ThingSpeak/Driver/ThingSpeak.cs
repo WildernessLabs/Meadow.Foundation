@@ -53,7 +53,7 @@ namespace Meadow.Foundation.DataLoggers
                 {
                     data += "&";
                 }
-                data += "field" + (index + 1).ToString() + "=" + values[index];
+                data += "field" + (index + 1) + "=" + values[index];
             }
             PostData(data);
         }

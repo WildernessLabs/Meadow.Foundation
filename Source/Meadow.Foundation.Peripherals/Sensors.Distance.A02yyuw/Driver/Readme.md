@@ -1,8 +1,8 @@
-# Meadow.Foundation.Sensors.Distance.Me007ys
+# Meadow.Foundation.Sensors.Distance.A02yyuw
 
-**Me007ys serial ultrasonic distance sensor**
+**A02yyuw serial ultrasonic distance sensor**
 
-The **Me007ys** library is designed for the [Wilderness Labs](www.wildernesslabs.co) Meadow .NET IoT platform and is part of [Meadow.Foundation](https://developer.wildernesslabs.co/Meadow/Meadow.Foundation/).
+The **A02yyuw** library is designed for the [Wilderness Labs](www.wildernesslabs.co) Meadow .NET IoT platform and is part of [Meadow.Foundation](https://developer.wildernesslabs.co/Meadow/Meadow.Foundation/).
 
 The **Meadow.Foundation** peripherals library is an open-source repository of drivers and libraries that streamline and simplify adding hardware to your C# .NET Meadow IoT application.
 
@@ -13,15 +13,15 @@ To view all Wilderness Labs open-source projects, including samples, visit [gith
 ## Usage
 
 ```csharp
-Me007ys me007ys;
+A02yyuw a02yyuw;
 
 public override Task Initialize()
 {
     Resolver.Log.Info("Initialize...");
 
-    me007ys = new Me007ys(Device, Device.PlatformOS.GetSerialPortName("COM1"));
+    a02yyuw = new A02yyuw(Device, Device.PlatformOS.GetSerialPortName("COM1"));
 
-    var consumer = Me007ys.CreateObserver(
+    var consumer = A02yyuw.CreateObserver(
         handler: result =>
         {
             Resolver.Log.Info($"Observer: Distance changed by threshold; new distance: {result.New.Centimeters:N1}cm, old: {result.Old?.Centimeters:N1}cm");
@@ -35,22 +35,24 @@ public override Task Initialize()
             return false;
         }
     );
-    me007ys.Subscribe(consumer);
+    a02yyuw.Subscribe(consumer);
 
-    me007ys.DistanceUpdated += Me007y_DistanceUpdated;
+    a02yyuw.DistanceUpdated += A02yyuw_DistanceUpdated;
 
     return Task.CompletedTask;
 }
 
 public override async Task Run()
 {
-    var distance = await me007ys.Read();
+    Resolver.Log.Info("Run...");
+
+    var distance = await a02yyuw.Read();
     Resolver.Log.Info($"Initial distance is: {distance.Centimeters:N1}cm / {distance.Inches:N1}in");
 
-    me007ys.StartUpdating(TimeSpan.FromSeconds(2));
+    a02yyuw.StartUpdating(TimeSpan.FromSeconds(2));
 }
 
-private void Me007y_DistanceUpdated(object sender, IChangeResult<Length> e)
+private void A02yyuw_DistanceUpdated(object sender, IChangeResult<Length> e)
 {
     Resolver.Log.Info($"Distance: {e.New.Centimeters:N1}cm / {e.New.Inches:N1}in");
 }
