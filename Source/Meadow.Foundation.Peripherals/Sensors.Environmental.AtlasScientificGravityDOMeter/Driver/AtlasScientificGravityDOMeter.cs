@@ -1,4 +1,5 @@
 ﻿using Meadow.Hardware;
+using Meadow.Peripherals.Sensors.Environmental;
 using Meadow.Units;
 using System;
 using System.Threading.Tasks;
@@ -8,7 +9,7 @@ namespace Meadow.Foundation.Sensors.Environmental;
 /// <summary>
 /// Atlas Scientific Analog Gravity Dissolved Oxygen Meter
 /// </summary>
-public partial class AtlasScientificGravityDOMeter : SamplingSensorBase<double>
+public partial class AtlasScientificGravityDOMeter : SamplingSensorBase<double>, IDisolvedOxygenSnesor
 {
     /// <summary>
     /// Raised when a new sensor percentage saturation reading is ready
@@ -16,12 +17,17 @@ public partial class AtlasScientificGravityDOMeter : SamplingSensorBase<double>
     public event EventHandler<IChangeResult<double>> SaturationUpdated = delegate { };
 
     /// <summary>
+    /// The calibration value for the sensor in air
+    /// </summary>
+    public Voltage CalibrationInAir { get; set; } = new Voltage(0.05, Voltage.UnitType.Volts);
+
+    /// <summary>
     /// Returns the analog input port
     /// </summary>
     protected IAnalogInputPort AnalogInputPort { get; }
 
     /// <summary>
-    /// Last percentage saturation value read from the sensor
+    /// Last saturation value read from the sensor (0.0-1.0)
     /// </summary>
     public double? Saturation { get; protected set; }
 
@@ -58,6 +64,15 @@ public partial class AtlasScientificGravityDOMeter : SamplingSensorBase<double>
                 }
             )
        );
+    }
+
+    /// <summary>
+    /// Get the current voltage, useful for calibration
+    /// </summary>
+    /// <returns></returns>
+    public Task<Voltage> GetCurrentVoltage()
+    {
+        return AnalogInputPort.Read();
     }
 
     /// <summary>
@@ -108,5 +123,8 @@ public partial class AtlasScientificGravityDOMeter : SamplingSensorBase<double>
         base.RaiseEventsAndNotify(changeResult);
     }
 
-    double VoltageToSaturation(Voltage voltage) => voltage.Volts * 11;
+    double VoltageToSaturation(Voltage voltage)
+    {
+        return voltage.Millivolts / CalibrationInAir.Millivolts;
+    }
 }
