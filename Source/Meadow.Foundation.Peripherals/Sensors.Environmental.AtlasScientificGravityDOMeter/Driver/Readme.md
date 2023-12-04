@@ -1,0 +1,1 @@
+# Meadow.Foundation.Sensors.Environmental.AltasScientificGravityDOMeter

@@ -64,7 +64,7 @@ public abstract partial class Mcp492x : ISpiPeripheral, IAnalogOutputController
     /// Initializes a new instance of the Mcp492x class.
     /// </summary>
     /// <param name="spiBus">The SPI bus.</param>
-    /// <param name="chipSelect">The chip select port (can be null).</param>
+    /// <param name="chipSelectPort">The chip select port (can be null).</param>
     public Mcp492x(ISpiBus spiBus, IDigitalOutputPort? chipSelectPort)
     {
         this.spiBus = spiBus;

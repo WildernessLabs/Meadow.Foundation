@@ -9,7 +9,7 @@ namespace Meadow.Foundation.Displays
 {
     /// <summary>
     /// Base class for TFT SPI displays
-    /// These displays typically support 16 & 18 bit, some also include 8, 9, 12 and/or 24 bit color 
+    /// These displays typically support 16 and 18 bit, some also include 8, 9, 12 and/or 24 bit color 
     /// </summary>
     public abstract partial class TftSpiBase : IGraphicsDisplay, ISpiPeripheral, IDisposable
     {
