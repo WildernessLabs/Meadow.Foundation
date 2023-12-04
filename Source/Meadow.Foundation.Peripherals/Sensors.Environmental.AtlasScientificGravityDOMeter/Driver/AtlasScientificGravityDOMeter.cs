@@ -9,7 +9,7 @@ namespace Meadow.Foundation.Sensors.Environmental;
 /// <summary>
 /// Atlas Scientific Analog Gravity Dissolved Oxygen Meter
 /// </summary>
-public partial class AtlasScientificGravityDOMeter : SamplingSensorBase<double>, IDisolvedOxygenSnesor
+public partial class AtlasScientificGravityDOMeter : SamplingSensorBase<double>, IDissolvedOxygenSnesor
 {
     /// <summary>
     /// Raised when a new sensor percentage saturation reading is ready
