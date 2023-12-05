@@ -10,7 +10,7 @@ namespace Sensors.Environmental.Scd40_Sample
     {
         //<!=SNIP=>
 
-        Scd41 sensor;
+        private Scd41 sensor;
 
         public override Task Initialize()
         {

@@ -13,6 +13,15 @@ namespace Meadow.Foundation
     public abstract class SamplingSensorBase<UNIT> : ObservableBase<UNIT>, ISamplingSensor<UNIT>
         where UNIT : struct
     {
+        private UNIT? _lastEventValue;
+
+        protected void RaiseUpdated(UNIT newValue)
+        {
+            var changeResult = new ChangeResult<UNIT>(newValue, _lastEventValue);
+            Updated?.Invoke(this, changeResult);
+            _lastEventValue = newValue;
+        }
+
         /// <summary>
         /// Lock for sampling
         /// </summary>

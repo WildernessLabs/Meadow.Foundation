@@ -11,7 +11,7 @@ namespace Leds.Led_Sample
     {
         //<!=SNIP=>
 
-        List<Led> leds;
+        private List<Led> leds;
 
         public override Task Initialize()
         {
@@ -48,11 +48,14 @@ namespace Leds.Led_Sample
 
         public override async Task Run()
         {
+            Resolver.Log.Error("Error level message");
+            Resolver.Log.Warn("Warn level message");
+
             Resolver.Log.Info("TestLeds...");
 
             while (true)
             {
-                Resolver.Log.Info("Turning on each led every 100ms");
+                Resolver.Log.Error("Turning on each led every 100ms");
                 foreach (var led in leds)
                 {
                     led.IsOn = true;
