@@ -43,6 +43,8 @@ namespace Me007ys_Sample
 
         public override async Task Run()
         {
+            Resolver.Log.Info("Run...");
+
             var distance = await me007ys.Read();
             Resolver.Log.Info($"Initial distance is: {distance.Centimeters:N1}cm / {distance.Inches:N1}in");
 

@@ -18,15 +18,20 @@ namespace Meadow.Foundation.Sensors.Motion
         : ByteCommsSensorBase<(Acceleration3D? Acceleration3D, Units.Temperature? Temperature)>,
         IAccelerometer, ITemperatureSensor, ISpiPeripheral
     {
-        /// <summary>
-        /// Raised when the acceleration value changes
-        /// </summary>
-        public event EventHandler<IChangeResult<Acceleration3D>> Acceleration3DUpdated = default!;
+        private event EventHandler<IChangeResult<Units.Temperature>> _temperatureHandlers;
+        private event EventHandler<IChangeResult<Acceleration3D>> _accelerationHandlers;
 
-        /// <summary>
-        /// Raised when the temperature value changes
-        /// </summary>
-        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = default!;
+        event EventHandler<IChangeResult<Units.Temperature>> ISamplingSensor<Units.Temperature>.Updated
+        {
+            add => _temperatureHandlers += value;
+            remove => _temperatureHandlers -= value;
+        }
+
+        event EventHandler<IChangeResult<Acceleration3D>> ISamplingSensor<Acceleration3D>.Updated
+        {
+            add => _accelerationHandlers += value;
+            remove => _accelerationHandlers -= value;
+        }
 
         private const double ADXL362_MG2G_MULTIPLIER = 0.004;
         private const double AVERAGE_TEMPERATURE_BIAS = 350;
@@ -283,11 +288,11 @@ namespace Meadow.Foundation.Sensors.Motion
         {
             if (changeResult.New.Temperature is { } temp)
             {
-                TemperatureUpdated?.Invoke(this, new ChangeResult<Units.Temperature>(temp, changeResult.Old?.Temperature));
+                _temperatureHandlers?.Invoke(this, new ChangeResult<Units.Temperature>(temp, changeResult.Old?.Temperature));
             }
             if (changeResult.New.Acceleration3D is { } accel)
             {
-                Acceleration3DUpdated?.Invoke(this, new ChangeResult<Acceleration3D>(accel, changeResult.Old?.Acceleration3D));
+                _accelerationHandlers?.Invoke(this, new ChangeResult<Acceleration3D>(accel, changeResult.Old?.Acceleration3D));
             }
             base.RaiseEventsAndNotify(changeResult);
         }

@@ -14,11 +14,6 @@ namespace Meadow.Foundation.Sensors.Light
     public partial class Bh1750 : ByteCommsSensorBase<Illuminance>, ILightSensor, II2cPeripheral
     {
         /// <summary>
-        /// Raised when a new Illuminance value is read by the sensor
-        /// </summary>
-        public event EventHandler<IChangeResult<Illuminance>> IlluminanceUpdated = default!;
-
-        /// <summary>
         /// BH1750 Light Transmittance (27.20-222.50%)
         /// </summary>
         public double LightTransmittance
@@ -72,7 +67,7 @@ namespace Meadow.Foundation.Sensors.Light
         /// Read the current luminosity 
         /// </summary>
         /// <returns>The current Illuminance value</returns>
-        protected async override Task<Illuminance> ReadSensor()
+        protected override async Task<Illuminance> ReadSensor()
         {
             if (MeasuringMode == MeasuringModes.OneTimeHighResolutionMode ||
                 MeasuringMode == MeasuringModes.OneTimeHighResolutionMode2 ||
@@ -101,7 +96,7 @@ namespace Meadow.Foundation.Sensors.Light
             return new Illuminance(result, IU.Lux);
         }
 
-        TimeSpan GetMeasurementTime(MeasuringModes mode)
+        private TimeSpan GetMeasurementTime(MeasuringModes mode)
         {
             return mode switch
             {   //high res modes are 120ms, low res 16ms
@@ -138,7 +133,6 @@ namespace Meadow.Foundation.Sensors.Light
         /// <param name="changeResult">The updated sensor data</param>
         protected override void RaiseEventsAndNotify(IChangeResult<Illuminance> changeResult)
         {
-            this.IlluminanceUpdated?.Invoke(this, changeResult);
             base.RaiseEventsAndNotify(changeResult);
         }
     }

@@ -16,6 +16,10 @@ namespace Meadow.Foundation.Sensors.Accelerometers
         PollingSensorBase<(Acceleration3D? Acceleration3D, AngularVelocity3D? AngularVelocity3D, Units.Temperature? Temperature)>,
         II2cPeripheral, IGyroscope, IAccelerometer, ITemperatureSensor
     {
+        private event EventHandler<IChangeResult<AngularVelocity3D>> _angularVelocityHandlers;
+        private event EventHandler<IChangeResult<Acceleration3D>> _accelerationHandlers;
+        private event EventHandler<IChangeResult<Units.Temperature>> _temperatureHandlers;
+
         /// <summary>
         /// Event raised when linear acceleration changes
         /// </summary>
@@ -88,7 +92,25 @@ namespace Meadow.Foundation.Sensors.Accelerometers
             SetPowerMode(PowerMode.Normal);
         }
 
-        void Initialize()
+        event EventHandler<IChangeResult<AngularVelocity3D>> ISamplingSensor<AngularVelocity3D>.Updated
+        {
+            add => _angularVelocityHandlers += value;
+            remove => _angularVelocityHandlers -= value;
+        }
+
+        event EventHandler<IChangeResult<Acceleration3D>> ISamplingSensor<Acceleration3D>.Updated
+        {
+            add => _accelerationHandlers += value;
+            remove => _accelerationHandlers -= value;
+        }
+
+        event EventHandler<IChangeResult<Units.Temperature>> ISamplingSensor<Units.Temperature>.Updated
+        {
+            add => _temperatureHandlers += value;
+            remove => _temperatureHandlers -= value;
+        }
+
+        private void Initialize()
         {   //disable advanced power save mode
             i2cComms.WriteRegister(PWR_CONF, 0xB0);
 
@@ -297,7 +319,7 @@ namespace Meadow.Foundation.Sensors.Accelerometers
             }
         }
 
-        byte[] ReadAccelerationData()
+        private byte[] ReadAccelerationData()
         {
             var readBuffer = new byte[12];
             i2cComms.ReadRegister(0x0C, readBuffer);

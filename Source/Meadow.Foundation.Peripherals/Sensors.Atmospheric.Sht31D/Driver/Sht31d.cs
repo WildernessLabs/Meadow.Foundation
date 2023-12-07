@@ -14,15 +14,20 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         ByteCommsSensorBase<(Units.Temperature? Temperature, RelativeHumidity? Humidity)>,
         ITemperatureSensor, IHumiditySensor, II2cPeripheral
     {
-        /// <summary>
-        /// Temperature changed event
-        /// </summary>
-        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = default!;
+        private event EventHandler<IChangeResult<Units.Temperature>> _temperatureHandlers;
+        private event EventHandler<IChangeResult<RelativeHumidity>> _humidityHandlers;
 
-        /// <summary>
-        /// Humidity changed event
-        /// </summary>
-        public event EventHandler<IChangeResult<RelativeHumidity>> HumidityUpdated = default!;
+        event EventHandler<IChangeResult<Units.Temperature>> ISamplingSensor<Units.Temperature>.Updated
+        {
+            add => _temperatureHandlers += value;
+            remove => _temperatureHandlers -= value;
+        }
+
+        event EventHandler<IChangeResult<RelativeHumidity>> ISamplingSensor<RelativeHumidity>.Updated
+        {
+            add => _humidityHandlers += value;
+            remove => _humidityHandlers -= value;
+        }
 
         /// <summary>
         /// The temperature from the last reading
@@ -56,11 +61,11 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         {
             if (changeResult.New.Temperature is { } temp)
             {
-                TemperatureUpdated?.Invoke(this, new ChangeResult<Units.Temperature>(temp, changeResult.Old?.Temperature));
+                _temperatureHandlers?.Invoke(this, new ChangeResult<Units.Temperature>(temp, changeResult.Old?.Temperature));
             }
             if (changeResult.New.Humidity is { } humidity)
             {
-                HumidityUpdated?.Invoke(this, new ChangeResult<Units.RelativeHumidity>(humidity, changeResult.Old?.Humidity));
+                _humidityHandlers?.Invoke(this, new ChangeResult<Units.RelativeHumidity>(humidity, changeResult.Old?.Humidity));
             }
             base.RaiseEventsAndNotify(changeResult);
         }

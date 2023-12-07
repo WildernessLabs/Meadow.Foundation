@@ -24,20 +24,14 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                             Resistance? GasResistance)>,
         ITemperatureSensor, IHumiditySensor, IBarometricPressureSensor, ISpiPeripheral, II2cPeripheral, IDisposable
     {
-        /// <summary>
-        /// Raised when the temperature value changes
-        /// </summary>
-        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = default!;
+        private event EventHandler<IChangeResult<Units.Temperature>> _temperatureHandlers;
+        private event EventHandler<IChangeResult<RelativeHumidity>> _humidityHandlers;
+        private event EventHandler<IChangeResult<Pressure>> _pressureHandlers;
 
         /// <summary>
         /// Raised when the pressure value changes
         /// </summary>
         public event EventHandler<IChangeResult<Pressure>> PressureUpdated = default!;
-
-        /// <summary>
-        /// Raised when the humidity value changes
-        /// </summary>
-        public event EventHandler<IChangeResult<RelativeHumidity>> HumidityUpdated = default!;
 
         /// <summary>
         /// Raised when the gas resistance value changes
@@ -95,7 +89,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 }
             }
         }
-        HeaterProfileType heaterProfile;
+
+        private HeaterProfileType heaterProfile;
 
         /// <summary>
         /// Gets / sets the filtering mode to be used for measurements
@@ -118,7 +113,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 filterMode = value;
             }
         }
-        FilteringMode filterMode;
+
+        private FilteringMode filterMode;
 
         /// <summary>
         /// Enable / disable the sensor heater
@@ -136,7 +132,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 heaterIsEnabled = value;
             }
         }
-        bool heaterIsEnabled;
+
+        private bool heaterIsEnabled;
 
         /// <summary>
         /// Enable / disable gas conversions
@@ -154,7 +151,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 gasConversionIsEnabled = value;
             }
         }
-        bool gasConversionIsEnabled = false;
+
+        private bool gasConversionIsEnabled = false;
 
         /// <summary>
         /// The default SPI bus speed for the device
@@ -192,7 +190,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <summary>
         /// Communication bus used to read and write to the BME68x sensor
         /// </summary>
-        readonly IByteCommunications busComms;
+        private readonly IByteCommunications busComms;
 
         /// <summary>
         /// The current temperature
@@ -222,9 +220,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <summary>
         /// Did we create the port(s) used by the peripheral
         /// </summary>
-        readonly bool createdPort = false;
-
-        readonly Configuration configuration;
+        private readonly bool createdPort = false;
+        private readonly Configuration configuration;
 
         /// <summary>
         /// Calibration data for the sensor
@@ -239,8 +236,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         private static readonly double[] k2Lookup = { 0.0, 0.0, 0.0, 0.0, 0.1, 0.7, 0.0, -0.8, -0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
 
         private readonly List<HeaterProfileConfiguration> heaterConfigs = new();
-
-        IDigitalOutputPort? chipSelectPort;
+        private IDigitalOutputPort? chipSelectPort;
 
         /// <summary>
         /// Creates a new instance of the BME68x class
@@ -281,6 +277,24 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             busComms.WriteRegister((byte)Registers.STATUS, value);
 
             Initialize();
+        }
+
+        event EventHandler<IChangeResult<Units.Temperature>> ISamplingSensor<Units.Temperature>.Updated
+        {
+            add => _temperatureHandlers += value;
+            remove => _temperatureHandlers -= value;
+        }
+
+        event EventHandler<IChangeResult<RelativeHumidity>> ISamplingSensor<RelativeHumidity>.Updated
+        {
+            add => _humidityHandlers += value;
+            remove => _humidityHandlers -= value;
+        }
+
+        event EventHandler<IChangeResult<Pressure>> ISamplingSensor<Pressure>.Updated
+        {
+            add => _pressureHandlers += value;
+            remove => _pressureHandlers -= value;
         }
 
         /// <summary>
@@ -409,11 +423,11 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         {
             if (changeResult.New.Temperature is { } temp)
             {
-                TemperatureUpdated?.Invoke(this, new ChangeResult<Units.Temperature>(temp, changeResult.Old?.Temperature));
+                _temperatureHandlers?.Invoke(this, new ChangeResult<Units.Temperature>(temp, changeResult.Old?.Temperature));
             }
             if (changeResult.New.Humidity is { } humidity)
             {
-                HumidityUpdated?.Invoke(this, new ChangeResult<RelativeHumidity>(humidity, changeResult.Old?.Humidity));
+                _humidityHandlers?.Invoke(this, new ChangeResult<RelativeHumidity>(humidity, changeResult.Old?.Humidity));
             }
             if (changeResult.New.Pressure is { } pressure)
             {
@@ -569,7 +583,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             return new RelativeHumidity(humidity, HU.Percent);
         }
 
-        Resistance CalculateGasResistance(ushort adcGasRes, byte gasRange)
+        private Resistance CalculateGasResistance(ushort adcGasRes, byte gasRange)
         {
             if (calibration == null) throw new NullReferenceException("Calibration must be defined");
 
@@ -581,7 +595,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             return new Resistance(gasResistance, Resistance.UnitType.Ohms);
         }
 
-        byte CalculateHeaterResistance(Units.Temperature setTemp, Units.Temperature ambientTemp)
+        private byte CalculateHeaterResistance(Units.Temperature setTemp, Units.Temperature ambientTemp)
         {
             if (calibration == null) throw new NullReferenceException("Calibration must be defined");
 
@@ -605,7 +619,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         // The duration is interpreted as follows:
         // Byte [7:6]: multiplication factor of 1, 4, 16 or 64
         // Byte [5:0]: 64 timer values, 1ms step size, rounded down
-        byte CalculateHeaterDuration(TimeSpan duration)
+        private byte CalculateHeaterDuration(TimeSpan duration)
         {
             byte factor = 0;
             byte durationValue;

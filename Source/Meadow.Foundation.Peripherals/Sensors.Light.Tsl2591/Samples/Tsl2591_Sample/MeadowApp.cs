@@ -10,7 +10,7 @@ namespace Sensors.Light.Tsl2591_Sample
     {
         //<!=SNIP=>
 
-        Tsl2591 sensor;
+        private Tsl2591 sensor;
 
         public override Task Initialize()
         {
@@ -38,10 +38,22 @@ namespace Sensors.Light.Tsl2591_Sample
             // classical .NET events can also be used:
             sensor.Updated += (sender, result) =>
             {
-                Resolver.Log.Info($"  Full Spectrum Light: {result.New.FullSpectrum?.Lux:N2}Lux");
-                Resolver.Log.Info($"  Infrared Light: {result.New.Infrared?.Lux:N2}Lux");
-                Resolver.Log.Info($"  Visible Light: {result.New.VisibleLight?.Lux:N2}Lux");
-                Resolver.Log.Info($"  Integrated Light: {result.New.Integrated?.Lux:N2}Lux");
+                Resolver.Log.Info($"  Integrated Light: {result.New.Lux:N2}Lux");
+            };
+
+            sensor.InfraredUpdated += (sender, result) =>
+            {
+                Resolver.Log.Info($"  Infrared Light: {result.New.Lux:N2}Lux");
+            };
+
+            sensor.VisibleLightUpdated += (sender, result) =>
+            {
+                Resolver.Log.Info($"  Visible Light: {result.New.Lux:N2}Lux");
+            };
+
+            sensor.FullSpectrumUpdated += (sender, result) =>
+            {
+                Resolver.Log.Info($"  Full Spectrum Light: {result.New.Lux:N2}Lux");
             };
 
             return Task.CompletedTask;
