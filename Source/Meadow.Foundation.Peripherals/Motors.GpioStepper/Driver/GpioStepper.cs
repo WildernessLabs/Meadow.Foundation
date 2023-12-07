@@ -73,8 +73,6 @@ public abstract class GpioStepperBase : IStepperMotor
             return Task.CompletedTask;
         }
 
-        Resolver.Log.Info($"Currently at: {Position.Degrees} moving to: {position.Degrees}");
-
         // determine shortest path to destination
         double totalDistance;
         if (position.Degrees < Position.Degrees)
@@ -104,8 +102,6 @@ public abstract class GpioStepperBase : IStepperMotor
             }
         }
 
-        Resolver.Log.Info($"Distance to move: {totalDistance} degrees");
-
         return Rotate(new Angle(totalDistance, Angle.UnitType.Degrees), shortestDirection, velocity, cancellationToken);
     }
 
@@ -127,8 +123,6 @@ public abstract class GpioStepperBase : IStepperMotor
         // convert velocity into frequency based on drive parameters
         var freq = GetFrequencyForVelocity(velocity);
 
-        Resolver.Log.Info($"Currently at: {start} moving to: {dest}");
-
         double totalDistance;
 
         if (dest < start)
@@ -148,8 +142,6 @@ public abstract class GpioStepperBase : IStepperMotor
             };
         }
 
-        Resolver.Log.Info($"Distance to move: {totalDistance} degrees");
-
         return Rotate((int)(totalDistance * _stepsPerDegree), direction, freq, cancellationToken);
     }
 
@@ -159,8 +151,6 @@ public abstract class GpioStepperBase : IStepperMotor
         // convert velocity into frequency based on drive parameters
         var freq = GetFrequencyForVelocity(velocity);
         var steps = (int)(amountToRotate.Degrees * _stepsPerDegree);
-
-        Resolver.Log.Info($"Rotating {steps} at {freq.Hertz}");
 
         return Rotate(steps, direction, freq, cancellationToken);
     }
