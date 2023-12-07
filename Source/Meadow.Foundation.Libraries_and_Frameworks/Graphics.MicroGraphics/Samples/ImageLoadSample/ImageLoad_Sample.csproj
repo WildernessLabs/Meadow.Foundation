@@ -29,8 +29,8 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.F7" Version="1.5.0" />
-    <PackageReference Include="Meadow.Foundation.Displays.TftSpi" Version="1.5.0" />
+    <PackageReference Include="Meadow.F7" Version="1.6.0" />
+    <PackageReference Include="Meadow.Foundation.Displays.TftSpi" Version="1.6.0" />
   </ItemGroup>
   <ItemGroup>
     <None Update="meadow.config.yaml">

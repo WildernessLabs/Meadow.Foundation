@@ -17,10 +17,13 @@ namespace Meadow.Foundation.Sensors.Environmental
                              Concentration? TVOCConcentration)>,
         IConcentrationSensor, II2cPeripheral
     {
-        /// <summary>
-        /// Raised when the CO2 concentration changes
-        /// </summary>
-        public event EventHandler<IChangeResult<Concentration>> ConcentrationUpdated = default!;
+        private event EventHandler<IChangeResult<Concentration>> _concentrationHandlers;
+
+        event EventHandler<IChangeResult<Concentration>> ISamplingSensor<Concentration>.Updated
+        {
+            add => _concentrationHandlers += value;
+            remove => _concentrationHandlers -= value;
+        }
 
         /// <summary>
         /// Raised when the CO2 concentration changes
@@ -138,7 +141,7 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// <summary>
         /// Clears the 10 GPR registers
         /// </summary>
-        void ClearGPRRegisters()
+        private void ClearGPRRegisters()
         {
             BusComms.WriteRegister((byte)Registers.COMMAND, (byte)Commands.CLRGPR);
         }
@@ -177,33 +180,33 @@ namespace Meadow.Foundation.Sensors.Environmental
             return (UBAAirQualityIndex)aqi;
         }
 
-        bool IsNewDataAvailable()
+        private bool IsNewDataAvailable()
         {
             var value = BusComms.ReadRegister((byte)Registers.DATA_STATUS);
 
             return BitHelpers.GetBitValue(value, 0x02);
         }
 
-        bool IsNewGPRAvailable()
+        private bool IsNewGPRAvailable()
         {
             var value = BusComms.ReadRegister((byte)Registers.DATA_STATUS);
 
             return BitHelpers.GetBitValue(value, 0x03);
         }
 
-        Concentration GetTotalVolotileOrganicCompounds()
+        private Concentration GetTotalVolotileOrganicCompounds()
         {
             var con = BusComms.ReadRegisterAsUShort((byte)Registers.DATA_TVOC);
             return new Concentration(con, Units.Concentration.UnitType.PartsPerBillion);
         }
 
-        Concentration GetCO2Concentration()
+        private Concentration GetCO2Concentration()
         {
             var con = BusComms.ReadRegisterAsUShort((byte)Registers.DATA_ECO2);
             return new Concentration(con, Units.Concentration.UnitType.PartsPerMillion);
         }
 
-        Concentration GetEthanolConcentration()
+        private Concentration GetEthanolConcentration()
         {
             var con = BusComms.ReadRegisterAsUShort((byte)Registers.DATA_ETOH);
             return new Concentration(con, Units.Concentration.UnitType.PartsPerBillion);
@@ -272,7 +275,7 @@ namespace Meadow.Foundation.Sensors.Environmental
         {
             if (changeResult.New.CO2Concentration is { } concentration)
             {
-                ConcentrationUpdated?.Invoke(this, new ChangeResult<Concentration>(concentration, changeResult.Old?.CO2Concentration));
+                _concentrationHandlers?.Invoke(this, new ChangeResult<Concentration>(concentration, changeResult.Old?.CO2Concentration));
                 CO2ConcentrationUpdated?.Invoke(this, new ChangeResult<Concentration>(concentration, changeResult.Old?.CO2Concentration));
             }
             if (changeResult.New.EthanolConcentration is { } ethConcentration)
