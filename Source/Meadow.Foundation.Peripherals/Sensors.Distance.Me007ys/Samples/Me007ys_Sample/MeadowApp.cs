@@ -29,7 +29,7 @@ namespace Me007ys_Sample
                 {
                     if (result.Old is { } old)
                     {
-                        return Math.Abs((result.New - old).Centimeters) > 0.5;
+                        return Math.Abs((result.New - old).Centimeters) > 5.0;
                     }
                     return false;
                 }
