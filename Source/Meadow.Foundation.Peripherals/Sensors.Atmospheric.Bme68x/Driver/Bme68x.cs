@@ -29,11 +29,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         private event EventHandler<IChangeResult<Pressure>> _pressureHandlers;
 
         /// <summary>
-        /// Raised when the pressure value changes
-        /// </summary>
-        public event EventHandler<IChangeResult<Pressure>> PressureUpdated = default!;
-
-        /// <summary>
         /// Raised when the gas resistance value changes
         /// </summary>
         public event EventHandler<IChangeResult<Resistance>> GasResistanceUpdated = default!;
