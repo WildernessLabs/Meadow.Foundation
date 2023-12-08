@@ -426,7 +426,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             }
             if (changeResult.New.Pressure is { } pressure)
             {
-                PressureUpdated?.Invoke(this, new ChangeResult<Pressure>(pressure, changeResult.Old?.Pressure));
+                _pressureHandlers?.Invoke(this, new ChangeResult<Pressure>(pressure, changeResult.Old?.Pressure));
             }
             if (changeResult.New.GasResistance is { } gasResistance)
             {
