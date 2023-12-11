@@ -22,7 +22,7 @@ public override Task Initialize()
     anemometer = new SwitchingAnemometer(Device.Pins.A01);
 
     //==== classic events example
-    anemometer.WindSpeedUpdated += (sender, result) =>
+    anemometer.Updated += (sender, result) =>
     {
         Resolver.Log.Info($"new speed: {result.New.KilometersPerHour:n1}kmh, old: {result.Old?.KilometersPerHour:n1}kmh");
     };

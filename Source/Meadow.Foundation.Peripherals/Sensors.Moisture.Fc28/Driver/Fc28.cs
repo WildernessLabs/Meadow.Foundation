@@ -13,11 +13,6 @@ namespace Meadow.Foundation.Sensors.Moisture
     public class Fc28 : SamplingSensorBase<double>, IMoistureSensor
     {
         /// <summary>
-        /// Raised when a new sensor reading has been made. To enable, call StartUpdating().
-        /// </summary>
-        public event EventHandler<IChangeResult<double>> MoistureUpdated = default!;
-
-        /// <summary>
         /// Returns the analog input port
         /// </summary>
         protected IAnalogInputPort AnalogInputPort { get; }
@@ -175,16 +170,6 @@ namespace Meadow.Foundation.Sensors.Moisture
                 }
                 IsSampling = false;
             }
-        }
-
-        /// <summary>
-        /// Raise change events for subscribers
-        /// </summary>
-        /// <param name="changeResult">The change result with the current sensor data</param>
-        protected void RaiseChangedAndNotify(IChangeResult<double> changeResult)
-        {
-            MoistureUpdated?.Invoke(this, changeResult);
-            NotifyObservers(changeResult);
         }
 
         /// <summary>
