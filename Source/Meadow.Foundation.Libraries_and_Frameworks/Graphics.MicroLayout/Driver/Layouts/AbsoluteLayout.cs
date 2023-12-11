@@ -32,7 +32,13 @@ public class AbsoluteLayout : Layout
     {
         if (Visible && BackgroundColor != null)
         {
-            graphics.DrawRectangle(Left, Top, Width, Height, BackgroundColor.Value, true);
+            graphics.DrawRectangle(
+                Left + (Parent?.Left ?? 0),
+                Top + (Parent?.Top ?? 0),
+                Width,
+                Height,
+                BackgroundColor.Value,
+                true);
         }
     }
 }

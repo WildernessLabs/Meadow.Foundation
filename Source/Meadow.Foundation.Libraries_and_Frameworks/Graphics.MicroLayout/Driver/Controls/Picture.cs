@@ -83,7 +83,13 @@ public class Picture : ThemedControl
     {
         if (BackColor != Color.Transparent)
         {
-            graphics.DrawRectangle(Left, Top, Width, Height, BackColor, true);
+            graphics.DrawRectangle(
+                Left + (Parent?.Left ?? 0),
+                Top + (Parent?.Top ?? 0),
+                Width,
+                Height,
+                BackColor,
+                true);
         }
 
         int x, y;
@@ -112,6 +118,9 @@ public class Picture : ThemedControl
         {
             y = Top;
         }
+
+        x += Parent?.Left ?? 0;
+        y += Parent?.Top ?? 0;
 
         graphics.DrawImage(x, y, Image);
     }

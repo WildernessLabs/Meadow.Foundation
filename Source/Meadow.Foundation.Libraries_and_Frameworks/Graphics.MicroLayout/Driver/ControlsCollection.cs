@@ -12,13 +12,16 @@ public sealed class ControlsCollection : IEnumerable<IControl>
     private readonly List<IControl> _controls = new();
     private readonly object _syncRoot = new();
 
+    private IControl? _parent;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="ControlsCollection"/> class.
     /// </summary>
     /// <param name="screen">The <see cref="DisplayScreen"/> that owns the controls collection.</param>
-    internal ControlsCollection(DisplayScreen screen)
+    internal ControlsCollection(DisplayScreen screen, IControl? parent)
     {
         _screen = screen;
+        _parent = parent;
     }
 
     internal object SyncRoot => _syncRoot;
@@ -66,7 +69,11 @@ public sealed class ControlsCollection : IEnumerable<IControl>
 
         lock (SyncRoot)
         {
-            _controls.AddRange(controls);
+            foreach (var control in controls)
+            {
+                control.Parent = _parent;
+                _controls.Add(control);
+            }
         }
     }
 

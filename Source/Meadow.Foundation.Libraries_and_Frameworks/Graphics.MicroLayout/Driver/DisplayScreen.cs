@@ -47,7 +47,7 @@ public class DisplayScreen
     /// <param name="theme">The display theme to use.</param>
     public DisplayScreen(IGraphicsDisplay physicalDisplay, RotationType rotation = RotationType.Normal, ITouchScreen? touchScreen = null, DisplayTheme? theme = null)
     {
-        Controls = new ControlsCollection(this);
+        Controls = new ControlsCollection(this, null);
         Theme = theme;
 
         _display = physicalDisplay;

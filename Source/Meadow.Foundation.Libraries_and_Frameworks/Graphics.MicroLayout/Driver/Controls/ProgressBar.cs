@@ -7,7 +7,7 @@ namespace Meadow.Foundation.Graphics.MicroLayout;
 /// </summary>
 public class ProgressBar : ThemedControl
 {
-    private Color _foreColor = Color.DarkBlue;
+    private Color _valueColor = Color.DarkBlue;
     private Color _borderColor = Color.Transparent;
     private Color _backColor = Color.DarkGray;
     private int _value = 0;
@@ -28,7 +28,7 @@ public class ProgressBar : ThemedControl
     {
         if (theme != null)
         {
-            if (theme.ForegroundColor != null) this.ForeColor = theme.ForegroundColor.Value;
+            if (theme.ForegroundColor != null) this.ValueColor = theme.ForegroundColor.Value;
             if (theme.BackgroundColor != null) this.BackColor = theme.BackgroundColor.Value;
             if (theme.HighlightColor != null) this.BorderColor = theme.HighlightColor.Value;
         }
@@ -76,10 +76,10 @@ public class ProgressBar : ThemedControl
     /// <summary>
     /// Gets or sets the foreground (value) color to fill on the ProgressBar
     /// </summary>
-    public Color ForeColor
+    public Color ValueColor
     {
-        get => _foreColor;
-        set => SetInvalidatingProperty(ref _foreColor, value);
+        get => _valueColor;
+        set => SetInvalidatingProperty(ref _valueColor, value);
     }
 
     /// <summary>
@@ -106,17 +106,37 @@ public class ProgressBar : ThemedControl
         var valueWidth = (int)((Value / (float)(Maximum - Minimum)) * Width);
         var emptyWidth = Width - valueWidth;
 
-        if (ForeColor != Color.Transparent)
+        if (ValueColor != Color.Transparent)
         {
-            graphics.DrawRectangle(Left, Top, valueWidth, Height, ForeColor, true);
+            graphics.DrawRectangle(
+                Left + (Parent?.Left ?? 0),
+                Top + (Parent?.Top ?? 0),
+                valueWidth,
+                Height,
+                ValueColor,
+                true);
         }
         if (BackColor != Color.Transparent)
         {
-            graphics.DrawRectangle(valueWidth, Top, emptyWidth, Height, BackColor, true);
+            Resolver.Log.Info($"Drawing back color of {BackColor}");
+
+            graphics.DrawRectangle(
+                Left + valueWidth + (Parent?.Left ?? 0),
+                Top + (Parent?.Top ?? 0),
+                emptyWidth,
+                Height,
+                BackColor,
+                true);
         }
         if (BorderColor != Color.Transparent)
         {
-            graphics.DrawRectangle(Left, Top, Width, Height, BorderColor, false);
+            graphics.DrawRectangle(
+                Left + (Parent?.Left ?? 0),
+                Top + (Parent?.Top ?? 0),
+                Width,
+                Height,
+                BorderColor,
+                false);
         }
     }
 }
