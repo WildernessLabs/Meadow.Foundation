@@ -31,7 +31,7 @@ namespace Sensors.Temperature.Tmp102_Sample
             );
             tmp102.Subscribe(consumer);
 
-            tmp102.TemperatureUpdated += (object sender, IChangeResult<Meadow.Units.Temperature> e) =>
+            tmp102.Updated += (object sender, IChangeResult<Meadow.Units.Temperature> e) =>
             {
                 Resolver.Log.Info($"Temperature Updated: {e.New.Celsius:N2}C");
             };

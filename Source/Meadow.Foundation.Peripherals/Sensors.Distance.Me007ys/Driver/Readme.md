@@ -37,7 +37,7 @@ public override Task Initialize()
     );
     me007ys.Subscribe(consumer);
 
-    me007ys.DistanceUpdated += Me007y_DistanceUpdated;
+    me007ys.Updated += Me007y_DistanceUpdated;
 
     return Task.CompletedTask;
 }

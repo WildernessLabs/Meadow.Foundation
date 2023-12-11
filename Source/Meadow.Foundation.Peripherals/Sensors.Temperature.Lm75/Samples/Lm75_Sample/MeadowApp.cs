@@ -27,7 +27,7 @@ namespace Sensors.Temperature.Lm75_Sample
             );
             lm75.Subscribe(consumer);
 
-            lm75.TemperatureUpdated += (object sender, IChangeResult<Meadow.Units.Temperature> e) =>
+            lm75.Updated += (object sender, IChangeResult<Meadow.Units.Temperature> e) =>
             {
                 Resolver.Log.Info($"Temperature Updated: {e.New.Celsius:n2}C");
             };

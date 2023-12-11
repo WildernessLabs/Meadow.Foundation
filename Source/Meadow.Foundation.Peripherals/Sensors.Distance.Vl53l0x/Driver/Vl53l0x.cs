@@ -13,11 +13,6 @@ namespace Meadow.Foundation.Sensors.Distance
     public partial class Vl53l0x : ByteCommsSensorBase<Length>, IRangeFinder, II2cPeripheral
     {
         /// <summary>
-        /// Distance updated event
-        /// </summary>
-        public event EventHandler<IChangeResult<Length>> DistanceUpdated = default!;
-
-        /// <summary>
         /// Is the hardware shutdown / off
         /// </summary>
         public bool IsShutdown
@@ -83,16 +78,6 @@ namespace Meadow.Foundation.Sensors.Distance
                 shutdownPort = shutdownPin?.CreateDigitalOutputPort(true);
             }
             Initialize().Wait();
-        }
-
-        /// <summary>
-        /// Raise distance change event and notify subscribers
-        /// </summary>
-        /// <param name="changeResult"></param>
-        protected override void RaiseEventsAndNotify(IChangeResult<Length> changeResult)
-        {
-            DistanceUpdated?.Invoke(this, changeResult);
-            base.RaiseEventsAndNotify(changeResult);
         }
 
         /// <summary>

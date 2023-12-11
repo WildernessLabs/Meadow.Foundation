@@ -29,7 +29,7 @@ namespace Sensors.Temperature.Thermistor_Sample
             );
             thermistor.Subscribe(consumer);
 
-            thermistor.TemperatureUpdated += (object sender, IChangeResult<Meadow.Units.Temperature> e) =>
+            thermistor.Updated += (object sender, IChangeResult<Meadow.Units.Temperature> e) =>
             {
                 Resolver.Log.Info($"Temperature Updated: {e.New.Fahrenheit:N1}F/{e.New.Celsius:N1}C");
             };

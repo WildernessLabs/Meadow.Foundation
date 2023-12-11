@@ -11,11 +11,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     public partial class Bh1900Nux : ByteCommsSensorBase<Units.Temperature>, ITemperatureSensor, II2cPeripheral
     {
         /// <summary>
-        /// Raised when the temperature value changes
-        /// </summary>
-        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = default!;
-
-        /// <summary>
         /// The current temperature
         /// </summary>
         public Units.Temperature? Temperature => Conditions;
@@ -222,17 +217,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             BusComms?.ReadRegister((byte)Register.Temperature, ReadBuffer.Span[0..2]);
 
             return Task.FromResult(RegisterToTemp(ReadBuffer));
-        }
-
-        /// <summary>
-        /// Raise events for subscribers and notify of value changes
-        /// </summary>
-        /// <param name="changeResult">The updated sensor data</param>
-        protected override void RaiseEventsAndNotify(IChangeResult<Units.Temperature> changeResult)
-        {
-            TemperatureUpdated?.Invoke(this, changeResult);
-
-            base.RaiseEventsAndNotify(changeResult);
         }
     }
 }
