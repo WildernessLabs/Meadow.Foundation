@@ -36,7 +36,7 @@ namespace A02yyuw_Sample
             );
             a02yyuw.Subscribe(consumer);
 
-            a02yyuw.DistanceUpdated += A02yyuw_DistanceUpdated;
+            a02yyuw.Updated += A02yyuw_DistanceUpdated;
 
             return Task.CompletedTask;
         }

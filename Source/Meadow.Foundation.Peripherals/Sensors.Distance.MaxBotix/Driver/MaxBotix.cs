@@ -11,11 +11,6 @@ namespace Meadow.Foundation.Sensors.Distance
     public partial class MaxBotix : ByteCommsSensorBase<Length>, IRangeFinder, IDisposable
     {
         /// <summary>
-        /// Raised when the value of the reading changes
-        /// </summary>
-        public event EventHandler<IChangeResult<Length>> DistanceUpdated = default!;
-
-        /// <summary>
         /// Distance from sensor to object
         /// </summary>
         public Length? Distance { get; protected set; }
@@ -62,16 +57,6 @@ namespace Meadow.Foundation.Sensors.Distance
                 CommunicationType.I2C => ReadSensorI2c(),
                 _ => throw new NotImplementedException(),
             };
-        }
-
-        /// <summary>
-        /// Raise distance change event for subscribers
-        /// </summary>
-        /// <param name="changeResult"></param>
-        protected override void RaiseEventsAndNotify(IChangeResult<Length> changeResult)
-        {
-            DistanceUpdated?.Invoke(this, changeResult);
-            base.RaiseEventsAndNotify(changeResult);
         }
 
         /// <summary>

@@ -126,14 +126,5 @@ namespace Meadow.Foundation.Sensors.Light
             BusComms.Write((byte)((byte)Commands.MeasurementTimeHigh | (val >> 5)));
             BusComms.Write((byte)((byte)Commands.MeasurementTimeLow | (val & 0b_0001_1111)));
         }
-
-        /// <summary>
-        /// Raise events for subscribers and notify of value changes
-        /// </summary>
-        /// <param name="changeResult">The updated sensor data</param>
-        protected override void RaiseEventsAndNotify(IChangeResult<Illuminance> changeResult)
-        {
-            base.RaiseEventsAndNotify(changeResult);
-        }
     }
 }

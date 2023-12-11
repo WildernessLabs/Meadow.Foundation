@@ -125,7 +125,6 @@ public partial class Mpl3115a2 :
     /// <param name="changeResult"></param>
     protected override void RaiseEventsAndNotify(IChangeResult<(Units.Temperature? Temperature, Pressure? Pressure)> changeResult)
     {
-        //Updated?.Invoke(this, changeResult);
         if (changeResult.New.Temperature is { } temp)
         {
             _temperatureHandlers?.Invoke(this, new ChangeResult<Units.Temperature>(temp, changeResult.Old?.Temperature));

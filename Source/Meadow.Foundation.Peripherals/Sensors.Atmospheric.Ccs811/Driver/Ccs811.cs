@@ -189,7 +189,6 @@ public partial class Ccs811 :
         {
             VocUpdated?.Invoke(this, new ChangeResult<Concentration>(voc, changeResult.Old?.Voc));
         }
-
         base.RaiseEventsAndNotify(changeResult);
     }
 

@@ -35,7 +35,7 @@ namespace Sensors.LoadCell.Nau7802_Sample
                 loadSensor.Tare();
             }
 
-            loadSensor.MassUpdated += (sender, values) => Resolver.Log.Info($"Mass is now returned {values.New.Grams:N2}g");
+            loadSensor.Updated += (sender, values) => Resolver.Log.Info($"Mass is now returned {values.New.Grams:N2}g");
         }
 
         public override Task Run()

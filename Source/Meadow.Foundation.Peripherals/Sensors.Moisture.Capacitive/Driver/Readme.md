@@ -39,7 +39,7 @@ public override Task Initialize()
     capacitive.Subscribe(consumer);
 
     // classical .NET events can also be used:
-    capacitive.MoistureUpdated += (sender, result) =>
+    capacitive.Updated += (sender, result) =>
     {
         string oldValue = (result.Old is { } old) ? $"{old:n2}" : "n/a";
         Resolver.Log.Info($"Updated - New: {result.New}, Old: {oldValue}");

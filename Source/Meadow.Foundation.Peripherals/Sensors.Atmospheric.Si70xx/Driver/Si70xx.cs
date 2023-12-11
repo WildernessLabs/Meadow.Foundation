@@ -174,7 +174,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             {
                 _humidityHandlers?.Invoke(this, new ChangeResult<Units.RelativeHumidity>(humidity, changeResult.Old?.Humidity));
             }
-
             base.RaiseEventsAndNotify(changeResult);
         }
 

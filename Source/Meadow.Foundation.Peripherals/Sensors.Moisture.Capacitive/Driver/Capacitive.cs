@@ -12,11 +12,6 @@ namespace Meadow.Foundation.Sensors.Moisture
     public class Capacitive : SamplingSensorBase<double>, IMoistureSensor, IDisposable
     {
         /// <summary>
-        /// Raised when a new sensor reading has been made
-        /// </summary>
-        public event EventHandler<IChangeResult<double>> MoistureUpdated = default!;
-
-        /// <summary>
         /// Returns the analog input port
         /// </summary>
         protected IAnalogInputPort AnalogInputPort { get; }
@@ -137,16 +132,6 @@ namespace Meadow.Foundation.Sensors.Moisture
                 IsSampling = false;
                 AnalogInputPort.StopUpdating();
             }
-        }
-
-        /// <summary>
-        /// Raise change events for subscribers
-        /// </summary>
-        /// <param name="changeResult">The change result with the current sensor data</param>
-        protected override void RaiseEventsAndNotify(IChangeResult<double> changeResult)
-        {
-            MoistureUpdated?.Invoke(this, changeResult);
-            base.RaiseEventsAndNotify(changeResult);
         }
 
         /// <summary>

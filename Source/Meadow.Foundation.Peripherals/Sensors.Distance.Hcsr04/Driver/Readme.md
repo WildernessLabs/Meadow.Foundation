@@ -22,7 +22,7 @@ public override Task Initialize()
     hCSR04 = new Hcsr04(
         triggerPin: Device.Pins.D05,
         echoPin: Device.Pins.D06);
-    hCSR04.DistanceUpdated += HCSR04_DistanceUpdated;
+    hCSR04.Updated += HCSR04_DistanceUpdated;
 
     return Task.CompletedTask;
 }

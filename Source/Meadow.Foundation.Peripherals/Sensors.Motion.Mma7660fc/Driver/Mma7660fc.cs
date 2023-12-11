@@ -1,7 +1,6 @@
 ﻿using Meadow.Hardware;
 using Meadow.Peripherals.Sensors.Motion;
 using Meadow.Units;
-using System;
 using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Motion
@@ -15,11 +14,6 @@ namespace Meadow.Foundation.Sensors.Motion
         /// The default I2C address for the peripheral
         /// </summary>
         public byte DefaultI2cAddress => (byte)Addresses.Default;
-
-        /// <summary>
-        /// Raised when new acceleration data is processed
-        /// </summary>
-        public event EventHandler<IChangeResult<Acceleration3D>> Acceleration3DUpdated = default!;
 
         /// <summary>
         /// Current Acceleration3d value
@@ -126,16 +120,6 @@ namespace Meadow.Foundation.Sensors.Motion
                     new Acceleration(yAccel * 3.0 / 64.0, Acceleration.UnitType.Gravity),
                     new Acceleration(zAccel * 3.0 / 64.0, Acceleration.UnitType.Gravity));
             });
-        }
-
-        /// <summary>
-        /// Raise event and notify subscribers
-        /// </summary>
-        /// <param name="changeResult">Acceleration3d data</param>
-        protected override void RaiseEventsAndNotify(IChangeResult<Acceleration3D> changeResult)
-        {
-            Acceleration3DUpdated?.Invoke(this, changeResult);
-            base.RaiseEventsAndNotify(changeResult);
         }
     }
 }

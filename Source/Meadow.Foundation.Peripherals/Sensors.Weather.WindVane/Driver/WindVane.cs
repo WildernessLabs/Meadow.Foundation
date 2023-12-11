@@ -20,9 +20,6 @@ namespace Meadow.Foundation.Sensors.Weather
     /// </summary>
     public partial class WindVane : SamplingSensorBase<Azimuth>, IWindVane, IDisposable
     {
-        /// <inheritdoc/>
-        public event EventHandler<IChangeResult<Azimuth>> WindAzimuthUpdated = default!;
-
         /// <summary>
         /// The last recorded azimuth of the wind
         /// </summary>
@@ -159,7 +156,7 @@ namespace Meadow.Foundation.Sensors.Weather
                 New = windAzimuth
             };
             WindAzimuth = windAzimuth;
-            WindAzimuthUpdated?.Invoke(this, windChangeResult);
+
             base.RaiseEventsAndNotify(windChangeResult);
         }
 

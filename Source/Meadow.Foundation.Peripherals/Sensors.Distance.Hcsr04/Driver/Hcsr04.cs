@@ -13,11 +13,6 @@ namespace Meadow.Foundation.Sensors.Distance
     public class Hcsr04 : SamplingSensorBase<Length>, IRangeFinder, IDisposable
     {
         /// <summary>
-        /// Raised when an received a rebound trigger signal
-        /// </summary>
-        public event EventHandler<IChangeResult<Length>> DistanceUpdated = default!;
-
-        /// <summary>
         /// Returns current distance
         /// </summary>
         public Length? Distance { get; protected set; }
@@ -141,16 +136,6 @@ namespace Meadow.Foundation.Sensors.Distance
         {
             // TODO:
             throw new NotImplementedException();
-        }
-
-        /// <summary>
-        /// Raise events for subscribers and notify of value changes
-        /// </summary>
-        /// <param name="changeResult">The updated sensor data</param>
-        protected override void RaiseEventsAndNotify(IChangeResult<Length> changeResult)
-        {
-            DistanceUpdated?.Invoke(this, changeResult);
-            base.RaiseEventsAndNotify(changeResult);
         }
 
         /// <summary>

@@ -41,7 +41,7 @@ namespace Sensors.Temperature.AnalogTemperature_Sample
             analogTemperature.Subscribe(consumer);
 
             // classical .NET events can also be used:
-            analogTemperature.TemperatureUpdated += (sender, result) =>
+            analogTemperature.Updated += (sender, result) =>
             {
                 Resolver.Log.Info($"Temp Changed, temp: {result.New.Celsius:N2}C, old: {result.Old?.Celsius:N2}C");
             };
