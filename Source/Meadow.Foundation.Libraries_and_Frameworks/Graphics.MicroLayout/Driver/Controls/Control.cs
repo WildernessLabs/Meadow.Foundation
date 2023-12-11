@@ -21,6 +21,9 @@ public abstract class Control : IControl
     /// </summary>
     public object? Context { get; set; }
 
+    /// <inheritdoc/>
+    public IControl? Parent { get; set; }
+
     /// <summary>
     /// Initializes a new instance of the <see cref="Control"/> class with the specified dimensions.
     /// </summary>

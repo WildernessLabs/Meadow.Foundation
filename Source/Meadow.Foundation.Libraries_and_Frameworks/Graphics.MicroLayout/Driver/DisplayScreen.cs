@@ -47,7 +47,7 @@ public class DisplayScreen
     /// <param name="theme">The display theme to use.</param>
     public DisplayScreen(IGraphicsDisplay physicalDisplay, RotationType rotation = RotationType.Normal, ITouchScreen? touchScreen = null, DisplayTheme? theme = null)
     {
-        Controls = new ControlsCollection(this);
+        Controls = new ControlsCollection(this, null);
         Theme = theme;
 
         _display = physicalDisplay;
@@ -148,9 +148,9 @@ public class DisplayScreen
 
     private void DrawLoop()
     {
-        if(Resolver.App != null)
+        if (Resolver.App != null)
         {
-            DrawLoopThreaded(); ;
+            DrawLoopThreaded();
         }
         else
         {
@@ -172,8 +172,10 @@ public class DisplayScreen
                         foreach (var control in Controls)
                         {
                             if (control != null)
-                                // until micrographics supports invalidating regions, we have to invalidate everything when one control needs updating
+                            {
+                                // TODO: micrographics supports invalidating regions - we need to update to invalidate only regions here, too
                                 RefreshTree(control);
+                            }
                         }
                     }
                     _graphics.Show();
@@ -199,16 +201,18 @@ public class DisplayScreen
                     {
                         foreach (var control in Controls)
                         {
-                            if(control != null)
-                            // until micrographics supports invalidating regions, we have to invalidate everything when one control needs updating
+                            if (control != null)
+                            {
+                                // TODO: micrographics supports invalidating regions - we need to update to invalidate only regions here, too
                                 RefreshTree(control);
+                            }
                         }
                     }
                     _graphics.Show();
                     IsInvalid = false;
                 }
             }
-            
+
             );
 
             Thread.Sleep(50);

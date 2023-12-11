@@ -7,6 +7,8 @@ namespace Meadow.Foundation.Graphics.MicroLayout;
 /// </summary>
 public abstract class Layout : ThemedControl
 {
+    private Color? _backColor;
+
     /// <summary>
     /// Creates a DisplayLayout
     /// </summary>
@@ -18,13 +20,17 @@ public abstract class Layout : ThemedControl
     protected Layout(DisplayScreen screen, int left, int top, int width, int height)
         : base(left, top, width, height)
     {
-        Controls = new ControlsCollection(screen);
+        Controls = new ControlsCollection(screen, this);
     }
 
     /// <summary>
     /// Gets or sets the background color of the Layout.
     /// </summary>
-    public Color? BackgroundColor { get; set; }
+    public Color? BackgroundColor
+    {
+        get => _backColor;
+        set => SetInvalidatingProperty(ref _backColor, value);
+    }
 
     /// <inheritdoc/>
     public override bool IsInvalid => base.IsInvalid || Controls.Any(c => c.IsInvalid);

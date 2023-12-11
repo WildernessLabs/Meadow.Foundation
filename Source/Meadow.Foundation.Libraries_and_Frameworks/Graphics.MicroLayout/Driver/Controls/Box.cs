@@ -53,7 +53,7 @@ public class Box : ThemedControl
     {
         if (ForeColor != Color.Transparent)
         {
-            graphics.DrawRectangle(Left, Top, Width, Height, ForeColor, Filled);
+            graphics.DrawRectangle(Left + (Parent?.Left ?? 0), Top + (Parent?.Top ?? 0), Width, Height, ForeColor, Filled);
         }
     }
 }
