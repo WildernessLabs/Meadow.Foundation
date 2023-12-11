@@ -12,16 +12,6 @@ namespace Meadow.Foundation.Sensors.Environmental
     public partial class MiniPID2 : SamplingSensorBase<Concentration>, IConcentrationSensor, IDisposable
     {
         /// <summary>
-        /// Raised when the VOC concentration changes
-        /// </summary>
-        public event EventHandler<IChangeResult<Concentration>> ConcentrationUpdated = default!;
-
-        /// <summary>
-        /// Raised when the VOC concentration changes
-        /// </summary>
-        public event EventHandler<IChangeResult<Concentration>> VOCConcentrationUpdated = default!;
-
-        /// <summary>
         /// The current VOC concentration value
         /// </summary>
         public Concentration? Concentration { get; protected set; }
@@ -174,16 +164,6 @@ namespace Meadow.Foundation.Sensors.Environmental
                 IsSampling = false;
                 AnalogInputPort.StopUpdating();
             }
-        }
-
-        /// <summary>
-        /// Method to notify subscribers to ConcentrationUpdated event handler
-        /// </summary>
-        /// <param name="changeResult"></param>
-        protected override void RaiseEventsAndNotify(IChangeResult<Concentration> changeResult)
-        {
-            ConcentrationUpdated?.Invoke(this, changeResult);
-            base.RaiseEventsAndNotify(changeResult);
         }
 
         /// <summary>
