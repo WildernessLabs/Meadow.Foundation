@@ -12,10 +12,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     public partial class Sgp40 : ByteCommsSensorBase<int>, II2cPeripheral
     {
         /// <summary>
-        /// </summary>
-        public event EventHandler<ChangeResult<int>> VocIndexUpdated = default!;
-
-        /// <summary>
         /// The VOC Index, from the last reading
         /// </summary>
         public int VocIndex => Conditions;
@@ -96,17 +92,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             var data = ReadBuffer.Span[0..3].ToArray();
 
             return Task.FromResult(data[0] << 8 | data[1]);
-        }
-
-        /// <summary>
-        /// Inheritance-safe way to raise events and notify observers.
-        /// </summary>
-        /// <param name="changeResult"></param>
-        protected override void RaiseEventsAndNotify(IChangeResult<int> changeResult)
-        {
-            VocIndexUpdated?.Invoke(this, new ChangeResult<int>(VocIndex, changeResult.Old));
-
-            base.RaiseEventsAndNotify(changeResult);
         }
 
         /// <summary>
