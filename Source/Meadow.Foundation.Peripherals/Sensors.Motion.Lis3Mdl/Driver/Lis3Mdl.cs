@@ -15,11 +15,6 @@ namespace Meadow.Foundation.Sensors.Motion
         : PollingSensorBase<MagneticField3D>, IMagnetometer, II2cPeripheral
     {
         /// <summary>
-        /// Event raised when magnetic field changes
-        /// </summary>
-        public event EventHandler<IChangeResult<MagneticField3D>> MagneticField3DUpdated = default!;
-
-        /// <summary>
         /// Current Magnetic Field 3D
         /// </summary>
         public MagneticField3D? MagneticField3D => Conditions;
@@ -62,19 +57,6 @@ namespace Meadow.Foundation.Sensors.Motion
             i2cComms.WriteRegister(CTRL_REG1, (byte)currentDataRate); // Temperature sensor: Off, Output Data Rate: 10Hz
             i2cComms.WriteRegister(CTRL_REG2, (byte)currentFullScale); // Full Scale: as configured, other values default
             i2cComms.WriteRegister(CTRL_REG3, 0x00); // Normal Power, Continuous conversion mode
-        }
-
-        /// <summary>
-        /// Raise events for subscribers and notify of value changes
-        /// </summary>
-        /// <param name="changeResult">The updated sensor data</param>
-        protected override void RaiseEventsAndNotify(IChangeResult<MagneticField3D> changeResult)
-        {
-            if (changeResult.New is { } mag)
-            {
-                MagneticField3DUpdated?.Invoke(this, new ChangeResult<MagneticField3D>(mag, changeResult.Old));
-            }
-            base.RaiseEventsAndNotify(changeResult);
         }
 
         /// <summary>

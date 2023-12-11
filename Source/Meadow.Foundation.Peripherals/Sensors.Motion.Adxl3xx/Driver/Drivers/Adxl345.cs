@@ -18,11 +18,6 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
         public byte DefaultI2cAddress => (byte)Addresses.Default;
 
-        /// <summary>
-        /// Event raised when acceleration changes
-        /// </summary>
-        public event EventHandler<IChangeResult<Acceleration3D>> Acceleration3DUpdated = default!;
-
         readonly double ADXL345_MG2G_MULTIPLIER = 0.004;
 
         /// <summary>
@@ -112,16 +107,6 @@ namespace Meadow.Foundation.Sensors.Motion
                 new Acceleration(ADXL345_MG2G_MULTIPLIER * (short)(ReadBuffer.Span[4] + (ReadBuffer.Span[5] << 8)), Acceleration.UnitType.Gravity));
 
             return Task.FromResult(conditions);
-        }
-
-        /// <summary>
-        /// Raise changed event for subscribers
-        /// </summary>
-        /// <param name="changeResult"></param>
-        protected override void RaiseEventsAndNotify(IChangeResult<Acceleration3D> changeResult)
-        {
-            Acceleration3DUpdated?.Invoke(this, changeResult);
-            base.RaiseEventsAndNotify(changeResult);
         }
 
         /// <summary>

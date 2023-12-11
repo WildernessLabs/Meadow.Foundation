@@ -18,11 +18,6 @@ namespace Meadow.Foundation.Sensors.Light
         protected IAnalogInputPort AnalogInputPort { get; }
 
         /// <summary>
-        /// Raised when the value of the reading changes.
-        /// </summary>
-        public event EventHandler<IChangeResult<Illuminance>> IlluminanceUpdated = default!;
-
-        /// <summary>
         /// Illuminance sensor calibration
         /// </summary>
         public Calibration LuminanceCalibration { get; protected set; }
@@ -123,16 +118,6 @@ namespace Meadow.Foundation.Sensors.Light
         public override void StopUpdating()
         {
             AnalogInputPort.StopUpdating();
-        }
-
-        /// <summary>
-        /// Notify subscribers of IlluminanceUpdated event handler
-        /// </summary>
-        /// <param name="changeResult">Change result with old and new Illuminance</param>
-        protected override void RaiseEventsAndNotify(IChangeResult<Illuminance> changeResult)
-        {
-            IlluminanceUpdated?.Invoke(this, changeResult);
-            base.RaiseEventsAndNotify(changeResult);
         }
 
         /// <summary>
