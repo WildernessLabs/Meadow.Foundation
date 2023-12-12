@@ -122,7 +122,7 @@ namespace Meadow.Foundation.Sensors.Motion
             var b = ReadBlueLight() / rgbDivisor;
             var a = ambient / rgbDivisor;
 
-            conditions.Color = Foundation.Color.FromRgba(r, g, b, a);
+            conditions.Color = Meadow.Color.FromRgba(r, g, b, a);
 
             return Task.FromResult(conditions);
         }

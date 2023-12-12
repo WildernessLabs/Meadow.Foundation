@@ -32,11 +32,11 @@ namespace Displays.ePaper.IL91874V03_Sample
 
         public override Task Run()
         {
-            graphics.DrawRectangle(1, 1, 126, 32, Meadow.Foundation.Color.Red, false);
+            graphics.DrawRectangle(1, 1, 126, 32, Color.Red, false);
 
             graphics.CurrentFont = new Font8x12();
-            graphics.DrawText(2, 2, "IL91874V03", Meadow.Foundation.Color.Black);
-            graphics.DrawText(2, 20, "Meadow F7", Meadow.Foundation.Color.Black);
+            graphics.DrawText(2, 2, "IL91874V03", Color.Black);
+            graphics.DrawText(2, 20, "Meadow F7", Color.Black);
 
             graphics.Show();
 

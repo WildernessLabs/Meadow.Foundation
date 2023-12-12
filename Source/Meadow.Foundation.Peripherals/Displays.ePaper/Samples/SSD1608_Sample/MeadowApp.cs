@@ -31,11 +31,11 @@ namespace Displays.ePaper.SSD1608_Sample
 
         public override Task Run()
         {
-            graphics.DrawRectangle(1, 1, 126, 32, Meadow.Foundation.Color.Black);
+            graphics.DrawRectangle(1, 1, 126, 32, Color.Black);
 
             graphics.CurrentFont = new Font8x12();
-            graphics.DrawText(2, 2, "SSD1608", Meadow.Foundation.Color.Black);
-            graphics.DrawText(2, 20, "Meadow F7", Meadow.Foundation.Color.Black);
+            graphics.DrawText(2, 2, "SSD1608", Color.Black);
+            graphics.DrawText(2, 20, "Meadow F7", Color.Black);
 
             graphics.Show();
 
