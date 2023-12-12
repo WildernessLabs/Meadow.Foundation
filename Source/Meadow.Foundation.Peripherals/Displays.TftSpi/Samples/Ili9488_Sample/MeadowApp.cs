@@ -43,9 +43,9 @@ namespace Displays.Tft.Ili9488_Sample
 
             graphics.Clear();
 
-            graphics.DrawTriangle(10, 10, 50, 50, 10, 50, Meadow.Foundation.Color.Red);
-            graphics.DrawRectangle(20, 15, 40, 20, Meadow.Foundation.Color.Yellow, false);
-            graphics.DrawCircle(50, 50, 40, Meadow.Foundation.Color.Blue, false);
+            graphics.DrawTriangle(10, 10, 50, 50, 10, 50, Color.Red);
+            graphics.DrawRectangle(20, 15, 40, 20, Color.Yellow, false);
+            graphics.DrawCircle(50, 50, 40, Color.Blue, false);
             graphics.DrawText(5, 5, "Meadow F7");
 
             graphics.Show();

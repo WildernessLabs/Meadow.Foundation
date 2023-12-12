@@ -39,8 +39,8 @@ namespace Displays.Tft.St7796s_Sample
         {
             graphics.Clear();
 
-            graphics.DrawTriangle(10, 10, 50, 50, 10, 50, Meadow.Foundation.Color.Red);
-            graphics.DrawRectangle(20, 15, 40, 20, Meadow.Foundation.Color.Yellow, false);
+            graphics.DrawTriangle(10, 10, 50, 50, 10, 50, Color.Red);
+            graphics.DrawRectangle(20, 15, 40, 20, Color.Yellow, false);
             graphics.DrawText(5, 5, "Meadow F7");
 
             graphics.Show();
