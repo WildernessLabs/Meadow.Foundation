@@ -8,8 +8,10 @@ namespace Meadow.Foundation.Leds
     /// <summary>
     /// Represents a Pulse-Width-Modulation (PWM) controlled RGB LED
     /// </summary>
-    public partial class RgbPwmLed : IRgbPwmLed
+    public partial class RgbPwmLed : IRgbPwmLed, IDisposable
     {
+        readonly bool createdPorts = false;
+
         static readonly Frequency DefaultFrequency = new Frequency(200, Frequency.UnitType.Hertz);
 
         readonly float DEFAULT_DUTY_CYCLE = 0f;
@@ -28,9 +30,7 @@ namespace Meadow.Foundation.Leds
         /// </summary>
         public Voltage MIN_FORWARD_VOLTAGE => new Voltage(0);
 
-        /// <summary>
-        /// Turns on LED with current color or turns it off
-        /// </summary>
+        ///<inheritdoc/>
         public bool IsOn
         {
             get => isOn;
@@ -47,9 +47,7 @@ namespace Meadow.Foundation.Leds
         /// </summary>
         public Color Color { get; protected set; } = Color.White;
 
-        /// <summary>
-        /// The brightness value assigned to the LED
-        /// </summary>
+        ///<inheritdoc/>
         public float Brightness { get; protected set; } = 1f;
 
         /// <summary>
@@ -86,6 +84,11 @@ namespace Meadow.Foundation.Leds
         /// The blue LED forward voltage
         /// </summary>
         public Voltage BlueForwardVoltage { get; protected set; }
+
+        /// <summary>
+        /// Is the object disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
 
         /// <summary>
         /// Create instance of RgbPwmLed 
@@ -134,35 +137,9 @@ namespace Meadow.Foundation.Leds
                 greenPwmPin.CreatePwmPort(DefaultFrequency),
                 bluePwmPin.CreatePwmPort(DefaultFrequency),
                 commonType)
-        { }
-
-        /// <summary>
-        /// Create instance of RgbPwmLed 
-        /// </summary>
-        /// <param name="redPwmPin">The PWM pin for the red LED</param>
-        /// <param name="greenPwmPin">The PWM pin for the green LED</param>
-        /// <param name="bluePwmPin">The PWM pin for the blue LED</param>
-        /// <param name="redLedForwardVoltage">The forward voltage for the red LED</param>
-        /// <param name="greenLedForwardVoltage">The forward voltage for the green LED</param>
-        /// <param name="blueLedForwardVoltage">The forward voltage for the blue LED</param>
-        /// <param name="commonType">Common anode or common cathode</param>
-        public RgbPwmLed(
-            IPin redPwmPin,
-            IPin greenPwmPin,
-            IPin bluePwmPin,
-            Voltage redLedForwardVoltage,
-            Voltage greenLedForwardVoltage,
-            Voltage blueLedForwardVoltage,
-            CommonType commonType = CommonType.CommonCathode) :
-            this(
-                redPwmPin.CreatePwmPort(DefaultFrequency),
-                greenPwmPin.CreatePwmPort(DefaultFrequency),
-                bluePwmPin.CreatePwmPort(DefaultFrequency),
-                redLedForwardVoltage,
-                greenLedForwardVoltage,
-                blueLedForwardVoltage,
-                commonType)
-        { }
+        {
+            createdPorts = true;
+        }
 
         /// <summary>
         /// Create instance of RgbPwmLed
@@ -200,6 +177,36 @@ namespace Meadow.Foundation.Leds
             maxBlueDutyCycle = Helpers.CalculateMaximumDutyCycle(BlueForwardVoltage);
 
             ResetPwmPorts();
+        }
+
+        /// <summary>
+        /// Create instance of RgbPwmLed 
+        /// </summary>
+        /// <param name="redPwmPin">The PWM pin for the red LED</param>
+        /// <param name="greenPwmPin">The PWM pin for the green LED</param>
+        /// <param name="bluePwmPin">The PWM pin for the blue LED</param>
+        /// <param name="redLedForwardVoltage">The forward voltage for the red LED</param>
+        /// <param name="greenLedForwardVoltage">The forward voltage for the green LED</param>
+        /// <param name="blueLedForwardVoltage">The forward voltage for the blue LED</param>
+        /// <param name="commonType">Common anode or common cathode</param>
+        public RgbPwmLed(
+            IPin redPwmPin,
+            IPin greenPwmPin,
+            IPin bluePwmPin,
+            Voltage redLedForwardVoltage,
+            Voltage greenLedForwardVoltage,
+            Voltage blueLedForwardVoltage,
+            CommonType commonType = CommonType.CommonCathode) :
+            this(
+                redPwmPin.CreatePwmPort(DefaultFrequency),
+                greenPwmPin.CreatePwmPort(DefaultFrequency),
+                bluePwmPin.CreatePwmPort(DefaultFrequency),
+                redLedForwardVoltage,
+                greenLedForwardVoltage,
+                blueLedForwardVoltage,
+                commonType)
+        {
+            createdPorts = true;
         }
 
         /// <summary>
@@ -258,11 +265,7 @@ namespace Meadow.Foundation.Leds
             SetColor(Color, brightness);
         }
 
-        /// <summary>
-        /// Sets the current color of the LED
-        /// </summary>
-        /// <param name="color">The LED color</param>
-        /// <param name="brightness">Valid values are from 0 to 1, inclusive</param>
+        ///<inheritdoc/>
         public void SetColor(Color color, float brightness = 1)
         {
             if (color == Color && brightness == Brightness)
@@ -276,6 +279,32 @@ namespace Meadow.Foundation.Leds
             RedPwm.DutyCycle = (float)(Color.R / 255.0 * maxRedDutyCycle * brightness);
             GreenPwm.DutyCycle = (float)(Color.G / 255.0 * maxGreenDutyCycle * brightness);
             BluePwm.DutyCycle = (float)(Color.B / 255.0 * maxBlueDutyCycle * brightness);
+        }
+
+        ///<inheritdoc/>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        /// <param name="disposing">Is disposing</param>
+        public virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && createdPorts)
+                {
+                    RedPwm.Dispose();
+                    GreenPwm.Dispose();
+                    BluePwm.Dispose();
+                }
+
+                IsDisposed = true;
+            }
         }
     }
 }
