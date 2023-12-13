@@ -30,9 +30,7 @@ namespace Meadow.Foundation.Leds
         /// </summary>
         public Voltage MIN_FORWARD_VOLTAGE => new Voltage(0);
 
-        /// <summary>
-        /// Turns on LED with current color or turns it off
-        /// </summary>
+        ///<inheritdoc/>
         public bool IsOn
         {
             get => isOn;
@@ -49,9 +47,7 @@ namespace Meadow.Foundation.Leds
         /// </summary>
         public Color Color { get; protected set; } = Color.White;
 
-        /// <summary>
-        /// The brightness value assigned to the LED
-        /// </summary>
+        ///<inheritdoc/>
         public float Brightness { get; protected set; } = 1f;
 
         /// <summary>
