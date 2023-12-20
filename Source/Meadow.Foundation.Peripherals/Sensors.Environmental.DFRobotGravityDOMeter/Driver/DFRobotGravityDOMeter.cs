@@ -1,5 +1,4 @@
 ﻿using Meadow.Hardware;
-using Meadow.Peripherals.Sensors.Environmental;
 using Meadow.Units;
 using System;
 using System.Threading.Tasks;
@@ -9,12 +8,17 @@ namespace Meadow.Foundation.Sensors.Environmental;
 /// <summary>
 /// DFRobot Analog Gravity Dissolved Oxygen Meter
 /// </summary>
-public partial class DFRobotGravityDOMeter : SamplingSensorBase<double>, IDissolvedOxygenSensor
+public partial class DFRobotGravityDOMeter : SamplingSensorBase<ConcentrationInWater> //, IDissolvedOxygenSensor
 {
     /// <summary>
-    /// The calibration value for the sensor in air
+    /// The current water temperature (default 25C)
     /// </summary>
-    public Voltage CalibrationInAir { get; set; } = new Voltage(0.05, Voltage.UnitType.Volts);
+    public Units.Temperature WaterTemperature { get; set; } = new Units.Temperature(25, Units.Temperature.UnitType.Celsius);
+
+    /// <summary>
+    /// The calibration value for the sensor at 25C (default 1.6V)
+    /// </summary>
+    public Voltage CalibrationAt25C { get; set; } = new Voltage(1.6, Voltage.UnitType.Volts);
 
     /// <summary>
     /// Returns the analog input port
@@ -22,9 +26,18 @@ public partial class DFRobotGravityDOMeter : SamplingSensorBase<double>, IDissol
     protected IAnalogInputPort AnalogInputPort { get; }
 
     /// <summary>
-    /// Last saturation value read from the sensor (0.0-1.0)
+    /// Last concentration value read from the sensor
     /// </summary>
-    public double? Saturation { get; protected set; }
+    public ConcentrationInWater? ConcentrationInWater { get; protected set; }
+
+    /// <summary>
+    /// The disolved oxygen lookup table for temperature values from 0 to 40 degrees C
+    /// </summary>
+    readonly int[] DO_Table = new int[41] {
+    14460, 14220, 13820, 13440, 13090, 12740, 12420, 12110, 11810, 11530,
+    11260, 11010, 10770, 10530, 10300, 10080, 9860, 9660, 9460, 9270,
+    9080, 8900, 8730, 8570, 8410, 8250, 8110, 7960, 7820, 7690,
+    7560, 7430, 7300, 7180, 7070, 6950, 6840, 6730, 6630, 6530, 6410};
 
     /// <summary>
     /// Creates a new DFRobotGravityDOMeter object
@@ -49,12 +62,12 @@ public partial class DFRobotGravityDOMeter : SamplingSensorBase<double>, IDissol
             IAnalogInputPort.CreateObserver(
                 result =>
                 {
-                    ChangeResult<double> changeResult = new()
+                    ChangeResult<ConcentrationInWater> changeResult = new()
                     {
-                        New = VoltageToSaturation(result.New),
-                        Old = Saturation
+                        New = VoltageToConcentration(result.New),
+                        Old = ConcentrationInWater
                     };
-                    Saturation = changeResult.New;
+                    ConcentrationInWater = changeResult.New;
                     RaiseEventsAndNotify(changeResult);
                 }
             )
@@ -74,12 +87,12 @@ public partial class DFRobotGravityDOMeter : SamplingSensorBase<double>, IDissol
     /// Reads data from the sensor
     /// </summary>
     /// <returns>The latest sensor reading</returns>
-    protected override async Task<double> ReadSensor()
+    protected override async Task<ConcentrationInWater> ReadSensor()
     {
         var voltage = await AnalogInputPort.Read();
-        var newSaturation = VoltageToSaturation(voltage);
-        Saturation = newSaturation;
-        return newSaturation;
+        var newConcentration = VoltageToConcentration(voltage);
+        ConcentrationInWater = newConcentration;
+        return newConcentration;
     }
 
     /// <summary>
@@ -108,8 +121,13 @@ public partial class DFRobotGravityDOMeter : SamplingSensorBase<double>, IDissol
         }
     }
 
-    double VoltageToSaturation(Voltage voltage)
+    ConcentrationInWater VoltageToConcentration(Voltage voltage)
     {
-        return voltage.Millivolts / CalibrationInAir.Millivolts;
+        var calibrationValue = DO_Table[(int)WaterTemperature.Celsius];
+
+        var voltageSaturationInMilliVolts = CalibrationAt25C.Millivolts + 35 * (WaterTemperature.Celsius - 25);
+        var concentrationRaw = voltage.Millivolts * calibrationValue / voltageSaturationInMilliVolts;
+
+        return new ConcentrationInWater(concentrationRaw, Units.ConcentrationInWater.UnitType.MicrogramsPerLiter);
     }
 }

@@ -1,7 +1,6 @@
 ﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Environmental;
-using Meadow.Units;
 using System;
 using System.Threading.Tasks;
 
@@ -18,10 +17,9 @@ namespace Sensors.Environmental.DFRobotGravityDOMeter_Sample
             Resolver.Log.Info("Initialize...");
 
             sensor = new DFRobotGravityDOMeter(Device.Pins.A01);
-            sensor.CalibrationInAir = new Voltage(0.04, Voltage.UnitType.Volts);
 
             // Example that uses an IObservable subscription to only be notified when the saturation changes
-            var consumer = AtlasScientificGravityDOMeter.CreateObserver(
+            var consumer = DFRobotGravityDOMeter.CreateObserver(
                 handler: result =>
                 {
                     string oldValue = (result.Old is { } old) ? $"{old * 100:n1}" : "n/a";
@@ -47,12 +45,6 @@ namespace Sensors.Environmental.DFRobotGravityDOMeter_Sample
             Resolver.Log.Info("Run...");
 
             await ReadSensor();
-
-            //example calibration setting, ensure the sensor is set up for calibration 
-            var calibrationVoltage = await sensor.GetCurrentVoltage();
-            sensor.CalibrationInAir = calibrationVoltage;
-
-            Resolver.Log.Info($"Calibration voltage: {calibrationVoltage.Volts}V");
 
             sensor.StartUpdating(TimeSpan.FromSeconds(2));
         }
