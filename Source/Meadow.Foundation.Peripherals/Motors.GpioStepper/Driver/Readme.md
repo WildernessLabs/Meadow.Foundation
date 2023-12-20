@@ -13,7 +13,7 @@ To view all Wilderness Labs open-source projects, including samples, visit [gith
 ## Usage
 
 ```csharp
-private IPositionalMotor stepper;
+private IStepperMotor stepper;
 
 private bool UseStepDirConfiguration { get; set; } = true;
 

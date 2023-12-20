@@ -19,7 +19,7 @@ public override Task Initialize()
 {
     Resolver.Log.Info("Initialize...");
 
-    a02yyuw = new A02yyuw(Device, Device.PlatformOS.GetSerialPortName("COM1"));
+    a02yyuw = new A02yyuw(Device, Device.PlatformOS.GetSerialPortName("COM4"));
 
     var consumer = A02yyuw.CreateObserver(
         handler: result =>
@@ -30,7 +30,7 @@ public override Task Initialize()
         {
             if (result.Old is { } old)
             {
-                return Math.Abs((result.New - old).Centimeters) > 0.5;
+                return Math.Abs((result.New - old).Centimeters) > 5.0;
             }
             return false;
         }
