@@ -22,9 +22,9 @@ namespace Sensors.Environmental.DFRobotGravityDOMeter_Sample
             var consumer = DFRobotGravityDOMeter.CreateObserver(
                 handler: result =>
                 {
-                    string oldValue = (result.Old is { } old) ? $"{old * 100:n1}" : "n/a";
-                    string newValue = $"{result.New * 100:n1}";
-                    Resolver.Log.Info($"New: {newValue}%, Old: {oldValue}%");
+                    string oldValue = (result.Old is { } old) ? $"{old.MilligramsPerLiter:n0}" : "n/a";
+                    string newValue = $"{result.New.MilligramsPerLiter:n0}";
+                    Resolver.Log.Info($"New: {newValue}mg/l, Old: {oldValue}mg/l");
                 },
                 filter: null
             );
@@ -33,8 +33,8 @@ namespace Sensors.Environmental.DFRobotGravityDOMeter_Sample
             // optional classical .NET events can also be used:
             sensor.Updated += (sender, result) =>
             {
-                string oldValue = (result.Old is { } old) ? $"{old * 100:n0}%" : "n/a";
-                Resolver.Log.Info($"Updated - New: {result.New * 100:n0}%, Old: {oldValue}");
+                string oldValue = (result.Old is { } old) ? $"{old.MilligramsPerLiter}mg/l" : "n/a";
+                Resolver.Log.Info($"Updated - New: {result.New.MilligramsPerLiter:n0}mg/l, Old: {oldValue}");
             };
 
             return Task.CompletedTask;
@@ -51,8 +51,8 @@ namespace Sensors.Environmental.DFRobotGravityDOMeter_Sample
 
         protected async Task ReadSensor()
         {
-            var saturation = await sensor.Read();
-            Resolver.Log.Info($"Initial saturation: {saturation * 100:N1}%");
+            var concentration = await sensor.Read();
+            Resolver.Log.Info($"Initial concentration: {concentration.MilligramsPerLiter:N0}mg/l");
         }
 
         //<!=SNOP=>
