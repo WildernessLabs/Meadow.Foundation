@@ -1,8 +1,8 @@
-# Meadow.Foundation.Sensors.Environmental.AtlasScientificGravityDOMeter
+# Meadow.Foundation.Sensors.Environmental.DFRobotGravityDOMeter
 
-**Atlas Scientific analog gravity dissolved oxygen sensor**
+**DFRobot analog gravity dissolved oxygen sensor**
 
-The **AtlasScientificGravityDOMeter** library is designed for the [Wilderness Labs](www.wildernesslabs.co) Meadow .NET IoT platform and is part of [Meadow.Foundation](https://developer.wildernesslabs.co/Meadow/Meadow.Foundation/).
+The **DFRobotGravityDOMeter** library is designed for the [Wilderness Labs](www.wildernesslabs.co) Meadow .NET IoT platform and is part of [Meadow.Foundation](https://developer.wildernesslabs.co/Meadow/Meadow.Foundation/).
 
 The **Meadow.Foundation** peripherals library is an open-source repository of drivers and libraries that streamline and simplify adding hardware to your C# .NET Meadow IoT application.
 
@@ -13,22 +13,21 @@ To view all Wilderness Labs open-source projects, including samples, visit [gith
 ## Usage
 
 ```csharp
-AtlasScientificGravityDOMeter sensor;
+DFRobotGravityDOMeter sensor;
 
 public override Task Initialize()
 {
     Resolver.Log.Info("Initialize...");
 
-    sensor = new AtlasScientificGravityDOMeter(Device.Pins.A01);
-    sensor.CalibrationInAir = new Voltage(0.04, Voltage.UnitType.Volts);
+    sensor = new DFRobotGravityDOMeter(Device.Pins.A01);
 
     // Example that uses an IObservable subscription to only be notified when the saturation changes
-    var consumer = AtlasScientificGravityDOMeter.CreateObserver(
+    var consumer = DFRobotGravityDOMeter.CreateObserver(
         handler: result =>
         {
-            string oldValue = (result.Old is { } old) ? $"{old * 100:n1}" : "n/a";
-            string newValue = $"{result.New * 100:n1}";
-            Resolver.Log.Info($"New: {newValue}%, Old: {oldValue}%");
+            string oldValue = (result.Old is { } old) ? $"{old.MilligramsPerLiter:n0}" : "n/a";
+            string newValue = $"{result.New.MilligramsPerLiter:n0}";
+            Resolver.Log.Info($"New: {newValue}mg/l, Old: {oldValue}mg/l");
         },
         filter: null
     );
@@ -37,8 +36,8 @@ public override Task Initialize()
     // optional classical .NET events can also be used:
     sensor.Updated += (sender, result) =>
     {
-        string oldValue = (result.Old is { } old) ? $"{old * 100:n0}%" : "n/a";
-        Resolver.Log.Info($"Updated - New: {result.New * 100:n0}%, Old: {oldValue}");
+        string oldValue = (result.Old is { } old) ? $"{old.MilligramsPerLiter}mg/l" : "n/a";
+        Resolver.Log.Info($"Updated - New: {result.New.MilligramsPerLiter:n0}mg/l, Old: {oldValue}");
     };
 
     return Task.CompletedTask;
@@ -50,19 +49,13 @@ public override async Task Run()
 
     await ReadSensor();
 
-    //example calibration setting, ensure the sensor is set up for calibration 
-    var calibrationVoltage = await sensor.GetCurrentVoltage();
-    sensor.CalibrationInAir = calibrationVoltage;
-
-    Resolver.Log.Info($"Calibration voltage: {calibrationVoltage.Volts}V");
-
     sensor.StartUpdating(TimeSpan.FromSeconds(2));
 }
 
 protected async Task ReadSensor()
 {
-    var saturation = await sensor.Read();
-    Resolver.Log.Info($"Initial saturation: {saturation * 100:N1}%");
+    var concentration = await sensor.Read();
+    Resolver.Log.Info($"Initial concentration: {concentration.MilligramsPerLiter:N0}mg/l");
 }
 
 ```
