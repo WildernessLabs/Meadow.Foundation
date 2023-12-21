@@ -10,11 +10,11 @@ namespace Meadow.Foundation.Simulation;
 /// </summary>
 public class SimulatedRelay : IRelay, ISimulatedSensor
 {
-    private bool _state;
+    private RelayState _state;
     private Timer? _simulationTimer;
 
     /// <inheritdoc/>
-    public event EventHandler<bool> OnRelayChanged = default!;
+    public event EventHandler<RelayState> OnChanged = default!;
 
     /// <inheritdoc/>
     public RelayType Type => RelayType.NormallyOpen;
@@ -34,14 +34,14 @@ public class SimulatedRelay : IRelay, ISimulatedSensor
     }
 
     /// <inheritdoc/>
-    public bool IsOn
+    public RelayState State
     {
         get => _state;
         set
         {
-            if (value == IsOn) return;
+            if (value == _state) return;
             _state = value;
-            OnRelayChanged?.Invoke(this, IsOn);
+            OnChanged?.Invoke(this, State);
         }
     }
 
@@ -53,7 +53,11 @@ public class SimulatedRelay : IRelay, ISimulatedSensor
     /// <inheritdoc/>
     public void Toggle()
     {
-        IsOn = !IsOn;
+        State = State switch
+        {
+            RelayState.Open => RelayState.Closed,
+            _ => RelayState.Open,
+        };
     }
 
     /// <inheritdoc/>
@@ -61,7 +65,15 @@ public class SimulatedRelay : IRelay, ISimulatedSensor
     {
         if (value is bool b)
         {
-            IsOn = b;
+            State = b switch
+            {
+                true => RelayState.Closed,
+                _ => RelayState.Open
+            };
+        }
+        else if (value is RelayState s)
+        {
+            State = s;
         }
         else
         {
