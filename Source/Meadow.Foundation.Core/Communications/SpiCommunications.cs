@@ -1,7 +1,8 @@
-﻿using Meadow.Units;
+﻿using Meadow.Hardware;
+using Meadow.Units;
 using System;
 
-namespace Meadow.Hardware
+namespace Meadow.Foundation
 {
     /// <summary>
     /// Helper class for SPI communications, handles registers, endian, etc.

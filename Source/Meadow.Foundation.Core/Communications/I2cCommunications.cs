@@ -1,6 +1,7 @@
-﻿using System;
+﻿using Meadow.Hardware;
+using System;
 
-namespace Meadow.Hardware
+namespace Meadow.Foundation
 {
     /// <summary>
     /// Helper class for I2C communications, handles registers, endian, etc.
