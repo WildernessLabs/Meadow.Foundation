@@ -11,10 +11,12 @@ public class LineChart : ThemedControl
     /// The default color for axis lines
     /// </summary>
     public static Color DefaultAxisColor = Color.Gray;
+
     /// <summary>
     /// The default color for axis labels
     /// </summary>
     public static Color DefaultAxisLabelColor = Color.White;
+
     /// <summary>
     /// The default chart background color
     /// </summary>
