@@ -23,7 +23,7 @@ public interface IControl
     /// <summary>
     /// Gets or sets whether the control is visible.
     /// </summary>
-    bool Visible { get; set; }
+    bool IsVisible { get; set; }
 
     /// <summary>
     /// Gets or sets the width of the display control.

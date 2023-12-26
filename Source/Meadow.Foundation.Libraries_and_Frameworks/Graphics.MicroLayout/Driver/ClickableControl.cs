@@ -22,7 +22,7 @@ public abstract class ClickableControl : ThemedControl, IClickableControl
         get => _pressed;
         set
         {
-            if (!Visible) return;
+            if (!IsVisible) return;
 
             if (_pressed == value) return;
 

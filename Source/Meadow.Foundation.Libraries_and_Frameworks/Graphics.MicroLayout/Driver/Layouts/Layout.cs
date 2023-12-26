@@ -48,16 +48,16 @@ public abstract class Layout : ThemedControl
     }
 
     /// <inheritdoc/>
-    public override bool Visible
+    public override bool IsVisible
     {
-        get => base.Visible;
+        get => base.IsVisible;
         set
         {
             foreach (var control in Controls)
             {
-                control.Visible = value;
+                control.IsVisible = value;
             }
-            base.Visible = value;
+            base.IsVisible = value;
         }
     }
 

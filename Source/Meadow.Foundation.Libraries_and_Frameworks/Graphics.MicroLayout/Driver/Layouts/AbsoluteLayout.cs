@@ -30,7 +30,7 @@ public class AbsoluteLayout : Layout
     /// <inheritdoc/>
     protected override void OnDraw(MicroGraphics graphics)
     {
-        if (Visible && BackgroundColor != null)
+        if (IsVisible && BackgroundColor != null)
         {
             graphics.DrawRectangle(
                 Left + (Parent?.Left ?? 0),
