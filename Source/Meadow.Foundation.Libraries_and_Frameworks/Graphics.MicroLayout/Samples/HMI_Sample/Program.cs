@@ -88,13 +88,13 @@ public class MeadowApp : App<Windows>
 
         _screen.Controls.Add(splashLayout, chartLayout);
 
-        chartLayout.Visible = false;
+        chartLayout.IsVisible = false;
 
         Task.Run(async () =>
         {
             await Task.Delay(5000);
-            splashLayout.Visible = false;
-            chartLayout.Visible = true;
+            splashLayout.IsVisible = false;
+            chartLayout.IsVisible = true;
         });
         Application.Run(display);
 

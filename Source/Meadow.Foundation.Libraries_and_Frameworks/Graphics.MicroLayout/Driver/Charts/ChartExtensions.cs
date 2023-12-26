@@ -34,5 +34,4 @@ public static class ChartExtensions
 
         return series;
     }
-
 }
