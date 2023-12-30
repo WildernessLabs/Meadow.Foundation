@@ -11,9 +11,9 @@ namespace Meadow.Foundation.Sensors.Buttons
     public abstract class PushButtonBase : IButton, IDisposable
     {
         /// <summary>
-        /// Default threshold for LongPress events
+        /// Default threshold for LongClicked events
         /// </summary>
-        public static readonly TimeSpan DefaultLongPressThreshold = TimeSpan.FromMilliseconds(500);
+        public static readonly TimeSpan DefaultLongClickThreshold = TimeSpan.FromMilliseconds(500);
 
         /// <summary>
         /// Raised when a press starts
@@ -26,12 +26,12 @@ namespace Meadow.Foundation.Sensors.Buttons
         public event EventHandler PressEnded = default!;
 
         /// <summary>
-        /// Raised when the button is released after a press
+        /// Raised when the button is released after being pressed (for shorter than LongClickedThreshold, if set)
         /// </summary>
         public event EventHandler Clicked = default!;
 
         /// <summary>
-        /// Raised when the button is pressed for LongClickedThreshold or longer and then releases
+        /// Raised when the button is released after being pressed for longer than LongClickedThreshold
         /// </summary>
         public event EventHandler LongClicked = default!;
 
@@ -52,9 +52,9 @@ namespace Meadow.Foundation.Sensors.Buttons
         protected IDigitalInputPort DigitalIn { get; private set; }
 
         /// <summary>
-        /// The minimum duration for a long press
+        /// The minimum duration for a long press. Defaults to 
         /// </summary>
-        public TimeSpan LongClickedThreshold { get; set; } = TimeSpan.Zero;
+        public TimeSpan LongClickedThreshold { get; set; } = DefaultLongClickThreshold;
 
         /// <summary>
         /// Initializes a new instance of the PushButtonBase class with the specified digital input port
@@ -62,7 +62,6 @@ namespace Meadow.Foundation.Sensors.Buttons
         /// <param name="inputPort">The digital input port to associate with the push button</param>
         protected PushButtonBase(IDigitalInputPort inputPort)
         {
-            LongClickedThreshold = DefaultLongPressThreshold;
             DigitalIn = inputPort;
         }
 
@@ -131,7 +130,7 @@ namespace Meadow.Foundation.Sensors.Buttons
         /// </summary>
         protected virtual void RaisePressStarted()
         {
-            PressStarted?.Invoke(this, new EventArgs());
+            PressStarted?.Invoke(this, EventArgs.Empty);
         }
 
         /// <summary>
@@ -139,7 +138,7 @@ namespace Meadow.Foundation.Sensors.Buttons
         /// </summary>
         protected virtual void RaisePressEnded()
         {
-            PressEnded?.Invoke(this, new EventArgs());
+            PressEnded?.Invoke(this, EventArgs.Empty);
         }
 
         /// <summary>
@@ -147,7 +146,7 @@ namespace Meadow.Foundation.Sensors.Buttons
         /// </summary>
         protected virtual void RaiseLongClicked()
         {
-            LongClicked?.Invoke(this, new EventArgs());
+            LongClicked?.Invoke(this, EventArgs.Empty);
         }
 
         /// <summary>

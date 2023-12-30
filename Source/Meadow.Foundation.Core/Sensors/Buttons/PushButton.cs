@@ -67,7 +67,7 @@ namespace Meadow.Foundation.Sensors.Buttons
         {
             DigitalIn = inputPort;
 
-            LongClickedThreshold = DefaultLongPressThreshold;
+            LongClickedThreshold = DefaultLongClickThreshold;
 
             DigitalIn.Changed += DigitalInChanged;
         }

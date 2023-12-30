@@ -4,7 +4,7 @@ using System.Threading;
 namespace Meadow.Foundation.Displays
 {
     /// <summary>
-    /// Represents the Sh1106 family of displays
+    /// Represents the Sh1106 family of displays (up to 132 x 64)
     /// </summary>
     public class Sh1106 : Sh110x
     {
@@ -15,8 +15,9 @@ namespace Meadow.Foundation.Displays
         /// <param name="address">I2C address</param>
         /// <param name="width">Display width in pixels</param>
         /// <param name="height">Display height in pixels</param>
-        public Sh1106(II2cBus i2cBus, byte address, int width, int height)
-            : base(i2cBus, address, width, height)
+        /// <param name="firstColumn">The first visible column on the display (if display is cropped)</param>
+        public Sh1106(II2cBus i2cBus, byte address, int width = 128, int height = 64, int firstColumn = 0)
+            : base(i2cBus, address, width, height, firstColumn)
         { }
 
         /// <summary>
@@ -28,8 +29,10 @@ namespace Meadow.Foundation.Displays
         /// <param name="resetPin">Reset pin</param>
         /// <param name="width">Display width in pixels</param>
         /// <param name="height">Display height in pixels</param>
-        public Sh1106(ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, int width = 128, int height = 64)
-            : base(spiBus, chipSelectPin, dcPin, resetPin, width, height)
+        /// <param name="firstColumn">The first visible column on the display (if display is cropped)</param>
+        public Sh1106(ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, 
+            int width = 128, int height = 64, int firstColumn = 0)
+            : base(spiBus, chipSelectPin, dcPin, resetPin, width, height, firstColumn)
         { }
 
         /// <summary>
@@ -41,12 +44,10 @@ namespace Meadow.Foundation.Displays
         /// <param name="resetPort">Reset output port</param>
         /// <param name="width">Display width in pixels</param>
         /// <param name="height">Display height in pixels</param>
-        public Sh1106(ISpiBus spiBus,
-            IDigitalOutputPort chipSelectPort,
-            IDigitalOutputPort dataCommandPort,
-            IDigitalOutputPort resetPort,
-            int width = 128, int height = 64)
-            : base(spiBus, chipSelectPort, dataCommandPort, resetPort, width, height)
+        /// <param name="firstColumn">The first visible column on the display (if display is cropped)</param>
+        public Sh1106(ISpiBus spiBus, IDigitalOutputPort chipSelectPort, IDigitalOutputPort dataCommandPort, IDigitalOutputPort resetPort,
+            int width = 128, int height = 64, int firstColumn = 0)
+            : base(spiBus, chipSelectPort, dataCommandPort, resetPort, width, height, firstColumn)
         { }
 
         /// <summary>
@@ -60,25 +61,25 @@ namespace Meadow.Foundation.Displays
             SendCommand(DisplayCommand.SetDisplayClockDiv);
             SendCommand(0x80);
 
-            SendCommand(DisplayCommand.MultiplexModeSet);
-            SendCommand(DisplayCommand.MultiplexDataSet);
+            SendCommand(DisplayCommand.SetMultiplexRatio);
+            SendCommand(0x3F);
 
             SendCommand(DisplayCommand.SetDisplayOffset);
-            SendCommand((byte)0);
+            SendCommand((byte)0x00);
 
             SendCommand(DisplayCommand.DisplayStartLine);
 
-            SendCommand(DisplayCommand.SegInvNormal);
-            SendCommand(0xC0);
+            SendCommand(DisplayCommand.SetSegmentNormal);
+            SendCommand(DisplayCommand.ScanDirectionStandard);
 
             SendCommand(DisplayCommand.SetComPins);
-            SendCommand(0x12);
+            SendCommand(DisplayCommand.ComPinsAlternative);
 
             SendCommand(DisplayCommand.SetContrast);
             SendCommand(0x0F);
 
-            SendCommand(0x30);
-            SendCommand(DisplayCommand.DisplayOnResume);
+            SendCommand((byte)DisplayCommand.PumpVoltage + 0x02);
+            SendCommand(DisplayCommand.DisplayResume);
 
             SendCommand(DisplayCommand.SetDisplayClockDiv);
             SendCommand(0xF0);
@@ -88,5 +89,14 @@ namespace Meadow.Foundation.Displays
             Thread.Sleep(100);
             SendCommand(DisplayCommand.DisplayOn);
         }
+
+        /// <inheritdoc/>
+        public override void SetDisplayOffsets(byte startLine = 0, byte offset = 0)
+        {
+            SendCommand(DisplayCommand.DisplayStartLine + startLine);
+            SendCommand(DisplayCommand.SetDisplayOffset);
+            SendCommand(offset);
+        }
+
     }
 }
