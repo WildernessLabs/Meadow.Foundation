@@ -3,7 +3,7 @@ using Meadow.Peripherals.Sensors;
 using System;
 using System.Threading;
 
-namespace Meadow.Foundation.Simulation;
+namespace Meadow.Foundation.Relays;
 
 /// <summary>
 /// Represents a simulated relay that implements both IRelay and ISimulatedSensor interfaces.

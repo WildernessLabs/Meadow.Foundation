@@ -1,45 +1,44 @@
 ﻿using Meadow.Hardware;
 using Meadow.Peripherals.Sensors;
-using Meadow.Units;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Meadow.Foundation.Simulation;
+namespace Meadow.Foundation.Sensors;
 
 /// <summary>
 /// Represents a simulated temperature sensor that implements both ITemperatureSensor and ISimulatedSensor interfaces.
 /// </summary>
 public class SimulatedTemperatureSensor : ITemperatureSensor, ISimulatedSensor
 {
-    private Random _random = new();
-    private Temperature? _temperature;
-    private Temperature? _minTemperature;
-    private Temperature? _maxTemperature;
+    private readonly Random _random = new();
+    private Units.Temperature? _temperature;
+    private Units.Temperature? _minTemperature;
+    private Units.Temperature? _maxTemperature;
     private SimulationBehavior _behavior;
     private int _sawtoothDirection = 1;
     private Timer? _reportTimer;
     private Timer? _simulationTimer;
 
     /// <inheritdoc/>
-    public event EventHandler<IChangeResult<Temperature>> Updated = default!;
+    public event EventHandler<IChangeResult<Units.Temperature>> Updated = default!;
     /// <inheritdoc/>
     public SimulationBehavior[] SupportedBehaviors => new SimulationBehavior[] { SimulationBehavior.RandomWalk, SimulationBehavior.Sawtooth };
     /// <inheritdoc/>
-    public Type ValueType => typeof(Temperature);
+    public Type ValueType => typeof(Units.Temperature);
     /// <inheritdoc/>
     public TimeSpan UpdateInterval { get; private set; }
     /// <inheritdoc/>
     public bool IsSampling { get; private set; }
 
     /// <summary>
-    /// Initializes a new instance of the SimulatedTemperatureSensor class.
+    /// Initializes a new instance of the TemperatureSensorSimulated class.
     /// </summary>
     /// <param name="initialTemperature">The initial temperature value of the sensor.</param>
     /// <param name="incrementPort">The digital interrupt port used for incrementing the temperature.</param>
     /// <param name="decrementPort">The digital interrupt port used for decrementing the temperature.</param>
     public SimulatedTemperatureSensor(
-        Temperature initialTemperature,
+        Units.Temperature initialTemperature,
         IDigitalInterruptPort incrementPort,
         IDigitalInterruptPort decrementPort)
     {
@@ -47,25 +46,25 @@ public class SimulatedTemperatureSensor : ITemperatureSensor, ISimulatedSensor
 
         incrementPort.Changed += (s, e) =>
         {
-            Temperature = new Temperature(Temperature!.Value.Fahrenheit + 0.5, Meadow.Units.Temperature.UnitType.Fahrenheit);
+            Temperature = new Units.Temperature(Temperature!.Value.Fahrenheit + 0.5, Meadow.Units.Temperature.UnitType.Fahrenheit);
         };
         decrementPort.Changed += (s, e) =>
         {
-            Temperature = new Temperature(Temperature!.Value.Fahrenheit - 0.5, Meadow.Units.Temperature.UnitType.Fahrenheit);
+            Temperature = new Units.Temperature(Temperature!.Value.Fahrenheit - 0.5, Meadow.Units.Temperature.UnitType.Fahrenheit);
         };
     }
 
     /// <summary>
-    /// Initializes a new instance of the SimulatedTemperatureSensor class with specified parameters.
+    /// Initializes a new instance of the TemperatureSensorSimulated class with specified parameters.
     /// </summary>
     /// <param name="initialTemperature">The initial temperature value of the sensor.</param>
     /// <param name="minimumTemperature">The minimum temperature value for the simulation.</param>
     /// <param name="maximumTemperature">The maximum temperature value for the simulation.</param>
     /// <param name="behavior">The simulation behavior for the sensor (default is SimulationBehavior.RandomWalk).</param>
     public SimulatedTemperatureSensor(
-        Temperature initialTemperature,
-        Temperature minimumTemperature,
-        Temperature maximumTemperature,
+        Units.Temperature initialTemperature,
+        Units.Temperature minimumTemperature,
+        Units.Temperature maximumTemperature,
         SimulationBehavior behavior = SimulationBehavior.RandomWalk)
     {
         _temperature = initialTemperature;
@@ -93,16 +92,16 @@ public class SimulatedTemperatureSensor : ITemperatureSensor, ISimulatedSensor
             _sawtoothDirection *= -1;
         }
 
-        Temperature = new Temperature(newTemp, Meadow.Units.Temperature.UnitType.Celsius);
+        Temperature = new Units.Temperature(newTemp, Meadow.Units.Temperature.UnitType.Celsius);
     }
 
     private void ReportTimerProc(object? o)
     {
-        Updated?.Invoke(this, new ChangeResult<Temperature>(this.Temperature!.Value, this.Temperature!.Value));
+        Updated?.Invoke(this, new ChangeResult<Units.Temperature>(this.Temperature!.Value, this.Temperature!.Value));
     }
 
     /// <inheritdoc/>
-    public Temperature? Temperature
+    public Units.Temperature? Temperature
     {
         get => _temperature;
         private set
@@ -113,15 +112,15 @@ public class SimulatedTemperatureSensor : ITemperatureSensor, ISimulatedSensor
             {
                 var previous = _temperature;
                 _temperature = value;
-                Updated?.Invoke(this, new ChangeResult<Temperature>(this.Temperature!.Value, previous));
+                Updated?.Invoke(this, new ChangeResult<Units.Temperature>(Temperature!.Value, previous));
             }
         }
     }
 
     /// <inheritdoc/>
-    public Task<Temperature> Read()
+    public Task<Units.Temperature> Read()
     {
-        return Task.FromResult(this.Temperature ?? Meadow.Units.Temperature.AbsoluteZero);
+        return Task.FromResult(Temperature ?? Units.Temperature.AbsoluteZero);
     }
 
     public void StartUpdating(TimeSpan? updateInterval = null)
@@ -134,13 +133,13 @@ public class SimulatedTemperatureSensor : ITemperatureSensor, ISimulatedSensor
     public void StopUpdating()
     {
         IsSampling = false;
-        _reportTimer.Dispose();
+        _reportTimer?.Dispose();
     }
 
     /// <inheritdoc/>
     public void SetSensorValue(object value)
     {
-        if (value is Temperature temperature)
+        if (value is Units.Temperature temperature)
         {
             Temperature = temperature;
         }
