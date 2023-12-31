@@ -9,12 +9,12 @@ namespace Meadow.Foundation.Sensors.Environmental
     /// <summary>
     /// Represents an IonScience MiniPID2 analog photoionisation (PID) Volatile Organic Compounds (VOC) sensor
     /// </summary>
-    public partial class MiniPID2 : SamplingSensorBase<Concentration>, IConcentrationSensor, IDisposable
+    public partial class MiniPID2 : SamplingSensorBase<Concentration>, IVOCConcentrationSensor, IDisposable
     {
         /// <summary>
         /// The current VOC concentration value
         /// </summary>
-        public Concentration? Concentration { get; protected set; }
+        public Concentration? VOCConcentration { get; protected set; }
 
         /// <summary>
         /// The MiniPID2 device type
@@ -118,9 +118,9 @@ namespace Meadow.Foundation.Sensors.Environmental
                         ChangeResult<Concentration> changeResult = new()
                         {
                             New = VoltageToConcentration(result.New),
-                            Old = Concentration
+                            Old = VOCConcentration
                         };
-                        Concentration = changeResult.New;
+                        VOCConcentration = changeResult.New;
                         RaiseEventsAndNotify(changeResult);
                     }
                 )
@@ -136,7 +136,7 @@ namespace Meadow.Foundation.Sensors.Environmental
         {
             var voltage = await AnalogInputPort.Read();
             var newConcentration = VoltageToConcentration(voltage);
-            Concentration = newConcentration;
+            VOCConcentration = newConcentration;
             return newConcentration;
         }
 
