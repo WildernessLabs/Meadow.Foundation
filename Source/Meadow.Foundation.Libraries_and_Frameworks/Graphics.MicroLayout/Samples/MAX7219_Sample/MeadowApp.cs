@@ -2,7 +2,6 @@
 using Meadow.Foundation.Displays;
 using Meadow.Foundation.Graphics.MicroLayout;
 using Meadow.Foundation.ICs.IOExpanders;
-using Meadow.Peripherals.Displays;
 
 public class MeadowApp : App<Windows>
 {
@@ -57,9 +56,7 @@ public class MeadowApp : App<Windows>
         while (true)
         {
             Thread.Sleep(1000);
-            var temp = box.ForeColor;
-            box.ForeColor = label.TextColor;
-            label.TextColor = temp;
+            (box.ForeColor, label.TextColor) = (label.TextColor, box.ForeColor);
         }
     }
 

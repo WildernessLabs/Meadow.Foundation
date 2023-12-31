@@ -19,7 +19,7 @@ namespace Meadow.Foundation.Graphics
         /// <summary>
         /// PixelBuffer draw target
         /// </summary>
-        protected IPixelBuffer PixelBuffer => (display != null) ? display.PixelBuffer : memoryBuffer;
+        protected IPixelBuffer PixelBuffer => display?.PixelBuffer ?? memoryBuffer;
         private readonly IPixelBuffer memoryBuffer = default!;
 
         /// <summary>
@@ -30,12 +30,12 @@ namespace Meadow.Foundation.Graphics
         /// <summary>
         /// The color used when a pixel is enabled (on)
         /// </summary>
-        public Color EnabledColor => display != null ? display.EnabledColor : Color.White;
+        public Color EnabledColor => display?.EnabledColor ?? Color.White;
 
         /// <summary>
         /// The color used when a pixel is not enabled (off)
         /// </summary>
-        public Color DisabledColor => display != null ? display.EnabledColor : Color.Black;
+        public Color DisabledColor => display?.EnabledColor ?? Color.Black;
 
         /// <summary>
         /// Font used for drawing text to the display
