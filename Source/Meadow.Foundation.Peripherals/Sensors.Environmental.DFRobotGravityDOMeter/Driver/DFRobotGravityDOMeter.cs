@@ -1,4 +1,5 @@
 ﻿using Meadow.Hardware;
+using Meadow.Peripherals.Sensors.Environmental;
 using Meadow.Units;
 using System;
 using System.Threading.Tasks;
@@ -8,7 +9,7 @@ namespace Meadow.Foundation.Sensors.Environmental;
 /// <summary>
 /// DFRobot Analog Gravity Dissolved Oxygen Meter
 /// </summary>
-public partial class DFRobotGravityDOMeter : SamplingSensorBase<ConcentrationInWater> //, IDissolvedOxygenSensor
+public partial class DFRobotGravityDOMeter : SamplingSensorBase<ConcentrationInWater>, IDissolvedOxygenConcentrationSensor
 {
     /// <summary>
     /// The current water temperature (default 25C)
@@ -28,7 +29,7 @@ public partial class DFRobotGravityDOMeter : SamplingSensorBase<ConcentrationInW
     /// <summary>
     /// Last concentration value read from the sensor
     /// </summary>
-    public ConcentrationInWater? ConcentrationInWater { get; protected set; }
+    public ConcentrationInWater? Concentration { get; protected set; }
 
     /// <summary>
     /// The disolved oxygen lookup table for temperature values from 0 to 40 degrees C
@@ -65,9 +66,9 @@ public partial class DFRobotGravityDOMeter : SamplingSensorBase<ConcentrationInW
                     ChangeResult<ConcentrationInWater> changeResult = new()
                     {
                         New = VoltageToConcentration(result.New),
-                        Old = ConcentrationInWater
+                        Old = Concentration
                     };
-                    ConcentrationInWater = changeResult.New;
+                    Concentration = changeResult.New;
                     RaiseEventsAndNotify(changeResult);
                 }
             )
@@ -91,7 +92,7 @@ public partial class DFRobotGravityDOMeter : SamplingSensorBase<ConcentrationInW
     {
         var voltage = await AnalogInputPort.Read();
         var newConcentration = VoltageToConcentration(voltage);
-        ConcentrationInWater = newConcentration;
+        Concentration = newConcentration;
         return newConcentration;
     }
 
