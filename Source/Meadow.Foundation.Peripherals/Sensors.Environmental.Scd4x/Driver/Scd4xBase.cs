@@ -16,7 +16,7 @@ namespace Meadow.Foundation.Sensors.Environmental
         : ByteCommsSensorBase<(Concentration? Concentration,
                                                         Units.Temperature? Temperature,
                                                         RelativeHumidity? Humidity)>,
-        ITemperatureSensor, IHumiditySensor, IConcentrationSensor, II2cPeripheral
+        ITemperatureSensor, IHumiditySensor, ICO2ConcentrationSensor, II2cPeripheral
     {
         private event EventHandler<IChangeResult<Units.Temperature>> _temperatureHandlers;
         private event EventHandler<IChangeResult<RelativeHumidity>> _humidityHandlers;
@@ -43,7 +43,7 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// <summary>
         /// The current C02 concentration value
         /// </summary>
-        public Concentration? Concentration => Conditions.Concentration;
+        public Concentration? CO2Concentration => Conditions.Concentration;
 
         /// <summary>
         /// The current temperature
