@@ -15,12 +15,12 @@
     <PackageId>Meadow.Foundation.Sensors.Distance.Hcsr04</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow.Foundation, Hcsr04, Distance, Sensor</PackageTags>
-    <Version>0.1.20</Version>
+    <Version>1.6.0.1</Version>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <Description>HCSR04 digital ultrasonic distance sensor</Description>
   </PropertyGroup>
   <ItemGroup>
-    <None Include=".\Readme.md" Pack="true" PackagePath=""/>
+    <None Include=".\Readme.md" Pack="true" PackagePath="" />
     <None Include="..\..\..\icon.png" Pack="true" PackagePath="" />
     <ProjectReference Include="..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
   </ItemGroup>
