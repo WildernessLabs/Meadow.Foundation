@@ -37,31 +37,11 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <summary>
         /// Gets or sets the resistor mode of the input port. 
         /// </summary>
-        /// <exception cref="NotSupportedException">The FT232 does not support internal resistors.</exception>
+        /// <exception cref="NotSupportedException">The CP2112 does not support internal resistors.</exception>
         public override ResistorMode Resistor
         {
             get => ResistorMode.Disabled;
-            set => throw new NotSupportedException("The FT232 does not support internal resistors");
-        }
-
-        /// <summary>
-        /// Gets or sets the debounce duration of the input port.
-        /// </summary>
-        /// <exception cref="NotSupportedException">The FT232 does not support debounce.</exception>
-        public override TimeSpan DebounceDuration
-        {
-            get => TimeSpan.Zero;
-            set => throw new NotSupportedException("The FT232 does not support debounce");
-        }
-
-        /// <summary>
-        /// Gets or sets the glitch duration of the input port.
-        /// </summary>
-        /// <exception cref="NotSupportedException">The FT232 does not support glitch filtering.</exception>
-        public override TimeSpan GlitchDuration
-        {
-            get => TimeSpan.Zero;
-            set => throw new NotSupportedException("The FT232 does not support glitch filtering");
+            set => throw new NotSupportedException("The CP2112 does not support internal resistors");
         }
     }
 }

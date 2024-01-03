@@ -90,13 +90,20 @@ namespace Meadow.Foundation.ICs.IOExpanders
             // TODO: lock out access to GPIO0,1,5 and 7
 
             //HID_SMBUS_STATUS HidSmbus_SetSmbusConfig(HID_SMBUS_DEVICE device,DWORD bitRate, BYTE address, BOOL autoReadRespond, WORD writeTimeout,WORD readTimeout, BOOL sclLowTimeout, WORD transferRetries)
-            Functions.HidSmbus_SetSmbusConfig(_handle, 100000, 0x02, 0, 100, 100, 0, 2);
+            //            Functions.HidSmbus_SetSmbusConfig(_handle, 100000, 0x02, 0, 100, 100, 0, 2);
             //HID_SMBUS_STATUS HidSmbus_SetGpioConfig(HID_SMBUS_DEVICE device,BYTE direction, BYTE mode, BYTE special, BYTE clkDiv)
-            Functions.HidSmbus_SetGpioConfig(_handle, 0x20, 0x20, 0x13, 0xFF);   //GPIO5 output/push-pull/GPIO0,1,7 special function/clkDiv=48MHz/(2x255)
-                                                                                 //HID_SMBUS_STATUS HidSmbus_WriteLatch(HID_SMBUS_DEVICE device,BYTE latchValue, BYTE latchMask)
-            Functions.HidSmbus_WriteLatch(_handle, 0, 0x20);     //"Low" active for GPIO5
+            //            Functions.HidSmbus_SetGpioConfig(_handle, 0x20, 0x20, 0x13, 0xFF);   //GPIO5 output/push-pull/GPIO0,1,7 special function/clkDiv=48MHz/(2x255)
+            //HID_SMBUS_STATUS HidSmbus_WriteLatch(HID_SMBUS_DEVICE device,BYTE latchValue, BYTE latchMask)
+            //            Functions.HidSmbus_WriteLatch(_handle, 0, 0x20);     //"Low" active for GPIO5
 
-            return new Cp2112I2cBus(busSpeed);
+            Open();
+
+            return new Cp2112I2cBus(this, busSpeed);
+        }
+
+        internal void I2CWrite(byte peripheralAddress, Span<byte> writeBuffer)
+        {
+            CheckStatus(Functions.HidSmbus_WriteRequest(_handle, peripheralAddress, writeBuffer.ToArray(), (byte)writeBuffer.Length));
         }
 
         internal void SetState(byte pinMask)
@@ -109,19 +116,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
             CheckStatus(Functions.HidSmbus_WriteLatch(_handle, (byte)~pinMask, pinMask));
         }
 
-        public IDigitalInputPort CreateDigitalInputPort(IPin pin)
+        public IDigitalInputPort CreateDigitalInputPort(IPin pin, ResistorMode resistorMode)
         {
-            return CreateDigitalInputPort(pin, InterruptMode.None, ResistorMode.Disabled, TimeSpan.Zero, TimeSpan.Zero);
-        }
-
-
-        public IDigitalInputPort CreateDigitalInputPort(IPin pin, InterruptMode interruptMode, ResistorMode resistorMode, TimeSpan debounceDuration, TimeSpan glitchDuration)
-        {
-            if (interruptMode != InterruptMode.None)
-            {
-                throw new NotSupportedException("The Cp2112 does not support interrupts");
-            }
-
             throw new NotImplementedException();
         }
 

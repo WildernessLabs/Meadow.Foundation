@@ -6,10 +6,12 @@ namespace Meadow.Foundation.ICs.IOExpanders
     public sealed class Cp2112I2cBus : II2cBus, IDisposable
     {
         private bool _isDisposed;
+        private Cp2112 _device;
 
-        internal Cp2112I2cBus(I2cBusSpeed busSpeed)
+        internal Cp2112I2cBus(Cp2112 device, I2cBusSpeed busSpeed)
         {
             BusSpeed = busSpeed;
+            _device = device;
         }
 
         public I2cBusSpeed BusSpeed { get; set; }
@@ -48,7 +50,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
         public void Write(byte peripheralAddress, Span<byte> writeBuffer)
         {
-            throw new NotImplementedException();
+            _device.I2CWrite(peripheralAddress, writeBuffer);
         }
     }
 }

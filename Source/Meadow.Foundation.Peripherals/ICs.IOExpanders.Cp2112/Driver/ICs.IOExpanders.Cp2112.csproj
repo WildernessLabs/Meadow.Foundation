@@ -12,6 +12,7 @@
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow.Foundation,IOExpanders,expander,IO,CP2112</PackageTags>
     <Version>0.1.0</Version>
+      <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>CP2112 USB IOExpander for GPIO, I2C, SPI on Windows</Description>
   </PropertyGroup>
