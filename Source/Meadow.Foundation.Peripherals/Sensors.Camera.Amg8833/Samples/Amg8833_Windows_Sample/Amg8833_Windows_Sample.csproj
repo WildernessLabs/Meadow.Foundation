@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="..\..\..\ICs.IOExpanders.Cp2112\Native\Windows\x64\SLABHIDDevice.dll" Link="SLABHIDDevice.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\..\ICs.IOExpanders.Cp2112\Native\Windows\x64\SLABHIDtoSMBus.dll" Link="SLABHIDtoSMBus.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\..\Meadow.Core\source\implementations\windows\Meadow.Windows\Meadow.Windows.csproj" />
+    <ProjectReference Include="..\..\..\ICs.IOExpanders.Cp2112\Driver\ICs.IOExpanders.Cp2112.csproj" />
+    <ProjectReference Include="..\..\Driver\Sensors.Camera.Amg8833.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="libmpsse.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+</Project>
