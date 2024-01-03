@@ -6,17 +6,17 @@ namespace Meadow.Foundation.ICs.IOExpanders
     /// <summary>
     /// Represents a digital input port implementation for the FT232 bus.
     /// </summary>
-    public sealed class Ft232DigitalInputPort : DigitalInterruptPortBase
+    public sealed class MpsseDigitalInputPort : DigitalInterruptPortBase
     {
         private readonly IFt232Bus _bus;
 
         /// <summary>
-        /// Instantiates a <see cref="Ft232DigitalInputPort"/>.
+        /// Instantiates a <see cref="MpsseDigitalInputPort"/>.
         /// </summary>
         /// <param name="pin">The pin connected to the input port.</param>
         /// <param name="info">The digital channel info associated with the pin.</param>
         /// <param name="bus">The FT232 bus instance.</param>
-        internal Ft232DigitalInputPort(IPin pin, IDigitalChannelInfo info, IFt232Bus bus)
+        internal MpsseDigitalInputPort(IPin pin, IDigitalChannelInfo info, IFt232Bus bus)
             : base(pin, info)
         {
             _bus = bus;
@@ -31,7 +31,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             get
             {
                 // reads all 8 pis at once
-                Native.Functions.FT_ReadGPIO(_bus.Handle, out byte state);
+                Native.Mpsse.FT_ReadGPIO(_bus.Handle, out byte state);
                 // the pin key is the mask
                 return (state & (byte)Pin.Key) != 0;
             }

@@ -6,8 +6,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
 {
     internal static partial class Native
     {
-
-        public class Functions
+        public static class Mpsse
         {
             private const string MPSSE_LIB = "libmpsse";
 

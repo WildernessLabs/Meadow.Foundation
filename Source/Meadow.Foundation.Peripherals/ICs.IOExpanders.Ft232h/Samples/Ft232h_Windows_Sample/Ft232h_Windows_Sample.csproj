@@ -14,6 +14,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Displays.TftSpi\Driver\Displays.TftSpi.csproj" />
+    <ProjectReference Include="..\..\..\Sensors.Atmospheric.Bme280\Driver\Sensors.Atmospheric.Bme280.csproj" />
+    <ProjectReference Include="..\..\..\Sensors.Light.Veml7700\Driver\Sensors.Light.Veml7700.csproj" />
     <ProjectReference Include="..\..\Driver\ICs.IOExpanders.Ft232h.csproj" />
   </ItemGroup>
 
