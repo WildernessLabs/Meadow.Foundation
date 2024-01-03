@@ -193,12 +193,12 @@ public class DisplayScreen
         {
             Resolver.App.InvokeOnMainThread((_) =>
             {
-                if (!_updateInProgress && (IsInvalid || Controls.Any(c => c.IsInvalid)))
+                lock (Controls.SyncRoot)
                 {
-                    _graphics.Clear(BackgroundColor);
-
-                    lock (Controls.SyncRoot)
+                    if (!_updateInProgress && (IsInvalid || Controls.Any(c => c.IsInvalid)))
                     {
+                        _graphics.Clear(BackgroundColor);
+
                         foreach (var control in Controls)
                         {
                             if (control != null)
@@ -207,13 +207,11 @@ public class DisplayScreen
                                 RefreshTree(control);
                             }
                         }
+                        _graphics.Show();
+                        IsInvalid = false;
                     }
-                    _graphics.Show();
-                    IsInvalid = false;
                 }
-            }
-
-            );
+            });
 
             Thread.Sleep(50);
         }

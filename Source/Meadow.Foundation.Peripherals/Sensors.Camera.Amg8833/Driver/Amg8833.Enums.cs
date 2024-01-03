@@ -5,6 +5,9 @@ public partial class Amg8833
     internal static class Constants
     {
         public const int StartupDelayMs = 100;
+        public const double ThermistorConversion = 0.0625;
+        public const int PixelArraySize = 64;
+        public const double PixelTempConversion = 0.25;
     }
 
     internal enum InterruptModes : byte

@@ -13,7 +13,7 @@
     <PackageProjectUrl>http://developer.wildernesslabs.co/Meadow/Meadow.Foundation/</PackageProjectUrl>
     <PackageId>Meadow.Foundation.Sensors.Camera.Mlx90640</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
-    <PackageTags>Meadow.Foundation, Amg8833, Camera</PackageTags>
+    <PackageTags>Meadow.Foundation, Amg8833, Camera, Infrared, Thermal</PackageTags>
     <Version>1.6.0.1</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Amg8833 Grid-EYE infrared array sensor</Description>

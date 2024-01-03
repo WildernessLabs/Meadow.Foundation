@@ -51,7 +51,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
             // HID_SMBUS_STATUS HidSmbus_WriteRequest (HID_SMBUS_DEVICE device, BYTE slaveAddress, BYTE* buffer, BYTE numBytesToWrite)
             [DllImport(HIDtoSMB)]
-            public static extern unsafe HID_SMBUS_STATUS HidSmbus_WriteRequest(IntPtr device, byte slaveAddress, byte[] buffer, byte numBytes);
+            public static extern HID_SMBUS_STATUS HidSmbus_WriteRequest(IntPtr device, byte slaveAddress, byte[] buffer, byte numBytes);
         }
     }
 }

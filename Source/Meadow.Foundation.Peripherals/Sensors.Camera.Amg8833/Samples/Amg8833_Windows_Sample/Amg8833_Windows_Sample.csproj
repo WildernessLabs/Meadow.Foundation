@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net7.0-windows</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
@@ -12,10 +12,16 @@
     <None Include="..\..\..\ICs.IOExpanders.Cp2112\Native\Windows\x64\SLABHIDtoSMBus.dll" Link="SLABHIDtoSMBus.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="..\..\..\ICs.IOExpanders.Ft232h\Native\Windows\x64\libmpsse.dll" Link="libmpsse.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\..\..\Meadow.Core\source\implementations\windows\Meadow.Windows\Meadow.Windows.csproj" />
+    <ProjectReference Include="..\..\..\..\Meadow.Foundation.Libraries_and_Frameworks\Graphics.MicroLayout\Driver\Graphics.MicroLayout.csproj" />
+    <ProjectReference Include="..\..\..\Displays.WinForms\Driver\Displays.WinForms.csproj" />
     <ProjectReference Include="..\..\..\ICs.IOExpanders.Cp2112\Driver\ICs.IOExpanders.Cp2112.csproj" />
+    <ProjectReference Include="..\..\..\ICs.IOExpanders.Ft232h\Driver\ICs.IOExpanders.Ft232h.csproj" />
     <ProjectReference Include="..\..\Driver\Sensors.Camera.Amg8833.csproj" />
   </ItemGroup>
   <ItemGroup>
