@@ -6,13 +6,13 @@ namespace Meadow.Foundation.Sensors.HallEffect
     /// <summary>
     /// Represents a Lineal Hall Effect tachometer.
     /// </summary>
-    public class LinearHallEffectTachometer
+    public class LinearHallEffectTachometer : IDisposable
     {
         /// <summary>
         /// Event raised when the RPM change is greater than the 
         /// RPMChangeNotificationThreshold value.
         /// </summary>
-        public event EventHandler<ChangeResult<float>> RPMsChanged = delegate { };
+        public event EventHandler<ChangeResult<float>> RPMsChanged = default!;
 
         /// <summary>
         /// Any changes to the RPMs that are greater than the RPM change
@@ -24,7 +24,7 @@ namespace Meadow.Foundation.Sensors.HallEffect
         /// <summary>
         /// Input port for the tachometer
         /// </summary>
-        protected IDigitalInputPort InputPort { get; set; }
+        protected IDigitalInterruptPort InputPort { get; set; }
 
         /// <summary>
         /// Returns number of magnets of the sensor.
@@ -37,21 +37,34 @@ namespace Meadow.Foundation.Sensors.HallEffect
         public int RPMs => (int)rpms;
 
         /// <summary>
-        /// Revolutions pers minute 
+        /// Revolutions per minute 
         /// </summary>
         protected float rpms = 0.0F;
+
         /// <summary>
         /// Last notified RPM value
         /// </summary>
         protected float lastNotifiedRPMs = 0.0F;
+
         /// <summary>
         /// Revolution start time
         /// </summary>
         protected DateTime revolutionTimeStart = DateTime.MinValue;
+
         /// <summary>
         /// Number of reads
         /// </summary>
         protected ushort numberOfReads = 0;
+
+        /// <summary>
+        /// Is the object disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
+
+        /// <summary>
+        /// Did we create the port(s) used by the peripheral
+        /// </summary>
+        readonly bool createdPort = false;
 
         /// <summary>
         /// LinearHallEffectTachometer driver
@@ -62,8 +75,10 @@ namespace Meadow.Foundation.Sensors.HallEffect
         /// <param name="rpmChangeNotificationThreshold"></param>
         public LinearHallEffectTachometer(IPin inputPin, CircuitTerminationType type = CircuitTerminationType.CommonGround,
             ushort numberOfMagnets = 2, float rpmChangeNotificationThreshold = 1.0F) :
-            this(inputPin.CreateDigitalInputPort(InterruptMode.None, ResistorMode.Disabled, TimeSpan.Zero, TimeSpan.Zero), type, numberOfMagnets, rpmChangeNotificationThreshold)
-        { }
+            this(inputPin.CreateDigitalInterruptPort(InterruptMode.None, ResistorMode.Disabled, TimeSpan.Zero, TimeSpan.Zero), type, numberOfMagnets, rpmChangeNotificationThreshold)
+        {
+            createdPort = true;
+        }
 
         /// <summary>
         /// LinearHallEffectTachometer driver
@@ -72,7 +87,7 @@ namespace Meadow.Foundation.Sensors.HallEffect
         /// <param name="type"></param>
         /// <param name="numberOfMagnets"></param>
         /// <param name="rpmChangeNotificationThreshold"></param>
-        public LinearHallEffectTachometer(IDigitalInputPort inputPort, CircuitTerminationType type = CircuitTerminationType.CommonGround,
+        public LinearHallEffectTachometer(IDigitalInterruptPort inputPort, CircuitTerminationType type = CircuitTerminationType.CommonGround,
             ushort numberOfMagnets = 2, float rpmChangeNotificationThreshold = 1.0F)
         {
             NumberOfMagnets = numberOfMagnets;
@@ -87,14 +102,13 @@ namespace Meadow.Foundation.Sensors.HallEffect
             InputPort.Changed += InputPortChanged;
         }
 
-        void InputPortChanged(object sender, DigitalPortResult e)
+        private void InputPortChanged(object sender, DigitalPortResult e)
         {
-            var time = DateTime.Now;
+            var time = DateTime.UtcNow;
 
             // if it's the very first read, set the time and bail out
             if (numberOfReads == 0 && revolutionTimeStart == DateTime.MinValue)
             {
-                //S.Console.WriteLine("First reading.");
                 revolutionTimeStart = time;
                 numberOfReads++;
                 return;
@@ -106,31 +120,18 @@ namespace Meadow.Foundation.Sensors.HallEffect
             // if we've made a full revolution
             if (numberOfReads == NumberOfMagnets)
             {
-                //S.Console.WriteLine("Viva La Revolucion!");
                 // calculate how much time has elapsed since the start of the revolution 
                 var revolutionTime = time - revolutionTimeStart;
 
-                //S.Console.WriteLine("RevTime Milliseconds: " + revolutionTime.Milliseconds.ToString());
-
                 if (revolutionTime.Milliseconds < 3)
                 {
-                    //S.Console.WriteLine("rev time < 3. Garbage, bailing.");
                     numberOfReads = 0;
                     revolutionTimeStart = time;
                     return;
                 }
 
                 // calculate our rpms
-                // RPSecond = 1000 / revTime.millis
-                // PPMinute = RPSecond * 60
-                rpms = ((float)1000 / (float)revolutionTime.Milliseconds) * (float)60;
-
-                //if (revolutionTime.Milliseconds < 5) {
-                //    S.Console.WriteLine("revolution time was < 5. garbage results.");
-                //} else {
-                //    S.Console.WriteLine("RPMs: " + _RPMs);
-                //}
-
+                rpms = 1000 / (float)revolutionTime.Milliseconds * 60;
 
                 // reset our number of reads and store our revolution time start
                 numberOfReads = 0;
@@ -151,6 +152,30 @@ namespace Meadow.Foundation.Sensors.HallEffect
         {
             RPMsChanged(this, new ChangeResult<float>(lastNotifiedRPMs, rpms));
             lastNotifiedRPMs = rpms;
+        }
+
+        ///<inheritdoc/>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        /// <param name="disposing">Is disposing</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && createdPort)
+                {
+                    InputPort?.Dispose();
+                }
+
+                IsDisposed = true;
+            }
         }
     }
 }

@@ -9,26 +9,36 @@ namespace Meadow.Foundation.Sensors.Switches
     /// Represents a simple, two position, Single-Pole-Dual-Throw (SPDT) switch that closes a circuit 
     /// to either ground/common or high depending on position  
     /// </summary>
-    public class SpdtSwitch : ISwitch
+    public class SpdtSwitch : ISwitch, IDisposable
     {
         /// <summary>
         /// Describes whether or not the switch circuit is closed/connected (IsOn = true), or open (IsOn = false).
         /// </summary>
         public bool IsOn
         {
-            get => DigitalIn.State;
+            get => DigitalInputPort.State;
             protected set => Changed(this, new EventArgs());
         }
 
         /// <summary>
         /// Returns the DigitalInputPort.
         /// </summary>
-        protected IDigitalInputPort DigitalIn { get; set; }
+        protected IDigitalInterruptPort DigitalInputPort { get; set; }
 
         /// <summary>
         /// Raised when the switch circuit is opened or closed.
         /// </summary>
-        public event EventHandler Changed = delegate { };
+        public event EventHandler Changed = default!;
+
+        /// <summary>
+        /// Is the object disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
+
+        /// <summary>
+        /// Did we create the port(s) used by the peripheral
+        /// </summary>
+        readonly bool createdPort = false;
 
         /// <summary>
         /// Instantiates a new SpdtSwitch object with the center pin connected to the specified digital pin, one pin connected to common/ground and one pin connected to high/3.3V.
@@ -37,8 +47,10 @@ namespace Meadow.Foundation.Sensors.Switches
         /// <param name="interruptMode"></param>
         /// <param name="resistorMode"></param>
         public SpdtSwitch(IPin pin, InterruptMode interruptMode, ResistorMode resistorMode) :
-            this(pin.CreateDigitalInputPort(interruptMode, resistorMode, TimeSpan.FromMilliseconds(20), TimeSpan.Zero))
-        { }
+            this(pin.CreateDigitalInterruptPort(interruptMode, resistorMode, TimeSpan.FromMilliseconds(20), TimeSpan.Zero))
+        {
+            createdPort = true;
+        }
 
         /// <summary>
         /// Instantiates a new SpdtSwitch object with the center pin connected to the specified digital pin, one pin connected to common/ground and one pin connected to high/3.3V.
@@ -49,17 +61,17 @@ namespace Meadow.Foundation.Sensors.Switches
         /// <param name="debounceDuration"></param>
         /// <param name="glitchFilterCycleCount"></param>
         public SpdtSwitch(IPin pin, InterruptMode interruptMode, ResistorMode resistorMode, TimeSpan debounceDuration, TimeSpan glitchFilterCycleCount) :
-            this(pin.CreateDigitalInputPort(interruptMode, resistorMode, debounceDuration, glitchFilterCycleCount))
+            this(pin.CreateDigitalInterruptPort(interruptMode, resistorMode, debounceDuration, glitchFilterCycleCount))
         { }
 
         /// <summary>
-        /// Creates a SpdtSwitch on a especified interrupt port
+        /// Creates a SpdtSwitch on a specified interrupt port
         /// </summary>
         /// <param name="interruptPort"></param>
-        public SpdtSwitch(IDigitalInputPort interruptPort)
+        public SpdtSwitch(IDigitalInterruptPort interruptPort)
         {
-            DigitalIn = interruptPort;
-            DigitalIn.Changed += DigitalInChanged;
+            DigitalInputPort = interruptPort;
+            DigitalInputPort.Changed += DigitalInChanged;
         }
 
         /// <summary>
@@ -69,12 +81,36 @@ namespace Meadow.Foundation.Sensors.Switches
         /// <param name="e"></param>
         protected void DigitalInChanged(object sender, DigitalPortResult e)
         {
-            IsOn = DigitalIn.State;
+            IsOn = DigitalInputPort.State;
         }
 
         /// <summary>
         /// Convenience method to get the current sensor reading
         /// </summary>
         public Task<bool> Read() => Task.FromResult(IsOn);
+
+        ///<inheritdoc/>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        /// <param name="disposing">Is disposing</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && createdPort)
+                {
+                    DigitalInputPort?.Dispose();
+                }
+
+                IsDisposed = true;
+            }
+        }
     }
 }

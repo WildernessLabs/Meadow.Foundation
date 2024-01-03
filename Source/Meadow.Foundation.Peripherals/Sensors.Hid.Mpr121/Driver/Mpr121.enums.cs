@@ -1,5 +1,4 @@
-﻿using System;
-namespace Meadow.Foundation.Sensors.Hid
+﻿namespace Meadow.Foundation.Sensors.Hid
 {
     public partial class Mpr121
     {
@@ -124,7 +123,7 @@ namespace Meadow.Foundation.Sensors.Hid
             /// Electrode touch threshold.
             /// </summary>
             /// <remark>
-            /// Threshold settings are dependant on the touch/release signal strength, system sensitivity and noise immunity requirements.
+            /// Threshold settings are dependent on the touch/release signal strength, system sensitivity and noise immunity requirements.
             /// In a typical touch detection application, threshold is typically in the range 0x04~0x10.
             /// The touch threshold is several counts larger than the release threshold. This is to provide hysteresis and to prevent noise and jitter.
             /// </remark>
@@ -134,7 +133,7 @@ namespace Meadow.Foundation.Sensors.Hid
             /// Electrode release threshold.
             /// </summary>
             /// <remark>
-            /// Threshold settings are dependant on the touch/release signal strength, system sensitivity and noise immunity requirements.
+            /// Threshold settings are dependent on the touch/release signal strength, system sensitivity and noise immunity requirements.
             /// In a typical touch detection application, threshold is typically in the range 0x04~0x10.
             /// The touch threshold is several counts larger than the release threshold. This is to provide hysteresis and to prevent noise and jitter.
             /// </remark>

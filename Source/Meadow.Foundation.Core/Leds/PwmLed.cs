@@ -13,7 +13,7 @@ namespace Meadow.Foundation.Leds
     {
         readonly bool createdPwm = false;
 
-        float maximumPwmDuty = 1;
+        readonly float maximumPwmDuty = 1;
 
         /// <summary>
         /// Maximum forward voltage (3.3 Volts)
@@ -136,9 +136,7 @@ namespace Meadow.Foundation.Leds
             }
         }
 
-        /// <summary>
-        /// Dispose of the object
-        /// </summary>
+        ///<inheritdoc/>
         public void Dispose()
         {
             Dispose(disposing: true);

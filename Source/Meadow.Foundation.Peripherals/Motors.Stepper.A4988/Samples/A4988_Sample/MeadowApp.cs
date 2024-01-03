@@ -1,6 +1,7 @@
 ﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Motors.Stepper;
+using Meadow.Peripherals;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -11,7 +12,7 @@ namespace MeadowApp
     {
         //<!=SNIP=>
 
-        A4988 a4988;
+        private A4988 a4988;
 
         public override Task Initialize()
         {

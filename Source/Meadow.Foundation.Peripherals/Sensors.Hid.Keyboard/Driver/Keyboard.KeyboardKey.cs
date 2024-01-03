@@ -8,7 +8,7 @@ public partial class Keyboard
     /// <summary>
     /// Represents a Keyboard key as a Meadow digital input
     /// </summary>
-    public class KeyboardKey : DigitalInputPortBase
+    public class KeyboardKey : DigitalInterruptPortBase
     {
         private bool _state;
 

@@ -10,7 +10,7 @@ namespace Meadow.Foundation.Displays
     /// <summary>
     /// Provide an interface to the Ch1115 family of displays
     /// </summary>
-    public partial class Ch1115 : IGraphicsDisplay, ISpiPeripheral
+    public partial class Ch1115 : IGraphicsDisplay, ISpiPeripheral, IDisposable
     {
         /// <summary>
         /// The display color mode - 1 bit per pixel monochrome
@@ -40,7 +40,7 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// The default SPI bus speed for the device
         /// </summary>
-        public Frequency DefaultSpiBusSpeed => new Frequency(375, Frequency.UnitType.Kilohertz);
+        public Frequency DefaultSpiBusSpeed => new(375, Frequency.UnitType.Kilohertz);
 
         /// <summary>
         /// The SPI bus speed for the device
@@ -66,18 +66,26 @@ namespace Meadow.Foundation.Displays
         }
 
         /// <summary>
+        /// Is the object disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
+
+        /// <summary>
         /// SPI Communication bus used to communicate with the peripheral
         /// </summary>
         protected readonly ISpiCommunications spiComms;
 
         readonly IDigitalOutputPort dataCommandPort;
         readonly IDigitalOutputPort resetPort;
+        readonly IDigitalOutputPort? chipSelectPort;
 
         const bool Data = true;
         const bool Command = false;
 
         readonly Buffer1bpp imageBuffer;
         readonly byte[] pageBuffer;
+
+        readonly bool createdPorts = false;
 
         /// <summary>
         /// Create a new Ch1115 object
@@ -88,11 +96,12 @@ namespace Meadow.Foundation.Displays
         /// <param name="resetPin">Reset pin</param>
         /// <param name="width">Width of display in pixels</param>
         /// <param name="height">Height of display in pixels</param>
-        public Ch1115(ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
+        public Ch1115(ISpiBus spiBus, IPin? chipSelectPin, IPin dcPin, IPin resetPin,
             int width = 128, int height = 64) :
-            this(spiBus, chipSelectPin?.CreateDigitalOutputPort(), dcPin.CreateDigitalOutputPort(),
+            this(spiBus, chipSelectPin?.CreateDigitalOutputPort() ?? null, dcPin.CreateDigitalOutputPort(),
                 resetPin.CreateDigitalOutputPort(), width, height)
         {
+            createdPorts = true;
         }
 
         /// <summary>
@@ -105,13 +114,14 @@ namespace Meadow.Foundation.Displays
         /// <param name="width">Width of display in pixels</param>
         /// <param name="height">Height of display in pixels</param>
         public Ch1115(ISpiBus spiBus,
-            IDigitalOutputPort chipSelectPort,
+            IDigitalOutputPort? chipSelectPort,
             IDigitalOutputPort dataCommandPort,
             IDigitalOutputPort resetPort,
             int width = 128, int height = 64)
         {
             this.dataCommandPort = dataCommandPort;
             this.resetPort = resetPort;
+            this.chipSelectPort = chipSelectPort;
 
             spiComms = new SpiCommunications(spiBus, chipSelectPort, DefaultSpiBusSpeed, DefaultSpiBusMode);
 
@@ -273,7 +283,7 @@ namespace Meadow.Foundation.Displays
             const int pageHeight = 8;
 
             //must update in pages (area of 128x8 pixels)
-            //so interate over all 8 pages and check if they're in range
+            //so iterate over all 8 pages and check if they're in range
             for (int page = 0; page < 8; page++)
             {
                 if (top > pageHeight * page || bottom < (page + 1) * pageHeight)
@@ -336,7 +346,7 @@ namespace Meadow.Foundation.Displays
         }
 
         /// <summary>
-        /// Start the display scrollling in the specified direction.
+        /// Start the display scrolling in the specified direction.
         /// </summary>
         /// <param name="direction">Direction that the display should scroll</param>
         public void StartScrolling(ScrollDirection direction)
@@ -353,7 +363,7 @@ namespace Meadow.Foundation.Displays
         /// </remarks>
         /// <param name="direction">Direction that the display should scroll</param>
         /// <param name="startPage">Start page for the scroll</param>
-        /// <param name="endPage">End oage for the scroll</param>
+        /// <param name="endPage">End page for the scroll</param>
         public void StartScrolling(ScrollDirection direction, byte startPage, byte endPage)
         {
             StopScrolling();
@@ -431,6 +441,32 @@ namespace Meadow.Foundation.Displays
         public void WriteBuffer(int x, int y, IPixelBuffer displayBuffer)
         {
             imageBuffer.WriteBuffer(x, y, displayBuffer);
+        }
+
+        ///<inheritdoc/>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        /// <param name="disposing">Is disposing</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && createdPorts)
+                {
+                    chipSelectPort?.Dispose();
+                    resetPort?.Dispose();
+                    dataCommandPort?.Dispose();
+                }
+
+                IsDisposed = true;
+            }
         }
     }
 }

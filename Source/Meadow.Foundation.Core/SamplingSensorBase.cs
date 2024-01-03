@@ -9,19 +9,32 @@ namespace Meadow.Foundation
     /// Base class for sensors and other updating classes that want to support
     /// having their updates consumed by observers that can optionally use filters
     /// </summary>
-    /// <typeparam name="UNIT"></typeparam>
+    /// <typeparam name="UNIT">The generic sensor data type</typeparam>
     public abstract class SamplingSensorBase<UNIT> : ObservableBase<UNIT>, ISamplingSensor<UNIT>
         where UNIT : struct
     {
+        private UNIT? _lastEventValue;
+
+        /// <summary>
+        /// Raised when the sensor has new data
+        /// </summary>
+        /// <param name="newValue">The new sensor value as a generic</param>
+        protected void RaiseUpdated(UNIT newValue)
+        {
+            var changeResult = new ChangeResult<UNIT>(newValue, _lastEventValue);
+            Updated?.Invoke(this, changeResult);
+            _lastEventValue = newValue;
+        }
+
         /// <summary>
         /// Lock for sampling
         /// </summary>
-        protected object samplingLock = new object();
+        protected object samplingLock = new();
 
         /// <summary>
         /// Event handler for updated values
         /// </summary>
-        public event EventHandler<IChangeResult<UNIT>> Updated = delegate { };
+        public event EventHandler<IChangeResult<UNIT>> Updated = default!;
 
         /// <summary>
         /// Sampling cancellation token source
@@ -59,7 +72,7 @@ namespace Meadow.Foundation
         /// <param name="changeResult">provides new and old values</param>
         protected virtual void RaiseEventsAndNotify(IChangeResult<UNIT> changeResult)
         {
-            Updated.Invoke(this, changeResult);
+            Updated?.Invoke(this, changeResult);
             NotifyObservers(changeResult);
         }
 

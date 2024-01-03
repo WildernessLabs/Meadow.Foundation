@@ -1,6 +1,5 @@
 ﻿using Meadow.Hardware;
 using Meadow.Peripherals.Sensors;
-using System;
 using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Temperature
@@ -15,11 +14,6 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// The default I2C address for the peripheral
         /// </summary>
         public byte DefaultI2cAddress => (byte)Addresses.Default;
-
-        /// <summary>
-        /// Raised when the temperature value changes
-        /// </summary>
-        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
 
         /// <summary>
         /// Backing variable for the SensorResolution property
@@ -86,16 +80,6 @@ namespace Meadow.Foundation.Sensors.Temperature
             }
 
             return Task.FromResult(new Units.Temperature((float)(sensorReading * 0.0625), Units.Temperature.UnitType.Celsius));
-        }
-
-        /// <summary>
-        /// Raise change events for subscribers
-        /// </summary>
-        /// <param name="changeResult">The change result with the current sensor data</param>
-        protected void RaiseChangedAndNotify(IChangeResult<Units.Temperature> changeResult)
-        {
-            TemperatureUpdated?.Invoke(this, changeResult);
-            base.RaiseEventsAndNotify(changeResult);
         }
     }
 }

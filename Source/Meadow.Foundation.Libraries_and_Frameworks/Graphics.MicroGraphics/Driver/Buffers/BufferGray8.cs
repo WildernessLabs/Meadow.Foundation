@@ -3,7 +3,7 @@
 namespace Meadow.Foundation.Graphics.Buffers
 {
     /// <summary>
-    /// Represents a 8bpp greyscale pixel buffer
+    /// Represents a 8bpp grayscale pixel buffer
     /// </summary>
     public class BufferGray8 : PixelBufferBase
     {
@@ -61,7 +61,7 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// </summary>
         /// <param name="x">X pixel position</param>
         /// <param name="y">Y pixel position</param>
-        /// <param name="gray">The pixel grey value</param>
+        /// <param name="gray">The pixel gray value</param>
         public void SetPixel(int x, int y, byte gray)
         {
             Buffer[y * Width + x] = gray;

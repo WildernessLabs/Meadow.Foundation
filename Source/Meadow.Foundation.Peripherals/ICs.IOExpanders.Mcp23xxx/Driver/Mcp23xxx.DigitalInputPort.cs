@@ -10,32 +10,21 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         public class DigitalInputPort : DigitalInputPortBase
         {
-            /// <summary>
-            /// Update state function 
-            /// Assign this when the Update method isn't reliable 
-            /// e.g. when not using interrupts/events
-            /// </summary>
-            public Func<IPin, bool> UpdateState;
-
-            /// <summary>
-            /// The port state
-            /// True is high, false is low
-            /// </summary>
+            /// <inheritdoc/>
             public override bool State
             {
                 get
                 {
-                    if (UpdateState != null) { Update(UpdateState.Invoke(Pin)); }
+                    if (Pin.Controller is Mcp23xxx mcp)
+                    {
+                        Update(mcp.ReadPort(Pin));
+                    }
                     return state;
                 }
             }
             private bool state = false;
 
-            private DateTime lastUpdate;
-
-            /// <summary>
-            /// The resistor mode of the port
-            /// </summary>
+            /// <inheritdoc/>
             public override ResistorMode Resistor
             {
                 get => portResistorMode;
@@ -44,27 +33,12 @@ namespace Meadow.Foundation.ICs.IOExpanders
             private readonly ResistorMode portResistorMode;
 
             /// <summary>
-            /// Debouce durration
-            /// </summary>
-            public override TimeSpan DebounceDuration { get; set; } = TimeSpan.Zero;
-
-            /// <summary>
-            /// Glitch durration
-            /// </summary>
-            public override TimeSpan GlitchDuration
-            {
-                get => TimeSpan.FromMilliseconds(0.00015);
-                set => _ = value; //fail silently
-            }
-
-            /// <summary>
             /// Create a new DigitalInputPort object
             /// </summary>
             /// <param name="pin">The interrupt pin</param>
-            /// <param name="interruptMode">The interrupt mode used for the interrupt pin</param>
             /// <param name="resistorMode">The resistor mode used by the interrupt pin</param>
-            public DigitalInputPort(IPin pin, InterruptMode interruptMode = InterruptMode.None, ResistorMode resistorMode = ResistorMode.Disabled)
-                : base(pin, (IDigitalChannelInfo)pin.SupportedChannels[0], interruptMode)
+            public DigitalInputPort(IPin pin, ResistorMode resistorMode = ResistorMode.Disabled)
+                : base(pin, (IDigitalChannelInfo)pin.SupportedChannels![0])
             {
                 portResistorMode = resistorMode;
             }
@@ -73,43 +47,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// Update the port value 
             /// </summary>
             /// <param name="newState">The new port state</param>
-            /// <param name="raiseEvents">Raise and notify for a state change</param>
             internal void Update(bool newState)
             {
-                if (DateTime.UtcNow - lastUpdate < DebounceDuration)
-                {
-                    return;
-                }
-
-                var now = DateTime.UtcNow;
-
-                if (newState != state)
-                {
-                    switch (InterruptMode)
-                    {
-                        case InterruptMode.EdgeFalling:
-                            if (newState)
-                            {
-                                RaiseChangedAndNotify(new DigitalPortResult(new DigitalState(false, now), new DigitalState(true, lastUpdate)));
-                            }
-                            break;
-                        case InterruptMode.EdgeRising:
-                            if (newState)
-                            {
-                                RaiseChangedAndNotify(new DigitalPortResult(new DigitalState(true, now), new DigitalState(false, lastUpdate)));
-                            }
-                            break;
-                        case InterruptMode.EdgeBoth:
-                            RaiseChangedAndNotify(new DigitalPortResult(new DigitalState(newState, now), new DigitalState(!newState, lastUpdate)));
-                            break;
-                        case InterruptMode.None:
-                        default:
-                            break;
-                    }
-                }
-
                 state = newState;
-                lastUpdate = now;
             }
         }
     }

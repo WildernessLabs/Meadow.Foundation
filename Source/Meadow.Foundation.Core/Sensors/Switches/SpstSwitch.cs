@@ -19,19 +19,29 @@ namespace Meadow.Foundation.Sensors.Switches
         /// </summary>
         public bool IsOn
         {
-            get => DigitalIn.State;
+            get => DigitalInputPort.State;
             protected set => Changed(this, new EventArgs());
         }
 
         /// <summary>
         /// Raised when the switch circuit is opened or closed.
         /// </summary>
-        public event EventHandler Changed = delegate { };
+        public event EventHandler Changed = default!;
 
         /// <summary>
         /// Returns the DigitalInputPort.
         /// </summary>
-        protected IDigitalInputPort DigitalIn { get; set; }
+        protected IDigitalInterruptPort DigitalInputPort { get; set; }
+
+        /// <summary>
+        /// Is the object disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
+
+        /// <summary>
+        /// Did we create the port(s) used by the peripheral
+        /// </summary>
+        readonly bool createdPort = false;
 
         /// <summary>
         /// Instantiates a new SpstSwitch object connected to the specified digital pin, and with the specified CircuitTerminationType in the type parameter.
@@ -40,8 +50,10 @@ namespace Meadow.Foundation.Sensors.Switches
         /// <param name="interruptMode"></param>
         /// <param name="resistorMode"></param>
         public SpstSwitch(IPin pin, InterruptMode interruptMode, ResistorMode resistorMode) :
-            this(pin.CreateDigitalInputPort(interruptMode, resistorMode, TimeSpan.FromMilliseconds(20), TimeSpan.Zero))
-        { }
+            this(pin.CreateDigitalInterruptPort(interruptMode, resistorMode, TimeSpan.FromMilliseconds(20), TimeSpan.Zero))
+        {
+            createdPort = true;
+        }
 
         /// <summary>
         /// Instantiates a new SpstSwitch object connected to the specified digital pin, and with the specified CircuitTerminationType in the type parameter.
@@ -52,17 +64,17 @@ namespace Meadow.Foundation.Sensors.Switches
         /// <param name="debounceDuration"></param>
         /// <param name="glitchFilterCycleCount"></param>
         public SpstSwitch(IPin pin, InterruptMode interruptMode, ResistorMode resistorMode, TimeSpan debounceDuration, TimeSpan glitchFilterCycleCount) :
-            this(pin.CreateDigitalInputPort(interruptMode, resistorMode, debounceDuration, glitchFilterCycleCount))
+            this(pin.CreateDigitalInterruptPort(interruptMode, resistorMode, debounceDuration, glitchFilterCycleCount))
         { }
 
         /// <summary>
-        /// Creates a SpstSwitch on a especified interrupt port
+        /// Creates a SpstSwitch on a specified interrupt port
         /// </summary>
         /// <param name="interruptPort"></param>
-        public SpstSwitch(IDigitalInputPort interruptPort)
+        public SpstSwitch(IDigitalInterruptPort interruptPort)
         {
-            DigitalIn = interruptPort;
-            DigitalIn.Changed += DigitalInChanged;
+            DigitalInputPort = interruptPort;
+            DigitalInputPort.Changed += DigitalInChanged;
         }
 
         /// <summary>
@@ -72,12 +84,36 @@ namespace Meadow.Foundation.Sensors.Switches
         /// <param name="e"></param>
         protected void DigitalInChanged(object sender, DigitalPortResult e)
         {
-            IsOn = DigitalIn.State;
+            IsOn = DigitalInputPort.State;
         }
 
         /// <summary>
         /// Convenience method to get the current sensor reading
         /// </summary>
         public Task<bool> Read() => Task.FromResult(IsOn);
+
+        ///<inheritdoc/>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        /// <param name="disposing">Is disposing</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && createdPort)
+                {
+                    DigitalInputPort?.Dispose();
+                }
+
+                IsDisposed = true;
+            }
+        }
     }
 }

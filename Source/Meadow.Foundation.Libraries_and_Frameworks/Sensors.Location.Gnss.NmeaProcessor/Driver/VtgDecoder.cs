@@ -1,5 +1,5 @@
-﻿using System;
-using Meadow.Peripherals.Sensors.Location.Gnss;
+﻿using Meadow.Peripherals.Sensors.Location.Gnss;
+using System;
 
 namespace Meadow.Foundation.Sensors.Location.Gnss
 {
@@ -11,7 +11,7 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
         /// <summary>
         /// Event to be raised when a course and velocity message is received and decoded.
         /// </summary>
-        public event EventHandler<CourseOverGround> CourseAndVelocityReceived = delegate { };
+        public event EventHandler<CourseOverGround> CourseAndVelocityReceived = default!;
 
         /// <summary>
         /// Prefix for the VTG decoder.
@@ -42,25 +42,29 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
             course.TalkerID = sentence.TalkerID;
 
             decimal trueHeading;
-            if (decimal.TryParse(sentence.DataElements[0], out trueHeading)) {
+            if (decimal.TryParse(sentence.DataElements[0], out trueHeading))
+            {
                 course.TrueHeading = trueHeading;
             }
             decimal magneticHeading;
-            if (decimal.TryParse(sentence.DataElements[2], out magneticHeading)) {
+            if (decimal.TryParse(sentence.DataElements[2], out magneticHeading))
+            {
                 course.MagneticHeading = magneticHeading;
             }
             decimal knots;
-            if (decimal.TryParse(sentence.DataElements[4], out knots)) {
+            if (decimal.TryParse(sentence.DataElements[4], out knots))
+            {
                 course.Knots = knots;
             }
             decimal kph;
-            if (decimal.TryParse(sentence.DataElements[6], out kph)) {
+            if (decimal.TryParse(sentence.DataElements[6], out kph))
+            {
                 course.Kph = kph;
             }
             //Resolver.Log.Info($"VTG process finished: trueHeading:{course.TrueHeading}, magneticHeading:{course.MagneticHeading}, knots:{course.Knots}, kph:{course.Kph}");
             CourseAndVelocityReceived(this, course);
         }
 
-        
+
     }
 }

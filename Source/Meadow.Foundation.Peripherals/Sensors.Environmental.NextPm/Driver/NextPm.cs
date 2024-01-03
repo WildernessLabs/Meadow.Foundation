@@ -1,5 +1,4 @@
-﻿using Meadow.Hardware;
-using Meadow.Units;
+﻿using Meadow.Units;
 using System;
 using System.Threading.Tasks;
 
@@ -20,23 +19,23 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// <summary>
         /// Raised when a new 10-second average reading is taken
         /// </summary>
-        public event EventHandler<IChangeResult<ParticulateReading>> Readings10sUpdated = delegate { };
+        public event EventHandler<IChangeResult<ParticulateReading>> Readings10sUpdated = default!;
         /// <summary>
         /// Raised when a new 1-minute average reading is taken
         /// </summary>
-        public event EventHandler<IChangeResult<ParticulateReading>> Readings1minUpdated = delegate { };
+        public event EventHandler<IChangeResult<ParticulateReading>> Readings1minUpdated = default!;
         /// <summary>
         /// Raised when a new 15-minute average reading is taken
         /// </summary>
-        public event EventHandler<IChangeResult<ParticulateReading>> Readings15minUpdated = delegate { };
+        public event EventHandler<IChangeResult<ParticulateReading>> Readings15minUpdated = default!;
         /// <summary>
         /// Raised when a new temperature reading is taken
         /// </summary>
-        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
+        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = default!;
         /// <summary>
         /// Raised when a new humidity reading is taken
         /// </summary>
-        public event EventHandler<IChangeResult<RelativeHumidity>> HumidityUpdated = delegate { };
+        public event EventHandler<IChangeResult<RelativeHumidity>> HumidityUpdated = default!;
 
         /// <summary>
         /// Returns true if the object is disposed, otherwise false
@@ -44,24 +43,9 @@ namespace Meadow.Foundation.Sensors.Environmental
         public bool IsDisposed { get; private set; }
 
         /// <summary>
-        /// Creates a NextPm instance
+        /// Did we create the port(s) used by the peripheral
         /// </summary>
-        /// <param name="portName"></param>
-        public NextPm(SerialPortName portName)
-            : this(portName.CreateSerialPort())
-        {
-        }
-
-        /// <summary>
-        /// Creates a NextPm instance
-        /// </summary>
-        /// <param name="port"></param>
-        public NextPm(ISerialPort port)
-        {
-            _port = InitializePort(port);
-
-            _port.Open();
-        }
+        readonly bool createdPort = false;
 
         /// <summary>
         /// Gets the sensor's firmware
@@ -108,7 +92,7 @@ namespace Meadow.Foundation.Sensors.Environmental
 
             // dev note:
             // this offset doesn't match the data sheet.  The data sheet says there should be 1 byte of response data, but I'm seeing 2 bytes.
-            // data sheet also says the value range should be 30-100, but with 2 bytes I see a value of 290, so totally guessing on this reponse here
+            // data sheet also says the value range should be 30-100, but with 2 bytes I see a value of 290, so totally guessing on this response here
             // the data sheet also says it should be 5 bytes, but the sensor requires 6 or it will give an error
             return _readBuffer[4];
         }
@@ -199,7 +183,7 @@ namespace Meadow.Foundation.Sensors.Environmental
             }
             if (changeResult.New.humidity is { } humidity)
             {
-                HumidityUpdated?.Invoke(this._port, new ChangeResult<RelativeHumidity>(humidity, changeResult.Old?.humidity));
+                HumidityUpdated?.Invoke(serialPort, new ChangeResult<RelativeHumidity>(humidity, changeResult.Old?.humidity));
             }
             base.RaiseEventsAndNotify(changeResult);
         }
@@ -261,14 +245,17 @@ namespace Meadow.Foundation.Sensors.Environmental
             return conditions;
         }
 
-        ///<inheritdoc/>
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        /// <param name="disposing">Is disposing</param>
         protected virtual void Dispose(bool disposing)
         {
             if (!IsDisposed)
             {
-                if (disposing)
+                if (disposing && createdPort)
                 {
-                    _port?.Dispose();
+                    serialPort?.Dispose();
                 }
                 IsDisposed = true;
             }

@@ -12,32 +12,31 @@ namespace Meadow.Foundation.Displays.UI
     /// </summary>
     public class TextDisplayMenu
     {
-        const string INPUT_TYPES_NAMESPACE = "Meadow.Foundation.Displays.TextDisplayMenu.InputTypes.";
-        ITextDisplay display;
+        ITextDisplay? display;
 
-        MenuPage rootMenuPage;
-        MenuPage currentMenuPage;
-        IMenuInputItem currentInputItem; //also effectively a "page"
+        MenuPage? rootMenuPage;
+        MenuPage? currentMenuPage;
+        IMenuInputItem? currentInputItem; //also effectively a "page"
         int topDisplayLine;
 
-        Stack<IPage> pageStack = null;
+        Stack<IPage>? pageStack;
         bool isEditMode = false;
-        bool showBackOnRoot = false;
+        readonly bool showBackOnRoot = false;
 
         /// <summary>
-        /// Raised when the menu receieves a selected input
+        /// Raised when the menu receives a selected input
         /// </summary>
-        public event MenuSelectedHandler Selected = delegate { };
+        public event MenuSelectedHandler Selected = default!;
 
         /// <summary>
         /// Raised when a value changes
         /// </summary>
-        public event ValueChangedHandler ValueChanged = delegate { };
+        public event ValueChangedHandler ValueChanged = default!;
 
         /// <summary>
         /// Raised when the user exits the menu
         /// </summary>
-        public event EventHandler Exited = delegate { };
+        public event EventHandler? Exited = null;
 
         /// <summary>
         /// Is the menu enabled
@@ -53,7 +52,7 @@ namespace Meadow.Foundation.Displays.UI
         public TextDisplayMenu(ITextDisplay display, byte[] menuJson, bool showBackOnRoot = false)
         {
             this.showBackOnRoot = showBackOnRoot;
-            var items = ParseMenuData(menuJson);
+            var items = ParseMenuData(menuJson) ?? throw new ArgumentNullException("Menu data is null");
             Init(display, CreateMenuPage(items, showBackOnRoot));
         }
 
@@ -65,10 +64,11 @@ namespace Meadow.Foundation.Displays.UI
         /// <param name="showBackOnRoot">True to show Back item on root menu</param>
         public TextDisplayMenu(ITextDisplay display, MenuItem[] menuItems, bool showBackOnRoot = false)
         {
+            this.showBackOnRoot = showBackOnRoot;
             Init(display, CreateMenuPage(menuItems, showBackOnRoot));
         }
 
-        MenuItem[] ParseMenuData(byte[] menuJson)
+        MenuItem[]? ParseMenuData(byte[] menuJson)
         {
             var menuString = System.Text.Encoding.Default.GetString(menuJson);
 
@@ -103,8 +103,8 @@ namespace Meadow.Foundation.Displays.UI
         {
             IsEnabled = false;
 
-            display.ClearLines();
-            display.Show();
+            display?.ClearLines();
+            display?.Show();
         }
 
         /// <summary>
@@ -141,19 +141,19 @@ namespace Meadow.Foundation.Displays.UI
                 return;
             }
 
-            display.ClearLines();
+            display?.ClearLines();
 
             // if there are no items to render, get out.
-            if (currentMenuPage.MenuItems.Count <= 0) { return; }
+            if (currentMenuPage?.MenuItems.Count <= 0) { return; }
 
             // if the scroll position is above the display area, move the display "window"
-            if (currentMenuPage.ScrollPosition < topDisplayLine)
+            if (currentMenuPage?.ScrollPosition < topDisplayLine)
             {
                 topDisplayLine = currentMenuPage.ScrollPosition;
             }
 
             // if the scroll position is below the display area, move the display "window"
-            if (currentMenuPage.ScrollPosition > topDisplayLine + display.DisplayConfig.Height - 1)
+            if (display != null && currentMenuPage?.ScrollPosition > topDisplayLine + display.DisplayConfig.Height - 1)
             {
                 topDisplayLine = currentMenuPage.ScrollPosition - display.DisplayConfig.Height + 1;
             }
@@ -162,20 +162,20 @@ namespace Meadow.Foundation.Displays.UI
 
             MenuItem item;
 
-            for (int i = topDisplayLine; i <= (topDisplayLine + display.DisplayConfig.Height - 1); i++)
+            for (int i = topDisplayLine; i <= (topDisplayLine + display?.DisplayConfig.Height - 1); i++)
             {
-                if (i < currentMenuPage.MenuItems.Count)
+                if (i < currentMenuPage?.MenuItems.Count)
                 {
                     item = currentMenuPage.MenuItems[i];
 
                     // trim and add selection
                     string lineText = GetItemText(item, (i == currentMenuPage.ScrollPosition));
-                    display.WriteLine(lineText, lineNumber);
+                    display?.WriteLine(lineText, lineNumber);
                     lineNumber++;
                 }
             }
 
-            display.Show();
+            display?.Show();
         }
 
         /// <summary>
@@ -207,16 +207,23 @@ namespace Meadow.Foundation.Displays.UI
                 }
             }
 
-            itemText = displayText.Substring(0, (displayText.Length >= display.DisplayConfig.Width - 1) ? display.DisplayConfig.Width - 1 : displayText.Length);
-
-            if (isSelected || item.HasSubItems)
+            if (display == null)
             {
-                // calculate any neccessary padding to put selector on far right
-                int paddingLength = (display.DisplayConfig.Width - 1 - displayText.Length);
-                string padding = string.Empty;
-                if (paddingLength > 0) { padding = new string(' ', paddingLength); }
+                itemText = displayText;
+            }
+            else
+            {
+                itemText = displayText.Substring(0, (displayText.Length >= display.DisplayConfig.Width - 1) ? display.DisplayConfig.Width - 1 : displayText.Length);
 
-                itemText += padding + (isSelected ? "*" : ">");
+                if (isSelected || item.HasSubItems)
+                {
+                    // calculate any necessary padding to put selector on far right
+                    int paddingLength = (display.DisplayConfig.Width / display.DisplayConfig.FontScale - 1 - displayText.Length);
+                    string padding = string.Empty;
+                    if (paddingLength > 0) { padding = new string(' ', paddingLength); }
+
+                    itemText += padding + (isSelected ? "*" : ">");
+                }
             }
 
             return itemText;
@@ -244,7 +251,7 @@ namespace Meadow.Foundation.Displays.UI
             }
             else
             {
-                currentMenuPage.Next();
+                currentMenuPage?.Next();
                 // re-render menu
                 ShowCurrentPage();
             }
@@ -266,7 +273,7 @@ namespace Meadow.Foundation.Displays.UI
             }
             else
             {
-                currentMenuPage.Previous();
+                currentMenuPage?.Previous();
                 // re-render menu
                 ShowCurrentPage();
             }
@@ -284,21 +291,20 @@ namespace Meadow.Foundation.Displays.UI
 
             if (currentInputItem != null)
             {
-                currentInputItem.Select();
+                currentInputItem.Back();
                 return true;
             }
-            else if (pageStack.Count == 0)
+            else if (pageStack?.Count > 0)
             {
-                Disable();
-                Exited(this, new EventArgs());
-                return true;
-            }
-            // if currently on a subpage and user selects back, pop back to parent page.
-            else if (pageStack.Count > 0)
-            {
-                MenuPage parent = pageStack.Pop() as MenuPage;
+                MenuPage? parent = pageStack?.Pop() as MenuPage;
                 currentMenuPage = parent;
                 ShowCurrentPage();
+                return true;
+            }
+            else if (pageStack?.Count == 0 && Exited != null)
+            {
+                Disable();
+                Exited?.Invoke(this, new EventArgs());
                 return true;
             }
 
@@ -316,22 +322,29 @@ namespace Meadow.Foundation.Displays.UI
                 currentInputItem.Select();
                 return true;
             }
+            else if (currentMenuPage == null)
+            {
+                return false;
+            }
             else
             {
-                currentMenuPage.Select();
+                currentMenuPage!.Select();
             }
 
-            if (currentMenuPage.ScrollPosition == 0 && pageStack.Count == 0 && showBackOnRoot)
+            if (currentMenuPage.ScrollPosition == 0
+                && pageStack?.Count == 0
+                && showBackOnRoot
+                && Exited != null)
             {
                 Disable();
-                Exited(this, new EventArgs());
+                Exited?.Invoke(this, new EventArgs());
                 return true;
             }
 
             // if currently on a subpage and user selects back, pop back to parent page.
-            if (currentMenuPage.ScrollPosition == 0 && pageStack.Count > 0)
+            if (currentMenuPage.ScrollPosition == 0 && pageStack?.Count > 0)
             {
-                MenuPage parent = pageStack.Pop() as MenuPage;
+                MenuPage? parent = pageStack.Pop() as MenuPage;
                 currentMenuPage = parent;
                 ShowCurrentPage();
                 return true;
@@ -343,46 +356,53 @@ namespace Meadow.Foundation.Displays.UI
             // go to the submenu if children are present
             if (menuItem.HasSubItems)
             {
-                pageStack.Push(currentMenuPage);
+                pageStack?.Push(currentMenuPage);
                 // currentMenuPage = child.SubMenu;
                 currentMenuPage = CreateMenuPage(menuItem.SubItems, true);
                 ShowCurrentPage();
                 return true;
             }
             // if there is a command, notify the subscribers 
-            else if (menuItem.Command != string.Empty)
+            else if (menuItem?.Command != string.Empty)
             {
-                Selected(this, new MenuSelectedEventArgs(menuItem.Command));
+                Selected?.Invoke(this, new MenuSelectedEventArgs(menuItem!.Command));
                 return true;
             }
             // if there is a type, then let the type handle the input
             else if (menuItem.Type != string.Empty)
             {
-                pageStack.Push(currentMenuPage);
+                pageStack?.Push(currentMenuPage);
 
                 isEditMode = true;
 
                 currentInputItem = GetMenuInputItemFromName(menuItem.Type);
 
                 // setup callback
-                currentInputItem.ValueChanged += delegate (object sender, ValueChangedEventArgs e)
+                if (currentInputItem != null)
                 {
-                    // set the value and notify the eager listeners
-                    menuItem.Value = e.Value;
-                    ValueChanged(this, new ValueChangedEventArgs(e.ItemID, e.Value));
+                    currentInputItem.ValueChanged += delegate (object sender, ValueChangedEventArgs e)
+                    {
+                        // set the value and notify the eager listeners
+                        menuItem.Value = e.Value;
+                        ValueChanged?.Invoke(this, new ValueChangedEventArgs(menuItem.Id, menuItem.Value));
 
-                    // reload the parent menu
-                    var parent = pageStack.Pop() as MenuPage;
-                    currentMenuPage = parent;
-                    currentInputItem = null;
-                    ShowCurrentPage();
-                    isEditMode = false;
-                };
+                        // reload the parent menu
+                        var parent = pageStack?.Pop() as MenuPage;
+                        currentMenuPage = parent;
+                        currentInputItem = null;
+                        ShowCurrentPage();
+                        isEditMode = false;
+                    };
+                }
+
 
                 // initialize input mode and get new value
-                currentInputItem.Init(display);
+                if (currentInputItem != null && display != null)
+                {
+                    currentInputItem.Init(display);
+                }
 
-                currentInputItem.GetInput(menuItem.Id, menuItem.Value);
+                currentInputItem?.GetInput(menuItem.Id, menuItem.Value);
                 return true;
             }
             else
@@ -393,7 +413,7 @@ namespace Meadow.Foundation.Displays.UI
 
         enum DaysOfWeek { Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday };
 
-        IMenuInputItem GetMenuInputItemFromName(string name)
+        IMenuInputItem? GetMenuInputItemFromName(string name)
         {
             if (Enum.TryParse(name, out InputType inputType) == false)
             {
@@ -406,7 +426,7 @@ namespace Meadow.Foundation.Displays.UI
                 InputType.Boolean => new InputTypes.Boolean(),
                 InputType.Date => new Date(),
                 InputType.Numerical => new Numerical(),
-                InputType.Onff => new OnOff(),
+                InputType.OnOff => new OnOff(),
                 InputType.Temperature => new Temperature(),
                 InputType.Time => new Time(),
                 InputType.TimeDetailed => new TimeDetailed(),
@@ -430,8 +450,10 @@ namespace Meadow.Foundation.Displays.UI
         /// <param name="value">New value</param>
         public void UpdateItemValue(string id, object value)
         {
-            var values = new Hashtable(1);
-            values[id] = value;
+            var values = new Hashtable(1)
+            {
+                [id] = value
+            };
             UpdateItemValue(values);
         }
 
@@ -453,8 +475,8 @@ namespace Meadow.Foundation.Displays.UI
 
         private void UpdateMenuItemValue(string id, object value)
         {
-            MenuItem node = null;
-            foreach (var menuItem in rootMenuPage.MenuItems)
+            MenuItem? node = null;
+            foreach (var menuItem in rootMenuPage!.MenuItems)
             {
                 node = FindNodeById(menuItem, id);
                 if (node != null) { break; }
@@ -470,13 +492,13 @@ namespace Meadow.Foundation.Displays.UI
             }
         }
 
-        private MenuItem FindNodeById(MenuItem menuItem, string id)
+        private MenuItem? FindNodeById(MenuItem menuItem, string id)
         {
             if (menuItem.Id == id)
             {
                 return menuItem;
             }
-            else if (menuItem.SubItems.Length > 0)
+            else if (menuItem != null && menuItem.SubItems?.Length > 0)
             {
                 foreach (var subMenuItem in menuItem.SubItems)
                 {

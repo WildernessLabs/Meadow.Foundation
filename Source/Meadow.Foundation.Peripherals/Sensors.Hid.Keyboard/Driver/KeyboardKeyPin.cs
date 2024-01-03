@@ -1,6 +1,7 @@
 ﻿using Meadow.Hardware;
 using System;
 using System.Collections.Generic;
+using static Meadow.Foundation.Sensors.Hid.Keyboard;
 
 namespace Meadow.Foundation.Sensors.Hid;
 
@@ -14,17 +15,20 @@ public class KeyboardKeyPin : Pin
     /// </summary>
     public new char Key => Convert.ToChar(base.Key);
 
-    internal KeyboardKeyPin(IPinController controller, string name, char key)
+    internal InteropMac.MacKeyCodes? MacKeyCode { get; }
+
+    internal KeyboardKeyPin(IPinController? controller, string name, char key, InteropMac.MacKeyCodes? macKey)
         : base(controller, name, char.ToUpper(key),
         new List<IChannelInfo>()
         {
             new DigitalChannelInfo(name, interruptCapable: true, pullUpCapable: false, pullDownCapable: false)
         })
     {
-        if (!(controller is Keyboard))
+        if (controller is not Keyboard)
         {
             throw new ArgumentException("KeyboardKeyPins are only supported on a Keyboard");
         }
+        MacKeyCode = macKey;
     }
 
     /// <summary>

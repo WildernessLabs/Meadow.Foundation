@@ -7,7 +7,7 @@ namespace Meadow.Foundation.Sensors.Hid
     /// <summary>
     /// Represents a BBQ10Keyboard Featherwing
     /// </summary>
-    public partial class BBQ10Keyboard : II2cPeripheral
+    public partial class BBQ10Keyboard : II2cPeripheral, IDisposable
     {
         /// <summary>
         /// The default I2C address for the peripheral
@@ -15,20 +15,29 @@ namespace Meadow.Foundation.Sensors.Hid
         public byte DefaultI2cAddress => (byte)Addresses.Default;
 
         /// <summary>
+        /// Is the object disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
+
+        /// <summary>
+        /// Did we create the port(s) used by the peripheral
+        /// </summary>
+        readonly bool createdPort = false;
+
+        /// <summary>
         /// I2C Communication bus used to communicate with the peripheral
         /// </summary>
         protected readonly II2cCommunications i2cComms;
-
-        readonly IDigitalInterruptPort interruptPort;
+        private readonly IDigitalInterruptPort? interruptPort;
 
         /// <summary>
         /// Raised when a key press is detected
         /// </summary>
-        public event EventHandler<KeyEvent> OnKeyEvent = delegate { };
+        public event EventHandler<KeyEvent> OnKeyEvent = default!;
 
-        byte Status => i2cComms.ReadRegister((byte)Registers.KEY);
+        private byte Status => i2cComms.ReadRegister((byte)Registers.KEY);
 
-        byte KeyCount => (byte)(i2cComms.ReadRegister(KEY_COUNT_MASK) & Status);
+        private byte KeyCount => (byte)(i2cComms.ReadRegister(KEY_COUNT_MASK) & Status);
 
         /// <summary>
         /// Get or set the backlight
@@ -54,13 +63,15 @@ namespace Meadow.Foundation.Sensors.Hid
         /// <param name="i2cBus">The I2C bus</param>
         /// <param name="interruptPin">The interrupt pin</param>
         /// <param name="address">The I2C address</param>
-        public BBQ10Keyboard(II2cBus i2cBus, IPin interruptPin = null, byte address = (byte)Addresses.Default)
+        public BBQ10Keyboard(II2cBus i2cBus, IPin? interruptPin = null, byte address = (byte)Addresses.Default)
         {
             i2cComms = new I2cCommunications(i2cBus, address);
 
             if (interruptPin != null)
             {
-                interruptPort = interruptPin.CreateDigitalInputPort(InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
+                createdPort = true;
+
+                interruptPort = interruptPin.CreateDigitalInterruptPort(InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
                 interruptPort.Changed += InterruptPort_Changed;
             }
 
@@ -103,6 +114,30 @@ namespace Meadow.Foundation.Sensors.Hid
         private void InterruptPort_Changed(object sender, DigitalPortResult e)
         {
             OnKeyEvent?.Invoke(this, GetLastKeyEvent());
+        }
+
+        ///<inheritdoc/>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        /// <param name="disposing">Is disposing</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && createdPort)
+                {
+                    interruptPort?.Dispose();
+                }
+
+                IsDisposed = true;
+            }
         }
     }
 }

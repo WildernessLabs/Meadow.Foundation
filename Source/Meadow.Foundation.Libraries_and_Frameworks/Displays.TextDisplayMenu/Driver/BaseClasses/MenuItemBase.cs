@@ -12,7 +12,7 @@ namespace Meadow.Foundation.Displays.UI
         /// Sub items in the menu
         /// </summary>
         [JsonPropertyName("sub")]
-        public MenuItem[] SubItems { get; set; }
+        public MenuItem[]? SubItems { get; set; }
 
         /// <summary>
         /// The text on the menu item
@@ -42,7 +42,7 @@ namespace Meadow.Foundation.Displays.UI
         /// The menu item value
         /// </summary>
         [JsonPropertyName("value")]
-        public object Value { get; set; }
+        public object? Value { get; set; }
 
         /// <summary>
         /// Does the item have sub items
@@ -64,11 +64,11 @@ namespace Meadow.Foundation.Displays.UI
         /// <param name="value">The item value</param>
         /// <param name="subItems">Item sub items</param>
         public MenuItem(string text,
-            string command = null,
-            string id = null,
-            string type = null,
-            object value = null,
-            MenuItem[] subItems = null)
+            string? command = null,
+            string? id = null,
+            string? type = null,
+            object? value = null,
+            MenuItem[]? subItems = null)
         {
             Text = text;
             Command = command ?? string.Empty;

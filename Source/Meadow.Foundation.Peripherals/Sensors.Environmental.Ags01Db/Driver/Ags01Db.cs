@@ -1,6 +1,5 @@
 using Meadow.Hardware;
 using Meadow.Units;
-using System;
 using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Environmental
@@ -8,7 +7,7 @@ namespace Meadow.Foundation.Sensors.Environmental
     /// <summary>
     /// Represents an AGS01DB MEMS VOC gas / air quality sensor
     /// Pinout (left to right, label side down): VDD, SDA, GND, SCL
-    /// Note: requires pullup resistors on SDA/SCL
+    /// Note: requires pull-up resistors on SDA/SCL
     /// </summary>
     public partial class Ags01Db : ByteCommsSensorBase<Concentration>, II2cPeripheral
     {
@@ -19,11 +18,6 @@ namespace Meadow.Foundation.Sensors.Environmental
         const byte ASG_DATA_LSB = 0x02;
         const byte ASG_VERSION_MSB = 0x0A;
         const byte ASG_VERSION_LSB = 0x01;
-
-        /// <summary>
-        /// Raised when the concentration changes
-        /// </summary>
-        public event EventHandler<IChangeResult<Concentration>> ConcentrationUpdated = delegate { };
 
         /// <summary>
         /// The current concentration value
@@ -84,16 +78,6 @@ namespace Meadow.Foundation.Sensors.Environmental
             }
 
             return ReadBuffer.Span[0];
-        }
-
-        /// <summary>
-        /// Raise change events for subscribers
-        /// </summary>
-        /// <param name="changeResult">The change result with the current sensor data</param>
-        protected void RaiseChangedAndNotify(IChangeResult<Concentration> changeResult)
-        {
-            ConcentrationUpdated?.Invoke(this, changeResult);
-            base.RaiseEventsAndNotify(changeResult);
         }
 
         /// <summary>

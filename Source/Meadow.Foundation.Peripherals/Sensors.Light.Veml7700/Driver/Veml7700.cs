@@ -13,19 +13,14 @@ namespace Meadow.Foundation.Sensors.Light
         ILightSensor, II2cPeripheral, IDisposable
     {
         /// <summary>
-        /// Raised when the luminosity value changes
-        /// </summary>
-        public event EventHandler<IChangeResult<Illuminance>> LuminosityUpdated = delegate { };
-
-        /// <summary>
         /// Raised when the high range is exceeded
         /// </summary>
-        public event EventHandler RangeExceededHigh = delegate { };
+        public event EventHandler RangeExceededHigh = default!;
 
         /// <summary>
         /// Raised when the low range is exceeded
         /// </summary>
-        public event EventHandler RangeExceededLow = delegate { };
+        public event EventHandler RangeExceededLow = default!;
 
         ushort config;
 
@@ -130,7 +125,7 @@ namespace Meadow.Foundation.Sensors.Light
 
                 if ((data >= DATA_FLOOR && data <= DATA_CEILING) || outOfRange)
                 {
-                    return ScaleDataToIluminance(data, gain, integrationTime);
+                    return ScaleDataToIlluminance(data, gain, integrationTime);
                 }
 
                 await DelayForIntegrationTime(integrationTime);
@@ -139,7 +134,7 @@ namespace Meadow.Foundation.Sensors.Light
             }
         }
 
-        private Illuminance ScaleDataToIluminance(ushort data, int gain, int integrationTime)
+        private Illuminance ScaleDataToIlluminance(ushort data, int gain, int integrationTime)
         {
             var scale = gain switch
             {
@@ -153,39 +148,18 @@ namespace Meadow.Foundation.Sensors.Light
                 _ => 1,
             };
 
-            switch (integrationTime)
+            scale *= integrationTime switch
             {
-                case -2: // 25ms
-                    scale *= 32;
-                    break;
-                case -1: // 50ms
-                    scale *= 16;
-                    break;
-                case 0: // 100ms
-                    scale *= 8;
-                    break;
-                case 1: // 200ms
-                    scale *= 4;
-                    break;
-                case 2: // 400ms
-                    scale *= 2;
-                    break;
-                case 3: // 800ms
-                    scale *= 1;
-                    break;
-            }
+                -2 => 32, // 25ms
+                -1 => 16, // 50ms
+                0 => 8, // 100ms
+                1 => 4, // 200ms
+                2 => 2, // 400ms
+                3 => 1, // 800ms
+                _ => throw new ArgumentOutOfRangeException(nameof(integrationTime), integrationTime, null)
+            };
 
             return CalculateCorrectedLux(scale * 0.0036d * data);
-        }
-
-        /// <summary>
-        /// Raise events for subcribers and notify of value changes
-        /// </summary>
-        /// <param name="changeResult">The updated sensor data</param>
-        protected override void RaiseEventsAndNotify(IChangeResult<Illuminance> changeResult)
-        {
-            LuminosityUpdated?.Invoke(this, changeResult);
-            base.RaiseEventsAndNotify(changeResult);
         }
 
         private Illuminance CalculateCorrectedLux(double lux)

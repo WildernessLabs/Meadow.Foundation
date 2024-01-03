@@ -11,15 +11,18 @@
     <PackageId>Meadow.Foundation.Sensors.Atmospheric.Sgp40</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow.Foundation, Atmospheric, SGP40, Sensiron</PackageTags>
-    <Version>0.1.0</Version>
+    <Version>1.6.0.1</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>SGP40 I2C VOC sensor driver</Description>
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <PropertyGroup>
-    <LangVersion>8.0</LangVersion>
+    <PackageReadmeFile>Readme.md</PackageReadmeFile>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <LangVersion>10.0</LangVersion>
   </PropertyGroup>
   <ItemGroup>
+    <None Include=".\Readme.md" Pack="true" PackagePath="" />
     <None Include="..\..\..\icon.png" Pack="true" PackagePath="" />
     <ProjectReference Include="..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
   </ItemGroup>

@@ -16,7 +16,7 @@
 
             public const byte REG_CONFIG = 0x01;        // config
             public const byte UPPER_TEMP = 0x02;     // upper alert boundary
-            public const byte LOWER_TEMP = 0x03;     // lower alert boundery
+            public const byte LOWER_TEMP = 0x03;     // lower alert boundary
             public const byte CRIT_TEMP = 0x04;     // critical temperature
             public const byte AMBIENT_TEMP = 0x05;   // ambient temperature
             public const byte MANUFACTURER_ID = 0x06; // manufacturer ID

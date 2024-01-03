@@ -119,7 +119,7 @@
     }
 
     /// <summary>
-    /// Represents the different sound effects that can be played by the <see cref="SystemSounds"/> class
+    /// Represents the sound effects that can be played by the <see cref="SystemSounds"/> class
     /// </summary>
     public enum SystemSoundEffect
     {
@@ -186,7 +186,7 @@
     }
 
     /// <summary>
-    /// Represents the different sound effects that can be played by the <see cref="GameSoundPlayer"/> class
+    /// Represents the sound effects that can be played by the <see cref="GameSounds"/> class
     /// </summary>
     public enum GameSoundEffect
     {
@@ -271,7 +271,7 @@
         /// </summary>
         SecretFound,
         /// <summary>
-        /// A sound effect indicating a spash in water
+        /// A sound effect indicating a splash in water
         /// </summary>
         Splash,
         /// <summary>

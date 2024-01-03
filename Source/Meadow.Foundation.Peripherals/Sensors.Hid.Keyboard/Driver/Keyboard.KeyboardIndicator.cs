@@ -1,6 +1,6 @@
 ﻿using Meadow.Hardware;
 using System;
-using static Meadow.Foundation.Sensors.Hid.Keyboard.Interop;
+using static Meadow.Foundation.Sensors.Hid.Keyboard.InteropWindows;
 
 namespace Meadow.Foundation.Sensors.Hid;
 
@@ -11,7 +11,7 @@ public partial class Keyboard
     /// </summary>
     public class KeyboardIndicator : DigitalOutputPortBase
     {
-        private KeyboardIndicatorPin _pin;
+        private readonly KeyboardIndicatorPin _pin;
 
         /// <summary>
         /// Sets the state of the indicator
@@ -42,12 +42,12 @@ public partial class Keyboard
 
         private void SetState(bool state)
         {
-            (_pin.Controller as Keyboard)?.SetIndicatorState((Indicators)(Convert.ToInt16(_pin.Key)), state);
+            (_pin.Controller as Keyboard)?.SetIndicatorStateWindows((Indicators)(Convert.ToInt16(_pin.Key)), state);
         }
 
         private bool GetState()
         {
-            return (_pin.Controller as Keyboard)?.GetIndicatorState((Indicators)(Convert.ToInt16(_pin.Key))) ?? false;
+            return (_pin.Controller as Keyboard)?.GetIndicatorStateWindows((Indicators)(Convert.ToInt16(_pin.Key))) ?? false;
         }
     }
 }

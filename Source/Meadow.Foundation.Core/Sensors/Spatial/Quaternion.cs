@@ -21,7 +21,7 @@
         public double Y { get; private set; }
 
         /// <summary>
-        /// Z componet of the quaternion.
+        /// Z component of the quaternion.
         /// </summary>
         public double Z { get; private set; }
 

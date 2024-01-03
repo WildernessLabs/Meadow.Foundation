@@ -1,5 +1,7 @@
 ﻿using Meadow.Hardware;
 using Meadow.Peripherals.Sensors;
+using Meadow.Peripherals.Sensors.Atmospheric;
+using Meadow.Peripherals.Sensors.Environmental;
 using Meadow.Units;
 using Meadow.Utilities;
 using System;
@@ -21,27 +23,12 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                             RelativeHumidity? Humidity,
                             Pressure? Pressure,
                             Resistance? GasResistance)>,
-        ITemperatureSensor, IHumiditySensor, IBarometricPressureSensor, ISpiPeripheral, II2cPeripheral
+        ITemperatureSensor, IHumiditySensor, IBarometricPressureSensor, IGasResistanceSensor, ISpiPeripheral, II2cPeripheral, IDisposable
     {
-        /// <summary>
-        /// Raised when the temperature value changes
-        /// </summary>
-        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
-
-        /// <summary>
-        /// Raised when the pressure value changes
-        /// </summary>
-        public event EventHandler<IChangeResult<Pressure>> PressureUpdated = delegate { };
-
-        /// <summary>
-        /// Raised when the humidity value changes
-        /// </summary>
-        public event EventHandler<IChangeResult<RelativeHumidity>> HumidityUpdated = delegate { };
-
-        /// <summary>
-        /// Raised when the gas resistance value changes
-        /// </summary>
-        public event EventHandler<IChangeResult<Resistance>> GasResistanceUpdated = delegate { };
+        private event EventHandler<IChangeResult<Units.Temperature>> _temperatureHandlers = default!;
+        private event EventHandler<IChangeResult<RelativeHumidity>> _humidityHandlers = default!;
+        private event EventHandler<IChangeResult<Pressure>> _pressureHandlers = default!;
+        private event EventHandler<IChangeResult<Resistance>> _gasResistanceHandlers = default!;
 
         /// <summary>
         /// The temperature oversampling mode
@@ -86,7 +73,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                     }
 
                     var profile = busComms.ReadRegister((byte)Registers.CTRL_GAS_1);
-                    profile = (byte)((profile & 0x0F) | (byte)value);
+                    profile = (byte)((profile & 0xF0) | (byte)value);
 
                     busComms.WriteRegister((byte)Registers.CTRL_GAS_1, profile);
 
@@ -94,7 +81,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 }
             }
         }
-        HeaterProfileType heaterProfile;
+
+        private HeaterProfileType heaterProfile;
 
         /// <summary>
         /// Gets / sets the filtering mode to be used for measurements
@@ -117,7 +105,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 filterMode = value;
             }
         }
-        FilteringMode filterMode;
+
+        private FilteringMode filterMode;
 
         /// <summary>
         /// Enable / disable the sensor heater
@@ -135,7 +124,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 heaterIsEnabled = value;
             }
         }
-        bool heaterIsEnabled;
+
+        private bool heaterIsEnabled;
 
         /// <summary>
         /// Enable / disable gas conversions
@@ -153,12 +143,13 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 gasConversionIsEnabled = value;
             }
         }
-        bool gasConversionIsEnabled = false;
+
+        private bool gasConversionIsEnabled = false;
 
         /// <summary>
         /// The default SPI bus speed for the device
         /// </summary>
-        public Frequency DefaultSpiBusSpeed => new Frequency(10000, Frequency.UnitType.Kilohertz);
+        public Frequency DefaultSpiBusSpeed => new(10000, Frequency.UnitType.Kilohertz);
 
         /// <summary>
         /// The SPI bus speed for the device
@@ -191,7 +182,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <summary>
         /// Communication bus used to read and write to the BME68x sensor
         /// </summary>
-        readonly IByteCommunications busComms;
+        private readonly IByteCommunications busComms;
 
         /// <summary>
         /// The current temperature
@@ -213,7 +204,16 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         public Resistance? GasResistance => Conditions.GasResistance;
 
-        readonly Configuration configuration;
+        /// <summary>
+        /// Is the object disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
+
+        /// <summary>
+        /// Did we create the port(s) used by the peripheral
+        /// </summary>
+        private readonly bool createdPort = false;
+        private readonly Configuration configuration;
 
         /// <summary>
         /// Calibration data for the sensor
@@ -228,6 +228,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         private static readonly double[] k2Lookup = { 0.0, 0.0, 0.0, 0.0, 0.1, 0.7, 0.0, -0.8, -0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
 
         private readonly List<HeaterProfileConfiguration> heaterConfigs = new();
+        private IDigitalOutputPort? chipSelectPort;
 
         /// <summary>
         /// Creates a new instance of the BME68x class
@@ -249,7 +250,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <param name="chipSelectPin">The chip select pin</param>
         protected Bme68x(ISpiBus spiBus, IPin chipSelectPin) :
             this(spiBus, chipSelectPin.CreateDigitalOutputPort())
-        { }
+        {
+            createdPort = true;
+        }
 
         /// <summary>
         /// Creates a new instance of the BME68x class
@@ -259,13 +262,37 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <param name="configuration">The BMP68x configuration (optional)</param>
         protected Bme68x(ISpiBus spiBus, IDigitalOutputPort chipSelectPort, Configuration? configuration = null)
         {
-            busComms = new Bme68xSpiCommunications(spiBus, chipSelectPort, DefaultSpiBusSpeed, DefaultSpiBusMode);
+            busComms = new Bme68xSpiCommunications(spiBus, this.chipSelectPort = chipSelectPort, DefaultSpiBusSpeed, DefaultSpiBusMode);
             this.configuration = configuration ?? new Configuration();
 
             byte value = busComms.ReadRegister((byte)Registers.STATUS);
             busComms.WriteRegister((byte)Registers.STATUS, value);
 
             Initialize();
+        }
+
+        event EventHandler<IChangeResult<Units.Temperature>> ISamplingSensor<Units.Temperature>.Updated
+        {
+            add => _temperatureHandlers += value;
+            remove => _temperatureHandlers -= value;
+        }
+
+        event EventHandler<IChangeResult<RelativeHumidity>> ISamplingSensor<RelativeHumidity>.Updated
+        {
+            add => _humidityHandlers += value;
+            remove => _humidityHandlers -= value;
+        }
+
+        event EventHandler<IChangeResult<Pressure>> ISamplingSensor<Pressure>.Updated
+        {
+            add => _pressureHandlers += value;
+            remove => _pressureHandlers -= value;
+        }
+
+        event EventHandler<IChangeResult<Resistance>> ISamplingSensor<Resistance>.Updated
+        {
+            add => _gasResistanceHandlers += value;
+            remove => _gasResistanceHandlers -= value;
         }
 
         /// <summary>
@@ -387,26 +414,26 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         }
 
         /// <summary>
-        /// Raise events for subcribers and notify of value changes
+        /// Raise events for subscribers and notify of value changes
         /// </summary>
         /// <param name="changeResult">The updated sensor data</param>
         protected override void RaiseEventsAndNotify(IChangeResult<(Units.Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure, Resistance? GasResistance)> changeResult)
         {
             if (changeResult.New.Temperature is { } temp)
             {
-                TemperatureUpdated?.Invoke(this, new ChangeResult<Units.Temperature>(temp, changeResult.Old?.Temperature));
+                _temperatureHandlers?.Invoke(this, new ChangeResult<Units.Temperature>(temp, changeResult.Old?.Temperature));
             }
             if (changeResult.New.Humidity is { } humidity)
             {
-                HumidityUpdated?.Invoke(this, new ChangeResult<RelativeHumidity>(humidity, changeResult.Old?.Humidity));
+                _humidityHandlers?.Invoke(this, new ChangeResult<RelativeHumidity>(humidity, changeResult.Old?.Humidity));
             }
             if (changeResult.New.Pressure is { } pressure)
             {
-                PressureUpdated?.Invoke(this, new ChangeResult<Pressure>(pressure, changeResult.Old?.Pressure));
+                _pressureHandlers?.Invoke(this, new ChangeResult<Pressure>(pressure, changeResult.Old?.Pressure));
             }
             if (changeResult.New.GasResistance is { } gasResistance)
             {
-                GasResistanceUpdated?.Invoke(this, new ChangeResult<Resistance>(gasResistance, changeResult.Old?.GasResistance));
+                _gasResistanceHandlers?.Invoke(this, new ChangeResult<Resistance>(gasResistance, changeResult.Old?.GasResistance));
             }
             base.RaiseEventsAndNotify(changeResult);
         }
@@ -554,7 +581,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             return new RelativeHumidity(humidity, HU.Percent);
         }
 
-        Resistance CalculateGasResistance(ushort adcGasRes, byte gasRange)
+        private Resistance CalculateGasResistance(ushort adcGasRes, byte gasRange)
         {
             if (calibration == null) throw new NullReferenceException("Calibration must be defined");
 
@@ -566,7 +593,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             return new Resistance(gasResistance, Resistance.UnitType.Ohms);
         }
 
-        byte CalculateHeaterResistance(Units.Temperature setTemp, Units.Temperature ambientTemp)
+        private byte CalculateHeaterResistance(Units.Temperature setTemp, Units.Temperature ambientTemp)
         {
             if (calibration == null) throw new NullReferenceException("Calibration must be defined");
 
@@ -590,7 +617,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         // The duration is interpreted as follows:
         // Byte [7:6]: multiplication factor of 1, 4, 16 or 64
         // Byte [5:0]: 64 timer values, 1ms step size, rounded down
-        byte CalculateHeaterDuration(TimeSpan duration)
+        private byte CalculateHeaterDuration(TimeSpan duration)
         {
             byte factor = 0;
             byte durationValue;
@@ -613,13 +640,40 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             return durationValue;
         }
 
+        ///<inheritdoc/>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        /// <param name="disposing">Is disposing</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && createdPort)
+                {
+                    chipSelectPort?.Dispose();
+                }
+
+                IsDisposed = true;
+            }
+        }
+
         async Task<Units.Temperature> ISensor<Units.Temperature>.Read()
-            => (await Read()).Temperature.Value;
+            => (await Read()).Temperature!.Value;
 
         async Task<RelativeHumidity> ISensor<RelativeHumidity>.Read()
-            => (await Read()).Humidity.Value;
+            => (await Read()).Humidity!.Value;
 
         async Task<Pressure> ISensor<Pressure>.Read()
-            => (await Read()).Pressure.Value;
+            => (await Read()).Pressure!.Value;
+
+        async Task<Resistance> ISensor<Resistance>.Read()
+            => (await Read()).GasResistance!.Value;
     }
 }

@@ -1,0 +1,27 @@
+<Project Sdk="Meadow.Sdk/1.1.0">
+  <PropertyGroup>
+    <PackageReadmeFile>Readme.md</PackageReadmeFile>
+    <LangVersion>10.0</LangVersion>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <PackageIcon>icon.png</PackageIcon>
+    <Authors>Wilderness Labs, Inc</Authors>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <OutputType>Library</OutputType>
+    <AssemblyName>Pca9671</AssemblyName>
+    <Company>Wilderness Labs, Inc</Company>
+    <PackageProjectUrl>http://developer.wildernesslabs.co/Meadow/Meadow.Foundation/</PackageProjectUrl>
+    <PackageId>Meadow.Foundation.ICs.IOExpanders.Pca9671</PackageId>
+    <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
+    <PackageTags>Meadow.Foundation,Meadow,Expanders,IOExpanders,Pca9671</PackageTags>
+    <Version>1.6.0.1</Version>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Description>PCA9671 I2C digital input/output expander</Description>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include=".\Readme.md" Pack="true" PackagePath="" />
+    <None Include="..\..\..\icon.png" Pack="true" PackagePath="" />
+    <ProjectReference Include="..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
+  </ItemGroup>
+</Project>

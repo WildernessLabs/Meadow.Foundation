@@ -11,16 +11,19 @@
     <PackageId>Meadow.Foundation.Sensors.Temperature.Tmp102</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow.Foundation,Temperature,TMP102</PackageTags>
-    <Version>0.1.53</Version>
+    <Version>1.6.0.1</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>TMP102 I2C temperature sensor</Description>
     <Nullable>enable</Nullable>
     <RootNamespace>Meadow.Foundation.Sensors.Temperature</RootNamespace>
   </PropertyGroup>
   <PropertyGroup>
+    <PackageReadmeFile>Readme.md</PackageReadmeFile>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <LangVersion>10.0</LangVersion>
   </PropertyGroup>
   <ItemGroup>
+    <None Include=".\Readme.md" Pack="true" PackagePath="" />
     <None Include="..\..\..\icon.png" Pack="true" PackagePath="" />
     <ProjectReference Include="..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
   </ItemGroup>

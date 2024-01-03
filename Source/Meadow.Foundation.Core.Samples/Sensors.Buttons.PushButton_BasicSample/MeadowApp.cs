@@ -29,7 +29,7 @@ namespace MeadowApp
                 bluePwmPin: Device.Pins.OnboardLedBlue,
                 CommonType.CommonAnode);
 
-            // intialize the push button
+            // initialize the push button
             pushButton = new PushButton(
                 Device.Pins.D02,
                 Meadow.Hardware.ResistorMode.InternalPullDown);

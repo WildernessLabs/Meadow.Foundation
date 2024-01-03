@@ -1,6 +1,7 @@
-﻿using System;
+﻿using Meadow.Hardware;
+using System;
 
-namespace Meadow.Hardware
+namespace Meadow.Foundation
 {
     /// <summary>
     /// Helper class for I2C communications, handles registers, endian, etc.
@@ -79,7 +80,7 @@ namespace Meadow.Hardware
         }
 
         /// <summary>
-        /// Read an usingned short from a register.
+        /// Read an unsigned short from a register.
         /// </summary>
         /// <param name="address">Register address of the low byte (the high byte will follow).</param>
         /// <param name="order">Order of the bytes in the register (little endian is the default).</param>
@@ -174,7 +175,7 @@ namespace Meadow.Hardware
             {
                 throw new ArgumentException("Data to write is too large for the write buffer. " +
                     "Must be less than WriteBuffer.Length + 1 (to allow for address). " +
-                    "Instantiate this class with a larger WriteBuffer, or send a smaller" +
+                    "Instantiate this class with a larger WriteBuffer, or send a smaller " +
                     "amount of data to fix.");
             }
 

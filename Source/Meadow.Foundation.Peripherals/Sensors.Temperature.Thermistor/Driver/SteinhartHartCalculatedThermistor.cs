@@ -21,7 +21,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         public double BetaCoefficient { get; } = DefaultBetaCoefficient;
 
         /// <summary>
-        /// Gets the resistance of the fixed-value seried resistor in your voltage divider circuit
+        /// Gets the resistance of the fixed-value series resistor in your voltage divider circuit
         /// </summary>
         public Resistance SeriesResistance { get; }
 
@@ -48,7 +48,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// </summary>
         /// <param name="analogInput">The analog input reading the thermistor voltage divider output</param>
         /// <param name="nominalResistance">The nominal resistance of the thermistor (e.g. 10kOhm for a 10k thermistor)</param>
-        /// <param name="seriesResistance">The resistance of the fixed-value seried resistor in your voltage divider circuit</param>
+        /// <param name="seriesResistance">The resistance of the fixed-value series resistor in your voltage divider circuit</param>
         public SteinhartHartCalculatedThermistor(IAnalogInputPort analogInput, Resistance nominalResistance, Resistance seriesResistance)
             : base(analogInput)
         {
@@ -61,7 +61,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// </summary>
         /// <param name="analogInput">The analog input reading the thermistor voltage divider output</param>
         /// <param name="nominalResistance">The nominal resistance of the thermistor (e.g. 10kOhm for a 10k thermistor)</param>
-        /// <param name="seriesResistance">The resistance of the fixed-value seried resistor in your voltage divider circuit</param>
+        /// <param name="seriesResistance">The resistance of the fixed-value series resistor in your voltage divider circuit</param>
         /// <param name="betaCoefficient">The beta coefficient of the thermistor used in the Steinhart-Hart equation</param>
         public SteinhartHartCalculatedThermistor(IAnalogInputPort analogInput, Resistance nominalResistance, Resistance seriesResistance, double betaCoefficient)
             : base(analogInput)
@@ -91,11 +91,10 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// </summary>
         protected override async Task<Units.Temperature> ReadSensor()
         {
-            var voltageReading = await AnalogInput.Read();
-            Resolver.Log.Info($"ADC: {voltageReading.Volts:N2}V");
+            var voltageReading = await AnalogInputPort.Read();
 
-            var measuredResistance = (SeriesResistance.Ohms * voltageReading.Volts) / (AnalogInput.ReferenceVoltage.Volts - voltageReading.Volts);
-            Resolver.Log.Info($"Resistance: {measuredResistance:N2}ohms");
+            // ohms
+            var measuredResistance = (SeriesResistance.Ohms * voltageReading.Volts) / (AnalogInputPort.ReferenceVoltage.Volts - voltageReading.Volts);
 
             double steinhart;
             steinhart = measuredResistance / NominalResistance.Ohms;

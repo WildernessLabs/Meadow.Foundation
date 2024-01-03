@@ -16,7 +16,7 @@ namespace Meadow.Foundation.Sensors.Hid
         /// <summary>
         /// Event if interrupt port is provided for interrupt pin
         /// </summary>
-        public event EventHandler Interrupt;
+        public event EventHandler Interrupt = default!;
 
         /// <summary>
         /// Default I2C bus speed
@@ -34,7 +34,7 @@ namespace Meadow.Foundation.Sensors.Hid
         public bool IsVerticalInverted { get; set; }
 
         /// <summary>
-        /// Swap horizonal and vertical
+        /// Swap horizontal and vertical
         /// </summary>
         public bool IsVerticalHorizonalSwapped { get; set; } = false;
 
@@ -74,7 +74,7 @@ namespace Meadow.Foundation.Sensors.Hid
         /// <param name="i2cBus">the I2C bus</param>
         /// <param name="address">the device I2C address</param>
         /// <param name="interruptPort">port connected to the interrupt pin</param>
-        public As5013(II2cBus i2cBus, byte address = (byte)Addresses.Default, IDigitalInterruptPort interruptPort = null)
+        public As5013(II2cBus i2cBus, byte address = (byte)Addresses.Default, IDigitalInterruptPort? interruptPort = null)
         {
             i2cComms = new I2cCommunications(i2cBus, address);
 
@@ -91,7 +91,7 @@ namespace Meadow.Foundation.Sensors.Hid
         {
             Update();
 
-            return Task.FromResult(Position.Value);
+            return Task.FromResult(Position!.Value);
         }
 
         /// <summary>
@@ -250,8 +250,8 @@ namespace Meadow.Foundation.Sensors.Hid
 
         DigitalJoystickPosition GetDigitalJoystickPosition()
         {
-            var h = Position.Value.Horizontal;
-            var v = Position.Value.Vertical;
+            var h = Position!.Value.Horizontal;
+            var v = Position!.Value.Vertical;
 
             var threshold = 0.5f;
 

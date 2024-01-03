@@ -1,0 +1,21 @@
+﻿#
+#   Device specific config.
+#
+Device:
+    #
+    #   Name of the device on the network.
+    #
+    Name: CellGnssBasics
+    
+    # On the Meadow F7v2 Feather, pins I9, H13, and C7 correspond to D00, D01, and D10, respectively. 
+    # If you use different pins, you should reserve the corresponding ones, according to the Meadow F7v2 Feather datasheet.
+    # For instance, if you want to utilize the A02 Meadow F7v2 Feather pin to turn on the module, 
+    # you should reserve the corresponding A3 MCU pin, instead of C7.
+    ReservedPins: I9;H13;C7 
+#
+#   Network configuration.
+#
+Network:
+    #   Which interface should be used?
+    #
+    DefaultInterface: Cell

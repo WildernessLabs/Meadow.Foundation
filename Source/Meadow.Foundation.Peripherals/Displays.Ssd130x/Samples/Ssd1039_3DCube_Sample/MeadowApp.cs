@@ -18,7 +18,7 @@ namespace Displays.Ssd130x.Ssd1309_3DCube_Sample
         double rotationXX, rotationYY, rotationZZ;
         double rotationXXX, rotationYYY, rotationZZZ;
 
-        int[,] cubeWireframe = new int[12, 3];
+        readonly int[,] cubeWireframe = new int[12, 3];
         int[,] cubeVertices;
 
         public override Task Initialize()

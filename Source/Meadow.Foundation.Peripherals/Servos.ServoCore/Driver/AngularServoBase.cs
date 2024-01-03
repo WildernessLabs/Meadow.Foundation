@@ -42,7 +42,7 @@ namespace Meadow.Foundation.Servos
             }
 
             float pulseDuration = CalculatePulseDuration(angle);
-            
+
             SendCommandPulse(pulseDuration);
 
             var rotationRequired = Math.Abs((Angle.HasValue ? Angle.Value.Degrees : 360) - angle.Degrees);

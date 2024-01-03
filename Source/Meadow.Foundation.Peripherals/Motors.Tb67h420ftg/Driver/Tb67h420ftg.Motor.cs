@@ -1,5 +1,5 @@
-﻿using System;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
+using System;
 
 #nullable enable
 
@@ -15,14 +15,14 @@ namespace Meadow.Foundation.Motors
             /// <summary>
             /// Raised when the motors is over current
             /// </summary>
-            public event EventHandler<MotorOvercurrentEventArgs> MotorOvercurrentFault = delegate { };
+            public event EventHandler<MotorOvercurrentEventArgs> MotorOvercurrentFault = default!;
 
-            Tb67h420ftg driver;
-            IDigitalInputPort? fault;
+            private readonly Tb67h420ftg driver;
+            private readonly IDigitalInterruptPort? fault;
 
             internal Motor(
                 Tb67h420ftg driver, IPwmPort in1, IPwmPort in2,
-                IDigitalOutputPort enable, IDigitalInputPort? fault)
+                IDigitalOutputPort enable, IDigitalInterruptPort? fault)
                 : base(in1, in2, enable)
             {
                 this.driver = driver;
@@ -31,11 +31,11 @@ namespace Meadow.Foundation.Motors
                 Initialize();
             }
 
-            void Initialize() 
+            private void Initialize()
             {   // wire up the fault event, if the LOx port is configured.
-                if (fault != null) 
+                if (fault != null)
                 {
-                    fault.Changed += (object sender, DigitalPortResult e) => 
+                    fault.Changed += (object sender, DigitalPortResult e) =>
                         RaiseMotorOvercurrentFault();
                 }
             }

@@ -15,15 +15,15 @@ public class GtkDisplay : IGraphicsDisplay, ITouchScreen
     /// <summary>
     /// Event fired when the display gets a mouse down
     /// </summary>
-    public event Hardware.TouchEventHandler TouchDown = delegate { };
+    public event Hardware.TouchEventHandler TouchDown = default!;
     /// <summary>
     /// Event fired when the display gets a mouse up
     /// </summary>
-    public event Hardware.TouchEventHandler TouchUp = delegate { };
+    public event Hardware.TouchEventHandler TouchUp = default!;
     /// <summary>
     /// Event fired when the display gets a mouse click
     /// </summary>
-    public event Hardware.TouchEventHandler TouchClick = delegate { };
+    public event Hardware.TouchEventHandler TouchClick = default!;
 
     private Window _window = default!;
     private IPixelBuffer _pixelBuffer = default!;
@@ -33,6 +33,8 @@ public class GtkDisplay : IGraphicsDisplay, ITouchScreen
     private bool _leftButtonState = false;
 
     private EventWaitHandle ShowComplete { get; } = new EventWaitHandle(true, EventResetMode.ManualReset);
+
+    /// <inheritdoc/>
     public IPixelBuffer PixelBuffer => _pixelBuffer;
 
     /// <summary>
@@ -60,7 +62,7 @@ public class GtkDisplay : IGraphicsDisplay, ITouchScreen
     }
 
     /// <summary>
-    /// Create a new WinFormsDisplay with a default size of 800x600
+    /// Create a new GTK Display with a default size of 800x600
     /// </summary>
     /// <param name="mode">Color mode of the display</param>
     public GtkDisplay(ColorMode mode = ColorMode.Format24bppRgb888)
@@ -68,6 +70,12 @@ public class GtkDisplay : IGraphicsDisplay, ITouchScreen
         Initialize(800, 600, mode); // TODO: query screen size and caps
     }
 
+    /// <summary>
+    /// Create a new GTK Display
+    /// </summary>
+    /// <param name="width">Width of display in pixels</param>
+    /// <param name="height">Height of display in pixels</param>
+    /// <param name="mode">Color mode of the display</param>
     public GtkDisplay(int width, int height, ColorMode mode = ColorMode.Format24bppRgb888)
     {
         Initialize(width, height, mode);
@@ -76,7 +84,7 @@ public class GtkDisplay : IGraphicsDisplay, ITouchScreen
     private void Initialize(int width, int height, ColorMode mode)
     {
         _window = new Window(WindowType.Popup);
-        _window.WidgetEvent += _window_WidgetEvent;
+        _window.WidgetEvent += WindowWidgetEvent;
 
         switch (mode)
         {
@@ -121,7 +129,7 @@ public class GtkDisplay : IGraphicsDisplay, ITouchScreen
 
     }
 
-    private void _window_WidgetEvent(object o, WidgetEventArgs args)
+    private void WindowWidgetEvent(object o, WidgetEventArgs args)
     {
         if (args.Event is Gdk.EventButton b)
         {
@@ -142,6 +150,9 @@ public class GtkDisplay : IGraphicsDisplay, ITouchScreen
         }
     }
 
+    /// <summary>
+    /// Run the application
+    /// </summary>
     public void Run()
     {
         Application.Run();
@@ -200,7 +211,7 @@ public class GtkDisplay : IGraphicsDisplay, ITouchScreen
     /// </summary>
     /// <param name="fillColor"></param>
     /// <param name="updateDisplay"></param>
-    public void Fill(Foundation.Color fillColor, bool updateDisplay = false)
+    public void Fill(Color fillColor, bool updateDisplay = false)
     {
         ShowComplete.WaitOne();
         _pixelBuffer.Fill(fillColor);
@@ -214,7 +225,7 @@ public class GtkDisplay : IGraphicsDisplay, ITouchScreen
     /// <param name="width"></param>
     /// <param name="height"></param>
     /// <param name="fillColor"></param>
-    public void Fill(int x, int y, int width, int height, Foundation.Color fillColor)
+    public void Fill(int x, int y, int width, int height, Color fillColor)
     {
         ShowComplete.WaitOne();
         _pixelBuffer.Fill(x, y, width, height, fillColor);
@@ -226,7 +237,7 @@ public class GtkDisplay : IGraphicsDisplay, ITouchScreen
     /// <param name="x"></param>
     /// <param name="y"></param>
     /// <param name="color"></param>
-    public void DrawPixel(int x, int y, Foundation.Color color)
+    public void DrawPixel(int x, int y, Color color)
     {
         ShowComplete.WaitOne();
         _pixelBuffer.SetPixel(x, y, color);
@@ -241,7 +252,7 @@ public class GtkDisplay : IGraphicsDisplay, ITouchScreen
     public void DrawPixel(int x, int y, bool colored)
     {
         ShowComplete.WaitOne();
-        DrawPixel(x, y, colored ? Foundation.Color.White : Foundation.Color.Black);
+        DrawPixel(x, y, colored ? Color.White : Color.Black);
     }
 
     /// <summary>
@@ -276,7 +287,7 @@ public class GtkDisplay : IGraphicsDisplay, ITouchScreen
     private int GetStrideForBitDepth(int width, int bpp)
     {
         var cairo_stride_alignment = sizeof(UInt32);
-        var stride = ((((bpp) * (width) + 7) / 8 + cairo_stride_alignment - 1) & -cairo_stride_alignment);
+        var stride = ((bpp * width + 7) / 8 + cairo_stride_alignment - 1) & -cairo_stride_alignment;
         return stride;
     }
 

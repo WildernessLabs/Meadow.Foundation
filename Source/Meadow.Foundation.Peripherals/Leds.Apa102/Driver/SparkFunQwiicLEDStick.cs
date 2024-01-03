@@ -14,7 +14,7 @@ namespace Meadow.Foundation.Leds
         public bool AutoWrite { get; set; }
 
         float brightness;
-        byte[][] buffer;
+        byte[][]? buffer;
 
         const int ArrayLength = 10;
 
@@ -87,7 +87,7 @@ namespace Meadow.Foundation.Leds
 
             for (byte b = 0; b < ArrayLength; b++)
             {
-                buffer[0][b] = color.R;
+                buffer![0][b] = color.R;
                 buffer[1][b] = color.G;
                 buffer[2][b] = color.B;
                 buffer[3][b] = bright;
@@ -112,7 +112,7 @@ namespace Meadow.Foundation.Leds
         /// </summary>
         /// <param name="index">Index of the LED to change</param>
         /// <param name="color">The color</param>
-        /// <param name="brightness">The brighrness 0.0 - 1.0f</param>
+        /// <param name="brightness">The brightness 0.0 - 1.0f</param>
         public virtual void SetLed(int index, Color color, float brightness = 1f)
         {
             SetLed(index, new byte[] { color.R, color.G, color.B }, brightness);
@@ -133,7 +133,7 @@ namespace Meadow.Foundation.Leds
         /// </summary>
         /// <param name="index">Index of the LED to change</param>
         /// <param name="rgb">Byte array representing the color RGB values. byte[0] = Red, byte[1] = Green, byte[2] = Blue</param>
-        /// <param name="brightness">The brighrness 0.0 - 1.0f</param>
+        /// <param name="brightness">The brightness 0.0 - 1.0f</param>
         public virtual void SetLed(int index, byte[] rgb, float brightness = 1f)
         {
             if (rgb.Length % 3 != 0)
@@ -145,7 +145,7 @@ namespace Meadow.Foundation.Leds
             var setColor = false;
             var setBrightness = false;
 
-            if (buffer[0][index] != rgb[0]) setColor = true;
+            if (buffer![0][index] != rgb[0]) setColor = true;
             if (buffer[1][index] != rgb[1]) setColor = true;
             if (buffer[2][index] != rgb[2]) setColor = true;
             if (buffer[3][index] != requestedBrightness) setBrightness = true;
@@ -189,7 +189,7 @@ namespace Meadow.Foundation.Leds
         void TransmitData()
         {
             // RED
-            var r = new byte[buffer[0].Length + 3];
+            var r = new byte[buffer![0].Length + 3];
             r[0] = (byte)Register.RedArray;
             r[1] = (byte)(buffer[0].Length);
             r[2] = 0;
@@ -219,7 +219,7 @@ namespace Meadow.Foundation.Leds
         {   // TODO: this could be improved - need to track current brightness and only write on change
             for (byte b = 0; b < ArrayLength; b++)
             {
-                base.WriteRegister((byte)Register.SingleBrightness, new byte[] { b, buffer[3][b] });
+                base.WriteRegister((byte)Register.SingleBrightness, new byte[] { b, buffer![3][b] });
             }
         }
 
@@ -228,7 +228,7 @@ namespace Meadow.Foundation.Leds
         /// </summary>
         public void Clear(bool update = false)
         {
-            Array.Clear(buffer[0], 0, buffer[0].Length);
+            Array.Clear(buffer![0], 0, buffer[0].Length);
             Array.Clear(buffer[1], 0, buffer[0].Length);
             Array.Clear(buffer[2], 0, buffer[0].Length);
             Array.Clear(buffer[3], 0, buffer[0].Length);

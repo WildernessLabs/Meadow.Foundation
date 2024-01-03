@@ -25,7 +25,7 @@ namespace Meadow.Foundation.Sensors.Switches
         /// <summary>
         /// Raised when one of the switches is switched on or off.
         /// </summary>
-        public event ArrayEventHandler Changed = delegate { };
+        public event ArrayEventHandler Changed = default!;
 
         /// <summary>
         /// Creates a new DipSwitch connected to the specified switchPins, with the InterruptMode and ResisterMode specified by the type parameters.
@@ -61,7 +61,7 @@ namespace Meadow.Foundation.Sensors.Switches
         /// Creates a new DipSwitch connected to an array of Interrupt Ports
         /// </summary>
         /// <param name="interruptPorts"></param>
-        public DipSwitch(IDigitalInputPort[] interruptPorts)
+        public DipSwitch(IDigitalInterruptPort[] interruptPorts)
         {
             Switches = new ISwitch[interruptPorts.Length];
 

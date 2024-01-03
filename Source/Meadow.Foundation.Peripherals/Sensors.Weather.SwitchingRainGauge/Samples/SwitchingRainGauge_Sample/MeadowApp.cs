@@ -1,9 +1,8 @@
-﻿using System;
-using System.Threading.Tasks;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Weather;
 using Meadow.Units;
+using System.Threading.Tasks;
 
 namespace MeadowApp
 {
@@ -18,7 +17,7 @@ namespace MeadowApp
             Resolver.Log.Info("Initialize...");
 
             // initialize the rain gauge driver
-            rainGauge = new SwitchingRainGauge(Device.Pins.D15);
+            rainGauge = new SwitchingRainGauge(Device.Pins.D14);
 
             //==== Classic event example:
             rainGauge.Updated += (sender, result) => Resolver.Log.Info($"Updated event {result.New.Millimeters}mm");

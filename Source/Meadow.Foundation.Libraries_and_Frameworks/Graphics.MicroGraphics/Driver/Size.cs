@@ -28,8 +28,8 @@
         /// <summary>
         /// Create a new size struct
         /// </summary>
-        /// <param name="width">The intial width</param>
-        /// <param name="height">The intial height</param>
+        /// <param name="width">The initial width</param>
+        /// <param name="height">The initial height</param>
         public Size(int width, int height)
         {
             Width = width;
@@ -55,7 +55,7 @@
         }
 
         /// <summary>
-        /// Add an amount to a Size in both dimentions
+        /// Add an amount to a Size in both dimensions
         /// </summary>
         /// <param name="size">The Size struct</param>
         /// <param name="amount">The amount to add</param>
@@ -66,7 +66,7 @@
         }
 
         /// <summary>
-        /// Subtract an amount from a Size in both dimentions
+        /// Subtract an amount from a Size in both dimensions
         /// </summary>
         /// <param name="size">The Size struct</param>
         /// <param name="amount">The amount to subtract</param>

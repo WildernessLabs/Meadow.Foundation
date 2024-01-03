@@ -26,7 +26,6 @@ namespace Bh1900Nux_Sample
                 },
                 filter: result =>
                 {
-                    //c# 8 pattern match syntax. checks for !null and assigns var.
                     if (result.Old is { } old)
                     {
                         return (result.New - old).Abs().Celsius > 0.5;
@@ -40,7 +39,7 @@ namespace Bh1900Nux_Sample
             {
                 Resolver.Log.Info($"  Temperature: {result.New.Celsius:N2}C");
             };
-   
+
             return Task.CompletedTask;
         }
 

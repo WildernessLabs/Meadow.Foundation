@@ -12,7 +12,7 @@ namespace Meadow.Foundation.Graphics
             /// <summary>
             /// The current font
             /// </summary>
-            public IFont CurrentFont { get; set; }
+            public IFont? CurrentFont { get; set; }
 
             /// <summary>
             /// The current stroke when drawing primitives
@@ -33,7 +33,7 @@ namespace Meadow.Foundation.Graphics
         /// <summary>
         /// The current canvas state
         /// </summary>
-        protected CanvasState canvasState;
+        protected CanvasState? canvasState;
 
         /// <summary>
         /// Save any state variables

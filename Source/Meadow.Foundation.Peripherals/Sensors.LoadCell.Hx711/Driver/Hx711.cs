@@ -1,5 +1,5 @@
 ﻿using Meadow.Hardware;
-using Meadow.Peripherals.Sensors;
+using Meadow.Peripherals.Sensors.Mass;
 using Meadow.Units;
 using System;
 using System.Threading;
@@ -48,11 +48,6 @@ namespace Meadow.Foundation.Sensors.LoadCell
         /// Gets/Sets Tare value
         /// </summary>
         public uint TareValue { get; set; } = 0;
-
-        /// <summary>
-        /// Mass changed event
-        /// </summary>
-        public event EventHandler<IChangeResult<Mass>> MassUpdated = delegate { };
 
         /// <summary>
         /// Gets default sample period (1 Second)
@@ -303,25 +298,7 @@ namespace Meadow.Foundation.Sensors.LoadCell
         }
 
         /// <summary>
-        /// Inheritance-safe way to raise events and notify observers.
-        /// </summary>
-        /// <param name="changeResult"></param>
-        protected override void RaiseEventsAndNotify(IChangeResult<Mass> changeResult)
-        {
-            try
-            {
-                MassUpdated?.Invoke(this, changeResult);
-                base.RaiseEventsAndNotify(changeResult);
-            }
-            catch (Exception ex)
-            {
-                Resolver.Log.Info($"HX711 event handler threw: {ex.Message}");
-                throw;
-            }
-        }
-
-        /// <summary>
-        /// Dispose managed resources
+        /// Dispose of the object
         /// </summary>
         /// <param name="disposing">Is disposing</param>
         protected virtual void Dispose(bool disposing)
@@ -334,12 +311,11 @@ namespace Meadow.Foundation.Sensors.LoadCell
             IsDisposed = true;
         }
 
-        /// <summary>
-        /// Dispose managed resources
-        /// </summary>
+        ///<inheritdoc/>
         public void Dispose()
         {
-            Dispose(true);
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }

@@ -33,7 +33,7 @@
             /// <summary>
             /// 32 samples per second
             /// </summary>
-            _32 =2,
+            _32 = 2,
             /// <summary>
             /// 16 samples per second
             /// </summary>

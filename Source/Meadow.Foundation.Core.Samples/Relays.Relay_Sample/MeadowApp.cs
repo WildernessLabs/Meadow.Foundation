@@ -1,9 +1,9 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Relays;
+using Meadow.Peripherals.Relays;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Relays.Relay_Sample
 {
@@ -24,14 +24,16 @@ namespace Relays.Relay_Sample
 
         public override Task Run()
         {
-            var state = false;
-
             while (true)
             {
-                state = !state;
+                var newState = relay.State switch
+                {
+                    RelayState.Open => RelayState.Closed,
+                    _ => RelayState.Open
+                };
 
-                Resolver.Log.Info($"- State: {state}");
-                relay.IsOn = state;
+                Resolver.Log.Info($"- State: {newState}");
+                relay.State = newState;
 
                 Thread.Sleep(500);
             }

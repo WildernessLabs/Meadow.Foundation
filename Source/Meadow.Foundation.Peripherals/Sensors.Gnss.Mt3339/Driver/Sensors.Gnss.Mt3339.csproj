@@ -11,15 +11,18 @@
     <PackageId>Meadow.Foundation.Sensors.Gnss.Mt3339</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow.Foundation, Mt3339, GPS, Adafruit Ultimate GPS, GNSS</PackageTags>
-    <Version>0.1.50</Version>
+    <Version>1.6.0.1</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>MediaTek MT3339 serial GNSS / GPS controller</Description>
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <PropertyGroup>
+    <PackageReadmeFile>Readme.md</PackageReadmeFile>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <LangVersion>10.0</LangVersion>
   </PropertyGroup>
   <ItemGroup>
+    <None Include=".\Readme.md" Pack="true" PackagePath="" />
     <ProjectReference Include="..\..\..\Meadow.Foundation.Libraries_and_Frameworks\Sensors.Location.Gnss.NmeaProcessor\Driver\Sensors.Location.Gnss.NmeaProcessor.csproj" />
     <None Include="..\..\..\icon.png" Pack="true" PackagePath="" />
   </ItemGroup>

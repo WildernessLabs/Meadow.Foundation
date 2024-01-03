@@ -15,6 +15,11 @@ namespace Meadow.Foundation.RTCs
         public byte DefaultI2cAddress => (byte)Addresses.Default;
 
         /// <summary>
+        /// Is the object disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
+
+        /// <summary>
         /// Number of registers that hold the date and time information.
         /// </summary>
         private const int DATE_TIME_REGISTERS_SIZE = 0x07;
@@ -57,24 +62,29 @@ namespace Meadow.Foundation.RTCs
         /// <summary>
         /// Bit mask to clear the Alarm2 interrupt
         /// </summary>
-        const byte ALARM2_INTERRUPT_OFF = 0xfd;
+        private const byte ALARM2_INTERRUPT_OFF = 0xfd;
 
-        AlarmRaised alarm1Delegate;
-        AlarmRaised alarm2Delegate;
-        bool interruptCreatedInternally;
-        readonly Memory<byte> readBuffer;
+        private AlarmRaised alarm1Delegate = default!;
+        private AlarmRaised alarm2Delegate = default!;
+
+        /// <summary>
+        /// Did we create the port(s) used by the peripheral
+        /// </summary>
+        private bool createdPort;
+
+        private readonly Memory<byte> readBuffer;
 
         /// <summary>
         /// Create a new Ds323x object
         /// </summary>
-        protected Ds323x(I2cCommunications i2cComms, IPin interruptPin)
+        protected Ds323x(I2cCommunications i2cComms, IPin? interruptPin)
         {
             this.i2cComms = i2cComms;
 
             if (interruptPin != null)
             {
-                var interruptPort = interruptPin.CreateDigitalInputPort(InterruptMode.EdgeFalling, ResistorMode.InternalPullUp, TimeSpan.FromMilliseconds(10), TimeSpan.FromMilliseconds(10));
-                interruptCreatedInternally = true;
+                var interruptPort = interruptPin.CreateDigitalInterruptPort(InterruptMode.EdgeFalling, ResistorMode.InternalPullUp, TimeSpan.FromMilliseconds(10), TimeSpan.FromMilliseconds(10));
+                createdPort = true;
 
                 Initialize(interruptPort);
             }
@@ -85,57 +95,45 @@ namespace Meadow.Foundation.RTCs
         /// <summary>
         /// Create a new Ds323x object
         /// </summary>
-        protected Ds323x(I2cCommunications i2cComms, IDigitalInputPort interruptPort)
+        protected Ds323x(I2cCommunications i2cComms, IDigitalInterruptPort? interruptPort)
         {
             this.i2cComms = i2cComms;
 
-            Initialize(interruptPort);
-        }
-
-        /// <summary>
-        /// Dispose
-        /// </summary>
-        public void Dispose()
-        {
-            if (interruptCreatedInternally)
-            {
-                InterruptPort?.Dispose();
-                InterruptPort = null;
-            }
-        }
-
-        private void Initialize(IDigitalInputPort interruptPort)
-        {
             if (interruptPort != null)
             {
-                switch (interruptPort.InterruptMode)
-                {
-                    case InterruptMode.EdgeFalling:
-                    case InterruptMode.EdgeBoth:
-                        // we need a rising edge, so all good;
-                        break;
-                    default:
-                        throw new DeviceConfigurationException("RTC alarms require a falling-edge enabled interrupt port");
-                }
-
-                InterruptPort = interruptPort;
-                InterruptPort.Changed += (s, cr) =>
-                {
-                    //Alarm interrupt has been raised, work out which one and raise the necessary event.
-                    if ((alarm1Delegate != null) || (alarm2Delegate != null))
-                    {
-                        var alarm = WhichAlarm;
-                        if (((alarm == Alarm.Alarm1Raised) || (alarm == Alarm.BothAlarmsRaised)) && (alarm1Delegate != null))
-                        {
-                            alarm1Delegate(this);
-                        }
-                        if (((alarm == Alarm.Alarm2Raised) || (alarm == Alarm.BothAlarmsRaised)) && (alarm2Delegate != null))
-                        {
-                            alarm2Delegate(this);
-                        }
-                    }
-                };
+                Initialize(interruptPort);
             }
+        }
+
+        private void Initialize(IDigitalInterruptPort interruptPort)
+        {
+            switch (interruptPort.InterruptMode)
+            {
+                case InterruptMode.EdgeFalling:
+                case InterruptMode.EdgeBoth:
+                    // we need a rising edge, so all good;
+                    break;
+                default:
+                    throw new DeviceConfigurationException("RTC alarms require a falling-edge enabled interrupt port");
+            }
+
+            InterruptPort = interruptPort;
+            InterruptPort.Changed += (s, cr) =>
+            {
+                //Alarm interrupt has been raised, work out which one and raise the necessary event.
+                if ((alarm1Delegate != null) || (alarm2Delegate != null))
+                {
+                    var alarm = WhichAlarm;
+                    if (((alarm == Alarm.Alarm1Raised) || (alarm == Alarm.BothAlarmsRaised)) && (alarm1Delegate != null))
+                    {
+                        alarm1Delegate(this);
+                    }
+                    if (((alarm == Alarm.Alarm2Raised) || (alarm == Alarm.BothAlarmsRaised)) && (alarm2Delegate != null))
+                    {
+                        alarm2Delegate(this);
+                    }
+                }
+            };
         }
 
         /// <summary>
@@ -156,7 +154,13 @@ namespace Meadow.Foundation.RTCs
                 }
                 alarm1Delegate += value;
             }
-            remove => alarm1Delegate -= value;
+            remove
+            {
+                if (alarm1Delegate != null)
+                {
+                    alarm1Delegate -= value;
+                }
+            }
         }
 
         /// <summary>
@@ -172,7 +176,13 @@ namespace Meadow.Foundation.RTCs
                 }
                 alarm2Delegate += value;
             }
-            remove => alarm2Delegate -= value;
+            remove
+            {
+                if (alarm2Delegate != null)
+                {
+                    alarm2Delegate -= value;
+                }
+            }
         }
 
         /// <summary>
@@ -214,7 +224,7 @@ namespace Meadow.Foundation.RTCs
         /// <summary>
         /// Interrupt port attached to the DS323x RTC module.
         /// </summary>
-        protected IDigitalInputPort InterruptPort { get; private set; }
+        protected IDigitalInterruptPort? InterruptPort { get; private set; }
 
         /// <summary>
         /// Control register.
@@ -427,7 +437,7 @@ namespace Meadow.Foundation.RTCs
                     data[3] |= 0x40;
                     break;
                 //
-                //  Alarm 2 interupts.
+                //  Alarm 2 interrupts.
                 //
                 case AlarmType.OncePerMinute:
                     data[0] |= 0x80;
@@ -526,6 +536,30 @@ namespace Meadow.Foundation.RTCs
             var data = readBuffer.Span[0..0x12];
             i2cComms.ReadRegister(0, data);
             DebugInformation.DisplayRegisters(0, data);
+        }
+
+        ///<inheritdoc/>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        /// <param name="disposing">Is disposing</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && createdPort)
+                {
+                    InterruptPort?.Dispose();
+                }
+
+                IsDisposed = true;
+            }
         }
     }
 }

@@ -1,5 +1,6 @@
 using Meadow.Hardware;
 using Meadow.Peripherals.Relays;
+using System;
 
 namespace Meadow.Foundation.Relays
 {
@@ -8,6 +9,12 @@ namespace Meadow.Foundation.Relays
     /// </summary>
     public class Relay : IRelay
     {
+        private RelayState _state;
+        private readonly bool _closedValue = true;
+
+        /// <inheritdoc/>
+        public event EventHandler<RelayState> OnChanged = default!;
+
         /// <summary>
         /// Returns digital output port
         /// </summary>
@@ -21,17 +28,21 @@ namespace Meadow.Foundation.Relays
         /// <summary>
         /// Whether or not the relay is on. Setting this property will turn it on or off.
         /// </summary>
-        public bool IsOn
+        public RelayState State
         {
-            get => isOn;
+            get => _state;
             set
             {
-                isOn = value;
-                DigitalOut.State = isOn ? onValue : !onValue;
+                _state = value;
+                DigitalOut.State = State switch
+                {
+                    RelayState.Open => !_closedValue,
+                    _ => _closedValue
+                };
+
+                OnChanged?.Invoke(this, State);
             }
         }
-        bool isOn = false;
-        readonly bool onValue = true;
 
         /// <summary>
         /// Creates a new Relay on an IDigitalOutputPort.
@@ -53,7 +64,7 @@ namespace Meadow.Foundation.Relays
         {
             // if it's normally closed, we have to invert the "on" value
             Type = type;
-            onValue = Type != RelayType.NormallyClosed;
+            _closedValue = Type != RelayType.NormallyClosed;
 
             DigitalOut = port;
         }
@@ -63,7 +74,11 @@ namespace Meadow.Foundation.Relays
         /// </summary>
         public void Toggle()
         {
-            IsOn = !IsOn;
+            State = State switch
+            {
+                RelayState.Open => RelayState.Closed,
+                _ => RelayState.Open,
+            };
         }
     }
 }

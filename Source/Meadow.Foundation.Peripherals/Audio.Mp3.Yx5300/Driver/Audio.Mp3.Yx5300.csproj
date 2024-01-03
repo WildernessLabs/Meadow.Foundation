@@ -1,5 +1,9 @@
 <Project Sdk="Meadow.Sdk/1.1.0">
   <PropertyGroup>
+    <PackageReadmeFile>Readme.md</PackageReadmeFile>
+    <Nullable>enable</Nullable>
+    <LangVersion>10.0</LangVersion>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageIcon>icon.png</PackageIcon>
     <Authors>Wilderness Labs, Inc</Authors>
@@ -11,11 +15,12 @@
     <PackageId>Meadow.Foundation.Audio.Mp3.Yx5300</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow.Foundation, Audio, MP3, YX5300</PackageTags>
-    <Version>0.1.21</Version>
+    <Version>1.6.0.1</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>YX5300 serial MP3 player</Description>
   </PropertyGroup>
   <ItemGroup>
+    <None Include=".\Readme.md" Pack="true" PackagePath="" />
     <None Include="..\..\..\icon.png" Pack="true" PackagePath="" />
     <ProjectReference Include="..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
   </ItemGroup>

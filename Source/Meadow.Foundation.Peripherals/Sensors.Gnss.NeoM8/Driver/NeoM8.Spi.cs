@@ -18,8 +18,8 @@ namespace Meadow.Foundation.Sensors.Gnss
         /// </summary>
         public Frequency SpiBusSpeed
         {
-            get => spiComms.BusSpeed;
-            set => spiComms.BusSpeed = value;
+            get => spiComms!.BusSpeed;
+            set => spiComms!.BusSpeed = value;
         }
 
         /// <summary>
@@ -32,29 +32,31 @@ namespace Meadow.Foundation.Sensors.Gnss
         /// </summary>
         public SpiClockConfiguration.Mode SpiBusMode
         {
-            get => spiComms.BusMode;
-            set => spiComms.BusMode = value;
+            get => spiComms!.BusMode;
+            set => spiComms!.BusMode = value;
         }
 
         /// <summary>
         /// SPI Communication bus used to communicate with the peripheral
         /// </summary>
-        protected ISpiCommunications spiComms;
+        protected ISpiCommunications? spiComms;
 
-        const byte NULL_VALUE = 0xFF;
+        IDigitalOutputPort? chipSelectPort;
+
+        private const byte NULL_VALUE = 0xFF;
 
         /// <summary>
         /// Create a new NEOM8 object using SPI
         /// </summary>
         public NeoM8(ISpiBus spiBus,
             IDigitalOutputPort chipSelectPort,
-            IDigitalOutputPort resetPort = null,
-            IDigitalInputPort ppsPort = null)
+            IDigitalOutputPort? resetPort = null,
+            IDigitalInputPort? ppsPort = null)
         {
             ResetPort = resetPort;
             PulsePerSecondPort = ppsPort;
 
-            spiComms = new SpiCommunications(spiBus, chipSelectPort, DefaultSpiBusSpeed, DefaultSpiBusMode);
+            spiComms = new SpiCommunications(spiBus, this.chipSelectPort = chipSelectPort, DefaultSpiBusSpeed, DefaultSpiBusMode);
 
             _ = InitializeSpi();
         }
@@ -62,21 +64,23 @@ namespace Meadow.Foundation.Sensors.Gnss
         /// <summary>
         /// Create a new NeoM8 object using SPI
         /// </summary>
-        public NeoM8(ISpiBus spiBus, IPin chipSelectPin = null, IPin resetPin = null, IPin ppsPin = null)
+        public NeoM8(ISpiBus spiBus, IPin? chipSelectPin = null, IPin? resetPin = null, IPin? ppsPin = null)
         {
-            var chipSelectPort = chipSelectPin.CreateDigitalOutputPort();
+            createdPorts = true;
+
+            var chipSelectPort = chipSelectPin?.CreateDigitalOutputPort();
 
             spiComms = new SpiCommunications(spiBus, chipSelectPort, DefaultSpiBusSpeed, DefaultSpiBusMode);
 
-            resetPin?.CreateDigitalOutputPort(true);
+            resetPort = resetPin?.CreateDigitalOutputPort(true);
 
-            ppsPin?.CreateDigitalInputPort(InterruptMode.EdgeRising, ResistorMode.InternalPullDown);
+            ppsPort = ppsPin?.CreateDigitalInterruptPort(InterruptMode.EdgeRising, ResistorMode.InternalPullDown);
 
             _ = InitializeSpi();
         }
 
         //ToDo cancellation for sleep aware 
-        async Task InitializeSpi()
+        private async Task InitializeSpi()
         {
             messageProcessor = new SerialMessageProcessor(suffixDelimiter: Encoding.ASCII.GetBytes("\r\n"),
                                                     preserveDelimiter: true,
@@ -90,8 +94,10 @@ namespace Meadow.Foundation.Sensors.Gnss
             await Reset();
         }
 
-        async Task StartUpdatingSpi()
+        private async Task StartUpdatingSpi()
         {
+            cts = new CancellationTokenSource();
+
             byte[] data = new byte[BUFFER_SIZE];
 
             static bool HasMoreData(byte[] data)
@@ -110,10 +116,10 @@ namespace Meadow.Foundation.Sensors.Gnss
 
             var t = new Task(() =>
             {
-                while (true)
+                while (cts.Token.IsCancellationRequested == false) { }
                 {
-                    spiComms.Read(data);
-                    messageProcessor.Process(data);
+                    spiComms!.Read(data);
+                    messageProcessor!.Process(data);
 
                     if (HasMoreData(data) == false)
                     {
@@ -122,6 +128,11 @@ namespace Meadow.Foundation.Sensors.Gnss
                 }
             }, TaskCreationOptions.LongRunning);
             await t;
+        }
+
+        void StopUpdatingSpi()
+        {
+            cts?.Cancel();
         }
     }
 }

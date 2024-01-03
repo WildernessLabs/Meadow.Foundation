@@ -8,7 +8,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
     /// </summary>
     public sealed class Ft232DigitalOutputPort : DigitalOutputPortBase
     {
-        private IFt232Bus _bus;
+        private readonly IFt232Bus _bus;
         private bool _state;
 
         /// <summary>

@@ -10,37 +10,45 @@ namespace Meadow.Foundation.Sensors.Motion
     /// Represents the APDS9960 Proximity, Light, RGB, and Gesture Sensor
     /// </summary>
     public partial class Apds9960 : ByteCommsSensorBase<(Color? Color, Illuminance? AmbientLight)>,
-        II2cPeripheral
+        II2cPeripheral, IDisposable
     {
         /// <summary>
         /// Raised when the ambient light value changes
         /// </summary>
-        public event EventHandler<IChangeResult<Illuminance>> AmbientLightUpdated = delegate { };
+        public event EventHandler<IChangeResult<Illuminance>> AmbientLightUpdated = default!;
 
         /// <summary>
         /// Raised when the color value changes
         /// </summary>
-        public event EventHandler<IChangeResult<Color>> ColorUpdated = delegate { };
+        public event EventHandler<IChangeResult<Color>> ColorUpdated = default!;
 
         /// <summary>
         /// The default I2C address for the peripheral
         /// </summary>
         public byte DefaultI2cAddress => (byte)Addresses.Default;
 
-        readonly IDigitalInputPort interruptPort;
-        readonly GestureData gestureData;
-        int gestureUdDelta;
-        int gestureLrDelta;
-        int gestureUdCount;
-        int gestureLrCount;
-        int gestureNearCount;
-        int gestureFarCount;
-        States gestureState;
-        Direction gestureDirection;
+        /// <summary>
+        /// Is the object disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
 
-        static readonly byte ERROR = 0xFF;
+        /// <summary>
+        /// Did we create the port(s) used by the peripheral
+        /// </summary>
+        readonly bool createdPort = false;
 
-        static readonly byte FIFO_PAUSE_TIME = 30;      // Wait period (ms) between FIFO reads
+        private readonly IDigitalInterruptPort? interruptPort;
+        private readonly GestureData gestureData;
+        private int gestureUdDelta;
+        private int gestureLrDelta;
+        private int gestureUdCount;
+        private int gestureLrCount;
+        private int gestureNearCount;
+        private int gestureFarCount;
+        private States gestureState;
+        private Direction gestureDirection;
+        private static readonly byte ERROR = 0xFF;
+        private static readonly byte FIFO_PAUSE_TIME = 30;      // Wait period (ms) between FIFO reads
 
         /// <summary>
         /// The current color value
@@ -48,23 +56,24 @@ namespace Meadow.Foundation.Sensors.Motion
         public Color? Color => Conditions.Color;
 
         /// <summary>
-        /// The current abient light value
+        /// The current ambient light value
         /// </summary>
         public Illuminance? AmbientLight => Conditions.AmbientLight;
 
-        readonly Memory<byte> readBuffer = new byte[256];
+        private readonly Memory<byte> readBuffer = new byte[256];
 
         /// <summary>
         /// Create a new instance of the APDS9960 communicating over the I2C interface.
         /// </summary>
         /// <param name="i2cBus">SI2C bus object</param>
         /// <param name="interruptPin">The interrupt pin</param>
-        public Apds9960(II2cBus i2cBus, IPin interruptPin)
+        public Apds9960(II2cBus i2cBus, IPin? interruptPin)
             : base(i2cBus, (byte)Addresses.Default)
         {
             if (interruptPin != null)
             {
-                interruptPort = interruptPin.CreateDigitalInputPort(InterruptMode.EdgeRising, ResistorMode.Disabled);
+                createdPort = true;
+                interruptPort = interruptPin.CreateDigitalInterruptPort(InterruptMode.EdgeRising, ResistorMode.Disabled);
                 interruptPort.Changed += InterruptPort_Changed;
             }
 
@@ -99,7 +108,7 @@ namespace Meadow.Foundation.Sensors.Motion
 
             //---- ambient light
             // TODO: someone needs to verify this
-            // have no idea if this conversion is correct. the exten of the datasheet documentation is:
+            // have no idea if this conversion is correct. the extent of the datasheet documentation is:
             // "RGBC results can be used to calculate ambient light levels (i.e. Lux) and color temperature (i.e. Kelvin)."
             // NOTE: looks correct, actually. reading ~600 lux in my office and went to 4k LUX when i moved the sensor to the window
             var ambient = ReadAmbientLight();
@@ -113,13 +122,13 @@ namespace Meadow.Foundation.Sensors.Motion
             var b = ReadBlueLight() / rgbDivisor;
             var a = ambient / rgbDivisor;
 
-            conditions.Color = Foundation.Color.FromRgba(r, g, b, a);
+            conditions.Color = Meadow.Color.FromRgba(r, g, b, a);
 
             return Task.FromResult(conditions);
         }
 
         /// <summary>
-        /// Raise events for subcribers and notify of value changes
+        /// Raise events for subscribers and notify of value changes
         /// </summary>
         /// <param name="changeResult">The updated sensor data</param>
         protected override void RaiseEventsAndNotify(IChangeResult<(Color? Color, Illuminance? AmbientLight)> changeResult)
@@ -140,7 +149,7 @@ namespace Meadow.Foundation.Sensors.Motion
             //    throw new NotImplementedException();
         }
 
-        void Initialize()
+        private void Initialize()
         {
             var id = BusComms.ReadRegister(Registers.APDS9960_ID);
 
@@ -205,7 +214,7 @@ namespace Meadow.Foundation.Sensors.Motion
          *
          * @return Contents of the ENABLE register. 0xFF if error.
          */
-        byte GetMode()
+        private byte GetMode()
         {
             return BusComms.ReadRegister(Registers.APDS9960_ENABLE);
         }
@@ -217,7 +226,7 @@ namespace Meadow.Foundation.Sensors.Motion
          * @param[in] enable ON (1) or OFF (0)
          * @return True if operation success. False otherwise.
          */
-        void SetMode(byte mode, byte enable)
+        private void SetMode(byte mode, byte enable)
         {
             byte reg_val;
 
@@ -239,7 +248,7 @@ namespace Meadow.Foundation.Sensors.Motion
                 }
                 else
                 {
-                    reg_val &= (byte)(~(1 << mode));
+                    reg_val &= (byte)~(1 << mode);
                 }
             }
             else if (mode == OperatingModes.ALL)
@@ -370,7 +379,7 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         /// <summary>
-        /// Read the current gesure
+        /// Read the current gesture
         /// </summary>
         /// <returns>The direction</returns>
         /// <exception cref="Exception">Throws if reading gesture data failed</exception>
@@ -527,7 +536,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         /// Reset all gesture data parameters
         /// </summary>
-        void ResetGestureParameters()
+        private void ResetGestureParameters()
         {
             gestureData.Index = 0;
             gestureData.TotalGestures = 0;
@@ -549,7 +558,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// Processes the raw gesture data to determine swipe direction
         /// </summary>
         /// <returns>True if near or far state seen, false otherwise</returns>
-        bool ProcessGestureData()
+        private bool ProcessGestureData()
         {
             byte u_first = 0;
             byte d_first = 0;
@@ -619,10 +628,10 @@ namespace Meadow.Foundation.Sensors.Motion
             }
 
             /* Calculate the first vs. last ratio of up/down and left/right */
-            ud_ratio_first = ((u_first - d_first) * 100) / (u_first + d_first);
-            lr_ratio_first = ((l_first - r_first) * 100) / (l_first + r_first);
-            ud_ratio_last = ((u_last - d_last) * 100) / (u_last + d_last);
-            lr_ratio_last = ((l_last - r_last) * 100) / (l_last + r_last);
+            ud_ratio_first = (u_first - d_first) * 100 / (u_first + d_first);
+            lr_ratio_first = (l_first - r_first) * 100 / (l_first + r_first);
+            ud_ratio_last = (u_last - d_last) * 100 / (u_last + d_last);
+            lr_ratio_last = (l_last - r_last) * 100 / (l_last + r_last);
 
             /* Determine the difference between the first and last ratios */
             ud_delta = ud_ratio_last - ud_ratio_first;
@@ -718,7 +727,7 @@ namespace Meadow.Foundation.Sensors.Motion
          *
          * @return True if near/far event. False otherwise.
          */
-        bool DecodeGesture()
+        private bool DecodeGesture()
         {
             /* Return if near or far event is detected */
             if (gestureState == States.NEAR_STATE)
@@ -954,7 +963,7 @@ namespace Meadow.Foundation.Sensors.Motion
          *
          * @return the value of the ALS gain. 0xFF on failure.
          */
-        byte GetAmbientLightGain()
+        private byte GetAmbientLightGain()
         {
             byte val = BusComms.ReadRegister(Registers.APDS9960_CONTROL);
 
@@ -976,7 +985,7 @@ namespace Meadow.Foundation.Sensors.Motion
          * @param[in] drive the value (0-3) for the gain
          * @return True if operation successful. False otherwise.
          */
-        void SetAmbientLightGain(byte drive)
+        private void SetAmbientLightGain(byte drive)
         {
             byte val = BusComms.ReadRegister(Registers.APDS9960_CONTROL);
 
@@ -998,7 +1007,7 @@ namespace Meadow.Foundation.Sensors.Motion
          *
          * @return The LED boost value. 0xFF on failure.
          */
-        byte GetLEDBoost()
+        private byte GetLEDBoost()
         {
             byte val = BusComms.ReadRegister(Registers.APDS9960_CONTROL);
 
@@ -1020,7 +1029,7 @@ namespace Meadow.Foundation.Sensors.Motion
          * @param[in] drive the value (0-3) for current boost (100-300%)
          * @return True if operation successful. False otherwise.
          */
-        void SetLEDBoost(byte boost)
+        private void SetLEDBoost(byte boost)
         {
             byte val = BusComms.ReadRegister(Registers.APDS9960_CONFIG2);
 
@@ -1038,7 +1047,7 @@ namespace Meadow.Foundation.Sensors.Motion
          *
          * @return 1 if compensation is enabled. 0 if not. 0xFF on error.
          */
-        byte GetProxGainCompEnable()
+        private byte GetProxGainCompEnable()
         {
             byte val = BusComms.ReadRegister(Registers.APDS9960_CONFIG3);
 
@@ -1054,7 +1063,7 @@ namespace Meadow.Foundation.Sensors.Motion
          * @param[in] enable 1 to enable compensation. 0 to disable compensation.
          * @return True if operation successful. False otherwise.
          */
-        void SetProxGainCompEnable(byte enable)
+        private void SetProxGainCompEnable(byte enable)
         {
             byte val = BusComms.ReadRegister(Registers.APDS9960_CONFIG3);
 
@@ -1080,7 +1089,7 @@ namespace Meadow.Foundation.Sensors.Motion
          *
          * @return Current proximity mask for photodiodes. 0xFF on error.
          */
-        byte GetProxPhotoMask()
+        private byte GetProxPhotoMask()
         {
             byte val = BusComms.ReadRegister(Registers.APDS9960_CONFIG3);
 
@@ -1103,7 +1112,7 @@ namespace Meadow.Foundation.Sensors.Motion
          * @param[in] mask 4-bit mask value
          * @return True if operation successful. False otherwise.
          */
-        void SetProxPhotoMask(byte mask)
+        private void SetProxPhotoMask(byte mask)
         {
             byte val = BusComms.ReadRegister(Registers.APDS9960_CONFIG3);
 
@@ -1120,7 +1129,7 @@ namespace Meadow.Foundation.Sensors.Motion
          *
          * @return Current entry proximity threshold.
          */
-        byte GetGestureEnterThresh()
+        private byte GetGestureEnterThresh()
         {
             byte val = BusComms.ReadRegister(Registers.APDS9960_GPENTH);
 
@@ -1133,7 +1142,7 @@ namespace Meadow.Foundation.Sensors.Motion
          * @param[in] threshold proximity value needed to start gesture mode
          * @return True if operation successful. False otherwise.
          */
-        void SetGestureEnterThresh(byte threshold)
+        private void SetGestureEnterThresh(byte threshold)
         {
             BusComms.WriteRegister(Registers.APDS9960_GPENTH, threshold);
         }
@@ -1143,7 +1152,7 @@ namespace Meadow.Foundation.Sensors.Motion
          *
          * @return Current exit proximity threshold.
          */
-        byte GetGestureExitThresh()
+        private byte GetGestureExitThresh()
         {
             byte val = BusComms.ReadRegister(Registers.APDS9960_GEXTH);
 
@@ -1156,7 +1165,7 @@ namespace Meadow.Foundation.Sensors.Motion
          * @param[in] threshold proximity value needed to end gesture mode
          * @return True if operation successful. False otherwise.
          */
-        void SetGestureExitThresh(byte threshold)
+        private void SetGestureExitThresh(byte threshold)
         {
             BusComms.WriteRegister(Registers.APDS9960_GEXTH, threshold);
         }
@@ -1172,7 +1181,7 @@ namespace Meadow.Foundation.Sensors.Motion
          *
          * @return the current photodiode gain. 0xFF on error.
          */
-        byte GetGestureGain()
+        private byte GetGestureGain()
         {
             byte val = BusComms.ReadRegister(Registers.APDS9960_GCONF2);
 
@@ -1194,7 +1203,7 @@ namespace Meadow.Foundation.Sensors.Motion
          * @param[in] gain the value for the photodiode gain
          * @return True if operation successful. False otherwise.
          */
-        void SetGestureGain(byte gain)
+        private void SetGestureGain(byte gain)
         {
             byte val = BusComms.ReadRegister(Registers.APDS9960_GCONF2);
 
@@ -1219,7 +1228,7 @@ namespace Meadow.Foundation.Sensors.Motion
          *
          * @return the LED drive current value. 0xFF on error.
          */
-        byte GetGestureLEDDrive()
+        private byte GetGestureLEDDrive()
         {
             /* Read value from GCONF2 register */
             byte val = BusComms.ReadRegister(Registers.APDS9960_GCONF2);
@@ -1242,7 +1251,7 @@ namespace Meadow.Foundation.Sensors.Motion
          * @param[in] drive the value for the LED drive current
          * @return True if operation successful. False otherwise.
          */
-        void SetGestureLEDDrive(byte drive)
+        private void SetGestureLEDDrive(byte drive)
         {
             byte val = BusComms.ReadRegister(Registers.APDS9960_GCONF2);
 
@@ -1270,7 +1279,7 @@ namespace Meadow.Foundation.Sensors.Motion
          *
          * @return the current wait time between gestures. 0xFF on error.
          */
-        byte GetGestureWaitTime()
+        private byte GetGestureWaitTime()
         {
             byte val = BusComms.ReadRegister(Registers.APDS9960_GCONF2);
 
@@ -1296,7 +1305,7 @@ namespace Meadow.Foundation.Sensors.Motion
          * @param[in] the value for the wait time
          * @return True if operation successful. False otherwise.
          */
-        void SetGestureWaitTime(byte time)
+        private void SetGestureWaitTime(byte time)
         {
             byte val = BusComms.ReadRegister(Registers.APDS9960_GCONF2);
 
@@ -1314,7 +1323,7 @@ namespace Meadow.Foundation.Sensors.Motion
          * @param[out] threshold current low threshold stored on the APDS-9960
          * @return True if operation successful. False otherwise.
          */
-        ushort GetLightIntLowThreshold()
+        private ushort GetLightIntLowThreshold()
         {
             var threshold = BusComms.ReadRegister(Registers.APDS9960_AILTL);
 
@@ -1329,7 +1338,7 @@ namespace Meadow.Foundation.Sensors.Motion
          * @param[in] threshold low threshold value for interrupt to trigger
          * @return True if operation successful. False otherwise.
          */
-        void SetLightIntLowThreshold(ushort threshold)
+        private void SetLightIntLowThreshold(ushort threshold)
         {
             byte val_low;
             byte val_high;
@@ -1348,7 +1357,7 @@ namespace Meadow.Foundation.Sensors.Motion
          * @param[out] threshold current low threshold stored on the APDS-9960
          * @return True if operation successful. False otherwise.
          */
-        ushort GetLightIntHighThreshold()
+        private ushort GetLightIntHighThreshold()
         {
             var threshold = BusComms.ReadRegister(Registers.APDS9960_AIHTL);
 
@@ -1363,7 +1372,7 @@ namespace Meadow.Foundation.Sensors.Motion
          * @param[in] threshold high threshold value for interrupt to trigger
          * @return True if operation successful. False otherwise.
          */
-        void SetLightIntHighThreshold(ushort threshold)
+        private void SetLightIntHighThreshold(ushort threshold)
         {
             /* Break 16-bit threshold into 2 8-bit values */
             byte val_low = (byte)(threshold & 0x00FF);
@@ -1379,7 +1388,7 @@ namespace Meadow.Foundation.Sensors.Motion
          * @param[out] threshold current low threshold stored on the APDS-9960
          * @return True if operation successful. False otherwise.
          */
-        byte GetProximityIntLowThreshold()
+        private byte GetProximityIntLowThreshold()
         {
             return BusComms.ReadRegister(Registers.APDS9960_PILT);
         }
@@ -1390,7 +1399,7 @@ namespace Meadow.Foundation.Sensors.Motion
          * @param[in] threshold low threshold value for interrupt to trigger
          * @return True if operation successful. False otherwise.
          */
-        void SetProximityIntLowThreshold(byte threshold)
+        private void SetProximityIntLowThreshold(byte threshold)
         {
             BusComms.WriteRegister(Registers.APDS9960_PILT, threshold);
         }
@@ -1401,7 +1410,7 @@ namespace Meadow.Foundation.Sensors.Motion
          * @param[out] threshold current low threshold stored on the APDS-9960
          * @return True if operation successful. False otherwise.
          */
-        byte GetProximityIntHighThreshold()
+        private byte GetProximityIntHighThreshold()
         {
             return BusComms.ReadRegister(Registers.APDS9960_PIHT);
         }
@@ -1412,7 +1421,7 @@ namespace Meadow.Foundation.Sensors.Motion
          * @param[in] threshold high threshold value for interrupt to trigger
          * @return True if operation successful. False otherwise.
          */
-        void SetProximityIntHighThreshold(byte threshold)
+        private void SetProximityIntHighThreshold(byte threshold)
         {
             BusComms.WriteRegister(Registers.APDS9960_PIHT, threshold);
         }
@@ -1422,7 +1431,7 @@ namespace Meadow.Foundation.Sensors.Motion
          *
          * @return 1 if interrupts are enabled, 0 if not. 0xFF on error.
          */
-        byte GetAmbientLightIntEnable()
+        private byte GetAmbientLightIntEnable()
         {
             byte val = BusComms.ReadRegister(Registers.APDS9960_ENABLE);
 
@@ -1438,7 +1447,7 @@ namespace Meadow.Foundation.Sensors.Motion
          * @param[in] enable 1 to enable interrupts, 0 to turn them off
          * @return True if operation successful. False otherwise.
          */
-        void SetAmbientLightIntEnable(bool enable)
+        private void SetAmbientLightIntEnable(bool enable)
         {
             byte val = BusComms.ReadRegister(Registers.APDS9960_ENABLE);
 
@@ -1457,7 +1466,7 @@ namespace Meadow.Foundation.Sensors.Motion
          *
          * @return 1 if interrupts are enabled, 0 if not. 0xFF on error.
          */
-        byte GetProximityIntEnable()
+        private byte GetProximityIntEnable()
         {
             byte val = BusComms.ReadRegister(Registers.APDS9960_ENABLE);
 
@@ -1473,7 +1482,7 @@ namespace Meadow.Foundation.Sensors.Motion
          * @param[in] enable 1 to enable interrupts, 0 to turn them off
          * @return True if operation successful. False otherwise.
          */
-        void SetProximityIntEnable(byte enable)
+        private void SetProximityIntEnable(byte enable)
         {
             byte val = BusComms.ReadRegister(Registers.APDS9960_ENABLE);
 
@@ -1491,7 +1500,7 @@ namespace Meadow.Foundation.Sensors.Motion
          *
          * @return 1 if interrupts are enabled, 0 if not. 0xFF on error.
          */
-        byte GetGestureIntEnable()
+        private byte GetGestureIntEnable()
         {
             byte val = BusComms.ReadRegister(Registers.APDS9960_GCONF4);
 
@@ -1507,7 +1516,7 @@ namespace Meadow.Foundation.Sensors.Motion
          * @param[in] enable 1 to enable interrupts, 0 to turn them off
          * @return True if operation successful. False otherwise.
          */
-        void SetGestureIntEnable(byte enable)
+        private void SetGestureIntEnable(byte enable)
         {
             byte val = BusComms.ReadRegister(Registers.APDS9960_GCONF4);
 
@@ -1525,7 +1534,7 @@ namespace Meadow.Foundation.Sensors.Motion
          *
          * @return True if operation completed successfully. False otherwise.
          */
-        void ClearAmbientLightInt()
+        private void ClearAmbientLightInt()
         {
             BusComms.WriteRegister(Registers.APDS9960_AICLEAR, 0);
         }
@@ -1535,7 +1544,7 @@ namespace Meadow.Foundation.Sensors.Motion
          *
          * @return True if operation completed successfully. False otherwise.
          */
-        void ClearProximityInt()
+        private void ClearProximityInt()
         {
             BusComms.WriteRegister(Registers.APDS9960_PICLEAR, 0);
         }
@@ -1545,7 +1554,7 @@ namespace Meadow.Foundation.Sensors.Motion
          *
          * @return 1 if gesture state machine is running, 0 if not. 0xFF on error.
          */
-        byte GetGestureMode()
+        private byte GetGestureMode()
         {
             byte val = BusComms.ReadRegister(Registers.APDS9960_GCONF4);
 
@@ -1561,7 +1570,7 @@ namespace Meadow.Foundation.Sensors.Motion
          * @param[in] mode 1 to enter gesture state machine, 0 to exit.
          * @return True if operation successful. False otherwise.
          */
-        void SetGestureMode(byte mode)
+        private void SetGestureMode(byte mode)
         {
             byte val = BusComms.ReadRegister(Registers.APDS9960_GCONF4);
 
@@ -1574,7 +1583,7 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         /* Container for gesture data */
-        class GestureData
+        private class GestureData
         {
             public byte[] UData { get; set; } = new byte[32];
             public byte[] DData { get; set; } = new byte[32];
@@ -1584,6 +1593,30 @@ namespace Meadow.Foundation.Sensors.Motion
             public byte TotalGestures { get; set; }
             public byte InThreshold { get; set; }
             public byte OutThreshold { get; set; }
+        }
+
+        ///<inheritdoc/>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        /// <param name="disposing">Is disposing</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && createdPort)
+                {
+                    interruptPort?.Dispose();
+                }
+
+                IsDisposed = true;
+            }
         }
     }
 }

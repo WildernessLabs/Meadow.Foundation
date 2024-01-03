@@ -12,22 +12,26 @@ public class WinFormsDisplay : Form, IGraphicsDisplay, ITouchScreen
     /// <summary>
     /// Event fired when the display gets a mouse down
     /// </summary>
-    public event TouchEventHandler TouchDown = delegate { };
+    public event TouchEventHandler TouchDown = default!;
     /// <summary>
     /// Event fired when the display gets a mouse up
     /// </summary>
-    public event TouchEventHandler TouchUp = delegate { };
+    public event TouchEventHandler TouchUp = default!;
     /// <summary>
     /// Event fired when the display gets a mouse click
     /// </summary>
-    public event TouchEventHandler TouchClick = delegate { };
+    public event TouchEventHandler TouchClick = default!;
 
-    private WinFormsPixelBuffer _buffer;
+    private readonly WinFormsPixelBuffer _buffer;
 
     /// <summary>
     /// Current color mode of display
     /// </summary>
     public ColorMode ColorMode => PixelBuffer.ColorMode;
+
+    /// <summary>
+    /// The display's pixel buffer
+    /// </summary>
     public IPixelBuffer PixelBuffer => _buffer;
 
     /// <summary>
@@ -38,31 +42,44 @@ public class WinFormsDisplay : Form, IGraphicsDisplay, ITouchScreen
     /// <summary>
     /// Create a new WinFormsDisplay
     /// </summary>
-    /// <param name="width">Width of the display, in pixles</param>
+    /// <param name="width">Width of the display, in pixels</param>
     /// <param name="height">Height of the display, in pixels</param>
+    /// <param name="colorMode">The ColorMode of the display</param>
     public WinFormsDisplay(int width = 800, int height = 600, ColorMode colorMode = ColorMode.Format16bppRgb565)
     {
-        this.Width = width;
-        this.Height = height;
+        this.Width = width + (Width - ClientSize.Width);
+        this.Height = height + (Height - ClientSize.Height);
 
+        this.Text = "Meadow WinFormsDisplay";
         this.DoubleBuffered = true;
-        this.FormBorderStyle = FormBorderStyle.FixedSingle;
-        this.ControlBox = false;
-        _buffer = new WinFormsPixelBuffer(Width, Height, colorMode);
+        this.FormBorderStyle = FormBorderStyle.FixedDialog;
+        this.StartPosition = FormStartPosition.CenterScreen;
+        this.Icon = new Icon("icon.ico");
+        _buffer = new WinFormsPixelBuffer(width, height, colorMode);
     }
 
+    /// <inheritdoc/>
+    protected override void Dispose(bool disposing)
+    {
+        _buffer?.Dispose();
+        base.Dispose(disposing);
+    }
+
+    ///<inheritdoc/>
     protected override void OnMouseDown(MouseEventArgs e)
     {
         TouchDown?.Invoke(e.X, e.Y);
         base.OnMouseDown(e);
     }
 
+    ///<inheritdoc/>
     protected override void OnMouseUp(MouseEventArgs e)
     {
         TouchUp?.Invoke(e.X, e.Y);
         base.OnMouseUp(e);
     }
 
+    ///<inheritdoc/>
     protected override void OnClick(EventArgs e)
     {
         TouchClick?.Invoke(-1, -1);
@@ -104,7 +121,10 @@ public class WinFormsDisplay : Form, IGraphicsDisplay, ITouchScreen
     /// <param name="updateDisplay"></param>
     void IGraphicsDisplay.Clear(bool updateDisplay)
     {
-        _buffer.Clear();
+        lock (_buffer)
+        {
+            _buffer.Clear();
+        }
         if (updateDisplay)
         {
             this.Show();
@@ -116,9 +136,12 @@ public class WinFormsDisplay : Form, IGraphicsDisplay, ITouchScreen
     /// </summary>
     /// <param name="fillColor"></param>
     /// <param name="updateDisplay"></param>
-    void IGraphicsDisplay.Fill(Foundation.Color fillColor, bool updateDisplay)
+    void IGraphicsDisplay.Fill(Color fillColor, bool updateDisplay)
     {
-        _buffer.Fill(fillColor);
+        lock (_buffer)
+        {
+            _buffer.Fill(fillColor);
+        }
         if (updateDisplay)
         {
             this.Show();
@@ -133,9 +156,12 @@ public class WinFormsDisplay : Form, IGraphicsDisplay, ITouchScreen
     /// <param name="width"></param>
     /// <param name="height"></param>
     /// <param name="fillColor"></param>
-    void IGraphicsDisplay.Fill(int x, int y, int width, int height, Foundation.Color fillColor)
+    void IGraphicsDisplay.Fill(int x, int y, int width, int height, Color fillColor)
     {
-        _buffer.Fill(x, y, width, height, fillColor);
+        lock (_buffer)
+        {
+            _buffer.Fill(x, y, width, height, fillColor);
+        }
     }
 
     /// <summary>
@@ -144,9 +170,12 @@ public class WinFormsDisplay : Form, IGraphicsDisplay, ITouchScreen
     /// <param name="x"></param>
     /// <param name="y"></param>
     /// <param name="color"></param>
-    void IGraphicsDisplay.DrawPixel(int x, int y, Foundation.Color color)
+    void IGraphicsDisplay.DrawPixel(int x, int y, Color color)
     {
-        _buffer.SetPixel(x, y, color);
+        lock (_buffer)
+        {
+            _buffer.SetPixel(x, y, color);
+        }
     }
 
     /// <summary>
@@ -157,7 +186,10 @@ public class WinFormsDisplay : Form, IGraphicsDisplay, ITouchScreen
     /// <param name="enabled"></param>
     void IGraphicsDisplay.DrawPixel(int x, int y, bool enabled)
     {
-        _buffer.SetPixel(x, y, enabled ? Foundation.Color.White : Foundation.Color.Black);
+        lock (_buffer)
+        {
+            _buffer.SetPixel(x, y, enabled ? Color.White : Color.Black);
+        }
     }
 
     /// <summary>
@@ -167,7 +199,10 @@ public class WinFormsDisplay : Form, IGraphicsDisplay, ITouchScreen
     /// <param name="y"></param>
     void IGraphicsDisplay.InvertPixel(int x, int y)
     {
-        _buffer.InvertPixel(x, y);
+        lock (_buffer)
+        {
+            _buffer.InvertPixel(x, y);
+        }
     }
 
     /// <summary>
@@ -178,12 +213,19 @@ public class WinFormsDisplay : Form, IGraphicsDisplay, ITouchScreen
     /// <param name="displayBuffer"></param>
     void IGraphicsDisplay.WriteBuffer(int x, int y, IPixelBuffer displayBuffer)
     {
-        _buffer.WriteBuffer(x, y, displayBuffer);
+        lock (_buffer)
+        {
+            _buffer.WriteBuffer(x, y, displayBuffer);
+        }
     }
 
+    ///<inheritdoc/>
     protected override void OnPaint(PaintEventArgs e)
     {
-        e.Graphics.DrawImage(_buffer.Image, 0, 0);
-        base.OnPaint(e);
+        lock (_buffer)
+        {
+            e.Graphics.DrawImage(_buffer.Image, 0, 0);
+            base.OnPaint(e);
+        }
     }
 }

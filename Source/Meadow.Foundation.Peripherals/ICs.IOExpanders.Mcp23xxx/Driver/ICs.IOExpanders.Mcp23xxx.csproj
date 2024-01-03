@@ -1,5 +1,8 @@
 <Project Sdk="Meadow.Sdk/1.1.0">
   <PropertyGroup>
+    <PackageReadmeFile>Readme.md</PackageReadmeFile>
+    <LangVersion>10.0</LangVersion>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageIcon>icon.png</PackageIcon>
     <Authors>Wilderness Labs, Inc</Authors>
@@ -11,11 +14,13 @@
     <PackageId>Meadow.Foundation.ICs.IOExpanders.Mcp23xxx</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow.Foundation,Meadow,Expanders,IOExpanders,MCP23008,MCP23009,MCP23017,MCP23018,MCP23S08,MCP23S09,MCP23S17,MCP23S18</PackageTags>
-    <Version>0.1.0</Version>
+    <Version>1.6.0.1</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Mcp23xxx I2C and SPI digital output expanders</Description>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
+    <None Include=".\Readme.md" Pack="true" PackagePath="" />
     <None Include="..\..\..\icon.png" Pack="true" PackagePath="" />
     <ProjectReference Include="..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
   </ItemGroup>

@@ -11,16 +11,19 @@
     <PackageId>Meadow.Foundation.Sensors.Light.AnalogSolarIntensityGauge</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow.Foundation, Light, AnalogSolarIntensityGauge</PackageTags>
-    <Version>0.1.13</Version>
+    <Version>1.6.0.1</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Analog solar intensity sensor</Description>
     <RootNamespace>Meadow.Foundation.Sensors.Light</RootNamespace>
   </PropertyGroup>
   <PropertyGroup>
+    <PackageReadmeFile>Readme.md</PackageReadmeFile>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <LangVersion>8.0</LangVersion>
+    <LangVersion>10.0</LangVersion>
   </PropertyGroup>
   <ItemGroup>
+    <None Include=".\Readme.md" Pack="true" PackagePath="" />
     <None Include="..\..\..\icon.png" Pack="true" PackagePath="" />
     <ProjectReference Include="..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
   </ItemGroup>

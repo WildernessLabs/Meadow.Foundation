@@ -1,9 +1,9 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Environmental;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Sensors.Environmental.Ags01Db_Sample
 {
@@ -30,7 +30,7 @@ namespace Sensors.Environmental.Ags01Db_Sample
             );
             ags10Db.Subscribe(consumer);
 
-            ags10Db.ConcentrationUpdated += (object sender, IChangeResult<Meadow.Units.Concentration> e) =>
+            ags10Db.Updated += (object sender, IChangeResult<Meadow.Units.Concentration> e) =>
             {
                 Resolver.Log.Info($"Concentration Updated: {e.New.PartsPerMillion:N2}ppm");
             };
@@ -55,7 +55,7 @@ namespace Sensors.Environmental.Ags01Db_Sample
             {
                 var temp = ags10Db.Read().Result;
 
-                Resolver.Log.Info($"Concentration New Value { temp.PartsPerMillion}ppm");
+                Resolver.Log.Info($"Concentration New Value {temp.PartsPerMillion}ppm");
                 Thread.Sleep(1000);
             }
         }

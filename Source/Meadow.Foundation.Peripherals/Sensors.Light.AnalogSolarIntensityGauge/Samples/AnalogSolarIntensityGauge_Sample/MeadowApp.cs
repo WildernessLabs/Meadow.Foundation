@@ -18,11 +18,11 @@ namespace MeadowApp
             solarGauge = new AnalogSolarIntensityGauge(Device.Pins.A02, updateInterval: TimeSpan.FromSeconds(1));
 
             //==== classic .NET Event
-            solarGauge.SolarIntensityUpdated += (s, result) => Resolver.Log.Info($"SolarIntensityUpdated: {result.New * 100:n2}%");
+            solarGauge.Updated += (s, result) => Resolver.Log.Info($"SolarIntensityUpdated: {result.New * 100:n2}%");
 
             //==== Filterable observer
             var observer = AnalogSolarIntensityGauge.CreateObserver(
-                handler: result => Resolver.Log.Info($"Observer filter satisifed, new intensity: {result.New * 100:n2}%"),
+                handler: result => Resolver.Log.Info($"Observer filter satisfied, new intensity: {result.New * 100:n2}%"),
                 filter: result =>
                 {
                     if (result.Old is { } old)

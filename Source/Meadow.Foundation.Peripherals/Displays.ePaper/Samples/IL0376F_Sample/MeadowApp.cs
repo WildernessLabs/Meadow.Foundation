@@ -33,11 +33,11 @@ namespace Displays.ePaper.IL0376F_Sample
         public override Task Run()
         {
             //any color but black will show the ePaper alternate color 
-            graphics.DrawRectangle(1, 1, 126, 32, Meadow.Foundation.Color.Red, false);
+            graphics.DrawRectangle(1, 1, 126, 32, Color.Red, false);
 
             graphics.CurrentFont = new Font8x12();
-            graphics.DrawText(2, 2, "IL0376F", Meadow.Foundation.Color.Black);
-            graphics.DrawText(2, 20, "Meadow F7", Meadow.Foundation.Color.Black);
+            graphics.DrawText(2, 2, "IL0376F", Color.Black);
+            graphics.DrawText(2, 20, "Meadow F7", Color.Black);
 
             graphics.Show();
 

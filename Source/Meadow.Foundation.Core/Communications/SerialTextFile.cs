@@ -1,5 +1,5 @@
-﻿using System.Threading;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
+using System.Threading;
 
 namespace Meadow.Foundation.Communications
 {
@@ -54,7 +54,7 @@ namespace Meadow.Foundation.Communications
         /// <summary>
         /// A complete line of text has been read, send this to the event subscriber.
         /// </summary>
-        public event LineReceived OnLineReceived = delegate {};
+        public event LineReceived OnLineReceived = default!;
 
         #endregion Events and delegates
 
@@ -62,7 +62,7 @@ namespace Meadow.Foundation.Communications
 
         /// <summary>
         /// Default constructor for the SerialTextFile class, made private to prevent the
-        /// programmer from using this method of construcing an object.
+        /// programmer from using this method of constructing an object.
         /// </summary>
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         private SerialTextFile()
@@ -71,7 +71,7 @@ namespace Meadow.Foundation.Communications
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
         /// <summary>
-        /// Create a new SerialTextFile and attach the instance to the specfied serial port.
+        /// Create a new SerialTextFile and attach the instance to the specified serial port.
         /// </summary>
         /// <param name="device">ISerialController used to instantiate serial port.</param>
         /// <param name="port">Serial port name.</param>
@@ -89,7 +89,7 @@ namespace Meadow.Foundation.Communications
         }
 
         /// <summary>
-        /// Create a new SerialTextFile and attach the instance to the specfied serial port.
+        /// Create a new SerialTextFile and attach the instance to the specified serial port.
         /// </summary>
         /// <param name="serialPort">Serial port object.</param>
         /// <param name="endOfLine">Text indicating the end of a line of text.</param>
@@ -99,7 +99,7 @@ namespace Meadow.Foundation.Communications
             this.serialPort = serialPort;
             LINE_END = endOfLine;
 
-            if(useSerialEvents)
+            if (useSerialEvents)
             {
                 serialPort.DataReceived += SerialPortDataReceived;
             }
@@ -160,9 +160,9 @@ namespace Meadow.Foundation.Communications
                 ReadDataFromSerialPort();
             }
         }
-        
+
         private void ReadDataFromSerialPort()
-        { 
+        {
             lock (buffer)
             {
                 int amount = serialPort.Read(staticBuffer, 0, MAXIMUM_BUFFER_SIZE);
@@ -173,7 +173,7 @@ namespace Meadow.Foundation.Communications
                 {
                     for (var index = 0; index < amount; index++)
                     {
-                        buffer += (char) staticBuffer[index];
+                        buffer += (char)staticBuffer[index];
                     }
                 }
                 var eolMarkerPosition = buffer.IndexOf(LINE_END);

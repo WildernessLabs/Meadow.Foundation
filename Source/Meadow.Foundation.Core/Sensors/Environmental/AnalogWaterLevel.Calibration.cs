@@ -32,7 +32,7 @@ namespace Meadow.Foundation.Sensors.Environmental
             /// <summary>
             /// Create a new Calibration object using the specified values.
             /// </summary>
-            /// <param name="voltsPerCentimeter">Voltage change per cenimeter.</param>
+            /// <param name="voltsPerCentimeter">Voltage change per centimeter.</param>
             /// <param name="voltsAtZero">Voltage at a zero water level reading.</param>
             public Calibration(Voltage voltsPerCentimeter, Voltage voltsAtZero)
             {

@@ -71,7 +71,7 @@ namespace Meadow.Foundation.Displays
         }
 
         /// <summary>
-        /// Initalize the display
+        /// Initialize the display
         /// </summary>
         protected override void Initialize()
         {
@@ -90,7 +90,7 @@ namespace Meadow.Foundation.Displays
             }
 
             if (Width == 135) //135x240 
-            {   //unknown if this is consistant across all displays with this res
+            {   //unknown if this is consistent across all displays with this res
                 rowStart = rowStart2 = 40;
                 columnStart = 53;
                 columnStart2 = 52;
@@ -102,7 +102,7 @@ namespace Meadow.Foundation.Displays
             }
             else //1.47", 1.59", 1.9", 2.0" .... 320x240 etc.
             {
-                rowStart = rowStart2 = (byte)((320 - Width) / 2);
+                rowStart = rowStart2 = (byte)((320 - Height) / 2);
                 columnStart = columnStart2 = (byte)((240 - Width) / 2);
             }
 
@@ -119,9 +119,6 @@ namespace Meadow.Foundation.Displays
 
             DelayMs(10);
 
-            SendCommand(Register.MADCTL);
-            SendData(0x00); //some variants use 0x08
-
             SendCommand(LcdCommand.CASET);
             SendData(new byte[] { 0, 0, 0, (byte)Width });
 
@@ -136,10 +133,12 @@ namespace Meadow.Foundation.Displays
             DelayMs(120);
 
             dataCommandPort.State = Data;
+
+            SetRotation(RotationType.Normal);
         }
 
         /// <summary>
-        /// Set addrees window for display updates
+        /// Set address window for display updates
         /// </summary>
         /// <param name="x0">X start in pixels</param>
         /// <param name="y0">Y start in pixels</param>

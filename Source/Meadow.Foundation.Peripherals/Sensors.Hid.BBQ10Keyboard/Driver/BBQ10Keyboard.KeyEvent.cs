@@ -8,7 +8,7 @@
         public struct KeyEvent
         {
             /// <summary>
-            /// Key ascii value
+            /// Key ASCII value
             /// </summary>
             public char AsciiValue { get; private set; }
 
@@ -20,7 +20,7 @@
             /// <summary>
             /// Create a new KeyEvent object
             /// </summary>
-            /// <param name="asciiValue">The ascii value</param>
+            /// <param name="asciiValue">The ASCII value</param>
             /// <param name="keyState">The key state</param>
             public KeyEvent(char asciiValue, KeyState keyState)
             {

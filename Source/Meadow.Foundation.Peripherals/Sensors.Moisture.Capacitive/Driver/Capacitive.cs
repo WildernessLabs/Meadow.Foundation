@@ -9,43 +9,46 @@ namespace Meadow.Foundation.Sensors.Moisture
     /// <summary>
     /// Capacitive Soil Moisture Sensor
     /// </summary>
-    public class Capacitive : SamplingSensorBase<double>, IMoistureSensor
+    public class Capacitive : SamplingSensorBase<double>, IMoistureSensor, IDisposable
     {
-        /// <summary>
-        /// Raised when a new sensor reading has been made. To enable, call StartUpdating().
-        /// </summary>
-        public event EventHandler<IChangeResult<double>> HumidityUpdated = delegate { };
-
         /// <summary>
         /// Returns the analog input port
         /// </summary>
         protected IAnalogInputPort AnalogInputPort { get; }
 
         /// <summary>
-        /// Last value read from the moisture sensor.
+        /// Last value read from the moisture sensor
         /// </summary>
         public double? Moisture { get; protected set; }
 
         /// <summary>
-        /// Voltage value of most dry soil. Default of `0V`.
+        /// Voltage value of most dry soil - default is 0 volts
         /// </summary>
         public Voltage MinimumVoltageCalibration { get; set; } = new Voltage(0);
 
         /// <summary>
-        /// Voltage value of most moist soil. Default of `3.3V`.
+        /// Voltage value of most moist soil - default of 3.3V
         /// </summary>
         public Voltage MaximumVoltageCalibration { get; set; } = new Voltage(3.3);
 
         /// <summary>
-        /// Creates a Capacitive soil moisture sensor object with the specified analog pin and a IO device.
+        /// Is the object disposed
         /// </summary>
-        /// <param name="analogInputPin">Analog pin the temperature sensor is connected to.</param>
+        public bool IsDisposed { get; private set; }
+
+        /// <summary>
+        /// Did we create the port(s) used by the peripheral
+        /// </summary>
+        readonly bool createdPort = false;
+
+        /// <summary>
+        /// Creates a Capacitive soil moisture sensor object with the specified analog pin and a IO device
+        /// </summary>
+        /// <param name="analogInputPin">Analog pin the temperature sensor is connected to</param>
         /// <param name="minimumVoltageCalibration">Minimum calibration voltage</param>
         /// <param name="maximumVoltageCalibration">Maximum calibration voltage</param>
-        /// This value determines how often`Changed` events are raised and `IObservable` consumers are notified.</param>
-        /// <param name="sampleCount">How many samples to take during a given
-        /// reading. These are automatically averaged to reduce noise.</param>
-        /// <param name="sampleInterval">The time, to wait in between samples during a reading.</param>
+        /// <param name="sampleCount">How many samples to take during a given reading</param>
+        /// <param name="sampleInterval">The time, to wait in between samples during a reading</param>
         public Capacitive(
             IPin analogInputPin,
             Voltage? minimumVoltageCalibration,
@@ -56,10 +59,12 @@ namespace Meadow.Foundation.Sensors.Moisture
                     analogInputPin.CreateAnalogInputPort(sampleCount, sampleInterval ?? TimeSpan.FromMilliseconds(40), new Voltage(3.3)),
                     minimumVoltageCalibration,
                     maximumVoltageCalibration)
-        { }
+        {
+            createdPort = true;
+        }
 
         /// <summary>
-        /// Creates a Capacitive soil moisture sensor object with the especified AnalogInputPort
+        /// Creates a Capacitive soil moisture sensor object with the specified AnalogInputPort
         /// </summary>
         /// <param name="analogInputPort">The port for the analog input pin</param>
         /// <param name="minimumVoltageCalibration">Minimum calibration voltage</param>
@@ -74,24 +79,17 @@ namespace Meadow.Foundation.Sensors.Moisture
             if (minimumVoltageCalibration is { } min) { MinimumVoltageCalibration = min; }
             if (maximumVoltageCalibration is { } max) { MaximumVoltageCalibration = max; }
 
-            // wire up our observable
-            // have to convert from voltage to temp units for our consumers
-            // this is where the magic is: this allows us to extend the IObservable
-            // pattern through the sensor driver
             AnalogInputPort.Subscribe
             (
                 IAnalogInputPort.CreateObserver(
                     result =>
                     {
-                        // create a new change result from the new value
-                        ChangeResult<double> changeResult = new ChangeResult<double>()
+                        ChangeResult<double> changeResult = new()
                         {
                             New = VoltageToMoisture(result.New),
                             Old = Moisture
                         };
-                        // save state
                         Moisture = changeResult.New;
-                        // notify
                         RaiseEventsAndNotify(changeResult);
                     }
                 )
@@ -137,16 +135,6 @@ namespace Meadow.Foundation.Sensors.Moisture
         }
 
         /// <summary>
-        /// Raise change events for subscribers
-        /// </summary>
-        /// <param name="changeResult">The change result with the current sensor data</param>
-        protected override void RaiseEventsAndNotify(IChangeResult<double> changeResult)
-        {
-            HumidityUpdated?.Invoke(this, changeResult);
-            base.RaiseEventsAndNotify(changeResult);
-        }
-
-        /// <summary>
         /// Converts voltage to moisture value, ranging from 0 (most dry) to 1 (most wet)
         /// </summary>
         /// <param name="voltage"></param>
@@ -156,8 +144,32 @@ namespace Meadow.Foundation.Sensors.Moisture
             {
                 return (1f - voltage.Volts.Map(MaximumVoltageCalibration.Volts, MinimumVoltageCalibration.Volts, 0f, 1.0f));
             }
-
             return (1f - voltage.Volts.Map(MinimumVoltageCalibration.Volts, MaximumVoltageCalibration.Volts, 0f, 1.0f));
+        }
+
+        ///<inheritdoc/>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        /// <param name="disposing">Is disposing</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && createdPort)
+                {
+                    AnalogInputPort?.StopUpdating();
+                    AnalogInputPort?.Dispose();
+                }
+
+                IsDisposed = true;
+            }
         }
     }
 }

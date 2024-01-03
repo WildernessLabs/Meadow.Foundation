@@ -20,11 +20,6 @@ namespace Meadow.Foundation.Sensors.Motion
         public byte DefaultI2cAddress => (byte)Addresses.Default;
 
         /// <summary>
-        /// Raised when the magnetic field value changes
-        /// </summary>
-        public event EventHandler<IChangeResult<MagneticField3D>> MagneticField3DUpdated = delegate { };
-
-        /// <summary>
         /// The current magnetic field value
         /// </summary>
         public MagneticField3D? MagneticField3D => Conditions;
@@ -50,7 +45,7 @@ namespace Meadow.Foundation.Sensors.Motion
 
             if (deviceID != 0x10)
             {
-                throw new Exception("Unknown device ID, " + deviceID + " retruend, 0xc4 expected");
+                throw new Exception("Unknown device ID, " + deviceID + " returned, 0xc4 expected");
             }
 
             Reset();
@@ -88,19 +83,6 @@ namespace Meadow.Foundation.Sensors.Motion
             {
                 SetRegisterBit(Registers.CONTROL_2, 4, false);
             }
-        }
-
-        /// <summary>
-        /// Raise events for subcribers and notify of value changes
-        /// </summary>
-        /// <param name="changeResult">The updated sensor data</param>
-        protected override void RaiseEventsAndNotify(IChangeResult<MagneticField3D> changeResult)
-        {
-            if (changeResult is { } mag)
-            {
-                MagneticField3DUpdated?.Invoke(this, new ChangeResult<MagneticField3D>(mag.New, changeResult.Old));
-            }
-            base.RaiseEventsAndNotify(changeResult);
         }
 
         Task TriggerMagneticFieldReading()
@@ -163,7 +145,7 @@ namespace Meadow.Foundation.Sensors.Motion
         {
             if (ContinuousModeEnabled)
             {
-                throw new Exception("Cannot read temperature while continous sampling mode is enabled");
+                throw new Exception("Cannot read temperature while continuous sampling mode is enabled");
             }
 
             if (IsTemperatureDataReady() == false)

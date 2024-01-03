@@ -15,7 +15,7 @@ namespace Meadow.Foundation.Sensors.Motion
     /// 9-axis absolute orientation sensor.
     /// </summary>
     /// <remarks>
-    /// By defult the sensor will start with the following configuration:
+    /// By default the sensor will start with the following configuration:
     /// 
     /// Range           Range       Bandwidth
     /// Accelerometer   4G          62.5 Hz
@@ -35,44 +35,51 @@ namespace Meadow.Foundation.Sensors.Motion
         public byte DefaultI2cAddress => (byte)Addresses.Default;
 
         /// <summary>
-        /// Raised when the acceleration value changes
+        /// Raised when the magnetic field value changes
         /// </summary>
-        public event EventHandler<IChangeResult<Acceleration3D>> Acceleration3DUpdated = delegate { };
+        public event EventHandler<IChangeResult<MagneticField3D>> MagneticField3DUpdated = default!;
 
         /// <summary>
-        /// Raised when the angular velocity value changes
+        /// Raised when the quaternion orientation value changes
         /// </summary>
-        public event EventHandler<IChangeResult<AngularVelocity3D>> AngularVelocity3DUpdated = delegate { };
-
-        /// <summary>
-        /// Raised when the magetic field value changes
-        /// </summary>
-        public event EventHandler<IChangeResult<MagneticField3D>> MagneticField3DUpdated = delegate { };
-
-        /// <summary>
-        /// Raised when the quaernion orientation value changes
-        /// </summary>
-        public event EventHandler<IChangeResult<Quaternion>> QuaternionOrientationUpdated = delegate { };
+        public event EventHandler<IChangeResult<Quaternion>> QuaternionOrientationUpdated = default!;
 
         /// <summary>
         /// Raised when the linear acceleration value changes
         /// </summary>
-        public event EventHandler<IChangeResult<Acceleration3D>> LinearAccelerationUpdated = delegate { };
+        public event EventHandler<IChangeResult<Acceleration3D>> LinearAccelerationUpdated = default!;
 
         /// <summary>
         /// Raised when the gravity vector acceleration value changes
         /// </summary>
-        public event EventHandler<IChangeResult<Acceleration3D>> GravityVectorUpdated = delegate { };
+        public event EventHandler<IChangeResult<Acceleration3D>> GravityVectorUpdated = default!;
 
         /// <summary>
         /// Raised when the euler orientation value changes
         /// </summary>
-        public event EventHandler<IChangeResult<EulerAngles>> EulerOrientationUpdated = delegate { };
+        public event EventHandler<IChangeResult<EulerAngles>> EulerOrientationUpdated = default!;
 
-        /// <summary>
-        /// Raised when the temperature value changes
-        /// </summary>
-        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
+        private event EventHandler<IChangeResult<Units.Temperature>> _temperatureHandlers;
+        private event EventHandler<IChangeResult<AngularVelocity3D>> _velocityHandlers;
+        private event EventHandler<IChangeResult<Acceleration3D>> _accelerationHandlers;
+
+        event EventHandler<IChangeResult<Units.Temperature>> ISamplingSensor<Units.Temperature>.Updated
+        {
+            add => _temperatureHandlers += value;
+            remove => _temperatureHandlers -= value;
+        }
+
+        event EventHandler<IChangeResult<AngularVelocity3D>> ISamplingSensor<AngularVelocity3D>.Updated
+        {
+            add => _velocityHandlers += value;
+            remove => _velocityHandlers -= value;
+        }
+
+        event EventHandler<IChangeResult<Acceleration3D>> ISamplingSensor<Acceleration3D>.Updated
+        {
+            add => _accelerationHandlers += value;
+            remove => _accelerationHandlers -= value;
+        }
 
         /// <summary>
         /// Current Acceleration
@@ -115,7 +122,7 @@ namespace Meadow.Foundation.Sensors.Motion
         public Units.Temperature? Temperature => Conditions.Temperature;
 
         /// <summary>
-        /// Select the source of the Temperatute property.
+        /// Select the source of the Temperature property
         /// </summary>
         public Sensor TemperatureSource
         {
@@ -131,7 +138,7 @@ namespace Meadow.Foundation.Sensors.Motion
                 }
                 else
                 {
-                    throw new ArgumentException("Invlid sensor type, temperature can only be read from the Accelerometer or the Gyroscope.");
+                    throw new ArgumentException("Invalid sensor type, temperature can only be read from the Accelerometer or the Gyroscope.");
                 }
             }
         }
@@ -225,7 +232,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// Is the system fully calibrated?
         /// </summary>
         /// <remarks>
-        /// The sensor is fully calibrated if the system, accelerometer, gyroscope and megnetometer
+        /// The sensor is fully calibrated if the system, accelerometer, gyroscope and magnetometer
         /// are all calibrated.
         /// </remarks>
         public bool IsFullyCalibrated => IsAccelerometerCalibrated && IsGyroscopeCalibrated && IsSystemCalibrated &&
@@ -297,14 +304,14 @@ namespace Meadow.Foundation.Sensors.Motion
                 OperatingMode = OperatingModes.NINE_DEGREES_OF_FREEDOM;
             }
 
-            // The amazing Octple!
+            // The amazing Octuple!
             (Acceleration3D? Acceleration3D, AngularVelocity3D? AngularVelocity3D,
             MagneticField3D? MagneticField3D, Quaternion? QuaternionOrientation,
             Acceleration3D? LinearAcceleration, Acceleration3D? GravityVector,
             EulerAngles? EulerOrientation, Units.Temperature? Temperature) conditions;
 
             // make all the readings
-            // 	This method reads ony the sensor motion / orientation registers.  When
+            // 	This method reads only the sensor motion / orientation registers.  When
             // 	accessing the data from a register it is necessary to subtract the
             // 	access of the start of the sensor registers from the register required
             // 	in order to get the correct offset into the _sensorReadings array.
@@ -329,7 +336,7 @@ namespace Meadow.Foundation.Sensors.Motion
             var magnetometerData = GetReadings(Registers.MagnetometerXLSB - Registers.StartOfSensorData, 16.0);
             conditions.MagneticField3D = new MagneticField3D(magnetometerData.X, magnetometerData.Y, magnetometerData.Z, MagneticField.UnitType.Tesla);
 
-            //---- Quarternion Orientation
+            //---- Quaternion Orientation
             int quaternionData = Registers.QuaternionDataWLSB - Registers.StartOfSensorData;
             short w = (short)((ReadBuffer.Span[quaternionData + 1] << 8) | ReadBuffer.Span[quaternionData]);
             short x = (short)((ReadBuffer.Span[quaternionData + 3] << 8) | ReadBuffer.Span[quaternionData + 2]);
@@ -359,7 +366,7 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         /// <summary>
-        /// Raise events for subcribers and notify of value changes
+        /// Raise events for subscribers and notify of value changes
         /// </summary>
         /// <param name="changeResult">The updated sensor data</param>
         protected override void RaiseEventsAndNotify(IChangeResult<
@@ -370,11 +377,11 @@ namespace Meadow.Foundation.Sensors.Motion
         {
             if (changeResult.New.Acceleration3D is { } accel)
             {
-                Acceleration3DUpdated?.Invoke(this, new ChangeResult<Acceleration3D>(accel, changeResult.Old?.Acceleration3D));
+                _accelerationHandlers?.Invoke(this, new ChangeResult<Acceleration3D>(accel, changeResult.Old?.Acceleration3D));
             }
             if (changeResult.New.AngularVelocity3D is { } angular)
             {
-                AngularVelocity3DUpdated?.Invoke(this, new ChangeResult<AngularVelocity3D>(angular, changeResult.Old?.AngularVelocity3D));
+                _velocityHandlers?.Invoke(this, new ChangeResult<AngularVelocity3D>(angular, changeResult.Old?.AngularVelocity3D));
             }
             if (changeResult.New.MagneticField3D is { } magnetic)
             {
@@ -398,7 +405,7 @@ namespace Meadow.Foundation.Sensors.Motion
             }
             if (changeResult.New.Temperature is { } temp)
             {
-                TemperatureUpdated?.Invoke(this, new ChangeResult<Units.Temperature>(temp, changeResult.Old?.Temperature));
+                _temperatureHandlers?.Invoke(this, new ChangeResult<Units.Temperature>(temp, changeResult.Old?.Temperature));
             }
             base.RaiseEventsAndNotify(changeResult);
         }
@@ -422,7 +429,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
         /// <param name="start">First of the sensor readings to convert</param>
         /// <param name="divisor">Divisor to apply to the sensor data</param>
-        /// <returns>EulerAngles object containing the orientation informaiton</returns>
+        /// <returns>EulerAngles object containing the orientation information</returns>
         protected EulerAngles ConvertReadingToEulerAngles(int start, double divisor)
         {
             var x = (short)((ReadBuffer.Span[start + 1] << 8) | ReadBuffer.Span[start]);
@@ -448,12 +455,12 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         async Task<AngularVelocity3D> ISensor<AngularVelocity3D>.Read()
-            => (await Read()).AngularVelocity3D.Value;
+            => (await Read()).AngularVelocity3D!.Value;
 
         async Task<Acceleration3D> ISensor<Acceleration3D>.Read()
-            => (await Read()).Acceleration3D.Value;
+            => (await Read()).Acceleration3D!.Value;
 
         async Task<Units.Temperature> ISensor<Units.Temperature>.Read()
-            => (await Read()).Temperature.Value;
+            => (await Read()).Temperature!.Value;
     }
 }

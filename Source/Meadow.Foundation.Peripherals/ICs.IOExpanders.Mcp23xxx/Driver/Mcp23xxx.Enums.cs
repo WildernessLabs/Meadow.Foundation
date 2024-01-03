@@ -46,7 +46,7 @@
         }
 
         /// <summary>
-        /// The MCP28XXX family has an address mapping concept for accessing registers.
+        /// The MCP23xxx family has an address mapping concept for accessing registers.
         /// This provides a way to easily address registers by group or type. This is only
         /// relevant for 16-bit devices where it has two banks (Port A and B) of 8-bit
         /// GPIO pins.
@@ -86,7 +86,7 @@
             /// </remarks>
             Paired = 1
         }
-        
+
         /// <summary>
         /// The I/O port bank for 16 pin devices
         /// </summary>

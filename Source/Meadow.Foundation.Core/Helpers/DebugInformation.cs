@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 
 namespace Meadow.Foundation.Helpers
 {
@@ -40,7 +39,7 @@ namespace Meadow.Foundation.Helpers
         private static string HexadecimalDigits(byte b)
         {
             char[] digits = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
-            return"" + digits[b >> 4] + digits[b & 0xf];
+            return "" + digits[b >> 4] + digits[b & 0xf];
         }
 
         /// <summary>
@@ -60,7 +59,7 @@ namespace Meadow.Foundation.Helpers
         /// <returns>Hexadecimal representation of the unsigned short.</returns>
         public static string Hexadecimal(ushort us)
         {
-            return "0x" + HexadecimalDigits((byte) ((us >> 8) & 0xff)) + HexadecimalDigits((byte) (us & 0xff));
+            return "0x" + HexadecimalDigits((byte)((us >> 8) & 0xff)) + HexadecimalDigits((byte)(us & 0xff));
         }
 
         /// <summary>
@@ -70,8 +69,8 @@ namespace Meadow.Foundation.Helpers
         /// <returns>Hexadecimal representation of the unsigned short.</returns>
         public static string Hexadecimal(int i)
         {
-            return "0x" + HexadecimalDigits((byte) ((i >> 24) & 0xff)) + HexadecimalDigits((byte) ((i >> 16) & 0xff)) +
-                   HexadecimalDigits((byte) ((i >> 8) & 0xff)) + HexadecimalDigits((byte) (i & 0xff));
+            return "0x" + HexadecimalDigits((byte)((i >> 24) & 0xff)) + HexadecimalDigits((byte)((i >> 16) & 0xff)) +
+                   HexadecimalDigits((byte)((i >> 8) & 0xff)) + HexadecimalDigits((byte)(i & 0xff));
         }
 
         /// <summary>

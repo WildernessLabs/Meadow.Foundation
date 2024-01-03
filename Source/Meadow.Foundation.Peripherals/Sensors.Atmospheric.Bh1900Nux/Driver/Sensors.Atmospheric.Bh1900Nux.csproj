@@ -11,15 +11,18 @@
     <PackageId>Meadow.Foundation.Sensors.Atmospheric.Bh1900Nux</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow.Foundation, Atmospheric, BH1900NUX</PackageTags>
-    <Version>0.1.0</Version>
+    <Version>1.6.0.1</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Rohm BH1900NUX I2C temperature sensor</Description>
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <PropertyGroup>
-    <LangVersion>8.0</LangVersion>
+    <PackageReadmeFile>Readme.md</PackageReadmeFile>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <LangVersion>10.0</LangVersion>
   </PropertyGroup>
   <ItemGroup>
+    <None Include=".\Readme.md" Pack="true" PackagePath="" />
     <None Include="..\..\..\icon.png" Pack="true" PackagePath="" />
   </ItemGroup>
   <ItemGroup>

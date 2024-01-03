@@ -15,27 +15,30 @@ namespace Meadow.Foundation.Sensors.Environmental
         ByteCommsSensorBase<(Concentration? CO2Concentration,
                              Concentration? EthanolConcentration,
                              Concentration? TVOCConcentration)>,
-        IConcentrationSensor, II2cPeripheral
+        ICO2ConcentrationSensor, II2cPeripheral
     {
-        /// <summary>
-        /// Raised when the CO2 concentration changes
-        /// </summary>
-        public event EventHandler<IChangeResult<Concentration>> ConcentrationUpdated = delegate { };
+        private event EventHandler<IChangeResult<Concentration>> _concentrationHandlers;
+
+        event EventHandler<IChangeResult<Concentration>> ISamplingSensor<Concentration>.Updated
+        {
+            add => _concentrationHandlers += value;
+            remove => _concentrationHandlers -= value;
+        }
 
         /// <summary>
         /// Raised when the CO2 concentration changes
         /// </summary>
-        public event EventHandler<IChangeResult<Concentration>> CO2ConcentrationUpdated = delegate { };
+        public event EventHandler<IChangeResult<Concentration>> CO2ConcentrationUpdated = default!;
 
         /// <summary>
         /// Raised when the ethanol concentration changes
         /// </summary>
-        public event EventHandler<IChangeResult<Concentration>> EthanolConcentrationUpdated = delegate { };
+        public event EventHandler<IChangeResult<Concentration>> EthanolConcentrationUpdated = default!;
 
         /// <summary>
         /// Raised when the Total Volatile Organic Compounds (TVOC) concentration changes
         /// </summary>
-        public event EventHandler<IChangeResult<Concentration>> TVOCConcentrationUpdated = delegate { };
+        public event EventHandler<IChangeResult<Concentration>> TVOCConcentrationUpdated = default!;
 
         /// <summary>
         /// The current C02 concentration value
@@ -93,8 +96,8 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// </summary>
         protected async Task Initialize()
         {
-            BusComms.WriteRegister((byte)Registers.COMMAND, (byte)Commands.NOP);
-            BusComms.WriteRegister((byte)Registers.COMMAND, (byte)Commands.CLRGPR);
+            BusComms?.WriteRegister((byte)Registers.COMMAND, (byte)Commands.NOP);
+            BusComms?.WriteRegister((byte)Registers.COMMAND, (byte)Commands.CLRGPR);
 
             await Task.Delay(10);
             await Reset();
@@ -106,7 +109,7 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// <returns></returns>
         public Task Reset()
         {
-            BusComms.WriteRegister((byte)Registers.OPMODE, (byte)OperatingMode.Reset);
+            BusComms?.WriteRegister((byte)Registers.OPMODE, (byte)OperatingMode.Reset);
             return Task.Delay(10);
         }
 
@@ -123,7 +126,7 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// <summary>
         /// Get the sensor app / firmware version
         /// </summary>
-        /// <returns>The major, minor, release values as a ttuple of bytes</returns>
+        /// <returns>The major, minor, release values as a tuple of bytes</returns>
         public (byte Major, byte Minor, byte Release) GetFirmwareVersion()
         {
             BusComms.WriteRegister((byte)Registers.COMMAND, (byte)Commands.GET_APPVER);
@@ -138,7 +141,7 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// <summary>
         /// Clears the 10 GPR registers
         /// </summary>
-        void ClearGPRRegisters()
+        private void ClearGPRRegisters()
         {
             BusComms.WriteRegister((byte)Registers.COMMAND, (byte)Commands.CLRGPR);
         }
@@ -177,33 +180,33 @@ namespace Meadow.Foundation.Sensors.Environmental
             return (UBAAirQualityIndex)aqi;
         }
 
-        bool IsNewDataAvailable()
+        private bool IsNewDataAvailable()
         {
             var value = BusComms.ReadRegister((byte)Registers.DATA_STATUS);
 
             return BitHelpers.GetBitValue(value, 0x02);
         }
 
-        bool IsNewGPRAvailable()
+        private bool IsNewGPRAvailable()
         {
             var value = BusComms.ReadRegister((byte)Registers.DATA_STATUS);
 
             return BitHelpers.GetBitValue(value, 0x03);
         }
 
-        Concentration GetTotalVolotileOrganicCompounds()
+        private Concentration GetTotalVolotileOrganicCompounds()
         {
             var con = BusComms.ReadRegisterAsUShort((byte)Registers.DATA_TVOC);
             return new Concentration(con, Units.Concentration.UnitType.PartsPerBillion);
         }
 
-        Concentration GetCO2Concentration()
+        private Concentration GetCO2Concentration()
         {
             var con = BusComms.ReadRegisterAsUShort((byte)Registers.DATA_ECO2);
             return new Concentration(con, Units.Concentration.UnitType.PartsPerMillion);
         }
 
-        Concentration GetEthanolConcentration()
+        private Concentration GetEthanolConcentration()
         {
             var con = BusComms.ReadRegisterAsUShort((byte)Registers.DATA_ETOH);
             return new Concentration(con, Units.Concentration.UnitType.PartsPerBillion);
@@ -272,7 +275,7 @@ namespace Meadow.Foundation.Sensors.Environmental
         {
             if (changeResult.New.CO2Concentration is { } concentration)
             {
-                ConcentrationUpdated?.Invoke(this, new ChangeResult<Concentration>(concentration, changeResult.Old?.CO2Concentration));
+                _concentrationHandlers?.Invoke(this, new ChangeResult<Concentration>(concentration, changeResult.Old?.CO2Concentration));
                 CO2ConcentrationUpdated?.Invoke(this, new ChangeResult<Concentration>(concentration, changeResult.Old?.CO2Concentration));
             }
             if (changeResult.New.EthanolConcentration is { } ethConcentration)
@@ -288,6 +291,6 @@ namespace Meadow.Foundation.Sensors.Environmental
         }
 
         async Task<Concentration> ISensor<Concentration>.Read()
-            => (await Read()).CO2Concentration.Value;
+            => (await Read()).CO2Concentration!.Value;
     }
 }

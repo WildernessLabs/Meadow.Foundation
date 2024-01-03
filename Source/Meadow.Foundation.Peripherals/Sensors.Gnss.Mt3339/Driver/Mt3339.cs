@@ -1,59 +1,63 @@
-﻿using System;
-using System.Text;
-using Meadow.Foundation.Sensors.Location.Gnss;
+﻿using Meadow.Foundation.Sensors.Location.Gnss;
 using Meadow.Hardware;
 using Meadow.Peripherals.Sensors.Location.Gnss;
+using System;
+using System.Text;
 
 namespace Meadow.Foundation.Sensors.Gnss
 {
     /// <summary>
-    /// NMEA Event args - holds an NMEA sentence as a string
-    /// </summary>
-    public class NmeaEventArgs
-    {
-        /// <summary>
-        /// The NMEA sentence
-        /// </summary>
-        public string NmeaSentence { get; set; } = string.Empty;
-    }
-
-    /// <summary>
     /// Represents MT3339 MediaTek high-performance, single-chip, multi-GNSS solution 
     /// </summary>
-    public class Mt3339
+    public class Mt3339 : IGnssSensor
     {
         readonly ISerialMessagePort serialPort;
         NmeaSentenceProcessor? nmeaProcessor;
 
         /// <summary>
-        /// Raised when GAG data is recieved
+        /// Supported GNSS result types
         /// </summary>
-        public event EventHandler<GnssPositionInfo> GgaReceived = delegate { };
+        public IGnssResult[] SupportedResultTypes { get; } = new IGnssResult[]
+        {
+            new GnssPositionInfo(),
+            new ActiveSatellites(),
+            new CourseOverGround()
+        };
 
         /// <summary>
-        /// Raised when GAG data is recieved
+        /// Raised when GNSS data is received
         /// </summary>
-        public event EventHandler<GnssPositionInfo> GllReceived = delegate { };
+        public event EventHandler<IGnssResult> GnssDataReceived = default!;
 
         /// <summary>
-        /// Raised when GSA data is recieved
+        /// Raised when GGA data is received
         /// </summary>
-        public event EventHandler<ActiveSatellites> GsaReceived = delegate { };
+        public event EventHandler<GnssPositionInfo> GgaReceived = default!;
 
         /// <summary>
-        /// Raised when RMC data is recieved
+        /// Raised when GLL data is received
         /// </summary>
-        public event EventHandler<GnssPositionInfo> RmcReceived = delegate { };
+        public event EventHandler<GnssPositionInfo> GllReceived = default!;
 
         /// <summary>
-        /// Raised when VTG data is recieved
+        /// Raised when GSA data is received
         /// </summary>
-        public event EventHandler<CourseOverGround> VtgReceived = delegate { };
+        public event EventHandler<ActiveSatellites> GsaReceived = default!;
 
         /// <summary>
-        /// Raised when GSV data is recieved
+        /// Raised when RMC data is received
         /// </summary>
-        public event EventHandler<SatellitesInView> GsvReceived = delegate { };
+        public event EventHandler<GnssPositionInfo> RmcReceived = default!;
+
+        /// <summary>
+        /// Raised when VTG data is received
+        /// </summary>
+        public event EventHandler<CourseOverGround> VtgReceived = default!;
+
+        /// <summary>
+        /// Raised when GSV data is received
+        /// </summary>
+        public event EventHandler<SatellitesInView> GsvReceived = default!;
 
         // TODO: if we want to make this public then we're going to have to add
         // a bunch of checks around baud rate, 8n1, etc.
@@ -92,17 +96,28 @@ namespace Meadow.Foundation.Sensors.Gnss
         }
 
         /// <summary>
-        /// Start updates
+        /// Start updating GNSS data
         /// </summary>
         public void StartUpdating()
         {
             serialPort.Open();
 
-            this.serialPort.Write(Encoding.ASCII.GetBytes(Commands.PMTK_Q_RELEASE));
+            serialPort.Write(Encoding.ASCII.GetBytes(Commands.PMTK_Q_RELEASE));
 
-            this.serialPort.Write(Encoding.ASCII.GetBytes(Commands.PGCMD_ANTENNA));
+            serialPort.Write(Encoding.ASCII.GetBytes(Commands.PGCMD_ANTENNA));
 
-            this.serialPort.Write(Encoding.ASCII.GetBytes(Commands.PMTK_SET_NMEA_OUTPUT_ALLDATA));
+            serialPort.Write(Encoding.ASCII.GetBytes(Commands.PMTK_SET_NMEA_OUTPUT_ALLDATA));
+        }
+
+        /// <summary>
+        /// Stop updating GNSS data
+        /// </summary>
+        public void StopUpdating()
+        {
+            if (serialPort.IsOpen)
+            {
+                serialPort.Close();
+            }
         }
 
         /// <summary>
@@ -113,46 +128,61 @@ namespace Meadow.Foundation.Sensors.Gnss
             nmeaProcessor = new NmeaSentenceProcessor();
 
             var mtkDecoder = new MtkDecoder();
-         
             nmeaProcessor.RegisterDecoder(mtkDecoder);
 
             var ggaDecoder = new GgaDecoder();
-           
             nmeaProcessor.RegisterDecoder(ggaDecoder);
-            ggaDecoder.PositionReceived += (object sender, GnssPositionInfo location) => 
-                GgaReceived(this, location);
-            
+            ggaDecoder.PositionReceived += (object sender, GnssPositionInfo location) =>
+            {
+                GgaReceived?.Invoke(this, location);
+                GnssDataReceived?.Invoke(this, location);
+            };
+
             var gllDecoder = new GllDecoder();
             nmeaProcessor.RegisterDecoder(gllDecoder);
-            gllDecoder.GeographicLatitudeLongitudeReceived += (object sender, GnssPositionInfo location) => {
-                GllReceived(this, location);
+            gllDecoder.GeographicLatitudeLongitudeReceived += (object sender, GnssPositionInfo location) =>
+            {
+                GllReceived?.Invoke(this, location);
+                GnssDataReceived?.Invoke(this, location);
             };
 
             var gsaDecoder = new GsaDecoder();
             nmeaProcessor.RegisterDecoder(gsaDecoder);
-            gsaDecoder.ActiveSatellitesReceived += (object sender, ActiveSatellites activeSatellites) => 
-                GsaReceived(this, activeSatellites);
-            
+            gsaDecoder.ActiveSatellitesReceived += (object sender, ActiveSatellites activeSatellites) =>
+            {
+                GsaReceived?.Invoke(this, activeSatellites);
+                GnssDataReceived?.Invoke(this, activeSatellites);
+            };
+
             var rmcDecoder = new RmcDecoder();
             nmeaProcessor.RegisterDecoder(rmcDecoder);
-            rmcDecoder.PositionCourseAndTimeReceived += (object sender, GnssPositionInfo positionCourseAndTime) => 
-                RmcReceived(this, positionCourseAndTime);
+            rmcDecoder.PositionCourseAndTimeReceived += (object sender, GnssPositionInfo positionCourseAndTime) =>
+            {
+                RmcReceived?.Invoke(this, positionCourseAndTime);
+                GnssDataReceived?.Invoke(this, positionCourseAndTime);
+            };
 
             var vtgDecoder = new VtgDecoder();
             nmeaProcessor.RegisterDecoder(vtgDecoder);
             vtgDecoder.CourseAndVelocityReceived += (object sender, CourseOverGround courseAndVelocity) =>
-                VtgReceived(this, courseAndVelocity);
+            {
+                VtgReceived?.Invoke(this, courseAndVelocity);
+                GnssDataReceived?.Invoke(this, courseAndVelocity);
+            };
+
 
             var gsvDecoder = new GsvDecoder();
             nmeaProcessor.RegisterDecoder(gsvDecoder);
             gsvDecoder.SatellitesInViewReceived += (object sender, SatellitesInView satellites) =>
-                GsvReceived(this, satellites);
+            {
+                GsvReceived?.Invoke(this, satellites);
+                GnssDataReceived?.Invoke(this, satellites);
+            };
         }
 
         private void SerialPort_MessageReceived(object sender, SerialMessageData e)
         {
-            string msg = (e.GetMessageString(Encoding.ASCII));
-            nmeaProcessor?.ProcessNmeaMessage(msg);
+            nmeaProcessor?.ProcessNmeaMessage(e.GetMessageString(Encoding.ASCII));
         }
     }
 }

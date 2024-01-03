@@ -2,20 +2,20 @@
 {
     public partial class Th02
     {
-		/// <summary>
-		/// Valid I2C addresses for the sensor
-		/// </summary>
-		public enum Addresses : byte
-		{
-			/// <summary>
-			/// Bus address 0x40
-			/// </summary>
-			Address_0x40 = 0x40,
-			/// <summary>
-			/// Default bus address
-			/// </summary>
-			Default = Address_0x40
-		}
+        /// <summary>
+        /// Valid I2C addresses for the sensor
+        /// </summary>
+        public enum Addresses : byte
+        {
+            /// <summary>
+            /// Bus address 0x40
+            /// </summary>
+            Address_0x40 = 0x40,
+            /// <summary>
+            /// Default bus address
+            /// </summary>
+            Default = Address_0x40
+        }
 
         /// <summary>
         /// Register addresses in the Grove TH02 sensor.
@@ -35,7 +35,7 @@
             /// </summary>
             DataLow = 0x02,
             /// <summary>
-            /// Addess of the configuration register
+            /// Address of the configuration register
             /// </summary>
             Config = 0x03,
             /// <summary>

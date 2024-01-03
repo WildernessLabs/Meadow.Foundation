@@ -14,14 +14,14 @@ namespace ICs.IOExpanders.Mcp23x17_Input_Sample
 {
     public class MeadowApp : App<F7FeatherV2>
     {
-        Mcp23017 mcp;
+        private Mcp23017 mcp;
 
         public override Task Initialize()
         {
             Resolver.Log.Info("Initializing...");
 
-            IDigitalInputPort interruptPort = Device.CreateDigitalInputPort(Device.Pins.D00, InterruptMode.EdgeBoth, ResistorMode.InternalPullDown);
-            IDigitalOutputPort resetPort = Device.CreateDigitalOutputPort(Device.Pins.D01);
+            var interruptPort = Device.CreateDigitalInterruptPort(Device.Pins.D00, InterruptMode.EdgeBoth, ResistorMode.InternalPullDown);
+            var resetPort = Device.CreateDigitalOutputPort(Device.Pins.D01);
 
             mcp = new Mcp23017(Device.CreateI2cBus(), (byte)Addresses.Address_0x20, interruptPort, resetPort);
 
@@ -44,7 +44,7 @@ namespace ICs.IOExpanders.Mcp23x17_Input_Sample
             return base.Run();
         }
 
-        void TestBulkPinReads(int loopCount)
+        private void TestBulkPinReads(int loopCount)
         {
             for (int l = 0; l < loopCount; l++)
             {
@@ -64,25 +64,25 @@ namespace ICs.IOExpanders.Mcp23x17_Input_Sample
             }
         }
 
-        async Task TestDigitalInputPorts(int loopCount)
+        private async Task TestDigitalInputPorts(int loopCount)
         {
-            var in00 = mcp.CreateDigitalInputPort(mcp.Pins.GPA0, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
-            var in01 = mcp.CreateDigitalInputPort(mcp.Pins.GPA1, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
-            var in02 = mcp.CreateDigitalInputPort(mcp.Pins.GPA2, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
-            var in03 = mcp.CreateDigitalInputPort(mcp.Pins.GPA3, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
-            var in04 = mcp.CreateDigitalInputPort(mcp.Pins.GPA4, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
-            var in05 = mcp.CreateDigitalInputPort(mcp.Pins.GPA5, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
-            var in06 = mcp.CreateDigitalInputPort(mcp.Pins.GPA6, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
-            var in07 = mcp.CreateDigitalInputPort(mcp.Pins.GPA7, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
+            var in00 = mcp.CreateDigitalInterruptPort(mcp.Pins.GPA0, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
+            var in01 = mcp.CreateDigitalInterruptPort(mcp.Pins.GPA1, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
+            var in02 = mcp.CreateDigitalInterruptPort(mcp.Pins.GPA2, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
+            var in03 = mcp.CreateDigitalInterruptPort(mcp.Pins.GPA3, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
+            var in04 = mcp.CreateDigitalInterruptPort(mcp.Pins.GPA4, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
+            var in05 = mcp.CreateDigitalInterruptPort(mcp.Pins.GPA5, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
+            var in06 = mcp.CreateDigitalInterruptPort(mcp.Pins.GPA6, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
+            var in07 = mcp.CreateDigitalInterruptPort(mcp.Pins.GPA7, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
 
-            var in08 = mcp.CreateDigitalInputPort(mcp.Pins.GPB0, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
-            var in09 = mcp.CreateDigitalInputPort(mcp.Pins.GPB1, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
-            var in10 = mcp.CreateDigitalInputPort(mcp.Pins.GPB2, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
-            var in11 = mcp.CreateDigitalInputPort(mcp.Pins.GPB3, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
-            var in12 = mcp.CreateDigitalInputPort(mcp.Pins.GPB4, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
-            var in13 = mcp.CreateDigitalInputPort(mcp.Pins.GPB5, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
-            var in14 = mcp.CreateDigitalInputPort(mcp.Pins.GPB6, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
-            var in15 = mcp.CreateDigitalInputPort(mcp.Pins.GPB7, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
+            var in08 = mcp.CreateDigitalInterruptPort(mcp.Pins.GPB0, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
+            var in09 = mcp.CreateDigitalInterruptPort(mcp.Pins.GPB1, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
+            var in10 = mcp.CreateDigitalInterruptPort(mcp.Pins.GPB2, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
+            var in11 = mcp.CreateDigitalInterruptPort(mcp.Pins.GPB3, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
+            var in12 = mcp.CreateDigitalInterruptPort(mcp.Pins.GPB4, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
+            var in13 = mcp.CreateDigitalInterruptPort(mcp.Pins.GPB5, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
+            var in14 = mcp.CreateDigitalInterruptPort(mcp.Pins.GPB6, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
+            var in15 = mcp.CreateDigitalInterruptPort(mcp.Pins.GPB7, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp);
 
             var inputPorts = new List<IDigitalInputPort>()
             {
@@ -113,29 +113,29 @@ namespace ICs.IOExpanders.Mcp23x17_Input_Sample
             }
         }
 
-        void TestInterrupts()
+        private void TestInterrupts()
         {
             Resolver.Log.Info($"Test Interrupts");
 
             var debounceTime = TimeSpan.FromMilliseconds(50);
 
-            var inputPort00 = mcp.CreateDigitalInputPort(mcp.Pins.GPA0, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp, debounceTime);
-            var inputPort01 = mcp.CreateDigitalInputPort(mcp.Pins.GPA1, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp, debounceTime);
-            var inputPort02 = mcp.CreateDigitalInputPort(mcp.Pins.GPA2, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp, debounceTime);
-            var inputPort03 = mcp.CreateDigitalInputPort(mcp.Pins.GPA3, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp, debounceTime);
-            var inputPort04 = mcp.CreateDigitalInputPort(mcp.Pins.GPA4, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp, debounceTime);
-            var inputPort05 = mcp.CreateDigitalInputPort(mcp.Pins.GPA5, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp, debounceTime);
-            var inputPort06 = mcp.CreateDigitalInputPort(mcp.Pins.GPA6, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp, debounceTime);
-            var inputPort07 = mcp.CreateDigitalInputPort(mcp.Pins.GPA7, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp, debounceTime);
+            var inputPort00 = mcp.CreateDigitalInterruptPort(mcp.Pins.GPA0, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp, debounceTime);
+            var inputPort01 = mcp.CreateDigitalInterruptPort(mcp.Pins.GPA1, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp, debounceTime);
+            var inputPort02 = mcp.CreateDigitalInterruptPort(mcp.Pins.GPA2, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp, debounceTime);
+            var inputPort03 = mcp.CreateDigitalInterruptPort(mcp.Pins.GPA3, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp, debounceTime);
+            var inputPort04 = mcp.CreateDigitalInterruptPort(mcp.Pins.GPA4, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp, debounceTime);
+            var inputPort05 = mcp.CreateDigitalInterruptPort(mcp.Pins.GPA5, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp, debounceTime);
+            var inputPort06 = mcp.CreateDigitalInterruptPort(mcp.Pins.GPA6, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp, debounceTime);
+            var inputPort07 = mcp.CreateDigitalInterruptPort(mcp.Pins.GPA7, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp, debounceTime);
 
-            var inputPort08 = mcp.CreateDigitalInputPort(mcp.Pins.GPB0, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp, debounceTime);
-            var inputPort09 = mcp.CreateDigitalInputPort(mcp.Pins.GPB1, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp, debounceTime);
-            var inputPort10 = mcp.CreateDigitalInputPort(mcp.Pins.GPB2, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp, debounceTime);
-            var inputPort11 = mcp.CreateDigitalInputPort(mcp.Pins.GPB3, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp, debounceTime);
-            var inputPort12 = mcp.CreateDigitalInputPort(mcp.Pins.GPB4, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp, debounceTime);
-            var inputPort13 = mcp.CreateDigitalInputPort(mcp.Pins.GPB5, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp, debounceTime);
-            var inputPort14 = mcp.CreateDigitalInputPort(mcp.Pins.GPB6, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp, debounceTime);
-            var inputPort15 = mcp.CreateDigitalInputPort(mcp.Pins.GPB7, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp, debounceTime);
+            var inputPort08 = mcp.CreateDigitalInterruptPort(mcp.Pins.GPB0, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp, debounceTime);
+            var inputPort09 = mcp.CreateDigitalInterruptPort(mcp.Pins.GPB1, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp, debounceTime);
+            var inputPort10 = mcp.CreateDigitalInterruptPort(mcp.Pins.GPB2, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp, debounceTime);
+            var inputPort11 = mcp.CreateDigitalInterruptPort(mcp.Pins.GPB3, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp, debounceTime);
+            var inputPort12 = mcp.CreateDigitalInterruptPort(mcp.Pins.GPB4, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp, debounceTime);
+            var inputPort13 = mcp.CreateDigitalInterruptPort(mcp.Pins.GPB5, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp, debounceTime);
+            var inputPort14 = mcp.CreateDigitalInterruptPort(mcp.Pins.GPB6, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp, debounceTime);
+            var inputPort15 = mcp.CreateDigitalInterruptPort(mcp.Pins.GPB7, InterruptMode.EdgeBoth, ResistorMode.InternalPullUp, debounceTime);
 
             inputPort00.Changed += (s, e) => Resolver.Log.Info($"Port A0 interrupt {e.New.State}");
             inputPort01.Changed += (s, e) => Resolver.Log.Info($"Port A1 interrupt {e.New.State}");

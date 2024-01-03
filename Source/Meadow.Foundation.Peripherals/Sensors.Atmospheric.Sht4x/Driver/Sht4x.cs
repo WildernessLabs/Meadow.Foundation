@@ -1,5 +1,6 @@
 ﻿using Meadow.Hardware;
 using Meadow.Peripherals.Sensors;
+using Meadow.Peripherals.Sensors.Atmospheric;
 using Meadow.Units;
 using System;
 using System.Threading;
@@ -14,20 +15,25 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         ByteCommsSensorBase<(Units.Temperature? Temperature, RelativeHumidity? Humidity)>,
         ITemperatureSensor, IHumiditySensor, II2cPeripheral
     {
+        private event EventHandler<IChangeResult<Units.Temperature>> _temperatureHandlers;
+        private event EventHandler<IChangeResult<RelativeHumidity>> _humidityHandlers;
+
+        event EventHandler<IChangeResult<Units.Temperature>> ISamplingSensor<Units.Temperature>.Updated
+        {
+            add => _temperatureHandlers += value;
+            remove => _temperatureHandlers -= value;
+        }
+
+        event EventHandler<IChangeResult<RelativeHumidity>> ISamplingSensor<RelativeHumidity>.Updated
+        {
+            add => _humidityHandlers += value;
+            remove => _humidityHandlers -= value;
+        }
+
         /// <summary>
         /// Precision of sensor reading
         /// </summary>
         public Precision ReadPrecision { get; protected set; } = Precision.HighPrecisionNoHeat;
-
-        /// <summary>
-        /// Temperature changed event handler
-        /// </summary>
-        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
-
-        /// <summary>
-        /// Humidity changed event handler
-        /// </summary>
-        public event EventHandler<IChangeResult<RelativeHumidity>> HumidityUpdated = delegate { };
 
         /// <summary>
         /// The current temperature
@@ -61,11 +67,11 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         {
             if (changeResult.New.Temperature is { } temp)
             {
-                TemperatureUpdated?.Invoke(this, new ChangeResult<Units.Temperature>(temp, changeResult.Old?.Temperature));
+                _temperatureHandlers?.Invoke(this, new ChangeResult<Units.Temperature>(temp, changeResult.Old?.Temperature));
             }
             if (changeResult.New.Humidity is { } humidity)
             {
-                HumidityUpdated?.Invoke(this, new ChangeResult<Units.RelativeHumidity>(humidity, changeResult.Old?.Humidity));
+                _humidityHandlers?.Invoke(this, new ChangeResult<Units.RelativeHumidity>(humidity, changeResult.Old?.Humidity));
             }
             base.RaiseEventsAndNotify(changeResult);
         }
@@ -126,9 +132,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         }
 
         async Task<Units.Temperature> ISensor<Units.Temperature>.Read()
-            => (await Read()).Temperature.Value;
+            => (await Read()).Temperature!.Value;
 
         async Task<RelativeHumidity> ISensor<RelativeHumidity>.Read()
-            => (await Read()).Humidity.Value;
+            => (await Read()).Humidity!.Value;
     }
 }

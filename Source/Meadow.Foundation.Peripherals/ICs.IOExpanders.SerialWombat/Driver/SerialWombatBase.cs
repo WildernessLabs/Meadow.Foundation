@@ -1,7 +1,7 @@
 ﻿using Meadow.Foundation.Servos;
 using Meadow.Hardware;
 using Meadow.Logging;
-using Meadow.Peripherals.Sensors;
+using Meadow.Peripherals.Sensors.Distance;
 using Meadow.Units;
 using System;
 using System.Linq;
@@ -127,8 +127,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
                     {
                         var data = ReadFlash(address + offset);
                         bytes[index++] = (byte)(data & 0xff);
-                        bytes[index++] = (byte)(data & 0xff >> 8);
-                        bytes[index++] = (byte)(data & 0xff >> 16);
+                        bytes[index++] = (byte)(data & (0xff >> 8));
+                        bytes[index++] = (byte)(data & (0xff >> 16));
                     }
 
                     uuid = new Guid(bytes);
@@ -208,7 +208,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             command[2] = (byte)(data & 0xff);
             command[3] = (byte)(data >> 8);
             var response = SendCommand(command);
-            return (ushort)(response[2] | response[3] << 8);
+            return (ushort)(response[2] | (response[3] << 8));
         }
 
         /// <summary>
@@ -230,7 +230,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             command[3] = (byte)((address >> 16) & 0xff);
             command[4] = (byte)((address >> 24) & 0xff);
             var response = SendCommand(command);
-            return (uint)(response[4] | response[5] << 8 | response[6] << 16 | response[7] << 24);
+            return (uint)(response[4] | (response[5] << 8) | (response[6] << 16) | (response[7] << 24));
         }
 
         /// <summary>
@@ -426,23 +426,17 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <summary>
         /// Create a digital input port for a pin
         /// </summary>
-        public IDigitalInputPort CreateDigitalInputPort(IPin pin, InterruptMode interruptMode = InterruptMode.None, ResistorMode resistorMode = ResistorMode.Disabled)
+        public IDigitalInputPort CreateDigitalInputPort(IPin pin, ResistorMode resistorMode = ResistorMode.Disabled)
         {
-            // if (debounceDuration != TimeSpan.Zero) throw new NotSupportedException("Debounce not supported");
-            // if (glitchDuration != TimeSpan.Zero) throw new NotSupportedException("Glitch Filtering not supported");
-
-            return new DigitalInputPort(this, pin, interruptMode, resistorMode);
+            return new DigitalInputPort(this, pin, resistorMode);
         }
 
         /// <summary>
         /// Create a digital input port for a pin
         /// </summary>
-        public IDigitalInputPort CreateDigitalInputPort(IPin pin, InterruptMode interruptMode, ResistorMode resistorMode, TimeSpan debounceDuration, TimeSpan glitchDuration)
+        public IDigitalInputPort CreateDigitalInputPort(IPin pin)
         {
-            // if (debounceDuration != TimeSpan.Zero) throw new NotSupportedException("Debounce not supported");
-            // if (glitchDuration != TimeSpan.Zero) throw new NotSupportedException("Glitch Filtering not supported");
-
-            return new DigitalInputPort(this, pin, interruptMode, resistorMode);
+            return new DigitalInputPort(this, pin, ResistorMode.Disabled);
         }
 
         /// <summary>
@@ -477,8 +471,14 @@ namespace Meadow.Foundation.ICs.IOExpanders
             return new AnalogInputPort(this, pin, channel, sampleCount);
         }
 
+        ///<inheritdoc/>
+        public IAnalogInputArray CreateAnalogInputArray(params IPin[] pins)
+        {
+            throw new NotImplementedException();
+        }
+
         /// <summary>
-        /// Create a ditance sensor for a pin
+        /// Create a distance sensor for a pin
         /// </summary>
         public IRangeFinder CreateDistanceSensor(IPin trigger, IPin echo)
         {
@@ -486,7 +486,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         }
 
         /// <summary>
-        /// Create a ditance sensor for a pin
+        /// Create a distance sensor for a pin
         /// </summary>
         public IRangeFinder CreateDistanceSensor(IPin trigger, IPin echo, TimeSpan readPeriod)
         {

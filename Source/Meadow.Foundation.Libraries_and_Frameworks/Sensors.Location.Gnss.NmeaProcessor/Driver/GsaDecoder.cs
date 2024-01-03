@@ -1,5 +1,5 @@
-﻿using System;
-using Meadow.Peripherals.Sensors.Location.Gnss;
+﻿using Meadow.Peripherals.Sensors.Location.Gnss;
+using System;
 
 namespace Meadow.Foundation.Sensors.Location.Gnss
 {
@@ -11,18 +11,18 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
         /// <summary>
         /// Event raised when valid GSA data is received
         /// </summary>
-        public event EventHandler<ActiveSatellites> ActiveSatellitesReceived = delegate { };
+        public event EventHandler<ActiveSatellites> ActiveSatellitesReceived = default!;
 
         /// <summary>
         /// Prefix for the GSA decoder
         /// </summary>
-        public string Prefix  => "GSA";
+        public string Prefix => "GSA";
 
         /// <summary>
         /// Friendly name for the GSA messages.
         /// </summary>
         public string Name => "GSA - DOP and number of active satellites.";
-        
+
         /// <summary>
         /// Process the data from a GSA message
         /// </summary>
@@ -42,55 +42,57 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
 
             int dimensionalFixType;
 
-            if (int.TryParse(sentence.DataElements[1], out dimensionalFixType)) 
+            if (int.TryParse(sentence.DataElements[1], out dimensionalFixType))
             {
                 satellites.Dimensions = (DimensionalFixType)dimensionalFixType;
             }
 
             var satelliteCount = 0;
-            for (var index = 2; index < 14; index++) 
+            for (var index = 2; index < 14; index++)
             {
                 if (!string.IsNullOrEmpty(sentence.DataElements[index]))
                 {
                     satelliteCount++;
                 }
             }
-            if (satelliteCount > 0) 
+            if (satelliteCount > 0)
             {
                 satellites.SatellitesUsedForFix = new string[satelliteCount];
                 var currentSatellite = 0;
-                for (var index = 2; index < 14; index++) 
+                for (var index = 2; index < 14; index++)
                 {
-                    if (!string.IsNullOrEmpty(sentence.DataElements[index])) 
+                    if (!string.IsNullOrEmpty(sentence.DataElements[index]))
                     {
                         satellites.SatellitesUsedForFix[currentSatellite] = sentence.DataElements[index];
                         currentSatellite++;
                     }
                 }
-            } 
-            else 
+            }
+            else
             {
                 satellites.SatellitesUsedForFix = null;
             }
 
             decimal dilutionOfPrecision;
 
-            if (decimal.TryParse(sentence.DataElements[14], out dilutionOfPrecision)) 
+            if (decimal.TryParse(sentence.DataElements[14], out dilutionOfPrecision))
             {
                 satellites.DilutionOfPrecision = dilutionOfPrecision;
             }
 
             decimal horizontalDilutionOfPrecision;
-            
-            if (decimal.TryParse(sentence.DataElements[15], out horizontalDilutionOfPrecision)) {
+
+            if (decimal.TryParse(sentence.DataElements[15], out horizontalDilutionOfPrecision))
+            {
                 satellites.HorizontalDilutionOfPrecision = horizontalDilutionOfPrecision;
             }
 
             decimal verticalDilutionOfPrecision;
-            if (decimal.TryParse(sentence.DataElements[16], out verticalDilutionOfPrecision)) {
+            if (decimal.TryParse(sentence.DataElements[16], out verticalDilutionOfPrecision))
+            {
                 satellites.VerticalDilutionOfPrecision = verticalDilutionOfPrecision;
             }
-           
+
             ActiveSatellitesReceived(this, satellites);
         }
     }

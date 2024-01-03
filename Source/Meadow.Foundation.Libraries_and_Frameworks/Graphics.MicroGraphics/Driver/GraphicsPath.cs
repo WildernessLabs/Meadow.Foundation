@@ -57,7 +57,7 @@ namespace Meadow.Foundation.Graphics
         /// <summary>
         /// The collection of points 
         /// </summary>
-        public Point[] Points;
+        public Point[]? Points;
 
         /// <summary>
         /// The number of verbs/actions used
@@ -76,10 +76,15 @@ namespace Meadow.Foundation.Graphics
         {
             get
             {
+                if (Points == null)
+                {
+                    return new Rect(0, 0, 0, 0);
+                }
+
                 Point min = Points[0];
                 Point max = Points[0];
 
-                foreach(var p in Points)
+                foreach (var p in Points)
                 {
                     min.X = Math.Min(min.X, p.X);
                     min.Y = Math.Min(min.Y, p.Y);
@@ -130,11 +135,11 @@ namespace Meadow.Foundation.Graphics
         /// <param name="point">The point position</param>
         public void MoveTo(Point point)
         {
-            if(PathActions.Count > 0)
+            if (PathActions.Count > 0)
             {
                 var last = GetLastAction();
 
-                if(last.Verb == VerbType.Move)
+                if (last.Verb == VerbType.Move)
                 {
                     last.PathPoint = point;
                     return;
@@ -153,7 +158,7 @@ namespace Meadow.Foundation.Graphics
         {
             int count = PathActions.Count;
 
-            if(count > 0)
+            if (count > 0)
             {
                 PathActions.Add(new PathAction(new Point(x, y) + PathActions[count - 1].PathPoint, VerbType.Move));
             }
@@ -188,7 +193,7 @@ namespace Meadow.Foundation.Graphics
         /// <param name="y">The y line end location</param>
         public void LineTo(int x, int y)
         {
-            if(PathActions.Count == 0)
+            if (PathActions.Count == 0)
             {
                 MoveTo(x, y);
                 return;
@@ -255,7 +260,7 @@ namespace Meadow.Foundation.Graphics
         /// <param name="points">The points defining the lines to add</param>
         public void AddPolyLine(Point[] points)
         {
-            foreach(var point in points)
+            foreach (var point in points)
             {
                 LineTo(point);
             }
@@ -267,7 +272,7 @@ namespace Meadow.Foundation.Graphics
         /// <param name="path">The path to add</param>
         public void AddPath(GraphicsPath path)
         {
-            foreach(var action in path.PathActions)
+            foreach (var action in path.PathActions)
             {
                 PathActions.Add(action);
             }
@@ -279,7 +284,7 @@ namespace Meadow.Foundation.Graphics
         /// <param name="path">The path to add</param>
         public void AddPathReverse(GraphicsPath path)
         {
-            for(int i = path.PathActions.Count - 1; i > 0; i--)
+            for (int i = path.PathActions.Count - 1; i > 0; i--)
             {
                 PathActions.Add(path.PathActions[i]);
             }
@@ -290,7 +295,7 @@ namespace Meadow.Foundation.Graphics
         /// </summary>
         public void Close()
         {
-            if(PathActions.Count == 0)
+            if (PathActions.Count == 0)
             {
                 return;
             }
@@ -307,10 +312,10 @@ namespace Meadow.Foundation.Graphics
         {
             var action = PathActions.Where(p => p.Verb == VerbType.Close).LastOrDefault();
 
-            if(action.Verb == VerbType.Close)
+            if (action.Verb == VerbType.Close)
             {
                 var index = PathActions.IndexOf(action);
-                if(index < PathActions.Count - 1 && PathActions[index +1].Verb == VerbType.Move)
+                if (index < PathActions.Count - 1 && PathActions[index + 1].Verb == VerbType.Move)
                 {
                     index++;
                 }

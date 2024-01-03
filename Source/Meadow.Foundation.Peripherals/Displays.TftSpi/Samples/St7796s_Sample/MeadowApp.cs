@@ -20,7 +20,7 @@ namespace Displays.Tft.St7796s_Sample
 
             Resolver.Log.Info("Create display driver instance");
 
-            var display = new Ssd1331
+            var display = new St7796s
             (
                 spiBus: spiBus,
                 resetPin: Device.Pins.D00,
@@ -39,8 +39,8 @@ namespace Displays.Tft.St7796s_Sample
         {
             graphics.Clear();
 
-            graphics.DrawTriangle(10, 10, 50, 50, 10, 50, Meadow.Foundation.Color.Red);
-            graphics.DrawRectangle(20, 15, 40, 20, Meadow.Foundation.Color.Yellow, false);
+            graphics.DrawTriangle(10, 10, 50, 50, 10, 50, Color.Red);
+            graphics.DrawRectangle(20, 15, 40, 20, Color.Yellow, false);
             graphics.DrawText(5, 5, "Meadow F7");
 
             graphics.Show();

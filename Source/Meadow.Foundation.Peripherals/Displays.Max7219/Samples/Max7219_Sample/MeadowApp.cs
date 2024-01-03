@@ -40,7 +40,7 @@ namespace MeadowApp
             Resolver.Log.Info("Digital test");
 
             display.SetMode(Max7219.Max7219Mode.Digital);
-            //control indivial LEDs - for 8x8 matrix configurations - use the Meadow graphics library
+            //control individual LEDs - for 8x8 matrix configurations - use the Meadow graphics library
             for (byte i = 0; i < 64; i++)
             {
                 for (int d = 0; d < 8; d++)

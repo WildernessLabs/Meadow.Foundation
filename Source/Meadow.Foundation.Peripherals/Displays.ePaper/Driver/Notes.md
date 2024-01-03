@@ -21,7 +21,7 @@ IL3820 - 2.9" 296x128 BW from WaveShare
 IL3897*
 IL91874 - 2.7" tri (also supports BW) https://adafruit-circuitpython-il91874.readthedocs.io/en/latest/
 SSD1608 - 2.13" BW
-SSD1675 - 1.54" BW 200x200 (also supports 2.13" 104x212 BW - not Adadruit)
+SSD1675 - 1.54" BW 200x200 (also supports 2.13" 104x212 BW - not Adafruit)
 SSD1675B
 
 * not supported by Adafruit

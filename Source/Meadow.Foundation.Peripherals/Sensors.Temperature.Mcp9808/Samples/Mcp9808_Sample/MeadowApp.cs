@@ -21,14 +21,14 @@ namespace Sensors.Temperature.Mcp9808_Sample
             var consumer = Mcp9808.CreateObserver(
                 handler: result =>
                 {
-                    Resolver.Log.Info($"Temperature New Value { result.New.Celsius}C");
-                    Resolver.Log.Info($"Temperature Old Value { result.Old?.Celsius}C");
+                    Resolver.Log.Info($"Temperature New Value {result.New.Celsius}C");
+                    Resolver.Log.Info($"Temperature Old Value {result.Old?.Celsius}C");
                 },
                 filter: null
             );
             mcp9808.Subscribe(consumer);
 
-            mcp9808.TemperatureUpdated += (object sender, IChangeResult<Meadow.Units.Temperature> e) =>
+            mcp9808.Updated += (object sender, IChangeResult<Meadow.Units.Temperature> e) =>
             {
                 Resolver.Log.Info($"Temperature Updated: {e.New.Celsius:N2}C");
             };

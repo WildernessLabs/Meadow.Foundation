@@ -19,16 +19,16 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// </summary>
             public event EventHandler<IChangeResult<Voltage>> Updated = (s, e) => { };
 
-            private SerialWombatBase controller;
-            private int supplyVoltage;
-            private object _lock = new object();
-
             /// <summary>
-            /// Collection of event observers for the Updated event
+            /// Collection of event Observers for the Updated event
             /// </summary>
-            protected List<IObserver<IChangeResult<Voltage>>> observers { get; set; } = new List<IObserver<IChangeResult<Voltage>>>();
-           
-            private List<Voltage> buffer = new List<Voltage>();
+            protected List<IObserver<IChangeResult<Voltage>>> Observers { get; set; } = new List<IObserver<IChangeResult<Voltage>>>();
+
+            private readonly SerialWombatBase controller;
+            private readonly int supplyVoltage;
+            private readonly object _lock = new object();
+
+            private readonly Voltage[] buffer;
 
             /// <summary>
             /// Is the port sampling
@@ -60,7 +60,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// <summary>
             /// The voltage sampling buffer
             /// </summary>
-            public IList<Voltage> VoltageSampleBuffer => buffer;
+            public Voltage[] VoltageSampleBuffer => buffer;
 
             /// <summary>
             /// The sampling interval
@@ -76,6 +76,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 SampleCount = sampleCount;
 
                 this.controller = controller;
+                buffer = new Voltage[sampleCount];
 
                 supplyVoltage = (int)(controller.GetSupplyVoltage().Millivolts);
                 ReferenceVoltage = new Voltage(supplyVoltage, Voltage.UnitType.Millivolts);
@@ -91,14 +92,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 var data = controller.ReadPublicData((byte)Pin.Key);
                 Voltage = new Voltage((data * supplyVoltage) >> 16, Voltage.UnitType.Millivolts);
 
-                if (buffer.Count == 0)
-                {
-                    buffer.Add(Voltage);
-                }
-                else
-                {
-                    buffer[0] = Voltage;
-                }
+                buffer[0] = Voltage;
 
                 return Task.FromResult(Voltage);
             }
@@ -130,7 +124,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
                             if (ct.IsCancellationRequested)
                             {
                                 // do task clean up here
-                                observers.ForEach(x => x.OnCompleted());
+                                Observers.ForEach(x => x.OnCompleted());
                                 break;
                             }
 
@@ -158,10 +152,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 {
                     if (!IsSampling) return;
 
-                    if (SamplingTokenSource != null)
-                    {
-                        SamplingTokenSource.Cancel();
-                    }
+                    SamplingTokenSource?.Cancel();
 
                     IsSampling = false;
                 }
@@ -174,22 +165,22 @@ namespace Meadow.Foundation.ICs.IOExpanders
             protected void RaiseChangedAndNotify(IChangeResult<Voltage> changeResult)
             {
                 Updated?.Invoke(this, changeResult);
-                observers.ForEach(x => x.OnNext(changeResult));
+                Observers.ForEach(x => x.OnNext(changeResult));
             }
 
             /// <summary>
-            /// Subscribe an obersver for update events
+            /// Subscribe an observer for update events
             /// </summary>
             public IDisposable Subscribe(IObserver<IChangeResult<Voltage>> observer)
             {
-                if (!observers.Contains(observer)) observers.Add(observer);
-                return new Unsubscriber(observers, observer);
+                if (!Observers.Contains(observer)) Observers.Add(observer);
+                return new Unsubscriber(Observers, observer);
             }
 
             private class Unsubscriber : IDisposable
             {
-                private List<IObserver<IChangeResult<Voltage>>> _observers;
-                private IObserver<IChangeResult<Voltage>> _observer;
+                private readonly List<IObserver<IChangeResult<Voltage>>> _observers;
+                private readonly IObserver<IChangeResult<Voltage>> _observer;
 
                 public Unsubscriber(List<IObserver<IChangeResult<Voltage>>> observers, IObserver<IChangeResult<Voltage>> observer)
                 {
@@ -199,7 +190,10 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
                 public void Dispose()
                 {
-                    if (!(_observer == null)) _observers.Remove(_observer);
+                    if (_observer != null)
+                    {
+                        _observers?.Remove(_observer);
+                    }
                 }
             }
         }

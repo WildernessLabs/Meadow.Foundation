@@ -52,7 +52,7 @@ namespace Meadow.Foundation.Helpers
         }
 
         /// <summary>
-        /// Generte the lookup table for the PolynomialCRC method.
+        /// Generate the lookup table for the PolynomialCRC method.
         /// </summary>
         private static byte[] PopulateLookupTable(byte polynomial)
         {
@@ -72,7 +72,7 @@ namespace Meadow.Foundation.Helpers
                         temp <<= 1;
                     }
                 }
-                _lookupTable[outer] = (byte) temp;            
+                _lookupTable[outer] = (byte)temp;
             }
             _polynomial = polynomial;
 

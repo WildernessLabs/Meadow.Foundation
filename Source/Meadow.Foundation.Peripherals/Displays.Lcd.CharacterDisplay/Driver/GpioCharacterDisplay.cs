@@ -8,12 +8,19 @@ namespace Meadow.Foundation.Displays.Lcd
     /// <summary>
     /// Represents a GPIO character display
     /// </summary>
-    public class GpioCharacterDisplay : ICharacterDisplay
+    public class GpioCharacterDisplay : ICharacterDisplay, IDisposable
     {
-        private byte LCD_LINE_1 = 0x80; // # LCD RAM address for the 1st line
-        private byte LCD_LINE_2 = 0xC0; // # LCD RAM address for the 2nd line
-        private byte LCD_LINE_3 = 0x94; // # LCD RAM address for the 3rd line
-        private byte LCD_LINE_4 = 0xD4; // # LCD RAM address for the 4th line
+        /// <summary>
+        /// Is the object disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
+
+        readonly bool createdPorts = false;
+
+        private readonly byte LCD_LINE_1 = 0x80; // # LCD RAM address for the 1st line
+        private readonly byte LCD_LINE_2 = 0xC0; // # LCD RAM address for the 2nd line
+        private readonly byte LCD_LINE_3 = 0x94; // # LCD RAM address for the 3rd line
+        private readonly byte LCD_LINE_4 = 0xD4; // # LCD RAM address for the 4th line
 
         private byte cursorLine = 0;
         private byte cursorColumn = 0;
@@ -21,7 +28,7 @@ namespace Meadow.Foundation.Displays.Lcd
         private const byte LCD_SETDDRAMADDR = 0x80;
         private const byte LCD_SETCGRAMADDR = 0x40;
 
-        readonly IPwmPort LCD_V0;
+        readonly IPwmPort? LCD_V0;
         readonly IDigitalOutputPort LCD_E;
         readonly IDigitalOutputPort LCD_RS;
         readonly IDigitalOutputPort LCD_D4;
@@ -29,9 +36,9 @@ namespace Meadow.Foundation.Displays.Lcd
         readonly IDigitalOutputPort LCD_D6;
         readonly IDigitalOutputPort LCD_D7;
 
-        bool LCD_INSTRUCTION = false;
-        bool LCD_DATA = true;
-        static object _lock = new object();
+        readonly bool LCD_INSTRUCTION = false;
+        readonly bool LCD_DATA = true;
+        static readonly object _lock = new();
 
         /// <summary>
         /// The text display menu configuration
@@ -65,7 +72,9 @@ namespace Meadow.Foundation.Displays.Lcd
                 pinD6.CreateDigitalOutputPort(),
                 pinD7.CreateDigitalOutputPort(),
                 rows, columns)
-        { }
+        {
+            createdPorts = true;
+        }
 
         /// <summary>
         /// Create a new GpioCharacterDisplay object
@@ -168,8 +177,8 @@ namespace Meadow.Foundation.Displays.Lcd
 
         private void Initialize()
         {
-            SendByte(0x33, LCD_INSTRUCTION); // 110011 Initialise
-            SendByte(0x32, LCD_INSTRUCTION); // 110010 Initialise
+            SendByte(0x33, LCD_INSTRUCTION); // 110011 Initialize
+            SendByte(0x32, LCD_INSTRUCTION); // 110010 Initialize
             SendByte(0x06, LCD_INSTRUCTION); // 000110 Cursor move direction
             SendByte(0x0C, LCD_INSTRUCTION); // 001100 Display On,Cursor Off, Blink Off
             SendByte(0x28, LCD_INSTRUCTION); // 101000 Data length, number of lines, font size
@@ -212,18 +221,14 @@ namespace Meadow.Foundation.Displays.Lcd
 
         private byte GetLineAddress(int line)
         {
-            switch (line)
+            return line switch
             {
-                case 0:
-                    return LCD_LINE_1;
-                case 1:
-                    return LCD_LINE_2;
-                case 2:
-                    return LCD_LINE_3;
-                case 3:
-                    return LCD_LINE_4;
-                default: throw new ArgumentOutOfRangeException();
-            }
+                0 => LCD_LINE_1,
+                1 => LCD_LINE_2,
+                2 => LCD_LINE_3,
+                3 => LCD_LINE_4,
+                _ => throw new ArgumentOutOfRangeException(),
+            };
         }
 
         private void SetLineAddress(int line)
@@ -234,7 +239,7 @@ namespace Meadow.Foundation.Displays.Lcd
         /// <summary>
         /// Write text to a line
         /// </summary>
-        /// <param name="text">The text to dislay</param>
+        /// <param name="text">The text to display</param>
         /// <param name="lineNumber">The target line</param>
         /// <param name="showCursor">If true, show the cursor</param>
         public void WriteLine(string text, byte lineNumber, bool showCursor = false)
@@ -321,9 +326,9 @@ namespace Meadow.Foundation.Displays.Lcd
 
 
         /// <summary>
-        /// Set the displa conrtast
+        /// Set the display contrast
         /// </summary>
-        /// <param name="contrast">The constrast as a float (0-1)</param>
+        /// <param name="contrast">The contrast as a float (0-1)</param>
         /// <exception cref="ArgumentOutOfRangeException"></exception>
         public void SetContrast(float contrast = 0.5f)
         {
@@ -333,11 +338,15 @@ namespace Meadow.Foundation.Displays.Lcd
             }
 
             Resolver.Log.Info($"Contrast: {contrast}");
-            LCD_V0.DutyCycle = contrast;
+
+            if (LCD_V0 != null)
+            {
+                LCD_V0.DutyCycle = contrast;
+            }
         }
 
         /// <summary>
-        /// Save a custom character to the dislay
+        /// Save a custom character to the display
         /// </summary>
         /// <param name="characterMap">The character data</param>
         /// <param name="address">The display character address (0-7)</param>
@@ -358,5 +367,34 @@ namespace Meadow.Foundation.Displays.Lcd
         public void Show()
         {   //can safely ignore
         }   //required for ITextDisplayMenu
+
+        ///<inheritdoc/>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        /// <param name="disposing">Is disposing</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && createdPorts)
+                {
+                    LCD_E.Dispose();
+                    LCD_RS.Dispose();
+                    LCD_D4.Dispose();
+                    LCD_D5.Dispose();
+                    LCD_D6.Dispose();
+                    LCD_D7.Dispose();
+                }
+
+                IsDisposed = true;
+            }
+        }
     }
 }

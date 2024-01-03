@@ -13,7 +13,7 @@ namespace Meadow.Foundation.Displays.UI.InputTypes
         /// <summary>
         /// Raised when the date value changes
         /// </summary>
-        public override event ValueChangedHandler ValueChanged;
+        public override event ValueChangedHandler ValueChanged = default!;
 
         /// <summary>
         /// Create a new Date input object
@@ -32,6 +32,24 @@ namespace Meadow.Foundation.Displays.UI.InputTypes
                     value += InputHelpers.PadLeft(dateParts[i].ToString(), '0', 2);
                 }
                 return InputHelpers.PadLeft(value, ' ', display.DisplayConfig.Width);
+            }
+        }
+
+        byte CursorPosition
+        {
+            get
+            {
+                if (display == null)
+                {
+                    return 0;
+                }
+
+                return position switch
+                {
+                    0 => (byte)(display.DisplayConfig.Width - 7),
+                    1 => (byte)(display.DisplayConfig.Width - 4),
+                    _ => (byte)(display.DisplayConfig.Width - 1),
+                };
             }
         }
 
@@ -54,9 +72,9 @@ namespace Meadow.Foundation.Displays.UI.InputTypes
             display.ClearLines();
             display.WriteLine("Enter " + DateModeDisplay, 0);
 
-            //display.SetCursorPosition(0, 0);
-
             ParseValue(currentValue);
+
+            display.SetCursorPosition(CursorPosition, 1);
             UpdateInputLine(DateDisplay);
         }
 
@@ -72,7 +90,7 @@ namespace Meadow.Foundation.Displays.UI.InputTypes
             {
                 max = 9999;
             }
-            else if(position == 1)
+            else if (position == 1)
             {
                 max = 12;
             }
@@ -82,6 +100,7 @@ namespace Meadow.Foundation.Displays.UI.InputTypes
             }
 
             if (dateParts[position] < max) { dateParts[position]++; }
+            display.SetCursorPosition(CursorPosition, 1);
             UpdateInputLine(DateDisplay);
 
             return true;
@@ -95,6 +114,7 @@ namespace Meadow.Foundation.Displays.UI.InputTypes
         {
             int min = 0;
             if (dateParts[position] > min) { dateParts[position]--; }
+            display.SetCursorPosition(CursorPosition, 1);
             UpdateInputLine(DateDisplay);
 
             return true;
@@ -109,14 +129,35 @@ namespace Meadow.Foundation.Displays.UI.InputTypes
             if (position < dateParts.Length - 1)
             {
                 position++;
+                display.SetCursorPosition(CursorPosition, 1);
+                UpdateInputLine(DateDisplay);
             }
             else
             {
                 DateTime date = new DateTime(dateParts[0], dateParts[1], dateParts[2]);
-
                 ValueChanged(this, new ValueChangedEventArgs(itemID, date));
             }
 
+            return true;
+        }
+
+        /// <summary>
+        /// Send a Back input to the item
+        /// </summary>
+        /// <returns>true</returns>
+        public override bool Back()
+        {
+            if (position > 0)
+            {
+                position--;
+                display.SetCursorPosition(CursorPosition, 1);
+                UpdateInputLine(DateDisplay);
+            }
+            else
+            {
+                DateTime date = new DateTime(dateParts[0], dateParts[1], dateParts[2]);
+                ValueChanged(this, new ValueChangedEventArgs(itemID, date));
+            }
             return true;
         }
 

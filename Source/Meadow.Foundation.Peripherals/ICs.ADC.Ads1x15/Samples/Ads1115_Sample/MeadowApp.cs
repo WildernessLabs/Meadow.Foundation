@@ -32,7 +32,6 @@ namespace Ads1115_Sample
                 },
                 filter: result =>
                 {
-                    //c# 8 pattern match syntax. checks for !null and assigns var.
                     if (result.Old is { } old)
                     {
                         // TODO: you can check to see if the voltage change is > your desired threshold.
@@ -44,7 +43,7 @@ namespace Ads1115_Sample
                 );
             adc.Subscribe(observer);
 
-            adc.Updated += (sender, result) => 
+            adc.Updated += (sender, result) =>
             {
                 Resolver.Log.Info($"  Voltage: {result.New.Volts:N2}V");
             };
@@ -68,7 +67,7 @@ namespace Ads1115_Sample
             var start = Environment.TickCount;
             long sum = 0;
 
-            for(var i = 0; i < totalSamples; i++)
+            for (var i = 0; i < totalSamples; i++)
             {
                 sum += await adc.ReadRaw();
             }

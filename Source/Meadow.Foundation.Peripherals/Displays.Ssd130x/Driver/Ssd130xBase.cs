@@ -9,7 +9,7 @@ namespace Meadow.Foundation.Displays
     /// <summary>
     /// Represents the SSD130x family of OLED displays
     /// </summary>
-    public abstract partial class Ssd130xBase : IGraphicsDisplay, ISpiPeripheral, II2cPeripheral
+    public abstract partial class Ssd130xBase : IGraphicsDisplay, ISpiPeripheral, II2cPeripheral, IDisposable
     {
         /// <summary>
         /// The display color mode
@@ -24,12 +24,12 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// The width of the display in pixels
         /// </summary>
-        public int Width => imageBuffer.Width;
+        public int Width => imageBuffer!.Width;
 
         /// <summary>
         /// The height of the display in pixels
         /// </summary>
-        public int Height => imageBuffer.Height;
+        public int Height => imageBuffer!.Height;
 
         /// <summary>
         /// The buffer the holds the pixel data for the display
@@ -46,8 +46,8 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         public Frequency SpiBusSpeed
         {
-            get => spiComms.BusSpeed;
-            set => spiComms.BusSpeed = value;
+            get => spiComms!.BusSpeed;
+            set => spiComms!.BusSpeed = value;
         }
 
         /// <summary>
@@ -65,29 +65,39 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         public SpiClockConfiguration.Mode SpiBusMode
         {
-            get => spiComms.BusMode;
-            set => spiComms.BusMode = value;
+            get => spiComms!.BusMode;
+            set => spiComms!.BusMode = value;
         }
+
+        /// <summary>
+        /// Is the object disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
+
+        /// <summary>
+        /// Did we create the port(s) used by the peripheral
+        /// </summary>
+        protected bool createdPorts = false;
 
         /// <summary>
         /// SPI Communication bus used to communicate with the peripheral
         /// </summary>
-        protected ISpiCommunications spiComms;
+        protected ISpiCommunications? spiComms;
 
         /// <summary>
         /// The data command port
         /// </summary>
-        protected IDigitalOutputPort dataCommandPort;
+        protected IDigitalOutputPort? dataCommandPort;
 
         /// <summary>
         /// The reset port
         /// </summary>
-        protected IDigitalOutputPort resetPort;
+        protected IDigitalOutputPort? resetPort;
 
         /// <summary>
         /// The chip select port
         /// </summary>
-        protected IDigitalOutputPort chipSelectPort;
+        protected IDigitalOutputPort? chipSelectPort;
 
         /// <summary>
         /// The connection type (I2C or SPI)
@@ -112,7 +122,7 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// I2C Communication bus used to communicate with the peripheral
         /// </summary>
-        protected II2cCommunications i2cComms;
+        protected II2cCommunications? i2cComms;
 
         /// <summary>
         /// Buffer holding the pixels in the display
@@ -122,7 +132,7 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// Read buffer
         /// </summary>
-        protected byte[] readBuffer;
+        protected byte[]? readBuffer;
 
         /// <summary>
         /// Display command buffer
@@ -132,12 +142,12 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// Page buffer to hold one page of data
         /// </summary>
-        protected byte[] pageBuffer;
+        protected byte[]? pageBuffer;
 
         /// <summary>
         /// Sequence of command bytes that must be sent to the display before
         /// </summary>
-        protected byte[] showPreamble;
+        protected byte[]? showPreamble;
 
         /// <summary>
         /// Invert the entire display (true) or return to normal mode (false)
@@ -208,14 +218,14 @@ namespace Meadow.Foundation.Displays
         {
             if (connectionType == ConnectionType.SPI)
             {
-                dataCommandPort.State = Command;
-                spiComms.Write(command);
+                dataCommandPort!.State = Command;
+                spiComms!.Write(command);
             }
             else
             {
                 commandBuffer.Span[0] = 0x00;
                 commandBuffer.Span[1] = command;
-                i2cComms.Write(commandBuffer.Span);
+                i2cComms!.Write(commandBuffer.Span);
             }
         }
 
@@ -227,8 +237,8 @@ namespace Meadow.Foundation.Displays
         {
             if (connectionType == ConnectionType.SPI)
             {
-                dataCommandPort.State = Command;
-                spiComms.Write(commands);
+                dataCommandPort!.State = Command;
+                spiComms?.Write(commands);
             }
             else
             {   //a little heavy but this is only used a couple of times
@@ -236,7 +246,7 @@ namespace Meadow.Foundation.Displays
                 Span<byte> data = new byte[commands.Length + 1];
                 data[0] = 0x00;
                 commands.CopyTo(data.Slice(1, commands.Length));
-                i2cComms.Write(data);
+                i2cComms?.Write(data);
             }
         }
 
@@ -249,20 +259,20 @@ namespace Meadow.Foundation.Displays
 
             if (connectionType == ConnectionType.SPI)
             {
-                dataCommandPort.State = Data;
-                spiComms.Bus.Exchange(chipSelectPort, imageBuffer.Buffer, readBuffer);
+                dataCommandPort!.State = Data;
+                spiComms!.Bus.Exchange(chipSelectPort, imageBuffer.Buffer, readBuffer);
             }
             else//  I2C
             {   //  Send the buffer page by page
                 //  This can be optimized when we move to Memory<byte>
-                pageBuffer[0] = 0x40;
+                pageBuffer![0] = 0x40;
 
                 for (ushort index = 0; index < imageBuffer.ByteCount; index += PAGE_SIZE)
                 {
                     if (imageBuffer.ByteCount - index < PAGE_SIZE) { break; }
 
                     Array.Copy(imageBuffer.Buffer, index, pageBuffer, 1, PAGE_SIZE);
-                    i2cComms.Write(pageBuffer);
+                    i2cComms?.Write(pageBuffer);
                 }
             }
         }
@@ -326,7 +336,7 @@ namespace Meadow.Foundation.Displays
         }
 
         /// <summary>
-        /// Start the display scrollling in the specified direction
+        /// Start the display scrolling in the specified direction
         /// </summary>
         /// <param name="direction">Direction that the display should scroll</param>
         public void StartScrolling(ScrollDirection direction)
@@ -343,7 +353,7 @@ namespace Meadow.Foundation.Displays
         /// </remarks>
         /// <param name="direction">Direction that the display should scroll</param>
         /// <param name="startPage">Start page for the scroll</param>
-        /// <param name="endPage">End oage for the scroll</param>
+        /// <param name="endPage">End page for the scroll</param>
         public void StartScrolling(ScrollDirection direction, byte startPage, byte endPage)
         {
             StopScrolling();
@@ -389,7 +399,7 @@ namespace Meadow.Foundation.Displays
         /// Fill the display with a normalized color 
         /// </summary>
         /// <param name="color">The color used to fill the display, will normalize to black/off or white/on</param>
-        /// <param name="updateDisplay">If true, update the display, if false, only update the offscreen buffer</param>
+        /// <param name="updateDisplay">If true, update the display, if false, only update the off-screen buffer</param>
         public virtual void Fill(Color color, bool updateDisplay = false)
         {
             imageBuffer.Clear(color.Color1bpp);
@@ -422,6 +432,32 @@ namespace Meadow.Foundation.Displays
         public virtual void WriteBuffer(int x, int y, IPixelBuffer displayBuffer)
         {
             imageBuffer.WriteBuffer(x, y, displayBuffer);
+        }
+
+        ///<inheritdoc/>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        /// <param name="disposing">Is disposing</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && createdPorts)
+                {
+                    chipSelectPort?.Dispose();
+                    dataCommandPort?.Dispose();
+                    resetPort?.Dispose();
+                }
+
+                IsDisposed = true;
+            }
         }
     }
 }

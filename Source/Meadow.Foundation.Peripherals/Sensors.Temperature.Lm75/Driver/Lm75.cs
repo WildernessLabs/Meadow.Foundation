@@ -17,11 +17,6 @@ namespace Meadow.Foundation.Sensors.Temperature
         public byte DefaultI2cAddress => (byte)Addresses.Default;
 
         /// <summary>
-        /// Raised when the value of the reading changes
-        /// </summary>
-        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
-
-        /// <summary>
         /// The Temperature value from the last reading
         /// </summary>
         public Units.Temperature? Temperature { get; protected set; }
@@ -62,16 +57,6 @@ namespace Meadow.Foundation.Sensors.Temperature
             }
 
             return Task.FromResult(new Units.Temperature((float)Math.Round(temp, 1), Units.Temperature.UnitType.Celsius));
-        }
-
-        /// <summary>
-        /// Raise events for subcribers and notify of value changes
-        /// </summary>
-        /// <param name="changeResult">The updated sensor data</param>
-        protected override void RaiseEventsAndNotify(IChangeResult<Units.Temperature> changeResult)
-        {
-            TemperatureUpdated?.Invoke(this, changeResult);
-            base.RaiseEventsAndNotify(changeResult);
         }
     }
 }

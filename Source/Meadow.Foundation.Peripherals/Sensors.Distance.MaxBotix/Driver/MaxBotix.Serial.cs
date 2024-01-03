@@ -1,27 +1,31 @@
-﻿using System;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
 using Meadow.Units;
+using System;
 
 namespace Meadow.Foundation.Sensors.Distance
 {
-    
+
     public partial class MaxBotix
     {
         //The baud rate is 9600, 8 bits, no parity, with one stop bit
-        readonly ISerialMessagePort serialMessagePort;
+        readonly ISerialMessagePort? serialMessagePort;
 
         static readonly byte[] suffixDelimiter = { 13 }; //ASCII return
-        static readonly int portSpeed = 9600; //this is fixed for MaxBotix
+        static readonly int portSpeed = 9600;
+
+        DateTime lastUpdate = DateTime.MinValue;
 
         /// <summary>
         /// Creates a new MaxBotix object communicating over serial
         /// </summary>
-        /// <param name="device">The device conected to the sensor</param>
-        /// <param name="serialPort">The serial port</param>
-        /// <param name="sensor">The distance sensor type</param>
-        public MaxBotix(IMeadowDevice device, SerialPortName serialPort, SensorType sensor)
-            : this(device.CreateSerialMessagePort(serialPort, suffixDelimiter, false, baudRate: portSpeed), sensor)
-        { }
+        /// <param name="device">The device connected to the sensor</param>
+        /// <param name="serialPortName">The serial port name</param>
+        /// <param name="sensor">The MaxBotix distance sensor type</param>
+        public MaxBotix(IMeadowDevice device, SerialPortName serialPortName, SensorType sensor) :
+            this(device.CreateSerialMessagePort(serialPortName, suffixDelimiter, false, baudRate: portSpeed), sensor)
+        {
+            createdPorts = true;
+        }
 
         /// <summary>
         /// Creates a new MaxBotix object communicating over serial
@@ -54,27 +58,32 @@ namespace Meadow.Foundation.Sensors.Distance
             { return; }
 
             //strip the leading R
-            string cleaned = message.Substring(1);
+            string cleaned = message[1..];
 
             // get index of space
             var spaceIndex = message.FirstIndexOf(new char[] { ' ' });
             if (spaceIndex > 0)
             {
-                cleaned = cleaned.Substring(0, spaceIndex);
+                cleaned = cleaned[..spaceIndex];
             }
 
             var value = double.Parse(cleaned);
 
             Length.UnitType units = GetUnitsForSensor(sensorType);
 
-            ChangeResult<Length> changeResult = new ChangeResult<Length>()
+            ChangeResult<Length> changeResult = new()
             {
                 New = new Length(value, units),
                 Old = Distance,
             };
-           
+
             Distance = changeResult.New;
-            RaiseEventsAndNotify(changeResult);
+
+            if (updateInterval == null || DateTime.UtcNow - lastUpdate >= updateInterval)
+            {
+                lastUpdate = DateTime.UtcNow;
+                RaiseEventsAndNotify(changeResult);
+            }
         }
     }
 }

@@ -23,11 +23,11 @@ namespace Sensors.Moisture.Capacitive_Sample
                 maximumVoltageCalibration: new Voltage(1.63f)
             );
 
-            // Example that uses an IObservable subscription to only be notified when the humidity changes by filter defined.
+            // Example that uses an IObservable subscription to only be notified when the moisture changes by filter defined.
             var consumer = Capacitive.CreateObserver(
                 handler: result =>
                 {
-                    string oldValue = (result.Old is { } old) ? $"{old:n2}" : "n/a"; // C# 8 pattern matching
+                    string oldValue = (result.Old is { } old) ? $"{old:n2}" : "n/a";
                     Resolver.Log.Info($"Subscribed - " +
                         $"new: {result.New}, " +
                         $"old: {oldValue}");
@@ -37,9 +37,9 @@ namespace Sensors.Moisture.Capacitive_Sample
             capacitive.Subscribe(consumer);
 
             // classical .NET events can also be used:
-            capacitive.HumidityUpdated += (sender, result) =>
+            capacitive.Updated += (sender, result) =>
             {
-                string oldValue = (result.Old is { } old) ? $"{old:n2}" : "n/a"; // C# 8 pattern matching
+                string oldValue = (result.Old is { } old) ? $"{old:n2}" : "n/a";
                 Resolver.Log.Info($"Updated - New: {result.New}, Old: {oldValue}");
             };
 
@@ -53,8 +53,8 @@ namespace Sensors.Moisture.Capacitive_Sample
 
         protected async Task ReadSensor()
         {
-            var humidity = await capacitive.Read();
-            Resolver.Log.Info($"Initial humidity: {humidity:N2}C");
+            var moisture = await capacitive.Read();
+            Resolver.Log.Info($"Initial moisture: {moisture:n2}");
         }
 
         //<!=SNOP=>
