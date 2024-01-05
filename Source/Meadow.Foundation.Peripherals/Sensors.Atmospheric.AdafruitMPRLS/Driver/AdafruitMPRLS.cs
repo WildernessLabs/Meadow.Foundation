@@ -69,7 +69,7 @@ public partial class AdafruitMPRLS :
     /// </summary>
     /// <param name="i2cbus">I2Cbus connected to the sensor</param>
     public AdafruitMPRLS(II2cBus i2cbus)
-        : base(i2cbus, (byte)Addresses.Default)
+        : base(i2cbus, (byte)Addresses.Default, 5, 0)
     { }
 
     /// <summary>

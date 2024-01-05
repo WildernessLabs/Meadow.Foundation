@@ -73,7 +73,7 @@ public partial class Bmp085 :
     /// <param name="deviceMode">The device mode</param>
     public Bmp085(II2cBus i2cBus, byte address = (byte)Addresses.Default,
         DeviceMode deviceMode = DeviceMode.Standard)
-            : base(i2cBus, address)
+            : base(i2cBus, address, 2, 2)
     {
         oversamplingSetting = (byte)deviceMode;
 

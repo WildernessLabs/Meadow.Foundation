@@ -74,11 +74,9 @@ public abstract class Htux1dBase :
     /// </summary>
     /// <param name="i2cBus"></param>
     /// <param name="address"></param>
-    /// <param name="updateInterval"></param>
-    public Htux1dBase(II2cBus i2cBus, byte address = (byte)Addresses.Default, TimeSpan? updateInterval = null)
-        : base(i2cBus, address, (int)(updateInterval == null ? 1000 : updateInterval.Value.TotalMilliseconds))
-    {
-    }
+    public Htux1dBase(II2cBus i2cBus, byte address = (byte)Addresses.Default)
+        : base(i2cBus, address)
+    { }
 
     /// <summary>
     /// Inheritance-safe way to raise events and notify observers
