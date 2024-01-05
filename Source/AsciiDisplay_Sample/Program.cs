@@ -9,7 +9,7 @@ internal class Program
 {
     private static async Task Main(string[] args)
     {
-        await MovingBox();
+        await DrawShapes();
     }
 
     private static async Task MovingBox()
@@ -21,7 +21,7 @@ internal class Program
             .ToArray();
 
         var colorIndex = 0;
-        var display = new AsciiDisplay(80, 60);
+        var display = new AsciiDisplay(20, 15);
         var screen = new DisplayScreen(display);
         var box = new Box(0, 0, 4, 3)
         {
@@ -34,7 +34,6 @@ internal class Program
         var xdir = 1;
         var ydir = 1;
 
-
         while (true)
         {
             screen.BeginUpdate();
@@ -43,7 +42,7 @@ internal class Program
             box.ForeColor = colors[colorIndex];
             screen.EndUpdate();
 
-            await Task.Delay(1000);
+            await Task.Delay(500);
 
             if ((x >= display.Width - 4) || (x < 0))
             {
@@ -72,9 +71,9 @@ internal class Program
 
         graphics.Clear();
 
-        graphics.DrawTriangle(5, 5, 30, 30, 5, 30, Color.Red);
+        graphics.DrawTriangle(5, 5, 30, 30, 5, 30, Color.Red, false);
         graphics.DrawRectangle(10, 12, 40, 20, Color.Yellow, false);
-        graphics.DrawCircle(50, 50, 40, Color.Blue, false);
+        graphics.DrawCircle(20, 20, 20, Color.White, false);
 
         graphics.Show();
     }

@@ -9,7 +9,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\..\..\Meadow.Core\source\implementations\linux\Meadow.Linux\Meadow.Linux.csproj" />
     <ProjectReference Include="..\..\..\..\Meadow.Foundation.Libraries_and_Frameworks\Graphics.MicroLayout\Driver\Graphics.MicroLayout.csproj" />
-    <ProjectReference Include="..\..\..\Displays.TftSpi\Driver\Displays.TftSpi.csproj" />
+    <ProjectReference Include="..\..\..\Displays.Ascii\Driver\Meadow.Displays.Ascii\Meadow.Displays.Ascii.csproj" />
     <ProjectReference Include="..\..\Driver\Sensors.Camera.Amg8833.csproj" />
   </ItemGroup>
   <ItemGroup>

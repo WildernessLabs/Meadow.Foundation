@@ -45,16 +45,16 @@ namespace Meadow.Foundation.Displays
 
             public void Fill(int originX, int originY, int width, int height, Color color)
             {
-                for (var y = originY; y < height; y++)
+                for (var y = originY; y < height + originY; y++)
                 {
-                    for (var x = originX; x < width; x++)
+                    for (var x = originX; x < width + originX; x++)
                     {
                         SetPixel(x, y, color);
                     }
                 }
             }
 
-            internal char GetPixelCharcater(int x, int y)
+            internal char GetPixelCharacter(int x, int y)
             {
                 return _buffer[x, y];
             }

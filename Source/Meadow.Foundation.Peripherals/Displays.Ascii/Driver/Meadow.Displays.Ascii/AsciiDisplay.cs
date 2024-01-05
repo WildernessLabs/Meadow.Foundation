@@ -19,6 +19,9 @@ public partial class AsciiDisplay : IGraphicsDisplay
 
     public AsciiDisplay(int width, int height)
     {
+        Console.Clear();
+        Console.SetCursorPosition(0, 0);
+
         _buffer = new CharacterBuffer(width, height);
         PixelBuffer.Clear();
     }
@@ -64,7 +67,7 @@ public partial class AsciiDisplay : IGraphicsDisplay
             for (var x = 0; x < Width; x++)
             {
                 Console.SetCursorPosition(x, y);
-                Console.Write(_buffer.GetPixelCharcater(x, y));
+                Console.Write(_buffer.GetPixelCharacter(x, y));
             }
         }
     }
@@ -76,7 +79,7 @@ public partial class AsciiDisplay : IGraphicsDisplay
             for (; top < bottom; top++)
             {
                 Console.SetCursorPosition(left, top);
-                Console.Write(_buffer.GetPixelCharcater(left, top));
+                Console.Write(_buffer.GetPixelCharacter(left, top));
             }
         }
     }

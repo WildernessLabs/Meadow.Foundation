@@ -3,13 +3,11 @@ using Meadow.Foundation.Displays;
 using Meadow.Foundation.Graphics;
 using Meadow.Foundation.Graphics.MicroLayout;
 using Meadow.Foundation.Sensors.Camera;
-using Meadow.Hardware;
 using Meadow.Pinouts;
-using Meadow.Units;
 
 public class MeadowApp : App<Linux<RaspberryPi>>
 {
-    private Ili9341 _display;
+    private IGraphicsDisplay _display;
     private DisplayScreen _screen;
     private Amg8833 _camera;
     private Box[] _pixelBoxes;
@@ -23,24 +21,8 @@ public class MeadowApp : App<Linux<RaspberryPi>>
     {
         Console.WriteLine("Creating Outputs");
 
-        _display = new Ili9341(
-            Device.CreateSpiBus(0, SpiClockConfiguration.Mode.Mode0, new Frequency(48000, Frequency.UnitType.Kilohertz)),
-            Device.Pins.GPIO5.CreateDigitalOutputPort(), //CS
-            Device.Pins.GPIO6.CreateDigitalOutputPort(), //RST
-            Device.Pins.GPIO13.CreateDigitalOutputPort(), // DC
-            240,
-            320,
-            ColorMode.Format16bppRgb565);
+        _display = new AsciiDisplay(8 * 4, 8 * 3); // each "pixel" will be 4x3
 
-        /*
-        _display = new Ili9341(
-            Device.CreateSpiBus(0, _display.DefaultSpiBusMode, _display.DefaultSpiBusSpeed),
-            Device.Pins.GPIO5, //CS
-            Device.Pins.GPIO6, //RST
-            Device.Pins.GPIO13, // DC
-            320,
-            240);
-        */
         var i2c = Device.CreateI2cBus();
         _camera = new Amg8833(i2c);
 
@@ -55,10 +37,10 @@ public class MeadowApp : App<Linux<RaspberryPi>>
         _screen = new DisplayScreen(_display);
         var x = 0;
         var y = 0;
-        var boxSize = 40;
+        var boxSize = 4;
         for (var i = 0; i < _pixelBoxes.Length; i++)
         {
-            _pixelBoxes[i] = new Box(x, y, boxSize, boxSize)
+            _pixelBoxes[i] = new Box(x, y, 4, 3)
             {
                 ForeColor = Color.Blue
             };
@@ -68,7 +50,7 @@ public class MeadowApp : App<Linux<RaspberryPi>>
             if (i % 8 == 7)
             {
                 x = 0;
-                y += boxSize;
+                y += 3;
             }
             else
             {
@@ -84,11 +66,6 @@ public class MeadowApp : App<Linux<RaspberryPi>>
         while (true)
         {
             var pixels = _camera.ReadPixels();
-
-            if (t++ % 20 == 0)
-            {
-                Resolver.Log.Info($"tick {pixels.Average(p => p.Celsius)}");
-            }
 
             _screen.BeginUpdate();
 
