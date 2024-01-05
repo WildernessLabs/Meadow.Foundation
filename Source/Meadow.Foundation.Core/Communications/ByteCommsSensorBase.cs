@@ -65,16 +65,6 @@ namespace Meadow.Foundation
         }
 
         /// <summary>
-        /// ByteCommsSensorBase abstract ctor with no bus
-        /// </summary>
-        /// <param name="readBufferSize">Read buffer size</param>
-        /// <param name="writeBufferSize">Write buffer size</param>
-        protected ByteCommsSensorBase(int readBufferSize = 8, int writeBufferSize = 8)
-        {
-            Init(readBufferSize, writeBufferSize);
-        }
-
-        /// <summary>
         /// Simple constructor for peripherals that don't use a bus 
         /// and don't need an IByteCommunications
         /// </summary>

@@ -12,7 +12,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric;
 /// Represents an Ms5611 pressure and temperature sensor
 /// </summary>
 public partial class Ms5611 :
-    ByteCommsSensorBase<(Units.Temperature? Temperature, Pressure? Pressure)>,
+    PollingSensorBase<(Units.Temperature? Temperature, Pressure? Pressure)>,
     ITemperatureSensor, IBarometricPressureSensor, II2cPeripheral
 {
     private event EventHandler<IChangeResult<Units.Temperature>> _temperatureHandlers;
