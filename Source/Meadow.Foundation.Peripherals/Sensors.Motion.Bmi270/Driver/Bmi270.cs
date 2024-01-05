@@ -70,6 +70,8 @@ namespace Meadow.Foundation.Sensors.Accelerometers
         /// </summary>
         protected readonly II2cCommunications i2cComms;
 
+        private byte[] readBuffer;
+
         /// <summary>
         /// Create a new Bmi270 instance
         /// </summary>
@@ -79,6 +81,8 @@ namespace Meadow.Foundation.Sensors.Accelerometers
         {
             //Write buffer: 256 bytes for the config data + 1 for the address
             i2cComms = new I2cCommunications(i2cBus, address, 256 + 1);
+
+            readBuffer = new byte[12];
 
             var id = i2cComms.ReadRegister(CHIP_ID);
 
@@ -320,7 +324,6 @@ namespace Meadow.Foundation.Sensors.Accelerometers
 
         private byte[] ReadAccelerationData()
         {
-            var readBuffer = new byte[12];
             i2cComms.ReadRegister(0x0C, readBuffer);
             return readBuffer;
         }
