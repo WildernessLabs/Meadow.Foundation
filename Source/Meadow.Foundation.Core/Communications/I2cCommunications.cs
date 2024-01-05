@@ -40,7 +40,7 @@ namespace Meadow.Foundation
             Bus = bus;
             Address = peripheralAddress;
             WriteBuffer = new byte[writeBufferSize];
-            ReadBuffer = new byte[3];
+            ReadBuffer = new byte[2];
         }
 
         /// <summary>

@@ -69,7 +69,7 @@ namespace Meadow.Foundation
             ChipSelect = chipSelect;
             chipSelectMode = csMode;
             WriteBuffer = new byte[writeBufferSize];
-            ReadBuffer = new byte[3];
+            ReadBuffer = new byte[2];
 
             // de-assert the chip select
             if (chipSelect != null)
