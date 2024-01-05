@@ -25,7 +25,7 @@ namespace Meadow.Foundation.Leds
         /// <param name="address">The I2C address</param>
         public SparkFunQwiicLEDStick(II2cBus i2cbus,
             byte address = (byte)Addresses.Default)
-            : base(i2cbus, address, 1, 16)
+            : base(i2cbus, address, 16)
         {
             Initialize();
         }

@@ -77,9 +77,8 @@ namespace Meadow.Foundation.Sensors.Accelerometers
         /// <param name="address">The I2C address</param>
         public Bmi270(II2cBus i2cBus, byte address = (byte)Addresses.Address_0x68)
         {
-            //Read buffer: 16 (needs at least 13)
             //Write buffer: 256 bytes for the config data + 1 for the address
-            i2cComms = new I2cCommunications(i2cBus, address, 16, 256 + 1);
+            i2cComms = new I2cCommunications(i2cBus, address, 256 + 1);
 
             var id = i2cComms.ReadRegister(CHIP_ID);
 

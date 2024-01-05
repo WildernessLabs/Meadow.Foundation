@@ -37,7 +37,7 @@ namespace Meadow.Foundation
             II2cBus i2cBus, byte address,
             int readBufferSize = 8, int writeBufferSize = 8)
         {
-            BusComms = new I2cCommunications(i2cBus, address, readBufferSize, writeBufferSize);
+            BusComms = new I2cCommunications(i2cBus, address, writeBufferSize);
             Init(readBufferSize, writeBufferSize);
         }
 
@@ -60,7 +60,7 @@ namespace Meadow.Foundation
             int writeBufferSize = 8,
             ChipSelectMode chipSelectMode = ChipSelectMode.ActiveLow)
         {
-            BusComms = new SpiCommunications(spiBus, chipSelect, busSpeed, busMode, readBufferSize, writeBufferSize, chipSelectMode);
+            BusComms = new SpiCommunications(spiBus, chipSelect, busSpeed, busMode, writeBufferSize, chipSelectMode);
             Init(readBufferSize, writeBufferSize);
         }
 
