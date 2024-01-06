@@ -18,9 +18,9 @@ namespace Meadow.Foundation.Sensors.Environmental
                                                         RelativeHumidity? Humidity)>,
         ITemperatureSensor, IHumiditySensor, ICO2ConcentrationSensor, II2cPeripheral
     {
-        private event EventHandler<IChangeResult<Units.Temperature>> _temperatureHandlers;
-        private event EventHandler<IChangeResult<RelativeHumidity>> _humidityHandlers;
-        private event EventHandler<IChangeResult<Concentration>> _concentrationHandlers;
+        private event EventHandler<IChangeResult<Units.Temperature>> _temperatureHandlers = default!;
+        private event EventHandler<IChangeResult<RelativeHumidity>> _humidityHandlers = default!;
+        private event EventHandler<IChangeResult<Concentration>> _concentrationHandlers = default!;
 
         event EventHandler<IChangeResult<Units.Temperature>> ISamplingSensor<Units.Temperature>.Updated
         {

@@ -1596,7 +1596,7 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         ///<inheritdoc/>
-        public void Dispose()
+        public override void Dispose()
         {
             Dispose(disposing: true);
             GC.SuppressFinalize(this);
@@ -1606,8 +1606,10 @@ namespace Meadow.Foundation.Sensors.Motion
         /// Dispose of the object
         /// </summary>
         /// <param name="disposing">Is disposing</param>
-        protected virtual void Dispose(bool disposing)
+        protected override void Dispose(bool disposing)
         {
+            base.Dispose(disposing);
+
             if (!IsDisposed)
             {
                 if (disposing && createdPort)

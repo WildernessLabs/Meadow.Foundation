@@ -354,11 +354,11 @@ namespace Meadow.Foundation.Displays.UI
             MenuItem menuItem = currentMenuPage.MenuItems[pos];
 
             // go to the submenu if children are present
-            if (menuItem.HasSubItems)
+            if (menuItem != null && menuItem.HasSubItems)
             {
                 pageStack?.Push(currentMenuPage);
                 // currentMenuPage = child.SubMenu;
-                currentMenuPage = CreateMenuPage(menuItem.SubItems, true);
+                currentMenuPage = CreateMenuPage(menuItem.SubItems!, true);
                 ShowCurrentPage();
                 return true;
             }
@@ -402,7 +402,7 @@ namespace Meadow.Foundation.Displays.UI
                     currentInputItem.Init(display);
                 }
 
-                currentInputItem?.GetInput(menuItem.Id, menuItem.Value);
+                currentInputItem?.GetInput(menuItem.Id, menuItem.Value!);
                 return true;
             }
             else

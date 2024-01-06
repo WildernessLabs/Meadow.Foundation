@@ -17,7 +17,7 @@ namespace Meadow.Foundation.Sensors.Environmental
                              Concentration? TVOCConcentration)>,
         ICO2ConcentrationSensor, II2cPeripheral
     {
-        private event EventHandler<IChangeResult<Concentration>> _concentrationHandlers;
+        private event EventHandler<IChangeResult<Concentration>> _concentrationHandlers = default!;
 
         event EventHandler<IChangeResult<Concentration>> ISamplingSensor<Concentration>.Updated
         {

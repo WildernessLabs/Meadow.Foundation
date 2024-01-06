@@ -14,7 +14,7 @@ namespace Meadow.Foundation.Sensors.Light
         : ByteCommsSensorBase<(Illuminance? AmbientLight, Color? Color, bool Valid)>,
         ILightSensor, II2cPeripheral
     {
-        private event EventHandler<IChangeResult<Illuminance>> _lightHandlers;
+        private event EventHandler<IChangeResult<Illuminance>> _lightHandlers = default!;
 
         event EventHandler<IChangeResult<Illuminance>> ISamplingSensor<Illuminance>.Updated
         {
