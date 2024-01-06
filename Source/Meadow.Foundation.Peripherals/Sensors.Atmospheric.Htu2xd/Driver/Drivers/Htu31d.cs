@@ -18,7 +18,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         /// <param name="address">Sensor address (default to 0x40).</param>
         /// <param name="i2cBus">I2CBus (default to 100 KHz).</param>
-        public Htu31d(II2cBus i2cBus, byte address = (byte)Addresses.Default, TimeSpan? updateInterval = null)
+        public Htu31d(II2cBus i2cBus, byte address = (byte)Addresses.Default)
             : base(i2cBus, address)
         {
             SerialNumber = GetSerial();
