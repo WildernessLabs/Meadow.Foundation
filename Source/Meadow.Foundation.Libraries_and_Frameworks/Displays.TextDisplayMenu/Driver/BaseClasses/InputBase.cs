@@ -10,7 +10,7 @@ namespace Meadow.Foundation.Displays.UI.InputTypes
         /// <summary>
         /// The ITextDisplay object
         /// </summary>
-        protected ITextDisplay display;
+        protected ITextDisplay display = default!;
 
         /// <summary>
         /// Is the item initialized

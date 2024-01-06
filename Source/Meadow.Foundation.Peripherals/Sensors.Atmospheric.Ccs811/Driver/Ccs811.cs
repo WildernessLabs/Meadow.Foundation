@@ -17,10 +17,9 @@ public partial class Ccs811 :
 {
     private II2cCommunications i2cComms;
 
-    // internal thread lock
     private byte[] _readingBuffer = new byte[8];
 
-    private event EventHandler<IChangeResult<Concentration>> _co2Handlers;
+    private event EventHandler<IChangeResult<Concentration>> _co2Handlers = default!;
 
     event EventHandler<IChangeResult<Concentration>> ISamplingSensor<Concentration>.Updated
     {

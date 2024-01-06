@@ -15,8 +15,8 @@ public partial class Bmp180 :
     ByteCommsSensorBase<(Units.Temperature? Temperature, Pressure? Pressure)>,
     ITemperatureSensor, IBarometricPressureSensor, II2cPeripheral
 {
-    private event EventHandler<IChangeResult<Units.Temperature>> _temperatureHandlers;
-    private event EventHandler<IChangeResult<Pressure>> _pressureHandlers;
+    private event EventHandler<IChangeResult<Units.Temperature>> _temperatureHandlers = default!;
+    private event EventHandler<IChangeResult<Pressure>> _pressureHandlers = default!;
 
     event EventHandler<IChangeResult<Units.Temperature>> ISamplingSensor<Units.Temperature>.Updated
     {

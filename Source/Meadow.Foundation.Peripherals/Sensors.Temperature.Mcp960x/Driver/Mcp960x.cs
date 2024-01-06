@@ -17,7 +17,7 @@ public abstract partial class Mcp960x :
     /// </summary>
     public byte DefaultI2cAddress => (byte)Addresses.Default;
 
-    private event EventHandler<IChangeResult<Units.Temperature>> _temperatureHandlers;
+    private event EventHandler<IChangeResult<Units.Temperature>> _temperatureHandlers = default!;
 
     event EventHandler<IChangeResult<Units.Temperature>> ISamplingSensor<Units.Temperature>.Updated
     {

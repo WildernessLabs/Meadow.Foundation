@@ -16,9 +16,9 @@ namespace Meadow.Foundation.Sensors.Accelerometers
         PollingSensorBase<(Acceleration3D? Acceleration3D, AngularVelocity3D? AngularVelocity3D, Units.Temperature? Temperature)>,
         II2cPeripheral, IGyroscope, IAccelerometer, ITemperatureSensor
     {
-        private event EventHandler<IChangeResult<AngularVelocity3D>> _angularVelocityHandlers;
-        private event EventHandler<IChangeResult<Acceleration3D>> _accelerationHandlers;
-        private event EventHandler<IChangeResult<Units.Temperature>> _temperatureHandlers;
+        private event EventHandler<IChangeResult<AngularVelocity3D>> _angularVelocityHandlers = default!;
+        private event EventHandler<IChangeResult<Acceleration3D>> _accelerationHandlers = default!;
+        private event EventHandler<IChangeResult<Units.Temperature>> _temperatureHandlers = default!;
 
         /// <summary>
         /// Event raised when linear acceleration changes
