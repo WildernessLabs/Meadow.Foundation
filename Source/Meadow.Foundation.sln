@@ -1439,13 +1439,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Amg8833_RasPi_Sample", "Mea
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meadow.Linux", "..\..\Meadow.Core\source\implementations\linux\Meadow.Linux\Meadow.Linux.csproj", "{CD273618-53A8-493C-9478-61C173210C84}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Ascii", "Ascii", "{E775FF9F-8AC5-4994-B45A-20B50E2B03E2}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AsciiConsole", "AsciiConsole", "{E775FF9F-8AC5-4994-B45A-20B50E2B03E2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Meadow.Displays.Ascii", "Meadow.Foundation.Peripherals\Displays.Ascii\Driver\Meadow.Displays.Ascii\Meadow.Displays.Ascii.csproj", "{EB5F7986-54CD-4DC0-B045-9C3E1C32E686}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meadow.Displays.AsciiConsole", "Meadow.Foundation.Peripherals\Displays.Ascii\Driver\Meadow.Displays.Ascii\Meadow.Displays.AsciiConsole.csproj", "{EB5F7986-54CD-4DC0-B045-9C3E1C32E686}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{40687DAC-F3EF-4F70-850A-0429B9586648}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AsciiDisplay_Sample", "AsciiDisplay_Sample\AsciiDisplay_Sample.csproj", "{2F20AD5B-5879-432B-B44F-8540DAEE5C43}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AsciiConsoleDisplay_Sample", "AsciiDisplay_Sample\AsciiConsoleDisplay_Sample.csproj", "{2F20AD5B-5879-432B-B44F-8540DAEE5C43}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

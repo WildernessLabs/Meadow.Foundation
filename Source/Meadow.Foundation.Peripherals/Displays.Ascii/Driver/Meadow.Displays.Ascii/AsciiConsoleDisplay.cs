@@ -4,7 +4,7 @@ using System;
 
 namespace Meadow.Foundation.Displays;
 
-public partial class AsciiDisplay : IGraphicsDisplay
+public partial class AsciiConsoleDisplay : IGraphicsDisplay
 {
     private readonly CharacterBuffer _buffer;
     private const string _colors = " `.-':_,^=;><+!rc*/z?sLTv)J7(|Fi{C}fI31tlu[neoZ5Yxjya]2ESwqkP6h9d4VpOGbUAKXHm8RD#$Bg0MNWQ%&@"; // 92 "colors"
@@ -17,7 +17,7 @@ public partial class AsciiDisplay : IGraphicsDisplay
     public int Height => PixelBuffer.Height;
     public IPixelBuffer PixelBuffer => _buffer;
 
-    public AsciiDisplay(int width, int height)
+    public AsciiConsoleDisplay(int width, int height)
     {
         Console.Clear();
         Console.SetCursorPosition(0, 0);

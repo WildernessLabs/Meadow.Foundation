@@ -1,5 +1,9 @@
 <Project Sdk="Meadow.Sdk/1.1.0">
   <PropertyGroup>
+	<PackageReadmeFile>Readme.md</PackageReadmeFile>
+	<Nullable>enable</Nullable>
+	<LangVersion>10.0</LangVersion>
+	<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageIcon>icon.png</PackageIcon>
     <Authors>Wilderness Labs, Inc</Authors>
@@ -12,8 +16,8 @@
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow.Foundation,IOExpanders,expander,IO,CP2112</PackageTags>
     <Version>0.1.0</Version>
-      <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <Description>CP2112 USB IOExpander for GPIO, I2C, SPI on Windows</Description>
   </PropertyGroup>
   <ItemGroup>
