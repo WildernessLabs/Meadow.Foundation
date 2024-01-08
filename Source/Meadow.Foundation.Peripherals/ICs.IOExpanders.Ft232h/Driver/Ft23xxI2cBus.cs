@@ -4,12 +4,19 @@ using System.IO;
 
 namespace Meadow.Foundation.ICs.IOExpanders;
 
+/// <summary>
+/// Represents an I2C bus implementation using the FT23xx device.
+/// </summary>
 public sealed class Ft23xxI2cBus : II2cBus, IDisposable
 {
     private FtdiDevice _device;
 
+    /// <summary>
+    /// Gets the handle to the FT23xx device used by the I2C bus.
+    /// </summary>
     public IntPtr Handle => _device.Handle;
 
+    /// <inheritdoc/>
     public I2cBusSpeed BusSpeed { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
     internal Ft23xxI2cBus(FtdiDevice device)
@@ -24,17 +31,20 @@ public sealed class Ft23xxI2cBus : II2cBus, IDisposable
         _device.InitializeI2C();
     }
 
+    /// <inheritdoc/>
     public void Dispose()
     {
         _device.Close();
     }
 
+    /// <inheritdoc/>
     public void Exchange(byte peripheralAddress, Span<byte> writeBuffer, Span<byte> readBuffer)
     {
         Write(peripheralAddress, writeBuffer);
         Read(peripheralAddress, readBuffer);
     }
 
+    /// <inheritdoc/>
     public void Read(byte peripheralAddress, Span<byte> readBuffer)
     {
         _device.I2cStart();
@@ -58,6 +68,7 @@ public sealed class Ft23xxI2cBus : II2cBus, IDisposable
         _device.I2cStop();
     }
 
+    /// <inheritdoc/>
     public void Write(byte peripheralAddress, Span<byte> writeBuffer)
     {
         _device.I2cStart();

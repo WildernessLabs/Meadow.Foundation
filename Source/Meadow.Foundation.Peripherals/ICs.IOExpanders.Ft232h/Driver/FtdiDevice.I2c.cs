@@ -8,8 +8,8 @@ internal partial class FtdiDevice
 {
     private byte GpioLowData = 0;
     private byte GpioLowDir = 0;
-    private byte GpioHighData = 0;
-    private byte GpioHighDir = 0;
+    //    private byte GpioHighData = 0;
+    //    private byte GpioHighDir = 0;
     private uint _i2cFreqKbps = 400;
 
     private const byte NumberCycles = 6;

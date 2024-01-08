@@ -3,6 +3,9 @@ using System;
 
 namespace Meadow.Foundation.ICs.IOExpanders;
 
+/// <summary>
+/// Represents a digital input port implementation for the FT23xx device.
+/// </summary>
 public sealed class Ft23xxDigitalInputPort : DigitalInputPortBase
 {
     private FtdiDevice _device;
@@ -15,6 +18,7 @@ public sealed class Ft23xxDigitalInputPort : DigitalInputPortBase
         _device = device;
     }
 
+    /// <inheritdoc/>
     public override bool State
     {
         get
@@ -26,6 +30,7 @@ public sealed class Ft23xxDigitalInputPort : DigitalInputPortBase
         }
     }
 
+    /// <inheritdoc/>
     public override ResistorMode Resistor
     {
         get => _resistor;

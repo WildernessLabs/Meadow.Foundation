@@ -3,6 +3,9 @@ using System;
 
 namespace Meadow.Foundation.ICs.IOExpanders;
 
+/// <summary>
+/// Represents a digital output port implementation for the FT23xx device.
+/// </summary>
 public sealed class Ft23xxDigitalOutputPort : DigitalOutputPortBase
 {
     private FtdiDevice _device;
@@ -31,6 +34,7 @@ public sealed class Ft23xxDigitalOutputPort : DigitalOutputPortBase
         _device.GpioDirectionMask |= _key;
     }
 
+    /// <inheritdoc/>
     public override bool State
     {
         get => _state;

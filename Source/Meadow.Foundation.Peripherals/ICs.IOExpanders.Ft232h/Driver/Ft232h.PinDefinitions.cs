@@ -122,6 +122,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
                     new SpiChannelInfo("SPI_CS0", SpiLineType.ChipSelect)
                 });
 
+            /// <summary>
+            /// Pin D4 definition.
+            /// </summary>
             public IPin D4 => new Pin(
                 Controller,
                 "D4",
@@ -130,6 +133,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
                     new DigitalChannelInfo("D4", interruptCapable: false, pullUpCapable: false, pullDownCapable: false)
                 });
 
+            /// <summary>
+            /// Pin D5 definition.
+            /// </summary>
             public IPin D5 => new Pin(
                 Controller,
                 "D5",
@@ -138,6 +144,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
                     new DigitalChannelInfo("D5", interruptCapable: false, pullUpCapable: false, pullDownCapable: false)
                 });
 
+            /// <summary>
+            /// Pin D6 definition.
+            /// </summary>
             public IPin D6 => new Pin(
                 Controller,
                 "D6",
@@ -146,6 +155,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
                     new DigitalChannelInfo("D6", interruptCapable: false, pullUpCapable: false, pullDownCapable: false)
                 });
 
+            /// <summary>
+            /// Pin D7 definition.
+            /// </summary>
             public IPin D7 => new Pin(
                 Controller,
                 "D7",

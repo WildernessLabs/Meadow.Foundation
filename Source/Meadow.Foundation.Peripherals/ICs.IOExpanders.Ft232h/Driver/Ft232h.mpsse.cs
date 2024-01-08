@@ -145,7 +145,7 @@ internal class MpsseImpl : IFtdiImpl
         // TODO: do we need to set the direction make (see outpuuts) or are they defaulted to input?
 
         var info = pin.SupportedChannels?.FirstOrDefault(c => c is IDigitalChannelInfo) as IDigitalChannelInfo;
-        return new MpsseDigitalInputPort(pin, info, _activeBus);
+        return new MpsseDigitalInputPort(pin, info!, _activeBus!);
     }
 
     public IDigitalOutputPort CreateDigitalOutputPort(int channel, IPin pin, bool initialState = false, OutputType initialOutputType = OutputType.PushPull)
@@ -162,13 +162,13 @@ internal class MpsseImpl : IFtdiImpl
         }
 
         // update the global mask to make this an output
-        _activeBus.GpioDirectionMask |= (byte)pin.Key;
+        _activeBus!.GpioDirectionMask |= (byte)pin.Key;
 
         // update the direction
         Native.Mpsse.FT_WriteGPIO(_activeBus.Handle, _activeBus.GpioDirectionMask, 0);
 
         var info = pin.SupportedChannels?.FirstOrDefault(c => c is IDigitalChannelInfo) as IDigitalChannelInfo;
-        return new MpsseDigitalOutputPort(pin, info, initialState, initialOutputType, _activeBus);
+        return new MpsseDigitalOutputPort(pin, info!, initialState, initialOutputType, _activeBus);
     }
 
     public void Dispose()
@@ -182,6 +182,11 @@ internal class MpsseImpl : IFtdiImpl
 
             if (Interlocked.Decrement(ref _instanceCount) == 0)
             {
+                if (_spiBusAutoCreated)
+                {
+                    // TODO:
+                }
+
                 // last instance was disposed, clean house
                 Native.Mpsse.Cleanup_libMPSSE();
             }
