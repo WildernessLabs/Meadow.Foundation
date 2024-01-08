@@ -14,8 +14,8 @@ public partial class Lsm303agr :
     PollingSensorBase<(Acceleration3D? Acceleration3D, MagneticField3D? MagneticField3D)>,
     IMagnetometer, IAccelerometer, II2cPeripheral
 {
-    private event EventHandler<IChangeResult<Acceleration3D>> _accelerationHandlers;
-    private event EventHandler<IChangeResult<MagneticField3D>> _fieldHandlers;
+    private event EventHandler<IChangeResult<Acceleration3D>> _accelerationHandlers = default!;
+    private event EventHandler<IChangeResult<MagneticField3D>> _fieldHandlers = default!;
 
     event EventHandler<IChangeResult<Acceleration3D>> ISamplingSensor<Acceleration3D>.Updated
     {

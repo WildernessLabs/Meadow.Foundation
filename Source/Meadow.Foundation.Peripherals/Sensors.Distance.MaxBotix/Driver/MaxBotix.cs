@@ -8,7 +8,7 @@ namespace Meadow.Foundation.Sensors.Distance
     /// <summary>
     /// Represents the MaxBotix series of distance sensors
     /// </summary>
-    public partial class MaxBotix : ByteCommsSensorBase<Length>, IRangeFinder, IDisposable
+    public partial class MaxBotix : PollingSensorBase<Length>, IRangeFinder, IDisposable
     {
         /// <summary>
         /// Distance from sensor to object
@@ -125,9 +125,8 @@ namespace Meadow.Foundation.Sensors.Distance
         }
 
         ///<inheritdoc/>
-        public override void Dispose()
+        public void Dispose()
         {
-            base.Dispose();
             Dispose(disposing: true);
             GC.SuppressFinalize(this);
         }
@@ -136,11 +135,15 @@ namespace Meadow.Foundation.Sensors.Distance
         /// Dispose of the object
         /// </summary>
         /// <param name="disposing">Is disposing</param>
-        protected override void Dispose(bool disposing)
+        protected void Dispose(bool disposing)
         {
-            base.Dispose(disposing);
             if (!IsDisposed)
             {
+                if (disposing)
+                {
+                    base.StopUpdating();
+                }
+
                 if (disposing && createdPorts)
                 {
                     analogInputPort?.Dispose();

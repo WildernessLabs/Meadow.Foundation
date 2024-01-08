@@ -29,8 +29,8 @@ public abstract class Htux1dBase :
     ByteCommsSensorBase<(Units.Temperature? Temperature, RelativeHumidity? Humidity)>,
     ITemperatureSensor, IHumiditySensor, II2cPeripheral
 {
-    private event EventHandler<IChangeResult<Units.Temperature>> _temperatureHandlers;
-    private event EventHandler<IChangeResult<RelativeHumidity>> _humidityHandlers;
+    private event EventHandler<IChangeResult<Units.Temperature>> _temperatureHandlers = default!;
+    private event EventHandler<IChangeResult<RelativeHumidity>> _humidityHandlers = default!;
 
     event EventHandler<IChangeResult<Units.Temperature>> ISamplingSensor<Units.Temperature>.Updated
     {
@@ -74,11 +74,9 @@ public abstract class Htux1dBase :
     /// </summary>
     /// <param name="i2cBus"></param>
     /// <param name="address"></param>
-    /// <param name="updateInterval"></param>
-    public Htux1dBase(II2cBus i2cBus, byte address = (byte)Addresses.Default, TimeSpan? updateInterval = null)
-        : base(i2cBus, address, (int)(updateInterval == null ? 1000 : updateInterval.Value.TotalMilliseconds))
-    {
-    }
+    public Htux1dBase(II2cBus i2cBus, byte address = (byte)Addresses.Default)
+        : base(i2cBus, address)
+    { }
 
     /// <summary>
     /// Inheritance-safe way to raise events and notify observers

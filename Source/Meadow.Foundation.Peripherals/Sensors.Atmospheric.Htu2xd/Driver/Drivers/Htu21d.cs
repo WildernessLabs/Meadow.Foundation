@@ -23,9 +23,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// </summary>
         /// <param name="address">Sensor address (default to 0x40)</param>
         /// <param name="i2cBus">I2CBus (default to 100 KHz)</param>
-        /// <param name="updateInterval">Update interval, defaults to 1 sec if null</param>
-        public Htu21d(II2cBus i2cBus, byte address = (byte)Addresses.Default, TimeSpan? updateInterval = null)
-            : base(i2cBus, address, updateInterval)
+        public Htu21d(II2cBus i2cBus, byte address = (byte)Addresses.Default)
+            : base(i2cBus, address)
         {
             Initialize();
         }

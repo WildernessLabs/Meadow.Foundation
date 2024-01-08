@@ -7,7 +7,7 @@ namespace Meadow.Foundation.Displays.UI.InputTypes
     /// </summary>
     public class Date : InputBase
     {
-        int[] dateParts;
+        int[] dateParts = new int[0];
         byte position = 0;
 
         /// <summary>

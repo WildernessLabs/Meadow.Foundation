@@ -15,8 +15,8 @@ public partial class Bmp180 :
     ByteCommsSensorBase<(Units.Temperature? Temperature, Pressure? Pressure)>,
     ITemperatureSensor, IBarometricPressureSensor, II2cPeripheral
 {
-    private event EventHandler<IChangeResult<Units.Temperature>> _temperatureHandlers;
-    private event EventHandler<IChangeResult<Pressure>> _pressureHandlers;
+    private event EventHandler<IChangeResult<Units.Temperature>> _temperatureHandlers = default!;
+    private event EventHandler<IChangeResult<Pressure>> _pressureHandlers = default!;
 
     event EventHandler<IChangeResult<Units.Temperature>> ISamplingSensor<Units.Temperature>.Updated
     {
@@ -76,7 +76,7 @@ public partial class Bmp180 :
     /// <param name="deviceMode">The device mode</param>
     public Bmp180(II2cBus i2cBus, byte address = (byte)Addresses.Default,
         DeviceMode deviceMode = DeviceMode.Standard)
-            : base(i2cBus, address)
+            : base(i2cBus, address, 2, 2)
     {
         oversamplingSetting = (byte)deviceMode;
 

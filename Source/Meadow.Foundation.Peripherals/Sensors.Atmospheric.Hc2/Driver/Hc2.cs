@@ -13,8 +13,8 @@ public partial class HC2 :
     PollingSensorBase<(RelativeHumidity? Humidity, Units.Temperature? Temperature)>,
     ITemperatureSensor, IHumiditySensor
 {
-    private event EventHandler<IChangeResult<Units.Temperature>> _temperatureHandlers;
-    private event EventHandler<IChangeResult<RelativeHumidity>> _humidityHandlers;
+    private event EventHandler<IChangeResult<Units.Temperature>> _temperatureHandlers = default!;
+    private event EventHandler<IChangeResult<RelativeHumidity>> _humidityHandlers = default!;
 
     event EventHandler<IChangeResult<Units.Temperature>> ISamplingSensor<Units.Temperature>.Updated
     {

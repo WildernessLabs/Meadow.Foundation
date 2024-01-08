@@ -13,8 +13,8 @@ public class SimulatedTemperatureSensor : ITemperatureSensor, ISimulatedSensor
 {
     private readonly Random _random = new();
     private Units.Temperature? _temperature;
-    private Units.Temperature? _minTemperature;
-    private Units.Temperature? _maxTemperature;
+    private readonly Units.Temperature? _minTemperature;
+    private readonly Units.Temperature? _maxTemperature;
     private SimulationBehavior _behavior;
     private int _sawtoothDirection = 1;
     private Timer? _reportTimer;
@@ -123,6 +123,10 @@ public class SimulatedTemperatureSensor : ITemperatureSensor, ISimulatedSensor
         return Task.FromResult(Temperature ?? Units.Temperature.AbsoluteZero);
     }
 
+    /// <summary>
+    /// Starts updating the sensor value at the specified interval
+    /// </summary>
+    /// <param name="updateInterval"></param>
     public void StartUpdating(TimeSpan? updateInterval = null)
     {
         UpdateInterval = updateInterval ?? TimeSpan.FromSeconds(1);
@@ -130,6 +134,9 @@ public class SimulatedTemperatureSensor : ITemperatureSensor, ISimulatedSensor
         _reportTimer = new Timer(ReportTimerProc, null, updateInterval!.Value, updateInterval.Value);
     }
 
+    /// <summary>
+    /// Stops updating the sensor
+    /// </summary>
     public void StopUpdating()
     {
         IsSampling = false;

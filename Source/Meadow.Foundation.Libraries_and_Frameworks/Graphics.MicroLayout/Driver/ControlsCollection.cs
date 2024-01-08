@@ -12,12 +12,13 @@ public sealed class ControlsCollection : IEnumerable<IControl>
     private readonly List<IControl> _controls = new();
     private readonly object _syncRoot = new();
 
-    private IControl? _parent;
+    private readonly IControl? _parent;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ControlsCollection"/> class.
     /// </summary>
     /// <param name="screen">The <see cref="DisplayScreen"/> that owns the controls collection.</param>
+    /// <param name="parent">The parent control (if exists)</param>
     internal ControlsCollection(DisplayScreen screen, IControl? parent)
     {
         _screen = screen;

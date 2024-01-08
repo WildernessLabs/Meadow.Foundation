@@ -44,7 +44,7 @@ namespace Meadow.Foundation.Displays
         /// The buffer the holds the black pixel data for the display
         /// </summary>
 
-        protected Buffer2bppEPaper imageBuffer;
+        protected Buffer2bppEPaper imageBuffer = default!;
 
         /// <summary>
         /// Width of display in pixels
@@ -113,7 +113,7 @@ namespace Meadow.Foundation.Displays
             int bufferWidth = width % 8 > 0 ? width + 8 - (width % 8) : width;
 
             CreateBuffer(bufferWidth, height);
-            imageBuffer?.Clear();
+            imageBuffer.Clear();
 
             Initialize();
         }

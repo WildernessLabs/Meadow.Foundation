@@ -12,16 +12,14 @@ namespace Meadow.Foundation.Sensors.Atmospheric;
 /// Provide access to the CCS811 C02 and VOC Air Quality Sensor
 /// </summary>
 public partial class Ccs811 :
-    ByteCommsSensorBase<(Concentration? Co2, Concentration? Voc)>,
+    PollingSensorBase<(Concentration? Co2, Concentration? Voc)>,
     ICo2Sensor, IVocSensor, II2cPeripheral
 {
-    private const int ReadBufferSize = 10;
-    private const int WriteBufferSize = 8;
+    private II2cCommunications i2cComms;
 
-    // internal thread lock
     private byte[] _readingBuffer = new byte[8];
 
-    private event EventHandler<IChangeResult<Concentration>> _co2Handlers;
+    private event EventHandler<IChangeResult<Concentration>> _co2Handlers = default!;
 
     event EventHandler<IChangeResult<Concentration>> ISamplingSensor<Concentration>.Updated
     {
@@ -64,8 +62,9 @@ public partial class Ccs811 :
     /// <param name="i2cBus">The I2C bus</param>
     /// <param name="address">The I2C address</param>
     public Ccs811(II2cBus i2cBus, byte address)
-        : base(i2cBus, address, ReadBufferSize, WriteBufferSize)
     {
+        i2cComms = new I2cCommunications(i2cBus, address);
+
         switch (address)
         {
             case 0x5a:
@@ -89,31 +88,31 @@ public partial class Ccs811 :
 
         Thread.Sleep(100);
 
-        var id = BusComms?.ReadRegister((byte)Register.HW_ID);
+        var id = i2cComms?.ReadRegister((byte)Register.HW_ID);
         if (id != 0x81)
         {
             throw new Exception("Hardware is not identifying as a CCS811");
         }
 
-        BusComms?.Write((byte)BootloaderCommand.APP_START);
+        i2cComms?.Write((byte)BootloaderCommand.APP_START);
 
         SetMeasurementMode(MeasurementMode.ConstantPower1s);
-        var mode = BusComms?.ReadRegister((byte)Register.MEAS_MODE);
+        _ = i2cComms?.ReadRegister((byte)Register.MEAS_MODE);
     }
 
     private void ShowDebugInfo()
     {
-        var ver = BusComms?.ReadRegister((byte)Register.HW_VERSION);
+        var ver = i2cComms?.ReadRegister((byte)Register.HW_VERSION);
         Resolver.Log.Info($"hardware version A = 0x{ver:x2}");
 
-        var fwb = BusComms?.ReadRegister((byte)Register.FW_BOOT_VERSION);
+        var fwb = i2cComms?.ReadRegister((byte)Register.FW_BOOT_VERSION);
         Resolver.Log.Info($"FWB version = 0x{fwb:x4}");
 
-        var fwa = BusComms?.ReadRegister((byte)Register.FW_APP_VERSION);
+        var fwa = i2cComms?.ReadRegister((byte)Register.FW_APP_VERSION);
         Resolver.Log.Info($"FWA version = 0x{fwa:x4}");
 
         // read status
-        var status = BusComms?.ReadRegister((byte)Register.STATUS);
+        var status = i2cComms?.ReadRegister((byte)Register.STATUS);
         Resolver.Log.Info($"status = 0x{status:x2}");
     }
 
@@ -123,7 +122,7 @@ public partial class Ccs811 :
     /// <returns>The baseline value</returns>
     public ushort GetBaseline()
     {
-        return BusComms?.ReadRegister((byte)Register.BASELINE) ?? 0;
+        return i2cComms?.ReadRegister((byte)Register.BASELINE) ?? 0;
     }
 
     /// <summary>
@@ -132,7 +131,7 @@ public partial class Ccs811 :
     /// <param name="value">The new baseline</param>
     public void SetBaseline(ushort value)
     {
-        BusComms?.WriteRegister((byte)Register.BASELINE, (byte)value);
+        i2cComms?.WriteRegister((byte)Register.BASELINE, (byte)value);
     }
 
     /// <summary>
@@ -141,7 +140,7 @@ public partial class Ccs811 :
     /// <returns>The measurement mode</returns>
     public MeasurementMode GetMeasurementMode()
     {
-        return (MeasurementMode)(BusComms?.ReadRegister((byte)Register.MEAS_MODE) ?? 0);
+        return (MeasurementMode)(i2cComms?.ReadRegister((byte)Register.MEAS_MODE) ?? 0);
     }
 
     /// <summary>
@@ -151,12 +150,12 @@ public partial class Ccs811 :
     public void SetMeasurementMode(MeasurementMode mode)
     {
         var m = (byte)mode;
-        BusComms?.WriteRegister((byte)Register.MEAS_MODE, m);
+        i2cComms?.WriteRegister((byte)Register.MEAS_MODE, m);
     }
 
     private void Reset()
     {
-        BusComms?.Write(new byte[] { (byte)Register.SW_RESET, 0x11, 0xE5, 0x72, 0x8A });
+        i2cComms?.Write(new byte[] { (byte)Register.SW_RESET, 0x11, 0xE5, 0x72, 0x8A });
     }
 
     /// <summary>
@@ -166,7 +165,7 @@ public partial class Ccs811 :
     protected override Task<(Concentration? Co2, Concentration? Voc)> ReadSensor()
     {
         // data is really in just the first 4, but this gets us status and raw data as well
-        BusComms?.ReadRegister((byte)Register.ALG_RESULT_DATA, _readingBuffer);
+        i2cComms?.ReadRegister((byte)Register.ALG_RESULT_DATA, _readingBuffer);
 
         (Concentration? co2, Concentration? voc) state;
         state.co2 = new Concentration(_readingBuffer[0] << 8 | _readingBuffer[1], Concentration.UnitType.PartsPerMillion);

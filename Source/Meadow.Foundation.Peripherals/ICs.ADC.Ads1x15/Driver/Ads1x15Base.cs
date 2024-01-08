@@ -48,7 +48,7 @@ namespace Meadow.Foundation.ICs.ADC
             MeasureMode measureMode,
             ChannelSetting channelSetting)
         {
-            i2cComms = new I2cCommunications(i2cBus, (byte)address, 3, 3);
+            i2cComms = new I2cCommunications(i2cBus, (byte)address, 3);
 
             SetConfigRegister(0x8583); // this is the default reset - force it in case it's not been reset
             config = GetConfigRegister();
