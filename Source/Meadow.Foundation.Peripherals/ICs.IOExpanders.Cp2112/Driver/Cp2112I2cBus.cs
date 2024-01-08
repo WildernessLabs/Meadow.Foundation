@@ -1,56 +1,64 @@
 ﻿using Meadow.Hardware;
 using System;
 
-namespace Meadow.Foundation.ICs.IOExpanders
+namespace Meadow.Foundation.ICs.IOExpanders;
+
+/// <summary>
+/// Represents an I2C bus implementation using the Cp2112 device.
+/// </summary>
+public sealed class Cp2112I2cBus : II2cBus, IDisposable
 {
-    public sealed class Cp2112I2cBus : II2cBus, IDisposable
+    private bool _isDisposed;
+    private Cp2112 _device;
+
+    internal Cp2112I2cBus(Cp2112 device, I2cBusSpeed busSpeed)
     {
-        private bool _isDisposed;
-        private Cp2112 _device;
+        BusSpeed = busSpeed;
+        _device = device;
+    }
 
-        internal Cp2112I2cBus(Cp2112 device, I2cBusSpeed busSpeed)
+    /// <inheritdoc/>
+    public I2cBusSpeed BusSpeed { get; set; }
+
+    private void Dispose(bool _)
+    {
+        if (!_isDisposed)
         {
-            BusSpeed = busSpeed;
-            _device = device;
+            _isDisposed = true;
         }
+    }
 
-        public I2cBusSpeed BusSpeed { get; set; }
+    /// <summary>
+    /// Finalizer for the Cp2112I2cBus class, used to release unmanaged resources.
+    /// </summary>
+    ~Cp2112I2cBus()
+    {
+        Dispose(false);
+    }
 
-        private void Dispose(bool _)
-        {
-            if (!_isDisposed)
-            {
-                _isDisposed = true;
-            }
-        }
+    /// <inheritdoc/>
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
 
-        ~Cp2112I2cBus()
-        {
-            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-            Dispose(false);
-        }
+    /// <inheritdoc/>
+    public void Exchange(byte peripheralAddress, Span<byte> writeBuffer, Span<byte> readBuffer)
+    {
+        Write(peripheralAddress, writeBuffer);
+        Read(peripheralAddress, readBuffer);
+    }
 
-        public void Dispose()
-        {
-            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
+    /// <inheritdoc/>
+    public void Read(byte peripheralAddress, Span<byte> readBuffer)
+    {
+        throw new NotImplementedException();
+    }
 
-        public void Exchange(byte peripheralAddress, Span<byte> writeBuffer, Span<byte> readBuffer)
-        {
-            Write(peripheralAddress, writeBuffer);
-            Read(peripheralAddress, readBuffer);
-        }
-
-        public void Read(byte peripheralAddress, Span<byte> readBuffer)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Write(byte peripheralAddress, Span<byte> writeBuffer)
-        {
-            _device.I2CWrite(peripheralAddress, writeBuffer);
-        }
+    /// <inheritdoc/>
+    public void Write(byte peripheralAddress, Span<byte> writeBuffer)
+    {
+        _device.I2CWrite(peripheralAddress, writeBuffer);
     }
 }
