@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Sensors.Temperature.MLX90640_Sample
+namespace Sensors.Cameras.Mlx90640_Sample
 {
     public class MeadowApp : App<F7FeatherV2>
     {

@@ -4,30 +4,25 @@ using System;
 namespace Meadow.Foundation.ICs.IOExpanders
 {
     /// <summary>
-    /// Digital output port for FT232 devices.
+    /// Digital output port for CP2112 devices.
     /// </summary>
-    public sealed class MpsseDigitalOutputPort : DigitalOutputPortBase
+    public sealed class Cp2112DigitalOutputPort : DigitalOutputPortBase
     {
-        private readonly IFt232Bus _bus;
-        private bool _state;
+        private readonly Cp2112 _device;
+        private readonly bool _state;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MpsseDigitalOutputPort"/> class.
+        /// Initializes a new instance of the <see cref="Cp2112DigitalOutputPort"/> class.
         /// </summary>
         /// <param name="pin">The pin to use.</param>
         /// <param name="info">The digital channel info.</param>
         /// <param name="initialState">The initial state of the output port.</param>
         /// <param name="initialOutputType">The initial output type.</param>
-        /// <param name="bus">The FT232 bus.</param>
-        internal MpsseDigitalOutputPort(IPin pin, IDigitalChannelInfo info, bool initialState, OutputType initialOutputType, IFt232Bus bus)
+        /// <param name="device">The CP2112 device.</param>
+        internal Cp2112DigitalOutputPort(IPin pin, IDigitalChannelInfo info, bool initialState, OutputType initialOutputType, Cp2112 device)
             : base(pin, info, initialState, initialOutputType)
         {
-            if (initialOutputType != OutputType.PushPull)
-            {
-                throw new NotSupportedException("The FT232 only supports push-pull outputs");
-            }
-
-            _bus = bus;
+            _device = device;
             State = initialState;
         }
 
@@ -42,22 +37,17 @@ namespace Meadow.Foundation.ICs.IOExpanders
             get => _state;
             set
             {
-                byte s = _bus.GpioState;
-
                 if (value)
                 {
-                    s |= (byte)Pin.Key;
+                    Console.WriteLine("ON");
+                    _device.SetState((byte)this.Pin.Key);
+
                 }
                 else
                 {
-                    s &= (byte)~(byte)Pin.Key;
+                    Console.WriteLine("OFF");
+                    _device.ClearState((byte)this.Pin.Key);
                 }
-
-                var result = Native.Mpsse.FT_WriteGPIO(_bus.Handle, _bus.GpioDirectionMask, s);
-                Native.CheckStatus(result);
-
-                _bus.GpioState = s;
-                _state = value;
             }
         }
     }
