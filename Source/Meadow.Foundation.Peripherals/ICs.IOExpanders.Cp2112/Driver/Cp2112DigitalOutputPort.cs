@@ -4,12 +4,12 @@ using System;
 namespace Meadow.Foundation.ICs.IOExpanders
 {
     /// <summary>
-    /// Digital output port for FT232 devices.
+    /// Digital output port for CP2112 devices.
     /// </summary>
     public sealed class Cp2112DigitalOutputPort : DigitalOutputPortBase
     {
-        private Cp2112 _device;
-        private bool _state;
+        private readonly Cp2112 _device;
+        private readonly bool _state;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Cp2112DigitalOutputPort"/> class.

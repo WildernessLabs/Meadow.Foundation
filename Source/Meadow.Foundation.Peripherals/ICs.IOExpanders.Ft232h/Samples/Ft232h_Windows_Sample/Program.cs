@@ -1,5 +1,5 @@
 ﻿// See https://aka.ms/new-console-template for more information
-using Meadow.Foundation;
+using Meadow;
 using Meadow.Foundation.Displays;
 using Meadow.Foundation.ICs.IOExpanders;
 using Meadow.Foundation.Sensors.Atmospheric;
@@ -77,8 +77,3 @@ async Task TestIli9341(Ft232h expander)
         await Task.Delay(1000);
     }
 }
-
-
-
-
-

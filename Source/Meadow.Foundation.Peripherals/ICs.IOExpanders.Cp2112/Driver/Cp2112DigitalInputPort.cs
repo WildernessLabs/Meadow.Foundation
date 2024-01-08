@@ -4,11 +4,11 @@ using System;
 namespace Meadow.Foundation.ICs.IOExpanders
 {
     /// <summary>
-    /// Represents a digital input port implementation for the FT232 bus.
+    /// Represents a digital input port implementation for the CP2112 bus.
     /// </summary>
     public sealed class Cp2112DigitalInputPort : DigitalInputPortBase
     {
-        private Cp2112 _device;
+        private readonly Cp2112 _device;
 
         /// <summary>
         /// Instantiates a <see cref="Cp2112DigitalInputPort"/>.

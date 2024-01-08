@@ -7,9 +7,9 @@ namespace AsciiConsoleDisplay_Sample;
 
 internal class Program
 {
-    private static async Task Main(string[] args)
+    private static void Main(string[] args)
     {
-        await DrawShapes();
+        DrawShapes();
     }
 
     private static async Task MovingBox()
@@ -17,7 +17,7 @@ internal class Program
         var colors = typeof(Color)
             .GetFields(System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public)
             .Where(f => f.FieldType == typeof(Color))
-            .Select(c => (Color)c.GetValue(null))
+            .Select(c => (Color)c.GetValue(null)!)
             .ToArray();
 
         var colorIndex = 0;
@@ -60,7 +60,7 @@ internal class Program
         }
     }
 
-    private static async Task DrawShapes()
+    private static void DrawShapes()
     {
         var display = new AsciiConsoleDisplay(80, 60);
 
@@ -89,7 +89,7 @@ internal class Program
             {
                 for (var y = 0; y < 16; y++)
                 {
-                    var c = (Color)color.GetValue(null);
+                    var c = (Color)color.GetValue(null)!;
 
                     display.DrawPixel(x, y, c);
                 }
