@@ -15,12 +15,13 @@
     <PackageId>Meadow.Foundation.Sensors.Motion.Mag3110</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow.Foundation,motion,magnetometer,MAG3110</PackageTags>
-    <Version>1.6.0.1</Version>
+    <Version>1.7.0</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Freescale MAG3110 I2C 3 axis magnetometer</Description>
     <RootNamespace>Meadow.Foundation.Sensors.Motion</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <None Include=".\Readme.md" Pack="true" PackagePath=""/>
     <None Include=".\Readme.md" Pack="true" PackagePath="" />
     <None Include="..\..\..\icon.png" Pack="true" PackagePath="" />
     <ProjectReference Include="..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />

@@ -15,11 +15,12 @@
     <PackageId>Meadow.Foundation.Sensors.Environmental.AtlasScientificGravityDOMeter</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow,Meadow.Foundation,Environmental,Atlas,Scientific,Gravity,DO,Dissolved,Oxygen,Meter</PackageTags>
-    <Version>1.6.0.1</Version>
+    <Version>1.7.0</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Atlas Scientific analog gravity dissolved oxygen sensor</Description>
   </PropertyGroup>
   <ItemGroup>
+    <None Include=".\Readme.md" Pack="true" PackagePath=""/>
     <None Include=".\Readme.md" Pack="true" PackagePath="" />
     <None Include="..\..\..\icon.png" Pack="true" PackagePath="" />
     <ProjectReference Include="..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />

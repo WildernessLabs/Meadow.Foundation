@@ -14,12 +14,13 @@
     <PackageId>Meadow.Foundation.ICs.IOExpanders.Pcx857x</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow.Foundation,Meadow,Expanders,IOExpanders,Pcx857x</PackageTags>
-    <Version>1.6.0.1</Version>
+    <Version>1.7.0</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Pcx857x I2C digital input/output expander (Pca8574, Pca8575, Pcf8574, Pcf855)</Description>
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
+    <None Include=".\Readme.md" Pack="true" PackagePath=""/>
     <None Include=".\Readme.md" Pack="true" PackagePath="" />
     <None Include="..\..\..\icon.png" Pack="true" PackagePath="" />
     <ProjectReference Include="..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
