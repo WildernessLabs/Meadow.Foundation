@@ -12,11 +12,6 @@ namespace Meadow.Foundation.Sensors.Motion
     public abstract class Adxl3xxBase : PollingSensorBase<Acceleration3D>, IAccelerometer, IDisposable
     {
         /// <summary>
-        /// Raised when the acceleration value changes
-        /// </summary>
-        public event EventHandler<IChangeResult<Acceleration3D>> Acceleration3DUpdated = default!;
-
-        /// <summary>
         /// The X analog input port
         /// </summary>
         protected IAnalogInputPort XAnalogInputPort { get; }
@@ -80,16 +75,6 @@ namespace Meadow.Foundation.Sensors.Motion
             {
                 SupplyVoltage = supplyV;
             }
-        }
-
-        /// <summary>
-        /// Raise events for subscribers and notify of value changes
-        /// </summary>
-        /// <param name="changeResult">The updated sensor data</param>
-        protected override void RaiseEventsAndNotify(IChangeResult<Acceleration3D> changeResult)
-        {
-            Acceleration3DUpdated?.Invoke(this, changeResult);
-            base.RaiseEventsAndNotify(changeResult);
         }
 
         /// <summary>

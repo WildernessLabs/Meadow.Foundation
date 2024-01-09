@@ -14,16 +14,16 @@
     <PackageId>Meadow.Foundation.ICs.IOExpanders.SerialWombat</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow.Foundation,IOExpanders,SerialWombat,serial,Multiplexer,wombat,18ab,gpio,pwm,servo</PackageTags>
-    <Version>0.1.0</Version>
+    <Version>1.7.0</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>SerialWombat I2C IO expander for GPIO, PWM, servos, etc.</Description>
-  <Nullable>enable</Nullable>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
-    <None Include=".\Readme.md" Pack="true" PackagePath=""/>
+    <None Include=".\Readme.md" Pack="true" PackagePath="" />
     <None Include="..\..\..\icon.png" Pack="true" PackagePath="" />
-    <PackageReference Include="Meadow.Foundation" Version="1.6.0" />
-    <PackageReference Include="Meadow.Foundation.Sensors.Distance.Hcsr04" Version="1.6.0" />
-    <PackageReference Include="Meadow.Foundation.Servos.ServoCore" Version="1.6.0" />
+    <PackageReference Include="Meadow.Foundation" Version="1.7.0" />
+    <PackageReference Include="Meadow.Foundation.Sensors.Distance.Hcsr04" Version="1.7.0" />
+    <PackageReference Include="Meadow.Foundation.Servos.ServoCore" Version="1.7.0" />
   </ItemGroup>
 </Project>

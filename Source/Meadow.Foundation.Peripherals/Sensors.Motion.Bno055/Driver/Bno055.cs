@@ -59,9 +59,9 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
         public event EventHandler<IChangeResult<EulerAngles>> EulerOrientationUpdated = default!;
 
-        private event EventHandler<IChangeResult<Units.Temperature>> _temperatureHandlers;
-        private event EventHandler<IChangeResult<AngularVelocity3D>> _velocityHandlers;
-        private event EventHandler<IChangeResult<Acceleration3D>> _accelerationHandlers;
+        private event EventHandler<IChangeResult<Units.Temperature>> _temperatureHandlers = default!;
+        private event EventHandler<IChangeResult<AngularVelocity3D>> _velocityHandlers = default!;
+        private event EventHandler<IChangeResult<Acceleration3D>> _accelerationHandlers = default!;
 
         event EventHandler<IChangeResult<Units.Temperature>> ISamplingSensor<Units.Temperature>.Updated
         {

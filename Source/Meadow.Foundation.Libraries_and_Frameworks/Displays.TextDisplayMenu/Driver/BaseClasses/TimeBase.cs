@@ -10,7 +10,7 @@ namespace Meadow.Foundation.Displays.UI.InputTypes
         /// <summary>
         /// Value for each time part
         /// </summary>
-        protected int[] timeParts;
+        protected int[] timeParts = new int[0];
 
         /// <summary>
         /// The current position

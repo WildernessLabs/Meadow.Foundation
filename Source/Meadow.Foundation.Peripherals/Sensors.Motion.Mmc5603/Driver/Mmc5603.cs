@@ -20,11 +20,6 @@ namespace Meadow.Foundation.Sensors.Motion
         public byte DefaultI2cAddress => (byte)Addresses.Default;
 
         /// <summary>
-        /// Raised when the magnetic field value changes
-        /// </summary>
-        public event EventHandler<IChangeResult<MagneticField3D>> MagneticField3DUpdated = default!;
-
-        /// <summary>
         /// The current magnetic field value
         /// </summary>
         public MagneticField3D? MagneticField3D => Conditions;
@@ -88,19 +83,6 @@ namespace Meadow.Foundation.Sensors.Motion
             {
                 SetRegisterBit(Registers.CONTROL_2, 4, false);
             }
-        }
-
-        /// <summary>
-        /// Raise events for subscribers and notify of value changes
-        /// </summary>
-        /// <param name="changeResult">The updated sensor data</param>
-        protected override void RaiseEventsAndNotify(IChangeResult<MagneticField3D> changeResult)
-        {
-            if (changeResult is { } mag)
-            {
-                MagneticField3DUpdated?.Invoke(this, new ChangeResult<MagneticField3D>(mag.New, changeResult.Old));
-            }
-            base.RaiseEventsAndNotify(changeResult);
         }
 
         Task TriggerMagneticFieldReading()

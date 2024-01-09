@@ -1,13 +1,16 @@
 ﻿using Meadow.Hardware;
 using Meadow.Peripherals.Leds;
+using System;
 
 namespace Meadow.Foundation.Leds
 {
     /// <summary>
     /// Represents an RGB LED
     /// </summary>
-    public partial class RgbLed : IRgbLed
+    public partial class RgbLed : IRgbLed, IDisposable
     {
+        readonly bool createdPorts = false;
+
         /// <summary>
         /// The current LED color
         /// </summary>
@@ -44,6 +47,11 @@ namespace Meadow.Foundation.Leds
         bool isOn;
 
         /// <summary>
+        /// Is the object disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
+
+        /// <summary>
         /// Create instance of RgbLed
         /// </summary>
         /// <param name="redPin">Red Pin</param>
@@ -60,7 +68,9 @@ namespace Meadow.Foundation.Leds
                 greenPin.CreateDigitalOutputPort(),
                 bluePin.CreateDigitalOutputPort(),
                 commonType)
-        { }
+        {
+            createdPorts = true;
+        }
 
         /// <summary>
         /// Create instance of RgbLed
@@ -81,10 +91,7 @@ namespace Meadow.Foundation.Leds
             Common = commonType;
         }
 
-        /// <summary>
-        /// Sets the current color of the LED.
-        /// </summary>
-        /// <param name="color">The color value</param>
+        ///<inheritdoc/>
         public void SetColor(RgbLedColors color)
         {
             Color = color;
@@ -146,6 +153,32 @@ namespace Meadow.Foundation.Leds
                 RedPort.State = !onState;
                 GreenPort.State = !onState;
                 BluePort.State = !onState;
+            }
+        }
+
+        ///<inheritdoc/>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        /// <param name="disposing">Is disposing</param>
+        public virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && createdPorts)
+                {
+                    RedPort.Dispose();
+                    GreenPort.Dispose();
+                    BluePort.Dispose();
+                }
+
+                IsDisposed = true;
             }
         }
     }

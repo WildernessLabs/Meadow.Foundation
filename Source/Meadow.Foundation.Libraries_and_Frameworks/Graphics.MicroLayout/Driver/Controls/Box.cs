@@ -10,7 +10,7 @@ public class Box : ThemedControl
     /// <summary>
     /// Gets or sets a value indicating whether the display box is filled with the foreground color.
     /// </summary>
-    public bool Filled { get; set; } = true;
+    public bool IsFilled { get; set; } = true;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Box"/> class with the specified dimensions.
@@ -53,7 +53,7 @@ public class Box : ThemedControl
     {
         if (ForeColor != Color.Transparent)
         {
-            graphics.DrawRectangle(Left, Top, Width, Height, ForeColor, Filled);
+            graphics.DrawRectangle(Left + (Parent?.Left ?? 0), Top + (Parent?.Top ?? 0), Width, Height, ForeColor, IsFilled);
         }
     }
 }

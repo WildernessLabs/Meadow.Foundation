@@ -59,7 +59,7 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// The buffer that holds the pixel data
         /// The packing structure in buffer-specific
         /// </summary>
-        public byte[] Buffer { get; protected set; }
+        public byte[] Buffer { get; protected set; } = default!;
 
         /// <summary>
         /// Did we create the buffer (true) or was it passed in (false)

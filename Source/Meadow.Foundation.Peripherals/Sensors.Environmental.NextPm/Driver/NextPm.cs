@@ -183,7 +183,7 @@ namespace Meadow.Foundation.Sensors.Environmental
             }
             if (changeResult.New.humidity is { } humidity)
             {
-                HumidityUpdated?.Invoke(this.serialPort, new ChangeResult<RelativeHumidity>(humidity, changeResult.Old?.humidity));
+                HumidityUpdated?.Invoke(serialPort, new ChangeResult<RelativeHumidity>(humidity, changeResult.Old?.humidity));
             }
             base.RaiseEventsAndNotify(changeResult);
         }

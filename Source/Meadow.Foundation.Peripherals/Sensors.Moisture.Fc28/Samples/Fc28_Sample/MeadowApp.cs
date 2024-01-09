@@ -38,7 +38,7 @@ namespace Sensors.Moisture.FC28_Sample
             );
             fc28.Subscribe(consumer);
 
-            fc28.MoistureUpdated += (object sender, IChangeResult<double> e) =>
+            fc28.Updated += (object sender, IChangeResult<double> e) =>
             {
                 Resolver.Log.Info($"Moisture Updated: {e.New}");
             };

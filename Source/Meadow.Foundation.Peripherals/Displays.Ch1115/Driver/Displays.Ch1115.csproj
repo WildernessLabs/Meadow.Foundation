@@ -15,13 +15,13 @@
     <PackageId>Meadow.Foundation.Displays.Ch1115</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow, Meadow.Foundation, Displays, LCD, Ch1115</PackageTags>
-    <Version>0.1.0</Version>
+    <Version>1.7.0</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Ch1115 SPI monochrome OLED display</Description>
   </PropertyGroup>
   <ItemGroup>
-    <None Include=".\Readme.md" Pack="true" PackagePath=""/>
+    <None Include=".\Readme.md" Pack="true" PackagePath="" />
     <None Include="..\..\..\icon.png" Pack="true" PackagePath="" />
-    <PackageReference Include="Meadow.Foundation.Graphics.MicroGraphics" Version="1.6.0" />
+    <PackageReference Include="Meadow.Foundation.Graphics.MicroGraphics" Version="1.7.0" />
   </ItemGroup>
 </Project>

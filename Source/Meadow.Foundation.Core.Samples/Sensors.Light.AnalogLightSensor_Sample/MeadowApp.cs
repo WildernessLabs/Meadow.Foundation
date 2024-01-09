@@ -39,7 +39,7 @@ namespace Sensors.Light.AnalogLightSensor_Sample
             analogLightSensor.Subscribe(consumer);
 
             // classical .NET events can also be used:
-            analogLightSensor.IlluminanceUpdated += (sender, result) =>
+            analogLightSensor.Updated += (sender, result) =>
                 Resolver.Log.Info($"Lux changed: {result.New.Lux:N2} lux, old: {result.Old?.Lux:N2} lux");
 
             //==== One-off reading use case/pattern

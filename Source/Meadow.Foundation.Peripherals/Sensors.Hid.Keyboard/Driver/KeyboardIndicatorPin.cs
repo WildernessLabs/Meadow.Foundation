@@ -1,7 +1,7 @@
 ﻿using Meadow.Hardware;
 using System;
 using System.Collections.Generic;
-using static Meadow.Foundation.Sensors.Hid.Keyboard.Interop;
+using static Meadow.Foundation.Sensors.Hid.Keyboard.InteropWindows;
 
 namespace Meadow.Foundation.Sensors.Hid;
 

@@ -19,8 +19,8 @@ public partial class Mag3110 :
     /// </summary>
     public byte DefaultI2cAddress => (byte)Addresses.Default;
 
-    private event EventHandler<IChangeResult<Units.Temperature>> _temperatureHandlers;
-    private event EventHandler<IChangeResult<MagneticField3D>> _fieldHandlers;
+    private event EventHandler<IChangeResult<Units.Temperature>> _temperatureHandlers = default!;
+    private event EventHandler<IChangeResult<MagneticField3D>> _fieldHandlers = default!;
 
     event EventHandler<IChangeResult<Units.Temperature>> ISamplingSensor<Units.Temperature>.Updated
     {

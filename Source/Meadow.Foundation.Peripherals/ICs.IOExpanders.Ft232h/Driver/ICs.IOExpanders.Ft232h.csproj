@@ -15,13 +15,13 @@
     <PackageId>Meadow.Foundation.ICs.IOExpanders.Ft232h</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow.Foundation,IOExpanders,expander,IO,Ft232h</PackageTags>
-    <Version>0.1.0</Version>
+    <Version>1.7.0</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Ft232h USB IOExpander for GPIO, I2C, SPI on Windows</Description>
   </PropertyGroup>
   <ItemGroup>
-    <None Include=".\Readme.md" Pack="true" PackagePath=""/>
-    <PackageReference Include="Meadow.Foundation" Version="1.6.0" />
+    <None Include=".\Readme.md" Pack="true" PackagePath="" />
+    <PackageReference Include="Meadow.Foundation" Version="1.7.0" />
     <None Include="..\..\..\icon.png" Pack="true" PackagePath="" />
   </ItemGroup>
 </Project>

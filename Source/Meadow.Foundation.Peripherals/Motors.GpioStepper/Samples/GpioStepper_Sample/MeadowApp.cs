@@ -13,7 +13,7 @@ namespace MeadowApp
     public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
-        private IPositionalMotor stepper;
+        private IStepperMotor stepper;
 
         private bool UseStepDirConfiguration { get; set; } = true;
 

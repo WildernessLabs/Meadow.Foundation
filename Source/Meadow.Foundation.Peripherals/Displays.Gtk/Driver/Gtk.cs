@@ -211,7 +211,7 @@ public class GtkDisplay : IGraphicsDisplay, ITouchScreen
     /// </summary>
     /// <param name="fillColor"></param>
     /// <param name="updateDisplay"></param>
-    public void Fill(Foundation.Color fillColor, bool updateDisplay = false)
+    public void Fill(Color fillColor, bool updateDisplay = false)
     {
         ShowComplete.WaitOne();
         _pixelBuffer.Fill(fillColor);
@@ -225,7 +225,7 @@ public class GtkDisplay : IGraphicsDisplay, ITouchScreen
     /// <param name="width"></param>
     /// <param name="height"></param>
     /// <param name="fillColor"></param>
-    public void Fill(int x, int y, int width, int height, Foundation.Color fillColor)
+    public void Fill(int x, int y, int width, int height, Color fillColor)
     {
         ShowComplete.WaitOne();
         _pixelBuffer.Fill(x, y, width, height, fillColor);
@@ -237,7 +237,7 @@ public class GtkDisplay : IGraphicsDisplay, ITouchScreen
     /// <param name="x"></param>
     /// <param name="y"></param>
     /// <param name="color"></param>
-    public void DrawPixel(int x, int y, Foundation.Color color)
+    public void DrawPixel(int x, int y, Color color)
     {
         ShowComplete.WaitOne();
         _pixelBuffer.SetPixel(x, y, color);
@@ -252,7 +252,7 @@ public class GtkDisplay : IGraphicsDisplay, ITouchScreen
     public void DrawPixel(int x, int y, bool colored)
     {
         ShowComplete.WaitOne();
-        DrawPixel(x, y, colored ? Foundation.Color.White : Foundation.Color.Black);
+        DrawPixel(x, y, colored ? Color.White : Color.Black);
     }
 
     /// <summary>

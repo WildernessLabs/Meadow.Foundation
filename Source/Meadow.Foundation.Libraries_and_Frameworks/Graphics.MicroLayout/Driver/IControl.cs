@@ -6,6 +6,11 @@
 public interface IControl
 {
     /// <summary>
+    /// Gets of sets the Control's Paretn, if it has one.  If the Control is unparented (i.e. Parent is null) then it is directly on the DisplayScreen
+    /// </summary>
+    IControl? Parent { get; set; }
+
+    /// <summary>
     /// Gets or sets the left coordinate of the display control.
     /// </summary>
     int Left { get; set; }
@@ -18,7 +23,7 @@ public interface IControl
     /// <summary>
     /// Gets or sets whether the control is visible.
     /// </summary>
-    bool Visible { get; set; }
+    bool IsVisible { get; set; }
 
     /// <summary>
     /// Gets or sets the width of the display control.

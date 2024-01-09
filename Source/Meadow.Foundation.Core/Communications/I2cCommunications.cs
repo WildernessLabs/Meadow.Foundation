@@ -1,6 +1,7 @@
-﻿using System;
+﻿using Meadow.Hardware;
+using System;
 
-namespace Meadow.Hardware
+namespace Meadow.Foundation
 {
     /// <summary>
     /// Helper class for I2C communications, handles registers, endian, etc.
@@ -33,14 +34,13 @@ namespace Meadow.Hardware
         /// </summary>
         /// <param name="bus">The II2cBus used for communication with the peripheral</param>
         /// <param name="peripheralAddress">The address of the peripheral on the I2C bus</param>
-        /// <param name="readBufferSize">The size of the buffer used for reading data from the peripheral. Defaults to 8 bytes</param>
         /// <param name="writeBufferSize">The size of the buffer used for writing data to the peripheral. Defaults to 8 bytes</param>
-        public I2cCommunications(II2cBus bus, byte peripheralAddress, int readBufferSize = 8, int writeBufferSize = 8)
+        public I2cCommunications(II2cBus bus, byte peripheralAddress, int writeBufferSize = 8)
         {
             Bus = bus;
             Address = peripheralAddress;
             WriteBuffer = new byte[writeBufferSize];
-            ReadBuffer = new byte[readBufferSize];
+            ReadBuffer = new byte[2];
         }
 
         /// <summary>

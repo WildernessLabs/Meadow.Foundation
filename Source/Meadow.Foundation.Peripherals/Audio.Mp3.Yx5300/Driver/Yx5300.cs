@@ -19,12 +19,16 @@ namespace Meadow.Foundation.Audio.Mp3
 
         readonly bool createdPort = false;
 
+        private byte[] sendBuffer;
+
         /// <summary>
         /// Create a YX5300 mp3 player object
         /// </summary>
-        /// <param name="serialPort"></param>
+        /// <param name="serialPort">The serial port</param>
         protected Yx5300(ISerialPort serialPort)
         {
+            sendBuffer = new byte[8];
+
             this.serialPort = serialPort;
 
             serialPort.Open();
@@ -233,8 +237,6 @@ namespace Meadow.Foundation.Audio.Mp3
 
         private void SendCommand(Commands command, byte data1 = 0, byte data2 = 0)
         {
-            byte[] sendBuffer = new byte[8];
-
             Thread.Sleep(20);
 
             // Command Structure 0x7E 0xFF 0x06 CMD FBACK DAT1 DAT2 0xEF

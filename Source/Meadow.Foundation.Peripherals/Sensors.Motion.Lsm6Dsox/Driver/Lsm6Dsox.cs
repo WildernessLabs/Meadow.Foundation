@@ -14,8 +14,8 @@ public partial class Lsm6dsox :
     PollingSensorBase<(Acceleration3D? Acceleration3D, AngularVelocity3D? AngularVelocity3D)>,
     IGyroscope, IAccelerometer, II2cPeripheral
 {
-    private event EventHandler<IChangeResult<Acceleration3D>> _accelerationHandlers;
-    private event EventHandler<IChangeResult<AngularVelocity3D>> _velocityHandlers;
+    private event EventHandler<IChangeResult<Acceleration3D>> _accelerationHandlers = default!;
+    private event EventHandler<IChangeResult<AngularVelocity3D>> _velocityHandlers = default!;
 
     event EventHandler<IChangeResult<Acceleration3D>> ISamplingSensor<Acceleration3D>.Updated
     {

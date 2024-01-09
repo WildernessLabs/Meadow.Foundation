@@ -195,7 +195,6 @@ namespace Meadow.Foundation.ICs.FanControllers
             {
                 FanSpeedUpdated?.Invoke(this, new ChangeResult<AngularVelocity>(fanSpeed, changeResult.Old?.FanSpeed));
             }
-
             base.RaiseEventsAndNotify(changeResult);
         }
 

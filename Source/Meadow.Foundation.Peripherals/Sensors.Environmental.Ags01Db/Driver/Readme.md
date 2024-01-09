@@ -32,7 +32,7 @@ public override Task Initialize()
     );
     ags10Db.Subscribe(consumer);
 
-    ags10Db.ConcentrationUpdated += (object sender, IChangeResult<Meadow.Units.Concentration> e) =>
+    ags10Db.Updated += (object sender, IChangeResult<Meadow.Units.Concentration> e) =>
     {
         Resolver.Log.Info($"Concentration Updated: {e.New.PartsPerMillion:N2}ppm");
     };

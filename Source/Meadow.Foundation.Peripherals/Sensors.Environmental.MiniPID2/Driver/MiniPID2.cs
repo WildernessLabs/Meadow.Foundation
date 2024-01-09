@@ -9,22 +9,12 @@ namespace Meadow.Foundation.Sensors.Environmental
     /// <summary>
     /// Represents an IonScience MiniPID2 analog photoionisation (PID) Volatile Organic Compounds (VOC) sensor
     /// </summary>
-    public partial class MiniPID2 : SamplingSensorBase<Concentration>, IConcentrationSensor, IDisposable
+    public partial class MiniPID2 : SamplingSensorBase<Concentration>, IVOCConcentrationSensor, IDisposable
     {
-        /// <summary>
-        /// Raised when the VOC concentration changes
-        /// </summary>
-        public event EventHandler<IChangeResult<Concentration>> ConcentrationUpdated = default!;
-
-        /// <summary>
-        /// Raised when the VOC concentration changes
-        /// </summary>
-        public event EventHandler<IChangeResult<Concentration>> VOCConcentrationUpdated = default!;
-
         /// <summary>
         /// The current VOC concentration value
         /// </summary>
-        public Concentration? Concentration { get; protected set; }
+        public Concentration? VOCConcentration { get; protected set; }
 
         /// <summary>
         /// The MiniPID2 device type
@@ -128,9 +118,9 @@ namespace Meadow.Foundation.Sensors.Environmental
                         ChangeResult<Concentration> changeResult = new()
                         {
                             New = VoltageToConcentration(result.New),
-                            Old = Concentration
+                            Old = VOCConcentration
                         };
-                        Concentration = changeResult.New;
+                        VOCConcentration = changeResult.New;
                         RaiseEventsAndNotify(changeResult);
                     }
                 )
@@ -146,7 +136,7 @@ namespace Meadow.Foundation.Sensors.Environmental
         {
             var voltage = await AnalogInputPort.Read();
             var newConcentration = VoltageToConcentration(voltage);
-            Concentration = newConcentration;
+            VOCConcentration = newConcentration;
             return newConcentration;
         }
 
@@ -174,16 +164,6 @@ namespace Meadow.Foundation.Sensors.Environmental
                 IsSampling = false;
                 AnalogInputPort.StopUpdating();
             }
-        }
-
-        /// <summary>
-        /// Method to notify subscribers to ConcentrationUpdated event handler
-        /// </summary>
-        /// <param name="changeResult"></param>
-        protected override void RaiseEventsAndNotify(IChangeResult<Concentration> changeResult)
-        {
-            ConcentrationUpdated?.Invoke(this, changeResult);
-            base.RaiseEventsAndNotify(changeResult);
         }
 
         /// <summary>

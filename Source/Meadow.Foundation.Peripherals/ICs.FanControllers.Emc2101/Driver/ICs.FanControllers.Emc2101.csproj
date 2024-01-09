@@ -15,13 +15,13 @@
     <PackageId>Meadow.Foundation.ICs.FanControllers.Emc2101</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow.Foundation,fan,controller,emc2101,temperature,sensor</PackageTags>
-    <Version>0.1.0</Version>
+    <Version>1.7.0</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Emc2101 I2C fan controller and temperature monitor</Description>
   </PropertyGroup>
   <ItemGroup>
-    <None Include=".\Readme.md" Pack="true" PackagePath=""/>
-    <PackageReference Include="Meadow.Foundation" Version="1.6.0" />
+    <None Include=".\Readme.md" Pack="true" PackagePath="" />
+    <PackageReference Include="Meadow.Foundation" Version="1.7.0" />
     <None Include="..\..\..\icon.png" Pack="true" PackagePath="" />
   </ItemGroup>
 </Project>

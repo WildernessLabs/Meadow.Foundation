@@ -127,7 +127,7 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// Buffer holding the pixels in the display
         /// </summary>
-        protected Buffer1bpp imageBuffer;
+        protected Buffer1bpp imageBuffer = default!;
 
         /// <summary>
         /// Read buffer

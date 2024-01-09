@@ -12,11 +12,6 @@ namespace Meadow.Foundation.Sensors.LoadCell
     /// </summary>
     public partial class Nau7802 : ByteCommsSensorBase<Mass>, IMassSensor, II2cPeripheral
     {
-        /// <summary>
-        /// Raised when the mass value changes
-        /// </summary>
-        public event EventHandler<IChangeResult<Mass>> MassUpdated = default!;
-
         private readonly byte[] readBuffer = new byte[3];
         private double gramsPerAdcUnit = 0;
         private PU_CTRL_BITS currentPuCTRL;
@@ -283,25 +278,6 @@ namespace Meadow.Foundation.Sensors.LoadCell
             var grams = adc * gramsPerAdcUnit;
             // convert to desired units
             return Task.FromResult(new Mass(grams, Units.Mass.UnitType.Grams));
-        }
-
-
-        /// <summary>
-        /// Inheritance-safe way to raise events and notify observers.
-        /// </summary>
-        /// <param name="changeResult"></param>
-        protected override void RaiseEventsAndNotify(IChangeResult<Mass> changeResult)
-        {
-            try
-            {
-                MassUpdated?.Invoke(this, changeResult);
-                base.RaiseEventsAndNotify(changeResult);
-            }
-            catch (Exception ex)
-            {
-                Resolver.Log.Info($"NAU7802 event handler threw: {ex.Message}");
-                throw;
-            }
         }
     }
 }

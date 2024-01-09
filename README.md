@@ -27,9 +27,11 @@ Meadow.Foundation makes the task of building connected things easy with Meadow b
 
 Meadow.Foundation is currently split into multiple GitHub repos:
 1. [Meadow.Foundation](https://github.com/WildernessLabs/Meadow.Foundation/) which contains the majority of the peripheral and library source code
-2. [Meadow.Foundation.Featherwings](https://github.com/WildernessLabs/Meadow.Foundation.Featherwings/) contains drivers for hardware that conforms to the [Adafruit Featherwing](https://learn.adafruit.com/adafruit-feather/) form factor
-3. [Meadow.Foundation.Grove](https://github.com/WildernessLabs/Meadow.Foundation.Grove/) contains drivers for [Seeed Studio Grove](https://www.seeedstudio.com/grove.html) modular hardware peripherals
-4. [Meadow.Foundation.MikroBus](https://github.com/WildernessLabs/Meadow.Foundation.mikrobus/) contains drivers for [MikroElektronika](https://www.mikroe.com/click)  mikroBUS Click Boards
+2. [Meadow.Foundation.CompositeDevices]([https://github.com/WildernessLabs/Meadow.Foundation.Featherwings/](https://github.com/wildernesslabs/meadow.foundation.compositedevices)) contains drivers for devices that combine multiple peripherals or leverage additional onboard microcontrollers
+3. [Meadow.Foundation.Featherwings](https://github.com/WildernessLabs/Meadow.Foundation.Featherwings/) contains drivers for hardware that conforms to the [Adafruit Featherwing](https://learn.adafruit.com/adafruit-feather/) form factor
+4. [Meadow.Foundation.Grove](https://github.com/WildernessLabs/Meadow.Foundation.Grove/) contains drivers for [Seeed Studio Grove](https://www.seeedstudio.com/grove.html) modular hardware peripherals
+5. [Meadow.Foundation.MBus](https://github.com/WildernessLabs/Meadow.Foundation.MBus/) contains drivers for M-Bus peripherals
+6. [Meadow.Foundation.MikroBus](https://github.com/WildernessLabs/Meadow.Foundation.mikrobus/) contains drivers for [MikroElektronika](https://www.mikroe.com/click)  mikroBUS Click Boards
 
 ## Repository Branches
 
@@ -80,7 +82,7 @@ Meadow.Foundation, is open source and community powered. We love pull requests, 
 
 ## License
 
-Copyright 2019-2023, Wilderness Labs Inc.
+Copyright 2019-2024, Wilderness Labs Inc.
     
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.

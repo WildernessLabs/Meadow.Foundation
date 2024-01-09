@@ -20,9 +20,9 @@ public partial class Mpu6050 :
     /// </summary>
     public byte DefaultI2cAddress => (byte)Addresses.Default;
 
-    private event EventHandler<IChangeResult<Units.Temperature>> _temperatureHandlers;
-    private event EventHandler<IChangeResult<Acceleration3D>> _accelerationHandlers;
-    private event EventHandler<IChangeResult<AngularVelocity3D>> _velocityHandlers;
+    private event EventHandler<IChangeResult<Units.Temperature>> _temperatureHandlers = default!;
+    private event EventHandler<IChangeResult<Acceleration3D>> _accelerationHandlers = default!;
+    private event EventHandler<IChangeResult<AngularVelocity3D>> _velocityHandlers = default!;
 
     event EventHandler<IChangeResult<Units.Temperature>> ISamplingSensor<Units.Temperature>.Updated
     {

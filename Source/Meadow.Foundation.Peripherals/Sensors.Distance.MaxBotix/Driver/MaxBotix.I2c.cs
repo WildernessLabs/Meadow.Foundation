@@ -11,6 +11,8 @@ namespace Meadow.Foundation.Sensors.Distance
         /// </summary>
         public byte DefaultI2cAddress => (byte)Addresses.Default;
 
+        II2cCommunications? i2cComms;
+
         /// <summary>
         /// Creates a new MaxBotix object communicating over I2C
         /// </summary>
@@ -18,8 +20,9 @@ namespace Meadow.Foundation.Sensors.Distance
         /// <param name="sensor">The distance sensor type</param>
         /// <param name="address">The I2C address</param>
         public MaxBotix(II2cBus i2cBus, SensorType sensor, byte address = (byte)Addresses.Default)
-            : base(i2cBus, address)
         {
+            i2cComms = new I2cCommunications(i2cBus, address);
+
             sensorType = sensor;
             communication = CommunicationType.I2C;
 
@@ -28,13 +31,13 @@ namespace Meadow.Foundation.Sensors.Distance
 
         void StartI2cSensor(byte address)
         {
-            BusComms.ReadRegister(address);
+            i2cComms?.ReadRegister(address);
             Thread.Sleep(100);
         }
 
         Length ReadSensorI2c()
         {
-            return new Length(BusComms.ReadRegisterAsUShort(0x51), GetUnitsForSensor(sensorType));
+            return new Length(i2cComms!.ReadRegisterAsUShort(0x51), GetUnitsForSensor(sensorType));
         }
     }
 }

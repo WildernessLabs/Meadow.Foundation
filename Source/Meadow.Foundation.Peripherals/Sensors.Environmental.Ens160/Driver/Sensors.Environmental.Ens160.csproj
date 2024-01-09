@@ -15,13 +15,13 @@
     <PackageId>Meadow.Foundation.Sensors.Environmental.Ens160</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow,Meadow.Foundation,Environmental,ENS160,gas,c02,ethanol,AQI,air,quality</PackageTags>
-    <Version>0.1.0</Version>
+    <Version>1.7.0</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>ENS160 I2C C02, Ethanol and AQI sensor</Description>
   </PropertyGroup>
   <ItemGroup>
-    <None Include=".\Readme.md" Pack="true" PackagePath=""/>
+    <None Include=".\Readme.md" Pack="true" PackagePath="" />
     <None Include="..\..\..\icon.png" Pack="true" PackagePath="" />
-    <PackageReference Include="Meadow.Foundation" Version="1.6.0" />
+    <PackageReference Include="Meadow.Foundation" Version="1.7.0" />
   </ItemGroup>
 </Project>

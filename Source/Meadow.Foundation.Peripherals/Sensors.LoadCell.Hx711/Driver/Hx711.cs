@@ -50,11 +50,6 @@ namespace Meadow.Foundation.Sensors.LoadCell
         public uint TareValue { get; set; } = 0;
 
         /// <summary>
-        /// Mass changed event
-        /// </summary>
-        public event EventHandler<IChangeResult<Mass>> MassUpdated = default!;
-
-        /// <summary>
         /// Gets default sample period (1 Second)
         /// </summary>
         public TimeSpan DefaultSamplePeriod { get; } = TimeSpan.FromSeconds(1);
@@ -300,24 +295,6 @@ namespace Meadow.Foundation.Sensors.LoadCell
             }
 
             return count;
-        }
-
-        /// <summary>
-        /// Inheritance-safe way to raise events and notify observers.
-        /// </summary>
-        /// <param name="changeResult"></param>
-        protected override void RaiseEventsAndNotify(IChangeResult<Mass> changeResult)
-        {
-            try
-            {
-                MassUpdated?.Invoke(this, changeResult);
-                base.RaiseEventsAndNotify(changeResult);
-            }
-            catch (Exception ex)
-            {
-                Resolver.Log.Info($"HX711 event handler threw: {ex.Message}");
-                throw;
-            }
         }
 
         /// <summary>

@@ -13,11 +13,6 @@ namespace Meadow.Foundation.Sensors.Light
         ILightSensor, II2cPeripheral, IDisposable
     {
         /// <summary>
-        /// Raised when the luminosity value changes
-        /// </summary>
-        public event EventHandler<IChangeResult<Illuminance>> IlluminanceUpdated = default!;
-
-        /// <summary>
         /// Raised when the high range is exceeded
         /// </summary>
         public event EventHandler RangeExceededHigh = default!;
@@ -153,8 +148,8 @@ namespace Meadow.Foundation.Sensors.Light
                 _ => 1,
             };
 
-            scale *= integrationTime switch 
-            { 
+            scale *= integrationTime switch
+            {
                 -2 => 32, // 25ms
                 -1 => 16, // 50ms
                 0 => 8, // 100ms
@@ -165,16 +160,6 @@ namespace Meadow.Foundation.Sensors.Light
             };
 
             return CalculateCorrectedLux(scale * 0.0036d * data);
-        }
-
-        /// <summary>
-        /// Raise events for subscribers and notify of value changes
-        /// </summary>
-        /// <param name="changeResult">The updated sensor data</param>
-        protected override void RaiseEventsAndNotify(IChangeResult<Illuminance> changeResult)
-        {
-            IlluminanceUpdated?.Invoke(this, changeResult);
-            base.RaiseEventsAndNotify(changeResult);
         }
 
         private Illuminance CalculateCorrectedLux(double lux)

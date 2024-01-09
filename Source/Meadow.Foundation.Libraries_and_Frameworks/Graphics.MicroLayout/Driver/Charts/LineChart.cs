@@ -11,10 +11,12 @@ public class LineChart : ThemedControl
     /// The default color for axis lines
     /// </summary>
     public static Color DefaultAxisColor = Color.Gray;
+
     /// <summary>
     /// The default color for axis labels
     /// </summary>
     public static Color DefaultAxisLabelColor = Color.White;
+
     /// <summary>
     /// The default chart background color
     /// </summary>
@@ -72,6 +74,8 @@ public class LineChart : ThemedControl
     private int ChartAreaLeft { get; set; }
     private int ChartAreaTop { get; set; }
     private int ChartAreaBottom { get; set; }
+    private int ParentOffsetX => (Parent?.Left ?? 0);
+    private int ParentOffsetY => (Parent?.Top ?? 0);
 
     /// <summary>
     /// Creates a DisplayLineChart instance
@@ -158,8 +162,8 @@ public class LineChart : ThemedControl
             if (XAxisYIntercept != YMinimumValue)
             {
                 graphics.DrawText(
-                    x: Left + DefaultMargin,
-                    y: XAxisScaledPosition - (font.Height / 2), // centered on tick
+                    x: Left + DefaultMargin + ParentOffsetX,
+                    y: XAxisScaledPosition - (font.Height / 2) + +ParentOffsetY, // centered on tick
                     color: AxisLabelColor,
                      text: XAxisYIntercept.ToString("0.0"),
                     font: font);
@@ -167,16 +171,16 @@ public class LineChart : ThemedControl
 
             // max label
             graphics.DrawText(
-                x: Left + DefaultMargin,
-                y: ChartAreaTop + font.Height,
+                x: Left + DefaultMargin + ParentOffsetX,
+                y: ChartAreaTop + font.Height + ParentOffsetY,
                 color: AxisLabelColor,
                 text: YMaximumValue.ToString("0.0"),
                 font: font);
 
             // min label
             graphics.DrawText(
-                x: Left + DefaultMargin,
-                y: ChartAreaBottom - font.Height,
+                x: Left + DefaultMargin + ParentOffsetX,
+                y: ChartAreaBottom - font.Height + ParentOffsetY,
                 color: AxisLabelColor,
                 text: YMinimumValue.ToString("0.0"),
                 font: font);
@@ -203,8 +207,8 @@ public class LineChart : ThemedControl
         // for now it's a fixed line at the bottom
         graphics.Stroke = DefaultAxisStroke;
         graphics.DrawLine(
-            ChartAreaLeft,
-            XAxisScaledPosition,
+            ChartAreaLeft + ParentOffsetX,
+            XAxisScaledPosition + ParentOffsetY,
             Right - DefaultMargin,
             XAxisScaledPosition,
             AxisColor);
@@ -242,8 +246,8 @@ public class LineChart : ThemedControl
         // for now it's a fixed line at the left
         graphics.Stroke = DefaultAxisStroke;
         graphics.DrawLine(
-            ChartAreaLeft,
-            Top + DefaultMargin,
+            ChartAreaLeft + ParentOffsetX,
+            Top + DefaultMargin + ParentOffsetY,
             ChartAreaLeft,
             Bottom - DefaultMargin,
             AxisColor);
@@ -261,8 +265,6 @@ public class LineChart : ThemedControl
 
         graphics.Stroke = series.LineStroke;
 
-        //graphics.DrawRectangle(ChartAreaLeft + DefaultAxisStroke * 2 + DefaultMargin, ChartAreaTop - DefaultAxisStroke, ChartAreaWidth, ChartAreaHeight, Color.Red, true);
-
         foreach (var point in series.Points)
         {
             var scaledX = ChartAreaLeft + DefaultAxisStroke * 2 + DefaultMargin + (int)(point.X / xRange * ChartAreaWidth);
@@ -277,8 +279,8 @@ public class LineChart : ThemedControl
                 else
                 {
                     graphics.DrawLine(
-                        (int)lastPoint.X,
-                        (int)lastPoint.Y,
+                        (int)lastPoint.X + ParentOffsetX,
+                        (int)lastPoint.Y + ParentOffsetY,
                         scaledX,
                         scaledY,
                         series.LineColor);
@@ -290,7 +292,7 @@ public class LineChart : ThemedControl
 
             if (series.ShowPoints)
             {
-                graphics.DrawCircle(scaledX, scaledY, series.PointSize, series.PointColor, true);
+                graphics.DrawCircle(scaledX + ParentOffsetX, scaledY + ParentOffsetY, series.PointSize, series.PointColor, true);
             }
         }
     }

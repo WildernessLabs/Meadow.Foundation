@@ -30,9 +30,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         SpiRegisterPage currentPage = SpiRegisterPage.Page1;
 
         internal Bme68xSpiCommunications(ISpiBus spiBus, IDigitalOutputPort? chipSelect, Frequency busSpeed, SpiClockConfiguration.Mode busMode)
-            : base(spiBus, chipSelect, busSpeed, busMode, 32, 32)
-        {
-        }
+            : base(spiBus, chipSelect, busSpeed, busMode, 32)
+        { }
 
         public override byte ReadRegister(byte address)
         {

@@ -18,11 +18,6 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
         public byte DefaultI2cAddress => (byte)Addresses.Default;
 
-        /// <summary>
-        /// Event to be raised when the compass changes
-        /// </summary>
-        public event EventHandler<IChangeResult<Vector>> DirectionUpdated = default!;
-
         internal byte measuringMode;
         internal byte outputRate;
         internal byte gain;
@@ -82,16 +77,6 @@ namespace Meadow.Foundation.Sensors.Motion
             BusComms?.WriteRegister(Registers.HMC_CONFIG_REG_A_ADDR, configA);
             BusComms?.WriteRegister(Registers.HMC_CONFIG_REG_B_ADDR, configB);
             BusComms?.WriteRegister(Registers.HMC_MODE_REG_ADDR, measuringMode);
-        }
-
-        /// <summary>
-        /// Raise events for subscribers and notify of value changes
-        /// </summary>
-        /// <param name="changeResult">The updated sensor data</param>
-        protected override void RaiseEventsAndNotify(IChangeResult<Vector> changeResult)
-        {
-            DirectionUpdated?.Invoke(this, changeResult);
-            base.RaiseEventsAndNotify(changeResult);
         }
 
         /// <summary>

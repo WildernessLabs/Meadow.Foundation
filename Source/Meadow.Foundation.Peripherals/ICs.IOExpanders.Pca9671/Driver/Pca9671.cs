@@ -51,7 +51,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <param name="peripheralAddress">The i2cBus address of the peripheral</param>
         /// <param name="resetPort">The optional pin connected to the peripheral's reset</param>
         public Pca9671(II2cBus i2cBus, byte peripheralAddress, IDigitalOutputPort? resetPort = default)
-            : base(i2cBus, peripheralAddress, 8, 8)
+            : base(i2cBus, peripheralAddress, 8)
         {
             this.resetPort = resetPort;
             Pins = new PinDefinitions(this);

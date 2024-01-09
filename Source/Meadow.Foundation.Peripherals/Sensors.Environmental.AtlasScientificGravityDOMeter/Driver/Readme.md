@@ -35,10 +35,10 @@ public override Task Initialize()
     sensor.Subscribe(consumer);
 
     // optional classical .NET events can also be used:
-    sensor.SaturationUpdated += (sender, result) =>
+    sensor.Updated += (sender, result) =>
     {
-        //    string oldValue = (result.Old is { } old) ? $"{old * 100:n0}%" : "n/a";
-        //    Resolver.Log.Info($"Updated - New: {result.New * 100:n0}%, Old: {oldValue}");
+        string oldValue = (result.Old is { } old) ? $"{old * 100:n0}%" : "n/a";
+        Resolver.Log.Info($"Updated - New: {result.New * 100:n0}%, Old: {oldValue}");
     };
 
     return Task.CompletedTask;
