@@ -20,7 +20,6 @@
     <Description>Digital Four digit seven segment displays</Description>
   </PropertyGroup>
   <ItemGroup>
-    <None Include=".\Readme.md" Pack="true" PackagePath=""/>
     <None Include=".\Readme.md" Pack="true" PackagePath="" />
     <None Include="..\..\..\icon.png" Pack="true" PackagePath="" />
     <ProjectReference Include="..\..\Displays.Led.SevenSegment\Driver\Displays.Led.SevenSegment.csproj" />

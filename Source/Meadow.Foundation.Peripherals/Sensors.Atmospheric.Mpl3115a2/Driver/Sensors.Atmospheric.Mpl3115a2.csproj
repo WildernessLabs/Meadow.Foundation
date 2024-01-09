@@ -18,10 +18,9 @@
     <Description>MPL3115A2 I2C barometric pressure, temperature, and altitude sensor</Description>
     <Nullable>enable</Nullable>
     <RootNamespace>Meadow.Foundation.Sensors.Atmospheric</RootNamespace>
-	<LangVersion>10.0</LangVersion>
+    <LangVersion>10.0</LangVersion>
   </PropertyGroup>
   <ItemGroup>
-    <None Include=".\Readme.md" Pack="true" PackagePath=""/>
     <None Include=".\Readme.md" Pack="true" PackagePath="" />
     <None Include="..\..\..\icon.png" Pack="true" PackagePath="" />
     <ProjectReference Include="..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />

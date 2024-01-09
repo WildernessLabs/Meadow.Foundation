@@ -21,7 +21,7 @@
     <Description>Windows Forms display driver for Meadow</Description>
   </PropertyGroup>
   <ItemGroup>
-    <None Include=".\Readme.md" Pack="true" PackagePath=""/>
+    <None Include=".\Readme.md" Pack="true" PackagePath="" />
     <None Remove="icon.ico" />
   </ItemGroup>
   <ItemGroup>
@@ -30,7 +30,6 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <None Include=".\Readme.md" Pack="true" PackagePath="" />
     <None Include="..\..\..\icon.png" Link="icon.png" Pack="true" PackagePath="" />
   </ItemGroup>
   <ItemGroup>

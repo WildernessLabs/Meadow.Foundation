@@ -20,7 +20,6 @@
     <Description>HT16K33 I2C IO expander, led driver, and character display controller</Description>
   </PropertyGroup>
   <ItemGroup>
-    <None Include=".\Readme.md" Pack="true" PackagePath=""/>
     <None Include=".\Readme.md" Pack="true" PackagePath="" />
     <None Include="..\..\..\icon.png" Pack="true" PackagePath="" />
     <ProjectReference Include="..\..\Displays.Led.FourteenSegment\Driver\Displays.Led.FourteenSegment.csproj" />

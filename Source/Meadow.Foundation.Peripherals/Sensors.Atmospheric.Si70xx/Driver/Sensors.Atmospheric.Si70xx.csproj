@@ -17,10 +17,9 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Si70xx I2C humidity and temperature sensors</Description>
     <Nullable>enable</Nullable>
-	<LangVersion>10.0</LangVersion>
+    <LangVersion>10.0</LangVersion>
   </PropertyGroup>
   <ItemGroup>
-    <None Include=".\Readme.md" Pack="true" PackagePath=""/>
     <None Include=".\Readme.md" Pack="true" PackagePath="" />
     <None Include="..\..\..\icon.png" Pack="true" PackagePath="" />
     <ProjectReference Include="..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />

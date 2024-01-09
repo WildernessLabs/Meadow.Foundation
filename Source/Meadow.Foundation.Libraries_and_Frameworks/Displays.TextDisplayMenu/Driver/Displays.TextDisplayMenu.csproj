@@ -20,7 +20,6 @@
     <Description>Text based stack navigation and editor for pixel and character displays</Description>
   </PropertyGroup>
   <ItemGroup>
-    <None Include=".\Readme.md" Pack="true" PackagePath=""/>
     <None Include=".\Readme.md" Pack="true" PackagePath="" />
     <None Include="..\..\..\icon.png" Pack="true" PackagePath="" />
     <PackageReference Include="System.Text.Json" Version="7.0.2" />
