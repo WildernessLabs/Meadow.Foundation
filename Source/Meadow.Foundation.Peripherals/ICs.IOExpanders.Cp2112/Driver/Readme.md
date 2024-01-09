@@ -1,4 +1,14 @@
-# Meadow.Foundation.IOEXpanders.Cp2112
+# Meadow.Foundation.ICs.IOExpanders.Cp2112
+
+**CP2112 USB IOExpander for GPIO, I2C, SPI on Windows**
+
+The **Cp2112** library is designed for the [Wilderness Labs](www.wildernesslabs.co) Meadow .NET IoT platform and is part of [Meadow.Foundation](https://developer.wildernesslabs.co/Meadow/Meadow.Foundation/).
+
+The **Meadow.Foundation** peripherals library is an open-source repository of drivers and libraries that streamline and simplify adding hardware to your C# .NET Meadow IoT application.
+
+For more information on developing for Meadow, visit [developer.wildernesslabs.co](http://developer.wildernesslabs.co/).
+
+To view all Wilderness Labs open-source projects, including samples, visit [github.com/wildernesslabs](https://github.com/wildernesslabs/).
 
 ## How to Contribute
 
