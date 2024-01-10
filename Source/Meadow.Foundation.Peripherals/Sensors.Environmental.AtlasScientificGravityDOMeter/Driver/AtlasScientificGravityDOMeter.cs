@@ -9,13 +9,8 @@ namespace Meadow.Foundation.Sensors.Environmental;
 /// <summary>
 /// Atlas Scientific Analog Gravity Dissolved Oxygen Meter
 /// </summary>
-public partial class AtlasScientificGravityDOMeter : SamplingSensorBase<double>, IDissolvedOxygenSensor
+public partial class AtlasScientificGravityDOMeter : SamplingSensorBase<double>, IDissolvedOxygenSaturationSensor
 {
-    /// <summary>
-    /// Raised when a new sensor percentage saturation reading is ready
-    /// </summary>
-    public event EventHandler<IChangeResult<double>> SaturationUpdated = delegate { };
-
     /// <summary>
     /// The calibration value for the sensor in air
     /// </summary>
@@ -111,16 +106,6 @@ public partial class AtlasScientificGravityDOMeter : SamplingSensorBase<double>,
             IsSampling = false;
             AnalogInputPort.StopUpdating();
         }
-    }
-
-    /// <summary>
-    /// Raise change events for subscribers
-    /// </summary>
-    /// <param name="changeResult">The change result with the current sensor data</param>
-    protected override void RaiseEventsAndNotify(IChangeResult<double> changeResult)
-    {
-        SaturationUpdated?.Invoke(this, changeResult);
-        base.RaiseEventsAndNotify(changeResult);
     }
 
     double VoltageToSaturation(Voltage voltage)

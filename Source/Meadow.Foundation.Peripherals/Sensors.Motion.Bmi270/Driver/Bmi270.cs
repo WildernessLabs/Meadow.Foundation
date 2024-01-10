@@ -16,9 +16,9 @@ namespace Meadow.Foundation.Sensors.Accelerometers
         PollingSensorBase<(Acceleration3D? Acceleration3D, AngularVelocity3D? AngularVelocity3D, Units.Temperature? Temperature)>,
         II2cPeripheral, IGyroscope, IAccelerometer, ITemperatureSensor
     {
-        private event EventHandler<IChangeResult<AngularVelocity3D>> _angularVelocityHandlers;
-        private event EventHandler<IChangeResult<Acceleration3D>> _accelerationHandlers;
-        private event EventHandler<IChangeResult<Units.Temperature>> _temperatureHandlers;
+        private event EventHandler<IChangeResult<AngularVelocity3D>> _angularVelocityHandlers = default!;
+        private event EventHandler<IChangeResult<Acceleration3D>> _accelerationHandlers = default!;
+        private event EventHandler<IChangeResult<Units.Temperature>> _temperatureHandlers = default!;
 
         /// <summary>
         /// Event raised when linear acceleration changes
@@ -70,6 +70,8 @@ namespace Meadow.Foundation.Sensors.Accelerometers
         /// </summary>
         protected readonly II2cCommunications i2cComms;
 
+        private byte[] readBuffer;
+
         /// <summary>
         /// Create a new Bmi270 instance
         /// </summary>
@@ -77,9 +79,10 @@ namespace Meadow.Foundation.Sensors.Accelerometers
         /// <param name="address">The I2C address</param>
         public Bmi270(II2cBus i2cBus, byte address = (byte)Addresses.Address_0x68)
         {
-            //Read buffer: 16 (needs at least 13)
             //Write buffer: 256 bytes for the config data + 1 for the address
-            i2cComms = new I2cCommunications(i2cBus, address, 16, 256 + 1);
+            i2cComms = new I2cCommunications(i2cBus, address, 256 + 1);
+
+            readBuffer = new byte[12];
 
             var id = i2cComms.ReadRegister(CHIP_ID);
 
@@ -321,7 +324,6 @@ namespace Meadow.Foundation.Sensors.Accelerometers
 
         private byte[] ReadAccelerationData()
         {
-            var readBuffer = new byte[12];
             i2cComms.ReadRegister(0x0C, readBuffer);
             return readBuffer;
         }

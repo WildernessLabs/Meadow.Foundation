@@ -15,13 +15,13 @@
     <PackageId>Meadow.Foundation.ICs.DigiPots.Mcp4xxx</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow.Foundation, DigiPots, Mcp4101, Mcp4102, Mcp41xx, Mcp42xx, Mcp41x1, Mcp41x2, Mcp42x1, Mcp42x2</PackageTags>
-    <Version>0.1.5</Version>
+    <Version>1.7.0</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Mcp4xxx SPI digital rheostats and potentiometers</Description>
   </PropertyGroup>
   <ItemGroup>
-    <None Include=".\Readme.md" Pack="true" PackagePath=""/>
+    <None Include=".\Readme.md" Pack="true" PackagePath="" />
     <None Include="..\..\..\icon.png" Pack="true" PackagePath="" />
-    <PackageReference Include="Meadow.Foundation" Version="1.6.0" />
+    <PackageReference Include="Meadow.Foundation" Version="1.7.0" />
   </ItemGroup>
 </Project>

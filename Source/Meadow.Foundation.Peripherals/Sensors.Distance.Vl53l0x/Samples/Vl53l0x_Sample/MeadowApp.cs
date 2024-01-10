@@ -22,7 +22,7 @@ namespace Sensors.Distance.Vl53l0x_Sample
             var i2cBus = Device.CreateI2cBus(I2cBusSpeed.FastPlus);
             sensor = new Vl53l0x(i2cBus);
 
-            sensor.DistanceUpdated += Sensor_Updated;
+            sensor.Updated += Sensor_Updated;
 
             return Task.CompletedTask;
         }

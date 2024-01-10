@@ -2,7 +2,6 @@
 using Meadow.Peripherals.Sensors.Moisture;
 using Meadow.Units;
 using System;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Moisture
@@ -10,13 +9,8 @@ namespace Meadow.Foundation.Sensors.Moisture
     /// <summary>
     /// FC-28-D Soil Hygrometer Detection Module + Soil Moisture Sensor
     /// </summary>
-    public class Fc28 : SamplingSensorBase<double>, IMoistureSensor
+    public class Fc28 : PollingSensorBase<double>, IMoistureSensor, IDisposable
     {
-        /// <summary>
-        /// Raised when a new sensor reading has been made. To enable, call StartUpdating().
-        /// </summary>
-        public event EventHandler<IChangeResult<double>> MoistureUpdated = default!;
-
         /// <summary>
         /// Returns the analog input port
         /// </summary>
@@ -30,15 +24,15 @@ namespace Meadow.Foundation.Sensors.Moisture
         /// <summary>
         /// Last value read from the moisture sensor
         /// </summary>
-        public double? Moisture { get; private set; } = double.NaN;
+        public double? Moisture { get; protected set; }
 
         /// <summary>
-        /// Voltage value of most dry soil. Default of `0V`
+        /// Voltage value of most dry soil - default is 0 volts
         /// </summary>
         public Voltage MinimumVoltageCalibration { get; set; } = new Voltage(0);
 
         /// <summary>
-        /// Voltage value of most moist soil. Default of `3.3V`
+        /// Voltage value of most moist soil - default of 3.3V
         /// </summary>
         public Voltage MaximumVoltageCalibration { get; set; } = new Voltage(3.3);
 
@@ -110,81 +104,7 @@ namespace Meadow.Foundation.Sensors.Moisture
             DigitalOutputPort.State = true;
             var voltage = await AnalogInputPort.Read();
             DigitalOutputPort.State = false;
-            return (VoltageToMoisture(voltage));
-        }
-
-        /// <summary>
-        /// Starts continuously sampling the sensor
-        /// </summary>
-        public override void StartUpdating(TimeSpan? updateInterval)
-        {
-            if (updateInterval == null)
-            {
-                UpdateInterval = TimeSpan.FromSeconds(5);
-            }
-            else
-            {
-                UpdateInterval = updateInterval.Value;
-            }
-
-            lock (samplingLock)
-            {
-                if (IsSampling) { return; }
-
-                IsSampling = true;
-
-                SamplingTokenSource = new CancellationTokenSource();
-                CancellationToken ct = SamplingTokenSource.Token;
-
-                double? oldConditions;
-                ChangeResult<double> result;
-                Task.Factory.StartNew(async () =>
-                {
-                    while (true)
-                    {
-                        if (ct.IsCancellationRequested)
-                        {
-                            observers.ForEach(x => x.OnCompleted());
-                            break;
-                        }
-                        oldConditions = Moisture;
-
-                        Moisture = await Read();
-
-                        result = new ChangeResult<double>(Moisture.Value, oldConditions);
-
-                        RaiseChangedAndNotify(result);
-
-                        await Task.Delay(base.UpdateInterval);
-                    }
-                }, SamplingTokenSource.Token);
-            }
-        }
-
-        /// <summary>
-        /// Stops sampling the sensor
-        /// </summary>
-        public override void StopUpdating()
-        {
-            lock (samplingLock)
-            {
-                if (!IsSampling) { return; }
-                if (SamplingTokenSource != null)
-                {
-                    SamplingTokenSource.Cancel();
-                }
-                IsSampling = false;
-            }
-        }
-
-        /// <summary>
-        /// Raise change events for subscribers
-        /// </summary>
-        /// <param name="changeResult">The change result with the current sensor data</param>
-        protected void RaiseChangedAndNotify(IChangeResult<double> changeResult)
-        {
-            MoistureUpdated?.Invoke(this, changeResult);
-            NotifyObservers(changeResult);
+            return VoltageToMoisture(voltage);
         }
 
         /// <summary>

@@ -10,8 +10,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.F7" Version="1.6.0" />
-    <PackageReference Include="Meadow.Foundation.ICs.IOExpanders.Sc16is7x2" Version="1.6.0" />
+    <PackageReference Include="Meadow.F7" Version="1.7.0" />
+    <PackageReference Include="Meadow.Foundation.ICs.IOExpanders.Sc16is7x2" Version="1.7.0" />
   </ItemGroup>
   <ItemGroup>
     <None Update="meadow.config.yaml">

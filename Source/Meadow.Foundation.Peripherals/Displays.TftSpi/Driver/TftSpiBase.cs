@@ -114,7 +114,7 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// The off-screen image buffer
         /// </summary>
-        protected IPixelBuffer imageBuffer;
+        protected IPixelBuffer imageBuffer = default!;
 
         /// <summary>
         /// The read buffer

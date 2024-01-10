@@ -41,7 +41,7 @@ namespace MaxBotix_Sample
             );
             maxBotix.Subscribe(consumer);
 
-            maxBotix.DistanceUpdated += MaxBotix_DistanceUpdated;
+            maxBotix.Updated += MaxBotix_DistanceUpdated;
 
             return Task.CompletedTask;
         }

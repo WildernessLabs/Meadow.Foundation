@@ -12,11 +12,6 @@ namespace Meadow.Foundation.Sensors.Power
     public partial class CurrentTransducer : SamplingSensorBase<Current>
     {
         /// <summary>
-        /// Raised when the value of the reading changes
-        /// </summary>
-        public event EventHandler<IChangeResult<Current>> CurrentUpdated = default!;
-
-        /// <summary>
         /// The analog input port connected to the transducer
         /// </summary>
         protected IAnalogInputPort AnalogPort { get; private set; } = default!;
@@ -157,16 +152,6 @@ namespace Meadow.Foundation.Sensors.Power
                 // state machine
                 IsSampling = false;
             }
-        }
-
-        /// <summary>
-        /// Method to notify subscribers to CurrentUpdated event handler
-        /// </summary>
-        /// <param name="changeResult"></param>
-        protected override void RaiseEventsAndNotify(IChangeResult<Current> changeResult)
-        {
-            CurrentUpdated?.Invoke(this, changeResult);
-            base.RaiseEventsAndNotify(changeResult);
         }
     }
 }

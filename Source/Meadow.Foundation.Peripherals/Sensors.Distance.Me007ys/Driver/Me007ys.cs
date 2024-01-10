@@ -13,11 +13,6 @@ namespace Meadow.Foundation.Sensors.Distance
     public class Me007ys : PollingSensorBase<Length>, IRangeFinder, ISleepAwarePeripheral, IDisposable
     {
         /// <summary>
-        /// Raised when the value of the reading changes
-        /// </summary>
-        public event EventHandler<IChangeResult<Length>> DistanceUpdated = default!;
-
-        /// <summary>
         /// Distance from sensor to object
         /// </summary>
         public Length? Distance { get; protected set; }
@@ -93,16 +88,6 @@ namespace Meadow.Foundation.Sensors.Distance
         protected override Task<Length> ReadSensor()
         {
             return ReadSingleValue();
-        }
-
-        /// <summary>
-        /// Raise distance change event for subscribers
-        /// </summary>
-        /// <param name="changeResult"></param>
-        protected override void RaiseEventsAndNotify(IChangeResult<Length> changeResult)
-        {
-            DistanceUpdated?.Invoke(this, changeResult);
-            base.RaiseEventsAndNotify(changeResult);
         }
 
         /// <summary>

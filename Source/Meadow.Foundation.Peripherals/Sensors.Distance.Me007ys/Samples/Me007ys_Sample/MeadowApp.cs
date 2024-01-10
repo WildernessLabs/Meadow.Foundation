@@ -29,14 +29,14 @@ namespace Me007ys_Sample
                 {
                     if (result.Old is { } old)
                     {
-                        return Math.Abs((result.New - old).Centimeters) > 0.5;
+                        return Math.Abs((result.New - old).Centimeters) > 5.0;
                     }
                     return false;
                 }
             );
             me007ys.Subscribe(consumer);
 
-            me007ys.DistanceUpdated += Me007y_DistanceUpdated;
+            me007ys.Updated += Me007y_DistanceUpdated;
 
             return Task.CompletedTask;
         }

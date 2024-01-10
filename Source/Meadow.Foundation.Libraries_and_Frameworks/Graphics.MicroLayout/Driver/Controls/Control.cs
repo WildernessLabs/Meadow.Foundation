@@ -9,7 +9,7 @@ public abstract class Control : IControl
     private int _top;
     private int _width;
     private int _height;
-    private bool _visible = true;
+    private bool _isVisible = true;
 
     /// <summary>
     /// Gets or sets a value indicating whether the control needs to be redrawn.
@@ -20,6 +20,9 @@ public abstract class Control : IControl
     /// Gets or sets the context object associated with the control.
     /// </summary>
     public object? Context { get; set; }
+
+    /// <inheritdoc/>
+    public IControl? Parent { get; set; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Control"/> class with the specified dimensions.
@@ -67,10 +70,10 @@ public abstract class Control : IControl
     /// <summary>
     /// Gets or sets a value indicating whether the control is visible.
     /// </summary>
-    public virtual bool Visible
+    public virtual bool IsVisible
     {
-        get => _visible;
-        set => SetInvalidatingProperty(ref _visible, value);
+        get => _isVisible;
+        set => SetInvalidatingProperty(ref _isVisible, value);
     }
 
     /// <summary>
@@ -127,7 +130,7 @@ public abstract class Control : IControl
     {
         if (IsInvalid)
         {
-            if (Visible)
+            if (IsVisible)
             {
                 OnDraw(graphics);
             }

@@ -10,7 +10,7 @@ namespace Meadow.Foundation.Displays.UI.InputTypes
         /// <summary>
         /// List of choices for the input
         /// </summary>
-        protected string[] choices;
+        protected string[] choices = new string[0];
 
         /// <summary>
         /// Selected index in the list

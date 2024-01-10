@@ -12,11 +12,6 @@ namespace Meadow.Foundation.Sensors.Light
     /// </summary>
     public class AnalogSolarIntensityGauge : SamplingSensorBase<float>, ISolarIntensityGauge, IDisposable
     {
-        /// <summary>
-        /// Raised when the solar intensity changes
-        /// </summary>
-        public event EventHandler<IChangeResult<float>> SolarIntensityUpdated = default!;
-
         readonly IAnalogInputPort analogInputPort;
 
         /// <summary>
@@ -148,16 +143,6 @@ namespace Meadow.Foundation.Sensors.Light
         public override void StopUpdating()
         {
             analogInputPort.StopUpdating();
-        }
-
-        /// <summary>
-        /// Raise events for subscribers and notify of value changes
-        /// </summary>
-        /// <param name="changeResult">The updated sensor data</param>
-        protected override void RaiseEventsAndNotify(IChangeResult<float> changeResult)
-        {
-            this.SolarIntensityUpdated?.Invoke(this, changeResult);
-            base.RaiseEventsAndNotify(changeResult);
         }
 
         /// <summary>

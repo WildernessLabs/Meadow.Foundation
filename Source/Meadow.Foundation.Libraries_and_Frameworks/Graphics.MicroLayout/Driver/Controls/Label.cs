@@ -117,7 +117,7 @@ public class Label : ThemedControl
     {
         if (BackColor != Color.Transparent)
         {
-            graphics.DrawRectangle(Left, Top, Width, Height, BackColor, true);
+            graphics.DrawRectangle(Left + (Parent?.Left ?? 0), Top + (Parent?.Top ?? 0), Width, Height, BackColor, true);
         }
 
         int x, y;
@@ -146,6 +146,9 @@ public class Label : ThemedControl
                 y = 0;
                 break;
         }
+
+        x += Parent?.Left ?? 0;
+        y += Parent?.Top ?? 0;
 
         graphics.DrawText(
             Left + x,

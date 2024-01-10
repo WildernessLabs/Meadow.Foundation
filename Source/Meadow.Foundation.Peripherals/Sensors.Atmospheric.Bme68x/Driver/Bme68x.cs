@@ -1,6 +1,7 @@
 ﻿using Meadow.Hardware;
 using Meadow.Peripherals.Sensors;
 using Meadow.Peripherals.Sensors.Atmospheric;
+using Meadow.Peripherals.Sensors.Environmental;
 using Meadow.Units;
 using Meadow.Utilities;
 using System;
@@ -22,21 +23,12 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                             RelativeHumidity? Humidity,
                             Pressure? Pressure,
                             Resistance? GasResistance)>,
-        ITemperatureSensor, IHumiditySensor, IBarometricPressureSensor, ISpiPeripheral, II2cPeripheral, IDisposable
+        ITemperatureSensor, IHumiditySensor, IBarometricPressureSensor, IGasResistanceSensor, ISpiPeripheral, II2cPeripheral, IDisposable
     {
-        private event EventHandler<IChangeResult<Units.Temperature>> _temperatureHandlers;
-        private event EventHandler<IChangeResult<RelativeHumidity>> _humidityHandlers;
-        private event EventHandler<IChangeResult<Pressure>> _pressureHandlers;
-
-        /// <summary>
-        /// Raised when the pressure value changes
-        /// </summary>
-        public event EventHandler<IChangeResult<Pressure>> PressureUpdated = default!;
-
-        /// <summary>
-        /// Raised when the gas resistance value changes
-        /// </summary>
-        public event EventHandler<IChangeResult<Resistance>> GasResistanceUpdated = default!;
+        private event EventHandler<IChangeResult<Units.Temperature>> _temperatureHandlers = default!;
+        private event EventHandler<IChangeResult<RelativeHumidity>> _humidityHandlers = default!;
+        private event EventHandler<IChangeResult<Pressure>> _pressureHandlers = default!;
+        private event EventHandler<IChangeResult<Resistance>> _gasResistanceHandlers = default!;
 
         /// <summary>
         /// The temperature oversampling mode
@@ -297,6 +289,12 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             remove => _pressureHandlers -= value;
         }
 
+        event EventHandler<IChangeResult<Resistance>> ISamplingSensor<Resistance>.Updated
+        {
+            add => _gasResistanceHandlers += value;
+            remove => _gasResistanceHandlers -= value;
+        }
+
         /// <summary>
         /// Initialize the sensor
         /// </summary>
@@ -431,11 +429,11 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             }
             if (changeResult.New.Pressure is { } pressure)
             {
-                PressureUpdated?.Invoke(this, new ChangeResult<Pressure>(pressure, changeResult.Old?.Pressure));
+                _pressureHandlers?.Invoke(this, new ChangeResult<Pressure>(pressure, changeResult.Old?.Pressure));
             }
             if (changeResult.New.GasResistance is { } gasResistance)
             {
-                GasResistanceUpdated?.Invoke(this, new ChangeResult<Resistance>(gasResistance, changeResult.Old?.GasResistance));
+                _gasResistanceHandlers?.Invoke(this, new ChangeResult<Resistance>(gasResistance, changeResult.Old?.GasResistance));
             }
             base.RaiseEventsAndNotify(changeResult);
         }
@@ -674,5 +672,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
         async Task<Pressure> ISensor<Pressure>.Read()
             => (await Read()).Pressure!.Value;
+
+        async Task<Resistance> ISensor<Resistance>.Read()
+            => (await Read()).GasResistance!.Value;
     }
 }

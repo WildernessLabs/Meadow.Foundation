@@ -137,25 +137,31 @@ public class Button : ClickableControl
     {
         graphics.Stroke = ButtonDepth;
 
+        var parentOffsetX = Parent?.Left ?? 0;
+        var parentOffsetY = Parent?.Top ?? 0;
+
         if (Pressed)
         {
-            graphics.DrawRectangle(Left, Top, Width, Height, PressedColor, true);
+            graphics.DrawRectangle(Left + parentOffsetX, Top + parentOffsetY, Width, Height, PressedColor, true);
 
-            graphics.DrawHorizontalLine(Left, Top, Width, ShadowColor);
-            graphics.DrawVerticalLine(Left, Top, Height, ShadowColor);
+            graphics.DrawHorizontalLine(Left + parentOffsetX, Top + parentOffsetY, Width, ShadowColor);
+            graphics.DrawVerticalLine(Left + parentOffsetX, Top + parentOffsetY, Height, ShadowColor);
 
-            graphics.DrawHorizontalLine(Left, Bottom, Width, HighlightColor);
-            graphics.DrawVerticalLine(Right, Top, Height, HighlightColor);
+            graphics.DrawHorizontalLine(Left + parentOffsetX, Bottom + parentOffsetY, Width, HighlightColor);
+            graphics.DrawVerticalLine(Right + parentOffsetX, Top + parentOffsetY, Height, HighlightColor);
 
             if (Image != null) // image always wins over text
             {
-                graphics.DrawImage(Left + ((this.Width - Image.Width) / 2) + ButtonDepth, Top + ((this.Height - Image.Height) / 2) + ButtonDepth, Image);
+                graphics.DrawImage(
+                    Left + ((this.Width - Image.Width) / 2) + ButtonDepth + parentOffsetX,
+                    Top + ((this.Height - Image.Height) / 2) + ButtonDepth + parentOffsetY,
+                    Image);
             }
             else if (!string.IsNullOrEmpty(Text))
             {
                 graphics.DrawText(
-                    Left + ButtonDepth + (this.Width / 2),
-                    Top + ButtonDepth + (this.Height / 2),
+                    Left + ButtonDepth + (this.Width / 2) + parentOffsetX,
+                    Top + ButtonDepth + (this.Height / 2) + parentOffsetY,
                     Text,
                     TextColor,
                     scaleFactor: ScaleFactor,
@@ -166,26 +172,26 @@ public class Button : ClickableControl
         }
         else
         {
-            graphics.DrawRectangle(Left, Top, Width, Height, ForeColor, true);
+            graphics.DrawRectangle(Left + parentOffsetX, Top + parentOffsetY, Width, Height, ForeColor, true);
 
-            graphics.DrawHorizontalLine(Left, Top, Width, HighlightColor);
-            graphics.DrawVerticalLine(Left, Top, Height, HighlightColor);
+            graphics.DrawHorizontalLine(Left + parentOffsetX, Top + parentOffsetY, Width, HighlightColor);
+            graphics.DrawVerticalLine(Left + parentOffsetX, Top + parentOffsetY, Height, HighlightColor);
 
-            graphics.DrawHorizontalLine(Left, Bottom, Width, ShadowColor);
-            graphics.DrawVerticalLine(Right, Top, Height, ShadowColor);
+            graphics.DrawHorizontalLine(Left + parentOffsetX, Bottom + parentOffsetY, Width, ShadowColor);
+            graphics.DrawVerticalLine(Right + parentOffsetX, Top + parentOffsetY, Height, ShadowColor);
 
             if (Image != null) // image always wins over text
             {
                 graphics.DrawImage(
-                    Left + ((this.Width - Image.Width) / 2),
-                    Top + ((this.Height - Image.Height) / 2),
+                    Left + ((this.Width - Image.Width) / 2) + parentOffsetX,
+                    Top + ((this.Height - Image.Height) / 2) + parentOffsetY,
                     Image);
             }
             else if (!string.IsNullOrEmpty(Text))
             {
                 graphics.DrawText(
-                    Left + (this.Width / 2),
-                    Top + (this.Height / 2),
+                    Left + (this.Width / 2) + parentOffsetX,
+                    Top + (this.Height / 2) + parentOffsetY,
                     Text,
                     TextColor,
                     scaleFactor: ScaleFactor,

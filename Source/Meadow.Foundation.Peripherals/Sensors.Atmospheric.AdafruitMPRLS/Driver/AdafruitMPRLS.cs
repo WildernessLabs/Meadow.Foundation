@@ -21,7 +21,7 @@ public partial class AdafruitMPRLS :
     /// </summary>
     public byte DefaultI2cAddress => (byte)Addresses.Default;
 
-    private event EventHandler<IChangeResult<Pressure>> _pressureHandlers;
+    private event EventHandler<IChangeResult<Pressure>> _pressureHandlers = default!;
 
     event EventHandler<IChangeResult<Pressure>> ISamplingSensor<Pressure>.Updated
     {
@@ -69,7 +69,7 @@ public partial class AdafruitMPRLS :
     /// </summary>
     /// <param name="i2cbus">I2Cbus connected to the sensor</param>
     public AdafruitMPRLS(II2cBus i2cbus)
-        : base(i2cbus, (byte)Addresses.Default)
+        : base(i2cbus, (byte)Addresses.Default, 5, 0)
     { }
 
     /// <summary>

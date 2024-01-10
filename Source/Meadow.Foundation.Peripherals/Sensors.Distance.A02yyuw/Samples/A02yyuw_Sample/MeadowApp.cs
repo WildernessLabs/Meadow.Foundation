@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace A02yyuw_Sample
 {
     // Change F7FeatherV2 to F7FeatherV1 for V1.x boards
-    public class MeadowApp : App<F7FeatherV2>
+    public class MeadowApp : App<F7CoreComputeV2>
     {
         //<!=SNIP=>
 
@@ -18,7 +18,7 @@ namespace A02yyuw_Sample
         {
             Resolver.Log.Info("Initialize...");
 
-            a02yyuw = new A02yyuw(Device, Device.PlatformOS.GetSerialPortName("COM1"));
+            a02yyuw = new A02yyuw(Device, Device.PlatformOS.GetSerialPortName("COM4"));
 
             var consumer = A02yyuw.CreateObserver(
                 handler: result =>
@@ -29,14 +29,14 @@ namespace A02yyuw_Sample
                 {
                     if (result.Old is { } old)
                     {
-                        return Math.Abs((result.New - old).Centimeters) > 0.5;
+                        return Math.Abs((result.New - old).Centimeters) > 5.0;
                     }
                     return false;
                 }
             );
             a02yyuw.Subscribe(consumer);
 
-            a02yyuw.DistanceUpdated += A02yyuw_DistanceUpdated;
+            a02yyuw.Updated += A02yyuw_DistanceUpdated;
 
             return Task.CompletedTask;
         }

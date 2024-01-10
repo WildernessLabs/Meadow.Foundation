@@ -122,7 +122,7 @@ namespace Meadow.Foundation.Sensors.Motion
             var b = ReadBlueLight() / rgbDivisor;
             var a = ambient / rgbDivisor;
 
-            conditions.Color = Foundation.Color.FromRgba(r, g, b, a);
+            conditions.Color = Meadow.Color.FromRgba(r, g, b, a);
 
             return Task.FromResult(conditions);
         }
@@ -1596,7 +1596,7 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         ///<inheritdoc/>
-        public void Dispose()
+        public override void Dispose()
         {
             Dispose(disposing: true);
             GC.SuppressFinalize(this);
@@ -1606,8 +1606,10 @@ namespace Meadow.Foundation.Sensors.Motion
         /// Dispose of the object
         /// </summary>
         /// <param name="disposing">Is disposing</param>
-        protected virtual void Dispose(bool disposing)
+        protected override void Dispose(bool disposing)
         {
+            base.Dispose(disposing);
+
             if (!IsDisposed)
             {
                 if (disposing && createdPort)

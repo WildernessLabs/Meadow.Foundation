@@ -22,7 +22,7 @@ public override Task Initialize()
     solarGauge = new AnalogSolarIntensityGauge(Device.Pins.A02, updateInterval: TimeSpan.FromSeconds(1));
 
     //==== classic .NET Event
-    solarGauge.SolarIntensityUpdated += (s, result) => Resolver.Log.Info($"SolarIntensityUpdated: {result.New * 100:n2}%");
+    solarGauge.Updated += (s, result) => Resolver.Log.Info($"SolarIntensityUpdated: {result.New * 100:n2}%");
 
     //==== Filterable observer
     var observer = AnalogSolarIntensityGauge.CreateObserver(

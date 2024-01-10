@@ -8,13 +8,8 @@ namespace Meadow.Foundation.Sensors.Distance
     /// <summary>
     /// Represents the MaxBotix series of distance sensors
     /// </summary>
-    public partial class MaxBotix : ByteCommsSensorBase<Length>, IRangeFinder, IDisposable
+    public partial class MaxBotix : PollingSensorBase<Length>, IRangeFinder, IDisposable
     {
-        /// <summary>
-        /// Raised when the value of the reading changes
-        /// </summary>
-        public event EventHandler<IChangeResult<Length>> DistanceUpdated = default!;
-
         /// <summary>
         /// Distance from sensor to object
         /// </summary>
@@ -62,16 +57,6 @@ namespace Meadow.Foundation.Sensors.Distance
                 CommunicationType.I2C => ReadSensorI2c(),
                 _ => throw new NotImplementedException(),
             };
-        }
-
-        /// <summary>
-        /// Raise distance change event for subscribers
-        /// </summary>
-        /// <param name="changeResult"></param>
-        protected override void RaiseEventsAndNotify(IChangeResult<Length> changeResult)
-        {
-            DistanceUpdated?.Invoke(this, changeResult);
-            base.RaiseEventsAndNotify(changeResult);
         }
 
         /// <summary>
@@ -140,9 +125,8 @@ namespace Meadow.Foundation.Sensors.Distance
         }
 
         ///<inheritdoc/>
-        public override void Dispose()
+        public void Dispose()
         {
-            base.Dispose();
             Dispose(disposing: true);
             GC.SuppressFinalize(this);
         }
@@ -151,11 +135,15 @@ namespace Meadow.Foundation.Sensors.Distance
         /// Dispose of the object
         /// </summary>
         /// <param name="disposing">Is disposing</param>
-        protected override void Dispose(bool disposing)
+        protected void Dispose(bool disposing)
         {
-            base.Dispose(disposing);
             if (!IsDisposed)
             {
+                if (disposing)
+                {
+                    base.StopUpdating();
+                }
+
                 if (disposing && createdPorts)
                 {
                     analogInputPort?.Dispose();

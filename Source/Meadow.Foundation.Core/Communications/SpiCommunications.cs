@@ -1,7 +1,8 @@
-﻿using Meadow.Units;
+﻿using Meadow.Hardware;
+using Meadow.Units;
 using System;
 
-namespace Meadow.Hardware
+namespace Meadow.Foundation
 {
     /// <summary>
     /// Helper class for SPI communications, handles registers, endian, etc.
@@ -52,7 +53,6 @@ namespace Meadow.Hardware
         /// <param name="chipSelect">The chip select port</param>
         /// <param name="busSpeed">The SPI bus speed</param>
         /// <param name="busMode">The SPI bus mode (0-3)</param>
-        /// <param name="readBufferSize">The size of the read buffer in bytes</param>
         /// <param name="writeBufferSize">The size of the write buffer in bytes</param>
         /// <param name="csMode">The chip select mode, active high or active low</param>
         public SpiCommunications(
@@ -60,7 +60,7 @@ namespace Meadow.Hardware
             IDigitalOutputPort? chipSelect,
             Frequency busSpeed,
             SpiClockConfiguration.Mode busMode = SpiClockConfiguration.Mode.Mode0,
-            int readBufferSize = 8, int writeBufferSize = 8,
+            int writeBufferSize = 8,
             ChipSelectMode csMode = ChipSelectMode.ActiveLow)
         {
             Bus = bus;
@@ -69,7 +69,7 @@ namespace Meadow.Hardware
             ChipSelect = chipSelect;
             chipSelectMode = csMode;
             WriteBuffer = new byte[writeBufferSize];
-            ReadBuffer = new byte[readBufferSize];
+            ReadBuffer = new byte[2];
 
             // de-assert the chip select
             if (chipSelect != null)

@@ -32,11 +32,6 @@ namespace Meadow.Foundation.Sensors.Temperature
     /// </remarks>
     public partial class AnalogTemperature : SamplingSensorBase<Units.Temperature>, ITemperatureSensor, IDisposable
     {
-        /// <summary>
-        /// Raised when the value of the reading changes.
-        /// </summary>
-        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = default!;
-
         ///<Summary>
         /// AnalogInputPort connected to temperature sensor
         ///</Summary>
@@ -250,16 +245,6 @@ namespace Meadow.Foundation.Sensors.Temperature
                 IsSampling = false;
                 AnalogInputPort.StopUpdating();
             }
-        }
-
-        /// <summary>
-        /// Method to notify subscribers to TemperatureUpdated event handler
-        /// </summary>
-        /// <param name="changeResult"></param>
-        protected override void RaiseEventsAndNotify(IChangeResult<Units.Temperature> changeResult)
-        {
-            TemperatureUpdated?.Invoke(this, changeResult);
-            base.RaiseEventsAndNotify(changeResult);
         }
 
         /// <summary>

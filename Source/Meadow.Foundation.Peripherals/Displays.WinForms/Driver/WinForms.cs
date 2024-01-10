@@ -136,7 +136,7 @@ public class WinFormsDisplay : Form, IGraphicsDisplay, ITouchScreen
     /// </summary>
     /// <param name="fillColor"></param>
     /// <param name="updateDisplay"></param>
-    void IGraphicsDisplay.Fill(Foundation.Color fillColor, bool updateDisplay)
+    void IGraphicsDisplay.Fill(Color fillColor, bool updateDisplay)
     {
         lock (_buffer)
         {
@@ -156,7 +156,7 @@ public class WinFormsDisplay : Form, IGraphicsDisplay, ITouchScreen
     /// <param name="width"></param>
     /// <param name="height"></param>
     /// <param name="fillColor"></param>
-    void IGraphicsDisplay.Fill(int x, int y, int width, int height, Foundation.Color fillColor)
+    void IGraphicsDisplay.Fill(int x, int y, int width, int height, Color fillColor)
     {
         lock (_buffer)
         {
@@ -170,7 +170,7 @@ public class WinFormsDisplay : Form, IGraphicsDisplay, ITouchScreen
     /// <param name="x"></param>
     /// <param name="y"></param>
     /// <param name="color"></param>
-    void IGraphicsDisplay.DrawPixel(int x, int y, Foundation.Color color)
+    void IGraphicsDisplay.DrawPixel(int x, int y, Color color)
     {
         lock (_buffer)
         {
@@ -188,7 +188,7 @@ public class WinFormsDisplay : Form, IGraphicsDisplay, ITouchScreen
     {
         lock (_buffer)
         {
-            _buffer.SetPixel(x, y, enabled ? Foundation.Color.White : Foundation.Color.Black);
+            _buffer.SetPixel(x, y, enabled ? Color.White : Color.Black);
         }
     }
 

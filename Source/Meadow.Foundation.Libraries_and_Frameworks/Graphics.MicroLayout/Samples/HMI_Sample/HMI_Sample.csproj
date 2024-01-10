@@ -8,9 +8,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Meadow.Windows" Version="1.6.0" />
-    <PackageReference Include="Meadow.Foundation.Displays.WinForms" Version="1.6.0" />
-    <PackageReference Include="Meadow.Foundation.Graphics.MicroLayout" Version="1.6.0" />
+    <PackageReference Include="Meadow.Windows" Version="1.7.0" />
+    <PackageReference Include="Meadow.Foundation.Displays.WinForms" Version="1.7.0" />
+    <PackageReference Include="Meadow.Foundation.Graphics.MicroLayout" Version="1.7.0" />
   </ItemGroup>
 
   <ItemGroup>

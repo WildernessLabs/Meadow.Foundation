@@ -18,8 +18,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         ByteCommsSensorBase<(Units.Temperature? Temperature, RelativeHumidity? Humidity)>,
         ITemperatureSensor, IHumiditySensor, II2cPeripheral
     {
-        private event EventHandler<IChangeResult<Units.Temperature>> _temperatureHandlers;
-        private event EventHandler<IChangeResult<RelativeHumidity>> _humidityHandlers;
+        private event EventHandler<IChangeResult<Units.Temperature>> _temperatureHandlers = default!;
+        private event EventHandler<IChangeResult<RelativeHumidity>> _humidityHandlers = default!;
 
         event EventHandler<IChangeResult<Units.Temperature>> ISamplingSensor<Units.Temperature>.Updated
         {
@@ -174,7 +174,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             {
                 _humidityHandlers?.Invoke(this, new ChangeResult<Units.RelativeHumidity>(humidity, changeResult.Old?.Humidity));
             }
-
             base.RaiseEventsAndNotify(changeResult);
         }
 

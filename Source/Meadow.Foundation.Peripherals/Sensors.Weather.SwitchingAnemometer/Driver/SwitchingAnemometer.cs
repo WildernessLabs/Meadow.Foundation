@@ -15,11 +15,6 @@ namespace Meadow.Foundation.Sensors.Weather
     public class SwitchingAnemometer : PollingSensorBase<Speed>, IAnemometer, IDisposable
     {
         /// <summary>
-        /// Raised when the speed of the wind changes
-        /// </summary>
-        public event EventHandler<IChangeResult<Speed>> WindSpeedUpdated = default!;
-
-        /// <summary>
         /// The current wind speed
         /// </summary>
         public Speed? WindSpeed { get; protected set; }
@@ -109,16 +104,6 @@ namespace Meadow.Foundation.Sensors.Weather
             {
                 samples.Dequeue();
             }
-        }
-
-        /// <summary>
-        /// Raise events for subscribers and notify of value changes
-        /// </summary>
-        /// <param name="changeResult">The updated sensor data</param>
-        protected override void RaiseEventsAndNotify(IChangeResult<Speed> changeResult)
-        {
-            WindSpeedUpdated?.Invoke(this, changeResult);
-            base.NotifyObservers(changeResult);
         }
 
         /// <summary>

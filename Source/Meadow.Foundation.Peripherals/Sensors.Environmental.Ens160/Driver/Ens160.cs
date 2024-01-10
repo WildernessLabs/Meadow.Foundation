@@ -15,9 +15,9 @@ namespace Meadow.Foundation.Sensors.Environmental
         ByteCommsSensorBase<(Concentration? CO2Concentration,
                              Concentration? EthanolConcentration,
                              Concentration? TVOCConcentration)>,
-        IConcentrationSensor, II2cPeripheral
+        ICO2ConcentrationSensor, II2cPeripheral
     {
-        private event EventHandler<IChangeResult<Concentration>> _concentrationHandlers;
+        private event EventHandler<IChangeResult<Concentration>> _concentrationHandlers = default!;
 
         event EventHandler<IChangeResult<Concentration>> ISamplingSensor<Concentration>.Updated
         {

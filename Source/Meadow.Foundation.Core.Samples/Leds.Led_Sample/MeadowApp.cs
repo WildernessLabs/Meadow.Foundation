@@ -1,6 +1,7 @@
 ﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Leds;
+using Meadow.Peripherals.Leds;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;

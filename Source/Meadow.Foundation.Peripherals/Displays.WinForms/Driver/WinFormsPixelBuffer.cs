@@ -78,7 +78,7 @@ internal class WinFormsPixelBuffer : IPixelBuffer, IDisposable
     /// Fills the entire buffer with a specified color
     /// </summary>
     /// <param name="color"></param>
-    public void Fill(Foundation.Color color)
+    public void Fill(Color color)
     {
         lock (_bmp)
         {
@@ -97,7 +97,7 @@ internal class WinFormsPixelBuffer : IPixelBuffer, IDisposable
     /// <param name="width"></param>
     /// <param name="height"></param>
     /// <param name="color"></param>
-    public void Fill(int originX, int originY, int width, int height, Foundation.Color color)
+    public void Fill(int originX, int originY, int width, int height, Color color)
     {
         try
         {
@@ -125,7 +125,7 @@ internal class WinFormsPixelBuffer : IPixelBuffer, IDisposable
         lock (_bmp)
         {
             var p = _bmp.GetPixel(x, y);
-            return Foundation.Color.FromRgba(p.R, p.G, p.B, p.A);
+            return Color.FromRgba(p.R, p.G, p.B, p.A);
         }
     }
 

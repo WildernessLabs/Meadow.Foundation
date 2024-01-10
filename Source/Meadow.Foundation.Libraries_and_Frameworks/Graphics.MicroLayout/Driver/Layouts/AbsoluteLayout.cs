@@ -30,9 +30,15 @@ public class AbsoluteLayout : Layout
     /// <inheritdoc/>
     protected override void OnDraw(MicroGraphics graphics)
     {
-        if (Visible && BackgroundColor != null)
+        if (IsVisible && BackgroundColor != null)
         {
-            graphics.DrawRectangle(Left, Top, Width, Height, BackgroundColor.Value, true);
+            graphics.DrawRectangle(
+                Left + (Parent?.Left ?? 0),
+                Top + (Parent?.Top ?? 0),
+                Width,
+                Height,
+                BackgroundColor.Value,
+                true);
         }
     }
 }

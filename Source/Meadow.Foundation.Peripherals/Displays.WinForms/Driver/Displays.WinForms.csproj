@@ -16,11 +16,12 @@
     <PackageIcon>icon.png</PackageIcon>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow.Foundation,Display,Windows,WinForms,Forms</PackageTags>
-    <Version>0.94.0</Version>
+    <Version>1.7.0</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Windows Forms display driver for Meadow</Description>
   </PropertyGroup>
   <ItemGroup>
+    <None Include=".\Readme.md" Pack="true" PackagePath="" />
     <None Remove="icon.ico" />
   </ItemGroup>
   <ItemGroup>
@@ -29,10 +30,9 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <None Include=".\Readme.md" Pack="true" PackagePath="" />
     <None Include="..\..\..\icon.png" Link="icon.png" Pack="true" PackagePath="" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.Foundation.Graphics.MicroGraphics" Version="1.6.0" />
+    <PackageReference Include="Meadow.Foundation.Graphics.MicroGraphics" Version="1.7.0" />
   </ItemGroup>
 </Project>

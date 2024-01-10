@@ -15,14 +15,14 @@
     <PackageId>Meadow.Foundation.Sensors.Environmental.Y4000</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow,Meadow.Foundation,Environmental,Y4000,water,quality</PackageTags>
-    <Version>0.1.0</Version>
+    <Version>1.7.0</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Y4000 Sonde RS485 Modbus water quality sensor</Description>
   </PropertyGroup>
   <ItemGroup>
-    <None Include=".\Readme.md" Pack="true" PackagePath=""/>
+    <None Include=".\Readme.md" Pack="true" PackagePath="" />
     <None Include="..\..\..\icon.png" Pack="true" PackagePath="" />
-    <PackageReference Include="Meadow.Foundation" Version="1.6.0" />
-    <PackageReference Include="Meadow.Modbus" Version="1.6.0" />
+    <PackageReference Include="Meadow.Foundation" Version="1.7.0" />
+    <PackageReference Include="Meadow.Modbus" Version="1.7.0" />
   </ItemGroup>
 </Project>

@@ -14,16 +14,16 @@
     <PackageId>Meadow.Foundation.Sensors.Environmental.NextPm</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow,Meadow.Foundation,Environmental,NextPM,tera,gas,particle,particulate,matter,AQI,air,quality</PackageTags>
-    <Version>0.1.0</Version>
+    <Version>1.7.0</Version>
     <Nullable>enable</Nullable>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>TERA Sensor NextPM serial particulate matter sensor</Description>
   </PropertyGroup>
   <ItemGroup>
-    <None Include=".\Readme.md" Pack="true" PackagePath=""/>
+    <None Include=".\Readme.md" Pack="true" PackagePath="" />
     <None Include="..\..\..\icon.png" Pack="true" PackagePath="" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.Foundation" Version="1.6.0" />
+    <PackageReference Include="Meadow.Foundation" Version="1.7.0" />
   </ItemGroup>
 </Project>

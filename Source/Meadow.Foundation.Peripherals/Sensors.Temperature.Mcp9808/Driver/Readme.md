@@ -31,7 +31,7 @@ public override Task Initialize()
     );
     mcp9808.Subscribe(consumer);
 
-    mcp9808.TemperatureUpdated += (object sender, IChangeResult<Meadow.Units.Temperature> e) =>
+    mcp9808.Updated += (object sender, IChangeResult<Meadow.Units.Temperature> e) =>
     {
         Resolver.Log.Info($"Temperature Updated: {e.New.Celsius:N2}C");
     };
