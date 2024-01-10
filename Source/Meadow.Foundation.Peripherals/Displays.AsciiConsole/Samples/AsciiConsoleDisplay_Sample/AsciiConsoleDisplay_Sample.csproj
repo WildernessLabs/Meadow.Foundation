@@ -10,7 +10,7 @@
 
   <ItemGroup>
     <PackageReference Include="Meadow.Foundation.Graphics.MicroLayout" Version="1.7.0" />
-    <ProjectReference Include="..\..\Driver\Meadow.Displays.AsciiConsole.csproj" />
+    <ProjectReference Include="..\..\Driver\Displays.AsciiConsole.csproj" />
   </ItemGroup>
 
 </Project>
