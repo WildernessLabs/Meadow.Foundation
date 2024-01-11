@@ -1139,6 +1139,42 @@ namespace Meadow.Foundation.Graphics
         }
 
         /// <summary>
+        /// Draw a horizontal gradient filled rectangle
+        /// </summary>
+        /// <param name="x">Abscissa of the top left corner</param>
+        /// <param name="y">Ordinate of the top left corner</param>
+        /// <param name="width">Width of the rectangle</param>
+        /// <param name="height">Height of the rectangle</param>
+        /// <param name="colorLeft">The start (left) color of the gradient</param>
+        /// <param name="colorRight">The end (right) color of the gradient</param>
+        public void DrawHorizontalGradient(int x, int y, int width, int height, Color colorLeft, Color colorRight)
+        {
+            for (int i = 0; i < height; i++)
+            {
+                var color = colorLeft.Blend(colorRight, (float)i / height);
+                DrawLine(x, i + y, x + width, i + y, color);
+            }
+        }
+
+        /// <summary>
+        /// Draw a vertical gradient filled rectangle
+        /// </summary>
+        /// <param name="x">Abscissa of the top left corner</param>
+        /// <param name="y">Ordinate of the top left corner</param>
+        /// <param name="width">Width of the rectangle</param>
+        /// <param name="height">Height of the rectangle</param>
+        /// <param name="colorTop">The start (top) color of the gradient</param>
+        /// <param name="colorBottom">The end (bottom) color of the gradient</param>
+        public void DrawVerticalGradient(int x, int y, int width, int height, Color colorTop, Color colorBottom)
+        {
+            for (int i = 0; i < width; i++)
+            {
+                var color = colorTop.Blend(colorBottom, (float)i / height);
+                DrawLine(x + i, y, x + i, y + height, color);
+            }
+        }
+
+        /// <summary>
         /// Draw a rounded rectangle
         /// </summary>
         /// <param name="x">Abscissa of the top left corner</param>
