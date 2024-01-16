@@ -9,8 +9,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Meadow.Foundation.Graphics.MicroLayout" Version="1.7.0" />
-    <ProjectReference Include="..\..\Driver\Displays.AsciiConsole.csproj" />
+    <PackageReference Include="Meadow.Foundation.Graphics.MicroLayout" Version="1.8.0" />
+    <PackageReference Include="Meadow.Foundation.Displays.AsciiConsole" Version="1.8.0" />
   </ItemGroup>
 
 </Project>

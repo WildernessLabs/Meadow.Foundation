@@ -1139,6 +1139,42 @@ namespace Meadow.Foundation.Graphics
         }
 
         /// <summary>
+        /// Draw a horizontal gradient filled rectangle
+        /// </summary>
+        /// <param name="x">Abscissa of the top left corner</param>
+        /// <param name="y">Ordinate of the top left corner</param>
+        /// <param name="width">Width of the rectangle</param>
+        /// <param name="height">Height of the rectangle</param>
+        /// <param name="colorLeft">The start (left) color of the gradient</param>
+        /// <param name="colorRight">The end (right) color of the gradient</param>
+        public void DrawHorizontalGradient(int x, int y, int width, int height, Color colorLeft, Color colorRight)
+        {
+            for (int i = 0; i < height; i++)
+            {
+                var color = colorLeft.Blend(colorRight, (float)i / height);
+                DrawLine(x, i + y, x + width, i + y, color);
+            }
+        }
+
+        /// <summary>
+        /// Draw a vertical gradient filled rectangle
+        /// </summary>
+        /// <param name="x">Abscissa of the top left corner</param>
+        /// <param name="y">Ordinate of the top left corner</param>
+        /// <param name="width">Width of the rectangle</param>
+        /// <param name="height">Height of the rectangle</param>
+        /// <param name="colorTop">The start (top) color of the gradient</param>
+        /// <param name="colorBottom">The end (bottom) color of the gradient</param>
+        public void DrawVerticalGradient(int x, int y, int width, int height, Color colorTop, Color colorBottom)
+        {
+            for (int i = 0; i < width; i++)
+            {
+                var color = colorTop.Blend(colorBottom, (float)i / height);
+                DrawLine(x + i, y, x + i, y + height, color);
+            }
+        }
+
+        /// <summary>
         /// Draw a rounded rectangle
         /// </summary>
         /// <param name="x">Abscissa of the top left corner</param>
@@ -1271,7 +1307,7 @@ namespace Meadow.Foundation.Graphics
         /// For best performance, source buffer should be the same color depth as the target display
         /// </summary>
         /// <param name="x">x location of target to draw buffer</param>
-        /// <param name="y">x location of target to draw buffer</param>
+        /// <param name="y">y location of target to draw buffer</param>
         /// <param name="buffer">the source buffer to write to the display buffer</param>
         /// <param name="alignmentH">Horizontal alignment: Left, Center or right align the buffer to the x location</param>
         /// <param name="alignmentV">Vertical alignment: Top, Center or bottom align the buffer to the y location</param>
@@ -1290,7 +1326,7 @@ namespace Meadow.Foundation.Graphics
         /// For best performance, source buffer should be the same color depth as the target display
         /// </summary>
         /// <param name="x">x location of target to draw buffer</param>
-        /// <param name="y">x location of target to draw buffer</param>
+        /// <param name="y">y location of target to draw buffer</param>
         /// <param name="buffer">the source buffer to write to the display buffer</param>
         public void DrawBuffer(int x, int y, IPixelBuffer buffer)
         {
@@ -1346,6 +1382,62 @@ namespace Meadow.Foundation.Graphics
                         PixelBuffer.SetPixel(GetXForRotation(x + i, y + j),
                             GetYForRotation(x + i, y + j),
                             buffer.GetPixel(i, j));
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Draw a buffer onto the display buffer at the given location
+        /// with a transparency color that will not be drawn
+        /// </summary>
+        /// <param name="x">x location of target to draw buffer</param>
+        /// <param name="y">y location of target to draw buffer</param>
+        /// <param name="buffer">the source buffer to write to the display buffer</param>
+        /// <param name="transparencyColor">the color to ignore when drawing the buffer</param>
+        public void DrawBufferWithTransparencyColor(int x, int y, IPixelBuffer buffer, Color transparencyColor)
+        {
+            if (x >= Width || y >= Height || x + buffer.Width < 0 || y + buffer.Height < 0)
+            {   //nothing to do 
+                return;
+            }
+            int xStartIndex = 0;
+            int yStartIndex = 0;
+            int widthToDraw = buffer.Width;
+            int heightToDraw = buffer.Height;
+
+            if (IgnoreOutOfBoundsPixels)
+            {
+                if (x < 0)
+                {
+                    xStartIndex = 0 - x;
+                }
+                if (y < 0)
+                {
+                    yStartIndex = 0 - y;
+                }
+
+                if (x + buffer.Width > Width)
+                {
+                    widthToDraw = Width - x;
+                }
+
+                if (y + buffer.Height > Height)
+                {
+                    heightToDraw = Height - y;
+                }
+            }
+
+            for (int i = xStartIndex; i < widthToDraw; i++)
+            {
+                for (int j = yStartIndex; j < heightToDraw; j++)
+                {
+                    var pixel = buffer.GetPixel(i, j);
+                    if (pixel != transparencyColor)
+                    {
+                        PixelBuffer.SetPixel(GetXForRotation(x + i, y + j),
+                                             GetYForRotation(x + i, y + j),
+                                             pixel);
                     }
                 }
             }

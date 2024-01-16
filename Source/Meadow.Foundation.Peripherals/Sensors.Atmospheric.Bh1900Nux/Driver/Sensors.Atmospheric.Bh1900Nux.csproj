@@ -1,5 +1,6 @@
 <Project Sdk="Meadow.Sdk/1.1.0">
   <PropertyGroup>
+    <Version>1.8.0</Version>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageIcon>icon.png</PackageIcon>
     <Authors>Wilderness Labs, Inc</Authors>
@@ -11,7 +12,6 @@
     <PackageId>Meadow.Foundation.Sensors.Atmospheric.Bh1900Nux</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow.Foundation, Atmospheric, BH1900NUX</PackageTags>
-    <Version>1.7.0</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Rohm BH1900NUX I2C temperature sensor</Description>
     <Nullable>enable</Nullable>
@@ -26,6 +26,6 @@
     <None Include="..\..\..\icon.png" Pack="true" PackagePath="" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.Foundation" Version="1.7.0" />
+    <PackageReference Include="Meadow.Foundation" Version="1.8.0" />
   </ItemGroup>
 </Project>

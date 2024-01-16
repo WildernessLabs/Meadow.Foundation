@@ -1,5 +1,6 @@
 <Project Sdk="Meadow.Sdk/1.1.0">
   <PropertyGroup>
+    <Version>1.8.0</Version>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageIcon>icon.png</PackageIcon>
     <Authors>Wilderness Labs, Inc</Authors>
@@ -11,7 +12,6 @@
     <PackageId>Meadow.Foundation.Motors.Tb67h420ftg</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow,Meadow.Foundation,Motor,HBridge,Tb67h420ftg</PackageTags>
-    <Version>1.7.0</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Tb67h420ftg digital input motor controller</Description>
   </PropertyGroup>
@@ -24,6 +24,6 @@
   <ItemGroup>
     <None Include=".\Readme.md" Pack="true" PackagePath="" />
     <None Include="..\..\..\icon.png" Pack="true" PackagePath="" />
-    <PackageReference Include="Meadow.Foundation" Version="1.7.0" />
+    <PackageReference Include="Meadow.Foundation" Version="1.8.0" />
   </ItemGroup>
 </Project>

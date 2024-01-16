@@ -25,7 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Meadow.Foundation.ICs.IOExpanders.Ft232h" Version="1.7.0" />
+    <PackageReference Include="Meadow.Foundation.ICs.IOExpanders.Ft232h" Version="1.8.0" />
   </ItemGroup>
 
 </Project>

@@ -1,5 +1,6 @@
 <Project Sdk="Meadow.Sdk/1.1.0">
   <PropertyGroup>
+    <Version>1.8.0</Version>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageIcon>icon.png</PackageIcon>
     <Authors>Wilderness Labs, Inc</Authors>
@@ -11,7 +12,6 @@
     <PackageId>Meadow.Foundation.Sensors.Atmospheric.Htux1d</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow.Foundation, Atmospheric, Humidity, Temperature, Htu21d, Htu31d</PackageTags>
-    <Version>1.7.0</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>HTU21D(F) and HTU31D I2C temperature and humidity sensors</Description>
     <Nullable>enable</Nullable>
@@ -24,6 +24,6 @@
   <ItemGroup>
     <None Include=".\Readme.md" Pack="true" PackagePath="" />
     <None Include="..\..\..\icon.png" Pack="true" PackagePath="" />
-    <PackageReference Include="Meadow.Foundation" Version="1.7.0" />
+    <PackageReference Include="Meadow.Foundation" Version="1.8.0" />
   </ItemGroup>
 </Project>

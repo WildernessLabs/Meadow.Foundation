@@ -292,7 +292,7 @@ public abstract partial class Mcp960x :
         }
         if (changeResult.New.TemperatureCold is { } cold)
         {
-            TemperatureHotUpdated?.Invoke(this, new ChangeResult<Units.Temperature>(cold, changeResult.Old?.TemperatureCold));
+            TemperatureColdUpdated?.Invoke(this, new ChangeResult<Units.Temperature>(cold, changeResult.Old?.TemperatureCold));
         }
 
         base.RaiseEventsAndNotify(changeResult);

@@ -1,5 +1,6 @@
 <Project Sdk="Meadow.Sdk/1.1.0">
   <PropertyGroup>
+    <Version>1.8.0</Version>
     <PackageReadmeFile>Readme.md</PackageReadmeFile>
     <Nullable>enable</Nullable>
     <LangVersion>10.0</LangVersion>
@@ -15,7 +16,6 @@
     <PackageId>Meadow.Foundation.Sensors.Motion.Lis2Mdl</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow.Foundation,magnetometer,Lis2Mdl</PackageTags>
-    <Version>1.7.0</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>LIS2MDL I2C 3-axis magnetometer</Description>
     <RootNamespace>Meadow.Foundation.Sensors.Motion</RootNamespace>
@@ -23,6 +23,6 @@
   <ItemGroup>
     <None Include=".\Readme.md" Pack="true" PackagePath="" />
     <None Include="..\..\..\icon.png" Pack="true" PackagePath="" />
-    <PackageReference Include="Meadow.Foundation" Version="1.7.0" />
+    <PackageReference Include="Meadow.Foundation" Version="1.8.0" />
   </ItemGroup>
 </Project>

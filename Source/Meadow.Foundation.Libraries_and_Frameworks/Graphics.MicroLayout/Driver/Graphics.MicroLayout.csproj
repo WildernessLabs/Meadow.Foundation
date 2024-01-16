@@ -1,5 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
+    <Version>1.8.0</Version>
     <PackageReadmeFile>Readme.md</PackageReadmeFile>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
@@ -13,7 +14,6 @@
     <PackageIcon>icon.png</PackageIcon>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow,Meadow.Foundation,Display,UI,MicroLayout</PackageTags>
-    <Version>1.7.0</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Lightweight UI Framework for embedded applications</Description>
     <Nullable>enable</Nullable>
@@ -22,6 +22,6 @@
   <ItemGroup>
     <None Include=".\Readme.md" Pack="true" PackagePath="" />
     <None Include="..\..\..\icon.png" Pack="true" PackagePath="" />
-    <PackageReference Include="Meadow.Foundation.Graphics.MicroGraphics" Version="1.7.0" />
+    <PackageReference Include="Meadow.Foundation.Graphics.MicroGraphics" Version="1.8.0" />
   </ItemGroup>
 </Project>
