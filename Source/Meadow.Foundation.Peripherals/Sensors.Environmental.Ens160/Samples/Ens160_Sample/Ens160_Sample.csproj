@@ -9,8 +9,8 @@
     <AssemblyName>App</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.F7" Version="1.7.0" />
-    <PackageReference Include="Meadow.Foundation.Sensors.Environmental.Ens160" Version="1.7.0" />
+    <PackageReference Include="Meadow.F7" Version="1.8.0" />
+    <PackageReference Include="Meadow.Foundation.Sensors.Environmental.Ens160" Version="1.8.0" />
   </ItemGroup>
   <ItemGroup>
     <None Update="meadow.config.yaml">

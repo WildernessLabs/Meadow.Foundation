@@ -1,5 +1,6 @@
 <Project Sdk="Meadow.Sdk/1.1.0">
   <PropertyGroup>
+    <Version>1.8.0</Version>
     <PackageReadmeFile>Readme.md</PackageReadmeFile>
     <Nullable>enable</Nullable>
     <LangVersion>10.0</LangVersion>
@@ -15,13 +16,12 @@
     <PackageId>Meadow.Foundation.ICs.IOExpanders.As1115</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow.Foundation, IOExpanders, As1115, led, driver, keyscan</PackageTags>
-    <Version>1.7.0</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>AS1115 I2C IO expander, led driver, character display controller and keyscan</Description>
   </PropertyGroup>
   <ItemGroup>
     <None Include=".\Readme.md" Pack="true" PackagePath="" />
     <None Include="..\..\..\icon.png" Pack="true" PackagePath="" />
-    <PackageReference Include="Meadow.Foundation.Graphics.MicroGraphics" Version="1.7.0" />
+    <PackageReference Include="Meadow.Foundation.Graphics.MicroGraphics" Version="1.8.0" />
   </ItemGroup>
 </Project>
