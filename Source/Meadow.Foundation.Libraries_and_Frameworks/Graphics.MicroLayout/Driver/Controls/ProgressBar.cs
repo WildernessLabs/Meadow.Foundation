@@ -118,8 +118,6 @@ public class ProgressBar : ThemedControl
         }
         if (BackColor != Color.Transparent)
         {
-            Resolver.Log.Info($"Drawing back color of {BackColor}");
-
             graphics.DrawRectangle(
                 Left + valueWidth + (Parent?.Left ?? 0),
                 Top + (Parent?.Top ?? 0),
