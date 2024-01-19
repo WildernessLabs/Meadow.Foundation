@@ -190,8 +190,6 @@ namespace Meadow.Foundation.Sensors.Weather
         /// </summary>
         protected ReadOnlyDictionary<Voltage, Azimuth> GetDefaultAzimuthVoltages()
         {
-            Resolver.Log.Info("Loading default azimuth voltages");
-
             return new ReadOnlyDictionary<Voltage, Azimuth>(new Dictionary<Voltage, Azimuth>
             {
                 { new Voltage(2.9f), new Azimuth(Azimuth16PointCardinalNames.N) },
