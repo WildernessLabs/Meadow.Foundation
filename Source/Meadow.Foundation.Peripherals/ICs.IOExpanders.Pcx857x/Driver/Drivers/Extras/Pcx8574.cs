@@ -158,7 +158,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         {
             Span<byte> buffer = stackalloc byte[1];
             i2cComms.Read(buffer);
-            return buffer[1];
+            return buffer[0];
         }
 
         /// <summary>
