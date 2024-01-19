@@ -9,7 +9,7 @@ namespace WinForms_Sample;
 
 public class MeadowApp : App<Meadow.Windows>
 {
-    WinFormsDisplay _display;
+    WinFormsDisplay? _display;
     MicroGraphics _graphics = default!;
 
     public override Task Initialize()
@@ -41,7 +41,7 @@ public class MeadowApp : App<Meadow.Windows>
 
     public override Task Run()
     {
-        Application.Run(_display);
+        Application.Run(_display!);
 
         return Task.CompletedTask;
     }
