@@ -22,8 +22,8 @@
   <ItemGroup>
     <None Include=".\Readme.md" Pack="true" PackagePath="" />
     <None Include="..\..\..\icon.png" Pack="true" PackagePath="" />
-    <PackageReference Include="Meadow.Foundation" Version="1.8.0" />
-    <PackageReference Include="Meadow.Foundation.Sensors.Distance.Hcsr04" Version="1.8.0" />
-    <PackageReference Include="Meadow.Foundation.Servos.ServoCore" Version="1.8.0" />
+    <PackageReference Include="Meadow.Foundation" Version="1.8.0.1" />
+    <PackageReference Include="Meadow.Foundation.Sensors.Distance.Hcsr04" Version="1.8.0.1" />
+    <PackageReference Include="Meadow.Foundation.Servos.ServoCore" Version="1.8.0.1" />
   </ItemGroup>
 </Project>

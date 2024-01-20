@@ -13,8 +13,8 @@
     <LangVersion>9.0</LangVersion>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.F7" Version="1.8.0" />
-    <PackageReference Include="Meadow.Foundation.Sensors.Atmospheric.Htux1d" Version="1.8.0" />
+    <PackageReference Include="Meadow.F7" Version="1.8.0.1" />
+    <PackageReference Include="Meadow.Foundation.Sensors.Atmospheric.Htux1d" Version="1.8.0.1" />
   </ItemGroup>
   <ItemGroup>
     <None Update="meadow.config.yaml">
