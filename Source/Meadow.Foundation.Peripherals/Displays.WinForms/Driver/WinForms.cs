@@ -54,7 +54,10 @@ public class WinFormsDisplay : Form, IGraphicsDisplay, ITouchScreen
         this.DoubleBuffered = true;
         this.FormBorderStyle = FormBorderStyle.FixedDialog;
         this.StartPosition = FormStartPosition.CenterScreen;
-        this.Icon = new Icon("icon.ico");
+
+        var iconStream = typeof(WinFormsDisplay).Assembly.GetManifestResourceStream("Displays.WinForms.icon.ico");
+        this.Icon = new Icon(iconStream!);
+
         _buffer = new WinFormsPixelBuffer(width, height, colorMode);
     }
 
