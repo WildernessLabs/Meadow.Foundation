@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Meadow.Foundation.Sensors.Temperature;
 
 /// <summary>
-/// Represents a PCT2075 temperature sensor, implementing the ITemperatureSensor and II2cPeripheral interfaces.
+/// Represents a PCT2075 temperature sensor
 /// </summary>
 public partial class Pct2075 : PollingSensorBase<Units.Temperature>, ITemperatureSensor, II2cPeripheral
 {
