@@ -1,5 +1,5 @@
 ﻿using Meadow;
-using Meadow.Foundation.ICs.IOExpanders;
+using Meadow.Devices;
 using Meadow.Foundation.Sensors.Temperature;
 using System;
 using System.Diagnostics;
@@ -7,19 +7,17 @@ using System.Threading.Tasks;
 
 namespace Sensors.Temperature.Pct2075_Sample;
 
-public class MeadowApp : App<Windows>
+public class MeadowApp : App<F7FeatherV2>
 {
     //<!=SNIP=>
-    private Ft232h _expander;
-    private Pct2075 _sensor;
+    private Pct2075 sensor;
 
     public override Task Initialize()
     {
-        _expander = new Ft232h(false);
-        _sensor = new Pct2075(_expander.CreateI2cBus());
+        sensor = new Pct2075(Device.CreateI2cBus());
 
-        _sensor.Updated += OnUpdated;
-        _sensor.StartUpdating(TimeSpan.FromSeconds(1));
+        sensor.Updated += OnUpdated;
+        sensor.StartUpdating(TimeSpan.FromSeconds(1));
 
         return base.Initialize();
     }

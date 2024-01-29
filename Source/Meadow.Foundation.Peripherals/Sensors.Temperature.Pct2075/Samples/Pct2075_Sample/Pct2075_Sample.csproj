@@ -10,12 +10,7 @@
     <LangVersion>10</LangVersion>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\..\Meadow.Contracts\Source\Meadow.Contracts\Meadow.Contracts.csproj" />
-    <ProjectReference Include="..\..\..\..\..\..\Meadow.Core\source\implementations\windows\Meadow.Windows\Meadow.Windows.csproj" />
-    <ProjectReference Include="..\..\..\..\..\..\Meadow.Core\source\Meadow.Core\Meadow.Core.csproj" />
-    <ProjectReference Include="..\..\..\..\..\..\Meadow.Logging\Source\Meadow.Logging\lib\Meadow.Logging.csproj" />
-    <ProjectReference Include="..\..\..\..\..\..\Meadow.Units\Source\Meadow.Units\Meadow.Units.csproj" />
-    <ProjectReference Include="..\..\..\ICs.IOExpanders.Ft232h\Driver\ICs.IOExpanders.Ft232h.csproj" />
+    <ProjectReference Include="..\..\..\..\..\..\Meadow.Core\source\implementations\f7\Meadow.F7\Meadow.F7.csproj" />
     <ProjectReference Include="..\..\Driver\Sensors.Temperature.Pct2075.csproj" />
   </ItemGroup>
   <ItemGroup>

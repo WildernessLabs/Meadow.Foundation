@@ -16,6 +16,7 @@ public partial class Pct2075 : PollingSensorBase<Units.Temperature>,
 
     /// <inheritdoc/>
     public Units.Temperature? Temperature { get; private set; }
+
     /// <inheritdoc/>
     public byte DefaultI2cAddress => (byte)Addresses.Default;
 
@@ -37,7 +38,7 @@ public partial class Pct2075 : PollingSensorBase<Units.Temperature>,
         if ((tempRegister & (1 << 15)) != 0)
         {
             // negative temp
-            var t = (tempRegister >> 5); // shift
+            var t = tempRegister >> 5; // shift
             t = (~t & 0b111111111) + 1; // invert, mask to 9-bits, add 1 (9-bit twos complement)
             result = (-1 * t * 0.125).Celsius();
         }
@@ -75,5 +76,4 @@ public partial class Pct2075 : PollingSensorBase<Units.Temperature>,
         var thyst = (ushort)(((short)interruptOnTemperature.Celsius / 2) << 7);
         _comms.WriteRegister((byte)Registers.Thyst, thyst);
     }
-
 }
