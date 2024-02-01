@@ -70,7 +70,14 @@ public class DisplayScreen
 
         BackgroundColor = theme?.BackgroundColor ?? Color.Black;
 
-        new Thread(DrawLoop).Start();
+        if (Resolver.App != null)
+        {
+            new Thread(DrawLoopThreaded).Start();
+        }
+        else
+        {
+            new Thread(DrawLoopOnCaller).Start();
+        }
     }
 
     private void _touchScreen_TouchUp(int x, int y)
@@ -144,18 +151,6 @@ public class DisplayScreen
     {
         _updateInProgress = false;
         IsInvalid = true;
-    }
-
-    private void DrawLoop()
-    {
-        if (Resolver.App != null)
-        {
-            DrawLoopThreaded();
-        }
-        else
-        {
-            DrawLoopOnCaller();
-        }
     }
 
     private void DrawLoopOnCaller()
