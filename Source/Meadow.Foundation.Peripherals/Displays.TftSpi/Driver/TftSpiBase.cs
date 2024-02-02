@@ -406,12 +406,14 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// Transfer part of the contents of the buffer to the display
         /// bounded by left, top, right and bottom
-        /// Only supported in 16Bpp565 mode
         /// </summary>
         public void Show(int left, int top, int right, int bottom)
         {
-            if (PixelBuffer.ColorMode != ColorMode.Format16bppRgb565)
-            {   //only supported in 565 mode 
+            if (PixelBuffer.ColorMode != ColorMode.Format12bppRgb444 &&
+                PixelBuffer.ColorMode != ColorMode.Format16bppRgb565 &&
+                PixelBuffer.ColorMode != ColorMode.Format24bppRgb888)
+            {
+                //should cover all of these displays but just in case
                 Show();
                 return;
             }
@@ -421,16 +423,28 @@ namespace Meadow.Foundation.Displays
                 return;
             }
 
-            SetAddressWindow(left, top, right, bottom);
+            if (PixelBuffer.ColorMode == ColorMode.Format12bppRgb444)
+            {
+                if (left % 2 != 0)
+                {
+                    left--;
+                }
+                if (right % 2 != 0)
+                {
+                    right++;
+                }
+            }
 
-            var len = (right - left + 1) * sizeof(ushort);
+            SetAddressWindow(left, top, right - 1, bottom - 1);
+
+            var len = (right - left) * PixelBuffer.BitDepth / 8;
 
             dataCommandPort.State = Data;
 
             int sourceIndex;
-            for (int y = top; y <= bottom; y++)
+            for (int y = top; y < bottom; y++)
             {
-                sourceIndex = ((y * Width) + left) * sizeof(ushort);
+                sourceIndex = ((y * Width) + left) * PixelBuffer.BitDepth / 8;
 
                 spiDisplay.Bus.Exchange(
                     chipSelectPort,
@@ -438,6 +452,7 @@ namespace Meadow.Foundation.Displays
                     readBuffer.Span[0..len]);
             }
         }
+
         /// <summary>
         /// Write a byte to the display
         /// </summary>

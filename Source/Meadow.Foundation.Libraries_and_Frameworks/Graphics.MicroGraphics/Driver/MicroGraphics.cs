@@ -1701,9 +1701,13 @@ namespace Meadow.Foundation.Graphics
         }
 
         /// <summary>
-        /// Update a region of the display
+        /// Update a region of the the display target from the buffer (thread safe)
         /// Note: not all displays support partial updates
         /// </summary>
+        /// <param name="left">The left coordinate of the display area to update</param>
+        /// <param name="top">The top coordinate of the display area to update</param>
+        /// <param name="right">The right coordinate of the display area to update</param>
+        /// <param name="bottom">The bottom coordinate of the display area to update</param>
         public virtual void Show(int left, int top, int right, int bottom)
         {
             lock (_lock)
