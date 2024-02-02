@@ -23,12 +23,13 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                             RelativeHumidity? Humidity,
                             Pressure? Pressure,
                             Resistance? GasResistance)>,
-        ITemperatureSensor, IHumiditySensor, IBarometricPressureSensor, IGasResistanceSensor, ISpiPeripheral, II2cPeripheral, IDisposable
+        ITemperatureSensor, IHumiditySensor, IBarometricPressureSensor, IGasResistanceSensor, ISpiPeripheral, II2cPeripheral, ISleepAwarePeripheral, IDisposable
     {
         private event EventHandler<IChangeResult<Units.Temperature>> _temperatureHandlers = default!;
         private event EventHandler<IChangeResult<RelativeHumidity>> _humidityHandlers = default!;
         private event EventHandler<IChangeResult<Pressure>> _pressureHandlers = default!;
         private event EventHandler<IChangeResult<Resistance>> _gasResistanceHandlers = default!;
+        private PowerMode _lastRunningPowerMode;
 
         /// <summary>
         /// The temperature oversampling mode
@@ -373,6 +374,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             byte mask = 0x03;
             status = (byte)((status & (byte)~mask) | (byte)powerMode);
             busComms.WriteRegister((byte)Registers.CTRL_MEAS, status);
+            _lastRunningPowerMode = powerMode;
         }
 
         /// <summary>
@@ -675,5 +677,19 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
         async Task<Resistance> ISensor<Resistance>.Read()
             => (await Read()).GasResistance!.Value;
+
+        /// <inheritdoc/>
+        public Task BeforeSleep(CancellationToken cancellationToken)
+        {
+            SetPowerMode(PowerMode.Sleep);
+            return Task.CompletedTask;
+        }
+
+        /// <inheritdoc/>
+        public Task AfterWake(CancellationToken cancellationToken)
+        {
+            SetPowerMode(_lastRunningPowerMode);
+            return Task.CompletedTask;
+        }
     }
 }
