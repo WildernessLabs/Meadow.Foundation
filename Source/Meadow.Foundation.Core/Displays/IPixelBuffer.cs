@@ -32,7 +32,7 @@
         ColorMode ColorMode { get; }
 
         /// <summary>
-        /// The BitDepth of the chosen ColorMode.
+        /// The BitDepth of the chosen ColorMode
         /// </summary>
         int BitDepth { get; }
 
