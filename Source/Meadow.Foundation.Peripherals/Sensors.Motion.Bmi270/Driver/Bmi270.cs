@@ -171,15 +171,12 @@ namespace Meadow.Foundation.Sensors.Accelerometers
         /// <param name="changeResult">The updated sensor data</param>
         protected override void RaiseEventsAndNotify(IChangeResult<(Acceleration3D? Acceleration3D, AngularVelocity3D? AngularVelocity3D, Units.Temperature? Temperature)> changeResult)
         {
-            Resolver.Log.Info($"RaiseAndNotify");
-
             if (changeResult.New.AngularVelocity3D is { } angular)
             {
                 _angularVelocityHandlers?.Invoke(this, new ChangeResult<AngularVelocity3D>(angular, changeResult.Old?.AngularVelocity3D));
             }
             if (changeResult.New.Acceleration3D is { } accel)
             {
-                Resolver.Log.Info($"RaiseAndNotify Acceleration");
                 _accelerationHandlers?.Invoke(this, new ChangeResult<Acceleration3D>(accel, changeResult.Old?.Acceleration3D));
             }
             if (changeResult.New.Temperature is { } temp)
