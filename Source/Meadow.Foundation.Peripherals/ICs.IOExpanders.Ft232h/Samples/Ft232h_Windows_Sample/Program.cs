@@ -8,13 +8,17 @@ using System.Diagnostics;
 
 Console.WriteLine("HELLO FROM THE WILDERNESS FT232H DRIVER!");
 
-var ft232 = new Ft232h();
+Ft232Collection.Devices.Refresh();
+var count = Ft232Collection.Devices.Count();
+var ft232 = Ft232Collection.Devices[0];
+
+var ft232h = new Ft232h_old();
 
 //await TestBME280(ft232);
-await TestIli9341(ft232);
+await TestIli9341(ft232h);
 //await TestGpio(ft232);
 
-async Task TestBME280(Ft232h expander)
+async Task TestBME280(Ft232h_old expander)
 {
     var bme = new Bme280(expander.CreateI2cBus());
 
@@ -26,7 +30,7 @@ async Task TestBME280(Ft232h expander)
     }
 }
 
-async Task TestGpio(Ft232h expander)
+async Task TestGpio(Ft232h_old expander)
 {
     var outputs = new List<IDigitalOutputPort>
     {
@@ -56,7 +60,7 @@ async Task TestGpio(Ft232h expander)
     }
 }
 
-async Task TestIli9341(Ft232h expander)
+async Task TestIli9341(Ft232h_old expander)
 {
     var ili = new Ili9341(
         expander.CreateSpiBus(),

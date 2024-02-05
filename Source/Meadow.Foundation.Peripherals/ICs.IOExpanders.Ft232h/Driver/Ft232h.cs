@@ -5,14 +5,14 @@ using System;
 namespace Meadow.Foundation.ICs.IOExpanders;
 
 /// <summary>
-/// Represents a DS3502 digital potentiometer
+/// Represents an FT232 IO Expander
 /// </summary>
-public partial class Ft232h :
-    IDisposable,
-    IDigitalInputOutputController,
-    IDigitalOutputController,
-    ISpiController,
-    II2cController
+public partial class Ft232h_old :
+IDisposable,
+IDigitalInputOutputController,
+IDigitalOutputController,
+ISpiController,
+II2cController
 {
     private bool _isDisposed;
     private IFtdiImpl _impl;
@@ -25,10 +25,10 @@ public partial class Ft232h :
     public PinDefinitions Pins { get; }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="Ft232h"/> class.
+    /// Initializes a new instance of the <see cref="Ft232h_old"/> class.
     /// </summary>
     /// <param name="useMPSSE">Specifies whether to use Multi-Protocol Synchronous Serial Engine (MPSSE) mode (default is false).</param>
-    public Ft232h(bool useMPSSE = false)
+    public Ft232h_old(bool useMPSSE = false)
     {
         UsingMpsse = useMPSSE;
 
@@ -145,7 +145,7 @@ public partial class Ft232h :
     /// <summary>
     /// Finalizer for the Ft232h class, used to release unmanaged resources.
     /// </summary>
-    ~Ft232h()
+    ~Ft232h_old()
     {
         Dispose(false);
     }

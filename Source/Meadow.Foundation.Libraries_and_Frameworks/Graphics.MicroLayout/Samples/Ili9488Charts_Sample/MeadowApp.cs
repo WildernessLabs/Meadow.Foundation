@@ -7,12 +7,12 @@ using Meadow.Foundation.ICs.IOExpanders;
 
 public class MeadowApp : App<Windows>
 {
-    private Ft232h expander = new Ft232h();
+    private Ft232h_old expander = new Ft232h_old();
     private DisplayScreen? screen;
 
     public override Task Initialize()
     {
-        expander = new Ft232h();
+        expander = new Ft232h_old();
 
         var display = new Ili9341
         (

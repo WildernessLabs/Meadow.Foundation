@@ -2,7 +2,7 @@
 
 namespace Meadow.Foundation.ICs.IOExpanders
 {
-    public partial class Ft232h
+    public partial class Ft232h_old
     {
         /// <summary>
         /// Flags for configuring the SPI communication options.
