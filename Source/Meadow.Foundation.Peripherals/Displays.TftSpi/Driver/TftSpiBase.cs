@@ -220,6 +220,24 @@ namespace Meadow.Foundation.Displays
         }
 
         /// <summary>
+        /// Set color mode for the display
+        /// </summary>
+        /// <param name="colorMode"></param>
+        /// <exception cref="ArgumentException">throw if the color mode isn't supported by the display</exception>
+        public virtual void SetColorMode(ColorMode colorMode)
+        {
+            if (IsColorTypeSupported(colorMode) == false)
+            {
+                throw new ArgumentException($"color mode {colorMode} not supported");
+            }
+
+            if (imageBuffer.ColorMode != colorMode)
+            {
+                CreateBuffer(colorMode, Width, Height);
+            }
+        }
+
+        /// <summary>
         /// Is the color mode supported on this display
         /// </summary>
         /// <param name="colorType">The color mode</param>
