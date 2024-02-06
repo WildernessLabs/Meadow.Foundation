@@ -8,29 +8,19 @@ namespace Meadow.Foundation.Displays
     /// </summary>
     public partial class Max7219 : IGraphicsDisplay
     {
-        /// <summary>
-        /// Color mode of display - 1bpp
-        /// </summary>
+        /// <inheritdoc/>
         public ColorMode ColorMode => ColorMode.Format1bpp;
 
-        /// <summary>
-        /// The Color mode supported by the display
-        /// </summary>
+        /// <inheritdoc/>
         public ColorMode SupportedColorModes => ColorMode.Format1bpp;
 
-        /// <summary>
-        /// Width of array of displays in pixels
-        /// </summary>
+        /// <inheritdoc/>
         public int Width => DigitColumns; //digit columns align to pixel columns
 
-        /// <summary>
-        /// Height of array of displays in pixels
-        /// </summary>
+        /// <inheritdoc/>
         public int Height => 8 * DigitRows; //each digit takes 8 bits so multiply by 8
 
-        /// <summary>
-        /// The offscreen buffer used for the display
-        /// </summary>
+        /// <inheritdoc/>
         public IPixelBuffer PixelBuffer => this;
 
         /// <summary>

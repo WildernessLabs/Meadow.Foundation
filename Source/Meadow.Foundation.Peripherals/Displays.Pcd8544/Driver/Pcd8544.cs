@@ -11,29 +11,19 @@ namespace Meadow.Foundation.Displays
     /// </summary>
     public class Pcd8544 : IGraphicsDisplay, ISpiPeripheral, IDisposable
     {
-        /// <summary>
-        /// Display color mode 
-        /// </summary>
+        /// <inheritdoc/>
         public ColorMode ColorMode => ColorMode.Format1bpp;
 
-        /// <summary>
-        /// The Color mode supported by the display
-        /// </summary>
+        /// <inheritdoc/>
         public ColorMode SupportedColorModes => ColorMode.Format1bpp;
 
-        /// <summary>
-        /// Height of display in pixels
-        /// </summary>
+        /// <inheritdoc/>
         public int Height => 48;
 
-        /// <summary>
-        /// Width of display in pixels
-        /// </summary>
+        /// <inheritdoc/>
         public int Width => 84;
 
-        /// <summary>
-        /// The buffer the holds the pixel data for the display
-        /// </summary>
+        /// <inheritdoc/>
         public IPixelBuffer PixelBuffer => imageBuffer;
 
         /// <summary>

@@ -9,29 +9,19 @@ namespace Meadow.Foundation.Displays
     /// </summary>
     public abstract class EPaperMonoBase : EPaperBase, IGraphicsDisplay
     {
-        /// <summary>
-        /// Display color mode 
-        /// </summary>
+        /// <inheritdoc/>
         public ColorMode ColorMode => ColorMode.Format1bpp;
 
-        /// <summary>
-        /// The Color mode supported by the display
-        /// </summary>
+        /// <inheritdoc/>
         public ColorMode SupportedColorModes => ColorMode.Format1bpp;
 
-        /// <summary>
-        /// The buffer the holds the pixel data for the display
-        /// </summary>
+        /// <inheritdoc/>
         public IPixelBuffer PixelBuffer => imageBuffer;
 
-        /// <summary>
-        /// The color to draw when a pixel is enabled
-        /// </summary>
+        /// <inheritdoc/>
         public Color EnabledColor => Color.Black;
 
-        /// <summary>
-        /// The color to draw when a pixel is disabled
-        /// </summary>
+        /// <inheritdoc/>
         public Color DisabledColor => Color.White;
 
         /// <summary>

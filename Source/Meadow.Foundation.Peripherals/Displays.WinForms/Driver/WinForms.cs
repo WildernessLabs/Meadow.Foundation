@@ -24,19 +24,13 @@ public class WinFormsDisplay : Form, IGraphicsDisplay, ITouchScreen
 
     private readonly WinFormsPixelBuffer _buffer;
 
-    /// <summary>
-    /// Current color mode of display
-    /// </summary>
+    /// <inheritdoc/>
     public ColorMode ColorMode => PixelBuffer.ColorMode;
 
-    /// <summary>
-    /// The display's pixel buffer
-    /// </summary>
+    /// <inheritdoc/>
     public IPixelBuffer PixelBuffer => _buffer;
 
-    /// <summary>
-    /// The Color mode supported by the display
-    /// </summary>
+    /// <inheritdoc/>
     public ColorMode SupportedColorModes => ColorMode.Format24bppRgb888;
 
     /// <summary>

@@ -18,14 +18,10 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         protected byte[] SetAddressBuffer { get; } = new byte[4];
 
-        /// <summary>
-        /// The current display color mode
-        /// </summary>
+        /// <inheritdoc/>
         public ColorMode ColorMode => imageBuffer.ColorMode;
 
-        /// <summary>
-        /// The color modes supported by the display
-        /// </summary>
+        /// <inheritdoc/>
         public abstract ColorMode SupportedColorModes { get; }
 
         /// <summary>
@@ -38,19 +34,13 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         public abstract ColorMode DefaultColorMode { get; }
 
-        /// <summary>
-        /// Width of display in pixels
-        /// </summary>
+        /// <inheritdoc/>
         public int Width => imageBuffer.Width;
 
-        /// <summary>
-        /// Height of display in pixels
-        /// </summary>
+        /// <inheritdoc/>
         public int Height => imageBuffer.Height;
 
-        /// <summary>
-        /// The buffer used to store the pixel data for the display
-        /// </summary>
+        /// <inheritdoc/>
         public IPixelBuffer PixelBuffer => imageBuffer;
 
         /// <summary>
