@@ -50,29 +50,19 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         public byte DefaultI2cAddress => (byte)Addresses.Default;
 
-        /// <summary>
-        /// The display color mode (1 bit per pixel)
-        /// </summary>
+        /// <inheritdoc/>
         public ColorMode ColorMode => ColorMode.Format1bpp;
 
-        /// <summary>
-        /// The Color mode supported by the display
-        /// </summary>
+        /// <inheritdoc/>
         public ColorMode SupportedColorModes => ColorMode.Format1bpp;
 
-        /// <summary>
-        /// Display width in pixels for 8x8 matrix displays
-        /// </summary>
+        /// <inheritdoc/>
         public int Width => 8;
 
-        /// <summary>
-        /// Display height in pixels for 8x8 matrix displays
-        /// </summary>
+        /// <inheritdoc/>
         public int Height => 8;
 
-        /// <summary>
-        /// The buffer that holds the pixel data for 8x8 matrix displays
-        /// </summary>
+        /// <inheritdoc/>
         public IPixelBuffer PixelBuffer => buffer;
 
         /// <summary>

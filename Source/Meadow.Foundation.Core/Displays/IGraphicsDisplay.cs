@@ -1,4 +1,5 @@
 ﻿using Meadow.Foundation.Graphics.Buffers;
+using System;
 
 namespace Meadow.Foundation.Graphics
 {
@@ -24,6 +25,14 @@ namespace Meadow.Foundation.Graphics
         public bool IsColorTypeSupported(ColorMode mode)
         {
             return (SupportedColorModes | mode) != 0;
+        }
+
+        /// <summary>
+        /// Set the color mode for the display
+        /// </summary>
+        public void SetColorMode(ColorMode mode)
+        {
+            throw new ArgumentException("Display does not support color mode changes");
         }
 
         /// <summary>

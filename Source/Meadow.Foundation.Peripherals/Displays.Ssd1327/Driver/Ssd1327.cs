@@ -12,29 +12,19 @@ namespace Meadow.Foundation.Displays
     /// </summary>
     public partial class Ssd1327 : IGraphicsDisplay, ISpiPeripheral, IDisposable
     {
-        /// <summary>
-        /// The display color mode (4 bit per pixel grayscale)
-        /// </summary>
+        /// <inheritdoc/>
         public ColorMode ColorMode => ColorMode.Format4bppGray;
 
-        /// <summary>
-        /// The Color mode supported by the display
-        /// </summary>
+        /// <inheritdoc/>
         public ColorMode SupportedColorModes => ColorMode.Format4bppGray;
 
-        /// <summary>
-        /// The display width in pixels
-        /// </summary>
+        /// <inheritdoc/>
         public int Width => 128;
 
-        /// <summary>
-        /// The display height in pixels
-        /// </summary>
+        /// <inheritdoc/>
         public int Height => 128;
 
-        /// <summary>
-        /// The buffer the holds the pixel data for the display
-        /// </summary>
+        /// <inheritdoc/>
         public IPixelBuffer PixelBuffer => imageBuffer;
 
         /// <summary>

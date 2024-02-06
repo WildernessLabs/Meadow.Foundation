@@ -30,14 +30,10 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         protected abstract bool IsColorInverted { get; }
 
-        /// <summary>
-        /// Display color mode 
-        /// </summary>
+        /// <inheritdoc/>
         public ColorMode ColorMode => ColorMode.Format2bpp;
 
-        /// <summary>
-        /// The Color mode supported by the display
-        /// </summary>
+        /// <inheritdoc/>
         public ColorMode SupportedColorModes => ColorMode.Format2bpp;
 
         /// <summary>
@@ -46,14 +42,10 @@ namespace Meadow.Foundation.Displays
 
         protected Buffer2bppEPaper imageBuffer = default!;
 
-        /// <summary>
-        /// Width of display in pixels
-        /// </summary>
+        /// <inheritdoc/>
         public virtual int Width => width;
 
-        /// <summary>
-        /// Height of display in pixels
-        /// </summary>
+        /// <inheritdoc/>
         public virtual int Height => height;
 
         /// <summary>
