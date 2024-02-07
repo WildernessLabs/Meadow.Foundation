@@ -18,14 +18,10 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         protected byte[] SetAddressBuffer { get; } = new byte[4];
 
-        /// <summary>
-        /// The current display color mode
-        /// </summary>
+        /// <inheritdoc/>
         public ColorMode ColorMode => imageBuffer.ColorMode;
 
-        /// <summary>
-        /// The color modes supported by the display
-        /// </summary>
+        /// <inheritdoc/>
         public abstract ColorMode SupportedColorModes { get; }
 
         /// <summary>
@@ -38,19 +34,13 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         public abstract ColorMode DefaultColorMode { get; }
 
-        /// <summary>
-        /// Width of display in pixels
-        /// </summary>
+        /// <inheritdoc/>
         public int Width => imageBuffer.Width;
 
-        /// <summary>
-        /// Height of display in pixels
-        /// </summary>
+        /// <inheritdoc/>
         public int Height => imageBuffer.Height;
 
-        /// <summary>
-        /// The buffer used to store the pixel data for the display
-        /// </summary>
+        /// <inheritdoc/>
         public IPixelBuffer PixelBuffer => imageBuffer;
 
         /// <summary>
@@ -217,6 +207,24 @@ namespace Meadow.Foundation.Displays
             spiDisplay = new SpiCommunications(spiBus, chipSelectPort, DefaultSpiBusSpeed, DefaultSpiBusMode);
 
             CreateBuffer(colorMode, nativeWidth = width, nativeHeight = height);
+        }
+
+        /// <summary>
+        /// Set color mode for the display
+        /// </summary>
+        /// <param name="colorMode"></param>
+        /// <exception cref="ArgumentException">throw if the color mode isn't supported by the display</exception>
+        public virtual void SetColorMode(ColorMode colorMode)
+        {
+            if (IsColorTypeSupported(colorMode) == false)
+            {
+                throw new ArgumentException($"color mode {colorMode} not supported");
+            }
+
+            if (imageBuffer.ColorMode != colorMode)
+            {
+                CreateBuffer(colorMode, Width, Height);
+            }
         }
 
         /// <summary>
