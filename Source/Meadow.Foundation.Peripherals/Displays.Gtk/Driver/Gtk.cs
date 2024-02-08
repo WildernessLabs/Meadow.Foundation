@@ -1,8 +1,8 @@
 ﻿using Cairo;
 using Gtk;
-using Meadow.Foundation.Graphics;
 using Meadow.Foundation.Graphics.Buffers;
 using Meadow.Hardware;
+using Meadow.Peripherals.Displays;
 using System.Buffers.Binary;
 
 namespace Meadow.Foundation.Displays;
@@ -10,7 +10,7 @@ namespace Meadow.Foundation.Displays;
 /// <summary>
 /// Represents a GTK graphics display
 /// </summary>
-public class GtkDisplay : IGraphicsDisplay, ITouchScreen
+public class GtkDisplay : IPixelDisplay, ITouchScreen
 {
     /// <summary>
     /// Event fired when the display gets a mouse down

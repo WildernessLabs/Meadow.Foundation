@@ -14,7 +14,7 @@ namespace Meadow.Foundation.Graphics
         /// <summary>
         /// Display object responsible for managing the buffer and rendering
         /// </summary>
-        protected readonly IGraphicsDisplay? display;
+        protected readonly IPixelDisplay? display;
 
         /// <summary>
         /// PixelBuffer draw target
@@ -145,8 +145,8 @@ namespace Meadow.Foundation.Graphics
         /// <summary>
         /// Create a new MicroGraphics instance from a display peripheral driver instance
         /// </summary>
-        /// <param name="display">An IGraphicsDisplay object</param>
-        public MicroGraphics(IGraphicsDisplay display)
+        /// <param name="display">An IPixelDisplay object</param>
+        public MicroGraphics(IPixelDisplay display)
         {
             this.display = display;
         }

@@ -2,6 +2,7 @@
 using Meadow.Devices;
 using Meadow.Foundation.Displays;
 using Meadow.Foundation.Graphics;
+using Meadow.Peripherals.Displays;
 using System.Threading.Tasks;
 
 namespace Displays.Tft.Gc9a01_Sample

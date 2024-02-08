@@ -1,4 +1,5 @@
 ﻿using Meadow.Hardware;
+using Meadow.Peripherals.Displays;
 using System.Linq;
 using System.Threading;
 
@@ -9,7 +10,7 @@ namespace Meadow.Foundation.Graphics.MicroLayout;
 /// </summary>
 public class DisplayScreen
 {
-    private readonly IGraphicsDisplay _display;
+    private readonly IPixelDisplay _display;
     private readonly MicroGraphics _graphics;
     private readonly ITouchScreen? _touchScreen;
     private bool _updateInProgress = false;
@@ -45,7 +46,7 @@ public class DisplayScreen
     /// <param name="rotation">The rotation type for the display.</param>
     /// <param name="touchScreen">The optional touchscreen interface.</param>
     /// <param name="theme">The display theme to use.</param>
-    public DisplayScreen(IGraphicsDisplay physicalDisplay, RotationType rotation = RotationType.Normal, ITouchScreen? touchScreen = null, DisplayTheme? theme = null)
+    public DisplayScreen(IPixelDisplay physicalDisplay, RotationType rotation = RotationType.Normal, ITouchScreen? touchScreen = null, DisplayTheme? theme = null)
     {
         Controls = new ControlsCollection(this, null);
         Theme = theme;

@@ -1,5 +1,4 @@
-﻿using Meadow.Foundation.Graphics;
-using Meadow.Foundation.Graphics.Buffers;
+﻿using Meadow.Peripherals.Displays;
 using System;
 
 namespace Meadow.Foundation.Displays;
@@ -7,7 +6,7 @@ namespace Meadow.Foundation.Displays;
 /// <summary>
 /// Represents a display driver for an ASCII console
 /// </summary>
-public partial class AsciiConsoleDisplay : IGraphicsDisplay
+public partial class AsciiConsoleDisplay : IPixelDisplay
 {
     private readonly CharacterBuffer _buffer;
     private const string _colors = " `.-':_,^=;><+!rc*/z?sLTv)J7(|Fi{C}fI31tlu[neoZ5Yxjya]2ESwqkP6h9d4VpOGbUAKXHm8RD#$Bg0MNWQ%&@"; // 92 "colors"

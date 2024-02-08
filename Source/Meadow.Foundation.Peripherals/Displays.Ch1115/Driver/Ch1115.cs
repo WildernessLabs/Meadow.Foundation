@@ -1,6 +1,6 @@
-﻿using Meadow.Foundation.Graphics;
-using Meadow.Foundation.Graphics.Buffers;
+﻿using Meadow.Foundation.Graphics.Buffers;
 using Meadow.Hardware;
+using Meadow.Peripherals.Displays;
 using Meadow.Units;
 using System;
 using System.Threading;
@@ -10,7 +10,7 @@ namespace Meadow.Foundation.Displays
     /// <summary>
     /// Provide an interface to the Ch1115 family of displays
     /// </summary>
-    public partial class Ch1115 : IGraphicsDisplay, ISpiPeripheral, IDisposable
+    public partial class Ch1115 : IPixelDisplay, ISpiPeripheral, IDisposable
     {
         /// <inheritdoc/>
         public ColorMode ColorMode => ColorMode.Format1bpp;

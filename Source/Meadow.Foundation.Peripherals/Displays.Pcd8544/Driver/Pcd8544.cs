@@ -1,6 +1,6 @@
-﻿using Meadow.Foundation.Graphics;
-using Meadow.Foundation.Graphics.Buffers;
+﻿using Meadow.Foundation.Graphics.Buffers;
 using Meadow.Hardware;
+using Meadow.Peripherals.Displays;
 using Meadow.Units;
 using System;
 
@@ -9,7 +9,7 @@ namespace Meadow.Foundation.Displays
     /// <summary>
     /// Represents a Pcd8544 monochrome display
     /// </summary>
-    public class Pcd8544 : IGraphicsDisplay, ISpiPeripheral, IDisposable
+    public class Pcd8544 : IPixelDisplay, ISpiPeripheral, IDisposable
     {
         /// <inheritdoc/>
         public ColorMode ColorMode => ColorMode.Format1bpp;

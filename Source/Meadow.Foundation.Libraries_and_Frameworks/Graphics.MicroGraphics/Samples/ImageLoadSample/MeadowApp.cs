@@ -1,6 +1,7 @@
 ﻿using Meadow.Devices;
 using Meadow.Foundation.Displays;
 using Meadow.Hardware;
+using Meadow.Peripherals.Displays;
 using Meadow.Units;
 using System;
 using System.IO;

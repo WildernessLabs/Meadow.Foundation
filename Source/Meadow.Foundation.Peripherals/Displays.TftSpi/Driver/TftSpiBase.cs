@@ -1,6 +1,6 @@
-using Meadow.Foundation.Graphics;
 using Meadow.Foundation.Graphics.Buffers;
 using Meadow.Hardware;
+using Meadow.Peripherals.Displays;
 using Meadow.Units;
 using System;
 using System.Threading;
@@ -11,7 +11,7 @@ namespace Meadow.Foundation.Displays
     /// Base class for TFT SPI displays
     /// These displays typically support 16 and 18 bit, some also include 8, 9, 12 and/or 24 bit color 
     /// </summary>
-    public abstract partial class TftSpiBase : IGraphicsDisplay, ISpiPeripheral, IDisposable
+    public abstract partial class TftSpiBase : IPixelDisplay, ISpiPeripheral, IDisposable
     {
         /// <summary>
         /// Temporary buffer that can be used to batch set address window buffer commands
@@ -224,6 +224,7 @@ namespace Meadow.Foundation.Displays
             if (imageBuffer.ColorMode != colorMode)
             {
                 CreateBuffer(colorMode, Width, Height);
+                Initialize();
             }
         }
 

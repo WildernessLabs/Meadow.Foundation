@@ -1,6 +1,6 @@
-﻿using Meadow.Foundation.Graphics;
-using Meadow.Foundation.Graphics.Buffers;
+﻿using Meadow.Foundation.Graphics.Buffers;
 using Meadow.Hardware;
+using Meadow.Peripherals.Displays;
 using Meadow.Units;
 using System;
 using System.Threading;
@@ -10,7 +10,7 @@ namespace Meadow.Foundation.Displays
     /// <summary>
     /// Provide an interface to the Sh110x family of displays
     /// </summary>
-    public abstract partial class Sh110x : IGraphicsDisplay, ISpiPeripheral, II2cPeripheral, IDisposable
+    public abstract partial class Sh110x : IPixelDisplay, ISpiPeripheral, II2cPeripheral, IDisposable
     {
         /// <inheritdoc/>
         public ColorMode ColorMode => ColorMode.Format1bpp;
