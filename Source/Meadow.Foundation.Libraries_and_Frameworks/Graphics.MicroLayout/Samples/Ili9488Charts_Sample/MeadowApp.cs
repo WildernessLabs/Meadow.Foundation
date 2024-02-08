@@ -1,9 +1,9 @@
 ﻿using Meadow;
-using Meadow.Foundation;
 using Meadow.Foundation.Displays;
 using Meadow.Foundation.Graphics;
 using Meadow.Foundation.Graphics.MicroLayout;
 using Meadow.Foundation.ICs.IOExpanders;
+using Meadow.Peripherals.Displays;
 
 public class MeadowApp : App<Windows>
 {

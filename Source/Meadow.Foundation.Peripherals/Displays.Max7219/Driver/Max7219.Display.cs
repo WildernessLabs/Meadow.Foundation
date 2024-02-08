@@ -1,12 +1,11 @@
-﻿using Meadow.Foundation.Graphics;
-using Meadow.Foundation.Graphics.Buffers;
+﻿using Meadow.Peripherals.Displays;
 
 namespace Meadow.Foundation.Displays
 {
     /// <summary>
     /// Max7219 LED matrix driver
     /// </summary>
-    public partial class Max7219 : IGraphicsDisplay
+    public partial class Max7219 : IPixelDisplay
     {
         /// <inheritdoc/>
         public ColorMode ColorMode => ColorMode.Format1bpp;

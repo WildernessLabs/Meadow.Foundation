@@ -1,4 +1,6 @@
-﻿namespace Meadow.Foundation.Graphics.Buffers
+﻿using Meadow.Peripherals.Displays;
+
+namespace Meadow.Foundation.Graphics.Buffers
 {
     /// <summary>
     /// Represents a 2bpp buffer

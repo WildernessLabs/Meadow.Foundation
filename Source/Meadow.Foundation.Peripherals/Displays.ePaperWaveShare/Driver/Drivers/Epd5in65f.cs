@@ -1,13 +1,13 @@
-﻿using Meadow.Foundation.Graphics;
-using Meadow.Foundation.Graphics.Buffers;
+﻿using Meadow.Foundation.Graphics.Buffers;
 using Meadow.Hardware;
+using Meadow.Peripherals.Displays;
 
 namespace Meadow.Foundation.Displays
 {
     /// <summary>
     /// Represents a WaveShare 5.65" ACeP 7 color e-Paper display
     /// </summary>
-    public class Epd5in65f : EPaperBase, IGraphicsDisplay
+    public class Epd5in65f : EPaperBase, IPixelDisplay
     {
         /// <inheritdoc/>
         public ColorMode ColorMode => ColorMode.Format4bppIndexed;

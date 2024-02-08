@@ -1,6 +1,6 @@
-﻿using Meadow.Foundation.Graphics;
-using Meadow.Foundation.Graphics.Buffers;
+﻿using Meadow.Foundation.Graphics.Buffers;
 using Meadow.Hardware;
+using Meadow.Peripherals.Displays;
 using Meadow.Peripherals.Sensors.Buttons;
 using System;
 using System.Collections.Generic;
@@ -11,7 +11,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
     /// <summary>
     /// Represents an As1115 led driver and key scanner
     /// </summary>
-    public partial class As1115 : IGraphicsDisplay, II2cPeripheral, IDisposable
+    public partial class As1115 : IPixelDisplay, II2cPeripheral, IDisposable
     {
         /// <summary>
         /// Event raised when any key scan button is pressed

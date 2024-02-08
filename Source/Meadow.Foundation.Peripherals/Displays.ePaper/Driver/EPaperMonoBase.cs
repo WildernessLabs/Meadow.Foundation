@@ -1,13 +1,13 @@
-﻿using Meadow.Foundation.Graphics;
-using Meadow.Foundation.Graphics.Buffers;
+﻿using Meadow.Foundation.Graphics.Buffers;
 using Meadow.Hardware;
+using Meadow.Peripherals.Displays;
 
 namespace Meadow.Foundation.Displays
 {
     /// <summary>
     /// Provide an interface for ePaper monochrome displays
     /// </summary>
-    public abstract class EPaperMonoBase : EPaperBase, IGraphicsDisplay
+    public abstract class EPaperMonoBase : EPaperBase, IPixelDisplay
     {
         /// <inheritdoc/>
         public ColorMode ColorMode => ColorMode.Format1bpp;
