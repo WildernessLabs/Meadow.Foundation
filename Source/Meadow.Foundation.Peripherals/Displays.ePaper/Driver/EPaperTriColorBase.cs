@@ -117,7 +117,6 @@ namespace Meadow.Foundation.Displays
         /// <param name="height">The height in pixels</param>
         protected virtual void CreateBuffer(int width, int height)
         {
-            Console.WriteLine($"Creating buffer: {width}x{height}");
             imageBuffer = new Buffer2bppEPaper(width, height);
         }
 
