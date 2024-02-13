@@ -17,9 +17,14 @@ internal class Program
             var frame = bus.Read();
             if (frame != null)
             {
-                Console.WriteLine($"{frame.ID:X8} {BitConverter.ToString(frame.Data)}");
-
-                var j1939 = J1939Frame.FromCanFrame(frame);
+                if (frame is StandardCanFrame scf)
+                {
+                    Console.WriteLine($"{scf.ID:X8} {BitConverter.ToString(frame.Data)}");
+                }
+                else if (frame is ExtendedCanFrame ecf)
+                {
+                    Console.WriteLine($"{ecf.ID:X8} {BitConverter.ToString(frame.Data)}");
+                }
             }
             else
             {
