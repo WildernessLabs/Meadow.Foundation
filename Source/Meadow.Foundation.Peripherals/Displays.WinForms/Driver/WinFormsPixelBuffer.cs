@@ -108,9 +108,13 @@ internal class WinFormsPixelBuffer : IPixelBuffer, IDisposable
                 }
             }
         }
+        catch (ArgumentException)
+        {
+            // NOP - can happen on app shutdown
+        }
         catch (InvalidOperationException)
         {
-            // NOP
+            // NOP - can happen on app shutdown
         }
     }
 
