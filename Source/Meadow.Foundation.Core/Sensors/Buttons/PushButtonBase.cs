@@ -10,6 +10,11 @@ namespace Meadow.Foundation.Sensors.Buttons
     /// </summary>
     public abstract class PushButtonBase : IButton, IDisposable
     {
+        private object eventSyncRoot = new();
+        private EventHandler? pressStarted;
+        private EventHandler? pressEnded;
+        private EventHandler? clicked;
+
         /// <summary>
         /// Default threshold for LongClicked events
         /// </summary>
@@ -18,17 +23,85 @@ namespace Meadow.Foundation.Sensors.Buttons
         /// <summary>
         /// Raised when a press starts
         /// </summary>
-        public event EventHandler PressStarted = default!;
+        public event EventHandler? PressStarted
+        {
+            add
+            {
+                if (DigitalIn is IDigitalInterruptPort dip)
+                {
+                    if (dip.InterruptMode == InterruptMode.None)
+                    {
+                        throw new ArgumentException("To receive a PressStarted event, you must have an interrupt enabled");
+                    }
+                }
+                lock (eventSyncRoot)
+                {
+                    pressStarted += value;
+                }
+            }
+            remove
+            {
+                lock (eventSyncRoot)
+                {
+                    pressStarted -= value;
+                }
+            }
+        }
 
         /// <summary>
         /// Raised when a press ends
         /// </summary>
-        public event EventHandler PressEnded = default!;
-
+        public event EventHandler PressEnded
+        {
+            add
+            {
+                if (DigitalIn is IDigitalInterruptPort dip)
+                {
+                    if (dip.InterruptMode != InterruptMode.EdgeBoth)
+                    {
+                        throw new ArgumentException("To receive a PressEnded event, you must have both interrupts enabled");
+                    }
+                }
+                lock (eventSyncRoot)
+                {
+                    pressEnded += value;
+                }
+            }
+            remove
+            {
+                lock (eventSyncRoot)
+                {
+                    pressEnded -= value;
+                }
+            }
+        }
         /// <summary>
         /// Raised when the button is released after being pressed (for shorter than LongClickedThreshold, if set)
         /// </summary>
-        public event EventHandler Clicked = default!;
+        public event EventHandler Clicked
+        {
+            add
+            {
+                if (DigitalIn is IDigitalInterruptPort dip)
+                {
+                    if (dip.InterruptMode != InterruptMode.EdgeBoth)
+                    {
+                        throw new ArgumentException("To receive a Clicked event, you must have both interrupts enabled");
+                    }
+                }
+                lock (eventSyncRoot)
+                {
+                    clicked += value;
+                }
+            }
+            remove
+            {
+                lock (eventSyncRoot)
+                {
+                    clicked -= value;
+                }
+            }
+        }
 
         /// <summary>
         /// Raised when the button is released after being pressed for longer than LongClickedThreshold
@@ -122,7 +195,7 @@ namespace Meadow.Foundation.Sensors.Buttons
         /// </summary>
         protected virtual void RaiseClicked()
         {
-            Clicked?.Invoke(this, EventArgs.Empty);
+            clicked?.Invoke(this, EventArgs.Empty);
         }
 
         /// <summary>
@@ -130,7 +203,7 @@ namespace Meadow.Foundation.Sensors.Buttons
         /// </summary>
         protected virtual void RaisePressStarted()
         {
-            PressStarted?.Invoke(this, EventArgs.Empty);
+            pressStarted?.Invoke(this, EventArgs.Empty);
         }
 
         /// <summary>
@@ -138,7 +211,7 @@ namespace Meadow.Foundation.Sensors.Buttons
         /// </summary>
         protected virtual void RaisePressEnded()
         {
-            PressEnded?.Invoke(this, EventArgs.Empty);
+            pressEnded?.Invoke(this, EventArgs.Empty);
         }
 
         /// <summary>

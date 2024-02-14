@@ -19,6 +19,7 @@ namespace Meadow.Foundation.Sensors.Buttons
         /// </summary>
         public static readonly TimeSpan DefaultGlitchDuration = TimeSpan.FromMilliseconds(50);
 
+
         /// <summary>
         /// This duration controls the debounce filter. It also has the effect
         /// of rate limiting clicks. Decrease this time to allow users to click
