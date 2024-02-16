@@ -2,7 +2,7 @@
 using Meadow.Units;
 using System;
 using System.Runtime.InteropServices;
-using static Meadow.Foundation.ICs.IOExpanders.Ft232h;
+using static Meadow.Foundation.ICs.IOExpanders.Ft232h_old;
 using static Meadow.Foundation.ICs.IOExpanders.Native;
 
 namespace Meadow.Foundation.ICs.IOExpanders;
@@ -153,7 +153,7 @@ public sealed class Ft232SpiBus : IFt232Bus, ISpiBus, IDisposable
     private SpiChannelConfig CreateChannelConfig(SpiClockConfiguration config)
     {
         // for now we support CS on D3 and that's it
-        Ft232h.SpiConfigOptions opts = SpiConfigOptions.CS_ACTIVELOW | SpiConfigOptions.CS_DBUS3;
+        Ft232h_old.SpiConfigOptions opts = SpiConfigOptions.CS_ACTIVELOW | SpiConfigOptions.CS_DBUS3;
 
         switch (config.SpiMode)
         {

@@ -137,7 +137,7 @@ internal class MpsseImpl : IFtdiImpl
 
         if (_activeBus == null)
         {
-            var bus = CreateSpiBus(channel, Ft232h.DefaultClockConfiguration);
+            var bus = CreateSpiBus(channel, Ft232h_old.DefaultClockConfiguration);
             _spiBusAutoCreated = true;
             _activeBus = bus as IFt232Bus;
         }
@@ -156,7 +156,7 @@ internal class MpsseImpl : IFtdiImpl
 
         if (_activeBus == null)
         {
-            var bus = CreateSpiBus(channel, Ft232h.DefaultClockConfiguration);
+            var bus = CreateSpiBus(channel, Ft232h_old.DefaultClockConfiguration);
             _spiBusAutoCreated = true;
             _activeBus = bus as IFt232Bus;
         }

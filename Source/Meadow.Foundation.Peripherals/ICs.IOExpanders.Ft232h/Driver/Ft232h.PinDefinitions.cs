@@ -7,7 +7,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
     /// <summary>
     /// Represents the pin definitions for the Ft232h IC.
     /// </summary>
-    public partial class Ft232h
+    public partial class Ft232h_old
     {
         /// <summary>
         /// Defines the pin definitions for the Ft232h IC.
@@ -37,7 +37,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// Creates a new PinDefinitions object.
             /// </summary>
             /// <param name="controller">The Ft232h controller associated with the pins.</param>
-            internal PinDefinitions(Ft232h controller)
+            internal PinDefinitions(Ft232h_old controller)
             {
                 UseMpsseKeys = controller.UsingMpsse;
                 Controller = controller;
