@@ -1,7 +1,8 @@
-﻿using Meadow.Units;
+﻿using Meadow.Hardware;
+using Meadow.Units;
 using System;
 
-namespace Meadow.Hardware
+namespace Meadow.Foundation
 {
     /// <summary>
     /// Helper class for SPI communications, handles registers, endian, etc.
@@ -17,7 +18,7 @@ namespace Meadow.Hardware
         /// <summary>
         /// The chip select mode (active high or active low)
         /// </summary>
-        readonly ChipSelectMode chipSelectMode;
+        private readonly ChipSelectMode chipSelectMode;
 
         /// <summary>
         /// the ISpiBus object
@@ -52,7 +53,6 @@ namespace Meadow.Hardware
         /// <param name="chipSelect">The chip select port</param>
         /// <param name="busSpeed">The SPI bus speed</param>
         /// <param name="busMode">The SPI bus mode (0-3)</param>
-        /// <param name="readBufferSize">The size of the read buffer in bytes</param>
         /// <param name="writeBufferSize">The size of the write buffer in bytes</param>
         /// <param name="csMode">The chip select mode, active high or active low</param>
         public SpiCommunications(
@@ -60,7 +60,7 @@ namespace Meadow.Hardware
             IDigitalOutputPort? chipSelect,
             Frequency busSpeed,
             SpiClockConfiguration.Mode busMode = SpiClockConfiguration.Mode.Mode0,
-            int readBufferSize = 8, int writeBufferSize = 8,
+            int writeBufferSize = 8,
             ChipSelectMode csMode = ChipSelectMode.ActiveLow)
         {
             Bus = bus;
@@ -69,7 +69,13 @@ namespace Meadow.Hardware
             ChipSelect = chipSelect;
             chipSelectMode = csMode;
             WriteBuffer = new byte[writeBufferSize];
-            ReadBuffer = new byte[readBufferSize];
+            ReadBuffer = new byte[2];
+
+            // de-assert the chip select
+            if (chipSelect != null)
+            {
+                chipSelect.State = (chipSelectMode == ChipSelectMode.ActiveLow) ? true : false;
+            }
         }
 
         /// <summary>
@@ -129,7 +135,7 @@ namespace Meadow.Hardware
             }
             else
             {
-                return (ushort)(ReadBuffer.Span[0] << 8 | ReadBuffer.Span[1]);
+                return (ushort)((ReadBuffer.Span[0] << 8) | ReadBuffer.Span[1]);
             }
         }
 
@@ -219,7 +225,7 @@ namespace Meadow.Hardware
             {
                 throw new ArgumentException("Data to write is too large for the write buffer. " +
                     "Must be less than WriteBuffer.Length + 1 (to allow for address). " +
-                    "Instantiate this class with a larger WriteBuffer, or send a smaller" +
+                    "Instantiate this class with a larger WriteBuffer, or send a smaller " +
                     "amount of data to fix.");
             }
 
@@ -262,7 +268,7 @@ namespace Meadow.Hardware
         /// Exchange data over the SPI bus
         /// </summary>
         /// <param name="writeBuffer">The buffer holding the data to write</param>
-        /// <param name="readBuffer">The buffer to receieve data</param>
+        /// <param name="readBuffer">The buffer to receive data</param>
         /// <param name="duplex">The duplex mode - half or full</param>
         public virtual void Exchange(Span<byte> writeBuffer, Span<byte> readBuffer, DuplexType duplex = DuplexType.Half)
         {

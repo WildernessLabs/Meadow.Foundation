@@ -8,9 +8,6 @@
     <OutputType>Library</OutputType>
     <AssemblyName>App</AssemblyName>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-  </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="BitMiracle.LibJpeg.NET" Version="1.5.324" />
   </ItemGroup>

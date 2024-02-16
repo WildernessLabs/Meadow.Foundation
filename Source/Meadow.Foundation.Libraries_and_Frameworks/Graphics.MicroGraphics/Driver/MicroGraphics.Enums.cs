@@ -49,7 +49,7 @@
         /// </summary>
         Left,
         /// <summary>
-        /// Horizontally centered, X is horizonally centered 
+        /// Horizontally centered, X is horizontally centered 
         /// </summary>
         Center,
         /// <summary>

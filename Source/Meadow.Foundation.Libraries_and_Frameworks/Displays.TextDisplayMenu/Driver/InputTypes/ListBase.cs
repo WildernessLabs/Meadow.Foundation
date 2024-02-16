@@ -8,9 +8,9 @@ namespace Meadow.Foundation.Displays.UI.InputTypes
     public abstract class ListBase : InputBase
     {
         /// <summary>
-        /// List choices
+        /// List of choices for the input
         /// </summary>
-        protected string[] choices;
+        protected string[] choices = new string[0];
 
         /// <summary>
         /// Selected index in the list
@@ -20,9 +20,12 @@ namespace Meadow.Foundation.Displays.UI.InputTypes
         /// <summary>
         /// The value changed event handler
         /// </summary>
-        public override event ValueChangedHandler ValueChanged;
+        public override event ValueChangedHandler ValueChanged = default!;
 
-        string OutputDisplay
+        /// <summary>
+        /// The output display text
+        /// </summary>
+        protected string OutputDisplay
         {
             get
             {
@@ -45,19 +48,18 @@ namespace Meadow.Foundation.Displays.UI.InputTypes
 
             display.ClearLines();
             display.WriteLine("Select", 0);
-            display.SetCursorPosition(0, 1);
 
             ParseValue(currentValue);
             UpdateInputLine(OutputDisplay);
         }
 
         /// <summary>
-        /// Send a Next input to the item
+        /// Scroll to the next item in the list
         /// </summary>
         /// <returns>true</returns>
         public override bool Next()
         {
-            if(selectedIndex < choices.Length - 1)
+            if (selectedIndex < choices.Length - 1)
             {
                 selectedIndex++;
                 UpdateInputLine(OutputDisplay);
@@ -66,7 +68,7 @@ namespace Meadow.Foundation.Displays.UI.InputTypes
         }
 
         /// <summary>
-        /// Send a Select input to the item
+        /// Select the current item in the list
         /// </summary>
         /// <returns>true</returns>
         public override bool Select()
@@ -76,12 +78,22 @@ namespace Meadow.Foundation.Displays.UI.InputTypes
         }
 
         /// <summary>
-        /// Send a Previous input to the item
+        /// Select the current item in the list
+        /// </summary>
+        /// <returns>true</returns>
+        public override bool Back()
+        {
+            ValueChanged(this, new ValueChangedEventArgs(itemID, choices[selectedIndex]));
+            return true;
+        }
+
+        /// <summary>
+        /// Scroll to the previous item in the list
         /// </summary>
         /// <returns>true</returns>
         public override bool Previous()
         {
-            if(selectedIndex > 0)
+            if (selectedIndex > 0)
             {
                 selectedIndex--;
                 UpdateInputLine(OutputDisplay);
@@ -97,9 +109,9 @@ namespace Meadow.Foundation.Displays.UI.InputTypes
         {
             if (value == null || value.ToString() == string.Empty) return;
 
-            for (int i = 0; i< choices.Length; i++)
+            for (int i = 0; i < choices.Length; i++)
             {
-                if(choices[i] == value.ToString())
+                if (choices[i] == value.ToString())
                 {
                     selectedIndex = i;
                     break;

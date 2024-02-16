@@ -2,15 +2,17 @@
 
 **Hmc5883 / Qmc5883 I2C digital compass**
 
-The **Hmc5883** library is designed for the [Wilderness Labs](www.wildernesslabs.co) Meadow .NET IoT platform and is part of [Meadow.Foundation](https://developer.wildernesslabs.co/Meadow/Meadow.Foundation/)
+The **Hmc5883** library is designed for the [Wilderness Labs](www.wildernesslabs.co) Meadow .NET IoT platform and is part of [Meadow.Foundation](https://developer.wildernesslabs.co/Meadow/Meadow.Foundation/).
 
 The **Meadow.Foundation** peripherals library is an open-source repository of drivers and libraries that streamline and simplify adding hardware to your C# .NET Meadow IoT application.
 
-For more information on developing for Meadow, visit [developer.wildernesslabs.co](http://developer.wildernesslabs.co/), to view all Wilderness Labs open-source projects, including samples, visit [github.com/wildernesslabs](https://github.com/wildernesslabs/)
+For more information on developing for Meadow, visit [developer.wildernesslabs.co](http://developer.wildernesslabs.co/).
+
+To view all Wilderness Labs open-source projects, including samples, visit [github.com/wildernesslabs](https://github.com/wildernesslabs/).
 
 ## Usage
 
-```
+```csharp
 Hmc5883 sensor;
 
 public override Task Initialize()
@@ -20,7 +22,8 @@ public override Task Initialize()
     sensor = new Hmc5883(Device.CreateI2cBus());
 
     // classical .NET events can also be used:
-    sensor.Updated += (sender, result) => {
+    sensor.Updated += (sender, result) =>
+    {
         Resolver.Log.Info($"Direction: [X:{result.New.X:N2}," +
             $"Y:{result.New.Y:N2}," +
             $"Z:{result.New.Z:N2}]");
@@ -33,8 +36,10 @@ public override Task Initialize()
         handler: result => Resolver.Log.Info($"Observer: [x] changed by threshold; new [x]: X:{Hmc5883.DirectionToHeading(result.New):N2}," +
                 $" old: X:{((result.Old != null) ? Hmc5883.DirectionToHeading(result.Old.Value) : "n/a"):N2} degrees"),
         // only notify if there's a greater than 5° of heading change
-        filter: result => {
-            if (result.Old is { } old) { //c# 8 pattern match syntax. checks for !null and assigns var.
+        filter: result =>
+        {
+            if (result.Old is { } old)
+            {
                 return (Hmc5883.DirectionToHeading(result.New - old) > new Azimuth(5));
             }
             return false;
@@ -59,3 +64,13 @@ public async override Task Run()
 }
 
 ```
+## How to Contribute
+
+- **Found a bug?** [Report an issue](https://github.com/WildernessLabs/Meadow_Issues/issues)
+- Have a **feature idea or driver request?** [Open a new feature request](https://github.com/WildernessLabs/Meadow_Issues/issues)
+- Want to **contribute code?** Fork the [Meadow.Foundation](https://github.com/WildernessLabs/Meadow.Foundation) repository and submit a pull request against the `develop` branch
+
+
+## Need Help?
+
+If you have questions or need assistance, please join the Wilderness Labs [community on Slack](http://slackinvite.wildernesslabs.co/).

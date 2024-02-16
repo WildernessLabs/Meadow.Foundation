@@ -1,8 +1,8 @@
-﻿using System;
-using System.Threading.Tasks;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Light;
+using System;
+using System.Threading.Tasks;
 
 namespace Sensors.Light.Veml7700_Sample
 {
@@ -18,7 +18,7 @@ namespace Sensors.Light.Veml7700_Sample
 
             sensor = new Veml7700(Device.CreateI2cBus());
             sensor.DataSource = Veml7700.SensorTypes.Ambient;
-            
+
             sensor.RangeExceededHigh += (s, a) => Resolver.Log.Info("Too bright to measure");
             sensor.RangeExceededLow += (s, a) => Resolver.Log.Info("Too dim to measure");
 
@@ -37,7 +37,7 @@ namespace Sensors.Light.Veml7700_Sample
 
             sensor.StartUpdating(TimeSpan.FromSeconds(1));
         }
-    
+
         //<!=SNOP=>
     }
 }

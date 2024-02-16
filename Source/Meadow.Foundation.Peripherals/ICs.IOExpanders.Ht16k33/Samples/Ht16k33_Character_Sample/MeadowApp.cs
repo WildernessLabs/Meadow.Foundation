@@ -17,10 +17,10 @@ namespace ICs.IOExpanders.HT16K33_Sample
             Resolver.Log.Info("Initialize...");
             ht16k33 = new Ht16k33(Device.CreateI2cBus());
 
-            return base.Initialize();
+            return Task.CompletedTask;
         }
 
-        public override async Task Run()
+        public override Task Run()
         {
             ht16k33.Set14SegmentDisplay('F', 0);
             ht16k33.Set14SegmentDisplay('7', 1);
@@ -28,6 +28,7 @@ namespace ICs.IOExpanders.HT16K33_Sample
             ht16k33.Set14SegmentDisplay('2', 3);
 
             ht16k33.UpdateDisplay();
+            return Task.CompletedTask;
         }
 
         //<!=SNOP=>

@@ -24,7 +24,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// <summary>
             /// The pin controller
             /// </summary>
-            public IPinController Controller { get; set; }
+            public IPinController? Controller { get; set; }
 
             /// <summary>
             /// Create a new PinDefinitions object

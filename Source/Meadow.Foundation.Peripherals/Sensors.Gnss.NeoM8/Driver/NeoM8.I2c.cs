@@ -16,16 +16,19 @@ namespace Meadow.Foundation.Sensors.Gnss
         /// <summary>
         /// I2C Communication bus used to communicate with the peripheral
         /// </summary>
-        protected II2cCommunications i2cComms;
+        protected II2cCommunications? i2cComms;
+
         private readonly Memory<byte> i2cBuffer = new byte[BUFFER_SIZE];
-        private readonly IDigitalOutputPort resetPort;
-        private readonly IDigitalInputPort ppsPort;
+        private readonly IDigitalOutputPort? resetPort;
+        private readonly IDigitalInputPort? ppsPort;
 
         /// <summary>
         /// Create a new NeoM8 object using I2C
         /// </summary>
-        public NeoM8(II2cBus i2cBus, byte address = (byte)Addresses.Default, IPin resetPin = null, IPin ppsPin = null)
+        public NeoM8(II2cBus i2cBus, byte address = (byte)Addresses.Default, IPin? resetPin = null, IPin? ppsPin = null)
         {
+            createdPorts = true;
+
             if (resetPin != null)
             {
                 resetPort = resetPin.CreateDigitalOutputPort(true);
@@ -42,7 +45,7 @@ namespace Meadow.Foundation.Sensors.Gnss
         /// <summary>
         /// Create a new NeoM8 object using I2C
         /// </summary>
-        public NeoM8(II2cBus i2cBus, byte address = (byte)Addresses.Default, IDigitalOutputPort resetPort = null, IDigitalInputPort ppsPort = null)
+        public NeoM8(II2cBus i2cBus, byte address = (byte)Addresses.Default, IDigitalOutputPort? resetPort = null, IDigitalInputPort? ppsPort = null)
         {
             ResetPort = resetPort;
             PulsePerSecondPort = ppsPort;
@@ -68,13 +71,15 @@ namespace Meadow.Foundation.Sensors.Gnss
 
         private async Task StartUpdatingI2c()
         {
+            cts = new CancellationTokenSource();
+
             var t = new Task(() =>
             {
                 int len;
 
-                while (true)
+                while (cts.IsCancellationRequested == false)
                 {
-                    len = i2cComms.ReadRegisterAsUShort(0xFD, ByteOrder.BigEndian);
+                    len = i2cComms!.ReadRegisterAsUShort(0xFD, ByteOrder.BigEndian);
 
                     if (len > 0)
                     {
@@ -83,7 +88,7 @@ namespace Meadow.Foundation.Sensors.Gnss
                             var data = i2cBuffer.Slice(0, Math.Min(len, BUFFER_SIZE)).Span;
 
                             i2cComms.ReadRegister(0xFF, data);
-                            messageProcessor.Process(data.ToArray());
+                            messageProcessor?.Process(data.ToArray());
                         }
                     }
                     Thread.Sleep(COMMS_SLEEP_MS);
@@ -91,6 +96,11 @@ namespace Meadow.Foundation.Sensors.Gnss
             }, TaskCreationOptions.LongRunning);
             t.Start();
             await t;
+        }
+
+        private void StopUpdatingI2c()
+        {
+            cts?.Cancel();
         }
     }
 }

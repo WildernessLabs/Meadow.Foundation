@@ -1,5 +1,4 @@
-﻿using Meadow.Peripherals.Sensors;
-using System;
+﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -10,7 +9,7 @@ namespace Meadow.Foundation
     /// </summary>
     /// <typeparam name="UNIT"></typeparam>
     public abstract class PollingSensorBase<UNIT>
-        : SamplingSensorBase<UNIT>, ISamplingSensor<UNIT>
+        : SamplingSensorBase<UNIT>
         where UNIT : struct
     {
         /// <summary>
@@ -28,7 +27,7 @@ namespace Meadow.Foundation
         {
             lock (samplingLock)
             {
-                if (IsSampling) { return; }
+                if (IsSampling && updateInterval == UpdateInterval) { return; }
 
                 IsSampling = true;
 

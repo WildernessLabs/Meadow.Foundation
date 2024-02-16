@@ -8,7 +8,7 @@ namespace Meadow.Foundation.Sensors.Environmental
     /// </summary>
     public struct ParticulateReading
     {
-        private byte[] _data;
+        private readonly byte[] _data;
 
         internal ParticulateReading(byte[] rawData, int offset)
         {

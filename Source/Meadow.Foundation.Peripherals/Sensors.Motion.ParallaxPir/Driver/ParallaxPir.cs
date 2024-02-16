@@ -4,63 +4,76 @@ using System;
 namespace Meadow.Foundation.Sensors.Motion
 {
     /// <summary>
-    /// Create a new Parallax PIR object.
+    /// Represents a Parallax Passive Infrared (PIR) motion sensor.
     /// </summary>
-    public class ParallaxPir
+    public class ParallaxPir : IDisposable
     {
         /// <summary>
-        /// Digital input port
+        /// Digital input port connected to the PIR sensor.
         /// </summary>
-        private readonly IDigitalInterruptPort _digitalInputPort;
+        private readonly IDigitalInterruptPort digitalInputPort;
 
         /// <summary>
-        /// Delgate for the motion start and end events.
+        /// Delegate for motion start and end events.
         /// </summary>
         public delegate void MotionChange(object sender);
 
         /// <summary>
         /// Event raised when motion is detected.
         /// </summary>
-        public event MotionChange OnMotionStart;
+        public event MotionChange OnMotionStart = default!;
 
         /// <summary>
-        /// Event raised when the PIR indicates that there is not longer any motion.
+        /// Event raised when the PIR sensor indicates that there is no longer any motion.
         /// </summary>
-        public event MotionChange OnMotionEnd;
+        public event MotionChange OnMotionEnd = default!;
 
         /// <summary>
-        /// Create a new Parallax PIR object connected to an input pin and IO Device.
+        /// Gets a value indicating whether the object is disposed.
         /// </summary>
-        /// <param name="pin"></param>
-        /// <param name="interruptMode"></param>
-        /// <param name="resistorMode"></param>
+        public bool IsDisposed { get; private set; }
+
+        /// <summary>
+        /// Gets a value indicating whether the peripheral port(s) were created by the object.
+        /// </summary>
+        readonly bool createdPort = false;
+
+        /// <summary>
+        /// Creates a new instance of the Parallax PIR sensor connected to an input pin with specified interrupt and resistor modes.
+        /// </summary>
+        /// <param name="pin">The input pin to which the PIR sensor is connected.</param>
+        /// <param name="interruptMode">The interrupt mode for the input pin.</param>
+        /// <param name="resistorMode">The resistor mode for the input pin.</param>
         public ParallaxPir(IPin pin, InterruptMode interruptMode, ResistorMode resistorMode) :
             this(pin.CreateDigitalInterruptPort(interruptMode, resistorMode, TimeSpan.FromMilliseconds(2), TimeSpan.Zero))
-        { }
+        {
+            createdPort = true;
+        }
 
         /// <summary>
-        /// Create a new Parallax PIR object connected to an input pin and IO Device.
+        /// Creates a new instance of the Parallax PIR sensor connected to an input pin with specified interrupt and resistor modes, debounce duration, and glitch filter cycle count.
         /// </summary>
-        /// <param name="pin"></param>
-        /// <param name="interruptMode"></param>
-        /// <param name="resistorMode"></param>
-        /// <param name="debounceDuration"></param>
-        /// <param name="glitchFilterCycleCount"></param>
+        /// <param name="pin">The input pin to which the PIR sensor is connected.</param>
+        /// <param name="interruptMode">The interrupt mode for the input pin.</param>
+        /// <param name="resistorMode">The resistor mode for the input pin.</param>
+        /// <param name="debounceDuration">The duration for input signal debouncing.</param>
+        /// <param name="glitchFilterCycleCount">The glitch filter cycle count for input signal filtering.</param>
         public ParallaxPir(IPin pin, InterruptMode interruptMode, ResistorMode resistorMode, TimeSpan debounceDuration, TimeSpan glitchFilterCycleCount) :
             this(pin.CreateDigitalInterruptPort(interruptMode, resistorMode, debounceDuration, glitchFilterCycleCount))
-        { }
+        {
+            createdPort = true;
+        }
 
         /// <summary>
-        /// Create a new Parallax PIR object connected to a interrupt port.
+        /// Creates a new instance of the Parallax PIR sensor connected to a digital interrupt port.
         /// </summary>
-        /// <param name="digitalInputPort"></param>
+        /// <param name="digitalInputPort">The digital interrupt port connected to the PIR sensor.</param>
         public ParallaxPir(IDigitalInterruptPort digitalInputPort)
         {
-            //TODO: I changed this from Pins.GPIO_NONE to null
             if (digitalInputPort != null)
             {
-                _digitalInputPort = digitalInputPort;
-                _digitalInputPort.Changed += DigitalInputPortChanged;
+                this.digitalInputPort = digitalInputPort;
+                this.digitalInputPort.Changed += DigitalInputPortChanged;
             }
             else
             {
@@ -69,17 +82,41 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         /// <summary>
-        /// Catch the PIR motion change interrupts and work out which interrupt should be raised.
+        /// Handles the PIR motion change interrupts and raises the appropriate events.
         /// </summary>
         private void DigitalInputPortChanged(object sender, DigitalPortResult e)
         {
-            if (_digitalInputPort.State)
+            if (digitalInputPort.State)
             {
                 OnMotionStart?.Invoke(this);
             }
             else
             {
                 OnMotionEnd?.Invoke(this);
+            }
+        }
+
+        /// <inheritdoc/>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Disposes of the object and releases any associated resources.
+        /// </summary>
+        /// <param name="disposing">A value indicating whether the object is being disposed.</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && createdPort)
+                {
+                    digitalInputPort?.Dispose();
+                }
+
+                IsDisposed = true;
             }
         }
     }

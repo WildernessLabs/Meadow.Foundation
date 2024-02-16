@@ -1,29 +1,27 @@
-using Meadow.Foundation.Graphics;
 using Meadow.Foundation.Graphics.Buffers;
 using Meadow.Hardware;
+using Meadow.Peripherals.Displays;
 using Meadow.Units;
 using System;
 using System.Threading;
 
 namespace Meadow.Foundation.Displays
 {
-    public abstract partial class TftSpiBase : IGraphicsDisplay, ISpiPeripheral
+    /// <summary>
+    /// Base class for TFT SPI displays
+    /// These displays typically support 16 and 18 bit, some also include 8, 9, 12 and/or 24 bit color 
+    /// </summary>
+    public abstract partial class TftSpiBase : IPixelDisplay, ISpiPeripheral, IDisposable
     {
         /// <summary>
         /// Temporary buffer that can be used to batch set address window buffer commands
         /// </summary>
         protected byte[] SetAddressBuffer { get; } = new byte[4];
 
-        //these displays typically support 16 & 18 bit, some also include 8, 9, 12 and/or 24 bit color 
-
-        /// <summary>
-        /// The current display color mode
-        /// </summary>
+        /// <inheritdoc/>
         public ColorMode ColorMode => imageBuffer.ColorMode;
 
-        /// <summary>
-        /// The color modes supported by the display
-        /// </summary>
+        /// <inheritdoc/>
         public abstract ColorMode SupportedColorModes { get; }
 
         /// <summary>
@@ -36,19 +34,13 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         public abstract ColorMode DefaultColorMode { get; }
 
-        /// <summary>
-        /// Width of display in pixels
-        /// </summary>
+        /// <inheritdoc/>
         public int Width => imageBuffer.Width;
 
-        /// <summary>
-        /// Height of display in pixels
-        /// </summary>
+        /// <inheritdoc/>
         public int Height => imageBuffer.Height;
 
-        /// <summary>
-        /// The buffer used to store the pixel data for the display
-        /// </summary>
+        /// <inheritdoc/>
         public IPixelBuffer PixelBuffer => imageBuffer;
 
         /// <summary>
@@ -80,6 +72,16 @@ namespace Meadow.Foundation.Displays
         }
 
         /// <summary>
+        /// Is the object disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
+
+        /// <summary>
+        /// Did we create the port(s) used by the peripheral
+        /// </summary>
+        readonly bool createdPorts = false;
+
+        /// <summary>
         /// The data command port
         /// </summary>
         protected IDigitalOutputPort dataCommandPort;
@@ -87,12 +89,12 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// The reset port
         /// </summary>
-        protected IDigitalOutputPort resetPort;
+        protected IDigitalOutputPort? resetPort;
 
         /// <summary>
         /// The chip select port
         /// </summary>
-        protected IDigitalOutputPort chipSelectPort;
+        protected IDigitalOutputPort? chipSelectPort;
 
         /// <summary>
         /// The spi peripheral for the display
@@ -100,9 +102,9 @@ namespace Meadow.Foundation.Displays
         protected ISpiCommunications spiDisplay;
 
         /// <summary>
-        /// The offscreen image buffer
+        /// The off-screen image buffer
         /// </summary>
-        protected IPixelBuffer imageBuffer;
+        protected IPixelBuffer imageBuffer = default!;
 
         /// <summary>
         /// The read buffer
@@ -110,7 +112,7 @@ namespace Meadow.Foundation.Displays
         protected Memory<byte> readBuffer;
 
         /// <summary>
-        /// Data convience bool
+        /// Data convenience bool
         /// </summary>
         protected const bool Data = true;
 
@@ -120,7 +122,7 @@ namespace Meadow.Foundation.Displays
         protected const bool Command = false;
 
         /// <summary>
-        /// Initalize the display
+        /// Initialize the display
         /// </summary>
         protected abstract void Initialize();
 
@@ -168,16 +170,17 @@ namespace Meadow.Foundation.Displays
         /// <param name="width">Width of display in pixels</param>
         /// <param name="height">Height of display in pixels</param>
         /// <param name="colorMode">The color mode to use for the display buffer</param>
-        public TftSpiBase(ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
+        public TftSpiBase(ISpiBus spiBus, IPin? chipSelectPin, IPin dcPin, IPin? resetPin,
             int width, int height, ColorMode colorMode = ColorMode.Format16bppRgb565)
             : this(
                     spiBus,
-                    chipSelectPin?.CreateDigitalOutputPort(),
+                    chipSelectPin?.CreateDigitalOutputPort() ?? null,
                     dcPin.CreateDigitalOutputPort(),
                     resetPin?.CreateDigitalOutputPort(),
                     width, height, colorMode
                   )
         {
+            createdPorts = true;
         }
 
         /// <summary>
@@ -191,9 +194,9 @@ namespace Meadow.Foundation.Displays
         /// <param name="height">Height of display in pixels</param>
         /// <param name="colorMode">The color mode to use for the display buffer</param>
         public TftSpiBase(ISpiBus spiBus,
-            IDigitalOutputPort chipSelectPort,
+            IDigitalOutputPort? chipSelectPort,
             IDigitalOutputPort dataCommandPort,
-            IDigitalOutputPort resetPort,
+            IDigitalOutputPort? resetPort,
             int width, int height,
             ColorMode colorMode = ColorMode.Format16bppRgb565)
         {
@@ -207,6 +210,25 @@ namespace Meadow.Foundation.Displays
         }
 
         /// <summary>
+        /// Set color mode for the display
+        /// </summary>
+        /// <param name="colorMode"></param>
+        /// <exception cref="ArgumentException">throw if the color mode isn't supported by the display</exception>
+        public virtual void SetColorMode(ColorMode colorMode)
+        {
+            if (IsColorTypeSupported(colorMode) == false)
+            {
+                throw new ArgumentException($"color mode {colorMode} not supported");
+            }
+
+            if (imageBuffer.ColorMode != colorMode)
+            {
+                CreateBuffer(colorMode, Width, Height);
+                Initialize();
+            }
+        }
+
+        /// <summary>
         /// Is the color mode supported on this display
         /// </summary>
         /// <param name="colorType">The color mode</param>
@@ -217,7 +239,7 @@ namespace Meadow.Foundation.Displays
         }
 
         /// <summary>
-        /// Create an offscreen buffer for the display
+        /// Create an off-screen buffer for the display
         /// </summary>
         /// <param name="colorMode">The color mode</param>
         /// <param name="width">The width in pixels</param>
@@ -285,7 +307,7 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// Clear the display.
         /// </summary>
-        /// <param name="updateDisplay">Update the dipslay once the buffer has been cleared when true.</param>
+        /// <param name="updateDisplay">Update the display once the buffer has been cleared when true.</param>
         public void Clear(bool updateDisplay = false)
         {
             imageBuffer.Clear();
@@ -309,7 +331,7 @@ namespace Meadow.Foundation.Displays
         }
 
         /// <summary>
-        /// Write a buffer to the display offscreen buffer
+        /// Write a buffer to the display off-screen buffer
         /// </summary>
         /// <param name="x">The x position in pixels to write the buffer</param>
         /// <param name="y">The y position in pixels to write the buffer</param>
@@ -393,12 +415,14 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// Transfer part of the contents of the buffer to the display
         /// bounded by left, top, right and bottom
-        /// Only supported in 16Bpp565 mode
         /// </summary>
         public void Show(int left, int top, int right, int bottom)
         {
-            if (PixelBuffer.ColorMode != ColorMode.Format16bppRgb565)
-            {   //only supported in 565 mode 
+            if (PixelBuffer.ColorMode != ColorMode.Format12bppRgb444 &&
+                PixelBuffer.ColorMode != ColorMode.Format16bppRgb565 &&
+                PixelBuffer.ColorMode != ColorMode.Format24bppRgb888)
+            {
+                //should cover all of these displays but just in case
                 Show();
                 return;
             }
@@ -408,16 +432,28 @@ namespace Meadow.Foundation.Displays
                 return;
             }
 
-            SetAddressWindow(left, top, right, bottom);
+            if (PixelBuffer.ColorMode == ColorMode.Format12bppRgb444)
+            {
+                if (left % 2 != 0)
+                {
+                    left--;
+                }
+                if (right % 2 != 0)
+                {
+                    right++;
+                }
+            }
 
-            var len = (right - left + 1) * sizeof(ushort);
+            SetAddressWindow(left, top, right - 1, bottom - 1);
+
+            var len = (right - left) * PixelBuffer.BitDepth / 8;
 
             dataCommandPort.State = Data;
 
             int sourceIndex;
-            for (int y = top; y <= bottom; y++)
+            for (int y = top; y < bottom; y++)
             {
-                sourceIndex = ((y * Width) + left) * sizeof(ushort);
+                sourceIndex = ((y * Width) + left) * PixelBuffer.BitDepth / 8;
 
                 spiDisplay.Bus.Exchange(
                     chipSelectPort,
@@ -425,6 +461,7 @@ namespace Meadow.Foundation.Displays
                     readBuffer.Span[0..len]);
             }
         }
+
         /// <summary>
         /// Write a byte to the display
         /// </summary>
@@ -541,6 +578,32 @@ namespace Meadow.Foundation.Displays
             if (newWidth != Width)
             {
                 CreateBuffer(ColorMode, newWidth, newHeight);
+            }
+        }
+
+        ///<inheritdoc/>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        /// <param name="disposing">Is disposing</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && createdPorts)
+                {
+                    chipSelectPort?.Dispose();
+                    dataCommandPort?.Dispose();
+                    resetPort?.Dispose();
+                }
+
+                IsDisposed = true;
             }
         }
     }

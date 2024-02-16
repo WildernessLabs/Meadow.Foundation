@@ -10,7 +10,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         public class DigitalOutputPort : DigitalOutputPortBase
         {
-            internal event EventHandler Disposed = delegate { };
+            internal event EventHandler Disposed = default!;
 
             /// <summary>
             /// The port's containing Pcx857x
@@ -28,7 +28,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 State = initialState;
             }
 
-            /// <inheritdoc/>
+            ///<inheritdoc/>
             protected override void Dispose(bool disposing)
             {
                 base.Dispose(disposing);

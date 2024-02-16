@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Meadow.Peripherals.Displays;
+using System;
 using System.Linq;
 
 namespace Meadow.Foundation.Graphics.Buffers
@@ -200,7 +201,7 @@ namespace Meadow.Foundation.Graphics.Buffers
 
         int GetIndexForColor(Color color)
         {
-            if(IndexedColors == null || IndexedColors.All(x => x == null))
+            if (IndexedColors == null || IndexedColors.All(x => x == null))
             {
                 throw new NullReferenceException("No indexed colors assigned");
             }
@@ -208,17 +209,17 @@ namespace Meadow.Foundation.Graphics.Buffers
             int closestIndex = -1;
             double shortestDistance = double.MaxValue;
 
-            for(int i = 0; i < IndexedColors.Length; i++) 
+            for (int i = 0; i < IndexedColors.Length; i++)
             {
                 double distance;
                 if (IndexedColors[i] != null)
                 {
                     distance = GetColorDistance(color, IndexedColors[i]);
-                    if (distance < shortestDistance) 
+                    if (distance < shortestDistance)
                     {
                         shortestDistance = distance;
                         closestIndex = i;
-                        if(distance == 0) { break; } //perfect match
+                        if (distance == 0) { break; } //perfect match
                     }
                 }
             }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Meadow.Peripherals.Displays;
+using System;
 using System.Linq;
 
 namespace Meadow.Foundation.Graphics.Buffers
@@ -6,7 +7,7 @@ namespace Meadow.Foundation.Graphics.Buffers
     /// <summary>
     /// Represents a pixel buffer
     /// </summary>
-    public abstract class PixelBufferBase : IPixelBuffer
+    public abstract class PixelBufferBase : IPixelBuffer, IDisposable
     {
         /// <summary>
         /// Width of buffer in pixels
@@ -24,7 +25,7 @@ namespace Meadow.Foundation.Graphics.Buffers
         public virtual ColorMode ColorMode { get; protected set; }
 
         /// <summary>
-        /// Bitdepth of display as an integer
+        /// Bit depth of display as an integer
         /// </summary>
         public int BitDepth
         {
@@ -59,13 +60,22 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// The buffer that holds the pixel data
         /// The packing structure in buffer-specific
         /// </summary>
-        public byte[] Buffer { get; protected set; }
+        public byte[] Buffer { get; protected set; } = default!;
 
+        /// <summary>
+        /// Did we create the buffer (true) or was it passed in (false)
+        /// </summary>
+        readonly bool createdBuffer = true;
+
+        bool isDisposed = false;
 
         /// <summary>
         /// Create a new PixelBufferBase object
         /// </summary>
-        public PixelBufferBase() { }
+        public PixelBufferBase()
+        {
+            Buffer = new byte[0];
+        }
 
         /// <summary>
         /// Create a new PixelBufferBase object
@@ -74,6 +84,11 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// <param name="height">Height in pixels</param>
         public PixelBufferBase(int width, int height)
         {
+            if (width < 1 || height < 1)
+            {
+                throw new ArgumentException("Width and height must be greater than 0.");
+            }
+
             Width = width;
             Height = height;
             InitializeBuffer();
@@ -87,13 +102,21 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// <param name="buffer">The buffer to hold the pixel data</param>
         public PixelBufferBase(int width, int height, byte[] buffer)
         {
+            if (width < 1 || height < 1)
+            {
+                throw new ArgumentException("Width and height must be greater than 0.");
+            }
+
             Width = width;
             Height = height;
+
             if (buffer.Length != ByteCount)
             {
                 throw new ArgumentException($"Provided buffer length ({buffer.Length}) does not match this buffer's ByteCount ({ByteCount}).");
             }
             Buffer = buffer;
+
+            createdBuffer = false;
         }
 
         /// <summary>
@@ -103,7 +126,7 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// <param name="replaceIfExists">If true, will recreates the buffer if it already exists</param>
         public void InitializeBuffer(bool replaceIfExists = false)
         {
-            if (Buffer == null || replaceIfExists)
+            if (Buffer == null || Buffer.Length == 0 || replaceIfExists)
             {
                 Buffer = new byte[ByteCount];
             }
@@ -114,7 +137,10 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// </summary>
         public virtual void Clear()
         {
-            Array.Clear(Buffer, 0, Buffer.Length);
+            if (Buffer != null)
+            {
+                Array.Clear(Buffer, 0, Buffer.Length);
+            }
         }
 
         /// <summary>
@@ -249,7 +275,7 @@ namespace Meadow.Foundation.Graphics.Buffers
         public T ScaleUp<T>(int scaleFactor)
             where T : PixelBufferBase, new()
         {
-            T newBuffer = new T
+            T newBuffer = new()
             {
                 Width = Width * scaleFactor,
                 Height = Height * scaleFactor,
@@ -272,7 +298,7 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// copy/convert pixel data from existing buffer
         /// </summary>
         /// <typeparam name="T">The buffer type to convert to</typeparam>
-        /// <returns>A pixel buffer derrived from PixelBufferBase</returns>
+        /// <returns>A pixel buffer derived from PixelBufferBase</returns>
         public T ConvertPixelBuffer<T>()
             where T : PixelBufferBase, new()
         {
@@ -281,7 +307,7 @@ namespace Meadow.Foundation.Graphics.Buffers
                 return Clone<T>();
             }
 
-            T newBuffer = new T()
+            T newBuffer = new()
             {
                 Width = Width,
                 Height = Height,
@@ -330,6 +356,32 @@ namespace Meadow.Foundation.Graphics.Buffers
             var bDeltaSquared = Math.Abs(color1.B - color2.B) ^ 2;
 
             return Math.Sqrt(rDeltaSquared + gDeltaSquared + bDeltaSquared);
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        /// <param name="disposing">Is disposing</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!isDisposed)
+            {
+                if (createdBuffer)
+                {
+                    if (disposing)
+                    {
+                        Buffer = new byte[0];
+                    }
+                }
+            }
+            isDisposed = true;
+        }
+
+        ///<inheritdoc/>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }

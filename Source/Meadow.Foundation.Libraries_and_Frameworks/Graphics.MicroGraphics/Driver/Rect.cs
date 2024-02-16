@@ -58,7 +58,7 @@ namespace Meadow.Foundation.Graphics
         public bool IsEmpty => Bottom == 0 && Top == 0 && Left == 0 && Right == 0;
 
         /// <summary>
-        /// Create a new rect struct with inital values
+        /// Create a new rect struct with initial values
         /// </summary>
         /// <param name="left">Left value</param>
         /// <param name="top">Top value</param>
@@ -77,7 +77,7 @@ namespace Meadow.Foundation.Graphics
         /// </summary>
         /// <param name="x">X position</param>
         /// <param name="y">Y position</param>
-        /// <returns>True if the corrindate is within the rect</returns>
+        /// <returns>True if the coordinate is within the rect</returns>
         public bool Contains(int x, int y)
         {
             return (x >= Left &&
@@ -107,8 +107,8 @@ namespace Meadow.Foundation.Graphics
         }
 
         /// <summary>
-        /// Increase the size in both dimentions
-        /// This makes the rect wider by increasign the right value
+        /// Increase the size in both dimensions
+        /// This makes the rect wider by increasing the right value
         /// And taller by increasing the top value
         /// </summary>
         /// <param name="width">The amount to increase horizontally (right)</param>
@@ -120,8 +120,8 @@ namespace Meadow.Foundation.Graphics
         }
 
         /// <summary>
-        /// Increase the size in both dimentions
-        /// This makes the rect wider by increasign the right value
+        /// Increase the size in both dimensions
+        /// This makes the rect wider by increasing the right value
         /// And taller by increasing the top value
         /// </summary>
         /// <param name="size">The amount to increase</param>
@@ -143,7 +143,7 @@ namespace Meadow.Foundation.Graphics
         }
 
         /// <summary>
-        /// Does a rect interect with this rect
+        /// Does a rect intersect with this rect
         /// </summary>
         /// <param name="rect">True if the rects overlap any amount</param>
         /// <returns></returns>
@@ -154,14 +154,14 @@ namespace Meadow.Foundation.Graphics
                    Contains(rect.Right, rect.Top) ||
                    Contains(rect.Right, rect.Bottom);
         }
-        
+
         /// <summary>
-        /// Combine two rects (take the minumum values in all directions)
+        /// Combine two rects (take the minimum values in all directions)
         /// </summary>
-        /// <param name="rect">The rect to inersect</param>
+        /// <param name="rect">The rect to intersect</param>
         public void Intersect(Rect rect)
         {
-            if(Intersects(rect) == false)
+            if (Intersects(rect) == false)
             {
                 Left = 0;
                 Right = 0;
@@ -284,7 +284,7 @@ namespace Meadow.Foundation.Graphics
         }
 
         /// <summary>
-        /// Get a string represention of the rect values
+        /// Get a string representation of the rect values
         /// </summary>
         /// <returns>The string with left, top, right and bottom values</returns>
         public override string ToString()

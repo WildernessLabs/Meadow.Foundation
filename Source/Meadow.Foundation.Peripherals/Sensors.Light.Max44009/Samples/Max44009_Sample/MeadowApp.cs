@@ -1,8 +1,8 @@
-﻿using System;
-using System.Threading.Tasks;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Light;
+using System;
+using System.Threading.Tasks;
 
 namespace Sensors.Light.Max44009_Sample
 {
@@ -20,11 +20,13 @@ namespace Sensors.Light.Max44009_Sample
 
             // Example that uses an IObservable subscription to only be notified when the filter is satisfied
             var consumer = Max44009.CreateObserver(
-                handler: result => Resolver.Log.Info($"Observer: filter satisifed: {result.New.Lux:N2}Lux, old: {result.Old?.Lux:N2}Lux"),
+                handler: result => Resolver.Log.Info($"Observer: filter satisfied: {result.New.Lux:N2}Lux, old: {result.Old?.Lux:N2}Lux"),
 
                 // only notify if the visible light changes by 100 lux (put your hand over the sensor to trigger)
-                filter: result => {
-                    if (result.Old is { } old) { //c# 8 pattern match syntax. checks for !null and assigns var.
+                filter: result =>
+                {
+                    if (result.Old is { } old)
+                    {
                         // returns true if > 100lux change
                         return (result.New - old).Abs().Lux > 100;
                     }

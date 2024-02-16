@@ -29,7 +29,7 @@
             /// <summary>
             /// Start measurement at 1lx resolution once
             /// Measurement Time is typically 120ms
-            /// Automatically set to powerdown mode after measurement
+            /// Automatically set to power-down mode after measurement
             /// </summary>
             OneTimeHighResolutionMode = 0b_0010_0000,
 

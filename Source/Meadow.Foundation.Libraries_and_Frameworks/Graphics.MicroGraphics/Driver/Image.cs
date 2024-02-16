@@ -1,4 +1,5 @@
 ﻿using Meadow.Foundation.Graphics.Buffers;
+using Meadow.Peripherals.Displays;
 using System;
 using System.IO;
 using System.Linq;
@@ -13,17 +14,17 @@ namespace Meadow.Foundation.Graphics
         /// <summary>
         /// The image pixel data
         /// </summary>
-        public IPixelBuffer DisplayBuffer { get; private set; }
+        public IPixelBuffer? DisplayBuffer { get; private set; }
 
         /// <summary>
         /// The image width in pixels
         /// </summary>
-        public int Width => DisplayBuffer.Width;
+        public int Width => DisplayBuffer?.Width ?? 0;
 
         /// <summary>
         /// The image height in pixels
         /// </summary>
-        public int Height => DisplayBuffer.Height;
+        public int Height => DisplayBuffer?.Height ?? 0;
 
         /// <summary>
         /// The image bits per pixel
@@ -132,19 +133,23 @@ namespace Meadow.Foundation.Graphics
             var compression = BitConverter.ToInt32(dib, 30 - 14);
             var dataSize = BitConverter.ToInt32(dib, 34 - 14);
 
+            //compression masks
+            uint redMask = 0;
+            uint greenMask = 0;
+            uint blueMask = 0;
+            uint alphaMask = 0;
+
             switch (compression)
             {
                 case 0:
                     // no compression, just pull the data
                     break;
                 case 3:
-                    // not sure what these are used for.  I've seen them on 32 and 24-bit
-                    /*
-                    var redMask = BitConverter.ToInt32(dib, 0x36 - 14);
-                    var greenMask = BitConverter.ToInt32(dib, 0x3a - 14);
-                    var blueMask = BitConverter.ToInt32(dib, 0x3e - 14);
-                    var alphaMask = BitConverter.ToInt32(dib, 0x42 - 14);
-                    */
+                    // BI_BITFIELDS compression
+                    redMask = BitConverter.ToUInt32(dib, 0x36 - 14);
+                    greenMask = BitConverter.ToUInt32(dib, 0x3a - 14);
+                    blueMask = BitConverter.ToUInt32(dib, 0x3e - 14);
+                    alphaMask = BitConverter.ToUInt32(dib, 0x42 - 14);
                     break;
                 default:
                     throw new NotSupportedException("Unsupported bitmap compression");
@@ -161,7 +166,37 @@ namespace Meadow.Foundation.Graphics
 
             // bitmaps are, by default, stored with rows bottom up (though top down is supported)
             // we need to read row-by-row and put these into the pixel buffer
-            if (invertedRows)
+            if (compression == 3)
+            {
+                var index = bytesPerRow * (height - 1);
+                int dataIndex = 0;
+                for (var row = 0; row < height; row++)
+                {
+                    source.Seek(index + dataOffset, SeekOrigin.Begin);
+                    for (var col = 0; col < width; col++)
+                    {
+                        // Read the pixel data
+                        var pixel = new byte[4];
+                        source.Read(pixel, 0, 4);
+
+                        // Apply bit masks to the pixel data
+                        var a = (byte)(pixel[3] & alphaMask >> 24);
+                        var b = (byte)(pixel[0] & redMask >> 16);
+                        var g = (byte)(pixel[1] & greenMask >> 8);
+                        var r = (byte)(pixel[2] & blueMask);
+
+                        // Write the adjusted pixel data to the output buffer
+                        pixelData[dataIndex++] = r;
+                        pixelData[dataIndex++] = g;
+                        pixelData[dataIndex++] = b;
+                        pixelData[dataIndex++] = a;
+                    }
+
+                    if (rowPad > 0) source.Seek(rowPad, SeekOrigin.Current);
+                    index -= bytesPerRow;
+                }
+            }
+            else if (invertedRows) //uncompressed inverted
             {
                 var index = 0;
                 for (var row = 0; row < height; row++)
@@ -172,7 +207,7 @@ namespace Meadow.Foundation.Graphics
                     index += bytesPerRow;
                 }
             }
-            else
+            else //normal uncompressed
             {
                 var index = bytesPerRow * (height - 1);
                 for (var row = 0; row < height; row++)

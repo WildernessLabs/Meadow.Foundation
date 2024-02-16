@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Meadow.Peripherals.Displays;
+using System;
 
 namespace Meadow.Foundation.Graphics.Buffers
 {
@@ -108,7 +109,7 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// <exception cref="ArgumentOutOfRangeException">Throws an exception if fill area is beyond the buffer bounds</exception>
         public override void Fill(int x, int y, int width, int height, Color color)
         {
-            if(x < 0 || x + width > Width ||
+            if (x < 0 || x + width > Width ||
                 y < 0 || y + height > Height)
             {
                 throw new ArgumentOutOfRangeException();
@@ -118,14 +119,14 @@ namespace Meadow.Foundation.Graphics.Buffers
             int index = (y * Width + x) * 2 - 1;
 
             //fill the first line
-            for(int i = 0; i < width; i++)
+            for (int i = 0; i < width; i++)
             {
                 Buffer[++index] = value[0];
                 Buffer[++index] = value[1];
             }
 
             //array copy the rest
-            for(int j = 0; j < height - 1; j++)
+            for (int j = 0; j < height - 1; j++)
             {
                 Array.Copy(Buffer,
                     (y + j) * Width * 2 + x * 2,
@@ -140,7 +141,7 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// </summary>
         /// <param name="color">The color as a ushort</param>
         public void Clear(ushort color)
-        { 
+        {
             // split the color in to two byte values
             Buffer[0] = (byte)(color >> 8);
             Buffer[1] = (byte)color;

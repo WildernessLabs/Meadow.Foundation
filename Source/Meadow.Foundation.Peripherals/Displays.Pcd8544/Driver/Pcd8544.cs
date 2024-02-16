@@ -1,6 +1,6 @@
-﻿using Meadow.Foundation.Graphics;
-using Meadow.Foundation.Graphics.Buffers;
+﻿using Meadow.Foundation.Graphics.Buffers;
 using Meadow.Hardware;
+using Meadow.Peripherals.Displays;
 using Meadow.Units;
 using System;
 
@@ -9,31 +9,21 @@ namespace Meadow.Foundation.Displays
     /// <summary>
     /// Represents a Pcd8544 monochrome display
     /// </summary>
-    public class Pcd8544 : IGraphicsDisplay, ISpiPeripheral
+    public class Pcd8544 : IPixelDisplay, ISpiPeripheral, IDisposable
     {
-        /// <summary>
-        /// Display color mode 
-        /// </summary>
+        /// <inheritdoc/>
         public ColorMode ColorMode => ColorMode.Format1bpp;
 
-        /// <summary>
-        /// The Color mode supported by the display
-        /// </summary>
+        /// <inheritdoc/>
         public ColorMode SupportedColorModes => ColorMode.Format1bpp;
 
-        /// <summary>
-        /// Height of display in pixels
-        /// </summary>
+        /// <inheritdoc/>
         public int Height => 48;
 
-        /// <summary>
-        /// Width of display in pixels
-        /// </summary>
+        /// <inheritdoc/>
         public int Width => 84;
 
-        /// <summary>
-        /// The buffer the holds the pixel data for the display
-        /// </summary>
+        /// <inheritdoc/>
         public IPixelBuffer PixelBuffer => imageBuffer;
 
         /// <summary>
@@ -69,8 +59,19 @@ namespace Meadow.Foundation.Displays
             set => spiComms.BusMode = value;
         }
 
+        /// <summary>
+        /// Is the object disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
+
+        /// <summary>
+        /// Did we create the port(s) used by the peripheral
+        /// </summary>
+        readonly bool createdPorts = false;
+
         readonly IDigitalOutputPort dataCommandPort;
         readonly IDigitalOutputPort resetPort;
+        readonly IDigitalOutputPort? chipSelectPort;
 
         /// <summary>
         /// SPI Communication bus used to communicate with the peripheral
@@ -94,10 +95,11 @@ namespace Meadow.Foundation.Displays
         /// <param name="chipSelectPin">Chip select pin</param>
         /// <param name="dcPin">Data command pin</param>
         /// <param name="resetPin">Reset pin</param>
-        public Pcd8544(ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin) :
-            this(spiBus, chipSelectPin?.CreateDigitalOutputPort(), dcPin.CreateDigitalOutputPort(true),
+        public Pcd8544(ISpiBus spiBus, IPin? chipSelectPin, IPin dcPin, IPin resetPin) :
+            this(spiBus, chipSelectPin?.CreateDigitalOutputPort() ?? null, dcPin.CreateDigitalOutputPort(true),
                 resetPin.CreateDigitalOutputPort(true))
         {
+            createdPorts = true;
         }
 
         /// <summary>
@@ -108,7 +110,7 @@ namespace Meadow.Foundation.Displays
         /// <param name="dataCommandPort">Data command output port</param>
         /// <param name="resetPort">Reset output port</param>
         public Pcd8544(ISpiBus spiBus,
-            IDigitalOutputPort chipSelectPort,
+            IDigitalOutputPort? chipSelectPort,
             IDigitalOutputPort dataCommandPort,
             IDigitalOutputPort resetPort)
         {
@@ -120,7 +122,7 @@ namespace Meadow.Foundation.Displays
             this.dataCommandPort = dataCommandPort;
             this.resetPort = resetPort;
 
-            spiComms = new SpiCommunications(spiBus, chipSelectPort, DefaultSpiBusSpeed, DefaultSpiBusMode);
+            spiComms = new SpiCommunications(spiBus, this.chipSelectPort = chipSelectPort, DefaultSpiBusSpeed, DefaultSpiBusMode);
 
             Initialize();
         }
@@ -266,6 +268,32 @@ namespace Meadow.Foundation.Displays
         public void WriteBuffer(int x, int y, IPixelBuffer displayBuffer)
         {
             imageBuffer.WriteBuffer(x, y, displayBuffer);
+        }
+
+        ///<inheritdoc/>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        /// <param name="disposing">Is disposing</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && createdPorts)
+                {
+                    chipSelectPort?.Dispose();
+                    dataCommandPort?.Dispose();
+                    resetPort?.Dispose();
+                }
+
+                IsDisposed = true;
+            }
         }
     }
 }

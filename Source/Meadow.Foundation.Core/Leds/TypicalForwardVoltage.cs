@@ -16,7 +16,7 @@ namespace Meadow.Foundation.Leds
         /// </summary>
         public static Voltage Green = new Voltage(2.2, Voltage.UnitType.Volts);
         /// <summary>
-        /// Typical forward voltate for a blue led
+        /// Typical forward voltage for a blue led
         /// </summary>
         public static Voltage Blue = new Voltage(3.2, Voltage.UnitType.Volts);
         /// <summary>

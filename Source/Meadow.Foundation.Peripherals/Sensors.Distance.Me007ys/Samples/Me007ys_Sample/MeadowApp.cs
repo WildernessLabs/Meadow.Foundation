@@ -29,20 +29,22 @@ namespace Me007ys_Sample
                 {
                     if (result.Old is { } old)
                     {
-                        return Math.Abs((result.New - old).Centimeters) > 0.5;
+                        return Math.Abs((result.New - old).Centimeters) > 5.0;
                     }
                     return false;
                 }
             );
             me007ys.Subscribe(consumer);
 
-            me007ys.DistanceUpdated += Me007y_DistanceUpdated;
+            me007ys.Updated += Me007y_DistanceUpdated;
 
             return Task.CompletedTask;
         }
 
         public override async Task Run()
         {
+            Resolver.Log.Info("Run...");
+
             var distance = await me007ys.Read();
             Resolver.Log.Info($"Initial distance is: {distance.Centimeters:N1}cm / {distance.Inches:N1}in");
 

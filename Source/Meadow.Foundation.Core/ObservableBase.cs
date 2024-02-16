@@ -35,7 +35,8 @@ namespace Meadow.Foundation
         /// <returns></returns>
         public IDisposable Subscribe(IObserver<IChangeResult<UNIT>> observer)
         {
-            if (!observers.Contains(observer)) {
+            if (!observers.Contains(observer))
+            {
                 observers.Add(observer);
             }
 
@@ -47,8 +48,8 @@ namespace Meadow.Foundation
         /// </summary>
         private class Unsubscriber : IDisposable
         {
-            private List<IObserver<IChangeResult<UNIT>>> observers;
-            private IObserver<IChangeResult<UNIT>> observer;
+            private readonly List<IObserver<IChangeResult<UNIT>>> observers;
+            private readonly IObserver<IChangeResult<UNIT>> observer;
 
             public Unsubscriber(List<IObserver<IChangeResult<UNIT>>> observers, IObserver<IChangeResult<UNIT>> observer)
             {
@@ -66,7 +67,7 @@ namespace Meadow.Foundation
         /// Convenience method to generate a an `FilterableChangeObserver` with
         /// the correct signature.
         /// </summary>
-        /// <param name="handler">The action that is invoked when the filter is satisifed.</param>
+        /// <param name="handler">The action that is invoked when the filter is satisfied.</param>
         /// <param name="filter">An optional filter that determines whether or not the
         /// consumer should be notified.</param>
         /// <returns>A FilterableChangeObserver</returns>

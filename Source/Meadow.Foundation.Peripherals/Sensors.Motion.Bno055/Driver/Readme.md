@@ -2,15 +2,17 @@
 
 **Bosch BNO055 I2C 9 axis absolute orientation sensor**
 
-The **Bno055** library is designed for the [Wilderness Labs](www.wildernesslabs.co) Meadow .NET IoT platform and is part of [Meadow.Foundation](https://developer.wildernesslabs.co/Meadow/Meadow.Foundation/)
+The **Bno055** library is designed for the [Wilderness Labs](www.wildernesslabs.co) Meadow .NET IoT platform and is part of [Meadow.Foundation](https://developer.wildernesslabs.co/Meadow/Meadow.Foundation/).
 
 The **Meadow.Foundation** peripherals library is an open-source repository of drivers and libraries that streamline and simplify adding hardware to your C# .NET Meadow IoT application.
 
-For more information on developing for Meadow, visit [developer.wildernesslabs.co](http://developer.wildernesslabs.co/), to view all Wilderness Labs open-source projects, including samples, visit [github.com/wildernesslabs](https://github.com/wildernesslabs/)
+For more information on developing for Meadow, visit [developer.wildernesslabs.co](http://developer.wildernesslabs.co/).
+
+To view all Wilderness Labs open-source projects, including samples, visit [github.com/wildernesslabs](https://github.com/wildernesslabs/).
 
 ## Usage
 
-```
+```csharp
 Bno055 sensor;
 
 public override Task Initialize()
@@ -58,11 +60,11 @@ public override Task Initialize()
     var consumer = Bno055.CreateObserver(
         handler: result => Resolver.Log.Info($"Observer: [x] changed by threshold; new [x]: X:{result.New.Acceleration3D?.X.MetersPerSecondSquared:N2}, old: X:{result.Old?.Acceleration3D?.X.MetersPerSecondSquared:N2}"),
         // only notify if there's a greater than 1 micro tesla on the Y axis
-        
+
         filter: result =>
         {
             if (result.Old is { } old)
-            { //c# 8 pattern match syntax. checks for !null and assigns var.
+            {
                 return ((result.New.Acceleration3D - old.Acceleration3D)?.Y > new Acceleration(1, AU.MetersPerSecondSquared));
             }
             return false;
@@ -73,7 +75,7 @@ public override Task Initialize()
 }
 
 public async override Task Run()
-{ 
+{
     await ReadConditions();
 
     sensor.StartUpdating(TimeSpan.FromMilliseconds(500));
@@ -115,3 +117,13 @@ protected async Task ReadConditions()
 }
         
 ```
+## How to Contribute
+
+- **Found a bug?** [Report an issue](https://github.com/WildernessLabs/Meadow_Issues/issues)
+- Have a **feature idea or driver request?** [Open a new feature request](https://github.com/WildernessLabs/Meadow_Issues/issues)
+- Want to **contribute code?** Fork the [Meadow.Foundation](https://github.com/WildernessLabs/Meadow.Foundation) repository and submit a pull request against the `develop` branch
+
+
+## Need Help?
+
+If you have questions or need assistance, please join the Wilderness Labs [community on Slack](http://slackinvite.wildernesslabs.co/).

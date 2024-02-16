@@ -2,27 +2,29 @@
 
 **GNSS NMEA parsing library**
 
-The **NmeaProcessor** library is designed for the [Wilderness Labs](www.wildernesslabs.co) Meadow .NET IoT platform and is part of [Meadow.Foundation](https://developer.wildernesslabs.co/Meadow/Meadow.Foundation/)
+The **NmeaProcessor** library is designed for the [Wilderness Labs](www.wildernesslabs.co) Meadow .NET IoT platform and is part of [Meadow.Foundation](https://developer.wildernesslabs.co/Meadow/Meadow.Foundation/).
 
 The **Meadow.Foundation** peripherals library is an open-source repository of drivers and libraries that streamline and simplify adding hardware to your C# .NET Meadow IoT application.
 
-For more information on developing for Meadow, visit [developer.wildernesslabs.co](http://developer.wildernesslabs.co/), to view all Wilderness Labs open-source projects, including samples, visit [github.com/wildernesslabs](https://github.com/wildernesslabs/)
+For more information on developing for Meadow, visit [developer.wildernesslabs.co](http://developer.wildernesslabs.co/).
+
+To view all Wilderness Labs open-source projects, including samples, visit [github.com/wildernesslabs](https://github.com/wildernesslabs/).
 
 ## Usage
 
-```
+```csharp
 List<string> sentences;
 NmeaSentenceProcessor nmeaProcessor;
 
 public override Task Initialize()
 {
     Resolver.Log.Info("Initialize...");
-    
+
     sentences = GetSampleNmeaSentences();
 
     InitDecoders();
 
-    foreach (string sentence in sentences) 
+    foreach (string sentence in sentences)
     {
         Resolver.Log.Info($"About to process:{sentence}");
         nmeaProcessor.ProcessNmeaMessage(sentence);
@@ -44,7 +46,8 @@ void InitDecoders()
     var ggaDecoder = new GgaDecoder();
     Resolver.Log.Info("Created GGA");
     nmeaProcessor.RegisterDecoder(ggaDecoder);
-    ggaDecoder.PositionReceived += (object sender, GnssPositionInfo location) => {
+    ggaDecoder.PositionReceived += (object sender, GnssPositionInfo location) =>
+    {
         Resolver.Log.Info("*********************************************");
         Resolver.Log.Info(location.ToString());
         Resolver.Log.Info("*********************************************");
@@ -53,7 +56,8 @@ void InitDecoders()
     // GLL
     var gllDecoder = new GllDecoder();
     nmeaProcessor.RegisterDecoder(gllDecoder);
-    gllDecoder.GeographicLatitudeLongitudeReceived += (object sender, GnssPositionInfo location) => {
+    gllDecoder.GeographicLatitudeLongitudeReceived += (object sender, GnssPositionInfo location) =>
+    {
         Resolver.Log.Info("*********************************************");
         Resolver.Log.Info(location.ToString());
         Resolver.Log.Info("*********************************************");
@@ -62,7 +66,8 @@ void InitDecoders()
     // GSA
     var gsaDecoder = new GsaDecoder();
     nmeaProcessor.RegisterDecoder(gsaDecoder);
-    gsaDecoder.ActiveSatellitesReceived += (object sender, ActiveSatellites activeSatellites) => {
+    gsaDecoder.ActiveSatellitesReceived += (object sender, ActiveSatellites activeSatellites) =>
+    {
         Resolver.Log.Info("*********************************************");
         Resolver.Log.Info(activeSatellites.ToString());
         Resolver.Log.Info("*********************************************");
@@ -71,7 +76,8 @@ void InitDecoders()
     // RMC (recommended minimum)
     var rmcDecoder = new RmcDecoder();
     nmeaProcessor.RegisterDecoder(rmcDecoder);
-    rmcDecoder.PositionCourseAndTimeReceived += (object sender, GnssPositionInfo positionCourseAndTime) => {
+    rmcDecoder.PositionCourseAndTimeReceived += (object sender, GnssPositionInfo positionCourseAndTime) =>
+    {
         Resolver.Log.Info("*********************************************");
         Resolver.Log.Info(positionCourseAndTime.ToString());
         Resolver.Log.Info("*********************************************");
@@ -81,7 +87,8 @@ void InitDecoders()
     // VTG (course made good)
     var vtgDecoder = new VtgDecoder();
     nmeaProcessor.RegisterDecoder(vtgDecoder);
-    vtgDecoder.CourseAndVelocityReceived += (object sender, CourseOverGround courseAndVelocity) => {
+    vtgDecoder.CourseAndVelocityReceived += (object sender, CourseOverGround courseAndVelocity) =>
+    {
         Resolver.Log.Info("*********************************************");
         Resolver.Log.Info($"{courseAndVelocity}");
         Resolver.Log.Info("*********************************************");
@@ -90,7 +97,8 @@ void InitDecoders()
     // GSV (satellites in view)
     var gsvDecoder = new GsvDecoder();
     nmeaProcessor.RegisterDecoder(gsvDecoder);
-    gsvDecoder.SatellitesInViewReceived += (object sender, SatellitesInView satellites) => {
+    gsvDecoder.SatellitesInViewReceived += (object sender, SatellitesInView satellites) =>
+    {
         Resolver.Log.Info("*********************************************");
         Resolver.Log.Info($"{satellites}");
         Resolver.Log.Info("*********************************************");
@@ -126,3 +134,13 @@ List<string> GetSampleNmeaSentences()
 }
 
 ```
+## How to Contribute
+
+- **Found a bug?** [Report an issue](https://github.com/WildernessLabs/Meadow_Issues/issues)
+- Have a **feature idea or driver request?** [Open a new feature request](https://github.com/WildernessLabs/Meadow_Issues/issues)
+- Want to **contribute code?** Fork the [Meadow.Foundation](https://github.com/WildernessLabs/Meadow.Foundation) repository and submit a pull request against the `develop` branch
+
+
+## Need Help?
+
+If you have questions or need assistance, please join the Wilderness Labs [community on Slack](http://slackinvite.wildernesslabs.co/).

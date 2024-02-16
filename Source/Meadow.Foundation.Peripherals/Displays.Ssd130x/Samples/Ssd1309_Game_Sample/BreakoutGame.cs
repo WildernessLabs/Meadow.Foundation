@@ -4,13 +4,13 @@ namespace Displays.Ssd130x.Ssd1309_Game_Sample
 {
     public class BreakoutGame
     {
-        Random rand = new Random();
+        readonly Random rand = new Random();
 
         public Paddle Paddle { get; private set; }
         public Ball Ball { get; private set; }
         public Block[] Blocks { get; private set; }
 
-        int width, height;
+        readonly int width, height;
 
         public BreakoutGame(int width, int height)
         {
@@ -41,10 +41,10 @@ namespace Displays.Ssd130x.Ssd1309_Game_Sample
             }
         }
 
-        int BLOCK_WIDTH = 10;
-        int BLOCK_HEIGHT = 5;
-        int BLOCK_X_SPACING = 2;
-        int BLOCK_Y_SPACING = 2;
+        readonly int BLOCK_WIDTH = 10;
+        readonly int BLOCK_HEIGHT = 5;
+        readonly int BLOCK_X_SPACING = 2;
+        readonly int BLOCK_Y_SPACING = 2;
 
         public void ResetBoard()
         {
@@ -109,7 +109,7 @@ namespace Displays.Ssd130x.Ssd1309_Game_Sample
                 }
             }
 
-            if(gameCleared)
+            if (gameCleared)
             {
                 ResetBoard();
                 ResetBall();
@@ -118,9 +118,9 @@ namespace Displays.Ssd130x.Ssd1309_Game_Sample
 
         void CheckBlockCollisions()
         {
-            foreach(var block in Blocks)
+            foreach (var block in Blocks)
             {
-                if(block.IsVisible == false)
+                if (block.IsVisible == false)
                 {
                     continue;
                 }
@@ -174,7 +174,7 @@ namespace Displays.Ssd130x.Ssd1309_Game_Sample
             }
 
             //Paddle
-            if(Ball.YSpeed > 0 &&
+            if (Ball.YSpeed > 0 &&
                 Ball.X - Ball.Radius >= Paddle.X &&
                 Ball.X + Ball.Radius <= Paddle.X + Paddle.Width &&
                 Ball.Y - Ball.Radius <= Paddle.Y + Paddle.Height &&

@@ -1,5 +1,5 @@
-﻿using Meadow.Foundation.Graphics;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
+using Meadow.Peripherals.Displays;
 
 namespace Meadow.Foundation.Displays
 {
@@ -54,7 +54,7 @@ namespace Meadow.Foundation.Displays
         }
 
         /// <summary>
-        /// Initalize the display
+        /// Initialize the display
         /// </summary>
         protected override void Initialize()
         {
@@ -95,7 +95,7 @@ namespace Meadow.Foundation.Displays
             SendData(0x01);
 
             SendCommand(0xE0);
-            dataCommandPort.State = (Data);
+            dataCommandPort.State = Data;
             Write(0x04);
             Write(0x3F);
             Write(0x25);

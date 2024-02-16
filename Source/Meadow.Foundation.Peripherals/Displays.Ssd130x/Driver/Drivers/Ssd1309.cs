@@ -16,8 +16,7 @@ namespace Meadow.Foundation.Displays
         /// <param name="resetPin">Reset pin</param>
         public Ssd1309(ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin) :
             base(spiBus, chipSelectPin, dcPin, resetPin, DisplayType.OLED128x64)
-        {
-        }
+        { }
 
         /// <summary>
         /// Create a new Ssd1309 display object
@@ -28,8 +27,7 @@ namespace Meadow.Foundation.Displays
         /// <param name="resetPort">Reset output port</param>
         public Ssd1309(ISpiBus spiBus, IDigitalOutputPort chipSelectPort, IDigitalOutputPort dataCommandPort, IDigitalOutputPort resetPort) :
             base(spiBus, chipSelectPort, dataCommandPort, resetPort)
-        {
-        }
+        { }
 
         /// <summary>
         /// Create a new SSD1309 object
@@ -38,7 +36,6 @@ namespace Meadow.Foundation.Displays
         /// <param name="address">Address of the bus on the I2C display.</param>
         public Ssd1309(II2cBus i2cBus, byte address = (byte)Addresses.Default) :
             base(i2cBus, address, DisplayType.OLED128x64)
-        {
-        }
+        { }
     }
 }

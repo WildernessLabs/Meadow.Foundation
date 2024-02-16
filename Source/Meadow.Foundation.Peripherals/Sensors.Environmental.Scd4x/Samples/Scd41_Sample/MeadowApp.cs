@@ -1,8 +1,8 @@
-﻿using System;
-using System.Threading.Tasks;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Environmental;
+using System;
+using System.Threading.Tasks;
 
 namespace Sensors.Environmental.Scd40_Sample
 {
@@ -10,7 +10,7 @@ namespace Sensors.Environmental.Scd40_Sample
     {
         //<!=SNIP=>
 
-        Scd41 sensor;
+        private Scd41 sensor;
 
         public override Task Initialize()
         {

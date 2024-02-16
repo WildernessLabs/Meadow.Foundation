@@ -9,16 +9,11 @@ using SU = Meadow.Units.Speed.UnitType;
 namespace Meadow.Foundation.Sensors.Weather
 {
     /// <summary>
-    /// Driver for a "switching" anememoter (wind speed gauge) that has an
+    /// Driver for a "switching" anemometer (wind speed gauge) that has an
     /// internal switch that is triggered during every revolution.
     /// </summary>
-    public partial class SwitchingAnemometer : PollingSensorBase<Speed>, IAnemometer
+    public class SwitchingAnemometer : PollingSensorBase<Speed>, IAnemometer, IDisposable
     {
-        /// <summary>
-        /// Raised when the speed of the wind changes
-        /// </summary>
-        public event EventHandler<IChangeResult<Speed>> WindSpeedUpdated = delegate { };
-
         /// <summary>
         /// The current wind speed
         /// </summary>
@@ -61,6 +56,16 @@ namespace Meadow.Foundation.Sensors.Weather
         private readonly Queue<DigitalPortResult>? samples;
 
         /// <summary>
+        /// Is the object disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
+
+        /// <summary>
+        /// Did we create the port(s) used by the peripheral
+        /// </summary>
+        readonly bool createdPort = false;
+
+        /// <summary>
         /// Creates a new `SwitchingAnemometer` using the specific digital input
         /// on the device.
         /// </summary>
@@ -70,7 +75,9 @@ namespace Meadow.Foundation.Sensors.Weather
                                                             ResistorMode.InternalPullUp,
                                                             TimeSpan.FromMilliseconds(2),
                                                             TimeSpan.FromMilliseconds(0)))
-        { }
+        {
+            createdPort = true;
+        }
 
         /// <summary>
         /// Creates a new switching anemometer using the specific `IDigitalInputPort`.
@@ -97,16 +104,6 @@ namespace Meadow.Foundation.Sensors.Weather
             {
                 samples.Dequeue();
             }
-        }
-
-        /// <summary>
-        /// Raise events for subcribers and notify of value changes
-        /// </summary>
-        /// <param name="changeResult">The updated sensor data</param>
-        protected override void RaiseEventsAndNotify(IChangeResult<Speed> changeResult)
-        {
-            WindSpeedUpdated?.Invoke(this, changeResult);
-            base.NotifyObservers(changeResult);
         }
 
         /// <summary>
@@ -155,7 +152,7 @@ namespace Meadow.Foundation.Sensors.Weather
                 StopUpdating();
             }
 
-            if (samples?.Count > 0 && (DateTime.Now - samples?.Peek().New.Time > NoWindTimeout))
+            if (samples?.Count > 0 && (DateTime.UtcNow - samples?.Peek().New.Time > NoWindTimeout))
             {   //we've exceeded the no wind interval time 
                 samples?.Clear(); //will force a zero reading
             }
@@ -191,6 +188,30 @@ namespace Meadow.Foundation.Sensors.Weather
         protected float SwitchIntervalToKmh(TimeSpan interval)
         {
             return KmhPerSwitchPerSecond / (float)interval.TotalSeconds;
+        }
+
+        ///<inheritdoc/>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        /// <param name="disposing">Is disposing</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && createdPort)
+                {
+                    inputPort?.Dispose();
+                }
+
+                IsDisposed = true;
+            }
         }
     }
 }

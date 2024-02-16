@@ -18,12 +18,12 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <summary>
         /// The pin definitions
         /// </summary>
-        public PinDefinitions Pins { get; }
+        public PinDefinitions Pins { get; } = default!;
 
         /// <summary>
         /// The default SPI bus speed for the device
         /// </summary>
-        public Frequency DefaultSpiBusSpeed => new Frequency(10000, Frequency.UnitType.Kilohertz);
+        public Frequency DefaultSpiBusSpeed => new(10000, Frequency.UnitType.Kilohertz);
 
         /// <summary>
         /// The SPI bus speed for the device
@@ -53,22 +53,12 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         private readonly int numberOfChips;
 
-        private byte[] latchData;
+        private byte[] latchData = default!;
 
         /// <summary>
         /// SPI Communication bus used to communicate with the peripheral
         /// </summary>
-        protected ISpiCommunications spiComms;
-
-        /// <summary>
-        /// Default constructor.
-        /// </summary>
-        /// <remarks>
-        /// This is private to prevent the programmer from calling it explicitly
-        /// </remarks>
-        private x74595()
-        {
-        }
+        protected ISpiCommunications spiComms = default!;
 
         /// <summary>
         /// Creates a new ShiftRegister 74595 object
@@ -76,8 +66,15 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <param name="pins">Number of pins in the shift register (should be a multiple of 8 pins).</param>
         /// <param name="spiBus">SpiBus object</param>
         /// <param name="pinChipSelect">The chip select pin</param>
-        public x74595(ISpiBus spiBus, IPin pinChipSelect, int pins = 8)
+        /// <param name="initialStates">An optional list of initial states for the pins.  Omitting this will initialize all pins to low.</param>
+        /// <param name="outputEnable">An optional pin connected to OE used for initializing startup state</param>
+        public x74595(ISpiBus spiBus, IPin pinChipSelect, int pins = 8, IPin? outputEnable = null, bool[]? initialStates = null)
         {
+            if (initialStates != null && initialStates.Length != pins)
+            {
+                throw new ArgumentException("If not null, initialStates length must match the pin count");
+            }
+
             Pins = new PinDefinitions(this);
 
             if (pins == 8)
@@ -86,7 +83,48 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
                 latchData = new byte[numberOfChips];
 
+                IDigitalOutputPort? oe = null;
+
+                if (outputEnable != null)
+                {
+                    oe = outputEnable.CreateDigitalOutputPort(true);
+                }
+
+                // start with the CS/OE/lath *high* which put the outputs in high-Z while we clear things to a known state
                 spiComms = new SpiCommunications(spiBus, pinChipSelect?.CreateDigitalOutputPort(), DefaultSpiBusSpeed, DefaultSpiBusMode);
+
+                // the chip register is in an unknown state right now - we need to set the data before the initial latch
+                if (initialStates != null)
+                {
+                    var pin = 0;
+
+                    for (var chip = 0; chip < numberOfChips; chip++)
+                    {
+                        byte b = 0;
+
+                        for (var bit = 0; bit < 8; bit++)
+                        {
+                            if (initialStates[pin])
+                            {
+                                b |= (byte)(1 << (7 - pin));
+                                if (pin >= pins) break;
+                            }
+                            pin++;
+                        }
+                        latchData[chip] = b;
+                    }
+
+                    ParalellWrite(latchData);
+                }
+                else
+                {
+                    Clear();
+                }
+
+                if (oe != null)
+                {
+                    oe.State = false;
+                }
             }
             else
             {
@@ -113,6 +151,11 @@ namespace Meadow.Foundation.ICs.IOExpanders
             throw new Exception("Pin is out of range");
         }
 
+        private void ParalellWrite(byte[] data)
+        {
+            spiComms.Write(data);
+        }
+
         /// <summary>
         /// Clear the shift register buffer
         /// </summary>
@@ -123,7 +166,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
             if (update)
             {
-                spiComms.Write(latchData);
+                ParalellWrite(latchData);
             }
         }
 

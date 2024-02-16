@@ -8,16 +8,27 @@ namespace Meadow.Foundation.Audio.Mp3
     /// <summary>
     /// Represents a Yx5300 serial MP3 player
     /// </summary>
-    public partial class Yx5300
+    public partial class Yx5300 : IDisposable
     {
+        /// <summary>
+        /// Is the object disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
+
         readonly ISerialPort serialPort;
+
+        readonly bool createdPort = false;
+
+        private byte[] sendBuffer;
 
         /// <summary>
         /// Create a YX5300 mp3 player object
         /// </summary>
-        /// <param name="serialPort"></param>
+        /// <param name="serialPort">The serial port</param>
         protected Yx5300(ISerialPort serialPort)
         {
+            sendBuffer = new byte[8];
+
             this.serialPort = serialPort;
 
             serialPort.Open();
@@ -38,7 +49,9 @@ namespace Meadow.Foundation.Audio.Mp3
         /// <param name="serialPortName">Name of serial port connected to YX5300</param>
         public Yx5300(IMeadowDevice device, SerialPortName serialPortName)
             : this(device.CreateSerialPort(serialPortName))
-        { }
+        {
+            createdPort = true;
+        }
 
         /// <summary>
         /// Reset the YX5300 hardware
@@ -224,8 +237,6 @@ namespace Meadow.Foundation.Audio.Mp3
 
         private void SendCommand(Commands command, byte data1 = 0, byte data2 = 0)
         {
-            byte[] sendBuffer = new byte[8];
-
             Thread.Sleep(20);
 
             // Command Structure 0x7E 0xFF 0x06 CMD FBACK DAT1 DAT2 0xEF
@@ -272,6 +283,30 @@ namespace Meadow.Foundation.Audio.Mp3
         Tuple<Responses, byte> ParseResponse(byte[] data)
         {
             return new Tuple<Responses, byte>((Responses)(data[3]), data[6]);
+        }
+
+        ///<inheritdoc/>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        /// <param name="disposing">Is disposing</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && createdPort)
+                {
+                    serialPort?.Dispose();
+                }
+
+                IsDisposed = true;
+            }
         }
     }
 }

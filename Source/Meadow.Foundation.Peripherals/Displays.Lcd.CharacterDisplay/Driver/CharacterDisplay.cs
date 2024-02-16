@@ -13,7 +13,7 @@ namespace Meadow.Foundation.Displays.Lcd
         /// <summary>
         /// The display configuration for text display menu
         /// </summary>
-        public TextDisplayConfig DisplayConfig => characterDisplay?.DisplayConfig;
+        public TextDisplayConfig DisplayConfig => characterDisplay!.DisplayConfig;
 
         /// <summary>
         /// Create a new character display object using GPIO
@@ -116,7 +116,7 @@ namespace Meadow.Foundation.Displays.Lcd
         /// </summary>
         /// <param name="i2cBus">The I2C bus connected to the display</param>
         /// <param name="address">The I2C address</param>
-        /// <param name="rows">The number of charcter rows</param>
+        /// <param name="rows">The number of character rows</param>
         /// <param name="columns">The number of character columns</param>
         /// <param name="isGroveDisplay">True if this is a Seeed Studio Grove display (default is false)</param>
         public CharacterDisplay(II2cBus i2cBus,
@@ -183,7 +183,7 @@ namespace Meadow.Foundation.Displays.Lcd
         /// <summary>
         /// Write text to a line
         /// </summary>
-        /// <param name="text">The text to dislay</param>
+        /// <param name="text">The text to display</param>
         /// <param name="lineNumber">The target line</param>
         /// <param name="showCursor">If true, show the cursor</param>
         public void WriteLine(string text, byte lineNumber, bool showCursor = false)

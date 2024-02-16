@@ -12,7 +12,7 @@ namespace Meadow.Foundation.Sensors.Hid
     /// 2-axis analog joystick
     /// </summary>
     public partial class AnalogJoystick
-        : SamplingSensorBase<AnalogJoystickPosition>, IAnalogJoystick
+        : SamplingSensorBase<AnalogJoystickPosition>, IAnalogJoystick, IDisposable
     {
         /// <summary>
         /// Number of samples used to calculate position
@@ -25,7 +25,7 @@ namespace Meadow.Foundation.Sensors.Hid
         protected int sampleIntervalMs;
 
         /// <summary>
-        /// Analog port connected to horizonal joystick pin
+        /// Analog port connected to horizontal joystick pin
         /// </summary>
         protected IAnalogInputPort HorizontalInputPort { get; set; }
 
@@ -55,9 +55,19 @@ namespace Meadow.Foundation.Sensors.Hid
         public DigitalJoystickPosition? DigitalPosition => GetDigitalJoystickPosition();
 
         /// <summary>
-        /// Callibration for 2-axis analog joystick
+        /// Calibration for 2-axis analog joystick
         /// </summary>
         public JoystickCalibration Calibration { get; protected set; }
+
+        /// <summary>
+        /// Is the object disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
+
+        /// <summary>
+        /// Did we create the port(s) used by the peripheral
+        /// </summary>
+        readonly bool createdPorts = false;
 
         /// <summary>
         /// Creates a 2-axis analog joystick
@@ -97,7 +107,9 @@ namespace Meadow.Foundation.Sensors.Hid
                       horizontalPin.CreateAnalogInputPort(sampleCount, sampleInterval, new Voltage(3.3, VU.Volts)),
                       verticalPin.CreateAnalogInputPort(sampleCount, sampleInterval, new Voltage(3.3, VU.Volts)),
                       calibration)
-        { }
+        {
+            createdPorts = true;
+        }
 
         /// <summary>
         /// Creates a 2-axis analog joystick
@@ -341,7 +353,7 @@ namespace Meadow.Foundation.Sensors.Hid
         /// </summary>
         /// <param name="value"></param>
         /// <param name="isHorizontal"></param>
-        /// <returns>A postion value between -1.0 and 1.0</returns>
+        /// <returns>A position value between -1.0 and 1.0</returns>
         float GetNormalizedPosition(Voltage value, bool isHorizontal)
         {
             double normalized;
@@ -370,6 +382,33 @@ namespace Meadow.Foundation.Sensors.Hid
             }
 
             return (float)normalized;
+        }
+
+        ///<inheritdoc/>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        /// <param name="disposing">Is disposing</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && createdPorts)
+                {
+                    HorizontalInputPort?.StopUpdating();
+                    HorizontalInputPort?.Dispose();
+                    VerticalInputPort?.StopUpdating();
+                    VerticalInputPort?.Dispose();
+                }
+
+                IsDisposed = true;
+            }
         }
     }
 }

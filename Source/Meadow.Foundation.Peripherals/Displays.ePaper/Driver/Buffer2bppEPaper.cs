@@ -1,4 +1,6 @@
-﻿namespace Meadow.Foundation.Graphics.Buffers
+﻿using Meadow.Peripherals.Displays;
+
+namespace Meadow.Foundation.Graphics.Buffers
 {
     /// <summary>
     /// Represents a 2bpp buffer
@@ -23,13 +25,11 @@
         /// </summary>
         public int Height => blackBuffer.Height;
 
-        /// <summary>
-        /// Color mode of the buffer - 2 bit per pixel 
-        /// </summary>
+        /// <inheritdoc/>
         public ColorMode ColorMode => ColorMode.Format2bpp;
 
         /// <summary>
-        /// Bitdepth of display as an integer
+        /// Bit depth of display as an integer
         /// </summary>
         public int BitDepth => 2;
 
@@ -125,7 +125,7 @@
         /// <param name="color">The fill color</param>
         public void Fill(int originX, int originY, int width, int height, Color color)
         {
-            for(int x = 0; x < width; x++)
+            for (int x = 0; x < width; x++)
             {
                 for (int y = 0; y < height; y++)
                 {
@@ -206,12 +206,12 @@
         {
             var state = GetStateFromColor(color);
 
-            if(state == PixelState.ColorOn)
+            if (state == PixelState.ColorOn)
             {
                 colorBuffer.SetPixel(x, y, false);
                 blackBuffer.SetPixel(x, y, true);
             }
-            else if(state == PixelState.On)
+            else if (state == PixelState.On)
             {
                 colorBuffer.SetPixel(x, y, true);
                 blackBuffer.SetPixel(x, y, false);

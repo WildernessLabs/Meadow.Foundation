@@ -1,37 +1,27 @@
-﻿using Meadow.Foundation.Graphics;
-using Meadow.Foundation.Graphics.Buffers;
+﻿using Meadow.Foundation.Graphics.Buffers;
 using Meadow.Hardware;
+using Meadow.Peripherals.Displays;
 
 namespace Meadow.Foundation.Displays
 {
     /// <summary>
     /// Provide an interface for ePaper monochrome displays
     /// </summary>
-    public abstract class EPaperMonoBase : EPaperBase, IGraphicsDisplay
+    public abstract class EPaperMonoBase : EPaperBase, IPixelDisplay
     {
-        /// <summary>
-        /// Display color mode 
-        /// </summary>
+        /// <inheritdoc/>
         public ColorMode ColorMode => ColorMode.Format1bpp;
 
-        /// <summary>
-        /// The Color mode supported by the display
-        /// </summary>
+        /// <inheritdoc/>
         public ColorMode SupportedColorModes => ColorMode.Format1bpp;
 
-        /// <summary>
-        /// The buffer the holds the pixel data for the display
-        /// </summary>
+        /// <inheritdoc/>
         public IPixelBuffer PixelBuffer => imageBuffer;
 
-        /// <summary>
-        /// The color to draw when a pixel is enabled
-        /// </summary>
+        /// <inheritdoc/>
         public Color EnabledColor => Color.Black;
 
-        /// <summary>
-        /// The color to draw when a pixel is disabled
-        /// </summary>
+        /// <inheritdoc/>
         public Color DisabledColor => Color.White;
 
         /// <summary>
@@ -68,6 +58,7 @@ namespace Meadow.Foundation.Displays
                 busyPin.CreateDigitalInputPort(),
                 width, height)
         {
+            createdPorts = true;
         }
 
         /// <summary>
@@ -119,7 +110,7 @@ namespace Meadow.Foundation.Displays
         /// Clear the display
         /// </summary>
         /// <param name="color">Color to set the display (not used on ePaper displays)</param>
-        /// <param name="updateDisplay">Update the dipslay once the buffer has been cleared when true</param>
+        /// <param name="updateDisplay">Update the display once the buffer has been cleared when true</param>
         public void Fill(Color color, bool updateDisplay = false)
         {
             Clear(color.Color1bpp, updateDisplay);
@@ -142,7 +133,7 @@ namespace Meadow.Foundation.Displays
         /// Clear the display
         /// </summary>
         /// <param name="enabled">Set the display to the enabled or disabled color (defaults are black and white)</param>
-        /// <param name="updateDisplay">Update the dipslay once the buffer has been cleared when true</param>
+        /// <param name="updateDisplay">Update the display once the buffer has been cleared when true</param>
         public void Clear(bool enabled, bool updateDisplay = false)
         {
             imageBuffer.Clear(enabled);
@@ -281,10 +272,10 @@ namespace Meadow.Foundation.Displays
             SendCommand(Command.WRITE_RAM);
             /* send the image data */
 
-            dataCommandPort.State = DataState;
+            dataCommandPort!.State = DataState;
             for (int i = 0; i < Width / 8 * Height; i++)
             {
-                spiComms.Write(buffer[i]);
+                spiComms?.Write(buffer[i]);
             }
         }
 
@@ -408,7 +399,7 @@ namespace Meadow.Foundation.Displays
             /// </summary>
             SET_GATE_TIME = 0x3B,
             /// <summary>
-            /// Border wavefrom control
+            /// Border waveform control
             /// </summary>
             BORDER_WAVEFORM_CONTROL = 0x3C,
             /// <summary>
@@ -428,7 +419,7 @@ namespace Meadow.Foundation.Displays
             /// </summary>
             SET_RAM_Y_ADDRESS_COUNTER = 0x4F,
             /// <summary>
-            /// Terminiate frame read and write
+            /// Terminate frame read and write
             /// </summary>
             TERMINATE_FRAME_READ_WRITE = 0xFF,
         }

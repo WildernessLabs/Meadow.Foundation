@@ -1,8 +1,8 @@
-﻿using System;
-using System.Threading.Tasks;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Power;
+using System;
+using System.Threading.Tasks;
 
 namespace MeadowApp
 {
@@ -31,7 +31,7 @@ namespace MeadowApp
         }
 
         public override Task Run()
-        { 
+        {
             ina260.StartUpdating(TimeSpan.FromSeconds(2));
             return Task.CompletedTask;
         }

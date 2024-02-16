@@ -1,8 +1,8 @@
 ﻿using Meadow;
 using Meadow.Devices;
-using Meadow.Foundation;
 using Meadow.Foundation.Displays;
 using Meadow.Foundation.Graphics;
+using Meadow.Peripherals.Displays;
 using System.Threading.Tasks;
 
 namespace Displays.ePaper.EpdColor_Sample
@@ -70,7 +70,7 @@ namespace Displays.ePaper.EpdColor_Sample
 
         EPaperTriColorBase GetDisplay(EpdColorDisplay displayType)
         {
-            //Intialize the display based on the displayType enum
+            //Initialize the display based on the displayType enum
             EPaperTriColorBase display = displayType switch
             {
                 EpdColorDisplay.Epd1in54b => new Epd1in54b(

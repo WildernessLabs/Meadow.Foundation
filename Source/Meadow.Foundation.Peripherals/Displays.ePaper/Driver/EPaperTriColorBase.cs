@@ -1,6 +1,6 @@
-﻿using Meadow.Foundation.Graphics;
-using Meadow.Foundation.Graphics.Buffers;
+﻿using Meadow.Foundation.Graphics.Buffers;
 using Meadow.Hardware;
+using Meadow.Peripherals.Displays;
 using System;
 
 namespace Meadow.Foundation.Displays
@@ -8,7 +8,7 @@ namespace Meadow.Foundation.Displays
     /// <summary>
     /// Provide an interface for ePaper 3 color displays
     /// </summary>
-    public abstract partial class EPaperTriColorBase : EPaperBase, IGraphicsDisplay
+    public abstract partial class EPaperTriColorBase : EPaperBase, IPixelDisplay
     {
         /// <summary>
         /// The color to draw when a pixel is enabled
@@ -30,30 +30,22 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         protected abstract bool IsColorInverted { get; }
 
-        /// <summary>
-        /// Display color mode 
-        /// </summary>
+        /// <inheritdoc/>
         public ColorMode ColorMode => ColorMode.Format2bpp;
 
-        /// <summary>
-        /// The Color mode supported by the display
-        /// </summary>
+        /// <inheritdoc/>
         public ColorMode SupportedColorModes => ColorMode.Format2bpp;
 
         /// <summary>
         /// The buffer the holds the black pixel data for the display
         /// </summary>
 
-        protected Buffer2bppEPaper imageBuffer;
+        protected Buffer2bppEPaper imageBuffer = default!;
 
-        /// <summary>
-        /// Width of display in pixels
-        /// </summary>
+        /// <inheritdoc/>
         public virtual int Width => width;
 
-        /// <summary>
-        /// Height of display in pixels
-        /// </summary>
+        /// <inheritdoc/>
         public virtual int Height => height;
 
         /// <summary>
@@ -62,7 +54,7 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         public IPixelBuffer PixelBuffer => imageBuffer;
 
-        int width, height;
+        readonly int width, height;
 
         /// <summary>
         /// Create a new color ePaper display object
@@ -79,7 +71,9 @@ namespace Meadow.Foundation.Displays
             this(spiBus, chipSelectPin.CreateDigitalOutputPort(), dcPin.CreateDigitalOutputPort(false),
                 resetPin.CreateDigitalOutputPort(true), busyPin.CreateDigitalInputPort(),
                 width, height)
-        { }
+        {
+            createdPorts = true;
+        }
 
         /// <summary>
         /// Create a new ePaper display object
@@ -127,7 +121,7 @@ namespace Meadow.Foundation.Displays
         }
 
         /// <summary>
-        /// Initalize the display
+        /// Initialize the display
         /// </summary>
         protected abstract void Initialize();
 
@@ -261,7 +255,7 @@ namespace Meadow.Foundation.Displays
         /// <exception cref="NotImplementedException"></exception>
         public virtual void Show()
         {
-            throw new NotImplementedException("Show must be implimented in the ePaper display driver");
+            throw new NotImplementedException("Show must be implemented in the ePaper display driver");
         }
 
         /// <summary>
@@ -273,7 +267,7 @@ namespace Meadow.Foundation.Displays
         /// <param name="bottom">Bottom bounds in pixels</param>
         public virtual void Show(int left, int top, int right, int bottom)
         {
-            throw new NotImplementedException("Show must be implimented in the ePaper display driver");
+            throw new NotImplementedException("Show must be implemented in the ePaper display driver");
         }
 
         /// <summary>

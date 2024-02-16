@@ -3,7 +3,6 @@ using Meadow.Devices;
 using Meadow.Foundation.Displays;
 using Meadow.Foundation.Graphics;
 using Meadow.Units;
-using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -59,7 +58,7 @@ namespace Displays.Ssd130x.Ssd1309_Sample
         {
             graphics.Clear();
             graphics.CurrentFont = new Font8x12();
-            graphics.DrawText(0, 0, "Meadow F7", Meadow.Foundation.Color.White);
+            graphics.DrawText(0, 0, "Meadow F7", Color.White);
             graphics.DrawRectangle(5, 14, 30, 10, true);
 
             Resolver.Log.Info("Show...");
@@ -75,10 +74,10 @@ namespace Displays.Ssd130x.Ssd1309_Sample
         {
             graphics.Clear();
             // graphics.DrawCircle(20, 20, 1); 
-            graphics.DrawCircle(20, 20, 2); 
-            graphics.DrawCircle(20, 20, 5); 
-            graphics.DrawCircle(20, 20, 8); 
-            graphics.DrawCircle(20, 20, 12); 
+            graphics.DrawCircle(20, 20, 2);
+            graphics.DrawCircle(20, 20, 5);
+            graphics.DrawCircle(20, 20, 8);
+            graphics.DrawCircle(20, 20, 12);
             graphics.Show();
         }
 

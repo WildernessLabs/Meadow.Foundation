@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Meadow.Peripherals.Displays;
+using System;
 
 namespace Meadow.Foundation.Graphics.Buffers
 {
@@ -108,7 +109,7 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// </summary>
         /// <param name="x">X pixel position</param>
         /// <param name="y">Y pixel position</param>
-        /// <param name="gray">The pixel grey value</param>
+        /// <param name="gray">The pixel gray value</param>
         public void SetPixel(int x, int y, byte gray)
         {
             int index = y * Width / 2 + x / 2;
@@ -146,7 +147,7 @@ namespace Meadow.Foundation.Graphics.Buffers
         public override void WriteBuffer(int x, int y, IPixelBuffer buffer)
         {
             if (buffer.ColorMode == ColorMode &&
-                x % 2 == 0 && 
+                x % 2 == 0 &&
                 buffer.Width % 2 == 0)
             {
                 //we have a happy path
@@ -186,7 +187,7 @@ namespace Meadow.Foundation.Graphics.Buffers
             {   //odd pixel
                 color = (byte)((Buffer[index] & 0xf0));
             }
-            return color; 
+            return color;
         }
     }
 }

@@ -2,7 +2,6 @@
 using Meadow.Devices;
 using Meadow.Foundation.Displays;
 using Meadow.Foundation.Graphics;
-using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -55,7 +54,7 @@ namespace Displays.Ssd130x.Ssd1306_Sample
         {
             graphics.Clear();
             graphics.CurrentFont = new Font8x12();
-            graphics.DrawText(0, 0, "Meadow F7", Meadow.Foundation.Color.White);
+            graphics.DrawText(0, 0, "Meadow F7", Color.White);
             graphics.DrawRectangle(5, 14, 30, 10, true);
 
             graphics.Show();

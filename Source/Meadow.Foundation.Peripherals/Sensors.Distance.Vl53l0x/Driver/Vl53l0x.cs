@@ -1,5 +1,5 @@
 ﻿using Meadow.Hardware;
-using Meadow.Peripherals.Sensors;
+using Meadow.Peripherals.Sensors.Distance;
 using Meadow.Units;
 using System;
 using System.Threading;
@@ -13,49 +13,31 @@ namespace Meadow.Foundation.Sensors.Distance
     public partial class Vl53l0x : ByteCommsSensorBase<Length>, IRangeFinder, II2cPeripheral
     {
         /// <summary>
-        /// Distance updated event
-        /// </summary>
-        public event EventHandler<IChangeResult<Length>> DistanceUpdated = delegate { };
-
-        /// <summary>
         /// Is the hardware shutdown / off
         /// </summary>
-        public bool IsShutdown
-        {
-            get
-            {
-                if (shutdownPort != null)
-                {
-                    return !shutdownPort.State;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-        }
+        public bool IsShutdown => shutdownPort?.State ?? false;
 
         /// <summary>
         /// The distance to the measured object
         /// </summary>
-        public Length? Distance { get; protected set; } = new Length(0);
+        public Length? Distance { get; protected set; }
 
         /// <summary>
         /// Minimum valid distance
         /// </summary>
-        public Length MinimumDistance => new Length(30, Length.UnitType.Millimeters);
+        public static Length MinimumDistance = new(30, Length.UnitType.Millimeters);
 
         /// <summary>
-        /// Maximum valid distance (CurrentDistance returns -1 if above)
+        /// Maximum valid distance
         /// </summary>
-        public Length MaximumDistance => new Length(2000, Length.UnitType.Millimeters);
+        public static Length MaximumDistance = new(2, Length.UnitType.Meters);
 
         /// <summary>
         /// The default I2C address for the peripheral
         /// </summary>
         public byte DefaultI2cAddress => (byte)Addresses.Default;
 
-        readonly IDigitalOutputPort shutdownPort;
+        readonly IDigitalOutputPort? shutdownPort;
 
         byte stopVariable;
 
@@ -75,24 +57,14 @@ namespace Meadow.Foundation.Sensors.Distance
         /// <param name="shutdownPin">Shutdown pin</param>
         /// <param name="address">VL53L0X address</param>
 
-        public Vl53l0x(II2cBus i2cBus, IPin shutdownPin, byte address = (byte)Addresses.Default)
+        public Vl53l0x(II2cBus i2cBus, IPin? shutdownPin, byte address = (byte)Addresses.Default)
                 : base(i2cBus, address)
         {
             if (shutdownPin != null)
             {
-                shutdownPort = shutdownPin.CreateDigitalOutputPort(true);
+                shutdownPort = shutdownPin?.CreateDigitalOutputPort(true);
             }
             Initialize().Wait();
-        }
-
-        /// <summary>
-        /// Raise distance change event and notify subscribers
-        /// </summary>
-        /// <param name="changeResult"></param>
-        protected override void RaiseEventsAndNotify(IChangeResult<Length> changeResult)
-        {
-            DistanceUpdated?.Invoke(this, changeResult);
-            base.RaiseEventsAndNotify(changeResult);
         }
 
         /// <summary>
@@ -257,23 +229,19 @@ namespace Meadow.Foundation.Sensors.Distance
         /// <summary>
         /// Returns the current distance/range
         /// </summary>
-        /// <returns>The distance in the specified Units. Default mm. Returns -1 if the shutdown pin is used and is off</returns>
+        /// <returns>The current distance, returns 0 if the shutdown pin is used and is off</returns>
         protected override async Task<Length> ReadSensor()
         {
-            //Resolver.Log.Info("ReadSensor");
-
             if (IsShutdown)
             {
-                return new Length(-1f, Length.UnitType.Millimeters);
+                return new Length(0, Length.UnitType.Millimeters);
             }
 
-            // get the distance
             Distance = new Length(await GetRawRangeData(), Length.UnitType.Millimeters);
 
-            // throw away invalid distances if out of range
             if (Distance > MaximumDistance)
             {
-                Distance = new Length(-1, Length.UnitType.Millimeters);
+                Distance = MaximumDistance;
             }
 
             return Distance.Value;
@@ -286,7 +254,9 @@ namespace Meadow.Foundation.Sensors.Distance
         public void SetAddress(byte newAddress)
         {
             if (IsShutdown)
+            {
                 return;
+            }
 
             byte address = (byte)(newAddress & 0x7F);
             BusComms.WriteRegister((byte)Register.I2CSlaveDeviceAddress, address);
@@ -295,7 +265,7 @@ namespace Meadow.Foundation.Sensors.Distance
         /// <summary>
         /// Set the Shutdown state of the device
         /// </summary>
-        /// <param name="state">true = off/shutdown. false = on</param>
+        /// <param name="state">returns true if off/shutdown, false if on</param>
         public async Task ShutDown(bool state)
         {
             if (shutdownPort == null)
@@ -309,16 +279,14 @@ namespace Meadow.Foundation.Sensors.Distance
             if (state == false)
             {
                 await Initialize();
-                // TODO: is this still needed? the previous line wasn't awaited before.
                 await Task.Delay(2).ConfigureAwait(false);
             }
         }
 
         /// <summary>
-        /// Get the spad info
+        /// Get the SPAD info
         /// </summary>
         /// <returns></returns>
-        /// <exception cref="Exception"></exception>
         protected Tuple<int, bool> GetSpadInfo()
         {
             BusComms.WriteRegister(0x80, 0x01);
@@ -403,6 +371,9 @@ namespace Meadow.Foundation.Sensors.Distance
             return (ReadBuffer.Span[0] << 8) | ReadBuffer.Span[1];
         }
 
+        /// <summary>
+        /// Returns the raw range data from the sensor in millimeters
+        /// </summary>
         async Task<int> GetRawRangeData()
         {
             BusComms.WriteRegister(0x80, 0x01);
@@ -449,7 +420,10 @@ namespace Meadow.Foundation.Sensors.Distance
         /// </summary>
         public void ShutDown()
         {
-            shutdownPort.State = true;
+            if (shutdownPort != null)
+            {
+                shutdownPort.State = true;
+            }
         }
     }
 }

@@ -14,7 +14,7 @@ namespace Meadow.Foundation
         /// <summary>
         /// Bus communications object, i.e. an I2cCommunications or SpiCommunications
         /// </summary>
-        protected IByteCommunications? BusComms { get; set; }
+        protected IByteCommunications BusComms { get; set; }
 
         /// <summary>
         /// The read buffer
@@ -37,7 +37,7 @@ namespace Meadow.Foundation
             II2cBus i2cBus, byte address,
             int readBufferSize = 8, int writeBufferSize = 8)
         {
-            BusComms = new I2cCommunications(i2cBus, address, readBufferSize, writeBufferSize);
+            BusComms = new I2cCommunications(i2cBus, address, writeBufferSize);
             Init(readBufferSize, writeBufferSize);
         }
 
@@ -60,18 +60,7 @@ namespace Meadow.Foundation
             int writeBufferSize = 8,
             ChipSelectMode chipSelectMode = ChipSelectMode.ActiveLow)
         {
-            BusComms = new SpiCommunications(spiBus, chipSelect, busSpeed, busMode, readBufferSize, writeBufferSize, chipSelectMode);
-            Init(readBufferSize, writeBufferSize);
-        }
-
-        /// <summary>
-        /// ByteCommsSensorBase abstract ctor with no bus
-        /// </summary>
-        /// <param name="readBufferSize">Read buffer size</param>
-        /// <param name="writeBufferSize">Write buffer size</param>
-        protected ByteCommsSensorBase(
-            int readBufferSize = 8, int writeBufferSize = 8)
-        {
+            BusComms = new SpiCommunications(spiBus, chipSelect, busSpeed, busMode, writeBufferSize, chipSelectMode);
             Init(readBufferSize, writeBufferSize);
         }
 
@@ -88,9 +77,9 @@ namespace Meadow.Foundation
         }
 
         /// <summary>
-        /// Dispose object
+        /// Dispose of the object
         /// </summary>
-        /// <param name="disposing">is disposing</param>
+        /// <param name="disposing">Is disposing</param>
 
         protected virtual void Dispose(bool disposing)
         {
@@ -100,9 +89,7 @@ namespace Meadow.Foundation
             }
         }
 
-        /// <summary>
-        /// Dispose managed resources
-        /// </summary>
+        ///<inheritdoc/>
         public virtual void Dispose()
         {
             Dispose(true);

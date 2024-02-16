@@ -22,18 +22,16 @@ namespace Meadow.Foundation.Sensors.Buttons
         protected CancellationTokenSource? ctsPolling;
 
         /// <summary>
-        /// Creates PushButton with a pre-configured input port
+        /// Creates PollingPushButton with an input pin
         /// </summary>
         /// <param name="inputPin">The pin connected to the button</param>
-        /// /// <param name="resistorMode">The resistor mode</param>
+        /// <param name="resistorMode">The resistor mode</param>
         public PollingPushButton(IPin inputPin, ResistorMode resistorMode = ResistorMode.InternalPullUp)
             : this(inputPin.CreateDigitalInputPort(resistorMode), resistorMode)
-        {
-        }
-
+        { }
 
         /// <summary>
-        /// Creates PushButton with a pre-configured input port
+        /// Creates PollingPushButton with a pre-configured input port
         /// </summary>
         /// <param name="inputPort">The input port connected to the button</param>
         /// /// <param name="resistorMode">The resistor mode</param>
@@ -63,12 +61,9 @@ namespace Meadow.Foundation.Sensors.Buttons
                 }
             }, ctsPolling.Token, TaskCreationOptions.LongRunning);
             t.Start();
-
         }
 
-        /// <summary>
-        /// Disposes the Digital Input resources
-        /// </summary>
+        ///<inheritdoc/>
         public override void Dispose()
         {
             base.Dispose();

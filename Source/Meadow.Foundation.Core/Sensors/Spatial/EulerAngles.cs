@@ -29,7 +29,7 @@ namespace Meadow.Foundation.Spatial
         /// <param name="heading">Heading reading.</param>
         /// <param name="roll">Roll angle.</param>
         /// <param name="pitch">Pitch angle.</param>
-        public EulerAngles (Angle heading, Angle roll, Angle pitch)
+        public EulerAngles(Angle heading, Angle roll, Angle pitch)
         {
             Heading = heading;
             Roll = roll;

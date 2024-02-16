@@ -1,6 +1,6 @@
-﻿using Meadow.Foundation.Graphics;
-using Meadow.Foundation.Graphics.Buffers;
+﻿using Meadow.Foundation.Graphics.Buffers;
 using Meadow.Hardware;
+using Meadow.Peripherals.Displays;
 using Meadow.Units;
 using System;
 using System.Threading;
@@ -8,39 +8,29 @@ using System.Threading;
 namespace Meadow.Foundation.Displays
 {
     /// <summary>
-    /// Provides an interface to the Ssd1327 greyscale OLED display
+    /// Provides an interface to the Ssd1327 grayscale OLED display
     /// </summary>
-    public partial class Ssd1327 : IGraphicsDisplay, ISpiPeripheral
+    public partial class Ssd1327 : IPixelDisplay, ISpiPeripheral, IDisposable
     {
-        /// <summary>
-        /// The display color mode (4 bit per pixel grayscale)
-        /// </summary>
+        /// <inheritdoc/>
         public ColorMode ColorMode => ColorMode.Format4bppGray;
 
-        /// <summary>
-        /// The Color mode supported by the display
-        /// </summary>
+        /// <inheritdoc/>
         public ColorMode SupportedColorModes => ColorMode.Format4bppGray;
 
-        /// <summary>
-        /// The display width in pixels
-        /// </summary>
+        /// <inheritdoc/>
         public int Width => 128;
 
-        /// <summary>
-        /// The display height in pixels
-        /// </summary>
+        /// <inheritdoc/>
         public int Height => 128;
 
-        /// <summary>
-        /// The buffer the holds the pixel data for the display
-        /// </summary>
+        /// <inheritdoc/>
         public IPixelBuffer PixelBuffer => imageBuffer;
 
         /// <summary>
         /// The default SPI bus speed for the device
         /// </summary>
-        public Frequency DefaultSpiBusSpeed => new Frequency(10000, Frequency.UnitType.Kilohertz);
+        public Frequency DefaultSpiBusSpeed => new(10000, Frequency.UnitType.Kilohertz);
 
         /// <summary>
         /// The SPI bus speed for the device
@@ -66,12 +56,23 @@ namespace Meadow.Foundation.Displays
         }
 
         /// <summary>
+        /// Is the object disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
+
+        /// <summary>
+        /// Did we create the port(s) used by the peripheral
+        /// </summary>
+        bool createdPorts = false;
+
+        /// <summary>
         /// SPI Communication bus used to communicate with the peripheral
         /// </summary>
         protected ISpiCommunications spiComms;
 
         readonly IDigitalOutputPort dataCommandPort;
-        readonly IDigitalOutputPort resetPort;
+        readonly IDigitalOutputPort? resetPort;
+        readonly IDigitalOutputPort? chipSelectPort;
 
         readonly BufferGray4 imageBuffer;
 
@@ -85,9 +86,10 @@ namespace Meadow.Foundation.Displays
         /// <param name="chipSelectPin">Chip select pin</param>
         /// <param name="dcPin">Data command pin</param>
         /// <param name="resetPin">Reset pin</param>
-        public Ssd1327(ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin)
-            : this(spiBus, chipSelectPin?.CreateDigitalOutputPort(false), dcPin?.CreateDigitalOutputPort(false), resetPin?.CreateDigitalOutputPort(true))
+        public Ssd1327(ISpiBus spiBus, IPin? chipSelectPin, IPin dcPin, IPin? resetPin)
+            : this(spiBus, chipSelectPin?.CreateDigitalOutputPort(false) ?? null, dcPin.CreateDigitalOutputPort(false), resetPin?.CreateDigitalOutputPort(true) ?? null)
         {
+            createdPorts = true;
         }
 
         /// <summary>
@@ -98,24 +100,24 @@ namespace Meadow.Foundation.Displays
         /// <param name="dataCommandPort">Data command output port</param>
         /// <param name="resetPort">Reset output port</param>
         public Ssd1327(ISpiBus spiBus,
-            IDigitalOutputPort chipSelectPort,
+            IDigitalOutputPort? chipSelectPort,
             IDigitalOutputPort dataCommandPort,
-            IDigitalOutputPort resetPort)
+            IDigitalOutputPort? resetPort)
         {
             imageBuffer = new BufferGray4(Width, Height);
 
             this.dataCommandPort = dataCommandPort;
             this.resetPort = resetPort;
 
-            spiComms = new SpiCommunications(spiBus, chipSelectPort, DefaultSpiBusSpeed, DefaultSpiBusMode);
+            spiComms = new SpiCommunications(spiBus, this.chipSelectPort = chipSelectPort, DefaultSpiBusSpeed, DefaultSpiBusMode);
 
             Initialize();
         }
 
         /// <summary>
-        /// Set the disply contrast
+        /// Set the display contrast
         /// </summary>
-        /// <param name="contrast">The constrast value (0-255)</param>
+        /// <param name="contrast">The contrast value (0-255)</param>
         public void SetContrast(byte contrast)
         {
             SendCommand(0x81);  //set contrast control
@@ -123,7 +125,7 @@ namespace Meadow.Foundation.Displays
         }
 
         /// <summary>
-        /// Initalize the display
+        /// Initialize the display
         /// </summary>
         protected void Initialize()
         {
@@ -157,7 +159,7 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         /// <param name="x">x location in pixels</param>
         /// <param name="y">y location in pixels</param>
-        /// <param name="color">The pixel color which will be transformed to 4bpp greyscale</param>
+        /// <param name="color">The pixel color which will be transformed to 4bpp grayscale</param>
         public void DrawPixel(int x, int y, Color color)
         {
             DrawPixel(x, y, color.Color4bppGray);
@@ -275,6 +277,32 @@ namespace Meadow.Foundation.Displays
         public void WriteBuffer(int x, int y, IPixelBuffer displayBuffer)
         {
             imageBuffer.WriteBuffer(x, y, displayBuffer);
+        }
+
+        ///<inheritdoc/>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        /// <param name="disposing">Is disposing</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && createdPorts)
+                {
+                    chipSelectPort?.Dispose();
+                    dataCommandPort?.Dispose();
+                    resetPort?.Dispose();
+                }
+
+                IsDisposed = true;
+            }
         }
 
         // Init sequence, make sure its under 32 bytes, or split into multiples

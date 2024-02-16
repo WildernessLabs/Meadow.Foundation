@@ -8,18 +8,33 @@ namespace Meadow.Foundation.Motors;
 /// </summary>
 public class BidirectionalDcMotor
 {
+    /// <summary>
+    /// Represents the state of a motor
+    /// </summary>
     public enum MotorState
     {
+        /// <summary>
+        /// The motor is stopped
+        /// </summary>
         Stopped,
+        /// <summary>
+        /// The motor is running clockwise
+        /// </summary>
         RunningClockwise,
+        /// <summary>
+        /// The motor is running counterclockwise
+        /// </summary>
         RunningCounterclockwise
     }
 
+    /// <summary>
+    /// Occurs when the state of the motor changes
+    /// </summary>
     public event EventHandler<MotorState> StateChanged = default!;
 
-    private IDigitalOutputPort _outputA;
-    private IDigitalOutputPort _outputB;
-    private bool _energizeHigh;
+    private readonly IDigitalOutputPort _outputA;
+    private readonly IDigitalOutputPort _outputB;
+    private readonly bool _energizeHigh;
 
     /// <summary>
     /// Gets the current run state of the motor

@@ -1,13 +1,12 @@
 ﻿using Meadow.Hardware;
 using Meadow.Peripherals.Sensors.Motion;
 using Meadow.Units;
-using System;
 using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Motion
 {
     /// <summary>
-    /// Represents Mma7660fc 3-axis acclerometer
+    /// Represents Mma7660fc 3-axis accelerometer
     /// </summary>
     public partial class Mma7660fc : ByteCommsSensorBase<Acceleration3D>, IAccelerometer, II2cPeripheral
     {
@@ -15,11 +14,6 @@ namespace Meadow.Foundation.Sensors.Motion
         /// The default I2C address for the peripheral
         /// </summary>
         public byte DefaultI2cAddress => (byte)Addresses.Default;
-
-        /// <summary>
-        /// Raised when new acceleration data is processed
-        /// </summary>
-        public event EventHandler<IChangeResult<Acceleration3D>> Acceleration3DUpdated = delegate { };
 
         /// <summary>
         /// Current Acceleration3d value
@@ -65,7 +59,7 @@ namespace Meadow.Foundation.Sensors.Motion
 
         void SetMode(SensorPowerMode mode)
         {
-            BusComms.WriteRegister((byte)Registers.Mode, (byte)mode);
+            BusComms?.WriteRegister((byte)Registers.Mode, (byte)mode);
         }
 
         /// <summary>
@@ -74,7 +68,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <param name="rate">sample rate</param>
         public void SetSampleRate(SampleRate rate)
         {
-            BusComms.WriteRegister((byte)Registers.SleepRate, (byte)rate);
+            BusComms?.WriteRegister((byte)Registers.SleepRate, (byte)rate);
         }
 
         /// <summary>
@@ -126,16 +120,6 @@ namespace Meadow.Foundation.Sensors.Motion
                     new Acceleration(yAccel * 3.0 / 64.0, Acceleration.UnitType.Gravity),
                     new Acceleration(zAccel * 3.0 / 64.0, Acceleration.UnitType.Gravity));
             });
-        }
-
-        /// <summary>
-        /// Raise event and notify subscribers
-        /// </summary>
-        /// <param name="changeResult">Acceleration3d data</param>
-        protected override void RaiseEventsAndNotify(IChangeResult<Acceleration3D> changeResult)
-        {
-            Acceleration3DUpdated?.Invoke(this, changeResult);
-            base.RaiseEventsAndNotify(changeResult);
         }
     }
 }

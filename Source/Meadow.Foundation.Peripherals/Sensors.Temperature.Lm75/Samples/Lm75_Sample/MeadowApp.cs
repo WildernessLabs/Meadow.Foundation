@@ -1,7 +1,6 @@
 ﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Temperature;
-using System;
 using System.Threading.Tasks;
 
 namespace Sensors.Temperature.Lm75_Sample
@@ -21,14 +20,14 @@ namespace Sensors.Temperature.Lm75_Sample
             var consumer = Lm75.CreateObserver(
                 handler: result =>
                 {
-                    Resolver.Log.Info($"Temperature New Value { result.New.Celsius}C");
-                    Resolver.Log.Info($"Temperature Old Value { result.Old?.Celsius}C");
-                      },
+                    Resolver.Log.Info($"Temperature New Value {result.New.Celsius}C");
+                    Resolver.Log.Info($"Temperature Old Value {result.Old?.Celsius}C");
+                },
                 filter: null
             );
             lm75.Subscribe(consumer);
 
-            lm75.TemperatureUpdated += (object sender, IChangeResult<Meadow.Units.Temperature> e) =>
+            lm75.Updated += (object sender, IChangeResult<Meadow.Units.Temperature> e) =>
             {
                 Resolver.Log.Info($"Temperature Updated: {e.New.Celsius:n2}C");
             };

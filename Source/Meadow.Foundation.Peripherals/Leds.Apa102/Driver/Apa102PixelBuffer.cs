@@ -1,4 +1,4 @@
-﻿using Meadow.Foundation.Graphics.Buffers;
+﻿using Meadow.Peripherals.Displays;
 
 namespace Meadow.Foundation.Leds
 {
@@ -26,7 +26,7 @@ namespace Meadow.Foundation.Leds
         public void Fill(Color color) => Fill(color, false);
 
         /// <summary>
-        /// Get the color of pixel at at given coordinate
+        /// Get the color of a pixel for a given coordinate
         /// </summary>
         /// <param name="x">X position in pixels</param>
         /// <param name="y">Y position in pixels</param>
@@ -36,12 +36,12 @@ namespace Meadow.Foundation.Leds
             var index = 3 * GetIndexForCoordinate(x, y);
 
             return new Color(red: buffer[index + pixelOrder[0]],
-                             green: buffer[index + pixelOrder[1]], 
+                             green: buffer[index + pixelOrder[1]],
                              blue: buffer[index + pixelOrder[2]]);
         }
 
         /// <summary>
-        /// Set the pixel for a given coordindate
+        /// Set the color of a pixel for a given coordinate
         /// </summary>
         /// <param name="x">X position in pixels</param>
         /// <param name="y">Y position in pixels</param>

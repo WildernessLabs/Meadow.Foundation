@@ -2,6 +2,7 @@
 using Meadow.Devices;
 using Meadow.Foundation.Displays;
 using Meadow.Foundation.Graphics;
+using Meadow.Peripherals.Displays;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -18,7 +19,7 @@ namespace MeadowApp
         double rotationXX, rotationYY, rotationZZ;
         double rotationXXX, rotationYYY, rotationZZZ;
 
-        int[,] cubeWireframe = new int[12, 3];
+        readonly int[,] cubeWireframe = new int[12, 3];
         int[,] cubeVertices;
 
         public override Task Initialize()

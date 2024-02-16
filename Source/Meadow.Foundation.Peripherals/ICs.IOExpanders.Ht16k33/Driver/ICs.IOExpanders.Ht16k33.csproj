@@ -1,5 +1,6 @@
 <Project Sdk="Meadow.Sdk/1.1.0">
   <PropertyGroup>
+    <Version>1.8.0</Version>
     <PackageReadmeFile>Readme.md</PackageReadmeFile>
     <Nullable>enable</Nullable>
     <LangVersion>10.0</LangVersion>
@@ -15,12 +16,11 @@
     <PackageId>Meadow.Foundation.ICs.IOExpanders.Ht16k33</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow.Foundation, IOExpanders, HT16K33</PackageTags>
-    <Version>0.6.55</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>HT16K33 I2C IO expander, led driver, and character display controller</Description>
   </PropertyGroup>
   <ItemGroup>
-    <None Include=".\Readme.md" Pack="true" PackagePath=""/>
+    <None Include=".\Readme.md" Pack="true" PackagePath="" />
     <None Include="..\..\..\icon.png" Pack="true" PackagePath="" />
     <ProjectReference Include="..\..\Displays.Led.FourteenSegment\Driver\Displays.Led.FourteenSegment.csproj" />
   </ItemGroup>

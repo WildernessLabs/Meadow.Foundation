@@ -1,6 +1,6 @@
-﻿using Meadow.Foundation.Graphics;
-using Meadow.Foundation.Graphics.Buffers;
+﻿using Meadow.Foundation.Graphics.Buffers;
 using Meadow.Hardware;
+using Meadow.Peripherals.Displays;
 using Meadow.Units;
 using System;
 using System.Threading;
@@ -10,31 +10,21 @@ namespace Meadow.Foundation.Displays
     /// <summary>
     /// Provide an interface to the ST7565 family of displays
     /// </summary>
-    public partial class St7565 : IGraphicsDisplay, ISpiPeripheral
+    public partial class St7565 : IPixelDisplay, ISpiPeripheral, IDisposable
     {
-        /// <summary>
-        /// The display color mode - 1 bit per pixel monochrome
-        /// </summary>
+        /// <inheritdoc/>
         public ColorMode ColorMode => ColorMode.Format1bpp;
 
-        /// <summary>
-        /// The Color mode supported by the display
-        /// </summary>
+        /// <inheritdoc/>
         public ColorMode SupportedColorModes => ColorMode.Format1bpp;
 
-        /// <summary>
-        /// The display width in pixels
-        /// </summary>
+        /// <inheritdoc/>
         public int Width => imageBuffer.Width;
 
-        /// <summary>
-        /// The display height in pixels
-        /// </summary>
+        /// <inheritdoc/>
         public int Height => imageBuffer.Height;
 
-        /// <summary>
-        /// The buffer the holds the pixel data for the display
-        /// </summary>
+        /// <inheritdoc/>
         public IPixelBuffer PixelBuffer => imageBuffer;
 
         /// <summary>
@@ -66,12 +56,23 @@ namespace Meadow.Foundation.Displays
         }
 
         /// <summary>
+        /// Is the object disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
+
+        /// <summary>
+        /// Did we create the port(s) used by the peripheral
+        /// </summary>
+        readonly bool createdPorts = false;
+
+        /// <summary>
         /// SPI Communication bus used to communicate with the peripheral
         /// </summary>
         protected ISpiCommunications spiComms;
 
         readonly IDigitalOutputPort dataCommandPort;
         readonly IDigitalOutputPort resetPort;
+        readonly IDigitalOutputPort? chipSelectPort;
 
         const bool Data = true;
         const bool Command = false;
@@ -88,11 +89,12 @@ namespace Meadow.Foundation.Displays
         /// <param name="resetPin">Reset pin</param>
         /// <param name="width">Width of display in pixels</param>
         /// <param name="height">Height of display in pixels</param>
-        public St7565(ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
+        public St7565(ISpiBus spiBus, IPin? chipSelectPin, IPin dcPin, IPin resetPin,
             int width = 128, int height = 64) :
-            this(spiBus, chipSelectPin?.CreateDigitalOutputPort(), dcPin.CreateDigitalOutputPort(),
+            this(spiBus, chipSelectPin?.CreateDigitalOutputPort() ?? null, dcPin.CreateDigitalOutputPort(),
                 resetPin.CreateDigitalOutputPort(), width, height)
         {
+            createdPorts = true;
         }
 
         /// <summary>
@@ -105,7 +107,7 @@ namespace Meadow.Foundation.Displays
         /// <param name="width">Width of display in pixels</param>
         /// <param name="height">Height of display in pixels</param>
         public St7565(ISpiBus spiBus,
-            IDigitalOutputPort chipSelectPort,
+            IDigitalOutputPort? chipSelectPort,
             IDigitalOutputPort dataCommandPort,
             IDigitalOutputPort resetPort,
             int width = 128, int height = 64)
@@ -113,7 +115,7 @@ namespace Meadow.Foundation.Displays
             this.dataCommandPort = dataCommandPort;
             this.resetPort = resetPort;
 
-            spiComms = new SpiCommunications(spiBus, chipSelectPort, DefaultSpiBusSpeed, DefaultSpiBusMode);
+            spiComms = new SpiCommunications(spiBus, this.chipSelectPort = chipSelectPort, DefaultSpiBusSpeed, DefaultSpiBusMode);
 
             imageBuffer = new Buffer1bpp(width, height);
             pageBuffer = new byte[PageSize];
@@ -242,7 +244,7 @@ namespace Meadow.Foundation.Displays
             const int pageHeight = 8;
 
             //must update in pages (area of 128x8 pixels)
-            //so interate over all 8 pages and check if they're in range
+            //so iterate over all 8 pages and check if they're in range
             for (int page = 0; page < 8; page++)
             {
                 if (top > pageHeight * page || bottom < (page + 1) * pageHeight)
@@ -306,7 +308,7 @@ namespace Meadow.Foundation.Displays
         }
 
         /// <summary>
-        /// Start the display scrollling in the specified direction.
+        /// Start the display scrolling in the specified direction.
         /// </summary>
         /// <param name="direction">Direction that the display should scroll</param>
         public void StartScrolling(ScrollDirection direction)
@@ -323,7 +325,7 @@ namespace Meadow.Foundation.Displays
         /// </remarks>
         /// <param name="direction">Direction that the display should scroll</param>
         /// <param name="startPage">Start page for the scroll</param>
-        /// <param name="endPage">End oage for the scroll</param>
+        /// <param name="endPage">End page for the scroll</param>
         public void StartScrolling(ScrollDirection direction, byte startPage, byte endPage)
         {
             StopScrolling();
@@ -401,6 +403,32 @@ namespace Meadow.Foundation.Displays
         public void WriteBuffer(int x, int y, IPixelBuffer displayBuffer)
         {
             imageBuffer.WriteBuffer(x, y, displayBuffer);
+        }
+
+        ///<inheritdoc/>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        /// <param name="disposing">Is disposing</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && createdPorts)
+                {
+                    chipSelectPort?.Dispose();
+                    dataCommandPort?.Dispose();
+                    resetPort?.Dispose();
+                }
+
+                IsDisposed = true;
+            }
         }
     }
 }

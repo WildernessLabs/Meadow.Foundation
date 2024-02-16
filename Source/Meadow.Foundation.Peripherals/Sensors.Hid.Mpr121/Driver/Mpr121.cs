@@ -31,7 +31,7 @@ namespace Meadow.Foundation.Sensors.Hid
         /// Notifies about a the channel statuses have been changed.
         /// Refresh period can be changed by setting PeriodRefresh property.
         /// </summary>
-        public event EventHandler<ChannelStatusChangedEventArgs> ChannelStatusesChanged;
+        public event EventHandler<ChannelStatusChangedEventArgs> ChannelStatusesChanged = default!;
 
         private static readonly int NumberOfChannels = Enum.GetValues(typeof(Channels)).Length;
 
@@ -64,7 +64,7 @@ namespace Meadow.Foundation.Sensors.Hid
         /// <summary>
         /// Create a new MPR121 keypad object.
         /// </summary>
-        public Mpr121(II2cBus i2cBus, byte address = (byte)Addresses.Default, int refreshPeriod = -1, Mpr121Configuration configuration = null)
+        public Mpr121(II2cBus i2cBus, byte address = (byte)Addresses.Default, int refreshPeriod = -1, Mpr121Configuration? configuration = null)
         {
             this.refreshPeriod = refreshPeriod;
 

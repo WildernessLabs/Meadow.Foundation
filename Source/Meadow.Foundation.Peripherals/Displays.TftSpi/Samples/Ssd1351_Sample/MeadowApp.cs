@@ -38,7 +38,7 @@ namespace BasicDisplays.Tft.Ssd1351_Sample
         {
             graphics.Clear();
 
-            graphics.DrawCircle(80, 80, 40, Meadow.Foundation.Color.Cyan, false);
+            graphics.DrawCircle(80, 80, 40, Color.Cyan, false);
 
             int indent = 0;
             int spacing = 10;
@@ -46,16 +46,16 @@ namespace BasicDisplays.Tft.Ssd1351_Sample
 
             graphics.DrawText(indent, y, "Meadow F7 (SSD1351)");
 
-            graphics.DrawText(indent, y += spacing, "Red", Meadow.Foundation.Color.Red);
-            graphics.DrawText(indent, y += spacing, "Purple", Meadow.Foundation.Color.Purple);
-            graphics.DrawText(indent, y += spacing, "BlueViolet", Meadow.Foundation.Color.BlueViolet);
-            graphics.DrawText(indent, y += spacing, "Blue", Meadow.Foundation.Color.Blue);
-            graphics.DrawText(indent, y += spacing, "Cyan", Meadow.Foundation.Color.Cyan);
-            graphics.DrawText(indent, y += spacing, "LawnGreen", Meadow.Foundation.Color.LawnGreen);
-            graphics.DrawText(indent, y += spacing, "GreenYellow", Meadow.Foundation.Color.GreenYellow);
-            graphics.DrawText(indent, y += spacing, "Yellow", Meadow.Foundation.Color.Yellow);
-            graphics.DrawText(indent, y += spacing, "Orange", Meadow.Foundation.Color.Orange);
-            graphics.DrawText(indent, y += spacing, "Brown", Meadow.Foundation.Color.Brown);
+            graphics.DrawText(indent, y += spacing, "Red", Color.Red);
+            graphics.DrawText(indent, y += spacing, "Purple", Color.Purple);
+            graphics.DrawText(indent, y += spacing, "BlueViolet", Color.BlueViolet);
+            graphics.DrawText(indent, y += spacing, "Blue", Color.Blue);
+            graphics.DrawText(indent, y += spacing, "Cyan", Color.Cyan);
+            graphics.DrawText(indent, y += spacing, "LawnGreen", Color.LawnGreen);
+            graphics.DrawText(indent, y += spacing, "GreenYellow", Color.GreenYellow);
+            graphics.DrawText(indent, y += spacing, "Yellow", Color.Yellow);
+            graphics.DrawText(indent, y += spacing, "Orange", Color.Orange);
+            graphics.DrawText(indent, y += spacing, "Brown", Color.Brown);
 
             graphics.Show();
 

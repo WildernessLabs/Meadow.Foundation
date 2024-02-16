@@ -1,5 +1,5 @@
-﻿using Meadow.Foundation.Graphics;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
+using Meadow.Peripherals.Displays;
 
 namespace Meadow.Foundation.Displays
 {
@@ -56,16 +56,19 @@ namespace Meadow.Foundation.Displays
         }
 
         /// <summary>
-        /// Initalize the display
+        /// Initialize the display
         /// </summary>
         protected override void Initialize()
         {
-            resetPort.State = true;
-            DelayMs(5);
-            resetPort.State = false;
-            DelayMs(120);
-            resetPort.State = true;
-            DelayMs(150);
+            if (resetPort != null)
+            {
+                resetPort.State = true;
+                DelayMs(5);
+                resetPort.State = false;
+                DelayMs(120);
+                resetPort.State = true;
+                DelayMs(150);
+            }
 
             SendCommand(0xE0); // Positive Gamma Control
             SendData(0x00);
@@ -133,7 +136,7 @@ namespace Meadow.Foundation.Displays
             SendData(0x02);
             SendData(0x3B);
 
-            SendCommand(0xE9); //set image funcion 
+            SendCommand(0xE9); //set image function 
             SendData(0x00); //disable 24 bit data
 
             SendCommand(0xF7); // Adjust Control 3

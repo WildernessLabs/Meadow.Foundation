@@ -1,37 +1,27 @@
-﻿using Meadow.Foundation.Graphics;
-using Meadow.Foundation.Graphics.Buffers;
+﻿using Meadow.Foundation.Graphics.Buffers;
 using Meadow.Hardware;
+using Meadow.Peripherals.Displays;
 
 namespace Meadow.Foundation.Displays
 {
     /// <summary>
-    /// Represents a WaveShare 5.65" ACeP 7 color epaper display
+    /// Represents a WaveShare 5.65" ACeP 7 color e-Paper display
     /// </summary>
-    public class Epd5in65f : EPaperBase, IGraphicsDisplay
+    public class Epd5in65f : EPaperBase, IPixelDisplay
     {
-        /// <summary>
-        /// Display color mode 
-        /// </summary>
+        /// <inheritdoc/>
         public ColorMode ColorMode => ColorMode.Format4bppIndexed;
 
-        /// <summary>
-        /// The Color mode supported by the display
-        /// </summary>
+        /// <inheritdoc/>
         public ColorMode SupportedColorModes => ColorMode.Format4bppIndexed;
 
-        /// <summary>
-        /// The buffer the holds the pixel data for the display
-        /// </summary>
+        /// <inheritdoc/>
         public IPixelBuffer PixelBuffer => imageBuffer;
 
-        /// <summary>
-        /// The color to draw when a pixel is enabled
-        /// </summary>
+        /// <inheritdoc/>
         public Color EnabledColor => Color.Black;
 
-        /// <summary>
-        /// The color to draw when a pixel is disabled
-        /// </summary>
+        /// <inheritdoc/>
         public Color DisabledColor => Color.White;
 
         /// <summary>
@@ -39,14 +29,10 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         protected readonly BufferIndexed4 imageBuffer;
 
-        /// <summary>
-        /// Width of display in pixels
-        /// </summary>
+        /// <inheritdoc/>
         public int Width => 600;
 
-        /// <summary>
-        /// Height of display in pixels
-        /// </summary>
+        /// <inheritdoc/>
         public int Height => 448;
 
         /// <summary>
@@ -198,9 +184,9 @@ namespace Meadow.Foundation.Displays
             SendData(0xC0);
             SendCommand(0x10);
 
-            dataCommandPort.State = DataState;
+            dataCommandPort!.State = DataState;
 
-            spiComms.Write(imageBuffer.Buffer);
+            spiComms!.Write(imageBuffer.Buffer);
 
             SendCommand(0x04);
             WaitForBusyState(true);
@@ -232,7 +218,7 @@ namespace Meadow.Foundation.Displays
                 {
                     if (i < bottom && i >= top && j < right / 2 && j >= left / 2)
                     {
-                        spiComms.Write(imageBuffer.Buffer[j + ((Width / 2) * i)]);
+                        spiComms!.Write(imageBuffer.Buffer[j + ((Width / 2) * i)]);
                     }
                     else
                     {   //no-op 
@@ -253,7 +239,7 @@ namespace Meadow.Foundation.Displays
         /// Clear the display
         /// </summary>
         /// <param name="fillColor">The color used to fill the display buffer</param>
-        /// <param name="updateDisplay">Update the dipslay once the buffer has been cleared when true</param>
+        /// <param name="updateDisplay">Update the display once the buffer has been cleared when true</param>
         public void Fill(Color fillColor, bool updateDisplay = false)
         {
             Fill(fillColor);
@@ -305,11 +291,18 @@ namespace Meadow.Foundation.Displays
         }
 
         /// <summary>
-        /// Wait until the display busy state is sey
+        /// Wait until the display busy state is set
         /// </summary>
         protected virtual void WaitForBusyState(bool state)
         {
             int count = 0;
+
+            if (busyPort is null)
+            {
+                DelayMs(200);
+                return;
+            }
+
             while (busyPort.State != state && count < 20)
             {
                 DelayMs(50);
@@ -327,7 +320,7 @@ namespace Meadow.Foundation.Displays
             SendCommand(0x07);
             SendData(0xA5);
             DelayMs(100);
-            resetPort.State = false;
+            resetPort!.State = false;
         }
     }
 }

@@ -4,7 +4,7 @@ namespace Meadow.Foundation.Displays
 {
     //similar to IL91874 ... appears to be an old version v0.3
     //GxGDEW027W3
-    //currently hard coded to the avaliable display size
+    //currently hard coded to the available display size
     /// <summary>
     /// Represents the older v0.3 Il91874V03 ePaper color displays
     /// 264x176, 2.7inch tri color e-Ink display / SPI interface 
@@ -47,7 +47,7 @@ namespace Meadow.Foundation.Displays
         }
 
         /// <summary>
-        /// Initalize the display
+        /// Initialize the display
         /// </summary>
         protected override void Initialize()
         {
@@ -302,7 +302,7 @@ namespace Meadow.Foundation.Displays
             READ_OTP_DATA = 0xA2,
         }
 
-        static byte[] lut_vcom_dc = {
+        static readonly byte[] lut_vcom_dc = {
             0x00, 0x00,
             0x00, 0x0F, 0x0F, 0x00, 0x00, 0x05,
             0x00, 0x32, 0x32, 0x00, 0x00, 0x02,
@@ -314,7 +314,7 @@ namespace Meadow.Foundation.Displays
         };
 
         //R21H
-        static byte[] lut_ww = {
+        static readonly byte[] lut_ww = {
             0x50, 0x0F, 0x0F, 0x00, 0x00, 0x05,
             0x60, 0x32, 0x32, 0x00, 0x00, 0x02,
             0xA0, 0x0F, 0x0F, 0x00, 0x00, 0x05,
@@ -325,7 +325,7 @@ namespace Meadow.Foundation.Displays
         };
 
         //R22H    r
-        static byte[] lut_bw =
+        static readonly byte[] lut_bw =
         {
             0x50, 0x0F, 0x0F, 0x00, 0x00, 0x05,
             0x60, 0x32, 0x32, 0x00, 0x00, 0x02,
@@ -337,7 +337,7 @@ namespace Meadow.Foundation.Displays
         };
 
         //R24H    b
-        static byte[] lut_bb =
+        static readonly byte[] lut_bb =
         {
             0xA0, 0x0F, 0x0F, 0x00, 0x00, 0x05,
             0x60, 0x32, 0x32, 0x00, 0x00, 0x02,
@@ -349,7 +349,7 @@ namespace Meadow.Foundation.Displays
         };
 
         //R23H    w
-        static byte[] lut_wb =
+        static readonly byte[] lut_wb =
         {
             0xA0, 0x0F, 0x0F, 0x00, 0x00, 0x05,
             0x60, 0x32, 0x32, 0x00, 0x00, 0x02,

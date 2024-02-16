@@ -1,5 +1,5 @@
-﻿using Meadow.Foundation.Graphics;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
+using Meadow.Peripherals.Displays;
 
 namespace Meadow.Foundation.Displays
 {
@@ -56,7 +56,7 @@ namespace Meadow.Foundation.Displays
         }
 
         /// <summary>
-        /// Initalize the display
+        /// Initialize the display
         /// </summary>
         protected override void Initialize()
         {
@@ -75,7 +75,7 @@ namespace Meadow.Foundation.Displays
             SendData(0x96);    //Enable extension command 2 partII
 
             SendCommand(Register.MADCTL); //Memory Data Access Control MX, MY, RGB mode                                    
-            SendData(0x48);    //X-Mirror, Top-Left to right-Buttom, RGB  
+            SendData(0x48);    //X-Mirror, Top-Left to right-Bottom, RGB  
 
             SendCommand(Register.COLOR_MODE);  // set color mode
             if (ColorMode == ColorMode.Format16bppRgb565)
@@ -96,7 +96,7 @@ namespace Meadow.Foundation.Displays
             SendData(0x8A);
             SendData(0x00);
             SendData(0x00);
-            SendData(0x29);    //Source eqaulizing period time= 22.5 us
+            SendData(0x29);    //Source equalizing period time= 22.5 us
             SendData(0x19);    //Timing for "Gate start"=25 (Tclk)
             SendData(0xA5);    //Timing for "Gate End"=37 (Tclk), Gate driver EQ function ON
             SendData(0x33);

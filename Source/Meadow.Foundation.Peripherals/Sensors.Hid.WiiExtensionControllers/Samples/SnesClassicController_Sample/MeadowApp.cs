@@ -15,7 +15,7 @@ namespace SnesClassicController_Sample
         public override Task Initialize()
         {
             Resolver.Log.Info("Initialize...");
-        
+
             var i2cBus = Device.CreateI2cBus(SnesClassicController.DefaultI2cSpeed);
 
             snesController = new SnesClassicController(i2cBus: i2cBus);

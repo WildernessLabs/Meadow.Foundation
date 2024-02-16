@@ -1,6 +1,5 @@
 ﻿using Meadow.Hardware;
 using Meadow.Peripherals.Sensors;
-using System;
 using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Temperature
@@ -15,11 +14,6 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// The default I2C address for the peripheral
         /// </summary>
         public byte DefaultI2cAddress => (byte)Addresses.Default;
-
-        /// <summary>
-        /// Raised when the temeperature value changes
-        /// </summary>
-        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
 
         /// <summary>
         /// The temperature, in degrees celsius (°C), from the last reading.
@@ -38,7 +32,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         }
 
         /// <summary>
-		/// Wake the the device if it's in sleep state
+		/// Wake the device if it's in sleep state
 		/// </summary>
         public void Wake()
         {
@@ -108,16 +102,6 @@ namespace Meadow.Foundation.Sensors.Temperature
             }
 
             return Task.FromResult(new Units.Temperature(temp, Units.Temperature.UnitType.Celsius));
-        }
-
-        /// <summary>
-        /// Raise events for subcribers and notify of value changes
-        /// </summary>
-        /// <param name="changeResult">The updated sensor data</param>
-        protected override void RaiseEventsAndNotify(IChangeResult<Units.Temperature> changeResult)
-        {
-            TemperatureUpdated?.Invoke(this, changeResult);
-            base.RaiseEventsAndNotify(changeResult);
         }
     }
 }

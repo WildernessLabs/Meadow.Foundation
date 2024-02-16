@@ -30,13 +30,8 @@ namespace Meadow.Foundation.Sensors.Temperature
     /// TMP37                   500                     20                
     /// TMP236                  887.5                   19.5                    
     /// </remarks>
-    public partial class AnalogTemperature : SamplingSensorBase<Units.Temperature>, ITemperatureSensor
+    public partial class AnalogTemperature : SamplingSensorBase<Units.Temperature>, ITemperatureSensor, IDisposable
     {
-        /// <summary>
-        /// Raised when the value of the reading changes.
-        /// </summary>
-        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
-
         ///<Summary>
         /// AnalogInputPort connected to temperature sensor
         ///</Summary>
@@ -96,6 +91,16 @@ namespace Meadow.Foundation.Sensors.Temperature
         public Units.Temperature? Temperature { get; protected set; }
 
         /// <summary>
+        /// Is the object disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
+
+        /// <summary>
+        /// Did we create the port(s) used by the peripheral
+        /// </summary>
+        readonly bool createdPort = false;
+
+        /// <summary>
         /// Creates a new instance of the AnalogTemperature class.
         /// </summary>
         /// <param name="analogPin">Analog pin the temperature sensor is connected to</param>
@@ -113,7 +118,9 @@ namespace Meadow.Foundation.Sensors.Temperature
                 : this(
                       analogPin.CreateAnalogInputPort(sampleCount, sampleInterval ?? TimeSpan.FromMilliseconds(40), new Voltage(3.3, Voltage.UnitType.Volts)),
                       sensorType, calibration)
-        { }
+        {
+            createdPort = true;
+        }
 
         /// <summary>
         /// Creates a new instance of the AnalogTemperature class.
@@ -133,7 +140,7 @@ namespace Meadow.Foundation.Sensors.Temperature
                 case KnownSensorType.LM35:
                 case KnownSensorType.LM45:
                     calibration = new Calibration(
-                        degreesCelciusSampleReading: 25,
+                        degreesCelsiusSampleReading: 25,
                         millivoltsAtSampleReading: 250,
                         millivoltsPerDegreeCentigrade: 10);
                     break;
@@ -141,19 +148,19 @@ namespace Meadow.Foundation.Sensors.Temperature
                 case KnownSensorType.TMP235:
                 case KnownSensorType.TMP36:
                     calibration = new Calibration(
-                        degreesCelciusSampleReading: 25,
+                        degreesCelsiusSampleReading: 25,
                         millivoltsAtSampleReading: 750,
                         millivoltsPerDegreeCentigrade: 10);
                     break;
                 case KnownSensorType.TMP37:
                     calibration = new Calibration(
-                        degreesCelciusSampleReading: 25,
+                        degreesCelsiusSampleReading: 25,
                         millivoltsAtSampleReading: 500,
                         millivoltsPerDegreeCentigrade: 20);
                     break;
                 case KnownSensorType.TMP236:
                     calibration = new Calibration(
-                        degreesCelciusSampleReading: 25,
+                        degreesCelsiusSampleReading: 25,
                         millivoltsAtSampleReading: 887.5,
                         millivoltsPerDegreeCentigrade: 19.5);
                     break;
@@ -241,16 +248,6 @@ namespace Meadow.Foundation.Sensors.Temperature
         }
 
         /// <summary>
-        /// Method to notify subscribers to TemperatureUpdated event handler
-        /// </summary>
-        /// <param name="changeResult"></param>
-        protected override void RaiseEventsAndNotify(IChangeResult<Units.Temperature> changeResult)
-        {
-            TemperatureUpdated?.Invoke(this, changeResult);
-            base.RaiseEventsAndNotify(changeResult);
-        }
-
-        /// <summary>
         /// Converts voltage to Temperature
         /// </summary>
         /// <param name="voltage"></param>
@@ -260,6 +257,30 @@ namespace Meadow.Foundation.Sensors.Temperature
             return new Units.Temperature(SensorCalibration.SampleReading +
                 (voltage.Millivolts - SensorCalibration.MillivoltsAtSampleReading) / SensorCalibration.MillivoltsPerDegreeCentigrade,
                 Units.Temperature.UnitType.Celsius);
+        }
+
+        ///<inheritdoc/>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        /// <param name="disposing">Is disposing</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && createdPort)
+                {
+                    AnalogInputPort?.Dispose();
+                }
+
+                IsDisposed = true;
+            }
         }
     }
 }

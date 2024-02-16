@@ -1,8 +1,8 @@
-﻿using System;
-using System.Threading.Tasks;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Temperature;
+using System;
+using System.Threading.Tasks;
 
 namespace Sensors.Temperature.Tmp102_Sample
 {
@@ -24,14 +24,14 @@ namespace Sensors.Temperature.Tmp102_Sample
             var consumer = Tmp102.CreateObserver(
                 handler: result =>
                 {
-                    Resolver.Log.Info($"Temperature New Value { result.New.Celsius}C");
-                    Resolver.Log.Info($"Temperature Old Value { result.Old?.Celsius}C");
+                    Resolver.Log.Info($"Temperature New Value {result.New.Celsius}C");
+                    Resolver.Log.Info($"Temperature Old Value {result.Old?.Celsius}C");
                 },
                 filter: null
             );
             tmp102.Subscribe(consumer);
 
-            tmp102.TemperatureUpdated += (object sender, IChangeResult<Meadow.Units.Temperature> e) =>
+            tmp102.Updated += (object sender, IChangeResult<Meadow.Units.Temperature> e) =>
             {
                 Resolver.Log.Info($"Temperature Updated: {e.New.Celsius:N2}C");
             };

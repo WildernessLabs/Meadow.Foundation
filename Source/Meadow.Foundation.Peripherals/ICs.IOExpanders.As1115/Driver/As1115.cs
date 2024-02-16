@@ -1,6 +1,6 @@
-﻿using Meadow.Foundation.Graphics;
-using Meadow.Foundation.Graphics.Buffers;
+﻿using Meadow.Foundation.Graphics.Buffers;
 using Meadow.Hardware;
+using Meadow.Peripherals.Displays;
 using Meadow.Peripherals.Sensors.Buttons;
 using System;
 using System.Collections.Generic;
@@ -11,29 +11,29 @@ namespace Meadow.Foundation.ICs.IOExpanders
     /// <summary>
     /// Represents an As1115 led driver and key scanner
     /// </summary>
-    public partial class As1115 : IGraphicsDisplay, II2cPeripheral, IDisposable
+    public partial class As1115 : IPixelDisplay, II2cPeripheral, IDisposable
     {
         /// <summary>
         /// Event raised when any key scan button is pressed
         /// </summary>
-        public event EventHandler<KeyScanEventArgs> KeyScanPressStarted = null;
+        public event EventHandler<KeyScanEventArgs> KeyScanPressStarted = default!;
 
         /// <summary>
         /// Event raised when any key scan button is released
         /// </summary>
-        public event EventHandler<KeyScanEventArgs> KeyScanPressEnded = null;
+        public event EventHandler<KeyScanEventArgs> KeyScanPressEnded = default!;
 
         /// <summary>
         /// Readonly collection that contains all 16 key scan button objects
         /// </summary>
-        public ReadOnlyDictionary<KeyScanButtonType, KeyScanButton> KeyScanButtons { get; protected set; }
+        public ReadOnlyDictionary<KeyScanButtonType, KeyScanButton>? KeyScanButtons { get; protected set; }
 
         /// <summary>
         /// Helper method to get IButton object references for keyscan buttons
         /// </summary>
         /// <param name="buttonType">The button type</param>
         /// <returns>The button object reference</returns>
-        public IButton GetButton(KeyScanButtonType buttonType) => KeyScanButtons[buttonType];
+        public IButton GetButton(KeyScanButtonType buttonType) => KeyScanButtons![buttonType];
 
         /// <summary>
         /// Last button pressed, used internally to raise key up events
@@ -50,29 +50,19 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         public byte DefaultI2cAddress => (byte)Addresses.Default;
 
-        /// <summary>
-        /// The display color mode (1 bit per pixel)
-        /// </summary>
+        /// <inheritdoc/>
         public ColorMode ColorMode => ColorMode.Format1bpp;
 
-        /// <summary>
-        /// The Color mode supported by the display
-        /// </summary>
+        /// <inheritdoc/>
         public ColorMode SupportedColorModes => ColorMode.Format1bpp;
 
-        /// <summary>
-        /// Display width in pixels for 8x8 matrix displays
-        /// </summary>
+        /// <inheritdoc/>
         public int Width => 8;
 
-        /// <summary>
-        /// Display height in pixels for 8x8 matrix displays
-        /// </summary>
+        /// <inheritdoc/>
         public int Height => 8;
 
-        /// <summary>
-        /// The buffer that holds the pixel data for 8x8 matrix displays
-        /// </summary>
+        /// <inheritdoc/>
         public IPixelBuffer PixelBuffer => buffer;
 
         /// <summary>
@@ -148,7 +138,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             {
                 KeyScanPressStarted?.Invoke(this, new KeyScanEventArgs(keyScanButton, data[0], data[1]));
 
-                KeyScanButtons[keyScanButton].Update(true);
+                KeyScanButtons![keyScanButton].Update(true);
 
                 lastButtonPressed = keyScanButton;
             }
@@ -158,7 +148,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
                 if (lastButtonPressed != KeyScanButtonType.None)
                 {
-                    KeyScanButtons[lastButtonPressed].Update(false);
+                    KeyScanButtons![lastButtonPressed].Update(false);
                 }
             }
         }
@@ -239,7 +229,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
         /// <summary>
         /// Set the display decode mode
-        /// Hexidecimal for matrix leds, or character for 7-segment displays
+        /// Hexadecimal for matrix leds, or character for 7-segment displays
         /// </summary>
         /// <param name="mode">The decode mode enum</param>
         /// Not currently supported - driver is pixel mode only
@@ -293,7 +283,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <summary>
         /// Set a single character
         /// </summary>
-        /// <param name="character">the chracter to display</param>
+        /// <param name="character">the character to display</param>
         /// <param name="digit">the digit index starting from the left</param>
         /// <param name="showDecimal">show the decimal with the character</param>
         public void SetCharacter(BcdCharacterType character, int digit, bool showDecimal = false)
@@ -311,14 +301,14 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <summary>
         /// Set a single character
         /// </summary>
-        /// <param name="character">the chracter to display</param>
+        /// <param name="character">the character to display</param>
         /// <param name="digit">the digit index starting from the left</param>
         /// <param name="showDecimal">show the decimal with the character</param>
         public void SetCharacter(HexCharacterType character, int digit, bool showDecimal = false)
         {
             if (DecodeMode != DecodeType.Hexidecimal)
             {
-                throw new Exception("SetCharacterBcd requires DecodeMode to be Hexidecimal");
+                throw new Exception("SetCharacterBcd requires DecodeMode to be Hexadecimal");
             }
 
             var data = (byte)((byte)character + (showDecimal ? 0x10000000 : 0));
@@ -329,7 +319,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <summary>
         /// Set display intensity (0-15)
         /// </summary>
-        /// <param name="intensity">Instensity from 0-15 (clamps above 15)</param>
+        /// <param name="intensity">Intensity from 0-15 (clamps above 15)</param>
         public void SetIntensity(byte intensity)
         {
             intensity = Math.Max(intensity, (byte)15);
@@ -399,7 +389,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// Fill a region of the display buffer with a color
         /// Black will clear the display, any other color will turn on all leds
         /// </summary>
-        /// <param name="x">X postion in pixels</param>
+        /// <param name="x">X position in pixels</param>
         /// <param name="y">Y position in pixels</param>
         /// <param name="width">Width in pixels</param>
         /// <param name="height">Height in pixels</param>
@@ -412,7 +402,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <summary>
         /// Draw a pixel at a given location
         /// </summary>
-        /// <param name="x">X postion in pixels</param>
+        /// <param name="x">X position in pixels</param>
         /// <param name="y">Y position in pixels</param>
         /// <param name="color">Color to draw - Black will turn pixels off, any color will turn pixels on</param>
         public void DrawPixel(int x, int y, Color color)
@@ -423,7 +413,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <summary>
         /// Draw a pixel at a given location
         /// </summary>
-        /// <param name="x">X postion in pixels</param>
+        /// <param name="x">X position in pixels</param>
         /// <param name="y">Y position in pixels</param>
         /// <param name="enabled">If true, turn led on at location</param>
         public void DrawPixel(int x, int y, bool enabled)
@@ -434,7 +424,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <summary>
         /// Invert pixel at location (switch on/off)
         /// </summary>
-        /// <param name="x">X postion in pixels</param>
+        /// <param name="x">X position in pixels</param>
         /// <param name="y">Y position in pixels</param>
         public void InvertPixel(int x, int y)
         {
@@ -444,7 +434,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <summary>
         /// Write a pixel buffer to the display buffer
         /// </summary>
-        /// <param name="x">X postion in pixels</param>
+        /// <param name="x">X position in pixels</param>
         /// <param name="y">Y position in pixels</param>
         /// <param name="displayBuffer">Display buffer to write</param>
         public void WriteBuffer(int x, int y, IPixelBuffer displayBuffer)
@@ -453,9 +443,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
         }
 
         /// <summary>
-        /// Dispose peripheral
+        /// Dispose of the object
         /// </summary>
-        /// <param name="disposing"></param>
+        /// <param name="disposing">Is disposing</param>
         protected virtual void Dispose(bool disposing)
         {
             if (!IsDisposed)
@@ -468,9 +458,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             }
         }
 
-        /// <summary>
-        /// Dispose BusComms
-        /// </summary>
+        ///<inheritdoc/>
         public void Dispose()
         {
             Dispose(disposing: true);

@@ -1,20 +1,24 @@
-﻿using Meadow.Foundation.Graphics;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
+using Meadow.Peripherals.Displays;
 using System.Linq;
 using System.Threading;
 
 namespace Meadow.Foundation.Graphics.MicroLayout;
 
+/// <summary>
+/// An abstraction of a physical screen
+/// </summary>
 public class DisplayScreen
 {
-    private IGraphicsDisplay _display;
-    private MicroGraphics _graphics;
-    private ITouchScreen? _touchScreen;
+    private readonly IPixelDisplay _display;
+    private readonly MicroGraphics _graphics;
+    private readonly ITouchScreen? _touchScreen;
+    private bool _updateInProgress = false;
 
     /// <summary>
-    /// Gets or sets the collection of controls on the display screen.
+    /// Gets the collection of controls on the display screen.
     /// </summary>
-    public ControlsCollection Controls { get; set; }
+    public ControlsCollection Controls { get; }
 
     /// <summary>
     /// Gets or sets the background color of the display screen.
@@ -31,6 +35,8 @@ public class DisplayScreen
     /// </summary>
     public int Height => _graphics.Height;
 
+    private bool IsInvalid { get; set; }
+
     internal DisplayTheme? Theme { get; }
 
     /// <summary>
@@ -40,9 +46,9 @@ public class DisplayScreen
     /// <param name="rotation">The rotation type for the display.</param>
     /// <param name="touchScreen">The optional touchscreen interface.</param>
     /// <param name="theme">The display theme to use.</param>
-    public DisplayScreen(IGraphicsDisplay physicalDisplay, RotationType rotation = RotationType.Normal, ITouchScreen? touchScreen = null, DisplayTheme? theme = null)
+    public DisplayScreen(IPixelDisplay physicalDisplay, RotationType rotation = RotationType.Normal, ITouchScreen? touchScreen = null, DisplayTheme? theme = null)
     {
-        Controls = new ControlsCollection(this);
+        Controls = new ControlsCollection(this, null);
         Theme = theme;
 
         _display = physicalDisplay;
@@ -65,18 +71,28 @@ public class DisplayScreen
 
         BackgroundColor = theme?.BackgroundColor ?? Color.Black;
 
-        new Thread(DrawLoop).Start();
+        if (Resolver.App != null)
+        {
+            new Thread(DrawLoopThreaded).Start();
+        }
+        else
+        {
+            new Thread(DrawLoopOnCaller).Start();
+        }
     }
 
     private void _touchScreen_TouchUp(int x, int y)
     {
-        foreach (var control in Controls)
+        lock (Controls.SyncRoot)
         {
-            if (control is IClickableDisplayControl c)
+            foreach (var control in Controls)
             {
-                if (control.Contains(x, y))
+                if (control is IClickableControl c)
                 {
-                    c.Pressed = false;
+                    if (control.Contains(x, y))
+                    {
+                        c.Pressed = false;
+                    }
                 }
             }
         }
@@ -84,36 +100,112 @@ public class DisplayScreen
 
     private void _touchScreen_TouchDown(int x, int y)
     {
-        foreach (var control in Controls)
+        lock (Controls.SyncRoot)
         {
-            if (control is IClickableDisplayControl c)
+            foreach (var control in Controls)
             {
-                if (control.Contains(x, y))
+                if (control is IClickableControl c)
                 {
-                    c.Pressed = true;
+                    if (control.Contains(x, y))
+                    {
+                        c.Pressed = true;
+                    }
                 }
             }
         }
     }
 
-    private void DrawLoop()
+    /// <summary>
+    /// Invalidates the entire screen, causing all controls to redraw
+    /// </summary>
+    public void Invalidate()
+    {
+        IsInvalid = true;
+    }
+
+    private void RefreshTree(IControl control)
+    {
+        control.Invalidate();
+        control.Refresh(_graphics);
+
+        if (control is Layout l)
+        {
+            foreach (var c in l.Controls)
+            {
+                RefreshTree(c);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Begins an update process for the display screen, indicating that no drawing should take place until EndUpdate is called
+    /// </summary>
+    public void BeginUpdate()
+    {
+        _updateInProgress = true;
+    }
+
+    /// <summary>
+    /// End an update process for the display screen, indicating that drawing should resume and invalidating the DisplayScreen
+    /// </summary>
+    public void EndUpdate()
+    {
+        _updateInProgress = false;
+        IsInvalid = true;
+    }
+
+    private void DrawLoopOnCaller()
+    {
+        while (true)
+        {
+            {
+                if (!_updateInProgress && (IsInvalid || Controls.Any(c => c.IsInvalid)))
+                {
+                    _graphics.Clear(BackgroundColor);
+
+                    lock (Controls.SyncRoot)
+                    {
+                        foreach (var control in Controls)
+                        {
+                            if (control != null)
+                            {
+                                // TODO: micrographics supports invalidating regions - we need to update to invalidate only regions here, too
+                                RefreshTree(control);
+                            }
+                        }
+                    }
+                    _graphics.Show();
+                    IsInvalid = false;
+                }
+            }
+
+            Thread.Sleep(50);
+        }
+    }
+
+    private void DrawLoopThreaded()
     {
         while (true)
         {
             Resolver.App.InvokeOnMainThread((_) =>
             {
-                if (Controls.Any(c => c.IsInvalid))
+                lock (Controls.SyncRoot)
                 {
-                    _graphics.Clear(BackgroundColor);
-
-                    foreach (var control in Controls)
+                    if (!_updateInProgress && (IsInvalid || Controls.Any(c => c.IsInvalid)))
                     {
-                        // until micrographics supports invalidating regions, we have to invalidate everything when one control needs updating
-                        control.Invalidate();
-                        control.Refresh(_graphics);
-                    }
+                        _graphics.Clear(BackgroundColor);
 
-                    _graphics.Show();
+                        foreach (var control in Controls)
+                        {
+                            if (control != null)
+                            {
+                                // TODO: micrographics supports invalidating regions - we need to update to invalidate only regions here, too
+                                RefreshTree(control);
+                            }
+                        }
+                        _graphics.Show();
+                        IsInvalid = false;
+                    }
                 }
             });
 

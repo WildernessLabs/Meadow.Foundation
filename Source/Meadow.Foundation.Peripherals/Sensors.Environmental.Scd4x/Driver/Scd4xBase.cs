@@ -1,5 +1,6 @@
 using Meadow.Hardware;
 using Meadow.Peripherals.Sensors;
+using Meadow.Peripherals.Sensors.Atmospheric;
 using Meadow.Peripherals.Sensors.Environmental;
 using Meadow.Units;
 using System;
@@ -15,27 +16,34 @@ namespace Meadow.Foundation.Sensors.Environmental
         : ByteCommsSensorBase<(Concentration? Concentration,
                                                         Units.Temperature? Temperature,
                                                         RelativeHumidity? Humidity)>,
-        ITemperatureSensor, IHumiditySensor, IConcentrationSensor, II2cPeripheral
+        ITemperatureSensor, IHumiditySensor, ICO2ConcentrationSensor, II2cPeripheral
     {
-        /// <summary>
-        /// Raised when the concentration changes
-        /// </summary>
-        public event EventHandler<IChangeResult<Concentration>> ConcentrationUpdated = delegate { };
+        private event EventHandler<IChangeResult<Units.Temperature>> _temperatureHandlers = default!;
+        private event EventHandler<IChangeResult<RelativeHumidity>> _humidityHandlers = default!;
+        private event EventHandler<IChangeResult<Concentration>> _concentrationHandlers = default!;
 
-        /// <summary>
-        /// Raised when the temperature value changes
-        /// </summary>
-        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = delegate { };
+        event EventHandler<IChangeResult<Units.Temperature>> ISamplingSensor<Units.Temperature>.Updated
+        {
+            add => _temperatureHandlers += value;
+            remove => _temperatureHandlers -= value;
+        }
 
-        /// <summary>
-        /// Raised when the humidity value changes
-        /// </summary>
-        public event EventHandler<IChangeResult<RelativeHumidity>> HumidityUpdated = delegate { };
+        event EventHandler<IChangeResult<RelativeHumidity>> ISamplingSensor<RelativeHumidity>.Updated
+        {
+            add => _humidityHandlers += value;
+            remove => _humidityHandlers -= value;
+        }
+
+        event EventHandler<IChangeResult<Concentration>> ISamplingSensor<Concentration>.Updated
+        {
+            add => _concentrationHandlers += value;
+            remove => _concentrationHandlers -= value;
+        }
 
         /// <summary>
         /// The current C02 concentration value
         /// </summary>
-        public Concentration? Concentration => Conditions.Concentration;
+        public Concentration? CO2Concentration => Conditions.Concentration;
 
         /// <summary>
         /// The current temperature
@@ -148,7 +156,7 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// Stop the sensor from sampling
         /// The sensor will not respond to commands for 500ms
         /// </summary>
-        Task StopPeriodicUpdates()
+        private Task StopPeriodicUpdates()
         {
             SendCommand(Commands.StopPeriodicMeasurement);
             return Task.Delay(500);
@@ -183,7 +191,7 @@ namespace Meadow.Foundation.Sensors.Environmental
             base.StopUpdating();
         }
 
-        void SendCommand(Commands command)
+        private void SendCommand(Commands command)
         {
             var data = new byte[2];
             data[0] = (byte)((ushort)command >> 8);
@@ -221,7 +229,7 @@ namespace Meadow.Foundation.Sensors.Environmental
             return conditions;
         }
 
-        Units.Temperature CalcTemperature(byte valueHigh, byte valueLow)
+        private Units.Temperature CalcTemperature(byte valueHigh, byte valueLow)
         {
             int value = valueHigh << 8 | valueLow;
             double temperature = -45 + value * 175 / 65536.0;
@@ -236,26 +244,26 @@ namespace Meadow.Foundation.Sensors.Environmental
         {
             if (changeResult.New.Temperature is { } temperature)
             {
-                TemperatureUpdated?.Invoke(this, new ChangeResult<Units.Temperature>(temperature, changeResult.Old?.Temperature));
+                _temperatureHandlers?.Invoke(this, new ChangeResult<Units.Temperature>(temperature, changeResult.Old?.Temperature));
             }
             if (changeResult.New.Humidity is { } humidity)
             {
-                HumidityUpdated?.Invoke(this, new ChangeResult<RelativeHumidity>(humidity, changeResult.Old?.Humidity));
+                _humidityHandlers?.Invoke(this, new ChangeResult<RelativeHumidity>(humidity, changeResult.Old?.Humidity));
             }
             if (changeResult.New.Concentration is { } concentration)
             {
-                ConcentrationUpdated?.Invoke(this, new ChangeResult<Concentration>(concentration, changeResult.Old?.Concentration));
+                _concentrationHandlers?.Invoke(this, new ChangeResult<Concentration>(concentration, changeResult.Old?.Concentration));
             }
             base.RaiseEventsAndNotify(changeResult);
         }
 
         async Task<Units.Temperature> ISensor<Units.Temperature>.Read()
-            => (await Read()).Temperature.Value;
+            => (await Read()).Temperature!.Value;
 
         async Task<RelativeHumidity> ISensor<RelativeHumidity>.Read()
-            => (await Read()).Humidity.Value;
+            => (await Read()).Humidity!.Value;
 
         async Task<Concentration> ISensor<Concentration>.Read()
-            => (await Read()).Concentration.Value;
+            => (await Read()).Concentration!.Value;
     }
 }

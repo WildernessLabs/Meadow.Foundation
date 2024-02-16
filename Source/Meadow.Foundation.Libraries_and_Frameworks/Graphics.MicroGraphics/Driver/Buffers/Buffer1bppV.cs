@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Meadow.Peripherals.Displays;
+using System;
 
 namespace Meadow.Foundation.Graphics.Buffers
 {
@@ -124,14 +125,13 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// <param name="buffer">buffer to write</param>
         public override void WriteBuffer(int x, int y, IPixelBuffer buffer)
         {
-            if (buffer.ColorMode == ColorMode)
+            if (buffer is Buffer1bppV buf1bppV)
             {
                 for (int i = 0; i < buffer.Width; i++)
                 {
                     for (int j = 0; j < buffer.Height; j++)
-                    {
-                        //1 bit at a time 
-                        SetPixel(x + i, y + j, (buffer as Buffer1bpp).GetPixelIsEnabled(i, j));
+                    {   //1 bit at a time - ToDo
+                        SetPixel(x + i, y + j, buf1bppV.GetPixelIsEnabled(i, j));
                     }
                 }
             }

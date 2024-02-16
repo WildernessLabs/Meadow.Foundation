@@ -9,14 +9,12 @@ namespace Meadow.Foundation.Leds
     /// </summary>
     public partial class RgbPwmLed
     {
-        private object syncRoot = new object();
+        private readonly object syncRoot = new object();
 
         private Task? animationTask = null;
         private CancellationTokenSource? cancellationTokenSource = null;
 
-        /// <summary>
-        /// Stops the current LED animation
-        /// </summary>
+        ///<inheritdoc/>
         public async Task StopAnimation()
         {
             if (animationTask != null)
@@ -28,24 +26,13 @@ namespace Meadow.Foundation.Leds
             }
         }
 
-        /// <summary>
-        /// Start the Blink animation which sets the brightness of the LED alternating between a low and high brightness
-        /// On an interval of 1 second (500ms on, 500ms off)
-        /// </summary>
-        /// <param name="highBrightness">The maximum brightness of the animation</param>
-        /// <param name="lowBrightness">The minimum brightness of the animation</param>
+        ///<inheritdoc/>
         public Task StartBlink(float highBrightness = 1f, float lowBrightness = 0f)
         {
             return StartBlink(TimeSpan.FromMilliseconds(500), TimeSpan.FromMilliseconds(500), highBrightness, lowBrightness);
         }
 
-        /// <summary>
-        /// Start the Blink animation which sets the brightness of the LED alternating between a low and high brightness
-        /// On an interval of 1 second (500ms on, 500ms off)
-        /// </summary>
-        /// <param name="color">The LED color</param>
-        /// <param name="highBrightness">The maximum brightness of the animation</param>
-        /// <param name="lowBrightness">The minimum brightness of the animation</param>
+        ///<inheritdoc/>
         public Task StartBlink(
             Color color,
             float highBrightness = 1f,
@@ -54,39 +41,7 @@ namespace Meadow.Foundation.Leds
             return StartBlink(color, TimeSpan.FromMilliseconds(500), TimeSpan.FromMilliseconds(500), highBrightness, lowBrightness);
         }
 
-        /// <summary>
-        /// Start the Blink animation which sets the brightness of the LED alternating between a low and high brightness setting, using the durations provided.
-        /// </summary>
-        /// <param name="color">The LED color</param>
-        /// <param name="onDuration">The duration the LED stays on</param>
-        /// <param name="offDuration">The duration the LED stays off</param>
-        /// <param name="highBrightness">The maximum brightness of the animation</param>
-        /// <param name="lowBrightness">The minimum brightness of the animation</param>
-
-        public async Task StartBlink(
-            Color color,
-            TimeSpan onDuration,
-            TimeSpan offDuration,
-            float highBrightness = 1f,
-            float lowBrightness = 0f)
-        {
-            ValidateBrightness(highBrightness, lowBrightness);
-
-            await StopAnimation();
-
-            SetColor(color);
-
-            await StartBlink(onDuration, offDuration, highBrightness, lowBrightness);
-        }
-
-        /// <summary>
-        /// Start the Blink animation which sets the brightness of the LED alternating between a low and high brightness setting, using the durations provided.
-        /// </summary>
-        /// <param name="onDuration">The duration the LED stays on</param>
-        /// <param name="offDuration">The duration the LED stays off</param>
-        /// <param name="highBrightness">The maximum brightness of the animation</param>
-        /// <param name="lowBrightness">The minimum brightness of the animation</param>
-
+        ///<inheritdoc/>
         public async Task StartBlink(
             TimeSpan onDuration,
             TimeSpan offDuration,
@@ -117,24 +72,30 @@ namespace Meadow.Foundation.Leds
             }
         }
 
-        /// <summary>
-        /// Start the Pulse animation which gradually alternates the brightness of the LED between a low and high brightness setting
-        /// with a cycle time of 600ms
-        /// </summary>
-        /// <param name="highBrightness">The maximum brightness of the animation</param>
-        /// <param name="lowBrightness">The minimum brightness of the animation</param>
+        ///<inheritdoc/>
+        public async Task StartBlink(
+            Color color,
+            TimeSpan onDuration,
+            TimeSpan offDuration,
+            float highBrightness = 1f,
+            float lowBrightness = 0f)
+        {
+            ValidateBrightness(highBrightness, lowBrightness);
+
+            await StopAnimation();
+
+            SetColor(color);
+
+            await StartBlink(onDuration, offDuration, highBrightness, lowBrightness);
+        }
+
+        ///<inheritdoc/>
         public Task StartPulse(float highBrightness = 1, float lowBrightness = 0.15F)
         {
             return StartPulse(TimeSpan.FromMilliseconds(600), highBrightness, lowBrightness);
         }
 
-        /// <summary>
-        /// Start the Pulse animation which gradually alternates the brightness of the LED between a low and high brightness setting
-        /// with a cycle time of 600ms
-        /// </summary>
-        /// <param name="color">The LED color</param>
-        /// <param name="highBrightness">The maximum brightness of the animation</param>
-        /// <param name="lowBrightness">The minimum brightness of the animation</param>
+        ///<inheritdoc/>
         public Task StartPulse(
             Color color,
             float highBrightness = 1,
@@ -143,13 +104,7 @@ namespace Meadow.Foundation.Leds
             return StartPulse(color, TimeSpan.FromMilliseconds(600), highBrightness, lowBrightness);
         }
 
-        /// <summary>
-        /// Start the Pulse animation which gradually alternates the brightness of the LED between a low and high brightness setting, using the durations provided.
-        /// </summary>
-        /// <param name="color">The LED color</param>
-        /// <param name="pulseDuration">The pulse animation duration</param>
-        /// <param name="highBrightness">The maximum brightness of the animation</param>
-        /// <param name="lowBrightness">The minimum brightness of the animation</param>
+        ///<inheritdoc/>
         public async Task StartPulse(
             Color color,
             TimeSpan pulseDuration,
@@ -165,12 +120,7 @@ namespace Meadow.Foundation.Leds
             await StartPulse(pulseDuration, highBrightness, lowBrightness);
         }
 
-        /// <summary>
-        /// Start the Pulse animation which gradually alternates the brightness of the LED between a low and high brightness setting, using the durations provided.
-        /// </summary>
-        /// <param name="pulseDuration">The pulse animation duration</param>
-        /// <param name="highBrightness">The maximum brightness of the animation</param>
-        /// <param name="lowBrightness">The minimum brightness of the animation</param>
+        ///<inheritdoc/>
         public async Task StartPulse(
             TimeSpan pulseDuration,
             float highBrightness = 1,
@@ -188,7 +138,7 @@ namespace Meadow.Foundation.Leds
                 {
                     float brightness = lowBrightness;
                     bool ascending = true;
-                    var intervalTime = TimeSpan.FromMilliseconds(60); // 60 miliseconds is probably the fastest update we want to do, given that threads are given 20 miliseconds by default. 
+                    var intervalTime = TimeSpan.FromMilliseconds(60); // 60 milliseconds is probably the fastest update we want to do, given that threads are given 20 milliseconds by default. 
                     float steps = (float)(pulseDuration.TotalMilliseconds / intervalTime.TotalMilliseconds);
                     float delta = (highBrightness - lowBrightness) / steps;
 
@@ -225,7 +175,7 @@ namespace Meadow.Foundation.Leds
         }
 
         /// <summary>
-        /// Validates LED brightness to ensure they're within the range 0 (off) - 1 (full brighness)
+        /// Validates LED brightness to ensure they're within the range 0 (off) - 1 (full brightness)
         /// </summary>
         /// <param name="highBrightness">The maximum brightness of the animation</param>
         /// <param name="lowBrightness">The minimum brightness of the animation</param>

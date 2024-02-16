@@ -10,24 +10,34 @@ namespace Meadow.Foundation.Sensors.Motion
     /// Represents the APDS9960 Proximity, Light, RGB, and Gesture Sensor
     /// </summary>
     public partial class Apds9960 : ByteCommsSensorBase<(Color? Color, Illuminance? AmbientLight)>,
-        II2cPeripheral
+        II2cPeripheral, IDisposable
     {
         /// <summary>
         /// Raised when the ambient light value changes
         /// </summary>
-        public event EventHandler<IChangeResult<Illuminance>> AmbientLightUpdated = delegate { };
+        public event EventHandler<IChangeResult<Illuminance>> AmbientLightUpdated = default!;
 
         /// <summary>
         /// Raised when the color value changes
         /// </summary>
-        public event EventHandler<IChangeResult<Color>> ColorUpdated = delegate { };
+        public event EventHandler<IChangeResult<Color>> ColorUpdated = default!;
 
         /// <summary>
         /// The default I2C address for the peripheral
         /// </summary>
         public byte DefaultI2cAddress => (byte)Addresses.Default;
 
-        private readonly IDigitalInterruptPort interruptPort;
+        /// <summary>
+        /// Is the object disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
+
+        /// <summary>
+        /// Did we create the port(s) used by the peripheral
+        /// </summary>
+        readonly bool createdPort = false;
+
+        private readonly IDigitalInterruptPort? interruptPort;
         private readonly GestureData gestureData;
         private int gestureUdDelta;
         private int gestureLrDelta;
@@ -46,7 +56,7 @@ namespace Meadow.Foundation.Sensors.Motion
         public Color? Color => Conditions.Color;
 
         /// <summary>
-        /// The current abient light value
+        /// The current ambient light value
         /// </summary>
         public Illuminance? AmbientLight => Conditions.AmbientLight;
 
@@ -57,11 +67,12 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
         /// <param name="i2cBus">SI2C bus object</param>
         /// <param name="interruptPin">The interrupt pin</param>
-        public Apds9960(II2cBus i2cBus, IPin interruptPin)
+        public Apds9960(II2cBus i2cBus, IPin? interruptPin)
             : base(i2cBus, (byte)Addresses.Default)
         {
             if (interruptPin != null)
             {
+                createdPort = true;
                 interruptPort = interruptPin.CreateDigitalInterruptPort(InterruptMode.EdgeRising, ResistorMode.Disabled);
                 interruptPort.Changed += InterruptPort_Changed;
             }
@@ -97,7 +108,7 @@ namespace Meadow.Foundation.Sensors.Motion
 
             //---- ambient light
             // TODO: someone needs to verify this
-            // have no idea if this conversion is correct. the exten of the datasheet documentation is:
+            // have no idea if this conversion is correct. the extent of the datasheet documentation is:
             // "RGBC results can be used to calculate ambient light levels (i.e. Lux) and color temperature (i.e. Kelvin)."
             // NOTE: looks correct, actually. reading ~600 lux in my office and went to 4k LUX when i moved the sensor to the window
             var ambient = ReadAmbientLight();
@@ -111,13 +122,13 @@ namespace Meadow.Foundation.Sensors.Motion
             var b = ReadBlueLight() / rgbDivisor;
             var a = ambient / rgbDivisor;
 
-            conditions.Color = Foundation.Color.FromRgba(r, g, b, a);
+            conditions.Color = Meadow.Color.FromRgba(r, g, b, a);
 
             return Task.FromResult(conditions);
         }
 
         /// <summary>
-        /// Raise events for subcribers and notify of value changes
+        /// Raise events for subscribers and notify of value changes
         /// </summary>
         /// <param name="changeResult">The updated sensor data</param>
         protected override void RaiseEventsAndNotify(IChangeResult<(Color? Color, Illuminance? AmbientLight)> changeResult)
@@ -368,7 +379,7 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         /// <summary>
-        /// Read the current gesure
+        /// Read the current gesture
         /// </summary>
         /// <returns>The direction</returns>
         /// <exception cref="Exception">Throws if reading gesture data failed</exception>
@@ -1582,6 +1593,32 @@ namespace Meadow.Foundation.Sensors.Motion
             public byte TotalGestures { get; set; }
             public byte InThreshold { get; set; }
             public byte OutThreshold { get; set; }
+        }
+
+        ///<inheritdoc/>
+        public override void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        /// <param name="disposing">Is disposing</param>
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+
+            if (!IsDisposed)
+            {
+                if (disposing && createdPort)
+                {
+                    interruptPort?.Dispose();
+                }
+
+                IsDisposed = true;
+            }
         }
     }
 }

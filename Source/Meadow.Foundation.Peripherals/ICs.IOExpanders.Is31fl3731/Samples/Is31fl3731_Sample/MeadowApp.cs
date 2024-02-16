@@ -1,7 +1,6 @@
 ﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.ICs.IOExpanders;
-using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -45,7 +44,7 @@ namespace ICs.IOExpanders.Is31fl3731_Sample
         //<!=SNOP=>
 
         void IS31FL3731Tests()
-        { 
+        {
             DarkToBright();
             Thread.Sleep(1000);
 
@@ -106,7 +105,7 @@ namespace ICs.IOExpanders.Is31fl3731_Sample
             iS31FL3731.DisplayFrame(0);
 
             //Turn on all LEDs
-            for(byte i = 0; i <= 144; i++)
+            for (byte i = 0; i <= 144; i++)
             {
                 iS31FL3731.SetLedPwm(0, i, 128);
                 iS31FL3731.SetLedPwm(1, i, 70);
@@ -125,7 +124,7 @@ namespace ICs.IOExpanders.Is31fl3731_Sample
             }
 
             //Switch between Frame 0 and 1. Blinking them
-            
+
             Thread.Sleep(1000);
             Resolver.Log.Info("Frame 0 blink mode on");
             iS31FL3731.SetBlinkMode(true, 0x05);

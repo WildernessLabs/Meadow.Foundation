@@ -1,5 +1,5 @@
-﻿using System.Threading.Tasks;
-using Meadow.Units;
+﻿using Meadow.Units;
+using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Servos
 {

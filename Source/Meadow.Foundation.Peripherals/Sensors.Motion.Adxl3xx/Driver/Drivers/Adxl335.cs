@@ -19,7 +19,6 @@ namespace Meadow.Foundation.Sensors.Motion
         public Adxl335(
             IPin xPin, IPin yPin, IPin zPin, Voltage? supplyVoltage)
                 : base(xPin, yPin, zPin, 6, supplyVoltage)
-        {
-        }
+        { }
     }
 }

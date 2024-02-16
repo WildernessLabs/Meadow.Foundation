@@ -1,8 +1,8 @@
 ﻿using Meadow;
 using Meadow.Devices;
-using Meadow.Foundation;
 using Meadow.Foundation.Displays;
 using Meadow.Foundation.Graphics;
+using Meadow.Peripherals.Displays;
 using System.Threading.Tasks;
 
 namespace Displays.ePaper.EpdMonochrome_Sample
@@ -30,7 +30,7 @@ namespace Displays.ePaper.EpdMonochrome_Sample
 
             Resolver.Log.Info($"{displayType} selected - change displayType to select a different display");
 
-            //Intialize the display based on the displayType enum
+            //Initialize the display based on the displayType enum
             display = GetDisplay(displayType);
 
             graphics = new MicroGraphics(display)

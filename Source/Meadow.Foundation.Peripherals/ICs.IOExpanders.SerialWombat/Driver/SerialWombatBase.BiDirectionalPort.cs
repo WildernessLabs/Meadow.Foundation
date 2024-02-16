@@ -9,7 +9,10 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         public class BiDirectionalPort : BiDirectionalPortBase
         {
-            private SerialWombatBase _controller;
+            /// <summary>
+            /// Serial Wombat controller
+            /// </summary>
+            private readonly SerialWombatBase? _controller;
 
             /// <summary>
             /// The port direction
@@ -33,8 +36,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// </summary>
             public override bool State
             {
-                get => _controller.ReadPublicData((byte)Pin.Key) != 0;
-                set => _controller.ConfigureOutputPin((byte)Pin.Key, value, OutputType.PushPull);
+                get => _controller!.ReadPublicData((byte)Pin.Key) != 0;
+                set => _controller!.ConfigureOutputPin((byte)Pin.Key, value, OutputType.PushPull);
             }
         }
     }

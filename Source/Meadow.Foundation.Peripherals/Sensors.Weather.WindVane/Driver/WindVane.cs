@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Meadow.Hardware;
+using Meadow.Peripherals.Sensors.Weather;
+using Meadow.Units;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
-using Meadow.Hardware;
-using Meadow.Peripherals.Sensors.Weather;
-using Meadow.Units;
 
 namespace Meadow.Foundation.Sensors.Weather
 {
@@ -18,7 +18,7 @@ namespace Meadow.Foundation.Sensors.Weather
     /// 4.7kΩ / 1kΩ, as can be found in the SparkFun weather shield, or Wilderness
     /// Labs Clima Pro board.
     /// </summary>
-    public partial class WindVane : SamplingSensorBase<Azimuth>, IWindVane
+    public partial class WindVane : SamplingSensorBase<Azimuth>, IWindVane, IDisposable
     {
         /// <summary>
         /// The last recorded azimuth of the wind
@@ -38,9 +38,19 @@ namespace Meadow.Foundation.Sensors.Weather
         /// <summary>
         /// Voltage -> wind azimuth lookup dictionary
         /// </summary>
-        public ReadOnlyDictionary<Voltage, Azimuth> AzimuthVoltages { get; protected set; }
+        public ReadOnlyDictionary<Voltage, Azimuth>? AzimuthVoltages { get; protected set; }
 
         readonly IAnalogInputPort inputPort;
+
+        /// <summary>
+        /// Is the object disposed
+        /// </summary>
+        public bool IsDisposed { get; private set; }
+
+        /// <summary>
+        /// Did we create the port(s) used by the peripheral
+        /// </summary>
+        readonly bool createdPort = false;
 
         /// <summary>
         /// Creates a new `WindVane` on the specified IO Device's analog input
@@ -52,12 +62,13 @@ namespace Meadow.Foundation.Sensors.Weather
         /// <param name="sampleCount">Sample couple</param>
         /// <param name="sampleInterval">Sample interval</param>
         public WindVane(IPin analogInputPin,
-            IDictionary<Voltage, Azimuth> azimuthVoltages = null,
+            IDictionary<Voltage, Azimuth>? azimuthVoltages = null,
             TimeSpan? updateInterval = null,
             int sampleCount = 1, TimeSpan? sampleInterval = null)
             : this(analogInputPin.CreateAnalogInputPort(sampleCount, sampleInterval ?? TimeSpan.FromMilliseconds(40), new Voltage(3.3))
                   , azimuthVoltages)
         {
+            createdPort = true;
             UpdateInterval = updateInterval ?? new TimeSpan(0, 0, 1);
         }
 
@@ -67,22 +78,21 @@ namespace Meadow.Foundation.Sensors.Weather
         /// </summary>
         /// <param name="inputPort">The analog input</param>
         /// <param name="azimuthVoltages">Optional. Supply if you have custom azimuth voltages</param>
-        public WindVane(IAnalogInputPort inputPort, IDictionary<Voltage, Azimuth> azimuthVoltages = null)
+        public WindVane(IAnalogInputPort inputPort, IDictionary<Voltage, Azimuth>? azimuthVoltages = null)
         {
             this.inputPort = inputPort;
 
-            
             Initialize(azimuthVoltages);
         }
 
-        void Initialize(IDictionary<Voltage, Azimuth> azimuthVoltages)
+        void Initialize(IDictionary<Voltage, Azimuth>? azimuthVoltages)
         {   // if no lookup has been provided, load the defaults
-            AzimuthVoltages = (azimuthVoltages == null) ? 
+            AzimuthVoltages = (azimuthVoltages == null) ?
                 GetDefaultAzimuthVoltages() : new ReadOnlyDictionary<Voltage, Azimuth>(azimuthVoltages);
 
             inputPort.Subscribe(
                 IAnalogInputPort.CreateObserver(
-                handler: result => HandleAnalogUpdate(result),
+                handler: HandleAnalogUpdate,
                 filter: null));
         }
 
@@ -99,7 +109,7 @@ namespace Meadow.Foundation.Sensors.Weather
         /// </param>
         public override void StartUpdating(TimeSpan? updateInterval)
         {
-            lock (samplingLock) 
+            lock (samplingLock)
             {
                 if (IsSampling) { return; }
 
@@ -113,7 +123,7 @@ namespace Meadow.Foundation.Sensors.Weather
         /// </summary>
         public override void StopUpdating()
         {
-            lock (samplingLock) 
+            lock (samplingLock)
             {
                 if (!IsSampling) { return; }
 
@@ -128,7 +138,7 @@ namespace Meadow.Foundation.Sensors.Weather
         /// </summary>
         /// <returns>A float value that's an average value of all the samples taken</returns>
         protected override async Task<Azimuth> ReadSensor()
-        {  
+        {
             Voltage voltage = await inputPort.Read();
             return LookupWindDirection(voltage);
         }
@@ -140,37 +150,38 @@ namespace Meadow.Foundation.Sensors.Weather
         protected void HandleAnalogUpdate(IChangeResult<Voltage> result)
         {
             var windAzimuth = LookupWindDirection(result.New);
-            ChangeResult<Azimuth> windChangeResult = new ChangeResult<Azimuth>() {
+            ChangeResult<Azimuth> windChangeResult = new()
+            {
                 Old = WindAzimuth,
                 New = windAzimuth
             };
             WindAzimuth = windAzimuth;
+
             base.RaiseEventsAndNotify(windChangeResult);
         }
 
         /// <summary>
         /// Finds the closest wind azimuth that matches the passed in voltage,
-        /// based on the `AziumuthVoltages`
+        /// based on the `AzimuthVoltages`
         /// </summary>
         /// <param name="voltage">The voltage</param>
         /// <returns>The Azimuth value</returns>
         protected Azimuth LookupWindDirection(Voltage voltage)
         {
-            Tuple<Azimuth, Voltage> closestFit = null;
-
+            Tuple<Azimuth, Voltage>? closestFit = null;
 
             Voltage difference;
-            foreach (var a in AzimuthVoltages)
+            foreach (var a in AzimuthVoltages!)
             {
                 difference = (a.Key - voltage).Abs();
- 
+
                 if (closestFit == null || closestFit.Item2 > difference)
                 {
                     closestFit = new Tuple<Azimuth, Voltage>(a.Value, difference);
                 }
             }
 
-            return closestFit.Item1;
+            return closestFit!.Item1;
         }
 
         /// <summary>
@@ -179,9 +190,7 @@ namespace Meadow.Foundation.Sensors.Weather
         /// </summary>
         protected ReadOnlyDictionary<Voltage, Azimuth> GetDefaultAzimuthVoltages()
         {
-            Resolver.Log.Info("Loading default azimuth voltages");
-            
-            return new ReadOnlyDictionary<Voltage, Azimuth>(new Dictionary<Voltage, Azimuth> 
+            return new ReadOnlyDictionary<Voltage, Azimuth>(new Dictionary<Voltage, Azimuth>
             {
                 { new Voltage(2.9f), new Azimuth(Azimuth16PointCardinalNames.N) },
                 { new Voltage(2.04f), new Azimuth(Azimuth16PointCardinalNames.NNE) },
@@ -200,6 +209,30 @@ namespace Meadow.Foundation.Sensors.Weather
                 { new Voltage(3.08f), new Azimuth(Azimuth16PointCardinalNames.NW) },
                 { new Voltage(2.74f), new Azimuth(Azimuth16PointCardinalNames.NNW) },
             });
+        }
+
+        ///<inheritdoc/>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        /// <param name="disposing">Is disposing</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (disposing && createdPort)
+                {
+                    inputPort?.Dispose();
+                }
+
+                IsDisposed = true;
+            }
         }
     }
 }

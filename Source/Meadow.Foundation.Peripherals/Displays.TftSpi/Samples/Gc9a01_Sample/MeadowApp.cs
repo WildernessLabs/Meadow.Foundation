@@ -2,6 +2,7 @@
 using Meadow.Devices;
 using Meadow.Foundation.Displays;
 using Meadow.Foundation.Graphics;
+using Meadow.Peripherals.Displays;
 using System.Threading.Tasks;
 
 namespace Displays.Tft.Gc9a01_Sample
@@ -41,8 +42,8 @@ namespace Displays.Tft.Gc9a01_Sample
         public override Task Run()
         {
             graphics.Clear();
-            graphics.DrawCircle(120, 120, 100, Meadow.Foundation.Color.Cyan, false);
-            graphics.DrawRoundedRectangle(50, 50, 140, 140, 50, Meadow.Foundation.Color.BlueViolet, false);
+            graphics.DrawCircle(120, 120, 100, Color.Cyan, false);
+            graphics.DrawRoundedRectangle(50, 50, 140, 140, 50, Color.BlueViolet, false);
             graphics.DrawText(120, 120, "Meadow F7", alignmentH: HorizontalAlignment.Center, alignmentV: VerticalAlignment.Center);
             graphics.Show();
 

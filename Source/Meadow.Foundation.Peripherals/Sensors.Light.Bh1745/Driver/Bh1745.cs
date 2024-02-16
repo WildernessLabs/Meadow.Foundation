@@ -8,16 +8,19 @@ using System.Threading.Tasks;
 namespace Meadow.Foundation.Sensors.Light
 {
     /// <summary>
-    /// Represents a BH1745 Luminance and Colour Sensor
+    /// Represents a BH1745 Luminance and Color Sensor
     /// </summary>
     public partial class Bh1745
         : ByteCommsSensorBase<(Illuminance? AmbientLight, Color? Color, bool Valid)>,
         ILightSensor, II2cPeripheral
     {
-        /// <summary>
-        /// Raised when the luminosity changes
-        /// </summary>
-        public event EventHandler<IChangeResult<Illuminance>> LuminosityUpdated = delegate { };
+        private event EventHandler<IChangeResult<Illuminance>> _lightHandlers = default!;
+
+        event EventHandler<IChangeResult<Illuminance>> ISamplingSensor<Illuminance>.Updated
+        {
+            add => _lightHandlers += value;
+            remove => _lightHandlers -= value;
+        }
 
         /// <summary>
         /// The current Illuminance value
@@ -65,7 +68,8 @@ namespace Meadow.Foundation.Sensors.Light
                 measurementTime = value;
             }
         }
-        MeasurementTimeType measurementTime;
+
+        private MeasurementTimeType measurementTime;
 
         /// <summary>
         /// Is the sensor actively measuring
@@ -81,7 +85,8 @@ namespace Meadow.Foundation.Sensors.Light
                 isMeasurementActive = value;
             }
         }
-        bool isMeasurementActive;
+
+        private bool isMeasurementActive;
 
         /// <summary>
         /// Gets or sets the ADC gain of the sensor
@@ -101,7 +106,8 @@ namespace Meadow.Foundation.Sensors.Light
                 this.adcGain = value;
             }
         }
-        AdcGainTypes adcGain;
+
+        private AdcGainTypes adcGain;
 
         /// <summary>
         /// Is the interrupt active
@@ -134,7 +140,8 @@ namespace Meadow.Foundation.Sensors.Light
                 latchBehavior = value;
             }
         }
-        LatchBehaviorTypes latchBehavior;
+
+        private LatchBehaviorTypes latchBehavior;
 
         /// <summary>
         /// Gets or sets the source channel that triggers the interrupt
@@ -151,7 +158,8 @@ namespace Meadow.Foundation.Sensors.Light
                 interruptSource = value;
             }
         }
-        InterruptChannels interruptSource;
+
+        private InterruptChannels interruptSource;
 
         /// <summary>
         /// Gets or sets whether the interrupt pin is enabled
@@ -167,7 +175,8 @@ namespace Meadow.Foundation.Sensors.Light
                 isInterruptEnabled = value;
             }
         }
-        bool isInterruptEnabled;
+
+        private bool isInterruptEnabled;
 
         /// <summary>
         /// Gets or sets the persistence function of the interrupt
@@ -187,7 +196,8 @@ namespace Meadow.Foundation.Sensors.Light
                 interruptPersistence = value;
             }
         }
-        InterruptTypes interruptPersistence;
+
+        private InterruptTypes interruptPersistence;
 
         /// <summary>
         /// Gets or sets the lower interrupt threshold
@@ -201,7 +211,8 @@ namespace Meadow.Foundation.Sensors.Light
                 lowerInterruptThreshold = value;
             }
         }
-        ushort lowerInterruptThreshold;
+
+        private ushort lowerInterruptThreshold;
 
         /// <summary>
         /// Gets or sets the upper interrupt threshold
@@ -215,7 +226,8 @@ namespace Meadow.Foundation.Sensors.Light
                 upperInterruptThreshold = value;
             }
         }
-        ushort upperInterruptThreshold;
+
+        private ushort upperInterruptThreshold;
 
         /// <summary>
         /// Gets or sets the channel compensation multipliers which are used to scale the channel measurements
@@ -278,14 +290,14 @@ namespace Meadow.Foundation.Sensors.Light
         }
 
         /// <summary>
-        /// Raise events for subcribers and notify of value changes
+        /// Raise events for subscribers and notify of value changes
         /// </summary>
         /// <param name="changeResult">The updated sensor data</param>
         protected override void RaiseEventsAndNotify(IChangeResult<(Illuminance? AmbientLight, Color? Color, bool Valid)> changeResult)
         {
             if (changeResult.New.AmbientLight is { } ambient)
             {
-                LuminosityUpdated?.Invoke(this, new ChangeResult<Illuminance>(ambient, changeResult.Old?.AmbientLight));
+                _lightHandlers?.Invoke(this, new ChangeResult<Illuminance>(ambient, changeResult.Old?.AmbientLight));
             }
             base.RaiseEventsAndNotify(changeResult);
         }
@@ -356,6 +368,6 @@ namespace Meadow.Foundation.Sensors.Light
         protected ushort ReadClearDataRegister() => BusComms.ReadRegisterAsUShort(Registers.CLEAR_DATA);
 
         async Task<Illuminance> ISensor<Illuminance>.Read()
-            => (await Read()).AmbientLight.Value;
+            => (await Read()).AmbientLight!.Value;
     }
 }
