@@ -1,13 +1,12 @@
-﻿using Meadow.Foundation.Graphics;
-using Meadow.Foundation.Graphics.Buffers;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
+using Meadow.Peripherals.Displays;
 
 namespace Meadow.Foundation.Displays;
 
 /// <summary>
 /// Represents a WinForms graphics display
 /// </summary>
-public class WinFormsDisplay : Form, IGraphicsDisplay, ITouchScreen
+public class WinFormsDisplay : Form, IPixelDisplay, ITouchScreen
 {
     /// <summary>
     /// Event fired when the display gets a mouse down
@@ -86,17 +85,28 @@ public class WinFormsDisplay : Form, IGraphicsDisplay, ITouchScreen
     /// <summary>
     /// Performs a full display update
     /// </summary>
-    void IGraphicsDisplay.Show()
+    void IPixelDisplay.Show()
     {
-        this.Invalidate(true);
-
-        if (InvokeRequired)
+        if (this.IsDisposed)
         {
-            Invoke(Update);
+            return;
         }
-        else
+
+        try
         {
-            this.Update();
+            this.Invalidate(true);
+            if (InvokeRequired)
+            {
+                Invoke(Update);
+            }
+            else
+            {
+                this.Update();
+            }
+        }
+        catch (ObjectDisposedException)
+        {
+            // NOP - can happen when quitting application
         }
     }
 
@@ -107,7 +117,7 @@ public class WinFormsDisplay : Form, IGraphicsDisplay, ITouchScreen
     /// <param name="top"></param>
     /// <param name="right"></param>
     /// <param name="bottom"></param>
-    void IGraphicsDisplay.Show(int left, int top, int right, int bottom)
+    void IPixelDisplay.Show(int left, int top, int right, int bottom)
     {
         this.Invalidate(new Rectangle(left, top, right - left, bottom - top), true);
     }
@@ -116,7 +126,7 @@ public class WinFormsDisplay : Form, IGraphicsDisplay, ITouchScreen
     /// Clears the display buffer
     /// </summary>
     /// <param name="updateDisplay"></param>
-    void IGraphicsDisplay.Clear(bool updateDisplay)
+    void IPixelDisplay.Clear(bool updateDisplay)
     {
         lock (_buffer)
         {
@@ -133,7 +143,7 @@ public class WinFormsDisplay : Form, IGraphicsDisplay, ITouchScreen
     /// </summary>
     /// <param name="fillColor"></param>
     /// <param name="updateDisplay"></param>
-    void IGraphicsDisplay.Fill(Color fillColor, bool updateDisplay)
+    void IPixelDisplay.Fill(Color fillColor, bool updateDisplay)
     {
         lock (_buffer)
         {
@@ -153,7 +163,7 @@ public class WinFormsDisplay : Form, IGraphicsDisplay, ITouchScreen
     /// <param name="width"></param>
     /// <param name="height"></param>
     /// <param name="fillColor"></param>
-    void IGraphicsDisplay.Fill(int x, int y, int width, int height, Color fillColor)
+    void IPixelDisplay.Fill(int x, int y, int width, int height, Color fillColor)
     {
         lock (_buffer)
         {
@@ -167,7 +177,7 @@ public class WinFormsDisplay : Form, IGraphicsDisplay, ITouchScreen
     /// <param name="x"></param>
     /// <param name="y"></param>
     /// <param name="color"></param>
-    void IGraphicsDisplay.DrawPixel(int x, int y, Color color)
+    void IPixelDisplay.DrawPixel(int x, int y, Color color)
     {
         lock (_buffer)
         {
@@ -181,7 +191,7 @@ public class WinFormsDisplay : Form, IGraphicsDisplay, ITouchScreen
     /// <param name="x"></param>
     /// <param name="y"></param>
     /// <param name="enabled"></param>
-    void IGraphicsDisplay.DrawPixel(int x, int y, bool enabled)
+    void IPixelDisplay.DrawPixel(int x, int y, bool enabled)
     {
         lock (_buffer)
         {
@@ -194,7 +204,7 @@ public class WinFormsDisplay : Form, IGraphicsDisplay, ITouchScreen
     /// </summary>
     /// <param name="x"></param>
     /// <param name="y"></param>
-    void IGraphicsDisplay.InvertPixel(int x, int y)
+    void IPixelDisplay.InvertPixel(int x, int y)
     {
         lock (_buffer)
         {
@@ -208,7 +218,7 @@ public class WinFormsDisplay : Form, IGraphicsDisplay, ITouchScreen
     /// <param name="x"></param>
     /// <param name="y"></param>
     /// <param name="displayBuffer"></param>
-    void IGraphicsDisplay.WriteBuffer(int x, int y, IPixelBuffer displayBuffer)
+    void IPixelDisplay.WriteBuffer(int x, int y, IPixelBuffer displayBuffer)
     {
         lock (_buffer)
         {

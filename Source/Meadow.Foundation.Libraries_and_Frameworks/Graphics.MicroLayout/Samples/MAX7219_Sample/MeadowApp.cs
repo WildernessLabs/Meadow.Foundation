@@ -1,9 +1,8 @@
 ﻿using Meadow;
-using Meadow.Foundation;
 using Meadow.Foundation.Displays;
 using Meadow.Foundation.Graphics.MicroLayout;
 using Meadow.Foundation.ICs.IOExpanders;
-using Meadow.Hardware;
+using Meadow.Peripherals.Displays;
 
 public class MeadowApp : App<Windows>
 {
@@ -18,7 +17,7 @@ public class MeadowApp : App<Windows>
             deviceRows: 4,
             deviceColumns: 1);
 
-        screen = new DisplayScreen(display, Meadow.Foundation.Graphics.RotationType._270Degrees);
+        screen = new DisplayScreen(display, RotationType._270Degrees);
         screen.BackgroundColor = Color.Black;
 
         return base.Initialize();

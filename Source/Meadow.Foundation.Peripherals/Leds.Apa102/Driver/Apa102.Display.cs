@@ -1,10 +1,9 @@
-﻿using Meadow.Foundation.Graphics;
-using Meadow.Foundation.Graphics.Buffers;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
+using Meadow.Peripherals.Displays;
 
 namespace Meadow.Foundation.Leds
 {
-    public partial class Apa102 : IGraphicsDisplay
+    public partial class Apa102 : IPixelDisplay
     {
         /// <inheritdoc/>
         public ColorMode ColorMode => ColorMode.Format24bppRgb888;

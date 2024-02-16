@@ -1,6 +1,6 @@
-﻿using Meadow.Foundation.Graphics;
-using Meadow.Foundation.Graphics.Buffers;
+﻿using Meadow.Foundation.Graphics.Buffers;
 using Meadow.Hardware;
+using Meadow.Peripherals.Displays;
 using System;
 
 namespace Meadow.Foundation.Displays
@@ -8,7 +8,7 @@ namespace Meadow.Foundation.Displays
     /// <summary>
     /// Provide an interface for ePaper 3 color displays
     /// </summary>
-    public abstract partial class EPaperTriColorBase : EPaperBase, IGraphicsDisplay
+    public abstract partial class EPaperTriColorBase : EPaperBase, IPixelDisplay
     {
         /// <summary>
         /// The color to draw when a pixel is enabled
