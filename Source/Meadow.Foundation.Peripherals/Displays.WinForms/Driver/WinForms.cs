@@ -87,15 +87,26 @@ public class WinFormsDisplay : Form, IPixelDisplay, ITouchScreen
     /// </summary>
     void IPixelDisplay.Show()
     {
-        this.Invalidate(true);
-
-        if (InvokeRequired)
+        if (this.IsDisposed)
         {
-            Invoke(Update);
+            return;
         }
-        else
+
+        try
         {
-            this.Update();
+            this.Invalidate(true);
+            if (InvokeRequired)
+            {
+                Invoke(Update);
+            }
+            else
+            {
+                this.Update();
+            }
+        }
+        catch (ObjectDisposedException)
+        {
+            // NOP - can happen when quitting application
         }
     }
 
