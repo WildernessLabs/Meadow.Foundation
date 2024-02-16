@@ -6,11 +6,19 @@ using Meadow.Foundation.Sensors.Atmospheric;
 using Meadow.Hardware;
 using System.Diagnostics;
 
-Console.WriteLine("HELLO FROM THE WILDERNESS FT232H DRIVER!");
+Console.WriteLine("HELLO FROM THE WILDERNESS FT232 DRIVER!");
 
 Ft232Collection.Devices.Refresh();
-var count = Ft232Collection.Devices.Count();
-var ft232 = Ft232Collection.Devices[0];
+var count = Ft232Collection.Devices.Count;
+
+Console.WriteLine($"{count} expander{(count == 1 ? string.Empty : "s")} found");
+if (count > 0)
+{
+    foreach (var expander in Ft232Collection.Devices)
+    {
+        Console.WriteLine($"  SN: {expander.SerialNumber}");
+    }
+}
 
 var ft232h = new Ft232h_old();
 

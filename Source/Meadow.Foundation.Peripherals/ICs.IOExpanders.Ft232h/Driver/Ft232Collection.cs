@@ -39,10 +39,11 @@ public abstract class FtdiExpander :
     public abstract II2cBus CreateI2cBus(IPin[] pins, I2cBusSpeed busSpeed);
     public abstract II2cBus CreateI2cBus(IPin clock, IPin data, I2cBusSpeed busSpeed);
 
-    internal static FtdiExpander From(FTDI.FT_DEVICE_INFO_NODE info, FTDI native)
+    internal static FtdiExpander? From(FTDI.FT_DEVICE_INFO_NODE info, FTDI native)
     {
         return info.Type switch
         {
+            FTDI.FT_DEVICE.FT_DEVICE_232R => null, // I saw this with a USB->RS485 converter
             FTDI.FT_DEVICE.FT_DEVICE_232H => new Ft232h(info, native),
             _ => throw new NotSupportedException(),
         };
@@ -106,7 +107,11 @@ public class Ft232Collection : IEnumerable<FtdiExpander>
 
             foreach (var info in infos)
             {
-                _list.Add(FtdiExpander.From(info, _native));
+                var expander = FtdiExpander.From(info, _native);
+                if (expander != null)
+                {
+                    _list.Add(expander);
+                }
             }
         }
     }
