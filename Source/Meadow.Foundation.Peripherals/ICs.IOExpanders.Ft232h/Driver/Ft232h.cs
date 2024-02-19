@@ -7,12 +7,12 @@ namespace Meadow.Foundation.ICs.IOExpanders;
 /// <summary>
 /// Represents an FT232 IO Expander
 /// </summary>
-public partial class Ft232h_old :
-IDisposable,
-IDigitalInputOutputController,
-IDigitalOutputController,
-ISpiController,
-II2cController
+public partial class Ft232h :
+    IDisposable,
+    IDigitalInputOutputController,
+    IDigitalOutputController,
+    ISpiController,
+    II2cController
 {
     private bool _isDisposed;
     private IFtdiImpl _impl;
@@ -25,10 +25,10 @@ II2cController
     public PinDefinitions Pins { get; }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="Ft232h_old"/> class.
+    /// Initializes a new instance of the <see cref="Ft232h"/> class.
     /// </summary>
     /// <param name="useMPSSE">Specifies whether to use Multi-Protocol Synchronous Serial Engine (MPSSE) mode (default is false).</param>
-    public Ft232h_old(bool useMPSSE = false)
+    public Ft232h(bool useMPSSE = false)
     {
         UsingMpsse = useMPSSE;
 
@@ -108,7 +108,7 @@ II2cController
     public static SpiClockConfiguration DefaultClockConfiguration
     {
         get => new SpiClockConfiguration(
-             new Frequency(Ft232SpiBus.DefaultClockRate, Frequency.UnitType.Hertz));
+             new Frequency(MpsseSpiBus.DefaultClockRate, Frequency.UnitType.Hertz));
     }
 
     /// <inheritdoc/>
@@ -145,7 +145,7 @@ II2cController
     /// <summary>
     /// Finalizer for the Ft232h class, used to release unmanaged resources.
     /// </summary>
-    ~Ft232h_old()
+    ~Ft232h()
     {
         Dispose(false);
     }

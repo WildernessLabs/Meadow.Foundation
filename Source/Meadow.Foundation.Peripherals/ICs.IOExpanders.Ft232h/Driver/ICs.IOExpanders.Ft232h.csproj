@@ -20,7 +20,11 @@
     <Description>Ft232h USB IOExpander for GPIO, I2C, SPI on Windows</Description>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="Ft23xx\Native.Ftd2xx.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <None Include=".\Readme.md" Pack="true" PackagePath="" />
+    <None Include="Ft23xx\Native.Ftd2xx.cs" />
     <ProjectReference Include="..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
     <None Include="..\..\..\icon.png" Pack="true" PackagePath="" />
   </ItemGroup>

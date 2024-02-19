@@ -11,7 +11,7 @@ internal class MpsseImpl : IFtdiImpl
     private static int _instanceCount = 0;
     private bool _isDisposed = false;
     private Dictionary<int, MpsseI2cBus> _i2cBuses = new Dictionary<int, MpsseI2cBus>();
-    private Dictionary<int, Ft232SpiBus> _spiBuses = new Dictionary<int, Ft232SpiBus>();
+    private Dictionary<int, MpsseSpiBus> _spiBuses = new Dictionary<int, MpsseSpiBus>();
     private bool _spiBusAutoCreated = false;
 
     private IFt232Bus? _activeBus = null;
@@ -54,9 +54,9 @@ internal class MpsseImpl : IFtdiImpl
         return result;
     }
 
-    private Dictionary<int, Ft232SpiBus> GetSpiBuses()
+    private Dictionary<int, MpsseSpiBus> GetSpiBuses()
     {
-        Dictionary<int, Ft232SpiBus> result = new Dictionary<int, Ft232SpiBus>();
+        Dictionary<int, MpsseSpiBus> result = new Dictionary<int, MpsseSpiBus>();
 
         if (Native.CheckStatus(Native.Mpsse.SPI_GetNumChannels(out int channels)))
         {
@@ -66,7 +66,7 @@ internal class MpsseImpl : IFtdiImpl
                 {
                     if (Native.CheckStatus(Native.Mpsse.SPI_GetChannelInfo(c, out Native.FT_DEVICE_LIST_INFO_NODE info)))
                     {
-                        result.Add(c, new Ft232SpiBus(c, info));
+                        result.Add(c, new MpsseSpiBus(c, info));
                     }
                 }
             }
@@ -137,7 +137,7 @@ internal class MpsseImpl : IFtdiImpl
 
         if (_activeBus == null)
         {
-            var bus = CreateSpiBus(channel, Ft232h_old.DefaultClockConfiguration);
+            var bus = CreateSpiBus(channel, Ft232h.DefaultClockConfiguration);
             _spiBusAutoCreated = true;
             _activeBus = bus as IFt232Bus;
         }
@@ -156,7 +156,7 @@ internal class MpsseImpl : IFtdiImpl
 
         if (_activeBus == null)
         {
-            var bus = CreateSpiBus(channel, Ft232h_old.DefaultClockConfiguration);
+            var bus = CreateSpiBus(channel, Ft232h.DefaultClockConfiguration);
             _spiBusAutoCreated = true;
             _activeBus = bus as IFt232Bus;
         }

@@ -2,7 +2,7 @@
 
 namespace Meadow.Foundation.ICs.IOExpanders
 {
-    public partial class Ft232h_old
+    public partial class Ft232h
     {
         [Flags]
         internal enum SPITransferOptions

@@ -6,7 +6,7 @@ using static Meadow.Foundation.ICs.IOExpanders.Native.Ftd2xx;
 
 namespace Meadow.Foundation.ICs.IOExpanders;
 
-internal partial class FtdiDevice
+internal partial class MpsseChannel
 {
     private const int DefaultTimeoutMs = 5000;
     private const int DefaultLatencyTimer = 16;
@@ -20,7 +20,7 @@ internal partial class FtdiDevice
     internal string Description { get; }
     internal IntPtr Handle { get; private set; }
 
-    internal FtdiDevice(
+    internal MpsseChannel(
         uint index,
         uint flags,
         FtDeviceType deviceType,

@@ -2,7 +2,7 @@
 using Meadow.Units;
 using System;
 using System.Runtime.InteropServices;
-using static Meadow.Foundation.ICs.IOExpanders.Ft232h_old;
+using static Meadow.Foundation.ICs.IOExpanders.Ft232h;
 using static Meadow.Foundation.ICs.IOExpanders.Native;
 
 namespace Meadow.Foundation.ICs.IOExpanders;
@@ -10,7 +10,7 @@ namespace Meadow.Foundation.ICs.IOExpanders;
 /// <summary>
 /// Represents an SPI bus implementation using the FT232 device.
 /// </summary>
-public sealed class Ft232SpiBus : IFt232Bus, ISpiBus, IDisposable
+public sealed class MpsseSpiBus : IFt232Bus, ISpiBus, IDisposable
 {
     /// <summary>
     /// The default SPI clock rate for the FT232H
@@ -36,7 +36,7 @@ public sealed class Ft232SpiBus : IFt232Bus, ISpiBus, IDisposable
     /// <inheritdoc/>
     public Frequency[] SupportedSpeeds => new Frequency[] { new Frequency(30d, Frequency.UnitType.Megahertz) };
 
-    internal Ft232SpiBus(int channelNumber, FT_DEVICE_LIST_INFO_NODE info)
+    internal MpsseSpiBus(int channelNumber, FT_DEVICE_LIST_INFO_NODE info)
     {
         ChannelNumber = channelNumber;
         InfoNode = info;
@@ -55,7 +55,7 @@ public sealed class Ft232SpiBus : IFt232Bus, ISpiBus, IDisposable
     /// <summary>
     /// Finalizer for the Ft232SpiBus class, used to release unmanaged resources.
     /// </summary>
-    ~Ft232SpiBus()
+    ~MpsseSpiBus()
     {
         // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
         Dispose(false);
@@ -153,7 +153,7 @@ public sealed class Ft232SpiBus : IFt232Bus, ISpiBus, IDisposable
     private SpiChannelConfig CreateChannelConfig(SpiClockConfiguration config)
     {
         // for now we support CS on D3 and that's it
-        Ft232h_old.SpiConfigOptions opts = SpiConfigOptions.CS_ACTIVELOW | SpiConfigOptions.CS_DBUS3;
+        Ft232h.SpiConfigOptions opts = SpiConfigOptions.CS_ACTIVELOW | SpiConfigOptions.CS_DBUS3;
 
         switch (config.SpiMode)
         {

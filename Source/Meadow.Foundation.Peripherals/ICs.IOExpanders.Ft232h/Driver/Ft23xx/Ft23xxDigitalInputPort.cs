@@ -8,10 +8,10 @@ namespace Meadow.Foundation.ICs.IOExpanders;
 /// </summary>
 public sealed class Ft23xxDigitalInputPort : DigitalInputPortBase
 {
-    private FtdiDevice _device;
+    private MpsseChannel _device;
     private ResistorMode _resistor;
 
-    internal Ft23xxDigitalInputPort(FtdiDevice device, IPin pin, ResistorMode resistorMode, IDigitalChannelInfo channel)
+    internal Ft23xxDigitalInputPort(MpsseChannel device, IPin pin, ResistorMode resistorMode, IDigitalChannelInfo channel)
         : base(pin, channel)
     {
         Resistor = resistorMode;

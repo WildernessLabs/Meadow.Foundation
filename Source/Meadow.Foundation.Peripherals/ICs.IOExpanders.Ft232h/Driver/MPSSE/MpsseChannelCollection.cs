@@ -3,17 +3,16 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
-using static Meadow.Foundation.ICs.IOExpanders.Native.Ftd2xx;
 
 namespace Meadow.Foundation.ICs.IOExpanders;
 
-internal class FtdiDeviceCollection : IEnumerable<FtdiDevice>
+internal class MpsseChannelCollection : IEnumerable<MpsseChannel>
 {
-    private List<FtdiDevice> _devices = new();
+    private List<MpsseChannel> _devices = new();
 
     public int Count => _devices.Count;
 
-    public FtdiDevice this[int index]
+    public MpsseChannel this[int index]
     {
         get => _devices[index];
     }
@@ -26,7 +25,7 @@ internal class FtdiDeviceCollection : IEnumerable<FtdiDevice>
 
         try
         {
-            Native.CheckStatus(FT_CreateDeviceInfoList(out count));
+            Native.CheckStatus(Native.Mpsse.FT_CreateDeviceInfoList(out count));
         }
         catch (DllNotFoundException)
         {
@@ -64,11 +63,11 @@ internal class FtdiDeviceCollection : IEnumerable<FtdiDevice>
             var serialNumber = Encoding.ASCII.GetString(serialNumberBuffer.ToArray(), 0, serialNumberBuffer.IndexOf((byte)0));
             var description = Encoding.ASCII.GetString(descriptionBuffer.ToArray(), 0, descriptionBuffer.IndexOf((byte)0));
 
-            _devices.Add(new FtdiDevice(index, flags, deviceType, id, locid, serialNumber, description, handle));
+            _devices.Add(new MpsseChannel(index, flags, deviceType, id, locid, serialNumber, description, handle));
         }
     }
 
-    public IEnumerator<FtdiDevice> GetEnumerator()
+    public IEnumerator<MpsseChannel> GetEnumerator()
     {
         return _devices.GetEnumerator();
     }

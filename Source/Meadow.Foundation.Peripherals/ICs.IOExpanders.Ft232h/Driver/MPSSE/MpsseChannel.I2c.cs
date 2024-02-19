@@ -4,7 +4,7 @@ using static Meadow.Foundation.ICs.IOExpanders.Native.Ftd2xx;
 
 namespace Meadow.Foundation.ICs.IOExpanders;
 
-internal partial class FtdiDevice
+internal partial class MpsseChannel
 {
     private byte GpioLowData = 0;
     private byte GpioLowDir = 0;

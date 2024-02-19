@@ -4,11 +4,11 @@ namespace Meadow.Foundation.ICs.IOExpanders;
 
 internal class Ftd2xxImpl : IFtdiImpl
 {
-    private FtdiDeviceCollection _devices = default!;
+    private MpsseChannelCollection _devices = default!;
 
     public void Initialize()
     {
-        _devices = new FtdiDeviceCollection();
+        _devices = new MpsseChannelCollection();
         _devices.Refresh();
     }
 

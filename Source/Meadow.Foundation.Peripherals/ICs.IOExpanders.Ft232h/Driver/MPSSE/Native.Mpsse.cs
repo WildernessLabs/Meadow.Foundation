@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
-using static Meadow.Foundation.ICs.IOExpanders.Ft232h_old;
+using static Meadow.Foundation.ICs.IOExpanders.Ft232h;
 
 namespace Meadow.Foundation.ICs.IOExpanders
 {

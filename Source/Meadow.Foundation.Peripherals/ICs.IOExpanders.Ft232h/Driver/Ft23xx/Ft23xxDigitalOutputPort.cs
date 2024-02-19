@@ -8,12 +8,12 @@ namespace Meadow.Foundation.ICs.IOExpanders;
 /// </summary>
 public sealed class Ft23xxDigitalOutputPort : DigitalOutputPortBase
 {
-    private FtdiDevice _device;
+    private MpsseChannel _device;
     private bool _state;
     private bool _isHighByte;
     private byte _key;
 
-    internal Ft23xxDigitalOutputPort(FtdiDevice device, IPin pin, IDigitalChannelInfo channel, bool initialState, OutputType initialOutputType)
+    internal Ft23xxDigitalOutputPort(MpsseChannel device, IPin pin, IDigitalChannelInfo channel, bool initialState, OutputType initialOutputType)
         : base(pin, channel, initialState, initialOutputType)
     {
         _device = device;

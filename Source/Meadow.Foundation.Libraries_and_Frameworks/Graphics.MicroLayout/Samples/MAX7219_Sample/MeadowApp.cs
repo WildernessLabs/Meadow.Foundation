@@ -6,7 +6,7 @@ using Meadow.Peripherals.Displays;
 
 public class MeadowApp : App<Windows>
 {
-    private readonly Ft232h_old expander = new Ft232h_old();
+    private readonly Ft232h expander = new Ft232h();
     private DisplayScreen? screen;
 
     public override Task Initialize()

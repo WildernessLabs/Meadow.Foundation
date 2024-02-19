@@ -9,7 +9,7 @@ namespace Meadow.Foundation.ICs.IOExpanders;
 /// </summary>
 public sealed class Ft23xxSpiBus : IFt232Bus, ISpiBus, IDisposable
 {
-    private FtdiDevice _device;
+    private MpsseChannel _device;
 
     /// <summary>
     /// Gets the handle to the FT23xx device used by the SPI bus.
@@ -28,7 +28,7 @@ public sealed class Ft23xxSpiBus : IFt232Bus, ISpiBus, IDisposable
     /// <inheritdoc/>
     public SpiClockConfiguration Configuration { get; }
 
-    internal Ft23xxSpiBus(FtdiDevice device, SpiClockConfiguration config)
+    internal Ft23xxSpiBus(MpsseChannel device, SpiClockConfiguration config)
     {
         Configuration = config;
 

@@ -9,7 +9,7 @@ namespace Meadow.Foundation.ICs.IOExpanders;
 /// </summary>
 public sealed class Ft23xxI2cBus : II2cBus, IDisposable
 {
-    private FtdiDevice _device;
+    private MpsseChannel _device;
 
     /// <summary>
     /// Gets the handle to the FT23xx device used by the I2C bus.
@@ -19,7 +19,7 @@ public sealed class Ft23xxI2cBus : II2cBus, IDisposable
     /// <inheritdoc/>
     public I2cBusSpeed BusSpeed { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
-    internal Ft23xxI2cBus(FtdiDevice device)
+    internal Ft23xxI2cBus(MpsseChannel device)
     {
         if (device.Handle == IntPtr.Zero)
         {
