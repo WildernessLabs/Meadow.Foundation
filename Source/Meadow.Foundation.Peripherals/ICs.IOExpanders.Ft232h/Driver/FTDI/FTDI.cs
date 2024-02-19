@@ -319,7 +319,7 @@ internal partial class FTDI
     private const uint FT_DEFAULT_DEVICE_ID = 0x04036001;
 
     // Create private variables for the device within the class
-    private IntPtr ftHandle = IntPtr.Zero;
+    public IntPtr ftHandle = IntPtr.Zero;
 
     // Handle to our DLL - used with GetProcAddress to load all of our functions
     private IntPtr hFTD2XXDLL = IntPtr.Zero;
