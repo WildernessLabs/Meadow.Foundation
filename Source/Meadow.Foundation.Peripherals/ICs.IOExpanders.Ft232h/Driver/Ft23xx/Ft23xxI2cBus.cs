@@ -1,8 +1,4 @@
-﻿using Meadow.Hardware;
-using System;
-using System.IO;
-
-namespace Meadow.Foundation.ICs.IOExpanders;
+﻿namespace Meadow.Foundation.ICs.IOExpanders;
 
 /// <summary>
 /// Represents an I2C bus implementation using the FT23xx device.
@@ -52,7 +48,7 @@ public sealed class Ft23xxI2cBus : II2cBus, IDisposable
         if (!ack)
         {
             _device.I2cStop();
-            throw new IOException($"Error reading device while setting up address");
+            throw new IOException($"NACK on address.  No peripheral detected.");
         }
 
         for (int i = 0; i < readBuffer.Length - 1; i++)

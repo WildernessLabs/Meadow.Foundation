@@ -8,69 +8,37 @@ using static Meadow.Foundation.ICs.IOExpanders.Native.Ftd2xx;
 
 namespace Meadow.Foundation.ICs.IOExpanders;
 
-public sealed class FtdiDigitalOutputPort : DigitalOutputPortBase
-{
-    private FtdiExpander _expander;
-    private bool _state;
-    private byte _key;
-    private bool _lowByte;
-
-    internal FtdiDigitalOutputPort(FtdiExpander expander, IPin pin, IDigitalChannelInfo channel, bool initialState, OutputType initialOutputType)
-        : base(pin, channel, initialState, initialOutputType)
-    {
-        _expander = expander;
-
-        if (pin is FtdiPin p)
-        {
-            _key = (byte)p.Key;
-            _lowByte = p.IsLowByte;
-        }
-    }
-
-    public override bool State
-    {
-        get => _state;
-        set
-        {
-            byte s = _expander.GpioState;
-
-            if (value)
-            {
-                s |= _key;
-            }
-            else
-            {
-                s &= (byte)~_key;
-            }
-
-            _expander.SetGpioDirectionAndState(_lowByte, _expander.GpioDirectionMask, s);
-            _expander.GpioState = s;
-            _state = value;
-        }
-    }
-}
-
-public class Ft232HExpander : FtdiExpander
-{
-    internal Ft232HExpander()
-    {
-    }
-}
-
 public abstract partial class FtdiExpander :
     IPinController,
 //    IDisposable,
 //    IDigitalInputOutputController,
-    IDigitalOutputController
+    IDigitalOutputController,
 //    ISpiController,
-//    II2cController
+    II2cController
 {
-    //    public abstract II2cBus CreateI2cBus(int busNumber = 1, I2cBusSpeed busSpeed = I2cBusSpeed.Standard);
-    //    public abstract II2cBus CreateI2cBus(IPin[] pins, I2cBusSpeed busSpeed);
-    //    public abstract II2cBus CreateI2cBus(IPin clock, IPin data, I2cBusSpeed busSpeed);
+    public II2cBus CreateI2cBus(int busNumber = 1, I2cBusSpeed busSpeed = I2cBusSpeed.Standard)
+    {
+        // TODO: depends on part
+        // TODO: make sure no SPI is in use
+        var bus = new Ft232hI2cBus(this);
+        bus.Configure();
+        return bus;
+    }
 
-    internal byte GpioDirectionMask { get; set; }
-    internal byte GpioState { get; set; }
+    public II2cBus CreateI2cBus(IPin[] pins, I2cBusSpeed busSpeed)
+    {
+        return CreateI2cBus(1);
+    }
+
+    public II2cBus CreateI2cBus(IPin clock, IPin data, I2cBusSpeed busSpeed)
+    {
+        return CreateI2cBus(1);
+    }
+
+    internal byte GpioDirectionLow { get; set; }
+    internal byte GpioStateLow { get; set; }
+    internal byte GpioDirectionHigh { get; set; }
+    internal byte GpioStateHigh { get; set; }
 
     internal uint Index { get; private set; }
     internal uint Flags { get; private set; }
@@ -79,6 +47,8 @@ public abstract partial class FtdiExpander :
     internal string SerialNumber { get; private set; }
     internal string Description { get; private set; }
     internal IntPtr Handle { get; private set; }
+
+    internal uint I2cBusFrequencyKbps { get; private set; } = 400;
 
     /// <summary>
     /// The pins
@@ -95,9 +65,9 @@ public abstract partial class FtdiExpander :
         string description,
         IntPtr handle)
     {
-        var device = deviceType switch
+        var expander = deviceType switch
         {
-            FtDeviceType.Ft232H => new Ft232HExpander
+            FtDeviceType.Ft232H => new Ft232hExpander
             {
                 Index = index,
                 Flags = flags,
@@ -110,10 +80,10 @@ public abstract partial class FtdiExpander :
             _ => throw new NotSupportedException(),
         };
 
-        device.Open();
-        device.InitializeGpio();
+        expander.Open();
+        expander.InitializeGpio();
 
-        return device;
+        return expander;
     }
 
     private void Open()
@@ -134,6 +104,14 @@ public abstract partial class FtdiExpander :
 
     private void InitializeGpio()
     {
+        // for I2C:
+        Native.Ftd2xx.FT_SetTimeouts(Handle, 5000, 5000);
+        Native.Ftd2xx.FT_SetLatencyTimer(Handle, 16);
+        Native.Ftd2xx.FT_SetFlowControl(Handle, Native.FT_FLOWCONTROL.FT_FLOW_RTS_CTS, 0, 0);
+        //ftStatus |= myFtdiDevice.SetTimeouts(5000, 5000);
+        //ftStatus |= myFtdiDevice.SetLatency(16);
+        //ftStatus |= myFtdiDevice.SetFlowControl(FTDI.FT_FLOW_CONTROL.FT_FLOW_RTS_CTS, 0x00, 0x00);
+
         Native.CheckStatus(Native.Ftd2xx.FT_SetBitMode(Handle, 0x00, Native.FT_BITMODE.FT_BITMODE_RESET));
         Native.CheckStatus(Native.Ftd2xx.FT_SetBitMode(Handle, 0x00, Native.FT_BITMODE.FT_BITMODE_MPSSE));
 
@@ -183,6 +161,17 @@ public abstract partial class FtdiExpander :
         outBuffer[1] = state; //data
         outBuffer[2] = direction; //direction 1 == output, 0 == input
 
+        if (lowByte)
+        {
+            GpioStateLow = state;
+            GpioDirectionLow = direction;
+        }
+        else
+        {
+            GpioStateHigh = state;
+            GpioDirectionHigh = direction;
+        }
+
         // Console.WriteLine($"{(BitConverter.ToString(outBuffer.ToArray()))}");
         Write(outBuffer);
     }
@@ -229,7 +218,7 @@ public abstract partial class FtdiExpander :
         return totalRead;
     }
 
-    public void Write(ReadOnlySpan<byte> data)
+    internal void Write(ReadOnlySpan<byte> data)
     {
         uint written = 0;
 
@@ -237,20 +226,95 @@ public abstract partial class FtdiExpander :
             FT_Write(Handle, in MemoryMarshal.GetReference(data), (ushort)data.Length, ref written));
     }
 
+    /*
+    private byte Receive_Data(uint BytesToRead)
+    {
+        uint NumBytesInQueue = 0;
+        uint QueueTimeOut = 0;
+        uint Buffer1Index = 0;
+        uint Buffer2Index = 0;
+        uint TotalBytesRead = 0;
+        bool QueueTimeoutFlag = false;
+        uint NumBytesRxd = 0;
+
+        // Keep looping until all requested bytes are received or we've tried 5000 times (value can be chosen as required)
+        while ((TotalBytesRead < BytesToRead) && (QueueTimeoutFlag == false))
+        {
+            ftStatus = myFtdiDevice.GetRxBytesAvailable(ref NumBytesInQueue);       // Check bytes available
+
+            if ((NumBytesInQueue > 0) && (ftStatus == FTDI.FT_STATUS.FT_OK))
+            {
+                ftStatus = myFtdiDevice.Read(InputBuffer, NumBytesInQueue, ref NumBytesRxd);  // if any available read them
+
+                if ((NumBytesInQueue == NumBytesRxd) && (ftStatus == FTDI.FT_STATUS.FT_OK))
+                {
+                    Buffer1Index = 0;
+
+                    while (Buffer1Index < NumBytesRxd)
+                    {
+                        InputBuffer2[Buffer2Index] = InputBuffer[Buffer1Index];     // copy into main overall application buffer
+                        Buffer1Index++;
+                        Buffer2Index++;
+                    }
+                    TotalBytesRead = TotalBytesRead + NumBytesRxd;                  // Keep track of total
+                }
+                else
+                    return 1;
+
+                QueueTimeOut++;
+                if (QueueTimeOut == 5000)
+                    QueueTimeoutFlag = true;
+                else
+                    Thread.Sleep(0);                                                // Avoids running Queue status checks back to back
+            }
+        }
+        // returning globals NumBytesRead and the buffer InputBuffer2
+        NumBytesRead = TotalBytesRead;
+
+        if (QueueTimeoutFlag == true)
+            return 1;
+        else
+            return 0;
+    }
+    */
+
     public IDigitalOutputPort CreateDigitalOutputPort(IPin pin, bool initialState = false, OutputType initialOutputType = OutputType.PushPull)
     {
         var p = pin as FtdiPin;
 
         // TODO: make sure the pin isn't in use
 
-        // update the expanders direction mask to make this an output
-        GpioDirectionMask |= (byte)pin.Key;
+        if (p.IsLowByte)
+        {
+            // update the expanders direction mask to make this an output
+            GpioDirectionLow |= (byte)pin.Key;
 
-        // update the direction
-        SetGpioDirectionAndState(
-            p.IsLowByte,
-            GpioDirectionMask,
-            GpioState);
+            // update initial state
+            if (initialState)
+            {
+                GpioStateLow |= (byte)pin.Key;
+            }
+
+            SetGpioDirectionAndState(
+                p.IsLowByte,
+                GpioDirectionLow,
+                GpioStateLow);
+        }
+        else
+        {
+            GpioDirectionHigh |= (byte)pin.Key;
+
+            // update initial state
+            if (initialState)
+            {
+                GpioStateHigh |= (byte)pin.Key;
+            }
+
+            SetGpioDirectionAndState(
+                p.IsLowByte,
+                GpioDirectionHigh,
+                GpioStateHigh);
+        }
 
         var channel = p.SupportedChannels.FirstOrDefault(channel => channel is IDigitalChannelInfo) as IDigitalChannelInfo;
         return new FtdiDigitalOutputPort(this, pin, channel, initialState, initialOutputType);
