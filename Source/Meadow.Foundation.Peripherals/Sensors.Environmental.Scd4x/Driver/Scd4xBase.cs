@@ -178,7 +178,7 @@ namespace Meadow.Foundation.Sensors.Environmental
         {
             if (IsSampling)
             {
-                StopUpdating();
+                return;
             }
 
             if (updateInterval != null && updateInterval.Value.TotalSeconds >= 30)
@@ -201,8 +201,6 @@ namespace Meadow.Foundation.Sensors.Environmental
         {
             _ = StopPeriodicUpdates();
             base.StopUpdating();
-
-            Thread.Sleep(500);
         }
 
         private void SendCommand(Commands command)
