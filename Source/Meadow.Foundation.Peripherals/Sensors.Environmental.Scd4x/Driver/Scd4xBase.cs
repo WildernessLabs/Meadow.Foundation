@@ -176,6 +176,11 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// </summary>
         public override void StartUpdating(TimeSpan? updateInterval = null)
         {
+            if (IsSampling)
+            {
+                StopUpdating();
+            }
+
             if (updateInterval != null && updateInterval.Value.TotalSeconds >= 30)
             {
                 SendCommand(Commands.StartLowPowerPeriodicMeasurement);
@@ -196,6 +201,8 @@ namespace Meadow.Foundation.Sensors.Environmental
         {
             _ = StopPeriodicUpdates();
             base.StopUpdating();
+
+            Thread.Sleep(500);
         }
 
         private void SendCommand(Commands command)
