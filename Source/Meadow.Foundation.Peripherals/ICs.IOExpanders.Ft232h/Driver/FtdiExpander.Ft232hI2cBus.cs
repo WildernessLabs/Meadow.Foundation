@@ -68,17 +68,17 @@ public abstract partial class FtdiExpander
             // SDA high, SCL high
             var direction = (byte)(PinDirection.SDAoutSCLout | (_expander.GpioDirectionLow & MaskGpio));
             Idle();
-            Wait(2);
+            //            Wait(2);
 
             // SDA lo, SCL high
             var state = (byte)(PinData.SDAloSCLhi | (_expander.GpioStateLow & MaskGpio));
             _expander.SetGpioDirectionAndState(true, direction, state);
-            Wait(2);
+            //            Wait(2);
 
             // SDA lo, SCL lo
             state = (byte)(PinData.SDAloSCLlo | (_expander.GpioStateLow & MaskGpio));
             _expander.SetGpioDirectionAndState(true, direction, state);
-            Wait(2);
+            //            Wait(2);
 
             // Release SDA
             //            state = (byte)(PinData.SDAhiSCLlo | (_expander.GpioStateLow & MaskGpio));
@@ -125,7 +125,7 @@ public abstract partial class FtdiExpander
             txBuffer[idx++] = data;
             // Put line back to idle (data released, clock pulled low)
             _expander.GpioStateLow = (byte)(PinData.SDAloSCLlo | (_expander.GpioStateLow & MaskGpio));
-            _expander.GpioDirectionLow = (byte)(PinDirection.SDAinSCLout | (_expander.GpioDirectionLow & MaskGpio));
+            _expander.GpioDirectionLow = (byte)(PinDirection.SDAoutSCLout | (_expander.GpioDirectionLow & MaskGpio));
             txBuffer[idx++] = (byte)Native.FT_OPCODE.SetDataBitsLowByte;
             txBuffer[idx++] = _expander.GpioStateLow;
             txBuffer[idx++] = _expander.GpioDirectionLow;

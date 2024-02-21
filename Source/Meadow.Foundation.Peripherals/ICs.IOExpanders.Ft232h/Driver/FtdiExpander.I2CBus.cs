@@ -66,6 +66,11 @@ public abstract partial class FtdiExpander
 
         public void Write(byte peripheralAddress, Span<byte> writeBuffer)
         {
+            Write(peripheralAddress, writeBuffer, true);
+        }
+
+        public void Write(byte peripheralAddress, Span<byte> writeBuffer, bool terminatingStop)
+        {
             Start();
             if (SendAddressByte(peripheralAddress, false) == TransferStatus.Nack)
             {
@@ -82,7 +87,10 @@ public abstract partial class FtdiExpander
                 }
             }
 
-            Stop();
+            if (terminatingStop)
+            {
+                Stop();
+            }
         }
 
         public void Dispose()
@@ -91,7 +99,7 @@ public abstract partial class FtdiExpander
 
         public void Exchange(byte peripheralAddress, Span<byte> writeBuffer, Span<byte> readBuffer)
         {
-            Write(peripheralAddress, writeBuffer);
+            Write(peripheralAddress, writeBuffer, false);
             Read(peripheralAddress, readBuffer);
         }
 

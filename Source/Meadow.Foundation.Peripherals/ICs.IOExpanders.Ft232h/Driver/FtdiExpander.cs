@@ -48,7 +48,7 @@ public abstract partial class FtdiExpander :
     internal string Description { get; private set; }
     internal IntPtr Handle { get; private set; }
 
-    internal uint I2cBusFrequencyKbps { get; private set; } = 400;
+    internal uint I2cBusFrequencyKbps { get; private set; } = 100;
 
     /// <summary>
     /// The pins

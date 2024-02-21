@@ -1,7 +1,8 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using Meadow.Foundation.ICs.IOExpanders;
-using Meadow.Foundation.Sensors.Atmospheric;
+using Meadow.Foundation.Sensors.Light;
 using Meadow.Hardware;
+using System.Diagnostics;
 
 Console.WriteLine("HELLO FROM THE WILDERNESS FT232H DRIVER!");
 
@@ -28,9 +29,22 @@ await TestI2C(FtdiExpanderCollection.Devices[0]);
 
 async Task TestI2C(FtdiExpander expander)
 {
-    var sensor = new Bme280(expander.CreateI2cBus());
+    var sensor = new Veml7700(expander.CreateI2cBus());
     //var sensor = new Pct2075(expander.CreateI2cBus());
-    await sensor.Read();
+    while (true)
+    {
+        Debug.WriteLine("Reading...");
+        try
+        {
+            var t = await sensor.Read();
+            Debug.WriteLine($"{t.Lux} lux");
+        }
+        catch
+        {
+        }
+
+        await Task.Delay(1000);
+    }
 }
 
 async Task TestGpio(IEnumerable<FtdiExpander> expanders)
