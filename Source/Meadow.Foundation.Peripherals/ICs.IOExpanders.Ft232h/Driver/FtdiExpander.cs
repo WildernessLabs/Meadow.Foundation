@@ -104,18 +104,20 @@ public abstract partial class FtdiExpander :
 
     private void InitializeGpio()
     {
-        // for I2C:
-        Native.Ftd2xx.FT_SetTimeouts(Handle, 5000, 5000);
-        Native.Ftd2xx.FT_SetLatencyTimer(Handle, 16);
-        Native.Ftd2xx.FT_SetFlowControl(Handle, Native.FT_FLOWCONTROL.FT_FLOW_RTS_CTS, 0, 0);
-        //ftStatus |= myFtdiDevice.SetTimeouts(5000, 5000);
-        //ftStatus |= myFtdiDevice.SetLatency(16);
-        //ftStatus |= myFtdiDevice.SetFlowControl(FTDI.FT_FLOW_CONTROL.FT_FLOW_RTS_CTS, 0x00, 0x00);
+        Native.FT_STATUS status;
+        status = Native.Ftd2xx.FT_SetUSBParameters(Handle, 65536, 65536);    // Set USB request transfer sizes
+        status |= Native.Ftd2xx.FT_SetChars(Handle, 0, 0, 0, 0);              // Disable event and error characters
+        status |= Native.Ftd2xx.FT_SetTimeouts(Handle, 5000, 5000);           // Set the read and write timeouts to 5 seconds
+        status |= Native.Ftd2xx.FT_SetLatencyTimer(Handle, 16);               // Keep the latency timer at default of 16ms
 
-        Native.CheckStatus(Native.Ftd2xx.FT_SetBitMode(Handle, 0x00, Native.FT_BITMODE.FT_BITMODE_RESET));
-        Native.CheckStatus(Native.Ftd2xx.FT_SetBitMode(Handle, 0x00, Native.FT_BITMODE.FT_BITMODE_MPSSE));
+        status |= Native.Ftd2xx.FT_SetFlowControl(Handle, Native.FT_FLOWCONTROL.FT_FLOW_RTS_CTS, 0, 0);
 
-        Thread.Sleep(50);
+        status |= Native.Ftd2xx.FT_SetBitMode(Handle, 0x00, Native.FT_BITMODE.FT_BITMODE_RESET); // Reset the mode to whatever is set in EEPROM
+        status |= Native.Ftd2xx.FT_SetBitMode(Handle, 0x00, Native.FT_BITMODE.FT_BITMODE_MPSSE); // Enable MPSSE mode
+
+        Native.CheckStatus(status);
+
+        Thread.Sleep(50); // the FTDI C example does this, so we keep it
 
         ClearInputBuffer();
         InitializeMpsse();
@@ -178,6 +180,7 @@ public abstract partial class FtdiExpander :
 
     private void InitializeMpsse()
     {
+        // Synchronise the MPSSE by sending bad command AA to it
         Span<byte> writeBuffer = stackalloc byte[1];
         writeBuffer[0] = 0xAA;
         Write(writeBuffer);
@@ -188,7 +191,7 @@ public abstract partial class FtdiExpander :
             throw new IOException($"Failed to setup device in MPSSE mode using magic 0xAA sync");
         }
 
-        // Second with 0xAB
+        // Synchronise the MPSSE by sending bad command AB to it
         writeBuffer[0] = 0xAB;
         Write(writeBuffer);
         ReadInto(readBuffer);

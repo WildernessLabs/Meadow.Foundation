@@ -19,7 +19,7 @@ public abstract partial class FtdiExpander
         public override void Configure()
         {
             // Setup the clock and other elements
-            Span<byte> toSend = stackalloc byte[13];
+            Span<byte> toSend = stackalloc byte[10];
             int idx = 0;
             // Disable clock divide by 5 for 60Mhz master clock
             toSend[idx++] = (byte)Native.FT_OPCODE.DisableClockDivideBy5;
@@ -37,11 +37,11 @@ public abstract partial class FtdiExpander
             // loopback off
             toSend[idx++] = (byte)Native.FT_OPCODE.DisconnectTDItoTDOforLoopback;
             // Enable the FT232H's drive-zero mode with the following enable mask
-            toSend[idx++] = (byte)Native.FT_OPCODE.SetIOOnlyDriveOn0AndTristateOn1;
+            //            toSend[idx++] = (byte)Native.FT_OPCODE.SetIOOnlyDriveOn0AndTristateOn1;
             // Low byte (ADx) enables - bits 0, 1 and 2
-            toSend[idx++] = 0x07;
+            //            toSend[idx++] = 0x07;
             // High byte (ACx) enables - all off
-            toSend[idx++] = 0x00;
+            //            toSend[idx++] = 0x00;
             // Command to set directions of lower 8 pins and force value on bits set as output
             toSend[idx++] = (byte)Native.FT_OPCODE.SetDataBitsLowByte;
 
