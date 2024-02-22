@@ -1,4 +1,7 @@
-﻿using Meadow.Hardware;
+﻿/*  
+ */
+using Meadow.Hardware;
+using Meadow.Peripherals.Sensors;
 using Meadow.Peripherals.Sensors.Environmental;
 using Meadow.Units;
 using System;
@@ -11,18 +14,33 @@ namespace Meadow.Foundation.Sensors.Environmental;
 /// </summary>
 public partial class DFRobotGravityDOMeter : SamplingSensorBase<ConcentrationInWater>, IDissolvedOxygenConcentrationSensor
 {
-    /// <summary>
-    /// The current water temperature (default 25C)
-    /// </summary>
-    public Units.Temperature WaterTemperature { get; set; } = new Units.Temperature(25, Units.Temperature.UnitType.Celsius);
 
     /// <summary>
-    /// The calibration value for the sensor at 25C (default 1.6V)
+    /// /// The current voltage from the A/D conversion of DO sensor
     /// </summary>
-    public Voltage CalibrationAt25C { get; set; } = new Voltage(1.6, Voltage.UnitType.Volts);
+    public Voltage SensorVoltage { get; set; }
 
     /// <summary>
-    /// Returns the analog input port
+    /// The current water temperature, which can be read from the TempSensor
+    /// </summary>
+    protected Units.Temperature WaterTemperature;
+
+    /// <summary>
+    /// a Temperature Sensor, used to keep tempertaure up to date
+    /// </summary>
+    readonly ITemperatureSensor tempSensor;
+
+    /// <summary>
+    /// The calibration values for the sensor, linear fits of voltage vs temperature for saturated and no oxygen  
+    /// </summary>
+    public double sat_Offset { get; set; } = 0.12454;
+    public double sat_Mult { get; set; } = 0.015984;
+    public double zero_Offset { get; set; } = 0.020734;
+    public double zero_Mult { get; set; } = 0.0019617;
+
+
+    /// <summary>
+    /// the analog input port  used for A/D conversion of amplified electrode potential
     /// </summary>
     protected IAnalogInputPort AnalogInputPort { get; }
 
@@ -32,31 +50,21 @@ public partial class DFRobotGravityDOMeter : SamplingSensorBase<ConcentrationInW
     public ConcentrationInWater? Concentration { get; protected set; }
 
     /// <summary>
-    /// The disolved oxygen lookup table for temperature values from 0 to 40 degrees C
+    /// Constants for 3rd order poly for DO saturation (mg/L) with temperature, good from 0 to 30 °C
     /// </summary>
-    readonly int[] DO_Table = new int[41] {
-    14460, 14220, 13820, 13440, 13090, 12740, 12420, 12110, 11810, 11530,
-    11260, 11010, 10770, 10530, 10300, 10080, 9860, 9660, 9460, 9270,
-    9080, 8900, 8730, 8570, 8410, 8250, 8110, 7960, 7820, 7690,
-    7560, 7430, 7300, 7180, 7070, 6950, 6840, 6730, 6630, 6530, 6410};
+    readonly double DO_Sat_K0 = 14.502;
+    readonly double DO_Sat_K1 = -0.35984;
+    readonly double DO_Sat_K2 = 0.0043703;
 
+ 
     /// <summary>
-    /// Creates a new DFRobotGravityDOMeter object
-    /// </summary>
-    /// <param name="analogInputPin">Analog pin the temperature sensor is connected to</param>
-    /// <param name="sampleCount">How many samples to take during a given reading</param>
-    /// <param name="sampleInterval">The time, to wait in between samples during a reading</param>
-    public DFRobotGravityDOMeter(IPin analogInputPin, int sampleCount = 5, TimeSpan? sampleInterval = null)
-        : this(analogInputPin.CreateAnalogInputPort(sampleCount, sampleInterval ?? TimeSpan.FromMilliseconds(40), new Voltage(3.3)))
-    { }
-
-    /// <summary>
-    /// Creates a new DFRobotGravityDOMeter object
+    /// Creates a new DFRobotGravityDOMeter object with an analog inpuyt port and a temperature sensor
     /// </summary>
     /// <param name="analogInputPort">The port for the analog input pin</param>
-    public DFRobotGravityDOMeter(IAnalogInputPort analogInputPort)
+    public DFRobotGravityDOMeter(ITemperatureSensor TempSensor, IAnalogInputPort analogInputPort)
     {
         AnalogInputPort = analogInputPort;
+        tempSensor = TempSensor;
 
         AnalogInputPort.Subscribe
         (
@@ -76,22 +84,13 @@ public partial class DFRobotGravityDOMeter : SamplingSensorBase<ConcentrationInW
     }
 
     /// <summary>
-    /// Get the current voltage, useful for calibration
-    /// </summary>
-    /// <returns></returns>
-    public Task<Voltage> GetCurrentVoltage()
-    {
-        return AnalogInputPort.Read();
-    }
-
-    /// <summary>
     /// Reads data from the sensor
     /// </summary>
     /// <returns>The latest sensor reading</returns>
     protected override async Task<ConcentrationInWater> ReadSensor()
     {
-        var voltage = await AnalogInputPort.Read();
-        var newConcentration = VoltageToConcentration(voltage);
+        SensorVoltage = await AnalogInputPort.Read();
+        var newConcentration = VoltageToConcentration(SensorVoltage);
         Concentration = newConcentration;
         return newConcentration;
     }
@@ -124,11 +123,12 @@ public partial class DFRobotGravityDOMeter : SamplingSensorBase<ConcentrationInW
 
     ConcentrationInWater VoltageToConcentration(Voltage voltage)
     {
-        var calibrationValue = DO_Table[(int)WaterTemperature.Celsius];
+        WaterTemperature = (Units.Temperature)tempSensor.Temperature;
+        Voltage satVatTemp = new Voltage(sat_Offset + WaterTemperature.Celsius * sat_Mult, Voltage.UnitType.Volts);
+        Voltage zeroVatTemp = new Voltage(zero_Offset + WaterTemperature.Celsius * zero_Mult, Voltage.UnitType.Volts);
+        var propSat = (voltage.Volts - zeroVatTemp.Volts) / (satVatTemp.Volts - zeroVatTemp.Volts);
+        var mg_per_ml_sat = DO_Sat_K0 + DO_Sat_K1 * WaterTemperature.Celsius + DO_Sat_K2 * WaterTemperature.Celsius * WaterTemperature.Celsius;
 
-        var voltageSaturationInMilliVolts = CalibrationAt25C.Millivolts + 35 * (WaterTemperature.Celsius - 25);
-        var concentrationRaw = voltage.Millivolts * calibrationValue / voltageSaturationInMilliVolts;
-
-        return new ConcentrationInWater(concentrationRaw, Units.ConcentrationInWater.UnitType.MicrogramsPerLiter);
+        return new ConcentrationInWater(propSat * mg_per_ml_sat, Units.ConcentrationInWater.UnitType.MilligramsPerLiter);
     }
 }

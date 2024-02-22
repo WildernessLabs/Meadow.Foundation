@@ -1,6 +1,7 @@
 ﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Environmental;
+using Meadow.Units;
 using System;
 using System.Threading.Tasks;
 
@@ -16,14 +17,17 @@ namespace Sensors.Environmental.DFRobotGravityDOMeter_Sample
         {
             Resolver.Log.Info("Initialize...");
 
-            sensor = new DFRobotGravityDOMeter(Device.Pins.A01);
+            sensor = new DFRobotGravityDOMeter(Device.Pins.A01) {
+                WaterTemperature = new Meadow.Units.Temperature(17, Meadow.Units.Temperature.UnitType.Celsius)
+            };
 
+            sensor.WaterTemperature = new Meadow.Units.Temperature(12, Meadow.Units.Temperature.UnitType.Celsius);
             // Example that uses an IObservable subscription to only be notified when the saturation changes
             var consumer = DFRobotGravityDOMeter.CreateObserver(
                 handler: result =>
                 {
                     string oldValue = (result.Old is { } old) ? $"{old.MilligramsPerLiter:n0}" : "n/a";
-                    string newValue = $"{result.New.MilligramsPerLiter:n0}";
+                    string newValue = $"{result.New.MilligramsPerLiter:n3}";
                     Resolver.Log.Info($"New: {newValue}mg/l, Old: {oldValue}mg/l");
                 },
                 filter: null
@@ -35,6 +39,7 @@ namespace Sensors.Environmental.DFRobotGravityDOMeter_Sample
             {
                 string oldValue = (result.Old is { } old) ? $"{old.MilligramsPerLiter}mg/l" : "n/a";
                 Resolver.Log.Info($"Updated - New: {result.New.MilligramsPerLiter:n0}mg/l, Old: {oldValue}");
+
             };
 
             return Task.CompletedTask;
