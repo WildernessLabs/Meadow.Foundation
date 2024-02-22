@@ -80,9 +80,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             var data = (buffer[0] & 0x1f) << 8 | buffer[1];
             // then shift back right 1 bit
             var result = data >> 1;
-            Console.WriteLine($"raw: {result}");
             return result;
-
         }
     }
 }

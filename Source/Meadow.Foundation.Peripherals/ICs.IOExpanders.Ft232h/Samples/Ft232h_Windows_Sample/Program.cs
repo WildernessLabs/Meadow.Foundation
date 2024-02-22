@@ -1,4 +1,5 @@
 ﻿// See https://aka.ms/new-console-template for more information
+using Meadow;
 using Meadow.Foundation.ICs.IOExpanders;
 using Meadow.Foundation.Sensors.Light;
 using Meadow.Hardware;
@@ -11,8 +12,9 @@ var expander = FtdiExpanderCollection.Devices[0];
 
 //await TestBME280(ft232);
 //await TestIli9341(ft232h);
-//await TestGpio(FtdiExpanderCollection.Devices);
-await TestI2C(FtdiExpanderCollection.Devices[0]);
+await TestGpio(FtdiExpanderCollection.Devices);
+//await TestI2C(FtdiExpanderCollection.Devices[0]);
+//await TestSPI(FtdiExpanderCollection.Devices[0]);
 
 
 //async Task TestBME280(Ft232h expander)
@@ -26,6 +28,28 @@ await TestI2C(FtdiExpanderCollection.Devices[0]);
 //        await Task.Delay(1000);
 //    }
 //}
+async Task TestSPI(FtdiExpander expander)
+{
+    var gpio = expander.CreateDigitalOutputPort(expander.Pins.C0);
+
+    while (true)
+    {
+        gpio.State = true;
+        await Task.Delay(1000);
+        gpio.State = false;
+        await Task.Delay(1000);
+    }
+
+
+    var mcp = new Mcp3201(
+        expander.CreateSpiBus(),
+        expander.Pins.C1.CreateDigitalOutputPort());
+
+    var inp = mcp.CreateAnalogInputPort();
+
+    await inp.Read();
+
+}
 
 async Task TestI2C(FtdiExpander expander)
 {
@@ -55,9 +79,18 @@ async Task TestGpio(IEnumerable<FtdiExpander> expanders)
     foreach (var expander in expanders)
     {
         outputs.Add(expander.CreateDigitalOutputPort(expander.Pins.C0));
-        outputs.Add(expander.CreateDigitalOutputPort(expander.Pins.C7));
-        outputs.Add(expander.CreateDigitalOutputPort(expander.Pins.D3));
-        outputs.Add(expander.CreateDigitalOutputPort(expander.Pins.D7));
+        outputs.Add(expander.CreateDigitalOutputPort(expander.Pins.C1));
+        //outputs.Add(expander.CreateDigitalOutputPort(expander.Pins.C2));
+        //outputs.Add(expander.CreateDigitalOutputPort(expander.Pins.C3));
+        //outputs.Add(expander.CreateDigitalOutputPort(expander.Pins.C4));
+        //outputs.Add(expander.CreateDigitalOutputPort(expander.Pins.C5));
+        //outputs.Add(expander.CreateDigitalOutputPort(expander.Pins.C6));
+        //outputs.Add(expander.CreateDigitalOutputPort(expander.Pins.C7));
+        //outputs.Add(expander.CreateDigitalOutputPort(expander.Pins.D3));
+        //outputs.Add(expander.CreateDigitalOutputPort(expander.Pins.D4));
+        //outputs.Add(expander.CreateDigitalOutputPort(expander.Pins.D5));
+        //outputs.Add(expander.CreateDigitalOutputPort(expander.Pins.D6));
+        //outputs.Add(expander.CreateDigitalOutputPort(expander.Pins.D7));
     }
 
     var s = false;

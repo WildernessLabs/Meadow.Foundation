@@ -1,4 +1,5 @@
 ﻿using Meadow.Hardware;
+using Meadow.Units;
 using System;
 using System.IO;
 using System.Linq;
@@ -13,28 +14,9 @@ public abstract partial class FtdiExpander :
 //    IDisposable,
 //    IDigitalInputOutputController,
     IDigitalOutputController,
-//    ISpiController,
+    ISpiController,
     II2cController
 {
-    public II2cBus CreateI2cBus(int busNumber = 1, I2cBusSpeed busSpeed = I2cBusSpeed.Standard)
-    {
-        // TODO: depends on part
-        // TODO: make sure no SPI is in use
-        var bus = new Ft232hI2cBus(this);
-        bus.Configure();
-        return bus;
-    }
-
-    public II2cBus CreateI2cBus(IPin[] pins, I2cBusSpeed busSpeed)
-    {
-        return CreateI2cBus(1);
-    }
-
-    public II2cBus CreateI2cBus(IPin clock, IPin data, I2cBusSpeed busSpeed)
-    {
-        return CreateI2cBus(1);
-    }
-
     internal byte GpioDirectionLow { get; set; }
     internal byte GpioStateLow { get; set; }
     internal byte GpioDirectionHigh { get; set; }
@@ -48,7 +30,8 @@ public abstract partial class FtdiExpander :
     internal string Description { get; private set; }
     internal IntPtr Handle { get; private set; }
 
-    internal uint I2cBusFrequencyKbps { get; private set; } = 100;
+    internal uint I2cBusFrequencyKbps { get; private set; } = 400;
+    internal uint SpiBusFrequencyKbps { get; private set; } = 1000;
 
     /// <summary>
     /// The pins
@@ -163,6 +146,9 @@ public abstract partial class FtdiExpander :
         outBuffer[1] = state; //data
         outBuffer[2] = direction; //direction 1 == output, 0 == input
 
+        // Console.WriteLine($"{(BitConverter.ToString(outBuffer.ToArray()))}");
+        Write(outBuffer);
+
         if (lowByte)
         {
             GpioStateLow = state;
@@ -173,9 +159,6 @@ public abstract partial class FtdiExpander :
             GpioStateHigh = state;
             GpioDirectionHigh = direction;
         }
-
-        // Console.WriteLine($"{(BitConverter.ToString(outBuffer.ToArray()))}");
-        Write(outBuffer);
     }
 
     private void InitializeMpsse()
@@ -229,58 +212,6 @@ public abstract partial class FtdiExpander :
             FT_Write(Handle, in MemoryMarshal.GetReference(data), (ushort)data.Length, ref written));
     }
 
-    /*
-    private byte Receive_Data(uint BytesToRead)
-    {
-        uint NumBytesInQueue = 0;
-        uint QueueTimeOut = 0;
-        uint Buffer1Index = 0;
-        uint Buffer2Index = 0;
-        uint TotalBytesRead = 0;
-        bool QueueTimeoutFlag = false;
-        uint NumBytesRxd = 0;
-
-        // Keep looping until all requested bytes are received or we've tried 5000 times (value can be chosen as required)
-        while ((TotalBytesRead < BytesToRead) && (QueueTimeoutFlag == false))
-        {
-            ftStatus = myFtdiDevice.GetRxBytesAvailable(ref NumBytesInQueue);       // Check bytes available
-
-            if ((NumBytesInQueue > 0) && (ftStatus == FTDI.FT_STATUS.FT_OK))
-            {
-                ftStatus = myFtdiDevice.Read(InputBuffer, NumBytesInQueue, ref NumBytesRxd);  // if any available read them
-
-                if ((NumBytesInQueue == NumBytesRxd) && (ftStatus == FTDI.FT_STATUS.FT_OK))
-                {
-                    Buffer1Index = 0;
-
-                    while (Buffer1Index < NumBytesRxd)
-                    {
-                        InputBuffer2[Buffer2Index] = InputBuffer[Buffer1Index];     // copy into main overall application buffer
-                        Buffer1Index++;
-                        Buffer2Index++;
-                    }
-                    TotalBytesRead = TotalBytesRead + NumBytesRxd;                  // Keep track of total
-                }
-                else
-                    return 1;
-
-                QueueTimeOut++;
-                if (QueueTimeOut == 5000)
-                    QueueTimeoutFlag = true;
-                else
-                    Thread.Sleep(0);                                                // Avoids running Queue status checks back to back
-            }
-        }
-        // returning globals NumBytesRead and the buffer InputBuffer2
-        NumBytesRead = TotalBytesRead;
-
-        if (QueueTimeoutFlag == true)
-            return 1;
-        else
-            return 0;
-    }
-    */
-
     public IDigitalOutputPort CreateDigitalOutputPort(IPin pin, bool initialState = false, OutputType initialOutputType = OutputType.PushPull)
     {
         var p = pin as FtdiPin;
@@ -320,6 +251,44 @@ public abstract partial class FtdiExpander :
         }
 
         var channel = p.SupportedChannels.FirstOrDefault(channel => channel is IDigitalChannelInfo) as IDigitalChannelInfo;
-        return new FtdiDigitalOutputPort(this, pin, channel, initialState, initialOutputType);
+        return new DigitalOutputPort(this, pin, channel, initialState, initialOutputType);
+    }
+
+    public II2cBus CreateI2cBus(int busNumber = 1, I2cBusSpeed busSpeed = I2cBusSpeed.Standard)
+    {
+        // TODO: depends on part
+        // TODO: make sure no SPI is in use
+        var bus = new Ft232hI2cBus(this);
+        bus.Configure();
+        return bus;
+    }
+
+    public II2cBus CreateI2cBus(IPin[] pins, I2cBusSpeed busSpeed)
+    {
+        return CreateI2cBus(1);
+    }
+
+    public II2cBus CreateI2cBus(IPin clock, IPin data, I2cBusSpeed busSpeed)
+    {
+        return CreateI2cBus(1);
+    }
+
+    public ISpiBus CreateSpiBus(IPin clock, IPin copi, IPin cipo, SpiClockConfiguration config)
+    {
+        // TODO: depends on part
+        // TODO: make sure no SPI is in use
+        var bus = new Ft232hSpiBus(this);
+        bus.Configure();
+        return bus;
+    }
+
+    public ISpiBus CreateSpiBus(IPin clock, IPin copi, IPin cipo, Frequency speed)
+    {
+        return CreateSpiBus(clock, copi, cipo, new SpiClockConfiguration(speed));
+    }
+
+    public ISpiBus CreateSpiBus()
+    {
+        return CreateSpiBus(null, null, null, 1000000.Hertz());
     }
 }
