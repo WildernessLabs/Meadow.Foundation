@@ -37,6 +37,9 @@ public abstract partial class FtdiExpander
             toSend[idx++] = (byte)((clockDivisor >> 8) & 0x00FF);
 
             _expander.Write(toSend);
+
+            // make the SCK and SDO lines outputs
+            _expander.SetGpioDirectionAndState(true, _expander.GpioDirectionLow |= 0x03, _expander.GpioStateLow);
         }
 
         /*
@@ -73,10 +76,10 @@ if dev:
                 chipSelect.State = csMode == ChipSelectMode.ActiveLow ? false : true;
             }
 
-            Span<byte> toSend = stackalloc byte[5];
+            Span<byte> toSend = stackalloc byte[4];
             var idx = 0;
             toSend[idx++] = (byte)Native.FT_OPCODE.ClockDataBytesInOnMinusVeClockMSBFirst; // clock in on falling edge
-            toSend[idx++] = (byte)(readBuffer.Length % 256); // LSB of length to read
+            toSend[idx++] = (byte)(readBuffer.Length % 256 - 1); // LSB of length to read
             toSend[idx++] = 0; // MSB of length to read
             toSend[idx++] = (byte)Native.FT_OPCODE.SendImmediate; // read now
             _expander.Write(toSend);
