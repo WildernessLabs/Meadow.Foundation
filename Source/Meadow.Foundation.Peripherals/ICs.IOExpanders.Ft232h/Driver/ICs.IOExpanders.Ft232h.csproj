@@ -20,43 +20,7 @@
     <Description>Ft232h USB IOExpander for GPIO, I2C, SPI on Windows</Description>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Remove="Ft232h.cs" />
-    <Compile Remove="Ft23xx\Ft23xxDigitalInputPort.cs" />
-    <Compile Remove="Ft23xx\Ft23xxDigitalOutputPort.cs" />
-    <Compile Remove="Ft23xx\Ft23xxI2cBus.cs" />
-    <Compile Remove="Ft23xx\Ft23xxSpiBus.cs" />
-    <Compile Remove="Ft23xx\Ftd2xxImpl.cs" />
-    <Compile Remove="MPSSE\MpsseChannel.cs" />
-    <Compile Remove="MPSSE\MpsseChannel.Gpio.cs" />
-    <Compile Remove="MPSSE\MpsseChannel.I2c.cs" />
-    <Compile Remove="MPSSE\MpsseChannel.Spi.cs" />
-    <Compile Remove="MPSSE\MpsseChannelCollection.cs" />
-    <Compile Remove="MPSSE\MpsseDigitalInputPort.cs" />
-    <Compile Remove="MPSSE\MpsseDigitalOutputPort.cs" />
-    <Compile Remove="MPSSE\MpsseI2cBus.cs" />
-    <Compile Remove="MPSSE\MpsseImpl.cs" />
-    <Compile Remove="MPSSE\MpsseSpiBus.cs" />
-    <Compile Remove="MPSSE\Native.Mpsse.cs" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include=".\Readme.md" Pack="true" PackagePath="" />
-    <None Include="Ft232h.cs" />
-    <None Include="Ft23xx\Ft23xxDigitalInputPort.cs" />
-    <None Include="Ft23xx\Ft23xxDigitalOutputPort.cs" />
-    <None Include="Ft23xx\Ft23xxI2cBus.cs" />
-    <None Include="Ft23xx\Ft23xxSpiBus.cs" />
-    <None Include="Ft23xx\Ftd2xxImpl.cs" />
-    <None Include="MPSSE\MpsseChannel.cs" />
-    <None Include="MPSSE\MpsseChannel.Gpio.cs" />
-    <None Include="MPSSE\MpsseChannel.I2c.cs" />
-    <None Include="MPSSE\MpsseChannel.Spi.cs" />
-    <None Include="MPSSE\MpsseChannelCollection.cs" />
-    <None Include="MPSSE\MpsseDigitalInputPort.cs" />
-    <None Include="MPSSE\MpsseDigitalOutputPort.cs" />
-    <None Include="MPSSE\MpsseI2cBus.cs" />
-    <None Include="MPSSE\MpsseImpl.cs" />
-    <None Include="MPSSE\MpsseSpiBus.cs" />
-    <None Include="MPSSE\Native.Mpsse.cs" />
     <ProjectReference Include="..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
     <None Include="..\..\..\icon.png" Pack="true" PackagePath="" />
   </ItemGroup>

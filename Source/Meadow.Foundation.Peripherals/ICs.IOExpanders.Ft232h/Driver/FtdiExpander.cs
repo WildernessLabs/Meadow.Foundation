@@ -30,8 +30,8 @@ public abstract partial class FtdiExpander :
     internal string Description { get; private set; }
     internal IntPtr Handle { get; private set; }
 
-    internal uint I2cBusFrequencyKbps { get; private set; } = 400;
-    internal uint SpiBusFrequencyKbps { get; private set; } = 1000;
+    public abstract II2cBus CreateI2cBus(int channel = 0, I2cBusSpeed busSpeed = I2cBusSpeed.Standard);
+    public abstract ISpiBus CreateSpiBus(int channel, SpiClockConfiguration configuration);
 
     /// <summary>
     /// The pins
@@ -48,7 +48,7 @@ public abstract partial class FtdiExpander :
         string description,
         IntPtr handle)
     {
-        var expander = deviceType switch
+        FtdiExpander expander = deviceType switch
         {
             FtDeviceType.Ft232H => new Ft232hExpander
             {
@@ -60,6 +60,18 @@ public abstract partial class FtdiExpander :
                 Description = description,
                 Handle = handle
             },
+            FtDeviceType.Ft2232 => new Ft2232Expander
+            {
+                Index = index,
+                Flags = flags,
+                ID = id,
+                LocID = locid,
+                SerialNumber = serialNumber,
+                Description = description,
+                Handle = handle
+            },
+            FtDeviceType.Ft2232H => throw new NotImplementedException(),
+            FtDeviceType.Ft4232H => throw new NotImplementedException(),
             _ => throw new NotSupportedException(),
         };
 
@@ -106,16 +118,6 @@ public abstract partial class FtdiExpander :
         InitializeMpsse();
     }
 
-    private bool CheckStatus(FTDI.FT_STATUS status)
-    {
-        if (status == FTDI.FT_STATUS.FT_OK)
-        {
-            return true;
-        }
-
-        throw new Exception($"Native error: {status}");
-    }
-
     private void ClearInputBuffer()
     {
         var available = GetAvailableBytes();
@@ -142,7 +144,7 @@ public abstract partial class FtdiExpander :
     internal void SetGpioDirectionAndState(bool lowByte, byte direction, byte state)
     {
         Span<byte> outBuffer = stackalloc byte[3];
-        outBuffer[0] = (byte)(lowByte ? FTDI.FT_OPCODE.SetDataBitsLowByte : FTDI.FT_OPCODE.SetDataBitsHighByte);
+        outBuffer[0] = (byte)(lowByte ? Native.FT_OPCODE.SetDataBitsLowByte : Native.FT_OPCODE.SetDataBitsHighByte);
         outBuffer[1] = state; //data
         outBuffer[2] = direction; //direction 1 == output, 0 == input
 
@@ -184,7 +186,7 @@ public abstract partial class FtdiExpander :
         }
     }
 
-    public int ReadInto(Span<byte> buffer)
+    internal int ReadInto(Span<byte> buffer)
     {
         var totalRead = 0;
         uint read = 0;
@@ -212,6 +214,7 @@ public abstract partial class FtdiExpander :
             FT_Write(Handle, in MemoryMarshal.GetReference(data), (ushort)data.Length, ref written));
     }
 
+    /// <inheritdoc/>
     public IDigitalOutputPort CreateDigitalOutputPort(IPin pin, bool initialState = false, OutputType initialOutputType = OutputType.PushPull)
     {
         var p = pin as FtdiPin;
@@ -254,41 +257,37 @@ public abstract partial class FtdiExpander :
         return new DigitalOutputPort(this, pin, channel, initialState, initialOutputType);
     }
 
-    public II2cBus CreateI2cBus(int busNumber = 1, I2cBusSpeed busSpeed = I2cBusSpeed.Standard)
-    {
-        // TODO: depends on part
-        // TODO: make sure no SPI is in use
-        var bus = new Ft232hI2cBus(this);
-        bus.Configure();
-        return bus;
-    }
-
+    /// <inheritdoc/>
     public II2cBus CreateI2cBus(IPin[] pins, I2cBusSpeed busSpeed)
     {
         return CreateI2cBus(1);
     }
 
+    /// <inheritdoc/>
     public II2cBus CreateI2cBus(IPin clock, IPin data, I2cBusSpeed busSpeed)
     {
         return CreateI2cBus(1);
     }
 
+    /// <inheritdoc/>
     public ISpiBus CreateSpiBus(IPin clock, IPin copi, IPin cipo, SpiClockConfiguration config)
     {
-        // TODO: depends on part
-        // TODO: make sure no SPI is in use
-        var bus = new Ft232hSpiBus(this);
-        bus.Configure();
-        return bus;
+        return CreateSpiBus(0, config);
     }
 
+    /// <inheritdoc/>
     public ISpiBus CreateSpiBus(IPin clock, IPin copi, IPin cipo, Frequency speed)
     {
-        return CreateSpiBus(clock, copi, cipo, new SpiClockConfiguration(speed));
+        return CreateSpiBus(0, new SpiClockConfiguration(speed));
     }
 
-    public ISpiBus CreateSpiBus()
+    public ISpiBus CreateSpiBus(SpiClockConfiguration configuration)
     {
-        return CreateSpiBus(null, null, null, 1000000.Hertz());
+        return CreateSpiBus(0, configuration);
+    }
+
+    public ISpiBus CreateSpiBus(int channel = 0)
+    {
+        return CreateSpiBus(channel, new SpiClockConfiguration(1000000.Hertz()));
     }
 }

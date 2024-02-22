@@ -9,20 +9,27 @@ public abstract partial class FtdiExpander
 {
     public abstract class I2CBus : II2cBus
     {
-        public I2cBusSpeed BusSpeed { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        protected internal readonly FtdiExpander _expander;
+
+        public I2cBusSpeed BusSpeed { get; set; }
 
         private SpinWait _spinWait = new();
 
-        public abstract void Configure();
-        public abstract void Start();
-        public abstract void Stop();
-        public abstract void Idle();
-        public abstract TransferStatus SendDataByte(byte data);
-        public abstract byte ReadDataByte(bool ackAfterRead);
-        protected const byte NumberCycles = 6;
-        protected const byte MaskGpio = 0xF8;
+        internal abstract void Configure();
+        internal abstract void Start();
+        internal abstract void Stop();
+        internal abstract void Idle();
+        internal abstract TransferStatus SendDataByte(byte data);
+        internal abstract byte ReadDataByte(bool ackAfterRead);
+        protected internal const byte MaskGpio = 0xF8;
 
-        public enum TransferStatus
+        internal I2CBus(FtdiExpander expander, I2cBusSpeed busSpeed)
+        {
+            _expander = expander;
+            BusSpeed = busSpeed;
+        }
+
+        internal enum TransferStatus
         {
             Ack = 0,
             Nack

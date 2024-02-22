@@ -7,16 +7,12 @@ public abstract partial class FtdiExpander
 {
     public class Ft23xxxI2cBus : I2CBus, II2cBus
     {
-        private FtdiExpander _expander;
-
-        public I2cBusSpeed BusSpeed { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-
-        internal Ft23xxxI2cBus(FtdiExpander expander)
+        internal Ft23xxxI2cBus(FtdiExpander expander, I2cBusSpeed busSpeed)
+            : base(expander, busSpeed)
         {
-            _expander = expander;
         }
 
-        public override void Configure()
+        internal override void Configure()
         {
             // Setup the clock and other elements
             Span<byte> toSend = stackalloc byte[10];
@@ -31,7 +27,7 @@ public abstract partial class FtdiExpander
             // TCK period = 60MHz / (( 1 + [ (0xValueH * 256) OR 0xValueL] ) * 2)
             // Command to set clock divisor
             toSend[idx++] = (byte)Native.FT_OPCODE.SetClockDivisor;
-            uint clockDivisor = (60000 / (_expander.I2cBusFrequencyKbps * 2)) - 1;
+            uint clockDivisor = (60000 / (((uint)BusSpeed / 1000) * 2)) - 1;
             toSend[idx++] = (byte)(clockDivisor & 0x00FF);
             toSend[idx++] = (byte)((clockDivisor >> 8) & 0x00FF);
             // loopback off
@@ -55,7 +51,7 @@ public abstract partial class FtdiExpander
             _expander.Write(toSend);
         }
 
-        public override void Start()
+        internal override void Start()
         {
             // Both SDA and SCL high (setting to input simulates open drain high)
             var state = (byte)(PinData.SDAloSCLlo | (_expander.GpioStateLow & MaskGpio));
@@ -78,7 +74,7 @@ public abstract partial class FtdiExpander
             Wait(6);
         }
 
-        public override void Stop()
+        internal override void Stop()
         {
             // SDA low, SCL low
             var state = (byte)(PinData.SDAloSCLlo | (_expander.GpioStateLow & MaskGpio));
@@ -98,7 +94,7 @@ public abstract partial class FtdiExpander
             Wait(6);
         }
 
-        public override void Idle()
+        internal override void Idle()
         {
             // SDA high, SCL high
             var state = (byte)(PinData.SDAloSCLlo | (_expander.GpioStateLow & MaskGpio));
@@ -107,7 +103,7 @@ public abstract partial class FtdiExpander
             _expander.SetGpioDirectionAndState(true, direction, state);
         }
 
-        public override TransferStatus SendDataByte(byte data)
+        internal override TransferStatus SendDataByte(byte data)
         {
             Span<byte> txBuffer = stackalloc byte[13];
             Span<byte> rxBuffer = stackalloc byte[1];
@@ -143,7 +139,7 @@ public abstract partial class FtdiExpander
             return (rxBuffer[0] & 0x01) == 0 ? TransferStatus.Ack : TransferStatus.Nack;
         }
 
-        public override byte ReadDataByte(bool ackAfterRead)
+        internal override byte ReadDataByte(bool ackAfterRead)
         {
             int idx = 0;
             Span<byte> toSend = stackalloc byte[16];
