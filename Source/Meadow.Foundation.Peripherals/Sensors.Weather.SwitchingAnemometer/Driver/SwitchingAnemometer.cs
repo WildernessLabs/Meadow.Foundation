@@ -63,7 +63,7 @@ namespace Meadow.Foundation.Sensors.Weather
         /// <summary>
         /// Did we create the port(s) used by the peripheral
         /// </summary>
-        readonly bool createdPort = false;
+        private readonly bool createdPort = false;
 
         /// <summary>
         /// Creates a new `SwitchingAnemometer` using the specific digital input
@@ -152,7 +152,9 @@ namespace Meadow.Foundation.Sensors.Weather
                 StopUpdating();
             }
 
-            if (samples?.Count > 0 && (DateTime.UtcNow - samples?.Peek().New.Time > NoWindTimeout))
+            var now = Environment.TickCount;
+
+            if (samples?.Count > 0 && (TimeSpan.FromMilliseconds(now - samples?.Peek().New.Time ?? 0) > NoWindTimeout))
             {   //we've exceeded the no wind interval time 
                 samples?.Clear(); //will force a zero reading
             }
@@ -166,7 +168,7 @@ namespace Meadow.Foundation.Sensors.Weather
                 {   // skip the first (old will be null)
                     if (sample.Old is { } old)
                     {
-                        speedSum += SwitchIntervalToKmh(sample.New.Time - old.Time);
+                        speedSum += SwitchIntervalToKmh(TimeSpan.FromMilliseconds(sample.New.Time - old.Time));
                     }
                 }
 
