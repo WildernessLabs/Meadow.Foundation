@@ -47,8 +47,8 @@
             TEMPDATA = 0x22,
             HUMIDITYDATA = 0x25,
 
-            GAS_RES = 0x2A,
-            GAS_RANGE = 0x2B,
+            GAS_RES = 0x2C,
+            GAS_RANGE = 0x2D,
             RES_HEAT_0 = 0x5A,
             GAS_WAIT_0 = 0x64,
 

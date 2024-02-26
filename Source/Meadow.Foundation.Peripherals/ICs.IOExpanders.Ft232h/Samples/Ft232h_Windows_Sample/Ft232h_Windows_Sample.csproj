@@ -15,8 +15,11 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\Displays.TftSpi\Driver\Displays.TftSpi.csproj" />
+    <ProjectReference Include="..\..\..\ICs.ADCs.Mcp3xxx\Driver\ICs.ADC.Mcp3xxx.csproj" />
     <ProjectReference Include="..\..\..\Sensors.Atmospheric.Bme280\Driver\Sensors.Atmospheric.Bme280.csproj" />
+    <ProjectReference Include="..\..\..\Sensors.Atmospheric.Si70xx\Driver\Sensors.Atmospheric.Si70xx.csproj" />
     <ProjectReference Include="..\..\..\Sensors.Light.Veml7700\Driver\Sensors.Light.Veml7700.csproj" />
+    <ProjectReference Include="..\..\..\Sensors.Temperature.Pct2075\Driver\Sensors.Temperature.Pct2075.csproj" />
     <ProjectReference Include="..\..\Driver\ICs.IOExpanders.Ft232h.csproj" />
   </ItemGroup>
 

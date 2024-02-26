@@ -6,11 +6,11 @@ using Meadow.Peripherals.Displays;
 
 public class MeadowApp : App<Windows>
 {
-    private readonly Ft232h expander = new Ft232h();
     private DisplayScreen? screen;
 
     public override Task Initialize()
     {
+        var expander = FtdiExpanderCollection.Devices[0];
         var display = new Max7219(
             expander.CreateSpiBus(),
             expander.Pins.C0.CreateDigitalOutputPort(), // CS

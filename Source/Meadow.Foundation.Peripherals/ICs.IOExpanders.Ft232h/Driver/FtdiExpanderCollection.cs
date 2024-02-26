@@ -7,31 +7,33 @@ using static Meadow.Foundation.ICs.IOExpanders.Native.Ftd2xx;
 
 namespace Meadow.Foundation.ICs.IOExpanders;
 
-internal class FtdiDeviceCollection : IEnumerable<FtdiDevice>
+public class FtdiExpanderCollection : IEnumerable<FtdiExpander>
 {
-    private List<FtdiDevice> _devices = new();
+    private static FtdiExpanderCollection? _instance;
 
-    public int Count => _devices.Count;
+    private List<FtdiExpander> _expanders = new List<FtdiExpander>();
 
-    public FtdiDevice this[int index]
+    /// <summary>
+    /// Gets the number of FtdiExpander devices connected to the host machine.
+    /// </summary>
+    public int Count => _expanders.Count;
+
+    /// <summary>
+    /// Gets the FtdiExpander device at the specified index in the collection.
+    /// </summary>
+    /// <param name="index">The index of the FtdiExpander device to retrieve.</param>
+    public FtdiExpander this[int index] => _expanders[index];
+
+    private FtdiExpanderCollection()
     {
-        get => _devices[index];
     }
 
     public void Refresh()
     {
-        _devices.Clear();
+        Native.CheckStatus(
+            Native.Ftd2xx.FT_CreateDeviceInfoList(out uint count));
 
-        uint count;
-
-        try
-        {
-            Native.CheckStatus(FT_CreateDeviceInfoList(out count));
-        }
-        catch (DllNotFoundException)
-        {
-            throw new DriverNotInstalledException();
-        }
+        _expanders.Clear();
 
         ReadOnlySpan<byte> serialNumberBuffer = stackalloc byte[16];
         ReadOnlySpan<byte> descriptionBuffer = stackalloc byte[64];
@@ -64,17 +66,34 @@ internal class FtdiDeviceCollection : IEnumerable<FtdiDevice>
             var serialNumber = Encoding.ASCII.GetString(serialNumberBuffer.ToArray(), 0, serialNumberBuffer.IndexOf((byte)0));
             var description = Encoding.ASCII.GetString(descriptionBuffer.ToArray(), 0, descriptionBuffer.IndexOf((byte)0));
 
-            _devices.Add(new FtdiDevice(index, flags, deviceType, id, locid, serialNumber, description, handle));
+            _expanders.Add(FtdiExpander.Create(index, flags, deviceType, id, locid, serialNumber, description, handle));
         }
     }
 
-    public IEnumerator<FtdiDevice> GetEnumerator()
+    /// <inheritdoc/>
+    public IEnumerator<FtdiExpander> GetEnumerator()
     {
-        return _devices.GetEnumerator();
+        return _expanders.GetEnumerator();
     }
 
     IEnumerator IEnumerable.GetEnumerator()
     {
         return GetEnumerator();
+    }
+
+    /// <summary>
+    /// Gets the singleton instance of Ft232Collection, initializing it if necessary.
+    /// </summary>
+    public static FtdiExpanderCollection Devices
+    {
+        get
+        {
+            if (_instance == null)
+            {
+                _instance = new FtdiExpanderCollection();
+                _instance.Refresh();
+            }
+            return _instance;
+        }
     }
 }
