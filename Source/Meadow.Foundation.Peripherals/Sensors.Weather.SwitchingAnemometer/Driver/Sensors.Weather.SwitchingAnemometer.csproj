@@ -1,6 +1,6 @@
 <Project Sdk="Meadow.Sdk/1.1.0">
   <PropertyGroup>
-    <Version>1.8.0</Version>
+    <Version>1.9.0</Version>
     <Authors>Wilderness Labs, Inc</Authors>
     <TargetFramework>netstandard2.1</TargetFramework>
     <OutputType>Library</OutputType>
