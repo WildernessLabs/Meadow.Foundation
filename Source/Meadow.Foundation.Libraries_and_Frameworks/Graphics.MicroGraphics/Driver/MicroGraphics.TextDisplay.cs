@@ -24,7 +24,7 @@ namespace Meadow.Foundation.Graphics
         }
 
         /// <summary>
-        /// Write a line of text
+        /// Write a line of text in White
         /// </summary>
         /// <param name="text">The text</param>
         /// <param name="lineNumber">The line to write</param>
@@ -32,12 +32,25 @@ namespace Meadow.Foundation.Graphics
         /// <exception cref="Exception">Throws if no font is set</exception>
         public void WriteLine(string text, byte lineNumber, bool showCursor = false)
         {
+            WriteLine(text, lineNumber, Color.White, showCursor);
+        }
+
+        /// <summary>
+        /// Write a line of text
+        /// </summary>
+        /// <param name="text">The text</param>
+        /// <param name="lineNumber">The line to write</param>
+        /// <param name="showCursor">True to show the cursor</param>
+        /// <param name="textColor">Optional color to use for drawing the text</param>
+        /// <exception cref="Exception">Throws if no font is set</exception>
+        public void WriteLine(string text, byte lineNumber, Color textColor, bool showCursor = false)
+        {
             if (CurrentFont == null)
             {
                 throw new Exception("MicroGraphics.WriteLine requires CurrentFont to be set");
             }
             DrawText(0, lineNumber * CurrentFont.Height * DisplayConfig.FontScale,
-                text, Color.White, (ScaleFactor)DisplayConfig.FontScale);
+                text, textColor, (ScaleFactor)DisplayConfig.FontScale);
 
             if (CursorLine == lineNumber && showCursor == true)
             {
@@ -45,7 +58,7 @@ namespace Meadow.Foundation.Graphics
             }
         }
 
-        void DrawCursor()
+        private void DrawCursor()
         {
             if (currentFont != null)
             {

@@ -79,7 +79,7 @@ public abstract class Control : IControl
     /// <summary>
     /// Gets or sets the left coordinate of the control.
     /// </summary>
-    public int Left
+    public virtual int Left
     {
         get => _left;
         set => SetInvalidatingProperty(ref _left, value);
@@ -88,7 +88,7 @@ public abstract class Control : IControl
     /// <summary>
     /// Gets or sets the top coordinate of the control.
     /// </summary>
-    public int Top
+    public virtual int Top
     {
         get => _top;
         set => SetInvalidatingProperty(ref _top, value);
@@ -97,7 +97,7 @@ public abstract class Control : IControl
     /// <summary>
     /// Gets or sets the width of the control.
     /// </summary>
-    public int Width
+    public virtual int Width
     {
         get => _width;
         set => SetInvalidatingProperty(ref _width, value);
@@ -106,7 +106,7 @@ public abstract class Control : IControl
     /// <summary>
     /// Gets or sets the height of the control.
     /// </summary>
-    public int Height
+    public virtual int Height
     {
         get => _height;
         set => SetInvalidatingProperty(ref _height, value);
@@ -115,12 +115,12 @@ public abstract class Control : IControl
     /// <summary>
     /// Gets the bottom coordinate of the control.
     /// </summary>
-    public int Bottom => Top + Height;
+    public virtual int Bottom => Top + Height;
 
     /// <summary>
     /// Gets the right coordinate of the control.
     /// </summary>
-    public int Right => Left + Width;
+    public virtual int Right => Left + Width;
 
     /// <summary>
     /// Refreshes the control by redrawing it on the specified <see cref="MicroGraphics"/> surface.

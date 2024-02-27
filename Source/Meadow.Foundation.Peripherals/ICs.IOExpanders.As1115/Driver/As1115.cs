@@ -1,6 +1,6 @@
-﻿using Meadow.Foundation.Graphics;
-using Meadow.Foundation.Graphics.Buffers;
+﻿using Meadow.Foundation.Graphics.Buffers;
 using Meadow.Hardware;
+using Meadow.Peripherals.Displays;
 using Meadow.Peripherals.Sensors.Buttons;
 using System;
 using System.Collections.Generic;
@@ -11,7 +11,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
     /// <summary>
     /// Represents an As1115 led driver and key scanner
     /// </summary>
-    public partial class As1115 : IGraphicsDisplay, II2cPeripheral, IDisposable
+    public partial class As1115 : IPixelDisplay, II2cPeripheral, IDisposable
     {
         /// <summary>
         /// Event raised when any key scan button is pressed
@@ -50,29 +50,19 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         public byte DefaultI2cAddress => (byte)Addresses.Default;
 
-        /// <summary>
-        /// The display color mode (1 bit per pixel)
-        /// </summary>
+        /// <inheritdoc/>
         public ColorMode ColorMode => ColorMode.Format1bpp;
 
-        /// <summary>
-        /// The Color mode supported by the display
-        /// </summary>
+        /// <inheritdoc/>
         public ColorMode SupportedColorModes => ColorMode.Format1bpp;
 
-        /// <summary>
-        /// Display width in pixels for 8x8 matrix displays
-        /// </summary>
+        /// <inheritdoc/>
         public int Width => 8;
 
-        /// <summary>
-        /// Display height in pixels for 8x8 matrix displays
-        /// </summary>
+        /// <inheritdoc/>
         public int Height => 8;
 
-        /// <summary>
-        /// The buffer that holds the pixel data for 8x8 matrix displays
-        /// </summary>
+        /// <inheritdoc/>
         public IPixelBuffer PixelBuffer => buffer;
 
         /// <summary>

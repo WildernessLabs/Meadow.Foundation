@@ -2,6 +2,7 @@
 using Meadow.Devices;
 using Meadow.Foundation.Displays;
 using Meadow.Foundation.Graphics;
+using Meadow.Peripherals.Displays;
 using System.Threading.Tasks;
 using static Meadow.Foundation.Displays.Sh110x;
 

@@ -1,5 +1,4 @@
-﻿using Meadow.Foundation.Graphics;
-using Meadow.Foundation.Graphics.Buffers;
+﻿using Meadow.Peripherals.Displays;
 
 namespace Meadow.Foundation.Displays;
 
@@ -109,9 +108,13 @@ internal class WinFormsPixelBuffer : IPixelBuffer, IDisposable
                 }
             }
         }
+        catch (ArgumentException)
+        {
+            // NOP - can happen on app shutdown
+        }
         catch (InvalidOperationException)
         {
-            // NOP
+            // NOP - can happen on app shutdown
         }
     }
 

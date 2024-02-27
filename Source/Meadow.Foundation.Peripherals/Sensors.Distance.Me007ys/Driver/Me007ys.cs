@@ -136,7 +136,7 @@ namespace Meadow.Foundation.Sensors.Distance
             {
                 return dataReceivedTaskCompletionSource.Task.Result;
             }
-            return Length.Zero;
+            return new Length(0);
         }
 
         private void SerialPortDataReceived(object sender, SerialDataReceivedEventArgs e)

@@ -1,37 +1,27 @@
-﻿using Meadow.Foundation.Graphics;
-using Meadow.Foundation.Graphics.Buffers;
+﻿using Meadow.Foundation.Graphics.Buffers;
 using Meadow.Hardware;
+using Meadow.Peripherals.Displays;
 
 namespace Meadow.Foundation.Displays
 {
     /// <summary>
     /// Represents a WaveShare 5.65" ACeP 7 color e-Paper display
     /// </summary>
-    public class Epd5in65f : EPaperBase, IGraphicsDisplay
+    public class Epd5in65f : EPaperBase, IPixelDisplay
     {
-        /// <summary>
-        /// Display color mode 
-        /// </summary>
+        /// <inheritdoc/>
         public ColorMode ColorMode => ColorMode.Format4bppIndexed;
 
-        /// <summary>
-        /// The Color mode supported by the display
-        /// </summary>
+        /// <inheritdoc/>
         public ColorMode SupportedColorModes => ColorMode.Format4bppIndexed;
 
-        /// <summary>
-        /// The buffer the holds the pixel data for the display
-        /// </summary>
+        /// <inheritdoc/>
         public IPixelBuffer PixelBuffer => imageBuffer;
 
-        /// <summary>
-        /// The color to draw when a pixel is enabled
-        /// </summary>
+        /// <inheritdoc/>
         public Color EnabledColor => Color.Black;
 
-        /// <summary>
-        /// The color to draw when a pixel is disabled
-        /// </summary>
+        /// <inheritdoc/>
         public Color DisabledColor => Color.White;
 
         /// <summary>
@@ -39,14 +29,10 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         protected readonly BufferIndexed4 imageBuffer;
 
-        /// <summary>
-        /// Width of display in pixels
-        /// </summary>
+        /// <inheritdoc/>
         public int Width => 600;
 
-        /// <summary>
-        /// Height of display in pixels
-        /// </summary>
+        /// <inheritdoc/>
         public int Height => 448;
 
         /// <summary>

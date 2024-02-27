@@ -3,11 +3,8 @@
 namespace Meadow.Foundation.Sensors.Atmospheric
 {
     /// <summary>
-    /// BME688 Temperature, Pressure, Humidity and gas busComms
+    /// Represents a BME688 Temperature, Pressure, Humidity and VOS sensor
     /// </summary>
-    /// <remarks>
-    /// This class implements the functionality necessary to read the temperature, pressure, humidity and VOS
-    /// </remarks>
     public partial class Bme688 : Bme68x
     {
         /// <summary>

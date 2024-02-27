@@ -1,4 +1,5 @@
 ﻿using Meadow.Foundation.Graphics.Buffers;
+using Meadow.Peripherals.Displays;
 using System;
 using System.IO;
 using System.Linq;

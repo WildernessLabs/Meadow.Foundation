@@ -148,7 +148,7 @@ public partial class Bme280 :
     /// Initializes a new instance of the BME280 class
     /// </summary>
     /// <param name="i2cBus">I2C Bus to use for communicating with the sensor</param>
-    /// <param name="address">I2C address of the sensor (default = 0x77)</param>
+    /// <param name="address">I2C address of the sensor (default = 0x76)</param>
     public Bme280(II2cBus i2cBus, byte address = (byte)Addresses.Default)
     {
         bme280Comms = new I2cCommunications(i2cBus, address);

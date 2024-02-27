@@ -1,6 +1,6 @@
-using Meadow.Foundation.Graphics;
 using Meadow.Foundation.Graphics.Buffers;
 using Meadow.Hardware;
+using Meadow.Peripherals.Displays;
 using Meadow.Units;
 using System;
 using System.Threading;
@@ -11,21 +11,17 @@ namespace Meadow.Foundation.Displays
     /// Base class for TFT SPI displays
     /// These displays typically support 16 and 18 bit, some also include 8, 9, 12 and/or 24 bit color 
     /// </summary>
-    public abstract partial class TftSpiBase : IGraphicsDisplay, ISpiPeripheral, IDisposable
+    public abstract partial class TftSpiBase : IPixelDisplay, ISpiPeripheral, IDisposable
     {
         /// <summary>
         /// Temporary buffer that can be used to batch set address window buffer commands
         /// </summary>
         protected byte[] SetAddressBuffer { get; } = new byte[4];
 
-        /// <summary>
-        /// The current display color mode
-        /// </summary>
+        /// <inheritdoc/>
         public ColorMode ColorMode => imageBuffer.ColorMode;
 
-        /// <summary>
-        /// The color modes supported by the display
-        /// </summary>
+        /// <inheritdoc/>
         public abstract ColorMode SupportedColorModes { get; }
 
         /// <summary>
@@ -38,19 +34,13 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         public abstract ColorMode DefaultColorMode { get; }
 
-        /// <summary>
-        /// Width of display in pixels
-        /// </summary>
+        /// <inheritdoc/>
         public int Width => imageBuffer.Width;
 
-        /// <summary>
-        /// Height of display in pixels
-        /// </summary>
+        /// <inheritdoc/>
         public int Height => imageBuffer.Height;
 
-        /// <summary>
-        /// The buffer used to store the pixel data for the display
-        /// </summary>
+        /// <inheritdoc/>
         public IPixelBuffer PixelBuffer => imageBuffer;
 
         /// <summary>
@@ -217,6 +207,25 @@ namespace Meadow.Foundation.Displays
             spiDisplay = new SpiCommunications(spiBus, chipSelectPort, DefaultSpiBusSpeed, DefaultSpiBusMode);
 
             CreateBuffer(colorMode, nativeWidth = width, nativeHeight = height);
+        }
+
+        /// <summary>
+        /// Set color mode for the display
+        /// </summary>
+        /// <param name="colorMode"></param>
+        /// <exception cref="ArgumentException">throw if the color mode isn't supported by the display</exception>
+        public virtual void SetColorMode(ColorMode colorMode)
+        {
+            if (IsColorTypeSupported(colorMode) == false)
+            {
+                throw new ArgumentException($"color mode {colorMode} not supported");
+            }
+
+            if (imageBuffer.ColorMode != colorMode)
+            {
+                CreateBuffer(colorMode, Width, Height);
+                Initialize();
+            }
         }
 
         /// <summary>
@@ -406,12 +415,14 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// Transfer part of the contents of the buffer to the display
         /// bounded by left, top, right and bottom
-        /// Only supported in 16Bpp565 mode
         /// </summary>
         public void Show(int left, int top, int right, int bottom)
         {
-            if (PixelBuffer.ColorMode != ColorMode.Format16bppRgb565)
-            {   //only supported in 565 mode 
+            if (PixelBuffer.ColorMode != ColorMode.Format12bppRgb444 &&
+                PixelBuffer.ColorMode != ColorMode.Format16bppRgb565 &&
+                PixelBuffer.ColorMode != ColorMode.Format24bppRgb888)
+            {
+                //should cover all of these displays but just in case
                 Show();
                 return;
             }
@@ -421,16 +432,28 @@ namespace Meadow.Foundation.Displays
                 return;
             }
 
-            SetAddressWindow(left, top, right, bottom);
+            if (PixelBuffer.ColorMode == ColorMode.Format12bppRgb444)
+            {
+                if (left % 2 != 0)
+                {
+                    left--;
+                }
+                if (right % 2 != 0)
+                {
+                    right++;
+                }
+            }
 
-            var len = (right - left + 1) * sizeof(ushort);
+            SetAddressWindow(left, top, right - 1, bottom - 1);
+
+            var len = (right - left) * PixelBuffer.BitDepth / 8;
 
             dataCommandPort.State = Data;
 
             int sourceIndex;
-            for (int y = top; y <= bottom; y++)
+            for (int y = top; y < bottom; y++)
             {
-                sourceIndex = ((y * Width) + left) * sizeof(ushort);
+                sourceIndex = ((y * Width) + left) * PixelBuffer.BitDepth / 8;
 
                 spiDisplay.Bus.Exchange(
                     chipSelectPort,
@@ -438,6 +461,7 @@ namespace Meadow.Foundation.Displays
                     readBuffer.Span[0..len]);
             }
         }
+
         /// <summary>
         /// Write a byte to the display
         /// </summary>

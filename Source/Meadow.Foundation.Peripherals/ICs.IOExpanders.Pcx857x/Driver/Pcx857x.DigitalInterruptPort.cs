@@ -30,7 +30,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             public override bool State => state;
             private bool state = false;
 
-            private DateTime lastUpdate;
+            private int lastUpdate;
 
             private ResistorMode resistorMode = ResistorMode.Disabled;
 
@@ -68,12 +68,12 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// <param name="newState">The new port state</param>
             internal void Update(bool newState)
             {
-                if (DateTime.UtcNow - lastUpdate < DebounceDuration)
+                var now = Environment.TickCount;
+
+                if (now - lastUpdate < DebounceDuration.TotalMilliseconds)
                 {
                     return;
                 }
-
-                var now = DateTime.UtcNow;
 
                 if (newState != state)
                 {
