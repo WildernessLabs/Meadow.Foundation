@@ -45,17 +45,17 @@ public partial class Keyboard
                     case InterruptMode.EdgeRising:
                         if (State)
                         {
-                            RaiseChangedAndNotify(new DigitalPortResult(new DigitalState(State, DateTime.UtcNow), null));
+                            RaiseChangedAndNotify(new DigitalPortResult(new DigitalState(State, Environment.TickCount), null));
                         }
                         break;
                     case InterruptMode.EdgeFalling:
                         if (!State)
                         {
-                            RaiseChangedAndNotify(new DigitalPortResult(new DigitalState(State, DateTime.UtcNow), null));
+                            RaiseChangedAndNotify(new DigitalPortResult(new DigitalState(State, Environment.TickCount), null));
                         }
                         break;
                     case InterruptMode.EdgeBoth:
-                        RaiseChangedAndNotify(new DigitalPortResult(new DigitalState(State, DateTime.UtcNow), null));
+                        RaiseChangedAndNotify(new DigitalPortResult(new DigitalState(State, Environment.TickCount), null));
                         break;
                 }
             }

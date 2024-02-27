@@ -14,7 +14,7 @@ namespace Meadow.Foundation.Graphics
         /// <summary>
         /// Display object responsible for managing the buffer and rendering
         /// </summary>
-        protected readonly IGraphicsDisplay? display;
+        protected readonly IPixelDisplay? display;
 
         /// <summary>
         /// PixelBuffer draw target
@@ -145,8 +145,8 @@ namespace Meadow.Foundation.Graphics
         /// <summary>
         /// Create a new MicroGraphics instance from a display peripheral driver instance
         /// </summary>
-        /// <param name="display">An IGraphicsDisplay object</param>
-        public MicroGraphics(IGraphicsDisplay display)
+        /// <param name="display">An IPixelDisplay object</param>
+        public MicroGraphics(IPixelDisplay display)
         {
             this.display = display;
         }
@@ -1701,9 +1701,13 @@ namespace Meadow.Foundation.Graphics
         }
 
         /// <summary>
-        /// Update a region of the display
+        /// Update a region of the the display target from the buffer (thread safe)
         /// Note: not all displays support partial updates
         /// </summary>
+        /// <param name="left">The left coordinate of the display area to update</param>
+        /// <param name="top">The top coordinate of the display area to update</param>
+        /// <param name="right">The right coordinate of the display area to update</param>
+        /// <param name="bottom">The bottom coordinate of the display area to update</param>
         public virtual void Show(int left, int top, int right, int bottom)
         {
             lock (_lock)

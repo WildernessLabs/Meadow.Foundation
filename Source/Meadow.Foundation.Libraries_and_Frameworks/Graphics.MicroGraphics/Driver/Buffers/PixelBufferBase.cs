@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Meadow.Peripherals.Displays;
+using System;
 using System.Linq;
 
 namespace Meadow.Foundation.Graphics.Buffers
@@ -83,6 +84,11 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// <param name="height">Height in pixels</param>
         public PixelBufferBase(int width, int height)
         {
+            if (width < 1 || height < 1)
+            {
+                throw new ArgumentException("Width and height must be greater than 0.");
+            }
+
             Width = width;
             Height = height;
             InitializeBuffer();
@@ -96,8 +102,14 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// <param name="buffer">The buffer to hold the pixel data</param>
         public PixelBufferBase(int width, int height, byte[] buffer)
         {
+            if (width < 1 || height < 1)
+            {
+                throw new ArgumentException("Width and height must be greater than 0.");
+            }
+
             Width = width;
             Height = height;
+
             if (buffer.Length != ByteCount)
             {
                 throw new ArgumentException($"Provided buffer length ({buffer.Length}) does not match this buffer's ByteCount ({ByteCount}).");

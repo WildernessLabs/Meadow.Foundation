@@ -1,5 +1,4 @@
-﻿using Meadow.Foundation.Graphics;
-using Meadow.Foundation.Graphics.Buffers;
+﻿using Meadow.Peripherals.Displays;
 using System;
 
 namespace Meadow.Foundation.Displays
@@ -17,7 +16,7 @@ namespace Meadow.Foundation.Displays
 
             public byte[] Buffer => throw new NotImplementedException();
 
-            private char[,] _buffer;
+            private readonly char[,] _buffer;
 
             public CharacterBuffer(int width, int height)
             {

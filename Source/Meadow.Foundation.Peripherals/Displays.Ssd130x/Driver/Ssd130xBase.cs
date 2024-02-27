@@ -1,6 +1,6 @@
-﻿using Meadow.Foundation.Graphics;
-using Meadow.Foundation.Graphics.Buffers;
+﻿using Meadow.Foundation.Graphics.Buffers;
 using Meadow.Hardware;
+using Meadow.Peripherals.Displays;
 using Meadow.Units;
 using System;
 
@@ -9,31 +9,21 @@ namespace Meadow.Foundation.Displays
     /// <summary>
     /// Represents the SSD130x family of OLED displays
     /// </summary>
-    public abstract partial class Ssd130xBase : IGraphicsDisplay, ISpiPeripheral, II2cPeripheral, IDisposable
+    public abstract partial class Ssd130xBase : IPixelDisplay, ISpiPeripheral, II2cPeripheral, IDisposable
     {
-        /// <summary>
-        /// The display color mode
-        /// </summary>
+        /// <inheritdoc/>
         public ColorMode ColorMode => ColorMode.Format1bpp;
 
-        /// <summary>
-        /// The Color mode supported by the display
-        /// </summary>
+        /// <inheritdoc/>
         public ColorMode SupportedColorModes => ColorMode.Format1bpp;
 
-        /// <summary>
-        /// The width of the display in pixels
-        /// </summary>
+        /// <inheritdoc/>
         public int Width => imageBuffer!.Width;
 
-        /// <summary>
-        /// The height of the display in pixels
-        /// </summary>
+        /// <inheritdoc/>
         public int Height => imageBuffer!.Height;
 
-        /// <summary>
-        /// The buffer the holds the pixel data for the display
-        /// </summary>
+        /// <inheritdoc/>
         public IPixelBuffer PixelBuffer => imageBuffer;
 
         /// <summary>

@@ -8,11 +8,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Meadow.Windows" Version="1.8.0" />
-    <PackageReference Include="Meadow" Version="1.8.0" />
-    <PackageReference Include="Meadow.Foundation.Displays.Max7219" Version="1.8.0" />
-    <PackageReference Include="Meadow.Foundation.ICs.IOExpanders.Ft232h" Version="1.8.0" />
-    <PackageReference Include="Meadow.Foundation.Graphics.MicroLayout" Version="1.8.0" />
+    <PackageReference Include="Meadow.Windows" Version="1.9.0" />
+    <PackageReference Include="Meadow" Version="1.9.0" />
+    <PackageReference Include="Meadow.Foundation.Displays.Max7219" Version="1.9.0" />
+    <PackageReference Include="Meadow.Foundation.ICs.IOExpanders.Ft232h" Version="1.9.0" />
+    <PackageReference Include="Meadow.Foundation.Graphics.MicroLayout" Version="1.9.0" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,8 +1,8 @@
 ﻿using Cairo;
 using Gtk;
-using Meadow.Foundation.Graphics;
 using Meadow.Foundation.Graphics.Buffers;
 using Meadow.Hardware;
+using Meadow.Peripherals.Displays;
 using System.Buffers.Binary;
 
 namespace Meadow.Foundation.Displays;
@@ -10,7 +10,7 @@ namespace Meadow.Foundation.Displays;
 /// <summary>
 /// Represents a GTK graphics display
 /// </summary>
-public class GtkDisplay : IGraphicsDisplay, ITouchScreen
+public class GtkDisplay : IPixelDisplay, ITouchScreen
 {
     /// <summary>
     /// Event fired when the display gets a mouse down
@@ -37,23 +37,16 @@ public class GtkDisplay : IGraphicsDisplay, ITouchScreen
     /// <inheritdoc/>
     public IPixelBuffer PixelBuffer => _pixelBuffer;
 
-    /// <summary>
-    /// Current color mode of display
-    /// </summary>
+    /// <inheritdoc/>
     public ColorMode ColorMode => _pixelBuffer.ColorMode;
 
-    /// <summary>
-    /// Width of the display, in pixels
-    /// </summary>
+    /// <inheritdoc/>
     public int Width => _window.Window.Width;
-    /// <summary>
-    /// Height of the display, in pixels
-    /// </summary>
+
+    /// <inheritdoc/>
     public int Height => _window.Window.Height;
 
-    /// <summary>
-    /// The color modes supported by the display
-    /// </summary>
+    /// <inheritdoc/>
     public ColorMode SupportedColorModes => ColorMode.Format24bppRgb888 | ColorMode.Format16bppRgb565 | ColorMode.Format32bppRgba8888;
 
     static GtkDisplay()

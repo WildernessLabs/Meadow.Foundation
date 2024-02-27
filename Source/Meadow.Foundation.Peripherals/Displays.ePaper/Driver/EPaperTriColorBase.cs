@@ -1,6 +1,6 @@
-﻿using Meadow.Foundation.Graphics;
-using Meadow.Foundation.Graphics.Buffers;
+﻿using Meadow.Foundation.Graphics.Buffers;
 using Meadow.Hardware;
+using Meadow.Peripherals.Displays;
 using System;
 
 namespace Meadow.Foundation.Displays
@@ -8,7 +8,7 @@ namespace Meadow.Foundation.Displays
     /// <summary>
     /// Provide an interface for ePaper 3 color displays
     /// </summary>
-    public abstract partial class EPaperTriColorBase : EPaperBase, IGraphicsDisplay
+    public abstract partial class EPaperTriColorBase : EPaperBase, IPixelDisplay
     {
         /// <summary>
         /// The color to draw when a pixel is enabled
@@ -30,14 +30,10 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         protected abstract bool IsColorInverted { get; }
 
-        /// <summary>
-        /// Display color mode 
-        /// </summary>
+        /// <inheritdoc/>
         public ColorMode ColorMode => ColorMode.Format2bpp;
 
-        /// <summary>
-        /// The Color mode supported by the display
-        /// </summary>
+        /// <inheritdoc/>
         public ColorMode SupportedColorModes => ColorMode.Format2bpp;
 
         /// <summary>
@@ -46,14 +42,10 @@ namespace Meadow.Foundation.Displays
 
         protected Buffer2bppEPaper imageBuffer = default!;
 
-        /// <summary>
-        /// Width of display in pixels
-        /// </summary>
+        /// <inheritdoc/>
         public virtual int Width => width;
 
-        /// <summary>
-        /// Height of display in pixels
-        /// </summary>
+        /// <inheritdoc/>
         public virtual int Height => height;
 
         /// <summary>

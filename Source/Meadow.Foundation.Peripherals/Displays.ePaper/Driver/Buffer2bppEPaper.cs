@@ -1,4 +1,6 @@
-﻿namespace Meadow.Foundation.Graphics.Buffers
+﻿using Meadow.Peripherals.Displays;
+
+namespace Meadow.Foundation.Graphics.Buffers
 {
     /// <summary>
     /// Represents a 2bpp buffer
@@ -23,9 +25,7 @@
         /// </summary>
         public int Height => blackBuffer.Height;
 
-        /// <summary>
-        /// Color mode of the buffer - 2 bit per pixel 
-        /// </summary>
+        /// <inheritdoc/>
         public ColorMode ColorMode => ColorMode.Format2bpp;
 
         /// <summary>

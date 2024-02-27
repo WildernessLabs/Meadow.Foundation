@@ -14,26 +14,11 @@ namespace Meadow.Foundation.Sensors.Accelerometers
     /// </summary>
     public partial class Bmi270 :
         PollingSensorBase<(Acceleration3D? Acceleration3D, AngularVelocity3D? AngularVelocity3D, Units.Temperature? Temperature)>,
-        II2cPeripheral, IGyroscope, IAccelerometer, ITemperatureSensor
+        II2cPeripheral, IGyroscope, IAccelerometer, ITemperatureSensor, ISleepAwarePeripheral
     {
         private event EventHandler<IChangeResult<AngularVelocity3D>> _angularVelocityHandlers = default!;
         private event EventHandler<IChangeResult<Acceleration3D>> _accelerationHandlers = default!;
         private event EventHandler<IChangeResult<Units.Temperature>> _temperatureHandlers = default!;
-
-        /// <summary>
-        /// Event raised when linear acceleration changes
-        /// </summary>
-        public event EventHandler<IChangeResult<Acceleration3D>> Acceleration3DUpdated = default!;
-
-        /// <summary>
-        /// Event raised when angular velocity (gyro) changes
-        /// </summary>
-        public event EventHandler<IChangeResult<AngularVelocity3D>> AngularVelocity3DUpdated = default!;
-
-        /// <summary>
-        /// Event raised when temperature changes
-        /// </summary>
-        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = default!;
 
         /// <summary>
         /// Current Acceleration 3D
@@ -188,15 +173,15 @@ namespace Meadow.Foundation.Sensors.Accelerometers
         {
             if (changeResult.New.AngularVelocity3D is { } angular)
             {
-                AngularVelocity3DUpdated?.Invoke(this, new ChangeResult<AngularVelocity3D>(angular, changeResult.Old?.AngularVelocity3D));
+                _angularVelocityHandlers?.Invoke(this, new ChangeResult<AngularVelocity3D>(angular, changeResult.Old?.AngularVelocity3D));
             }
             if (changeResult.New.Acceleration3D is { } accel)
             {
-                Acceleration3DUpdated?.Invoke(this, new ChangeResult<Acceleration3D>(accel, changeResult.Old?.Acceleration3D));
+                _accelerationHandlers?.Invoke(this, new ChangeResult<Acceleration3D>(accel, changeResult.Old?.Acceleration3D));
             }
             if (changeResult.New.Temperature is { } temp)
             {
-                TemperatureUpdated?.Invoke(this, new ChangeResult<Units.Temperature>(temp, changeResult.Old?.Temperature));
+                _temperatureHandlers?.Invoke(this, new ChangeResult<Units.Temperature>(temp, changeResult.Old?.Temperature));
             }
             base.RaiseEventsAndNotify(changeResult);
         }
@@ -336,5 +321,19 @@ namespace Meadow.Foundation.Sensors.Accelerometers
 
         async Task<Units.Temperature> ISensor<Units.Temperature>.Read()
             => (await Read()).Temperature!.Value;
+
+        /// <inheritdoc/>
+        public Task BeforeSleep(CancellationToken cancellationToken)
+        {
+            SetPowerMode(PowerMode.Suspend);
+            return Task.CompletedTask;
+        }
+
+        /// <inheritdoc/>
+        public Task AfterWake(CancellationToken cancellationToken)
+        {
+            SetPowerMode(PowerMode.Normal);
+            return Task.CompletedTask;
+        }
     }
 }

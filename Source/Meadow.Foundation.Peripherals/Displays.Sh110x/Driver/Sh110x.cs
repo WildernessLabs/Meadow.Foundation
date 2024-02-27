@@ -1,6 +1,6 @@
-﻿using Meadow.Foundation.Graphics;
-using Meadow.Foundation.Graphics.Buffers;
+﻿using Meadow.Foundation.Graphics.Buffers;
 using Meadow.Hardware;
+using Meadow.Peripherals.Displays;
 using Meadow.Units;
 using System;
 using System.Threading;
@@ -10,26 +10,18 @@ namespace Meadow.Foundation.Displays
     /// <summary>
     /// Provide an interface to the Sh110x family of displays
     /// </summary>
-    public abstract partial class Sh110x : IGraphicsDisplay, ISpiPeripheral, II2cPeripheral, IDisposable
+    public abstract partial class Sh110x : IPixelDisplay, ISpiPeripheral, II2cPeripheral, IDisposable
     {
-        /// <summary>
-        /// The display color mode - 1 bit per pixel monochrome
-        /// </summary>
+        /// <inheritdoc/>
         public ColorMode ColorMode => ColorMode.Format1bpp;
 
-        /// <summary>
-        /// The Color mode supported by the display
-        /// </summary>
+        /// <inheritdoc/>
         public ColorMode SupportedColorModes => ColorMode.Format1bpp;
 
-        /// <summary>
-        /// The display width in pixels
-        /// </summary>
+        /// <inheritdoc/>
         public int Width { get; protected set; }
 
-        /// <summary>
-        /// The display height in pixels
-        /// </summary>
+        /// <inheritdoc/>
         public int Height { get; protected set; }
 
         /// <summary>
@@ -84,7 +76,7 @@ namespace Meadow.Foundation.Displays
         /// Did we create the port(s) used by the peripheral
         /// </summary>
         private readonly bool createdPorts = false;
-        
+
         /// <summary>
         /// I2C Communication bus used to communicate with the peripheral
         /// </summary>
@@ -208,7 +200,7 @@ namespace Meadow.Foundation.Displays
         /// <param name="offset">Column number in display RAM to offset the screen</param>
         public void SetDisplayOffset(byte offset = 0x00)
         {
-            SendCommands(new [] {(byte)DisplayCommand.SetDisplayOffset, offset});
+            SendCommands(new[] { (byte)DisplayCommand.SetDisplayOffset, offset });
         }
 
         /// <summary>
@@ -523,7 +515,7 @@ namespace Meadow.Foundation.Displays
         {
             imageBuffer.WriteBuffer(x, y, displayBuffer);
         }
-        
+
         #region IDisposible
         ///<inheritdoc/>
         public void Dispose()
