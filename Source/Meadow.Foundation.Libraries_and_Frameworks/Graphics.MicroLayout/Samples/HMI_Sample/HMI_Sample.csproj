@@ -8,9 +8,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\..\Meadow.Core\source\implementations\windows\Meadow.Windows\Meadow.Windows.csproj" />
-    <ProjectReference Include="..\..\..\..\Meadow.Foundation.Peripherals\Displays.WinForms\Driver\Displays.WinForms.csproj" />
-    <ProjectReference Include="..\..\Driver\Graphics.MicroLayout.csproj" />
+    <ProjectReference Include="..\..\..\..\..\..\Meadow.Core\source\implementations\windows\Meadow.Windows\Meadow.Windows.csproj">
+      <ReferenceSourceTarget></ReferenceSourceTarget>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Meadow.Foundation.Peripherals\Displays.WinForms\Driver\Displays.WinForms.csproj">
+      <ReferenceSourceTarget></ReferenceSourceTarget>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Driver\Graphics.MicroLayout.csproj">
+      <ReferenceSourceTarget></ReferenceSourceTarget>
+    </ProjectReference>
   </ItemGroup>
 
   <ItemGroup>

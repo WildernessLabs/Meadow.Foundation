@@ -5,9 +5,9 @@ namespace Meadow.Foundation.ICs.IOExpanders;
 
 public abstract partial class FtdiExpander
 {
-    public class Ft23xxxI2cBus : I2CBus, II2cBus
+    public class Ft23xxI2cBus : I2CBus, II2cBus
     {
-        internal Ft23xxxI2cBus(FtdiExpander expander, I2cBusSpeed busSpeed)
+        internal Ft23xxI2cBus(FtdiExpander expander, I2cBusSpeed busSpeed)
             : base(expander, busSpeed)
         {
         }
