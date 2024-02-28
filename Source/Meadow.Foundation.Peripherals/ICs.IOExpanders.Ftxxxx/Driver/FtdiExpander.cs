@@ -50,7 +50,7 @@ public abstract partial class FtdiExpander :
     {
         FtdiExpander expander = deviceType switch
         {
-            FtDeviceType.Ft232H => new Ft232hExpander
+            FtDeviceType.Ft232H => new Ft232h
             {
                 Index = index,
                 Flags = flags,
@@ -60,7 +60,7 @@ public abstract partial class FtdiExpander :
                 Description = description,
                 Handle = handle
             },
-            FtDeviceType.Ft2232 => new Ft2232Expander
+            FtDeviceType.Ft2232 => new Ft2232
             {
                 Index = index,
                 Flags = flags,
