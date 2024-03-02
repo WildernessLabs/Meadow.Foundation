@@ -1,5 +1,8 @@
 ﻿using Meadow.Hardware;
+using Meadow.Peripherals.Displays;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 
 namespace Meadow.Foundation.Sensors.Hid
@@ -7,95 +10,239 @@ namespace Meadow.Foundation.Sensors.Hid
     /// <summary>
     /// Represents an XPT2046 4-wire touch screen controller
     /// </summary>
-    public partial class Xpt2046 : ITouchScreen
+    public partial class Xpt2046 : ICalibratableTouchscreen
     {
         public event TouchEventHandler? TouchDown = null;
         public event TouchEventHandler? TouchUp = null;
         public event TouchEventHandler? TouchClick = null;
+        public event TouchEventHandler? TouchMoved = null;
+
+        private const int SamplePeriodMilliseconds = 100;
+        private const byte StartBit = 0x80;
 
         private readonly ISpiBus spiBus;
         private readonly IDigitalInterruptPort touchInterrupt;
         private readonly IDigitalOutputPort? chipSelect = null;
+        private Timer sampleTimer;
+        private bool isSampling = false;
+        private bool firstTouch = true;
+        private TouchPoint? lastTouchPosition;
+        private TouchPoint? penultimatePosition;
+        private float mX, mY, cX, cY; // linear calibration coefficeints
 
-        private bool isCollecting = false;
+        public RotationType Rotation { get; }
+        public bool IsCalibrated { get; private set; }
 
-        public Xpt2046(ISpiBus spiBus, IDigitalInterruptPort touchInterrupt, IDigitalOutputPort? chipSelect)
+        public bool IsTouched => isSampling;
+
+        public Xpt2046(
+            ISpiBus spiBus,
+            IDigitalInterruptPort touchInterrupt,
+            IDigitalOutputPort? chipSelect,
+            RotationType rotation = RotationType.Normal)
         {
+            sampleTimer = new Timer(SampleTimerProc, null, -1, -1);
+
             this.spiBus = spiBus;
             this.touchInterrupt = touchInterrupt;
             this.chipSelect = chipSelect;
-
-            if (touchInterrupt.InterruptMode != InterruptMode.EdgeBoth)
-            {
-                throw new ArgumentException("Interrupt port must be InterruptMode.EdgeBoth");
-            }
+            Rotation = rotation;
 
             touchInterrupt.Changed += OnTouchInterrupt;
         }
 
+        private TouchPoint ConvertRawToTouchPoint(ushort rawX, ushort rawY, ushort rawZ)
+        {
+            int x, y;
+
+            // rotate
+            switch (Rotation)
+            {
+                case RotationType._90Degrees:
+                    x = 4095 - rawY;
+                    y = rawX;
+                    break;
+                case RotationType._180Degrees:
+                    x = 4095 - rawX;
+                    y = 4095 - rawY;
+                    break;
+                case RotationType._270Degrees:
+                    x = rawY;
+                    y = 4095 - rawX;
+                    break;
+                default:
+                    x = rawX;
+                    y = rawY;
+                    break;
+            }
+
+            if (!IsCalibrated)
+            {
+                Resolver.Log.Info($"X{x} Y{y} Z{rawZ}");
+                return TouchPoint.FromRawData(x, y, rawZ);
+            }
+
+            // scale for calibration
+            var scaledX = ((x * mX) + cX);
+            //if (scaledX < 0) scaledX = 0;
+            //if (scaledX > screen.Width) return screen.Width - 1;
+            var scaledY = ((y * mY) + cY);
+            //if (scaledY < 0) scaledY = 0;
+            //if (scaledY > screen.Height) return screen.Height - 1;
+
+            Resolver.Log.Info($"X{x}/{scaledX} Y{y}/{scaledY}");
+
+            return TouchPoint.FromScreenData((int)scaledX, (int)scaledY, rawZ, rawX, rawY, rawZ);
+        }
+
         private void OnTouchInterrupt(object sender, DigitalPortResult e)
         {
-            if (e.New.State)
+            // high is not touched, low is touched
+            if (!isSampling)
             {
-                new Thread(CollectTouchInfo).Start();
-            }
-            else
-            {
-                TouchUp?.Invoke(0, 0);
-                Resolver.Log.Info($"touch up");
-                isCollecting = false;
+                sampleTimer.Change(0, -1);
             }
         }
 
-        private const int SamplePeriodMilliseconds = 1000;
-
-        private void CollectTouchInfo()
+        private void SampleTimerProc(object o)
         {
-            if (isCollecting) return;
-            isCollecting = true;
-
-            TouchDown?.Invoke(0, 0);
-            Resolver.Log.Info($"touch down");
-
-            while (isCollecting)
+            if (touchInterrupt.State)
             {
-                var z = ReadZ();
-
-                var x = ReadX();
-                var y = ReadY();
-
-                Resolver.Log.Info($"Z:{z}  ({x},{y})");
-
-                Thread.Sleep(SamplePeriodMilliseconds);
+                // the actual "last" reading for up is often garbage, so go back one before that if we have it
+                if (penultimatePosition != null)
+                {
+                    TouchUp?.Invoke(this, penultimatePosition.Value);
+                }
+                else if (lastTouchPosition != null)
+                {
+                    TouchUp?.Invoke(this, lastTouchPosition.Value);
+                }
+                isSampling = false;
+                firstTouch = true;
+                lastTouchPosition = null;
+                penultimatePosition = null;
+                return;
             }
+
+            isSampling = true;
+
+            var z = ReadZ();
+            var x = ReadX();
+            var y = ReadY();
+            EnableIrq();
+
+            var position = ConvertRawToTouchPoint(x, y, z);
+
+            try
+            {
+                if (firstTouch)
+                {
+                    firstTouch = false;
+                    lastTouchPosition = position;
+                    if (lastTouchPosition != null)
+                    {
+                        TouchDown?.Invoke(this, lastTouchPosition.Value);
+                    }
+                }
+                else
+                {
+                    if (!position.Equals(lastTouchPosition))
+                    {
+                        penultimatePosition = lastTouchPosition;
+                        lastTouchPosition = position;
+                        if (lastTouchPosition != null)
+                        {
+                            TouchMoved?.Invoke(this, lastTouchPosition.Value);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Resolver.Log.Warn($"Touchscreen event handler error: {ex.Message}");
+                // ignore any unhandled handler exceptions
+            }
+
+            sampleTimer.Change(SamplePeriodMilliseconds, -1);
         }
 
         private ushort ReadX()
         {
-            return ReadChannel(0x91);
+            return ReadChannel(Channel.X);
         }
 
         private ushort ReadY()
         {
-            return ReadChannel(0xD1);
+            return ReadChannel(Channel.Y);
         }
 
         private ushort ReadZ()
         {
-            return ReadChannel(0xC1);
+            return ReadChannel(Channel.Z2);
         }
 
-        private ushort ReadChannel(byte channelIdentifier)
+        private void EnableIrq()
         {
-            Span<byte> txBuffer = stackalloc byte[1];
-            Span<byte> rxBuffer = stackalloc byte[2];
+            ReadChannel(Channel.Temp, PowerState.PowerDown);
+        }
 
-            txBuffer[0] = channelIdentifier;
+        private ushort ReadChannel(Channel channel, PowerState postSamplePowerState = PowerState.Adc, Mode mode = Mode.Bits_12, VoltageReference vref = VoltageReference.Differential)
+        {
+            Span<byte> txBuffer = stackalloc byte[3];
+            Span<byte> rxBuffer = stackalloc byte[3];
+
+            txBuffer[0] = (byte)(StartBit | (byte)channel | (byte)mode | (byte)vref | (byte)postSamplePowerState);
 
             spiBus.Exchange(chipSelect, txBuffer, rxBuffer);
 
-            return (ushort)((rxBuffer[0] >> 3) << 8 | (rxBuffer[1] >> 3));
+            return (ushort)((rxBuffer[1] >> 3) << 8 | (rxBuffer[2] >> 3));
         }
 
+        public void SetCalibrationData(IEnumerable<CalibrationPoint> data)
+        {
+            var points = data.ToArray();
+            if (points.Length != 2) { throw new ArgumentException("This touchscreen requires exactly 2 calibration points"); }
+
+            // simple 2-point linear calibration (fine for small screens
+            Resolver.Log.Info($"Setting calibration: {points[0].RawX}={points[0].ScreenX} {points[1].RawX}={points[1].ScreenX}");
+
+            mX = (points[1].ScreenX - points[0].ScreenX) / (float)(points[1].RawX - points[0].RawX);
+            cX = points[0].ScreenX - (points[0].RawX * mX);
+            mY = (points[1].ScreenY - points[0].ScreenY) / (float)(points[1].RawY - points[0].RawY);
+            cY = points[0].ScreenY - (points[0].RawY * mY);
+
+            Resolver.Log.Info($"calibration: mX:{mX} mY:{mY} cX:{cX} cY:{cY}");
+
+            IsCalibrated = true;
+        }
+
+        private enum Channel : byte
+        {
+            Temp = 0x00,
+            X = 1 << 4,
+            Z1 = 3 << 4,
+            Z2 = 4 << 4,
+            Y = 5 << 4,
+        }
+
+        private enum Mode
+        {
+            Bits_12 = 0,
+            Bits_8 = 8
+        }
+
+        private enum VoltageReference
+        {
+            SingleEnded = 0,
+            Differential = 4
+        }
+
+        [Flags]
+        private enum PowerState
+        {
+            PowerDown = 0,
+            Adc = 1,
+            Reference = 2,
+        }
     }
 }
