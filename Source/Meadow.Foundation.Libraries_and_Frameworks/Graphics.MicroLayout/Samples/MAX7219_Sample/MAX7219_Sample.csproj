@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net7.0-windows</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
@@ -13,12 +13,6 @@
     <ProjectReference Include="..\..\..\..\Meadow.Foundation.Peripherals\Displays.Max7219\Driver\Displays.Max7219.csproj" />
     <ProjectReference Include="..\..\..\..\Meadow.Foundation.Peripherals\ICs.IOExpanders.Ftxxxx\Driver\ICs.IOExpanders.Ftxxxx.csproj" />
     <ProjectReference Include="..\..\Driver\Graphics.MicroLayout.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="libmpsse.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
 
 </Project>

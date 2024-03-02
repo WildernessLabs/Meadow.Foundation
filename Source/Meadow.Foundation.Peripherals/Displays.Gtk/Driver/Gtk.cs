@@ -12,18 +12,14 @@ namespace Meadow.Foundation.Displays;
 /// </summary>
 public class GtkDisplay : IPixelDisplay, ITouchScreen
 {
-    /// <summary>
-    /// Event fired when the display gets a mouse down
-    /// </summary>
+    /// <inheritdoc/>
     public event Hardware.TouchEventHandler TouchDown = default!;
-    /// <summary>
-    /// Event fired when the display gets a mouse up
-    /// </summary>
+    /// <inheritdoc/>
     public event Hardware.TouchEventHandler TouchUp = default!;
-    /// <summary>
-    /// Event fired when the display gets a mouse click
-    /// </summary>
+    /// <inheritdoc/>
     public event Hardware.TouchEventHandler TouchClick = default!;
+    /// <inheritdoc/>
+    public event Hardware.TouchEventHandler TouchMoved = default!;
 
     private Window _window = default!;
     private IPixelBuffer _pixelBuffer = default!;
@@ -33,6 +29,9 @@ public class GtkDisplay : IPixelDisplay, ITouchScreen
     private bool _leftButtonState = false;
 
     private EventWaitHandle ShowComplete { get; } = new EventWaitHandle(true, EventResetMode.ManualReset);
+
+    /// <inheritdoc/>
+    public RotationType Rotation => RotationType.Normal;
 
     /// <inheritdoc/>
     public IPixelBuffer PixelBuffer => _pixelBuffer;
@@ -48,6 +47,9 @@ public class GtkDisplay : IPixelDisplay, ITouchScreen
 
     /// <inheritdoc/>
     public ColorMode SupportedColorModes => ColorMode.Format24bppRgb888 | ColorMode.Format16bppRgb565 | ColorMode.Format32bppRgba8888;
+
+    /// <inheritdoc/>
+    public bool IsTouched { get; private set; }
 
     static GtkDisplay()
     {
@@ -108,15 +110,15 @@ public class GtkDisplay : IPixelDisplay, ITouchScreen
     private void RaiseTouchDown(double x, double y)
     {
         _leftButtonState = true;
-        TouchDown?.Invoke((int)x, (int)y);
+        TouchDown?.Invoke(this, TouchPoint.FromScreenData((int)x, (int)y, 0, (int)x, (int)y, 0));
     }
 
     private void RaiseTouchUp(double x, double y)
     {
-        TouchUp?.Invoke((int)x, (int)y);
+        TouchUp?.Invoke(this, TouchPoint.FromScreenData((int)x, (int)y, 0, (int)x, (int)y, 0));
         if (_leftButtonState)
         {
-            TouchClick?.Invoke((int)x, (int)y);
+            TouchClick?.Invoke(this, TouchPoint.FromScreenData((int)x, (int)y, 0, (int)x, (int)y, 0));
         }
         _leftButtonState = false;
 
@@ -133,9 +135,11 @@ public class GtkDisplay : IPixelDisplay, ITouchScreen
                     {
                         case Gdk.ModifierType.None:
                             RaiseTouchDown(b.X, b.Y);
+                            IsTouched = true;
                             break;
                         case Gdk.ModifierType.Button1Mask:
                             RaiseTouchUp(b.X, b.Y);
+                            IsTouched = false;
                             break;
                     }
                     break;

@@ -8,20 +8,19 @@ namespace Meadow.Foundation.Displays;
 /// </summary>
 public class WinFormsDisplay : Form, IPixelDisplay, ITouchScreen
 {
-    /// <summary>
-    /// Event fired when the display gets a mouse down
-    /// </summary>
-    public event TouchEventHandler TouchDown = default!;
-    /// <summary>
-    /// Event fired when the display gets a mouse up
-    /// </summary>
-    public event TouchEventHandler TouchUp = default!;
-    /// <summary>
-    /// Event fired when the display gets a mouse click
-    /// </summary>
-    public event TouchEventHandler TouchClick = default!;
+    /// <inheritdoc/>
+    public event TouchEventHandler? TouchDown = default!;
+    /// <inheritdoc/>
+    public event TouchEventHandler? TouchUp = default!;
+    /// <inheritdoc/>
+    public event TouchEventHandler? TouchClick = default!;
+    /// <inheritdoc/>
+    public event TouchEventHandler? TouchMoved = default!;
 
     private readonly WinFormsPixelBuffer _buffer;
+
+    /// <inheritdoc/>
+    public RotationType Rotation => RotationType.Normal;
 
     /// <inheritdoc/>
     public ColorMode ColorMode => PixelBuffer.ColorMode;
@@ -31,6 +30,9 @@ public class WinFormsDisplay : Form, IPixelDisplay, ITouchScreen
 
     /// <inheritdoc/>
     public ColorMode SupportedColorModes => ColorMode.Format24bppRgb888;
+
+    /// <inheritdoc/>
+    public bool IsTouched { get; private set; }
 
     /// <summary>
     /// Create a new WinFormsDisplay
@@ -64,21 +66,23 @@ public class WinFormsDisplay : Form, IPixelDisplay, ITouchScreen
     ///<inheritdoc/>
     protected override void OnMouseDown(MouseEventArgs e)
     {
-        TouchDown?.Invoke(e.X, e.Y);
+        TouchDown?.Invoke(this, TouchPoint.FromScreenData(e.X, e.Y, 0, e.X, e.Y, 0));
+        IsTouched = true;
         base.OnMouseDown(e);
     }
 
     ///<inheritdoc/>
     protected override void OnMouseUp(MouseEventArgs e)
     {
-        TouchUp?.Invoke(e.X, e.Y);
+        TouchUp?.Invoke(this, TouchPoint.FromScreenData(e.X, e.Y, 0, e.X, e.Y, 0));
+        IsTouched = false;
         base.OnMouseUp(e);
     }
 
     ///<inheritdoc/>
     protected override void OnClick(EventArgs e)
     {
-        TouchClick?.Invoke(-1, -1);
+        TouchClick?.Invoke(this, TouchPoint.FromScreenData(-1, -1, 0, -1, -1, 0));
         base.OnClick(e);
     }
 
