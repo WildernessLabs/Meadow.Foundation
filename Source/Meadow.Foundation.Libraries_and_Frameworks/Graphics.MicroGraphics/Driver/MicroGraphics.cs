@@ -435,7 +435,7 @@ namespace Meadow.Foundation.Graphics
         /// <param name="color">The color of the line</param>
         public void DrawHorizontalLine(int x, int y, int length, Color color)
         {
-            if (length == 0)
+            if (length == 0 || y + Stroke <= 0 || y - Stroke >= Height)
             {
                 return;
             }
@@ -510,6 +510,11 @@ namespace Meadow.Foundation.Graphics
         /// <param name="color">The color of the line</param>
         public void DrawVerticalLine(int x, int y, int length, Color color)
         {
+            if (length == 0 || x + Stroke <= 0 || x - Stroke >= Width)
+            {
+                return;
+            }
+
             if (length < 0)
             {
                 y += length;
