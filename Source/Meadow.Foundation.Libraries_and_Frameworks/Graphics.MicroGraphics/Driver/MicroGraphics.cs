@@ -1190,7 +1190,7 @@ namespace Meadow.Foundation.Graphics
         {
             for (int i = 0; i < width; i++)
             {
-                var color = colorTop.Blend(colorBottom, (float)i / height);
+                var color = colorTop.Blend(colorBottom, (float)i / width);
                 DrawLine(x + i, y, x + i, y + height, color);
             }
         }
