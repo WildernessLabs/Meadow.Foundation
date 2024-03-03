@@ -435,7 +435,7 @@ namespace Meadow.Foundation.Graphics
         /// <param name="color">The color of the line</param>
         public void DrawHorizontalLine(int x, int y, int length, Color color)
         {
-            if (length == 0)
+            if (length == 0 || y + Stroke <= 0 || y - Stroke >= Height)
             {
                 return;
             }
@@ -444,6 +444,16 @@ namespace Meadow.Foundation.Graphics
             {
                 x += length;
                 length *= -1;
+            }
+
+            if (x < 0)
+            {
+                length += x;
+                x = 0;
+            }
+            else if (x + length > Width)
+            {
+                length = Width - x;
             }
 
             int yOffset = 0;
@@ -480,11 +490,7 @@ namespace Meadow.Foundation.Graphics
         {
             DrawVerticalLine(x, y, length, PenColor);
 
-            if (Stroke == 1)
-            {
-
-            }
-            else
+            if (Stroke > 1)
             {
                 int xOffset = Stroke >> 1;
 
@@ -504,10 +510,25 @@ namespace Meadow.Foundation.Graphics
         /// <param name="color">The color of the line</param>
         public void DrawVerticalLine(int x, int y, int length, Color color)
         {
+            if (length == 0 || x + Stroke <= 0 || x - Stroke >= Width)
+            {
+                return;
+            }
+
             if (length < 0)
             {
                 y += length;
                 length *= -1;
+            }
+
+            if (y < 0)
+            {
+                length += y;
+                y = 0;
+            }
+            else if (y + length > Height)
+            {
+                length = Height - y;
             }
 
             int yOffset = 0;
@@ -1152,7 +1173,7 @@ namespace Meadow.Foundation.Graphics
             for (int i = 0; i < height; i++)
             {
                 var color = colorLeft.Blend(colorRight, (float)i / height);
-                DrawLine(x, i + y, x + width, i + y, color);
+                DrawHorizontalLine(x, i + y, width, color);
             }
         }
 
@@ -1169,8 +1190,8 @@ namespace Meadow.Foundation.Graphics
         {
             for (int i = 0; i < width; i++)
             {
-                var color = colorTop.Blend(colorBottom, (float)i / height);
-                DrawLine(x + i, y, x + i, y + height, color);
+                var color = colorTop.Blend(colorBottom, (float)i / width);
+                DrawVerticalLine(x + i, y, height, color);
             }
         }
 
