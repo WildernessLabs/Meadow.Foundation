@@ -30,11 +30,21 @@ namespace Meadow.Foundation.Sensors.Hid
         private TouchPoint? penultimatePosition;
         private float mX, mY, cX, cY; // linear calibration coefficeints
 
+        /// <inheritdoc/>
         public RotationType Rotation { get; }
+        /// <inheritdoc/>
         public bool IsCalibrated { get; private set; }
 
+        /// <inheritdoc/>
         public bool IsTouched => isSampling;
 
+        /// <summary>
+        /// Creates an instance of an Xpt2046
+        /// </summary>
+        /// <param name="spiBus">The ISpiBus connected to the touchscreen controller</param>
+        /// <param name="touchInterrupt">The interrupt port connected to the touchscreen controller</param>
+        /// <param name="chipSelect">The chip select port for the touchscreen controller</param>
+        /// <param name="rotation">The touchscreen rotation (not the display rotation)</param>
         public Xpt2046(
             ISpiBus spiBus,
             IDigitalInterruptPort touchInterrupt,
@@ -89,8 +99,6 @@ namespace Meadow.Foundation.Sensors.Hid
             var scaledY = ((y * mY) + cY);
             //if (scaledY < 0) scaledY = 0;
             //if (scaledY > screen.Height) return screen.Height - 1;
-
-            Resolver.Log.Info($"X{x}/{scaledX} Y{y}/{scaledY}");
 
             return TouchPoint.FromScreenData((int)scaledX, (int)scaledY, rawZ, rawX, rawY, rawZ);
         }
@@ -198,20 +206,18 @@ namespace Meadow.Foundation.Sensors.Hid
             return (ushort)((rxBuffer[1] >> 3) << 8 | (rxBuffer[2] >> 3));
         }
 
+        /// <inheritdoc/>
         public void SetCalibrationData(IEnumerable<CalibrationPoint> data)
         {
             var points = data.ToArray();
             if (points.Length != 2) { throw new ArgumentException("This touchscreen requires exactly 2 calibration points"); }
 
-            // simple 2-point linear calibration (fine for small screens
-            Resolver.Log.Info($"Setting calibration: {points[0].RawX}={points[0].ScreenX} {points[1].RawX}={points[1].ScreenX}");
+            // simple 2-point linear calibration (fine for small screens)
 
             mX = (points[1].ScreenX - points[0].ScreenX) / (float)(points[1].RawX - points[0].RawX);
             cX = points[0].ScreenX - (points[0].RawX * mX);
             mY = (points[1].ScreenY - points[0].ScreenY) / (float)(points[1].RawY - points[0].RawY);
             cY = points[0].ScreenY - (points[0].RawY * mY);
-
-            Resolver.Log.Info($"calibration: mX:{mX} mY:{mY} cX:{cX} cY:{cY}");
 
             IsCalibrated = true;
         }
@@ -223,26 +229,6 @@ namespace Meadow.Foundation.Sensors.Hid
             Z1 = 3 << 4,
             Z2 = 4 << 4,
             Y = 5 << 4,
-        }
-
-        private enum Mode
-        {
-            Bits_12 = 0,
-            Bits_8 = 8
-        }
-
-        private enum VoltageReference
-        {
-            SingleEnded = 0,
-            Differential = 4
-        }
-
-        [Flags]
-        private enum PowerState
-        {
-            PowerDown = 0,
-            Adc = 1,
-            Reference = 2,
         }
     }
 }

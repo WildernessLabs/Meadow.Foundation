@@ -87,17 +87,24 @@ public class DisplayScreen
 
     private void _touchScreen_TouchUp(ITouchScreen source, TouchPoint point)
     {
-        lock (Controls.SyncRoot)
+        if (Monitor.TryEnter(Controls.SyncRoot, 100))
         {
-            foreach (var control in Controls)
+            try
             {
-                if (control is IClickableControl c)
+                foreach (var control in Controls)
                 {
-                    if (control.Contains(point.ScreenX, point.ScreenY))
+                    if (control is IClickableControl c)
                     {
-                        c.Pressed = false;
+                        if (control.Contains(point.ScreenX, point.ScreenY))
+                        {
+                            c.Pressed = false;
+                        }
                     }
                 }
+            }
+            finally
+            {
+                Monitor.Exit(Controls.SyncRoot);
             }
         }
     }
