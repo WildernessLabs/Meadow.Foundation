@@ -446,6 +446,16 @@ namespace Meadow.Foundation.Graphics
                 length *= -1;
             }
 
+            if (x < 0)
+            {
+                length += x;
+                x = 0;
+            }
+            else if (x + length > Width)
+            {
+                length = Width - x;
+            }
+
             int yOffset = 0;
             int height = 1;
 
@@ -480,11 +490,7 @@ namespace Meadow.Foundation.Graphics
         {
             DrawVerticalLine(x, y, length, PenColor);
 
-            if (Stroke == 1)
-            {
-
-            }
-            else
+            if (Stroke > 1)
             {
                 int xOffset = Stroke >> 1;
 
@@ -508,6 +514,16 @@ namespace Meadow.Foundation.Graphics
             {
                 y += length;
                 length *= -1;
+            }
+
+            if (y < 0)
+            {
+                length += y;
+                y = 0;
+            }
+            else if (y + length > Height)
+            {
+                length = Height - y;
             }
 
             int yOffset = 0;
