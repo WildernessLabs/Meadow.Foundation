@@ -211,6 +211,15 @@ namespace Meadow.Foundation.Sensors.Hid
             var points = data.ToArray();
             if (points.Length != 2) { throw new ArgumentException("This touchscreen requires exactly 2 calibration points"); }
 
+            // basic point validation
+            if (points[1].RawX - points[0].RawX == 0 ||
+                points[1].RawY - points[0].RawY == 0 ||
+                points[1].ScreenX - points[0].ScreenX == 0 ||
+                points[1].ScreenY - points[0].ScreenY == 0)
+            {
+                throw new ArgumentOutOfRangeException("Invalid calibration data");
+            }
+
             // simple 2-point linear calibration (fine for small screens)
 
             mX = (points[1].ScreenX - points[0].ScreenX) / (float)(points[1].RawX - points[0].RawX);
