@@ -88,7 +88,6 @@ namespace Meadow.Foundation.Sensors.Hid
 
             if (!IsCalibrated)
             {
-                Resolver.Log.Info($"X{x} Y{y} Z{rawZ}");
                 return TouchPoint.FromRawData(x, y, rawZ);
             }
 
