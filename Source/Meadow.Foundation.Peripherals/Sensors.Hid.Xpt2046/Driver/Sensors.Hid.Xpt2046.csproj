@@ -12,7 +12,7 @@
     <AssemblyName>Xpt2046</AssemblyName>
     <Company>Wilderness Labs, Inc</Company>
     <PackageProjectUrl>http://developer.wildernesslabs.co/Meadow/Meadow.Foundation/</PackageProjectUrl>
-    <PackageId>Meadow.Foundation.Sensors.Hid.Tsc2004</PackageId>
+    <PackageId>Meadow.Foundation.Sensors.Hid.Xpt2046</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow.Foundation,touch,screen,display,capacitive,XPT2046</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -20,8 +20,6 @@
   </PropertyGroup>
   <ItemGroup>
     <None Include="..\..\..\icon.png" Pack="true" PackagePath="" />
-    <ProjectReference Include="..\..\..\..\..\Meadow.Contracts\Source\Meadow.Contracts\Meadow.Contracts.csproj" />
-    <ProjectReference Include="..\..\..\..\..\Meadow.Logging\Source\Meadow.Logging\lib\Meadow.Logging.csproj" />
     <ProjectReference Include="..\..\..\Meadow.Foundation.Libraries_and_Frameworks\Graphics.MicroGraphics\Driver\Graphics.MicroGraphics.csproj" />
   </ItemGroup>
 </Project>
