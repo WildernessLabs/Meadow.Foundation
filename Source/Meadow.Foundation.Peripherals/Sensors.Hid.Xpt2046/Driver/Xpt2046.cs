@@ -12,9 +12,13 @@ namespace Meadow.Foundation.Sensors.Hid
     /// </summary>
     public partial class Xpt2046 : ICalibratableTouchscreen
     {
+        /// <inheritdoc/>
         public event TouchEventHandler? TouchDown = null;
+        /// <inheritdoc/>
         public event TouchEventHandler? TouchUp = null;
+        /// <inheritdoc/>
         public event TouchEventHandler? TouchClick = null;
+        /// <inheritdoc/>
         public event TouchEventHandler? TouchMoved = null;
 
         private const int SamplePeriodMilliseconds = 100;
