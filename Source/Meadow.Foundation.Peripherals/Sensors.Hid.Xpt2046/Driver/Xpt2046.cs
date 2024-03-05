@@ -93,11 +93,7 @@ namespace Meadow.Foundation.Sensors.Hid
 
             // scale for calibration
             var scaledX = ((x * mX) + cX);
-            //if (scaledX < 0) scaledX = 0;
-            //if (scaledX > screen.Width) return screen.Width - 1;
             var scaledY = ((y * mY) + cY);
-            //if (scaledY < 0) scaledY = 0;
-            //if (scaledY > screen.Height) return screen.Height - 1;
 
             return TouchPoint.FromScreenData((int)scaledX, (int)scaledY, rawZ, rawX, rawY, rawZ);
         }

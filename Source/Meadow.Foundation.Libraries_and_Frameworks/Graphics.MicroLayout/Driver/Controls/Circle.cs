@@ -5,9 +5,9 @@
 /// </summary>
 public class Circle : ThemedControl
 {
-    private Color _foreColor;
-    private Point _center;
-    private int _radius;
+    private Color foreColor;
+    private Point center;
+    private int radius;
 
     /// <summary>
     /// Gets or sets a value indicating whether the Circle is filled with the foreground color.
@@ -33,8 +33,8 @@ public class Circle : ThemedControl
     public Circle(Point center, int radius)
         : base(center.X - radius, center.Y - radius, radius * 2, radius * 2)
     {
-        _center = center;
-        _radius = radius;
+        this.center = center;
+        this.radius = radius;
     }
 
     /// <summary>
@@ -54,8 +54,8 @@ public class Circle : ThemedControl
     /// </summary>
     public Color ForeColor
     {
-        get => _foreColor;
-        set => SetInvalidatingProperty(ref _foreColor, value);
+        get => foreColor;
+        set => SetInvalidatingProperty(ref foreColor, value);
     }
 
     /// <summary>
@@ -63,14 +63,14 @@ public class Circle : ThemedControl
     /// </summary>
     public int Radius
     {
-        get => _radius;
+        get => radius;
         set
         {
-            _radius = value;
-            Left = _center.X - _radius;
-            Width = _radius * 2;
-            Top = _center.Y - _radius;
-            Height = _radius * 2;
+            radius = value;
+            Left = center.X - radius;
+            Width = radius * 2;
+            Top = center.Y - radius;
+            Height = radius * 2;
         }
     }
 
@@ -82,10 +82,7 @@ public class Circle : ThemedControl
     {
         if (ForeColor != Color.Transparent)
         {
-            //var radius = (Right - Left) / 2;
-            //var centerX = Left + radius;
-            //var centerY = Top + radius;
-            graphics.DrawCircle(_center.X, _center.Y, _radius, ForeColor, IsFilled);
+            graphics.DrawCircle(center.X, center.Y, radius, ForeColor, IsFilled);
         }
     }
 }
