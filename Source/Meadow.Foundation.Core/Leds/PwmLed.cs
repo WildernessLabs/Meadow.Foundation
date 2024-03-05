@@ -72,7 +72,7 @@ namespace Meadow.Foundation.Leds
             IPin pin,
             Voltage forwardVoltage,
             CircuitTerminationType terminationType = CircuitTerminationType.CommonGround) :
-                this(pin.CreatePwmPort(new Frequency(100, Frequency.UnitType.Hertz)), forwardVoltage, terminationType)
+                this(pin.CreatePwmPort(new Frequency(1000, Frequency.UnitType.Hertz)), forwardVoltage, terminationType)
         {
             createdPwm = true;
         }
