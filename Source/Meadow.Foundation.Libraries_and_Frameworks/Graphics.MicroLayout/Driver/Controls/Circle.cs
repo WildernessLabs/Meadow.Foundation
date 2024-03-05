@@ -1,17 +1,13 @@
 ﻿namespace Meadow.Foundation.Graphics.MicroLayout;
 
-public struct Coordinate2D
-{
-    public int X { get; set; }
-    public int Y { get; set; }
-}
-
 /// <summary>
 /// Represents a circle in the user interface.
 /// </summary>
 public class Circle : ThemedControl
 {
-    private Color _foreColor;
+    private Color foreColor;
+    private Point center;
+    private int radius;
 
     /// <summary>
     /// Gets or sets a value indicating whether the Circle is filled with the foreground color.
@@ -25,7 +21,7 @@ public class Circle : ThemedControl
     /// <param name="centerY">The Y coordinate of the circles's center.</param>
     /// <param name="radius">The radius of the circle.</param>
     public Circle(int centerX, int centerY, int radius)
-        : base(centerX - radius, centerY - radius, radius * 2, radius * 2)
+        : this(new Point(centerX, centerY), radius)
     {
     }
 
@@ -34,9 +30,11 @@ public class Circle : ThemedControl
     /// </summary>
     /// <param name="center">The coordinate of the circles's center.</param>
     /// <param name="radius">The radius of the circle.</param>
-    public Circle(Coordinate2D center, int radius)
+    public Circle(Point center, int radius)
         : base(center.X - radius, center.Y - radius, radius * 2, radius * 2)
     {
+        this.center = center;
+        this.radius = radius;
     }
 
     /// <summary>
@@ -56,8 +54,8 @@ public class Circle : ThemedControl
     /// </summary>
     public Color ForeColor
     {
-        get => _foreColor;
-        set => SetInvalidatingProperty(ref _foreColor, value);
+        get => foreColor;
+        set => SetInvalidatingProperty(ref foreColor, value);
     }
 
     /// <summary>
@@ -65,14 +63,14 @@ public class Circle : ThemedControl
     /// </summary>
     public int Radius
     {
-        get => Width / 2;
+        get => radius;
         set
         {
-            // keep centered
-            var coeff = (value > Radius) ? -1 : 1;
-            var offset = value - Radius;
-
-            Width = value * 2;
+            radius = value;
+            Left = center.X - radius;
+            Width = radius * 2;
+            Top = center.Y - radius;
+            Height = radius * 2;
         }
     }
 
@@ -84,10 +82,7 @@ public class Circle : ThemedControl
     {
         if (ForeColor != Color.Transparent)
         {
-            var radius = (Right - Left) / 2;
-            var centerX = Left + radius;
-            var centerY = Top + radius;
-            graphics.DrawCircle(centerX, centerY, radius, ForeColor, IsFilled);
+            graphics.DrawCircle(center.X, center.Y, radius, ForeColor, IsFilled);
         }
     }
 }

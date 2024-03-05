@@ -15,10 +15,4 @@
     <ProjectReference Include="..\..\Driver\Graphics.MicroLayout.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Update="libmpsse.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
 </Project>
