@@ -23,6 +23,6 @@
     <None Include=".\Readme.md" Pack="true" PackagePath="" />
     <None Include="..\..\..\icon.png" Pack="true" PackagePath="" />
     <PackageReference Include="System.Text.Json" Version="7.0.2" />
-    <PackageReference Include="Meadow.Foundation.Graphics.MicroGraphics" Version="1.9.0" />
+    <PackageReference Include="Meadow.Foundation.Graphics.MicroGraphics" Version="1.9.0.3" />
   </ItemGroup>
 </Project>

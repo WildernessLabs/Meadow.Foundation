@@ -152,9 +152,7 @@ namespace Meadow.Foundation.Sensors.Weather
                 StopUpdating();
             }
 
-            var now = Environment.TickCount;
-
-            if (samples?.Count > 0 && (TimeSpan.FromMilliseconds(now - samples?.Peek().New.Time ?? 0) > NoWindTimeout))
+            if (samples?.Count > 0 && (DateTime.UtcNow - samples?.Peek().New.Time > NoWindTimeout))
             {   //we've exceeded the no wind interval time 
                 samples?.Clear(); //will force a zero reading
             }
@@ -168,7 +166,7 @@ namespace Meadow.Foundation.Sensors.Weather
                 {   // skip the first (old will be null)
                     if (sample.Old is { } old)
                     {
-                        speedSum += SwitchIntervalToKmh(TimeSpan.FromMilliseconds(sample.New.Time - old.Time));
+                        speedSum += SwitchIntervalToKmh(sample.New.Time - old.Time);
                     }
                 }
 

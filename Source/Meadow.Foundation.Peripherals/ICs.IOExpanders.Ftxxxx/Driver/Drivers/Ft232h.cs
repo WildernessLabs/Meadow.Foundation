@@ -1,11 +1,13 @@
 ﻿using Meadow.Hardware;
-using System;
 
 namespace Meadow.Foundation.ICs.IOExpanders;
 
-public class Ft2232Expander : FtdiExpander
+/// <summary>
+/// Represents an FT232H USB IO expander
+/// </summary>
+public class Ft232h : FtdiExpander
 {
-    internal Ft2232Expander()
+    internal Ft232h()
     {
     }
 
@@ -14,7 +16,7 @@ public class Ft2232Expander : FtdiExpander
     {
         // TODO: depends on part
         // TODO: make sure no SPI is in use
-        var bus = new Ft23xxxI2cBus(this, busSpeed);
+        var bus = new Ft232hI2cBus(this, busSpeed);
         bus.Configure();
         return bus;
     }
@@ -23,7 +25,8 @@ public class Ft2232Expander : FtdiExpander
     public override ISpiBus CreateSpiBus(int channel, SpiClockConfiguration configuration)
     {
         // TODO: make sure no SPI is in use
-
-        throw new NotSupportedException();
+        var bus = new Ft232hSpiBus(this, configuration);
+        bus.Configure();
+        return bus;
     }
 }

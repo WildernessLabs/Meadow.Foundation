@@ -8,17 +8,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Meadow.Windows" Version="1.9.0" />
-    <PackageReference Include="Meadow" Version="1.9.0" />
-    <PackageReference Include="Meadow.Foundation.Displays.TftSpi" Version="1.9.0" />
-    <PackageReference Include="Meadow.Foundation.ICs.IOExpanders.Ft232h" Version="1.9.0" />
-    <PackageReference Include="Meadow.Foundation.Graphics.MicroLayout" Version="1.9.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="libmpsse.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <PackageReference Include="Meadow.Windows" Version="1.9.0.3" />
+    <PackageReference Include="Meadow" Version="1.9.0.3" />
+    <PackageReference Include="Meadow.Foundation.Displays.TftSpi" Version="1.9.0.3" />
+    <PackageReference Include="Meadow.Foundation.ICs.IOExpanders.Ft232h" Version="1.9.0.3" />
+    <PackageReference Include="Meadow.Foundation.Graphics.MicroLayout" Version="1.9.0.3" />
   </ItemGroup>
 
 </Project>

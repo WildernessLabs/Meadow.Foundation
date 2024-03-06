@@ -1,7 +1,6 @@
 <Project Sdk="Meadow.Sdk/1.1.0">
   <PropertyGroup>
-    <Version>1.9.0</Version>
-    <PackageReadmeFile>Readme.md</PackageReadmeFile>
+    <Version>1.8.0</Version>
     <Nullable>enable</Nullable>
     <LangVersion>10.0</LangVersion>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
@@ -10,18 +9,17 @@
     <Authors>Wilderness Labs, Inc</Authors>
     <TargetFramework>netstandard2.1</TargetFramework>
     <OutputType>Library</OutputType>
-    <AssemblyName>Ft232h</AssemblyName>
+    <AssemblyName>Xpt2046</AssemblyName>
     <Company>Wilderness Labs, Inc</Company>
     <PackageProjectUrl>http://developer.wildernesslabs.co/Meadow/Meadow.Foundation/</PackageProjectUrl>
-    <PackageId>Meadow.Foundation.ICs.IOExpanders.Ft232h</PackageId>
+    <PackageId>Meadow.Foundation.Sensors.Hid.Xpt2046</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
-    <PackageTags>Meadow.Foundation,IOExpanders,expander,IO,Ft232h</PackageTags>
+    <PackageTags>Meadow.Foundation,touch,screen,display,capacitive,XPT2046</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Description>Ft232h USB IOExpander for GPIO, I2C, SPI on Windows</Description>
+    <Description>Xpt2046 SPI, 4-wire resistive touch screen controller</Description>
   </PropertyGroup>
   <ItemGroup>
-    <None Include=".\Readme.md" Pack="true" PackagePath="" />
-    <PackageReference Include="Meadow.Foundation" Version="1.9.0" />
     <None Include="..\..\..\icon.png" Pack="true" PackagePath="" />
+    <PackageReference Include="Meadow.Foundation.Graphics.MicroGraphics" Version="1.9.0.3" />
   </ItemGroup>
 </Project>
