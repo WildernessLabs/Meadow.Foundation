@@ -10,7 +10,7 @@
     <AssemblyName>Pct2075</AssemblyName>
     <Company>Wilderness Labs, Inc</Company>
     <PackageProjectUrl>http://developer.wildernesslabs.co/Meadow/Meadow.Foundation/</PackageProjectUrl>
-    <PackageId>Meadow.Foundation.Sensors.Temperature.Mcp960x</PackageId>
+    <PackageId>Meadow.Foundation.Sensors.Temperature.Pct2075</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow.Foundation,Temperature,PCT2075</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
