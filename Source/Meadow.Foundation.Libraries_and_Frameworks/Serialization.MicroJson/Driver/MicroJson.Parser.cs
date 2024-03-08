@@ -60,6 +60,13 @@ internal class Parser
         return null;
     }
 
+    /// <summary>
+    /// Parses a JSON object from the provided character array.
+    /// </summary>
+    /// <param name="json">The JSON character array.</param>
+    /// <param name="index">The current index in the character array.</param>
+    /// <param name="success">A reference indicating the success of the parsing operation.</param>
+    /// <returns>A Hashtable representing the parsed JSON object, or null if parsing fails.</returns>
     protected static Hashtable? ParseObject(char[] json, ref int index, ref bool success)
     {
         var table = new Hashtable();
@@ -91,13 +98,11 @@ internal class Parser
                 string? name = ParseString(json, ref index, ref success);
                 if (!success)
                 {
-                    success = false;
                     return null;
                 }
 
                 // :
-                token = NextToken(json, ref index);
-                if (token != Token.PropertySeparator)
+                if (NextToken(json, ref index) != Token.PropertySeparator)
                 {
                     success = false;
                     return null;
@@ -107,7 +112,6 @@ internal class Parser
                 object? value = ParseValue(json, ref index, ref success);
                 if (!success)
                 {
-                    success = false;
                     return null;
                 }
 
@@ -118,6 +122,14 @@ internal class Parser
         return table;
     }
 
+
+    /// <summary>
+    /// Parses a JSON array from the provided character array.
+    /// </summary>
+    /// <param name="json">The JSON character array.</param>
+    /// <param name="index">The current index in the character array.</param>
+    /// <param name="success">A reference indicating the success of the parsing operation.</param>
+    /// <returns>An ArrayList representing the parsed JSON array, or null if parsing fails.</returns>
     protected static ArrayList? ParseArray(char[] json, ref int index, ref bool success)
     {
         var array = new ArrayList();
@@ -158,6 +170,13 @@ internal class Parser
         return array;
     }
 
+    /// <summary>
+    /// Parses a JSON value from the provided character array.
+    /// </summary>
+    /// <param name="json">The JSON character array.</param>
+    /// <param name="index">The current index in the character array.</param>
+    /// <param name="success">A reference indicating the success of the parsing operation.</param>
+    /// <returns>The parsed JSON value as an object, or null if parsing fails.</returns>
     protected static object? ParseValue(char[] json, ref int index, ref bool success)
     {
         switch (LookAhead(json, index))
@@ -187,6 +206,13 @@ internal class Parser
         return null;
     }
 
+    /// <summary>
+    /// Parses a JSON string from the provided character array.
+    /// </summary>
+    /// <param name="json">The JSON character array.</param>
+    /// <param name="index">The current index in the character array.</param>
+    /// <param name="success">A reference indicating the success of the parsing operation.</param>
+    /// <returns>The parsed JSON string, or null if parsing fails.</returns>
     protected static string? ParseString(char[] json, ref int index, ref bool success)
     {
         var s = new StringBuilder();
@@ -195,7 +221,6 @@ internal class Parser
 
         AdvanceIndexPastWhitespace(json, ref index);
 
-        // "
         char c;
         bool complete = false;
 
@@ -295,23 +320,23 @@ internal class Parser
     /// Determines the type of number (int, double, etc) and returns an object
     /// containing that value.
     /// </summary>
-    /// <param name="json"></param>
-    /// <param name="index"></param>
-    /// <param name="success"></param>
-    /// <returns>The object</returns>
+    /// <param name="json">The JSON character array.</param>
+    /// <param name="index">The current index in the character array.</param>
+    /// <param name="success">A reference indicating the success of the parsing operation.</param>
+    /// <returns>The parsed number as an object, or null if parsing fails.</returns>
     protected static object? ParseNumber(char[] json, ref int index, ref bool success)
     {
         AdvanceIndexPastWhitespace(json, ref index);
 
         int lastIndex = GetLastIndexOfNumber(json, index);
-        int charLength = (lastIndex - index) + 1;
+        int charLength = lastIndex - index + 1;
         var value = new string(json, index, charLength);
 
         index = lastIndex + 1;
         success = true;
 
-        string dot = CultureInfo.CurrentUICulture.NumberFormat.NumberDecimalSeparator;
-        string comma = CultureInfo.CurrentUICulture.NumberFormat.NumberGroupSeparator;
+        string dot = CultureInfo.InvariantCulture.NumberFormat.NumberDecimalSeparator;
+        string comma = CultureInfo.InvariantCulture.NumberFormat.NumberGroupSeparator;
 
         // Detecting and parsing the number based on its characteristics
         if (value.Contains(dot) || value.Contains(comma) || value.Contains("e") || value.Contains("E"))
@@ -322,7 +347,7 @@ internal class Parser
                 return dblValue;
             }
         }
-        else if (value.StartsWith("0x", StringComparison.OrdinalIgnoreCase) || value.IndexOfAny(new[] { 'a', 'b', 'c', 'd', 'e', 'f', 'A', 'B', 'C', 'D', 'E', 'F' }) >= 0)
+        else if (value.StartsWith("0x", StringComparison.OrdinalIgnoreCase) || value.IndexOfAny("abcdefABCDEF".ToCharArray()) >= 0)
         {
             // Parse as a hexadecimal number
             if (long.TryParse(value.Substring(2), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out long hexValue))
@@ -343,25 +368,33 @@ internal class Parser
         return null;
     }
 
+    /// <summary>
+    /// Gets the last index of a number in the JSON data starting from the specified index.
+    /// </summary>
+    /// <param name="json">The JSON character array.</param>
+    /// <param name="index">The starting index in the character array.</param>
+    /// <returns>The last index of the number in the character array.</returns>
     protected static int GetLastIndexOfNumber(char[] json, int index)
     {
         int lastIndex;
 
         for (lastIndex = index; lastIndex < json.Length; lastIndex++)
         {
+            // Check if the character is a part of a number
             if ("0123456789+-.eE".IndexOf(json[lastIndex]) == -1)
             {
                 break;
             }
         }
+
         return lastIndex - 1;
     }
 
     /// <summary>
     /// Advances the index past any whitespace characters in the JSON data.
     /// </summary>
-    /// <param name="json">The JSON data.</param>
-    /// <param name="index">The current index in the JSON data.</param>
+    /// <param name="json">The JSON character array.</param>
+    /// <param name="index">The current index in the character array.</param>
     protected static void AdvanceIndexPastWhitespace(char[] json, ref int index)
     {
         for (; index < json.Length; index++)
@@ -373,12 +406,24 @@ internal class Parser
         }
     }
 
+    /// <summary>
+    /// Looks ahead in the JSON data to determine the next token without advancing the index.
+    /// </summary>
+    /// <param name="json">The JSON character array.</param>
+    /// <param name="index">The current index in the character array.</param>
+    /// <returns>The next token in the character array.</returns>
     protected static Token LookAhead(char[] json, int index)
     {
         int saveIndex = index;
         return NextToken(json, ref saveIndex);
     }
 
+    /// <summary>
+    /// Gets the next token in the JSON data and advances the index accordingly.
+    /// </summary>
+    /// <param name="json">The JSON character array.</param>
+    /// <param name="index">The current index in the character array.</param>
+    /// <returns>The next token in the character array.</returns>
     protected static Token NextToken(char[] json, ref int index)
     {
         AdvanceIndexPastWhitespace(json, ref index);
