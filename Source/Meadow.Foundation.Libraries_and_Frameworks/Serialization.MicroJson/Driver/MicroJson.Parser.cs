@@ -215,13 +215,13 @@ internal class Parser
     /// <returns>The parsed JSON string, or null if parsing fails.</returns>
     protected static string? ParseString(char[] json, ref int index, ref bool success)
     {
-        var s = new StringBuilder();
+        var result = new StringBuilder();
 
         success = true;
 
         AdvanceIndexPastWhitespace(json, ref index);
 
-        char c;
+        char character;
         bool complete = false;
 
         index++;
@@ -232,53 +232,53 @@ internal class Parser
                 break;
             }
 
-            c = json[index++];
-            if (c == '"')
+            character = json[index++];
+            if (character == '"')
             {
                 complete = true;
                 break;
             }
-            else if (c == '\\')
+            else if (character == '\\')
             {
                 if (index == json.Length)
                 {
                     break;
                 }
 
-                c = json[index++];
-                if (c == '"')
+                character = json[index++];
+                if (character == '"')
                 {
-                    s.Append('"');
+                    result.Append('"');
                 }
-                else if (c == '\\')
+                else if (character == '\\')
                 {
-                    s.Append('\\');
+                    result.Append('\\');
                 }
-                else if (c == '/')
+                else if (character == '/')
                 {
-                    s.Append('/');
+                    result.Append('/');
                 }
-                else if (c == 'b')
+                else if (character == 'b')
                 {
-                    s.Append('\b');
+                    result.Append('\b');
                 }
-                else if (c == 'f')
+                else if (character == 'f')
                 {
-                    s.Append('\f');
+                    result.Append('\f');
                 }
-                else if (c == 'n')
+                else if (character == 'n')
                 {
-                    s.Append('\n');
+                    result.Append('\n');
                 }
-                else if (c == 'r')
+                else if (character == 'r')
                 {
-                    s.Append('\r');
+                    result.Append('\r');
                 }
-                else if (c == 't')
+                else if (character == 't')
                 {
-                    s.Append('\t');
+                    result.Append('\t');
                 }
-                else if (c == 'u')
+                else if (character == 'u')
                 {
                     int remainingLength = json.Length - index;
                     if (remainingLength >= 4)
@@ -290,7 +290,7 @@ internal class Parser
                         }
 
                         // convert the integer codepoint to a unicode char and add to string
-                        s.Append(UInt32Converters.ConvertUnicodeToAsciiString((int)codePoint));
+                        result.Append(UInt32Converters.ConvertUnicodeToAsciiString((int)codePoint));
 
                         // skip 4 chars
                         index += 4;
@@ -303,7 +303,7 @@ internal class Parser
             }
             else
             {
-                s.Append(c);
+                result.Append(character);
             }
         }
 
@@ -313,7 +313,7 @@ internal class Parser
             return null;
         }
 
-        return s.ToString();
+        return result.ToString();
     }
 
     /// <summary>
@@ -350,7 +350,7 @@ internal class Parser
         else if (value.StartsWith("0x", StringComparison.OrdinalIgnoreCase) || value.IndexOfAny("abcdefABCDEF".ToCharArray()) >= 0)
         {
             // Parse as a hexadecimal number
-            if (long.TryParse(value.Substring(2), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out long hexValue))
+            if (long.TryParse(value[2..], NumberStyles.HexNumber, CultureInfo.InvariantCulture, out long hexValue))
             {
                 return hexValue;
             }

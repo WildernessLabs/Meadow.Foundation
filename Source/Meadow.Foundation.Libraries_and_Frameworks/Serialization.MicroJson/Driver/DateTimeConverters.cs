@@ -18,10 +18,9 @@ internal static class DateTimeConverters
 
         if (DateTime.TryParseExact(input, "yyyy-MM-ddTHH:mm:ss.FFFK", CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal, out var dateTime))
         {
-            // If not in UTC and has offset information
             if (!isUtc && input.Length > 19)
             {
-                string offset = input.Substring(19);
+                string offset = input[19..];
                 TimeSpan timeOffset = TimeSpan.Parse(offset);
                 dateTime = dateTime.Add(timeOffset);
             }
@@ -63,7 +62,6 @@ internal static class DateTimeConverters
 
         long ticks = Convert.ToInt64(parts[1]);
 
-        // Create a Utc DateTime based on the tick count
         return new DateTime(ticks, DateTimeKind.Utc);
     }
 }

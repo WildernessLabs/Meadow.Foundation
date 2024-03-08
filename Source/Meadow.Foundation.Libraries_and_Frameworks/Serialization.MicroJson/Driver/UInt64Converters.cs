@@ -31,7 +31,6 @@ internal static class UInt64Converters
         bool isOverflow = false;
         result = 0;
 
-        // Skip leading white space.
         int length = input.Length;
         int currentIndex = 0;
         while (currentIndex < length && char.IsWhiteSpace(input[currentIndex]))
@@ -39,11 +38,11 @@ internal static class UInt64Converters
             currentIndex++;
         }
 
-        // Check for leading sign information.
         NumberFormatInfo nfi = CultureInfo.CurrentUICulture.NumberFormat;
         string posSign = nfi.PositiveSign;
         string negSign = nfi.NegativeSign;
         sign = false;
+
         while (currentIndex < length)
         {
             character = input[currentIndex];
@@ -63,7 +62,6 @@ internal static class UInt64Converters
             }
         }
 
-        // If the string is empty
         if (currentIndex >= length)
         {
             return false;
@@ -72,7 +70,7 @@ internal static class UInt64Converters
         uint low = 0;
         uint high = 0;
         uint digit;
-        ulong tempa, tempb;
+        ulong lowPart, highPart;
 
         // Parse the value based on the selected format
         do
@@ -84,30 +82,29 @@ internal static class UInt64Converters
                     (uint)(char.IsDigit(character) ? character - '0' : char.ToUpper(character) - 'A' + 10) :
                     (uint)(character - '0');
 
-                // Combine the digit with the result, and check for overflow.
                 if (!isOverflow)
                 {
-                    tempa = ((ulong)low) * ((ulong)(parseHex ? 16 : 10));
-                    tempb = ((ulong)high) * ((ulong)(parseHex ? 16 : 10));
-                    tempb += (tempa >> 32);
+                    lowPart = low * ((ulong)(parseHex ? 16 : 10));
+                    highPart = high * ((ulong)(parseHex ? 16 : 10));
+                    highPart += lowPart >> 32;
 
-                    if (tempb > ((ulong)0xFFFFFFFF))
+                    if (highPart > 0xFFFFFFFF)
                     {
                         isOverflow = true;
                     }
                     else
                     {
-                        tempa = (tempa & 0xFFFFFFFF) + ((ulong)digit);
-                        tempb += (tempa >> 32);
+                        lowPart = (lowPart & 0xFFFFFFFF) + digit;
+                        highPart += (lowPart >> 32);
 
-                        if (tempb > ((ulong)0xFFFFFFFF))
+                        if (highPart > 0xFFFFFFFF)
                         {
                             isOverflow = true;
                         }
                         else
                         {
-                            low = unchecked((uint)tempa);
-                            high = unchecked((uint)tempb);
+                            low = unchecked((uint)lowPart);
+                            high = unchecked((uint)highPart);
                         }
                     }
                 }
@@ -125,9 +122,13 @@ internal static class UInt64Converters
             {
                 character = input[currentIndex];
                 if (char.IsWhiteSpace(character))
+                {
                     ++currentIndex;
+                }
                 else
+                {
                     break;
+                }
             } while (currentIndex < length);
 
             if (currentIndex < length)
@@ -136,8 +137,7 @@ internal static class UInt64Converters
             }
         }
 
-        // Return the results to the caller.
-        result = (((ulong)high) << 32) | ((ulong)low);
+        result = (((ulong)high) << 32) | low;
         return !isOverflow;
     }
 }
