@@ -11,18 +11,6 @@ namespace Meadow.Foundation.Serialization;
 public static partial class MicroJson
 {
     /// <summary>
-    /// Converts an object to a JSON string.
-    /// </summary>
-    /// <param name="o">The value to convert. Supported types are: Boolean, String, byte, sbyte, (U)Int16, (U)Int32, Float, Double, Decimal, Array, IDictionary, IEnumerable, Guid, DateTime, DictionaryEntry, Object, and null.</param>
-    /// <param name="dateTimeFormat">The format to use for DateTime values. Defaults to ISO 8601 format.</param>
-    /// <returns>The JSON object as a string or null when the value type is not supported.</returns>
-    /// <remarks>For objects, only public properties with getters are converted.</remarks>
-    public static string? Serialize(object o, DateTimeFormat dateTimeFormat = DateTimeFormat.ISO8601)
-    {
-        return SerializeObject(o, dateTimeFormat);
-    }
-
-    /// <summary>
     /// Desrializes a Json string into an object.
     /// </summary>
     /// <param name="json"></param>
@@ -43,13 +31,13 @@ public static partial class MicroJson
     }
 
     /// <summary>
-    /// Convert an object to a JSON string.
+    /// Converts an object to a JSON string.
     /// </summary>
-    /// <param name="o">The value to convert. Supported types are: Boolean, String, Byte, (U)Int16, (U)Int32, Float, Double, Decimal, Array, IDictionary, IEnumerable, Guid, Datetime, DictionaryEntry, Object and null.</param>
+    /// <param name="o">The value to convert.</param>
     /// <param name="dateTimeFormat">The format to use for DateTime values. Defaults to ISO 8601 format.</param>
     /// <returns>The JSON object as a string or null when the value type is not supported.</returns>
     /// <remarks>For objects, only public properties with getters are converted.</remarks>
-    public static string? SerializeObject(object o, DateTimeFormat dateTimeFormat = DateTimeFormat.ISO8601)
+    public static string? Serialize(object o, DateTimeFormat dateTimeFormat = DateTimeFormat.ISO8601)
     {
         if (o == null)
         {
@@ -59,37 +47,46 @@ public static partial class MicroJson
         Type type = o.GetType();
 
         if (type.IsEnum)
-        {   // Serialize enum values by converting them integers
+        {
+            // Serialize enum values by converting them to integers
             return $"{(int)o}";
         }
 
-        switch (type.Name)
+        switch (Type.GetTypeCode(type))
         {
-            case "Boolean":
+            case TypeCode.Boolean:
                 return (bool)o ? "true" : "false";
-            case "String":
-            case "Char":
-            case "Guid":
-                return "\"" + o.ToString() + "\"";
-            case "Single":
-            case "Double":
-            case "Decimal":
-            case "Float":
-            case "Byte":
-            case "SByte":
-            case "Int16":
-            case "UInt16":
-            case "Int32":
-            case "UInt32":
-            case "Int64":
-            case "UInt64":
+            case TypeCode.String:
+            case TypeCode.Char:
+                return $"\"{o}\"";
+            case TypeCode.Single:
+            case TypeCode.Double:
+            case TypeCode.Decimal:
+            case TypeCode.Byte:
+            case TypeCode.SByte:
+            case TypeCode.Int16:
+            case TypeCode.UInt16:
+            case TypeCode.Int32:
+            case TypeCode.UInt32:
+            case TypeCode.Int64:
+            case TypeCode.UInt64:
                 return o.ToString();
-            case "DateTime":
+            case TypeCode.DateTime:
                 return dateTimeFormat switch
-                {   // This MSDN page describes the problem with JSON dates: http://msdn.microsoft.com/en-us/library/bb299886.aspx
-                    DateTimeFormat.Ajax => "\"" + DateTimeConverters.ToASPNetAjax((DateTime)o) + "\"",
-                    _ => "\"" + DateTimeConverters.ToIso8601((DateTime)o) + "\"",
+                {
+                    DateTimeFormat.Ajax => $"\"{DateTimeConverters.ToASPNetAjax((DateTime)o)}\"",
+                    _ => $"\"{DateTimeConverters.ToIso8601((DateTime)o)}\"",
                 };
+            default:
+                if (type == typeof(Guid))
+                {
+                    return $"\"{o}\"";
+                }
+                else if (type == typeof(Single) || type == typeof(Double) || type == typeof(Decimal) || type == typeof(float))
+                {
+                    return o.ToString();
+                }
+                break;
         }
 
         if (o is IDictionary dictionary && !type.IsArray)
@@ -105,9 +102,9 @@ public static partial class MicroJson
         if (o is DictionaryEntry entry)
         {
             var hashtable = new Hashtable
-            {
-                { entry.Key, entry.Value }
-            };
+        {
+            { entry.Key, entry.Value }
+        };
             return SerializeIDictionary(hashtable, dateTimeFormat);
         }
 
@@ -115,37 +112,14 @@ public static partial class MicroJson
         {
             var hashtable = new Hashtable();
 
-            // Iterate through all of the methods, looking for public GET properties
-            MethodInfo[] methods = type.GetMethods();
-            foreach (MethodInfo method in methods)
+            // Use PropertyInfo instead of MethodInfo for better performance
+            PropertyInfo[] properties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance);
+            foreach (PropertyInfo property in properties)
             {
-                // We care only about property getters when serializing
-                if (method.Name.StartsWith("get_"))
-                {
-                    // Ignore abstract and virtual objects
-                    if (method.IsAbstract)
-                    {
-                        continue;
-                    }
-
-                    // Ignore delegates and MethodInfos
-                    if ((method.ReturnType == typeof(Delegate)) ||
-                        (method.ReturnType == typeof(MulticastDelegate)) ||
-                        (method.ReturnType == typeof(MethodInfo)))
-                    {
-                        continue;
-                    }
-                    // Ditto for DeclaringType
-                    if ((method.DeclaringType == typeof(Delegate)) ||
-                        (method.DeclaringType == typeof(MulticastDelegate)))
-                    {
-                        continue;
-                    }
-
-                    object returnObject = method.Invoke(o, null);
-                    hashtable.Add(method.Name.Substring(4), returnObject);
-                }
+                object returnObject = property.GetValue(o);
+                hashtable.Add(property.Name, returnObject);
             }
+
             return SerializeIDictionary(hashtable, dateTimeFormat);
         }
 
@@ -169,7 +143,7 @@ public static partial class MicroJson
                 result.Append(",");
             }
 
-            result.Append(SerializeObject(current, dateTimeFormat));
+            result.Append(Serialize(current, dateTimeFormat));
         }
 
         result.Append("]");
@@ -195,7 +169,7 @@ public static partial class MicroJson
 
             result.Append("\"" + entry.Key + "\"");
             result.Append(":");
-            result.Append(SerializeObject(entry.Value, dateTimeFormat));
+            result.Append(Serialize(entry.Value, dateTimeFormat));
         }
 
         result.Append("}");
