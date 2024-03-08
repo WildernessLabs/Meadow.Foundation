@@ -1,13 +1,12 @@
 ﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Atmospheric;
-using Meadow.Hardware;
 using System;
 using System.Threading.Tasks;
 
 namespace Sensors.Atmospheric.BME280_Sample
 {
-    public class MeadowApp : App<F7FeatherV2>
+    public class MeadowApp : App<F7FeatherV1>
     {
         //<!=SNIP=>
 
@@ -74,7 +73,7 @@ namespace Sensors.Atmospheric.BME280_Sample
             Resolver.Log.Info("Create BME280 sensor with I2C...");
 
             var i2c = Device.CreateI2cBus();
-            sensor = new Bme280(i2c, (byte)Bme280.Addresses.Default); // SDA pulled up
+            sensor = new Bme280(i2c, (byte)Bme280.Addresses.Address_0x77); // SDA pulled up
 
         }
 
