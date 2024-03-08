@@ -127,11 +127,11 @@ public static partial class MicroJson
     }
 
     /// <summary>
-    /// Convert an IEnumerable to a JSON string.
+    /// Converts an IEnumerable to a JSON string.
     /// </summary>
-    /// <param name="enumerable">The value to convert.</param>
+    /// <param name="enumerable">The IEnumerable to convert.</param>
     /// <param name="dateTimeFormat">The format to use for DateTime values. Defaults to ISO 8601 format.</param>
-    /// <returns>The JSON object as a string or null when the value type is not supported.</returns>
+    /// <returns>The JSON array as a string or null when the value type is not supported.</returns>
     private static string SerializeIEnumerable(IEnumerable enumerable, DateTimeFormat dateTimeFormat = DateTimeFormat.ISO8601)
     {
         var result = new StringBuilder("[");
@@ -151,9 +151,9 @@ public static partial class MicroJson
     }
 
     /// <summary>
-    /// Convert an IDictionary to a JSON string.
+    /// Converts an IDictionary to a JSON string.
     /// </summary>
-    /// <param name="dictionary">The value to convert.</param>
+    /// <param name="dictionary">The IDictionary to convert.</param>
     /// <param name="dateTimeFormat">The format to use for DateTime values. Defaults to ISO 8601 format.</param>
     /// <returns>The JSON object as a string or null when the value type is not supported.</returns>
     private static string SerializeIDictionary(IDictionary dictionary, DateTimeFormat dateTimeFormat = DateTimeFormat.ISO8601)
@@ -167,14 +167,13 @@ public static partial class MicroJson
                 result.Append(",");
             }
 
-            result.Append("\"" + entry.Key + "\"");
-            result.Append(":");
-            result.Append(Serialize(entry.Value, dateTimeFormat));
+            result.Append($"\"{entry.Key}\":{Serialize(entry.Value, dateTimeFormat)}");
         }
 
         result.Append("}");
         return result.ToString();
     }
+
 
     /// <summary>
     /// Safely serialize a String into a JSON string value, escaping all backslash and quote characters.
@@ -183,15 +182,13 @@ public static partial class MicroJson
     /// <returns>The serialized JSON string.</returns>
     public static string SerializeString(string input)
     {
-        // If the string is just fine (most are) then make a quick exit for improved performance
-        if (input.IndexOf('\\') < 0 && input.IndexOf('\"') < 0)
+        if (input.IndexOfAny(new[] { '\\', '\"' }) < 0)
         {
             return input;
         }
 
-        // Build a new string
         var result = new StringBuilder(input.Length + 1); // we know there is at least 1 char to escape
-        foreach (char ch in input.ToCharArray())
+        foreach (char ch in input)
         {
             if (ch == '\\' || ch == '\"')
             {
