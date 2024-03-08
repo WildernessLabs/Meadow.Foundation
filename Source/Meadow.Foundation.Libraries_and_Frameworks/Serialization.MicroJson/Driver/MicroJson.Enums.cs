@@ -1,5 +1,11 @@
 ﻿namespace Meadow.Foundation.Serialization;
 
+internal enum NumberStyle
+{
+    Decimal = 1,
+    Hexadecimal
+}
+
 public static partial class MicroJson
 {
     /// <summary>

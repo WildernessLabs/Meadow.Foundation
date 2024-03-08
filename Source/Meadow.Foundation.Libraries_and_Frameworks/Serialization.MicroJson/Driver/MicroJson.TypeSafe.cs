@@ -5,9 +5,6 @@ using System.Linq;
 
 namespace Meadow.Foundation.Serialization;
 
-/// <summary>
-/// Provides typesafe methods for JSON serialization and deserialization.
-/// </summary>
 public static partial class MicroJson
 {
     /// <summary>
@@ -184,7 +181,6 @@ public static partial class MicroJson
 
             return (T)instance;
         }
-        //            object instance = new T(); // <-- MUST be declared as object to box potential structs
     }
 
     /// <summary>

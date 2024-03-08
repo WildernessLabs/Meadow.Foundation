@@ -1,9 +1,13 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Globalization;
 
 namespace Meadow.Foundation.Serialization;
 
 internal static class UInt64Converters
 {
+    /// <summary>
+    /// The maximum number of digits supported for parsing double values.
+    /// </summary>
     public const int MaxDoubleDigits = 16;
 
     /// <summary>
@@ -16,22 +20,23 @@ internal static class UInt64Converters
     /// <returns>true if succesful</returns>
     public static bool TryParse(string input, bool parseHex, out ulong result, out bool sign)
     {
-        if (input.Length >= 2 && input[..2].ToLower() == "0x")
+        // Check for hexadecimal prefix
+        if (input.Length >= 2 && input.StartsWith("0x", StringComparison.OrdinalIgnoreCase))
         {
             input = input[2..];
             parseHex = true;
         }
 
         char character;
-        bool noOverflow = true;
+        bool isOverflow = false;
         result = 0;
 
         // Skip leading white space.
-        int len = input.Length;
-        int posn = 0;
-        while (posn < len && char.IsWhiteSpace(input[posn]))
+        int length = input.Length;
+        int currentIndex = 0;
+        while (currentIndex < length && char.IsWhiteSpace(input[currentIndex]))
         {
-            posn++;
+            currentIndex++;
         }
 
         // Check for leading sign information.
@@ -39,18 +44,13 @@ internal static class UInt64Converters
         string posSign = nfi.PositiveSign;
         string negSign = nfi.NegativeSign;
         sign = false;
-        while (posn < len)
+        while (currentIndex < length)
         {
-            character = input[posn];
-            if (!parseHex && character == negSign[0])
+            character = input[currentIndex];
+            if (!parseHex && (character == negSign[0] || character == posSign[0]))
             {
-                sign = true;
-                ++posn;
-            }
-            else if (!parseHex && character == posSign[0])
-            {
-                sign = false;
-                ++posn;
+                sign = character == negSign[0];
+                ++currentIndex;
             }
             else if ((parseHex && ((character >= 'A' && character <= 'F') || (character >= 'a' && character <= 'f'))) ||
                      (character >= '0' && character <= '9'))
@@ -63,8 +63,8 @@ internal static class UInt64Converters
             }
         }
 
-        //if the string is empty
-        if (posn >= len)
+        // If the string is empty
+        if (currentIndex >= length)
         {
             return false;
         }
@@ -73,49 +73,36 @@ internal static class UInt64Converters
         uint high = 0;
         uint digit;
         ulong tempa, tempb;
-        if (parseHex)
+
+        // Parse the value based on the selected format
+        do
         {
-            #region Parse a hexadecimal value.
-            do
+            character = input[currentIndex];
+            if ((character >= '0' && character <= '9') || (parseHex && ((character >= 'A' && character <= 'F') || (character >= 'a' && character <= 'f'))))
             {
-                // Get the next digit from the string.
-                character = input[posn];
-                if (character >= '0' && character <= '9')
-                {
-                    digit = (uint)(character - '0');
-                }
-                else if (character >= 'A' && character <= 'F')
-                {
-                    digit = (uint)(character - 'A' + 10);
-                }
-                else if (character >= 'a' && character <= 'f')
-                {
-                    digit = (uint)(character - 'a' + 10);
-                }
-                else
-                {
-                    break;
-                }
+                digit = parseHex ?
+                    (uint)(char.IsDigit(character) ? character - '0' : char.ToUpper(character) - 'A' + 10) :
+                    (uint)(character - '0');
 
                 // Combine the digit with the result, and check for overflow.
-                if (noOverflow)
+                if (!isOverflow)
                 {
-                    tempa = ((ulong)low) * ((ulong)16);
-                    tempb = ((ulong)high) * ((ulong)16);
+                    tempa = ((ulong)low) * ((ulong)(parseHex ? 16 : 10));
+                    tempb = ((ulong)high) * ((ulong)(parseHex ? 16 : 10));
                     tempb += (tempa >> 32);
+
                     if (tempb > ((ulong)0xFFFFFFFF))
                     {
-                        // Overflow has occurred.
-                        noOverflow = false;
+                        isOverflow = true;
                     }
                     else
                     {
                         tempa = (tempa & 0xFFFFFFFF) + ((ulong)digit);
                         tempb += (tempa >> 32);
+
                         if (tempb > ((ulong)0xFFFFFFFF))
                         {
-                            // Overflow has occurred.
-                            noOverflow = false;
+                            isOverflow = true;
                         }
                         else
                         {
@@ -124,71 +111,26 @@ internal static class UInt64Converters
                         }
                     }
                 }
-                ++posn; // Advance to the next character.
-            } while (posn < len);
-            #endregion
-        }
-        else
-        {
-            #region Parse a decimal value.
-            do
+                currentIndex++;
+            }
+            else
             {
-                // Get the next digit from the string.
-                character = input[posn];
-                if (character >= '0' && character <= '9')
-                {
-                    digit = (uint)(character - '0');
-                }
-                else
-                {
-                    break;
-                }
+                break;
+            }
+        } while (currentIndex < length);
 
-                // Combine the digit with the result, and check for overflow.
-                if (noOverflow)
-                {
-                    tempa = ((ulong)low) * ((ulong)10);
-                    tempb = ((ulong)high) * ((ulong)10);
-                    tempb += (tempa >> 32);
-                    if (tempb > ((ulong)0xFFFFFFFF))
-                    {
-                        // Overflow has occurred.
-                        noOverflow = false;
-                    }
-                    else
-                    {
-                        tempa = (tempa & 0xFFFFFFFF) + ((ulong)digit);
-                        tempb += (tempa >> 32);
-                        if (tempb > ((ulong)0xFFFFFFFF))
-                        {
-                            // Overflow has occurred.
-                            noOverflow = false;
-                        }
-                        else
-                        {
-                            low = unchecked((uint)tempa);
-                            high = unchecked((uint)tempb);
-                        }
-                    }
-                }
-                ++posn;// Advance to the next character.
-            } while (posn < len);
-            #endregion
-        }
-
-        // Process trailing white space.
-        if (posn < len)
+        if (currentIndex < length)
         {
             do
             {
-                character = input[posn];
+                character = input[currentIndex];
                 if (char.IsWhiteSpace(character))
-                    ++posn;
+                    ++currentIndex;
                 else
                     break;
-            } while (posn < len);
+            } while (currentIndex < length);
 
-            if (posn < len)
+            if (currentIndex < length)
             {
                 return false;
             }
@@ -196,6 +138,6 @@ internal static class UInt64Converters
 
         // Return the results to the caller.
         result = (((ulong)high) << 32) | ((ulong)low);
-        return noOverflow;
+        return !isOverflow;
     }
 }
