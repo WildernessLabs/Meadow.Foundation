@@ -1,8 +1,8 @@
-# Meadow.Foundation.Sensors.Hid.Tsc2004
+# Meadow.Foundation.Sensors.Hid.Xpt2046
 
-**Tsc2004 I2C capacitive touch screen**
+**Xpt2046 SPI, 4-wire resistive touch screen controller**
 
-The **Tsc2004** library is included in the **Meadow.Foundation.Sensors.Hid.Tsc2004** nuget package and is designed for the [Wilderness Labs](www.wildernesslabs.co) Meadow .NET IoT platform.
+The **Xpt2046** library is included in the **Meadow.Foundation.Sensors.Hid.Xpt2046** nuget package and is designed for the [Wilderness Labs](www.wildernesslabs.co) Meadow .NET IoT platform.
 
 This driver is part of the [Meadow.Foundation](https://developer.wildernesslabs.co/Meadow/Meadow.Foundation/) peripherals library, an open-source repository of drivers and libraries that streamline and simplify adding hardware to your C# .NET Meadow IoT applications.
 
@@ -14,11 +14,11 @@ To view all Wilderness Labs open-source projects, including samples, visit [gith
 
 You can install the library from within Visual studio using the the NuGet Package Manager or from the command line using the .NET CLI:
 
-`dotnet add package Meadow.Foundation.Sensors.Hid.Tsc2004`
+`dotnet add package Meadow.Foundation.Sensors.Hid.Xpt2046`
 ## Usage
 
 ```csharp
-private Tsc2004 touchScreen;
+private Xpt2046 touchScreen;
 
 public override Task Initialize()
 {
@@ -26,37 +26,19 @@ public override Task Initialize()
 
     var i2cBus = Device.CreateI2cBus(I2cBusSpeed.Fast);
 
-    touchScreen = new Tsc2004(i2cBus)
-    {
-        DisplayWidth = 240,
-        DisplayHeight = 320,
-        XMin = 260,
-        XMax = 3803,
-        YMin = 195,
-        YMax = 3852,
-        Rotation = RotationType._90Degrees
-    };
+    touchScreen = new Xpt2046(
+        Device.CreateSpiBus(),
+        Device.Pins.D04.CreateDigitalInterruptPort(InterruptMode.EdgeFalling, ResistorMode.InternalPullUp),
+        Device.Pins.D05.CreateDigitalOutputPort(true));
+
+    touchScreen.TouchDown += TouchScreen_TouchDown;
 
     return Task.CompletedTask;
 }
 
-public override Task Run()
+private void TouchScreen_TouchDown(ITouchScreen sender, TouchPoint point)
 {
-    return Task.Run(() =>
-    {
-        Point3d pt;
-
-        while (true)
-        {
-            if (touchScreen.IsTouched())
-            {
-                pt = touchScreen.GetPoint();
-                Resolver.Log.Info($"Location: X:{pt.X}, Y:{pt.Y}, Z:{pt.Z}");
-            }
-
-            Thread.Sleep(0);
-        }
-    });
+    Resolver.Log.Info($"Touch at location: X:{point.ScreenX}, Y:{point.ScreenY}");
 }
 
 ```

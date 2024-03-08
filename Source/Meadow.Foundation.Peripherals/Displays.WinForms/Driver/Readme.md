@@ -20,14 +20,14 @@ You can install the library from within Visual studio using the the NuGet Packag
 ```csharp
 public class MeadowApp : App<Meadow.Windows>
 {
-WinFormsDisplay? _display;
-MicroGraphics _graphics = default!;
+WinFormsDisplay? display;
+MicroGraphics graphics = default!;
 
 public override Task Initialize()
 {
-    _display = new WinFormsDisplay(240, 320);
+    display = new WinFormsDisplay(320, 240);
 
-    _graphics = new MicroGraphics(_display)
+    graphics = new MicroGraphics(display)
     {
         CurrentFont = new Font12x20(),
         Stroke = 1
@@ -35,16 +35,14 @@ public override Task Initialize()
 
     _ = Task.Run(() =>
     {
-        Thread.Sleep(2000);
+        graphics.Clear();
 
-        _graphics.Clear();
+        graphics.DrawTriangle(10, 30, 50, 50, 10, 50, Color.Red);
+        graphics.DrawRectangle(20, 45, 40, 20, Color.Yellow, false);
+        graphics.DrawCircle(50, 50, 40, Color.Blue, false);
+        graphics.DrawText(5, 5, "Meadow F7", Color.White);
 
-        _graphics.DrawTriangle(10, 30, 50, 50, 10, 50, Color.Red);
-        _graphics.DrawRectangle(20, 45, 40, 20, Color.Yellow, false);
-        _graphics.DrawCircle(50, 50, 40, Color.Blue, false);
-        _graphics.DrawText(5, 5, "Meadow F7", Color.White);
-
-        _graphics.Show();
+        graphics.Show();
     });
 
     return Task.CompletedTask;
@@ -52,7 +50,7 @@ public override Task Initialize()
 
 public override Task Run()
 {
-    Application.Run(_display!);
+    Application.Run(display!);
 
     return Task.CompletedTask;
 }

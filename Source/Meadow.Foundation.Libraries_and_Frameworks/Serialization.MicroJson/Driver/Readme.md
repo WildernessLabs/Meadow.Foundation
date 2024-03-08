@@ -1,8 +1,8 @@
-# Meadow.Foundation.Sensors.Hid.Tsc2004
+# Meadow.Foundation.Serialization.MicroJson
 
-**Tsc2004 I2C capacitive touch screen**
+**Lightweight .NET Json serializer/deserializer**
 
-The **Tsc2004** library is included in the **Meadow.Foundation.Sensors.Hid.Tsc2004** nuget package and is designed for the [Wilderness Labs](www.wildernesslabs.co) Meadow .NET IoT platform.
+The **MicroJson** library is included in the **Meadow.Foundation.Serialization.MicroJson** nuget package and is designed for the [Wilderness Labs](www.wildernesslabs.co) Meadow .NET IoT platform.
 
 This driver is part of the [Meadow.Foundation](https://developer.wildernesslabs.co/Meadow/Meadow.Foundation/) peripherals library, an open-source repository of drivers and libraries that streamline and simplify adding hardware to your C# .NET Meadow IoT applications.
 
@@ -14,49 +14,60 @@ To view all Wilderness Labs open-source projects, including samples, visit [gith
 
 You can install the library from within Visual studio using the the NuGet Package Manager or from the command line using the .NET CLI:
 
-`dotnet add package Meadow.Foundation.Sensors.Hid.Tsc2004`
+`dotnet add package Meadow.Foundation.Serialization.MicroJson`
 ## Usage
 
 ```csharp
-private Tsc2004 touchScreen;
-
-public override Task Initialize()
+public static void Main(string[] args)
 {
-    Resolver.Log.Info("Initialize...");
+    var resourceData = LoadResource("menu.json");
 
-    var i2cBus = Device.CreateI2cBus(I2cBusSpeed.Fast);
+    var menuJson = new string(System.Text.Encoding.UTF8.GetChars(resourceData));
 
-    touchScreen = new Tsc2004(i2cBus)
-    {
-        DisplayWidth = 240,
-        DisplayHeight = 320,
-        XMin = 260,
-        XMax = 3803,
-        YMin = 195,
-        YMax = 3852,
-        Rotation = RotationType._90Degrees
-    };
-
-    return Task.CompletedTask;
+    DeserializeTypeSafe(menuJson);
+    DeserializeAsHashtable(menuJson);
 }
 
-public override Task Run()
+private static void DeserializeTypeSafe(string menuJson)
 {
-    return Task.Run(() =>
+    string testJsonItem = "{\"ScreenX\":290,\"ScreenY\":210,\"RawX\":3341,\"RawY\":3353}";
+    var point = MicroJson.Deserialize<CalibrationPoint>(testJsonItem);
+
+    string testJsonArray = "[{\"ScreenX\":30,\"ScreenY\":30,\"RawX\":522,\"RawY\":514},{\"ScreenX\":290,\"ScreenY\":210,\"RawX\":3341,\"RawY\":3353}]";
+
+    var points = MicroJson.Deserialize<CalibrationPoint[]>(testJsonArray);
+
+    var menu = MicroJson.Deserialize<MenuContainer>(menuJson);
+}
+
+private static void DeserializeAsHashtable(string menuJson)
+{
+    var menuData = MicroJson.DeserializeString(menuJson) as Hashtable;
+
+    if (menuData["menu"] == null)
     {
-        Point3d pt;
+        throw new ArgumentException("JSON root must contain a 'menu' item");
+    }
 
-        while (true)
-        {
-            if (touchScreen.IsTouched())
-            {
-                pt = touchScreen.GetPoint();
-                Resolver.Log.Info($"Location: X:{pt.X}, Y:{pt.Y}, Z:{pt.Z}");
-            }
+    Console.WriteLine($"Root element is {menuData["menu"]}");
 
-            Thread.Sleep(0);
-        }
-    });
+    var items = (ArrayList)menuData["menu"];
+
+    foreach (Hashtable item in items)
+    {
+        Console.WriteLine($"Found {item["text"]}");
+    }
+}
+
+private static byte[] LoadResource(string filename)
+{
+    var assembly = Assembly.GetExecutingAssembly();
+    var resourceName = $"MicroJson_Sample.{filename}";
+
+    using Stream stream = assembly.GetManifestResourceStream(resourceName);
+    using var ms = new MemoryStream();
+    stream.CopyTo(ms);
+    return ms.ToArray();
 }
 
 ```
