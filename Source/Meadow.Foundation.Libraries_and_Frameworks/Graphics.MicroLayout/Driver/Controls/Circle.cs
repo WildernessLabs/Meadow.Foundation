@@ -61,6 +61,15 @@ public class Circle : ThemedControl
     /// <summary>
     /// Gets or sets the foreground color of the Circle.
     /// </summary>
+    public Point Center
+    {
+        get => center;
+        set => SetInvalidatingProperty(ref center, value);
+    }
+
+    /// <summary>
+    /// Gets or sets the foreground color of the Circle.
+    /// </summary>
     public int Radius
     {
         get => radius;
