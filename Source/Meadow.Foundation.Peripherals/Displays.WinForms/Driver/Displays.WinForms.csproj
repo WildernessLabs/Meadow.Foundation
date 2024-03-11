@@ -19,6 +19,7 @@
     <PackageTags>Meadow.Foundation,Display,Windows,WinForms,Forms</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Windows Forms display driver for Meadow</Description>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>    
   </PropertyGroup>
   <ItemGroup>
     <None Include=".\Readme.md" Pack="true" PackagePath="" />
