@@ -1,0 +1,13 @@
+{
+  "name": "2023100330.mpak",
+  "description": "",
+  "metadata": "",
+  "crc": "cae412c8",
+  "fileSize": 3181792,
+  "mpakId": "d867bb8b6e56418ba26ebe4e2b3ef6db",
+  "mpakDownloadUrl": "https://www.meadowcloud.co/api/packages/d867bb8b6e56418ba26ebe4e2b3ef6db/download",
+  "mpakWithOsDownloadUrl": "https://www.meadowcloud.co/api/packages/d867bb8b6e56418ba26ebe4e2b3ef6db/download?withos=true",
+  "osVersion": "1.3.4.0",
+  "targetDevices": [ "*" ],
+  "publishedOn": "2024-03-12T22:32:50.9600131Z"
+}

@@ -4,6 +4,12 @@
 	<TargetFramework>net8.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="update - Copy.json" />
+    <None Remove="update.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="update - Copy.json" />
+    <EmbeddedResource Include="update.json" />
     <EmbeddedResource Include="menu.json" />
   </ItemGroup>
   <ItemGroup>

@@ -1,4 +1,5 @@
 ﻿using Meadow.Foundation.Serialization;
+using Meadow.Update;
 using System;
 using System.Collections;
 using System.IO;
@@ -12,12 +13,12 @@ internal class Program
 
     public static void Main(string[] args)
     {
-        var resourceData = LoadResource("menu.json");
+        var resourceData = LoadResource("update.json");
 
         var menuJson = new string(System.Text.Encoding.UTF8.GetChars(resourceData));
 
-        DeserializeTypeSafe(menuJson);
-        DeserializeAsHashtable(menuJson);
+        MicroJson.Deserialize<UpdateMessage>(menuJson);
+
     }
 
     private static void DeserializeTypeSafe(string menuJson)

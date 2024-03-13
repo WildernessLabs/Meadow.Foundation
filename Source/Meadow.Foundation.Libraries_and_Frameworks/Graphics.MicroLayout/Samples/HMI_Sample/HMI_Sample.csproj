@@ -4,6 +4,7 @@
     <OutputType>Exe</OutputType>
 	  <TargetFramework>net7.0-windows</TargetFramework>
 	  <ImplicitUsings>enable</ImplicitUsings>
+      <UseWindowsForms>true</UseWindowsForms>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 

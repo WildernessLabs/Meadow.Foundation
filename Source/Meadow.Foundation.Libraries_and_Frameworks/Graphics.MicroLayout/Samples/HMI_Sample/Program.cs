@@ -1,6 +1,5 @@
 ﻿using Meadow.Foundation.Graphics;
 using Meadow.Foundation.Graphics.MicroLayout;
-using System.Windows.Forms;
 
 namespace Meadow.Foundation.Displays.UI;
 
@@ -29,7 +28,7 @@ public class MeadowApp : App<Windows>
             //            BackgroundColor = Color.Blue
         };
 
-        var logo = Image.LoadFromFile("logo.bmp");
+        var logo = Meadow.Foundation.Graphics.Image.LoadFromFile("logo.bmp");
         var wlLabel = new Graphics.MicroLayout.Label(0, 10, _screen.Width, 32)
         {
             TextColor = Color.White,

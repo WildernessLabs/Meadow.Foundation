@@ -133,7 +133,17 @@ public static partial class MicroJson
     public static T Deserialize<T>(string json)
     {
         var type = typeof(T);
+        return (T)Deserialize(json, type);
+    }
 
+    /// <summary>
+    /// Deserializes an object of a given type from a JSON string.
+    /// </summary>
+    /// <typeparam name="T">The type of object to deserialize.</typeparam>
+    /// <param name="json">The JSON string to deserialize.</param>
+    /// <returns>An object of the given type</returns>
+    public static object Deserialize(string json, Type type)
+    {
         if (type.IsArray)
         {
             var elementType = type.GetElementType();
@@ -152,7 +162,7 @@ public static partial class MicroJson
                 }
             }
 
-            return (T)(object)targetArray;
+            return targetArray;
         }
         else if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(List<>))
         {
@@ -172,14 +182,14 @@ public static partial class MicroJson
                 }
             }
 
-            return (T)targetList;
+            return targetList;
         }
         else
         {
             object instance = Activator.CreateInstance(type);
-            Deserialize(json, typeof(T), ref instance);
+            Deserialize(json, type, ref instance);
 
-            return (T)instance;
+            return instance;
         }
     }
 
@@ -214,6 +224,7 @@ public static partial class MicroJson
 
             if (prop != null && prop.CanWrite)
             {
+                Console.WriteLine($"{v}=>{prop.Name}");
                 switch (true)
                 {
                     case bool _ when prop.PropertyType.IsEnum:
@@ -256,6 +267,10 @@ public static partial class MicroJson
                     case bool _ when prop.PropertyType == typeof(string):
                         prop.SetValue(instance, values[v].ToString());
                         break;
+                    case bool _ when prop.PropertyType == typeof(DateTime):
+                        var dt = DateTime.Parse(values[v].ToString());
+                        prop.SetValue(instance, dt);
+                        break;
                     default:
                         if (prop.PropertyType.IsArray)
                         {
@@ -286,6 +301,10 @@ public static partial class MicroJson
                         }
                         break;
                 }
+            }
+            else
+            {
+                Console.WriteLine($"skip {v}");
             }
         }
     }
