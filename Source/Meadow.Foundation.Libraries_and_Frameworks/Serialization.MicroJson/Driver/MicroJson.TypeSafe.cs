@@ -219,113 +219,96 @@ public static partial class MicroJson
 
             if (prop != null && prop.CanWrite)
             {
-                switch (true)
+                Type propType = prop.PropertyType;
+
+                if (propType.IsEnum)
                 {
-                    case bool _ when prop.PropertyType.IsEnum:
-                        var enumValue = Enum.Parse(prop.PropertyType, values[v].ToString());
-                        prop.SetValue(instance, enumValue);
-                        break;
-                    case bool _ when prop.PropertyType == typeof(ulong):
-                        prop.SetValue(instance, Convert.ToUInt64(values[v]));
-                        break;
-                    case bool _ when prop.PropertyType == typeof(long):
-                        prop.SetValue(instance, Convert.ToInt64(values[v]));
-                        break;
-                    case bool _ when prop.PropertyType == typeof(uint):
-                        prop.SetValue(instance, Convert.ToUInt32(values[v]));
-                        break;
-                    case bool _ when prop.PropertyType == typeof(int):
-                        prop.SetValue(instance, Convert.ToInt32(values[v]));
-                        break;
-                    case bool _ when prop.PropertyType == typeof(ushort):
-                        prop.SetValue(instance, Convert.ToUInt16(values[v]));
-                        break;
-                    case bool _ when prop.PropertyType == typeof(short):
-                        prop.SetValue(instance, Convert.ToInt16(values[v]));
-                        break;
-                    case bool _ when prop.PropertyType == typeof(byte):
-                        prop.SetValue(instance, Convert.ToByte(values[v]));
-                        break;
-                    case bool _ when prop.PropertyType == typeof(sbyte):
-                        prop.SetValue(instance, Convert.ToSByte(values[v]));
-                        break;
-                    case bool _ when prop.PropertyType == typeof(decimal):
-                        prop.SetValue(instance, Convert.ToDecimal(values[v]));
-                        break;
-                    case bool _ when prop.PropertyType == typeof(double):
-                        prop.SetValue(instance, Convert.ToDouble(values[v]));
-                        break;
-                    case bool _ when prop.PropertyType == typeof(float):
-                        prop.SetValue(instance, Convert.ToSingle(values[v]));
-                        break;
-                    case bool _ when prop.PropertyType == typeof(bool):
-                        prop.SetValue(instance, Convert.ToBoolean(values[v]));
-                        break;
-                    case bool _ when prop.PropertyType == typeof(string):
-                        prop.SetValue(instance, values[v].ToString());
-                        break;
-                    default:
-                        if (prop.PropertyType.IsArray)
-                        {
-                            var al = values[v] as ArrayList;
-                            var elementType = prop.PropertyType.GetElementType();
-                            var targetArray = Array.CreateInstance(elementType, al!.Count);
-                            DeserializeArray(al, elementType, ref targetArray);
-                            prop.SetValue(instance, targetArray);
-                        }
-                        else if (prop.PropertyType.IsGenericType && prop.PropertyType.GetGenericTypeDefinition() == typeof(List<>))
-                        {
-                            var listType = prop.PropertyType.GetGenericArguments()[0];
-                            var list = Activator.CreateInstance(prop.PropertyType);
-                            var addMethod = prop.PropertyType.GetMethod("Add");
+                    prop.SetValue(instance, Enum.Parse(propType, values[v].ToString()));
+                }
+                else if (propType.IsArray)
+                {
+                    var al = values[v] as ArrayList;
+                    var elementType = propType.GetElementType();
+                    var targetArray = Array.CreateInstance(elementType, al!.Count);
+                    for (int i = 0; i < al.Count; i++)
+                    {
+                        object arrayItem = Activator.CreateInstance(elementType);
+                        Deserialize(al[i] as Hashtable, elementType, ref arrayItem);
+                        targetArray.SetValue(arrayItem, i);
+                    }
+                    prop.SetValue(instance, targetArray);
+                }
+                else if (propType.IsGenericType && propType.GetGenericTypeDefinition() == typeof(List<>))
+                {
+                    var listType = propType.GetGenericArguments()[0];
+                    var list = Activator.CreateInstance(propType);
+                    var addMethod = propType.GetMethod("Add");
 
-                            foreach (var item in (ArrayList)values[v])
-                            {
-                                var listItem = Activator.CreateInstance(listType);
-                                Deserialize(item as Hashtable, listType, ref listItem);
-                                addMethod.Invoke(list, new[] { listItem });
-                            }
+                    foreach (var item in (ArrayList)values[v])
+                    {
+                        object listItem = Activator.CreateInstance(listType);
+                        Deserialize(item as Hashtable, listType, ref listItem);
+                        addMethod.Invoke(list, new[] { listItem });
+                    }
 
-                            prop.SetValue(instance, list);
-                        }
-                        else if (IsComplexType(prop.PropertyType))
-                        {
-                            if (values[v] is Hashtable hashtableValue)
-                            {
-                                var complexInstance = Activator.CreateInstance(prop.PropertyType);
-                                Deserialize(hashtableValue, prop.PropertyType, ref complexInstance);
-                                prop.SetValue(instance, complexInstance);
-                            }
-                        }
-                        else
-                        {
-                            throw new NotSupportedException($"Type '{prop.PropertyType}' not supported");
-                        }
-                        break;
+                    prop.SetValue(instance, list);
+                }
+                else if (propType.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IDictionary<,>)))
+                {
+                    var dictionaryType = propType.GetGenericTypeDefinition();
+                    var keyType = propType.GetGenericArguments()[0];
+                    var valueType = propType.GetGenericArguments()[1];
+
+                    var dictionary = (IDictionary)Activator.CreateInstance(propType);
+
+                    foreach (DictionaryEntry entry in (Hashtable)values[v])
+                    {
+                        object key = Convert.ChangeType(entry.Key, keyType);
+                        object value = Activator.CreateInstance(valueType);
+                        Deserialize((Hashtable)entry.Value, valueType, ref value);
+                        dictionary.Add(key, value);
+                    }
+
+                    prop.SetValue(instance, dictionary);
+                }
+                else if (IsComplexType(propType))
+                {
+                    if (values[v] is Hashtable hashtableValue)
+                    {
+                        object complexInstance = Activator.CreateInstance(propType);
+                        Deserialize(hashtableValue, propType, ref complexInstance);
+                        prop.SetValue(instance, complexInstance);
+                    }
+                }
+                else
+                {
+                    if (values[v] != null && values[v] != DBNull.Value)
+                    {
+                        prop.SetValue(instance, Convert.ChangeType(values[v], propType));
+                    }
                 }
             }
         }
     }
 
-
     private static bool IsComplexType(Type type)
     {
-        if (type.IsPrimitive || type == typeof(string) || type == typeof(decimal) || type == typeof(DateTime) || type == typeof(Guid))
+        if (type.IsPrimitive ||
+            type.IsEnum ||
+            type == typeof(string) ||
+            type == typeof(decimal) ||
+            type == typeof(DateTime) ||
+            type == typeof(Guid)
+            )
         {
             return false;
         }
 
-        if (Nullable.GetUnderlyingType(type) != null)
+        if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
         {
             return IsComplexType(Nullable.GetUnderlyingType(type));
         }
 
-        if (type.IsEnum)
-        {
-            return false;
-        }
-
-        // If none of the above, it's a complex type
         return true;
     }
 }
