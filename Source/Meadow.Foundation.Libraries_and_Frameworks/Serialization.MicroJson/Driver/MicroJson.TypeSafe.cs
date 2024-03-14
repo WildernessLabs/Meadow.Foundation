@@ -26,7 +26,7 @@ public static partial class MicroJson
     /// </summary>
     /// <typeparam name="T">The type of objects in the list.</typeparam>
     /// <param name="array">The JSON array to deserialize.</param>
-    /// <param name="type">The type of objects in the list as a <see cref="System.Type"/>.</param>
+    /// <param name="type">The type of objects in the list as a <see cref="Type"/>.</param>
     /// <param name="instance"></param>
     /// <returns>A list of objects of type T.</returns>
     private static void DeserializeList<T>(ArrayList array, Type type, ref List<T> instance)
@@ -281,7 +281,7 @@ public static partial class MicroJson
 
                             foreach (var item in (ArrayList)values[v])
                             {
-                                object listItem = Activator.CreateInstance(listType);
+                                var listItem = Activator.CreateInstance(listType);
                                 Deserialize(item as Hashtable, listType, ref listItem);
                                 addMethod.Invoke(list, new[] { listItem });
                             }
@@ -290,10 +290,9 @@ public static partial class MicroJson
                         }
                         else if (IsComplexType(prop.PropertyType))
                         {
-                            var hashtableValue = values[v] as Hashtable;
-                            if (hashtableValue != null)
+                            if (values[v] is Hashtable hashtableValue)
                             {
-                                object complexInstance = Activator.CreateInstance(prop.PropertyType);
+                                var complexInstance = Activator.CreateInstance(prop.PropertyType);
                                 Deserialize(hashtableValue, prop.PropertyType, ref complexInstance);
                                 prop.SetValue(instance, complexInstance);
                             }
