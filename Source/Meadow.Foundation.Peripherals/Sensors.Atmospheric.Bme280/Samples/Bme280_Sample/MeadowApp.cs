@@ -26,13 +26,14 @@ namespace Sensors.Atmospheric.BME280_Sample
                 },
                 filter: result =>
                 {
-                    if (result.Old is { } old)
+                    if (result.Old?.Temperature is { } oldTemp &&
+                        result.Old?.Humidity is { } oldHumidity &&
+                        result.New.Temperature is { } newTemp &&
+                        result.New.Humidity is { } newHumidity)
                     {
-                        return (
-                        (result.New.Temperature.Value - old.Temperature.Value).Abs().Celsius > 0.5
-                        &&
-                        (result.New.Humidity.Value - old.Humidity.Value).Percent > 0.05
-                        );
+                        return
+                        (newTemp - oldTemp).Abs().Celsius > 0.5 &&
+                        (newHumidity - oldHumidity).Percent > 0.05;
                     }
                     return false;
                 }
@@ -41,9 +42,16 @@ namespace Sensors.Atmospheric.BME280_Sample
 
             sensor.Updated += (sender, result) =>
             {
-                Resolver.Log.Info($"  Temperature: {result.New.Temperature?.Celsius:N2}C");
-                Resolver.Log.Info($"  Relative Humidity: {result.New.Humidity:N2}%");
-                Resolver.Log.Info($"  Pressure: {result.New.Pressure?.Millibar:N2}mbar ({result.New.Pressure?.Pascal:N2}Pa)");
+                try
+                {
+                    Resolver.Log.Info($"  Temperature: {result.New.Temperature?.Celsius:N2}C");
+                    Resolver.Log.Info($"  Relative Humidity: {result.New.Humidity:N2}%");
+                    Resolver.Log.Info($"  Pressure: {result.New.Pressure?.Millibar:N2}mbar ({result.New.Pressure?.Pascal:N2}Pa)");
+                }
+                catch (Exception ex)
+                {
+                    Resolver.Log.Error(ex, "Error reading sensor");
+                }
             };
 
             return Task.CompletedTask;
