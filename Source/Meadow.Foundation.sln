@@ -1479,6 +1479,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MicroJson_Sample", "Meadow.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MicroJson_ArrayList_Sample", "Meadow.Foundation.Libraries_and_Frameworks\Serialization.MicroJson\Samples\MicroJson_ArrayList_Sample\MicroJson_ArrayList_Sample.csproj", "{9F5DD1C6-4A3E-4170-BE18-3FAC3A1E0D48}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MicroJson_Complex_Sample", "Meadow.Foundation.Libraries_and_Frameworks\Serialization.MicroJson\Samples\MicroJson_Complex_Sample\MicroJson_Complex_Sample.csproj", "{6FD1D41A-1A80-4E04-B7FF-5EDCE6A526AC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -3567,6 +3569,10 @@ Global
 		{9F5DD1C6-4A3E-4170-BE18-3FAC3A1E0D48}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9F5DD1C6-4A3E-4170-BE18-3FAC3A1E0D48}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9F5DD1C6-4A3E-4170-BE18-3FAC3A1E0D48}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6FD1D41A-1A80-4E04-B7FF-5EDCE6A526AC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6FD1D41A-1A80-4E04-B7FF-5EDCE6A526AC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6FD1D41A-1A80-4E04-B7FF-5EDCE6A526AC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6FD1D41A-1A80-4E04-B7FF-5EDCE6A526AC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -4305,6 +4311,7 @@ Global
 		{CA32D6C5-DD19-4787-8EE1-B92415FEF903} = {B9C2605C-AC98-4BF1-8E3F-8F0F23A694C9}
 		{5F905795-94F9-43F3-A3F8-AD667C55A730} = {CA32D6C5-DD19-4787-8EE1-B92415FEF903}
 		{9F5DD1C6-4A3E-4170-BE18-3FAC3A1E0D48} = {CA32D6C5-DD19-4787-8EE1-B92415FEF903}
+		{6FD1D41A-1A80-4E04-B7FF-5EDCE6A526AC} = {CA32D6C5-DD19-4787-8EE1-B92415FEF903}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}
