@@ -26,7 +26,7 @@ public static partial class MicroJson
     /// </summary>
     /// <typeparam name="T">The type of objects in the list.</typeparam>
     /// <param name="array">The JSON array to deserialize.</param>
-    /// <param name="type">The type of objects in the list as a <see cref="System.Type"/>.</param>
+    /// <param name="type">The type of objects in the list as a <see cref="Type"/>.</param>
     /// <param name="instance"></param>
     /// <returns>A list of objects of type T.</returns>
     private static void DeserializeList<T>(ArrayList array, Type type, ref List<T> instance)
@@ -117,6 +117,11 @@ public static partial class MicroJson
             object? instance = Activator.CreateInstance<T>();
             Deserialize(hashtable, typeof(T), ref instance!);
             return (T)instance;
+        }
+        else if (data is byte[] byteArray)
+        {
+            var jsonString = new string(System.Text.Encoding.UTF8.GetChars(byteArray));
+            return Deserialize<T>(jsonString);
         }
         else
         {
@@ -210,7 +215,7 @@ public static partial class MicroJson
 
         foreach (string v in values.Keys)
         {
-            var prop = props.FirstOrDefault(p => string.Compare(p.Name, v, true) == 0);
+            var prop = props.FirstOrDefault(p => string.Compare(p.Name, v, StringComparison.OrdinalIgnoreCase) == 0);
 
             if (prop != null && prop.CanWrite)
             {
@@ -242,7 +247,10 @@ public static partial class MicroJson
                         prop.SetValue(instance, Convert.ToByte(values[v]));
                         break;
                     case bool _ when prop.PropertyType == typeof(sbyte):
-                        prop.SetValue(instance, Convert.ToBoolean(values[v]));
+                        prop.SetValue(instance, Convert.ToSByte(values[v]));
+                        break;
+                    case bool _ when prop.PropertyType == typeof(decimal):
+                        prop.SetValue(instance, Convert.ToDecimal(values[v]));
                         break;
                     case bool _ when prop.PropertyType == typeof(double):
                         prop.SetValue(instance, Convert.ToDouble(values[v]));
@@ -280,6 +288,15 @@ public static partial class MicroJson
 
                             prop.SetValue(instance, list);
                         }
+                        else if (IsComplexType(prop.PropertyType))
+                        {
+                            if (values[v] is Hashtable hashtableValue)
+                            {
+                                var complexInstance = Activator.CreateInstance(prop.PropertyType);
+                                Deserialize(hashtableValue, prop.PropertyType, ref complexInstance);
+                                prop.SetValue(instance, complexInstance);
+                            }
+                        }
                         else
                         {
                             throw new NotSupportedException($"Type '{prop.PropertyType}' not supported");
@@ -288,5 +305,27 @@ public static partial class MicroJson
                 }
             }
         }
+    }
+
+
+    private static bool IsComplexType(Type type)
+    {
+        if (type.IsPrimitive || type == typeof(string) || type == typeof(decimal) || type == typeof(DateTime) || type == typeof(Guid))
+        {
+            return false;
+        }
+
+        if (Nullable.GetUnderlyingType(type) != null)
+        {
+            return IsComplexType(Nullable.GetUnderlyingType(type));
+        }
+
+        if (type.IsEnum)
+        {
+            return false;
+        }
+
+        // If none of the above, it's a complex type
+        return true;
     }
 }

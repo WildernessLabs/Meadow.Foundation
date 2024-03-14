@@ -22,6 +22,5 @@
 	<ItemGroup>
 		<None Include=".\Readme.md" Pack="true" PackagePath="" />
 		<None Include="..\..\..\icon.png" Pack="true" PackagePath="" />
-		<ProjectReference Include="..\..\Graphics.MicroGraphics\Driver\Graphics.MicroGraphics.csproj" />
 	</ItemGroup>
 </Project>
