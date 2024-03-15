@@ -35,6 +35,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <param name="pinA2">State of A2 address pin - true if high</param>
         /// <returns>The device address</returns>
         public static byte GetAddressForPins(bool pinA0, bool pinA1, bool pinA2)
-            => GetAddressFromPins(pinA0, pinA1, pinA2, false);
+            => GetAddressFromPins(pinA0, pinA1, pinA2, true);
     }
 }
