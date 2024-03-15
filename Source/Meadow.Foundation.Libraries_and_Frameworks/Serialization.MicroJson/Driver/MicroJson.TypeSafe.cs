@@ -2,8 +2,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace Meadow.Foundation.Serialization;
+
+[AttributeUsage(AttributeTargets.Property, Inherited = true)]
+public class JsonIgnoreAttribute : Attribute
+{
+}
 
 public static partial class MicroJson
 {
@@ -73,60 +79,14 @@ public static partial class MicroJson
     }
 
     /// <summary>
-    /// Deserializes a JSON array into an array of objects of the specified type.
-    /// </summary>
-    /// <param name="array">The JSON array to deserialize.</param>
-    /// <param name="type">The type of objects in the array as a <see cref="System.Type"/>.</param>
-    /// <param name="instance">The array instance to populate.</param>
-    private static void DeserializeArray(ArrayList array, Type type, ref Array instance)
-    {
-        var index = 0;
-
-        foreach (Hashtable item in array)
-        {
-            if (type == typeof(string))
-            {
-                var e = item.GetEnumerator();
-                e.MoveNext();
-                instance.SetValue(((DictionaryEntry)e.Current).Value, index);
-                index++;
-            }
-            else
-            {
-                var arrayItem = Activator.CreateInstance(type);
-                Deserialize(item, type, ref arrayItem);
-                instance.SetValue(arrayItem, index++);
-            }
-        }
-    }
-
-    /// <summary>
-    /// Deserializes an object of type T from a JSON string or Hashtable.
+    /// Deserializes an object of type T from a JSON string.
     /// </summary>
     /// <typeparam name="T">The type of object to deserialize.</typeparam>
-    /// <param name="data">The JSON string or Hashtable to deserialize.</param>
+    /// <param name="encodedData">A UTF8-encoded JSON string to deserialize.</param>
     /// <returns>An object of type T.</returns>
-    public static T Deserialize<T>(object data)
+    public static T Deserialize<T>(byte[] encodedData)
     {
-        if (data is string json)
-        {
-            return Deserialize<T>(json);
-        }
-        else if (data is Hashtable hashtable)
-        {
-            object? instance = Activator.CreateInstance<T>();
-            Deserialize(hashtable, typeof(T), ref instance!);
-            return (T)instance;
-        }
-        else if (data is byte[] byteArray)
-        {
-            var jsonString = new string(System.Text.Encoding.UTF8.GetChars(byteArray));
-            return Deserialize<T>(jsonString);
-        }
-        else
-        {
-            throw new ArgumentException("Unsupported data type for deserialization.");
-        }
+        return Deserialize<T>(Encoding.UTF8.GetString(encodedData));
     }
 
     /// <summary>
@@ -139,6 +99,17 @@ public static partial class MicroJson
     {
         var type = typeof(T);
 
+        return (T)Deserialize(json, type);
+    }
+
+    /// <summary>
+    /// Deserializes an object of type T from a JSON string.
+    /// </summary>
+    /// <param name="type">The type of object to deserialize.</param>
+    /// <param name="json">The JSON string to deserialize.</param>
+    /// <returns>An object of the specified type</returns>
+    public static object Deserialize(string json, Type type)
+    {
         if (type.IsArray)
         {
             var elementType = type.GetElementType();
@@ -157,7 +128,7 @@ public static partial class MicroJson
                 }
             }
 
-            return (T)(object)targetArray;
+            return targetArray;
         }
         else if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(List<>))
         {
@@ -177,14 +148,14 @@ public static partial class MicroJson
                 }
             }
 
-            return (T)targetList;
+            return targetList;
         }
         else
         {
             object instance = Activator.CreateInstance(type);
-            Deserialize(json, typeof(T), ref instance);
+            Deserialize(json, type, ref instance);
 
-            return (T)instance;
+            return instance;
         }
     }
 
@@ -211,7 +182,10 @@ public static partial class MicroJson
     {
         var values = root ?? throw new ArgumentException();
 
-        var props = type.GetProperties(System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic).ToList();
+        var props = type.GetProperties(
+            System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic)
+            .Where(p => p.GetCustomAttributes(typeof(JsonIgnoreAttribute), true).Length == 0)
+            .ToList();
 
         foreach (string v in values.Keys)
         {
