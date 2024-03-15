@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 
@@ -113,7 +114,10 @@ public static partial class MicroJson
             var hashtable = new Hashtable();
 
             // Use PropertyInfo instead of MethodInfo for better performance
-            PropertyInfo[] properties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance);
+            var properties = type
+                .GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                .Where(p => p.GetCustomAttributes(typeof(JsonIgnoreAttribute), true).Length == 0);
+
             foreach (PropertyInfo property in properties)
             {
                 object returnObject = property.GetValue(o);
