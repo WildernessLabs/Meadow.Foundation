@@ -4,9 +4,7 @@ using Meadow.Peripherals.Sensors.Atmospheric;
 using Meadow.Units;
 using System;
 using System.Threading.Tasks;
-using HU = Meadow.Units.RelativeHumidity.UnitType;
-using PU = Meadow.Units.Pressure.UnitType;
-using TU = Meadow.Units.Temperature.UnitType;
+using static Meadow.Foundation.Sensors.Atmospheric.Bmx280;
 
 namespace Meadow.Foundation.Sensors.Atmospheric;
 
@@ -91,7 +89,7 @@ public partial class Bme280 :
     /// <summary>
     /// Sensor configuration
     /// </summary>
-    protected Configuration configuration;
+    private readonly Configuration configuration;
 
     /// <summary>
     /// The temperature from the last reading
@@ -99,20 +97,19 @@ public partial class Bme280 :
     public Units.Temperature? Temperature => Conditions.Temperature;
 
     /// <summary>
-    /// The pressure, in hectopascals (hPa), from the last reading. 1 hPa
-    /// is equal to one millibar, or 1/10th of a kilopascal (kPa)/centibar.
+    /// The pressure from the last reading
     /// </summary>
     public Pressure? Pressure => Conditions.Pressure;
 
     /// <summary>
-    /// The humidity, in percent relative humidity, from the last reading..
+    /// The realtive humidity from the last reading
     /// </summary>
     public RelativeHumidity? Humidity => Conditions.Humidity;
 
     /// <summary>
     /// The default SPI bus speed for the device
     /// </summary>
-    public Frequency DefaultSpiBusSpeed => new Frequency(10000, Frequency.UnitType.Kilohertz);
+    public Frequency DefaultSpiBusSpeed => new(10000, Frequency.UnitType.Kilohertz);
 
     /// <summary>
     /// The SPI bus speed for the device
@@ -142,7 +139,7 @@ public partial class Bme280 :
     /// </summary>
     public byte DefaultI2cAddress => (byte)Addresses.Default;
 
-    private IDigitalOutputPort? chipSelectPort;
+    private readonly IDigitalOutputPort? chipSelectPort;
 
     /// <summary>
     /// Initializes a new instance of the BME280 class
@@ -184,7 +181,7 @@ public partial class Bme280 :
     /// </summary>
     protected void Initialize()
     {
-        ReadCompensationData();
+        Bmx280.ReadCompensationData(bme280Comms, readBuffer, compensationData);
 
         configuration.Mode = Modes.Sleep;
         configuration.Filter = FilterCoefficient.Off;
@@ -227,7 +224,7 @@ public partial class Bme280 :
     /// </remarks>
     protected override async Task<(Units.Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure)> ReadSensor()
     {
-        //TODO: set an update flag on the oversample properties and set
+        // TODO: set an update flag on the oversample properties and set
         // these once, unless the update flag has been set.
         configuration.TemperatureOverSampling = TemperatureSampleCount;
         configuration.PressureOversampling = PressureSampleCount;
@@ -242,62 +239,15 @@ public partial class Bme280 :
             await Task.Delay(100); //give the BME280 time to read new values
         }
 
-        (Units.Temperature Temperature, RelativeHumidity Humidity, Pressure Pressure) conditions;
-
-        bme280Comms.ReadRegister(0xf7, readBuffer.Span[0..8]);
-
-        var adcTemperature = (readBuffer.Span[3] << 12) | (readBuffer.Span[4] << 4) | ((readBuffer.Span[5] >> 4) & 0x0f);
-        var tvar1 = (((adcTemperature >> 3) - (compensationData.T1 << 1)) * compensationData.T2) >> 11;
-        var tvar2 = (((((adcTemperature >> 4) - compensationData.T1) *
-                       ((adcTemperature >> 4) - compensationData.T1)) >> 12) * compensationData.T3) >> 14;
-        var tfine = tvar1 + tvar2;
-
-        conditions.Temperature = new Units.Temperature((float)(((tfine * 5) + 128) >> 8) / 100, TU.Celsius);
-
-        long pvar1 = tfine - 128000;
-        var pvar2 = pvar1 * pvar1 * compensationData.P6;
-        pvar2 += (pvar1 * compensationData.P5) << 17;
-        pvar2 += (long)compensationData.P4 << 35;
-        pvar1 = ((pvar1 * pvar1 * compensationData.P8) >> 8) + ((pvar1 * compensationData.P2) << 12);
-        pvar1 = ((((long)1 << 47) + pvar1) * compensationData.P1) >> 33;
-        if (pvar1 == 0)
-        {
-            conditions.Pressure = new Pressure(0, PU.Pascal);
-        }
-        else
-        {
-            var adcPressure = (readBuffer.Span[0] << 12) | (readBuffer.Span[1] << 4) | ((readBuffer.Span[2] >> 4) & 0x0f);
-            long pressure = 1048576 - adcPressure;
-            pressure = (((pressure << 31) - pvar2) * 3125) / pvar1;
-            pvar1 = (compensationData.P9 * (pressure >> 13) * (pressure >> 13)) >> 25;
-            pvar2 = (compensationData.P8 * pressure) >> 19;
-            pressure = ((pressure + pvar1 + pvar2) >> 8) + ((long)compensationData.P7 << 4);
-            conditions.Pressure = new Pressure((double)pressure / 256, PU.Pascal);
-        }
-
-        var adcHumidity = (readBuffer.Span[6] << 8) | readBuffer.Span[7];
-        var v_x1_u32r = tfine - 76800;
-
-        v_x1_u32r = ((((adcHumidity << 14) - (compensationData.H4 << 20) - (compensationData.H5 * v_x1_u32r)) +
-                      16384) >> 15) *
-                    ((((((((v_x1_u32r * compensationData.H6) >> 10) *
-                          (((v_x1_u32r * compensationData.H3) >> 11) + 32768)) >> 10) + 2097152) *
-                       compensationData.H2) + 8192) >> 14);
-        v_x1_u32r = v_x1_u32r - (((((v_x1_u32r >> 15) * (v_x1_u32r >> 15)) >> 7) * compensationData.H1) >> 4);
-
-        v_x1_u32r = v_x1_u32r < 0 ? 0 : v_x1_u32r;
-        v_x1_u32r = v_x1_u32r > 419430400 ? 419430400 : v_x1_u32r;
-
-        conditions.Humidity = new RelativeHumidity((v_x1_u32r >> 12) / 1024, HU.Percent);
-
-        return conditions;
+        return await Bmx280.ReadSensor(bme280Comms, readBuffer, compensationData);
     }
+
     /// <summary>
     /// Update the configuration for the BME280.
     /// </summary>
     /// <remarks>
     /// This method uses the data in the configuration properties in order to set up the
-    /// BME280.  Ensure that the following are set correctly before calling this method:
+    /// BME280. Ensure that the following are set correctly before calling this method:
     /// - Standby
     /// - Filter
     /// - HumidityOverSampling
@@ -305,11 +255,9 @@ public partial class Bme280 :
     /// - PressureOverSampling
     /// - Mode
     /// </remarks>
-    protected void UpdateConfiguration(Configuration configuration)
+    private void UpdateConfiguration(Configuration configuration)
     {
-        //
         //  Put to sleep to allow the configuration to be changed.
-        //
         bme280Comms.WriteRegister((byte)Register.Measurement, 0x00);
 
         var data = (byte)((((byte)configuration.Standby << 5) & 0xe0) | (((byte)configuration.Filter << 2) & 0x1c));
@@ -335,56 +283,9 @@ public partial class Bme280 :
     }
 
     /// <summary>
-    /// Reads the compensation data.
-    /// </summary>
-    /// <remarks>
-    /// The compensation data is written to the chip at the time of manufacture and cannot be changed.
-    /// This information is used to convert the readings from the sensor into actual temperature,
-    /// pressure and humidity readings.
-    /// From the data sheet, the register addresses and length are:
-    /// Temperature and pressure: start address 0x88, end address 0x9F (length = 24)
-    /// Humidity 1: 0xa1, length = 1
-    /// Humidity 2 and 3: start address 0xe1, end address 0xe7, (length = 8)
-    /// </remarks>
-    protected void ReadCompensationData()
-    {
-        // read the temperature and pressure data into the internal read buffer
-        bme280Comms.ReadRegister(0x88, readBuffer.Span[0..24]);
-
-        // Temperature
-        compensationData.T1 = (ushort)(readBuffer.Span[0] + (readBuffer.Span[1] << 8));
-        compensationData.T2 = (short)(readBuffer.Span[2] + (readBuffer.Span[3] << 8));
-        compensationData.T3 = (short)(readBuffer.Span[4] + (readBuffer.Span[5] << 8));
-        // Pressure
-        compensationData.P1 = (ushort)(readBuffer.Span[6] + (readBuffer.Span[7] << 8));
-        compensationData.P2 = (short)(readBuffer.Span[8] + (readBuffer.Span[9] << 8));
-        compensationData.P3 = (short)(readBuffer.Span[10] + (readBuffer.Span[11] << 8));
-        compensationData.P4 = (short)(readBuffer.Span[12] + (readBuffer.Span[13] << 8));
-        compensationData.P5 = (short)(readBuffer.Span[14] + (readBuffer.Span[15] << 8));
-        compensationData.P6 = (short)(readBuffer.Span[16] + (readBuffer.Span[17] << 8));
-        compensationData.P7 = (short)(readBuffer.Span[18] + (readBuffer.Span[19] << 8));
-        compensationData.P8 = (short)(readBuffer.Span[20] + (readBuffer.Span[21] << 8));
-        compensationData.P9 = (short)(readBuffer.Span[22] + (readBuffer.Span[23] << 8));
-
-        // read the humidity data. have to read twice because they're in different,
-        // non-sequential registers
-
-        // first one
-        bme280Comms.ReadRegister(0xa1, readBuffer.Span[0..1]);
-        compensationData.H1 = readBuffer.Span[0];
-        // 2-6
-        bme280Comms.ReadRegister(0xe1, readBuffer.Span[0..7]);
-        compensationData.H2 = (short)(readBuffer.Span[0] + (readBuffer.Span[1] << 8));
-        compensationData.H3 = readBuffer.Span[2];
-        compensationData.H4 = (short)((readBuffer.Span[3] << 4) + (readBuffer.Span[4] & 0xf));
-        compensationData.H5 = (short)(((readBuffer.Span[4] & 0xf) >> 4) + (readBuffer.Span[5] << 4));
-        compensationData.H6 = (sbyte)readBuffer.Span[6];
-    }
-
-    /// <summary>
     /// Get the chip ID
     /// </summary>
-    /// <returns></returns>
+    /// <returns>The ID as a byte</returns>
     public byte GetChipID()
     {
         bme280Comms.ReadRegister((byte)Register.ChipID, readBuffer.Span[0..1]);

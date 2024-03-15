@@ -4,13 +4,13 @@ using Meadow.Foundation.Sensors.Atmospheric;
 using System;
 using System.Threading.Tasks;
 
-namespace Sensors.Atmospheric.BME280_Sample
+namespace Sensors.Atmospheric.BMP280_Sample
 {
     public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
 
-        Bme280 sensor;
+        Bmp280 sensor;
 
         public override Task Initialize()
         {
@@ -19,7 +19,7 @@ namespace Sensors.Atmospheric.BME280_Sample
             //CreateSpiSensor();
             CreateI2CSensor();
 
-            var consumer = Bme280.CreateObserver(
+            var consumer = Bmp280.CreateObserver(
                 handler: result =>
                 {
                     Resolver.Log.Info($"Observer: Temp changed by threshold; new temp: {result.New.Temperature?.Celsius:N2}C, old: {result.Old?.Temperature?.Celsius:N2}C");
@@ -27,13 +27,9 @@ namespace Sensors.Atmospheric.BME280_Sample
                 filter: result =>
                 {
                     if (result.Old?.Temperature is { } oldTemp &&
-                        result.Old?.Humidity is { } oldHumidity &&
-                        result.New.Temperature is { } newTemp &&
-                        result.New.Humidity is { } newHumidity)
+                        result.New.Temperature is { } newTemp)
                     {
-                        return
-                        (newTemp - oldTemp).Abs().Celsius > 0.5 &&
-                        (newHumidity - oldHumidity).Percent > 0.05;
+                        return (newTemp - oldTemp).Abs().Celsius > 0.5;
                     }
                     return false;
                 }
@@ -45,7 +41,6 @@ namespace Sensors.Atmospheric.BME280_Sample
                 try
                 {
                     Resolver.Log.Info($"  Temperature: {result.New.Temperature?.Celsius:N2}C");
-                    Resolver.Log.Info($"  Relative Humidity: {result.New.Humidity:N2}%");
                     Resolver.Log.Info($"  Pressure: {result.New.Pressure?.Millibar:N2}mbar ({result.New.Pressure?.Pascal:N2}Pa)");
                 }
                 catch (Exception ex)
@@ -63,7 +58,6 @@ namespace Sensors.Atmospheric.BME280_Sample
             Resolver.Log.Info("Initial Readings:");
             Resolver.Log.Info($"  Temperature: {conditions.Temperature?.Celsius:N2}C");
             Resolver.Log.Info($"  Pressure: {conditions.Pressure?.Bar:N2}hPa");
-            Resolver.Log.Info($"  Relative Humidity: {conditions.Humidity?.Percent:N2}%");
 
             sensor.StartUpdating(TimeSpan.FromSeconds(1));
         }
@@ -73,7 +67,7 @@ namespace Sensors.Atmospheric.BME280_Sample
             Resolver.Log.Info("Create BME280 sensor with SPI...");
 
             var spi = Device.CreateSpiBus();
-            sensor = new Bme280(spi, Device.Pins.D00.CreateDigitalOutputPort());
+            sensor = new Bmp280(spi, Device.Pins.D00.CreateDigitalOutputPort());
         }
 
         void CreateI2CSensor()
@@ -81,7 +75,7 @@ namespace Sensors.Atmospheric.BME280_Sample
             Resolver.Log.Info("Create BME280 sensor with I2C...");
 
             var i2c = Device.CreateI2cBus();
-            sensor = new Bme280(i2c, (byte)Bme280.Addresses.Default); // SDA pulled up
+            sensor = new Bmp280(i2c, (byte)Bmx280.Addresses.Default); // SDA pulled up
 
         }
 
