@@ -34,4 +34,24 @@ public class BasicTests
 
         Assert.Equal(3, result.Length);
     }
+
+    [Fact]
+    public void SerializeToCamelCaseTest()
+    {
+        var item = new IntegerClass { Value = 23 };
+        var json = MicroJson.Serialize(item);
+
+        Assert.Contains("value", json);
+        Assert.DoesNotContain("Value", json);
+    }
+
+    [Fact]
+    public void SerializeToNonCamelCaseTest()
+    {
+        var item = new IntegerClass { Value = 23 };
+        var json = MicroJson.Serialize(item, convertNamesToCamelCase: false);
+
+        Assert.Contains("Value", json);
+        Assert.DoesNotContain("value", json);
+    }
 }
