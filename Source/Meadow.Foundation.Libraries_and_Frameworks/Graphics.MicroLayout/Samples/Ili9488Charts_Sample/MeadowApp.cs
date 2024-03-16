@@ -1,18 +1,17 @@
 ﻿using Meadow;
-using Meadow.Foundation;
 using Meadow.Foundation.Displays;
 using Meadow.Foundation.Graphics;
 using Meadow.Foundation.Graphics.MicroLayout;
 using Meadow.Foundation.ICs.IOExpanders;
+using Meadow.Peripherals.Displays;
 
 public class MeadowApp : App<Windows>
 {
-    private Ft232h expander = new Ft232h();
     private DisplayScreen? screen;
 
     public override Task Initialize()
     {
-        expander = new Ft232h();
+        var expander = FtdiExpanderCollection.Devices[0];
 
         var display = new Ili9341
         (

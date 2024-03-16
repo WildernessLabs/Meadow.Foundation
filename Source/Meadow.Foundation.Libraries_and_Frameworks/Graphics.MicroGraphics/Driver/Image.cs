@@ -1,4 +1,5 @@
 ﻿using Meadow.Foundation.Graphics.Buffers;
+using Meadow.Peripherals.Displays;
 using System;
 using System.IO;
 using System.Linq;
@@ -68,6 +69,15 @@ namespace Meadow.Foundation.Graphics
             }
 
             throw new ArgumentException("Requested resource not found");
+        }
+
+        /// <summary>
+        /// Load an image from a Stream
+        /// </summary>
+        /// <param name="stream">The resource stream</param>
+        public static Image LoadFromStream(Stream stream)
+        {
+            return new Image(stream);
         }
 
         private Image(Stream source)

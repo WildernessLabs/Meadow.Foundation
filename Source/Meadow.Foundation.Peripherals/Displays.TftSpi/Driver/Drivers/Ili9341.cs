@@ -1,5 +1,5 @@
-﻿using Meadow.Foundation.Graphics;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
+using Meadow.Peripherals.Displays;
 using Meadow.Units;
 
 namespace Meadow.Foundation.Displays

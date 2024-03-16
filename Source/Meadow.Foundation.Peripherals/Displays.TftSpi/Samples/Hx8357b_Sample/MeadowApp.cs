@@ -2,6 +2,7 @@
 using Meadow.Devices;
 using Meadow.Foundation.Displays;
 using Meadow.Foundation.Graphics;
+using Meadow.Peripherals.Displays;
 using System;
 using System.Diagnostics;
 using System.Threading;

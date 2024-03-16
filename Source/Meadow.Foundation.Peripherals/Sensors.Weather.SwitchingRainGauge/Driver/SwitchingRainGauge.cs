@@ -1,4 +1,5 @@
 ﻿using Meadow.Hardware;
+using Meadow.Peripherals.Sensors.Weather;
 using Meadow.Units;
 using System;
 using System.Threading.Tasks;
@@ -8,7 +9,7 @@ namespace Meadow.Foundation.Sensors.Weather
     /// <summary>
     /// Represents a simple switching rain gauge
     /// </summary>
-    public class SwitchingRainGauge : SamplingSensorBase<Length>, IDisposable
+    public class SwitchingRainGauge : SamplingSensorBase<Length>, IRainGauge, IDisposable
     {
         private readonly IDigitalInterruptPort rainGaugePort;
         private DateTime lastUpdated = DateTime.MinValue;

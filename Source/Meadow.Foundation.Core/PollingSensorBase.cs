@@ -27,7 +27,7 @@ namespace Meadow.Foundation
         {
             lock (samplingLock)
             {
-                if (IsSampling) { return; }
+                if (IsSampling && updateInterval == UpdateInterval) { return; }
 
                 IsSampling = true;
 

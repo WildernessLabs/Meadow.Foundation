@@ -3,16 +3,17 @@ using Meadow.Devices;
 using Meadow.Foundation.Graphics;
 using Meadow.Foundation.Sensors.Hid;
 using Meadow.Hardware;
+using Meadow.Peripherals.Displays;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Bbq10Keyboard_Sample
+namespace Tsc2004_Sample
 {
     public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
 
-        Tsc2004 touchScreen;
+        private Tsc2004 touchScreen;
 
         public override Task Initialize()
         {

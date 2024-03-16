@@ -6,14 +6,12 @@ namespace Meadow.Foundation.Leds
 {
     public partial class PwmLed
     {
-        private readonly object syncRoot = new object();
+        private readonly object syncRoot = new();
 
         private Task? animationTask = null;
         private CancellationTokenSource? cancellationTokenSource = null;
 
-        /// <summary>
-        /// Stops any running animations.
-        /// </summary>
+        /// <inheritdoc/>
         public async Task StopAnimation()
         {
             if (animationTask != null)
@@ -25,12 +23,20 @@ namespace Meadow.Foundation.Leds
             }
         }
 
-        /// <summary>
-        /// Start a Blink animation which sets the brightness of the LED alternating between a low and high brightness setting.
-        /// </summary>
-        /// <param name="highBrightness">The maximum brightness of the animation</param>
-        /// <param name="lowBrightness">The minimum brightness of the animation</param>
-        public async Task StartBlink(float highBrightness = 1f, float lowBrightness = 0f)
+        /// <inheritdoc/>
+        public Task StartBlink()
+        {
+            return StartBlink(1f, 0f);
+        }
+
+        /// <inheritdoc/>
+        public Task StartBlink(TimeSpan onDuration, TimeSpan offDuration)
+        {
+            return StartBlink(TimeSpan.FromMilliseconds(500), TimeSpan.FromMilliseconds(500));
+        }
+
+        /// <inheritdoc/>
+        public async Task StartBlink(float highBrightness, float lowBrightness)
         {
             ValidateBrightness(highBrightness, lowBrightness);
 
@@ -39,13 +45,7 @@ namespace Meadow.Foundation.Leds
             await StartBlink(TimeSpan.FromMilliseconds(500), TimeSpan.FromMilliseconds(500));
         }
 
-        /// <summary>
-        /// Start the Blink animation which sets the brightness of the LED alternating between a low and high brightness setting, using the durations provided.
-        /// </summary>
-        /// <param name="highBrightnessDuration">The duration the LED stays in high brightness</param>
-        /// <param name="lowBrightnessDuration">The duration the LED stays in low brightness</param>
-        /// <param name="highBrightness">The maximum brightness of the animation</param>
-        /// <param name="lowBrightness">The minimum brightness of the animation</param>
+        /// <inheritdoc/>
         public async Task StartBlink(
             TimeSpan highBrightnessDuration,
             TimeSpan lowBrightnessDuration,
@@ -76,11 +76,7 @@ namespace Meadow.Foundation.Leds
             }
         }
 
-        /// <summary>
-        /// Start the Pulse animation which gradually alternates the brightness of the LED between a low and high brightness setting.
-        /// </summary>
-        /// <param name="highBrightness">The maximum brightness of the animation</param>
-        /// <param name="lowBrightness">The minimum brightness of the animation</param>
+        /// <inheritdoc/>
         public async Task StartPulse(float highBrightness = 1, float lowBrightness = 0.15F)
         {
             ValidateBrightness(highBrightness, lowBrightness);
@@ -90,12 +86,7 @@ namespace Meadow.Foundation.Leds
             await StartPulse(TimeSpan.FromMilliseconds(600), highBrightness, lowBrightness);
         }
 
-        /// <summary>
-        /// Start the Pulse animation which gradually alternates the brightness of the LED between a low and high brightness setting, using the durations provided.
-        /// </summary>
-        /// <param name="pulseDuration">The pulse animation duration</param>
-        /// <param name="highBrightness">The maximum brightness of the animation</param>
-        /// <param name="lowBrightness">The minimum brightness of the animation</param>
+        /// <inheritdoc/>
         public async Task StartPulse(
             TimeSpan pulseDuration,
             float highBrightness = 1,
@@ -113,7 +104,7 @@ namespace Meadow.Foundation.Leds
                 {
                     float brightness = lowBrightness;
                     bool ascending = true;
-                    var intervalTime = TimeSpan.FromMilliseconds(60); // 60 milliseconds is probably the fastest update we want to do, given that threads are given 20 milliseconds by default. 
+                    var intervalTime = TimeSpan.FromMilliseconds(16);
                     float steps = (float)(pulseDuration.TotalMilliseconds / intervalTime.TotalMilliseconds);
                     float delta = (highBrightness - lowBrightness) / steps;
 
