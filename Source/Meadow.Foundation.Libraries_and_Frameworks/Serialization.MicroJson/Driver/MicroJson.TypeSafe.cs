@@ -130,6 +130,17 @@ public static partial class MicroJson
 
             return targetArray;
         }
+        else if (typeof(IDictionary).IsAssignableFrom(type))
+        {
+            if (type.IsGenericType)
+            {
+                var table = DeserializeString(json) as Hashtable;
+
+                return DeserializeHashtableToDictionary(table, type)
+                    ?? throw new NotSupportedException($"Type '{type.Name}' not supported");
+            }
+            throw new NotSupportedException($"Type '{type.Name}' not supported");
+        }
         else if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(List<>))
         {
             var elementType = type.GetGenericArguments()[0];
@@ -157,6 +168,24 @@ public static partial class MicroJson
 
             return instance;
         }
+    }
+
+    private static IDictionary? DeserializeHashtableToDictionary(Hashtable hashtable, Type dictionaryType)
+    {
+        var genericArguments = dictionaryType.GetGenericArguments();
+        var keyType = genericArguments[0];
+        var valueType = genericArguments[1];
+
+        var dictionary = (IDictionary)Activator.CreateInstance(dictionaryType);
+
+        foreach (DictionaryEntry entry in hashtable)
+        {
+            object key = Convert.ChangeType(entry.Key, keyType);
+            object value = Convert.ChangeType(entry.Value, valueType);
+            dictionary.Add(key, value);
+        }
+
+        return dictionary;
     }
 
     /// <summary>
@@ -229,20 +258,8 @@ public static partial class MicroJson
                 }
                 else if (propType.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IDictionary<,>)))
                 {
-                    var dictionaryType = propType.GetGenericTypeDefinition();
-                    var keyType = propType.GetGenericArguments()[0];
-                    var valueType = propType.GetGenericArguments()[1];
-
-                    var dictionary = (IDictionary)Activator.CreateInstance(propType);
-
-                    foreach (DictionaryEntry entry in (Hashtable)values[v])
-                    {
-                        object key = Convert.ChangeType(entry.Key, keyType);
-                        object value = Activator.CreateInstance(valueType);
-                        Deserialize((Hashtable)entry.Value, valueType, ref value);
-                        dictionary.Add(key, value);
-                    }
-
+                    var dictionary = DeserializeHashtableToDictionary((Hashtable)values[v], propType)
+                        ?? throw new NotSupportedException($"Type '{type.Name}' not supported");
                     prop.SetValue(instance, dictionary);
                 }
                 else if (IsComplexType(propType))

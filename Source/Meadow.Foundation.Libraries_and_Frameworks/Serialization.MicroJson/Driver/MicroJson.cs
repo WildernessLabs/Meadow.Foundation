@@ -103,9 +103,9 @@ public static partial class MicroJson
         if (o is DictionaryEntry entry)
         {
             var hashtable = new Hashtable
-        {
-            { entry.Key, entry.Value }
-        };
+            {
+                { entry.Key, entry.Value }
+            };
             return SerializeIDictionary(hashtable, dateTimeFormat);
         }
 
