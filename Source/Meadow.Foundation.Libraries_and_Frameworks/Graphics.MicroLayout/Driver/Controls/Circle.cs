@@ -67,6 +67,28 @@ public class Circle : ThemedControl
         set => SetInvalidatingProperty(ref center, value);
     }
 
+    /// <inheritdoc/>
+    public override int Left
+    {
+        get => center.X - radius;
+        set
+        {
+            center.X = value + radius;
+            Invalidate();
+        }
+    }
+
+    /// <inheritdoc/>
+    public override int Top
+    {
+        get => center.Y - radius;
+        set
+        {
+            center.Y = value + radius;
+            Invalidate();
+        }
+    }
+
     /// <summary>
     /// Gets or sets the foreground color of the Circle.
     /// </summary>
