@@ -38,7 +38,7 @@ public static partial class MicroJson
     /// <param name="dateTimeFormat">The format to use for DateTime values. Defaults to ISO 8601 format.</param>
     /// <returns>The JSON object as a string or null when the value type is not supported.</returns>
     /// <remarks>For objects, only public properties with getters are converted.</remarks>
-    public static string? Serialize(object o, DateTimeFormat dateTimeFormat = DateTimeFormat.ISO8601)
+    public static string? Serialize(object o, DateTimeFormat dateTimeFormat = DateTimeFormat.ISO8601, bool convertNamesToCamelCase = true)
     {
         if (o == null)
         {
@@ -103,9 +103,9 @@ public static partial class MicroJson
         if (o is DictionaryEntry entry)
         {
             var hashtable = new Hashtable
-        {
-            { entry.Key, entry.Value }
-        };
+            {
+                { entry.Key, entry.Value }
+            };
             return SerializeIDictionary(hashtable, dateTimeFormat);
         }
 
@@ -121,7 +121,12 @@ public static partial class MicroJson
             foreach (PropertyInfo property in properties)
             {
                 object returnObject = property.GetValue(o);
-                hashtable.Add(property.Name, returnObject);
+                var name = convertNamesToCamelCase
+                    ? char.ToLowerInvariant(property.Name[0]) + property.Name[1..]
+                    : property.Name;
+
+                // camel case the name
+                hashtable.Add(name, returnObject);
             }
 
             return SerializeIDictionary(hashtable, dateTimeFormat);
