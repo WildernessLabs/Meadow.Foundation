@@ -1,0 +1,30 @@
+<Project Sdk="Meadow.Sdk/1.1.0">
+    <PropertyGroup>
+        <Version>1.8.0</Version>
+        <PackageReadmeFile>Readme.md</PackageReadmeFile>
+        <Nullable>enable</Nullable>
+        <LangVersion>12.0</LangVersion>
+        <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <PackageIcon>icon.png</PackageIcon>
+        <Authors>Wilderness Labs, Inc</Authors>
+        <TargetFramework>netstandard2.1</TargetFramework>
+        <OutputType>Library</OutputType>
+        <AssemblyName>Scd30</AssemblyName>
+        <Company>Wilderness Labs, Inc</Company>
+        <PackageProjectUrl>http://developer.wildernesslabs.co/Meadow/Meadow.Foundation/</PackageProjectUrl>
+        <PackageId>Meadow.Foundation.Sensors.Environmental.Scd30</PackageId>
+        <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
+        <PackageTags>Meadow,Meadow.Foundation,Environmental,SCD30,gas,c02,temperature,relative,humidity</PackageTags>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <Description>SCD30 I2C C02, temperature, and relative humidity sensor</Description>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="Gapotchenko.FX.Data.Integrity.Checksum.Crc8" Version="2022.2.7"/>
+    </ItemGroup>
+    <ItemGroup>
+        <None Include=".\Readme.md" Pack="true" PackagePath=""/>
+        <None Include="..\..\..\icon.png" Pack="true" PackagePath=""/>
+        <ProjectReference Include="..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj"/>
+    </ItemGroup>
+</Project>
