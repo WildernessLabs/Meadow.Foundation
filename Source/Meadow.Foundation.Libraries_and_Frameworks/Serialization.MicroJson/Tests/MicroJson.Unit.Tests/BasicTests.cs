@@ -1,10 +1,54 @@
 using Meadow.Foundation.Serialization;
+using System;
+using System.Text.Json;
 using Xunit;
 
 namespace Unit.Tests;
 
 public class BasicTests
 {
+    [Fact]
+    public void DateTimeSerializationTest()
+    {
+        var input = new DateTimeClass
+        {
+            DTField = DateTime.Now,
+            DTOField = DateTimeOffset.UtcNow
+        };
+
+        var json = MicroJson.Serialize(input);
+
+        Assert.NotNull(json);
+        var test = JsonSerializer.Deserialize<DateTimeClass>(json,
+            new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
+        Assert.NotNull(test);
+        // the fraction of a second will be lost, so equality won't work
+        Assert.True(Math.Abs((input.DTField - test.DTField).TotalSeconds) < 1, "DateTime failed");
+        Assert.True(Math.Abs((input.DTOField - test.DTOField).TotalSeconds) < 1, "DateTimeOffset failed");
+    }
+
+    [Fact]
+    public void DateTimeDeserializationTest()
+    {
+        var input = new DateTimeClass
+        {
+            DTField = DateTime.Now,
+            DTOField = DateTimeOffset.UtcNow
+        };
+
+        var json = JsonSerializer.Serialize(input);
+
+        var test = MicroJson.Deserialize<DateTimeClass>(json);
+
+        Assert.NotNull(test);
+        // the fraction of a second will be lost, so equality won't work
+        Assert.True(Math.Abs((input.DTField - test.DTField).TotalSeconds) < 1, "DateTime failed");
+        Assert.True(Math.Abs((input.DTOField - test.DTOField).TotalSeconds) < 1, "DateTimeOffset failed");
+    }
+
     [Fact]
     public void SimpleIntegerPropertyTest()
     {

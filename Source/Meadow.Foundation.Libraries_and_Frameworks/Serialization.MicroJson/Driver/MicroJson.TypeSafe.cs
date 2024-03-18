@@ -6,11 +6,6 @@ using System.Text;
 
 namespace Meadow.Foundation.Serialization;
 
-[AttributeUsage(AttributeTargets.Property, Inherited = true)]
-public class JsonIgnoreAttribute : Attribute
-{
-}
-
 public static partial class MicroJson
 {
     /// <summary>
@@ -277,6 +272,15 @@ public static partial class MicroJson
                         object complexInstance = Activator.CreateInstance(propType);
                         Deserialize(hashtableValue, propType, ref complexInstance);
                         prop.SetValue(instance, complexInstance);
+                    }
+                    else if (propType == typeof(DateTimeOffset))
+                    {
+                        var dto = DateTimeOffset.Parse(values[v].ToString());
+                        prop.SetValue(instance, dto);
+                    }
+                    else
+                    {
+                        throw new NotSupportedException($"Unable to deserialize type '{propType}'");
                     }
                 }
                 else

@@ -1,6 +1,13 @@
 ﻿using Meadow.Foundation.Serialization;
+using System;
 
 namespace Unit.Tests;
+
+internal class DateTimeClass
+{
+    public DateTime DTField { get; set; }
+    public DateTimeOffset DTOField { get; set; }
+}
 
 internal class IntegerClass
 {

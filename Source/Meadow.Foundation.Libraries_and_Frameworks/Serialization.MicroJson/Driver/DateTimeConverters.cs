@@ -42,11 +42,31 @@ internal static class DateTimeConverters
     }
 
     /// <summary>
+    /// Converts a DateTime object into an ISO 8601 string in UTC format.
+    /// </summary>
+    /// <param name="dateTime">The DateTime to convert.</param>
+    /// <returns>DateTime as an ISO 8601 string in UTC format.</returns>
+    public static string ToIso8601(DateTimeOffset dateTime)
+    {
+        return $"{dateTime:yyyy-MM-ddTHH:mm:ss.FFFZ}";
+    }
+
+    /// <summary>
     /// Converts a DateTime to the ASP.NET Ajax JSON format.
     /// </summary>
     /// <param name="dateTime">The DateTime to convert.</param>
     /// <returns>A string representation of the DateTime in ASP.NET Ajax JSON format.</returns>
     public static string ToASPNetAjax(DateTime dateTime)
+    {
+        return $@"\/Date({dateTime.Ticks})\/";
+    }
+
+    /// <summary>
+    /// Converts a DateTime to the ASP.NET Ajax JSON format.
+    /// </summary>
+    /// <param name="dateTime">The DateTime to convert.</param>
+    /// <returns>A string representation of the DateTime in ASP.NET Ajax JSON format.</returns>
+    public static string ToASPNetAjax(DateTimeOffset dateTime)
     {
         return $@"\/Date({dateTime.Ticks})\/";
     }

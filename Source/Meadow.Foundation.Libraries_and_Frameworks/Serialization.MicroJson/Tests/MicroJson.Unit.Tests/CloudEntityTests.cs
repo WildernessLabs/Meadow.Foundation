@@ -1,13 +1,40 @@
 ﻿using Meadow.Cloud;
 using Meadow.Foundation.Serialization;
 using Meadow.Update;
+using System;
 using System.Collections.Generic;
+using System.Text.Json;
 using Xunit;
 
 namespace Unit.Tests;
 
 public class CloudEntityTests
 {
+    [Fact]
+    public void CloudEventSerializationTest()
+    {
+        var ce = new CloudEvent()
+        {
+            EventId = 2000,
+            Description = "Cloud Sample Data",
+            Timestamp = DateTime.UtcNow,
+            Measurements = new Dictionary<string, object>
+            {
+                { "Int value", 31 },
+                { "StringValue", "37-A2-0A-94-FA-42-EC-3F" }
+            }
+        };
+
+        var json = MicroJson.Serialize(ce);
+        Assert.NotNull(json);
+
+        var item = JsonSerializer.Deserialize<CloudEvent>(json);
+
+        Assert.NotNull(item);
+        // the fraction of a second will be lost, so equality won't work
+        Assert.True(Math.Abs((item.Timestamp - ce.Timestamp).TotalSeconds) < 1, "Timestamp failed");
+    }
+
     [Fact]
     public void UpdateMessageSerializationTest()
     {
