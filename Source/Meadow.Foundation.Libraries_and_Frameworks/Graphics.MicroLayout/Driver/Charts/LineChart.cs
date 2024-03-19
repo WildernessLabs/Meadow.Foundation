@@ -97,7 +97,7 @@ public class LineChart : ThemedControl
     /// <inheritdoc/>
     protected override void OnDraw(MicroGraphics graphics)
     {
-        graphics.DrawRectangle(Left, Top, Width, Height, BackgroundColor, true);
+        graphics.DrawRectangle(Left, Top, Width, Height, Color.Blue, true);
 
         ChartAreaTop = Top + DefaultMargin;
         ChartAreaBottom = Bottom - DefaultMargin;
@@ -136,7 +136,7 @@ public class LineChart : ThemedControl
             YMaximumValue = (ymax > 0) ? ymax * 1.1 : ymax * 0.9;
         }
 
-        ChartAreaHeight = Height - (2 * DefaultMargin) - (DefaultAxisStroke / 2);
+        ChartAreaHeight = Height - DefaultMargin * 2;
         VerticalScale = ChartAreaHeight / (YMaximumValue - YMinimumValue); // pixels per vertical unit
 
         DrawYAxis(graphics);
@@ -172,7 +172,7 @@ public class LineChart : ThemedControl
             // max label
             graphics.DrawText(
                 x: Left + DefaultMargin + ParentOffsetX,
-                y: ChartAreaTop + font.Height + ParentOffsetY,
+                y: ChartAreaTop - font.Height,
                 color: AxisLabelColor,
                 text: YMaximumValue.ToString("0.0"),
                 font: font);
@@ -194,31 +194,31 @@ public class LineChart : ThemedControl
             // axis is at 0
             XAxisYIntercept = 0;
 
-            XAxisScaledPosition = Bottom - DefaultMargin - DefaultAxisStroke + (int)(minY * VerticalScale);
+            XAxisScaledPosition = Bottom - DefaultMargin + (int)(minY * VerticalScale);
         }
         else
         {
             // axis at min Y
             XAxisYIntercept = YMinimumValue;
 
-            XAxisScaledPosition = Bottom - DefaultMargin - DefaultAxisStroke;
+            XAxisScaledPosition = ChartAreaBottom - DefaultMargin * 2 + AxisStroke * 2;
         }
 
         // for now it's a fixed line at the bottom
-        graphics.Stroke = DefaultAxisStroke;
+        graphics.Stroke = AxisStroke;
         graphics.DrawLine(
             ChartAreaLeft + ParentOffsetX,
-            XAxisScaledPosition + ParentOffsetY,
+            XAxisScaledPosition,
             Right - DefaultMargin,
             XAxisScaledPosition,
-            AxisColor);
+            Color.White);
     }
 
     private IFont GetAxisFont()
     {
         if (AxisFont == null)
         {
-            _axisFont = new Font8x16();
+            _axisFont = new Font6x8();
         }
         else
         {
@@ -241,10 +241,10 @@ public class LineChart : ThemedControl
         // TODO: deal with chart with negative values
 
         ChartAreaLeft = Left + leftMargin;
-        ChartAreaWidth = Width - ChartAreaLeft - DefaultMargin - DefaultAxisStroke * 2;
+        ChartAreaWidth = Width - ChartAreaLeft - AxisStroke * 2;
 
         // for now it's a fixed line at the left
-        graphics.Stroke = DefaultAxisStroke;
+        graphics.Stroke = AxisStroke;
         graphics.DrawLine(
             ChartAreaLeft + ParentOffsetX,
             Top + DefaultMargin + ParentOffsetY,
@@ -265,10 +265,18 @@ public class LineChart : ThemedControl
 
         graphics.Stroke = series.LineStroke;
 
+        graphics.DrawRectangle(
+            ChartAreaLeft,
+            ChartAreaTop,
+            ChartAreaWidth,
+            ChartAreaHeight,
+            Color.Red,
+            true);
+
         foreach (var point in series.Points)
         {
-            var scaledX = ChartAreaLeft + DefaultAxisStroke * 2 + DefaultMargin + (int)(point.X / xRange * ChartAreaWidth);
-            var scaledY = Bottom - DefaultMargin - (DefaultAxisStroke / 2) - (int)((point.Y - YMinimumValue) * VerticalScale);
+            var scaledX = ChartAreaLeft + (int)(point.X / xRange * ChartAreaWidth);
+            var scaledY = (ChartAreaTop + ChartAreaHeight) - (int)((point.Y - YMinimumValue) * VerticalScale);
 
             if (series.ShowLines)
             {
@@ -292,7 +300,12 @@ public class LineChart : ThemedControl
 
             if (series.ShowPoints)
             {
-                graphics.DrawCircle(scaledX + ParentOffsetX, scaledY + ParentOffsetY, series.PointSize, series.PointColor, true);
+                graphics.DrawCircle(
+                    scaledX + ParentOffsetX,
+                    scaledY + ParentOffsetY,
+                    series.PointSize,
+                    series.PointColor,
+                    true);
             }
         }
     }
