@@ -260,14 +260,6 @@ public class LineChart : ThemedControl
         var lastPoint = new LineSeriesPoint();
         var first = true;
 
-        //graphics.DrawRectangle(
-        //    ChartAreaLeft,
-        //    ChartAreaTop,
-        //    ChartAreaWidth,
-        //    ChartAreaHeight,
-        //    Color.Purple,
-        //    true);
-
         graphics.Stroke = series.LineStroke;
 
         foreach (var point in series.Points)
