@@ -191,43 +191,48 @@ public partial class Mcp4728 : II2cPeripheral, IAnalogOutputController
     /// <param name="pin">The pin on which to create the port</param>
     /// <param name="internalVRef">use the internal 2.048V reference for this analog output.</param>
     /// <param name="gain2x">if using <paramref name="internalVRef"/>, also apply a 2x gain to the output.</param>
-    /// <param name="bufferedInput">if true, changes to the output are not applied until the LDAC pin is pulled low.</param>
-    /// <param name="vcc">if not using <paramref name="internalVRef"/>, providing the external Vcc voltage will allow <see cref="AnalogOutputPort.VoltageLSB"/> to be correctly calculated. If not provided, 3.3V is assumed.</param>
-    public IAnalogOutputPort CreateAnalogOutputPort(IPin pin, bool internalVRef, bool gain2x, bool bufferedInput = false, Voltage? vcc = default)
+    /// <param name="buffered">if true, changes to the output are not applied until the LDAC pin is pulled low.</param>
+    /// <param name="vcc">if not using <paramref name="internalVRef"/>, providing the external Vcc voltage will allow <see cref="AnalogOutputPort.VoltageResolution"/> to be correctly calculated. If not provided, 3.3V is assumed.</param>
+    public IAnalogOutputPort CreateAnalogOutputPort(IPin pin, bool internalVRef, bool gain2x, bool buffered = false, Voltage? vcc = default)
     {
         if (pin.Controller == null || !pin.Controller.Equals(this))
         {
             throw new ArgumentException("The provided pin must be on this controller");
         }
+        var channelInfo = pin.SupportedChannels?.First(c => c is IAnalogChannelInfo) as IAnalogChannelInfo
+                                ?? throw new ArgumentException("Pin does not support analog output");
 
         ChannelSettings settings;
-        Voltage voltageLSB;
+        Voltage voltageResolution, voltageReference;
         switch (internalVRef, gain2x)
         {
             case (internalVRef: true, gain2x: true):
                 settings = ChannelSettings.InternalVRef | ChannelSettings.OutputGain2x;
-                voltageLSB = new Voltage(1, Voltage.UnitType.Millivolts);
+                voltageReference = 2.048.Volts();
+                voltageResolution = new Voltage(1, Voltage.UnitType.Millivolts);
                 break;
             case (internalVRef: true, gain2x: false):
                 settings = ChannelSettings.InternalVRef;
-                voltageLSB = new Voltage(0.5, Voltage.UnitType.Millivolts);
+                voltageReference = 2.048.Volts();
+                voltageResolution = new Voltage(0.5, Voltage.UnitType.Millivolts);
                 break;
             default:
                 settings = ChannelSettings.ExternalVRef;
-                voltageLSB = (vcc ?? new Voltage(3.3)) / 4096.0;
+                voltageReference = vcc ?? 3.3.Volts();
+                voltageResolution = (voltageReference) / (1 << channelInfo.Precision);
                 break;
         }
 
         return new AnalogOutputPort(
             pin,
-            pin.SupportedChannels?.First(c => c is IAnalogChannelInfo) as IAnalogChannelInfo
-            ?? throw new ArgumentException("Pin does not support analog output"),
+            channelInfo,
             this,
             (DACChannel)(pin.Key))
         {
-            BufferedInput = bufferedInput,
+            Buffered = buffered,
             Settings = settings,
-            VoltageLSB = voltageLSB,
+            VoltageReference = voltageReference,
+            VoltageResolution = voltageResolution,
         };
     }
 }

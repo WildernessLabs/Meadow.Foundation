@@ -12,9 +12,13 @@ public partial class Mcp4728
     /// </summary>
     public enum DACChannel : byte
     {
+        /// <summary> A Output Channel </summary>
         ChannelA = 0,
+        /// <summary> B Output Channel </summary>
         ChannelB = 1,
+        /// <summary> C Output Channel </summary>
         ChannelC = 2,
+        /// <summary> D Output Channel </summary>
         ChannelD = 3
     }
 
@@ -57,9 +61,19 @@ public partial class Mcp4728
         public IPin Pin { get; }
 
         /// <summary>
+        /// Maximum Output value that can be used with this <see cref="IAnalogOutputPort"/>
+        /// </summary>
+        public uint MaxOutputValue => (uint)(1 << Channel.Precision) - 1;
+
+        /// <summary>
+        /// Voltage reference of the <see cref="IAnalogOutputPort"/>
+        /// </summary>
+        public Units.Voltage VoltageReference { get; internal set; }
+
+        /// <summary>
         /// Voltage resolution of the <see cref="IAnalogOutputPort"/>
         /// </summary>
-        public Units.Voltage VoltageLSB { get; internal set; }
+        public Units.Voltage VoltageResolution { get; internal set; }
 
         /// <summary>
         /// Gets or sets the Channel Settings for the port
@@ -67,9 +81,9 @@ public partial class Mcp4728
         public ChannelSettings Settings { get; set; }
 
         /// <summary>
-        /// Gets or sets whether the port has a buffered input
+        /// Gets or sets whether the port has a buffered value (Defers update until commanded)
         /// </summary>
-        public bool BufferedInput { get; set; }
+        public bool Buffered { get; set; }
 
         internal AnalogOutputPort(IPin pin, IAnalogChannelInfo channelDefinition, Mcp4728 controller, DACChannel hardwareChannel)
         {
@@ -79,7 +93,7 @@ public partial class Mcp4728
             Channel = channelDefinition;
             Pin = pin;
 
-            BufferedInput = false;
+            Buffered = false;
         }
 
         /// <inheritdoc/>
@@ -91,12 +105,12 @@ public partial class Mcp4728
         /// <inheritdoc/>
         public Task GenerateOutput(uint digitalValue)
         {
-            if (digitalValue > (1 << Channel.Precision) - 1)
+            if (digitalValue > MaxOutputValue)
             {
                 throw new ArgumentOutOfRangeException($"Port supports a maximum of {Channel.Precision} bits");
             }
 
-            _controller.WriteOutput((ushort)digitalValue, _channel, Settings, BufferedInput);
+            _controller.WriteOutput((ushort)digitalValue, _channel, Settings, Buffered);
 
             return Task.CompletedTask;
         }
@@ -107,12 +121,13 @@ public partial class Mcp4728
         /// <param name="voltageValue">The target voltage output, which will be automatically adjusted to the nearest selectable value.</param>
         public Task GenerateOutput(Voltage voltageValue)
         {
-            if (voltageValue.Volts < 0)
+            var digitalValue = Math.Round(voltageValue.Volts / VoltageResolution.Volts);
+            if (digitalValue < 0)
                 throw new ArgumentOutOfRangeException(nameof(voltageValue), "Port does not support negative output voltages.");
-            if (voltageValue.Volts > VoltageLSB.Volts * ((1 << Channel.Precision) - 1))
+            if (digitalValue > MaxOutputValue)
                 throw new ArgumentOutOfRangeException(nameof(voltageValue), voltageValue.Volts, "Port does not support requested output voltage.");
 
-            return GenerateOutput((uint)Math.Round(voltageValue.Volts / VoltageLSB.Volts));
+            return GenerateOutput((uint)digitalValue);
         }
 
         /// <summary>

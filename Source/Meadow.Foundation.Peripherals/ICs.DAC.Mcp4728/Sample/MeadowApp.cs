@@ -25,24 +25,25 @@ namespace MeadowApp
             analogInputPort = Device.CreateAnalogInputPort(Device.Pins.A00);
 
             Resolver.Log.Info($"--- MCP4728 Sample App ---");
-
+            analogOutputPort.HighZ();
             return Task.CompletedTask;
         }
 
         public override Task Run()
         {
             Resolver.Log.Debug("Run...");
-
-
+         
+            var centerValue = analogOutputPort.MaxOutputValue / 2.0;
+            
             for (int cycle = 0; cycle < 10; cycle++)
             {
                 for (int i = 0; i < 360; i++)
                 {
-                    var value = 2048 + (2000 * Math.Sin(i * 180 / Math.PI));
-                    analogOutputPort.GenerateOutput((uint)value);
-                    Task.Delay(10);
-                    var input = analogInputPort.Read();
-                    Task.Delay(10);
+                    var value = (uint)(centerValue + (centerValue * Math.Sin(i * Math.PI / 180)));
+                    analogOutputPort.GenerateOutput(value);
+                    var expected = value * analogOutputPort.VoltageResolution.Volts;
+                    var actual = analogInputPort.Read().Result.Volts;
+                    Resolver.Log.Info($"Expected: {expected:N3}, Actual: {actual:N3}");
                 }
             }
 
