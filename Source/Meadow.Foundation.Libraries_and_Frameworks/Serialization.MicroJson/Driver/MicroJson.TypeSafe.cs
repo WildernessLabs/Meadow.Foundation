@@ -327,7 +327,7 @@ public static partial class MicroJson
             double doubleValue => doubleValue,
             long longValue => longValue,
             bool boolValue => boolValue,
-            _ => jsonValue,// Directly return the value if it doesn't need special handling
+            _ => throw new NotSupportedException($"Unable to deserialize dynamic type '{jsonValue.GetType()}'")
         };
     }
 }
