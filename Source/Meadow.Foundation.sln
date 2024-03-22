@@ -1445,9 +1445,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scd30", "Scd30", "{BAACC3E2
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{A3EF6DB1-971C-4891-853A-369652E36959}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensors.Environmental.Scd30", "Meadow.Foundation.Peripherals\Sensors.Environmental.Scd30\Driver\Sensors.Environmental.Scd30.csproj", "{EACC5CD9-C3EB-4BB3-A137-C0F950592519}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Environmental.Scd30", "Meadow.Foundation.Peripherals\Sensors.Environmental.Scd30\Driver\Sensors.Environmental.Scd30.csproj", "{EACC5CD9-C3EB-4BB3-A137-C0F950592519}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Scd30_Sample", "Meadow.Foundation.Peripherals\Sensors.Environmental.Scd30\Samples\Scd30_Sample\Scd30_Sample.csproj", "{43B00BB5-2F6A-437A-A969-B4ADF2E9F439}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Scd30_Sample", "Meadow.Foundation.Peripherals\Sensors.Environmental.Scd30\Samples\Scd30_Sample\Scd30_Sample.csproj", "{43B00BB5-2F6A-437A-A969-B4ADF2E9F439}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Pct2075", "Pct2075", "{7471C6BF-1995-4E56-91E9-86DAAA46C386}"
 EndProject
@@ -1473,7 +1473,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xpt2046_Sample", "Meadow.Fo
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Serialization.MicroJson", "Serialization.MicroJson", "{B9C2605C-AC98-4BF1-8E3F-8F0F23A694C9}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MicroJson", "Meadow.Foundation.Libraries_and_Frameworks\Serialization.MicroJson\Driver\MicroJson.csproj", "{D8E5BFC6-EE60-4E2D-BDF9-A4FC349A5F44}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Serialization.MicroJson", "Meadow.Foundation.Libraries_and_Frameworks\Serialization.MicroJson\Driver\Serialization.MicroJson.csproj", "{D8E5BFC6-EE60-4E2D-BDF9-A4FC349A5F44}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Driver", "Driver", "{9543AB72-69FA-4C42-90F2-56EF19C3D57A}"
 EndProject

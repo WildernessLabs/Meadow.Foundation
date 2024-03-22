@@ -1,6 +1,4 @@
 
-using System.Text.Json.Serialization;
-
 namespace Meadow.Foundation.Displays.UI
 {
     /// <summary>
@@ -11,37 +9,31 @@ namespace Meadow.Foundation.Displays.UI
         /// <summary>
         /// Sub items in the menu
         /// </summary>
-        [JsonPropertyName("sub")]
         public MenuItem[]? SubItems { get; set; }
 
         /// <summary>
         /// The text on the menu item
         /// </summary>
-        [JsonPropertyName("text")]
         public string Text { get; set; }
 
         /// <summary>
         /// The optional command when the item is selected
         /// </summary>
-        [JsonPropertyName("command")]
         public string Command { get; set; }
 
         /// <summary>
         /// The menu item type
         /// </summary>
-        [JsonPropertyName("type")]
         public string Type { get; set; }
 
         /// <summary>
         /// The menu item id
         /// </summary>
-        [JsonPropertyName("id")]
         public string Id { get; set; }
 
         /// <summary>
         /// The menu item value
         /// </summary>
-        [JsonPropertyName("value")]
         public object? Value { get; set; }
 
         /// <summary>
@@ -53,6 +45,19 @@ namespace Meadow.Foundation.Displays.UI
         /// Is the menu item editable by the user
         /// </summary>
         public bool IsEditable => Value != null;
+
+        /// <summary>
+        /// Creates a new MenuItem object
+        /// </summary>
+        public MenuItem()
+        {
+            Text = string.Empty;
+            Command = string.Empty;
+            Id = string.Empty;
+            Type = string.Empty;
+            Value = null;
+            SubItems = null;
+        }
 
         /// <summary>
         /// Creates a new MenuItem object

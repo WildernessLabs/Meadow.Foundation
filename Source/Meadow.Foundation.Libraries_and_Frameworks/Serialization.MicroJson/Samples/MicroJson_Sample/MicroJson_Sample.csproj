@@ -7,6 +7,6 @@
     <EmbeddedResource Include="menu.json" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Driver\MicroJson.csproj" />
+    <ProjectReference Include="..\..\Driver\Serialization.MicroJson.csproj" />
   </ItemGroup>
 </Project>

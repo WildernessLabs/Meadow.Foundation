@@ -14,9 +14,4 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Driver\Audio.Radio.Tea5767.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <None Update="meadow.config.yaml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
 </Project>

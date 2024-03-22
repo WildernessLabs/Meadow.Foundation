@@ -278,6 +278,10 @@ public static partial class MicroJson
                         var dto = DateTimeOffset.Parse(values[v].ToString());
                         prop.SetValue(instance, dto);
                     }
+                    else if (propType == typeof(object))
+                    {
+                        prop.SetValue(instance, DeserializeDynamic(values[v]));
+                    }
                     else
                     {
                         throw new NotSupportedException($"Unable to deserialize type '{propType}'");
@@ -313,5 +317,17 @@ public static partial class MicroJson
         }
 
         return true;
+    }
+
+    private static object? DeserializeDynamic(object jsonValue)
+    {
+        return jsonValue switch
+        {
+            string stringValue => stringValue,
+            double doubleValue => doubleValue,
+            long longValue => longValue,
+            bool boolValue => boolValue,
+            _ => jsonValue,// Directly return the value if it doesn't need special handling
+        };
     }
 }
