@@ -36,7 +36,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\..\..\Meadow.Contracts\Source\Meadow.Contracts\Meadow.Contracts.csproj" />
-    <ProjectReference Include="..\..\Driver\MicroJson.csproj" />
+    <ProjectReference Include="..\..\Driver\Serialization.MicroJson.csproj" />
   </ItemGroup>
 
 </Project>
