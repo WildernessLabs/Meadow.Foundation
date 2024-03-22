@@ -7,13 +7,14 @@ using Meadow.Foundation.Sensors.Buttons;
 using Meadow.Hardware;
 using Meadow.Peripherals.Displays;
 using Meadow.Peripherals.Sensors.Buttons;
+using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
 
 namespace TextDisplayMenuTft_Sample
 {
-    public class MeadowApp : App<F7FeatherV2>
+    public class MeadowApp : App<F7FeatherV1>
     {
         TextDisplayMenu menu;
 
@@ -45,6 +46,9 @@ namespace TextDisplayMenuTft_Sample
             microGraphics.DrawText(0, 0, "Loading Menu");
             microGraphics.Show();
 
+            var sw = new Stopwatch();
+            sw.Start();
+
             Resolver.Log.Info("Load menu data...");
 
             var menuData = LoadResource("menu.json");
@@ -55,6 +59,9 @@ namespace TextDisplayMenuTft_Sample
 
             menu = new TextDisplayMenu(microGraphics, menuData, false);
             menu.ValueChanged += Menu_ValueChanged;
+
+            sw.Stop();
+            Resolver.Log.Info($"Menu created in {sw.ElapsedMilliseconds}ms");
 
             Resolver.Log.Info("Create buttons...");
 
