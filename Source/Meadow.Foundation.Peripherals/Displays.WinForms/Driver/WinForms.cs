@@ -17,7 +17,13 @@ public class WinFormsDisplay : Form, IPixelDisplay, ITouchScreen
     /// <inheritdoc/>
     public event TouchEventHandler? TouchMoved = default!;
 
-    private readonly WinFormsPixelBuffer _buffer;
+    /// <inheritdoc/>
+    public new int Width => virtualWidth;
+
+    /// <inheritdoc/>
+    public new int Height => virtualHeight;
+
+    private readonly WinFormsPixelBuffer buffer;
 
     /// <inheritdoc/>
     public RotationType Rotation => RotationType.Normal;
@@ -26,7 +32,7 @@ public class WinFormsDisplay : Form, IPixelDisplay, ITouchScreen
     public ColorMode ColorMode => PixelBuffer.ColorMode;
 
     /// <inheritdoc/>
-    public IPixelBuffer PixelBuffer => _buffer;
+    public IPixelBuffer PixelBuffer => buffer;
 
     /// <inheritdoc/>
     public ColorMode SupportedColorModes => ColorMode.Format24bppRgb888;
@@ -34,39 +40,50 @@ public class WinFormsDisplay : Form, IPixelDisplay, ITouchScreen
     /// <inheritdoc/>
     public bool IsTouched { get; private set; }
 
+    private readonly int virtualWidth;
+    private readonly int virtualHeight;
+    private readonly float displayScale;
+
     /// <summary>
     /// Create a new WinFormsDisplay
     /// </summary>
     /// <param name="width">Width of the display, in pixels</param>
     /// <param name="height">Height of the display, in pixels</param>
     /// <param name="colorMode">The ColorMode of the display</param>
-    public WinFormsDisplay(int width = 800, int height = 600, ColorMode colorMode = ColorMode.Format16bppRgb565)
+    /// <param name="displayScale">The scale of the display</param>
+    public WinFormsDisplay(int width = 800, int height = 600, ColorMode colorMode = ColorMode.Format16bppRgb565, float displayScale = 1.0f)
     {
-        this.Width = width + (Width - ClientSize.Width);
-        this.Height = height + (Height - ClientSize.Height);
+        this.displayScale = displayScale;
+        base.Width = (int)(width * displayScale);
+        base.Height = (int)(height * displayScale);
 
-        this.Text = "Meadow WinFormsDisplay";
-        this.DoubleBuffered = true;
-        this.FormBorderStyle = FormBorderStyle.FixedDialog;
-        this.StartPosition = FormStartPosition.CenterScreen;
+        virtualWidth = width;
+        virtualHeight = height;
+
+        Text = "Meadow WinFormsDisplay";
+        DoubleBuffered = true;
+        FormBorderStyle = FormBorderStyle.FixedDialog;
+        StartPosition = FormStartPosition.CenterScreen;
 
         var iconStream = typeof(WinFormsDisplay).Assembly.GetManifestResourceStream("Displays.WinForms.icon.ico");
-        this.Icon = new Icon(iconStream!);
+        Icon = new Icon(iconStream!);
 
-        _buffer = new WinFormsPixelBuffer(width, height, colorMode);
+        buffer = new WinFormsPixelBuffer(virtualWidth, virtualHeight, colorMode);
     }
 
     /// <inheritdoc/>
     protected override void Dispose(bool disposing)
     {
-        _buffer?.Dispose();
+        buffer?.Dispose();
         base.Dispose(disposing);
     }
 
     ///<inheritdoc/>
     protected override void OnMouseDown(MouseEventArgs e)
     {
-        TouchDown?.Invoke(this, TouchPoint.FromScreenData(e.X, e.Y, 0, e.X, e.Y, 0));
+        int virtualX = (int)(e.X / displayScale);
+        int virtualY = (int)(e.Y / displayScale);
+        TouchDown?.Invoke(this, TouchPoint.FromScreenData(virtualX, virtualY, 0, virtualX, virtualY, 0));
         IsTouched = true;
         base.OnMouseDown(e);
     }
@@ -74,7 +91,9 @@ public class WinFormsDisplay : Form, IPixelDisplay, ITouchScreen
     ///<inheritdoc/>
     protected override void OnMouseUp(MouseEventArgs e)
     {
-        TouchUp?.Invoke(this, TouchPoint.FromScreenData(e.X, e.Y, 0, e.X, e.Y, 0));
+        int virtualX = (int)(e.X / displayScale);
+        int virtualY = (int)(e.Y / displayScale);
+        TouchUp?.Invoke(this, TouchPoint.FromScreenData(virtualX, virtualY, 0, virtualX, virtualY, 0));
         IsTouched = false;
         base.OnMouseUp(e);
     }
@@ -82,7 +101,12 @@ public class WinFormsDisplay : Form, IPixelDisplay, ITouchScreen
     ///<inheritdoc/>
     protected override void OnClick(EventArgs e)
     {
-        TouchClick?.Invoke(this, TouchPoint.FromScreenData(-1, -1, 0, -1, -1, 0));
+        Point clientPoint = PointToClient(Cursor.Position);
+
+        int virtualX = (int)(clientPoint.X / displayScale);
+        int virtualY = (int)(clientPoint.Y / displayScale);
+
+        TouchClick?.Invoke(this, TouchPoint.FromScreenData(virtualX, virtualY, 0, virtualX, virtualY, 0));
         base.OnClick(e);
     }
 
@@ -91,21 +115,21 @@ public class WinFormsDisplay : Form, IPixelDisplay, ITouchScreen
     /// </summary>
     void IPixelDisplay.Show()
     {
-        if (this.IsDisposed)
+        if (IsDisposed)
         {
             return;
         }
 
         try
         {
-            this.Invalidate(true);
+            Invalidate(true);
             if (InvokeRequired)
             {
                 Invoke(Update);
             }
             else
             {
-                this.Update();
+                Update();
             }
         }
         catch (ObjectDisposedException)
@@ -123,7 +147,12 @@ public class WinFormsDisplay : Form, IPixelDisplay, ITouchScreen
     /// <param name="bottom"></param>
     void IPixelDisplay.Show(int left, int top, int right, int bottom)
     {
-        this.Invalidate(new Rectangle(left, top, right - left, bottom - top), true);
+        var scaledLeft = (int)(left * displayScale);
+        var scaledTop = (int)(top * displayScale);
+        var scaledRight = (int)((right - left) * displayScale);
+        var scaledBottom = (int)((bottom - top) * displayScale);
+
+        Invalidate(new Rectangle(scaledLeft, scaledTop, scaledRight, scaledBottom), true);
     }
 
     /// <summary>
@@ -132,13 +161,13 @@ public class WinFormsDisplay : Form, IPixelDisplay, ITouchScreen
     /// <param name="updateDisplay"></param>
     void IPixelDisplay.Clear(bool updateDisplay)
     {
-        lock (_buffer)
+        lock (buffer)
         {
-            _buffer.Clear();
+            buffer.Clear();
         }
         if (updateDisplay)
         {
-            this.Show();
+            Show();
         }
     }
 
@@ -149,13 +178,13 @@ public class WinFormsDisplay : Form, IPixelDisplay, ITouchScreen
     /// <param name="updateDisplay"></param>
     void IPixelDisplay.Fill(Color fillColor, bool updateDisplay)
     {
-        lock (_buffer)
+        lock (buffer)
         {
-            _buffer.Fill(fillColor);
+            buffer.Fill(fillColor);
         }
         if (updateDisplay)
         {
-            this.Show();
+            Show();
         }
     }
 
@@ -169,9 +198,9 @@ public class WinFormsDisplay : Form, IPixelDisplay, ITouchScreen
     /// <param name="fillColor"></param>
     void IPixelDisplay.Fill(int x, int y, int width, int height, Color fillColor)
     {
-        lock (_buffer)
+        lock (buffer)
         {
-            _buffer.Fill(x, y, width, height, fillColor);
+            buffer.Fill(x, y, width, height, fillColor);
         }
     }
 
@@ -183,9 +212,9 @@ public class WinFormsDisplay : Form, IPixelDisplay, ITouchScreen
     /// <param name="color"></param>
     void IPixelDisplay.DrawPixel(int x, int y, Color color)
     {
-        lock (_buffer)
+        lock (buffer)
         {
-            _buffer.SetPixel(x, y, color);
+            buffer.SetPixel(x, y, color);
         }
     }
 
@@ -197,9 +226,9 @@ public class WinFormsDisplay : Form, IPixelDisplay, ITouchScreen
     /// <param name="enabled"></param>
     void IPixelDisplay.DrawPixel(int x, int y, bool enabled)
     {
-        lock (_buffer)
+        lock (buffer)
         {
-            _buffer.SetPixel(x, y, enabled ? Color.White : Color.Black);
+            buffer.SetPixel(x, y, enabled ? Color.White : Color.Black);
         }
     }
 
@@ -210,9 +239,9 @@ public class WinFormsDisplay : Form, IPixelDisplay, ITouchScreen
     /// <param name="y"></param>
     void IPixelDisplay.InvertPixel(int x, int y)
     {
-        lock (_buffer)
+        lock (buffer)
         {
-            _buffer.InvertPixel(x, y);
+            buffer.InvertPixel(x, y);
         }
     }
 
@@ -224,18 +253,22 @@ public class WinFormsDisplay : Form, IPixelDisplay, ITouchScreen
     /// <param name="displayBuffer"></param>
     void IPixelDisplay.WriteBuffer(int x, int y, IPixelBuffer displayBuffer)
     {
-        lock (_buffer)
+        lock (buffer)
         {
-            _buffer.WriteBuffer(x, y, displayBuffer);
+            buffer.WriteBuffer(x, y, displayBuffer);
         }
     }
 
     ///<inheritdoc/>
     protected override void OnPaint(PaintEventArgs e)
     {
-        lock (_buffer)
+        lock (buffer)
         {
-            e.Graphics.DrawImage(_buffer.Image, 0, 0);
+            // Apply scaling
+            e.Graphics.ScaleTransform(displayScale, displayScale);
+
+            // Draw the scaled image
+            e.Graphics.DrawImage(buffer.Image, 0, 0, virtualWidth, virtualHeight);
             base.OnPaint(e);
         }
     }
