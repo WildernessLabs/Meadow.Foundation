@@ -18,7 +18,7 @@ You can install the library from within Visual studio using the the NuGet Packag
 ## Usage
 
 ```csharp
-Tsc2004 touchScreen;
+private Tsc2004 touchScreen;
 
 public override Task Initialize()
 {

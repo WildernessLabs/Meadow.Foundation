@@ -13,12 +13,7 @@
     <None Include="..\..\..\..\icon.png" Pack="true" PackagePath="" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.F7" Version="1.9.0" />
-    <PackageReference Include="Meadow.Foundation.Sensors.Location.Gnss.NmeaProcessor" Version="1.9.0" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Update="meadow.config.yaml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+    <PackageReference Include="Meadow.F7" Version="1.10.0" />
+    <PackageReference Include="Meadow.Foundation.Sensors.Location.Gnss.NmeaProcessor" Version="1.10.0" />
   </ItemGroup>
 </Project>

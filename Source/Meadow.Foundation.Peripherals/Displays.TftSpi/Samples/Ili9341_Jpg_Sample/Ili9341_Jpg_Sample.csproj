@@ -13,8 +13,8 @@
     <None Remove="meadow.jpg" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.F7" Version="1.9.0" />
-    <PackageReference Include="Meadow.Foundation.Displays.TftSpi" Version="1.9.0" />
+    <PackageReference Include="Meadow.F7" Version="1.10.0" />
+    <PackageReference Include="Meadow.Foundation.Displays.TftSpi" Version="1.10.0" />
     <PackageReference Include="SimpleJpegDecoder" Version="0.4.0" />
   </ItemGroup>
   <ItemGroup>
@@ -24,10 +24,5 @@
     <EmbeddedResource Include="meadow.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <None Update="meadow.config.yaml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
 </Project>

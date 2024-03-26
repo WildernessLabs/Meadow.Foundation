@@ -23,6 +23,6 @@
   <ItemGroup>
     <None Include=".\Readme.md" Pack="true" PackagePath="" />
 	<None Include="..\..\..\icon.png" Pack="true" PackagePath="" />
-    <PackageReference Include="Meadow.Foundation" Version="1.9.0" />
+    <PackageReference Include="Meadow.Foundation" Version="1.10.0" />
   </ItemGroup>
 </Project>

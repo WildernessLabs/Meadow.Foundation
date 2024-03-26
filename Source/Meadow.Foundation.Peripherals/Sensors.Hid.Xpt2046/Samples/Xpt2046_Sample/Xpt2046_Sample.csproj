@@ -1,0 +1,12 @@
+<Project Sdk="Meadow.Sdk/1.1.0">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <OutputType>Library</OutputType>
+    <AssemblyName>App</AssemblyName>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Meadow.F7" Version="1.10.0" />
+    <PackageReference Include="Meadow.Foundation.Sensors.Hid.Xpt2046" Version="1.10.0" />
+  </ItemGroup>
+</Project>

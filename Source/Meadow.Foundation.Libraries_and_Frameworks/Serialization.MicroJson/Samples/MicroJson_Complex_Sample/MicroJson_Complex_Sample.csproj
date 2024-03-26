@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="weather.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="weather.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Meadow.Foundation.Serialization.MicroJson" Version="1.10.0" />
+  </ItemGroup>
+
+</Project>

@@ -71,6 +71,15 @@ namespace Meadow.Foundation.Graphics
             throw new ArgumentException("Requested resource not found");
         }
 
+        /// <summary>
+        /// Load an image from a Stream
+        /// </summary>
+        /// <param name="stream">The resource stream</param>
+        public static Image LoadFromStream(Stream stream)
+        {
+            return new Image(stream);
+        }
+
         private Image(Stream source)
         {   // determine type
             var buffer = new byte[2];

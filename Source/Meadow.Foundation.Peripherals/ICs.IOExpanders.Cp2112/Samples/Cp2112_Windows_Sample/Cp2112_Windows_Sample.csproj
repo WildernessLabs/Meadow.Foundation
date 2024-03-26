@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Meadow.Foundation.ICs.IOExpanders.Cp2112" Version="1.9.0" />
+    <PackageReference Include="Meadow.Foundation.ICs.IOExpanders.Cp2112" Version="1.10.0" />
   </ItemGroup>
 
 </Project>
