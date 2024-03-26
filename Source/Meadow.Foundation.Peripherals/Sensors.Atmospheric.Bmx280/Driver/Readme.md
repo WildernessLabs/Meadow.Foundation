@@ -1,8 +1,8 @@
-# Meadow.Foundation.Sensors.Atmospheric.Bme280
+# Meadow.Foundation.Sensors.Atmospheric.Bmx280
 
-**Bosch BME280 SPI and I2C absolute barometric pressure sensor**
+**Bosch BMx280 SPI and I2C family of atmospheric sensor**
 
-The **Bme280** library is included in the **Meadow.Foundation.Sensors.Atmospheric.Bme280** nuget package and is designed for the [Wilderness Labs](www.wildernesslabs.co) Meadow .NET IoT platform.
+The **Bmx280** library is included in the **Meadow.Foundation.Sensors.Atmospheric.Bmx280** nuget package and is designed for the [Wilderness Labs](www.wildernesslabs.co) Meadow .NET IoT platform.
 
 This driver is part of the [Meadow.Foundation](https://developer.wildernesslabs.co/Meadow/Meadow.Foundation/) peripherals library, an open-source repository of drivers and libraries that streamline and simplify adding hardware to your C# .NET Meadow IoT applications.
 
@@ -14,7 +14,7 @@ To view all Wilderness Labs open-source projects, including samples, visit [gith
 
 You can install the library from within Visual studio using the the NuGet Package Manager or from the command line using the .NET CLI:
 
-`dotnet add package Meadow.Foundation.Sensors.Atmospheric.Bme280`
+`dotnet add package Meadow.Foundation.Sensors.Atmospheric.Bmx280`
 ## Usage
 
 ```csharp
@@ -34,13 +34,14 @@ public override Task Initialize()
         },
         filter: result =>
         {
-            if (result.Old is { } old)
+            if (result.Old?.Temperature is { } oldTemp &&
+                result.Old?.Humidity is { } oldHumidity &&
+                result.New.Temperature is { } newTemp &&
+                result.New.Humidity is { } newHumidity)
             {
-                return (
-                (result.New.Temperature.Value - old.Temperature.Value).Abs().Celsius > 0.5
-                &&
-                (result.New.Humidity.Value - old.Humidity.Value).Percent > 0.05
-                );
+                return
+                (newTemp - oldTemp).Abs().Celsius > 0.5 &&
+                (newHumidity - oldHumidity).Percent > 0.05;
             }
             return false;
         }
@@ -49,9 +50,16 @@ public override Task Initialize()
 
     sensor.Updated += (sender, result) =>
     {
-        Resolver.Log.Info($"  Temperature: {result.New.Temperature?.Celsius:N2}C");
-        Resolver.Log.Info($"  Relative Humidity: {result.New.Humidity:N2}%");
-        Resolver.Log.Info($"  Pressure: {result.New.Pressure?.Millibar:N2}mbar ({result.New.Pressure?.Pascal:N2}Pa)");
+        try
+        {
+            Resolver.Log.Info($"  Temperature: {result.New.Temperature?.Celsius:N2}C");
+            Resolver.Log.Info($"  Relative Humidity: {result.New.Humidity:N2}%");
+            Resolver.Log.Info($"  Pressure: {result.New.Pressure?.Millibar:N2}mbar ({result.New.Pressure?.Pascal:N2}Pa)");
+        }
+        catch (Exception ex)
+        {
+            Resolver.Log.Error(ex, "Error reading sensor");
+        }
     };
 
     return Task.CompletedTask;
@@ -81,7 +89,7 @@ void CreateI2CSensor()
     Resolver.Log.Info("Create BME280 sensor with I2C...");
 
     var i2c = Device.CreateI2cBus();
-    sensor = new Bme280(i2c, (byte)Bme280.Addresses.Default); // SDA pulled up
+    sensor = new Bme280(i2c, (byte)Bmx280.Addresses.Default); // SDA pulled up
 
 }
 
