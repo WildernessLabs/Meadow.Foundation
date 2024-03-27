@@ -3,7 +3,7 @@ using System;
 
 namespace Meadow.Foundation.Displays
 {
-    public partial class AsciiConsoleDisplay
+    public partial class AsciiConsole
     {
         internal class CharacterBuffer : IPixelBuffer
         {

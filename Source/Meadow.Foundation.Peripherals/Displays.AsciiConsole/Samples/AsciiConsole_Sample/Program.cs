@@ -3,7 +3,7 @@ using Meadow.Foundation.Displays;
 using Meadow.Foundation.Graphics;
 using Meadow.Foundation.Graphics.MicroLayout;
 
-namespace AsciiConsoleDisplay_Sample;
+namespace AsciiConsole_Sample;
 
 internal class Program
 {
@@ -21,7 +21,7 @@ internal class Program
             .ToArray();
 
         var colorIndex = 0;
-        var display = new AsciiConsoleDisplay(20, 15);
+        var display = new AsciiConsole(20, 15);
         var screen = new DisplayScreen(display);
         var box = new Box(0, 0, 4, 3)
         {
@@ -62,7 +62,7 @@ internal class Program
 
     private static void DrawShapes()
     {
-        var display = new AsciiConsoleDisplay(80, 60);
+        var display = new AsciiConsole(80, 60);
 
         var graphics = new MicroGraphics(display)
         {
@@ -80,7 +80,7 @@ internal class Program
 
     private static async Task CycleColors()
     {
-        var display = new AsciiConsoleDisplay(40, 30);
+        var display = new AsciiConsole(40, 30);
 
         var colors = typeof(Color).GetFields(System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public).Where(c => c.FieldType == typeof(Color));
         foreach (var color in colors)

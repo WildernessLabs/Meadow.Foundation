@@ -6,7 +6,7 @@ namespace Meadow.Foundation.Displays;
 /// <summary>
 /// Represents a display driver for an ASCII console
 /// </summary>
-public partial class AsciiConsoleDisplay : IPixelDisplay
+public partial class AsciiConsole : IPixelDisplay
 {
     private readonly CharacterBuffer _buffer;
     private const string _colors = " `.-':_,^=;><+!rc*/z?sLTv)J7(|Fi{C}fI31tlu[neoZ5Yxjya]2ESwqkP6h9d4VpOGbUAKXHm8RD#$Bg0MNWQ%&@"; // 92 "colors"
@@ -27,11 +27,11 @@ public partial class AsciiConsoleDisplay : IPixelDisplay
     public IPixelBuffer PixelBuffer => _buffer;
 
     /// <summary>
-    /// Creates a new <see cref="AsciiConsoleDisplay"/> instance with the specified width and height
+    /// Creates a new <see cref="AsciiConsole"/> instance with the specified width and height
     /// </summary>
     /// <param name="width">The width in pixels</param>
     /// <param name="height">The height in pixels</param>
-    public AsciiConsoleDisplay(int width, int height)
+    public AsciiConsole(int width, int height)
     {
         Console.Clear();
         Console.SetCursorPosition(0, 0);
