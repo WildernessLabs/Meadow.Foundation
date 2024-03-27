@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace Meadow.Foundation.Serialization;
 
@@ -26,7 +27,7 @@ public static partial class MicroJson
     /// </summary>
     /// <typeparam name="T">The type of objects in the list.</typeparam>
     /// <param name="array">The JSON array to deserialize.</param>
-    /// <param name="type">The type of objects in the list as a <see cref="System.Type"/>.</param>
+    /// <param name="type">The type of objects in the list as a <see cref="Type"/>.</param>
     /// <param name="instance"></param>
     /// <returns>A list of objects of type T.</returns>
     private static void DeserializeList<T>(ArrayList array, Type type, ref List<T> instance)
@@ -73,55 +74,14 @@ public static partial class MicroJson
     }
 
     /// <summary>
-    /// Deserializes a JSON array into an array of objects of the specified type.
-    /// </summary>
-    /// <param name="array">The JSON array to deserialize.</param>
-    /// <param name="type">The type of objects in the array as a <see cref="System.Type"/>.</param>
-    /// <param name="instance">The array instance to populate.</param>
-    private static void DeserializeArray(ArrayList array, Type type, ref Array instance)
-    {
-        var index = 0;
-
-        foreach (Hashtable item in array)
-        {
-            if (type == typeof(string))
-            {
-                var e = item.GetEnumerator();
-                e.MoveNext();
-                instance.SetValue(((DictionaryEntry)e.Current).Value, index);
-                index++;
-            }
-            else
-            {
-                var arrayItem = Activator.CreateInstance(type);
-                Deserialize(item, type, ref arrayItem);
-                instance.SetValue(arrayItem, index++);
-            }
-        }
-    }
-
-    /// <summary>
-    /// Deserializes an object of type T from a JSON string or Hashtable.
+    /// Deserializes an object of type T from a JSON string.
     /// </summary>
     /// <typeparam name="T">The type of object to deserialize.</typeparam>
-    /// <param name="data">The JSON string or Hashtable to deserialize.</param>
+    /// <param name="encodedData">A UTF8-encoded JSON string to deserialize.</param>
     /// <returns>An object of type T.</returns>
-    public static T Deserialize<T>(object data)
+    public static T Deserialize<T>(byte[] encodedData)
     {
-        if (data is string json)
-        {
-            return Deserialize<T>(json);
-        }
-        else if (data is Hashtable hashtable)
-        {
-            object? instance = Activator.CreateInstance<T>();
-            Deserialize(hashtable, typeof(T), ref instance!);
-            return (T)instance;
-        }
-        else
-        {
-            throw new ArgumentException("Unsupported data type for deserialization.");
-        }
+        return Deserialize<T>(Encoding.UTF8.GetString(encodedData));
     }
 
     /// <summary>
@@ -134,6 +94,17 @@ public static partial class MicroJson
     {
         var type = typeof(T);
 
+        return (T)Deserialize(json, type);
+    }
+
+    /// <summary>
+    /// Deserializes an object of type T from a JSON string.
+    /// </summary>
+    /// <param name="type">The type of object to deserialize.</param>
+    /// <param name="json">The JSON string to deserialize.</param>
+    /// <returns>An object of the specified type</returns>
+    public static object Deserialize(string json, Type type)
+    {
         if (type.IsArray)
         {
             var elementType = type.GetElementType();
@@ -144,15 +115,34 @@ public static partial class MicroJson
 
             if (rootArray is not null)
             {
-                foreach (Hashtable item in rootArray)
+                foreach (var item in rootArray)
                 {
-                    object instance = Activator.CreateInstance(elementType);
-                    Deserialize(item, elementType, ref instance);
-                    targetArray.SetValue(instance, index++);
+                    if (item is Hashtable h)
+                    {
+                        object instance = Activator.CreateInstance(elementType);
+                        Deserialize(h, elementType, ref instance);
+                        targetArray.SetValue(instance, index++);
+                    }
+                    else
+                    {
+                        var instance = Convert.ChangeType(item, elementType);
+                        targetArray.SetValue(instance, index++);
+                    }
                 }
             }
 
-            return (T)(object)targetArray;
+            return targetArray;
+        }
+        else if (typeof(IDictionary).IsAssignableFrom(type))
+        {
+            if (type.IsGenericType)
+            {
+                var table = DeserializeString(json) as Hashtable;
+
+                return DeserializeHashtableToDictionary(table, type)
+                    ?? throw new NotSupportedException($"Type '{type.Name}' not supported");
+            }
+            throw new NotSupportedException($"Type '{type.Name}' not supported");
         }
         else if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(List<>))
         {
@@ -172,15 +162,33 @@ public static partial class MicroJson
                 }
             }
 
-            return (T)targetList;
+            return targetList;
         }
         else
         {
             object instance = Activator.CreateInstance(type);
-            Deserialize(json, typeof(T), ref instance);
+            Deserialize(json, type, ref instance);
 
-            return (T)instance;
+            return instance;
         }
+    }
+
+    private static IDictionary? DeserializeHashtableToDictionary(Hashtable hashtable, Type dictionaryType)
+    {
+        var genericArguments = dictionaryType.GetGenericArguments();
+        var keyType = genericArguments[0];
+        var valueType = genericArguments[1];
+
+        var dictionary = (IDictionary)Activator.CreateInstance(dictionaryType);
+
+        foreach (DictionaryEntry entry in hashtable)
+        {
+            object key = Convert.ChangeType(entry.Key, keyType);
+            object value = Convert.ChangeType(entry.Value, valueType);
+            dictionary.Add(key, value);
+        }
+
+        return dictionary;
     }
 
     /// <summary>
@@ -206,87 +214,120 @@ public static partial class MicroJson
     {
         var values = root ?? throw new ArgumentException();
 
-        var props = type.GetProperties(System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic).ToList();
+        var props = type.GetProperties(
+            System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic)
+            .Where(p => p.GetCustomAttributes(typeof(JsonIgnoreAttribute), true).Length == 0)
+            .ToList();
 
         foreach (string v in values.Keys)
         {
-            var prop = props.FirstOrDefault(p => string.Compare(p.Name, v, true) == 0);
+            var prop = props.FirstOrDefault(p => string.Compare(p.Name, v, StringComparison.OrdinalIgnoreCase) == 0);
 
             if (prop != null && prop.CanWrite)
             {
-                switch (true)
+                Type propType = prop.PropertyType;
+
+                if (propType.IsEnum)
                 {
-                    case bool _ when prop.PropertyType.IsEnum:
-                        var enumValue = Enum.Parse(prop.PropertyType, values[v].ToString());
-                        prop.SetValue(instance, enumValue);
-                        break;
-                    case bool _ when prop.PropertyType == typeof(ulong):
-                        prop.SetValue(instance, Convert.ToUInt64(values[v]));
-                        break;
-                    case bool _ when prop.PropertyType == typeof(long):
-                        prop.SetValue(instance, Convert.ToInt64(values[v]));
-                        break;
-                    case bool _ when prop.PropertyType == typeof(uint):
-                        prop.SetValue(instance, Convert.ToUInt32(values[v]));
-                        break;
-                    case bool _ when prop.PropertyType == typeof(int):
-                        prop.SetValue(instance, Convert.ToInt32(values[v]));
-                        break;
-                    case bool _ when prop.PropertyType == typeof(ushort):
-                        prop.SetValue(instance, Convert.ToUInt16(values[v]));
-                        break;
-                    case bool _ when prop.PropertyType == typeof(short):
-                        prop.SetValue(instance, Convert.ToInt16(values[v]));
-                        break;
-                    case bool _ when prop.PropertyType == typeof(byte):
-                        prop.SetValue(instance, Convert.ToByte(values[v]));
-                        break;
-                    case bool _ when prop.PropertyType == typeof(sbyte):
-                        prop.SetValue(instance, Convert.ToBoolean(values[v]));
-                        break;
-                    case bool _ when prop.PropertyType == typeof(double):
-                        prop.SetValue(instance, Convert.ToDouble(values[v]));
-                        break;
-                    case bool _ when prop.PropertyType == typeof(float):
-                        prop.SetValue(instance, Convert.ToSingle(values[v]));
-                        break;
-                    case bool _ when prop.PropertyType == typeof(bool):
-                        prop.SetValue(instance, Convert.ToBoolean(values[v]));
-                        break;
-                    case bool _ when prop.PropertyType == typeof(string):
-                        prop.SetValue(instance, values[v].ToString());
-                        break;
-                    default:
-                        if (prop.PropertyType.IsArray)
-                        {
-                            var al = values[v] as ArrayList;
-                            var elementType = prop.PropertyType.GetElementType();
-                            var targetArray = Array.CreateInstance(elementType, al!.Count);
-                            DeserializeArray(al, elementType, ref targetArray);
-                            prop.SetValue(instance, targetArray);
-                        }
-                        else if (prop.PropertyType.IsGenericType && prop.PropertyType.GetGenericTypeDefinition() == typeof(List<>))
-                        {
-                            var listType = prop.PropertyType.GetGenericArguments()[0];
-                            var list = Activator.CreateInstance(prop.PropertyType);
-                            var addMethod = prop.PropertyType.GetMethod("Add");
+                    prop.SetValue(instance, Enum.Parse(propType, values[v].ToString()));
+                }
+                else if (propType.IsArray)
+                {
+                    var al = values[v] as ArrayList;
+                    var elementType = propType.GetElementType();
+                    var targetArray = Array.CreateInstance(elementType, al!.Count);
+                    for (int i = 0; i < al.Count; i++)
+                    {
+                        object arrayItem = Activator.CreateInstance(elementType);
+                        Deserialize(al[i] as Hashtable, elementType, ref arrayItem);
+                        targetArray.SetValue(arrayItem, i);
+                    }
+                    prop.SetValue(instance, targetArray);
+                }
+                else if (propType.IsGenericType && propType.GetGenericTypeDefinition() == typeof(List<>))
+                {
+                    var listType = propType.GetGenericArguments()[0];
+                    var list = Activator.CreateInstance(propType);
+                    var addMethod = propType.GetMethod("Add");
 
-                            foreach (var item in (ArrayList)values[v])
-                            {
-                                var listItem = Activator.CreateInstance(listType);
-                                Deserialize(item as Hashtable, listType, ref listItem);
-                                addMethod.Invoke(list, new[] { listItem });
-                            }
+                    foreach (var item in (ArrayList)values[v])
+                    {
+                        object listItem = Activator.CreateInstance(listType);
+                        Deserialize(item as Hashtable, listType, ref listItem);
+                        addMethod.Invoke(list, new[] { listItem });
+                    }
 
-                            prop.SetValue(instance, list);
-                        }
-                        else
-                        {
-                            throw new NotSupportedException($"Type '{prop.PropertyType}' not supported");
-                        }
-                        break;
+                    prop.SetValue(instance, list);
+                }
+                else if (propType.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IDictionary<,>)))
+                {
+                    var dictionary = DeserializeHashtableToDictionary((Hashtable)values[v], propType)
+                        ?? throw new NotSupportedException($"Type '{type.Name}' not supported");
+                    prop.SetValue(instance, dictionary);
+                }
+                else if (IsComplexType(propType))
+                {
+                    if (values[v] is Hashtable hashtableValue)
+                    {
+                        object complexInstance = Activator.CreateInstance(propType);
+                        Deserialize(hashtableValue, propType, ref complexInstance);
+                        prop.SetValue(instance, complexInstance);
+                    }
+                    else if (propType == typeof(DateTimeOffset))
+                    {
+                        var dto = DateTimeOffset.Parse(values[v].ToString());
+                        prop.SetValue(instance, dto);
+                    }
+                    else if (propType == typeof(object))
+                    {
+                        prop.SetValue(instance, DeserializeDynamic(values[v]));
+                    }
+                    else
+                    {
+                        throw new NotSupportedException($"Unable to deserialize type '{propType}'");
+                    }
+                }
+                else
+                {
+                    if (values[v] != null && values[v] != DBNull.Value)
+                    {
+                        prop.SetValue(instance, Convert.ChangeType(values[v], propType));
+                    }
                 }
             }
         }
+    }
+
+    private static bool IsComplexType(Type type)
+    {
+        if (type.IsPrimitive ||
+            type.IsEnum ||
+            type == typeof(string) ||
+            type == typeof(decimal) ||
+            type == typeof(DateTime) ||
+            type == typeof(Guid)
+            )
+        {
+            return false;
+        }
+
+        if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
+        {
+            return IsComplexType(Nullable.GetUnderlyingType(type));
+        }
+
+        return true;
+    }
+
+    private static object? DeserializeDynamic(object jsonValue)
+    {
+        return jsonValue switch
+        {
+            string stringValue => stringValue,
+            double doubleValue => doubleValue,
+            long longValue => longValue,
+            bool boolValue => boolValue,
+            _ => jsonValue,// Directly return the value if it doesn't need special handling
+        };
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 
@@ -35,9 +36,10 @@ public static partial class MicroJson
     /// </summary>
     /// <param name="o">The value to convert.</param>
     /// <param name="dateTimeFormat">The format to use for DateTime values. Defaults to ISO 8601 format.</param>
+    /// <param name="convertNamesToCamelCase">True to convert all properties to camel case during serialization</param>
     /// <returns>The JSON object as a string or null when the value type is not supported.</returns>
     /// <remarks>For objects, only public properties with getters are converted.</remarks>
-    public static string? Serialize(object o, DateTimeFormat dateTimeFormat = DateTimeFormat.ISO8601)
+    public static string? Serialize(object o, DateTimeFormat dateTimeFormat = DateTimeFormat.ISO8601, bool convertNamesToCamelCase = true)
     {
         if (o == null)
         {
@@ -78,6 +80,14 @@ public static partial class MicroJson
                     _ => $"\"{DateTimeConverters.ToIso8601((DateTime)o)}\"",
                 };
             default:
+                if (type == typeof(DateTimeOffset))
+                {
+                    return dateTimeFormat switch
+                    {
+                        DateTimeFormat.Ajax => $"\"{DateTimeConverters.ToASPNetAjax((DateTimeOffset)o)}\"",
+                        _ => $"\"{DateTimeConverters.ToIso8601((DateTimeOffset)o)}\"",
+                    };
+                }
                 if (type == typeof(Guid))
                 {
                     return $"\"{o}\"";
@@ -102,9 +112,9 @@ public static partial class MicroJson
         if (o is DictionaryEntry entry)
         {
             var hashtable = new Hashtable
-        {
-            { entry.Key, entry.Value }
-        };
+            {
+                { entry.Key, entry.Value }
+            };
             return SerializeIDictionary(hashtable, dateTimeFormat);
         }
 
@@ -113,11 +123,19 @@ public static partial class MicroJson
             var hashtable = new Hashtable();
 
             // Use PropertyInfo instead of MethodInfo for better performance
-            PropertyInfo[] properties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance);
+            var properties = type
+                .GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                .Where(p => p.GetCustomAttributes(typeof(JsonIgnoreAttribute), true).Length == 0);
+
             foreach (PropertyInfo property in properties)
             {
                 object returnObject = property.GetValue(o);
-                hashtable.Add(property.Name, returnObject);
+                var name = convertNamesToCamelCase
+                    ? char.ToLowerInvariant(property.Name[0]) + property.Name[1..]
+                    : property.Name;
+
+                // camel case the name
+                hashtable.Add(name, returnObject);
             }
 
             return SerializeIDictionary(hashtable, dateTimeFormat);
