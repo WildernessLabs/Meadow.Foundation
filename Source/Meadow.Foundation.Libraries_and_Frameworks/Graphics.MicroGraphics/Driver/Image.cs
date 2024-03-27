@@ -142,30 +142,17 @@ namespace Meadow.Foundation.Graphics
             var compression = BitConverter.ToInt32(dib, 30 - 14);
             var dataSize = BitConverter.ToInt32(dib, 34 - 14);
 
-            //compression masks
-            uint redMask = 0;
-            uint greenMask = 0;
-            uint blueMask = 0;
-            uint alphaMask = 0;
-
-            switch (compression)
+            if (BitsPerPixel < 8)
             {
-                case 0:
-                    // no compression, just pull the data
-                    break;
-                case 3:
-                    // BI_BITFIELDS compression
-                    redMask = BitConverter.ToUInt32(dib, 0x36 - 14);
-                    greenMask = BitConverter.ToUInt32(dib, 0x3a - 14);
-                    blueMask = BitConverter.ToUInt32(dib, 0x3e - 14);
-                    alphaMask = BitConverter.ToUInt32(dib, 0x42 - 14);
-                    break;
-                default:
-                    throw new NotSupportedException("Unsupported bitmap compression");
+                throw new NotSupportedException("Unsupported color depth");
             }
 
-            var bytesPerRow = width * (BitsPerPixel >> 3);
-            // BMP row length is evenly divisible by 4
+            if (compression != 0 && compression != 3)
+            {
+                throw new NotSupportedException("Unsupported bitmap compression");
+            }
+
+            var bytesPerRow = width * BitsPerPixel / 8;
             var mod = bytesPerRow % 4;
             var rowPad = mod == 0 ? 0 : 4 - mod;
             var pixelBufferSize = height * bytesPerRow;
@@ -177,15 +164,24 @@ namespace Meadow.Foundation.Graphics
             // we need to read row-by-row and put these into the pixel buffer
             if (compression == 3)
             {
-                var index = bytesPerRow * (height - 1);
-                int dataIndex = 0;
-                for (var row = 0; row < height; row++)
+                if (BitsPerPixel == 24)
                 {
+                    var masks = new byte[16];
+                    source.Read(masks, 0, masks.Length);
+
+                    uint redMask = BitConverter.ToUInt32(masks, 0);
+                    uint greenMask = BitConverter.ToUInt32(masks, 4);
+                    uint blueMask = BitConverter.ToUInt32(masks, 8);
+                    uint alphaMask = BitConverter.ToUInt32(masks, 12);
+
+                    var index = bytesPerRow * (height - 1);
+                    int dataIndex = 0;
                     source.Seek(index + dataOffset, SeekOrigin.Begin);
+
+                    var pixel = new byte[4];
+
                     for (var col = 0; col < width; col++)
                     {
-                        // Read the pixel data
-                        var pixel = new byte[4];
                         source.Read(pixel, 0, 4);
 
                         // Apply bit masks to the pixel data
@@ -204,7 +200,30 @@ namespace Meadow.Foundation.Graphics
                     if (rowPad > 0) source.Seek(rowPad, SeekOrigin.Current);
                     index -= bytesPerRow;
                 }
+
+                if (BitsPerPixel == 16)
+                {
+                    var index = bytesPerRow * (height - 1);
+                    int dataIndex = 0;
+                    for (var row = 0; row < height; row++)
+                    {
+                        source.Seek(index + dataOffset, SeekOrigin.Begin);
+                        for (var col = 0; col < width; col++)
+                        {
+                            // Read the pixel data
+                            byte[] pixel = new byte[2];
+                            source.Read(pixel, 0, 2);
+
+                            pixelData[dataIndex++] = pixel[0];
+                            pixelData[dataIndex++] = pixel[1];
+                        }
+
+                        if (rowPad > 0) source.Seek(rowPad, SeekOrigin.Current);
+                        index -= bytesPerRow;
+                    }
+                }
             }
+            //assume uncompressed
             else if (invertedRows) //uncompressed inverted
             {
                 var index = 0;
@@ -229,7 +248,6 @@ namespace Meadow.Foundation.Graphics
             }
 
             // TODO: determine if it's grayscale?
-
             switch (BitsPerPixel)
             {
                 case 32:
@@ -274,6 +292,17 @@ namespace Meadow.Foundation.Graphics
                 buffer[i] = buffer[i + 2];
                 buffer[i + 2] = temp;
             }
+        }
+
+        private int GetShiftCount(uint mask)
+        {
+            int count = 0;
+            while ((mask & 1) == 0)
+            {
+                mask >>= 1;
+                count++;
+            }
+            return count;
         }
     }
 }
