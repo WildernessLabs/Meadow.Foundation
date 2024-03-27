@@ -139,7 +139,7 @@ public class DisplayScreen
         control.Invalidate();
         control.Refresh(_graphics);
 
-        if (control is Layout l)
+        if (control is MicroLayout l)
         {
             foreach (var c in l.Controls)
             {
