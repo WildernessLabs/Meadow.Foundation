@@ -54,11 +54,8 @@ public class WinFormsDisplay : Form, IPixelDisplay, ITouchScreen
     public WinFormsDisplay(int width = 800, int height = 600, ColorMode colorMode = ColorMode.Format16bppRgb565, float displayScale = 1.0f)
     {
         this.displayScale = displayScale;
-        base.Width = (int)(width * displayScale);
-        base.Height = (int)(height * displayScale);
 
-        virtualWidth = width;
-        virtualHeight = height;
+        ClientSize = new Size((int)(width * displayScale), (int)(height * displayScale));
 
         Text = "Meadow WinFormsDisplay";
         DoubleBuffered = true;
@@ -68,7 +65,7 @@ public class WinFormsDisplay : Form, IPixelDisplay, ITouchScreen
         var iconStream = typeof(WinFormsDisplay).Assembly.GetManifestResourceStream("Displays.WinForms.icon.ico");
         Icon = new Icon(iconStream!);
 
-        buffer = new WinFormsPixelBuffer(virtualWidth, virtualHeight, colorMode);
+        buffer = new WinFormsPixelBuffer(virtualWidth = width, virtualHeight = height, colorMode);
     }
 
     /// <inheritdoc/>
