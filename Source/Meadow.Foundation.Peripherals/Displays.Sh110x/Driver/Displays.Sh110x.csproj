@@ -13,7 +13,7 @@
     <AssemblyName>Sh110x</AssemblyName>
     <Company>Wilderness Labs, Inc</Company>
     <PackageProjectUrl>http://developer.wildernesslabs.co/Meadow/Meadow.Foundation/</PackageProjectUrl>
-    <PackageId>Meadow.Foundation.Displays.Sh1106</PackageId>
+    <PackageId>Meadow.Foundation.Displays.Sh110x</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow,Meadow.Foundation,Displays,LCD,Sh1106,SH1107,oled,monochrome</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>

@@ -5,7 +5,7 @@ namespace Meadow.Foundation.Graphics.MicroLayout;
 /// <summary>
 /// A base class for display layouts
 /// </summary>
-public abstract class Layout : ThemedControl
+public abstract class MicroLayout : ThemedControl
 {
     private Color? _backColor;
 
@@ -17,7 +17,7 @@ public abstract class Layout : ThemedControl
     /// <param name="top">The layout's top position</param>
     /// <param name="width">The layout's width</param>
     /// <param name="height">The layout's height</param>
-    protected Layout(DisplayScreen screen, int left, int top, int width, int height)
+    protected MicroLayout(DisplayScreen screen, int left, int top, int width, int height)
         : base(left, top, width, height)
     {
         Controls = new ControlsCollection(screen, this);

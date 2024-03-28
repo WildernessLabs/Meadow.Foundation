@@ -263,6 +263,7 @@ namespace Meadow.Foundation.Leds
             SetColor(Color, brightness);
         }
 
+        ///<inheritdoc/>
         public void SetColor(Color color, float brightness = 1)
         {
             if (color == Color && brightness == Brightness)
@@ -279,7 +280,7 @@ namespace Meadow.Foundation.Leds
         }
 
         ///<inheritdoc/>
-        public new void SetColor(RgbLedColors color)
+        public void SetColor(RgbLedColors color)
         {
             SetColor(color.AsColor());
         }

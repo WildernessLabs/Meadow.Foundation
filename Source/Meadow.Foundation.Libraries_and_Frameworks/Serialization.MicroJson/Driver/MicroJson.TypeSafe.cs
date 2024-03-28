@@ -137,7 +137,10 @@ public static partial class MicroJson
         {
             if (type.IsGenericType)
             {
-                var table = DeserializeString(json) as Hashtable;
+                if (DeserializeString(json) is not Hashtable table)
+                {
+                    throw new ArgumentException("Invalid JSON data or format not supported");
+                }
 
                 return DeserializeHashtableToDictionary(table, type)
                     ?? throw new NotSupportedException($"Type '{type.Name}' not supported");
