@@ -10,6 +10,6 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\..\..\Meadow.Core\Source\implementations\f7\Meadow.F7\Meadow.F7.csproj" />
-    <ProjectReference Include="..\..\Driver\Sensors.Motion.Lis2Mdl.csproj" />
+    <ProjectReference Include="..\..\Driver\Sensors.Motion.Lis2mdl.csproj" />
   </ItemGroup>
 </Project>

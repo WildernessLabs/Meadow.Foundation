@@ -10,7 +10,7 @@ namespace Meadow.Foundation.Sensors.Motion
     /// Represents a LIS2MDL is a low-power, high-performance 3-axis magnetometer from STMicroelectronics
     /// with a fixed full range of ±50 gauss and a 16-bit resolution
     /// </summary>
-    public partial class Lis2Mdl : PollingSensorBase<MagneticField3D>, IMagnetometer, II2cPeripheral
+    public partial class Lis2mdl : PollingSensorBase<MagneticField3D>, IMagnetometer, II2cPeripheral
     {
         /// <summary>
         /// Current Magnetic Field 3D
@@ -26,11 +26,11 @@ namespace Meadow.Foundation.Sensors.Motion
         protected readonly II2cCommunications i2cComms;
 
         /// <summary>
-        /// Create a new Lis2Mdl instance
+        /// Create a new Lis2mdl instance
         /// </summary>
         /// <param name="i2cBus">The I2C bus connected to the sensor</param>
         /// <param name="address">The I2C address</param>
-        public Lis2Mdl(II2cBus i2cBus, byte address = (byte)Addresses.Default)
+        public Lis2mdl(II2cBus i2cBus, byte address = (byte)Addresses.Default)
         {
             i2cComms = new I2cCommunications(i2cBus, address);
 
