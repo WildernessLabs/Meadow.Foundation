@@ -1193,13 +1193,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Motion.Lsm303agr", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lsm303agr_Sample", "Meadow.Foundation.Peripherals\Sensors.Motion.Lsm303agr\Samples\Lsm303agr_Sample\Lsm303agr_Sample.csproj", "{1B54CA69-FD1F-46FF-9F0C-2AFB00AAB2E1}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Lis2Mdl", "Lis2Mdl", "{698A96DD-692F-4ABE-9B4D-9BDA300C8B84}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Lis2mdl", "Lis2mdl", "{698A96DD-692F-4ABE-9B4D-9BDA300C8B84}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{385CB50B-4D17-4FFF-BCCE-C8BF9D280A52}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Motion.Lis2Mdl", "Meadow.Foundation.Peripherals\Sensors.Motion.Lis2Mdl\Driver\Sensors.Motion.Lis2Mdl.csproj", "{09E368FA-1ACA-4F96-9153-B4959A7EE390}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Motion.Lis2mdl", "Meadow.Foundation.Peripherals\Sensors.Motion.Lis2mdl\Driver\Sensors.Motion.Lis2mdl.csproj", "{09E368FA-1ACA-4F96-9153-B4959A7EE390}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lis2Mdl_Sample", "Meadow.Foundation.Peripherals\Sensors.Motion.Lis2Mdl\Samples\Lis2Mdl_Sample\Lis2Mdl_Sample.csproj", "{6923DB1E-CDDC-4A84-AAEF-6F6F7D9DC406}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lis2mdl_Sample", "Meadow.Foundation.Peripherals\Sensors.Motion.Lis2mdl\Samples\Lis2mdl_Sample\Lis2mdl_Sample.csproj", "{6923DB1E-CDDC-4A84-AAEF-6F6F7D9DC406}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Mcp960x", "Mcp960x", "{CBF95E20-6021-4E5B-807A-E099DBC98764}"
 EndProject
