@@ -36,6 +36,7 @@ public static partial class MicroJson
     /// </summary>
     /// <param name="o">The value to convert.</param>
     /// <param name="dateTimeFormat">The format to use for DateTime values. Defaults to ISO 8601 format.</param>
+    /// <param name="convertNamesToCamelCase">True to convert all properties to camel case during serialization</param>
     /// <returns>The JSON object as a string or null when the value type is not supported.</returns>
     /// <remarks>For objects, only public properties with getters are converted.</remarks>
     public static string? Serialize(object o, DateTimeFormat dateTimeFormat = DateTimeFormat.ISO8601, bool convertNamesToCamelCase = true)
@@ -79,6 +80,14 @@ public static partial class MicroJson
                     _ => $"\"{DateTimeConverters.ToIso8601((DateTime)o)}\"",
                 };
             default:
+                if (type == typeof(DateTimeOffset))
+                {
+                    return dateTimeFormat switch
+                    {
+                        DateTimeFormat.Ajax => $"\"{DateTimeConverters.ToASPNetAjax((DateTimeOffset)o)}\"",
+                        _ => $"\"{DateTimeConverters.ToIso8601((DateTimeOffset)o)}\"",
+                    };
+                }
                 if (type == typeof(Guid))
                 {
                     return $"\"{o}\"";

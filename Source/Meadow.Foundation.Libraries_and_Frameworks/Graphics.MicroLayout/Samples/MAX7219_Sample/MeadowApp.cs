@@ -38,7 +38,6 @@ public class MeadowApp : App<Windows>
         label.Text = "HELLO";
 
         screen.Controls.Add(label);
-
     }
 
     public void TextOnBox()
@@ -83,7 +82,6 @@ public class MeadowApp : App<Windows>
 
             Thread.Sleep(50);
         }
-
     }
 
     public static async Task Main(string[] args)

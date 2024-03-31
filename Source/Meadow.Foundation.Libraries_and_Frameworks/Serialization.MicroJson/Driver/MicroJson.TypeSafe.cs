@@ -6,11 +6,6 @@ using System.Text;
 
 namespace Meadow.Foundation.Serialization;
 
-[AttributeUsage(AttributeTargets.Property, Inherited = true)]
-public class JsonIgnoreAttribute : Attribute
-{
-}
-
 public static partial class MicroJson
 {
     /// <summary>
@@ -142,7 +137,10 @@ public static partial class MicroJson
         {
             if (type.IsGenericType)
             {
-                var table = DeserializeString(json) as Hashtable;
+                if (DeserializeString(json) is not Hashtable table)
+                {
+                    throw new ArgumentException("Invalid JSON data or format not supported");
+                }
 
                 return DeserializeHashtableToDictionary(table, type)
                     ?? throw new NotSupportedException($"Type '{type.Name}' not supported");
@@ -278,6 +276,19 @@ public static partial class MicroJson
                         Deserialize(hashtableValue, propType, ref complexInstance);
                         prop.SetValue(instance, complexInstance);
                     }
+                    else if (propType == typeof(DateTimeOffset))
+                    {
+                        var dto = DateTimeOffset.Parse(values[v].ToString());
+                        prop.SetValue(instance, dto);
+                    }
+                    else if (propType == typeof(object))
+                    {
+                        prop.SetValue(instance, DeserializeDynamic(values[v]));
+                    }
+                    else
+                    {
+                        throw new NotSupportedException($"Unable to deserialize type '{propType}'");
+                    }
                 }
                 else
                 {
@@ -309,5 +320,17 @@ public static partial class MicroJson
         }
 
         return true;
+    }
+
+    private static object? DeserializeDynamic(object jsonValue)
+    {
+        return jsonValue switch
+        {
+            string stringValue => stringValue,
+            double doubleValue => doubleValue,
+            long longValue => longValue,
+            bool boolValue => boolValue,
+            _ => jsonValue,// Directly return the value if it doesn't need special handling
+        };
     }
 }

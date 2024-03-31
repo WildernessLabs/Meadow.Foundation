@@ -281,11 +281,21 @@ public abstract partial class FtdiExpander :
         return CreateSpiBus(0, new SpiClockConfiguration(speed));
     }
 
+    /// <summary>
+    /// Creates a SPI bus instance for the requested control pins and bus speed
+    /// </summary>
+    /// <param name="configuration">The SPI clock configuration.</param>
+    /// <returns>Returns an instance of <see cref="ISpiBus"/>.</returns>
     public ISpiBus CreateSpiBus(SpiClockConfiguration configuration)
     {
         return CreateSpiBus(0, configuration);
     }
 
+    /// <summary>
+    /// Creates an SPI bus on the expander.
+    /// </summary>
+    /// <param name="channel">The channel number to use for the SPI bus.</param>
+    /// <returns>Returns an instance of <see cref="ISpiBus"/>.</returns>
     public ISpiBus CreateSpiBus(int channel = 0)
     {
         return CreateSpiBus(channel, new SpiClockConfiguration(1000000.Hertz()));

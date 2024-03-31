@@ -3,7 +3,7 @@
 /// <summary>
 /// A layout requiring absolute positioning of all child controls
 /// </summary>
-public class AbsoluteLayout : Layout
+public class AbsoluteLayout : MicroLayout
 {
     /// <summary>
     /// Creates a full-screen DisplayAbsoluteLayout

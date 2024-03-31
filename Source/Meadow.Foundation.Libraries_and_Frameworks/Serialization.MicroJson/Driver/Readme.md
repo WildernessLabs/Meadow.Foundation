@@ -15,7 +15,6 @@ To view all Wilderness Labs open-source projects, including samples, visit [gith
 You can install the library from within Visual studio using the the NuGet Package Manager or from the command line using the .NET CLI:
 
 `dotnet add package Meadow.Foundation.Serialization.MicroJson`
-
 ## Usage
 
 ```csharp
@@ -72,7 +71,6 @@ private static byte[] LoadResource(string filename)
 }
 
 ```
-
 ## How to Contribute
 
 - **Found a bug?** [Report an issue](https://github.com/WildernessLabs/Meadow_Issues/issues)

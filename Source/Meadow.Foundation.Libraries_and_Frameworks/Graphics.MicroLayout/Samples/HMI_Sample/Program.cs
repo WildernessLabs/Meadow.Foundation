@@ -6,7 +6,7 @@ namespace Meadow.Foundation.Displays.UI;
 
 public class MeadowApp : App<Windows>
 {
-    private DisplayScreen? _screen;
+    private DisplayScreen? screen;
 
     public static async Task Main(string[] args)
     {
@@ -21,16 +21,15 @@ public class MeadowApp : App<Windows>
 
         var labelFont = new Font12x20();
 
-        _screen = new DisplayScreen(display);
-        _screen.BackgroundColor = Color.AntiqueWhite;
+        screen = new DisplayScreen(display);
+        screen.BackgroundColor = Color.AntiqueWhite;
 
-        var splashLayout = new AbsoluteLayout(_screen, 0, 0, _screen.Width, _screen.Height)
+        var splashLayout = new AbsoluteLayout(screen, 0, 0, screen.Width, screen.Height)
         {
-            //            BackgroundColor = Color.Blue
         };
 
         var logo = Image.LoadFromFile("logo.bmp");
-        var wlLabel = new Graphics.MicroLayout.Label(0, 10, _screen.Width, 32)
+        var wlLabel = new Graphics.MicroLayout.Label(0, 10, screen.Width, 32)
         {
             TextColor = Color.White,
             BackColor = Color.DarkRed,
@@ -38,17 +37,15 @@ public class MeadowApp : App<Windows>
         };
         var logoImg = new Graphics.MicroLayout.Picture(
                 0, 0,
-                _screen.Width,
-                _screen.Height,
+                screen.Width,
+                screen.Height,
                 logo
             );
         splashLayout.Controls.Add(logoImg, wlLabel);
 
+        var chartLayout = new AbsoluteLayout(screen, 0, 0, screen.Width, screen.Height);
 
-
-        var chartLayout = new AbsoluteLayout(_screen, 0, 0, _screen.Width, _screen.Height);
-
-        var chart1Label = new Graphics.MicroLayout.Label(0, 0, _screen.Width, 16)
+        var chart1Label = new Graphics.MicroLayout.Label(0, 0, screen.Width, 16)
         {
             Text = "Values for process A",
             TextColor = Color.Aquamarine,
@@ -56,7 +53,7 @@ public class MeadowApp : App<Windows>
             Font = labelFont,
         };
 
-        var chart1 = new LineChart(0, 16, _screen.Width, (_screen.Height / 2) - 16)
+        var chart1 = new LineChart(0, 16, screen.Width, (screen.Height / 2) - 16)
         {
             BackgroundColor = Color.FromHex("111111"),
             ShowYAxisLabels = true
@@ -66,7 +63,7 @@ public class MeadowApp : App<Windows>
             GetSineSeries(),
             GetCosineSeries(4, 4.2, 0));
 
-        var chart2Label = new Graphics.MicroLayout.Label(0, _screen.Height / 2, _screen.Width, 16)
+        var chart2Label = new Graphics.MicroLayout.Label(0, screen.Height / 2, screen.Width, 16)
         {
             Text = "Values for process B",
             TextColor = Color.BlueViolet,
@@ -74,7 +71,7 @@ public class MeadowApp : App<Windows>
             Font = labelFont,
         };
 
-        var chart2 = new LineChart(0, (_screen.Height / 2) + 16, _screen.Width, (_screen.Height / 2) - 16)
+        var chart2 = new LineChart(0, (screen.Height / 2) + 16, screen.Width, (screen.Height / 2) - 16)
         {
             BackgroundColor = Color.FromHex("222222"),
             ShowYAxisLabels = true
@@ -86,7 +83,7 @@ public class MeadowApp : App<Windows>
 
         chartLayout.Controls.Add(chart1Label, chart2Label, chart1, chart2);
 
-        _screen.Controls.Add(splashLayout, chartLayout);
+        screen.Controls.Add(splashLayout, chartLayout);
 
         chartLayout.IsVisible = false;
 
