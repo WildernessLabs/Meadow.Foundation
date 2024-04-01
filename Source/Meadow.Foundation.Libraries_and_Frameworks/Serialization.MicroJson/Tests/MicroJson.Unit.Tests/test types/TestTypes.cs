@@ -3,6 +3,12 @@ using System;
 
 namespace Unit.Tests;
 
+internal class StringFieldClass
+{
+    public string FieldA { get; set; } = string.Empty;
+    public string? FieldB { get; set; }
+}
+
 internal class DateTimeClass
 {
     public DateTime DTField { get; set; }

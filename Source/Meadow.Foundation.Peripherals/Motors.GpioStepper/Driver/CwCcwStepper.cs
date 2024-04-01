@@ -137,8 +137,6 @@ public class CwCcwStepper : GpioStepperBase
     {
         if (steps < -1) throw new ArgumentOutOfRangeException(nameof(steps));
 
-        Resolver.Log.Info($"Moving {steps} steps at {rate.Hertz}Hz");
-
         // usPerCall is calculated async at startup.  This loop is to make sure it's calculated before the first Rotate is run
         while (_usPerCall == 0)
         {
@@ -147,7 +145,6 @@ public class CwCcwStepper : GpioStepperBase
 
         if (steps == 0)
         {
-            Resolver.Log.Info($"no move required");
             return Task.CompletedTask;
         }
 

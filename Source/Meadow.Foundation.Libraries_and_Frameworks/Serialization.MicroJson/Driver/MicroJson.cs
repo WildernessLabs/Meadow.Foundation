@@ -59,6 +59,9 @@ public static partial class MicroJson
             case TypeCode.Boolean:
                 return (bool)o ? "true" : "false";
             case TypeCode.String:
+                return $"\"{o}\""
+                    .Replace("\n", "\\n")
+                    .Replace("\r", "\\r");
             case TypeCode.Char:
                 return $"\"{o}\"";
             case TypeCode.Single:
