@@ -564,8 +564,8 @@ namespace Meadow.Foundation.Graphics
 
             int offset = centerBetweenPixels ? 1 : 0;
 
-            double startAngleRadians = startAngle.Radians;
-            double endAngleRadians = endAngle.Radians;
+            float startAngleRadians = (float)startAngle.Radians;
+            float endAngleRadians = (float)endAngle.Radians;
 
             if (startAngleRadians > endAngleRadians)
             {
@@ -586,14 +586,14 @@ namespace Meadow.Foundation.Graphics
 
             while (x <= y)
             {
-                double angle1 = Math.Atan2(y, -x);
-                double angle2 = Math.Atan2(x, -y);
-                double angle3 = Math.Atan2(-x, -y);
-                double angle4 = Math.Atan2(-y, -x);
-                double angle5 = Math.Atan2(-y, x);
-                double angle6 = Math.Atan2(-x, y);
-                double angle7 = Math.Atan2(x, y);
-                double angle8 = Math.Atan2(y, x);
+                float angle1 = MathF.Atan2(y, -x);
+                float angle2 = MathF.Atan2(x, -y);
+                float angle3 = MathF.Atan2(-x, -y);
+                float angle4 = MathF.Atan2(-y, -x);
+                float angle5 = MathF.Atan2(-y, x);
+                float angle6 = MathF.Atan2(-x, y);
+                float angle7 = MathF.Atan2(x, y);
+                float angle8 = MathF.Atan2(y, x);
 
                 if (angle1 >= startAngleRadians && angle1 <= endAngleRadians) { DrawArcPoint(centerX + y - offset, centerY - x, color); }
                 if (angle2 >= startAngleRadians && angle2 <= endAngleRadians) { DrawArcPoint(centerX + x - offset, centerY - y, color); }
