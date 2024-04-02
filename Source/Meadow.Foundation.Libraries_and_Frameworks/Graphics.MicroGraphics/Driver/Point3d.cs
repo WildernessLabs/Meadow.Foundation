@@ -131,9 +131,9 @@ namespace Meadow.Foundation.Graphics
         /// <returns>True if both instances are equal, false otherwise</returns>
         public override bool Equals(object obj)
         {
-            if (obj is Point3d)
+            if (obj is Point3d d)
             {
-                return Equals((Point3d)obj);
+                return Equals(d);
             }
 
             return false;
