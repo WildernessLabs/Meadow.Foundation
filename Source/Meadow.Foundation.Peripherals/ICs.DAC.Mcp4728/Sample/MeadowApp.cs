@@ -1,5 +1,6 @@
 ﻿using System;
 using Meadow;
+using Meadow.Units;
 using Meadow.Devices;
 using System.Threading.Tasks;
 using Meadow.Foundation.ICs.DAC;
@@ -23,9 +24,9 @@ namespace MeadowApp
             mcp4728 = new Mcp4728(bus);
             analogOutputPort = mcp4728.CreateAnalogOutputPort(mcp4728.Pins.ChannelA) as Mcp4728.AnalogOutputPort;
             analogInputPort = Device.CreateAnalogInputPort(Device.Pins.A00);
-
+            
             Resolver.Log.Info($"--- MCP4728 Sample App ---");
-            analogOutputPort.HighZ();
+            analogOutputPort?.HighZ();
             return Task.CompletedTask;
         }
 
@@ -39,7 +40,7 @@ namespace MeadowApp
             {
                 for (int i = 0; i < 360; i++)
                 {
-                    var value = (uint)(centerValue + (centerValue * Math.Sin(i * Math.PI / 180)));
+                    var value = (uint)(centerValue + (centerValue * Math.Sin(new Angle(i).Radians)));
                     analogOutputPort.GenerateOutput(value);
                     var expected = value * analogOutputPort.VoltageResolution.Volts;
                     var actual = analogInputPort.Read().Result.Volts;
