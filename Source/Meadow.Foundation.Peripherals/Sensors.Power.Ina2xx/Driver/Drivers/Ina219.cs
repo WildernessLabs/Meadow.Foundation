@@ -1,7 +1,7 @@
-﻿using System;
-using System.Runtime.CompilerServices;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
 using Meadow.Units;
+using System;
+using System.Runtime.CompilerServices;
 
 namespace Meadow.Foundation.Sensors.Power;
 
@@ -33,15 +33,15 @@ public class Ina219 : Ina2xx
     /// </summary>
     /// <param name="i2cBus">The I2C bus</param>
     /// <param name="address">The I2C address</param>
-    public Ina219(II2cBus i2cBus, byte address = (byte)Addresses.Default) 
-        : this(i2cBus, address, new Resistance(0.1)) 
+    public Ina219(II2cBus i2cBus, byte address = (byte)Addresses.Default)
+        : this(i2cBus, address, new Resistance(0.1))
     { }
 
     /// <inheritdoc/>
     public override void Configure()
     {
-        Configure(BusVoltageRange.Range_32V, ADCModes.ADCMode_12bit_532us, 
-            ShuntVoltageRange.Range_320mV, ADCModes.ADCMode_12bit_532us, 
+        Configure(BusVoltageRange.Range_32V, ADCModes.ADCMode_12bit_532us,
+            ShuntVoltageRange.Range_320mV, ADCModes.ADCMode_12bit_532us,
             Mode.ContinuousAll);
     }
 
@@ -54,17 +54,21 @@ public class Ina219 : Ina2xx
     /// <param name="shuntADCMode">ADC resolution/averaging for Shunt Voltage</param>
     /// <param name="mode">selection of values and trigger mode</param>
     public void Configure(
-        BusVoltageRange busVoltageRange = BusVoltageRange.Range_32V, 
+        BusVoltageRange busVoltageRange = BusVoltageRange.Range_32V,
         ADCModes busADCMode = ADCModes.ADCMode_12bit_532us,
-        ShuntVoltageRange shuntVoltageRange = ShuntVoltageRange.Range_320mV, 
+        ShuntVoltageRange shuntVoltageRange = ShuntVoltageRange.Range_320mV,
         ADCModes shuntADCMode = ADCModes.ADCMode_12bit_532us,
         Mode mode = Mode.ContinuousAll
         )
     {
-        ushort config = (ushort)((ushort)busVoltageRange | (ushort)shuntVoltageRange | (ushort) busADCMode << 7 | (ushort)shuntADCMode << 3 | (ushort)mode);
+        ushort config = (ushort)((ushort)busVoltageRange | (ushort)shuntVoltageRange | (ushort)busADCMode << 7 | (ushort)shuntADCMode << 3 | (ushort)mode);
         WriteRegister(Registers.Config, config);
         if (_calibration > 0)
+        {
             WriteRegister(Registers.Calibration, _calibration);
+        }
+
+        IsConfigured = true;
     }
 
     /// <summary>
@@ -75,7 +79,7 @@ public class Ina219 : Ina2xx
     /// <param name="adcMode">ADC resolution/averaging setting common to both ADCs</param>
     /// <param name="mode">selection of values and trigger mode</param>
     public void Configure(
-        BusVoltageRange busVoltageRange, 
+        BusVoltageRange busVoltageRange,
         Current maxExpectedCurrent,
         ADCModes adcMode = ADCModes.ADCMode_12bit_532us,
         Mode mode = Mode.ContinuousAll)
@@ -96,13 +100,13 @@ public class Ina219 : Ina2xx
         var minimumLSB = maxExpectedCurrent.Microamps / 0x7FFF;
         var maximumLSB = maxExpectedCurrent.Microamps / 0x1000;
         var selectedLSB = Math.Ceiling(minimumLSB);
-        _currentScale =  new Current(selectedLSB, Units.Current.UnitType.Microamps);
+        _currentScale = new Current(selectedLSB, Units.Current.UnitType.Microamps);
         _powerScale = new Units.Power(_currentScale.Amps * 20, Units.Power.UnitType.Watts);
         _calibration = (ushort)(0.04096 / (_currentScale.Amps * _shuntResistor.Ohms));
 
         var maxCurrentBeforeOverflow = Math.Min(maxShuntVoltage / _shuntResistor.Ohms, _currentScale.Amps * 0x7FFF);
         var maxShuntVoltageBeforeOverflow = Math.Min(maxExpectedCurrent.Amps * _shuntResistor.Ohms, maxShuntVoltage);
-        
+
         return maxShuntVoltageBeforeOverflow switch
         {
             <= 0.04 => ShuntVoltageRange.Range_40mV,
@@ -111,19 +115,28 @@ public class Ina219 : Ina2xx
             _ => ShuntVoltageRange.Range_320mV,
         };
     }
-    
+
     /// <inheritdoc/>
-    public override Units.Current ReadCurrent() => new Current((short)ReadRegisterAsUShort(Registers.Current) * _currentScale.Amps);
-    
+    public override Units.Current ReadCurrent()
+    {
+        var rawRegister = ReadRegisterAsUShort(Registers.Current);
+        return new Current((short)rawRegister * _currentScale.Amps);
+    }
+
     /// <inheritdoc/>
     public override Units.Voltage ReadBusVoltage()
     {
         var rawRegister = ReadRegisterAsUShort(Registers.BusVoltage);
-        var mathOverflow = (rawRegister & 0x0001) != 0;
         return new Voltage((rawRegister >> 3) * _voltageScale.Volts);
     }
+
     /// <inheritdoc/>
-    public override Units.Voltage ReadShuntVoltage() => new Voltage(ReadRegisterAsUShort(Registers.ShuntVoltage) * _shuntVoltageScale.Volts);
+    public override Units.Voltage ReadShuntVoltage()
+    {
+        var rawRegister = ReadRegisterAsUShort(Registers.ShuntVoltage);
+        return new Voltage(rawRegister * _shuntVoltageScale.Volts);
+    }
+
     /// <inheritdoc/>
     public override Units.Power ReadPower() => new Units.Power(ReadRegisterAsUShort(Registers.Power) * _powerScale.Watts);
 
