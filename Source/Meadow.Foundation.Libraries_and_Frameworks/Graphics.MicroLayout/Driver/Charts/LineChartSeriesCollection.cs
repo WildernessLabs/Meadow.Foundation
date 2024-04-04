@@ -11,6 +11,11 @@ public class LineChartSeriesCollection : IEnumerable<LineChartSeries>
     private readonly List<LineChartSeries> _series = new();
 
     /// <summary>
+    /// Gets the number of Series in the collection
+    /// </summary>
+    public int Count => _series.Count;
+
+    /// <summary>
     /// Adds one or more LineChartSeries to the collection
     /// </summary>
     /// <param name="series"></param>

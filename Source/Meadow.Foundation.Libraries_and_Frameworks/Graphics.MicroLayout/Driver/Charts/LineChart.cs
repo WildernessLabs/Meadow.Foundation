@@ -102,52 +102,55 @@ public class LineChart : ThemedControl
         ChartAreaTop = Top + DefaultMargin * 2 - AxisStroke;
         ChartAreaBottom = Bottom - DefaultMargin;
 
-        // determine overall min/max
-        var minX = Series.Min(s => s.Points.MinX);
-        var maxX = Series.Max(s => s.Points.MaxX);
-
-        if (AlwaysShowYOrigin)
+        if (Series.Count > 0)
         {
-            var min = Series.Min(s => s.Points.MinY);
-            var max = Series.Max(s => s.Points.MaxY);
+            // determine overall min/max
+            var minX = Series.Min(s => s.Points.MinX);
+            var maxX = Series.Max(s => s.Points.MaxX);
 
-            if (min > 0)
+            if (AlwaysShowYOrigin)
             {
-                YMinimumValue = 0;
-                YMaximumValue = max;
-            }
-            else if (max < 0)
-            {
-                YMinimumValue = min;
-                YMaximumValue = 0;
+                var min = Series.Min(s => s.Points.MinY);
+                var max = Series.Max(s => s.Points.MaxY);
+
+                if (min > 0)
+                {
+                    YMinimumValue = 0;
+                    YMaximumValue = max;
+                }
+                else if (max < 0)
+                {
+                    YMinimumValue = min;
+                    YMaximumValue = 0;
+                }
+                else
+                {
+                    YMinimumValue = min;
+                    YMaximumValue = max;
+                }
             }
             else
             {
-                YMinimumValue = min;
-                YMaximumValue = max;
+                // set chart top/bottom at 10% above/below the min/max
+                var ymin = Series.Min(s => s.Points.MinY);
+                YMinimumValue = (ymin > 0) ? ymin * 0.9 : ymin * 1.1;
+                var ymax = Series.Max(s => s.Points.MaxY);
+                YMaximumValue = (ymax > 0) ? ymax * 1.1 : ymax * 0.9;
             }
+
+            ChartAreaHeight = Height - DefaultMargin * 3;
+            VerticalScale = ChartAreaHeight / (YMaximumValue - YMinimumValue); // pixels per vertical unit
+
+            DrawYAxis(graphics);
+            DrawXAxis(graphics, YMinimumValue, YMaximumValue);
+
+            foreach (var series in Series)
+            {
+                DrawSeries(graphics, series);
+            }
+
+            DrawAxisLabels(graphics);
         }
-        else
-        {
-            // set chart top/bottom at 10% above/below the min/max
-            var ymin = Series.Min(s => s.Points.MinY);
-            YMinimumValue = (ymin > 0) ? ymin * 0.9 : ymin * 1.1;
-            var ymax = Series.Max(s => s.Points.MaxY);
-            YMaximumValue = (ymax > 0) ? ymax * 1.1 : ymax * 0.9;
-        }
-
-        ChartAreaHeight = Height - DefaultMargin * 3;
-        VerticalScale = ChartAreaHeight / (YMaximumValue - YMinimumValue); // pixels per vertical unit
-
-        DrawYAxis(graphics);
-        DrawXAxis(graphics, YMinimumValue, YMaximumValue);
-
-        foreach (var series in Series)
-        {
-            DrawSeries(graphics, series);
-        }
-
-        DrawAxisLabels(graphics);
 
         graphics.Show();
     }
