@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Meadow.Hardware;
+using System;
 using System.Runtime.CompilerServices;
 using System.Text;
-using Meadow.Hardware;
 
 namespace Meadow.Foundation.Sensors.Power;
 
@@ -34,7 +34,7 @@ public class Ina228 : Ina2xx
         _powerScale = new Units.Power(3.2 * _currentScale.Amps);
         _energyScale = new Units.Energy(_powerScale.Watts * 16);
         _chargeScale = _currentScale.Amps;
-        
+
         ReadDeviceInfo();
     }
 
@@ -42,9 +42,9 @@ public class Ina228 : Ina2xx
     public override void Configure()
     {
         Configure(false, false, 0);
-        ConfigureConversion(Mode.ContinuousAll, Averaging.Average_1, 
-            voltageTime: ConversionTime.ConversionTime_1052us, 
-            currentTime: ConversionTime.ConversionTime_1052us, 
+        ConfigureConversion(Mode.ContinuousAll, Averaging.Average_1,
+            voltageTime: ConversionTime.ConversionTime_1052us,
+            currentTime: ConversionTime.ConversionTime_1052us,
             temperatureTime: ConversionTime.ConversionTime_1052us
             );
     }
@@ -58,6 +58,7 @@ public class Ina228 : Ina2xx
             throw new ArgumentOutOfRangeException(nameof(initialConversionDelayMs), initialConversionDelayMs, null);
         ushort config = (ushort)((shuntGain4x ? 0x10 : 0x00) | (temperatureCompensation ? 0x20 : 0x00) | ((initialConversionDelayMs / 2) << 6));
         WriteRegister(Registers.Config, config);
+        IsConfigured = true;
     }
 
     /// <summary>
@@ -92,13 +93,13 @@ public class Ina228 : Ina2xx
         WriteRegister(Registers.Config, config);
 
         // shuntGain4x also affects the calibration and other current derived values
-        _shuntVoltageScale = new Units.Voltage(shuntGain4x ? 78.125 : 312.5 , Units.Voltage.UnitType.Nanovolts);
+        _shuntVoltageScale = new Units.Voltage(shuntGain4x ? 78.125 : 312.5, Units.Voltage.UnitType.Nanovolts);
         var maxShuntVoltage = new Units.Voltage(shuntGain4x ? 40.96 : 163.84, Units.Voltage.UnitType.Millivolts);
         var maxCurrent = maxShuntVoltage.Volts / _shuntResistor.Ohms;
         var currentLSB = Math.Min(maxExpectedCurrent.Amps, maxCurrent) / (1 << 19);
         _calibration = (ushort)(13107.2 * 1e6 * currentLSB * _shuntResistor.Ohms * (shuntGain4x ? 4 : 1));
         WriteRegister(Registers.ShuntCal, _calibration);
-        
+
         _currentScale = new Units.Current(currentLSB);
         _powerScale = new Units.Power(_currentScale.Amps * 3.2);
         _energyScale = new Units.Energy(_powerScale.Watts * 16);
@@ -304,10 +305,10 @@ public class Ina228 : Ina2xx
     #region Shorthand
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private void WriteRegister(Registers register, byte value) => BusComms.WriteRegister((byte)register, value, ByteOrder.BigEndian);
-    
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private void WriteRegister(Registers register, ushort value) => BusComms.WriteRegister((byte)register, value, ByteOrder.BigEndian);
-    
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private void WriteRegister(Registers register, uint value) => BusComms.WriteRegister((byte)register, value, ByteOrder.BigEndian);
 
