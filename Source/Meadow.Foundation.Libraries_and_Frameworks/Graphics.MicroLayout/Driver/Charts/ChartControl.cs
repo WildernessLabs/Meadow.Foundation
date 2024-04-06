@@ -53,12 +53,34 @@ public abstract class ChartControl : ThemedControl
     /// </summary>
     public int AxisStroke { get; set; } = DefaultAxisStroke;
 
+    /// <summary>
+    /// Gets or sets the height of the chart (non-axis) area
+    /// </summary>
     protected int ChartAreaHeight { get; set; }
+    /// <summary>
+    /// Gets or sets the width of the chart (non-axis) area
+    /// </summary>
     protected int ChartAreaWidth { get; set; }
+    /// <summary>
+    /// Gets or sets the left of the chart (non-axis) area
+    /// </summary>
     protected int ChartAreaLeft { get; set; }
+    /// <summary>
+    /// Gets or sets the top of the chart (non-axis) area
+    /// </summary>
     protected int ChartAreaTop { get; set; }
+    /// <summary>
+    /// Gets or sets the bottom of the chart (non-axis) area
+    /// </summary>
     protected int ChartAreaBottom { get; set; }
+
+    /// <summary>
+    /// Gets or sets the X offset withing the chart's parent
+    /// </summary>
     protected int ParentOffsetX => (Parent?.Left ?? 0);
+    /// <summary>
+    /// Gets or sets the Y offset withing the chart's parent
+    /// </summary>
     protected int ParentOffsetY => (Parent?.Top ?? 0);
 
     /// <summary>
@@ -73,6 +95,10 @@ public abstract class ChartControl : ThemedControl
     {
     }
 
+    /// <summary>
+    /// Get either the specified or default font for the axes
+    /// </summary>
+    /// <returns></returns>
     protected IFont GetAxisFont()
     {
         if (AxisFont == null)

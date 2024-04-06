@@ -11,43 +11,74 @@ public class VerticalBarChart : ChartControl
     private int _barSpacing = 1;
     private string _xlabelFormat = "N1";
     private Color _seriesColor = Color.White;
-    private bool _showXLabels;
+    private bool _showXLabels = true;
 
+    /// <summary>
+    /// Creates a vertical bar chart instance
+    /// </summary>
+    /// <param name="left">The control's left position</param>
+    /// <param name="top">The control's top position</param>
+    /// <param name="width">The control's width</param>
+    /// <param name="height">The control's height</param>
     public VerticalBarChart(int left, int top, int width, int height)
         : base(left, top, width, height)
     {
     }
 
+    /// <summary>
+    /// Creates a vertical bar chart instance
+    /// </summary>
+    /// <param name="left">The control's left position</param>
+    /// <param name="top">The control's top position</param>
+    /// <param name="width">The control's width</param>
+    /// <param name="height">The control's height</param>
+    /// <param name="series">A series of data to plot</param>
     public VerticalBarChart(int left, int top, int width, int height, float[] series)
         : base(left, top, width, height)
     {
         Series = series;
     }
 
+    /// <summary>
+    /// Gets or sets a series of float values to plot
+    /// </summary>
     public float[]? Series
     {
         get => _series;
         set => SetInvalidatingProperty(ref _series, value);
     }
 
+    /// <summary>
+    /// Gets or sets the padding around a bar
+    /// </summary>
+    /// <remarks>This property behaves like a margin, so the space between any two bars will be twice this value</remarks>
     public int BarSpacing
     {
         get => _barSpacing;
         set => SetInvalidatingProperty(ref _barSpacing, value);
     }
 
+    /// <summary>
+    /// Gets or sets the string formatting (i.e. "N0" for a 0-decimal number) to apply to the X axis labels
+    /// </summary>
     public string XAxisLabelFormat
     {
         get => _xlabelFormat;
         set => SetInvalidatingProperty(ref _xlabelFormat, value);
     }
 
+    /// <summary>
+    /// Gets or sets the visibility of the X axis labels
+    /// </summary>
     public bool ShowXAxisLabels
     {
         get => _showXLabels;
         set => SetInvalidatingProperty(ref _showXLabels, value);
     }
 
+    /// <summary>
+    /// Gets or sets the color of the plotted series (bars)
+    /// </summary>
     public Color SeriesColor
     {
         get => _seriesColor;

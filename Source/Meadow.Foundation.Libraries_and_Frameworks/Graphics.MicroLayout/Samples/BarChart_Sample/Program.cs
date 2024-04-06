@@ -34,15 +34,20 @@ public class MeadowApp : App<Windows>
         {
             seriesB[i] = random.NextSingle() * 10;
         }
+        var seriesC = new float[23];
+        for (var i = 0; i < seriesC.Length; i++)
+        {
+            seriesC[i] = random.NextSingle() * 10;
+        }
 
-        var chartA = new VerticalBarChart(0, 0, screen.Width, screen.Height / 2, seriesA)
+        var chartA = new VerticalBarChart(0, 0, screen.Width / 2, screen.Height / 2, seriesA)
         {
             AxisLabelColor = Color.Red,
             AxisColor = Color.DarkRed,
             AxisStroke = 3,
             BarSpacing = 3,
             SeriesColor = Color.DarkBlue,
-            AxisFont = new Font12x20(),
+            AxisFont = new Font8x8(),
         };
         var chartB = new VerticalBarChart(0, screen.Height / 2, screen.Width, screen.Height / 2, seriesB)
         {
@@ -52,10 +57,21 @@ public class MeadowApp : App<Windows>
             BarSpacing = 3,
             SeriesColor = Color.DarkGreen,
             AxisFont = new Font12x20(),
+            XAxisLabelFormat = "N2"
+        };
+        var chartC = new VerticalBarChart(screen.Width / 2, 0, screen.Width / 2, screen.Height / 2, seriesC)
+        {
+            AxisLabelColor = Color.Orange,
+            AxisColor = Color.Magenta,
+            AxisStroke = 2,
+            BarSpacing = 2,
+            SeriesColor = Color.Purple,
+            AxisFont = new Font12x20(),
+            ShowXAxisLabels = false
         };
 
 
-        screen.Controls.Add(chartA, chartB);
+        screen.Controls.Add(chartA, chartB, chartC);
 
         System.Windows.Forms.Application.Run(display);
 
