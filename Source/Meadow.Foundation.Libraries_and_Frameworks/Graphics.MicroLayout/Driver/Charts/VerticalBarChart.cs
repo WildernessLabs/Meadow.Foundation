@@ -7,10 +7,11 @@ namespace Meadow.Foundation.Graphics.MicroLayout;
 /// </summary>
 public class VerticalBarChart : ChartControl
 {
-    public float[]? Series { get; set; }
-    public int BarSpacing { get; set; } = 1;
-    public string XAxisLabelFormat { get; set; } = "N1";
-    public Color SeriesColor { get; set; } = Color.White;
+    private float[]? _series;
+    private int _barSpacing = 1;
+    private string _xlabelFormat = "N1";
+    private Color _seriesColor = Color.White;
+    private bool _showXLabels;
 
     public VerticalBarChart(int left, int top, int width, int height)
         : base(left, top, width, height)
@@ -23,6 +24,36 @@ public class VerticalBarChart : ChartControl
         Series = series;
     }
 
+    public float[]? Series
+    {
+        get => _series;
+        set => SetInvalidatingProperty(ref _series, value);
+    }
+
+    public int BarSpacing
+    {
+        get => _barSpacing;
+        set => SetInvalidatingProperty(ref _barSpacing, value);
+    }
+
+    public string XAxisLabelFormat
+    {
+        get => _xlabelFormat;
+        set => SetInvalidatingProperty(ref _xlabelFormat, value);
+    }
+
+    public bool ShowXAxisLabels
+    {
+        get => _showXLabels;
+        set => SetInvalidatingProperty(ref _showXLabels, value);
+    }
+
+    public Color SeriesColor
+    {
+        get => _seriesColor;
+        set => SetInvalidatingProperty(ref _seriesColor, value);
+    }
+
     /// <inheritdoc/>
     protected override void OnDraw(MicroGraphics graphics)
     {
@@ -31,7 +62,11 @@ public class VerticalBarChart : ChartControl
         var font = GetAxisFont();
 
         ChartAreaTop = Top + DefaultMargin * 2 - AxisStroke;
-        ChartAreaBottom = Bottom - DefaultMargin - font.Height - AxisStroke;
+        ChartAreaBottom = Bottom - DefaultMargin - AxisStroke;
+        if (ShowXAxisLabels)
+        {
+            ChartAreaBottom -= font.Height;
+        }
         ChartAreaHeight = Height - DefaultMargin * 3;
 
         int yLabelWidth = 0;
@@ -80,13 +115,16 @@ public class VerticalBarChart : ChartControl
                 color: SeriesColor,
                 filled: true);
 
-            graphics.DrawText(
+            if (ShowXAxisLabels)
+            {
+                graphics.DrawText(
                 x + halfWidth,
                 ChartAreaBottom + DefaultMargin + AxisStroke,
                 alignmentH: HorizontalAlignment.Center,
                 color: AxisLabelColor,
                 text: item.ToString(XAxisLabelFormat),
                 font: font);
+            }
 
             x += barWidth + 2 * BarSpacing;
         }
