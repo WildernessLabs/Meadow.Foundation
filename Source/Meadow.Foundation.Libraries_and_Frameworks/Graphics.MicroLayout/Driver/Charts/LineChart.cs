@@ -5,52 +5,12 @@ namespace Meadow.Foundation.Graphics.MicroLayout;
 /// <summary>
 /// An X/Y Line chart
 /// </summary>
-public class LineChart : ThemedControl
+public class LineChart : ChartControl
 {
-    /// <summary>
-    /// The default color for axis lines
-    /// </summary>
-    public static Color DefaultAxisColor = Color.Gray;
-
-    /// <summary>
-    /// The default color for axis labels
-    /// </summary>
-    public static Color DefaultAxisLabelColor = Color.White;
-
-    /// <summary>
-    /// The default chart background color
-    /// </summary>
-    public static Color DefaultBackgroundColor = Color.Black;
-
-    private const int DefaultMargin = 5;
-    private const int DefaultAxisStroke = 4;
-
-    private IFont _axisFont = default!;
-
     /// <summary>
     /// When true, Y-value origin (zero) is always displayed, otherwise the Y axis is scaled based on the data range.
     /// </summary>
     public bool AlwaysShowYOrigin { get; set; } = true;
-    /// <summary>
-    /// The IFont used to for displaying axis labels
-    /// </summary>
-    public IFont? AxisFont { get; set; }
-    /// <summary>
-    /// The chart's background color
-    /// </summary>
-    public Color BackgroundColor { get; set; } = DefaultBackgroundColor;
-    /// <summary>
-    /// The color used to draw the chart axes lines
-    /// </summary>
-    public Color AxisColor { get; set; } = DefaultAxisColor;
-    /// <summary>
-    /// The color used to draw the chart axes labels
-    /// </summary>
-    public Color AxisLabelColor { get; set; } = DefaultAxisLabelColor;
-    /// <summary>
-    /// The width of the axes lines
-    /// </summary>
-    public int AxisStroke { get; set; } = DefaultAxisStroke;
 
     //    public bool ShowXAxisLabels { get; set; }
     /// <summary>
@@ -69,13 +29,6 @@ public class LineChart : ThemedControl
     private int XAxisScaledPosition { get; set; }
     private double HorizontalScale { get; set; } // pixels per X units
     private double HorizontalMinimum { get; set; } // X units at left of chart
-    private int ChartAreaHeight { get; set; }
-    private int ChartAreaWidth { get; set; }
-    private int ChartAreaLeft { get; set; }
-    private int ChartAreaTop { get; set; }
-    private int ChartAreaBottom { get; set; }
-    private int ParentOffsetX => (Parent?.Left ?? 0);
-    private int ParentOffsetY => (Parent?.Top ?? 0);
 
     /// <summary>
     /// Creates a DisplayLineChart instance
@@ -86,11 +39,6 @@ public class LineChart : ThemedControl
     /// <param name="height">The control's height</param>
     public LineChart(int left, int top, int width, int height)
         : base(left, top, width, height)
-    {
-    }
-
-    /// <inheritdoc/>
-    public override void ApplyTheme(DisplayTheme theme)
     {
     }
 
@@ -214,20 +162,6 @@ public class LineChart : ThemedControl
             XAxisScaledPosition,
             ChartAreaWidth,
             AxisColor);
-    }
-
-    private IFont GetAxisFont()
-    {
-        if (AxisFont == null)
-        {
-            _axisFont = new Font6x8();
-        }
-        else
-        {
-            _axisFont = AxisFont;
-        }
-
-        return _axisFont;
     }
 
     private void DrawYAxis(MicroGraphics graphics)

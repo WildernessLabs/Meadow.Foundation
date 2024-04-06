@@ -142,6 +142,13 @@ public class BasicTests
 
         var result = MicroJson.Deserialize<IntegerClass>(input);
 
+        Assert.NotNull(result);
+    }
+
+    [Fact]
+    public void DeserializeJsonWithExtraField()
+    {
+        var result = MicroJson.Deserialize<IntegerClass>("{\"stringArg\":\"my string\",\"value\":23}");
         Assert.Equal(23, result.Value);
     }
 }
