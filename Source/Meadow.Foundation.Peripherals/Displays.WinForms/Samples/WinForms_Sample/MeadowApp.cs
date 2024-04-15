@@ -19,8 +19,6 @@ public class MeadowApp : App<Meadow.Windows>
         graphics = new MicroGraphics(display)
         {
             CurrentFont = new Font16x24(),
-            //CurrentFont = new Font12x20(),
-            //CurrentFont = new Font6x8(),
             Stroke = 1
         };
 
