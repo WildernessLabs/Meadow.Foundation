@@ -1523,20 +1523,33 @@ namespace Meadow.Foundation.Graphics
         {
             byte[] bitmap;
 
-            if (font.Width == 8) //just copy bytes
+            if (font.Width == 8)
             {
-                bitmap = new byte[text.Length * font.Height * (font.Width >> 3)];
+                bitmap = new byte[text.Length * font.Height];
 
-                byte[] characterMap;
+                for (int i = 0; i < text.Length; i++)
+                {   //copy data for 1 character at a time going top to bottom
+                    for (int j = 0; j < font.Height; j++)
+                    {
+                        bitmap[i + (j * text.Length)] = font[text[i]][j];
+                    }
+                }
+            }
+            else if (font.Width == 16)
+            {
+                int len = text.Length * 2; // Each character takes up 2 bytes per row
+                bitmap = new byte[len * font.Height];
+                int bitmapIndex;
 
                 for (int i = 0; i < text.Length; i++)
                 {
-                    characterMap = font[text[i]];
+                    byte[] charMap = font[text[i]];
 
-                    //copy data for 1 character at a time going top to bottom
-                    for (int segment = 0; segment < font.Height; segment++)
-                    {
-                        bitmap[i + (segment * text.Length)] = characterMap[segment];
+                    for (int j = 0; j < font.Height; j++)
+                    {   // Calculate the starting index in the bitmap array for this row and character
+                        bitmapIndex = (i * 2) + (j * len);
+                        bitmap[bitmapIndex] = charMap[j * 2];        // First byte of the row
+                        bitmap[bitmapIndex + 1] = charMap[j * 2 + 1]; // Second byte of the row
                     }
                 }
             }
@@ -1574,14 +1587,7 @@ namespace Meadow.Foundation.Graphics
             }
             else if (font.Width == 6)
             {
-                var len = text.Length;
-
-                if (text.Length % 4 != 0)
-                {
-                    len += 4 - (text.Length % 4); //character length
-                }
-                len = len * 3 / 4; //length in bytes
-
+                int len = (text.Length + 3) / 4 * 3; // Adjusted to handle padding in one line.
                 bitmap = new byte[len * font.Height];
 
                 byte[] charMap1, charMap2, charMap3, charMap4;
@@ -1643,7 +1649,7 @@ namespace Meadow.Foundation.Graphics
             }
             else
             {
-                throw new Exception("Font width must be 4, 6, 8, or 12");
+                throw new Exception("Font width must be 4, 6, 8, 12 or 16");
             }
             return bitmap;
         }

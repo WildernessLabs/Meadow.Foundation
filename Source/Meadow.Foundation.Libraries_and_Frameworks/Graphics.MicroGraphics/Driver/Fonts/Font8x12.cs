@@ -134,7 +134,7 @@ namespace Meadow.Foundation.Graphics
                 var index = (byte)character;
                 if ((index < 32) || (index > 127))
                 {
-                    return _fontTable[0x20];
+                    return _fontTable[0];
                 }
                 return _fontTable[(byte)character - 0x20];
             }

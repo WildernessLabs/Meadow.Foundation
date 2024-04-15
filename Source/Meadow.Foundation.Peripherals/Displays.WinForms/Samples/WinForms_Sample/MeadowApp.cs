@@ -14,11 +14,11 @@ public class MeadowApp : App<Meadow.Windows>
 
     public override Task Initialize()
     {
-        display = new WinFormsDisplay(320, 240, displayScale: 1.5f);
+        display = new WinFormsDisplay(640, 480, displayScale: 1f);
 
         graphics = new MicroGraphics(display)
         {
-            CurrentFont = new Font12x20(),
+            CurrentFont = new Font16x24(),
             Stroke = 1
         };
 
@@ -26,10 +26,16 @@ public class MeadowApp : App<Meadow.Windows>
         {
             graphics.Clear();
 
-            graphics.DrawTriangle(10, 30, 50, 50, 10, 50, Color.Red);
-            graphics.DrawRectangle(20, 45, 40, 20, Color.Yellow, false);
-            graphics.DrawCircle(50, 50, 40, Color.Blue, false);
-            graphics.DrawText(5, 5, "Meadow on WinForms", Color.White);
+            graphics.DrawText(10, 10, "16x24 font on WinForms", Color.White);
+
+            graphics.DrawText(10, 40, "1234567890!@#$%^&*(){}[],./<>?;':", Color.LawnGreen);
+            graphics.DrawText(10, 70, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", Color.Cyan);
+            graphics.DrawText(10, 100, "abcdefghijklmnopqrstuvwxyz", Color.Yellow);
+            graphics.DrawText(10, 130, "Temp: 21.5°C", Color.Orange);
+
+            graphics.DrawTriangle(10, 220, 50, 260, 10, 260, Color.Red);
+            graphics.DrawRectangle(20, 185, 80, 40, Color.Yellow, false);
+            graphics.DrawCircle(50, 240, 40, Color.Blue, false);
 
             graphics.Show();
         });
