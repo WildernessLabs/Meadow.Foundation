@@ -11,6 +11,31 @@ namespace Unit.Tests;
 public class CloudEntityTests
 {
     [Fact]
+    public void SerializeJsonElement_ShouldThrow()
+    {
+        var data1 = new CloudEvent
+        {
+            EventId = 110,
+            Description = "Atmospheric reading",
+            Measurements = new Dictionary<string, object>()
+            {
+                { "TemperatureCelsius", 27.716796875 },
+                { "HumidityPercent", 33.6125501896705 },
+                { "PressureMillibar", 2.32899230499455 }
+            }
+        };
+
+        var json1 = MicroJson.Serialize(data1);
+        Assert.NotNull(json1);
+
+        var data2 = JsonSerializer.Deserialize<CloudEvent>(json1, new JsonSerializerOptions(JsonSerializerDefaults.Web));
+        Assert.NotNull(data2);
+
+        // system.text.json will deserialize the Measurement values to JsonEleemnts, not doubles
+        Assert.Throws<NotSupportedException>(() => { var json2 = MicroJson.Serialize(data2); });
+    }
+
+    [Fact]
     public void CloudEventSerializationTest()
     {
         var ce = new CloudEvent()
