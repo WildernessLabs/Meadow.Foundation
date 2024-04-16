@@ -11,7 +11,7 @@
     <PackageId>Meadow.Foundation.Sensors.Power.Ina2xx</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow.Foundation, Sensor, Power, Current, Voltage, Ina260, Ina219, Ina228</PackageTags>
-    <Version>1.9.0</Version>
+    <Version>1.10.2</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>INA2xx Series I2C current and power monitor</Description>
   </PropertyGroup>
