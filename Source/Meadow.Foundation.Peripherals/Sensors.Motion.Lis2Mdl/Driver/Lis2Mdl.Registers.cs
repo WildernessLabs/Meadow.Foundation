@@ -1,6 +1,6 @@
 ﻿namespace Meadow.Foundation.Sensors.Motion
 {
-    public partial class Lis2Mdl
+    public partial class Lis2mdl
     {
         private const byte WHO_AM_I = 0x4F;
         private const byte CFG_REG_A = 0x60;

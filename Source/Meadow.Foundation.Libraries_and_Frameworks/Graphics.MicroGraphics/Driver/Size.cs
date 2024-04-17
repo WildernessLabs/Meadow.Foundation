@@ -105,9 +105,9 @@
         /// <returns>True if both instances are equal, false otherwise</returns>
         public override bool Equals(object obj)
         {
-            if (obj is Size)
+            if (obj is Size size)
             {
-                return Equals((Size)obj);
+                return Equals(size);
             }
 
             return false;

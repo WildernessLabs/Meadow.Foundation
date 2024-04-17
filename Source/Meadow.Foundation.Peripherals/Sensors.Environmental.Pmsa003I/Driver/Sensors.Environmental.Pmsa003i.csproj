@@ -1,6 +1,6 @@
 <Project Sdk="Meadow.Sdk/1.1.0">
   <PropertyGroup>
-    <Version>1.9.0</Version>
+    <Version>1.10.2</Version>
     <PackageReadmeFile>Readme.md</PackageReadmeFile>
     <Nullable>enable</Nullable>
     <LangVersion>10.0</LangVersion>
@@ -10,18 +10,18 @@
     <Authors>Wilderness Labs, Inc</Authors>
     <TargetFramework>netstandard2.1</TargetFramework>
     <OutputType>Library</OutputType>
-    <AssemblyName>Pmsa300i</AssemblyName>
+    <AssemblyName>Pmsa003i</AssemblyName>
     <Company>Wilderness Labs, Inc</Company>
     <PackageProjectUrl>http://developer.wildernesslabs.co/Meadow/Meadow.Foundation/</PackageProjectUrl>
-    <PackageId>Meadow.Foundation.Sensors.Environmental.Pmsa300i</PackageId>
+    <PackageId>Meadow.Foundation.Sensors.Environmental.Pmsa003i</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
-    <PackageTags>Meadow,Meadow.Foundation,Environmental,Pmsa300i,gas,particle,particulate,matter,AQI,air,quality</PackageTags>
+    <PackageTags>Meadow,Meadow.Foundation,Environmental,Pmsa003i,gas,particle,particulate,matter,AQI,air,quality</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Description>PMSA300I I2C particulate matter AQI sensor</Description>
+    <Description>PMSA003I I2C particulate matter AQI sensor</Description>
   </PropertyGroup>
   <ItemGroup>
     <None Include=".\Readme.md" Pack="true" PackagePath="" />
     <None Include="..\..\..\icon.png" Pack="true" PackagePath="" />
-    <PackageReference Include="Meadow.Foundation" Version="1.9.0" />
+    <PackageReference Include="Meadow.Foundation" Version="1.10.2" />
   </ItemGroup>
 </Project>

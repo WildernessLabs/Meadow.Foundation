@@ -95,7 +95,6 @@ public class MeadowApp : App<Windows>
 
             Thread.Sleep(50);
         }
-
     }
 
     public static async Task Main(string[] args)

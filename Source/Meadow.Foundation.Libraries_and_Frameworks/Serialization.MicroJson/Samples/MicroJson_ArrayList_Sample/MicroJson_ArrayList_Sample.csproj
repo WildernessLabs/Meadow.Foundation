@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="puzzles.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="puzzles.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Meadow.Foundation.Serialization.MicroJson" Version="1.10.2" />
+  </ItemGroup>
+
+</Project>

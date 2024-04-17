@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Version>1.9.0</Version>
+    <Version>1.10.2</Version>
     <PackageReadmeFile>Readme.md</PackageReadmeFile>
     <LangVersion>10.0</LangVersion>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
@@ -22,6 +22,6 @@
   <ItemGroup>
     <None Include=".\Readme.md" Pack="true" PackagePath="" />
     <None Include="..\..\..\icon.png" Pack="true" PackagePath="" />
-    <PackageReference Include="Meadow.Foundation" Version="1.9.0" />
+    <PackageReference Include="Meadow.Foundation" Version="1.10.2" />
   </ItemGroup>
 </Project>

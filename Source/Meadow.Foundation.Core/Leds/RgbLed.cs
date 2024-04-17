@@ -36,9 +36,7 @@ namespace Meadow.Foundation.Leds
         /// </summary>
         public CommonType Common { get; protected set; }
 
-        /// <summary>
-        /// Turns on LED with current color or turns it off
-        /// </summary>
+        /// <inheritdoc/>
         public bool IsOn
         {
             get => isOn;

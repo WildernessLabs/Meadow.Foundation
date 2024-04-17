@@ -10,12 +10,7 @@
     <RootNamespace>ICs.IOExpanders</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.F7" Version="1.9.0" />
-    <PackageReference Include="Meadow.Foundation.ICs.IOExpanders.Pca9685" Version="1.9.0" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Update="meadow.config.yaml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+    <PackageReference Include="Meadow.F7" Version="1.10.2" />
+    <PackageReference Include="Meadow.Foundation.ICs.IOExpanders.Pca9685" Version="1.10.2" />
   </ItemGroup>
 </Project>

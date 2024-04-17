@@ -1,7 +1,7 @@
 <Project Sdk="Meadow.Sdk/1.1.0">
   <PropertyGroup>
     <PackageReadmeFile>Readme.md</PackageReadmeFile>
-    <Version>1.9.0</Version>
+    <Version>1.10.2</Version>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageIcon>icon.png</PackageIcon>
     <Authors>Wilderness Labs, Inc</Authors>
@@ -10,7 +10,7 @@
     <AssemblyName>Pct2075</AssemblyName>
     <Company>Wilderness Labs, Inc</Company>
     <PackageProjectUrl>http://developer.wildernesslabs.co/Meadow/Meadow.Foundation/</PackageProjectUrl>
-    <PackageId>Meadow.Foundation.Sensors.Temperature.Mcp960x</PackageId>
+    <PackageId>Meadow.Foundation.Sensors.Temperature.Pct2075</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow.Foundation,Temperature,PCT2075</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -25,6 +25,6 @@
   <ItemGroup>
     <None Include=".\Readme.md" Pack="true" PackagePath="" />
     <None Include="..\..\..\icon.png" Pack="true" PackagePath="" />
-    <PackageReference Include="Meadow.Foundation" Version="1.9.0" />
+    <PackageReference Include="Meadow.Foundation" Version="1.10.2" />
   </ItemGroup>
 </Project>

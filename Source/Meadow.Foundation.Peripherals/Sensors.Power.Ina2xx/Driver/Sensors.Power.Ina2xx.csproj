@@ -1,0 +1,31 @@
+<Project Sdk="Meadow.Sdk/1.1.0">
+  <PropertyGroup>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <PackageIcon>icon.png</PackageIcon>
+    <Authors>Wilderness Labs, Inc</Authors>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <OutputType>Library</OutputType>
+    <AssemblyName>Ina2xx</AssemblyName>
+    <Company>Wilderness Labs, Inc</Company>
+    <PackageProjectUrl>http://developer.wildernesslabs.co/Meadow/Meadow.Foundation/</PackageProjectUrl>
+    <PackageId>Meadow.Foundation.Sensors.Power.Ina2xx</PackageId>
+    <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
+    <PackageTags>Meadow.Foundation, Sensor, Power, Current, Voltage, Ina260, Ina219, Ina228</PackageTags>
+    <Version>1.10.2</Version>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Description>INA2xx Series I2C current and power monitor</Description>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PackageReadmeFile>Readme.md</PackageReadmeFile>
+    <Nullable>enable</Nullable>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <LangVersion>10.0</LangVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include=".\Readme.md" Pack="true" PackagePath="" />
+    <None Include="..\..\..\icon.png" Pack="true" PackagePath="" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Meadow.Foundation" Version="1.10.2" />
+  </ItemGroup>
+</Project>

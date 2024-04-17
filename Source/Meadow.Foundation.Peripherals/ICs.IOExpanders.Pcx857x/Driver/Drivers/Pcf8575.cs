@@ -26,5 +26,15 @@ namespace Meadow.Foundation.ICs.IOExpanders
         public Pcf8575(II2cBus i2cBus, byte address, IDigitalInterruptPort? interruptPort = default)
             : base(i2cBus, address, interruptPort)
         { }
+
+        /// <summary>
+        /// Helper method to get address from address pin configuration
+        /// </summary>
+        /// <param name="pinA0">State of A0 address pin - true if high</param>
+        /// <param name="pinA1">State of A1 address pin - true if high</param>
+        /// <param name="pinA2">State of A2 address pin - true if high</param>
+        /// <returns>The device address</returns>
+        public static byte GetAddressForPins(bool pinA0, bool pinA1, bool pinA2)
+            => GetAddressFromPins(pinA0, pinA1, pinA2, false);
     }
 }
