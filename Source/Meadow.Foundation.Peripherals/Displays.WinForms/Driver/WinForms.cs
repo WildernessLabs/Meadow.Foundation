@@ -6,7 +6,7 @@ namespace Meadow.Foundation.Displays;
 /// <summary>
 /// Represents a WinForms graphics display
 /// </summary>
-public class WinFormsDisplay : Form, IPixelDisplay, ITouchScreen
+public class WinFormsDisplay : Form, IResizablePixelDisplay, ITouchScreen
 {
     /// <inheritdoc/>
     public event TouchEventHandler? TouchDown = default!;
@@ -23,7 +23,7 @@ public class WinFormsDisplay : Form, IPixelDisplay, ITouchScreen
     /// <inheritdoc/>
     public new int Height => virtualHeight;
 
-    private readonly WinFormsPixelBuffer buffer;
+    private WinFormsPixelBuffer buffer;
 
     /// <inheritdoc/>
     public RotationType Rotation => RotationType.Normal;
@@ -40,9 +40,9 @@ public class WinFormsDisplay : Form, IPixelDisplay, ITouchScreen
     /// <inheritdoc/>
     public bool IsTouched { get; private set; }
 
-    private readonly int virtualWidth;
-    private readonly int virtualHeight;
-    private readonly float displayScale;
+    private int virtualWidth;
+    private int virtualHeight;
+    private float displayScale;
 
     /// <summary>
     /// Create a new WinFormsDisplay
@@ -65,7 +65,23 @@ public class WinFormsDisplay : Form, IPixelDisplay, ITouchScreen
         var iconStream = typeof(WinFormsDisplay).Assembly.GetManifestResourceStream("Displays.WinForms.icon.ico");
         Icon = new Icon(iconStream!);
 
-        buffer = new WinFormsPixelBuffer(virtualWidth = width, virtualHeight = height, colorMode);
+        virtualWidth = width;
+        virtualHeight = height;
+        buffer = new WinFormsPixelBuffer(width, height, colorMode);
+    }
+
+    /// <inheritdoc/>
+    public void Resize(int width, int height, float displayScale = 1)
+    {
+        lock (buffer)
+        {
+            this.displayScale = displayScale;
+            ClientSize = new Size((int)(width * displayScale), (int)(height * displayScale));
+            virtualWidth = width;
+            virtualHeight = height;
+            buffer = new WinFormsPixelBuffer(width, height, buffer.ColorMode);
+        }
+        this.Invalidate();
     }
 
     /// <inheritdoc/>
