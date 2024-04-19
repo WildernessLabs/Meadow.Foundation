@@ -10,7 +10,7 @@ namespace Meadow.Foundation.Displays;
 /// <summary>
 /// Represents a GTK graphics display
 /// </summary>
-public class GtkDisplay : IPixelDisplay, ITouchScreen
+public class GtkDisplay : IResizablePixelDisplay, ITouchScreen
 {
     /// <inheritdoc/>
     public event Hardware.TouchEventHandler TouchDown = default!;
@@ -74,6 +74,12 @@ public class GtkDisplay : IPixelDisplay, ITouchScreen
     public GtkDisplay(int width, int height, ColorMode mode = ColorMode.Format24bppRgb888)
     {
         Initialize(width, height, mode);
+    }
+
+    /// <inheritdoc/>
+    public void Resize(int width, int height, float displayScale = 1)
+    {
+        throw new NotSupportedException();
     }
 
     private void Initialize(int width, int height, ColorMode mode)
