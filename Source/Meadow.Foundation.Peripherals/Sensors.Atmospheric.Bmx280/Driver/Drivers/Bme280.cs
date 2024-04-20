@@ -181,7 +181,7 @@ public partial class Bme280 :
     /// </summary>
     protected void Initialize()
     {
-        Bmx280.ReadCompensationData(bme280Comms, readBuffer, compensationData);
+        Bmx280.ReadCompensationData(bme280Comms, readBuffer, ref compensationData);
 
         configuration.Mode = Modes.Sleep;
         configuration.Filter = FilterCoefficient.Off;

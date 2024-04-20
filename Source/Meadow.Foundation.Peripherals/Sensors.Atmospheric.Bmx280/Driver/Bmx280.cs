@@ -11,7 +11,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric;
 /// <summary>
 /// Shared logic for the BMx280 family of sensors
 /// </summary>
-partial class Bmx280
+public partial class Bmx280
 {
     /// <summary>
     /// Update the sensor information from the BMx280
@@ -21,15 +21,21 @@ partial class Bmx280
     {
         (Units.Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure) conditions;
 
+        Resolver.Log.Info("Reading 0xf7...");
         bmx280Comms.ReadRegister(0xf7, readBuffer.Span[0..8]);
+        Resolver.Log.Info($"Read {BitConverter.ToString(readBuffer.ToArray())}");
 
         var adcTemperature = (readBuffer.Span[3] << 12) | (readBuffer.Span[4] << 4) | ((readBuffer.Span[5] >> 4) & 0x0f);
+
         var tvar1 = (((adcTemperature >> 3) - (compensationData.T1 << 1)) * compensationData.T2) >> 11;
         var tvar2 = (((((adcTemperature >> 4) - compensationData.T1) *
                        ((adcTemperature >> 4) - compensationData.T1)) >> 12) * compensationData.T3) >> 14;
         var tfine = tvar1 + tvar2;
+        var tcalc = (((tfine * 5) + 128) >> 8) / 100f;
 
-        conditions.Temperature = new Units.Temperature((float)(((tfine * 5) + 128) >> 8) / 100, TU.Celsius);
+        Resolver.Log.Info($"Read {adcTemperature:x6} T1: {compensationData.T1:x4} T2: {compensationData.T2:x4} T3: {compensationData.T3:x4}");
+        Resolver.Log.Info($"{tvar1} {tvar2} {tfine} {tcalc}");
+        conditions.Temperature = new Units.Temperature(tcalc, TU.Celsius);
 
         long pvar1 = tfine - 128000;
         var pvar2 = pvar1 * pvar1 * compensationData.P6;
@@ -49,7 +55,7 @@ partial class Bmx280
             pvar1 = (compensationData.P9 * (pressure >> 13) * (pressure >> 13)) >> 25;
             pvar2 = (compensationData.P8 * pressure) >> 19;
             pressure = ((pressure + pvar1 + pvar2) >> 8) + ((long)compensationData.P7 << 4);
-            conditions.Pressure = new Pressure((double)pressure / 256, PU.Pascal);
+            conditions.Pressure = new Pressure((double)pressure / 256f, PU.Pascal);
         }
 
         var adcHumidity = (readBuffer.Span[6] << 8) | readBuffer.Span[7];
@@ -65,7 +71,7 @@ partial class Bmx280
         v_x1_u32r = v_x1_u32r < 0 ? 0 : v_x1_u32r;
         v_x1_u32r = v_x1_u32r > 419430400 ? 419430400 : v_x1_u32r;
 
-        conditions.Humidity = new RelativeHumidity((v_x1_u32r >> 12) / 1024, HU.Percent);
+        conditions.Humidity = new RelativeHumidity((v_x1_u32r >> 12) / 1024f, HU.Percent);
 
         return Task.FromResult(conditions);
     }
@@ -73,10 +79,12 @@ partial class Bmx280
     /// <summary>
     /// Reads the sensor compensation data
     /// </summary>
-    internal static void ReadCompensationData(IByteCommunications bmx280Comms, Memory<byte> readBuffer, CompensationData compensationData)
+    internal static void ReadCompensationData(IByteCommunications bmx280Comms, Memory<byte> readBuffer, ref CompensationData compensationData)
     {
+        Resolver.Log.Info("Reading 0x88...");
         // read the temperature and pressure data into the internal read buffer
         bmx280Comms.ReadRegister(0x88, readBuffer.Span[0..24]);
+        Resolver.Log.Info($"Read {BitConverter.ToString(readBuffer.ToArray())}");
 
         // Temperature
         compensationData.T1 = (ushort)(readBuffer.Span[0] + (readBuffer.Span[1] << 8));
