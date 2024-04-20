@@ -22,7 +22,7 @@ namespace Sensors.Atmospheric.BME280_Sample
             var consumer = Bme280.CreateObserver(
                 handler: result =>
                 {
-                    Resolver.Log.Info($"Observer: Temp changed by threshold; new temp: {result.New.Temperature?.Celsius:N2}C, old: {result.Old?.Temperature?.Celsius:N2}C");
+                    Resolver.Log.Info($"Observer: Temp changed by threshold; new temp: {result.New.Temperature?.Celsius:N1}C, old: {result.Old?.Temperature?.Celsius:N1}C");
                 },
                 filter: result =>
                 {
@@ -44,9 +44,9 @@ namespace Sensors.Atmospheric.BME280_Sample
             {
                 try
                 {
-                    Resolver.Log.Info($"  Temperature: {result.New.Temperature?.Celsius:N2}C");
-                    Resolver.Log.Info($"  Relative Humidity: {result.New.Humidity:N2}%");
-                    Resolver.Log.Info($"  Pressure: {result.New.Pressure?.Millibar:N2}mbar ({result.New.Pressure?.Pascal:N2}Pa)");
+                    Resolver.Log.Info($"  Temperature: {result.New.Temperature?.Celsius:N1}C");
+                    Resolver.Log.Info($"  Relative Humidity: {result.New.Humidity:N1}%");
+                    Resolver.Log.Info($"  Pressure: {result.New.Pressure?.Millibar:N1}mbar ({result.New.Pressure?.Pascal:N1}Pa)");
                 }
                 catch (Exception ex)
                 {
@@ -61,9 +61,9 @@ namespace Sensors.Atmospheric.BME280_Sample
         {
             var conditions = await sensor.Read();
             Resolver.Log.Info("Initial Readings:");
-            Resolver.Log.Info($"  Temperature: {conditions.Temperature?.Celsius:N2}C");
-            Resolver.Log.Info($"  Pressure: {conditions.Pressure?.Bar:N2}hPa");
-            Resolver.Log.Info($"  Relative Humidity: {conditions.Humidity?.Percent:N2}%");
+            Resolver.Log.Info($"  Temperature: {conditions.Temperature?.Celsius:N1}C");
+            Resolver.Log.Info($"  Pressure: {conditions.Pressure?.Bar:N1}hPa");
+            Resolver.Log.Info($"  Relative Humidity: {conditions.Humidity?.Percent:N1}%");
 
             sensor.StartUpdating(TimeSpan.FromSeconds(1));
         }
