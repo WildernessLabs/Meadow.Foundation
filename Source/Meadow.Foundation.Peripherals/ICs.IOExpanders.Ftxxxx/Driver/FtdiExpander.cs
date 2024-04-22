@@ -70,7 +70,16 @@ public abstract partial class FtdiExpander :
                 Description = description,
                 Handle = handle
             },
-            FtDeviceType.Ft2232H => throw new NotImplementedException(),
+            FtDeviceType.Ft2232H => new Ft2232h
+            {
+                Index = index,
+                Flags = flags,
+                ID = id,
+                LocID = locid,
+                SerialNumber = serialNumber,
+                Description = description,
+                Handle = handle
+            },
             FtDeviceType.Ft4232H => throw new NotImplementedException(),
             _ => throw new NotSupportedException(),
         };
