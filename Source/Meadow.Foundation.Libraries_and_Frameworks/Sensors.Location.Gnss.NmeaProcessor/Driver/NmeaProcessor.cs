@@ -46,7 +46,7 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
         /// <param name="decoder">NMEA decoder</param>
         public void RegisterDecoder(INmeaDecoder decoder)
         {
-            Resolver.Log.Info($"Registering decoder: {decoder.Prefix}");
+            Resolver.Log.Trace($"Registering decoder: {decoder.Prefix}");
             if (decoders.ContainsKey(decoder.Prefix))
             {
                 throw new Exception(decoder.Prefix + " already registered.");
