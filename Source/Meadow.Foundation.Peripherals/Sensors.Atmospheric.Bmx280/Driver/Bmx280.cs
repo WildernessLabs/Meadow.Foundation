@@ -73,7 +73,7 @@ partial class Bmx280
     /// <summary>
     /// Reads the sensor compensation data
     /// </summary>
-    internal static void ReadCompensationData(IByteCommunications bmx280Comms, Memory<byte> readBuffer, CompensationData compensationData)
+    internal static void ReadCompensationData(IByteCommunications bmx280Comms, Memory<byte> readBuffer, ref CompensationData compensationData)
     {
         // read the temperature and pressure data into the internal read buffer
         bmx280Comms.ReadRegister(0x88, readBuffer.Span[0..24]);

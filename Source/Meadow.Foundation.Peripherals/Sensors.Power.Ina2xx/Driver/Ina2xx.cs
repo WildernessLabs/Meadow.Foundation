@@ -1,7 +1,7 @@
 ﻿using Meadow.Hardware;
+using Meadow.Peripherals.Sensors;
 using Meadow.Units;
 using System;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Power;
@@ -10,7 +10,8 @@ namespace Meadow.Foundation.Sensors.Power;
 /// Represents a INA2xx Series Precision Digital Current and Power Monitor
 /// </summary>
 public abstract partial class Ina2xx
-    : ByteCommsSensorBase<(Units.Current? Current, Units.Voltage? Voltage, Units.Power? Power)>, II2cPeripheral
+    : ByteCommsSensorBase<(Units.Current? Current, Units.Voltage? Voltage, Units.Power? Power)>,
+    ICurrentSensor, IVoltageSensor, IPowerSensor, II2cPeripheral
 {
     /// <summary>
     /// The default I2C address for the peripheral
@@ -50,6 +51,28 @@ public abstract partial class Ina2xx
         : this(i2cBus, GetAddress(a0, a1))
     { }
 
+    private event EventHandler<IChangeResult<Current>>? _currentHandlers = default!;
+    private event EventHandler<IChangeResult<Voltage>>? _voltageHandlers = default!;
+    private event EventHandler<IChangeResult<Units.Power>>? _powerHandlers = default!;
+
+    event EventHandler<IChangeResult<Current>>? ISamplingSensor<Current>.Updated
+    {
+        add => _currentHandlers += value;
+        remove => _currentHandlers -= value;
+    }
+
+    event EventHandler<IChangeResult<Voltage>>? ISamplingSensor<Voltage>.Updated
+    {
+        add => _voltageHandlers += value;
+        remove => _voltageHandlers -= value;
+    }
+
+    event EventHandler<IChangeResult<Units.Power>>? ISamplingSensor<Units.Power>.Updated
+    {
+        add => _powerHandlers += value;
+        remove => _powerHandlers -= value;
+    }
+
     /// <summary>
     /// Lookup the correct address to use for the INA2xx based on the address pin connections.
     /// </summary>
@@ -62,6 +85,11 @@ public abstract partial class Ina2xx
     /// Sets the sensor Configuration to default values. Each implementation should provide overloads for specific available options.
     /// </summary>
     public abstract void Configure();
+
+    /// <summary>
+    /// Returns <b>true</b> if the sensor has been configured, otherwise <b>false</b>
+    /// </summary>
+    public bool IsConfigured { get; protected set; }
 
     /// <summary>
     /// Resets Ina2xx to default settings.
@@ -78,29 +106,14 @@ public abstract partial class Ina2xx
     public Units.Current? Current => Conditions.Current;
 
     /// <summary>
-    /// Raised when the current value changes.
-    /// </summary>
-    public event EventHandler<IChangeResult<Current>> CurrentUpdated = default!;
-
-    /// <summary>
     /// The voltage from the last reading.
     /// </summary>
     public Units.Voltage? Voltage => Conditions.Voltage;
 
     /// <summary>
-    /// Raised when the voltage value changes.
-    /// </summary>
-    public event EventHandler<IChangeResult<Voltage>> VoltageUpdated = default!;
-
-    /// <summary>
     /// The power from the last reading.
     /// </summary>
     public Units.Power? Power => Conditions.Power;
-
-    /// <summary>
-    /// Raised when the power value changes.
-    /// </summary>
-    public event EventHandler<IChangeResult<Units.Power>> PowerUpdated = default!;
 
     /// <summary>
     /// Raise events for subscribers and notify of value changes.
@@ -110,15 +123,15 @@ public abstract partial class Ina2xx
     {
         if (changeResult.New.Current is { } amps)
         {
-            CurrentUpdated?.Invoke(this, new ChangeResult<Current>(amps, changeResult.Old?.Current));
+            _currentHandlers?.Invoke(this, new ChangeResult<Current>(amps, changeResult.Old?.Current));
         }
         if (changeResult.New.Voltage is { } volts)
         {
-            VoltageUpdated?.Invoke(this, new ChangeResult<Voltage>(volts, changeResult.Old?.Voltage));
+            _voltageHandlers?.Invoke(this, new ChangeResult<Voltage>(volts, changeResult.Old?.Voltage));
         }
         if (changeResult.New.Power is { } power)
         {
-            PowerUpdated?.Invoke(this, new ChangeResult<Units.Power>(power, changeResult.Old?.Power));
+            _powerHandlers?.Invoke(this, new ChangeResult<Units.Power>(power, changeResult.Old?.Power));
         }
         base.RaiseEventsAndNotify(changeResult);
     }
@@ -126,6 +139,11 @@ public abstract partial class Ina2xx
     /// <inheritdoc/>
     protected override Task<(Units.Current? Current, Units.Voltage? Voltage, Units.Power? Power)> ReadSensor()
     {
+        if (!IsConfigured)
+        {
+            throw new Exception("Sensor must first be configured.");
+        }
+
         (Units.Current? Current, Units.Voltage? Voltage, Units.Power? Power) conditions;
 
         // TODO: What if Mode is not ContinuousAll, so some data might be stale?
@@ -138,13 +156,13 @@ public abstract partial class Ina2xx
 
     /// <summary> Read the Current measurement from the power monitor IC. </summary>
     public abstract Units.Current ReadCurrent();
-    
+
     /// <summary> Read the Voltage measurement from the power monitor IC. </summary>
     public abstract Units.Voltage ReadBusVoltage();
-    
+
     /// <summary> Read the Voltage across the Shunt (sense) resistor from the power monitor IC. </summary>
     public abstract Units.Voltage ReadShuntVoltage();
-    
+
     /// <summary> Read the Power measurement from the power monitor IC. </summary>
     public abstract Units.Power ReadPower();
     #endregion
@@ -160,4 +178,13 @@ public abstract partial class Ina2xx
 
     /// <summary> Method for reading the <see cref="ManufacturerID"/>, <see cref="DeviceID"/>, and <see cref="DeviceRevision"/> </summary>
     internal abstract void ReadDeviceInfo();
+
+    async Task<Current> ISensor<Current>.Read()
+        => (await Read()).Current!.Value;
+
+    async Task<Voltage> ISensor<Voltage>.Read()
+        => (await Read()).Voltage!.Value;
+
+    async Task<Units.Power> ISensor<Units.Power>.Read()
+        => (await Read()).Power!.Value;
 }

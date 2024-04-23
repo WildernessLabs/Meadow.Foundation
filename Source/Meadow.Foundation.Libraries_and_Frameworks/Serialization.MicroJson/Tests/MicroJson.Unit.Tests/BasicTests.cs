@@ -98,4 +98,57 @@ public class BasicTests
         Assert.Contains("Value", json);
         Assert.DoesNotContain("value", json);
     }
+
+    [Fact]
+    public void SerializeDataWithSpecialStringCharactersTest()
+    {
+        var testStrings = new string[]
+            {
+                "Hello\nThere",
+                "Hello\r\nThere",
+                "Hello{There}"
+            };
+
+        foreach (var s in testStrings)
+        {
+            var item = new StringFieldClass
+            {
+                FieldA = s
+            };
+
+            var json = MicroJson.Serialize(item);
+
+            var opts = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true,
+            };
+            var testResult = JsonSerializer.Deserialize<StringFieldClass>(json, opts);
+
+            Assert.NotNull(testResult);
+            Assert.Equal(s, testResult.FieldA);
+        }
+    }
+
+    [Fact]
+    public void DeserializeDataWithContainsCarriageReturnsTest()
+    {
+        var input = """
+            {
+                "Value": "hello
+                there
+                data"
+            }
+            """;
+
+        var result = MicroJson.Deserialize<IntegerClass>(input);
+
+        Assert.NotNull(result);
+    }
+
+    [Fact]
+    public void DeserializeJsonWithExtraField()
+    {
+        var result = MicroJson.Deserialize<IntegerClass>("{\"stringArg\":\"my string\",\"value\":23}");
+        Assert.Equal(23, result.Value);
+    }
 }

@@ -1,8 +1,8 @@
-# Meadow.Foundation.Sensors.Environmental.Pmsa300i
+# Meadow.Foundation.Sensors.Environmental.Pmsa003i
 
-**PMSA300I I2C particulate matter AQI sensor**
+**PMSA003I I2C particulate matter AQI sensor**
 
-The **Pmsa300i** library is included in the **Meadow.Foundation.Sensors.Environmental.Pmsa300i** nuget package and is designed for the [Wilderness Labs](www.wildernesslabs.co) Meadow .NET IoT platform.
+The **Pmsa003i** library is included in the **Meadow.Foundation.Sensors.Environmental.Pmsa003i** nuget package and is designed for the [Wilderness Labs](www.wildernesslabs.co) Meadow .NET IoT platform.
 
 This driver is part of the [Meadow.Foundation](https://developer.wildernesslabs.co/Meadow/Meadow.Foundation/) peripherals library, an open-source repository of drivers and libraries that streamline and simplify adding hardware to your C# .NET Meadow IoT applications.
 
@@ -14,7 +14,7 @@ To view all Wilderness Labs open-source projects, including samples, visit [gith
 
 You can install the library from within Visual studio using the the NuGet Package Manager or from the command line using the .NET CLI:
 
-`dotnet add package Meadow.Foundation.Sensors.Environmental.Pmsa300i`
+`dotnet add package Meadow.Foundation.Sensors.Environmental.Pmsa003i`
 ## Usage
 
 ```csharp

@@ -1,6 +1,7 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <PackageReadmeFile>Readme.md</PackageReadmeFile>
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
 
@@ -9,6 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include=".\Readme.md" Pack="true" PackagePath="" />
     <None Remove="inputs\menu.json" />
     <None Remove="inputs\puzzles.json" />
     <None Remove="inputs\weather.json" />

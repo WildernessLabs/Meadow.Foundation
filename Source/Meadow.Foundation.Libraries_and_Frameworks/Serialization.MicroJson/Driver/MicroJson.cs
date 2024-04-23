@@ -59,6 +59,9 @@ public static partial class MicroJson
             case TypeCode.Boolean:
                 return (bool)o ? "true" : "false";
             case TypeCode.String:
+                return $"\"{o}\""
+                    .Replace("\n", "\\n")
+                    .Replace("\r", "\\r");
             case TypeCode.Char:
                 return $"\"{o}\"";
             case TypeCode.Single:
@@ -141,7 +144,7 @@ public static partial class MicroJson
             return SerializeIDictionary(hashtable, dateTimeFormat);
         }
 
-        return null;
+        throw new NotSupportedException($"Serialization of type {type.Name} is not supported");
     }
 
     /// <summary>

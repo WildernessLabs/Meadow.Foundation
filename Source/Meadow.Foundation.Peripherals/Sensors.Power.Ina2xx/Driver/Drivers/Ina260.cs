@@ -60,13 +60,14 @@ public class Ina260 : Ina2xx
     /// <param name="currentConversionTime">Conversion time for Current measurements</param>
     /// <param name="voltageConversionTime">Conversion time for Voltage measurements</param>
     /// <param name="averaging">On-chip value averaging</param>
-    public void Configure(ConversionTime currentConversionTime = ConversionTime.ConversionTime_1100us, 
-        ConversionTime voltageConversionTime = ConversionTime.ConversionTime_1100us, 
+    public void Configure(ConversionTime currentConversionTime = ConversionTime.ConversionTime_1100us,
+        ConversionTime voltageConversionTime = ConversionTime.ConversionTime_1100us,
         Averaging averaging = Averaging.Average_1,
         Mode mode = Mode.ContinuousAll)
     {
         ushort config = (ushort)((ushort)averaging << 9 | ((ushort)voltageConversionTime << 6) | ((ushort)currentConversionTime << 3) | (ushort)mode);
         BusComms.WriteRegister(ConfigRegister, config, ByteOrder.BigEndian);
+        IsConfigured = true;
     }
 
     /// <inheritdoc/>
@@ -115,7 +116,7 @@ public class Ina260 : Ina2xx
     private const double maxCurrent = 15;
     private const double minPower = 0;
     private const double maxPower = 419.43;
-    
+
     /// <summary>
     /// Configures the Voltage Limit Alert function.
     /// </summary>
@@ -150,7 +151,7 @@ public class Ina260 : Ina2xx
     {
         if (threshold.Amps is < minCurrent or > maxCurrent)
             throw new ArgumentOutOfRangeException(nameof(threshold), threshold.Amps, null);
-            
+
         var maskValue = ((overLimit ? MaskEnable.AlertOverCurrentLimit : MaskEnable.AlertUnderCurrentLimit) |
                          (activeHigh ? MaskEnable.AlertPolarity : 0) |
                          (latching ? MaskEnable.LatchEnable : 0));
@@ -336,7 +337,7 @@ public class Ina260 : Ina2xx
     {
         if (disposing)
         {
-            if (_alertPort != null) 
+            if (_alertPort != null)
                 _alertPort.Changed -= AlertPortOnChanged;
             base.Dispose(disposing);
         }

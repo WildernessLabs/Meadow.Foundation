@@ -1,17 +1,17 @@
-﻿<Project Sdk="Meadow.Sdk/1.1.0">
+<Project Sdk="Meadow.Sdk/1.1.0">
     <PropertyGroup>
-        <Version>1.10.0</Version>
-        <PackageReadmeFile>Readme.md</PackageReadmeFile>
-        <Nullable>enable</Nullable>
-        <LangVersion>10.0</LangVersion>
-        <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
-        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <Version>1.10.2</Version>
+    <PackageReadmeFile>Readme.md</PackageReadmeFile>
+    <Nullable>enable</Nullable>
+    <LangVersion>10.0</LangVersion>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <PackageIcon>icon.png</PackageIcon>
-        <Authors>Wilderness Labs, Inc</Authors>
+    <Authors>Wilderness Labs, Inc</Authors>
         <TargetFramework>netstandard2.1</TargetFramework>
         <OutputType>Library</OutputType>
         <AssemblyName>Scd30</AssemblyName>
-        <Company>Wilderness Labs, Inc</Company>
+    <Company>Wilderness Labs, Inc</Company>
         <PackageProjectUrl>http://developer.wildernesslabs.co/Meadow/Meadow.Foundation/</PackageProjectUrl>
         <PackageId>Meadow.Foundation.Sensors.Environmental.Scd30</PackageId>
         <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
@@ -23,7 +23,7 @@
         <PackageReference Include="Gapotchenko.FX.Data.Integrity.Checksum.Crc8" Version="2022.2.7"/>
     </ItemGroup>
     <ItemGroup>
-        <None Include=".\Readme.md" Pack="true" PackagePath=""/>
+    <None Include=".\Readme.md" Pack="true" PackagePath="" />
         <None Include="..\..\..\icon.png" Pack="true" PackagePath=""/>
         <ProjectReference Include="..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj"/>
     </ItemGroup>

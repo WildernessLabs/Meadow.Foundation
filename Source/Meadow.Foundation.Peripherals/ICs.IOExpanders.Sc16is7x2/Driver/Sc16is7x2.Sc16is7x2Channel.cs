@@ -1,5 +1,4 @@
-﻿
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
 using System;
 using System.Threading;
 
@@ -24,7 +23,10 @@ public partial class Sc16is7x2
         private StopBits _stopBits;
 
         /// <inheritdoc/>
-        public int BytesToRead => _controller.GetReadFifoCount(_channel);
+        public int BytesToRead => (_irqReadBuffer == null) 
+            ? _controller.GetReadFifoCount(_channel) 
+            : _controller.GetReadFifoCount(_channel) + _irqReadBuffer.Count;
+
         /// <inheritdoc/>
         public bool IsOpen { get; private set; }
 
@@ -47,7 +49,23 @@ public partial class Sc16is7x2
         private readonly Channels _channel;
         private readonly IDigitalInterruptPort? _irq;
 
-        internal Sc16is7x2Channel(Sc16is7x2 controller, string portName, Channels channel, int baudRate = 9600, int dataBits = 8, Parity parity = Parity.None, StopBits stopBits = StopBits.One, bool isRS485 = false, bool invertDE = false, IDigitalInterruptPort? irq = null)
+        private readonly FifoBuffer? _irqReadBuffer;
+
+        /// <summary>
+        /// This method is never called directly from user code.
+        /// </summary>
+        /// <param name="controller">The parent Sc16is7x2 controller.</param>
+        /// <param name="portName">Firendly port name</param>
+        /// <param name="channel">Channel port code</param>
+        /// <param name="baudRate"></param>
+        /// <param name="dataBits"></param>
+        /// <param name="parity"></param>
+        /// <param name="stopBits"></param>
+        /// <param name="isRS485"></param>
+        /// <param name="invertDE"></param>
+        /// <param name="irq">The IDigitalInterruptPort connected to the IRQ pin on SC16IS7x2.</param>
+        /// <param name="readBufferSize">An interrupt from SC16IS7x2 will not be reset until all bytes in the FIFO are read. So we need a local buffer.</param>
+        internal Sc16is7x2Channel(Sc16is7x2 controller, string portName, Channels channel, int baudRate = 9600, int dataBits = 8, Parity parity = Parity.None, StopBits stopBits = StopBits.One, bool isRS485 = false, bool invertDE = false, IDigitalInterruptPort? irq = null, int readBufferSize = 1024)
         {
             PortName = portName;
             _controller = controller;
@@ -61,17 +79,44 @@ public partial class Sc16is7x2
 
             if (irq != null)
             {
+                // Setting up IRQ read with a large software FIFO buffer to offload the hardware FIFO of only 64 bytes.
                 _irq = irq;
+                _irqReadBuffer = new FifoBuffer(readBufferSize);
                 _controller.EnableReceiveInterrupts(_channel);
                 _irq.Changed += OnInterruptLineChanged;
             }
+
+            // https://github.com/WildernessLabs/Meadow_Issues/issues/74
+            // For some reason (missing hot-paths?), the first interrupt is very slow. So we'll try to perform some dummy runs to pave the way.
+            // Doesn't really work... problem seems to be before our interrupt handler is called.
+
+            //OnInterruptLineChanged(null, new DigitalPortResult());
+            //ReadByte();
+            //Read(new byte[0], 0, 0);
+            //ReadAll();
+            //if (_controller._irq is VirtualDigitalInterruptPort a)
+            //    a.RaiseInterrupt(this, new DigitalPortResult());
         }
 
-        private void OnInterruptLineChanged(object sender, DigitalPortResult e)
+        internal void OnInterruptLineChanged(object sender, DigitalPortResult e)
         {
-            if (_controller.ReceiveInterruptPending(_channel))
+            // If the first message after reboot is longer than the FIFO buffer, we already have a buffer overrun at this point.
+            // For any consecutive messages, it works fine.
+            // Ref: https://github.com/WildernessLabs/Meadow_Issues/issues/74
+            //int count = _controller.GetReadFifoCount(_channel);
+            //Resolver.Log.Info($"Channel {_channel} port FIFO: {count} bytes");
+
+            if (_irqReadBuffer == null)
             {
-                this.DataReceived?.Invoke(this, new SerialDataReceivedEventArgs(SerialDataType.Chars));
+                if (_controller.ReceiveInterruptPending(_channel))
+                    this.DataReceived?.Invoke(this, new SerialDataReceivedEventArgs(SerialDataType.Chars));
+            }
+            else
+            { 
+                // If this is IRQ reading, shortcut the user callback. Empty FIFO ASAP.
+                ReadAllIrqFifo();              
+                if (_irqReadBuffer.Count > 0)
+                    this.DataReceived?.Invoke(this, new SerialDataReceivedEventArgs(SerialDataType.Chars));
             }
         }
 
@@ -128,75 +173,170 @@ public partial class Sc16is7x2
             _controller.EnableRS485(_channel, invertDE);
         }
 
+        /// <summary>
+        /// Try to read all bytes from the FIFO buffer.
+        /// </summary>
+        internal void ReadAllIrqFifo()
+        {
+            if (_irqReadBuffer == null) return;
+            int totalRead = 0;
+            int count = _controller.GetReadFifoCount(_channel);     // How may bytes to read.
+            while (count > 0)
+            {
+                for (int i = 0; i < count; i++)
+                    _irqReadBuffer.Write((byte)_controller.ReadByte(_channel));
+                totalRead += count;
+                count = _controller.GetReadFifoCount(_channel);     // Check that we're all done. To make sure IRQ is reset.
+
+                byte lsr = _controller.ReadChannelRegister(Registers.LSR, _channel);
+                if ((lsr & RegisterBits.LSR_OVERRUN_ERROR) > 0)
+                {
+                    _irqReadBuffer.WriteString("[BUFFER OVERRUN]");     // Not sure to keep this, but nice when debugging.
+                    BufferOverrun?.Invoke(this, EventArgs.Empty);
+                }
+            }
+            if (totalRead > 0)
+            {
+                Resolver.Log.Info($"---> ReadAllIrqFifo: Channel {_channel} port read {totalRead} bytes");
+            }
+        }
+
         /// <inheritdoc/>
         public int ReadByte()
         {
-            // check if data is available
-            if (!_controller.IsFifoDataAvailable(_channel))
+            if (_irqReadBuffer == null)
             {
-                return -1;
-            }
+                // The normal way...
+                // check if data is available
+                if (!_controller.IsFifoDataAvailable(_channel))
+                {
+                    return -1;
+                }
 
-            // read the data
-            return _controller.ReadByte(_channel);
+                // read the data
+                return _controller.ReadByte(_channel);
+            }
+            else
+            {
+                // IRQ fast read....
+                ReadAllIrqFifo();
+                if (_irqReadBuffer.Count == 0)
+                    return -1;
+                else
+                    return _irqReadBuffer.Read();
+            }
         }
 
         /// <inheritdoc/>
         public int Read(byte[] buffer, int offset, int count)
         {
             var timeout = -1;
-
             if (ReadTimeout.TotalMilliseconds > 0)
             {
                 timeout = Environment.TickCount + (int)ReadTimeout.TotalMilliseconds;
             }
 
-            var available = _controller.GetReadFifoCount(_channel);
-
-            // read either the available or count, whichever is less, unless available is 0, in which case we wait until timeout
-            while (available == 0)
+            if (_irqReadBuffer == null)
             {
-                Thread.Sleep(10);
-                available = _controller.GetReadFifoCount(_channel);
+                // The normal way...
+                var available = _controller.GetReadFifoCount(_channel);
 
-                if (timeout > 0)
+                // read either the available or count, whichever is less, unless available is 0, in which case we wait until timeout
+                while (available == 0)
                 {
-                    if (Environment.TickCount >= timeout)
+                    Thread.Sleep(10);
+                    available = _controller.GetReadFifoCount(_channel);
+
+                    if (timeout > 0)
                     {
-                        throw new TimeoutException();
+                        if (Environment.TickCount >= timeout)
+                        {
+                            throw new TimeoutException();
+                        }
                     }
                 }
+
+                var toRead = available <= count ? available : count;
+
+                for (var i = 0; i < toRead; i++)
+                {
+                    buffer[i + offset] = _controller.ReadByte(_channel);
+                }
+
+                return toRead;
             }
-
-            var toRead = available <= count ? available : count;
-
-            for (var i = 0; i < toRead; i++)
+            else
             {
-                buffer[i + offset] = _controller.ReadByte(_channel);
-            }
+                // IRQ fast read....
+                ReadAllIrqFifo();  // Always read whatever is in the FIFO.
 
-            return toRead;
+                // Read either the available or count, whichever is less, unless available is 0, in which case we wait until timeout
+                // Do we have to wait for some data?
+                while (_irqReadBuffer.Count == 0)
+                {
+                    Thread.Sleep(10);
+
+                    ReadAllIrqFifo();
+                    if (_irqReadBuffer.Count > 0) break;
+
+                    if (timeout > 0)
+                    {
+                        if (Environment.TickCount >= timeout)
+                        {
+                            throw new TimeoutException();
+                        }
+                    }
+                }
+
+                // Read the requested count bytes, or all available, whichever is less
+                var toRead = _irqReadBuffer.Count <= count ? _irqReadBuffer.Count : count;
+                for (var i = 0; i < toRead; i++)
+                {
+                    buffer[i + offset] = _irqReadBuffer.Read();
+                }
+                return toRead;
+            }
         }
 
         /// <inheritdoc/>
         public byte[] ReadAll()
         {
-            var available = _controller.GetReadFifoCount(_channel);
-            var buffer = new byte[available];
-            Read(buffer, 0, available);
-            return buffer;
+            if (_irqReadBuffer == null)
+            {
+                // The normal way...
+                var available = _controller.GetReadFifoCount(_channel);
+                var buffer = new byte[available];
+                Read(buffer, 0, available);
+                return buffer;
+            }
+            else
+            {
+                // IRQ fast read....
+                ReadAllIrqFifo();  // Always read whatever is in the FIFO.
+                var available = _irqReadBuffer.Count;
+                var buffer = new byte[available];
+                for (int i = 0; i < available; i++)
+                {
+                    buffer[i] = _irqReadBuffer.Read();
+                }
+                return buffer;
+            }
         }
 
         /// <inheritdoc/>
         public void ClearReceiveBuffer()
         {
             _controller.ResetReadFifo(_channel);
+            if (_irqReadBuffer != null)
+                _irqReadBuffer.Clear();
         }
 
         /// <inheritdoc/>
         public void Close()
         {
             IsOpen = false;
+            if (_irqReadBuffer != null)
+                _irqReadBuffer.Clear();
         }
 
         /// <inheritdoc/>
