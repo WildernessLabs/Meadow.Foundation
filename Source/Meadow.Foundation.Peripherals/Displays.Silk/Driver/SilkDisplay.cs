@@ -1,5 +1,6 @@
 ﻿using Meadow.Hardware;
 using Meadow.Peripherals.Displays;
+using Silk.NET.Input;
 using Silk.NET.Maths;
 using Silk.NET.Windowing;
 using Silk.NET.Windowing.Glfw;
@@ -86,7 +87,9 @@ public class SilkDisplay : IResizablePixelDisplay, ITouchScreen
         GlfwWindowing.Use();
         _window = Window.Create(options);
         _window.Initialize();
+        _window.Load += OnWindowLoad;
         _window.Render += OnWindowRender;
+
         _grglInterface = GRGlInterface.Create((name => _window.GLContext!.TryGetProcAddress(name, out var addr) ? addr : 0));
         _grglInterface.Validate();
         _context = GRContext.CreateGl(_grglInterface);
@@ -95,20 +98,25 @@ public class SilkDisplay : IResizablePixelDisplay, ITouchScreen
         _canvas = _surface.Canvas;
     }
 
+    private void OnWindowLoad()
+    {
+        IInputContext input = _window.CreateInput();
+        var mouse = input.Mice.FirstOrDefault(); ;
+
+        if (mouse != null)
+        {
+            mouse.MouseDown += (s, e) => { TouchDown?.Invoke(this, TouchPoint.FromScreenData((int)mouse.Position.X, (int)mouse.Position.Y, 0, -1, -1, null)); };
+            mouse.MouseUp += (s, e) => { TouchUp?.Invoke(this, TouchPoint.FromScreenData((int)mouse.Position.X, (int)mouse.Position.Y, 0, -1, -1, null)); };
+            mouse.Click += (s, e, v) => { TouchClick?.Invoke(this, TouchPoint.FromScreenData((int)v.X, (int)v.Y, 0, -1, -1, null)); };
+            mouse.MouseMove += (s, e) => { TouchMoved?.Invoke(this, TouchPoint.FromScreenData((int)mouse.Position.X, (int)mouse.Position.Y, 0, -1, -1, null)); };
+        }
+    }
+
     private void OnWindowRender(double obj)
     {
         _canvas.DrawBitmap(_pixelBuffer.SKBitmap, 0, 0);
         _canvas.Flush();
     }
-
-    private void RaiseTouchDown(double x, double y)
-    {
-    }
-
-    private void RaiseTouchUp(double x, double y)
-    {
-    }
-
 
     /// <summary>
     /// Run the application
@@ -124,6 +132,7 @@ public class SilkDisplay : IResizablePixelDisplay, ITouchScreen
     /// </summary>
     public void Show()
     {
+        _canvas.Flush();
     }
 
     /// <summary>
