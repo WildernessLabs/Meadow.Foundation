@@ -14,6 +14,10 @@ public class SilkDisplay : IResizablePixelDisplay, ITouchScreen
 {
     private IWindow _window;
     private SkiaPixelBuffer _pixelBuffer = default!;
+    private GRGlInterface _grglInterface;
+    private GRContext _context;
+    private SKSurface _surface;
+    private SKCanvas _canvas;
 
     /// <inheritdoc/>
     public event Hardware.TouchEventHandler TouchDown = default!;
@@ -48,10 +52,9 @@ public class SilkDisplay : IResizablePixelDisplay, ITouchScreen
     /// <summary>
     /// Create a new SilkDisplay with a default size of 800x600
     /// </summary>
-    /// <param name="mode">Color mode of the display</param>
-    public SilkDisplay(ColorMode mode = ColorMode.Format24bppRgb888)
+    public SilkDisplay()
     {
-        Initialize(800, 600, mode); // TODO: query screen size and caps
+        Initialize(800, 600); // TODO: query screen size and caps
     }
 
     /// <summary>
@@ -59,10 +62,9 @@ public class SilkDisplay : IResizablePixelDisplay, ITouchScreen
     /// </summary>
     /// <param name="width">Width of display in pixels</param>
     /// <param name="height">Height of display in pixels</param>
-    /// <param name="mode">Color mode of the display</param>
-    public SilkDisplay(int width, int height, ColorMode mode = ColorMode.Format24bppRgb888)
+    public SilkDisplay(int width, int height)
     {
-        Initialize(width, height, mode);
+        Initialize(width, height);
     }
 
     /// <inheritdoc/>
@@ -71,12 +73,7 @@ public class SilkDisplay : IResizablePixelDisplay, ITouchScreen
         throw new NotSupportedException();
     }
 
-    private GRGlInterface _grglInterface;
-    private GRContext _context;
-    private SKSurface _surface;
-    private SKCanvas _canvas;
-
-    private void Initialize(int width, int height, ColorMode mode)
+    private void Initialize(int width, int height)
     {
         _pixelBuffer = new SkiaPixelBuffer(width, height);
 
@@ -85,6 +82,7 @@ public class SilkDisplay : IResizablePixelDisplay, ITouchScreen
         options.Title = "Meadow Desktop";
         options.PreferredStencilBufferBits = 8;
         options.PreferredBitDepth = new Vector4D<int>(8, 8, 8, 8);
+        options.WindowBorder = WindowBorder.Fixed;
         GlfwWindowing.Use();
         _window = Window.Create(options);
         _window.Initialize();
@@ -99,20 +97,7 @@ public class SilkDisplay : IResizablePixelDisplay, ITouchScreen
 
     private void OnWindowRender(double obj)
     {
-        _context.ResetContext();
-        _canvas.Clear();
-
         _canvas.DrawBitmap(_pixelBuffer.SKBitmap, 0, 0);
-
-        //_context.ResetContext();
-        //_canvas.Clear();
-        //_canvas.DrawImage(
-        /*
-        _canvas.Clear(SKColors.Cyan);
-        using var red = new SKPaint();
-        red.Color = new SKColor(255, 0, 0, 255);
-        _canvas.DrawCircle(150, 150, 100, red);
-        */
         _canvas.Flush();
     }
 
@@ -150,6 +135,7 @@ public class SilkDisplay : IResizablePixelDisplay, ITouchScreen
     /// <param name="bottom"></param>
     public void Show(int left, int top, int right, int bottom)
     {
+        Show();
     }
 
     /// <summary>
