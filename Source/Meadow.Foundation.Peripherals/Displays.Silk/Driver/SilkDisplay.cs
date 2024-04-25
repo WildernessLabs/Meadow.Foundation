@@ -24,13 +24,13 @@ public class SilkDisplay : IResizablePixelDisplay, ITouchScreen
     private float displayScale;
 
     /// <inheritdoc/>
-    public event Hardware.TouchEventHandler TouchDown = default!;
+    public event TouchEventHandler TouchDown = default!;
     /// <inheritdoc/>
-    public event Hardware.TouchEventHandler TouchUp = default!;
+    public event TouchEventHandler TouchUp = default!;
     /// <inheritdoc/>
-    public event Hardware.TouchEventHandler TouchClick = default!;
+    public event TouchEventHandler TouchClick = default!;
     /// <inheritdoc/>
-    public event Hardware.TouchEventHandler TouchMoved = default!;
+    public event TouchEventHandler TouchMoved = default!;
 
     /// <inheritdoc/>
     public RotationType Rotation => RotationType.Normal;
@@ -58,6 +58,7 @@ public class SilkDisplay : IResizablePixelDisplay, ITouchScreen
     /// </summary>
     /// <param name="width">Width of display in pixels</param>
     /// <param name="height">Height of display in pixels</param>
+    /// <param name="displayScale"></param>
     public SilkDisplay(int width = 800, int height = 600, float displayScale = 1.0f)
     {
         this.displayScale = displayScale;
@@ -161,22 +162,12 @@ public class SilkDisplay : IResizablePixelDisplay, ITouchScreen
     }
 
     /// <summary>
-    /// Run the application
-    /// </summary>
-    public void Run()
-    {
-        window.Run();
-        window.Reset();
-        window.Dispose();
-    }
-
-
-    /// <summary>
     /// Performs a full display update
     /// </summary>
     public void Show()
     {
-        window.DoUpdate();
+        window.DoEvents();
+        window.DoRender();
     }
 
     /// <summary>

@@ -25,7 +25,7 @@ internal class SkiaPixelBuffer : IPixelBuffer
 
     public void Clear()
     {
-        SKBitmap.Erase(SKColor.Empty);
+        SKBitmap.Erase(SKColors.Black);
     }
 
     public void Fill(Color color)
@@ -37,7 +37,7 @@ internal class SkiaPixelBuffer : IPixelBuffer
     {
         SKBitmap.Erase(
             new SKColor(color.R, color.G, color.B),
-            new SKRectI(originX, originY, width, height));
+            new SKRectI(originX, originY, originX + width, originY + height));
     }
 
     public Color GetPixel(int x, int y)

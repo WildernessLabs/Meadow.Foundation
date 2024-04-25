@@ -1507,6 +1507,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Silk", "Silk", "{0E913C73-6
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Displays.Silk", "Meadow.Foundation.Peripherals\Displays.Silk\Driver\Displays.Silk.csproj", "{37F84366-1DC7-4DDF-8C33-6A45219F4882}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{3D090B0B-F863-4B8A-942C-89ED6C71BFF2}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Silk_Sample", "Meadow.Foundation.Peripherals\Displays.Silk\Samples\Silk_Sample\Silk_Sample.csproj", "{5500B380-D815-4911-A30A-1DFB311F60BB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -3641,6 +3645,10 @@ Global
 		{37F84366-1DC7-4DDF-8C33-6A45219F4882}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{37F84366-1DC7-4DDF-8C33-6A45219F4882}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{37F84366-1DC7-4DDF-8C33-6A45219F4882}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5500B380-D815-4911-A30A-1DFB311F60BB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5500B380-D815-4911-A30A-1DFB311F60BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5500B380-D815-4911-A30A-1DFB311F60BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5500B380-D815-4911-A30A-1DFB311F60BB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -4393,6 +4401,8 @@ Global
 		{933A1748-3481-497E-94BC-8F93D5A6E9BA} = {21C511DD-43DD-486E-86D7-18D8F6810ACD}
 		{0E913C73-609E-40D7-949C-553615CD13B8} = {2B794146-DFEE-475A-B919-7D3ED48587B8}
 		{37F84366-1DC7-4DDF-8C33-6A45219F4882} = {0E913C73-609E-40D7-949C-553615CD13B8}
+		{3D090B0B-F863-4B8A-942C-89ED6C71BFF2} = {0E913C73-609E-40D7-949C-553615CD13B8}
+		{5500B380-D815-4911-A30A-1DFB311F60BB} = {3D090B0B-F863-4B8A-942C-89ED6C71BFF2}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}
