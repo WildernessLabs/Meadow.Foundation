@@ -166,7 +166,6 @@ public class SilkDisplay : IResizablePixelDisplay, ITouchScreen
     /// </summary>
     public void Show()
     {
-        window.DoEvents();
         window.DoRender();
     }
 
