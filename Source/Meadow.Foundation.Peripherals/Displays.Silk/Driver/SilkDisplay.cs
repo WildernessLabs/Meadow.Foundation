@@ -71,7 +71,7 @@ public class SilkDisplay : IResizablePixelDisplay, ITouchScreen
     /// <inheritdoc/>
     public void Resize(int width, int height, float displayScale = 1)
     {
-        throw new NotSupportedException();
+        _window.Size = new Vector2D<int>(width, height);
     }
 
     private void Initialize(int width, int height)
