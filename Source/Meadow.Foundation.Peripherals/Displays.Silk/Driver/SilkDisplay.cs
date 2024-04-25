@@ -86,9 +86,9 @@ public class SilkDisplay : IResizablePixelDisplay, ITouchScreen
         options.WindowBorder = WindowBorder.Fixed;
         GlfwWindowing.Use();
         _window = Window.Create(options);
-        _window.Initialize();
         _window.Load += OnWindowLoad;
         _window.Render += OnWindowRender;
+        _window.Initialize();
 
         _grglInterface = GRGlInterface.Create((name => _window.GLContext!.TryGetProcAddress(name, out var addr) ? addr : 0));
         _grglInterface.Validate();
@@ -101,7 +101,7 @@ public class SilkDisplay : IResizablePixelDisplay, ITouchScreen
     private void OnWindowLoad()
     {
         IInputContext input = _window.CreateInput();
-        var mouse = input.Mice.FirstOrDefault(); ;
+        var mouse = input.Mice.FirstOrDefault();
 
         if (mouse != null)
         {
@@ -124,6 +124,8 @@ public class SilkDisplay : IResizablePixelDisplay, ITouchScreen
     public void Run()
     {
         _window.Run();
+        _window.Reset();
+        _window.Dispose();
     }
 
 
@@ -132,7 +134,7 @@ public class SilkDisplay : IResizablePixelDisplay, ITouchScreen
     /// </summary>
     public void Show()
     {
-        _canvas.Flush();
+        _window.DoUpdate();
     }
 
     /// <summary>
