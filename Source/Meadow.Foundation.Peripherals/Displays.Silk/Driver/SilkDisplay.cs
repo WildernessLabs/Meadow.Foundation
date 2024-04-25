@@ -13,12 +13,15 @@ namespace Meadow.Foundation.Displays;
 /// </summary>
 public class SilkDisplay : IResizablePixelDisplay, ITouchScreen
 {
-    private IWindow _window;
-    private SkiaPixelBuffer _pixelBuffer = default!;
-    private GRGlInterface _grglInterface;
-    private GRContext _context;
-    private SKSurface _surface;
-    private SKCanvas _canvas;
+    private IWindow window;
+    private SkiaPixelBuffer pixelBuffer = default!;
+    private GRGlInterface grglInterface;
+    private GRContext context;
+    private SKSurface surface;
+    private SKCanvas canvas;
+    private int virtualWidth;
+    private int virtualHeight;
+    private float displayScale;
 
     /// <inheritdoc/>
     public event Hardware.TouchEventHandler TouchDown = default!;
@@ -33,16 +36,16 @@ public class SilkDisplay : IResizablePixelDisplay, ITouchScreen
     public RotationType Rotation => RotationType.Normal;
 
     /// <inheritdoc/>
-    public IPixelBuffer PixelBuffer => _pixelBuffer;
+    public IPixelBuffer PixelBuffer => pixelBuffer;
 
     /// <inheritdoc/>
-    public ColorMode ColorMode => _pixelBuffer.ColorMode;
+    public ColorMode ColorMode => pixelBuffer.ColorMode;
 
     /// <inheritdoc/>
-    public int Width => _pixelBuffer.Width;
+    public int Width => pixelBuffer.Width;
 
     /// <inheritdoc/>
-    public int Height => _pixelBuffer.Height;
+    public int Height => pixelBuffer.Height;
 
     /// <inheritdoc/>
     public ColorMode SupportedColorModes => ColorMode.Format24bppRgb888 | ColorMode.Format16bppRgb565 | ColorMode.Format32bppRgba8888;
@@ -51,32 +54,31 @@ public class SilkDisplay : IResizablePixelDisplay, ITouchScreen
     public bool IsTouched { get; private set; }
 
     /// <summary>
-    /// Create a new SilkDisplay with a default size of 800x600
-    /// </summary>
-    public SilkDisplay()
-    {
-        Initialize(800, 600); // TODO: query screen size and caps
-    }
-
-    /// <summary>
     /// Create a new SilkDisplay
     /// </summary>
     /// <param name="width">Width of display in pixels</param>
     /// <param name="height">Height of display in pixels</param>
-    public SilkDisplay(int width, int height)
+    public SilkDisplay(int width = 800, int height = 600, float displayScale = 1.0f)
     {
-        Initialize(width, height);
+        this.displayScale = displayScale;
+        virtualWidth = (int)(width * displayScale);
+        virtualHeight = (int)(height * displayScale);
+        Initialize(virtualWidth, virtualHeight);
     }
 
     /// <inheritdoc/>
     public void Resize(int width, int height, float displayScale = 1)
     {
-        _window.Size = new Vector2D<int>(width, height);
+        this.displayScale = displayScale;
+        virtualWidth = (int)(width * displayScale);
+        virtualHeight = (int)(height * displayScale);
+        window.Size = new Vector2D<int>(virtualWidth, virtualHeight);
+        CreateOrUpdateDrawingSurface(virtualWidth, virtualHeight);
     }
 
     private void Initialize(int width, int height)
     {
-        _pixelBuffer = new SkiaPixelBuffer(width, height);
+        pixelBuffer = new SkiaPixelBuffer(width, height);
 
         var options = WindowOptions.Default;
         options.Size = new Vector2D<int>(width, height);
@@ -85,37 +87,77 @@ public class SilkDisplay : IResizablePixelDisplay, ITouchScreen
         options.PreferredBitDepth = new Vector4D<int>(8, 8, 8, 8);
         options.WindowBorder = WindowBorder.Fixed;
         GlfwWindowing.Use();
-        _window = Window.Create(options);
-        _window.Load += OnWindowLoad;
-        _window.Render += OnWindowRender;
-        _window.Initialize();
+        window = Window.Create(options);
+        window.Load += OnWindowLoad;
+        window.Render += OnWindowRender;
+        window.Initialize();
 
-        _grglInterface = GRGlInterface.Create((name => _window.GLContext!.TryGetProcAddress(name, out var addr) ? addr : 0));
-        _grglInterface.Validate();
-        _context = GRContext.CreateGl(_grglInterface);
+        grglInterface = GRGlInterface.Create((name => window.GLContext!.TryGetProcAddress(name, out var addr) ? addr : 0));
+        grglInterface.Validate();
+        context = GRContext.CreateGl(grglInterface);
+        CreateOrUpdateDrawingSurface(width, height);
+    }
+
+    private void CreateOrUpdateDrawingSurface(int width, int height)
+    {
         var renderTarget = new GRBackendRenderTarget(width, height, 0, 8, new GRGlFramebufferInfo(0, 0x8058)); // 0x8058 = GL_RGBA8`
-        _surface = SKSurface.Create(_context, renderTarget, GRSurfaceOrigin.BottomLeft, SKColorType.Rgba8888);
-        _canvas = _surface.Canvas;
+        if (canvas != null) canvas.Dispose();
+        if (surface != null) surface.Dispose();
+        surface = SKSurface.Create(context, renderTarget, GRSurfaceOrigin.BottomLeft, SKColorType.Rgba8888);
+        canvas = surface.Canvas;
     }
 
     private void OnWindowLoad()
     {
-        IInputContext input = _window.CreateInput();
+        IInputContext input = window.CreateInput();
         var mouse = input.Mice.FirstOrDefault();
 
         if (mouse != null)
         {
-            mouse.MouseDown += (s, e) => { TouchDown?.Invoke(this, TouchPoint.FromScreenData((int)mouse.Position.X, (int)mouse.Position.Y, 0, -1, -1, null)); };
-            mouse.MouseUp += (s, e) => { TouchUp?.Invoke(this, TouchPoint.FromScreenData((int)mouse.Position.X, (int)mouse.Position.Y, 0, -1, -1, null)); };
-            mouse.Click += (s, e, v) => { TouchClick?.Invoke(this, TouchPoint.FromScreenData((int)v.X, (int)v.Y, 0, -1, -1, null)); };
-            mouse.MouseMove += (s, e) => { TouchMoved?.Invoke(this, TouchPoint.FromScreenData((int)mouse.Position.X, (int)mouse.Position.Y, 0, -1, -1, null)); };
+            mouse.MouseDown += (s, e) =>
+            {
+                IsTouched = true;
+                TouchDown?.Invoke(this,
+                    TouchPoint.FromScreenData(
+                        (int)(mouse.Position.X / displayScale),
+                        (int)(mouse.Position.Y / displayScale),
+                        0, -1, -1, null));
+            };
+            mouse.MouseUp += (s, e) =>
+            {
+                IsTouched = false;
+                TouchUp?.Invoke(this,
+                    TouchPoint.FromScreenData(
+                        (int)(mouse.Position.X / displayScale),
+                        (int)(mouse.Position.Y / displayScale),
+                        0, -1, -1, null));
+            };
+            mouse.Click += (s, e, v) =>
+            {
+                TouchClick?.Invoke(this,
+                    TouchPoint.FromScreenData(
+                        (int)(v.X / displayScale),
+                        (int)(v.Y / displayScale),
+                        0, -1, -1, null));
+            };
+            mouse.MouseMove += (s, e) =>
+            {
+                TouchMoved?.Invoke(this,
+                    TouchPoint.FromScreenData(
+                        (int)(mouse.Position.X / displayScale),
+                        (int)(mouse.Position.Y / displayScale),
+                        0, -1, -1, null));
+            };
         }
     }
 
     private void OnWindowRender(double obj)
     {
-        _canvas.DrawBitmap(_pixelBuffer.SKBitmap, 0, 0);
-        _canvas.Flush();
+        canvas.DrawBitmap(pixelBuffer.SKBitmap,
+            SKRect.Create(0, 0, Width, Height),
+            SKRect.Create(0, 0, virtualWidth, virtualHeight));
+
+        canvas.Flush();
     }
 
     /// <summary>
@@ -123,9 +165,9 @@ public class SilkDisplay : IResizablePixelDisplay, ITouchScreen
     /// </summary>
     public void Run()
     {
-        _window.Run();
-        _window.Reset();
-        _window.Dispose();
+        window.Run();
+        window.Reset();
+        window.Dispose();
     }
 
 
@@ -134,7 +176,7 @@ public class SilkDisplay : IResizablePixelDisplay, ITouchScreen
     /// </summary>
     public void Show()
     {
-        _window.DoUpdate();
+        window.DoUpdate();
     }
 
     /// <summary>
@@ -155,7 +197,7 @@ public class SilkDisplay : IResizablePixelDisplay, ITouchScreen
     /// <param name="updateDisplay"></param>
     public void Clear(bool updateDisplay = false)
     {
-        _pixelBuffer.Clear();
+        pixelBuffer.Clear();
     }
 
     /// <summary>
@@ -165,8 +207,8 @@ public class SilkDisplay : IResizablePixelDisplay, ITouchScreen
     /// <param name="updateDisplay"></param>
     public void Fill(Color fillColor, bool updateDisplay = false)
     {
-        _pixelBuffer.Fill(fillColor);
-        _window.DoRender();
+        pixelBuffer.Fill(fillColor);
+        window.DoRender();
     }
 
     /// <summary>
@@ -179,7 +221,7 @@ public class SilkDisplay : IResizablePixelDisplay, ITouchScreen
     /// <param name="fillColor"></param>
     public void Fill(int x, int y, int width, int height, Color fillColor)
     {
-        _pixelBuffer.Fill(x, y, width, height, fillColor);
+        pixelBuffer.Fill(x, y, width, height, fillColor);
     }
 
     /// <summary>
@@ -190,7 +232,7 @@ public class SilkDisplay : IResizablePixelDisplay, ITouchScreen
     /// <param name="color"></param>
     public void DrawPixel(int x, int y, Color color)
     {
-        _pixelBuffer.SetPixel(x, y, color);
+        pixelBuffer.SetPixel(x, y, color);
     }
 
     /// <summary>
@@ -211,7 +253,7 @@ public class SilkDisplay : IResizablePixelDisplay, ITouchScreen
     /// <param name="y"></param>
     public void InvertPixel(int x, int y)
     {
-        _pixelBuffer.InvertPixel(x, y);
+        pixelBuffer.InvertPixel(x, y);
     }
 
     /// <summary>
@@ -222,6 +264,6 @@ public class SilkDisplay : IResizablePixelDisplay, ITouchScreen
     /// <param name="displayBuffer"></param>
     public void WriteBuffer(int x, int y, IPixelBuffer displayBuffer)
     {
-        _pixelBuffer.WriteBuffer(x, y, displayBuffer);
+        pixelBuffer.WriteBuffer(x, y, displayBuffer);
     }
 }
