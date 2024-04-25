@@ -162,11 +162,20 @@ public class SilkDisplay : IResizablePixelDisplay, ITouchScreen
     }
 
     /// <summary>
+    /// Run the application
+    /// </summary>
+    public void Run()
+    {
+        window.Run();
+        window.Reset();
+        window.Dispose();
+    }
+
+    /// <summary>
     /// Performs a full display update
     /// </summary>
     public void Show()
     {
-        window.DoRender();
     }
 
     /// <summary>
@@ -198,7 +207,11 @@ public class SilkDisplay : IResizablePixelDisplay, ITouchScreen
     public void Fill(Color fillColor, bool updateDisplay = false)
     {
         pixelBuffer.Fill(fillColor);
-        window.DoRender();
+
+        if(updateDisplay)
+        {
+            Show();
+        }
     }
 
     /// <summary>
