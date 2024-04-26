@@ -4,19 +4,26 @@ using System;
 
 namespace Meadow.Foundation.Sensors;
 
+/// <summary>
+/// Represents a simulated current sensor
+/// </summary>
 public class SimulatedCurrentSensor : SimulatedSamplingSensorBase<Current>, ICurrentSensor
 {
-    private Random random = new Random();
-
     private Current maxCurrent;
     private Current minCurrent;
 
+    /// <inheritdoc/>
     public Current? Current { get; private set; }
 
+    /// <inheritdoc/>
     public override SimulationBehavior[] SupportedBehaviors => new[] { SimulationBehavior.RandomWalk };
 
+    /// <inheritdoc/>
     public override Type ValueType => typeof(Current);
 
+    /// <summary>
+    /// Creates a SimulatedAccelerometer instance
+    /// </summary>
     public SimulatedCurrentSensor(Current? maxCurrent = null, Current? minCurrent = null)
     {
         this.minCurrent = minCurrent ?? new Current(0, Units.Current.UnitType.Amps);
@@ -25,21 +32,23 @@ public class SimulatedCurrentSensor : SimulatedSamplingSensorBase<Current>, ICur
         Current = 0.Amps();
     }
 
+    /// <inheritdoc/>
     public override void SetSensorValue(object value)
     {
         Current = (Current)value;
     }
 
+    /// <inheritdoc/>
     protected override Current GenerateSimulatedValue(SimulationBehavior behavior)
     {
         switch (behavior)
         {
             case SimulationBehavior.RandomWalk:
-                var r = random.NextDouble() * (maxCurrent.Amps - minCurrent.Amps) + minCurrent.Amps;
-                this.Current = new Current(r);
+                var r = GetRandomDouble(minCurrent.Amps, maxCurrent.Amps);
+                Current = new Current(r);
                 break;
         }
 
-        return this.Current.Value;
+        return Current!.Value;
     }
 }

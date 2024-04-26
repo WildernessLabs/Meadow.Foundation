@@ -5,16 +5,23 @@ using System;
 
 namespace Meadow.Foundation.Sensors;
 
+/// <summary>
+/// Represents a simulated accelerometer
+/// </summary>
 public class SimulatedAccelerometer : SimulatedSamplingSensorBase<Acceleration3D>, IAccelerometer
 {
-    private Random random = new Random();
-
+    /// <inheritdoc/>
     public Acceleration3D? Acceleration3D { get; private set; }
 
+    /// <inheritdoc/>
     public override SimulationBehavior[] SupportedBehaviors => new[] { SimulationBehavior.RandomWalk };
 
+    /// <inheritdoc/>
     public override Type ValueType => typeof(Acceleration3D);
 
+    /// <summary>
+    /// Creates a SimulatedAccelerometer instance
+    /// </summary>
     public SimulatedAccelerometer()
     {
         Acceleration3D = new Acceleration3D
@@ -25,23 +32,25 @@ public class SimulatedAccelerometer : SimulatedSamplingSensorBase<Acceleration3D
         };
     }
 
+    /// <inheritdoc/>
     public override void SetSensorValue(object value)
     {
         Acceleration3D = (Acceleration3D)value;
     }
 
+    /// <inheritdoc/>
     protected override Acceleration3D GenerateSimulatedValue(SimulationBehavior behavior)
     {
         switch (behavior)
         {
             case SimulationBehavior.RandomWalk:
-                var rX = new Acceleration(random.NextDouble() - 0.5, Acceleration.UnitType.Gravity);
-                var rY = new Acceleration(random.NextDouble() - 0.5, Acceleration.UnitType.Gravity);
-                var rZ = new Acceleration(random.NextDouble() - 0.5, Acceleration.UnitType.Gravity);
-                this.Acceleration3D = new Acceleration3D(rX, rY, rZ);
+                var rX = new Acceleration(GetRandomDouble(-0.5, 0.5), Acceleration.UnitType.Gravity);
+                var rY = new Acceleration(GetRandomDouble(-0.5, 0.5), Acceleration.UnitType.Gravity);
+                var rZ = new Acceleration(GetRandomDouble(-0.5, 0.5), Acceleration.UnitType.Gravity);
+                Acceleration3D = new Acceleration3D(rX, rY, rZ);
                 break;
         }
 
-        return this.Acceleration3D.Value;
+        return Acceleration3D!.Value;
     }
 }
