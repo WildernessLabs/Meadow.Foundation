@@ -70,6 +70,8 @@ public class SilkDisplay : IResizablePixelDisplay, ITouchScreen
     /// <inheritdoc/>
     public void Resize(int width, int height, float displayScale = 1)
     {
+        pixelBuffer = new SkiaPixelBuffer(width, height);
+
         this.displayScale = displayScale;
         virtualWidth = (int)(width * displayScale);
         virtualHeight = (int)(height * displayScale);
@@ -93,7 +95,7 @@ public class SilkDisplay : IResizablePixelDisplay, ITouchScreen
         window.Render += OnWindowRender;
         window.Initialize();
 
-        grglInterface = GRGlInterface.Create((name => window.GLContext!.TryGetProcAddress(name, out var addr) ? addr : 0));
+        grglInterface = GRGlInterface.Create(name => window.GLContext!.TryGetProcAddress(name, out var addr) ? addr : 0);
         grglInterface.Validate();
         context = GRContext.CreateGl(grglInterface);
         CreateOrUpdateDrawingSurface(width, height);
@@ -208,7 +210,7 @@ public class SilkDisplay : IResizablePixelDisplay, ITouchScreen
     {
         pixelBuffer.Fill(fillColor);
 
-        if(updateDisplay)
+        if (updateDisplay)
         {
             Show();
         }
