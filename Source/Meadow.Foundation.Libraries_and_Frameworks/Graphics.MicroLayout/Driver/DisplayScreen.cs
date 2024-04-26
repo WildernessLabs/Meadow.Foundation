@@ -69,7 +69,7 @@ public class DisplayScreen
             _graphics.CurrentFont = theme.Font;
         }
 
-        BackgroundColor = theme?.BackgroundColor ?? Color.Black;
+        _backgroundColor = theme?.BackgroundColor ?? _display.DisabledColor;
 
         if (Resolver.App != null)
         {
