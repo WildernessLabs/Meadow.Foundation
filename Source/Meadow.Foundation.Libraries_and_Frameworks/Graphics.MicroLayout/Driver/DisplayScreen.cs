@@ -13,6 +13,7 @@ public class DisplayScreen
     private readonly IPixelDisplay _display;
     private readonly MicroGraphics _graphics;
     private bool _updateInProgress = false;
+    private Color _backgroundColor;
 
     /// <summary>
     /// Gets the Touchscreen associated with the display screen
@@ -23,11 +24,6 @@ public class DisplayScreen
     /// Gets the collection of controls on the display screen.
     /// </summary>
     public ControlsCollection Controls { get; }
-
-    /// <summary>
-    /// Gets or sets the background color of the display screen.
-    /// </summary>
-    public Color BackgroundColor { get; set; }
 
     /// <summary>
     /// Gets the width of the display screen.
@@ -82,6 +78,20 @@ public class DisplayScreen
         else
         {
             new Thread(DrawLoopOnCaller).Start();
+        }
+    }
+
+    /// <summary>
+    /// Gets or sets the background color of the display screen.
+    /// </summary>
+    public Color BackgroundColor
+    {
+        get => _backgroundColor;
+        set
+        {
+            if (value == BackgroundColor) return;
+            _backgroundColor = value;
+            Invalidate();
         }
     }
 
