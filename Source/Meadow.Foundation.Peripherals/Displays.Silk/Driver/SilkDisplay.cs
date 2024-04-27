@@ -95,6 +95,8 @@ public class SilkDisplay : IResizablePixelDisplay, ITouchScreen
         window.Render += OnWindowRender;
         window.Initialize();
 
+        WindowExtensions.Center(window);
+
         grglInterface = GRGlInterface.Create(name => window.GLContext!.TryGetProcAddress(name, out var addr) ? addr : 0);
         grglInterface.Validate();
         context = GRContext.CreateGl(grglInterface);
