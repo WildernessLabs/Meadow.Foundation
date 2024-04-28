@@ -76,6 +76,9 @@ public class SilkDisplay : IResizablePixelDisplay, ITouchScreen
         virtualWidth = (int)(width * displayScale);
         virtualHeight = (int)(height * displayScale);
         window.Size = new Vector2D<int>(virtualWidth, virtualHeight);
+
+        WindowExtensions.Center(window);
+
         CreateOrUpdateDrawingSurface(virtualWidth, virtualHeight);
     }
 
