@@ -76,6 +76,9 @@ public class SilkDisplay : IResizablePixelDisplay, ITouchScreen
         virtualWidth = (int)(width * displayScale);
         virtualHeight = (int)(height * displayScale);
         window.Size = new Vector2D<int>(virtualWidth, virtualHeight);
+
+        WindowExtensions.Center(window);
+
         CreateOrUpdateDrawingSurface(virtualWidth, virtualHeight);
     }
 
@@ -94,6 +97,8 @@ public class SilkDisplay : IResizablePixelDisplay, ITouchScreen
         window.Load += OnWindowLoad;
         window.Render += OnWindowRender;
         window.Initialize();
+
+        WindowExtensions.Center(window);
 
         grglInterface = GRGlInterface.Create(name => window.GLContext!.TryGetProcAddress(name, out var addr) ? addr : 0);
         grglInterface.Validate();
