@@ -20,31 +20,35 @@ You can install the library from within Visual studio using the the NuGet Packag
 ```csharp
 public class MeadowApp : App<Meadow.Windows>
 {
-WinFormsDisplay? _display;
-MicroGraphics _graphics = default!;
+WinFormsDisplay? display;
+MicroGraphics graphics = default!;
 
 public override Task Initialize()
 {
-    _display = new WinFormsDisplay(240, 320);
+    display = new WinFormsDisplay(640, 480, displayScale: 1f);
 
-    _graphics = new MicroGraphics(_display)
+    graphics = new MicroGraphics(display)
     {
-        CurrentFont = new Font12x20(),
+        CurrentFont = new Font16x24(),
         Stroke = 1
     };
 
     _ = Task.Run(() =>
     {
-        Thread.Sleep(2000);
+        graphics.Clear();
 
-        _graphics.Clear();
+        graphics.DrawText(10, 10, "16x24 font on WinForms", Color.White);
 
-        _graphics.DrawTriangle(10, 30, 50, 50, 10, 50, Color.Red);
-        _graphics.DrawRectangle(20, 45, 40, 20, Color.Yellow, false);
-        _graphics.DrawCircle(50, 50, 40, Color.Blue, false);
-        _graphics.DrawText(5, 5, "Meadow F7", Color.White);
+        graphics.DrawText(10, 40, "1234567890!@#$%^&*(){}[],./<>?;':", Color.LawnGreen);
+        graphics.DrawText(10, 70, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", Color.Cyan);
+        graphics.DrawText(10, 100, "abcdefghijklmnopqrstuvwxyz", Color.Yellow);
+        graphics.DrawText(10, 130, "Temp: 21.5°C", Color.Orange);
 
-        _graphics.Show();
+        graphics.DrawTriangle(10, 220, 50, 260, 10, 260, Color.Red);
+        graphics.DrawRectangle(20, 185, 80, 40, Color.Yellow, false);
+        graphics.DrawCircle(50, 240, 40, Color.Blue, false);
+
+        graphics.Show();
     });
 
     return Task.CompletedTask;
@@ -52,7 +56,7 @@ public override Task Initialize()
 
 public override Task Run()
 {
-    Application.Run(_display!);
+    Application.Run(display!);
 
     return Task.CompletedTask;
 }

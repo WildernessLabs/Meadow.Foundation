@@ -5,52 +5,12 @@ namespace Meadow.Foundation.Graphics.MicroLayout;
 /// <summary>
 /// An X/Y Line chart
 /// </summary>
-public class LineChart : ThemedControl
+public class LineChart : ChartControl
 {
-    /// <summary>
-    /// The default color for axis lines
-    /// </summary>
-    public static Color DefaultAxisColor = Color.Gray;
-
-    /// <summary>
-    /// The default color for axis labels
-    /// </summary>
-    public static Color DefaultAxisLabelColor = Color.White;
-
-    /// <summary>
-    /// The default chart background color
-    /// </summary>
-    public static Color DefaultBackgroundColor = Color.Black;
-
-    private const int DefaultMargin = 5;
-    private const int DefaultAxisStroke = 4;
-
-    private IFont _axisFont = default!;
-
     /// <summary>
     /// When true, Y-value origin (zero) is always displayed, otherwise the Y axis is scaled based on the data range.
     /// </summary>
     public bool AlwaysShowYOrigin { get; set; } = true;
-    /// <summary>
-    /// The IFont used to for displaying axis labels
-    /// </summary>
-    public IFont? AxisFont { get; set; }
-    /// <summary>
-    /// The chart's background color
-    /// </summary>
-    public Color BackgroundColor { get; set; } = DefaultBackgroundColor;
-    /// <summary>
-    /// The color used to draw the chart axes lines
-    /// </summary>
-    public Color AxisColor { get; set; } = DefaultAxisColor;
-    /// <summary>
-    /// The color used to draw the chart axes labels
-    /// </summary>
-    public Color AxisLabelColor { get; set; } = DefaultAxisLabelColor;
-    /// <summary>
-    /// The width of the axes lines
-    /// </summary>
-    public int AxisStroke { get; set; } = DefaultAxisStroke;
 
     //    public bool ShowXAxisLabels { get; set; }
     /// <summary>
@@ -69,13 +29,6 @@ public class LineChart : ThemedControl
     private int XAxisScaledPosition { get; set; }
     private double HorizontalScale { get; set; } // pixels per X units
     private double HorizontalMinimum { get; set; } // X units at left of chart
-    private int ChartAreaHeight { get; set; }
-    private int ChartAreaWidth { get; set; }
-    private int ChartAreaLeft { get; set; }
-    private int ChartAreaTop { get; set; }
-    private int ChartAreaBottom { get; set; }
-    private int ParentOffsetX => (Parent?.Left ?? 0);
-    private int ParentOffsetY => (Parent?.Top ?? 0);
 
     /// <summary>
     /// Creates a DisplayLineChart instance
@@ -90,64 +43,62 @@ public class LineChart : ThemedControl
     }
 
     /// <inheritdoc/>
-    public override void ApplyTheme(DisplayTheme theme)
-    {
-    }
-
-    /// <inheritdoc/>
     protected override void OnDraw(MicroGraphics graphics)
     {
         graphics.DrawRectangle(Left, Top, Width, Height, BackgroundColor, true);
 
-        ChartAreaTop = Top + DefaultMargin;
+        ChartAreaTop = Top + DefaultMargin * 2 - AxisStroke;
         ChartAreaBottom = Bottom - DefaultMargin;
 
-        // determine overall min/max
-        var minX = Series.Min(s => s.Points.MinX);
-        var maxX = Series.Max(s => s.Points.MaxX);
-
-        if (AlwaysShowYOrigin)
+        if (Series.Count > 0)
         {
-            var min = Series.Min(s => s.Points.MinY);
-            var max = Series.Max(s => s.Points.MaxY);
+            // determine overall min/max
+            var minX = Series.Min(s => s.Points.MinX);
+            var maxX = Series.Max(s => s.Points.MaxX);
 
-            if (min > 0)
+            if (AlwaysShowYOrigin)
             {
-                YMinimumValue = 0;
-                YMaximumValue = max;
-            }
-            else if (max < 0)
-            {
-                YMinimumValue = min;
-                YMaximumValue = 0;
+                var min = Series.Min(s => s.Points.MinY);
+                var max = Series.Max(s => s.Points.MaxY);
+
+                if (min > 0)
+                {
+                    YMinimumValue = 0;
+                    YMaximumValue = max;
+                }
+                else if (max < 0)
+                {
+                    YMinimumValue = min;
+                    YMaximumValue = 0;
+                }
+                else
+                {
+                    YMinimumValue = min;
+                    YMaximumValue = max;
+                }
             }
             else
             {
-                YMinimumValue = min;
-                YMaximumValue = max;
+                // set chart top/bottom at 10% above/below the min/max
+                var ymin = Series.Min(s => s.Points.MinY);
+                YMinimumValue = (ymin > 0) ? ymin * 0.9 : ymin * 1.1;
+                var ymax = Series.Max(s => s.Points.MaxY);
+                YMaximumValue = (ymax > 0) ? ymax * 1.1 : ymax * 0.9;
             }
+
+            ChartAreaHeight = Height - DefaultMargin * 3;
+            VerticalScale = ChartAreaHeight / (YMaximumValue - YMinimumValue); // pixels per vertical unit
+
+            DrawYAxis(graphics);
+            DrawXAxis(graphics, YMinimumValue, YMaximumValue);
+
+            foreach (var series in Series)
+            {
+                DrawSeries(graphics, series);
+            }
+
+            DrawAxisLabels(graphics);
         }
-        else
-        {
-            // set chart top/bottom at 10% above/below the min/max
-            var ymin = Series.Min(s => s.Points.MinY);
-            YMinimumValue = (ymin > 0) ? ymin * 0.9 : ymin * 1.1;
-            var ymax = Series.Max(s => s.Points.MaxY);
-            YMaximumValue = (ymax > 0) ? ymax * 1.1 : ymax * 0.9;
-        }
-
-        ChartAreaHeight = Height - (2 * DefaultMargin) - (DefaultAxisStroke / 2);
-        VerticalScale = ChartAreaHeight / (YMaximumValue - YMinimumValue); // pixels per vertical unit
-
-        DrawYAxis(graphics);
-        DrawXAxis(graphics, YMinimumValue, YMaximumValue);
-
-        foreach (var series in Series)
-        {
-            DrawSeries(graphics, series);
-        }
-
-        DrawAxisLabels(graphics);
 
         graphics.Show();
     }
@@ -172,7 +123,7 @@ public class LineChart : ThemedControl
             // max label
             graphics.DrawText(
                 x: Left + DefaultMargin + ParentOffsetX,
-                y: ChartAreaTop + font.Height + ParentOffsetY,
+                y: ChartAreaTop - font.Height + DefaultMargin,
                 color: AxisLabelColor,
                 text: YMaximumValue.ToString("0.0"),
                 font: font);
@@ -194,38 +145,23 @@ public class LineChart : ThemedControl
             // axis is at 0
             XAxisYIntercept = 0;
 
-            XAxisScaledPosition = Bottom - DefaultMargin - DefaultAxisStroke + (int)(minY * VerticalScale);
+            XAxisScaledPosition = Bottom - DefaultMargin + (int)(minY * VerticalScale);
         }
         else
         {
             // axis at min Y
             XAxisYIntercept = YMinimumValue;
 
-            XAxisScaledPosition = Bottom - DefaultMargin - DefaultAxisStroke;
+            XAxisScaledPosition = ChartAreaBottom - DefaultMargin * 2 + AxisStroke * 2;
         }
 
         // for now it's a fixed line at the bottom
-        graphics.Stroke = DefaultAxisStroke;
-        graphics.DrawLine(
-            ChartAreaLeft + ParentOffsetX,
-            XAxisScaledPosition + ParentOffsetY,
-            Right - DefaultMargin,
+        graphics.Stroke = AxisStroke;
+        graphics.DrawHorizontalLine(
+            ChartAreaLeft, //ChartAreaLeft - AxisStroke + ParentOffsetX,
             XAxisScaledPosition,
+            ChartAreaWidth,
             AxisColor);
-    }
-
-    private IFont GetAxisFont()
-    {
-        if (AxisFont == null)
-        {
-            _axisFont = new Font8x16();
-        }
-        else
-        {
-            _axisFont = AxisFont;
-        }
-
-        return _axisFont;
     }
 
     private void DrawYAxis(MicroGraphics graphics)
@@ -239,17 +175,15 @@ public class LineChart : ThemedControl
         }
 
         // TODO: deal with chart with negative values
-
-        ChartAreaLeft = Left + leftMargin;
-        ChartAreaWidth = Width - ChartAreaLeft - DefaultMargin - DefaultAxisStroke * 2;
+        ChartAreaLeft = Left + leftMargin + AxisStroke;
+        ChartAreaWidth = Right - ChartAreaLeft - DefaultMargin - AxisStroke;
 
         // for now it's a fixed line at the left
-        graphics.Stroke = DefaultAxisStroke;
-        graphics.DrawLine(
-            ChartAreaLeft + ParentOffsetX,
-            Top + DefaultMargin + ParentOffsetY,
-            ChartAreaLeft,
-            Bottom - DefaultMargin,
+        graphics.Stroke = AxisStroke;
+        graphics.DrawVerticalLine(
+            ChartAreaLeft - AxisStroke,
+            ChartAreaTop,
+            ChartAreaHeight + AxisStroke,
             AxisColor);
     }
 
@@ -260,15 +194,15 @@ public class LineChart : ThemedControl
         var xRange = series.Points.MaxX - minX;
         var yRange = series.Points.MaxY; //  - minY; // assuming axis at 0 right now
 
-        LineSeriesPoint lastPoint = new LineSeriesPoint();
+        var lastPoint = new LineSeriesPoint();
         var first = true;
 
         graphics.Stroke = series.LineStroke;
 
         foreach (var point in series.Points)
         {
-            var scaledX = ChartAreaLeft + DefaultAxisStroke * 2 + DefaultMargin + (int)(point.X / xRange * ChartAreaWidth);
-            var scaledY = Bottom - DefaultMargin - (DefaultAxisStroke / 2) - (int)((point.Y - YMinimumValue) * VerticalScale);
+            var scaledX = ChartAreaLeft + (int)(point.X / xRange * ChartAreaWidth);
+            var scaledY = (ChartAreaTop + ChartAreaHeight) - (int)((point.Y - YMinimumValue) * VerticalScale);
 
             if (series.ShowLines)
             {
@@ -292,7 +226,12 @@ public class LineChart : ThemedControl
 
             if (series.ShowPoints)
             {
-                graphics.DrawCircle(scaledX + ParentOffsetX, scaledY + ParentOffsetY, series.PointSize, series.PointColor, true);
+                graphics.DrawCircle(
+                    scaledX + ParentOffsetX,
+                    scaledY + ParentOffsetY,
+                    series.PointSize,
+                    series.PointColor,
+                    true);
             }
         }
     }

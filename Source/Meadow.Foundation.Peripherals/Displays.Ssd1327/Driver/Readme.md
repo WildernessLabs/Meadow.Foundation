@@ -42,7 +42,7 @@ public override Task Run()
 
     for (int i = 10; i > 0; i--)
     {   //iterate across different brightnesses
-        graphics.DrawText(0, i * 11, "SSD1327", Color.FromRgb(i * 0.1, i * 0.1, i * 0.1));
+        graphics.DrawText(0, i * 11, "SSD1327", Color.FromRgb(i * 0.1f, i * 0.1f, i * 0.1f));
     }
 
     graphics.Show();

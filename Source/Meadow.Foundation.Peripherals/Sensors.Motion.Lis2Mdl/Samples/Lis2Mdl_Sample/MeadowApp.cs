@@ -11,18 +11,18 @@ namespace Lis2Mdl_Sample
     {
         //<!=SNIP=>
 
-        Lis2Mdl sensor;
+        Lis2mdl sensor;
 
         public override Task Initialize()
         {
             Resolver.Log.Info("Initialize hardware...");
-            sensor = new Lis2Mdl(Device.CreateI2cBus());
+            sensor = new Lis2mdl(Device.CreateI2cBus());
 
             // classical .NET events can also be used:
             sensor.Updated += HandleResult;
 
             // Example that uses an IObservable subscription to only be notified when the filter is satisfied
-            var consumer = Lis2Mdl.CreateObserver(handler: result => HandleResult(this, result),
+            var consumer = Lis2mdl.CreateObserver(handler: result => HandleResult(this, result),
                                                  filter: result => FilterResult(result));
 
             sensor.Subscribe(consumer);

@@ -10,15 +10,12 @@ namespace Meadow.Foundation.Leds
     /// </summary>
     public partial class RgbPwmLed : IRgbPwmLed, IDisposable
     {
-        readonly bool createdPorts = false;
-
-        static readonly Frequency DefaultFrequency = new Frequency(200, Frequency.UnitType.Hertz);
-
-        readonly float DEFAULT_DUTY_CYCLE = 0f;
-
-        readonly double maxRedDutyCycle = 1;
-        readonly double maxGreenDutyCycle = 1;
-        readonly double maxBlueDutyCycle = 1;
+        private readonly bool createdPorts = false;
+        private static readonly Frequency DefaultFrequency = new Frequency(200, Frequency.UnitType.Hertz);
+        private readonly float DEFAULT_DUTY_CYCLE = 0f;
+        private readonly double maxRedDutyCycle = 1;
+        private readonly double maxGreenDutyCycle = 1;
+        private readonly double maxBlueDutyCycle = 1;
 
         /// <summary>
         /// Maximum forward voltage (3.3 Volts)
@@ -40,7 +37,8 @@ namespace Meadow.Foundation.Leds
                 isOn = value;
             }
         }
-        bool isOn;
+
+        private bool isOn;
 
         /// <summary>
         /// The current LED color
@@ -279,6 +277,12 @@ namespace Meadow.Foundation.Leds
             RedPwm.DutyCycle = (float)(Color.R / 255.0 * maxRedDutyCycle * brightness);
             GreenPwm.DutyCycle = (float)(Color.G / 255.0 * maxGreenDutyCycle * brightness);
             BluePwm.DutyCycle = (float)(Color.B / 255.0 * maxBlueDutyCycle * brightness);
+        }
+
+        ///<inheritdoc/>
+        public void SetColor(RgbLedColors color)
+        {
+            SetColor(color.AsColor());
         }
 
         ///<inheritdoc/>

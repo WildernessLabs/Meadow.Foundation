@@ -12,18 +12,18 @@ public class DisplayScreen
 {
     private readonly IPixelDisplay _display;
     private readonly MicroGraphics _graphics;
-    private readonly ITouchScreen? _touchScreen;
     private bool _updateInProgress = false;
+    private Color _backgroundColor;
+
+    /// <summary>
+    /// Gets the Touchscreen associated with the display screen
+    /// </summary>
+    public ITouchScreen? TouchScreen { get; }
 
     /// <summary>
     /// Gets the collection of controls on the display screen.
     /// </summary>
     public ControlsCollection Controls { get; }
-
-    /// <summary>
-    /// Gets or sets the background color of the display screen.
-    /// </summary>
-    public Color BackgroundColor { get; set; }
 
     /// <summary>
     /// Gets the width of the display screen.
@@ -56,12 +56,12 @@ public class DisplayScreen
 
         _graphics.Rotation = rotation;
 
-        _touchScreen = touchScreen;
+        TouchScreen = touchScreen;
 
-        if (_touchScreen != null)
+        if (TouchScreen != null)
         {
-            _touchScreen.TouchDown += _touchScreen_TouchDown;
-            _touchScreen.TouchUp += _touchScreen_TouchUp;
+            TouchScreen.TouchDown += _touchScreen_TouchDown;
+            TouchScreen.TouchUp += _touchScreen_TouchUp;
         }
 
         if (theme?.Font != null)
@@ -69,7 +69,7 @@ public class DisplayScreen
             _graphics.CurrentFont = theme.Font;
         }
 
-        BackgroundColor = theme?.BackgroundColor ?? Color.Black;
+        _backgroundColor = theme?.BackgroundColor ?? _display.DisabledColor;
 
         if (Resolver.App != null)
         {
@@ -81,24 +81,45 @@ public class DisplayScreen
         }
     }
 
-    private void _touchScreen_TouchUp(int x, int y)
+    /// <summary>
+    /// Gets or sets the background color of the display screen.
+    /// </summary>
+    public Color BackgroundColor
     {
-        lock (Controls.SyncRoot)
+        get => _backgroundColor;
+        set
         {
-            foreach (var control in Controls)
+            if (value == BackgroundColor) return;
+            _backgroundColor = value;
+            Invalidate();
+        }
+    }
+
+    private void _touchScreen_TouchUp(ITouchScreen source, TouchPoint point)
+    {
+        if (Monitor.TryEnter(Controls.SyncRoot, 100))
+        {
+            try
             {
-                if (control is IClickableControl c)
+                foreach (var control in Controls)
                 {
-                    if (control.Contains(x, y))
+                    if (control is IClickableControl c)
                     {
-                        c.Pressed = false;
+                        if (control.Contains(point.ScreenX, point.ScreenY))
+                        {
+                            c.Pressed = false;
+                        }
                     }
                 }
+            }
+            finally
+            {
+                Monitor.Exit(Controls.SyncRoot);
             }
         }
     }
 
-    private void _touchScreen_TouchDown(int x, int y)
+    private void _touchScreen_TouchDown(ITouchScreen source, TouchPoint point)
     {
         lock (Controls.SyncRoot)
         {
@@ -106,7 +127,7 @@ public class DisplayScreen
             {
                 if (control is IClickableControl c)
                 {
-                    if (control.Contains(x, y))
+                    if (control.Contains(point.ScreenX, point.ScreenY))
                     {
                         c.Pressed = true;
                     }
@@ -128,7 +149,7 @@ public class DisplayScreen
         control.Invalidate();
         control.Refresh(_graphics);
 
-        if (control is Layout l)
+        if (control is MicroLayout l)
         {
             foreach (var c in l.Controls)
             {
