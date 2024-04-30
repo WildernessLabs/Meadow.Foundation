@@ -1,7 +1,7 @@
 <Project Sdk="Meadow.Sdk/1.1.0">
   <PropertyGroup>
     <PackageReadmeFile>Readme.md</PackageReadmeFile>
-    <Version>1.10.2</Version>
+    <Version>1.11.0</Version>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageIcon>icon.png</PackageIcon>
     <Authors>Wilderness Labs, Inc</Authors>

@@ -1,6 +1,7 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Version>1.10.2</Version>
+    <PackageReadmeFile>Readme.md</PackageReadmeFile>
+    <Version>1.11.0</Version>
     <LangVersion>10.0</LangVersion>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
@@ -21,6 +22,7 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
+    <None Include=".\Readme.md" Pack="true" PackagePath="" />
     <PackageReference Include="Silk.NET" Version="2.20.0" />
     <PackageReference Include="SkiaSharp" Version="2.88.8" />
   </ItemGroup>
