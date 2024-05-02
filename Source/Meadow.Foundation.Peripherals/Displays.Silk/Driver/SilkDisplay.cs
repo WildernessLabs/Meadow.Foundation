@@ -38,6 +38,11 @@ public class SilkDisplay : IResizablePixelDisplay, ITouchScreen
     /// <inheritdoc/>
     public IPixelBuffer PixelBuffer => pixelBuffer;
 
+    /// <summary>
+    /// The frame buffer that's used to draw to the display
+    /// </summary>
+    private SkiaPixelBuffer? frameBuffer;
+
     /// <inheritdoc/>
     public ColorMode ColorMode => pixelBuffer.ColorMode;
 
@@ -71,6 +76,7 @@ public class SilkDisplay : IResizablePixelDisplay, ITouchScreen
     public void Resize(int width, int height, float displayScale = 1)
     {
         pixelBuffer = new SkiaPixelBuffer(width, height);
+        frameBuffer = new SkiaPixelBuffer(width, height);
 
         this.displayScale = displayScale;
         virtualWidth = (int)(width * displayScale);
@@ -85,6 +91,7 @@ public class SilkDisplay : IResizablePixelDisplay, ITouchScreen
     private void Initialize(int width, int height)
     {
         pixelBuffer = new SkiaPixelBuffer(width, height);
+        frameBuffer = new SkiaPixelBuffer(width, height);
 
         var options = WindowOptions.Default;
         options.Size = new Vector2D<int>(width, height);
@@ -161,11 +168,19 @@ public class SilkDisplay : IResizablePixelDisplay, ITouchScreen
 
     private void OnWindowRender(double obj)
     {
-        canvas.DrawBitmap(pixelBuffer.SKBitmap,
-            SKRect.Create(0, 0, Width, Height),
-            SKRect.Create(0, 0, virtualWidth, virtualHeight));
+        if (frameBuffer == null)
+        {
+            return;
+        }
 
-        canvas.Flush();
+        lock (frameBuffer)
+        {
+            canvas.DrawBitmap(frameBuffer.SKBitmap,
+                SKRect.Create(0, 0, Width, Height),
+                SKRect.Create(0, 0, virtualWidth, virtualHeight));
+
+            canvas.Flush();
+        }
     }
 
     /// <summary>
@@ -183,6 +198,15 @@ public class SilkDisplay : IResizablePixelDisplay, ITouchScreen
     /// </summary>
     public void Show()
     {
+        if (frameBuffer == null)
+        {
+            return;
+        }
+
+        lock (frameBuffer)
+        {
+            frameBuffer?.WriteBuffer(0, 0, pixelBuffer);
+        }
     }
 
     /// <summary>
@@ -204,6 +228,11 @@ public class SilkDisplay : IResizablePixelDisplay, ITouchScreen
     public void Clear(bool updateDisplay = false)
     {
         pixelBuffer.Clear();
+
+        if (updateDisplay)
+        {
+            Show();
+        }
     }
 
     /// <summary>
