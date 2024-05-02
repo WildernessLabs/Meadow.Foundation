@@ -99,7 +99,7 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <returns>Current acceleration</returns>
         protected override Task<Acceleration3D> ReadSensor()
         {
-            BusComms.ReadRegister((byte)Register.X0, ReadBuffer.Span[0..6]);
+            BusComms.ReadRegister((byte)Register.DATAX0, ReadBuffer.Span[0..6]);
 
             var conditions = new Acceleration3D(
                 new Acceleration(ADXL345_MG2G_MULTIPLIER * (short)(ReadBuffer.Span[0] + (ReadBuffer.Span[1] << 8)), Acceleration.UnitType.Gravity),
