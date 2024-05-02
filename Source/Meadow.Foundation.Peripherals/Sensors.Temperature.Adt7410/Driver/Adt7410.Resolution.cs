@@ -1,19 +1,19 @@
 ﻿namespace Meadow.Foundation.Sensors.Temperature
 {
-    public partial class Tmp102
+    public partial class Adt7410
     {
         /// <summary>
-        /// Indicate the resolution of the sensor.
+        /// Indicate the resolution of the sensor
         /// </summary>
         public enum Resolution : byte
         {
             /// <summary>
-            /// Operate in 12-bit mode.
+            /// Operate in 16-bit mode
             /// </summary>
-            Resolution12Bits,
+            Resolution16Bits,
 
             /// <summary>
-            /// Operate in 13-bit mode.
+            /// Operate in 13-bit mode
             /// </summary>
             Resolution13Bits
         }
