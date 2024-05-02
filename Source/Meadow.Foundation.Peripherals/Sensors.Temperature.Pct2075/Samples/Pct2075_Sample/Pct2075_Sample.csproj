@@ -10,12 +10,7 @@
 		<LangVersion>10.0</LangVersion>
 	</PropertyGroup>
 	<ItemGroup>
-    <PackageReference Include="Meadow.F7" Version="1.9.0" />
-    <PackageReference Include="Meadow.Foundation.Sensors.Temperature.Mcp960x" Version="1.9.0" />
-	</ItemGroup>
-	<ItemGroup>
-		<None Update="meadow.config.yaml">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
+    <PackageReference Include="Meadow.F7" Version="1.11.0" />
+    <PackageReference Include="Meadow.Foundation.Sensors.Temperature.Pct2075" Version="1.11.0" />
 	</ItemGroup>
 </Project>

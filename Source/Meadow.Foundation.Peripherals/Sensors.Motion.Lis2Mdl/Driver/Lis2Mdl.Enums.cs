@@ -1,6 +1,6 @@
 ﻿namespace Meadow.Foundation.Sensors.Motion
 {
-    public partial class Lis2Mdl
+    public partial class Lis2mdl
     {
         /// <summary>
         /// Valid I2C addresses for the sensor

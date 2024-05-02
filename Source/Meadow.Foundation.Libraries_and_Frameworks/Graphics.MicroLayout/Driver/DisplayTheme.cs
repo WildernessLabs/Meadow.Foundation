@@ -6,6 +6,16 @@
 public class DisplayTheme
 {
     /// <summary>
+    /// Gets or sets the start color for gradient-capable controls using this theme.
+    /// </summary>
+    public Color? StartColor { get; set; }
+
+    /// <summary>
+    /// Gets or sets the end color for gradient-capable controls using this theme.
+    /// </summary>
+    public Color? EndColor { get; set; }
+
+    /// <summary>
     /// Gets or sets the background color for display controls using this theme.
     /// </summary>
     public Color? BackgroundColor { get; set; }

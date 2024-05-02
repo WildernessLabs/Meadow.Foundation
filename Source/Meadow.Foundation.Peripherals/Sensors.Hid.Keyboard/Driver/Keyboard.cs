@@ -1,6 +1,6 @@
 ﻿using Meadow.Hardware;
 using System;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Linq;
 using System.Threading;
 
@@ -12,7 +12,7 @@ namespace Meadow.Foundation.Sensors.Hid;
 public partial class Keyboard : IDigitalInterruptController, IDigitalOutputController, IDisposable
 {
     private static Thread? _thread = null;
-    private static Dictionary<char, KeyboardKey> _keys = new Dictionary<char, KeyboardKey>();
+    private static ConcurrentDictionary<char, KeyboardKey> _keys = new();
 
     private bool _keepScanning = false;
     private bool _isDisposed = false;
@@ -94,7 +94,7 @@ public partial class Keyboard : IDigitalInterruptController, IDigitalOutputContr
         var ci = kp.SupportedChannels?.First() as IDigitalChannelInfo ?? throw new ArgumentException("Pin is not a Digital channel");
 
         var kbk = new KeyboardKey(kp, ci, interruptMode);
-        _keys.Add(key, kbk);
+        _keys[key] = kbk;
         return kbk;
     }
 
