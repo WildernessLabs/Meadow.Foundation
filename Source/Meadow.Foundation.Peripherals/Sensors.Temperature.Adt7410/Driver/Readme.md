@@ -1,8 +1,8 @@
-# Meadow.Foundation.Sensors.Temperature.Tmp102
+# Meadow.Foundation.Sensors.Temperature.Adt7410
 
-**TMP102 I2C temperature sensor**
+**Adt7410 I2C temperature sensor**
 
-The **Tmp102** library is included in the **Meadow.Foundation.Sensors.Temperature.Tmp102** nuget package and is designed for the [Wilderness Labs](www.wildernesslabs.co) Meadow .NET IoT platform.
+The **Adt7410** library is included in the **Meadow.Foundation.Sensors.Temperature.Adt7410** nuget package and is designed for the [Wilderness Labs](www.wildernesslabs.co) Meadow .NET IoT platform.
 
 This driver is part of the [Meadow.Foundation](https://developer.wildernesslabs.co/Meadow/Meadow.Foundation/) peripherals library, an open-source repository of drivers and libraries that streamline and simplify adding hardware to your C# .NET Meadow IoT applications.
 
@@ -14,29 +14,29 @@ To view all Wilderness Labs open-source projects, including samples, visit [gith
 
 You can install the library from within Visual studio using the the NuGet Package Manager or from the command line using the .NET CLI:
 
-`dotnet add package Meadow.Foundation.Sensors.Temperature.Tmp102`
+`dotnet add package Meadow.Foundation.Sensors.Temperature.Adt7410`
 ## Usage
 
 ```csharp
-Tmp102 tmp102;
+Adt7410 adt7410;
 
 public override Task Initialize()
 {
     Resolver.Log.Info("Initialize...");
 
-    tmp102 = new Tmp102(Device.CreateI2cBus());
+    adt7410 = new Adt7410(Device.CreateI2cBus());
+    adt7410.SensorResolution = Adt7410.Resolution.Resolution13Bits;
 
-    var consumer = Tmp102.CreateObserver(
+    var consumer = Adt7410.CreateObserver(
         handler: result =>
         {
-            Resolver.Log.Info($"Temperature New Value {result.New.Celsius}C");
-            Resolver.Log.Info($"Temperature Old Value {result.Old?.Celsius}C");
+            Resolver.Log.Info($"Temperature New {result.New.Celsius:N2}C, Old {result.Old?.Celsius:N2}C");
         },
         filter: null
     );
-    tmp102.Subscribe(consumer);
+    adt7410.Subscribe(consumer);
 
-    tmp102.Updated += (object sender, IChangeResult<Meadow.Units.Temperature> e) =>
+    adt7410.Updated += (object sender, IChangeResult<Meadow.Units.Temperature> e) =>
     {
         Resolver.Log.Info($"Temperature Updated: {e.New.Celsius:N2}C");
     };
@@ -46,10 +46,10 @@ public override Task Initialize()
 
 public override async Task Run()
 {
-    var temp = await tmp102.Read();
-    Resolver.Log.Info($"Current temperature: {temp.Celsius} C");
+    var temp = await adt7410.Read();
+    Resolver.Log.Info($"Current temperature: {temp.Celsius}C");
 
-    tmp102.StartUpdating(TimeSpan.FromSeconds(1));
+    adt7410.StartUpdating(TimeSpan.FromSeconds(1));
 }
 
 ```
