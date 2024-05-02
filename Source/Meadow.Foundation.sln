@@ -1519,6 +1519,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Temperature.Adt7410
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Adt7410_Sample", "Meadow.Foundation.Peripherals\Sensors.Temperature.Adt7410\Samples\Adt7410_Sample\Adt7410_Sample.csproj", "{9C465F6E-AE56-48AB-8ABE-CE8428599D07}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Adxl343_Sample", "Meadow.Foundation.Peripherals\Sensors.Motion.Adxl3xx\Samples\Adxl343_Sample\Adxl343_Sample.csproj", "{C10E05C3-5E2D-4334-BDCF-5D3A5748C882}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -3665,6 +3667,10 @@ Global
 		{9C465F6E-AE56-48AB-8ABE-CE8428599D07}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9C465F6E-AE56-48AB-8ABE-CE8428599D07}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9C465F6E-AE56-48AB-8ABE-CE8428599D07}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C10E05C3-5E2D-4334-BDCF-5D3A5748C882}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C10E05C3-5E2D-4334-BDCF-5D3A5748C882}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C10E05C3-5E2D-4334-BDCF-5D3A5748C882}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C10E05C3-5E2D-4334-BDCF-5D3A5748C882}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -4423,6 +4429,7 @@ Global
 		{5200F1B2-C218-4CF8-B9AB-876AF244B839} = {40E30114-4639-4F9F-9936-12E169B6E955}
 		{940EEEA3-64F8-48D4-9568-8C9487C22876} = {40E30114-4639-4F9F-9936-12E169B6E955}
 		{9C465F6E-AE56-48AB-8ABE-CE8428599D07} = {5200F1B2-C218-4CF8-B9AB-876AF244B839}
+		{C10E05C3-5E2D-4334-BDCF-5D3A5748C882} = {4660F8A6-3E4A-47D3-BBFE-5CC06AEE7E4D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}
