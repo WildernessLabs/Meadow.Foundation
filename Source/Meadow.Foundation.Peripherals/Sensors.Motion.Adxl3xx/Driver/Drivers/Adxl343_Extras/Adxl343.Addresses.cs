@@ -1,6 +1,6 @@
 ﻿namespace Meadow.Foundation.Sensors.Motion
 {
-    public partial class Adxl345
+    public partial class Adxl343
     {
         /// <summary>
         /// Valid I2C addresses for the sensor

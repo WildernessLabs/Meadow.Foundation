@@ -1,7 +1,7 @@
 ﻿
 namespace Meadow.Foundation.Sensors.Motion
 {
-    public partial class Adxl345
+    public partial class Adxl343
     {
         /// <summary>
         /// Control registers for the ADXL345 chip.

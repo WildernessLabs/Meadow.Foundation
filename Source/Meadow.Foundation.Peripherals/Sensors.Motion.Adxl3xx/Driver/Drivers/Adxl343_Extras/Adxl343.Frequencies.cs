@@ -1,6 +1,6 @@
 ﻿namespace Meadow.Foundation.Sensors.Motion
 {
-    public partial class Adxl345
+    public partial class Adxl343
     {
         /// <summary>
         /// Frequency of the sensor readings when the device is in sleep mode.

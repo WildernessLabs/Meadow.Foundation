@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Sensors.Temperature.Adt7410_Sample
 {
-    public class MeadowApp : App<F7FeatherV1>
+    public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
 

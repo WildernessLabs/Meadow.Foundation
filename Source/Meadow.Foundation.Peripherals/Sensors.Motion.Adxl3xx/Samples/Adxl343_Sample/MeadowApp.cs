@@ -4,20 +4,20 @@ using Meadow.Foundation.Sensors.Motion;
 using System;
 using System.Threading.Tasks;
 
-namespace Sensors.Motion.Adxl345_Sample
+namespace Sensors.Motion.Adxl343_Sample
 {
     public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
 
-        Adxl345 sensor;
+        Adxl343 sensor;
 
         public override Task Initialize()
         {
             Resolver.Log.Info("Initialize...");
 
-            sensor = new Adxl345(Device.CreateI2cBus());
-            sensor.SetPowerState(false, false, true, false, Adxl345.Frequencies.TwoHz);
+            sensor = new Adxl343(Device.CreateI2cBus(), Adxl343.Addresses.Default);
+            sensor.SetPowerState(false, false, true, false, Adxl343.Frequencies.TwoHz);
 
             // classical .NET events can also be used:
             sensor.Updated += (sender, result) =>

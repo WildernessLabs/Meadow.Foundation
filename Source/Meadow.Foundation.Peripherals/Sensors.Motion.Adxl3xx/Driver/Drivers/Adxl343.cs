@@ -8,17 +8,17 @@ using System.Threading.Tasks;
 namespace Meadow.Foundation.Sensors.Motion
 {
     /// <summary>
-    /// Driver for the ADXL345 triple axis accelerometer
+    /// Driver for the ADXL343 triple axis accelerometer
     /// +/- 16g
     /// </summary>
-    public partial class Adxl345 : ByteCommsSensorBase<Acceleration3D>, IAccelerometer, II2cPeripheral
+    public partial class Adxl343 : ByteCommsSensorBase<Acceleration3D>, IAccelerometer, II2cPeripheral
     {
         /// <summary>
         /// The default I2C address for the peripheral
         /// </summary>
         public byte DefaultI2cAddress => (byte)Addresses.Default;
 
-        readonly double ADXL345_MG2G_MULTIPLIER = 0.004;
+        readonly double ADXL343_MG2G_MULTIPLIER = 0.004;
 
         /// <summary>
         /// Minimum value that can be used for the update interval when the
@@ -68,21 +68,21 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         /// <summary>
-        /// Create a new instance of the ADXL345 communicating over the I2C interface
+        /// Create a new instance of the ADXL343 communicating over the I2C interface
         /// </summary>
         /// <param name="address">Address of the I2C sensor</param>
         /// <param name="i2cBus">I2C bus</param>
-        public Adxl345(II2cBus i2cBus, Addresses address = Addresses.Default)
+        public Adxl343(II2cBus i2cBus, Addresses address = Addresses.Default)
             : this(i2cBus, (byte)address)
         {
         }
 
         /// <summary>
-        /// Create a new instance of the ADXL345 communicating over the I2C interface
+        /// Create a new instance of the ADXL343 communicating over the I2C interface
         /// </summary>
         /// <param name="address">Address of the I2C sensor</param>
         /// <param name="i2cBus">I2C bus</param>
-        public Adxl345(II2cBus i2cBus, byte address)
+        public Adxl343(II2cBus i2cBus, byte address)
             : base(i2cBus, address)
         {
             var deviceID = ReadRegister(Register.DEVICE_ID);
@@ -102,9 +102,9 @@ namespace Meadow.Foundation.Sensors.Motion
             BusComms.ReadRegister((byte)Register.DATAX0, ReadBuffer.Span[0..6]);
 
             var conditions = new Acceleration3D(
-                new Acceleration(ADXL345_MG2G_MULTIPLIER * (short)(ReadBuffer.Span[0] + (ReadBuffer.Span[1] << 8)), Acceleration.UnitType.Gravity),
-                new Acceleration(ADXL345_MG2G_MULTIPLIER * (short)(ReadBuffer.Span[2] + (ReadBuffer.Span[3] << 8)), Acceleration.UnitType.Gravity),
-                new Acceleration(ADXL345_MG2G_MULTIPLIER * (short)(ReadBuffer.Span[4] + (ReadBuffer.Span[5] << 8)), Acceleration.UnitType.Gravity));
+                new Acceleration(ADXL343_MG2G_MULTIPLIER * (short)(ReadBuffer.Span[0] + (ReadBuffer.Span[1] << 8)), Acceleration.UnitType.Gravity),
+                new Acceleration(ADXL343_MG2G_MULTIPLIER * (short)(ReadBuffer.Span[2] + (ReadBuffer.Span[3] << 8)), Acceleration.UnitType.Gravity),
+                new Acceleration(ADXL343_MG2G_MULTIPLIER * (short)(ReadBuffer.Span[4] + (ReadBuffer.Span[5] << 8)), Acceleration.UnitType.Gravity));
 
             return Task.FromResult(conditions);
         }
