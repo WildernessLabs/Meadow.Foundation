@@ -3,7 +3,7 @@ using SkiaSharp;
 
 namespace Meadow.Foundation.Displays;
 
-internal class SkiaPixelBuffer : IPixelBuffer
+public class SkiaPixelBuffer : IPixelBuffer
 {
     public SKBitmap SKBitmap { get; private set; }
 
