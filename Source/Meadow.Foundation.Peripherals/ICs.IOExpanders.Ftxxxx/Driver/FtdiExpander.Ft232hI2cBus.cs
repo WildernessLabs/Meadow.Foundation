@@ -8,8 +8,6 @@ public abstract partial class FtdiExpander
 {
     public class Ft232hI2cBus : I2CBus
     {
-        private FtdiExpander _expander;
-
         internal Ft232hI2cBus(FtdiExpander expander, I2cBusSpeed busSpeed)
             : base(expander, busSpeed)
         {
