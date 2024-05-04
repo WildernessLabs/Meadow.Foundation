@@ -4,19 +4,19 @@ using Meadow.Foundation.RTCs;
 using System;
 using System.Threading.Tasks;
 
-namespace RTCs.DS1307_Sample
+namespace RTCs.Pcf8523_Sample
 {
     public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
 
-        private Ds1307 rtc;
+        private Pcf8523 rtc;
 
         public override Task Initialize()
         {
             Resolver.Log.Info("Initializing...");
 
-            rtc = new Ds1307(Device.CreateI2cBus());
+            rtc = new Pcf8523(Device.CreateI2cBus());
 
             return base.Initialize();
         }
@@ -43,21 +43,6 @@ namespace RTCs.DS1307_Sample
 
             dateTime = rtc.GetTime();
             Resolver.Log.Info($" RTC current time is: {dateTime.ToString("MM/dd/yy HH:mm:ss")}");
-
-            var rand = new Random();
-
-            var data = new byte[56];
-
-            for (int i = 0; i < 56; i++)
-            {
-                data[i] = (byte)rand.Next(256);
-            }
-
-            Resolver.Log.Info($" Writing to RTC RAM   : {BitConverter.ToString(data)}");
-            rtc.WriteRAM(0, data);
-            Resolver.Log.Info($" Reading from RTC RAM : ");
-            data = rtc.ReadRAM(0, 56);
-            Resolver.Log.Info(BitConverter.ToString(data));
 
             return base.Run();
         }
