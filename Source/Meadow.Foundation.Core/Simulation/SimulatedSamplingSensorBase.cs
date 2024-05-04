@@ -5,24 +5,33 @@ using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors;
 
-public abstract class SimulatedSamplingSensorBase<UNIT> : ISimulatedSensor, ISamplingSensor<UNIT>
+/// <summary>
+/// Represents the base logic for a simulated sample sensor
+/// </summary>
+public abstract class SimulatedSamplingSensorBase<UNIT> : SimulatedSensorBase, ISamplingSensor<UNIT>
     where UNIT : struct
 {
+    /// <inheritdoc/>
     public event EventHandler<IChangeResult<UNIT>>? Updated;
 
     private Timer updateTimer;
-    private SimulationBehavior simulationBehavior;
 
-    public virtual SimulationBehavior[] SupportedBehaviors => new[] { SimulationBehavior.None };
-    public abstract Type ValueType { get; }
+    /// <inheritdoc/>
     public TimeSpan UpdateInterval { get; private set; }
+    /// <inheritdoc/>
     public bool IsSampling { get; private set; }
+    /// <inheritdoc/>
     protected UNIT? PreviousReading { get; private set; }
 
+    /// <summary>
+    /// Generates a value based on the provided behavior
+    /// </summary>
+    /// <param name="behavior">The behavior to use when generating a value</param>
     protected abstract UNIT GenerateSimulatedValue(SimulationBehavior behavior);
-    public abstract void SetSensorValue(object value);
 
-
+    /// <summary>
+    /// Called from derived classes
+    /// </summary>
     protected SimulatedSamplingSensorBase()
     {
         UpdateInterval = TimeSpan.FromSeconds(5);
@@ -39,16 +48,13 @@ public abstract class SimulatedSamplingSensorBase<UNIT> : ISimulatedSensor, ISam
         updateTimer.Change(UpdateInterval, TimeSpan.FromMilliseconds(-1));
     }
 
+    /// <inheritdoc/>
     public Task<UNIT> Read()
     {
-        return Task.FromResult(GenerateSimulatedValue(simulationBehavior));
+        return Task.FromResult(GenerateSimulatedValue(SimulationBehavior));
     }
 
-    public virtual void StartSimulation(SimulationBehavior behavior)
-    {
-        simulationBehavior = behavior;
-    }
-
+    /// <inheritdoc/>
     public void StartUpdating(TimeSpan? updateInterval = null)
     {
         IsSampling = true;
@@ -61,6 +67,7 @@ public abstract class SimulatedSamplingSensorBase<UNIT> : ISimulatedSensor, ISam
         updateTimer.Change(UpdateInterval, TimeSpan.FromMilliseconds(-1));
     }
 
+    /// <inheritdoc/>
     public void StopUpdating()
     {
         IsSampling = false;

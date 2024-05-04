@@ -1,6 +1,6 @@
 <Project Sdk="Meadow.Sdk/1.1.0">
   <PropertyGroup>
-    <Version>1.10.2</Version>
+    <Version>1.11.0</Version>
     <PackageReadmeFile>Readme.md</PackageReadmeFile>
     <Nullable>enable</Nullable>
     <LangVersion>10.0</LangVersion>
@@ -15,9 +15,9 @@
     <PackageProjectUrl>http://developer.wildernesslabs.co/Meadow/Meadow.Foundation/</PackageProjectUrl>
     <PackageId>Meadow.Foundation.Sensors.Motion.Adxl3xx</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
-    <PackageTags>Meadow.Foundation,ADXL335,ADXL345,ADXL337,ADXL362,ADXL377,Accelerometer,Motion,3-axis</PackageTags>
+    <PackageTags>Meadow.Foundation,ADXL335,ADXL343,ADXL345,ADXL337,ADXL362,ADXL377,Accelerometer,Motion,3-axis</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Description>ADXL3xx Analog and I2C 3-axis accelerometers (ADXL335, ADXL345, ADXL337, ADXL362, ADXL377)</Description>
+    <Description>ADXL3xx Analog and I2C 3-axis accelerometers (ADXL335, ADXL343, ADXL345, ADXL337, ADXL362, ADXL377)</Description>
   </PropertyGroup>
   <ItemGroup>
     <None Include=".\Readme.md" Pack="true" PackagePath="" />

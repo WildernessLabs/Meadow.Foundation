@@ -40,5 +40,7 @@ namespace Sensors.Motion.Adxl345_Sample
 
             sensor.StartUpdating(TimeSpan.FromMilliseconds(500));
         }
+
+        //<!=SNOP=>
     }
 }

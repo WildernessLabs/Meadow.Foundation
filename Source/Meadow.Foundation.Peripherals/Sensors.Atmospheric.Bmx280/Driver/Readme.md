@@ -18,7 +18,9 @@ You can install the library from within Visual studio using the the NuGet Packag
 ## Usage
 
 ```csharp
-Bme280 sensor;
+protected Bme280 sensor;
+
+protected virtual IPin SpiChipSelect { get; }
 
 public override Task Initialize()
 {
@@ -30,7 +32,7 @@ public override Task Initialize()
     var consumer = Bme280.CreateObserver(
         handler: result =>
         {
-            Resolver.Log.Info($"Observer: Temp changed by threshold; new temp: {result.New.Temperature?.Celsius:N2}C, old: {result.Old?.Temperature?.Celsius:N2}C");
+            Resolver.Log.Info($"Observer: Temp changed by threshold; new temp: {result.New.Temperature?.Celsius:N1}C, old: {result.Old?.Temperature?.Celsius:N1}C");
         },
         filter: result =>
         {
@@ -52,9 +54,9 @@ public override Task Initialize()
     {
         try
         {
-            Resolver.Log.Info($"  Temperature: {result.New.Temperature?.Celsius:N2}C");
-            Resolver.Log.Info($"  Relative Humidity: {result.New.Humidity:N2}%");
-            Resolver.Log.Info($"  Pressure: {result.New.Pressure?.Millibar:N2}mbar ({result.New.Pressure?.Pascal:N2}Pa)");
+            Resolver.Log.Info($"  Temperature: {result.New.Temperature?.Celsius:N1}C");
+            Resolver.Log.Info($"  Relative Humidity: {result.New.Humidity:N1}%");
+            Resolver.Log.Info($"  Pressure: {result.New.Pressure?.Millibar:N1}mbar ({result.New.Pressure?.Pascal:N1}Pa)");
         }
         catch (Exception ex)
         {
@@ -69,22 +71,22 @@ public override async Task Run()
 {
     var conditions = await sensor.Read();
     Resolver.Log.Info("Initial Readings:");
-    Resolver.Log.Info($"  Temperature: {conditions.Temperature?.Celsius:N2}C");
-    Resolver.Log.Info($"  Pressure: {conditions.Pressure?.Bar:N2}hPa");
-    Resolver.Log.Info($"  Relative Humidity: {conditions.Humidity?.Percent:N2}%");
+    Resolver.Log.Info($"  Temperature: {conditions.Temperature?.Celsius:N1}C");
+    Resolver.Log.Info($"  Pressure: {conditions.Pressure?.Bar:N1}hPa");
+    Resolver.Log.Info($"  Relative Humidity: {conditions.Humidity?.Percent:N1}%");
 
     sensor.StartUpdating(TimeSpan.FromSeconds(1));
 }
 
-void CreateSpiSensor()
+private void CreateSpiSensor()
 {
     Resolver.Log.Info("Create BME280 sensor with SPI...");
 
     var spi = Device.CreateSpiBus();
-    sensor = new Bme280(spi, Device.Pins.D00.CreateDigitalOutputPort());
+    sensor = new Bme280(spi, SpiChipSelect.CreateDigitalOutputPort());
 }
 
-void CreateI2CSensor()
+private void CreateI2CSensor()
 {
     Resolver.Log.Info("Create BME280 sensor with I2C...");
 
