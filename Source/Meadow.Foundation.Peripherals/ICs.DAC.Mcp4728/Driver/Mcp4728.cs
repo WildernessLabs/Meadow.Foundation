@@ -36,7 +36,6 @@ public partial class Mcp4728 : II2cPeripheral, IAnalogOutputController
         i2cBus = bus;
         i2cAddress = address;
         Pins = new PinDefinitions(this);
-
     }
 
     /// <summary>

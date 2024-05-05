@@ -22,6 +22,7 @@ namespace MeadowApp
 
             var bus = Device.CreateI2cBus(I2cBusSpeed.Fast);
             mcp4728 = new Mcp4728(bus);
+            // This example requires the VA output of the Mcp4728 to be connected to the A0 analog input on the device. 
             analogOutputPort = mcp4728.CreateAnalogOutputPort(mcp4728.Pins.ChannelA) as Mcp4728.AnalogOutputPort;
             analogInputPort = Device.CreateAnalogInputPort(Device.Pins.A00);
             
@@ -36,16 +37,14 @@ namespace MeadowApp
          
             var centerValue = analogOutputPort.MaxOutputValue / 2.0;
             
-            for (int cycle = 0; cycle < 10; cycle++)
+            // Generate a sine wave and read it back using an analog input.
+            for (int angle = 0; angle < 360; angle+=5)
             {
-                for (int i = 0; i < 360; i++)
-                {
-                    var value = (uint)(centerValue + (centerValue * Math.Sin(new Angle(i).Radians)));
-                    analogOutputPort.GenerateOutput(value);
-                    var expected = value * analogOutputPort.VoltageResolution.Volts;
-                    var actual = analogInputPort.Read().Result.Volts;
-                    Resolver.Log.Info($"Expected: {expected:N3}, Actual: {actual:N3}");
-                }
+                var value = (uint)(centerValue + (centerValue * Math.Sin(new Angle(angle).Radians)));
+                analogOutputPort.GenerateOutput(value);
+                var expected = value * analogOutputPort.VoltageResolution.Volts;
+                var actual = analogInputPort.Read().Result.Volts;
+                Resolver.Log.Info($"Expected: {expected:N3}, Actual: {actual:N3}");
             }
 
             analogOutputPort.HighZ();
