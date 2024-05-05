@@ -18,7 +18,7 @@ public sealed class ControlsCollection : IEnumerable<IControl>
     /// Initializes a new instance of the <see cref="ControlsCollection"/> class.
     /// </summary>
     /// <param name="screen">The <see cref="DisplayScreen"/> that owns the controls collection.</param>
-    /// <param name="parent">The parent control (if exists)</param>
+    /// <param name="parent">The parent <see cref="IControl"/> for this collection, if any.</param>
     internal ControlsCollection(DisplayScreen screen, IControl? parent)
     {
         _screen = screen;

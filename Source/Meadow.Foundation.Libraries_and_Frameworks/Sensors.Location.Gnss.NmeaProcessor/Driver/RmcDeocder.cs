@@ -60,13 +60,12 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
             position.Position.Longitude = NmeaUtilities.DegreesMinutesDecode(sentence.DataElements[4], sentence.DataElements[5]);
             //Resolver.Log.Info("40");
 
-            decimal speedInKnots;
-            if (decimal.TryParse(sentence.DataElements[6], out speedInKnots))
+            if (decimal.TryParse(sentence.DataElements[6], out var speedInKnots))
             {
                 position.SpeedInKnots = speedInKnots;
             }
-            decimal courseHeading;
-            if (decimal.TryParse(sentence.DataElements[7], out courseHeading))
+
+            if (decimal.TryParse(sentence.DataElements[7], out var courseHeading))
             {
                 position.CourseHeading = courseHeading;
             }

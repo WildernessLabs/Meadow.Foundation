@@ -111,7 +111,7 @@ namespace Meadow.Foundation.Sensors.Light
         }
 
         /// <summary>
-        /// Set BH1750FVI Light Transmittance
+        /// Set BH1750 Light Transmittance
         /// </summary>
         /// <param name="transmittance">Light Transmittance, from 27.20% to 222.50%</param>
         private void SetLightTransmittance(double transmittance)

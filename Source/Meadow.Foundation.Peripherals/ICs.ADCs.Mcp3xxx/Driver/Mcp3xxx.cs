@@ -38,7 +38,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <summary>
         /// The default reference voltage for the device
         /// </summary>
-        public Voltage DefaultReferenceVoltage => 3.3.Volts();
+        public Voltage DefaultReferenceVoltage => new Voltage(3.3);
 
         /// <summary>
         /// The SPI bus speed for the device
