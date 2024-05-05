@@ -22,7 +22,7 @@ public abstract class Control : IControl
     public object? Context { get; set; }
 
     /// <inheritdoc/>
-    public IControl? Parent { get; set; }
+    public virtual IControl? Parent { get; set; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Control"/> class with the specified dimensions.

@@ -5,22 +5,21 @@ namespace Meadow.Foundation.Graphics.MicroLayout;
 /// <summary>
 /// A base class for display layouts
 /// </summary>
-public abstract class MicroLayout : ThemedControl
+public abstract class MicroLayout : ThemedControl, IControlContainer
 {
     private Color? _backColor;
 
     /// <summary>
-    /// Creates a DisplayLayout
+    /// Creates a MicroLayout
     /// </summary>
-    /// <param name="screen">The DisplayScreen to associate this layout with</param>
     /// <param name="left">The layout's left position</param>
     /// <param name="top">The layout's top position</param>
     /// <param name="width">The layout's width</param>
     /// <param name="height">The layout's height</param>
-    protected MicroLayout(DisplayScreen screen, int left, int top, int width, int height)
+    protected MicroLayout(int left, int top, int width, int height)
         : base(left, top, width, height)
     {
-        Controls = new ControlsCollection(screen, this);
+        Controls = new ControlsCollection(this);
     }
 
     /// <summary>
@@ -28,7 +27,7 @@ public abstract class MicroLayout : ThemedControl
     /// </summary>
     public Color? BackgroundColor
     {
-        get => _backColor;
+        get => _backColor; // ?? _parent.BackgroundColor;
         set => SetInvalidatingProperty(ref _backColor, value);
     }
 

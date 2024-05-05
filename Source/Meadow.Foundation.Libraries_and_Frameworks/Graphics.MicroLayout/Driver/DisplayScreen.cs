@@ -8,12 +8,14 @@ namespace Meadow.Foundation.Graphics.MicroLayout;
 /// <summary>
 /// An abstraction of a physical screen
 /// </summary>
-public class DisplayScreen
+public class DisplayScreen : IControlContainer
 {
     private readonly IPixelDisplay _display;
     private readonly MicroGraphics _graphics;
     private bool _updateInProgress = false;
     private Color _backgroundColor;
+
+    public IControl Parent => null;
 
     /// <summary>
     /// Gets the Touchscreen associated with the display screen
@@ -48,7 +50,7 @@ public class DisplayScreen
     /// <param name="theme">The display theme to use.</param>
     public DisplayScreen(IPixelDisplay physicalDisplay, RotationType rotation = RotationType.Normal, ITouchScreen? touchScreen = null, DisplayTheme? theme = null)
     {
-        Controls = new ControlsCollection(this, null);
+        Controls = new ControlsCollection(this);
         Theme = theme;
 
         _display = physicalDisplay;
@@ -149,9 +151,9 @@ public class DisplayScreen
         control.Invalidate();
         control.Refresh(_graphics);
 
-        if (control is MicroLayout l)
+        if (control is IControlContainer container)
         {
-            foreach (var c in l.Controls)
+            foreach (var c in container.Controls)
             {
                 RefreshTree(c);
             }

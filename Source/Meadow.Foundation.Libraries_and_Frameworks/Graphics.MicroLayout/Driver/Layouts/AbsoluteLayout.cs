@@ -8,9 +8,10 @@ public class AbsoluteLayout : MicroLayout
     /// <summary>
     /// Creates a full-screen DisplayAbsoluteLayout
     /// </summary>
-    /// <param name="screen">The DisplayScreen to associate this layout with</param>
-    public AbsoluteLayout(DisplayScreen screen)
-        : base(screen, 0, 0, screen.Width, screen.Height)
+    /// <param name="width">The layout's width</param>
+    /// <param name="height">The layout's height</param>
+    public AbsoluteLayout(int width, int height)
+        : base(0, 0, width, height)
     {
     }
 
@@ -23,7 +24,7 @@ public class AbsoluteLayout : MicroLayout
     /// <param name="width">The layout's width</param>
     /// <param name="height">The layout's height</param>
     public AbsoluteLayout(DisplayScreen screen, int left, int top, int width, int height)
-        : base(screen, left, top, width, height)
+        : base(left, top, width, height)
     {
     }
 
