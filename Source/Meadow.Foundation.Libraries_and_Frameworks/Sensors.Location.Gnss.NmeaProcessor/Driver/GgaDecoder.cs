@@ -49,18 +49,17 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
             location.Position.Longitude = NmeaUtilities.DegreesMinutesDecode(sentence.DataElements[3], sentence.DataElements[4]);
             location.FixQuality = (FixType)int.Parse(sentence.DataElements[5]);
 
-            int numberOfSatellites;
-            if (int.TryParse(sentence.DataElements[6], out numberOfSatellites))
+            if (int.TryParse(sentence.DataElements[6], out var numberOfSatellites))
             {
                 location.NumberOfSatellites = numberOfSatellites;
             }
-            decimal horizontalDilutionOfPrecision;
-            if (decimal.TryParse(sentence.DataElements[7], out horizontalDilutionOfPrecision))
+
+            if (decimal.TryParse(sentence.DataElements[7], out var horizontalDilutionOfPrecision))
             {
                 location.HorizontalDilutionOfPrecision = horizontalDilutionOfPrecision;
             }
-            decimal altitude;
-            if (decimal.TryParse(sentence.DataElements[8], out altitude))
+
+            if (decimal.TryParse(sentence.DataElements[8], out var altitude))
             {
                 location.Position.Altitude = altitude;
             }

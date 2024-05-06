@@ -56,9 +56,7 @@ public class MeadowApp : App<Windows>
         while (true)
         {
             Thread.Sleep(1000);
-            var temp = box.ForeColor;
-            box.ForeColor = label.TextColor;
-            label.TextColor = temp;
+            (box.ForeColor, label.TextColor) = (label.TextColor, box.ForeColor);
         }
     }
 
