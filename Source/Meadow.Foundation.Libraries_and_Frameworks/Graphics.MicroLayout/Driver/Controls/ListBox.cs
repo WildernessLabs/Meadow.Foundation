@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 
@@ -20,13 +21,18 @@ public class ListBox : MicroLayout
     private int _selectedLabelIndex = -1;
 
     /// <summary>
+    /// An optional function to provide formatting for row objects
+    /// </summary>
+    public Func<object, string>? RowFormatter { get; set; }
+
+    /// <summary>
     /// Spacing, in pixels, between items
     /// </summary>
     public int ItemSpacing { get; } = 1;
     /// <summary>
     /// Items to display in the ListBox
     /// </summary>
-    public ObservableCollection<string> Items { get; } = new();
+    public ObservableCollection<object> Items { get; } = new();
 
     /// <summary>
     /// Creates a ListBox control
@@ -57,7 +63,8 @@ public class ListBox : MicroLayout
                 {
                     Font = _font,
                     TextColor = TextColor,
-                    BackColor = this.BackgroundColor ?? Color.Transparent
+                    BackColor = this.BackgroundColor ?? Color.Transparent,
+                    VerticalAlignment = VerticalAlignment.Center,
                 });
 
             y += _rowHeight;
@@ -118,7 +125,7 @@ public class ListBox : MicroLayout
     /// <summary>
     /// The value of the selected Item
     /// </summary>
-    public string? SelectedItem
+    public object? SelectedItem
     {
         get
         {
@@ -183,7 +190,8 @@ public class ListBox : MicroLayout
                     var i = e.NewStartingIndex - TopIndex;
                     foreach (var item in e.NewItems)
                     {
-                        (Controls[i] as Label)!.Text = item.ToString();
+                        (Controls[i] as Label)!.Text =
+                            RowFormatter != null ? RowFormatter(item) : item.ToString();
                     }
                 }
                 break;
