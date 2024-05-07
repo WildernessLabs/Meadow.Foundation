@@ -18,7 +18,7 @@ namespace Meadow.Foundation.RTCs
         public bool IsRunning
         {
             get => true;
-            set => throw new NotSupportedException();
+            set => throw new NotImplementedException();
         }
 
         /// <summary>
