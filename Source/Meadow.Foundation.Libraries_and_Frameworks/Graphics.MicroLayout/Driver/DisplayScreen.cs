@@ -15,6 +15,7 @@ public class DisplayScreen : IControlContainer
     private bool _updateInProgress = false;
     private Color _backgroundColor;
 
+    /// <inheritdoc/>
     public IControl Parent => null;
 
     /// <summary>
