@@ -27,7 +27,7 @@ public abstract class MicroLayout : ThemedControl, IControlContainer
     /// </summary>
     public Color? BackgroundColor
     {
-        get => _backColor; // ?? _parent.BackgroundColor;
+        get => _backColor;
         set => SetInvalidatingProperty(ref _backColor, value);
     }
 
