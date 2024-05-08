@@ -67,9 +67,11 @@ public class SilkDisplay : IResizablePixelDisplay, ITouchScreen
     public SilkDisplay(int width = 800, int height = 600, float displayScale = 1.0f)
     {
         this.displayScale = displayScale;
-        virtualWidth = (int)(width * displayScale);
-        virtualHeight = (int)(height * displayScale);
+        virtualWidth = width;
+        virtualHeight = height;
         Initialize(virtualWidth, virtualHeight);
+
+        Resize(width, height, displayScale);
     }
 
     /// <inheritdoc/>
