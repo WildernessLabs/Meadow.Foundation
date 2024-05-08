@@ -1465,6 +1465,55 @@ namespace Meadow.Foundation.Graphics
         }
 
         /// <summary>
+        /// Get the color for a pixel at a given location
+        /// </summary>
+        /// <param name="x">x location </param>
+        /// <param name="y">y location</param>
+        public virtual Color GetPixel(int x, int y)
+        {
+            if (IgnoreOutOfBoundsPixels && IsCoordinateInBounds(x, y) == false)
+            {
+                return Color.Black;
+            }
+
+            if (display is IRotatableDisplay)
+            {
+                return PixelBuffer.GetPixel(x, y);
+            }
+            else
+            {
+                return PixelBuffer.GetPixel(GetXForRotation(x, y), GetYForRotation(x, y));
+            }
+        }
+
+        /// <summary>
+        /// Draws a pixel with alpha blending at the specified coordinates using the given color and it's alpha value
+        /// </summary>
+        /// <param name="x">The x-coordinate of the pixel</param>
+        /// <param name="y">The y-coordinate of the pixel</param>
+        /// <param name="color">The color to draw</param>
+        public void DrawPixelWithAlpha(float x, float y, Color color)
+        {
+            DrawPixelWithAlpha(x, y, color, color.A);
+        }
+
+        /// <summary>
+        /// Draws a pixel with alpha blending at the specified coordinates using the given color an external alpha value
+        /// </summary>
+        /// <remarks>
+        /// The alpha channel of the provided color will be ignored
+        /// </remarks>
+        /// <param name="x">The x-coordinate of the pixel</param>
+        /// <param name="y">The y-coordinate of the pixel</param>
+        /// <param name="color">The color to draw</param>
+        /// <param name="alpha">The alpha value</param>
+        public void DrawPixelWithAlpha(float x, float y, Color color, float alpha)
+        {
+            var background = GetPixel((int)x, (int)y);
+            DrawPixel((int)x, (int)y, background.Blend(color, alpha));
+        }
+
+        /// <summary>
         /// Draw an Image onto the display buffer at the specified location
         /// </summary>
         /// <param name="x">x location of target to draw buffer</param>
