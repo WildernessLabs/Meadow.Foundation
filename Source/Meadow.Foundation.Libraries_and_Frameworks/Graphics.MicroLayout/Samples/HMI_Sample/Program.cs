@@ -24,7 +24,7 @@ public class MeadowApp : App<Windows>
         screen = new DisplayScreen(display);
         screen.BackgroundColor = Color.AntiqueWhite;
 
-        var splashLayout = new AbsoluteLayout(screen, 0, 0, screen.Width, screen.Height)
+        var splashLayout = new AbsoluteLayout(0, 0, screen.Width, screen.Height)
         {
         };
 
@@ -43,7 +43,7 @@ public class MeadowApp : App<Windows>
             );
         splashLayout.Controls.Add(logoImg, wlLabel);
 
-        var chartLayout = new AbsoluteLayout(screen, 0, 0, screen.Width, screen.Height);
+        var chartLayout = new AbsoluteLayout(0, 0, screen.Width, screen.Height);
 
         var chart1Label = new Graphics.MicroLayout.Label(0, 0, screen.Width, 16)
         {

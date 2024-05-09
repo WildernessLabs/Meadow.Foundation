@@ -6,7 +6,7 @@
 public interface IControl
 {
     /// <summary>
-    /// Gets of sets the Control's Paretn, if it has one.  If the Control is unparented (i.e. Parent is null) then it is directly on the DisplayScreen
+    /// Gets of sets the Control's Parent, if it has one.  If the Control is unparented (i.e. Parent is null) then it is directly on the DisplayScreen
     /// </summary>
     IControl? Parent { get; set; }
 
