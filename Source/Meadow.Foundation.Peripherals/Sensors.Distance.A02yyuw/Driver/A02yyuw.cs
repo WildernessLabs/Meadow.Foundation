@@ -12,6 +12,15 @@ namespace Meadow.Foundation.Sensors.Distance
     /// </summary>
     public class A02yyuw : PollingSensorBase<Length>, IRangeFinder, ISleepAwarePeripheral, IDisposable
     {
+
+        /// <summary>
+        /// Constant for output mode UART Auto
+        /// </summary>
+        public const byte MODE_UART_AUTO = 1;
+        /// <summary>
+        /// Constant for output mode UART Control
+        /// </summary>
+        public const byte MODE_UART_CONTROL = 1;
         /// <summary>
         /// Distance from sensor to object
         /// </summary>
@@ -37,6 +46,11 @@ namespace Meadow.Foundation.Sensors.Distance
         int serialDataBytesRead = 0;
         byte serialDataFirstByte;
 
+        // Output buffer
+        private byte[] sendBufer = { 0 };
+
+        private byte outPutMode;
+
         private TaskCompletionSource<Length>? dataReceivedTaskCompletionSource;
 
         private readonly bool createdPort = false;
@@ -48,8 +62,9 @@ namespace Meadow.Foundation.Sensors.Distance
         /// </summary>
         /// <param name="device">The device connected to the sensor</param>
         /// <param name="serialPortName">The serial port</param>
-        public A02yyuw(IMeadowDevice device, SerialPortName serialPortName)
-            : this(device.CreateSerialPort(serialPortName, portSpeed))
+        /// <param name="outPutModeParam">Output mode of the distance sensor, default is AUTO</param>
+        public A02yyuw(IMeadowDevice device, SerialPortName serialPortName, byte outPutModeParam = MODE_UART_AUTO)
+            : this(device.CreateSerialPort(serialPortName, portSpeed, outPutModeParam))
         {
             createdPort = true;
         }
@@ -58,11 +73,14 @@ namespace Meadow.Foundation.Sensors.Distance
         /// Creates a new A02YYUW object communicating over serial
         /// </summary>
         /// <param name="serialMessage">The serial message port</param>
-        public A02yyuw(ISerialPort serialMessage)
+        /// <param name="outPutModeParam">Output mode of the distance sensor, default is AUTO</param>
+
+        public A02yyuw(ISerialPort serialMessage, byte outPutModeParam = MODE_UART_AUTO)
         {
             serialPort = serialMessage;
             serialPort.ReadTimeout = TimeSpan.FromSeconds(5);
             serialPort.DataReceived += SerialPortDataReceived;
+            outPutMode = outPutModeParam;
         }
 
         /// <summary>
@@ -125,7 +143,11 @@ namespace Meadow.Foundation.Sensors.Distance
             {
                 serialPort.Open();
             }
-
+            // in UART Control Mode, send a 0 value over serial to toggle the control line
+            if (outPutMode == MODE_UART_CONTROL)
+            {
+                serialPort.Write(sendBufer);
+            }
             var timeOutTask = Task.Delay(SensorReadTimeOut);
 
             await Task.WhenAny(dataReceivedTaskCompletionSource.Task, timeOutTask);
