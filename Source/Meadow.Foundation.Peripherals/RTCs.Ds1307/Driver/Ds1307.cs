@@ -7,16 +7,15 @@ namespace Meadow.Foundation.RTCs
     /// <summary>
     /// Represents a DS1307 real-time clock
     /// </summary>
-    public partial class Ds1307 : II2cPeripheral
+    public partial class Ds1307 : II2cPeripheral, IRealTimeClock
     {
         /// <summary>
         /// The default I2C address for the peripheral
         /// </summary>
         public byte DefaultI2cAddress => (byte)Addresses.Default;
 
-        const int OriginYear = 1980;
-
-        readonly II2cBus i2cBus;
+        private const int OriginYear = 1980;
+        private readonly II2cBus i2cBus;
 
         /// <summary>
         /// Create a new Ds1307 object
@@ -67,7 +66,7 @@ namespace Meadow.Foundation.RTCs
         /// Get the time from the real-time clock
         /// </summary>
         /// <returns></returns>
-        public DateTime GetTime()
+        public DateTimeOffset GetTime()
         {
             var data = new byte[7];
             i2cBus.Write((byte)Addresses.Default, new byte[] { 0 });
@@ -79,7 +78,7 @@ namespace Meadow.Foundation.RTCs
         /// Set the time on the real-time clock
         /// </summary>
         /// <param name="time">The new time</param>
-        public void SetTime(DateTime time)
+        public void SetTime(DateTimeOffset time)
         {
             var data = new List<byte> { 0 };
             data.AddRange(ToRTCTime(time));
@@ -139,17 +138,17 @@ namespace Meadow.Foundation.RTCs
             i2cBus.Write((byte)Addresses.Default, new byte[] { 0x07, registerData }); //register and value
         }
 
-        static byte ToBCD(ushort i)
+        private static byte ToBCD(ushort i)
         {
             return (byte)((i % 10) + ((i / 10) * 0x10));
         }
 
-        static ushort FromBCD(byte bcd)
+        private static ushort FromBCD(byte bcd)
         {
             return (ushort)(((bcd) & 0x0F) + (((bcd) >> 4) * 10));
         }
 
-        static byte[] ToRTCTime(DateTime dt)
+        private static byte[] ToRTCTime(DateTimeOffset dt)
         {
             var data = new byte[7];
             data[0] = ToBCD((ushort)dt.Second);
@@ -162,7 +161,7 @@ namespace Meadow.Foundation.RTCs
             return data;
         }
 
-        static DateTime FromRTCTime(byte[] rtcData)
+        private static DateTimeOffset FromRTCTime(byte[] rtcData)
         {
             try
             {   // is the RTC in 12- or 24-hour mode?

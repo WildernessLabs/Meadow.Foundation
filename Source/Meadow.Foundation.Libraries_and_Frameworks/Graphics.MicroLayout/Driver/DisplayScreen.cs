@@ -1,4 +1,5 @@
 ﻿using Meadow.Hardware;
+using Meadow.Peripherals.Displays;
 using System.Linq;
 using System.Threading;
 
@@ -7,22 +8,25 @@ namespace Meadow.Foundation.Graphics.MicroLayout;
 /// <summary>
 /// An abstraction of a physical screen
 /// </summary>
-public class DisplayScreen
+public class DisplayScreen : IControlContainer
 {
-    private readonly IGraphicsDisplay _display;
+    private readonly IPixelDisplay _display;
     private readonly MicroGraphics _graphics;
-    private readonly ITouchScreen? _touchScreen;
     private bool _updateInProgress = false;
+    private Color _backgroundColor;
+
+    /// <inheritdoc/>
+    public IControl Parent => null;
+
+    /// <summary>
+    /// Gets the Touchscreen associated with the display screen
+    /// </summary>
+    public ITouchScreen? TouchScreen { get; }
 
     /// <summary>
     /// Gets the collection of controls on the display screen.
     /// </summary>
     public ControlsCollection Controls { get; }
-
-    /// <summary>
-    /// Gets or sets the background color of the display screen.
-    /// </summary>
-    public Color BackgroundColor { get; set; }
 
     /// <summary>
     /// Gets the width of the display screen.
@@ -45,9 +49,9 @@ public class DisplayScreen
     /// <param name="rotation">The rotation type for the display.</param>
     /// <param name="touchScreen">The optional touchscreen interface.</param>
     /// <param name="theme">The display theme to use.</param>
-    public DisplayScreen(IGraphicsDisplay physicalDisplay, RotationType rotation = RotationType.Normal, ITouchScreen? touchScreen = null, DisplayTheme? theme = null)
+    public DisplayScreen(IPixelDisplay physicalDisplay, RotationType rotation = RotationType.Normal, ITouchScreen? touchScreen = null, DisplayTheme? theme = null)
     {
-        Controls = new ControlsCollection(this, null);
+        Controls = new ControlsCollection(this);
         Theme = theme;
 
         _display = physicalDisplay;
@@ -55,12 +59,12 @@ public class DisplayScreen
 
         _graphics.Rotation = rotation;
 
-        _touchScreen = touchScreen;
+        TouchScreen = touchScreen;
 
-        if (_touchScreen != null)
+        if (TouchScreen != null)
         {
-            _touchScreen.TouchDown += _touchScreen_TouchDown;
-            _touchScreen.TouchUp += _touchScreen_TouchUp;
+            TouchScreen.TouchDown += _touchScreen_TouchDown;
+            TouchScreen.TouchUp += _touchScreen_TouchUp;
         }
 
         if (theme?.Font != null)
@@ -68,29 +72,57 @@ public class DisplayScreen
             _graphics.CurrentFont = theme.Font;
         }
 
-        BackgroundColor = theme?.BackgroundColor ?? Color.Black;
+        _backgroundColor = theme?.BackgroundColor ?? _display.DisabledColor;
 
-        new Thread(DrawLoop).Start();
+        if (Resolver.App != null)
+        {
+            new Thread(DrawLoopThreaded).Start();
+        }
+        else
+        {
+            new Thread(DrawLoopOnCaller).Start();
+        }
     }
 
-    private void _touchScreen_TouchUp(int x, int y)
+    /// <summary>
+    /// Gets or sets the background color of the display screen.
+    /// </summary>
+    public Color BackgroundColor
     {
-        lock (Controls.SyncRoot)
+        get => _backgroundColor;
+        set
         {
-            foreach (var control in Controls)
+            if (value == BackgroundColor) return;
+            _backgroundColor = value;
+            Invalidate();
+        }
+    }
+
+    private void _touchScreen_TouchUp(ITouchScreen source, TouchPoint point)
+    {
+        if (Monitor.TryEnter(Controls.SyncRoot, 100))
+        {
+            try
             {
-                if (control is IClickableControl c)
+                foreach (var control in Controls)
                 {
-                    if (control.Contains(x, y))
+                    if (control is IClickableControl c)
                     {
-                        c.Pressed = false;
+                        if (control.Contains(point.ScreenX, point.ScreenY))
+                        {
+                            c.Pressed = false;
+                        }
                     }
                 }
+            }
+            finally
+            {
+                Monitor.Exit(Controls.SyncRoot);
             }
         }
     }
 
-    private void _touchScreen_TouchDown(int x, int y)
+    private void _touchScreen_TouchDown(ITouchScreen source, TouchPoint point)
     {
         lock (Controls.SyncRoot)
         {
@@ -98,7 +130,7 @@ public class DisplayScreen
             {
                 if (control is IClickableControl c)
                 {
-                    if (control.Contains(x, y))
+                    if (control.Contains(point.ScreenX, point.ScreenY))
                     {
                         c.Pressed = true;
                     }
@@ -120,9 +152,9 @@ public class DisplayScreen
         control.Invalidate();
         control.Refresh(_graphics);
 
-        if (control is Layout l)
+        if (control is IControlContainer container)
         {
-            foreach (var c in l.Controls)
+            foreach (var c in container.Controls)
             {
                 RefreshTree(c);
             }
@@ -144,18 +176,6 @@ public class DisplayScreen
     {
         _updateInProgress = false;
         IsInvalid = true;
-    }
-
-    private void DrawLoop()
-    {
-        if (Resolver.App != null)
-        {
-            DrawLoopThreaded();
-        }
-        else
-        {
-            DrawLoopOnCaller();
-        }
     }
 
     private void DrawLoopOnCaller()

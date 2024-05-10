@@ -16,18 +16,12 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
         /// <summary>
         /// Prefix for the VTG decoder.
         /// </summary>
-        public string Prefix
-        {
-            get => "VTG";
-        }
+        public string Prefix => "VTG";
 
         /// <summary>
         /// Friendly name for the VTG messages.
         /// </summary>
-        public string Name
-        {
-            get => "Velocity made good";
-        }
+        public string Name => "Velocity made good";
 
         /// <summary>
         /// Process the data from a VTG message.
@@ -41,23 +35,22 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
 
             course.TalkerID = sentence.TalkerID;
 
-            decimal trueHeading;
-            if (decimal.TryParse(sentence.DataElements[0], out trueHeading))
+            if (decimal.TryParse(sentence.DataElements[0], out var trueHeading))
             {
                 course.TrueHeading = trueHeading;
             }
-            decimal magneticHeading;
-            if (decimal.TryParse(sentence.DataElements[2], out magneticHeading))
+
+            if (decimal.TryParse(sentence.DataElements[2], out var magneticHeading))
             {
                 course.MagneticHeading = magneticHeading;
             }
-            decimal knots;
-            if (decimal.TryParse(sentence.DataElements[4], out knots))
+
+            if (decimal.TryParse(sentence.DataElements[4], out var knots))
             {
                 course.Knots = knots;
             }
-            decimal kph;
-            if (decimal.TryParse(sentence.DataElements[6], out kph))
+
+            if (decimal.TryParse(sentence.DataElements[6], out var kph))
             {
                 course.Kph = kph;
             }

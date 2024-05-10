@@ -11,7 +11,7 @@ public class Picture : ThemedControl
     private Color _backColor = Color.Transparent;
     private VerticalAlignment _verticalAlignment = VerticalAlignment.Center;
     private HorizontalAlignment _horizontalAlignment = HorizontalAlignment.Center;
-    private MF.Image _image = default!;
+    private MF.Image? _image = default!;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MicroLayout.Picture"/> class with the specified dimensions and image.
@@ -21,7 +21,7 @@ public class Picture : ThemedControl
     /// <param name="width">The width of the image display control.</param>
     /// <param name="height">The height of the image display control.</param>
     /// <param name="image">The image to be displayed.</param>
-    public Picture(int left, int top, int width, int height, MF.Image image)
+    public Picture(int left, int top, int width, int height, MF.Image? image = null)
         : base(left, top, width, height)
     {
         Image = image;
@@ -42,7 +42,7 @@ public class Picture : ThemedControl
     /// <summary>
     /// Gets or sets the image to be displayed on the image display control.
     /// </summary>
-    public MF.Image Image
+    public MF.Image? Image
     {
         get => _image;
         set => SetInvalidatingProperty(ref _image, value);
@@ -81,6 +81,8 @@ public class Picture : ThemedControl
     /// <param name="graphics">The <see cref="MicroGraphics"/> surface to draw the image display control on.</param>
     protected override void OnDraw(MicroGraphics graphics)
     {
+        if (Image == null) { return; }
+
         if (BackColor != Color.Transparent)
         {
             graphics.DrawRectangle(

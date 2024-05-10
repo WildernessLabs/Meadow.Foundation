@@ -9,6 +9,7 @@
     <AssemblyName>App</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
+<<<<<<< HEAD
     <None Update="meadow.config.yaml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -25,5 +26,9 @@
     <Reference Include="DFRobotGravityDOMeter">
       <HintPath>..\..\Driver\bin\Release\netstandard2.1\DFRobotGravityDOMeter.dll</HintPath>
     </Reference>
+=======
+    <ProjectReference Include="..\..\..\..\..\..\Meadow.Core\Source\implementations\f7\Meadow.F7\Meadow.F7.csproj" />
+    <ProjectReference Include="..\..\Driver\Sensors.Environmental.DFRobotGravityDOMeter.csproj" />
+>>>>>>> eef92098f11df7cb81cc254e33b3b5f87b80ce04
   </ItemGroup>
 </Project>

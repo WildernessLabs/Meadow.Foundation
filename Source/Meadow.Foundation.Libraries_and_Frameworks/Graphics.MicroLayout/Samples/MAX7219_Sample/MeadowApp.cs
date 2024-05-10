@@ -1,24 +1,23 @@
 ﻿using Meadow;
-using Meadow.Foundation;
 using Meadow.Foundation.Displays;
 using Meadow.Foundation.Graphics.MicroLayout;
 using Meadow.Foundation.ICs.IOExpanders;
-using Meadow.Hardware;
+using Meadow.Peripherals.Displays;
 
 public class MeadowApp : App<Windows>
 {
-    private readonly Ft232h expander = new Ft232h();
     private DisplayScreen? screen;
 
     public override Task Initialize()
     {
+        var expander = FtdiExpanderCollection.Devices[0];
         var display = new Max7219(
             expander.CreateSpiBus(),
             expander.Pins.C0.CreateDigitalOutputPort(), // CS
             deviceRows: 4,
             deviceColumns: 1);
 
-        screen = new DisplayScreen(display, Meadow.Foundation.Graphics.RotationType._270Degrees);
+        screen = new DisplayScreen(display, RotationType._270Degrees);
         screen.BackgroundColor = Color.Black;
 
         return base.Initialize();
@@ -40,7 +39,6 @@ public class MeadowApp : App<Windows>
         label.Text = "HELLO";
 
         screen.Controls.Add(label);
-
     }
 
     public void TextOnBox()
@@ -58,9 +56,7 @@ public class MeadowApp : App<Windows>
         while (true)
         {
             Thread.Sleep(1000);
-            var temp = box.ForeColor;
-            box.ForeColor = label.TextColor;
-            label.TextColor = temp;
+            (box.ForeColor, label.TextColor) = (label.TextColor, box.ForeColor);
         }
     }
 
@@ -87,7 +83,6 @@ public class MeadowApp : App<Windows>
 
             Thread.Sleep(50);
         }
-
     }
 
     public static async Task Main(string[] args)

@@ -13,10 +13,8 @@ namespace Meadow.Foundation.Sensors.Environmental
     /// Base class for SCD4x series of C02 sensors
     /// </summary>
     public abstract partial class Scd4xBase
-        : ByteCommsSensorBase<(Concentration? Concentration,
-                                                        Units.Temperature? Temperature,
-                                                        RelativeHumidity? Humidity)>,
-        ITemperatureSensor, IHumiditySensor, ICO2ConcentrationSensor, II2cPeripheral
+        : PollingSensorBase<(Concentration? Concentration, Units.Temperature? Temperature, RelativeHumidity? Humidity)>,
+            ITemperatureSensor, IHumiditySensor, ICO2ConcentrationSensor, II2cPeripheral
     {
         private event EventHandler<IChangeResult<Units.Temperature>> _temperatureHandlers = default!;
         private event EventHandler<IChangeResult<RelativeHumidity>> _humidityHandlers = default!;
@@ -61,6 +59,13 @@ namespace Meadow.Foundation.Sensors.Environmental
         public byte DefaultI2cAddress => (byte)Addresses.Default;
 
         /// <summary>
+        /// I2C Communication bus used to communicate with the peripheral
+        /// </summary>
+        protected readonly II2cCommunications i2cComms;
+
+        private byte[] readBuffer;
+
+        /// <summary>
         /// Create a new Scd4xBase object
         /// </summary>
         /// <remarks>
@@ -70,8 +75,10 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// <param name="i2cBus">The I2C bus</param>
         /// <param name="address">The I2C address</param>
         public Scd4xBase(II2cBus i2cBus, byte address = (byte)Addresses.Default)
-            : base(i2cBus, address, readBufferSize: 9, writeBufferSize: 9)
         {
+            readBuffer = new byte[9];
+
+            i2cComms = new I2cCommunications(i2cBus, address, 9);
             StopPeriodicUpdates().Wait();
         }
 
@@ -119,7 +126,7 @@ namespace Meadow.Foundation.Sensors.Environmental
             Thread.Sleep(1);
 
             var data = new byte[9];
-            BusComms.Read(data);
+            i2cComms.Read(data);
 
             var ret = new byte[6];
 
@@ -143,7 +150,7 @@ namespace Meadow.Foundation.Sensors.Environmental
             SendCommand(Commands.GetDataReadyStatus);
             Thread.Sleep(1);
             var data = new byte[3];
-            BusComms.Read(data);
+            i2cComms.Read(data);
 
             if (data[1] == 0 && (data[0] & 0x07) == 0)
             {
@@ -169,6 +176,11 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// </summary>
         public override void StartUpdating(TimeSpan? updateInterval = null)
         {
+            if (IsSampling)
+            {
+                return;
+            }
+
             if (updateInterval != null && updateInterval.Value.TotalSeconds >= 30)
             {
                 SendCommand(Commands.StartLowPowerPeriodicMeasurement);
@@ -197,7 +209,7 @@ namespace Meadow.Foundation.Sensors.Environmental
             data[0] = (byte)((ushort)command >> 8);
             data[1] = (byte)(ushort)command;
 
-            BusComms.Write(data);
+            i2cComms.Write(data);
         }
 
         /// <summary>
@@ -215,14 +227,14 @@ namespace Meadow.Foundation.Sensors.Environmental
 
             SendCommand(Commands.ReadMeasurement);
             Thread.Sleep(1);
-            BusComms.Read(ReadBuffer.Span[0..9]);
+            i2cComms.Read(readBuffer);
 
-            int value = ReadBuffer.Span[0] << 8 | ReadBuffer.Span[1];
-            conditions.Concentration = new Concentration(value, Units.Concentration.UnitType.PartsPerMillion);
+            int value = readBuffer[0] << 8 | readBuffer[1];
+            conditions.Concentration = new Concentration(value, Concentration.UnitType.PartsPerMillion);
 
-            conditions.Temperature = CalcTemperature(ReadBuffer.Span[3], ReadBuffer.Span[4]);
+            conditions.Temperature = CalcTemperature(readBuffer[3], readBuffer[4]);
 
-            value = ReadBuffer.Span[6] << 8 | ReadBuffer.Span[8];
+            value = readBuffer[6] << 8 | readBuffer[8];
             double humidiy = 100 * value / 65536.0;
             conditions.Humidity = new RelativeHumidity(humidiy, RelativeHumidity.UnitType.Percent);
 
@@ -240,7 +252,7 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// Raise change events for subscribers
         /// </summary>
         /// <param name="changeResult">The change result with the current sensor data</param>
-        protected void RaiseChangedAndNotify(IChangeResult<(Concentration? Concentration, Units.Temperature? Temperature, RelativeHumidity? Humidity)> changeResult)
+        protected override void RaiseEventsAndNotify(IChangeResult<(Concentration? Concentration, Units.Temperature? Temperature, RelativeHumidity? Humidity)> changeResult)
         {
             if (changeResult.New.Temperature is { } temperature)
             {

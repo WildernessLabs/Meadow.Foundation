@@ -23,12 +23,13 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                             RelativeHumidity? Humidity,
                             Pressure? Pressure,
                             Resistance? GasResistance)>,
-        ITemperatureSensor, IHumiditySensor, IBarometricPressureSensor, IGasResistanceSensor, ISpiPeripheral, II2cPeripheral, IDisposable
+        ITemperatureSensor, IHumiditySensor, IBarometricPressureSensor, IGasResistanceSensor, ISpiPeripheral, II2cPeripheral, ISleepAwarePeripheral, IDisposable
     {
         private event EventHandler<IChangeResult<Units.Temperature>> _temperatureHandlers = default!;
         private event EventHandler<IChangeResult<RelativeHumidity>> _humidityHandlers = default!;
         private event EventHandler<IChangeResult<Pressure>> _pressureHandlers = default!;
         private event EventHandler<IChangeResult<Resistance>> _gasResistanceHandlers = default!;
+        private PowerMode _lastRunningPowerMode;
 
         /// <summary>
         /// The temperature oversampling mode
@@ -137,7 +138,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             {
                 var gasConversion = busComms.ReadRegister((byte)Registers.CTRL_GAS_1);
                 byte mask = 0x10;
-                gasConversion = (byte)((gasConversion & (byte)~mask) | Convert.ToByte(value) << 4);
+                gasConversion = (byte)((gasConversion & (byte)~mask) | Convert.ToByte(value) << 5);
 
                 busComms.WriteRegister((byte)Registers.CTRL_GAS_1, gasConversion);
                 gasConversionIsEnabled = value;
@@ -373,6 +374,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             byte mask = 0x03;
             status = (byte)((status & (byte)~mask) | (byte)powerMode);
             busComms.WriteRegister((byte)Registers.CTRL_MEAS, status);
+            _lastRunningPowerMode = powerMode;
         }
 
         /// <summary>
@@ -585,10 +587,11 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         {
             if (calibration == null) throw new NullReferenceException("Calibration must be defined");
 
-            var var1 = 1340.0 + 5.0 * calibration.RangeSwErr;
-            var var2 = var1 * (1.0 + k1Lookup[gasRange] / 100.0);
-            var var3 = 1.0 + k2Lookup[gasRange] / 100.0;
-            var gasResistance = 1.0 / (var3 * 0.000000125 * (1 << gasRange) * ((adcGasRes - 512.0) / var2 + 1.0));
+            var var1 = ((uint)262144) >> gasRange;
+            var var2 = (adcGasRes) - 512;
+            var2 *= 3;
+            var2 = 4096 + var2;
+            var gasResistance = 1_000_000.0 * var1 / var2;
 
             return new Resistance(gasResistance, Resistance.UnitType.Ohms);
         }
@@ -675,5 +678,19 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
         async Task<Resistance> ISensor<Resistance>.Read()
             => (await Read()).GasResistance!.Value;
+
+        /// <inheritdoc/>
+        public Task BeforeSleep(CancellationToken cancellationToken)
+        {
+            SetPowerMode(PowerMode.Sleep);
+            return Task.CompletedTask;
+        }
+
+        /// <inheritdoc/>
+        public Task AfterWake(CancellationToken cancellationToken)
+        {
+            SetPowerMode(_lastRunningPowerMode);
+            return Task.CompletedTask;
+        }
     }
 }

@@ -1,4 +1,6 @@
-﻿using Meadow;
+﻿//#define DEVICE_FEATHER
+#define DEVICE_PROJECT_LAB
+using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Distance;
 using Meadow.Units;
@@ -8,7 +10,12 @@ using System.Threading.Tasks;
 namespace A02yyuw_Sample
 {
     // Change F7FeatherV2 to F7FeatherV1 for V1.x boards
+#if DEVICE_FEATHER          // Feather: Change F7FeatherV2 to F7FeatherV1 for V1.x boards
+    public class MeadowApp : App<F7FeatherV2>
+#endif
+#if DEVICE_PROJECT_LAB      //ProjectLab: uses an F7CoreComputeV2 board
     public class MeadowApp : App<F7CoreComputeV2>
+#endif
     {
         //<!=SNIP=>
 
@@ -18,7 +25,7 @@ namespace A02yyuw_Sample
         {
             Resolver.Log.Info("Initialize...");
 
-            a02yyuw = new A02yyuw(Device, Device.PlatformOS.GetSerialPortName("COM4"));
+            a02yyuw = new A02yyuw(Device, Device.PlatformOS.GetSerialPortName("COM4"), A02yyuw.MODE_UART_CONTROL);
 
             var consumer = A02yyuw.CreateObserver(
                 handler: result =>

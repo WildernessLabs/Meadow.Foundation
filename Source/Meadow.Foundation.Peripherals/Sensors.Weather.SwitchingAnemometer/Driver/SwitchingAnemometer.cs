@@ -63,7 +63,7 @@ namespace Meadow.Foundation.Sensors.Weather
         /// <summary>
         /// Did we create the port(s) used by the peripheral
         /// </summary>
-        readonly bool createdPort = false;
+        private readonly bool createdPort = false;
 
         /// <summary>
         /// Creates a new `SwitchingAnemometer` using the specific digital input

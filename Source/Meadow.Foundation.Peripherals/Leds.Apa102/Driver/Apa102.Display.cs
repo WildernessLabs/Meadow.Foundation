@@ -1,36 +1,25 @@
-﻿using Meadow.Foundation.Graphics;
-using Meadow.Foundation.Graphics.Buffers;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
+using Meadow.Peripherals.Displays;
 
 namespace Meadow.Foundation.Leds
 {
-    public partial class Apa102 : IGraphicsDisplay
+    public partial class Apa102 : IPixelDisplay
     {
-        /// <summary>
-        /// Color mode of leds - 24bpp
-        /// </summary>
+        /// <inheritdoc/>
         public ColorMode ColorMode => ColorMode.Format24bppRgb888;
 
-        /// <summary>
-        /// The Color mode supported by the display
-        /// </summary>
+        /// <inheritdoc/>
         public ColorMode SupportedColorModes => ColorMode.Format24bppRgb888;
 
-        /// <summary>
-        /// Width of pixel array 
-        /// </summary>
+        /// <inheritdoc/>
         public int Width => width;
         readonly int width;
 
-        /// <summary>
-        /// Height of pixel array
-        /// </summary>
+        /// <inheritdoc/>
         public int Height => height;
         readonly int height;
 
-        /// <summary>
-        /// PixelBuffer representation of the Apa102
-        /// </summary>
+        /// <inheritdoc/>
         public IPixelBuffer PixelBuffer => this;
 
         /// <summary>

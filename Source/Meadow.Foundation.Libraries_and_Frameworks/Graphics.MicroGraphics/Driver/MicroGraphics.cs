@@ -14,12 +14,12 @@ namespace Meadow.Foundation.Graphics
         /// <summary>
         /// Display object responsible for managing the buffer and rendering
         /// </summary>
-        protected readonly IGraphicsDisplay? display;
+        protected readonly IPixelDisplay? display;
 
         /// <summary>
         /// PixelBuffer draw target
         /// </summary>
-        protected IPixelBuffer PixelBuffer => (display != null) ? display.PixelBuffer : memoryBuffer;
+        protected IPixelBuffer PixelBuffer => display?.PixelBuffer ?? memoryBuffer;
         private readonly IPixelBuffer memoryBuffer = default!;
 
         /// <summary>
@@ -30,12 +30,12 @@ namespace Meadow.Foundation.Graphics
         /// <summary>
         /// The color used when a pixel is enabled (on)
         /// </summary>
-        public Color EnabledColor => display != null ? display.EnabledColor : Color.White;
+        public Color EnabledColor => display?.EnabledColor ?? Color.White;
 
         /// <summary>
         /// The color used when a pixel is not enabled (off)
         /// </summary>
-        public Color DisabledColor => display != null ? display.EnabledColor : Color.Black;
+        public Color DisabledColor => display?.EnabledColor ?? Color.Black;
 
         /// <summary>
         /// Font used for drawing text to the display
@@ -145,8 +145,8 @@ namespace Meadow.Foundation.Graphics
         /// <summary>
         /// Create a new MicroGraphics instance from a display peripheral driver instance
         /// </summary>
-        /// <param name="display">An IGraphicsDisplay object</param>
-        public MicroGraphics(IGraphicsDisplay display)
+        /// <param name="display">An IPixelDisplay object</param>
+        public MicroGraphics(IPixelDisplay display)
         {
             this.display = display;
         }
@@ -435,7 +435,7 @@ namespace Meadow.Foundation.Graphics
         /// <param name="color">The color of the line</param>
         public void DrawHorizontalLine(int x, int y, int length, Color color)
         {
-            if (length == 0)
+            if (length == 0 || y + Stroke <= 0 || y - Stroke >= Height)
             {
                 return;
             }
@@ -444,6 +444,16 @@ namespace Meadow.Foundation.Graphics
             {
                 x += length;
                 length *= -1;
+            }
+
+            if (x < 0)
+            {
+                length += x;
+                x = 0;
+            }
+            else if (x + length > Width)
+            {
+                length = Width - x;
             }
 
             int yOffset = 0;
@@ -480,11 +490,7 @@ namespace Meadow.Foundation.Graphics
         {
             DrawVerticalLine(x, y, length, PenColor);
 
-            if (Stroke == 1)
-            {
-
-            }
-            else
+            if (Stroke > 1)
             {
                 int xOffset = Stroke >> 1;
 
@@ -504,10 +510,25 @@ namespace Meadow.Foundation.Graphics
         /// <param name="color">The color of the line</param>
         public void DrawVerticalLine(int x, int y, int length, Color color)
         {
+            if (length == 0 || x + Stroke <= 0 || x - Stroke >= Width)
+            {
+                return;
+            }
+
             if (length < 0)
             {
                 y += length;
                 length *= -1;
+            }
+
+            if (y < 0)
+            {
+                length += y;
+                y = 0;
+            }
+            else if (y + length > Height)
+            {
+                length = Height - y;
             }
 
             int yOffset = 0;
@@ -543,8 +564,8 @@ namespace Meadow.Foundation.Graphics
 
             int offset = centerBetweenPixels ? 1 : 0;
 
-            double startAngleRadians = startAngle.Radians;
-            double endAngleRadians = endAngle.Radians;
+            float startAngleRadians = (float)startAngle.Radians;
+            float endAngleRadians = (float)endAngle.Radians;
 
             if (startAngleRadians > endAngleRadians)
             {
@@ -565,14 +586,14 @@ namespace Meadow.Foundation.Graphics
 
             while (x <= y)
             {
-                double angle1 = Math.Atan2(y, -x);
-                double angle2 = Math.Atan2(x, -y);
-                double angle3 = Math.Atan2(-x, -y);
-                double angle4 = Math.Atan2(-y, -x);
-                double angle5 = Math.Atan2(-y, x);
-                double angle6 = Math.Atan2(-x, y);
-                double angle7 = Math.Atan2(x, y);
-                double angle8 = Math.Atan2(y, x);
+                float angle1 = MathF.Atan2(y, -x);
+                float angle2 = MathF.Atan2(x, -y);
+                float angle3 = MathF.Atan2(-x, -y);
+                float angle4 = MathF.Atan2(-y, -x);
+                float angle5 = MathF.Atan2(-y, x);
+                float angle6 = MathF.Atan2(-x, y);
+                float angle7 = MathF.Atan2(x, y);
+                float angle8 = MathF.Atan2(y, x);
 
                 if (angle1 >= startAngleRadians && angle1 <= endAngleRadians) { DrawArcPoint(centerX + y - offset, centerY - x, color); }
                 if (angle2 >= startAngleRadians && angle2 <= endAngleRadians) { DrawArcPoint(centerX + x - offset, centerY - y, color); }
@@ -1152,7 +1173,7 @@ namespace Meadow.Foundation.Graphics
             for (int i = 0; i < height; i++)
             {
                 var color = colorLeft.Blend(colorRight, (float)i / height);
-                DrawLine(x, i + y, x + width, i + y, color);
+                DrawHorizontalLine(x, i + y, width, color);
             }
         }
 
@@ -1169,8 +1190,8 @@ namespace Meadow.Foundation.Graphics
         {
             for (int i = 0; i < width; i++)
             {
-                var color = colorTop.Blend(colorBottom, (float)i / height);
-                DrawLine(x + i, y, x + i, y + height, color);
+                var color = colorTop.Blend(colorBottom, (float)i / width);
+                DrawVerticalLine(x + i, y, height, color);
             }
         }
 
@@ -1444,6 +1465,55 @@ namespace Meadow.Foundation.Graphics
         }
 
         /// <summary>
+        /// Get the color for a pixel at a given location
+        /// </summary>
+        /// <param name="x">x location </param>
+        /// <param name="y">y location</param>
+        public virtual Color GetPixel(int x, int y)
+        {
+            if (IgnoreOutOfBoundsPixels && IsCoordinateInBounds(x, y) == false)
+            {
+                return Color.Black;
+            }
+
+            if (display is IRotatableDisplay)
+            {
+                return PixelBuffer.GetPixel(x, y);
+            }
+            else
+            {
+                return PixelBuffer.GetPixel(GetXForRotation(x, y), GetYForRotation(x, y));
+            }
+        }
+
+        /// <summary>
+        /// Draws a pixel with alpha blending at the specified coordinates using the given color and it's alpha value
+        /// </summary>
+        /// <param name="x">The x-coordinate of the pixel</param>
+        /// <param name="y">The y-coordinate of the pixel</param>
+        /// <param name="color">The color to draw</param>
+        public void DrawPixelWithAlpha(float x, float y, Color color)
+        {
+            DrawPixelWithAlpha(x, y, color, color.A);
+        }
+
+        /// <summary>
+        /// Draws a pixel with alpha blending at the specified coordinates using the given color an external alpha value
+        /// </summary>
+        /// <remarks>
+        /// The alpha channel of the provided color will be ignored
+        /// </remarks>
+        /// <param name="x">The x-coordinate of the pixel</param>
+        /// <param name="y">The y-coordinate of the pixel</param>
+        /// <param name="color">The color to draw</param>
+        /// <param name="alpha">The alpha value</param>
+        public void DrawPixelWithAlpha(float x, float y, Color color, float alpha)
+        {
+            var background = GetPixel((int)x, (int)y);
+            DrawPixel((int)x, (int)y, background.Blend(color, alpha));
+        }
+
+        /// <summary>
         /// Draw an Image onto the display buffer at the specified location
         /// </summary>
         /// <param name="x">x location of target to draw buffer</param>
@@ -1502,20 +1572,33 @@ namespace Meadow.Foundation.Graphics
         {
             byte[] bitmap;
 
-            if (font.Width == 8) //just copy bytes
+            if (font.Width == 8)
             {
-                bitmap = new byte[text.Length * font.Height * (font.Width >> 3)];
+                bitmap = new byte[text.Length * font.Height];
 
-                byte[] characterMap;
+                for (int i = 0; i < text.Length; i++)
+                {   //copy data for 1 character at a time going top to bottom
+                    for (int j = 0; j < font.Height; j++)
+                    {
+                        bitmap[i + (j * text.Length)] = font[text[i]][j];
+                    }
+                }
+            }
+            else if (font.Width == 16)
+            {
+                int len = text.Length * 2; // Each character takes up 2 bytes per row
+                bitmap = new byte[len * font.Height];
+                int bitmapIndex;
 
                 for (int i = 0; i < text.Length; i++)
                 {
-                    characterMap = font[text[i]];
+                    byte[] charMap = font[text[i]];
 
-                    //copy data for 1 character at a time going top to bottom
-                    for (int segment = 0; segment < font.Height; segment++)
-                    {
-                        bitmap[i + (segment * text.Length)] = characterMap[segment];
+                    for (int j = 0; j < font.Height; j++)
+                    {   // Calculate the starting index in the bitmap array for this row and character
+                        bitmapIndex = (i * 2) + (j * len);
+                        bitmap[bitmapIndex] = charMap[j * 2];        // First byte of the row
+                        bitmap[bitmapIndex + 1] = charMap[j * 2 + 1]; // Second byte of the row
                     }
                 }
             }
@@ -1553,14 +1636,7 @@ namespace Meadow.Foundation.Graphics
             }
             else if (font.Width == 6)
             {
-                var len = text.Length;
-
-                if (text.Length % 4 != 0)
-                {
-                    len += 4 - (text.Length % 4); //character length
-                }
-                len = len * 3 / 4; //length in bytes
-
+                int len = (text.Length + 3) / 4 * 3; // Adjusted to handle padding in one line.
                 bitmap = new byte[len * font.Height];
 
                 byte[] charMap1, charMap2, charMap3, charMap4;
@@ -1622,7 +1698,7 @@ namespace Meadow.Foundation.Graphics
             }
             else
             {
-                throw new Exception("Font width must be 4, 6, 8, or 12");
+                throw new Exception("Font width must be 4, 6, 8, 12 or 16");
             }
             return bitmap;
         }
@@ -1701,9 +1777,13 @@ namespace Meadow.Foundation.Graphics
         }
 
         /// <summary>
-        /// Update a region of the display
+        /// Update a region of the the display target from the buffer (thread safe)
         /// Note: not all displays support partial updates
         /// </summary>
+        /// <param name="left">The left coordinate of the display area to update</param>
+        /// <param name="top">The top coordinate of the display area to update</param>
+        /// <param name="right">The right coordinate of the display area to update</param>
+        /// <param name="bottom">The bottom coordinate of the display area to update</param>
         public virtual void Show(int left, int top, int right, int bottom)
         {
             lock (_lock)

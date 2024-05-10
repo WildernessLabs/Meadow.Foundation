@@ -55,8 +55,8 @@ namespace ElectronicSpeedController_Sample
         private void DisplayPowerOnLed(float power)
         {
             // `0.0` - `1.0`
-            int r = (int)ExtensionMethods.Map(power, 0f, 1f, 0f, 255f);
-            int b = (int)ExtensionMethods.Map(power, 0f, 1f, 255f, 0f);
+            int r = (int)power.Map(0f, 1f, 0f, 255f);
+            int b = (int)power.Map(0f, 1f, 255f, 0f);
 
             var color = Color.FromRgb(r, 0, b);
         }

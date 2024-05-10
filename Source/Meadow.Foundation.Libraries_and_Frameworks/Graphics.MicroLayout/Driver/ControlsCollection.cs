@@ -3,26 +3,29 @@ using System.Collections.Generic;
 
 namespace Meadow.Foundation.Graphics.MicroLayout;
 
+internal interface IControlContainer
+{
+    IControl? Parent { get; }
+    ControlsCollection Controls { get; }
+}
+
 /// <summary>
 /// Represents a collection of display controls on a <see cref="DisplayScreen"/>.
 /// </summary>
 public sealed class ControlsCollection : IEnumerable<IControl>
 {
-    private readonly DisplayScreen _screen;
     private readonly List<IControl> _controls = new();
     private readonly object _syncRoot = new();
 
-    private readonly IControl? _parent;
+    private readonly IControlContainer? _container;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ControlsCollection"/> class.
     /// </summary>
-    /// <param name="screen">The <see cref="DisplayScreen"/> that owns the controls collection.</param>
     /// <param name="parent">The parent control (if exists)</param>
-    internal ControlsCollection(DisplayScreen screen, IControl? parent)
+    internal ControlsCollection(IControlContainer? parent)
     {
-        _screen = screen;
-        _parent = parent;
+        _container = parent;
     }
 
     internal object SyncRoot => _syncRoot;
@@ -44,7 +47,7 @@ public sealed class ControlsCollection : IEnumerable<IControl>
         lock (SyncRoot)
         {
             _controls.Clear();
-            _screen.Invalidate();
+            _container?.Parent?.Invalidate();
         }
     }
 
@@ -60,11 +63,14 @@ public sealed class ControlsCollection : IEnumerable<IControl>
     public void Add(params IControl[] controls)
     {
         // Apply screen theme to the added controls, if available.
-        if (_screen.Theme != null)
+        if (_container is DisplayScreen screen)
         {
-            foreach (IThemedControl control in controls)
+            if (screen.Theme != null)
             {
-                control.ApplyTheme(_screen.Theme);
+                foreach (IThemedControl control in controls)
+                {
+                    control.ApplyTheme(screen.Theme);
+                }
             }
         }
 
@@ -72,7 +78,7 @@ public sealed class ControlsCollection : IEnumerable<IControl>
         {
             foreach (var control in controls)
             {
-                control.Parent = _parent;
+                control.Parent = _container?.Parent;
                 _controls.Add(control);
             }
         }
