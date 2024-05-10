@@ -6,7 +6,17 @@
     <AssemblyName>App</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\..\Meadow.Core\Source\implementations\f7\Meadow.F7\Meadow.F7.csproj" />
-    <ProjectReference Include="..\..\Driver\Sensors.Distance.A02yyuw.csproj" />
+    <Reference Include="A02yyuw">
+      <HintPath>..\..\Driver\bin\Release\netstandard2.1\A02yyuw.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Meadow" Version="1.11.0" />
+    <PackageReference Include="Meadow.Contracts" Version="1.11.0" />
+    <PackageReference Include="Meadow.Units" Version="1.11.0" />
+    <PackageReference Include="Meadow.Foundation" Version="1.11.0" />
+    <PackageReference Include="Meadow.Logging" Version="1.11.0" />
+    <PackageReference Include="Meadow.Core" Version="0.3.225" />
+    <PackageReference Include="Meadow.F7" Version="1.11.0" />
   </ItemGroup>
 </Project>

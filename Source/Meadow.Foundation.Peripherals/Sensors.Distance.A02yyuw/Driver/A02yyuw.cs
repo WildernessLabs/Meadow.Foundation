@@ -20,7 +20,7 @@ namespace Meadow.Foundation.Sensors.Distance
         /// <summary>
         /// Constant for output mode UART Control
         /// </summary>
-        public const byte MODE_UART_CONTROL = 1;
+        public const byte MODE_UART_CONTROL = 2;
         /// <summary>
         /// Distance from sensor to object
         /// </summary>
@@ -64,9 +64,10 @@ namespace Meadow.Foundation.Sensors.Distance
         /// <param name="serialPortName">The serial port</param>
         /// <param name="outPutModeParam">Output mode of the distance sensor, default is AUTO</param>
         public A02yyuw(IMeadowDevice device, SerialPortName serialPortName, byte outPutModeParam = MODE_UART_AUTO)
-            : this(device.CreateSerialPort(serialPortName, portSpeed, outPutModeParam))
+            : this(device.CreateSerialPort(serialPortName, portSpeed))
         {
             createdPort = true;
+            outPutMode = outPutModeParam;
         }
 
         /// <summary>
