@@ -16,19 +16,19 @@ public partial class Ahtx0 :
 {
     private bool isInitialized = false;
 
-    private event EventHandler<IChangeResult<Units.Temperature>> _temperatureHandlers = default!;
-    private event EventHandler<IChangeResult<RelativeHumidity>> _humidityHandlers = default!;
+    private event EventHandler<IChangeResult<Units.Temperature>> temperatureHandlers = default!;
+    private event EventHandler<IChangeResult<RelativeHumidity>> humidityHandlers = default!;
 
     event EventHandler<IChangeResult<Units.Temperature>> ISamplingSensor<Units.Temperature>.Updated
     {
-        add => _temperatureHandlers += value;
-        remove => _temperatureHandlers -= value;
+        add => temperatureHandlers += value;
+        remove => temperatureHandlers -= value;
     }
 
     event EventHandler<IChangeResult<RelativeHumidity>> ISamplingSensor<RelativeHumidity>.Updated
     {
-        add => _humidityHandlers += value;
-        remove => _humidityHandlers -= value;
+        add => humidityHandlers += value;
+        remove => humidityHandlers -= value;
     }
 
     /// <summary>
@@ -48,7 +48,7 @@ public partial class Ahtx0 :
     /// <param name="i2cBus">The I2C bus</param>
     /// <param name="address">I2C address of the sensor</param>
     public Ahtx0(II2cBus i2cBus, byte address = (byte)Addresses.Default)
-        : base(i2cBus, address, readBufferSize: 6)
+        : base(i2cBus, address, readBufferSize: 7)
     {
     }
 
@@ -60,11 +60,11 @@ public partial class Ahtx0 :
     {
         if (changeResult.New.Humidity is { } humidity)
         {
-            _humidityHandlers?.Invoke(this, new ChangeResult<Units.RelativeHumidity>(humidity, changeResult.Old?.Humidity));
+            humidityHandlers?.Invoke(this, new ChangeResult<Units.RelativeHumidity>(humidity, changeResult.Old?.Humidity));
         }
         if (changeResult.New.Temperature is { } temperature)
         {
-            _temperatureHandlers?.Invoke(this, new ChangeResult<Units.Temperature>(temperature, changeResult.Old?.Temperature));
+            temperatureHandlers?.Invoke(this, new ChangeResult<Units.Temperature>(temperature, changeResult.Old?.Temperature));
         }
         base.RaiseEventsAndNotify(changeResult);
     }
@@ -76,10 +76,27 @@ public partial class Ahtx0 :
         BusComms.Write((byte)Commands.SOFT_RESET);
         await Task.Delay(20);
 
-        BusComms.Write((byte)Commands.INITIALIZE);
-        //BusComms.Write(new byte[] { (byte)Commands.INITIALIZE, 0x08, 0x00 });
+        while (IsBusy())
+        {
+            await Task.Delay(10);
+        }
+
+        BusComms.Write(new byte[] { (byte)Commands.INITIALIZE, 0x08, 0x00 });
+
+        while (IsBusy())
+        {
+            await Task.Delay(10);
+        }
+
+        BusComms.Read(ReadBuffer.Span[0..1]);
 
         isInitialized = true;
+    }
+
+    private bool IsBusy()
+    {
+        BusComms.Read(ReadBuffer.Span[0..1]);
+        return (ReadBuffer.Span[0] & 0x80) == 0x80;
     }
 
     /// <summary>
@@ -91,21 +108,24 @@ public partial class Ahtx0 :
 
         await InitializeIfRequired();
 
-        BusComms.Write((byte)Commands.TRIGGER_MEAS);
-        //BusComms.Write(new byte[] { (byte)Commands.TRIGGER_MEAS, 0x33, 0x00 });
+        BusComms.Write(new byte[] { (byte)Commands.TRIGGER_MEAS, 0x33, 0x00 });
+        await Task.Delay(80);
 
-        do
+        while (IsBusy())
         {
-            BusComms.Read(ReadBuffer.Span[0..1]);
-        } while ((ReadBuffer.Span[0] & 0x80) != 0);
+            await Task.Delay(10);
+        }
 
         BusComms.Read(ReadBuffer.Span);
 
-        var humidity = ReadBuffer.Span[1] << 8 | ReadBuffer.Span[2] << 4 | ReadBuffer.Span[3] >> 4;
-        conditions.Humidity = new RelativeHumidity(humidity * 100 / 0x100000);
+        var data = ReadBuffer.ToArray();
+        Resolver.Log.Info(BitConverter.ToString(data));
 
-        var temp = ReadBuffer.Span[3] & 0x0f << 8 | ReadBuffer.Span[4] << 4 | ReadBuffer.Span[5];
-        conditions.Temperature = new Units.Temperature((temp * 200 / 0x100000) - 50);
+        var humidity = (data[1] << 12) | (data[2] << 4) | (data[3] >> 4);
+        conditions.Humidity = new RelativeHumidity((humidity / (double)0x100000) * 100d, RelativeHumidity.UnitType.Percent);
+
+        var temp = ((data[3] & 0x0f) << 16) | (data[4] << 8) | data[5];
+        conditions.Temperature = new Units.Temperature((temp / (double)0x100000) * 200d - 50d, Units.Temperature.UnitType.Celsius);
 
         return conditions;
     }

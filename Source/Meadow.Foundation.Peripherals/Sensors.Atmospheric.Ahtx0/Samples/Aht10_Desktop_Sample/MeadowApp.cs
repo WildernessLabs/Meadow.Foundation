@@ -22,6 +22,7 @@ public class MeadowApp : App<Windows>
     {
         Resolver.Log.Info("Initialize...");
 
+        // adjust the index to match your hardware configuration
         var ft232 = FtdiExpanderCollection.Devices[0];
 
         sensor = new Ahtx0(ft232.CreateI2cBus());

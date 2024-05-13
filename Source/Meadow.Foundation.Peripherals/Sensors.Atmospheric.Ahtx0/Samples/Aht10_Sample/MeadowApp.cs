@@ -1,32 +1,39 @@
-﻿using Meadow.Devices;
+﻿using Meadow;
+using Meadow.Devices;
 using Meadow.Foundation.Sensors.Atmospheric;
+using Meadow.Peripherals.Sensors;
+using System;
 using System.Threading.Tasks;
 
 namespace Sensors.Temperature.Aht10_Sample;
 
-public class MeadowApp : App<F7FeatherV2>
+public class FeatherV1App : MeadowApp<F7FeatherV1> { }
+public class FeatherV2App : MeadowApp<F7FeatherV2> { }
+public class CoreComputApp : MeadowApp<F7CoreComputeV2> { }
+
+public class MeadowApp<T> : App<T>
+    where T : F7MicroBase
 {
     //<!=SNIP=>
 
-    private Ahtx0 aht10;
+    private Ahtx0? sensor;
 
     public override Task Initialize()
     {
         Resolver.Log.Info("Initialize...");
 
-        lm75 = new Lm75(Device.CreateI2cBus());
+        sensor = new Ahtx0(Device.CreateI2cBus());
 
-        var consumer = Lm75.CreateObserver(
-            handler: result =>
+        var consumer = Ahtx0.CreateObserver(
+            handler: (result) =>
             {
-                Resolver.Log.Info($"Temperature New Value {result.New.Celsius}C");
-                Resolver.Log.Info($"Temperature Old Value {result.Old?.Celsius}C");
+                Resolver.Log.Info($"Observer: Temp changed by threshold; new temp: {result.New.Temperature?.Celsius:N2}C, old: {result.Old?.Temperature?.Celsius:N2}C");
             },
             filter: null
         );
-        lm75.Subscribe(consumer);
+        sensor.Subscribe(consumer);
 
-        lm75.Updated += (object sender, IChangeResult<Meadow.Units.Temperature> e) =>
+        (sensor as ITemperatureSensor).Updated += (sender, e) =>
         {
             Resolver.Log.Info($"Temperature Updated: {e.New.Celsius:n2}C");
         };
@@ -35,10 +42,16 @@ public class MeadowApp : App<F7FeatherV2>
 
     public override async Task Run()
     {
-        var temp = await lm75.Read();
-        Resolver.Log.Info($"Temperature New Value {temp.Celsius}C");
+        Resolver.Log.Info("Run...");
 
-        lm75.StartUpdating();
+        if (sensor == null) { return; }
+
+        var result = await sensor.Read();
+        Resolver.Log.Info("Initial Readings:");
+        Resolver.Log.Info($"  Temperature: {result.Temperature?.Celsius:F1}°C");
+        Resolver.Log.Info($"  Relative Humidity: {result.Humidity:F1}%");
+
+        sensor.StartUpdating(TimeSpan.FromSeconds(1));
     }
 
     //<!=SNOP=>
