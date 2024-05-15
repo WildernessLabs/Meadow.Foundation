@@ -11,9 +11,7 @@ namespace Meadow.Foundation.ICs.IOExpanders;
 
 public abstract partial class FtdiExpander :
     IPinController,
-//    IDisposable,
-//    IDigitalInputOutputController,
-    IDigitalOutputController,
+    IDigitalInputOutputController,
     ISpiController,
     II2cController
 {
@@ -30,7 +28,9 @@ public abstract partial class FtdiExpander :
     internal string Description { get; private set; }
     internal IntPtr Handle { get; private set; }
 
+    /// <inheritdoc/>
     public abstract II2cBus CreateI2cBus(int channel = 0, I2cBusSpeed busSpeed = I2cBusSpeed.Standard);
+    /// <inheritdoc/>
     public abstract ISpiBus CreateSpiBus(int channel, SpiClockConfiguration configuration);
 
     /// <summary>
@@ -70,7 +70,16 @@ public abstract partial class FtdiExpander :
                 Description = description,
                 Handle = handle
             },
-            FtDeviceType.Ft2232H => throw new NotImplementedException(),
+            FtDeviceType.Ft2232H => new Ft232h
+            {
+                Index = index,
+                Flags = flags,
+                ID = id,
+                LocID = locid,
+                SerialNumber = serialNumber,
+                Description = description,
+                Handle = handle
+            },
             FtDeviceType.Ft4232H => throw new NotImplementedException(),
             _ => throw new NotSupportedException(),
         };
@@ -139,6 +148,17 @@ public abstract partial class FtdiExpander :
             FT_GetQueueStatus(Handle, ref availableBytes));
 
         return availableBytes;
+    }
+
+    internal byte GetGpioStates(bool lowByte)
+    {
+        Span<byte> outBuffer = stackalloc byte[2];
+        Span<byte> inBuffer = stackalloc byte[1];
+        outBuffer[0] = (byte)(lowByte ? Native.FT_OPCODE.ReadDataBitsLowByte : Native.FT_OPCODE.ReadDataBitsHighByte);
+        outBuffer[1] = (byte)Native.FT_OPCODE.SendImmediate;
+        Write(outBuffer);
+        ReadInto(inBuffer);
+        return inBuffer[0];
     }
 
     internal void SetGpioDirectionAndState(bool lowByte, byte direction, byte state)
@@ -217,7 +237,7 @@ public abstract partial class FtdiExpander :
     /// <inheritdoc/>
     public IDigitalOutputPort CreateDigitalOutputPort(IPin pin, bool initialState = false, OutputType initialOutputType = OutputType.PushPull)
     {
-        var p = pin as FtdiPin;
+        var p = pin as FtdiPin ?? throw new ArgumentException();
 
         // TODO: make sure the pin isn't in use
 
@@ -299,5 +319,42 @@ public abstract partial class FtdiExpander :
     public ISpiBus CreateSpiBus(int channel = 0)
     {
         return CreateSpiBus(channel, new SpiClockConfiguration(1000000.Hertz()));
+    }
+
+    /// <inheritdoc/>
+    public IDigitalInputPort CreateDigitalInputPort(IPin pin, ResistorMode resistorMode)
+    {
+        switch (resistorMode)
+        {
+            case ResistorMode.InternalPullUp:
+            case ResistorMode.InternalPullDown:
+                throw new Exception("Internal resistors are not supported");
+        }
+
+        var p = pin as FtdiPin ?? throw new ArgumentException();
+
+        // TODO: make sure the pin isn't in use
+
+        if (p.IsLowByte)
+        {
+            // update the expanders direction mask to make this an output
+            GpioDirectionLow &= (byte)~(byte)pin.Key;
+
+            SetGpioDirectionAndState(
+                p.IsLowByte,
+                GpioDirectionLow,
+                GpioStateLow);
+        }
+        else
+        {
+            GpioDirectionHigh &= (byte)~(byte)pin.Key;
+
+            SetGpioDirectionAndState(
+                p.IsLowByte,
+                GpioDirectionHigh,
+                GpioStateHigh);
+        }
+
+        return new DigitalInputPort(this, pin, (pin.SupportedChannels.First() as IDigitalChannelInfo)!, resistorMode);
     }
 }
