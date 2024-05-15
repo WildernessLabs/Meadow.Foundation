@@ -92,6 +92,7 @@ namespace Meadow.Foundation.Sensors.Light
                         if (++integrationTime >= 4)
                         {
                             // everything is maxed out                                
+                            integrationTime = 3;
                             RangeExceededHigh?.Invoke(this, EventArgs.Empty);
                             outOfRange = true;
                         }
@@ -113,6 +114,7 @@ namespace Meadow.Foundation.Sensors.Light
                         // we're at max gain, have to slow integration time
                         if (--integrationTime <= -2)
                         {
+                            integrationTime = -2;
                             RangeExceededLow?.Invoke(this, EventArgs.Empty);
                             outOfRange = true;
                         }
@@ -223,6 +225,15 @@ namespace Meadow.Foundation.Sensors.Light
         private async Task SetIntegrationTime(int it)
         {
             ushort cfg;
+
+            if (it < -2)
+            {
+                it = -2;
+            }
+            else if (it > 3)
+            {
+                it = 3;
+            }
 
             // bits 6-9
 
