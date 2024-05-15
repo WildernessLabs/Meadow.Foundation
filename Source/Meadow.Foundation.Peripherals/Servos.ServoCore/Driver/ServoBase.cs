@@ -8,12 +8,12 @@ namespace Meadow.Foundation.Servos
     public abstract class ServoBase : IServo
     {
         /// <summary>
-        /// Gets the PWM port used to drive the Servo
+        /// Gets the PWM port used to drive the servo
         /// </summary>
         protected IPwmPort PwmPort { get; }
 
         /// <summary>
-        /// Gets the ServoConfig that describes this servo.
+        /// Gets the ServoConfig that describes this servo
         /// </summary>
         public ServoConfig Config { get; protected set; }
 

@@ -9,7 +9,7 @@ namespace Meadow.Foundation.Servos
     public abstract class ContinuousRotationServoBase : ServoBase, IContinuousRotationServo
     {
         /// <summary>
-        /// Gets the current rotation direction.
+        /// Gets the current rotation direction
         /// </summary>
         public RotationDirection CurrentDirection { get; protected set; } = RotationDirection.None;
 
