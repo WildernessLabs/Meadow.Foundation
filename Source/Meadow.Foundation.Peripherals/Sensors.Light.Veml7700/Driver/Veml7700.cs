@@ -22,12 +22,12 @@ namespace Meadow.Foundation.Sensors.Light
         /// </summary>
         public event EventHandler RangeExceededLow = default!;
 
-        ushort config;
+        private ushort config;
 
         /// <summary>
         /// Luminosity reading from the TSL2561 sensor.
         /// </summary>
-        public Illuminance? Illuminance { get; protected set; }
+        public Illuminance? Illuminance => Conditions;
 
         /// <summary>
         /// Sensor types Data source
@@ -51,16 +51,16 @@ namespace Meadow.Foundation.Sensors.Light
         {
         }
 
-        int gain = 3;
-        int integrationTime = 0;
-        bool firstRead = true;
-        bool outOfRange = false;
+        private int gain = 3;
+        private int integrationTime = 0;
+        private bool firstRead = true;
+        private bool outOfRange = false;
 
         /// <summary>
         /// Reads data from the sensor
         /// </summary>
         /// <returns>The latest sensor reading</returns>
-        protected async override Task<Illuminance> ReadSensor()
+        protected override async Task<Illuminance> ReadSensor()
         {
             Illuminance illuminance = new Illuminance(0);
 
