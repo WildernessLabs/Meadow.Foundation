@@ -15,6 +15,7 @@ public abstract partial class FtdiExpander
             : base(pin, channel, initialState, initialOutputType)
         {
             _expander = expander;
+            _state = initialState;
 
             if (pin is FtdiPin p)
             {
@@ -26,6 +27,7 @@ public abstract partial class FtdiExpander
             }
         }
 
+        /// <inheritdoc/>
         public override bool State
         {
             get => _state;
