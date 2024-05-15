@@ -31,7 +31,7 @@ public partial class HC2 :
     /// <summary>
     /// The current relative humidity
     /// </summary>
-    public Units.RelativeHumidity? Humidity { get; protected set; }
+    public Units.RelativeHumidity? Humidity => Conditions.Humidity;
 
     /// <summary>
     /// The current temperature

@@ -17,7 +17,7 @@ namespace Meadow.Foundation.Sensors.Weather
         /// <summary>
         /// The current wind speed
         /// </summary>
-        public Speed? WindSpeed { get; protected set; }
+        public Speed? WindSpeed => Conditions;
 
         /// <summary>
         /// Time to wait if no events come in to register a zero speed wind
