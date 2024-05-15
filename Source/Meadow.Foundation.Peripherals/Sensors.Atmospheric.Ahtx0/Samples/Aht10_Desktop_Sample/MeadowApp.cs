@@ -16,7 +16,7 @@ public class MeadowApp : App<Windows>
 
     //<!=SNIP=>
 
-    private Ahtx0? sensor;
+    private Ahtx0 sensor;
 
     public override Task Initialize()
     {
@@ -25,9 +25,9 @@ public class MeadowApp : App<Windows>
         // adjust the index to match your hardware configuration
         var ft232 = FtdiExpanderCollection.Devices[0];
 
-        sensor = new Ahtx0(ft232.CreateI2cBus());
+        sensor = new Aht10(ft232.CreateI2cBus());
 
-        var consumer = Ahtx0.CreateObserver(
+        var consumer = Aht10.CreateObserver(
             handler: (result) =>
             {
                 Resolver.Log.Info($"Observer: Temp changed by threshold; new temp: {result.New.Temperature?.Celsius:N2}C, old: {result.Old?.Temperature?.Celsius:N2}C");

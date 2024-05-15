@@ -7,10 +7,11 @@ using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Atmospheric;
 
+
 /// <summary>
 /// Ahtx0 Temperature sensor object
 /// </summary>    
-public partial class Ahtx0 :
+public abstract partial class Ahtx0 :
     ByteCommsSensorBase<(RelativeHumidity? Humidity, Units.Temperature? Temperature)>,
     ITemperatureSensor, IHumiditySensor, II2cPeripheral
 {

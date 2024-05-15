@@ -16,15 +16,15 @@ public class MeadowApp<T> : App<T>
 {
     //<!=SNIP=>
 
-    private Ahtx0? sensor;
+    private Ahtx0 sensor;
 
     public override Task Initialize()
     {
         Resolver.Log.Info("Initialize...");
 
-        sensor = new Ahtx0(Device.CreateI2cBus());
+        sensor = new Aht10(Device.CreateI2cBus());
 
-        var consumer = Ahtx0.CreateObserver(
+        var consumer = Aht10.CreateObserver(
             handler: (result) =>
             {
                 Resolver.Log.Info($"Observer: Temp changed by threshold; new temp: {result.New.Temperature?.Celsius:N2}C, old: {result.Old?.Temperature?.Celsius:N2}C");
