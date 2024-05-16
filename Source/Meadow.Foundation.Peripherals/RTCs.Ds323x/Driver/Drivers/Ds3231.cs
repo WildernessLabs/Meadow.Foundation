@@ -25,8 +25,8 @@ namespace Meadow.Foundation.RTCs
         /// <param name="interruptPort">Digital port connected to the alarm interrupt pin on the RTC.</param>
         public Ds3231(
            II2cBus i2cBus,
-           IDigitalInterruptPort? interruptPort = null,
-           byte address = (byte)Addresses.Default)
+           IDigitalInterruptPort? interruptPort,
+           byte address)
            : base(new I2cCommunications(i2cBus, address), interruptPort)
         { }
     }
