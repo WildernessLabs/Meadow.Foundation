@@ -6,7 +6,7 @@ namespace Meadow.Foundation.RTCs;
 /// <summary>
 /// Represents a PCF8523 real-time clock
 /// </summary>
-public partial class Pcf8523 : II2cPeripheral, IRealTimeClock
+public partial class Pcf8523 : II2cPeripheral, IRealTimeClock, IBatteryBackedPeripheral
 {
     /// <summary>
     /// The default I2C address for the peripheral
@@ -14,9 +14,10 @@ public partial class Pcf8523 : II2cPeripheral, IRealTimeClock
     public byte DefaultI2cAddress => (byte)Addresses.Default;
 
     private const int OriginYear = 1980;
-    private readonly II2cBus i2cBus;
     private byte[] txBuffer = new byte[20];
     private byte[] rxBuffer = new byte[20];
+
+    private I2cCommunications i2CCommunications;
 
     /// <summary>
     /// Creates a new Pcf8523 object
@@ -24,18 +25,29 @@ public partial class Pcf8523 : II2cPeripheral, IRealTimeClock
     /// <param name="i2cBus">The I2C bus</param>
     public Pcf8523(II2cBus i2cBus)
     {
-        this.i2cBus = i2cBus;
+        this.i2CCommunications = new I2cCommunications(i2cBus, (byte)Addresses.Default, 20);
         Initialize();
     }
 
     private void Initialize()
     {
         // put the device into 24-hour mode
-        txBuffer[0] = (byte)Registers.Control_1;
-        i2cBus.Read((byte)Addresses.Default, rxBuffer.AsSpan()[..1]);
-        txBuffer[0] = (byte)Registers.Control_1;
-        txBuffer[1] = (byte)(rxBuffer[0] & ~(1 << 3));
-        i2cBus.Write((byte)Addresses.Default, txBuffer[..1]);
+        var reg = i2CCommunications.ReadRegister((byte)Registers.Control_1);
+        reg = (byte)(reg & ~(1 << 3));
+        i2CCommunications.WriteRegister((byte)Registers.Control_1, reg);
+
+        // make sure we're in battery state monitor mode, direct switching on
+        i2CCommunications.WriteRegister((byte)Registers.Control_3, 0x20);
+    }
+
+    /// <summary>
+    /// Reads the battery low indicator register bit
+    /// </summary>
+    public bool IsBatteryLow()
+    {
+        var reg = i2CCommunications.ReadRegister((byte)Registers.Control_3);
+        var low = (reg & (1 << 2)) != 0;
+        return low;
     }
 
     /// <inheritdoc/>
@@ -43,16 +55,21 @@ public partial class Pcf8523 : II2cPeripheral, IRealTimeClock
     {
         get
         {
-            txBuffer[0] = (byte)Registers.Control_1;
-            i2cBus.Read((byte)Addresses.Default, rxBuffer.AsSpan()[..1]);
-            return (rxBuffer[0] & (1 << 5)) == 0;
+            var reg = i2CCommunications.ReadRegister((byte)Registers.Control_1);
+            return (reg & (1 << 5)) == 0;
         }
         set
         {
-            txBuffer[0] = (byte)Registers.Control_1;
-            i2cBus.Read((byte)Addresses.Default, rxBuffer.AsSpan()[..1]);
-            txBuffer[1] = (byte)(rxBuffer[0] & (1 << 5));
-            i2cBus.Write((byte)Addresses.Default, rxBuffer.AsSpan()[..2]);
+            var reg = i2CCommunications.ReadRegister((byte)Registers.Control_1);
+            if (value)
+            {
+                reg = (byte)(reg & ~(1 << 5));
+            }
+            else
+            {
+                reg = (byte)(reg | ~(1 << 5));
+            }
+            i2CCommunications.WriteRegister((byte)Registers.Control_1, reg);
         }
     }
 
@@ -60,10 +77,7 @@ public partial class Pcf8523 : II2cPeripheral, IRealTimeClock
     public DateTimeOffset GetTime()
     {
         // read 10 bytes
-        // set the register pointer
-        txBuffer[0] = (byte)Registers.Control_1;
-        i2cBus.Write((byte)Addresses.Default, txBuffer[..1]);
-        i2cBus.Read((byte)Addresses.Default, rxBuffer.AsSpan()[..10]);
+        i2CCommunications.ReadRegister((byte)Registers.Control_1, rxBuffer.AsSpan()[..10]);
 
         return RTCTimeToDateTimeOffset(rxBuffer, 0x03);
     }
@@ -81,7 +95,14 @@ public partial class Pcf8523 : II2cPeripheral, IRealTimeClock
         var min = FromBCD(rtcRegisters[startOffset + 1]);
         var s = FromBCD((byte)(rtcRegisters[startOffset + 0] & 0x7f));
 
-        return new DateTime(y, m, d, h, min, s);
+        try
+        {
+            return new DateTime(y, m, d, h, min, s);
+        }
+        catch
+        {
+            return DateTimeOffset.MinValue;
+        }
     }
 
     private void DateTimeOffsetToRTCTime(DateTimeOffset dt, Span<byte> destination, int offset)
@@ -100,7 +121,7 @@ public partial class Pcf8523 : II2cPeripheral, IRealTimeClock
     {
         txBuffer[0] = (byte)Registers.Seconds;
         DateTimeOffsetToRTCTime(time, txBuffer, 1);
-        i2cBus.Write((byte)Addresses.Default, txBuffer.AsSpan()[0..8]);
+        i2CCommunications.Write(txBuffer);
     }
 
     private static byte ToBCD(ushort i)
