@@ -47,7 +47,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// <summary>
         /// The temperature from the last reading
         /// </summary>
-        public Units.Temperature? Temperature { get; protected set; }
+        public Units.Temperature? Temperature => Conditions;
 
         /// <summary>
         /// Create a new TMP102 object using the default configuration for the sensor

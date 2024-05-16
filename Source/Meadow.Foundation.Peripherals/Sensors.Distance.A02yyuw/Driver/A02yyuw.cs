@@ -24,7 +24,7 @@ namespace Meadow.Foundation.Sensors.Distance
         /// <summary>
         /// Distance from sensor to object
         /// </summary>
-        public Length? Distance { get; protected set; }
+        public Length? Distance => Conditions;
 
         /// <summary>
         /// Value returned when the sensor cannot determine the distance
