@@ -23,12 +23,12 @@ public partial class DFRobotGravityDOMeter : SamplingSensorBase<ConcentrationInW
     /// <summary>
     /// The current water temperature, which can be read from the TempSensor
     /// </summary>
-    protected Units.Temperature WaterTemperature;
+    public Units.Temperature WaterTemperature { get; set; }
 
     /// <summary>
     /// a Temperature Sensor, used to keep tempertaure up to date
     /// </summary>
-    readonly ITemperatureSensor tempSensor;
+    readonly ITemperatureSensor TempSensor;
 
     /// <summary>
     /// The calibration values for the sensor, linear fits of voltage vs temperature for saturated and no oxygen  
@@ -47,7 +47,7 @@ public partial class DFRobotGravityDOMeter : SamplingSensorBase<ConcentrationInW
     /// <summary>
     /// Last concentration value read from the sensor
     /// </summary>
-    public ConcentrationInWater? Concentration { get; protected set; }
+    public ConcentrationInWater? Concentration { get; set; }
 
     /// <summary>
     /// Constants for 3rd order poly for DO saturation (mg/L) with temperature, good from 0 to 30 °C
@@ -61,18 +61,17 @@ public partial class DFRobotGravityDOMeter : SamplingSensorBase<ConcentrationInW
     /// Creates a new DFRobotGravityDOMeter object with an analog inpuyt port and a temperature sensor
     /// </summary>
     /// <param name="analogInputPort">The port for the analog input pin</param>
-    public DFRobotGravityDOMeter(ITemperatureSensor TempSensor, IAnalogInputPort analogInputPort)
+    public DFRobotGravityDOMeter(IAnalogInputPort analogInputPort, ITemperatureSensor tempSensor)
     {
+        TempSensor = tempSensor;
         AnalogInputPort = analogInputPort;
-        tempSensor = TempSensor;
-
         AnalogInputPort.Subscribe
         (
             IAnalogInputPort.CreateObserver(
                 result =>
                 {
-                    ChangeResult<ConcentrationInWater> changeResult = new()
-                    {
+                    ChangeResult<ConcentrationInWater> changeResult = new ChangeResult<ConcentrationInWater>()
+                    { 
                         New = VoltageToConcentration(result.New),
                         Old = Concentration
                     };
@@ -123,7 +122,7 @@ public partial class DFRobotGravityDOMeter : SamplingSensorBase<ConcentrationInW
 
     ConcentrationInWater VoltageToConcentration(Voltage voltage)
     {
-        WaterTemperature = (Units.Temperature)tempSensor.Temperature;
+        WaterTemperature = (Units.Temperature)TempSensor.Temperature;
         Voltage satVatTemp = new Voltage(sat_Offset + WaterTemperature.Celsius * sat_Mult, Voltage.UnitType.Volts);
         Voltage zeroVatTemp = new Voltage(zero_Offset + WaterTemperature.Celsius * zero_Mult, Voltage.UnitType.Volts);
         var propSat = (voltage.Volts - zeroVatTemp.Volts) / (satVatTemp.Volts - zeroVatTemp.Volts);
