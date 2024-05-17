@@ -1,6 +1,7 @@
 ﻿using Meadow.Hardware;
 using Meadow.Units;
 using System;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Temperature
@@ -41,6 +42,22 @@ namespace Meadow.Foundation.Sensors.Temperature
         {
             NominalResistance = nominalResistance;
             SeriesResistance = nominalResistance;
+
+            AnalogInputPort.Subscribe
+            (
+                IAnalogInputPort.CreateObserver(
+                result =>
+                {
+                    ChangeResult<Units.Temperature> changeResult = new ChangeResult<Units.Temperature>()
+
+                    {
+                        New = VoltageToTemperature(result.New),
+                        Old = Temperature,
+                    };
+                    RaiseEventsAndNotify(changeResult);
+                    }
+                )
+            );
         }
 
         /// <summary>
@@ -92,7 +109,25 @@ namespace Meadow.Foundation.Sensors.Temperature
         protected override async Task<Units.Temperature> ReadSensor()
         {
             var voltageReading = await AnalogInputPort.Read();
+            return VoltageToTemperature(voltageReading);
+            /*
+            // ohms
+            var measuredResistance = (SeriesResistance.Ohms * voltageReading.Volts) / (AnalogInputPort.ReferenceVoltage.Volts - voltageReading.Volts);
 
+            double steinhart;
+            steinhart = measuredResistance / NominalResistance.Ohms;
+            steinhart = Math.Log(steinhart);
+            steinhart /= BetaCoefficient;
+            steinhart += 1.0 / NominalTemperature.Kelvin;
+            steinhart = 1.0 / steinhart;
+
+            return new Units.Temperature(steinhart, Units.Temperature.UnitType.Kelvin);
+            */
+        }
+
+
+        protected Units.Temperature VoltageToTemperature(Voltage voltageReading)
+        {
             // ohms
             var measuredResistance = (SeriesResistance.Ohms * voltageReading.Volts) / (AnalogInputPort.ReferenceVoltage.Volts - voltageReading.Volts);
 
@@ -105,5 +140,6 @@ namespace Meadow.Foundation.Sensors.Temperature
 
             return new Units.Temperature(steinhart, Units.Temperature.UnitType.Kelvin);
         }
+
     }
 }
