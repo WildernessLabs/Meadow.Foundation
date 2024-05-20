@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -75,7 +76,14 @@ public static partial class MicroJson
             case TypeCode.UInt32:
             case TypeCode.Int64:
             case TypeCode.UInt64:
-                return o.ToString();
+                if (o is IFormattable formattable)
+                {
+                    return formattable.ToString(null, System.Globalization.CultureInfo.InvariantCulture);
+                }
+                else
+                {
+                    return o.ToString();
+                }
             case TypeCode.DateTime:
                 return dateTimeFormat switch
                 {
