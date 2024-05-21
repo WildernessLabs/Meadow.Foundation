@@ -44,10 +44,19 @@ public class LineSeriesPointCollection : IEnumerable<LineSeriesPoint>
     }
 
     /// <summary>
-    /// Adds a point to the collection
+    /// Adds a series of points to the collection
     /// </summary>
     /// <param name="points">The point to add</param>
     public void Add(params LineSeriesPoint[] points)
+    {
+        Add((IEnumerable<LineSeriesPoint>)points);
+    }
+
+    /// <summary>
+    /// Adds a series of points to the collection
+    /// </summary>
+    /// <param name="points">The points to add</param>
+    public void Add(IEnumerable<LineSeriesPoint> points)
     {
         lock (_points)
         {
