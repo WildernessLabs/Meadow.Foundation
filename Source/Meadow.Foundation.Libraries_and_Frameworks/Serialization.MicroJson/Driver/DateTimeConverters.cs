@@ -38,7 +38,6 @@ internal static class DateTimeConverters
     /// <returns>DateTime as an ISO 8601 string in UTC format.</returns>
     public static string ToIso8601(DateTime dateTime)
     {
-        //return $"{dateTime:yyyy-MM-ddTHH:mm:ss.FFFZ}";
         return dateTime.ToString("o", CultureInfo.InvariantCulture);
     }
 
