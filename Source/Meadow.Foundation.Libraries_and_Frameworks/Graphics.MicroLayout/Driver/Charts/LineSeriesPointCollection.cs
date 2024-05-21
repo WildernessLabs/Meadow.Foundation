@@ -103,11 +103,14 @@ public class LineSeriesPointCollection : IEnumerable<LineSeriesPoint>
     /// <summary>
     /// Removes all points to the collection
     /// </summary>
-    public void Clear()
+    /// <param name="capacity">Sets the total number of elements the collection can contain without resizing</param>
+    public void Clear(int capacity = 10)
     {
         lock (_points)
         {
             _points.Clear();
+
+            _points.Capacity = capacity;
 
             MinX = MaxX = MinY = MaxY = 0;
         }

@@ -194,7 +194,8 @@ public class LineChart : ChartControl
         var xRange = series.Points.MaxX - minX;
         var yRange = series.Points.MaxY; //  - minY; // assuming axis at 0 right now
 
-        var lastPoint = new LineSeriesPoint();
+        int lastX = 0;
+        int lastY = 0;
         var first = true;
 
         graphics.Stroke = series.LineStroke;
@@ -213,15 +214,15 @@ public class LineChart : ChartControl
                 else
                 {
                     graphics.DrawLine(
-                        (int)lastPoint.X + ParentOffsetX,
-                        (int)lastPoint.Y + ParentOffsetY,
+                        lastX + ParentOffsetX,
+                        lastY + ParentOffsetY,
                         scaledX,
                         scaledY,
                         series.LineColor);
                 }
 
-                lastPoint.X = scaledX;
-                lastPoint.Y = scaledY;
+                lastX = scaledX;
+                lastY = scaledY;
             }
 
             if (series.ShowPoints)
