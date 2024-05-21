@@ -241,9 +241,20 @@ public static partial class MicroJson
                     var targetArray = Array.CreateInstance(elementType, al!.Count);
                     for (int i = 0; i < al.Count; i++)
                     {
-                        object arrayItem = Activator.CreateInstance(elementType);
-                        Deserialize(al[i] as Hashtable, elementType, ref arrayItem);
-                        targetArray.SetValue(arrayItem, i);
+                        if (elementType == typeof(string))
+                        {
+                            targetArray.SetValue(al[i], i);
+                        }
+                        else if (elementType.IsValueType || elementType.IsEnum)
+                        {
+                            targetArray.SetValue(Convert.ChangeType(al[i], elementType), i);
+                        }
+                        else
+                        {
+                            object arrayItem = Activator.CreateInstance(elementType);
+                            Deserialize(al[i] as Hashtable, elementType, ref arrayItem);
+                            targetArray.SetValue(arrayItem, i);
+                        }
                     }
                     prop.SetValue(instance, targetArray);
                 }
