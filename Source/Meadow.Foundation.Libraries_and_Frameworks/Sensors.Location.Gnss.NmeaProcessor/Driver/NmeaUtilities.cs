@@ -83,5 +83,22 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
             }
             return position;
         }
+
+        /// <summary>
+        /// Converts a geographical position from degrees, minutes, and seconds (DMS) to a decimal format for latitude or longitude.
+        /// </summary>
+        /// <param name="dms">The position in degrees, minutes, and seconds to convert.</param>
+        /// <returns>A double value representing the converted decimal position.</returns>
+        public static double ConvertDegreesMinutesSecondsToDecimal(DegreesMinutesSecondsPosition dms)
+        {
+            double result = Convert.ToDouble(dms.Degrees) + Convert.ToDouble(dms.Minutes) / 60 + Convert.ToDouble(dms.Seconds) / 3600;
+
+            if (dms.Direction == CardinalDirection.South || dms.Direction == CardinalDirection.West)
+            {
+                result = -result;
+            }
+
+            return result;
+        }
     }
 }
