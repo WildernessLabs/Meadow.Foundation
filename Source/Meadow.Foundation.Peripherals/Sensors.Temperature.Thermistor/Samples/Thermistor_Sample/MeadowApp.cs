@@ -24,39 +24,42 @@ namespace Sensors.Temperature.Thermistor_Sample
             var consumer = SteinhartHartCalculatedThermistor.CreateObserver(
             handler: result =>
             {
-                Resolver.Log.Info($"Handler Temperature New Value: {result.New.Celsius:N1} °C");
-                Resolver.Log.Info($"Handler From Thermistor {thermistor.Conditions.Celsius:N1} °C");
+                //Resolver.Log.Info("Handler...");
+                Resolver.Log.Info($"Handler New:{result.New.Celsius:N1} °C");
+                Resolver.Log.Info($"Handler from therm : {thermistor.Conditions.Celsius:N1}C");
                 },
                 filter: null
             );
             thermistor.Subscribe(consumer);
 
             thermistor.Updated += Thermistor_TempreatureUpdated;
-            /*
-            (object sender, IChangeResult<Meadow.Units.Temperature> e) =>
-            {
-                //Resolver.Log.Info($"Updated Temperature: {e.New.Celsius:N1} °C");
 
+            /* syntax when using a 
+             (object sender, IChangeResult<Meadow.Units.Temperature> e) =>
+             {
+                Resolver.Log.Info($"Temperature Updated: {e.New.Fahrenheit:N1}F/{e.New.Celsius:N1}C");
             };
             */
             return base.Initialize();
         }
 
-        
+
         public override async Task Run()
         {
             var temp = await thermistor.Read();
-            Resolver.Log.Info($"Initial temperature: {temp.Fahrenheit:N1}F/{temp.Celsius:N1}C");
-            Resolver.Log.Info($"Inital From therm: {thermistor.Conditions.Fahrenheit:N1}F/{thermistor.Conditions.Celsius:N1}C");
+            Resolver.Log.Info($"Initial temperature: {temp.Celsius:N1} °C");
+            Resolver.Log.Info($"Initial From therm: {thermistor.Conditions.Celsius:N1}° C");
             thermistor.StartUpdating(TimeSpan.FromSeconds(1d));
         }
+
+       
 
 
         // function called when using the IChangeResult interface when temp measure is updated
         private void Thermistor_TempreatureUpdated(object sender, IChangeResult<Meadow.Units.Temperature> e)
         {
-            Resolver.Log.Info($"IChangeResultTemperature: {e.New.Celsius:N1}°C");
-            Resolver.Log.Info($"IChangeResult from Thermistor: {thermistor.Conditions.Celsius:N1}°C");
+            Resolver.Log.Info($"Updated Temperature: {e.New.Celsius:N1}°C");
+            Resolver.Log.Info($"Updated from Therm: {thermistor.Conditions.Celsius:N1}°C");
         }
 
         //<!=SNOP=>
