@@ -1,13 +1,15 @@
 using Meadow.Foundation.Helpers;
 using Meadow.Hardware;
+using Meadow.Units;
 using System;
+using System.Threading.Tasks;
 
 namespace Meadow.Foundation.RTCs
 {
     /// <summary>
     /// Base class for DS323x family of real-time clocks
     /// </summary>
-    public partial class Ds323x : IRealTimeClock, II2cPeripheral, IDisposable
+    public partial class Ds323x : PollingSensorBase<Temperature>, IRealTimeClock, II2cPeripheral, IDisposable
     {
         /// <summary>
         /// The default I2C address for the peripheral
@@ -139,19 +141,36 @@ namespace Meadow.Foundation.RTCs
             set => SetTime(value);
         }
 
+        /// <inheritdoc/>
+        protected override Task<Temperature> ReadSensor()
+        {
+            var ctl = i2cComms.ReadRegister(Registers.Control);
+            ctl |= 1 << 5;
+            i2cComms.WriteRegister(Registers.Control, ctl);
+
+            byte status;
+
+            do
+            {
+                status = i2cComms.ReadRegister(Registers.ControlStatus);
+            } while ((status & (1 << 2)) != (1 << 2));
+
+            var data = readBuffer.Span[0..2];
+            i2cComms.ReadRegister(Registers.TemperatureMSB, data);
+            if ((data[0] & 0x80) != 0)
+            {
+                // negative
+                data[0] = (byte)(data[0] | ~((1 << 8) - 1));
+            }
+
+            var temperature = 0.25 * (data[1] >> 6) + data[0];
+            return Task.FromResult(new Temperature(temperature, Temperature.UnitType.Celsius));
+        }
+
         /// <summary>
         /// Get the current die temperature.
         /// </summary>
-        public Units.Temperature Temperature
-        {
-            get
-            {
-                var data = readBuffer.Span[0..2];
-                i2cComms.ReadRegister(Registers.TemperatureMSB, data);
-                var temperature = (ushort)((data[0] << 2) | (data[1] >> 6));
-                return new Units.Temperature(temperature * 0.25, Units.Temperature.UnitType.Celsius);
-            }
-        }
+        public Temperature Temperature => Conditions;
 
         /// <summary>
         /// I2C Communication bus used to communicate with the i2cComms
@@ -322,7 +341,15 @@ namespace Meadow.Foundation.RTCs
             {
                 year += 100;
             }
-            return new DateTime(year, month, day, hour, minutes, seconds);
+            try
+            {
+                return new DateTime(year, month, day, hour, minutes, seconds);
+            }
+            catch
+            {
+                // uninitialized RTC will have zeros, which won't parse to a DateTimeOffset
+                return DateTime.MinValue;
+            }
         }
 
         /// <summary>
@@ -343,7 +370,7 @@ namespace Meadow.Foundation.RTCs
             if (dt.Year > 1999)
             {
                 data[5] |= 0x80;
-                data[6] = Converters.ByteToBCD((byte)((dt.Year - 2000) & 0xff));
+            data[6] = Converters.ByteToBCD((byte)((dt.Year - 2000) & 0xff));
             }
             else
             {
@@ -359,32 +386,7 @@ namespace Meadow.Foundation.RTCs
         /// <returns>Byte representation of the day of the week (Sunday = 1).</returns>
         protected byte DayOfWeekToByte(DayOfWeek day)
         {
-            byte result = 1;
-            switch (day)
-            {
-                case DayOfWeek.Sunday:
-                    result = 1;
-                    break;
-                case DayOfWeek.Monday:
-                    result = 2;
-                    break;
-                case DayOfWeek.Tuesday:
-                    result = 3;
-                    break;
-                case DayOfWeek.Wednesday:
-                    result = 4;
-                    break;
-                case DayOfWeek.Thursday:
-                    result = 5;
-                    break;
-                case DayOfWeek.Friday:
-                    result = 6;
-                    break;
-                case DayOfWeek.Saturday:
-                    result = 7;
-                    break;
-            }
-            return result;
+            return (byte)(day + 1);
         }
 
         /// <summary>
