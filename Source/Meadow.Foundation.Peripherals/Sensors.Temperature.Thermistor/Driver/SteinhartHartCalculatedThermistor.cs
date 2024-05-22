@@ -1,7 +1,6 @@
 ﻿using Meadow.Hardware;
 using Meadow.Units;
 using System;
-using System.Security.Cryptography;
 using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Temperature
@@ -32,6 +31,12 @@ namespace Meadow.Foundation.Sensors.Temperature
         public override Resistance NominalResistance { get; }
 
         /// <summary>
+        /// observer for setting conditions
+        /// </summary>
+        FilterableChangeObserver<Voltage> VoltageObserver;
+
+
+        /// <summary>
         /// Creates a new SteinhartHartCalculatedThermistor object using the provided analog input and the thermistor's nominal resistance (i.e. 10kOhm)
         /// </summary>
         /// <param name="analogInput">The analog input reading the thermistor voltage divider output</param>
@@ -43,21 +48,7 @@ namespace Meadow.Foundation.Sensors.Temperature
             NominalResistance = nominalResistance;
             SeriesResistance = nominalResistance;
 
-            AnalogInputPort.Subscribe
-            (
-                IAnalogInputPort.CreateObserver(
-                result =>
-                {
-                    ChangeResult<Units.Temperature> changeResult = new ChangeResult<Units.Temperature>()
-
-                    {
-                        New = VoltageToTemperature(result.New),
-                        Old = Temperature,
-                    };
-                    RaiseEventsAndNotify(changeResult);
-                    }
-                )
-            );
+            VoltageObserver = AddListener();
         }
 
         /// <summary>
@@ -71,6 +62,8 @@ namespace Meadow.Foundation.Sensors.Temperature
         {
             NominalResistance = nominalResistance;
             SeriesResistance = seriesResistance;
+            VoltageObserver = AddListener();
+
         }
 
         /// <summary>
@@ -86,6 +79,7 @@ namespace Meadow.Foundation.Sensors.Temperature
             NominalResistance = nominalResistance;
             SeriesResistance = seriesResistance;
             BetaCoefficient = betaCoefficient;
+            VoltageObserver = AddListener();
         }
 
         /// <summary>
@@ -101,6 +95,7 @@ namespace Meadow.Foundation.Sensors.Temperature
             NominalResistance = nominalResistance;
             SeriesResistance = nominalResistance;
             BetaCoefficient = betaCoefficient;
+            VoltageObserver = AddListener();
         }
 
         /// <summary>
@@ -109,8 +104,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         protected override async Task<Units.Temperature> ReadSensor()
         {
             var voltageReading = await AnalogInputPort.Read();
-            return VoltageToTemperature(voltageReading);
-            /*
+
             // ohms
             var measuredResistance = (SeriesResistance.Ohms * voltageReading.Volts) / (AnalogInputPort.ReferenceVoltage.Volts - voltageReading.Volts);
 
@@ -121,10 +115,29 @@ namespace Meadow.Foundation.Sensors.Temperature
             steinhart += 1.0 / NominalTemperature.Kelvin;
             steinhart = 1.0 / steinhart;
 
-            return new Units.Temperature(steinhart, Units.Temperature.UnitType.Kelvin);
-            */
+            Conditions= new Units.Temperature(steinhart, Units.Temperature.UnitType.Kelvin);
+            return Conditions;
         }
 
+
+        protected FilterableChangeObserver<Voltage> AddListener()
+        {
+            AnalogInputPort.Subscribe
+           (
+              VoltageObserver = IAnalogInputPort.CreateObserver(
+                   result =>
+                   {
+                       ChangeResult<Units.Temperature> changeResult = new ChangeResult<Units.Temperature>()
+                       {
+                           New = VoltageToTemperature(result.New),
+                           Old = Temperature,
+                       };
+                       RaiseEventsAndNotify(changeResult);
+                   }
+               )
+           );
+            return VoltageObserver;
+        }
 
         protected Units.Temperature VoltageToTemperature(Voltage voltageReading)
         {
@@ -137,9 +150,8 @@ namespace Meadow.Foundation.Sensors.Temperature
             steinhart /= BetaCoefficient;
             steinhart += 1.0 / NominalTemperature.Kelvin;
             steinhart = 1.0 / steinhart;
-
-            return new Units.Temperature(steinhart, Units.Temperature.UnitType.Kelvin);
+            Conditions = new Units.Temperature(steinhart, Units.Temperature.UnitType.Kelvin);
+            return Conditions;  //new Units.Temperature(steinhart, Units.Temperature.UnitType.Kelvin);
         }
-
     }
 }
