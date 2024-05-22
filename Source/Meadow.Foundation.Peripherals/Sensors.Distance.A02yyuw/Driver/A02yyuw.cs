@@ -34,7 +34,7 @@ namespace Meadow.Foundation.Sensors.Distance
         /// <summary>
         /// The maximum time to wait for a sensor reading
         /// </summary>
-        public TimeSpan SensorReadTimeOut { get; set; } = TimeSpan.FromSeconds(1000);
+        public TimeSpan SensorReadTimeOut { get; set; } = TimeSpan.FromSeconds(2);
 
         //The baud rate is 9600, 8 bits, no parity, with one stop bit
         private readonly ISerialPort serialPort;
@@ -79,7 +79,7 @@ namespace Meadow.Foundation.Sensors.Distance
         public A02yyuw(ISerialPort serialMessage, byte outPutModeParam = MODE_UART_AUTO)
         {
             serialPort = serialMessage;
-            serialPort.ReadTimeout = TimeSpan.FromSeconds(5);
+            serialPort.ReadTimeout = SensorReadTimeOut;
             serialPort.DataReceived += SerialPortDataReceived;
             outPutMode = outPutModeParam;
         }
@@ -157,6 +157,7 @@ namespace Meadow.Foundation.Sensors.Distance
 
             if (dataReceivedTaskCompletionSource.Task.IsCompletedSuccessfully == true)
             {
+                Conditions = dataReceivedTaskCompletionSource.Task.Result;
                 return dataReceivedTaskCompletionSource.Task.Result;
             }
             return new Length(0);
