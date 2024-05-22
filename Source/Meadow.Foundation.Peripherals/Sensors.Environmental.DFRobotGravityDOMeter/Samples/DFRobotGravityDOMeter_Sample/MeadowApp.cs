@@ -8,7 +8,6 @@ using System;
 using System.Threading.Tasks;
 
 
-
 namespace Sensors.Environmental.DFRobotGravityDOMeter_Sample
 {
     public class MeadowApp : App<F7CoreComputeV2>
