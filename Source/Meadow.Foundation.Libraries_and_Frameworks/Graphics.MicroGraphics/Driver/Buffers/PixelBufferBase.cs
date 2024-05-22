@@ -54,7 +54,7 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// <summary>
         /// Number of bytes in buffer
         /// </summary>
-        public int ByteCount => (Width * Height * BitDepth) >> 3;
+        public virtual int ByteCount => (Width * Height * BitDepth) >> 3;
 
         /// <summary>
         /// The buffer that holds the pixel data

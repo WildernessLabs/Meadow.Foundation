@@ -14,6 +14,7 @@ namespace Meadow.Foundation
         where UNIT : struct
     {
         private UNIT? _lastEventValue;
+        private UNIT _conditions;
 
         /// <summary>
         /// Raised when the sensor has new data
@@ -44,7 +45,11 @@ namespace Meadow.Foundation
         /// <summary>
         /// The last read conditions
         /// </summary>
-        public UNIT Conditions { get; protected set; }
+        public UNIT Conditions
+        {
+            get => IsSampling ? _conditions : ReadSensor().Result;
+            protected set => _conditions = value;
+        }
 
         /// <summary>
         /// Gets a value indicating whether the sensor is currently in a sampling

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -32,6 +33,32 @@ public static partial class MicroJson
     }
 
     /// <summary>
+    /// Escapes special characters in a string to ensure it is JSON-compliant.
+    /// </summary>
+    /// <param name="value">The string to escape.</param>
+    /// <returns>The escaped string with special characters properly encoded.</returns>
+    /// <remarks>
+    /// This method handles the following special characters:
+    /// - Double quotes (") are escaped as \".
+    /// - Backslashes (\) are escaped as \\.
+    /// - Newlines (\n) are escaped as \\n.
+    /// - Carriage returns (\r) are escaped as \\r.
+    /// - Tabs (\t) are escaped as \\t.
+    /// - Backspaces (\b) are escaped as \\b.
+    /// - Form feeds (\f) are escaped as \\f.
+    /// </remarks>
+    public static string EscapeString(string value)
+    {
+        return "\"" + value.Replace("\\", "\\\\")
+                        .Replace("\"", "\\\"")
+                        .Replace("\n", "\\n")
+                        .Replace("\r", "\\r")
+                        .Replace("\t", "\\t")
+                        .Replace("\b", "\\b")
+                        .Replace("\f", "\\f") + "\"";
+    }
+
+    /// <summary>
     /// Converts an object to a JSON string.
     /// </summary>
     /// <param name="o">The value to convert.</param>
@@ -59,11 +86,9 @@ public static partial class MicroJson
             case TypeCode.Boolean:
                 return (bool)o ? "true" : "false";
             case TypeCode.String:
-                return $"\"{o}\""
-                    .Replace("\n", "\\n")
-                    .Replace("\r", "\\r");
+                return EscapeString((string)o);
             case TypeCode.Char:
-                return $"\"{o}\"";
+                return EscapeString(o.ToString());
             case TypeCode.Single:
             case TypeCode.Double:
             case TypeCode.Decimal:
@@ -75,7 +100,14 @@ public static partial class MicroJson
             case TypeCode.UInt32:
             case TypeCode.Int64:
             case TypeCode.UInt64:
-                return o.ToString();
+                if (o is IFormattable formattable)
+                {
+                    return formattable.ToString(null, System.Globalization.CultureInfo.InvariantCulture);
+                }
+                else
+                {
+                    return o.ToString();
+                }
             case TypeCode.DateTime:
                 return dateTimeFormat switch
                 {
