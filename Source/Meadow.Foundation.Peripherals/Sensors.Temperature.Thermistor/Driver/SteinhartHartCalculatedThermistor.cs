@@ -1,6 +1,7 @@
 ﻿using Meadow.Hardware;
 using Meadow.Units;
 using System;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Temperature
@@ -103,19 +104,8 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// </summary>
         protected override async Task<Units.Temperature> ReadSensor()
         {
-            var voltageReading = await AnalogInputPort.Read();
-
-            // ohms
-            var measuredResistance = (SeriesResistance.Ohms * voltageReading.Volts) / (AnalogInputPort.ReferenceVoltage.Volts - voltageReading.Volts);
-
-            double steinhart;
-            steinhart = measuredResistance / NominalResistance.Ohms;
-            steinhart = Math.Log(steinhart);
-            steinhart /= BetaCoefficient;
-            steinhart += 1.0 / NominalTemperature.Kelvin;
-            steinhart = 1.0 / steinhart;
-
-            Conditions= new Units.Temperature(steinhart, Units.Temperature.UnitType.Kelvin);
+            Units.Temperature temp = VoltageToTemperature(await AnalogInputPort.Read());
+            Conditions = temp;
             return Conditions;
         }
 
@@ -124,7 +114,8 @@ namespace Meadow.Foundation.Sensors.Temperature
         {
             AnalogInputPort.Subscribe
            (
-              VoltageObserver = IAnalogInputPort.CreateObserver(
+                
+                VoltageObserver = IAnalogInputPort.CreateObserver(
                    result =>
                    {
                        ChangeResult<Units.Temperature> changeResult = new ChangeResult<Units.Temperature>()
@@ -134,10 +125,24 @@ namespace Meadow.Foundation.Sensors.Temperature
                        };
                        RaiseEventsAndNotify(changeResult);
                    }
-               )
+            )
            );
+            Updated += HandleResult;
+                /*(object sender, IChangeResult<Meadow.Units.Temperature> e) =>
+            {
+                //Resolver.Log.Info($"Temperature Updated: {e.New.Fahrenheit:N1}F/{e.New.Celsius:N1}C");
+                Conditions = e.New;
+            }; */
             return VoltageObserver;
         }
+
+        
+        void HandleResult(object sender, IChangeResult<Meadow.Units.Temperature> e)
+        {
+            Conditions = e.New;
+           // Resolver.Log.Info($"Handler: {Conditions.Celsius:N1} °C");
+         }
+
 
         protected Units.Temperature VoltageToTemperature(Voltage voltageReading)
         {
@@ -150,8 +155,7 @@ namespace Meadow.Foundation.Sensors.Temperature
             steinhart /= BetaCoefficient;
             steinhart += 1.0 / NominalTemperature.Kelvin;
             steinhart = 1.0 / steinhart;
-            Conditions = new Units.Temperature(steinhart, Units.Temperature.UnitType.Kelvin);
-            return Conditions;  //new Units.Temperature(steinhart, Units.Temperature.UnitType.Kelvin);
+            return new Units.Temperature(steinhart, Units.Temperature.UnitType.Kelvin);
         }
     }
 }
