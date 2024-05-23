@@ -266,7 +266,7 @@ namespace Meadow.Foundation.Graphics.Buffers
         }
 
         /// <summary>
-        /// Create a new buffer scaled up from the existing buffer
+        /// Create a new buffer integer scaled up from the existing buffer
         /// </summary>
         /// <typeparam name="T">Buffer type</typeparam>
         /// <param name="scaleFactor">Integer scale ratio</param>
@@ -344,18 +344,49 @@ namespace Meadow.Foundation.Graphics.Buffers
         }
 
         /// <summary>
+        /// Resize the buffer to new dimensions using the nearest neighbor algorithm
+        /// </summary>
+        /// <typeparam name="T">Buffer type</typeparam>
+        /// <param name="newWidth">New width</param>
+        /// <param name="newHeight">New height</param>
+        /// <returns>The resized buffer</returns>
+        public T Resize<T>(int newWidth, int newHeight)
+            where T : PixelBufferBase, new()
+        {
+            T newBuffer = new()
+            {
+                Width = newWidth,
+                Height = newHeight,
+            };
+
+            float xRatio = (float)Width / newWidth;
+            float yRatio = (float)Height / newHeight;
+
+            for (int i = 0; i < newWidth; i++)
+            {
+                for (int j = 0; j < newHeight; j++)
+                {
+                    int srcX = (int)(i * xRatio);
+                    int srcY = (int)(j * yRatio);
+                    newBuffer.SetPixel(i, j, GetPixel(srcX, srcY));
+                }
+            }
+            return newBuffer;
+        }
+
+        /// <summary>
         /// Calculate the uncorrected distance between two colors using bytes for red, green, blue
         /// </summary>
         /// <param name="color1"></param>
         /// <param name="color2"></param>
-        /// <returns>The distance as a double</returns>
-        public double GetColorDistance(Color color1, Color color2)
+        /// <returns>The distance as a float</returns>
+        public float GetColorDistance(Color color1, Color color2)
         {
-            var rDeltaSquared = Math.Abs(color1.R - color2.R) ^ 2;
-            var gDeltaSquared = Math.Abs(color1.G - color2.G) ^ 2;
-            var bDeltaSquared = Math.Abs(color1.B - color2.B) ^ 2;
+            var rDeltaSquared = MathF.Pow(Math.Abs(color1.R - color2.R), 2);
+            var gDeltaSquared = MathF.Pow(Math.Abs(color1.G - color2.G), 2);
+            var bDeltaSquared = MathF.Pow(Math.Abs(color1.B - color2.B), 2);
 
-            return Math.Sqrt(rDeltaSquared + gDeltaSquared + bDeltaSquared);
+            return MathF.Sqrt(rDeltaSquared + gDeltaSquared + bDeltaSquared);
         }
 
         /// <summary>
@@ -366,7 +397,7 @@ namespace Meadow.Foundation.Graphics.Buffers
         {
             if (!isDisposed)
             {
-                if (createdBuffer)
+                if (disposing && createdBuffer)
                 {
                     if (disposing)
                     {
