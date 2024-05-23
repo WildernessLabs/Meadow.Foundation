@@ -282,7 +282,6 @@ namespace Meadow.Foundation.Graphics.Buffers
                 Height = Height * scaleFactor,
             };
             newBuffer.InitializeBuffer(true);
-            newBuffer.Clear();
 
             for (int i = 0; i < Width; i++)
             {
@@ -295,8 +294,7 @@ namespace Meadow.Foundation.Graphics.Buffers
         }
 
         /// <summary>
-        /// Create a new pixel buffer and 
-        /// copy/convert pixel data from existing buffer
+        /// Create a new pixel buffer and copy/convert pixel data from existing buffer
         /// </summary>
         /// <typeparam name="T">The buffer type to convert to</typeparam>
         /// <returns>A pixel buffer derived from PixelBufferBase</returns>
@@ -359,7 +357,6 @@ namespace Meadow.Foundation.Graphics.Buffers
                 Width = newWidth,
                 Height = newHeight,
             };
-            newBuffer.InitializeBuffer(true);
 
             float xRatio = (float)Width / newWidth;
             float yRatio = (float)Height / newHeight;
@@ -373,6 +370,56 @@ namespace Meadow.Foundation.Graphics.Buffers
                     newBuffer.SetPixel(i, j, GetPixel(srcX, srcY));
                 }
             }
+            return newBuffer;
+        }
+
+        /// <summary>
+        /// Resize the buffer to new dimensions using bilinear interpolation
+        /// </summary>
+        /// <typeparam name="T">Buffer type</typeparam>
+        /// <param name="newWidth">New width</param>
+        /// <param name="newHeight">New height</param>
+        /// <returns>The resized buffer</returns>
+        public T ResizeBilinear<T>(int newWidth, int newHeight)
+            where T : PixelBufferBase, new()
+        {
+            T newBuffer = new()
+            {
+                Width = newWidth,
+                Height = newHeight,
+            };
+            newBuffer.InitializeBuffer(true);
+
+            float xRatio = (float)(Width - 1) / newWidth;
+            float yRatio = (float)(Height - 1) / newHeight;
+
+            for (int i = 0; i < newWidth; i++)
+            {
+                for (int j = 0; j < newHeight; j++)
+                {
+                    float gx = i * xRatio;
+                    float gy = j * yRatio;
+                    int gxi = (int)gx;
+                    int gyi = (int)gy;
+
+                    var c00 = GetPixel(gxi, gyi);
+                    var c10 = GetPixel(gxi + 1, gyi);
+                    var c01 = GetPixel(gxi, gyi + 1);
+                    var c11 = GetPixel(gxi + 1, gyi + 1);
+
+                    float w00 = (1 - (gx - gxi)) * (1 - (gy - gyi));
+                    float w10 = (gx - gxi) * (1 - (gy - gyi));
+                    float w01 = (1 - (gx - gxi)) * (gy - gyi);
+                    float w11 = (gx - gxi) * (gy - gyi);
+
+                    var r = (byte)(c00.R * w00 + c10.R * w10 + c01.R * w01 + c11.R * w11);
+                    var g = (byte)(c00.G * w00 + c10.G * w10 + c01.G * w01 + c11.G * w11);
+                    var b = (byte)(c00.B * w00 + c10.B * w10 + c01.B * w01 + c11.B * w11);
+
+                    newBuffer.SetPixel(i, j, new Color(r, g, b));
+                }
+            }
+
             return newBuffer;
         }
 
