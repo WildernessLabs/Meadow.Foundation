@@ -20,7 +20,7 @@ namespace A02yyuw_Sample
         //<!=SNIP=>
 
         A02yyuw a02yyuw;
-        protected TimeSpan updateInterval = TimeSpan.FromSeconds(10);
+        protected TimeSpan updateInterval = TimeSpan.FromSeconds(2);
         public override Task Initialize()
         {
             Resolver.Log.Info("Initialize...");
