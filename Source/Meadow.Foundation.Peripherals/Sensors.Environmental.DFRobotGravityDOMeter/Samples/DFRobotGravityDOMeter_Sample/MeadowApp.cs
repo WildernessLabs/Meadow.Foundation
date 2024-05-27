@@ -28,11 +28,11 @@ namespace Sensors.Environmental.DFRobotGravityDOMeter_Sample
             tempSensor = new SteinhartHartCalculatedThermistor(
                 projectLab.GroveAnalog.Pins.D0.CreateAnalogInputPort(10),
                 new Resistance(10, Resistance.UnitType.Kiloohms));
-            // IAnalogInputPort DOport = projectLab.IOTerminal.Pins.A1.CreateAnalogInputPort(20);
-            IAnalogInputPort DOport = projectLab.MikroBus2.Pins.AN.CreateAnalogInputPort(20);
+                IAnalogInputPort DOport = projectLab.IOTerminal.Pins.A1.CreateAnalogInputPort(20);
+            // IAnalogInputPort DOport = projectLab.MikroBus2.Pins.AN.CreateAnalogInputPort(20);
             DOsensor = new DFRobotGravityDOMeter(DOport, tempSensor);
 
-      
+
 
             tempConsumer = SteinhartHartCalculatedThermistor.CreateObserver(
                 handler: result =>
