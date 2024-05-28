@@ -18,7 +18,7 @@ You can install the library from within Visual studio using the the NuGet Packag
 ## Usage
 
 ```csharp
-Ds1307 rtc;
+private Ds1307 rtc;
 
 public override Task Initialize()
 {
@@ -31,7 +31,7 @@ public override Task Initialize()
 
 public override Task Run()
 {
-    var dateTime = new DateTime();
+    var dateTime = new DateTimeOffset();
     var running = rtc.IsRunning;
 
     Resolver.Log.Info($"{(running ? "is running" : "is not running")}");

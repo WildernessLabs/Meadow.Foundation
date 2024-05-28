@@ -18,10 +18,12 @@ You can install the library from within Visual studio using the the NuGet Packag
 ## Usage
 
 ```csharp
-public class Program 
+public class Program
 {
 static SilkDisplay? display;
 static MicroGraphics graphics = default!;
+
+static PixelBufferBase image = default!;
 
 public static void Main()
 {
@@ -40,26 +42,53 @@ public static void Initialize()
         CurrentFont = new Font16x24(),
         Stroke = 1
     };
+
+    image = LoadJpeg() as PixelBufferBase;
 }
 
 public static void Run()
 {
-    graphics.Clear();
+    Task.Run(() =>
+    {
+        var grayImage = image.Convert<BufferGray8>();
 
-    graphics.DrawText(10, 10, "Silk.NET", Color.White);
+        var scaledImage = image.Resize<BufferGray8>(320, 320);
 
-    graphics.DrawText(10, 40, "1234567890!@#$%^&*(){}[],./<>?;':", Color.LawnGreen);
-    graphics.DrawText(10, 70, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", Color.Cyan);
-    graphics.DrawText(10, 100, "abcdefghijklmnopqrstuvwxyz", Color.Yellow);
-    graphics.DrawText(10, 130, "Temp: 21.5°C", Color.Orange);
+        var rotatedImage = image.Rotate<BufferGray8>(new Meadow.Units.Angle(60));
 
-    graphics.DrawTriangle(10, 220, 50, 260, 10, 260, Color.Red);
-    graphics.DrawRectangle(20, 185, 80, 40, Color.Yellow, false);
-    graphics.DrawCircle(50, 240, 40, Color.Blue, false);
+        graphics.Clear();
 
-    graphics.Show();
+        //draw the image centered
+        graphics.DrawBuffer((display!.Width - rotatedImage.Width) / 2,
+            (display!.Height - rotatedImage.Height) / 2, rotatedImage);
+
+        graphics.Show();
+    });
 
     display!.Run();
+}
+
+static IPixelBuffer LoadJpeg()
+{
+    var jpgData = LoadResource("maple.jpg");
+
+    var decoder = new JpegDecoder();
+    var jpg = decoder.DecodeJpeg(jpgData);
+
+    Console.WriteLine($"Jpeg decoded is {jpg.Length} bytes, W: {decoder.Width}, H: {decoder.Height}");
+
+    return new BufferRgb888(decoder.Width, decoder.Height, jpg);
+}
+
+static byte[] LoadResource(string filename)
+{
+    var assembly = Assembly.GetExecutingAssembly();
+    var resourceName = $"Silk_Image_Sample.{filename}";
+
+    using Stream stream = assembly.GetManifestResourceStream(resourceName);
+    using var ms = new MemoryStream();
+    stream.CopyTo(ms);
+    return ms.ToArray();
 }
 }
 ```

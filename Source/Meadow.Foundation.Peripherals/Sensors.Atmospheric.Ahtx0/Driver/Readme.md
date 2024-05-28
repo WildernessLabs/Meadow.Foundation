@@ -1,8 +1,8 @@
-# Meadow.Foundation.Sensors.Atmospheric.Sgp40
+# Meadow.Foundation.Sensors.Atmospheric.Ahtx0
 
-**SGP40 I2C VOC sensor driver**
+**AHTx0 I2C temperature and humidity sensors**
 
-The **Sgp40** library is included in the **Meadow.Foundation.Sensors.Atmospheric.Sgp40** nuget package and is designed for the [Wilderness Labs](www.wildernesslabs.co) Meadow .NET IoT platform.
+The **Ahtx0** library is included in the **Meadow.Foundation.Sensors.Atmospheric.Ahtx0** nuget package and is designed for the [Wilderness Labs](www.wildernesslabs.co) Meadow .NET IoT platform.
 
 This driver is part of the [Meadow.Foundation](https://developer.wildernesslabs.co/Meadow/Meadow.Foundation/) peripherals library, an open-source repository of drivers and libraries that streamline and simplify adding hardware to your C# .NET Meadow IoT applications.
 
@@ -14,59 +14,47 @@ To view all Wilderness Labs open-source projects, including samples, visit [gith
 
 You can install the library from within Visual studio using the the NuGet Package Manager or from the command line using the .NET CLI:
 
-`dotnet add package Meadow.Foundation.Sensors.Atmospheric.Sgp40`
+`dotnet add package Meadow.Foundation.Sensors.Atmospheric.Ahtx0`
 ## Usage
 
 ```csharp
-private Sgp40? sensor;
+private Ahtx0 sensor;
 
 public override Task Initialize()
 {
-    Resolver.Log.Info("Initializing...");
+    Resolver.Log.Info("Initialize...");
 
-    sensor = new Sgp40(Device.CreateI2cBus());
+    // adjust the index to match your hardware configuration
+    var ft232 = FtdiExpanderCollection.Devices[0];
 
-    Resolver.Log.Info($"Sensor SN: {sensor.SerialNumber:x6}");
+    sensor = new Aht10(ft232.CreateI2cBus());
 
-    if (sensor.RunSelfTest())
+    var consumer = Aht10.CreateObserver(
+        handler: (result) =>
+        {
+            Resolver.Log.Info($"Observer: Temp changed by threshold; new temp: {result.New.Temperature?.Celsius:N2}C, old: {result.Old?.Temperature?.Celsius:N2}C");
+        },
+        filter: null
+    );
+    sensor.Subscribe(consumer);
+
+    (sensor as ITemperatureSensor).Updated += (sender, e) =>
     {
-        Resolver.Log.Info("Self test successful");
-    }
-    else
-    {
-        Resolver.Log.Warn("Self test failed");
-    }
-
-        var consumer = Sgp40.CreateObserver(
-            handler: result =>
-            {
-                Resolver.Log.Info($"Observer: VOC changed by threshold; new index: {result.New}");
-            },
-            filter: result => Math.Abs(result.New - result.Old ?? 0) > 10);
-        sensor.Subscribe(consumer);
-
-    sensor.Updated += (sender, result) =>
-    {
-        Resolver.Log.Info($"  VOC: {result.New}");
+        Resolver.Log.Info($"Temperature Updated: {e.New.Celsius:n2}C");
     };
-
-    return base.Initialize();
+    return Task.CompletedTask;
 }
 
 public override async Task Run()
-{
-    await ReadConditions();
-
-    sensor?.StartUpdating(TimeSpan.FromSeconds(1));
-}
-
-private async Task ReadConditions()
 {
     if (sensor == null) { return; }
 
     var result = await sensor.Read();
     Resolver.Log.Info("Initial Readings:");
-    Resolver.Log.Info($"  Temperature: {result}");
+    Resolver.Log.Info($"  Temperature: {result.Temperature?.Celsius:F1}°C");
+    Resolver.Log.Info($"  Relative Humidity: {result.Humidity:F1}%");
+
+    sensor.StartUpdating(TimeSpan.FromSeconds(1));
 }
 
 ```
