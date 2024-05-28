@@ -1,8 +1,8 @@
-# Meadow.Foundation.ICs.DAC.MCP492x
+# Meadow.Foundation.ICs.DAC.Mcp492x
 
 **Microchip MCP4921 and MCP4922 SPI digital to analog converters**
 
-The **Mcp492x** library is included in the **Meadow.Foundation.ICs.DAC.MCP492x** nuget package and is designed for the [Wilderness Labs](www.wildernesslabs.co) Meadow .NET IoT platform.
+The **Mcp492x** library is included in the **Meadow.Foundation.ICs.DAC.Mcp492x** nuget package and is designed for the [Wilderness Labs](www.wildernesslabs.co) Meadow .NET IoT platform.
 
 This driver is part of the [Meadow.Foundation](https://developer.wildernesslabs.co/Meadow/Meadow.Foundation/) peripherals library, an open-source repository of drivers and libraries that streamline and simplify adding hardware to your C# .NET Meadow IoT applications.
 
@@ -14,7 +14,7 @@ To view all Wilderness Labs open-source projects, including samples, visit [gith
 
 You can install the library from within Visual studio using the the NuGet Package Manager or from the command line using the .NET CLI:
 
-`dotnet add package Meadow.Foundation.ICs.DAC.MCP492x`
+`dotnet add package Meadow.Foundation.ICs.DAC.Mcp492x`
 ## How to Contribute
 
 - **Found a bug?** [Report an issue](https://github.com/WildernessLabs/Meadow_Issues/issues)
