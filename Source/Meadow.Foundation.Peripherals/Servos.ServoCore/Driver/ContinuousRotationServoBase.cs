@@ -9,7 +9,7 @@ namespace Meadow.Foundation.Servos
     public abstract class ContinuousRotationServoBase : ServoBase, IContinuousRotationServo
     {
         /// <summary>
-        /// Gets the current rotation direction.
+        /// Gets the current rotation direction
         /// </summary>
         public RotationDirection CurrentDirection { get; protected set; } = RotationDirection.None;
 
@@ -35,9 +35,9 @@ namespace Meadow.Foundation.Servos
         /// <param name="speed">0.0 to 1.0 (0% to 100%).</param>
         public void Rotate(RotationDirection direction, float speed)
         {
-            if (speed < 0 || speed > 1)
+            if (speed is < 0 or > 1)
             {
-                throw new ArgumentOutOfRangeException("speed", "speed must be 0.0 - 1.0.");
+                throw new ArgumentOutOfRangeException(nameof(speed), "speed must be 0.0 - 1.0.");
             }
 
             // calculate the appropriate pulse duration for the speed and direction

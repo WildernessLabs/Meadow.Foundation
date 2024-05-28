@@ -92,9 +92,9 @@ namespace Meadow.Foundation.Sensors.Environmental
         }
 
         /// <summary>
-        /// Forced recalibration allows recalibration using an external CO2 reference
+        /// Forced calibration allows calibration using an external CO2 reference
         /// </summary>
-        public Task PerformForcedRecalibration()
+        public Task PerformForcedCalibration()
         {
             SendCommand(Commands.PerformForcedCalibration);
             return Task.Delay(400);
@@ -213,14 +213,26 @@ namespace Meadow.Foundation.Sensors.Environmental
         }
 
         /// <summary>
-        /// Get Scdx40 C02 Gas Concentration and
+        /// Get Scd4x C02 Gas Concentration and
         /// Update the Concentration property
         /// </summary>
         protected override async Task<(Concentration? Concentration, Units.Temperature? Temperature, RelativeHumidity? Humidity)> ReadSensor()
         {
+            bool isSampling = IsSampling;
+
+            if (IsSampling == false)
+            {
+                StartUpdating();
+            }
+
             while (IsDataReady() == false)
             {
                 await Task.Delay(500);
+            }
+
+            if (isSampling == false)
+            {
+                StopUpdating();
             }
 
             (Concentration Concentration, Units.Temperature Temperature, RelativeHumidity Humidity) conditions;

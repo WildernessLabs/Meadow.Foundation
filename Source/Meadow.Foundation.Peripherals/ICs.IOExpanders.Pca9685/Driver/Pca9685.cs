@@ -102,9 +102,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <returns>IPwmPort</returns>
         public virtual IPwmPort CreatePwmPort(byte portNumber, float dutyCycle = 0.5f)
         {
-            if (portNumber < 0 || portNumber > 15)
+            if (portNumber is < 0 or > 15)
             {
-                throw new ArgumentException("Value must be between 0 and 15", "portNumber");
+                throw new ArgumentException("Value must be between 0 and 15", nameof(portNumber));
             }
 
             var pwmPort = new PwmPort(i2cBus, address, Led0OnL, frequency, portNumber, dutyCycle);
@@ -119,19 +119,12 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <param name="on">true is on, false if off</param>
         public virtual void SetPin(byte pin, bool on)
         {
-            if ((pin < 0) || (pin > 15))
+            if (pin is < 0 or > 15)
             {
                 throw new ArgumentException("PWM pin must be between 0 and 15");
             }
 
-            if (on)
-            {
-                SetPwm(pin, 4096, 0);
-            }
-            else
-            {
-                SetPwm(pin, 0, 0);
-            }
+            SetPwm(pin, on ? 4096 : 0, 0);
         }
 
         /// <summary>
@@ -143,19 +136,19 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <remarks>On parameter is an inverted pwm signal</remarks>
         public virtual void SetPwm(byte pin, int on, int off)
         {
-            if (pin < 0 || pin > 15)
+            if (pin is < 0 or > 15)
             {
-                throw new ArgumentException("Value has to be between 0 and 15", "port");
+                throw new ArgumentException("Value has to be between 0 and 15", nameof(pin));
             }
 
-            if (on < 0 || on > 4096)
+            if (on is < 0 or > 4096)
             {
-                throw new ArgumentException("Value has to be between 0 and 4096", "on");
+                throw new ArgumentException("Value has to be between 0 and 4096", nameof(on));
             }
 
-            if (off < 0 || off > 4096)
+            if (off is < 0 or > 4096)
             {
-                throw new ArgumentException("Value has to be between 0 and 4096", "off");
+                throw new ArgumentException("Value has to be between 0 and 4096", nameof(off));
             }
 
             Write((byte)(Led0OnL + (4 * pin)), (byte)(on & 0xFF), (byte)(on >> 8), (byte)(off & 0xFF), (byte)(off >> 8));

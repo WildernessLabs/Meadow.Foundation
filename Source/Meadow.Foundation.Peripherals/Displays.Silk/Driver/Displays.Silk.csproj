@@ -23,13 +23,13 @@
   </PropertyGroup>
   <ItemGroup>
     <None Include=".\Readme.md" Pack="true" PackagePath="" />
-    <PackageReference Include="Silk.NET" Version="2.20.0" />
+    <PackageReference Include="Silk.NET" Version="2.21.0" />
     <PackageReference Include="SkiaSharp" Version="2.88.8" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\icon.png" Link="icon.png" Pack="true" PackagePath="" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.Foundation.Graphics.MicroGraphics" Version="1.11.0" />
+    <PackageReference Include="Meadow.Foundation.Graphics.MicroGraphics" Version="1.12.0" />
   </ItemGroup>
 </Project>

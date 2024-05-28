@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Meadow.Units;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -19,8 +20,7 @@ namespace Meadow.Foundation.Graphics
         CounterClockwise
     }
 
-    //https://api.skia.org/classSkPath.html#ac36f638ac96f3428626e993eacf84ff0ab2c02031eada4693dcf0f0724aec22a6
-    internal enum VerbType //from Skia, could change
+    internal enum VerbType
     {
         Move,
         Line,
@@ -40,7 +40,7 @@ namespace Meadow.Foundation.Graphics
     }
 
     /// <summary>
-    /// Represents a 2D graphics paths
+    /// Represents a 2D graphics path
     /// </summary>
     public class GraphicsPath
     {
@@ -50,19 +50,19 @@ namespace Meadow.Foundation.Graphics
         public Point LastPoint => PathActions.LastOrDefault().PathPoint;
 
         /// <summary>
-        /// The number of points in th path
+        /// The number of points in the path
         /// </summary>
         public int PointCount => PathActions.Count;
 
         /// <summary>
         /// The collection of points 
         /// </summary>
-        public Point[]? Points;
+        public Point[] Points { get; private set; }
 
         /// <summary>
         /// The number of verbs/actions used
         /// </summary>
-        public int VerbCount => PathActions.Count; //need to figure out if/when this wouldn't be equal to PointCount
+        public int VerbCount => PathActions.Count;
 
         /// <summary>
         /// The collection of actions 
@@ -76,25 +76,26 @@ namespace Meadow.Foundation.Graphics
         {
             get
             {
-                if (Points == null)
+                if (PathActions == null || PathActions.Count == 0)
                 {
                     return new Rect(0, 0, 0, 0);
                 }
 
-                Point min = Points[0];
-                Point max = Points[0];
+                Point min = PathActions[0].PathPoint;
+                Point max = PathActions[0].PathPoint;
 
-                foreach (var p in Points)
+                foreach (var action in PathActions)
                 {
-                    min.X = Math.Min(min.X, p.X);
-                    min.Y = Math.Min(min.Y, p.Y);
-                    max.X = Math.Max(max.X, p.X);
-                    max.Y = Math.Min(max.X, p.Y);
+                    min.X = Math.Min(min.X, action.PathPoint.X);
+                    min.Y = Math.Min(min.Y, action.PathPoint.Y);
+                    max.X = Math.Max(max.X, action.PathPoint.X);
+                    max.Y = Math.Max(max.Y, action.PathPoint.Y);
                 }
 
                 return new Rect(min.X, min.Y, max.X, max.Y);
             }
         }
+
 
         /// <summary>
         /// Create a new GraphicsPath object
@@ -116,7 +117,7 @@ namespace Meadow.Foundation.Graphics
         /// </summary>
         public void Reset()
         {
-            PathActions = new List<PathAction>();
+            PathActions.Clear();
         }
 
         /// <summary>
@@ -291,6 +292,87 @@ namespace Meadow.Foundation.Graphics
         }
 
         /// <summary>
+        /// Scales the path by the specified factors in the X and Y directions.
+        /// </summary>
+        /// <param name="scaleX">The scale factor in the X direction.</param>
+        /// <param name="scaleY">The scale factor in the Y direction.</param>
+        public void Scale(float scaleX, float scaleY)
+        {
+            for (int i = 0; i < PathActions.Count; i++)
+            {
+                var action = PathActions[i];
+                action.PathPoint = new Point((int)(action.PathPoint.X * scaleX), (int)(action.PathPoint.Y * scaleY));
+                PathActions[i] = action;
+            }
+        }
+
+        /// <summary>
+        /// Translates the path by the specified amounts in the X and Y directions.
+        /// </summary>
+        /// <param name="dx">The amount to translate in the X direction.</param>
+        /// <param name="dy">The amount to translate in the Y direction.</param>
+        public void Translate(float dx, float dy)
+        {
+            for (int i = 0; i < PathActions.Count; i++)
+            {
+                var action = PathActions[i];
+                action.PathPoint = new Point((int)(action.PathPoint.X + dx), (int)(action.PathPoint.Y + dy));
+                PathActions[i] = action;
+            }
+        }
+
+        /// <summary>
+        /// Rotates the path by the specified angle.
+        /// </summary>
+        /// <param name="angle">The angle to rotate the path, in degrees.</param>
+        public void Rotate(Angle angle)
+        {
+            float radians = (float)angle.Radians;
+            float cos = MathF.Cos(radians);
+            float sin = MathF.Sin(radians);
+
+            for (int i = 0; i < PathActions.Count; i++)
+            {
+                var action = PathActions[i];
+                float x = action.PathPoint.X;
+                float y = action.PathPoint.Y;
+                action.PathPoint = new Point(
+                    (int)(x * cos - y * sin),
+                    (int)(x * sin + y * cos));
+                PathActions[i] = action;
+            }
+        }
+
+        /// <summary>
+        /// Determines if a point lies on the path within a specified tolerance.
+        /// </summary>
+        /// <param name="point">The point to check.</param>
+        /// <param name="tolerance">The tolerance within which the point is considered to be on the path.</param>
+        /// <returns>True if the point is on the path; otherwise, false.</returns>
+        public bool IsPointOnPath(Point point, float tolerance = 0.5f)
+        {
+            foreach (var action in PathActions)
+            {
+                if (MathF.Abs(action.PathPoint.X - point.X) <= tolerance && MathF.Abs(action.PathPoint.Y - point.Y) <= tolerance)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Clips the path to a specified rectangular area.
+        /// </summary>
+        /// <param name="clipRect">The rectangle to which the path will be clipped.</param>
+        public void Clip(Rect clipRect)
+        {
+            PathActions = PathActions.Where(action =>
+                action.PathPoint.X >= clipRect.Left && action.PathPoint.X <= clipRect.Right &&
+                action.PathPoint.Y >= clipRect.Top && action.PathPoint.Y <= clipRect.Bottom).ToList();
+        }
+
+        /// <summary>
         /// Close the path
         /// </summary>
         public void Close()
@@ -320,7 +402,6 @@ namespace Meadow.Foundation.Graphics
                     index++;
                 }
                 return PathActions[index];
-
             }
             return PathActions[0];
         }

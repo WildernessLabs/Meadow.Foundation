@@ -4,17 +4,6 @@ using System.Collections.Generic;
 
 namespace Meadow.Foundation.ICs.IOExpanders;
 
-public class FtdiPin : Pin
-{
-    public bool IsLowByte { get; set; }
-
-    internal FtdiPin(bool isLowByte, IPinController? controller, string name, object key, IList<IChannelInfo>? supportedChannels)
-        : base(controller, name, key, supportedChannels)
-    {
-        IsLowByte = isLowByte;
-    }
-}
-
 /// <summary>
 /// Represents the pin definitions for the Ft232h IC.
 /// </summary>
@@ -299,7 +288,7 @@ public partial class FtdiExpander
             AllPins.Add(D1);
             AllPins.Add(D2);
             AllPins.Add(D3);
-            AllPins.Add(D7);
+            AllPins.Add(D4);
             AllPins.Add(D5);
             AllPins.Add(D6);
             AllPins.Add(D7);

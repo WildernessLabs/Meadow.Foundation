@@ -1,4 +1,5 @@
 ﻿using Meadow.Peripherals.Displays;
+using Meadow.Units;
 using System;
 using System.Linq;
 
@@ -54,7 +55,7 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// <summary>
         /// Number of bytes in buffer
         /// </summary>
-        public int ByteCount => (Width * Height * BitDepth) >> 3;
+        public virtual int ByteCount => (Width * Height * BitDepth) >> 3;
 
         /// <summary>
         /// The buffer that holds the pixel data
@@ -223,7 +224,7 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// <typeparam name="T">Buffer type</typeparam>
         /// <param name="rotation">Rotation</param>
         /// <returns>The new buffer</returns>
-        public T RotateAndConvert<T>(RotationType rotation)
+        public T Rotate<T>(RotationType rotation)
             where T : PixelBufferBase, new()
         {
             T newBuffer;
@@ -266,7 +267,7 @@ namespace Meadow.Foundation.Graphics.Buffers
         }
 
         /// <summary>
-        /// Create a new buffer scaled up from the existing buffer
+        /// Create a new buffer integer scaled up from the existing buffer
         /// </summary>
         /// <typeparam name="T">Buffer type</typeparam>
         /// <param name="scaleFactor">Integer scale ratio</param>
@@ -281,7 +282,6 @@ namespace Meadow.Foundation.Graphics.Buffers
                 Height = Height * scaleFactor,
             };
             newBuffer.InitializeBuffer(true);
-            newBuffer.Clear();
 
             for (int i = 0; i < Width; i++)
             {
@@ -294,12 +294,11 @@ namespace Meadow.Foundation.Graphics.Buffers
         }
 
         /// <summary>
-        /// Create a new pixel buffer and 
-        /// copy/convert pixel data from existing buffer
+        /// Create a new pixel buffer and copy/convert pixel data from existing buffer
         /// </summary>
         /// <typeparam name="T">The buffer type to convert to</typeparam>
         /// <returns>A pixel buffer derived from PixelBufferBase</returns>
-        public T ConvertPixelBuffer<T>()
+        public T Convert<T>()
             where T : PixelBufferBase, new()
         {
             if (GetType() == typeof(T))
@@ -344,18 +343,158 @@ namespace Meadow.Foundation.Graphics.Buffers
         }
 
         /// <summary>
+        /// Resize the buffer to new dimensions using the nearest neighbor algorithm
+        /// </summary>
+        /// <typeparam name="T">Buffer type</typeparam>
+        /// <param name="newWidth">New width</param>
+        /// <param name="newHeight">New height</param>
+        /// <returns>The resized buffer</returns>
+        public T Resize<T>(int newWidth, int newHeight)
+            where T : PixelBufferBase, new()
+        {
+            T newBuffer = new()
+            {
+                Width = newWidth,
+                Height = newHeight,
+            };
+
+            float xRatio = (float)Width / newWidth;
+            float yRatio = (float)Height / newHeight;
+
+            for (int i = 0; i < newWidth; i++)
+            {
+                for (int j = 0; j < newHeight; j++)
+                {
+                    int srcX = (int)(i * xRatio);
+                    int srcY = (int)(j * yRatio);
+                    newBuffer.SetPixel(i, j, GetPixel(srcX, srcY));
+                }
+            }
+            return newBuffer;
+        }
+
+        /// <summary>
+        /// Resize the buffer to new dimensions using bilinear interpolation
+        /// </summary>
+        /// <typeparam name="T">Buffer type</typeparam>
+        /// <param name="newWidth">New width</param>
+        /// <param name="newHeight">New height</param>
+        /// <returns>The resized buffer</returns>
+        public T ResizeBilinear<T>(int newWidth, int newHeight)
+            where T : PixelBufferBase, new()
+        {
+            T newBuffer = new()
+            {
+                Width = newWidth,
+                Height = newHeight,
+            };
+            newBuffer.InitializeBuffer(true);
+
+            float xRatio = (float)(Width - 1) / newWidth;
+            float yRatio = (float)(Height - 1) / newHeight;
+
+            for (int i = 0; i < newWidth; i++)
+            {
+                for (int j = 0; j < newHeight; j++)
+                {
+                    float gx = i * xRatio;
+                    float gy = j * yRatio;
+                    int gxi = (int)gx;
+                    int gyi = (int)gy;
+
+                    var c00 = GetPixel(gxi, gyi);
+                    var c10 = GetPixel(gxi + 1, gyi);
+                    var c01 = GetPixel(gxi, gyi + 1);
+                    var c11 = GetPixel(gxi + 1, gyi + 1);
+
+                    float w00 = (1 - (gx - gxi)) * (1 - (gy - gyi));
+                    float w10 = (gx - gxi) * (1 - (gy - gyi));
+                    float w01 = (1 - (gx - gxi)) * (gy - gyi);
+                    float w11 = (gx - gxi) * (gy - gyi);
+
+                    var r = (byte)(c00.R * w00 + c10.R * w10 + c01.R * w01 + c11.R * w11);
+                    var g = (byte)(c00.G * w00 + c10.G * w10 + c01.G * w01 + c11.G * w11);
+                    var b = (byte)(c00.B * w00 + c10.B * w10 + c01.B * w01 + c11.B * w11);
+
+                    newBuffer.SetPixel(i, j, new Color(r, g, b));
+                }
+            }
+
+            return newBuffer;
+        }
+
+        /// <summary>
+        /// Rotate the buffer by an arbitrary angle
+        /// </summary>
+        /// <typeparam name="T">Buffer type</typeparam>
+        /// <param name="angle">Rotation angle in degrees</param>
+        /// <returns>The rotated buffer</returns>
+        public T Rotate<T>(Angle angle)
+            where T : PixelBufferBase, new()
+        {
+            // Convert angle to radians
+            var radians = (float)angle.Radians;
+
+            // Calculate sine and cosine of the angle
+            var cos = MathF.Cos(radians);
+            var sin = MathF.Sin(radians);
+
+            // Calculate the new width and height of the bounding box
+            int newWidth = (int)MathF.Ceiling(MathF.Abs(Width * cos) + MathF.Abs(Height * sin));
+            int newHeight = (int)MathF.Ceiling(MathF.Abs(Width * sin) + MathF.Abs(Height * cos));
+
+            // Create a new buffer
+            T newBuffer = new()
+            {
+                Width = newWidth,
+                Height = newHeight,
+            };
+            newBuffer.InitializeBuffer(true);
+            newBuffer.Clear();
+
+            // Center of the original and new buffer
+            int x0 = Width / 2;
+            int y0 = Height / 2;
+            int x1 = newWidth / 2;
+            int y1 = newHeight / 2;
+
+            // Map each pixel from the original buffer to the new buffer
+            for (int x = 0; x < Width; x++)
+            {
+                for (int y = 0; y < Height; y++)
+                {
+                    // Calculate the coordinates relative to the center
+                    int dx = x - x0;
+                    int dy = y - y0;
+
+                    // Apply the rotation matrix
+                    int newX = (int)(dx * cos - dy * sin + x1);
+                    int newY = (int)(dx * sin + dy * cos + y1);
+
+                    // Set the pixel in the new buffer if within bounds
+                    if (newX >= 0 && newX < newWidth && newY >= 0 && newY < newHeight)
+                    {
+                        newBuffer.SetPixel(newX, newY, GetPixel(x, y));
+                    }
+                }
+            }
+
+            return newBuffer;
+        }
+
+        /// <summary>
         /// Calculate the uncorrected distance between two colors using bytes for red, green, blue
         /// </summary>
         /// <param name="color1"></param>
         /// <param name="color2"></param>
-        /// <returns>The distance as a double</returns>
-        public double GetColorDistance(Color color1, Color color2)
+        /// <returns>The distance as a float</returns>
+        public float GetColorDistance(Color color1, Color color2)
         {
-            var rDeltaSquared = Math.Abs(color1.R - color2.R) ^ 2;
-            var gDeltaSquared = Math.Abs(color1.G - color2.G) ^ 2;
-            var bDeltaSquared = Math.Abs(color1.B - color2.B) ^ 2;
+            var rDeltaSquared = MathF.Pow(MathF.Abs(color1.R - color2.R), 2);
+            var gDeltaSquared = MathF.Pow(MathF.Abs(color1.G - color2.G), 2);
+            var bDeltaSquared = MathF.Pow(MathF.Abs(color1.B - color2.B), 2);
 
-            return Math.Sqrt(rDeltaSquared + gDeltaSquared + bDeltaSquared);
+            return MathF.Sqrt(rDeltaSquared + gDeltaSquared + bDeltaSquared);
         }
 
         /// <summary>
@@ -366,7 +505,7 @@ namespace Meadow.Foundation.Graphics.Buffers
         {
             if (!isDisposed)
             {
-                if (createdBuffer)
+                if (disposing && createdBuffer)
                 {
                     if (disposing)
                     {

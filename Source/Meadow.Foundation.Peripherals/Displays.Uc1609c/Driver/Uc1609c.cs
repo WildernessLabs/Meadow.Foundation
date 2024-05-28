@@ -111,6 +111,7 @@ namespace Meadow.Foundation.Displays
             IDigitalOutputPort resetPort,
             int width = 128, int height = 64)
         {
+            this.chipSelectPort = chipSelectPort;
             this.dataCommandPort = dataCommandPort;
             this.resetPort = resetPort;
 

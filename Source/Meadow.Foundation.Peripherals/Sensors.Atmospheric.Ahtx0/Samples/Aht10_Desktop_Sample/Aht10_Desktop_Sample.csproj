@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+	  <TargetFramework>net8.0</TargetFramework>
+      <Nullable>enable</Nullable>
+      <LangVersion>10</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Meadow.Windows" Version="1.12.0" />
+    <PackageReference Include="Meadow.Foundation.ICs.IOExpanders.Ft232h" Version="1.12.0" />
+    <PackageReference Include="Meadow.Foundation.Sensors.Atmospheric.Ahtx0" Version="1.12.0" />
+  </ItemGroup>
+
+</Project>

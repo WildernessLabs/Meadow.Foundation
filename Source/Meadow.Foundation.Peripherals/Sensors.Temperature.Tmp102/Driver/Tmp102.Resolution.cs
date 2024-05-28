@@ -17,6 +17,5 @@
             /// </summary>
             Resolution13Bits
         }
-
     }
 }

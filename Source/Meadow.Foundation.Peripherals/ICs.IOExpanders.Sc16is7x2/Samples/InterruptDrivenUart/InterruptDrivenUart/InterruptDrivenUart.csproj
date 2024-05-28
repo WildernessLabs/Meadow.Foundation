@@ -21,6 +21,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.Foundation.ICs.IOExpanders.Sc16is7x2" Version="1.11.0" />
+    <PackageReference Include="Meadow.Foundation.ICs.IOExpanders.Sc16is7x2" Version="1.12.0" />
   </ItemGroup>
 </Project>

@@ -8,9 +8,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Meadow.Foundation.ICs.ADCs.Mcp3xxx" Version="1.11.0" />
-    <PackageReference Include="Meadow.Foundation.Sensors.Light.Veml7700" Version="1.11.0" />
-    <PackageReference Include="Meadow.Foundation.ICs.IOExpanders.Ft232h" Version="1.11.0" />
+    <PackageReference Include="Meadow.Foundation.ICs.ADCs.Mcp3xxx" Version="1.12.0" />
+    <PackageReference Include="Meadow.Foundation.Sensors.Light.Veml7700" Version="1.12.0" />
+    <PackageReference Include="Meadow.Foundation.ICs.IOExpanders.Ft232h" Version="1.12.0" />
   </ItemGroup>
 
 </Project>

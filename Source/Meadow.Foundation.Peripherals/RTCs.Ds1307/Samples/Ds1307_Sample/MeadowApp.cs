@@ -10,7 +10,7 @@ namespace RTCs.DS1307_Sample
     {
         //<!=SNIP=>
 
-        Ds1307 rtc;
+        private Ds1307 rtc;
 
         public override Task Initialize()
         {
@@ -23,7 +23,7 @@ namespace RTCs.DS1307_Sample
 
         public override Task Run()
         {
-            var dateTime = new DateTime();
+            var dateTime = new DateTimeOffset();
             var running = rtc.IsRunning;
 
             Resolver.Log.Info($"{(running ? "is running" : "is not running")}");

@@ -7,6 +7,6 @@
     <EmbeddedResource Include="menu.json" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.Foundation.Serialization.MicroJson" Version="1.11.0" />
+    <PackageReference Include="Meadow.Foundation.Serialization.MicroJson" Version="1.12.0" />
   </ItemGroup>
 </Project>

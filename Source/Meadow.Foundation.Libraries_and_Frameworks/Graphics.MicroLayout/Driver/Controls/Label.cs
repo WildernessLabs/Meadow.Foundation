@@ -5,10 +5,14 @@
 /// </summary>
 public class Label : ThemedControl
 {
+    private static Color DefaultTextColor = Color.White;
+    private static Color DefaultBackColor = Color.Transparent;
+
     private string _text = string.Empty;
 
-    private Color _textColor = Color.White;
-    private Color _backColor = Color.Transparent;
+    private DisplayTheme? _theme;
+    private Color? _textColor;
+    private Color? _backColor;
     private VerticalAlignment _verticalAlignment = VerticalAlignment.Center;
     private HorizontalAlignment _horizontalAlignment;
     private IFont? _font;
@@ -34,16 +38,7 @@ public class Label : ThemedControl
     /// <param name="theme">The display theme to apply.</param>
     public override void ApplyTheme(DisplayTheme theme)
     {
-        if (theme != null)
-        {
-            if (theme.TextColor != null) TextColor = theme.TextColor.Value;
-            if (theme.BackgroundColor != null) BackColor = theme.BackgroundColor.Value;
-
-            if (Font == null)
-            {
-                Font = theme.Font;
-            }
-        }
+        _theme = theme;
     }
 
     /// <summary>
@@ -69,7 +64,7 @@ public class Label : ThemedControl
     /// </summary>
     public Color TextColor
     {
-        get => _textColor;
+        get => _textColor ?? _theme?.TextColor ?? DefaultTextColor;
         set => SetInvalidatingProperty(ref _textColor, value);
     }
 
@@ -78,7 +73,7 @@ public class Label : ThemedControl
     /// </summary>
     public Color BackColor
     {
-        get => _backColor;
+        get => _backColor ?? _theme?.BackgroundColor ?? DefaultBackColor;
         set => SetInvalidatingProperty(ref _backColor, value);
     }
 
