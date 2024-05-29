@@ -47,7 +47,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// <summary>
         /// The temperature from the last reading
         /// </summary>
-        public Units.Temperature? Temperature { get; protected set; }
+        public Units.Temperature? Temperature => Conditions;
 
         /// <summary>
         /// Create a new TMP102 object using the default configuration for the sensor
@@ -55,7 +55,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// <param name="i2cBus">The I2CBus</param>
         /// <param name="address">I2C address of the sensor</param>
         public Tmp102(II2cBus i2cBus, byte address = (byte)Addresses.Default)
-            : base(i2cBus, address, readBufferSize: 2, writeBufferSize: 2)
+            : base(i2cBus, address, readBufferSize: 2, writeBufferSize: 3)
         {
             BusComms?.ReadRegister(0x01, ReadBuffer.Span);
             _sensorResolution = (ReadBuffer.Span[1] & 0x10) > 0 ?

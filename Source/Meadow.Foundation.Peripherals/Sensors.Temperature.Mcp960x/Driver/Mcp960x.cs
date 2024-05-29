@@ -43,12 +43,12 @@ public abstract partial class Mcp960x :
     /// <summary>
     /// The Hot Temperature value from the last reading
     /// </summary>
-    public Units.Temperature? TemperatureHot { get; protected set; }
+    public Units.Temperature? TemperatureHot => Conditions.TemperatureHot;
 
     /// <summary>
     /// The Cold Temperature value from the last reading
     /// </summary>
-    public Units.Temperature? TemperatureCold { get; protected set; }
+    public Units.Temperature? TemperatureCold => Conditions.TemperatureCold;
 
     /// <summary>
     /// Create a new Mcp960x object using the default configuration for the sensor

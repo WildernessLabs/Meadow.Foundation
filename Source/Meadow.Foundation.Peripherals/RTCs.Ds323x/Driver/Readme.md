@@ -1,6 +1,6 @@
 # Meadow.Foundation.RTCs.Ds323x
 
-**Ds323x I2C real time clock (DS3231)**
+**Ds323x I2C family of real time clocks (DS3231, DS3231M, DS3232)**
 
 The **Ds323x** library is included in the **Meadow.Foundation.RTCs.Ds323x** nuget package and is designed for the [Wilderness Labs](www.wildernesslabs.co) Meadow .NET IoT platform.
 
@@ -20,6 +20,8 @@ You can install the library from within Visual studio using the the NuGet Packag
 ```csharp
 Ds3231 sensor;
 
+readonly TimeSpan timezoneOffset = new TimeSpan(-7, 0, 0);
+
 public override Task Initialize()
 {
     Resolver.Log.Info("Initialize...");
@@ -32,16 +34,16 @@ public override Task Initialize()
 
 public override Task Run()
 {
-    sensor.CurrentDateTime = new DateTime(2020, 1, 1);
+    sensor.CurrentDateTime = new DateTimeOffset(new DateTime(2024, 1, 1), timezoneOffset);
 
     Resolver.Log.Info($"Current time: {sensor.CurrentDateTime}");
     Resolver.Log.Info($"Temperature: {sensor.Temperature}");
 
-    sensor.ClearInterrupt(Ds323x.Alarm.BothAlarmsRaised);
+    sensor.ClearInterrupt(Ds3231.Alarm.BothAlarmsRaised);
 
-    sensor.SetAlarm(Ds323x.Alarm.Alarm1Raised,
-        new DateTime(2020, 1, 1, 1, 0, 0),
-        Ds323x.AlarmType.WhenSecondsMatch);
+    sensor.SetAlarm(Ds3231.Alarm.Alarm1Raised,
+        new DateTimeOffset(new DateTime(2024, 1, 1, 1, 0, 0), timezoneOffset),
+        Ds3231.AlarmType.WhenSecondsMatch);
 
     sensor.DisplayRegisters();
 

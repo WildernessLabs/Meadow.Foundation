@@ -38,6 +38,11 @@ public class SilkDisplay : IResizablePixelDisplay, ITouchScreen
     /// <inheritdoc/>
     public IPixelBuffer PixelBuffer => pixelBuffer;
 
+    /// <summary>
+    /// The frame buffer that's used to draw to the display
+    /// </summary>
+    private SkiaPixelBuffer? frameBuffer;
+
     /// <inheritdoc/>
     public ColorMode ColorMode => pixelBuffer.ColorMode;
 
@@ -58,21 +63,20 @@ public class SilkDisplay : IResizablePixelDisplay, ITouchScreen
     /// </summary>
     /// <param name="width">Width of display in pixels</param>
     /// <param name="height">Height of display in pixels</param>
-    /// <param name="displayScale"></param>
+    /// <param name="displayScale">The scale factor to visualize the display</param>
     public SilkDisplay(int width = 800, int height = 600, float displayScale = 1.0f)
     {
-        this.displayScale = displayScale;
-        virtualWidth = (int)(width * displayScale);
-        virtualHeight = (int)(height * displayScale);
-        Initialize(virtualWidth, virtualHeight);
+        Initialize(width, height, displayScale);
     }
 
     /// <inheritdoc/>
     public void Resize(int width, int height, float displayScale = 1)
     {
         pixelBuffer = new SkiaPixelBuffer(width, height);
+        frameBuffer = new SkiaPixelBuffer(width, height);
 
         this.displayScale = displayScale;
+
         virtualWidth = (int)(width * displayScale);
         virtualHeight = (int)(height * displayScale);
         window.Size = new Vector2D<int>(virtualWidth, virtualHeight);
@@ -82,12 +86,11 @@ public class SilkDisplay : IResizablePixelDisplay, ITouchScreen
         CreateOrUpdateDrawingSurface(virtualWidth, virtualHeight);
     }
 
-    private void Initialize(int width, int height)
+    private void Initialize(int width, int height, float displayScale = 1)
     {
-        pixelBuffer = new SkiaPixelBuffer(width, height);
+        this.displayScale = displayScale;
 
         var options = WindowOptions.Default;
-        options.Size = new Vector2D<int>(width, height);
         options.Title = "Meadow Desktop";
         options.PreferredStencilBufferBits = 8;
         options.PreferredBitDepth = new Vector4D<int>(8, 8, 8, 8);
@@ -98,12 +101,12 @@ public class SilkDisplay : IResizablePixelDisplay, ITouchScreen
         window.Render += OnWindowRender;
         window.Initialize();
 
-        WindowExtensions.Center(window);
-
         grglInterface = GRGlInterface.Create(name => window.GLContext!.TryGetProcAddress(name, out var addr) ? addr : 0);
         grglInterface.Validate();
         context = GRContext.CreateGl(grglInterface);
         CreateOrUpdateDrawingSurface(width, height);
+
+        Resize(width, height, displayScale);
     }
 
     private void CreateOrUpdateDrawingSurface(int width, int height)
@@ -161,11 +164,19 @@ public class SilkDisplay : IResizablePixelDisplay, ITouchScreen
 
     private void OnWindowRender(double obj)
     {
-        canvas.DrawBitmap(pixelBuffer.SKBitmap,
-            SKRect.Create(0, 0, Width, Height),
-            SKRect.Create(0, 0, virtualWidth, virtualHeight));
+        if (frameBuffer == null)
+        {
+            return;
+        }
 
-        canvas.Flush();
+        lock (frameBuffer)
+        {
+            canvas.DrawBitmap(frameBuffer.SKBitmap,
+                SKRect.Create(0, 0, Width, Height),
+                SKRect.Create(0, 0, virtualWidth, virtualHeight));
+
+            canvas.Flush();
+        }
     }
 
     /// <summary>
@@ -183,6 +194,15 @@ public class SilkDisplay : IResizablePixelDisplay, ITouchScreen
     /// </summary>
     public void Show()
     {
+        if (frameBuffer == null)
+        {
+            return;
+        }
+
+        lock (frameBuffer)
+        {
+            frameBuffer?.WriteBuffer(0, 0, pixelBuffer);
+        }
     }
 
     /// <summary>
@@ -204,6 +224,11 @@ public class SilkDisplay : IResizablePixelDisplay, ITouchScreen
     public void Clear(bool updateDisplay = false)
     {
         pixelBuffer.Clear();
+
+        if (updateDisplay)
+        {
+            Show();
+        }
     }
 
     /// <summary>

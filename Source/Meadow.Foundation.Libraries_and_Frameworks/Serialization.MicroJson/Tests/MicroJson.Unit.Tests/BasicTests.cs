@@ -134,13 +134,13 @@ public class BasicTests
     {
         var input = """
             {
-                "Value": "hello
+                "StringArg": "hello
                 there
                 data"
             }
             """;
 
-        var result = MicroJson.Deserialize<IntegerClass>(input);
+        var result = MicroJson.Deserialize<SimpleCommand>(input);
 
         Assert.NotNull(result);
     }

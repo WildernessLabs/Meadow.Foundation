@@ -1,6 +1,6 @@
 # Meadow.Foundation.Sensors.Motion.Adxl3xx
 
-**ADXL3xx Analog and I2C 3-axis accelerometers (ADXL335, ADXL345, ADXL337, ADXL362, ADXL377)**
+**ADXL3xx Analog and I2C 3-axis accelerometers (ADXL335, ADXL343, ADXL345, ADXL337, ADXL362, ADXL377)**
 
 The **Adxl3xx** library is included in the **Meadow.Foundation.Sensors.Motion.Adxl3xx** nuget package and is designed for the [Wilderness Labs](www.wildernesslabs.co) Meadow .NET IoT platform.
 

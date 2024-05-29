@@ -5,7 +5,7 @@ namespace Meadow.Foundation.Displays;
 
 internal class SkiaPixelBuffer : IPixelBuffer
 {
-    public SKBitmap SKBitmap { get; }
+    public SKBitmap SKBitmap { get; private set; }
 
     public int Width => SKBitmap.Width;
     public int Height => SKBitmap.Height;
@@ -48,7 +48,8 @@ internal class SkiaPixelBuffer : IPixelBuffer
 
     public void InvertPixel(int x, int y)
     {
-        throw new NotImplementedException();
+        var px = SKBitmap.GetPixel(x, y);
+        SKBitmap.SetPixel(x, y, new SKColor((byte)~px.Red, (byte)~px.Green, (byte)~px.Blue));
     }
 
     public void SetPixel(int x, int y, Color color)
@@ -58,6 +59,12 @@ internal class SkiaPixelBuffer : IPixelBuffer
 
     public void WriteBuffer(int originX, int originY, IPixelBuffer buffer)
     {
+        if (buffer is SkiaPixelBuffer skiaBuffer && originX == 0 && originY == 0)
+        {
+            skiaBuffer.SKBitmap.CopyTo(SKBitmap);
+            return;
+        }
+
         for (var x = 0; x < buffer.Width; x++)
         {
             for (var y = 0; y < buffer.Height; y++)

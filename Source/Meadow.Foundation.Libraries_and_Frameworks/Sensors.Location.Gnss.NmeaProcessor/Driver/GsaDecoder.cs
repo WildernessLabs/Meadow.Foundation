@@ -40,9 +40,7 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
                 _ => ActiveSatelliteSelection.Unknown,
             };
 
-            int dimensionalFixType;
-
-            if (int.TryParse(sentence.DataElements[1], out dimensionalFixType))
+            if (int.TryParse(sentence.DataElements[1], out var dimensionalFixType))
             {
                 satellites.Dimensions = (DimensionalFixType)dimensionalFixType;
             }
@@ -73,22 +71,17 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
                 satellites.SatellitesUsedForFix = null;
             }
 
-            decimal dilutionOfPrecision;
-
-            if (decimal.TryParse(sentence.DataElements[14], out dilutionOfPrecision))
+            if (decimal.TryParse(sentence.DataElements[14], out var dilutionOfPrecision))
             {
                 satellites.DilutionOfPrecision = dilutionOfPrecision;
             }
 
-            decimal horizontalDilutionOfPrecision;
-
-            if (decimal.TryParse(sentence.DataElements[15], out horizontalDilutionOfPrecision))
+            if (decimal.TryParse(sentence.DataElements[15], out var horizontalDilutionOfPrecision))
             {
                 satellites.HorizontalDilutionOfPrecision = horizontalDilutionOfPrecision;
             }
 
-            decimal verticalDilutionOfPrecision;
-            if (decimal.TryParse(sentence.DataElements[16], out verticalDilutionOfPrecision))
+            if (decimal.TryParse(sentence.DataElements[16], out var verticalDilutionOfPrecision))
             {
                 satellites.VerticalDilutionOfPrecision = verticalDilutionOfPrecision;
             }

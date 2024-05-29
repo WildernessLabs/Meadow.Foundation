@@ -19,7 +19,7 @@ namespace Meadow.Foundation.Graphics
         /// <summary>
         /// PixelBuffer draw target
         /// </summary>
-        protected IPixelBuffer PixelBuffer => (display != null) ? display.PixelBuffer : memoryBuffer;
+        protected IPixelBuffer PixelBuffer => display?.PixelBuffer ?? memoryBuffer;
         private readonly IPixelBuffer memoryBuffer = default!;
 
         /// <summary>
@@ -30,12 +30,12 @@ namespace Meadow.Foundation.Graphics
         /// <summary>
         /// The color used when a pixel is enabled (on)
         /// </summary>
-        public Color EnabledColor => display != null ? display.EnabledColor : Color.White;
+        public Color EnabledColor => display?.EnabledColor ?? Color.White;
 
         /// <summary>
         /// The color used when a pixel is not enabled (off)
         /// </summary>
-        public Color DisabledColor => display != null ? display.EnabledColor : Color.Black;
+        public Color DisabledColor => display?.DisabledColor ?? Color.Black;
 
         /// <summary>
         /// Font used for drawing text to the display
@@ -1462,6 +1462,55 @@ namespace Meadow.Foundation.Graphics
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// Get the color for a pixel at a given location
+        /// </summary>
+        /// <param name="x">x location </param>
+        /// <param name="y">y location</param>
+        public virtual Color GetPixel(int x, int y)
+        {
+            if (IgnoreOutOfBoundsPixels && IsCoordinateInBounds(x, y) == false)
+            {
+                return Color.Black;
+            }
+
+            if (display is IRotatableDisplay)
+            {
+                return PixelBuffer.GetPixel(x, y);
+            }
+            else
+            {
+                return PixelBuffer.GetPixel(GetXForRotation(x, y), GetYForRotation(x, y));
+            }
+        }
+
+        /// <summary>
+        /// Draws a pixel with alpha blending at the specified coordinates using the given color and it's alpha value
+        /// </summary>
+        /// <param name="x">The x-coordinate of the pixel</param>
+        /// <param name="y">The y-coordinate of the pixel</param>
+        /// <param name="color">The color to draw</param>
+        public void DrawPixelWithAlpha(float x, float y, Color color)
+        {
+            DrawPixelWithAlpha(x, y, color, color.A);
+        }
+
+        /// <summary>
+        /// Draws a pixel with alpha blending at the specified coordinates using the given color an external alpha value
+        /// </summary>
+        /// <remarks>
+        /// The alpha channel of the provided color will be ignored
+        /// </remarks>
+        /// <param name="x">The x-coordinate of the pixel</param>
+        /// <param name="y">The y-coordinate of the pixel</param>
+        /// <param name="color">The color to draw</param>
+        /// <param name="alpha">The alpha value</param>
+        public void DrawPixelWithAlpha(float x, float y, Color color, float alpha)
+        {
+            var background = GetPixel((int)x, (int)y);
+            DrawPixel((int)x, (int)y, background.Blend(color, alpha));
         }
 
         /// <summary>

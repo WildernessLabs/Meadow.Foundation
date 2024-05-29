@@ -34,4 +34,16 @@ public class WeatherJsonTests
         Assert.NotNull(result.Coord);
         Assert.NotNull(result.Sys);
     }
+
+    [Fact]
+    public void OpenMeteoJson()
+    {
+        var json = Inputs.GetInputResource("open-meteo.json");
+        var result = MicroJson.Deserialize<MeteoResponse>(json);
+
+        Assert.NotNull(result);
+        Assert.NotNull(result.current);
+        Assert.NotEmpty(result.hourly.temperature_2m);
+        Assert.NotEmpty(result.hourly.time);
+    }
 }

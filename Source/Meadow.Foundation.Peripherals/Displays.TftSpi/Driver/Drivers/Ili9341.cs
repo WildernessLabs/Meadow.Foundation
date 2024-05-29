@@ -22,7 +22,7 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// The color modes supported by the display
         /// </summary>
-        public override ColorMode SupportedColorModes => ColorMode.Format16bppRgb565 | ColorMode.Format12bppRgb444;
+        public override ColorMode SupportedColorModes => ColorMode.Format16bppRgb565 | ColorMode.Format12bppRgb444 | ColorMode.Format18bppRgb666;
 
         /// <summary>
         /// Create a new Ili9341 color display object
@@ -75,7 +75,7 @@ namespace Meadow.Foundation.Displays
             }
             else
             {
-                DelayMs(120); //Not sure if this is needed but can't hurt
+                DelayMs(120); // Not sure if this is needed but can't hurt
             }
 
             SendCommand(0xEF, new byte[] { 0x03, 0x80, 0x02 });
@@ -92,14 +92,19 @@ namespace Meadow.Foundation.Displays
             SendCommand(ILI9341_VMCTR2, new byte[] { 0x86 });
             SendCommand((byte)Register.MADCTL, new byte[] { (byte)(Register.MADCTL_MX | Register.MADCTL_BGR) });
 
-            if (ColorMode == ColorMode.Format16bppRgb565)
+            switch (ColorMode)
             {
-                SendCommand((byte)Register.COLOR_MODE, new byte[] { 0x55 }); //color mode - 16bpp  
+                case ColorMode.Format16bppRgb565:
+                    SendCommand((byte)Register.COLOR_MODE, new byte[] { 0x55 }); // Color mode - 16bpp
+                    break;
+                case ColorMode.Format12bppRgb444:
+                    SendCommand((byte)Register.COLOR_MODE, new byte[] { 0x53 }); // Color mode - 12bpp
+                    break;
+                case ColorMode.Format18bppRgb666:
+                    SendCommand((byte)Register.COLOR_MODE, new byte[] { 0x66 }); // Color mode - 18bpp
+                    break;
             }
-            else
-            {
-                SendCommand((byte)Register.COLOR_MODE, new byte[] { 0x53 }); //color mode - 12bpp 
-            }
+
             SendCommand((byte)Register.FRMCTR1, new byte[] { 0x00, 0x18 });
             SendCommand(ILI9341_DFUNCTR, new byte[] { 0x08, 0x82, 0x27 });
             SendCommand(0xF2, new byte[] { 0x00 });

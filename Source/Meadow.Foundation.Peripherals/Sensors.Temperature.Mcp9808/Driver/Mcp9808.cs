@@ -16,9 +16,9 @@ namespace Meadow.Foundation.Sensors.Temperature
         public byte DefaultI2cAddress => (byte)Addresses.Default;
 
         /// <summary>
-        /// The temperature, in degrees celsius (°C), from the last reading.
+        /// The current temperature
         /// </summary>
-        public Units.Temperature? Temperature { get; protected set; }
+        public Units.Temperature? Temperature => Conditions;
 
         /// <summary>
         /// Creates a new Mcp9808 object

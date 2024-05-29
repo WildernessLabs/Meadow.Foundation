@@ -12,12 +12,14 @@
   <ItemGroup>
     <None Include=".\Readme.md" Pack="true" PackagePath="" />
     <None Remove="inputs\menu.json" />
+    <None Remove="inputs\open-meteo.json" />
     <None Remove="inputs\puzzles.json" />
     <None Remove="inputs\weather.json" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="inputs\menu.json" />
+    <EmbeddedResource Include="inputs\open-meteo.json" />
     <EmbeddedResource Include="inputs\puzzles.json" />
     <EmbeddedResource Include="inputs\weather.json" />
   </ItemGroup>
@@ -37,8 +39,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Meadow.Contracts" Version="1.11.0" />
-    <PackageReference Include="Meadow.Foundation.Serialization.MicroJson" Version="1.11.0" />
+    <PackageReference Include="Meadow.Contracts" Version="1.12.0" />
+    <PackageReference Include="Meadow.Foundation.Serialization.MicroJson" Version="1.12.0" />
   </ItemGroup>
 
 </Project>
