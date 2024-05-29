@@ -8,7 +8,7 @@ public class Ftd2xxTests
     public void GetDeviceList()
     {
         // assumes an FT232 is connected
-        var devices = new FtdiDeviceCollection();
+        var devices = FtdiExpanderCollection.Devices;
         devices.Refresh();
         Assert.True(devices.Count > 0);
     }
@@ -17,7 +17,7 @@ public class Ftd2xxTests
     public void OpenI2CBus()
     {
         // assumes an FT232 is connected
-        var ftdi = new Ft232h(false);
+        var ftdi = FtdiExpanderCollection.Devices[0];
         var bus = ftdi.CreateI2cBus();
         Assert.NotNull(bus);
     }
@@ -26,7 +26,7 @@ public class Ftd2xxTests
     public void OpenSPIBus()
     {
         // assumes an FT232 is connected
-        var ftdi = new Ft232h(false);
+        var ftdi = FtdiExpanderCollection.Devices[0];
         var bus = ftdi.CreateSpiBus();
         Assert.NotNull(bus);
     }
@@ -35,7 +35,7 @@ public class Ftd2xxTests
     public void NoDeviceForSpiCheck()
     {
         // assumes no FT232 is connected
-        var ftdi = new Ft232h(false);
+        var ftdi = FtdiExpanderCollection.Devices[0];
         Assert.Throws<DeviceNotFoundException>(() =>
         {
             var bus = ftdi.CreateSpiBus();
@@ -46,7 +46,7 @@ public class Ftd2xxTests
     public void NoDeviceForI2CCheck()
     {
         // assumes no FT232 is connected
-        var ftdi = new Ft232h(false);
+        var ftdi = FtdiExpanderCollection.Devices[0];
         Assert.Throws<DeviceNotFoundException>(() =>
         {
             var bus = ftdi.CreateI2cBus();
@@ -59,7 +59,7 @@ public class Ftd2xxTests
         // assumes no FT232 driver is installed (rename C:\Windows\System32\ftd2xx.dll)
         Assert.Throws<DriverNotInstalledException>(() =>
         {
-            var ftdi = new Ft232h(false);
+            var ftdi = FtdiExpanderCollection.Devices[0];
         });
     }
 }
