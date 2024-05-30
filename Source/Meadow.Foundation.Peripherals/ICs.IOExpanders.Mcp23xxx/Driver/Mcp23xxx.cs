@@ -138,17 +138,21 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
             if (interruptPort != null)
             {
-                bool intHigh = true;
-
-                if (interruptPort.Resistor == ResistorMode.InternalPullUp ||
-                   interruptPort.Resistor == ResistorMode.ExternalPullUp)
-                {
-                    intHigh = false;
-                }
-
                 byte iocon = 0x00;
-                iocon = BitHelpers.SetBit(iocon, 0x01, intHigh); //set interrupt pin to active high (true), low (false)
                 iocon = BitHelpers.SetBit(iocon, 0x02, false); //don't set interrupt to open drain (should be the default)
+
+                switch (interruptPort.InterruptMode)
+                {
+                    case InterruptMode.EdgeRising:
+                        // INTPOL == 1
+                        iocon = BitHelpers.SetBit(iocon, 0x01, true); //set interrupt pin to active high (true), low (false)
+                        break;
+                    case InterruptMode.EdgeFalling:
+                        // INTPOL == 0
+                        iocon = BitHelpers.SetBit(iocon, 0x01, false); //set interrupt pin to active high (true), low (false)
+                        break;
+                    default: throw new ArgumentException("The MCP interrupt must be single-edge (rising or falling)");
+                }
 
                 mcpDevice.WriteRegister(MapRegister(Registers.IOCON_IOConfiguration), iocon);
 
@@ -426,6 +430,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 if (interruptMode != InterruptMode.None)
                 {   // we don't set DEFVAL or INTCON because we want interrupts raised for both directions
                     // interrupt on change (raise an interrupt on the interrupt pin on state change)
+                    ClearRegisterBit(MapRegister(Registers.INTCAP_InterruptCapture, bank), bitIndex);
+                    ClearRegisterBit(MapRegister(Registers.INTF_InterruptFlag, bank), bitIndex);
                     SetRegisterBit(MapRegister(Registers.GPINTEN_InterruptOnChange, bank), bitIndex);
                 }
                 else
@@ -437,6 +443,14 @@ namespace Meadow.Foundation.ICs.IOExpanders
             {
                 throw new Exception("Pin is out of range");
             }
+        }
+
+        private void DumpRegisters()
+        {
+            var data = new byte[11];
+            mcpDevice.ReadRegister(0x00, data);
+
+            Resolver.Log.Info($"Registers: {BitConverter.ToString(data)}");
         }
 
         /// <summary>
