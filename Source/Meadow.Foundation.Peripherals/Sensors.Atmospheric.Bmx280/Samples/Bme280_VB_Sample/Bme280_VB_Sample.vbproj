@@ -6,7 +6,7 @@
     <AssemblyName>App</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\..\Meadow.Core\source\implementations\f7\Meadow.F7\Meadow.F7.csproj" />
-    <ProjectReference Include="..\..\Driver\Sensors.Atmospheric.Bmx280.csproj" />
+    <PackageReference Include="Meadow.F7" Version="1.12.0" />
+    <PackageReference Include="Meadow.Foundation.Sensors.Atmospheric.Bmx280" Version="1.12.0" />
   </ItemGroup>
 </Project>
