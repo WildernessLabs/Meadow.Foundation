@@ -413,3 +413,8 @@ OnBoardFlash.dat.*
 # NETMF
 OnBoardFlash.dat
 
+*.csproj
+*.vbproj
+*.json
+*.csproj
+*.vbproj

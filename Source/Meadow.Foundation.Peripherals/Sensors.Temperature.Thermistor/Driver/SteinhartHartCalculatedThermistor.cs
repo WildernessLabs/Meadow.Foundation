@@ -135,7 +135,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// <summary>
         /// Update function calculates new temperature from voltage when filter threshold is met
         /// </summary>
-        /// <param name="result"></param>
+        /// <param name="result">Voltgae change result, old and new</param>
         protected void HandleAnalogUpdate(IChangeResult<Voltage> result)
         {
             Units.Temperature temperature = VoltageToTemperature(result.New);
@@ -155,7 +155,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// </summary>
         /// <param name="sender">Thermistor object that generated update</param>
         /// <param name="e"></param>a structure of two temperatures, old and new
-        void HandleResult(object sender, IChangeResult<Meadow.Units.Temperature> e)
+        void HandleTemperatureUpdate(object sender, IChangeResult<Meadow.Units.Temperature> e)
         {
              Resolver.Log.Info($"Handle Result: {e.New.Celsius:N1} °C");
         }
