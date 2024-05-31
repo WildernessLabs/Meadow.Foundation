@@ -10,35 +10,135 @@
  */
 
 using Meadow.Hardware;
+using Meadow.Foundation;
 using Meadow.Peripherals.Sensors;
 using Meadow.Peripherals.Sensors.Environmental;
 using Meadow.Units;
 using System;
 using System.Threading.Tasks;
+using Meadow.Logging;
+using Meadow.Foundation.Sensors.Temperature;
 
-namespace Meadow.Foundation.Sensors.Environmental;
+using TempCorrectedDOSensorContract;
+using Meadow;
+
+namespace DFRobotGravityDOMeter;
 
 /// <summary>
 /// DFRobot Analog Gravity Dissolved Oxygen Meter
 /// </summary>
-public class DFRobotGravityDOMeter : SamplingSensorBase<ConcentrationInWater>, IDissolvedOxygenConcentrationSensor
+public class DFRobotGravityDOMeter : PollingSensorBase<ConcentrationInWater>, ITempCorrectedDOsensor
 {
-    public const byte MODE_MEASURE = 0;
-    public const byte MODE_CAL_ZERO = 1;
-    public const byte MODE_CAL_SAT = 2;
-    private byte calState;
+    /// <summary>
+    /// Last concentration value read from the sensor
+    /// </summary>
+    public ConcentrationInWater Concentration { get; set; } = new ConcentrationInWater(10, ConcentrationInWater.UnitType.MilligramsPerLiter);
 
     /// <summary>
-    /// The current water temperature, which can be set from the TempSensor
+    /// Last Temperature read from the sensor
     /// </summary>
-    public Units.Temperature WaterTemperature { get; set; } = new Units.Temperature(20, Units.Temperature.UnitType.Celsius);
-    private Units.Temperature lastWaterTemperature;
+    public Meadow.Units.Temperature WaterTemperature { get; set; } = new Temperature(20, Temperature.UnitType.Celsius);
 
-    public Units.Voltage SensorVoltage;
+    //public ISamplingSensor<Temperature>? TempSensor { get; set; } = null;
     /// <summary>
-    /// a Temperature Sensor, used to update water temperature for calulating mg/l
+    /// A Temperature Sensor is nice, but not essential
     /// </summary>
-    readonly ITemperatureSensor TempSensor;
+    public ITemperatureSensor? TempSensor { get; set; } = null;
+
+    /// <summary>
+    /// The analog input port sampling the Oxygen sensor probe voltage
+    /// </summary>
+    private IAnalogInputPort DOsensorPort { get; }
+
+    /// <summary>
+    ///  constructor for DO sensor
+    /// </summary>
+    /// <param name="doSensorPort">Analog input port that samples oxygen sensor</param>
+    /// <param name="tempSensor">Temeprature sensor, may be null</param>
+    public DFRobotGravityDOMeter(IAnalogInputPort doSensorPort, ITemperatureSensor? tempSensor)
+    {
+        TempSensor = tempSensor;
+        if (TempSensor is not null)
+            TempSensor.Updated += TempSensorHandler;
+        DOsensorPort = doSensorPort;
+        DOsensorPort.Subscribe(IAnalogInputPort.CreateObserver(handler: HandleAnalogUpdate, filter: FilterAnalogUpdate));
+    }
+
+     /// <summary>
+    /// This filter prevents Temperature calculations for changes in sensor voltage less than 10 mV
+    /// </summary>
+    /// <param name="result"></param>
+    /// <returns></returns>
+    private bool FilterAnalogUpdate(IChangeResult<Voltage> result)
+    {
+        bool filter = false;
+        if (result.Old is { } old) //if (result.Old is not null) new Voltage old = result.old.Value
+        {
+            filter = Math.Abs(result.New.Millivolts - old.Millivolts) > 10;
+        }
+        return filter;
+    }
+
+    /// <summary>
+    /// Update function calculates new concentration when filter threshold voltage is met
+    /// </summary>
+    /// <param name="result">Voltage change result,old and new</param>
+    private void HandleAnalogUpdate(IChangeResult<Voltage> result)
+    {
+        ConcentrationInWater concentration = VoltageToConcentration(result.New, WaterTemperature);
+        ChangeResult<ConcentrationInWater> ConcentrationChangeResult = new()
+        {
+            Old = this.Concentration,
+            New = concentration,
+        };
+        this.Concentration = concentration;
+        base.RaiseEventsAndNotify(ConcentrationChangeResult);
+    }
+
+    /// <summary>
+    /// Observer for temperature sensor, updates DOMeter Water Temperature with latest value
+    /// </summary>
+    /// <param name="sender">The temperature sensor object</param>
+    /// <param name="e">Temperature change result, old and new</param>
+    void TempSensorHandler(object sender, IChangeResult<Temperature> e)
+    {
+        this.WaterTemperature = e.New;
+    }
+
+
+    /// <summary>
+    /// Reads the temperature and O2 sensors, updates values and returns the concentration
+    /// </summary>
+    /// <returns>new concentration value</returns>
+    Task<ConcentrationInWater> ITempCorrectedDOsensor.Read()
+    {
+        return ReadSensors();
+    }
+
+   /// <summary>
+   /// Task that reads the sensors and updates the temperature/concentration value
+   /// </summary>
+   /// <returns>new concentration value</returns>
+   async Task<ConcentrationInWater> ReadSensors()
+    {
+        if (TempSensor is not null)
+            this.WaterTemperature = await TempSensor.Read();
+        Voltage voltage = await DOsensorPort.Read();
+        this.Concentration = VoltageToConcentration(voltage, WaterTemperature);
+        return Concentration;
+
+    }
+
+    /// <summary>
+    /// task that just reads the O2 sensor
+    /// </summary>
+    /// <returns>new concentration value</returns>
+    protected override async Task<ConcentrationInWater> ReadSensor()
+    {
+        Voltage voltage = await DOsensorPort.Read();
+        this.Concentration = VoltageToConcentration(voltage, WaterTemperature);
+        return Concentration;
+    }
 
     /// <summary>
     /// The calibration values for the sensor, log linear fits of voltage vs temperature
@@ -49,18 +149,65 @@ public class DFRobotGravityDOMeter : SamplingSensorBase<ConcentrationInWater>, I
     public double Sat_Offset { get; set; } = 4.6834;
     public double Sat_Mult { get; set; } = -0.086818;
 
-    private double SumXi, SumYi, SumXiYi, SumSqXi, Nreads;
-
 
     /// <summary>
-    /// the analog input port  used for A/D conversion of amplified electrode potential
+    /// Calculates O2 concentration from sensor voltage and temperature
     /// </summary>
-    public IAnalogInputPort AnalogInputPort { get; }
+    /// <param name="voltage"></param>
+    /// <param name="temperature"></param>
+    /// <returns></returns>
+    ConcentrationInWater VoltageToConcentration(Voltage voltage, Meadow.Units.Temperature temperature)
+    {
+        double milligramsPerVolt = Math.Exp(Sat_Offset + Sat_Mult * temperature.Celsius);
+        return new ConcentrationInWater((voltage.Volts * milligramsPerVolt), Meadow.Units.ConcentrationInWater.UnitType.MilligramsPerLiter);
+    }
 
-    /// <summary>
-    /// Last concentration value read from the sensor
-    /// </summary>
-    public ConcentrationInWater? Concentration => Conditions;
+ 
+    TimeSpan ISamplingSensor.UpdateInterval { get; } = TimeSpan.FromSeconds(2d);
+    bool ISamplingSensor.IsSampling { get; }
+
+   
+
+    ConcentrationInWater ITempCorrectedDOsensor.GetConcentrationWithTemp(Temperature temperature)
+    {
+        this.WaterTemperature = temperature;
+        Concentration = VoltageToConcentration(DOsensorPort.Voltage, temperature);
+        return Concentration;
+    }
+
+   
+    void ISamplingSensor.StartUpdating(TimeSpan? updateInterval)
+    {
+        lock (samplingLock)
+        {
+            if (IsSampling) { return; }
+            IsSampling = true;
+            DOsensorPort.StartUpdating(updateInterval);
+            TempSensor?.StartUpdating(updateInterval);
+        }
+
+        base.StartUpdating(updateInterval);
+    }
+
+
+    void ISamplingSensor.StopUpdating()
+        {
+        lock (samplingLock)
+        {
+            if (!IsSampling) { return; }
+            IsSampling = false;
+            DOsensorPort.StopUpdating();
+            TempSensor?.StopUpdating();
+        }
+
+        base.StopUpdating();
+    }
+
+    public const byte MODE_MEASURE = 0;
+    public const byte MODE_CAL_ZERO = 1;
+    public const byte MODE_CAL_SAT = 2;
+    private byte calState;
+
 
     /// <summary>
     /// Constants for 3rd order poly for DO saturation (mg/L) with °C temperature,
@@ -72,23 +219,46 @@ public class DFRobotGravityDOMeter : SamplingSensorBase<ConcentrationInWater>, I
     readonly double DO_Sat_K1 = -0.35984;
     readonly double DO_Sat_K2 = 0.0043703;
 
+}
+
+
+
+/*
+   
+
+
+
+
+
+    /// <summary>
+    /// The current water temperature, which can be set from the TempSensor
+    /// </summary>
+    public Units.Temperature WaterTemperature { get; set; } = new Units.Temperature(20, Units.Temperature.UnitType.Celsius);
+    private Units.Temperature lastWaterTemperature;
+
+    public Units.Voltage SensorVoltage;
+    /// <summary>
+    /// a Temperature Sensor, used to update water temperature for calulating mg/l
+    /// </summary>
+   
+
+  
+    private double SumXi, SumYi, SumXiYi, SumSqXi, Nreads;
+
+
+   
+
+  
+   
+
     /// <summary>
     /// observer for notifying that sensor has been sensed/votage has changed
     /// </summary>
     FilterableChangeObserver<Voltage> Observer;
 
-    /// <summary>
-    /// Creates a new DFRobotGravityDOMeter object with an analog input port and a temperature sensor
-    /// </summary>
-    /// <param name="analogInputPort">The port for the analog input pin</param>
-    /// <param name="tempSensor">Some method that can continuously sample temperatue</param>
-    public DFRobotGravityDOMeter(IAnalogInputPort analogInputPort, ITemperatureSensor tempSensor)
-    {
-        TempSensor = tempSensor;
-        AnalogInputPort = analogInputPort;
-        calState = MODE_MEASURE;
-        Observer = AddListener();
-    }
+    
+
+   
 
     /// <summary>
     /// Reads new data from the sensor
@@ -109,70 +279,7 @@ public class DFRobotGravityDOMeter : SamplingSensorBase<ConcentrationInWater>, I
     }
 
 
-    public void StartCalZero(TimeSpan updateInterval)
-    {
-        if (calState == MODE_MEASURE)
-        {
-            SumXi = 0;
-            SumYi = 0;
-            SumXiYi = 0;
-            SumSqXi = 0;
-            Nreads = 0;
-            lastWaterTemperature = WaterTemperature;
-            Updated += HandleCalZeroResult;
-            calState = MODE_CAL_ZERO;
-            StartUpdating(updateInterval);
-            TempSensor.StartUpdating(updateInterval);
-        }
-    }
-
-    public void EndCalZero()
-    {
-
-        if (calState == MODE_CAL_ZERO)
-        {
-            StopUpdating();
-            TempSensor.StopUpdating();
-            Zero_Mult = ((Nreads * SumXiYi) - (SumXi * SumYi)) / ((Nreads * SumSqXi) - (SumXi * SumXi));
-            Zero_Offset = ((SumYi * SumSqXi) - (SumXi * SumXiYi)) / ((Nreads * SumSqXi) - (SumXi * SumXi));
-            Updated -= HandleCalZeroResult;
-            calState = 0;
-        }
-    }
-
-
-    public void StartCalSat(TimeSpan updateInterval)
-    {
-        if (calState == MODE_MEASURE)
-        {
-            SumXi = 0;
-            SumYi = 0;
-            SumXiYi = 0;
-            SumSqXi = 0;
-            Nreads = 0;
-            lastWaterTemperature = WaterTemperature;
-            Updated += HandleCalSatResult;
-            calState = MODE_CAL_SAT;
-            StartUpdating(updateInterval);
-            TempSensor.StartUpdating(updateInterval);
-        }
-    }
-
-
-
-    public void EndCalSat()
-    {
-
-        if (calState == MODE_CAL_SAT)
-        {
-            StopUpdating();
-            TempSensor.StopUpdating();
-            Sat_Mult = ((Nreads * SumXiYi) - (SumXi * SumYi)) / ((Nreads * SumSqXi) - (SumXi * SumXi));
-            Sat_Offset = ((SumYi * SumSqXi) - (SumXi * SumXiYi)) / ((Nreads * SumSqXi) - (SumXi * SumXi));
-            Updated -= HandleCalSatResult;
-            calState = 0;
-        }
-    }
+    
 
 
 
@@ -220,7 +327,6 @@ public class DFRobotGravityDOMeter : SamplingSensorBase<ConcentrationInWater>, I
                     SensorVoltage = result.New;
                     WaterTemperature = (TempSensor.Temperature.HasValue) ? TempSensor.Temperature.Value : new Units.Temperature(20, Units.Temperature.UnitType.Celsius);
 
-                    /* The next line can be used to report raw voltage, for testing */
                     Resolver.Log.Info($"DO Sensor Voltage: {result.New.Millivolts:N1} mV");
                     Resolver.Log.Info($"DO TempSensor temp: {WaterTemperature.Celsius:N1} °C");
                    
@@ -237,6 +343,7 @@ public class DFRobotGravityDOMeter : SamplingSensorBase<ConcentrationInWater>, I
         );
         return Observer;
     }
+
 
 
     void  HandleCalZeroResult(object sender, IChangeResult<ConcentrationInWater> e)
@@ -281,9 +388,6 @@ public class DFRobotGravityDOMeter : SamplingSensorBase<ConcentrationInWater>, I
 
 
 
-    ConcentrationInWater VoltageToConcentration(Voltage voltage, Units.Temperature temperature)
-    {
-        double milligramsPerVolt = Math.Exp(Sat_Offset + Sat_Mult * temperature.Celsius);
-        return new ConcentrationInWater((voltage.Volts * milligramsPerVolt), Units.ConcentrationInWater.UnitType.MilligramsPerLiter);
-    }
-}
+   
+  
+}*/
