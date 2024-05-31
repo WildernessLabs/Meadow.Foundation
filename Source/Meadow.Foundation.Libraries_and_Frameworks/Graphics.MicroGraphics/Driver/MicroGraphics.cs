@@ -35,7 +35,7 @@ namespace Meadow.Foundation.Graphics
         /// <summary>
         /// The color used when a pixel is not enabled (off)
         /// </summary>
-        public Color DisabledColor => display?.EnabledColor ?? Color.Black;
+        public Color DisabledColor => display?.DisabledColor ?? Color.Black;
 
         /// <summary>
         /// Font used for drawing text to the display
