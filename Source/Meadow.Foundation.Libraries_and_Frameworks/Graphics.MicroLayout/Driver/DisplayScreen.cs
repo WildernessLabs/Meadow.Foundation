@@ -17,7 +17,7 @@ public class DisplayScreen : IControlContainer
     private Color _backgroundColor;
 
     /// <inheritdoc/>
-    public IControl Parent => null;
+    public IControl? Parent => null;
 
     /// <summary>
     /// Gets the Touchscreen associated with the display screen
