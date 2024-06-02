@@ -3,14 +3,29 @@ using System;
 
 namespace Meadow.Foundation.ICs.IOExpanders;
 
+/// <summary>
+/// Represents an FTDI expander.
+/// </summary>
 public abstract partial class FtdiExpander
 {
+    /// <summary>
+    /// Represents a digital output port for the FTDI expander.
+    /// </summary>
     public sealed class DigitalOutputPort : DigitalOutputPortBase
     {
-        private FtdiExpander _expander;
+        private readonly FtdiExpander _expander;
         private bool _state;
-        private FtdiPin _pin;
+        private readonly FtdiPin _pin;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DigitalOutputPort"/> class.
+        /// </summary>
+        /// <param name="expander">The FTDI expander instance.</param>
+        /// <param name="pin">The pin associated with this digital output port.</param>
+        /// <param name="channel">The digital channel information.</param>
+        /// <param name="initialState">The initial state of the port.</param>
+        /// <param name="initialOutputType">The initial output type of the port.</param>
+        /// <exception cref="ArgumentException">Thrown when the pin is invalid.</exception>
         internal DigitalOutputPort(FtdiExpander expander, IPin pin, IDigitalChannelInfo channel, bool initialState, OutputType initialOutputType)
             : base(pin, channel, initialState, initialOutputType)
         {
@@ -27,6 +42,9 @@ public abstract partial class FtdiExpander
             }
         }
 
+        /// <summary>
+        /// Gets or sets the state of the digital output port.
+        /// </summary>
         /// <inheritdoc/>
         public override bool State
         {
