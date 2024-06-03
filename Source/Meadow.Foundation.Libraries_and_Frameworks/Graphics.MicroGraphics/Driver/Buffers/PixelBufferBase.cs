@@ -357,6 +357,7 @@ namespace Meadow.Foundation.Graphics.Buffers
                 Width = newWidth,
                 Height = newHeight,
             };
+            newBuffer.InitializeBuffer(true);
 
             float xRatio = (float)Width / newWidth;
             float yRatio = (float)Height / newHeight;
