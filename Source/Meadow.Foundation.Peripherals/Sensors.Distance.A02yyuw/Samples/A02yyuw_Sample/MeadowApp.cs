@@ -5,6 +5,7 @@ using Meadow.Devices;
 using Meadow.Foundation.Sensors.Distance;
 using Meadow.Units;
 using System;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 
 namespace A02yyuw_Sample
@@ -21,13 +22,14 @@ namespace A02yyuw_Sample
 
         A02yyuw a02yyuw;
         protected TimeSpan updateInterval = TimeSpan.FromSeconds(2);
+        protected Length? currentLength;
         public override Task Initialize()
         {
             Resolver.Log.Info("Initialize...");
 
             a02yyuw = new A02yyuw(Device, Device.PlatformOS.GetSerialPortName("COM4"), A02yyuw.MODE_UART_CONTROL);
 
-            /******* Using the Observer/consumer approach, with optional filter************
+            /******* Using the Observer/consumer approach, with optional filter************/
             var consumer = A02yyuw.CreateObserver(
                 handler: result =>
                 {
@@ -37,16 +39,16 @@ namespace A02yyuw_Sample
                 {
                     if (result.Old is { } old)
                     {
-                        return Math.Abs((result.New - old).Centimeters) > 5.0;
+                        return Math.Abs((result.New - old).Centimeters) > 0.2;
                     }
                     return false;
                 }
             );
             a02yyuw.Subscribe(consumer);
 
-            /********************** /Using the IChangeResult interface *******************
-            a02yyuw.Updated += A02yyuw_DistanceUpdated;
-            ********************** IChangeResult interface *******************/
+            /********************** /Using the IChangeResult interface *******************/
+            //a02yyuw.Updated += A02yyuw_DistanceUpdated;
+            /********************** IChangeResult interface *******************/
             return Task.CompletedTask;
         }
 
@@ -58,17 +60,30 @@ namespace A02yyuw_Sample
             Resolver.Log.Info($"Initial distance is: {distance.Centimeters:N1}cm");
 
             a02yyuw.StartUpdating(TimeSpan.FromSeconds(2));
+            /*
             while (true)
             {
                 Resolver.Log.Info($"Last Distance: {a02yyuw.Conditions.Centimeters:N1} cm");
                 await Task.Delay(updateInterval);
-            }
+            } */
         }
 
         // function called when using the IChangeResult interface when distance measure is updated
         private void A02yyuw_DistanceUpdated(object sender, IChangeResult<Length> e)
         {
-            Resolver.Log.Info($"Distance: {e.New.Centimeters:N1}cm");
+            if (currentLength is { } length)
+            {
+                if (Math.Abs((e.New - length).Centimeters) > 0.5)
+                {
+                    Resolver.Log.Info($"Distance: {e.New.Centimeters:N2}cm");
+                    currentLength = e.New;
+                }
+            }
+            else
+            {
+                currentLength = e.New;
+            }
+            
         }
         //<!=SNOP=>
     }

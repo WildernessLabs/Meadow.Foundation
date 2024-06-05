@@ -2,6 +2,7 @@
 using Meadow.Peripherals.Sensors.Distance;
 using Meadow.Units;
 using System;
+using System.IO.Ports;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -25,12 +26,6 @@ namespace Meadow.Foundation.Sensors.Distance
         /// Distance from sensor to object
         /// </summary>
         public Length? Distance => Conditions;
-
-        /// <summary>
-        /// Value returned when the sensor cannot determine the distance
-        /// </summary>
-        public Length OutOfRangeValue { get; } = new Length(25, Length.UnitType.Centimeters);
-
         /// <summary>
         /// The maximum time to wait for a sensor reading
         /// </summary>
@@ -42,20 +37,20 @@ namespace Meadow.Foundation.Sensors.Distance
         private static readonly int portSpeed = 9600;
 
         //Serial read variables 
-        readonly byte[] readBuffer = new byte[16];
+        readonly byte[] readBuffer = new byte[4];
         int serialDataBytesRead = 0;
-        byte serialDataFirstByte;
+        //byte serialDataFirstByte;
 
         // Output buffer
         private byte[] sendBufer = { 0 };
 
         private byte outPutMode;
 
-        private TaskCompletionSource<Length>? dataReceivedTaskCompletionSource;
-
         private readonly bool createdPort = false;
 
         private bool isDisposed = false;
+
+        private TaskCompletionSource<Length>? dataReceivedTaskCompletionSource;
 
         /// <summary>
         /// Creates a new A02YYUW object communicating over serial
@@ -68,6 +63,11 @@ namespace Meadow.Foundation.Sensors.Distance
         {
             createdPort = true;
             outPutMode = outPutModeParam;
+            serialPort.DataReceived += SerialPortDataReceived;
+            serialPort.ReadTimeout = SensorReadTimeOut;
+            serialPort.Open();
+            serialPort.ClearReceiveBuffer();
+
         }
 
         /// <summary>
@@ -78,10 +78,14 @@ namespace Meadow.Foundation.Sensors.Distance
 
         public A02yyuw(ISerialPort serialMessage, byte outPutModeParam = MODE_UART_AUTO)
         {
+            createdPort = true;
             serialPort = serialMessage;
             serialPort.ReadTimeout = SensorReadTimeOut;
-            serialPort.DataReceived += SerialPortDataReceived;
             outPutMode = outPutModeParam;
+            serialPort.DataReceived += SerialPortDataReceived;
+            serialPort.Open();
+            serialPort.ClearReceiveBuffer();
+
         }
 
         /// <summary>
@@ -107,6 +111,7 @@ namespace Meadow.Foundation.Sensors.Distance
         protected override Task<Length> ReadSensor()
         {
             return ReadSingleValue();
+
         }
 
         /// <summary>
@@ -139,31 +144,34 @@ namespace Meadow.Foundation.Sensors.Distance
         private async Task<Length> ReadSingleValue()
         {
             dataReceivedTaskCompletionSource = new TaskCompletionSource<Length>();
-
             if (serialPort.IsOpen == false)
             {
                 serialPort.Open();
             }
-            // in UART Control Mode, send a 0 value over serial to toggle the control line
-            if (outPutMode == MODE_UART_CONTROL)
+            var timeOutTask = Task.Delay(SensorReadTimeOut);
+
+            if (outPutMode == MODE_UART_CONTROL) // in UART Control Mode, send a 0 value over serial to toggle the control line
+
             {
                 serialPort.Write(sendBufer);
             }
-            var timeOutTask = Task.Delay(SensorReadTimeOut);
-
             await Task.WhenAny(dataReceivedTaskCompletionSource.Task, timeOutTask);
-
-            serialPort.Close();
 
             if (dataReceivedTaskCompletionSource.Task.IsCompletedSuccessfully == true)
             {
-                Conditions = dataReceivedTaskCompletionSource.Task.Result;
                 return dataReceivedTaskCompletionSource.Task.Result;
             }
             return new Length(0);
+
         }
 
-        private void SerialPortDataReceived(object sender, SerialDataReceivedEventArgs e)
+        private bool DoCheckSum(int ii)
+        {
+            var checkSum = (ushort)((ushort)readBuffer[ii] + (ushort)readBuffer[ii + 1] + (ushort)readBuffer[ii + 2]);
+            return (checkSum & 0x00FF) == readBuffer[ii + 3];
+        }
+
+        private void SerialPortDataReceived(object sender, Hardware.SerialDataReceivedEventArgs e)
         {
             if (serialPort.IsOpen == false || serialPort.BytesToRead == 0 || dataReceivedTaskCompletionSource?.Task.IsCompletedSuccessfully == true)
             {
@@ -172,33 +180,33 @@ namespace Meadow.Foundation.Sensors.Distance
 
             var len = serialPort.BytesToRead;
 
-            serialPort.Read(readBuffer, 0, Math.Min(len, readBuffer.Length));
+            //serialPort.Read(readBuffer, 0, Math.Min(len, readBuffer.Length));
+            var bytesRead = serialPort.Read(readBuffer, 0, 4);
 
-            for (int i = 0; i < len; i++)
+            if ((bytesRead == 4) && (DoCheckSum(0)))
             {
-                if (readBuffer[i] == 0xFF)
-                {
-                    serialDataBytesRead = 0;
-                }
-                else if (serialDataBytesRead == 0)
-                {
-                    serialDataFirstByte = readBuffer[i];
-                    serialDataBytesRead++;
-                }
-                else if (serialDataBytesRead == 1)
-                {
-                    serialDataBytesRead = 2;
-                    var lengthInMillimeters = serialDataFirstByte << 8 | readBuffer[i];
-
-                    if (lengthInMillimeters != 0) //device should never return 0
-                    {
-                        var length = new Length(lengthInMillimeters, Length.UnitType.Millimeters);
-                        dataReceivedTaskCompletionSource?.SetResult(length);
-                        return;
-                    }
-                }
+                var lengthInMillimeters = (readBuffer[1] * 256) + readBuffer[2];
+                var length = new Length(lengthInMillimeters, Length.UnitType.Millimeters);
+                dataReceivedTaskCompletionSource?.SetResult(length);
+                //this.Conditions = new Length(, Length.UnitType.Millimeters);
+                dataReceivedTaskCompletionSource?.SetResult(length);
             }
+            else
+            {
+                serialPort.ClearReceiveBuffer();
+                serialPort.Write(sendBufer);
+                bytesRead = serialPort.Read(readBuffer, 0, 4);
+                var lengthInMillimeters = (readBuffer[1] * 256) + readBuffer[2];
+                var length = new Length(lengthInMillimeters, Length.UnitType.Millimeters);
+                dataReceivedTaskCompletionSource?.SetResult(length);
+                //this.Conditions = new Length(, Length.UnitType.Millimeters);
+                dataReceivedTaskCompletionSource?.SetResult(length);
+
+
+            }
+            return;
         }
+
 
         /// <summary>
         /// Called before the platform goes into Sleep state
