@@ -162,12 +162,23 @@ public class DFRobotGravityDOMeter : PollingSensorBase<ConcentrationInWater>, IT
         return new ConcentrationInWater((voltage.Volts * milligramsPerVolt), Meadow.Units.ConcentrationInWater.UnitType.MilligramsPerLiter);
     }
 
- 
+     /// <summary>
+     /// Default update interval for updating sensor on start updating
+     /// </summary>
     TimeSpan ISamplingSensor.UpdateInterval { get; } = TimeSpan.FromSeconds(2d);
+
+    /// <summary>
+    /// Returns truth the sensor has been started updating
+    /// </summary>
     bool ISamplingSensor.IsSampling { get; }
 
    
-
+    /// <summary>
+    /// gets a new DO cocentration after updating temp with provided temp
+    /// useful if running without an attached temp sensor
+    /// </summary>
+    /// <param name="temperature">temperature obtained from some other method</param>
+    /// <returns>DO concentration calculated with latest sensor voltage and provided temp</returns>
     ConcentrationInWater ITempCorrectedDOsensor.GetConcentrationWithTemp(Temperature temperature)
     {
         this.WaterTemperature = temperature;
@@ -175,7 +186,10 @@ public class DFRobotGravityDOMeter : PollingSensorBase<ConcentrationInWater>, IT
         return Concentration;
     }
 
-   
+   /// <summary>
+   /// Starts both DO sensor and temp sensor updating at updateInterval
+   /// </summary>
+   /// <param name="updateInterval">Optional update interval</param>
     void ISamplingSensor.StartUpdating(TimeSpan? updateInterval)
     {
         lock (samplingLock)
@@ -189,7 +203,9 @@ public class DFRobotGravityDOMeter : PollingSensorBase<ConcentrationInWater>, IT
         base.StartUpdating(updateInterval);
     }
 
-
+    /// <summary>
+    /// Stops DO sensor and temp sensor from updating automatically
+    /// </summary>
     void ISamplingSensor.StopUpdating()
         {
         lock (samplingLock)
@@ -203,11 +219,14 @@ public class DFRobotGravityDOMeter : PollingSensorBase<ConcentrationInWater>, IT
         base.StopUpdating();
     }
 
+    /// <summary>
+    /// Variable used track steps in calibration of probe for temperature
+    /// </summary>
+    private byte calState;
     public const byte MODE_MEASURE = 0;
     public const byte MODE_CAL_ZERO = 1;
     public const byte MODE_CAL_SAT = 2;
-    private byte calState;
-
+   
 
     /// <summary>
     /// Constants for 3rd order poly for DO saturation (mg/L) with °C temperature,
@@ -218,6 +237,12 @@ public class DFRobotGravityDOMeter : PollingSensorBase<ConcentrationInWater>, IT
     readonly double DO_Sat_K0 = 14.502;
     readonly double DO_Sat_K1 = -0.35984;
     readonly double DO_Sat_K2 = 0.0043703;
+
+
+    /// <summary>
+    /// variables used for making linear fit to calibration data
+    /// </summary>
+    private double SumXi, SumYi, SumXiYi, SumSqXi, Nreads;
 
 }
 

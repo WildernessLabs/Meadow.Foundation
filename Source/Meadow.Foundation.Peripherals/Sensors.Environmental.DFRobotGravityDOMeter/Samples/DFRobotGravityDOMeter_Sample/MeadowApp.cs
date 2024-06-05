@@ -9,70 +9,33 @@ using System;
 using System.Threading.Tasks;
 using System.Timers;
 
+using TempCorrectedDOSensorContract;
+using DFRobotGravityDOMeter;
+
 namespace Sensors.Environmental.DFRobotGravityDOMeter_Sample
 {
     public class MeadowApp : App<F7CoreComputeV2>
     {
-        //<!=SNIP=>
-
+        // using  interfaces for flexibility
         IProjectLabHardware projectLab;
-        DFRobotGravityDOMeter DOsensor;
-        SteinhartHartCalculatedThermistor tempSensor;
-        protected FilterableChangeObserver<Meadow.Units.Temperature> tempConsumer;
-        protected FilterableChangeObserver<ConcentrationInWater> DOconsumer;
+        ITempCorrectedDOsensor I_DOSensor;
+
+        ConcentrationInWater? LastConcentration ;
         DateTime startTime;
+
         public override Task Initialize()
         {
             Resolver.Log.Info("Initialize...");
             projectLab = ProjectLab.Create();
-            tempSensor = new SteinhartHartCalculatedThermistor(
-                projectLab.GroveAnalog.Pins.D0.CreateAnalogInputPort(10),
-                new Resistance(10, Resistance.UnitType.Kiloohms));
-                IAnalogInputPort DOport = projectLab.IOTerminal.Pins.A1.CreateAnalogInputPort(20);
+            IAnalogInputPort DOport = projectLab.IOTerminal.Pins.A1.CreateAnalogInputPort(20);
             // IAnalogInputPort DOport = projectLab.MikroBus2.Pins.AN.CreateAnalogInputPort(20);
-            DOsensor = new DFRobotGravityDOMeter(DOport, tempSensor);
 
+            I_DOSensor = new DFRobotGravityDOMeter.DFRobotGravityDOMeter(
+                DOport, new SteinhartHartCalculatedThermistor(
+                projectLab.GroveAnalog.Pins.D0.CreateAnalogInputPort(10),
+                new Resistance(10, Resistance.UnitType.Kiloohms)));
 
-
-            tempConsumer = SteinhartHartCalculatedThermistor.CreateObserver(
-                handler: result =>
-                {
-                    Resolver.Log.Info($"Water Temp: {result.New.Celsius:N2}°C");
-                },
-                filter: result =>
-                {
-                    if (result.Old is { } old)
-                    {
-                        return (result.New - old).Abs().Celsius > 0.5; // returns true if > 0.5°C change.
-                    }
-                    return false;
-                }
-            );
-            //tempSensor.Subscribe(tempConsumer);
-
-             DOconsumer = DFRobotGravityDOMeter.CreateObserver(
-                 handler: result =>
-                {
-                    //Resolver.Log.Info($"0xygen Conc:{result.New.MilligramsPerLiter:N1} mg/l");
-                    // Print data in three columns so it can be copied and pasted into IgorPro or other package
-                    TimeSpan elapsed = DateTime.Now - startTime;
-                    Resolver.Log.Info($"{result.New.MilligramsPerLiter:N1} {DOsensor.WaterTemperature.Celsius:N1} {elapsed}");
-
-                },
-                //filter: null
-            filter: result =>
-            {
-                if (result.Old is { } old)
-                {
-                    return (result.New - old).Abs().MilligramsPerLiter> 0.1; // returns true if change > 0.1 mg/L.
-                }
-                return false;
-            } 
-
-            );
-            DOsensor.Subscribe(DOconsumer);
-            //DOsensor.Updated += handleResult;
-
+           
 
             return Task.CompletedTask;
         }
@@ -80,25 +43,44 @@ namespace Sensors.Environmental.DFRobotGravityDOMeter_Sample
         public override async Task Run()
         {
             Resolver.Log.Info("Run...");
-            await ReadSensor();
+           
+            I_DOSensor.Concentration = await I_DOSensor.Read(); // updates both temp and ox
+            Resolver.Log.Info($"Initial Water Temp: {I_DOSensor.WaterTemperature:N1} °C");
+            Resolver.Log.Info($"Initial Oxygen concentration: {I_DOSensor.Concentration.MilligramsPerLiter:N1} mg/l");
+
+            I_DOSensor.Updated += I_DOSensor_Updated;
+
             startTime = DateTime.Now;
-            DOsensor.StartUpdating(TimeSpan.FromSeconds(2));
-            tempSensor.StartUpdating(TimeSpan.FromSeconds(2));
+            I_DOSensor.StartUpdating(TimeSpan.FromSeconds(2));
+            await base.Run();
+            return;
         }
 
-        protected async Task ReadSensor()
+        private void I_DOSensor_Updated(object sender, IChangeResult<ConcentrationInWater> e)
         {
-            DOsensor.WaterTemperature = await tempSensor.Read();
-            var concentration = await DOsensor.Read();
-            Resolver.Log.Info($"Water Temp: {DOsensor.WaterTemperature.Celsius:N1}°C");
-            Resolver.Log.Info($"Oxygen concentration: {concentration.MilligramsPerLiter:N1}mg/l");
+            if (this.LastConcentration is { } last)
+            {
+                if (Math.Abs(e.New.MilligramsPerLiter - last.MilligramsPerLiter) > 0.1)
+                {
+                    Resolver.Log.Info($"{I_DOSensor.Concentration:N2} {I_DOSensor.WaterTemperature:N2} {DateTime.Now - startTime}");
+                    this.LastConcentration = e.New;
+                }
+            }
+            else
+            {
+                this.LastConcentration = e.New;
+            }
+
+            /*
+            if (e.Old is { } old)
+            {
+                if (Math.Abs(e.New.MilligramsPerLiter - old.MilligramsPerLiter) > 0.1)
+                {
+                    Resolver.Log.Info($"{I_DOSensor.Concentration:N2} {I_DOSensor.WaterTemperature:N2} {DateTime.Now - startTime}");
+                }
+            }
+            */
         }
 
-        void handleResult(object sender, IChangeResult<ConcentrationInWater> e)
-        {
-            Resolver.Log.Info($"Result Handler:{e.New.MilligramsPerLiter:N2} mg/l");
-        }
-
-        //<!=SNOP=>
     }
 }

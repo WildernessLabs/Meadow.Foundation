@@ -127,13 +127,13 @@ namespace Meadow.Foundation.Sensors.Temperature
             }
 
             // Resolver.Log.Info($"New:{result.New.Millivolts:N1} mV");
-            // Resolver.Log.Info($"Filters was:{filter}");
+            // Resolver.Log.Info($"Filter was:{filter}");
 
             return filter;
         }
 
         /// <summary>
-        /// Update function calculates new temperature from voltage when filter threshold is met
+        /// Update function calculates new temperature from voltage when filter Voltage threshold is met
         /// </summary>
         /// <param name="result">Voltgae change result, old and new</param>
         protected void HandleAnalogUpdate(IChangeResult<Voltage> result)
