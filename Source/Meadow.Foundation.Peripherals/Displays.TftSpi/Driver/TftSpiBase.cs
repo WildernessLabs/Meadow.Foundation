@@ -474,6 +474,15 @@ namespace Meadow.Foundation.Displays
         }
 
         /// <summary>
+        /// Set the display inversion
+        /// </summary>
+        /// <param name="inverted">True to invert the display, false otherwise</param>
+        public void InvertDisplay(bool inverted)
+        {
+            SendCommand(inverted ? Register.INVON : Register.INVOFF);
+        }
+
+        /// <summary>
         /// Write a byte to the display
         /// </summary>
         /// <param name="value">The byte to send</param>
