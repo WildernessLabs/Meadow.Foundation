@@ -127,7 +127,7 @@ public static partial class MicroJson
                         _ => $"\"{DateTimeConverters.ToIso8601((DateTimeOffset)o)}\"",
                     };
                 }
-                if (type == typeof(Guid))
+                if (type == typeof(Guid) || type == typeof(TimeSpan))
                 {
                     return $"\"{o}\"";
                 }
