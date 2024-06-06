@@ -426,13 +426,12 @@ namespace Meadow.Foundation.Displays
                 PixelBuffer.ColorMode != ColorMode.Format18bppRgb666 &&
                 PixelBuffer.ColorMode != ColorMode.Format24bppRgb888)
             {
-                //should cover all of these displays but just in case
                 Show();
                 return;
             }
 
             if (right < left || bottom < top)
-            {   //could throw an exception
+            {
                 return;
             }
 
@@ -448,7 +447,7 @@ namespace Meadow.Foundation.Displays
                 }
             }
 
-            int bytesPerPixel = PixelBuffer.BitDepth / 8;
+            float bytesPerPixel = PixelBuffer.BitDepth / 8f;
 
             if (PixelBuffer.ColorMode == ColorMode.Format18bppRgb666)
             {
@@ -457,14 +456,13 @@ namespace Meadow.Foundation.Displays
 
             SetAddressWindow(left, top, right - 1, bottom - 1);
 
-            var len = (right - left) * bytesPerPixel;
+            int len = (int)((right - left) * bytesPerPixel);
 
             dataCommandPort.State = Data;
 
-            int sourceIndex;
             for (int y = top; y < bottom; y++)
             {
-                sourceIndex = (y * Width + left) * bytesPerPixel;
+                int sourceIndex = (int)((y * Width + left) * bytesPerPixel);
 
                 spiDisplay.Bus.Exchange(
                     chipSelectPort,
@@ -477,7 +475,7 @@ namespace Meadow.Foundation.Displays
         /// Set the display inversion
         /// </summary>
         /// <param name="inverted">True to invert the display, false otherwise</param>
-        public void InvertDisplay(bool inverted)
+        public virtual void InvertDisplay(bool inverted)
         {
             SendCommand(inverted ? Register.INVON : Register.INVOFF);
         }
