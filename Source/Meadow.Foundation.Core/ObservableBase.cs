@@ -59,7 +59,10 @@ namespace Meadow.Foundation
 
             public void Dispose()
             {
-                if (!(observer == null)) { observers.Remove(observer); }
+                if (observer != null)
+                {
+                    observers.Remove(observer);
+                }
             }
         }
 
@@ -75,9 +78,7 @@ namespace Meadow.Foundation
             Action<IChangeResult<UNIT>> handler,
             Predicate<IChangeResult<UNIT>>? filter = null)
         {
-            return new FilterableChangeObserver<UNIT>(
-                handler, filter);
+            return new FilterableChangeObserver<UNIT>(handler, filter);
         }
-
     }
 }
