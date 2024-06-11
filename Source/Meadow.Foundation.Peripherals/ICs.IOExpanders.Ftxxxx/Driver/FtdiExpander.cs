@@ -280,13 +280,13 @@ public abstract partial class FtdiExpander :
     /// <inheritdoc/>
     public II2cBus CreateI2cBus(IPin[] pins, I2cBusSpeed busSpeed)
     {
-        return CreateI2cBus(1, I2cBusSpeed.Standard);
+        return CreateI2cBus(1);
     }
 
     /// <inheritdoc/>
     public II2cBus CreateI2cBus(IPin clock, IPin data, I2cBusSpeed busSpeed)
     {
-        return CreateI2cBus(1);
+        return CreateI2cBus(1, I2cBusSpeed.Standard);
     }
 
     /// <inheritdoc/>

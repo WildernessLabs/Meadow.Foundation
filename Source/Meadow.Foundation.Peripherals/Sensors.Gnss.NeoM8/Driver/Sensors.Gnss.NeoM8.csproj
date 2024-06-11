@@ -17,11 +17,11 @@
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Meadow.Foundation,NEOM8,NEO,NEO-M8,GPS,GNSS</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Description>NEO M8 serial GNSS / GPS controller</Description>
+    <Description>NEO M8 SPI, I2C, and serial GNSS / GPS controller</Description>
   </PropertyGroup>
   <ItemGroup>
     <None Include=".\Readme.md" Pack="true" PackagePath="" />
   <None Include="..\..\..\icon.png" Pack="true" PackagePath="" />
-    <PackageReference Include="Meadow.Foundation.Sensors.Location.Gnss.NmeaProcessor" Version="1.12.0" />
+    <PackageReference Include="Meadow.Foundation.Sensors.Location.Gnss.NmeaProcessor" Version="1.12.2.0" />
   </ItemGroup>
 </Project>

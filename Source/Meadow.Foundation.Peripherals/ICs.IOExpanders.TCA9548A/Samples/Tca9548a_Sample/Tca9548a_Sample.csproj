@@ -10,8 +10,8 @@
     <RootNamespace>ICs.IOExpanders</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.Foundation.ICs.IOExpanders.Mcp23xxx" Version="1.12.0" />
-    <PackageReference Include="Meadow.F7" Version="1.12.0" />
-    <PackageReference Include="Meadow.Foundation.ICs.IOExpanders.Tca9548a" Version="1.12.0" />
+    <PackageReference Include="Meadow.Foundation.ICs.IOExpanders.Mcp23xxx" Version="1.12.2.0" />
+    <PackageReference Include="Meadow.F7" Version="1.12.2.0" />
+    <PackageReference Include="Meadow.Foundation.ICs.IOExpanders.Tca9548a" Version="1.12.2.0" />
   </ItemGroup>
 </Project>

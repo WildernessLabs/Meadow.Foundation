@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections;
-using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -12,6 +11,11 @@ namespace Meadow.Foundation.Serialization;
 /// </summary>
 public static partial class MicroJson
 {
+    private static string[] ExplicitlyUnsupportedTypes =
+    {
+        "System.Text.Json.JsonElement"
+    };
+
     /// <summary>
     /// Desrializes a Json string into an object.
     /// </summary>
@@ -123,7 +127,7 @@ public static partial class MicroJson
                         _ => $"\"{DateTimeConverters.ToIso8601((DateTimeOffset)o)}\"",
                     };
                 }
-                if (type == typeof(Guid))
+                if (type == typeof(Guid) || type == typeof(TimeSpan))
                 {
                     return $"\"{o}\"";
                 }
@@ -153,8 +157,9 @@ public static partial class MicroJson
             return SerializeIDictionary(hashtable, dateTimeFormat);
         }
 
-        if (type.IsClass)
+        if (type.IsClass || type.IsValueType && !ExplicitlyUnsupportedTypes.Any(e => e == type.FullName))
         {
+
             var hashtable = new Hashtable();
 
             // Use PropertyInfo instead of MethodInfo for better performance

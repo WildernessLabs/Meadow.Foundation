@@ -22,6 +22,6 @@
   <ItemGroup>
     <None Include=".\Readme.md" Pack="true" PackagePath="" />
     <None Include="..\..\..\icon.png" Pack="true" PackagePath="" />
-    <PackageReference Include="Meadow.Foundation.Displays.Led.FourteenSegment" Version="1.12.0" />
+    <PackageReference Include="Meadow.Foundation.Displays.Led.FourteenSegment" Version="1.12.2.0" />
   </ItemGroup>
 </Project>

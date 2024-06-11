@@ -16,7 +16,7 @@
     <PackageReference Include="SimpleJpegDecoder" Version="0.4.0" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.Foundation.Graphics.MicroGraphics" Version="1.12.0" />
-    <PackageReference Include="Meadow.Foundation.Displays.Silk" Version="1.12.0" />
+    <PackageReference Include="Meadow.Foundation.Graphics.MicroGraphics" Version="1.12.2.0" />
+    <PackageReference Include="Meadow.Foundation.Displays.Silk" Version="1.12.2.0" />
   </ItemGroup>
 </Project>

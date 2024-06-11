@@ -9,7 +9,7 @@
     <AssemblyName>App</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.F7" Version="1.12.0" />
-    <PackageReference Include="Meadow.Foundation.Sensors.Gnss.NeoM8" Version="1.12.0" />
+    <PackageReference Include="Meadow.F7" Version="1.12.2.0" />
+    <PackageReference Include="Meadow.Foundation.Sensors.Gnss.NeoM8" Version="1.12.2.0" />
   </ItemGroup>
 </Project>

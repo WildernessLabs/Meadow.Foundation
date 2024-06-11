@@ -9,7 +9,7 @@
     <AssemblyName>App</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.F7" Version="1.12.0" />
-    <PackageReference Include="Meadow.Foundation.Sensors.Atmospheric.Ms5611" Version="1.12.0" />
+    <PackageReference Include="Meadow.F7" Version="1.12.2.0" />
+    <ProjectReference Include="..\..\Driver\Sensors.Atmospheric.MS5611.csproj" />
   </ItemGroup>
 </Project>
