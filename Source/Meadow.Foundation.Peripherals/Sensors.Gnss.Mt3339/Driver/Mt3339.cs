@@ -11,8 +11,8 @@ namespace Meadow.Foundation.Sensors.Gnss
     /// </summary>
     public class Mt3339 : IGnssSensor
     {
-        readonly ISerialMessagePort serialPort;
-        NmeaSentenceProcessor? nmeaProcessor;
+        private readonly ISerialMessagePort serialPort;
+        private NmeaSentenceProcessor? nmeaProcessor;
 
         /// <summary>
         /// Supported GNSS result types
@@ -140,7 +140,7 @@ namespace Meadow.Foundation.Sensors.Gnss
 
             var gllDecoder = new GllDecoder();
             nmeaProcessor.RegisterDecoder(gllDecoder);
-            gllDecoder.GeographicLatitudeLongitudeReceived += (object sender, GnssPositionInfo location) =>
+            gllDecoder.PositionReceived += (object sender, GnssPositionInfo location) =>
             {
                 GllReceived?.Invoke(this, location);
                 GnssDataReceived?.Invoke(this, location);
@@ -156,7 +156,7 @@ namespace Meadow.Foundation.Sensors.Gnss
 
             var rmcDecoder = new RmcDecoder();
             nmeaProcessor.RegisterDecoder(rmcDecoder);
-            rmcDecoder.PositionCourseAndTimeReceived += (object sender, GnssPositionInfo positionCourseAndTime) =>
+            rmcDecoder.PositionReceived += (object sender, GnssPositionInfo positionCourseAndTime) =>
             {
                 RmcReceived?.Invoke(this, positionCourseAndTime);
                 GnssDataReceived?.Invoke(this, positionCourseAndTime);
