@@ -3,12 +3,6 @@ using System.Collections.Generic;
 
 namespace Meadow.Foundation.Graphics.MicroLayout;
 
-internal interface IControlContainer
-{
-    IControl? Parent { get; }
-    ControlsCollection Controls { get; }
-}
-
 /// <summary>
 /// Represents a collection of display controls on a <see cref="DisplayScreen"/>.
 /// </summary>
@@ -17,15 +11,18 @@ public sealed class ControlsCollection : IEnumerable<IControl>
     private readonly List<IControl> _controls = new();
     private readonly object _syncRoot = new();
 
-    private readonly IControlContainer? _container;
+    /// <summary>
+    /// The collection's parent control (if it exists)
+    /// </summary>
+    public IControlContainer? Parent { get; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ControlsCollection"/> class.
     /// </summary>
-    /// <param name="parent">The parent control (if exists)</param>
+    /// <param name="parent">The parent control (if it exists)</param>
     internal ControlsCollection(IControlContainer? parent)
     {
-        _container = parent;
+        Parent = parent;
     }
 
     internal object SyncRoot => _syncRoot;
@@ -47,7 +44,7 @@ public sealed class ControlsCollection : IEnumerable<IControl>
         lock (SyncRoot)
         {
             _controls.Clear();
-            _container?.Parent?.Invalidate();
+            Parent?.Parent?.Invalidate();
         }
     }
 
@@ -63,7 +60,7 @@ public sealed class ControlsCollection : IEnumerable<IControl>
     public void Add(params IControl[] controls)
     {
         // Apply screen theme to the added controls, if available.
-        if (_container is DisplayScreen screen)
+        if (Parent is DisplayScreen screen)
         {
             if (screen.Theme != null)
             {
@@ -78,9 +75,13 @@ public sealed class ControlsCollection : IEnumerable<IControl>
         {
             foreach (var control in controls)
             {
-                control.Parent = _container?.Parent;
+
+                control.Parent = Parent?.Parent;
                 _controls.Add(control);
+                control.IsVisible = Parent?.IsVisible ?? true;
             }
+
+            Parent?.Invalidate();
         }
     }
 

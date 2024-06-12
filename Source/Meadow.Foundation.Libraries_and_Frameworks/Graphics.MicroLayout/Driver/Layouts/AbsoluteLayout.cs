@@ -11,7 +11,7 @@ public class AbsoluteLayout : MicroLayout
     /// <param name="width">The layout's width</param>
     /// <param name="height">The layout's height</param>
     public AbsoluteLayout(int width, int height)
-        : base(0, 0, width, height)
+        : this(0, 0, width, height)
     {
     }
 
@@ -20,7 +20,7 @@ public class AbsoluteLayout : MicroLayout
     /// </summary>
     /// <param name="screen">The DisplayScreen to associate this layout with</param>
     public AbsoluteLayout(DisplayScreen screen)
-        : base(0, 0, screen.Width, screen.Height)
+        : this(0, 0, screen.Width, screen.Height)
     {
     }
 

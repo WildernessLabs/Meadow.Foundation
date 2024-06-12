@@ -78,5 +78,5 @@ public abstract class MicroLayout : ThemedControl, IControlContainer
     /// <summary>
     /// Gets the collection of controls on the display screen.
     /// </summary>
-    public ControlsCollection Controls { get; private set; }
+    public ControlsCollection Controls { get; }
 }

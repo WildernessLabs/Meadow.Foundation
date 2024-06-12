@@ -39,6 +39,13 @@ public class DisplayScreen : IControlContainer
     /// </summary>
     public int Height => _graphics.Height;
 
+    /// <inheritdoc/>
+    public bool IsVisible
+    {
+        get => true;
+        set { }
+    }
+
     private bool IsInvalid { get; set; }
 
     internal DisplayTheme? Theme { get; }
@@ -105,16 +112,24 @@ public class DisplayScreen : IControlContainer
         {
             try
             {
-                foreach (var control in Controls)
+                void UnPress(ControlsCollection collection)
                 {
-                    if (control is IClickableControl c)
+                    foreach (var control in collection)
                     {
-                        if (control.Contains(point.ScreenX, point.ScreenY))
+                        if (control is IClickableControl c
+                            && c.IsVisible
+                            && c.Pressed)
                         {
                             c.Pressed = false;
                         }
+                        else if (control is IControlContainer container)
+                        {
+                            UnPress(container.Controls);
+                        }
                     }
                 }
+
+                UnPress(this.Controls);
             }
             finally
             {
@@ -127,16 +142,26 @@ public class DisplayScreen : IControlContainer
     {
         lock (Controls.SyncRoot)
         {
-            foreach (var control in Controls)
+            void CheckForPress(ControlsCollection collection)
             {
-                if (control is IClickableControl c)
+                foreach (var control in collection)
                 {
-                    if (control.Contains(point.ScreenX, point.ScreenY))
+                    if (control is IClickableControl c
+                            && c.IsVisible
+                            && !c.Pressed
+                            && control.Contains(point.ScreenX, point.ScreenY))
                     {
                         c.Pressed = true;
+                        break;
+                    }
+                    else if (control is IControlContainer container)
+                    {
+                        CheckForPress(container.Controls);
                     }
                 }
             }
+
+            CheckForPress(this.Controls);
         }
     }
 
