@@ -251,6 +251,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
                 port.SetPinState += (_pin, state) => PreValidatedWriteToPort(pin, portBank, bitIndex, state);
 
+                port.State = initialState;
+
                 return port;
             }
             throw new Exception("Pin is out of range");
