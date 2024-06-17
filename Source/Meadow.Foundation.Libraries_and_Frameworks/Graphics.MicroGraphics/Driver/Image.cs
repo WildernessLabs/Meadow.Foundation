@@ -80,6 +80,20 @@ namespace Meadow.Foundation.Graphics
             return new Image(stream);
         }
 
+        /// <summary>
+        /// Load an image from a IPixelBuffer
+        /// </summary>
+        /// <param name="pixelData">The resource pixel</param>
+        public static Image LoadFromPixelData(IPixelBuffer pixelData)
+        {
+            return new Image(pixelData);
+        }
+
+        private Image(IPixelBuffer pixelData)
+        {
+            DisplayBuffer = pixelData;
+        }
+
         private Image(Stream source)
         {   // determine type
             var buffer = new byte[2];

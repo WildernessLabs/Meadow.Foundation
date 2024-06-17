@@ -292,6 +292,11 @@ public static partial class MicroJson
                         var dto = DateTimeOffset.Parse(values[v].ToString());
                         prop.SetValue(instance, dto);
                     }
+                    else if (propType == typeof(TimeSpan))
+                    {
+                        var dto = TimeSpan.Parse(values[v].ToString());
+                        prop.SetValue(instance, dto);
+                    }
                     else if (propType == typeof(object))
                     {
                         prop.SetValue(instance, DeserializeDynamic(values[v]));

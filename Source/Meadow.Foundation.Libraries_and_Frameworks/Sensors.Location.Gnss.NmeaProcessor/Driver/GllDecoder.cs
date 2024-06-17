@@ -7,12 +7,10 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
     /// Process GLL (Geographic position Latitude / Longitude) messages from a
     /// GPS receiver.
     /// </summary>
-    public class GllDecoder : INmeaDecoder
+    public class GllDecoder : INmeaDecoder, IGnssPositionEventSource
     {
-        /// <summary>
-        /// Event raised when valid GLL data is received.
-        /// </summary>
-        public event EventHandler<GnssPositionInfo> GeographicLatitudeLongitudeReceived = default!;
+        /// <inheritdoc/>
+        public event EventHandler<GnssPositionInfo>? PositionReceived;
 
         /// <summary>
         /// Prefix for the GLL (Geographic position Latitude / Longitude) decoder.
@@ -25,6 +23,15 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
         public string Name => "GLL - Global Positioning System Fix Data";
 
         /// <summary>
+        /// Process a GPRMC sentence string
+        /// </summary>
+        /// <param name="sentence">The sentence</param>
+        public void Process(string sentence)
+        {
+            Process(NmeaSentence.From(sentence));
+        }
+
+        /// <summary>
         /// Process the data from a GLL message.
         /// </summary>
         /// <param name="sentence">String array of the message components for a GLL message.</param>
@@ -34,12 +41,13 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
             //  Status is stored in element 7 (position 6), A = valid, V = not valid.
             //
             var location = new GnssPositionInfo();
+            location.Position = new();
             location.TalkerID = sentence.TalkerID;
-            location.Position!.Latitude = NmeaUtilities.DegreesMinutesDecode(sentence.DataElements[0], sentence.DataElements[1]);
-            location.Position.Longitude = NmeaUtilities.DegreesMinutesDecode(sentence.DataElements[2], sentence.DataElements[3]);
+            location.Position.Latitude = NmeaUtilities.ParseLatitude(sentence.DataElements[0], sentence.DataElements[1]);
+            location.Position.Longitude = NmeaUtilities.ParseLongitude(sentence.DataElements[2], sentence.DataElements[3]);
             location.TimeOfReading = NmeaUtilities.TimeOfReading(null, sentence.DataElements[4]);
-            location.Valid = (sentence.DataElements[5].ToLower() == "a");
-            GeographicLatitudeLongitudeReceived(this, location);
+            location.IsValid = (sentence.DataElements[5].ToLower() == "a");
+            PositionReceived?.Invoke(this, location);
         }
     }
 }
