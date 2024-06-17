@@ -1,41 +1,41 @@
 ﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Environmental;
+using Meadow.Foundation.Sensors.Temperature;
+using Meadow.Hardware;
+using Meadow.Peripherals.Sensors;
+using Meadow.Units;
 using System;
 using System.Threading.Tasks;
+using System.Timers;
+
+using TempCorrectedDOSensorContract;
+using DFRobotGravityDOMeter;
 
 namespace Sensors.Environmental.DFRobotGravityDOMeter_Sample
 {
-    public class MeadowApp : App<F7FeatherV2>
+    public class MeadowApp : App<F7CoreComputeV2>
     {
-        //<!=SNIP=>
+        // using  interfaces for flexibility
+        IProjectLabHardware projectLab;
+        ITempCorrectedDOsensor I_DOSensor;
 
-        DFRobotGravityDOMeter sensor;
+        ConcentrationInWater? LastConcentration ;
+        DateTime startTime;
 
         public override Task Initialize()
         {
             Resolver.Log.Info("Initialize...");
+            projectLab = ProjectLab.Create();
+            IAnalogInputPort DOport = projectLab.IOTerminal.Pins.A1.CreateAnalogInputPort(20);
+            // IAnalogInputPort DOport = projectLab.MikroBus2.Pins.AN.CreateAnalogInputPort(20);
 
-            sensor = new DFRobotGravityDOMeter(Device.Pins.A01);
+            I_DOSensor = new DFRobotGravityDOMeter.DFRobotGravityDOMeter(
+                DOport, new SteinhartHartCalculatedThermistor(
+                projectLab.GroveAnalog.Pins.D0.CreateAnalogInputPort(10),
+                new Resistance(10, Resistance.UnitType.Kiloohms)));
 
-            // Example that uses an IObservable subscription to only be notified when the saturation changes
-            var consumer = DFRobotGravityDOMeter.CreateObserver(
-                handler: result =>
-                {
-                    string oldValue = (result.Old is { } old) ? $"{old.MilligramsPerLiter:n0}" : "n/a";
-                    string newValue = $"{result.New.MilligramsPerLiter:n0}";
-                    Resolver.Log.Info($"New: {newValue}mg/l, Old: {oldValue}mg/l");
-                },
-                filter: null
-            );
-            sensor.Subscribe(consumer);
-
-            // optional classical .NET events can also be used:
-            sensor.Updated += (sender, result) =>
-            {
-                string oldValue = (result.Old is { } old) ? $"{old.MilligramsPerLiter}mg/l" : "n/a";
-                Resolver.Log.Info($"Updated - New: {result.New.MilligramsPerLiter:n0}mg/l, Old: {oldValue}");
-            };
+           
 
             return Task.CompletedTask;
         }
@@ -43,18 +43,44 @@ namespace Sensors.Environmental.DFRobotGravityDOMeter_Sample
         public override async Task Run()
         {
             Resolver.Log.Info("Run...");
+           
+            I_DOSensor.Concentration = await I_DOSensor.Read(); // updates both temp and ox
+            Resolver.Log.Info($"Initial Water Temp: {I_DOSensor.WaterTemperature:N1} °C");
+            Resolver.Log.Info($"Initial Oxygen concentration: {I_DOSensor.Concentration.MilligramsPerLiter:N1} mg/l");
 
-            await ReadSensor();
+            I_DOSensor.Updated += I_DOSensor_Updated;
 
-            sensor.StartUpdating(TimeSpan.FromSeconds(2));
+            startTime = DateTime.Now;
+            I_DOSensor.StartUpdating(TimeSpan.FromSeconds(2));
+            await base.Run();
+            return;
         }
 
-        protected async Task ReadSensor()
+        private void I_DOSensor_Updated(object sender, IChangeResult<ConcentrationInWater> e)
         {
-            var concentration = await sensor.Read();
-            Resolver.Log.Info($"Initial concentration: {concentration.MilligramsPerLiter:N0}mg/l");
+            if (this.LastConcentration is { } last)
+            {
+                if (Math.Abs(e.New.MilligramsPerLiter - last.MilligramsPerLiter) > 0.1)
+                {
+                    Resolver.Log.Info($"{I_DOSensor.Concentration:N2} {I_DOSensor.WaterTemperature:N2} {DateTime.Now - startTime}");
+                    this.LastConcentration = e.New;
+                }
+            }
+            else
+            {
+                this.LastConcentration = e.New;
+            }
+
+            /*
+            if (e.Old is { } old)
+            {
+                if (Math.Abs(e.New.MilligramsPerLiter - old.MilligramsPerLiter) > 0.1)
+                {
+                    Resolver.Log.Info($"{I_DOSensor.Concentration:N2} {I_DOSensor.WaterTemperature:N2} {DateTime.Now - startTime}");
+                }
+            }
+            */
         }
 
-        //<!=SNOP=>
     }
 }

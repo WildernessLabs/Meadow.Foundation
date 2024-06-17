@@ -30,6 +30,8 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// </summary>
         public virtual Units.Temperature NominalTemperature => new Units.Temperature(25, Units.Temperature.UnitType.Celsius);
 
+        Units.Temperature? ITemperatureSensor.Temperature { get; }
+
         /// <summary>
         /// Creates a new Thermistor object using the provided analog input
         /// </summary>
@@ -65,10 +67,5 @@ namespace Meadow.Foundation.Sensors.Temperature
 
             base.StopUpdating();
         }
-
-        /// <summary>
-        /// The temperature from the last reading
-        /// </summary>
-        public Units.Temperature? Temperature => Conditions;
     }
 }

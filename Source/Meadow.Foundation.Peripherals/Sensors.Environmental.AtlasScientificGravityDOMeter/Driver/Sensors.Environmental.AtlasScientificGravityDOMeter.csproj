@@ -22,6 +22,13 @@
   <ItemGroup>
     <None Include=".\Readme.md" Pack="true" PackagePath="" />
     <None Include="..\..\..\icon.png" Pack="true" PackagePath="" />
-    <ProjectReference Include="..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Meadow.Core" Version="0.3.225" />
+    <PackageReference Include="Meadow.Foundation" Version="1.8.0.1" />
+    <PackageReference Include="Meadow" Version="1.8.0.1" />
+    <PackageReference Include="Meadow.Units" Version="1.8.0.1" />
+    <PackageReference Include="Meadow.F7" Version="1.8.0.1" />
+    <PackageReference Include="Meadow.Contracts" Version="1.8.0.1" />
   </ItemGroup>
 </Project>

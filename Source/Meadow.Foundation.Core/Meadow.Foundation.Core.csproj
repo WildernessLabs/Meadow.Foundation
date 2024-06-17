@@ -28,5 +28,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Meadow.Contracts\Source\Meadow.Contracts\Meadow.Contracts.csproj" />
+    <ProjectReference Include="..\..\..\Meadow.Units\Source\Meadow.Units\Meadow.Units.csproj" />
+    <ProjectReference Include="..\..\..\Meadow.Logging\Source\Meadow.Logging\lib\Meadow.Logging.csproj" />
   </ItemGroup>
 </Project>

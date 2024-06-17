@@ -2,19 +2,46 @@
 
 **A02yyuw serial ultrasonic distance sensor**
 
-The **A02yyuw** library is included in the **Meadow.Foundation.Sensors.Distance.A02yyuw** nuget package and is designed for the [Wilderness Labs](www.wildernesslabs.co) Meadow .NET IoT platform.
+The A02 series sensor module is an ultrasonic distance sensor that reports distance to objects over a range from 30 millimetres to 4.4 metres. The A02 series supports 5 different modes of operation (PWM output, UART Controlled output, UART Auto output, Switched output). The Rx and Tx pin function corresponds to the output mode selected before ordering, and can not be changed. The A02yyuw library supports the UART Controlled output and UART Auto output of the A02. These two modes use a UART serial interface, typically COM4 or COM1 on the Meadow boards. Pinout is as follows:
 
-This driver is part of the [Meadow.Foundation](https://developer.wildernesslabs.co/Meadow/Meadow.Foundation/) peripherals library, an open-source repository of drivers and libraries that streamline and simplify adding hardware to your C# .NET Meadow IoT applications.
+### Pinout for Sensor:
+| Pin | Color  | Description                             |
+|-----|--------|-----------------------------------------|
+|  1  |  Red   | VCC power input 3- 5 V                  |
+|  2  | Black  | Ground                                  |
+|  3  | Yellow | Rx pin function depends on output mode  |
+|  4  | White  | Tx pin function depends on output mode  |
+
+Note that Rx and Tx are defined from the perspective of the A02 module, so are reversed from the perspective of the Meadow board.
+
+
+In UART Auto mode, when the Rx pin is held low, the module continuously outputs real-time values on the Tx pin with a response time of 100ms.
+When pin(RX)is held high, the module outputs processed values, and the data is more stable. The response time is 100~500ms. The A02yyuw library
+keeps Rx high in UART Auto output, so processed values are obtained.
+
+In UART Controlled mode, the module will perform a distance detection and send data on the Tx pin after the Rx pin receives a falling edge pulse.
+The period between Rx pulses must be greater than 70ms. The **A02yyuw** library sends a pulse by writing a byte of data to the serial port.
+
+The data from sent from the sensor is in milimetres and comes as a 2 byte unsigned integer.  Each sensor reading is packed in a data frame as follows:
+
+### Data Frame Description:
+| Byte | Data Frame | Description     |
+|------|------------|-----------------|
+| 1    | Start Byte | 0xFF 0xFF       |
+| 2    | Data_H     | High 8 Distance |
+| 3    | Data_L     | Low 8 Distance  |
+| 4    | SUM        | Parity Sum      |
+
+The distance in millimeters = Data_H * 256 + Data_L. The check sum is the lower 8 bits of the sum of the first three bytes, SUM =(start bit+ Data_H + Data_L) & 0x00FF.
+
+The **A02yyuw** library is designed for the [Wilderness Labs](www.wildernesslabs.co) Meadow .NET IoT platform and is part of [Meadow.Foundation](https://developer.wildernesslabs.co/Meadow/Meadow.Foundation/).
+
+The **Meadow.Foundation** peripherals library is an open-source repository of drivers and libraries that streamline and simplify adding hardware to your C# .NET Meadow IoT application.
 
 For more information on developing for Meadow, visit [developer.wildernesslabs.co](http://developer.wildernesslabs.co/).
 
 To view all Wilderness Labs open-source projects, including samples, visit [github.com/wildernesslabs](https://github.com/wildernesslabs/).
 
-## Installation
-
-You can install the library from within Visual studio using the the NuGet Package Manager or from the command line using the .NET CLI:
-
-`dotnet add package Meadow.Foundation.Sensors.Distance.A02yyuw`
 ## Usage
 
 ```csharp
@@ -24,7 +51,7 @@ public override Task Initialize()
 {
     Resolver.Log.Info("Initialize...");
 
-    a02yyuw = new A02yyuw(Device, Device.PlatformOS.GetSerialPortName("COM4"));
+    a02yyuw = new A02yyuw(Device, Device.PlatformOS.GetSerialPortName("COM4"), A02yyuw.MODE_UART_AUTO);
 
     var consumer = A02yyuw.CreateObserver(
         handler: result =>
@@ -73,20 +100,3 @@ private void A02yyuw_DistanceUpdated(object sender, IChangeResult<Length> e)
 ## Need Help?
 
 If you have questions or need assistance, please join the Wilderness Labs [community on Slack](http://slackinvite.wildernesslabs.co/).
-## About Meadow
-
-Meadow is a complete, IoT platform with defense-grade security that runs full .NET applications on embeddable microcontrollers and Linux single-board computers including Raspberry Pi and NVIDIA Jetson.
-
-### Build
-
-Use the full .NET platform and tooling such as Visual Studio and plug-and-play hardware drivers to painlessly build IoT solutions.
-
-### Connect
-
-Utilize native support for WiFi, Ethernet, and Cellular connectivity to send sensor data to the Cloud and remotely control your peripherals.
-
-### Deploy
-
-Instantly deploy and manage your fleet in the cloud for OtA, health-monitoring, logs, command + control, and enterprise backend integrations.
-
-

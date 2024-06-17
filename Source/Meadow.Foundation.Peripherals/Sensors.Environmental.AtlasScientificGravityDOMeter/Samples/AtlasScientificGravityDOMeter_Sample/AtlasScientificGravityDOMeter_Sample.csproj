@@ -9,7 +9,28 @@
     <AssemblyName>App</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
+<<<<<<< HEAD
+    <None Update="meadow.config.yaml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Meadow.Units" Version="1.8.0.1" />
+    <PackageReference Include="Meadow" Version="1.8.0.1" />
+    <PackageReference Include="Meadow.Foundation.Sensors.Environmental.DFRobotGravityDOMeter" Version="1.8.0.1" />
+    <PackageReference Include="Meadow.Contracts" Version="1.8.0.1" />
+    <PackageReference Include="Meadow.Foundation" Version="1.8.0.1" />
+    <PackageReference Include="Meadow.Core" Version="0.3.225" />
+    <PackageReference Include="Meadow.F7" Version="1.8.0.1" />
+    <PackageReference Include="Meadow.Foundation.Sensors.Environmental.AtlasScientificGravityDOMeter" Version="1.8.0.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="..\..\Driver\bin\Release\Meadow.Foundation.Sensors.Environmental.AtlasScientificGravityDOMeter.1.8.0.nupkg">
+      <Link>Meadow.Foundation.Sensors.Environmental.AtlasScientificGravityDOMeter.1.8.0.nupkg</Link>
+    </EmbeddedResource>
+=======
     <ProjectReference Include="..\..\..\..\..\..\Meadow.Core\Source\implementations\f7\Meadow.F7\Meadow.F7.csproj" />
     <ProjectReference Include="..\..\Driver\Sensors.Environmental.AtlasScientificGravityDOMeter.csproj" />
+>>>>>>> eef92098f11df7cb81cc254e33b3b5f87b80ce04
   </ItemGroup>
 </Project>

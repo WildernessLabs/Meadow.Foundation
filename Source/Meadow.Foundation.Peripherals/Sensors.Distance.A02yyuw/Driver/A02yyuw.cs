@@ -1,4 +1,29 @@
-﻿using Meadow.Hardware;
+﻿/******************** A02 ultrasonic distance sensor **********************
+ * Uses a serial port to commnicate with an A02 ultrasonic distance module,
+ * which reports distance from the sensor to nearest object.
+ * 
+ * Pinout for Sensor:
+ * 1. (red) VCC power input 3- 5 V
+ * 2. (black) ground
+ * 3. (yellow) Rx pin function depends on output mode
+ * 4. (white) Tx pin function depends on output mode
+ * 
+ * The A02 series supports 5 different modes of operation (PWM output, UART 
+ * Controlled output, UART Auto output, Switched output). The Rx and Tx pin
+ * function corresponds to the output mode selected before ordering, and can not 
+ * be changed. The **A02yyuw** library supports the UART Controlled output and 
+ * UART Auto output of the A02. 
+
+ * Data Frame Description
+
+ * Data Frame	Description				Byte
+ * Start Bit 	0XFF 0XFF				1 byte
+ * Data_H		High8 distance value	1 byte
+ * Data_L		Low8 distance value		1 byte
+ * SUM			Parity sum				1 byte
+ * 
+ */
+using Meadow.Hardware;
 using Meadow.Peripherals.Sensors.Distance;
 using Meadow.Units;
 using System;
@@ -12,20 +37,23 @@ namespace Meadow.Foundation.Sensors.Distance
     /// </summary>
     public class A02yyuw : PollingSensorBase<Length>, IRangeFinder, ISleepAwarePeripheral, IDisposable
     {
+
+        /// <summary>
+        /// Constant for output mode UART Auto
+        /// </summary>
+        public const byte MODE_UART_AUTO = 1;
+        /// <summary>
+        /// Constant for output mode UART Control
+        /// </summary>
+        public const byte MODE_UART_CONTROL = 2;
         /// <summary>
         /// Distance from sensor to object
         /// </summary>
         public Length? Distance => Conditions;
-
-        /// <summary>
-        /// Value returned when the sensor cannot determine the distance
-        /// </summary>
-        public Length OutOfRangeValue { get; } = new Length(25, Length.UnitType.Centimeters);
-
         /// <summary>
         /// The maximum time to wait for a sensor reading
         /// </summary>
-        public TimeSpan SensorReadTimeOut { get; set; } = TimeSpan.FromSeconds(1000);
+        public TimeSpan SensorReadTimeOut { get; set; } = TimeSpan.FromSeconds(2);
 
         //The baud rate is 9600, 8 bits, no parity, with one stop bit
         private readonly ISerialPort serialPort;
@@ -33,44 +61,76 @@ namespace Meadow.Foundation.Sensors.Distance
         private static readonly int portSpeed = 9600;
 
         //Serial read variables 
-        readonly byte[] readBuffer = new byte[16];
-        int serialDataBytesRead = 0;
-        byte serialDataFirstByte;
+        readonly byte[] readBuffer;   //= new byte[4];
+
+        private bool createdPort;
+
+        // Output buffer - zero, all bits low, makes a single high-low-high pulse
+        private byte[] sendBufer = { 0 };
+
+        private byte outPutMode;
+
+        private bool isDisposed = false;
 
         private TaskCompletionSource<Length>? dataReceivedTaskCompletionSource;
 
-        private readonly bool createdPort = false;
-
-        private bool isDisposed = false;
 
         /// <summary>
         /// Creates a new A02YYUW object communicating over serial
         /// </summary>
         /// <param name="device">The device connected to the sensor</param>
         /// <param name="serialPortName">The serial port</param>
-        public A02yyuw(IMeadowDevice device, SerialPortName serialPortName)
+        /// <param name="outPutModeParam">Output mode of the distance sensor, default is AUTO</param>
+        public A02yyuw(IMeadowDevice device, SerialPortName serialPortName, byte outPutModeParam = MODE_UART_AUTO)
             : this(device.CreateSerialPort(serialPortName, portSpeed))
         {
+            if (outPutModeParam == MODE_UART_AUTO)
+            {
+                readBuffer = new byte[200]; // good for 5 seconds between reads
+            }
+            else
+            {
+                readBuffer = new byte[4];
+            }
+            outPutMode = outPutModeParam;
             createdPort = true;
+            //serialPort.DataReceived += SerialPortDataReceived;
+            serialPort.ReadTimeout = SensorReadTimeOut;
+            if (!(serialPort.IsOpen))
+                serialPort.Open();
+            serialPort.ClearReceiveBuffer();
         }
 
         /// <summary>
         /// Creates a new A02YYUW object communicating over serial
         /// </summary>
         /// <param name="serialMessage">The serial message port</param>
-        public A02yyuw(ISerialPort serialMessage)
-        {
-            serialPort = serialMessage;
-            serialPort.ReadTimeout = TimeSpan.FromSeconds(5);
-            serialPort.DataReceived += SerialPortDataReceived;
-        }
+        /// <param name="outPutModeParam">Output mode of the distance sensor, default is UART_AUTO</param>
 
-        /// <summary>
-        /// Start a distance measurement
-        /// </summary>
-        public void MeasureDistance()
+        public A02yyuw(ISerialPort serialMessagePort, byte outPutModeParam = MODE_UART_AUTO)
         {
-            _ = Read();
+            if (outPutModeParam == MODE_UART_AUTO)
+            {
+                readBuffer = new byte[200]; // good for 5 seconds between reads
+            }
+            else
+            {
+                readBuffer = new byte[4];
+            }
+            serialPort = serialMessagePort;
+            serialPort.ReadTimeout = SensorReadTimeOut;
+            outPutMode = outPutModeParam;
+            createdPort = false;
+            // serialPort.DataReceived += SerialPortDataReceived;
+            if (!(serialPort.IsOpen))
+                serialPort.Open();
+            serialPort.ClearReceiveBuffer();
+
+        }
+        void IRangeFinder.MeasureDistance()
+        {
+            _ = ReadSensor();
+            return;
         }
 
         /// <summary>
@@ -88,6 +148,7 @@ namespace Meadow.Foundation.Sensors.Distance
         protected override Task<Length> ReadSensor()
         {
             return ReadSingleValue();
+
         }
 
         /// <summary>
@@ -98,6 +159,10 @@ namespace Meadow.Foundation.Sensors.Distance
         {
             lock (samplingLock)
             {
+                if (serialPort.IsOpen == false)
+                {
+                    serialPort.Open();
+                }
                 base.StartUpdating(updateInterval);
             }
         }
@@ -109,72 +174,103 @@ namespace Meadow.Foundation.Sensors.Distance
         {
             lock (samplingLock)
             {
-                serialPort?.Close();
                 base.StopUpdating();
             }
         }
 
-        //This sensor will write a single byte of 0xFF alternating with 
-        //3 bytes: 2 bytes for distance and a 3rd for the checksum
-        //when 3 bytes are available we know we have a distance reading ready
+        
         private async Task<Length> ReadSingleValue()
         {
-            dataReceivedTaskCompletionSource = new TaskCompletionSource<Length>();
-
-            if (serialPort.IsOpen == false)
+            int bytesRead, bytesToRead;
+            if (outPutMode == MODE_UART_CONTROL) // in UART Control Mode, send a 0 value over serial to toggle the control line
             {
-                serialPort.Open();
-            }
-
-            var timeOutTask = Task.Delay(SensorReadTimeOut);
-
-            await Task.WhenAny(dataReceivedTaskCompletionSource.Task, timeOutTask);
-
-            serialPort.Close();
-
-            if (dataReceivedTaskCompletionSource.Task.IsCompletedSuccessfully == true)
-            {
-                return dataReceivedTaskCompletionSource.Task.Result;
-            }
-            return new Length(0);
-        }
-
-        private void SerialPortDataReceived(object sender, SerialDataReceivedEventArgs e)
-        {
-            if (serialPort.IsOpen == false || serialPort.BytesToRead == 0 || dataReceivedTaskCompletionSource?.Task.IsCompletedSuccessfully == true)
-            {
-                return;
-            }
-
-            var len = serialPort.BytesToRead;
-
-            serialPort.Read(readBuffer, 0, Math.Min(len, readBuffer.Length));
-
-            for (int i = 0; i < len; i++)
-            {
-                if (readBuffer[i] == 0xFF)
+                /* In UART Controlled mode, a trigger pulse (by writing a 0 on serial port) is followed by
+                * data for distance presented to serial read after 70 ms.
+                * because it is a blocking read, we don't really need the task.Delay, but we need to call 
+                * some Task activity because inheritance demands an aync method.
+                */
+                do
                 {
-                    serialDataBytesRead = 0;
-                }
-                else if (serialDataBytesRead == 0)
-                {
-                    serialDataFirstByte = readBuffer[i];
-                    serialDataBytesRead++;
-                }
-                else if (serialDataBytesRead == 1)
-                {
-                    serialDataBytesRead = 2;
-                    var lengthInMillimeters = serialDataFirstByte << 8 | readBuffer[i];
+                    serialPort.Write(sendBufer);
+                    await Task.Delay(70);
+                    bytesRead = serialPort.Read(readBuffer, 0, 4);
 
-                    if (lengthInMillimeters != 0) //device should never return 0
+                    if ((bytesRead == 4) && (DoCheckSum(0)))
                     {
-                        var length = new Length(lengthInMillimeters, Length.UnitType.Millimeters);
-                        dataReceivedTaskCompletionSource?.SetResult(length);
-                        return;
+                        //The distance in millimeters = Data_H* 256 + Data_L
+                        Length distance = new Length((readBuffer[1] * 256) + readBuffer[2], Length.UnitType.Millimeters);
+                        Conditions = distance;
+                        return distance;
+                    }
+                    else
+                    {
+                        serialPort.ClearReceiveBuffer();
+                    }
+                } while (true);
+            }
+            else
+            {
+                if (outPutMode == MODE_UART_AUTO)
+                    /* In UART Auto mode, updated distance data is sent to the serial receive 
+                     *  buffer automatically  at a rate no faster than 10 Hz. The serial receive buffer
+                     *  size default is 1024 bytes. We have a 200 byte serial read buffer, so if
+                     *  we are Updating, we can go for at least 5 seconds without losing data.
+                     *  We only care about most recent distance, not rest of data in buffer 
+                     */
+                {
+                    // if possibility of buffer overflow, just delete what is in the buffer and wait for new data
+                    bytesToRead = serialPort.BytesToRead;
+                    if (bytesToRead >= 200)
+                    {
+                        serialPort.ClearReceiveBuffer();
+                        bytesToRead = 0;
+                    }
+                    while (bytesToRead < 7) // not just 4 because we may catch the middle of a distance reading
+                    {
+                        await Task.Delay(100);
+                        bytesToRead = serialPort.BytesToRead;
+                    }
+                    // read the data into the read buffer
+                    bytesRead = serialPort.Read(readBuffer, 0, bytesToRead);
+                    int iByte;
+                    // look backwards to find start of first data frame
+                    for (iByte = bytesToRead - 4; iByte >= 0 && DoCheckSum(iByte) == false ; iByte -= 1) { };
+                    if (iByte > 0)
+                    {
+                        //The distance in millimeters = Data_H* 256 + Data_L
+                        Length distance = new Length((readBuffer[iByte] * 256) + readBuffer[iByte + 1], Length.UnitType.Millimeters);
+                        Conditions = distance;
+                        return distance;
+                    }
+                    else
+                    {
+                        return new Length(0);
                     }
                 }
+
+
             }
+            return new Length(0); // only get here if there is no distance
         }
+
+
+        /// <summary>
+        /// Does a checksum starting at a given point in readBuffer.
+        /// The check sum is the lower 8 bits of the sum of the first three bytes, SUM =(start_bit + Data_H + Data_L) & 0x00FF
+        /// </summary>
+        /// <param name="ii">the check sum starts from this index into the read buffer array</param>
+        /// <returns>the truth that the check sum is valid</returns>
+        private bool DoCheckSum(int ii)
+        {
+            if (readBuffer[ii] == 255)
+            {
+                var checkSum = (ushort)((ushort)readBuffer[ii] + (ushort)readBuffer[ii + 1] + (ushort)readBuffer[ii + 2]);
+                return (checkSum & 0x00FF) == readBuffer[ii + 3];
+            }
+            return false;
+        }
+
+      
 
         /// <summary>
         /// Called before the platform goes into Sleep state
@@ -230,5 +326,7 @@ namespace Meadow.Foundation.Sensors.Distance
             Dispose(true);
             GC.SuppressFinalize(this);
         }
+
+        
     }
 }
