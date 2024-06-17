@@ -21,6 +21,9 @@ using Meadow.Foundation.Sensors.Temperature;
 
 using TempCorrectedDOSensorContract;
 using Meadow;
+using System.IO;
+using Newtonsoft.Json.Bson;
+using System.Text;
 
 namespace DFRobotGravityDOMeter;
 
@@ -29,6 +32,16 @@ namespace DFRobotGravityDOMeter;
 /// </summary>
 public class DFRobotGravityDOMeter : PollingSensorBase<ConcentrationInWater>, ITempCorrectedDOsensor
 {
+    /// <summary>
+    /// The calibration values for the sensor, log linear fits of voltage vs temperature
+    /// for no oxygen condition,and for (mg/l)/V for saturated O2 condition
+    /// </summary>
+    public double Zero_Offset, Zero_Mult, Sat_Offset, Sat_Mult;
+    static double Default_Zero_Offset { get; set; } = -3.5382; // or a big negative number like -1E6 if no zero cal is available
+    static double Default_Zero_Mult { get; set; } = -0.086818; // // or 0 if no zero cal is available
+    static double Default_Sat_Offset { get; set; } = 4.6834;
+    static double Default_Sat_Mult { get; set; } = -0.086818;
+
     /// <summary>
     /// Last concentration value read from the sensor
     /// </summary>
@@ -41,7 +54,7 @@ public class DFRobotGravityDOMeter : PollingSensorBase<ConcentrationInWater>, IT
 
     //public ISamplingSensor<Temperature>? TempSensor { get; set; } = null;
     /// <summary>
-    /// A Temperature Sensor is nice, but not essential
+    /// A Temperature Sensor is nice, but not essential, as temp can be updated with function call
     /// </summary>
     public ITemperatureSensor? TempSensor { get; set; } = null;
 
@@ -62,6 +75,37 @@ public class DFRobotGravityDOMeter : PollingSensorBase<ConcentrationInWater>, IT
             TempSensor.Updated += TempSensorHandler;
         DOsensorPort = doSensorPort;
         DOsensorPort.Subscribe(IAnalogInputPort.CreateObserver(handler: HandleAnalogUpdate, filter: FilterAnalogUpdate));
+        // try to load calibration data
+        Boolean hasCal = false;
+        string path = Path.Combine(MeadowOS.FileSystem.DataDirectory, "DO_Cal");
+        if (File.Exists(path))
+        {
+            try {
+                using (Stream stream = File.Open(path, FileMode.Open))
+                {
+                    using (BinaryReader reader = new BinaryReader(stream))
+                    {
+                        Zero_Offset = reader.ReadDouble();
+                        Zero_Mult = reader.ReadDouble();
+                        Sat_Offset = reader.ReadDouble();
+                        Sat_Mult = reader.ReadDouble();
+                        hasCal = true;
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Resolver.Log.Info("Error reading calibration data: {0}.",e.GetType().Name);
+            }
+            
+        }
+        if (hasCal == false)
+        {
+            Zero_Offset = Default_Zero_Offset;
+            Zero_Mult = Default_Zero_Mult;
+            Sat_Offset = Default_Sat_Offset;
+            Sat_Mult = Default_Sat_Mult;
+        }
     }
 
      /// <summary>
@@ -140,18 +184,9 @@ public class DFRobotGravityDOMeter : PollingSensorBase<ConcentrationInWater>, IT
         return Concentration;
     }
 
+    
     /// <summary>
-    /// The calibration values for the sensor, log linear fits of voltage vs temperature
-    /// for no oxygen condition,and for (mg/l)/V for saturated O2 condition
-    /// </summary>
-    public double Zero_Offset { get; set; } = -3.5382; // or a big negative number like -1E6 if no zero cal is available
-    public double Zero_Mult { get; set; } = -0.086818; // // or 0 if no zero cal is available
-    public double Sat_Offset { get; set; } = 4.6834;
-    public double Sat_Mult { get; set; } = -0.086818;
-
-
-    /// <summary>
-    /// Calculates O2 concentration from sensor voltage and temperature
+    /// Calculates O2 concentration from sensor voltage and a given temperature
     /// </summary>
     /// <param name="voltage"></param>
     /// <param name="temperature"></param>
@@ -220,7 +255,7 @@ public class DFRobotGravityDOMeter : PollingSensorBase<ConcentrationInWater>, IT
     }
 
     /// <summary>
-    /// Variable used track steps in calibration of probe for temperature
+    /// Variables used to track steps in calibration of probe for temperature
     /// </summary>
     private byte calState;
     public const byte MODE_MEASURE = 0;
@@ -246,9 +281,32 @@ public class DFRobotGravityDOMeter : PollingSensorBase<ConcentrationInWater>, IT
 
 }
 
-
-
 /*
+// create a `hello.txt` file in the `/Temp` directory
+//CreateFile(MeadowOS.FileSystem.TempDirectory, "hello.txt");
+
+private void CreateFile(string path, string filename)
+{
+    if (!Directory.Exists(MeadowOS.FileSystem.DocumentsDirectory))
+    {
+        Directory.CreateDirectory(path);
+    }
+
+    try
+    {
+        using (var fs = File.CreateText(Path.Combine(path, filename)))
+        {
+            fs.WriteLine("Hello Meadow File!");
+        }
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine(ex.Message);
+    }
+}
+
+
+
    
 
 

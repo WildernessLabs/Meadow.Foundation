@@ -1,0 +1,9 @@
+﻿# Uncomment to set the default Wi-Fi credentials. (This file will be processed into secure storage on the ESP32 and then deleted from the device.)
+# To learn more about these config options, including custom application configuration settings, check out the Application Settings Configuration documentation.
+# http://developer.wildernesslabs.co/Meadow/Meadow.OS/Configuration/WiFi_Configuration/
+
+# # To enable automatically connecting to a default network, make sure to enable the Coprocessor > AutomaticallyStartNetwork value in meadow.config.yaml.
+#Credentials:
+#  Ssid: YourSSID
+#  Password: SSIDPassword
+

@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	 <meta name="description" content="Documentation for Temperature Corrected Dissolved Oxygen Sensor">
+	  <meta name="author" content="Jamie Boyd">
+    <title>Temperature Corrected Analog Dissolved Oxygen Sensor</title>
+  </head>
+  <body>
+	  
+	  
+	  <H1><center>Analog Dissolved Oxygen Sensor</center></H1>
+
+This Dissolved Oxygen Sensor library is designed for the <a href=https://www.wildernesslabs.co>Wilderness Labs</a> Meadow .NET IoT platform. The library is designed to work with the Dissolved Oxygen Meter from <a href = https://atlas-scientific.com/kits/surveyor-analog-do-kit>Atlas Scientific</a> or <a href = https://www.dfrobot.com/product-1628.html> DFRobot</a>. But it will work with any galvanic dissolved oxygen probe that ouputs a buffered analog voltage. Although Atlas recommends using the setup only to calculate percent saturation of oxygen relative to the partial pressure of oxygen in the atmosphere, we measure temperature and calculate temperature correction, with some simplifications, to estimate dissolved oxygen in mg/L. First among these simplifications is neglecting the effects of atmospheric pressure when doing calibrations; instead, we assume pressure is close to standard. We also ignore the effects of salinity. To use this code, then, you will need to have a sensor for water temperature (an NTC thermistor works nicely) or supply the temperature in °C when calling the code functions. You will also need to do some calibration, explained below.
+
+<H2>Hooking up the Sensor</H2>
+A small breakout board connects to the oxygen probe with an SMA cable. The breakout board amplifies the voltage from the sensor and outputs outputs a buffered analog voltage between 0 and about 1 V.  The pins on the breakout and thier conection to the Meadow Board are indicated as follows:
+
+<table>
+	<caption>Breakout Connections</caption>
+	<thead>
+		<tr>
+			<th scope="col">Breakout</th>
+			<th scope="col">Meadow Connections</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>-</td>
+			<td>Ground</td>
+		</tr>
+		<tr>
+			<td>+</td>
+			<td>3.3V</td>
+		</tr>
+		<tr>
+			<td>A</td>
+			<td>Any analog input port</td>
+		</tr>
+	</tbody>
+</table>
+
+<H2>Running the Code</H2>
+
+
+
+<H2>Calibration</H2>
+<p>Calibration is expected to be slightly different for each electrode, and to slowly change over time as the electrode oxidizes. A reasonable rule of thumb might be to redo the calibration procedure every 6 months and also change electrolyte solution.</p>
+
+<p>As described by the Nernst equation, electrochemical potential and thus sensor voltage increases with temperature at a given oxygen concentration. We use sensor readings for two points of oxygen concentration over a range of temperatures to compensate for this temperature dependence.  The first point is water saturated with oxygen, constantly stirred while in contact with air, and the second point is zero dissolved oxygen using saturated sodium metabisulfite (an oxygen scavenging reagent) to eliminate all oxygen, while limiting contact with air. We assume that sensor voltage maps oxygen concentration linearly between these two values at a given temperature.</p>
+
+<p>Note that the saturation concentration of oxygen in water varies with temperature, decreasing by about 47% as water is heated from 0 to 30 C, as shown in figure 1. Thus, the saturation calibration value  is not constant  across temperatures. This needs to be taken into account when making the calibration. Note that oxygen saturation concentration will increase with atmospheric pressure, and that sensor voltage will vary with salinity independent of oxygen concentration, but we do not correct for these factors.</p>
+<img src = "DO_SaturationCurve.png" alt = "Fig 1. Dissolved Oxygen Saturation Concentration versus Water Temperature">
+
+A .NET library and sample application for the [Gravity dissolved oxygen sensor](https://atlas-scientific.com/embedded-solutions/dissolved-oxygen-meter/) using Wilderness Lab's [Meadow Foundation API](https://developer.wildernesslabs.co/docs/api/Meadow.Foundation/) with support for the [ProjectLab v3](https://store.wildernesslabs.co/collections/frontpage/products/project-lab-board). The code should work with any analog dissolved oxygen sensor.
+
+
+  </body>
+</html>

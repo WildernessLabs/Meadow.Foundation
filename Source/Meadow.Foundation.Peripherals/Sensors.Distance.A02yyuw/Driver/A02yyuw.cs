@@ -1,8 +1,32 @@
-﻿using Meadow.Hardware;
+﻿/******************** A02 ultrasonic distance sensor **********************
+ * Uses a serial port to commnicate with an A02 ultrasonic distance module,
+ * which reports distance from the sensor to nearest object.
+ * 
+ * Pinout for Sensor:
+ * 1. (red) VCC power input 3- 5 V
+ * 2. (black) ground
+ * 3. (yellow) Rx pin function depends on output mode
+ * 4. (white) Tx pin function depends on output mode
+ * 
+ * The A02 series supports 5 different modes of operation (PWM output, UART 
+ * Controlled output, UART Auto output, Switched output). The Rx and Tx pin
+ * function corresponds to the output mode selected before ordering, and can not 
+ * be changed. The **A02yyuw** library supports the UART Controlled output and 
+ * UART Auto output of the A02. 
+
+ * Data Frame Description
+
+ * Data Frame	Description				Byte
+ * Start Bit 	0XFF 0XFF				1 byte
+ * Data_H		High8 distance value	1 byte
+ * Data_L		Low8 distance value		1 byte
+ * SUM			Parity sum				1 byte
+ * 
+ */
+using Meadow.Hardware;
 using Meadow.Peripherals.Sensors.Distance;
 using Meadow.Units;
 using System;
-using System.IO.Ports;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -41,7 +65,7 @@ namespace Meadow.Foundation.Sensors.Distance
 
         private bool createdPort;
 
-        // Output buffer - just a zero
+        // Output buffer - zero, all bits low, makes a single high-low-high pulse
         private byte[] sendBufer = { 0 };
 
         private byte outPutMode;
@@ -150,12 +174,11 @@ namespace Meadow.Foundation.Sensors.Distance
         {
             lock (samplingLock)
             {
-                serialPort.Close();
                 base.StopUpdating();
             }
         }
 
-
+        
         private async Task<Length> ReadSingleValue()
         {
             int bytesRead, bytesToRead;
@@ -174,6 +197,7 @@ namespace Meadow.Foundation.Sensors.Distance
 
                     if ((bytesRead == 4) && (DoCheckSum(0)))
                     {
+                        //The distance in millimeters = Data_H* 256 + Data_L
                         Length distance = new Length((readBuffer[1] * 256) + readBuffer[2], Length.UnitType.Millimeters);
                         Conditions = distance;
                         return distance;
@@ -194,6 +218,7 @@ namespace Meadow.Foundation.Sensors.Distance
                      *  We only care about most recent distance, not rest of data in buffer 
                      */
                 {
+                    // if possibility of buffer overflow, just delete what is in the buffer and wait for new data
                     bytesToRead = serialPort.BytesToRead;
                     if (bytesToRead >= 200)
                     {
@@ -205,12 +230,14 @@ namespace Meadow.Foundation.Sensors.Distance
                         await Task.Delay(100);
                         bytesToRead = serialPort.BytesToRead;
                     }
-
+                    // read the data into the read buffer
                     bytesRead = serialPort.Read(readBuffer, 0, bytesToRead);
                     int iByte;
-                    for (iByte = bytesToRead - 4; DoCheckSum(iByte) == false && iByte >= 0; iByte -= 1) { };
+                    // look backwards to find start of first data frame
+                    for (iByte = bytesToRead - 4; iByte >= 0 && DoCheckSum(iByte) == false ; iByte -= 1) { };
                     if (iByte > 0)
                     {
+                        //The distance in millimeters = Data_H* 256 + Data_L
                         Length distance = new Length((readBuffer[iByte] * 256) + readBuffer[iByte + 1], Length.UnitType.Millimeters);
                         Conditions = distance;
                         return distance;
@@ -226,8 +253,13 @@ namespace Meadow.Foundation.Sensors.Distance
             return new Length(0); // only get here if there is no distance
         }
 
-    
 
+        /// <summary>
+        /// Does a checksum starting at a given point in readBuffer.
+        /// The check sum is the lower 8 bits of the sum of the first three bytes, SUM =(start_bit + Data_H + Data_L) & 0x00FF
+        /// </summary>
+        /// <param name="ii">the check sum starts from this index into the read buffer array</param>
+        /// <returns>the truth that the check sum is valid</returns>
         private bool DoCheckSum(int ii)
         {
             if (readBuffer[ii] == 255)
