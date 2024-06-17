@@ -22,6 +22,11 @@ internal class DateTimeClass
     public DateTimeOffset DTOField { get; set; }
 }
 
+internal class TimeSpanClass
+{
+    public TimeSpan TSField { get; set; }
+}
+
 internal class IntegerClass
 {
     public int Value { get; set; }

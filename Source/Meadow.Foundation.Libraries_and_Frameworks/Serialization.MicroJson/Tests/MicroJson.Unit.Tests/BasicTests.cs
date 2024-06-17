@@ -31,6 +31,23 @@ public class BasicTests
     }
 
     [Fact]
+    public void TimeSpanSerializationTest()
+    {
+        var input = new TimeSpanClass
+        {
+            TSField = new TimeSpan(23, 15, 34, 23, 02)
+        };
+
+        var json = MicroJson.Serialize(input);
+
+        Assert.NotNull(json);
+
+        var json1 = JsonSerializer.Serialize(input);
+
+        Assert.True(string.Compare(json, json1, true) == 0);
+    }
+
+    [Fact]
     public void DateTimeDeserializationTest()
     {
         var input = new DateTimeClass
@@ -47,6 +64,23 @@ public class BasicTests
         // the fraction of a second will be lost, so equality won't work
         Assert.True(Math.Abs((input.DTField - test.DTField).TotalSeconds) < 1, "DateTime failed");
         Assert.True(Math.Abs((input.DTOField - test.DTOField).TotalSeconds) < 1, "DateTimeOffset failed");
+    }
+
+    [Fact]
+    public void TimeSpanDeserializationTest()
+    {
+        var input = new TimeSpanClass
+        {
+            TSField = new TimeSpan(23, 15, 34, 23, 02)
+        };
+
+        var json = JsonSerializer.Serialize(input);
+
+        var test = MicroJson.Deserialize<TimeSpanClass>(json);
+
+        Assert.NotNull(test);
+        // the fraction of a second will be lost, so equality won't work
+        Assert.True((input.TSField - test.TSField).TotalMilliseconds == 0, "TimeSpan failed");
     }
 
     [Fact]
