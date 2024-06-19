@@ -10,7 +10,7 @@ namespace Meadow.Foundation.Sensors;
 /// </summary>
 public class SimulatedBarometricPressureSensor : SimulatedSamplingSensorBase<Pressure>, IBarometricPressureSensor
 {
-    private readonly Random random = new Random();
+    private readonly Random random = new();
 
     /// <summary>
     /// Gets the current pressure reading.
@@ -23,11 +23,13 @@ public class SimulatedBarometricPressureSensor : SimulatedSamplingSensorBase<Pre
     public override Type ValueType => typeof(Pressure);
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="SimulateBarometricPressureSensor"/> class.
+    /// Initializes a new instance of the <see cref="SimulatedBarometricPressureSensor"/> class.
     /// </summary>
     public SimulatedBarometricPressureSensor()
     {
         Pressure = new Pressure(1015.25, Units.Pressure.UnitType.Millibar);
+
+        StartSimulation(SimulationBehavior.RandomWalk);
     }
 
     /// <summary>
@@ -50,7 +52,7 @@ public class SimulatedBarometricPressureSensor : SimulatedSamplingSensorBase<Pre
         {
             case SimulationBehavior.RandomWalk:
                 var delta = random.NextDouble() * 10d - 5d;
-                return new Pressure(Pressure!.Value.Millibar + delta);
+                return new Pressure(Pressure!.Value.Millibar + delta, Units.Pressure.UnitType.Millibar);
         }
         return Pressure!.Value;
     }
