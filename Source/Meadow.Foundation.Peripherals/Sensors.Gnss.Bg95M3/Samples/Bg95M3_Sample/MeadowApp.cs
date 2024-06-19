@@ -1,11 +1,10 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Gnss;
+using Meadow.Hardware;
 using Meadow.Peripherals.Sensors.Location.Gnss;
-using Meadow.Peripherals.Sensors.Location.Gnss.Bg95M3;
+using System;
+using System.Threading.Tasks;
 
 namespace Sensors.Gnss.Bg95M3_Sample
 {
@@ -17,11 +16,9 @@ namespace Sensors.Gnss.Bg95M3_Sample
 
         void ProcessGnssPosition(object sender, IGnssResult location)
         {
-            Resolver.Log.Info("*********************************************");
-            Resolver.Log.Info(location.ToString());
-            Resolver.Log.Info("*********************************************");  
+            Resolver.Log.Info($"{location}");
         }
-        
+
         public override Task Initialize()
         {
             Resolver.Log.Info("Initializing ...");

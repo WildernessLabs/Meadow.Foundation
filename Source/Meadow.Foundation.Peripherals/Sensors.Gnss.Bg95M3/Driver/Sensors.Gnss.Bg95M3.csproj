@@ -19,9 +19,13 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>BG95-M3 Cellular / GNSS controller</Description>
   </PropertyGroup>
+  <PropertyGroup>
+	<PackageReadmeFile>Readme.md</PackageReadmeFile>
+	<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+  </PropertyGroup>
   <ItemGroup>
     <None Include=".\Readme.md" Pack="true" PackagePath="" />
-  <None Include="..\..\..\icon.png" Pack="true" PackagePath="" />
+    <None Include="..\..\..\icon.png" Pack="true" PackagePath="" />
     <ProjectReference Include="..\..\..\Meadow.Foundation.Libraries_and_Frameworks\Sensors.Location.Gnss.NmeaProcessor\Driver\Sensors.Location.Gnss.NmeaProcessor.csproj" />
   </ItemGroup>
 </Project>
