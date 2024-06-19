@@ -1,186 +1,224 @@
 ﻿using Meadow.Hardware;
 using Meadow.Units;
 using System;
+using System.Collections.Generic;
 using System.Threading;
 
-namespace Meadow.Foundation.ICs.IOExpanders
+namespace Meadow.Foundation.ICs.IOExpanders;
+
+/// <summary>
+/// Represents a PCA9685
+/// </summary>
+/// <remarks>All PWM channels run at the same Frequency</remarks>
+public partial class Pca9685 : II2cPeripheral, IPwmOutputController, IDisposable
 {
+    private readonly byte address;
+
+    private Dictionary<int, IPwmPort> portCache = new();
+    private bool isDisposed;
+
     /// <summary>
-    /// Represents PCA9685 IC
+    /// The default I2C address for the peripheral
     /// </summary>
-    /// <remarks>All PWM channels run at the same Frequency</remarks>
-    public partial class Pca9685 : II2cPeripheral
+    public byte DefaultI2cAddress => (byte)Addresses.Default;
+
+    /// <summary>
+    /// I2C Communication bus used to communicate with the peripheral
+    /// </summary>
+    protected readonly II2cCommunications i2cComms;
+
+    /// <summary>
+    /// The I2C bus connected to the pca9685
+    /// </summary>
+    protected II2cBus i2cBus { get; set; }
+
+    /// <summary>
+    /// PCA9685 pin definitions
+    /// </summary>
+    public PinDefinitions Pins { get; }
+
+    /// <summary>
+    /// The frequency for the PWM outputs
+    /// </summary>
+    /// <remarks>
+    /// All PWMs on the part share the same frequency
+    /// </remarks>
+    public Frequency Frequency
     {
-        /// <summary>
-        /// The default I2C address for the peripheral
-        /// </summary>
-        public byte DefaultI2cAddress => (byte)Addresses.Default;
+        get;
+    }
 
-        /// <summary>
-        /// I2C Communication bus used to communicate with the peripheral
-        /// </summary>
-        protected readonly II2cCommunications i2cComms;
-
-        private readonly Frequency frequency;
-
-        const byte Mode1 = 0x00;
-        const byte Mode2 = 0x01;
-        const byte SubAdr1 = 0x02;
-        const byte SubAdr2 = 0x03;
-        const byte SubAdr3 = 0x04;
-        const byte PreScale = 0xFE;
-        const byte Led0OnL = 0x06;
-        const byte Led0OnH = 0x07;
-        const byte Led0OffL = 0x08;
-        const byte Led0OffH = 0x09;
-        const byte AllLedOnL = 0xFA;
-        const byte AllLedOnH = 0xFB;
-        const byte AllLedOffL = 0xFC;
-        const byte AllLedOffH = 0xFD;
-
-        //# Bits
-        const byte restart = 0x80;
-        const byte sleep = 0x10;
-        const byte allCall = 0x01;
-        const byte invert = 0x10;
-        const byte outDrv = 0x04;
-        const byte mode1AI = 0x21;
-
-        /// <summary>
-        /// The I2C bus connected to the pca9685
-        /// </summary>
-        protected II2cBus i2cBus { get; set; }
-
-        readonly byte address;
-
-        /// <summary>
-        /// Create a new Pca9685 object
-        /// </summary>
-        /// <param name="i2cBus">The I2C bus connected to the peripheral</param>
-        /// <param name="frequency">The frequency</param>
-        /// <param name="address">The I2C address</param>
-        public Pca9685(II2cBus i2cBus, Frequency frequency, byte address = (byte)Addresses.Default)
+    /// <summary>
+    /// Create a new Pca9685 object
+    /// </summary>
+    /// <param name="i2cBus">The I2C bus connected to the peripheral</param>
+    /// <param name="frequency">The frequency</param>
+    /// <param name="address">The I2C address</param>
+    public Pca9685(II2cBus i2cBus, Frequency frequency, byte address = (byte)Addresses.Default)
+    {
+        Pins = new PinDefinitions(this)
         {
-            this.i2cBus = i2cBus;
-            this.address = address;
-            i2cComms = new I2cCommunications(this.i2cBus, address);
-            this.frequency = frequency;
-        }
+            Controller = this
+        };
 
-        /// <summary>
-        /// Create a new Pca9685 object
-        /// </summary>
-        /// <param name="i2cBus">The I2C bus connected to the peripheral</param>
-        /// <param name="address">The I2C address</param>
-        public Pca9685(II2cBus i2cBus, byte address = (byte)Addresses.Default)
+        this.Frequency = frequency;
+        this.i2cBus = i2cBus;
+        this.address = address;
+        i2cComms = new I2cCommunications(this.i2cBus, address);
+
+        Initialize();
+    }
+
+    /// <summary>
+    /// Create a new Pca9685 object
+    /// </summary>
+    /// <param name="i2cBus">The I2C bus connected to the peripheral</param>
+    /// <param name="address">The I2C address</param>
+    public Pca9685(II2cBus i2cBus, byte address = (byte)Addresses.Default)
         : this(i2cBus, new Frequency(IPwmOutputController.DefaultPwmFrequency, Frequency.UnitType.Hertz), address)
-        { }
+    {
+    }
 
-        /// <summary>
-        /// Initializes the PCA9685 IC
-        /// </summary>
-        public virtual void Initialize()
+    /// <summary>
+    /// Initializes the PCA9685 IC
+    /// </summary>
+    private void Initialize()
+    {
+        i2cBus.Write(address, new byte[] { Registers.Mode1, 0x00 });
+
+        Thread.Sleep(5);
+
+        SetFrequency(Frequency);
+
+        for (byte i = 0; i < 16; i++)
         {
-            i2cBus.Write(address, new byte[] { Mode1, 0x00 });
-            i2cBus.Write(address, new byte[] { Mode1 });
+            SetPwm(i, 0, 0);
+        }
+    }
 
-            Thread.Sleep(5);
+    /*
+    /// <summary>
+    /// Turns the specified pin On or Off
+    /// </summary>
+    /// <param name="pin">The pin to set</param>
+    /// <param name="on">true is on, false if off</param>
+    public virtual void SetPin(byte pin, bool on)
+    {
+        if (pin is < 0 or > 15)
+        {
+            throw new ArgumentException("PWM pin must be between 0 and 15");
+        }
 
-            SetFrequency(frequency);
+        SetPwm(pin, on ? 4096 : 0, 0);
+    }
+    */
 
-            for (byte i = 0; i < 16; i++)
+    /// <summary>
+    /// Set the values for specified output pin.
+    /// </summary>
+    /// <param name="pin">The pwm Pin</param>
+    /// <param name="on">LED{X}_ON_L and LED{X}_ON_H register value</param>
+    /// <param name="off">LED{X}_OFF_L and LED{X}_OFF_H register value</param>
+    /// <remarks>On parameter is an inverted pwm signal</remarks>
+    private void SetPwm(byte pin, int on, int off)
+    {
+        if (pin is < 0 or > 15)
+        {
+            throw new ArgumentException("Value has to be between 0 and 15", nameof(pin));
+        }
+
+        if (on is < 0 or > 4096)
+        {
+            throw new ArgumentException("Value has to be between 0 and 4096", nameof(on));
+        }
+
+        if (off is < 0 or > 4096)
+        {
+            throw new ArgumentException("Value has to be between 0 and 4096", nameof(off));
+        }
+
+        Write((byte)(Registers.Led0OnL + (4 * pin)), (byte)(on & 0xFF), (byte)(on >> 8), (byte)(off & 0xFF), (byte)(off >> 8));
+    }
+
+    private void Write(byte register, byte ledXOnL, byte ledXOnH, byte ledXOffL, byte ledXOffH)
+    {
+        i2cComms.Write(new byte[] { register, ledXOnL, ledXOnH, ledXOffL, ledXOffH });
+    }
+
+    private void Write(byte register, byte value)
+    {
+        i2cComms.WriteRegister(register, value);
+    }
+
+    private void SetFrequency(Frequency frequency)
+    {
+        var prescaleval = 25_000_000d;  //  # 25MHz
+        prescaleval /= 4096.0;       //# 12-bit
+        prescaleval /= frequency.Hertz;
+        prescaleval -= 1.0;
+
+        double prescale = Math.Floor(prescaleval + 0.5);
+        byte oldmode = i2cComms.ReadRegister(Registers.Mode1);
+        byte newmode = (byte)((oldmode & ~Mode1.Restart) | Mode1.Sleep);         //   # sleep
+
+        Write(Registers.Mode1, newmode);//       # go to sleep
+        Write(Registers.PreScale, (byte)((int)(Math.Floor(prescale))));
+        Write(Registers.Mode1, oldmode);
+
+        Thread.Sleep(5);
+        Write(Registers.Mode1, (byte)(oldmode | Mode1.Restart | Mode1.AutoIncrement));
+    }
+
+    /// <inheritdoc/>
+    public IPwmPort CreatePwmPort(IPin pin, float dutyCycle = 0.5F, bool invert = false)
+    {
+        return CreatePwmPort(pin, Frequency, dutyCycle, invert);
+    }
+
+    /// <inheritdoc/>
+    public IPwmPort CreatePwmPort(IPin pin, Frequency frequency, float dutyCycle = 0.5F, bool invert = false)
+    {
+        var portNumber = (byte)pin.Key;
+
+        if (portNumber is < 0 or > 15)
+        {
+            throw new ArgumentException("Value must be between 0 and 15", nameof(portNumber));
+        }
+
+        if (portCache.ContainsKey(portNumber))
+        {
+            return portCache[portNumber];
+        }
+
+        var pwmPort = new PwmPort(this, pin, frequency, dutyCycle, invert);
+
+        portCache.Add(portNumber, pwmPort);
+
+        return pwmPort;
+    }
+
+    /// <inheritdoc/>
+    protected virtual void Dispose(bool disposing)
+    {
+        if (!isDisposed)
+        {
+            if (disposing)
             {
-                SetPwm(i, 0, 0);
-            }
-        }
-
-        /// <summary>
-        /// Create a IPwmPort on the specified pin
-        /// </summary>
-        /// <param name="portNumber">The port number (0-15)</param>
-        /// <param name="dutyCycle">The duty cycle for that port</param>
-        /// <returns>IPwmPort</returns>
-        public virtual IPwmPort CreatePwmPort(byte portNumber, float dutyCycle = 0.5f)
-        {
-            if (portNumber is < 0 or > 15)
-            {
-                throw new ArgumentException("Value must be between 0 and 15", nameof(portNumber));
+                foreach (var p in portCache.Values)
+                {
+                    p.Dispose();
+                }
             }
 
-            var pwmPort = new PwmPort(i2cBus, address, Led0OnL, frequency, portNumber, dutyCycle);
-
-            return pwmPort;
+            isDisposed = true;
         }
+    }
 
-        /// <summary>
-        /// Turns the specified pin On or Off
-        /// </summary>
-        /// <param name="pin">The pin to set</param>
-        /// <param name="on">true is on, false if off</param>
-        public virtual void SetPin(byte pin, bool on)
-        {
-            if (pin is < 0 or > 15)
-            {
-                throw new ArgumentException("PWM pin must be between 0 and 15");
-            }
-
-            SetPwm(pin, on ? 4096 : 0, 0);
-        }
-
-        /// <summary>
-        /// Set the values for specified output pin.
-        /// </summary>
-        /// <param name="pin">The pwm Pin</param>
-        /// <param name="on">LED{X}_ON_L and LED{X}_ON_H register value</param>
-        /// <param name="off">LED{X}_OFF_L and LED{X}_OFF_H register value</param>
-        /// <remarks>On parameter is an inverted pwm signal</remarks>
-        public virtual void SetPwm(byte pin, int on, int off)
-        {
-            if (pin is < 0 or > 15)
-            {
-                throw new ArgumentException("Value has to be between 0 and 15", nameof(pin));
-            }
-
-            if (on is < 0 or > 4096)
-            {
-                throw new ArgumentException("Value has to be between 0 and 4096", nameof(on));
-            }
-
-            if (off is < 0 or > 4096)
-            {
-                throw new ArgumentException("Value has to be between 0 and 4096", nameof(off));
-            }
-
-            Write((byte)(Led0OnL + (4 * pin)), (byte)(on & 0xFF), (byte)(on >> 8), (byte)(off & 0xFF), (byte)(off >> 8));
-        }
-
-        void Write(byte register, byte ledXOnL, byte ledXOnH, byte ledXOffL, byte ledXOffH)
-        {
-            i2cBus.Write(address, new byte[] { register, ledXOnL, ledXOnH, ledXOffL, ledXOffH });
-        }
-
-        void Write(byte register, byte value)
-        {
-            i2cComms.WriteRegister(register, value);
-        }
-
-        void SetFrequency(Frequency frequency)
-        {
-            double prescaleval = 25000000.0;  //  # 25MHz
-            prescaleval /= 4096.0;       //# 12-bit
-            prescaleval /= frequency.Hertz;
-            prescaleval -= 1.0;
-
-            double prescale = Math.Floor(prescaleval + 0.5);
-            byte oldmode = i2cComms.ReadRegister(Mode1);
-            byte newmode = (byte)((oldmode & 0x7F) | 0x10);         //   # sleep
-
-            Write(Mode1, newmode);//       # go to sleep
-            Write(PreScale, (byte)((int)(Math.Floor(prescale))));
-            Write(Mode1, oldmode);
-
-            Thread.Sleep(5);
-            Write(Mode1, (byte)(oldmode | 0x80 | mode1AI));
-        }
+    /// <inheritdoc/>
+    public void Dispose()
+    {
+        // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+        Dispose(disposing: true);
+        GC.SuppressFinalize(this);
     }
 }

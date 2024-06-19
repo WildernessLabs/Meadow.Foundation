@@ -44,14 +44,6 @@ namespace Meadow.Foundation.Servos
         /// </summary>0
         public static ServoConfig JXHV180 = new ServoConfig(minimumPulseDuration: 500, maximumPulseDuration: 2500, maximumAngle: new Angle(180, AU.Degrees));
 
-        /// <summary>
-        /// Represents the SG90 180 degree servo models. Angle: 0-180, Pulse: 500 - 2,200
-        /// </summary>0
-        public static ServoConfig SG90 = new ServoConfig(minimumAngle: new Angle(0, AU.Degrees),
-                                                        maximumAngle: new Angle(180, AU.Degrees),
-                                                        minimumPulseDuration: 500,
-                                                        maximumPulseDuration: 2350,
-                                                        frequency: new Frequency(50, Frequency.UnitType.Hertz));
 
         /// <summary>
         /// Represents the MG996R 180 degree servo models. Angle: 0-180, Pulse: 500 - 2,200
@@ -61,5 +53,28 @@ namespace Meadow.Foundation.Servos
                                                         minimumPulseDuration: 500,
                                                         maximumPulseDuration: 2350,
                                                         frequency: new Frequency(50, Frequency.UnitType.Hertz));
+
+        private static ServoConfig? fs90R;
+        private static ServoConfig? sg90;
+
+        /// <summary>
+        /// Represents the SG90 180 degree servo models. Angle: 0-180, Pulse: 500 - 2,200
+        /// </summary>0
+        public static ServoConfig SG90 => sg90 ??=
+            new ServoConfig(
+                new Frequency(50, Frequency.UnitType.Hertz),
+                minimumAngle: new Angle(0, AU.Degrees),
+                maximumAngle: new Angle(180, AU.Degrees),
+                minimumPulseDuration: 1000,
+                maximumPulseDuration: 2000);
+
+        /// <summary>
+        /// Represents the FS90 continuous rotation servo models. Angle: 0-180, Pulse: 500 - 2,200
+        /// </summary>0
+        public static ServoConfig FS90R => fs90R ??=
+            new ServoConfig(
+                new Frequency(50, Frequency.UnitType.Hertz),
+                minimumPulseDuration: 900,
+                maximumPulseDuration: 2100);
     }
 }
