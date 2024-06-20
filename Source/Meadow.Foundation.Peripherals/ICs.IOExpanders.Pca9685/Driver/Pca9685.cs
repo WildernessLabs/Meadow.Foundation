@@ -70,12 +70,12 @@ public partial class Pca9685 : II2cPeripheral, IPwmOutputController, IDisposable
     }
 
     /// <summary>
-    /// Create a new Pca9685 object
+    /// Create a new Pca9685 object with a 50Hz PWM frequency
     /// </summary>
     /// <param name="i2cBus">The I2C bus connected to the peripheral</param>
     /// <param name="address">The I2C address</param>
     public Pca9685(II2cBus i2cBus, byte address = (byte)Addresses.Default)
-        : this(i2cBus, new Frequency(IPwmOutputController.DefaultPwmFrequency, Frequency.UnitType.Hertz), address)
+        : this(i2cBus, new Frequency(50, Frequency.UnitType.Hertz), address)
     {
     }
 

@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 namespace Meadow.Foundation.Servos;
 
 /// <summary>
-/// Represents an angular servo base class
+/// Represents an angular servo
 /// </summary>
-public abstract class AngularServoBase : ServoBase, IAngularServo
+public class AngularServo : ServoBase, IAngularServo
 {
     /// <summary>
     /// The current angle
@@ -20,7 +20,7 @@ public abstract class AngularServoBase : ServoBase, IAngularServo
     /// </summary>
     /// <param name="pwmPort">The PWM port</param>
     /// <param name="config">The servo configuration</param>
-    public AngularServoBase(IPwmPort pwmPort, ServoConfig config)
+    public AngularServo(IPwmPort pwmPort, ServoConfig config)
         : base(pwmPort, config)
     { }
 
@@ -43,7 +43,7 @@ public abstract class AngularServoBase : ServoBase, IAngularServo
 
         var pulseDuration = CalculatePulseDuration(angle);
 
-        SendCommandPulse(pulseDuration);
+        SendCommandPulseWithTrim(pulseDuration);
 
         var rotationRequired = Math.Abs((Angle.HasValue ? Angle.Value.Degrees : 360) - angle.Degrees);
         var delay = (int)(8 * rotationRequired); // estimating 8ms / degree
@@ -64,9 +64,15 @@ public abstract class AngularServoBase : ServoBase, IAngularServo
     /// <returns>The pulse duration as as float</returns>
     protected TimeSpan CalculatePulseDuration(Angle angle)
     {
-        return TimeSpan.FromMilliseconds(
-            Config.MinimumPulseDuration + (float)(angle.Degrees / Config.MaximumAngle.Degrees * (Config.MaximumPulseDuration - Config.MinimumPulseDuration)) / 1000
-            );
+        var totalDegrees = Config.MaximumAngle.Degrees - Config.MinimumAngle.Degrees;
+        double totalDuration = Config.MaximumPulseDuration - Config.MinimumPulseDuration;
+        var microsecondsPerDegree = totalDuration / totalDegrees;
+
+        var duration = (Config.MinimumAngle.Degrees + angle.Degrees) * microsecondsPerDegree;
+
+        Console.WriteLine($"Pulse duration: {duration} us");
+
+        return TimeSpan.FromMilliseconds(duration / 1000d);
     }
 
 }

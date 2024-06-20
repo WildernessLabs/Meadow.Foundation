@@ -13,9 +13,9 @@ public partial class Pca9685
     public class PwmPort : IPwmPort
     {
         private Pca9685 controller;
-        private float dutyCycle;
+        private double dutyCycle;
         private readonly byte portNumber;
-        private Units.Frequency frequency;
+        private Frequency frequency;
         private int onCount = 0;
 
         /// <summary>
@@ -34,16 +34,16 @@ public partial class Pca9685
             set
             {
                 Console.WriteLine($"setting duration to {value}");
-                DutyCycle = (float)(value.TotalSeconds * Frequency.Hertz / 2d);
+                DutyCycle = (value.TotalSeconds * Frequency.Hertz / 2d);
             }
         }
 
         /// <summary>
         /// Period
         /// </summary>
-        public float Period
+        public double Period
         {
-            get => 1 / (float)frequency.Hertz;
+            get => 1 / frequency.Hertz;
             set => Frequency = new Frequency(1 / value, Units.Frequency.UnitType.Hertz);
         }
 
@@ -71,7 +71,7 @@ public partial class Pca9685
         /// <summary>
         /// Duty cycle
         /// </summary>
-        public float DutyCycle
+        public double DutyCycle
         {
             get => dutyCycle;
             set

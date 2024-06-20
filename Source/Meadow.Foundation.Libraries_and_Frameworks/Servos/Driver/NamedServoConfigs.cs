@@ -63,8 +63,8 @@ namespace Meadow.Foundation.Servos
         public static ServoConfig SG90 => sg90 ??=
             new ServoConfig(
                 new Frequency(50, Frequency.UnitType.Hertz),
-                minimumAngle: new Angle(0, AU.Degrees),
-                maximumAngle: new Angle(180, AU.Degrees),
+                minimumAngle: new Angle(-90, AU.Degrees),
+                maximumAngle: new Angle(90, AU.Degrees),
                 minimumPulseDuration: 1000,
                 maximumPulseDuration: 2000);
 
