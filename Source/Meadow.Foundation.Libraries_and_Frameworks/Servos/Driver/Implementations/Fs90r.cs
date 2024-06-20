@@ -1,5 +1,4 @@
 ﻿using Meadow.Hardware;
-using Meadow.Units;
 using System;
 
 namespace Meadow.Foundation.Servos;
@@ -9,12 +8,8 @@ namespace Meadow.Foundation.Servos;
 /// </summary>
 public class Fs90r : ContinuousRotationServo
 {
-    private static Frequency? requiredFrequency;
-
-    /// <summary>
-    /// Gets the required PWM frequency for the FS90R servo.
-    /// </summary>
-    public static Frequency RequiredFrequency => requiredFrequency ??= new Frequency(50, Frequency.UnitType.Hertz);
+    private const double minDurationMs = 0.9;
+    private const double maxDurationMs = 2.1;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Fs90r"/> class.
@@ -22,11 +17,21 @@ public class Fs90r : ContinuousRotationServo
     /// <param name="pwm">The PWM port to control the servo.</param>
     /// <exception cref="ArgumentException">Thrown if the PWM frequency is not the required 50 Hz.</exception>
     public Fs90r(IPwmPort pwm)
-        : base(pwm, TimeSpan.FromMilliseconds(0.9d), TimeSpan.FromMilliseconds(2.1d))
+        : base(pwm, TimeSpan.FromMilliseconds(minDurationMs), TimeSpan.FromMilliseconds(maxDurationMs))
     {
         if (pwm.Frequency.Hertz != RequiredFrequency.Hertz)
         {
             throw new ArgumentException($"PWM Frequency must be {RequiredFrequency.Hertz:N0} Hz");
         }
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Fs90r"/> class.
+    /// </summary>
+    /// <param name="pwmPin">The PWM pin to control the servo.</param>
+    /// <exception cref="ArgumentException">Thrown if the PWM frequency is not the required 50 Hz.</exception>
+    public Fs90r(IPin pwmPin)
+        : base(pwmPin, RequiredFrequency, TimeSpan.FromMilliseconds(minDurationMs), TimeSpan.FromMilliseconds(maxDurationMs))
+    {
     }
 }

@@ -1,6 +1,7 @@
 using Meadow.Hardware;
 using Meadow.Peripherals;
 using Meadow.Peripherals.Servos;
+using Meadow.Units;
 using System;
 
 namespace Meadow.Foundation.Servos;
@@ -26,6 +27,24 @@ public class ContinuousRotationServo : ServoBase, IContinuousRotationServo
     /// <param name="maximumPulseDuration">The maximum pulse duration for the servo.</param>
     public ContinuousRotationServo(IPwmPort pwm, TimeSpan minimumPulseDuration, TimeSpan maximumPulseDuration)
         : base(pwm)
+    {
+        this.maximumPulseDuration = maximumPulseDuration;
+        rawNeutralPulseDuration = TimeSpan.FromSeconds(
+            (maximumPulseDuration.TotalSeconds - minimumPulseDuration.TotalSeconds) / 2
+            + minimumPulseDuration.TotalSeconds);
+
+        Neutral();
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AngularServo"/> class with a specified PWM port and pulse angles.
+    /// </summary>
+    /// <param name="pwmPin">The pin used for PWM control.</param>
+    /// <param name="pwmFrequency">The frequency of the PWM signal.</param>
+    /// <param name="minimumPulseDuration">The minimum pulse duration for the servo.</param>
+    /// <param name="maximumPulseDuration">The maximum pulse duration for the servo.</param>
+    public ContinuousRotationServo(IPin pwmPin, Frequency pwmFrequency, TimeSpan minimumPulseDuration, TimeSpan maximumPulseDuration)
+        : base(pwmPin, pwmFrequency)
     {
         this.maximumPulseDuration = maximumPulseDuration;
         rawNeutralPulseDuration = TimeSpan.FromSeconds(

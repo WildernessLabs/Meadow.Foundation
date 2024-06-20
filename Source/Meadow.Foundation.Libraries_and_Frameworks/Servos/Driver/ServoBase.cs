@@ -10,7 +10,13 @@ namespace Meadow.Foundation.Servos;
 /// </summary>
 public abstract class ServoBase : IServo, IDisposable
 {
+    private static Frequency? requiredFrequency;
     private bool portCreated = false;
+
+    /// <summary>
+    /// Gets the required PWM frequency for the servo.
+    /// </summary>
+    public static Frequency RequiredFrequency => requiredFrequency ??= new Frequency(50, Frequency.UnitType.Hertz);
 
     /// <inheritdoc/>
     public abstract void Neutral();

@@ -43,6 +43,28 @@ public partial class AngularServo : ServoBase, IAngularServo
         Neutral();
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AngularServo"/> class with a specified PWM port and pulse angles.
+    /// </summary>
+    /// <param name="pwmPin">The pin used for PWM control.</param>
+    /// <param name="pwmFrequency">The frequency of the PWM signal.</param>
+    /// <param name="minPulseAngle">The pulse angle corresponding to the minimum angle of the servo.</param>
+    /// <param name="maxPulseAngle">The pulse angle corresponding to the maximum angle of the servo.</param>
+    public AngularServo(IPin pwmPin, Frequency pwmFrequency, PulseAngle minPulseAngle, PulseAngle maxPulseAngle)
+        : base(pwmPin, pwmFrequency)
+    {
+        this.minPulseAngle = minPulseAngle;
+        this.maxPulseAngle = maxPulseAngle;
+
+        var pulseRange = Math.Abs(maxPulseAngle.PulseWidth.TotalSeconds - minPulseAngle.PulseWidth.TotalSeconds);
+        var angleRange = Math.Abs(maxPulseAngle.Angle.Degrees - minPulseAngle.Angle.Degrees);
+
+        neutralRawPulseWidth = (pulseRange / 2) + minPulseAngle.PulseWidth.TotalSeconds;
+        pulseSecodesPerDegree = pulseRange / angleRange;
+
+        Neutral();
+    }
+
     /// <inheritdoc/>
     public override void Neutral()
     {
