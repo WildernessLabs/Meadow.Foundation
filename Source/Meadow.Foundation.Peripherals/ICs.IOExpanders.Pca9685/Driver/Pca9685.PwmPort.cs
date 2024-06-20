@@ -41,10 +41,10 @@ public partial class Pca9685
         /// <summary>
         /// Period
         /// </summary>
-        public double Period
+        public TimeSpan Period
         {
-            get => 1 / frequency.Hertz;
-            set => Frequency = new Frequency(1 / value, Units.Frequency.UnitType.Hertz);
+            get => TimeSpan.FromSeconds(1 / frequency.Hertz);
+            set => Frequency = new Frequency(1 / value.TotalSeconds, Units.Frequency.UnitType.Hertz);
         }
 
         /// <summary>
@@ -123,8 +123,6 @@ public partial class Pca9685
             {
                 return;
             }
-
-            Console.WriteLine($"Duty: {DutyCycle:N2}");
 
             onCount = newOnCount;
             var offCount = 4096 - onCount;

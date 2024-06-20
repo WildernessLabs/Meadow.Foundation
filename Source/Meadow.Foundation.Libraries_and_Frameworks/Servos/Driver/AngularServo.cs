@@ -1,78 +1,67 @@
 ﻿using Meadow.Hardware;
+using Meadow.Peripherals.Servos;
 using Meadow.Units;
 using System;
-using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Servos;
 
 /// <summary>
 /// Represents an angular servo
 /// </summary>
-public class AngularServo : ServoBase, IAngularServo
+public partial class AngularServo : ServoBase, IAngularServo
 {
-    /// <summary>
-    /// The current angle
-    /// </summary>
-    public Angle? Angle { get; protected set; }
+    private readonly PulseAngle minPulseAngle;
+    private readonly PulseAngle maxPulseAngle;
+    private readonly double pulseSecodesPerDegree;
+    private readonly double neutralRawPulseWidth;
+
+    /// <inheritdoc/>
+    public Angle Angle { get; }
+    /// <inheritdoc/>
+    public Angle MinimumAngle => minPulseAngle.Angle;
+    /// <inheritdoc/>
+    public Angle MaximumAngle => maxPulseAngle.Angle;
 
     /// <summary>
-    /// Instantiates a new Servo on the specified PWM Pin with the specified config
+    /// Initializes a new instance of the <see cref="AngularServo"/> class with a specified PWM port and pulse angles.
     /// </summary>
-    /// <param name="pwmPort">The PWM port</param>
-    /// <param name="config">The servo configuration</param>
-    public AngularServo(IPwmPort pwmPort, ServoConfig config)
-        : base(pwmPort, config)
-    { }
-
-    /// <summary>
-    /// Rotates the servo to a given angle
-    /// </summary>
-    /// <param name="angle">The angle to rotate to</param>
-    /// <param name="stopAfterMotion">When true the PWM will stop after motion is complete</param>
-    public async Task RotateTo(Angle angle, bool stopAfterMotion = false)
+    /// <param name="pwmPort">The PWM port to control the servo.</param>
+    /// <param name="minPulseAngle">The pulse angle corresponding to the minimum angle of the servo.</param>
+    /// <param name="maxPulseAngle">The pulse angle corresponding to the maximum angle of the servo.</param>
+    public AngularServo(IPwmPort pwmPort, PulseAngle minPulseAngle, PulseAngle maxPulseAngle)
+        : base(pwmPort)
     {
-        if (!PwmPort.State)
-        {
-            PwmPort.Start();
-        }
+        this.minPulseAngle = minPulseAngle;
+        this.maxPulseAngle = maxPulseAngle;
 
-        if (angle < Config.MinimumAngle || angle > Config.MaximumAngle)
-        {
-            throw new ArgumentOutOfRangeException(nameof(angle), "Angle must be within servo configuration tolerance.");
-        }
+        var pulseRange = Math.Abs(maxPulseAngle.PulseWidth.TotalSeconds - minPulseAngle.PulseWidth.TotalSeconds);
+        var angleRange = Math.Abs(maxPulseAngle.Angle.Degrees - minPulseAngle.Angle.Degrees);
 
-        var pulseDuration = CalculatePulseDuration(angle);
+        neutralRawPulseWidth = (pulseRange / 2) + minPulseAngle.PulseWidth.TotalSeconds;
+        pulseSecodesPerDegree = pulseRange / angleRange;
 
-        SendCommandPulseWithTrim(pulseDuration);
-
-        var rotationRequired = Math.Abs((Angle.HasValue ? Angle.Value.Degrees : 360) - angle.Degrees);
-        var delay = (int)(8 * rotationRequired); // estimating 8ms / degree
-        await Task.Delay(delay);
-
-        Angle = angle;
-
-        if (stopAfterMotion)
-        {
-            Stop();
-        }
+        Neutral();
     }
 
-    /// <summary>
-    /// Calculate the pulse duration for an angle
-    /// </summary>
-    /// <param name="angle">The angle</param>
-    /// <returns>The pulse duration as as float</returns>
-    protected TimeSpan CalculatePulseDuration(Angle angle)
+    /// <inheritdoc/>
+    public override void Neutral()
     {
-        var totalDegrees = Config.MaximumAngle.Degrees - Config.MinimumAngle.Degrees;
-        double totalDuration = Config.MaximumPulseDuration - Config.MinimumPulseDuration;
-        var microsecondsPerDegree = totalDuration / totalDegrees;
-
-        var duration = (Config.MinimumAngle.Degrees + angle.Degrees) * microsecondsPerDegree;
-
-        Console.WriteLine($"Pulse duration: {duration} us");
-
-        return TimeSpan.FromMilliseconds(duration / 1000d);
+        RotateTo(new Angle((MaximumAngle.Degrees + MinimumAngle.Degrees) / 2));
     }
 
+    /// <inheritdoc/>
+    public void RotateTo(Angle angle)
+    {
+        if (angle < MinimumAngle || angle > MaximumAngle)
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(angle),
+                $"Angle ({angle.Degrees} must be within servo configuration tolerance ({MinimumAngle.Degrees:n0}-{MaximumAngle.Degrees:n0}");
+        }
+
+        var delta = angle.Degrees * pulseSecodesPerDegree;
+        var targetPulseWidth = neutralRawPulseWidth + delta;
+
+        SetPulseWidthWithTrim(TimeSpan.FromSeconds(targetPulseWidth));
+    }
 }

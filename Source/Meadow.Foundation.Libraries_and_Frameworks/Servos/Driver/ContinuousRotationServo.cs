@@ -1,5 +1,6 @@
 using Meadow.Hardware;
 using Meadow.Peripherals;
+using Meadow.Peripherals.Servos;
 using System;
 
 namespace Meadow.Foundation.Servos;
@@ -31,19 +32,12 @@ public class ContinuousRotationServo : ServoBase, IContinuousRotationServo
             (maximumPulseDuration.TotalSeconds - minimumPulseDuration.TotalSeconds) / 2
             + minimumPulseDuration.TotalSeconds);
 
-        Console.WriteLine($"min: {minimumPulseDuration} max: {maximumPulseDuration} mid: {rawNeutralPulseDuration}");
-
-        pwm.Stop();
-
-        Speed = 0;
-        Direction = RotationDirection.Clockwise;
+        Neutral();
     }
 
     /// <inheritdoc/>
     public void Rotate(RotationDirection direction, double speed)
     {
-        Console.WriteLine($"ROTATE {direction} @ {speed}");
-
         if (speed is < 0 or > 1)
         {
             throw new ArgumentOutOfRangeException(nameof(speed), "speed must be 0.0 - 1.0.");
@@ -51,7 +45,7 @@ public class ContinuousRotationServo : ServoBase, IContinuousRotationServo
 
         var pulseDuration = CalculatePulseDuration(direction, speed);
 
-        SendCommandPulseWithTrim(pulseDuration);
+        SetPulseWidthWithTrim(pulseDuration);
 
         Speed = speed;
         Direction = direction;
@@ -79,8 +73,6 @@ public class ContinuousRotationServo : ServoBase, IContinuousRotationServo
         var delta = (maximumPulseDuration.TotalSeconds - rawNeutralPulseDuration.TotalSeconds) * speed;
         delta *= direction == RotationDirection.Clockwise ? -1 : 1;
         var calculatedDuration = rawNeutralPulseDuration.Add(TimeSpan.FromSeconds(delta));
-
-        Console.WriteLine($"delta: {delta} duration: {calculatedDuration}");
 
         return calculatedDuration;
     }

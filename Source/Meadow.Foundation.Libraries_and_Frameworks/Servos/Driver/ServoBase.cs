@@ -1,4 +1,5 @@
 ﻿using Meadow.Hardware;
+using Meadow.Peripherals.Servos;
 using Meadow.Units;
 using System;
 
@@ -52,6 +53,22 @@ public abstract class ServoBase : IServo, IDisposable
         PwmPort = pwmPort;
     }
 
+    private double PulseDurationToDutyCycle(TimeSpan pulseDuration)
+    {
+        return pulseDuration.TotalSeconds * PwmPort.Frequency.Hertz / 2d;
+    }
+
+    /// <summary>
+    /// Send a command pulse
+    /// </summary>
+    /// <param name="pulseDuration">The pulse duration</param>
+    protected virtual void SetPulseWidthWithTrim(TimeSpan pulseDuration)
+    {
+        var duty = PulseDurationToDutyCycle(pulseDuration + TrimOffset);
+
+        PwmPort.DutyCycle = duty;
+    }
+
     /// <inheritdoc/>
     public virtual void Disable()
     {
@@ -78,21 +95,4 @@ public abstract class ServoBase : IServo, IDisposable
         Dispose(disposing: true);
         GC.SuppressFinalize(this);
     }
-
-    private double CalculateDutyCycle(TimeSpan pulseDuration)
-    {
-        return pulseDuration.TotalSeconds * PwmPort.Frequency.Hertz / 2d;
-    }
-
-    /// <summary>
-    /// Send a command pulse
-    /// </summary>
-    /// <param name="pulseDuration">The pulse duration</param>
-    protected virtual void SendCommandPulseWithTrim(TimeSpan pulseDuration)
-    {
-        var duty = CalculateDutyCycle(pulseDuration + TrimOffset);
-        Console.WriteLine($"Duration of: {pulseDuration} is a duty of {duty}");
-        PwmPort.DutyCycle = duty;
-    }
-
 }

@@ -1,6 +1,7 @@
 ﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Servos;
+using Meadow.Peripherals.Servos;
 using Meadow.Units;
 using System.Threading.Tasks;
 using AU = Meadow.Units.Angle.UnitType;
@@ -11,18 +12,18 @@ namespace Servos.Servo_Sample
     {
         //<!=SNIP=>
 
-        protected Servo servo;
+        protected IAngularServo servo;
 
         public override Task Initialize()
         {
             Resolver.Log.Info("Initialize...");
 
-            servo = new Servo(Device.Pins.D02, NamedServoConfigs.SG90);
+            servo = new Sg90(Device.Pins.D02, NamedServoConfigs.SG90);
 
             return Task.CompletedTask;
         }
 
-        public async override Task Run()
+        public override async Task Run()
         {
             await servo.RotateTo(new Angle(0, AU.Degrees));
 
