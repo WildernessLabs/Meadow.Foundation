@@ -24,6 +24,5 @@
     <None Include="..\..\..\icon.png" Pack="true" PackagePath="" />
     <ProjectReference Include="..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
     <ProjectReference Include="..\..\Sensors.Distance.Hcsr04\Driver\Sensors.Distance.Hcsr04.csproj" />
-    <ProjectReference Include="..\..\Servos.ServoCore\Driver\Servos.ServoCore.csproj" />
   </ItemGroup>
 </Project>
