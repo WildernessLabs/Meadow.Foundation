@@ -185,4 +185,20 @@ public class BasicTests
         var result = MicroJson.Deserialize<IntegerClass>("{\"stringArg\":\"my string\",\"value\":23}");
         Assert.Equal(23, result.Value);
     }
+
+    [Fact]
+    public void NullableDoubleSerializer()
+    {
+        var item = new NullableDoubleProps
+        {
+            D = 42.42,
+            G = 1,
+            H = -45.23,
+            P = null,
+            T = -234
+        };
+
+        var result = MicroJson.Serialize(item);
+        Assert.NotNull(result);
+    }
 }
