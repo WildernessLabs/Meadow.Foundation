@@ -1,8 +1,8 @@
-# Meadow.Foundation.Servos.ServoCore
+# Meadow.Foundation.Servos
 
 **PWM generic servo controller**
 
-The **ServoCore** library is included in the **Meadow.Foundation.Servos.ServoCore** nuget package and is designed for the [Wilderness Labs](www.wildernesslabs.co) Meadow .NET IoT platform.
+The **Servos** library is included in the **Meadow.Foundation.Servos** nuget package and is designed for the [Wilderness Labs](www.wildernesslabs.co) Meadow .NET IoT platform.
 
 This driver is part of the [Meadow.Foundation](https://developer.wildernesslabs.co/Meadow/Meadow.Foundation/) peripherals library, an open-source repository of drivers and libraries that streamline and simplify adding hardware to your C# .NET Meadow IoT applications.
 
@@ -14,38 +14,36 @@ To view all Wilderness Labs open-source projects, including samples, visit [gith
 
 You can install the library from within Visual studio using the the NuGet Package Manager or from the command line using the .NET CLI:
 
-`dotnet add package Meadow.Foundation.Servos.ServoCore`
+`dotnet add package Meadow.Foundation.Servos`
 ## Usage
 
 ```csharp
-protected Servo servo;
+protected IAngularServo servo;
 
 public override Task Initialize()
 {
     Resolver.Log.Info("Initialize...");
 
-    servo = new Servo(Device.Pins.D02, NamedServoConfigs.SG90);
+    servo = new Sg90(Device.Pins.D02);
 
     return Task.CompletedTask;
 }
 
-public async override Task Run()
+public override async Task Run()
 {
-    await servo.RotateTo(new Angle(0, AU.Degrees));
-
     while (true)
     {
-        for (int i = 0; i <= servo.Config.MaximumAngle.Degrees; i++)
+        for (int i = 0; i <= servo.MaximumAngle.Degrees; i++)
         {
-            await servo.RotateTo(new Angle(i, AU.Degrees));
+            servo.RotateTo(new Angle(i, AU.Degrees));
             Resolver.Log.Info($"Rotating to {i}");
         }
 
         await Task.Delay(2000);
 
-        for (int i = 180; i >= servo.Config.MinimumAngle.Degrees; i--)
+        for (int i = 180; i >= servo.MinimumAngle.Degrees; i--)
         {
-            await servo.RotateTo(new Angle(i, AU.Degrees));
+            servo.RotateTo(new Angle(i, AU.Degrees));
             Resolver.Log.Info($"Rotating to {i}");
         }
         await Task.Delay(2000);
