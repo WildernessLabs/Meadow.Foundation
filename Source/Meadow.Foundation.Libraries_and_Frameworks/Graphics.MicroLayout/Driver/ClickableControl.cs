@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Graphics.MicroLayout;
 
@@ -15,6 +16,24 @@ public abstract class ClickableControl : ThemedControl, IClickableControl
     private bool _pressed = false;
 
     /// <summary>
+    /// Gets or sets the Enabled state of the control
+    /// </summary>
+    public bool IsEnabled { get; set; } = true;
+
+    /// <summary>
+    /// Cycles the Control through the pressed and unpressed state, firing the Clicked event
+    /// </summary>
+    public void Click()
+    {
+        this.Pressed = true;
+        _ = Task.Run(async () =>
+        {
+            await Task.Delay(250);
+            this.Pressed = false;
+        });
+    }
+
+    /// <summary>
     /// Gets or sets a value indicating whether the clickable control is in a pressed state.
     /// </summary>
     public bool Pressed
@@ -22,9 +41,9 @@ public abstract class ClickableControl : ThemedControl, IClickableControl
         get => _pressed;
         set
         {
-            if (!IsVisible) return;
+            if (!IsVisible || !IsEnabled) { return; }
 
-            if (_pressed == value) return;
+            if (_pressed == value) { return; }
 
             _pressed = value;
 
