@@ -10,11 +10,12 @@ namespace Meadow.Foundation.ICs.IOExpanders;
 /// Represents a PCA9685
 /// </summary>
 /// <remarks>All PWM channels run at the same Frequency</remarks>
-public partial class Pca9685 : II2cPeripheral, IPwmOutputController, IDisposable
+public partial class Pca9685 : II2cPeripheral, IDigitalOutputController, IPwmOutputController, IDisposable
 {
     private readonly byte address;
 
-    private Dictionary<int, IPwmPort> portCache = new();
+    private Dictionary<int, IPwmPort> pwmPortCache = new();
+    private Dictionary<int, IDigitalOutputPort> outputPortCache = new();
     private bool isDisposed;
 
     /// <summary>
@@ -170,6 +171,33 @@ public partial class Pca9685 : II2cPeripheral, IPwmOutputController, IDisposable
     }
 
     /// <inheritdoc/>
+    public IDigitalOutputPort CreateDigitalOutputPort(IPin pin, bool initialState = false, OutputType initialOutputType = OutputType.PushPull)
+    {
+        var portNumber = (byte)pin.Key;
+
+        if (portNumber is < 0 or > 15)
+        {
+            throw new ArgumentException("Value must be between 0 and 15", nameof(portNumber));
+        }
+
+        if (pwmPortCache.ContainsKey(portNumber))
+        {
+            throw new ArgumentException("Pin is already in use", nameof(portNumber));
+
+        }
+
+        if (outputPortCache.ContainsKey(portNumber))
+        {
+            return outputPortCache[portNumber];
+        }
+
+        var outputPort = new DigitalOutputPort(this, pin, initialState);
+        outputPortCache.Add(portNumber, outputPort);
+
+        return outputPort;
+    }
+
+    /// <inheritdoc/>
     public IPwmPort CreatePwmPort(IPin pin, float dutyCycle = 0.5F, bool invert = false)
     {
         return CreatePwmPort(pin, Frequency, dutyCycle, invert);
@@ -185,14 +213,19 @@ public partial class Pca9685 : II2cPeripheral, IPwmOutputController, IDisposable
             throw new ArgumentException("Value must be between 0 and 15", nameof(portNumber));
         }
 
-        if (portCache.ContainsKey(portNumber))
+        if (pwmPortCache.ContainsKey(portNumber))
         {
-            return portCache[portNumber];
+            return pwmPortCache[portNumber];
+        }
+
+        if (outputPortCache.ContainsKey(portNumber))
+        {
+            throw new ArgumentException("Pin is already in use", nameof(portNumber));
         }
 
         var pwmPort = new PwmPort(this, pin, frequency, dutyCycle, invert);
 
-        portCache.Add(portNumber, pwmPort);
+        pwmPortCache.Add(portNumber, pwmPort);
 
         return pwmPort;
     }
@@ -204,7 +237,7 @@ public partial class Pca9685 : II2cPeripheral, IPwmOutputController, IDisposable
         {
             if (disposing)
             {
-                foreach (var p in portCache.Values)
+                foreach (var p in pwmPortCache.Values)
                 {
                     p.Dispose();
                 }

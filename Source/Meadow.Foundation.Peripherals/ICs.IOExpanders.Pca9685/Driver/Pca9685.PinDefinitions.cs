@@ -25,6 +25,7 @@ public partial class Pca9685
             Controller,
             "LED0", (byte)0x00,
             new List<IChannelInfo> {
+                new DigitalChannelInfo("LED0", false, true, false, false, false, false),
                 new PwmChannelInfo("LED0", 0, 0, 0, 25000)
             }
         );
@@ -36,6 +37,7 @@ public partial class Pca9685
             Controller,
             "LED1", (byte)0x00,
             new List<IChannelInfo> {
+                new DigitalChannelInfo("LED1", false, true, false, false, false, false),
                 new PwmChannelInfo("LED1", 0, 0, 0, 25000)
             }
         );
@@ -47,6 +49,7 @@ public partial class Pca9685
             Controller,
             "LED2", (byte)0x00,
             new List<IChannelInfo> {
+                new DigitalChannelInfo("LED2", false, true, false, false, false, false),
                 new PwmChannelInfo("LED2", 0, 0, 0, 25000)
             }
         );
@@ -58,6 +61,7 @@ public partial class Pca9685
             Controller,
             "LED3", (byte)0x00,
             new List<IChannelInfo> {
+                new DigitalChannelInfo("LED3", false, true, false, false, false, false),
                 new PwmChannelInfo("LED3", 0, 0, 0, 25000)
             }
         );
@@ -69,6 +73,7 @@ public partial class Pca9685
             Controller,
             "LED4", (byte)0x00,
             new List<IChannelInfo> {
+                new DigitalChannelInfo("LED4", false, true, false, false, false, false),
                 new PwmChannelInfo("LED4", 0, 0, 0, 25000)
             }
         );
@@ -80,6 +85,7 @@ public partial class Pca9685
             Controller,
             "LED5", (byte)0x00,
             new List<IChannelInfo> {
+                new DigitalChannelInfo("LED5", false, true, false, false, false, false),
                 new PwmChannelInfo("LED5", 0, 0, 0, 25000)
             }
         );
@@ -91,6 +97,7 @@ public partial class Pca9685
             Controller,
             "LED6", (byte)0x00,
             new List<IChannelInfo> {
+                new DigitalChannelInfo("LED6", false, true, false, false, false, false),
                 new PwmChannelInfo("LED6", 0, 0, 0, 25000)
             }
         );
@@ -102,6 +109,7 @@ public partial class Pca9685
             Controller,
             "LED7", (byte)0x00,
             new List<IChannelInfo> {
+                new DigitalChannelInfo("LED7", false, true, false, false, false, false),
                 new PwmChannelInfo("LED7", 0, 0, 0, 25000)
             }
         );
@@ -113,6 +121,7 @@ public partial class Pca9685
             Controller,
             "LED8", (byte)0x00,
             new List<IChannelInfo> {
+                new DigitalChannelInfo("LED8", false, true, false, false, false, false),
                 new PwmChannelInfo("LED8", 0, 0, 0, 25000)
             }
         );
@@ -124,6 +133,7 @@ public partial class Pca9685
             Controller,
             "LED9", (byte)0x00,
             new List<IChannelInfo> {
+                new DigitalChannelInfo("LED9", false, true, false, false, false, false),
                 new PwmChannelInfo("LED9", 0, 0, 0, 25000)
             }
         );
@@ -135,6 +145,7 @@ public partial class Pca9685
             Controller,
             "LED10", (byte)0x00,
             new List<IChannelInfo> {
+                new DigitalChannelInfo("LED10", false, true, false, false, false, false),
                 new PwmChannelInfo("LED10", 0, 0, 0, 25000)
             }
         );
@@ -146,6 +157,7 @@ public partial class Pca9685
             Controller,
             "LED11", (byte)0x00,
             new List<IChannelInfo> {
+                new DigitalChannelInfo("LED11", false, true, false, false, false, false),
                 new PwmChannelInfo("LED11", 0, 0, 0, 25000)
             }
         );
@@ -157,6 +169,7 @@ public partial class Pca9685
             Controller,
             "LED12", (byte)0x00,
             new List<IChannelInfo> {
+                new DigitalChannelInfo("LED12", false, true, false, false, false, false),
                 new PwmChannelInfo("LED12", 0, 0, 0, 25000)
             }
         );
@@ -168,6 +181,7 @@ public partial class Pca9685
             Controller,
             "LED13", (byte)0x00,
             new List<IChannelInfo> {
+                new DigitalChannelInfo("LED13", false, true, false, false, false, false),
                 new PwmChannelInfo("LED13", 0, 0, 0, 25000)
             }
         );
@@ -179,6 +193,7 @@ public partial class Pca9685
             Controller,
             "LED14", (byte)0x00,
             new List<IChannelInfo> {
+                new DigitalChannelInfo("LED14", false, true, false, false, false, false),
                 new PwmChannelInfo("LED14", 0, 0, 0, 25000)
             }
         );
@@ -190,6 +205,7 @@ public partial class Pca9685
             Controller,
             "LED15", (byte)0x00,
             new List<IChannelInfo> {
+                new DigitalChannelInfo("LED15", false, true, false, false, false, false),
                 new PwmChannelInfo("LED15", 0, 0, 0, 25000)
             }
         );

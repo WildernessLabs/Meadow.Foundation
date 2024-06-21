@@ -12,10 +12,10 @@ public partial class Pca9685
     /// </summary>
     public class PwmPort : IPwmPort
     {
-        private Pca9685 controller;
+        private readonly Pca9685 controller;
         private double dutyCycle;
         private readonly byte portNumber;
-        private Frequency frequency;
+        private readonly Frequency frequency;
         private int onCount = 0;
 
         /// <summary>
