@@ -1,31 +1,28 @@
-﻿using Meadow.Foundation.Graphics;
+﻿using Meadow;
+using Meadow.Foundation.Graphics;
 using Meadow.Foundation.Graphics.MicroLayout;
 
 namespace Meadow.Foundation.Displays.UI;
 
-public class MeadowApp : App<Windows>
+public class MeadowApp : App<Desktop>
 {
     private DisplayScreen? screen;
 
     public static async Task Main(string[] args)
     {
-        ApplicationConfiguration.Initialize();
         await MeadowOS.Start(args);
     }
 
     public override Task Run()
     {
-        var display = new WinFormsDisplay();
-        display.ControlBox = true;
-
         var labelFont = new Font16x24();
 
-        screen = new DisplayScreen(display)
+        screen = new DisplayScreen(Device.Display)
         {
             BackgroundColor = Color.Cyan
         };
 
-        var listView = new ListBox(0, 0, display.Width, display.Height, labelFont);
+        var listView = new ListBox(0, 0, screen.Width, screen.Height, labelFont);
 
         listView.Items.Add("Item A");
         listView.Items.Add("Item B");
@@ -50,8 +47,6 @@ public class MeadowApp : App<Windows>
             listView.Items.RemoveAt(1);
 
         });
-
-        System.Windows.Forms.Application.Run(display);
 
         return Task.CompletedTask;
     }

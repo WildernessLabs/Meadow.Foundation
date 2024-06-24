@@ -1,27 +1,22 @@
 ﻿using Meadow.Foundation.Graphics;
 using Meadow.Foundation.Graphics.MicroLayout;
-using System.Windows.Forms;
 
 namespace Meadow.Foundation.Displays.UI;
 
-public class MeadowApp : App<Windows>
+public class MeadowApp : App<Desktop>
 {
     private DisplayScreen? screen;
 
     public static async Task Main(string[] args)
     {
-        ApplicationConfiguration.Initialize();
         await MeadowOS.Start(args);
     }
 
     public override Task Run()
     {
-        var display = new WinFormsDisplay();
-        display.ControlBox = true;
-
         var labelFont = new Font12x20();
 
-        screen = new DisplayScreen(display);
+        screen = new DisplayScreen(Device.Display);
         screen.BackgroundColor = Color.AntiqueWhite;
 
         var splashLayout = new AbsoluteLayout(0, 0, screen.Width, screen.Height)
@@ -93,7 +88,6 @@ public class MeadowApp : App<Windows>
             splashLayout.IsVisible = false;
             chartLayout.IsVisible = true;
         });
-        Application.Run(display);
 
         return base.Run();
     }

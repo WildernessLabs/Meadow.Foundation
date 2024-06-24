@@ -1,9 +1,10 @@
-﻿using Meadow.Foundation.Graphics;
+﻿using Meadow;
+using Meadow.Foundation.Graphics;
 using Meadow.Foundation.Graphics.MicroLayout;
 
 namespace Meadow.Foundation.Displays.UI;
 
-public class MeadowApp : App<Windows>
+public class MeadowApp : App<Desktop>
 {
     private DisplayScreen? screen;
     private SilkDisplay display;

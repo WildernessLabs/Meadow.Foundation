@@ -10,7 +10,7 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\..\Meadow.Core\Source\implementations\f7\Meadow.F7\Meadow.F7.csproj" />
+    <ProjectReference Include="..\..\..\..\..\..\Meadow.Core\source\implementations\f7\Meadow.F7\Meadow.F7.csproj" />
     <ProjectReference Include="..\..\Driver\ICs.IOExpanders.Sc16is7x2.csproj" />
   </ItemGroup>
 </Project>

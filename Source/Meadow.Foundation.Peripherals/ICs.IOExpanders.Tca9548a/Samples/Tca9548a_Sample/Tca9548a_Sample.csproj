@@ -7,13 +7,11 @@
     <TargetFramework>netstandard2.1</TargetFramework>
     <OutputType>Library</OutputType>
     <AssemblyName>App</AssemblyName>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
-  <PropertyGroup>
-    <LangVersion>8.0</LangVersion>
+    <RootNamespace>ICs.IOExpanders</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
-    <ProjectReference Include="..\..\..\..\Meadow.Core\Source\implementations\f7\Meadow.F7\Meadow.F7.csproj" />
+    <ProjectReference Include="..\..\..\ICs.IOExpanders.Mcp23xxx\Driver\ICs.IOExpanders.Mcp23xxx.csproj" />
+    <ProjectReference Include="..\..\..\..\..\..\Meadow.Core\source\implementations\f7\Meadow.F7\Meadow.F7.csproj" />
+    <ProjectReference Include="..\..\Driver\ICs.IOExpanders.Tca9548a.csproj" />
   </ItemGroup>
 </Project>

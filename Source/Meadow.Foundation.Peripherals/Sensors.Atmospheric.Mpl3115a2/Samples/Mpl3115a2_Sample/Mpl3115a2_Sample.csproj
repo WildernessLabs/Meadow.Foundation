@@ -11,7 +11,7 @@
 	<LangVersion>10.0</LangVersion>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\..\Meadow.Core\Source\implementations\f7\Meadow.F7\Meadow.F7.csproj" />
+    <ProjectReference Include="..\..\..\..\..\..\Meadow.Core\source\implementations\f7\Meadow.F7\Meadow.F7.csproj" />
     <ProjectReference Include="..\..\Driver\Sensors.Atmospheric.Mpl3115a2.csproj" />
   </ItemGroup>
 </Project>

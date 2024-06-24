@@ -3,24 +3,20 @@ using Meadow.Foundation.Graphics.MicroLayout;
 
 namespace Meadow.Foundation.Displays.UI;
 
-public class MeadowApp : App<Windows>
+public class MeadowApp : App<Desktop>
 {
     private DisplayScreen? screen;
 
     public static async Task Main(string[] args)
     {
-        ApplicationConfiguration.Initialize();
         await MeadowOS.Start(args);
     }
 
     public override Task Run()
     {
-        var display = new WinFormsDisplay();
-        display.ControlBox = true;
-
         var labelFont = new Font12x20();
 
-        screen = new DisplayScreen(display);
+        screen = new DisplayScreen(Device.Display);
         screen.BackgroundColor = Color.AntiqueWhite;
 
         var random = new Random();
@@ -70,10 +66,7 @@ public class MeadowApp : App<Windows>
             ShowXAxisLabels = false
         };
 
-
         screen.Controls.Add(chartA, chartB, chartC);
-
-        System.Windows.Forms.Application.Run(display);
 
         return Task.CompletedTask;
     }
