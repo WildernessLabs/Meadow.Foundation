@@ -6,7 +6,7 @@ using Meadow.Peripherals.Displays;
 
 namespace MAX7219_Sample;
 
-public class MeadowApp : App<Windows>
+public class MeadowApp : App<Desktop>
 {
     private DisplayScreen? screen;
 

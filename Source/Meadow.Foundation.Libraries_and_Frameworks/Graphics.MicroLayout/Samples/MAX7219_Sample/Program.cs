@@ -1,5 +1,11 @@
-﻿namespace MAX7219_Sample;
+﻿using Meadow;
 
-internal class Program
+namespace MAX7219_Sample;
+
+public class Program
 {
+    public static async Task Main(string[] args)
+    {
+        await MeadowOS.Start(args);
+    }
 }
