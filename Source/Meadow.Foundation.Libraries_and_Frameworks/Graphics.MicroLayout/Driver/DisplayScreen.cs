@@ -16,9 +16,6 @@ public class DisplayScreen : IControlContainer
     private bool _updateInProgress = false;
     private Color _backgroundColor;
 
-    /// <inheritdoc/>
-    public IControl? Parent => null;
-
     /// <summary>
     /// Gets the Touchscreen associated with the display screen
     /// </summary>
@@ -32,14 +29,15 @@ public class DisplayScreen : IControlContainer
     /// <summary>
     /// Gets the width of the display screen.
     /// </summary>
-    public int Width => _graphics.Width;
+    public int Width { get => _graphics.Width; set { } }
 
     /// <summary>
     /// Gets the height of the display screen.
     /// </summary>
-    public int Height => _graphics.Height;
+    public int Height { get => _graphics.Height; set { } }
 
-    private bool IsInvalid { get; set; }
+    /// <inheritdoc/>
+    public bool IsInvalid { get; private set; }
 
     internal DisplayTheme? Theme { get; }
 
@@ -101,42 +99,63 @@ public class DisplayScreen : IControlContainer
 
     private void _touchScreen_TouchUp(ITouchScreen source, TouchPoint point)
     {
-        if (Monitor.TryEnter(Controls.SyncRoot, 100))
+        bool LookForUnclick(ControlsCollection controls)
         {
-            try
+            foreach (var control in controls)
             {
-                foreach (var control in Controls)
+                if (control is IClickableControl c)
                 {
-                    if (control is IClickableControl c)
+                    if (control.IsVisible && control.Contains(point.ScreenX, point.ScreenY))
                     {
-                        if (control.Contains(point.ScreenX, point.ScreenY))
-                        {
-                            c.Pressed = false;
-                        }
+                        c.Pressed = false;
+                        return true;
+                    }
+                }
+                else if (control is IControlContainer container)
+                {
+                    if (LookForUnclick(container.Controls))
+                    {
+                        return true;
                     }
                 }
             }
-            finally
-            {
-                Monitor.Exit(Controls.SyncRoot);
-            }
+            return false;
+        }
+
+        lock (Controls.SyncRoot)
+        {
+            LookForUnclick(Controls);
         }
     }
 
     private void _touchScreen_TouchDown(ITouchScreen source, TouchPoint point)
     {
-        lock (Controls.SyncRoot)
+        bool LookForClick(ControlsCollection controls)
         {
-            foreach (var control in Controls)
+            foreach (var control in controls)
             {
                 if (control is IClickableControl c)
                 {
-                    if (control.Contains(point.ScreenX, point.ScreenY))
+                    if (control.IsVisible && control.Contains(point.ScreenX, point.ScreenY))
                     {
                         c.Pressed = true;
+                        return true;
+                    }
+                }
+                else if (control is IControlContainer container)
+                {
+                    if (LookForClick(container.Controls))
+                    {
+                        return true;
                     }
                 }
             }
+            return false;
+        }
+
+        lock (Controls.SyncRoot)
+        {
+            LookForClick(Controls);
         }
     }
 
@@ -253,4 +272,19 @@ public class DisplayScreen : IControlContainer
             Thread.Sleep(50);
         }
     }
+
+    /// <inheritdoc/>
+    public void Refresh(MicroGraphics graphics)
+    {
+        this.Invalidate();
+    }
+
+    /// <inheritdoc/>
+    public int Left { get => 0; set { } }
+    /// <inheritdoc/>
+    public int Top { get => 0; set { } }
+    /// <inheritdoc/>
+    public bool IsVisible { get => true; set { } }
+    /// <inheritdoc/>
+    public IControl? Parent { get => null; set { } }
 }
