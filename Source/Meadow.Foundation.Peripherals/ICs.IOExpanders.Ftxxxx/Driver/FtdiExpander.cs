@@ -301,6 +301,17 @@ public abstract partial class FtdiExpander :
         return CreateSpiBus(0, new SpiClockConfiguration(speed));
     }
 
+    /// <inheritdoc/>
+    public ISpiBus CreateSpiBus(int channel, Frequency speed)
+    {
+        if (channel != 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(channel), "Only channel 0 is supported");
+        }
+
+        return CreateSpiBus(channel, new SpiClockConfiguration(speed));
+    }
+
     /// <summary>
     /// Creates a SPI bus instance for the requested control pins and bus speed
     /// </summary>
