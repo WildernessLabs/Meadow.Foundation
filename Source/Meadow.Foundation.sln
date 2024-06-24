@@ -1069,7 +1069,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Scd40_Sample", "Meadow.Foun
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Scd41_Sample", "Meadow.Foundation.Peripherals\Sensors.Environmental.Scd4x\Samples\Scd41_Sample\Scd41_Sample.csproj", "{54190390-0EDF-4EBD-8D75-DB7A9C78FBCA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meadow.Core", "..\..\Meadow.Core\source\Meadow.Core\Meadow.Core.csproj", "{72EFC530-A0A4-47AA-8E1A-5CAEBD654DDF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meadow.Core", "..\..\Meadow.Core\Source\Meadow.Core\Meadow.Core.csproj", "{72EFC530-A0A4-47AA-8E1A-5CAEBD654DDF}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Ens160", "Ens160", "{F8FD8FFF-5FF2-4EE8-8AAF-0ABE8D99DAB2}"
 EndProject
