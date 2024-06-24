@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\..\Meadow.Core\source\implementations\windows\Meadow.Windows\Meadow.Windows.csproj" />
+    <ProjectReference Include="..\..\..\..\..\..\Meadow.Core\Source\implementations\windows\Meadow.Windows\Meadow.Windows.csproj" />
     <ProjectReference Include="..\..\..\ICs.IOExpanders.Ftxxxx\Driver\ICs.IOExpanders.Ftxxxx.csproj" />
       <ProjectReference Include="..\..\Driver\Sensors.Atmospheric.Ahtx0.csproj" />
   </ItemGroup>

@@ -1099,7 +1099,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Y4000_Sample", "Meadow.Foun
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meadow.Modbus", "..\..\Meadow.Modbus\src\Meadow.Modbus\Meadow.Modbus.csproj", "{DD749A41-50A3-4DB4-A84F-4372BDFCB742}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meadow.F7", "..\..\Meadow.Core\source\implementations\f7\Meadow.F7\Meadow.F7.csproj", "{404AAC33-B6F1-4EA3-A246-FD9D8A95E93F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meadow.F7", "..\..\Meadow.Core\Source\implementations\f7\Meadow.F7\Meadow.F7.csproj", "{404AAC33-B6F1-4EA3-A246-FD9D8A95E93F}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Ft232h", "Ft232h", "{4E0052C2-559D-4509-9C42-C6451B1F1FFC}"
 EndProject
@@ -1289,7 +1289,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Keyboard", "Keyboard", "{CB
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Hid.Keyboard", "Meadow.Foundation.Peripherals\Sensors.Hid.Keyboard\Driver\Sensors.Hid.Keyboard.csproj", "{8A514B3D-9DD0-486B-BC31-1287C2FF09FC}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meadow.Windows", "..\..\Meadow.Core\source\implementations\windows\Meadow.Windows\Meadow.Windows.csproj", "{47C3AC1D-57A8-4144-BFED-263CAB66F4CB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meadow.Windows", "..\..\Meadow.Core\Source\implementations\windows\Meadow.Windows\Meadow.Windows.csproj", "{47C3AC1D-57A8-4144-BFED-263CAB66F4CB}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Motor.BidirectionalDcMotor_Sample", "Meadow.Foundation.Core.Samples\Motor.BidirectionalDcMotor_Sample\Motor.BidirectionalDcMotor_Sample.csproj", "{F79FCA46-1B0E-4537-A139-464FD53DCEF4}"
 EndProject
@@ -1407,7 +1407,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Cp2112", "Cp2112", "{087005
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ICs.IOExpanders.Cp2112", "Meadow.Foundation.Peripherals\ICs.IOExpanders.Cp2112\Driver\ICs.IOExpanders.Cp2112.csproj", "{5A740B20-BD2A-4D8C-B37D-1F5AA0E5355B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meadow.Linux", "..\..\Meadow.Core\source\implementations\linux\Meadow.Linux\Meadow.Linux.csproj", "{CD273618-53A8-493C-9478-61C173210C84}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meadow.Linux", "..\..\Meadow.Core\Source\implementations\linux\Meadow.Linux\Meadow.Linux.csproj", "{CD273618-53A8-493C-9478-61C173210C84}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AsciiConsole", "AsciiConsole", "{E775FF9F-8AC5-4994-B45A-20B50E2B03E2}"
 EndProject
@@ -1551,9 +1551,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Servos", "Meadow.Foundation
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Servo_Sample", "Meadow.Foundation.Libraries_and_Frameworks\Servos\Samples\Servo_Sample\Servo_Sample.csproj", "{F531D6BC-D3F2-4AFF-A84B-59351E2FA462}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meadow.Desktop", "..\..\Meadow.Core\source\implementations\desktop\Meadow.Desktop\Meadow.Desktop.csproj", "{2E819178-0F9F-4193-A7D4-BC5D505ACAFC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meadow.Desktop", "..\..\Meadow.Core\Source\implementations\desktop\Meadow.Desktop\Meadow.Desktop.csproj", "{2E819178-0F9F-4193-A7D4-BC5D505ACAFC}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meadow.Mac", "..\..\Meadow.Core\source\implementations\mac\Meadow.Mac\Meadow.Mac.csproj", "{FD7E56EE-6BBE-44BB-BB8B-8DB0647CDD0D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meadow.Mac", "..\..\Meadow.Core\Source\implementations\mac\Meadow.Mac\Meadow.Mac.csproj", "{FD7E56EE-6BBE-44BB-BB8B-8DB0647CDD0D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
