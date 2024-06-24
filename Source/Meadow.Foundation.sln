@@ -1551,7 +1551,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Servos", "Meadow.Foundation
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Servo_Sample", "Meadow.Foundation.Libraries_and_Frameworks\Servos\Samples\Servo_Sample\Servo_Sample.csproj", "{F531D6BC-D3F2-4AFF-A84B-59351E2FA462}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Meadow.Desktop", "..\..\Meadow.Core\source\implementations\desktop\Meadow.Desktop\Meadow.Desktop.csproj", "{2E819178-0F9F-4193-A7D4-BC5D505ACAFC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meadow.Desktop", "..\..\Meadow.Core\source\implementations\desktop\Meadow.Desktop\Meadow.Desktop.csproj", "{2E819178-0F9F-4193-A7D4-BC5D505ACAFC}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meadow.Mac", "..\..\Meadow.Core\source\implementations\mac\Meadow.Mac\Meadow.Mac.csproj", "{FD7E56EE-6BBE-44BB-BB8B-8DB0647CDD0D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -3763,6 +3765,10 @@ Global
 		{2E819178-0F9F-4193-A7D4-BC5D505ACAFC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2E819178-0F9F-4193-A7D4-BC5D505ACAFC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2E819178-0F9F-4193-A7D4-BC5D505ACAFC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FD7E56EE-6BBE-44BB-BB8B-8DB0647CDD0D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FD7E56EE-6BBE-44BB-BB8B-8DB0647CDD0D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FD7E56EE-6BBE-44BB-BB8B-8DB0647CDD0D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FD7E56EE-6BBE-44BB-BB8B-8DB0647CDD0D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -4538,6 +4544,7 @@ Global
 		{84CEDB6D-C9B1-4317-8A4E-84785ACCA6D1} = {2BB9FA79-851A-48EE-A2E1-91AE3F2B61EF}
 		{F531D6BC-D3F2-4AFF-A84B-59351E2FA462} = {2BB9FA79-851A-48EE-A2E1-91AE3F2B61EF}
 		{2E819178-0F9F-4193-A7D4-BC5D505ACAFC} = {65C50059-6C22-43E9-88DE-AD73F7F108C8}
+		{FD7E56EE-6BBE-44BB-BB8B-8DB0647CDD0D} = {65C50059-6C22-43E9-88DE-AD73F7F108C8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}

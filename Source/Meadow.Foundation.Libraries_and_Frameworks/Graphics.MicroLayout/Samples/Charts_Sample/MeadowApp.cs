@@ -5,6 +5,8 @@ using Meadow.Foundation.Graphics.MicroLayout;
 using Meadow.Foundation.ICs.IOExpanders;
 using Meadow.Peripherals.Displays;
 
+namespace Charts_Sample;
+
 public class MeadowApp : App<Desktop>
 {
     private DisplayScreen? screen;
@@ -29,13 +31,6 @@ public class MeadowApp : App<Desktop>
         };
 
         return base.Initialize();
-    }
-
-    public override Task Run()
-    {
-        Text();
-
-        return base.Run();
     }
 
     public void Text()
@@ -95,8 +90,10 @@ public class MeadowApp : App<Desktop>
         }
     }
 
-    public static async Task Main(string[] args)
+    public override Task Run()
     {
-        await MeadowOS.Start(args);
+        Text();
+
+        return base.Run();
     }
 }
