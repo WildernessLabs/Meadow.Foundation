@@ -11,8 +11,8 @@ namespace Meadow.Foundation.Servos;
 /// </summary>
 public class ContinuousRotationServo : ServoBase, IContinuousRotationServo
 {
-    private readonly TimeSpan maximumPulseDuration;
-    private readonly TimeSpan rawNeutralPulseDuration;
+    private readonly TimePeriod maximumPulseDuration;
+    private readonly TimePeriod rawNeutralPulseDuration;
 
     /// <inheritdoc/>
     public double Speed { get; private set; }
@@ -25,13 +25,13 @@ public class ContinuousRotationServo : ServoBase, IContinuousRotationServo
     /// <param name="pwm">The PWM port to control the servo.</param>
     /// <param name="minimumPulseDuration">The minimum pulse duration for the servo.</param>
     /// <param name="maximumPulseDuration">The maximum pulse duration for the servo.</param>
-    public ContinuousRotationServo(IPwmPort pwm, TimeSpan minimumPulseDuration, TimeSpan maximumPulseDuration)
+    public ContinuousRotationServo(IPwmPort pwm, TimePeriod minimumPulseDuration, TimePeriod maximumPulseDuration)
         : base(pwm)
     {
         this.maximumPulseDuration = maximumPulseDuration;
-        rawNeutralPulseDuration = TimeSpan.FromSeconds(
-            (maximumPulseDuration.TotalSeconds - minimumPulseDuration.TotalSeconds) / 2
-            + minimumPulseDuration.TotalSeconds);
+        rawNeutralPulseDuration = TimePeriod.FromSeconds(
+            (maximumPulseDuration.Seconds - minimumPulseDuration.Seconds) / 2
+            + minimumPulseDuration.Seconds);
 
         Neutral();
     }
@@ -43,13 +43,13 @@ public class ContinuousRotationServo : ServoBase, IContinuousRotationServo
     /// <param name="pwmFrequency">The frequency of the PWM signal.</param>
     /// <param name="minimumPulseDuration">The minimum pulse duration for the servo.</param>
     /// <param name="maximumPulseDuration">The maximum pulse duration for the servo.</param>
-    public ContinuousRotationServo(IPin pwmPin, Frequency pwmFrequency, TimeSpan minimumPulseDuration, TimeSpan maximumPulseDuration)
+    public ContinuousRotationServo(IPin pwmPin, Frequency pwmFrequency, TimePeriod minimumPulseDuration, TimePeriod maximumPulseDuration)
         : base(pwmPin, pwmFrequency)
     {
         this.maximumPulseDuration = maximumPulseDuration;
-        rawNeutralPulseDuration = TimeSpan.FromSeconds(
-            (maximumPulseDuration.TotalSeconds - minimumPulseDuration.TotalSeconds) / 2
-            + minimumPulseDuration.TotalSeconds);
+        rawNeutralPulseDuration = TimePeriod.FromSeconds(
+            (maximumPulseDuration.Seconds - minimumPulseDuration.Seconds) / 2
+            + minimumPulseDuration.Seconds);
 
         Neutral();
     }
@@ -76,7 +76,7 @@ public class ContinuousRotationServo : ServoBase, IContinuousRotationServo
     /// rotate clockwise and rotate their fastest at the minimum pulse duration. As 
     /// you increase the pulse duration, they rotate counter-clockwise.
     /// </summary>
-    private TimeSpan CalculatePulseDuration(RotationDirection direction, double speed)
+    private TimePeriod CalculatePulseDuration(RotationDirection direction, double speed)
     {
         if (speed is < 0 or > 1)
         {
@@ -89,9 +89,9 @@ public class ContinuousRotationServo : ServoBase, IContinuousRotationServo
         }
 
         // distance from the raw neutral - proportial to speed
-        var delta = (maximumPulseDuration.TotalSeconds - rawNeutralPulseDuration.TotalSeconds) * speed;
+        var delta = (maximumPulseDuration.Seconds - rawNeutralPulseDuration.Seconds) * speed;
         delta *= direction == RotationDirection.Clockwise ? -1 : 1;
-        var calculatedDuration = rawNeutralPulseDuration.Add(TimeSpan.FromSeconds(delta));
+        var calculatedDuration = rawNeutralPulseDuration.Add(TimePeriod.FromSeconds(delta));
 
         return calculatedDuration;
     }

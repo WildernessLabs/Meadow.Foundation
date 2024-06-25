@@ -1,6 +1,5 @@
 ﻿using Meadow.Hardware;
 using Meadow.Units;
-using System;
 
 namespace Meadow.Foundation.Servos;
 
@@ -12,8 +11,8 @@ public class Ds3218 : AngularServo
     private const double frequencyHz = 50;
     private const double minimumAngle = -90;
     private const double maximumAngle = 90;
-    private const double minDurationMs = 0.8;
-    private const double maxDurationMs = 2.2;
+    private const double minDurationMs = 0.6;
+    private const double maxDurationMs = 2.5;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Ds3218"/> class with a specified PWM port.
@@ -21,8 +20,8 @@ public class Ds3218 : AngularServo
     /// <param name="pwm">The PWM port to control the servo.</param>
     public Ds3218(IPwmPort pwm)
         : base(pwm,
-            new PulseAngle(new Angle(minimumAngle), TimeSpan.FromMilliseconds(minDurationMs)),
-            new PulseAngle(new Angle(maximumAngle), TimeSpan.FromMilliseconds(maxDurationMs)))
+            new PulseAngle(new Angle(minimumAngle), TimePeriod.FromMilliseconds(minDurationMs)),
+            new PulseAngle(new Angle(maximumAngle), TimePeriod.FromMilliseconds(maxDurationMs)))
     {
     }
 
@@ -33,8 +32,8 @@ public class Ds3218 : AngularServo
     public Ds3218(IPin pwmPin)
         : base(pwmPin,
             new Frequency(frequencyHz, Frequency.UnitType.Hertz),
-            new PulseAngle(new Angle(minimumAngle), TimeSpan.FromMilliseconds(minDurationMs)),
-            new PulseAngle(new Angle(maximumAngle), TimeSpan.FromMilliseconds(maxDurationMs)))
+            new PulseAngle(new Angle(minimumAngle), TimePeriod.FromMilliseconds(minDurationMs)),
+            new PulseAngle(new Angle(maximumAngle), TimePeriod.FromMilliseconds(maxDurationMs)))
     {
     }
 }
