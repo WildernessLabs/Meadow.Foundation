@@ -8,8 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\..\Meadow.Core\source\implementations\windows\Meadow.Windows\Meadow.Windows.csproj" />
-    <ProjectReference Include="..\..\..\..\Meadow.Foundation.Peripherals\Displays.WinForms\Driver\Displays.WinForms.csproj" />
+    <ProjectReference Include="..\..\..\..\..\..\Meadow.Core\Source\implementations\desktop\Meadow.Desktop\Meadow.Desktop.csproj" />
     <ProjectReference Include="..\..\Driver\Graphics.MicroLayout.csproj" />
   </ItemGroup>
 

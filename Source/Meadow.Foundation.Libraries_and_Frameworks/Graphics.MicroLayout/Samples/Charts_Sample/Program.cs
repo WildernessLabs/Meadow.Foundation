@@ -1,6 +1,6 @@
 ﻿using Meadow;
 
-namespace BarChart_Sample;
+namespace Charts_Sample;
 
 public class Program
 {

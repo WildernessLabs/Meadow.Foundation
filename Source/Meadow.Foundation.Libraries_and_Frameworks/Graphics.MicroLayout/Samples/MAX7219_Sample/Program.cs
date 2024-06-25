@@ -1,6 +1,6 @@
 ﻿using Meadow;
 
-namespace BarChart_Sample;
+namespace MAX7219_Sample;
 
 public class Program
 {
