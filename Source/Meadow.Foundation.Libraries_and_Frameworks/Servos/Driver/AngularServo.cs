@@ -12,8 +12,9 @@ public partial class AngularServo : ServoBase, IAngularServo
 {
     private readonly PulseAngle minPulseAngle;
     private readonly PulseAngle maxPulseAngle;
-    private readonly double pulseSecodesPerDegree;
+    private readonly double pulseSecondsPerDegree;
     private readonly double neutralRawPulseWidth;
+    private readonly bool portCreated = false;
 
     /// <inheritdoc/>
     public Angle Angle { get; }
@@ -34,11 +35,15 @@ public partial class AngularServo : ServoBase, IAngularServo
         this.minPulseAngle = minPulseAngle;
         this.maxPulseAngle = maxPulseAngle;
 
-        var pulseRange = Math.Abs(maxPulseAngle.PulseWidth.TotalSeconds - minPulseAngle.PulseWidth.TotalSeconds);
+        var pulseRange = Math.Abs(maxPulseAngle.PulseWidth.Seconds - minPulseAngle.PulseWidth.Seconds);
         var angleRange = Math.Abs(maxPulseAngle.Angle.Degrees - minPulseAngle.Angle.Degrees);
 
-        neutralRawPulseWidth = (pulseRange / 2) + minPulseAngle.PulseWidth.TotalSeconds;
-        pulseSecodesPerDegree = pulseRange / angleRange;
+        Resolver.Log.Info($"p range: {pulseRange}  a range: {angleRange}");
+
+        neutralRawPulseWidth = (pulseRange / 2) + minPulseAngle.PulseWidth.Seconds;
+        pulseSecondsPerDegree = pulseRange / angleRange;
+
+        Resolver.Log.Info($"neutral: {neutralRawPulseWidth}  s/d: {pulseSecondsPerDegree}");
 
         Neutral();
     }
@@ -51,24 +56,26 @@ public partial class AngularServo : ServoBase, IAngularServo
     /// <param name="minPulseAngle">The pulse angle corresponding to the minimum angle of the servo.</param>
     /// <param name="maxPulseAngle">The pulse angle corresponding to the maximum angle of the servo.</param>
     public AngularServo(IPin pwmPin, Frequency pwmFrequency, PulseAngle minPulseAngle, PulseAngle maxPulseAngle)
-        : base(pwmPin, pwmFrequency)
+        : this(pwmPin.CreatePwmPort(pwmFrequency), minPulseAngle, maxPulseAngle)
     {
-        this.minPulseAngle = minPulseAngle;
-        this.maxPulseAngle = maxPulseAngle;
+        portCreated = true;
+    }
 
-        var pulseRange = Math.Abs(maxPulseAngle.PulseWidth.TotalSeconds - minPulseAngle.PulseWidth.TotalSeconds);
-        var angleRange = Math.Abs(maxPulseAngle.Angle.Degrees - minPulseAngle.Angle.Degrees);
+    /// <inheritdoc/>
+    protected override void Dispose(bool disposing)
+    {
+        if (portCreated)
+        {
+            PwmPort?.Dispose();
+        }
 
-        neutralRawPulseWidth = (pulseRange / 2) + minPulseAngle.PulseWidth.TotalSeconds;
-        pulseSecodesPerDegree = pulseRange / angleRange;
-
-        Neutral();
+        base.Dispose(disposing);
     }
 
     /// <inheritdoc/>
     public override void Neutral()
     {
-        RotateTo(new Angle((MaximumAngle.Degrees + MinimumAngle.Degrees) / 2));
+        RotateTo(new Angle((MaximumAngle.Degrees + MinimumAngle.Degrees) / 2d));
     }
 
     /// <inheritdoc/>
@@ -81,9 +88,11 @@ public partial class AngularServo : ServoBase, IAngularServo
                 $"Angle ({angle.Degrees} must be within servo configuration tolerance ({MinimumAngle.Degrees:n0}-{MaximumAngle.Degrees:n0}");
         }
 
-        var delta = angle.Degrees * pulseSecodesPerDegree;
+        var delta = angle.Degrees * pulseSecondsPerDegree;
         var targetPulseWidth = neutralRawPulseWidth + delta;
 
-        SetPulseWidthWithTrim(TimeSpan.FromSeconds(targetPulseWidth));
+        Resolver.Log.Info($"delta: {delta}  target: {targetPulseWidth}");
+
+        SetPulseWidthWithTrim(TimePeriod.FromSeconds(targetPulseWidth));
     }
 }

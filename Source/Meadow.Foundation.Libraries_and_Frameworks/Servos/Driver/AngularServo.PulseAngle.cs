@@ -1,5 +1,4 @@
 ﻿using Meadow.Units;
-using System;
 
 namespace Meadow.Foundation.Servos;
 
@@ -18,7 +17,7 @@ public partial class AngularServo
         /// </summary>
         /// <param name="angle">The angle corresponding to the pulse width.</param>
         /// <param name="pulseWidth">The pulse width corresponding to the angle.</param>
-        public PulseAngle(Angle angle, TimeSpan pulseWidth)
+        public PulseAngle(Angle angle, TimePeriod pulseWidth)
         {
             Angle = angle;
             PulseWidth = pulseWidth;
@@ -27,7 +26,7 @@ public partial class AngularServo
         /// <summary>
         /// Gets or sets the pulse width corresponding to the angle.
         /// </summary>
-        public TimeSpan PulseWidth { get; set; }
+        public TimePeriod PulseWidth { get; set; }
 
         /// <summary>
         /// Gets or sets the angle corresponding to the pulse width.

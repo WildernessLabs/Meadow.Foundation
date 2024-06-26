@@ -1,4 +1,5 @@
 ﻿using Meadow.Hardware;
+using Meadow.Units;
 using System;
 
 namespace Meadow.Foundation.Servos;
@@ -17,7 +18,7 @@ public class Fs90r : ContinuousRotationServo
     /// <param name="pwm">The PWM port to control the servo.</param>
     /// <exception cref="ArgumentException">Thrown if the PWM frequency is not the required 50 Hz.</exception>
     public Fs90r(IPwmPort pwm)
-        : base(pwm, TimeSpan.FromMilliseconds(minDurationMs), TimeSpan.FromMilliseconds(maxDurationMs))
+        : base(pwm, TimePeriod.FromMilliseconds(minDurationMs), TimePeriod.FromMilliseconds(maxDurationMs))
     {
         if (pwm.Frequency.Hertz != RequiredFrequency.Hertz)
         {
@@ -31,7 +32,7 @@ public class Fs90r : ContinuousRotationServo
     /// <param name="pwmPin">The PWM pin to control the servo.</param>
     /// <exception cref="ArgumentException">Thrown if the PWM frequency is not the required 50 Hz.</exception>
     public Fs90r(IPin pwmPin)
-        : base(pwmPin, RequiredFrequency, TimeSpan.FromMilliseconds(minDurationMs), TimeSpan.FromMilliseconds(maxDurationMs))
+        : base(pwmPin, RequiredFrequency, TimePeriod.FromMilliseconds(minDurationMs), TimePeriod.FromMilliseconds(maxDurationMs))
     {
     }
 }

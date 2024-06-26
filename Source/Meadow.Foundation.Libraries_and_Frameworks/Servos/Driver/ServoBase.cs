@@ -32,7 +32,7 @@ public abstract class ServoBase : IServo, IDisposable
     protected IPwmPort PwmPort { get; }
 
     /// <inheritdoc/>
-    public TimeSpan TrimOffset { get; set; } = TimeSpan.Zero;
+    public TimePeriod TrimOffset { get; set; } = TimePeriod.Zero;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ServoBase"/> class with a specified PWM pin and frequency.
@@ -59,20 +59,26 @@ public abstract class ServoBase : IServo, IDisposable
         PwmPort = pwmPort;
     }
 
-    private double PulseDurationToDutyCycle(TimeSpan pulseDuration)
+    private double PulseDurationToDutyCycle(TimePeriod pulseDuration)
     {
-        return pulseDuration.TotalSeconds * PwmPort.Frequency.Hertz / 2d;
+        return pulseDuration.Seconds * PwmPort.Frequency.Hertz;
     }
 
     /// <summary>
     /// Send a command pulse
     /// </summary>
-    /// <param name="pulseDuration">The pulse duration</param>
-    protected virtual void SetPulseWidthWithTrim(TimeSpan pulseDuration)
+    /// <param name="duration">The pulse duration</param>
+    protected virtual void SetPulseWidthWithTrim(TimePeriod pulseDuration)
     {
         var duty = PulseDurationToDutyCycle(pulseDuration + TrimOffset);
 
+        Resolver.Log.Info($"duration of: {pulseDuration.Microseconds} us  = duty:{duty}");
+
         PwmPort.DutyCycle = duty;
+        if (!PwmPort.State)
+        {
+            PwmPort.Start();
+        }
     }
 
     /// <inheritdoc/>
