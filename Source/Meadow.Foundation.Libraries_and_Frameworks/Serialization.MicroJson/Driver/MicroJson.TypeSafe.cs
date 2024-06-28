@@ -248,6 +248,9 @@ public static partial class MicroJson
                 {
                     prop.SetValue(instance, Enum.Parse(propType, values[v].ToString()));
                 }
+                else if (propType is IEnumerable ie)
+                {
+                }
                 else if (propType.IsArray)
                 {
                     var al = values[v] as ArrayList;
@@ -301,15 +304,24 @@ public static partial class MicroJson
                         Deserialize(hashtableValue, propType, ref complexInstance);
                         prop.SetValue(instance, complexInstance);
                     }
-                    else if (propType == typeof(DateTimeOffset))
+                    else if (values[v] is null)
+                    {
+                        prop.SetValue(instance, null);
+                    }
+                    else if (propType == typeof(DateTimeOffset) || propType == typeof(DateTimeOffset?))
                     {
                         var dto = DateTimeOffset.Parse(values[v].ToString());
                         prop.SetValue(instance, dto);
                     }
-                    else if (propType == typeof(TimeSpan))
+                    else if (propType == typeof(TimeSpan) || propType == typeof(TimeSpan?))
                     {
                         var dto = TimeSpan.Parse(values[v].ToString());
                         prop.SetValue(instance, dto);
+                    }
+                    else if (propType == typeof(Guid) || propType == typeof(Guid?))
+                    {
+                        var g = Guid.Parse(values[v].ToString());
+                        prop.SetValue(instance, g);
                     }
                     else if (propType == typeof(object))
                     {
@@ -324,7 +336,14 @@ public static partial class MicroJson
                 {
                     if (values[v] != null && values[v] != DBNull.Value)
                     {
-                        prop.SetValue(instance, Convert.ChangeType(values[v], propType));
+                        if (propType.IsGenericType && propType.GetGenericTypeDefinition() == typeof(Nullable<>))
+                        {
+                            prop.SetValue(instance, Convert.ChangeType(values[v], Nullable.GetUnderlyingType(propType)));
+                        }
+                        else
+                        {
+                            prop.SetValue(instance, Convert.ChangeType(values[v], propType));
+                        }
                     }
                 }
             }
@@ -337,8 +356,7 @@ public static partial class MicroJson
             type.IsEnum ||
             type == typeof(string) ||
             type == typeof(decimal) ||
-            type == typeof(DateTime) ||
-            type == typeof(Guid)
+            type == typeof(DateTime)
             )
         {
             return false;
