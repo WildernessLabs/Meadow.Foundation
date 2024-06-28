@@ -77,26 +77,26 @@ public abstract partial class SerialWombatBase
         /// <summary>
         /// The amount of time, in seconds, that the a PWM pulse is high.  This will always be less than or equal to the Period
         /// </summary>
-        public override TimeSpan Duration
+        public override TimePeriod Duration
         {
-            get => TimeSpan.FromSeconds(DutyCycle * Period.TotalSeconds);
+            get => TimePeriod.FromSeconds(DutyCycle * Period.Seconds);
             set
             {
                 if (value > Period) throw new ArgumentOutOfRangeException("Duration must be less than Period");
                 // clamp
-                if (value.TotalSeconds < 0) { value = TimeSpan.Zero; }
+                if (value.Seconds < 0) { value = TimePeriod.Zero; }
 
-                DutyCycle = value / Period;
+                DutyCycle = value.Seconds / Period.Seconds;
             }
         }
 
         /// <summary>
         /// PWM period
         /// </summary>
-        public override TimeSpan Period
+        public override TimePeriod Period
         {
-            get => TimeSpan.FromSeconds(1 / _frequency.Hertz);
-            set => Frequency = new Frequency(1 / value.TotalSeconds);
+            get => TimePeriod.FromSeconds(1 / _frequency.Hertz);
+            set => Frequency = new Frequency(1 / value.Seconds);
         }
 
         /// <summary>
