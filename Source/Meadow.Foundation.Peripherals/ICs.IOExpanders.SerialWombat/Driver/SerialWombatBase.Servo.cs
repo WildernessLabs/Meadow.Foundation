@@ -1,5 +1,6 @@
 ﻿using Meadow.Hardware;
 using Meadow.Peripherals.Servos;
+using Meadow.Units;
 using System;
 
 namespace Meadow.Foundation.ICs.IOExpanders
@@ -19,7 +20,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 throw new NotImplementedException();
             }
 
-            public TimeSpan TrimOffset { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+            public TimePeriod TrimOffset { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
             public void Disable()
             {

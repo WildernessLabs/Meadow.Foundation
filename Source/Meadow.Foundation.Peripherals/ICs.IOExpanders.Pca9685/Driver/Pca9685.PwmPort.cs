@@ -28,23 +28,23 @@ public partial class Pca9685
         /// <summary>
         /// Duration
         /// </summary>
-        public TimeSpan Duration
+        public TimePeriod Duration
         {
-            get => TimeSpan.FromSeconds(1d / Frequency.Hertz * DutyCycle);
+            get => TimePeriod.FromSeconds(1d / Frequency.Hertz * DutyCycle);
             set
             {
                 Console.WriteLine($"setting duration to {value}");
-                DutyCycle = (value.TotalSeconds * Frequency.Hertz / 2d);
+                DutyCycle = (value.Seconds * Frequency.Hertz / 2d);
             }
         }
 
         /// <summary>
         /// Period
         /// </summary>
-        public TimeSpan Period
+        public TimePeriod Period
         {
-            get => TimeSpan.FromSeconds(1 / frequency.Hertz);
-            set => Frequency = new Frequency(1 / value.TotalSeconds, Units.Frequency.UnitType.Hertz);
+            get => TimePeriod.FromSeconds(1 / frequency.Hertz);
+            set => Frequency = new Frequency(1 / value.Seconds, Units.Frequency.UnitType.Hertz);
         }
 
         /// <summary>
