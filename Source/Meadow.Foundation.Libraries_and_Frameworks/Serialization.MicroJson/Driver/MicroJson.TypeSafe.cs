@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 
 namespace Meadow.Foundation.Serialization;
@@ -218,13 +219,26 @@ public static partial class MicroJson
         var values = root ?? throw new ArgumentException();
 
         var props = type.GetProperties(
-            System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic)
+            BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
             .Where(p => p.GetCustomAttributes(typeof(JsonIgnoreAttribute), true).Length == 0)
             .ToList();
+
+        (PropertyInfo Property, string MappedTo)[] nameMap =
+            props.Select((propertyInfo, index) => (
+                propertyInfo.CustomAttributes.FirstOrDefault(a => a.AttributeType == typeof(JsonPropertyName)),
+                props[index]))
+            .Where(p => p.Item1 != null)
+            .Select(t => (t.Item2, t.Item1.ConstructorArguments[0].Value.ToString()))
+            .ToArray();
 
         foreach (string v in values.Keys)
         {
             var prop = props.FirstOrDefault(p => string.Compare(p.Name, v, StringComparison.OrdinalIgnoreCase) == 0);
+
+            if (prop == null)
+            {
+                prop = nameMap.FirstOrDefault(p => p.MappedTo == v).Property;
+            }
 
             if (prop != null && prop.CanWrite)
             {
