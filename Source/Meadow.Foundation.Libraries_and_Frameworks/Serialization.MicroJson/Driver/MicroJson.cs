@@ -170,9 +170,14 @@ public static partial class MicroJson
             foreach (PropertyInfo property in properties)
             {
                 object returnObject = property.GetValue(o);
-                var name = convertNamesToCamelCase
-                    ? char.ToLowerInvariant(property.Name[0]) + property.Name[1..]
-                    : property.Name;
+
+                var mappedName = property.GetCustomAttribute<JsonPropertyName>(true);
+
+                var name = mappedName != null
+                    ? mappedName.PropertyName
+                    : convertNamesToCamelCase
+                        ? char.ToLowerInvariant(property.Name[0]) + property.Name[1..]
+                        : property.Name;
 
                 // camel case the name
                 hashtable.Add(name, returnObject);
