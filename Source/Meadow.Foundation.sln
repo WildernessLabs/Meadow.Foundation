@@ -125,7 +125,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sht31d", "Sht31d", "{E985E4
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{6A664586-4544-4427-8FC1-2A8E306BE7A3}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Atmospheric.Sht31d", "Meadow.Foundation.Peripherals\Sensors.Atmospheric.Sht31D\Driver\Sensors.Atmospheric.Sht31d.csproj", "{81E6E143-8752-45A9-8BDA-C6F4730A7DF1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Atmospheric.Sht31d", "Meadow.Foundation.Peripherals\Sensors.Atmospheric.Sht31d\Driver\Sensors.Atmospheric.Sht31d.csproj", "{81E6E143-8752-45A9-8BDA-C6F4730A7DF1}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Htux1d", "Htux1d", "{27F8F5B1-F535-4116-BB16-63454D21D13B}"
 EndProject
@@ -281,7 +281,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ili9163_Sample", "Meadow.Fo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ili9341_Sample", "Meadow.Foundation.Peripherals\Displays.TftSpi\Samples\Ili9341_Sample\Ili9341_Sample.csproj", "{E9B8729A-7525-4EB3-86F0-50E88C504AE6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SSD1351_Sample", "Meadow.Foundation.Peripherals\Displays.TftSpi\Samples\SSD1351_Sample\SSD1351_Sample.csproj", "{41FF7FB1-FDE1-4229-A307-06C25CF91520}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ssd1351_Sample", "Meadow.Foundation.Peripherals\Displays.TftSpi\Samples\Ssd1351_Sample\Ssd1351_Sample.csproj", "{41FF7FB1-FDE1-4229-A307-06C25CF91520}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ST7789_Sample", "Meadow.Foundation.Peripherals\Displays.TftSpi\Samples\ST7789_Sample\ST7789_Sample.csproj", "{19D809AF-CCC4-46EC-8DCE-6BEC700EC37B}"
 EndProject
@@ -1069,7 +1069,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Scd40_Sample", "Meadow.Foun
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Scd41_Sample", "Meadow.Foundation.Peripherals\Sensors.Environmental.Scd4x\Samples\Scd41_Sample\Scd41_Sample.csproj", "{54190390-0EDF-4EBD-8D75-DB7A9C78FBCA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meadow.Core", "..\..\Meadow.Core\source\Meadow.Core\Meadow.Core.csproj", "{72EFC530-A0A4-47AA-8E1A-5CAEBD654DDF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meadow.Core", "..\..\Meadow.Core\Source\Meadow.Core\Meadow.Core.csproj", "{72EFC530-A0A4-47AA-8E1A-5CAEBD654DDF}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Ens160", "Ens160", "{F8FD8FFF-5FF2-4EE8-8AAF-0ABE8D99DAB2}"
 EndProject
@@ -1099,7 +1099,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Y4000_Sample", "Meadow.Foun
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meadow.Modbus", "..\..\Meadow.Modbus\src\Meadow.Modbus\Meadow.Modbus.csproj", "{DD749A41-50A3-4DB4-A84F-4372BDFCB742}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meadow.F7", "..\..\Meadow.Core\source\implementations\f7\Meadow.F7\Meadow.F7.csproj", "{404AAC33-B6F1-4EA3-A246-FD9D8A95E93F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meadow.F7", "..\..\Meadow.Core\Source\implementations\f7\Meadow.F7\Meadow.F7.csproj", "{404AAC33-B6F1-4EA3-A246-FD9D8A95E93F}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Ft232h", "Ft232h", "{4E0052C2-559D-4509-9C42-C6451B1F1FFC}"
 EndProject
@@ -1293,7 +1293,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Keyboard", "Keyboard", "{CB
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Hid.Keyboard", "Meadow.Foundation.Peripherals\Sensors.Hid.Keyboard\Driver\Sensors.Hid.Keyboard.csproj", "{8A514B3D-9DD0-486B-BC31-1287C2FF09FC}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meadow.Windows", "..\..\Meadow.Core\source\implementations\windows\Meadow.Windows\Meadow.Windows.csproj", "{47C3AC1D-57A8-4144-BFED-263CAB66F4CB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meadow.Windows", "..\..\Meadow.Core\Source\implementations\windows\Meadow.Windows\Meadow.Windows.csproj", "{47C3AC1D-57A8-4144-BFED-263CAB66F4CB}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Motor.BidirectionalDcMotor_Sample", "Meadow.Foundation.Core.Samples\Motor.BidirectionalDcMotor_Sample\Motor.BidirectionalDcMotor_Sample.csproj", "{F79FCA46-1B0E-4537-A139-464FD53DCEF4}"
 EndProject
@@ -1411,7 +1411,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Cp2112", "Cp2112", "{087005
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ICs.IOExpanders.Cp2112", "Meadow.Foundation.Peripherals\ICs.IOExpanders.Cp2112\Driver\ICs.IOExpanders.Cp2112.csproj", "{5A740B20-BD2A-4D8C-B37D-1F5AA0E5355B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meadow.Linux", "..\..\Meadow.Core\source\implementations\linux\Meadow.Linux\Meadow.Linux.csproj", "{CD273618-53A8-493C-9478-61C173210C84}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meadow.Linux", "..\..\Meadow.Core\Source\implementations\linux\Meadow.Linux\Meadow.Linux.csproj", "{CD273618-53A8-493C-9478-61C173210C84}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AsciiConsole", "AsciiConsole", "{E775FF9F-8AC5-4994-B45A-20B50E2B03E2}"
 EndProject
@@ -1559,7 +1559,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Servos", "Meadow.Foundation
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Servo_Sample", "Meadow.Foundation.Libraries_and_Frameworks\Servos\Samples\Servo_Sample\Servo_Sample.csproj", "{F531D6BC-D3F2-4AFF-A84B-59351E2FA462}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meadow.Desktop", "..\..\Meadow.Core\Source\implementations\desktop\Meadow.Desktop\Meadow.Desktop.csproj", "{0C115513-9372-4166-AEB9-3902F46DEF93}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meadow.Desktop", "..\..\Meadow.Core\Source\implementations\desktop\Meadow.Desktop\Meadow.Desktop.csproj", "{2E819178-0F9F-4193-A7D4-BC5D505ACAFC}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Meadow.Mac", "..\..\Meadow.Core\Source\implementations\mac\Meadow.Mac\Meadow.Mac.csproj", "{FD7E56EE-6BBE-44BB-BB8B-8DB0647CDD0D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -3775,10 +3777,14 @@ Global
 		{F531D6BC-D3F2-4AFF-A84B-59351E2FA462}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F531D6BC-D3F2-4AFF-A84B-59351E2FA462}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F531D6BC-D3F2-4AFF-A84B-59351E2FA462}.Release|Any CPU.Deploy.0 = Release|Any CPU
-		{0C115513-9372-4166-AEB9-3902F46DEF93}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0C115513-9372-4166-AEB9-3902F46DEF93}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0C115513-9372-4166-AEB9-3902F46DEF93}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0C115513-9372-4166-AEB9-3902F46DEF93}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2E819178-0F9F-4193-A7D4-BC5D505ACAFC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2E819178-0F9F-4193-A7D4-BC5D505ACAFC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2E819178-0F9F-4193-A7D4-BC5D505ACAFC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2E819178-0F9F-4193-A7D4-BC5D505ACAFC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FD7E56EE-6BBE-44BB-BB8B-8DB0647CDD0D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FD7E56EE-6BBE-44BB-BB8B-8DB0647CDD0D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FD7E56EE-6BBE-44BB-BB8B-8DB0647CDD0D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FD7E56EE-6BBE-44BB-BB8B-8DB0647CDD0D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -4557,7 +4563,6 @@ Global
 		{2BB9FA79-851A-48EE-A2E1-91AE3F2B61EF} = {E0384B86-37FC-403C-B1F7-AA5D1B869EB1}
 		{84CEDB6D-C9B1-4317-8A4E-84785ACCA6D1} = {2BB9FA79-851A-48EE-A2E1-91AE3F2B61EF}
 		{F531D6BC-D3F2-4AFF-A84B-59351E2FA462} = {2BB9FA79-851A-48EE-A2E1-91AE3F2B61EF}
-		{0C115513-9372-4166-AEB9-3902F46DEF93} = {65C50059-6C22-43E9-88DE-AD73F7F108C8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}
