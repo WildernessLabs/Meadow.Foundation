@@ -1,5 +1,6 @@
 ﻿using Meadow.Foundation.Serialization;
 using System;
+using System.Collections.Generic;
 
 namespace Unit.Tests;
 
@@ -57,4 +58,29 @@ public class AuthResponseMessage
     public string? AccessToken { get; set; }
     [JsonPropertyName("scope")]
     public string? Scope { get; set; }
+}
+
+public class StringListClass
+{
+    public List<string> ListProp { get; set; } = new();
+}
+
+public class TestResultMessage2
+{
+    public Guid? TestID { get; set; }
+}
+
+public class TestResultMessage
+{
+    public Guid? ResultID { get; set; }
+    public Guid? TestID { get; set; }
+    public string? TestName { get; set; }
+    public DateTime? StartedTimestamp { get; set; }
+    public DateTime? CompletedTimestamp { get; set; }
+    public string? State { get; set; }
+    public string? TargetPlatform { get; set; }
+    public string? MeadowOSVersion { get; set; }
+    public string? TargetInfo { get; set; }
+    public string? TestRunBy { get; set; }
+    public List<string>? Output { get; set; } = new List<string>();
 }
