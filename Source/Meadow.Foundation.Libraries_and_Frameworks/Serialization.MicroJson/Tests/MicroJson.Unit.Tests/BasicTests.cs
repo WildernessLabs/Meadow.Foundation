@@ -8,6 +8,28 @@ namespace Unit.Tests;
 public class BasicTests
 {
     [Fact]
+    public void StringListTest()
+    {
+        var input = new StringListClass
+        {
+            ListProp =
+            {
+                "Item 1",
+                "Item 2",
+                "Item 3"
+            }
+        };
+
+        var json = MicroJson.Serialize(input);
+
+        Assert.NotNull(json);
+
+        var test = MicroJson.Deserialize<StringListClass>(json);
+        Assert.NotNull(test);
+        Assert.Equal(3, test.ListProp.Count);
+    }
+
+    [Fact]
     public void DateTimeSerializationTest()
     {
         var input = new DateTimeClass

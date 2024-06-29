@@ -60,6 +60,11 @@ public class AuthResponseMessage
     public string? Scope { get; set; }
 }
 
+public class StringListClass
+{
+    public List<string> ListProp { get; set; } = new();
+}
+
 public class TestResultMessage2
 {
     public Guid? TestID { get; set; }

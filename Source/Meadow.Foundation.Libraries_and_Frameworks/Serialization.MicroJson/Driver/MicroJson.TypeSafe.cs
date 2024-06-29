@@ -283,9 +283,16 @@ public static partial class MicroJson
 
                     foreach (var item in (ArrayList)values[v])
                     {
-                        object listItem = Activator.CreateInstance(listType);
-                        Deserialize(item as Hashtable, listType, ref listItem);
-                        addMethod.Invoke(list, new[] { listItem });
+                        if (listType == typeof(string))
+                        {
+                            addMethod.Invoke(list, new[] { item.ToString() });
+                        }
+                        else
+                        {
+                            object listItem = Activator.CreateInstance(listType);
+                            Deserialize(item as Hashtable, listType, ref listItem);
+                            addMethod.Invoke(list, new[] { listItem });
+                        }
                     }
 
                     prop.SetValue(instance, list);
