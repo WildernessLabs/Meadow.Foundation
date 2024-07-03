@@ -38,12 +38,8 @@ public partial class AngularServo : ServoBase, IAngularServo
         var pulseRange = Math.Abs(maxPulseAngle.PulseWidth.Seconds - minPulseAngle.PulseWidth.Seconds);
         var angleRange = Math.Abs(maxPulseAngle.Angle.Degrees - minPulseAngle.Angle.Degrees);
 
-        Resolver.Log.Info($"p range: {pulseRange}  a range: {angleRange}");
-
         neutralRawPulseWidth = (pulseRange / 2) + minPulseAngle.PulseWidth.Seconds;
         pulseSecondsPerDegree = pulseRange / angleRange;
-
-        Resolver.Log.Info($"neutral: {neutralRawPulseWidth}  s/d: {pulseSecondsPerDegree}");
 
         Neutral();
     }
@@ -90,8 +86,6 @@ public partial class AngularServo : ServoBase, IAngularServo
 
         var delta = angle.Degrees * pulseSecondsPerDegree;
         var targetPulseWidth = neutralRawPulseWidth + delta;
-
-        Resolver.Log.Info($"delta: {delta}  target: {targetPulseWidth}");
 
         SetPulseWidthWithTrim(TimePeriod.FromSeconds(targetPulseWidth));
     }
