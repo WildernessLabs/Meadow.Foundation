@@ -67,12 +67,10 @@ public abstract class ServoBase : IServo, IDisposable
     /// <summary>
     /// Send a command pulse
     /// </summary>
-    /// <param name="duration">The pulse duration</param>
+    /// <param name="pulseDuration">The pulse duration</param>
     protected virtual void SetPulseWidthWithTrim(TimePeriod pulseDuration)
     {
         var duty = PulseDurationToDutyCycle(pulseDuration + TrimOffset);
-
-        Resolver.Log.Info($"duration of: {pulseDuration.Microseconds} us  = duty:{duty}");
 
         PwmPort.DutyCycle = duty;
         if (!PwmPort.State)
