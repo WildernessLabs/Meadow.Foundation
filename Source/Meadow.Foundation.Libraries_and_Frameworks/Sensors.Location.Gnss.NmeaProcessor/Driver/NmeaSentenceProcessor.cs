@@ -83,7 +83,15 @@ public class NmeaSentenceProcessor
             if (decoder != null)
             {
                 if (DebugMode) { Resolver.Log.Info($"Found appropriate decoder:{decoder.Prefix}"); }
-                decoder.Process(sentence);
+
+                try
+                {
+                    decoder.Process(sentence);
+                }
+                catch (Exception ex)
+                {
+                    Resolver.Log.Warn($"{ex.Message}{Environment.NewLine}Failed to process {sentence}");
+                }
             }
         }
         else

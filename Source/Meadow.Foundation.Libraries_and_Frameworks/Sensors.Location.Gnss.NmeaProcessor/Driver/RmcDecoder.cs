@@ -58,32 +58,35 @@ public class RmcDecoder : INmeaDecoder, IGnssPositionEventSource
             position.IsValid = false;
         }
 
-        position.Position = new();
+        if (position.IsValid)
+        {
+            position.Position = new();
 
-        position.Position!.Latitude = NmeaUtilities.ParseLatitude(sentence.DataElements[2], sentence.DataElements[3]);
-        position.Position.Longitude = NmeaUtilities.ParseLongitude(sentence.DataElements[4], sentence.DataElements[5]);
+            position.Position!.Latitude = NmeaUtilities.ParseLatitude(sentence.DataElements[2], sentence.DataElements[3]);
+            position.Position.Longitude = NmeaUtilities.ParseLongitude(sentence.DataElements[4], sentence.DataElements[5]);
 
-        if (double.TryParse(sentence.DataElements[6], out var speedInKnots))
-        {
-            position.Speed = new Units.Speed(speedInKnots, Units.Speed.UnitType.Knots);
-        }
+            if (double.TryParse(sentence.DataElements[6], out var speedInKnots))
+            {
+                position.Speed = new Units.Speed(speedInKnots, Units.Speed.UnitType.Knots);
+            }
 
-        if (double.TryParse(sentence.DataElements[7], out var courseHeading))
-        {
-            position.CourseHeading = new Units.Azimuth(courseHeading);
-        }
+            if (double.TryParse(sentence.DataElements[7], out var courseHeading))
+            {
+                position.CourseHeading = new Units.Azimuth(courseHeading);
+            }
 
-        if (sentence.DataElements[10].ToLower() == "e")
-        {
-            position.MagneticVariation = CardinalDirection.East;
-        }
-        else if (sentence.DataElements[10].ToLower() == "w")
-        {
-            position.MagneticVariation = CardinalDirection.West;
-        }
-        else
-        {
-            position.MagneticVariation = CardinalDirection.Unknown;
+            if (sentence.DataElements[10].ToLower() == "e")
+            {
+                position.MagneticVariation = CardinalDirection.East;
+            }
+            else if (sentence.DataElements[10].ToLower() == "w")
+            {
+                position.MagneticVariation = CardinalDirection.West;
+            }
+            else
+            {
+                position.MagneticVariation = CardinalDirection.Unknown;
+            }
         }
 
         PositionReceived?.Invoke(this, position);
