@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Hid;
 
@@ -55,12 +56,15 @@ public partial class Xpt2046 : ICalibratableTouchscreen
         IDigitalOutputPort? chipSelect,
         RotationType rotation = RotationType.Normal)
     {
+        /*
         if (touchInterrupt.InterruptMode != InterruptMode.EdgeBoth)
         {
             throw new ArgumentException("The interrupt port must be set to EdgeBoth");
         }
+        */
+        new Thread(SampleThreadProc).Start();
 
-        sampleTimer = new Timer(SampleTimerProc, null, -1, -1);
+        //sampleTimer = new Timer(SampleTimerProc, null, -1, -1);
 
         this.spiBus = spiBus;
         this.touchInterrupt = touchInterrupt;
@@ -108,14 +112,100 @@ public partial class Xpt2046 : ICalibratableTouchscreen
 
     private void OnTouchInterrupt(object sender, DigitalPortResult e)
     {
+        if (_doingTouchStuff)
+        {
+            Resolver.Log.Info("IGNORE INTERRUPT");
+            return;
+        }
+
+        Resolver.Log.Info("INTERRUPT");
+        _touchEvent.Set();
+
         // high is not touched, low is touched
+        /*
         if (!isSampling)
         {
             sampleTimer.Change(0, -1);
         }
+        */
     }
 
-    private void SampleTimerProc(object o)
+    private AutoResetEvent _touchEvent = new AutoResetEvent(false);
+    private bool _doingTouchStuff = false;
+
+    private async void SampleThreadProc(object o)
+    {
+        while (true)
+        {
+            Resolver.Log.Info("EVENT WAIT");
+            _doingTouchStuff = false;
+            _touchEvent.WaitOne();
+            _doingTouchStuff = true;
+            Resolver.Log.Info("EVENT");
+            // high is not touched, low is touched
+            while (touchInterrupt.State == false)
+            {
+
+                isSampling = true;
+
+                var state = ReadBulk();
+
+                var position = ConvertRawToTouchPoint(state.X, state.Y, state.Z);
+
+                try
+                {
+                    if (firstTouch)
+                    {
+                        firstTouch = false;
+                        lastTouchPosition = position;
+                        if (lastTouchPosition != null)
+                        {
+                            TouchDown?.Invoke(this, lastTouchPosition.Value);
+                        }
+                    }
+                    else
+                    {
+                        if (!position.Equals(lastTouchPosition))
+                        {
+                            penultimatePosition = lastTouchPosition;
+                            lastTouchPosition = position;
+                            if (lastTouchPosition != null)
+                            {
+                                TouchMoved?.Invoke(this, lastTouchPosition.Value);
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Resolver.Log.Warn($"Touchscreen event handler error: {ex.Message}");
+                    // ignore any unhandled handler exceptions
+                }
+                await Task.Delay(20);
+            }
+
+            // touch released
+
+            // the actual "last" reading for up is often garbage, so go back one before that if we have it
+            if (penultimatePosition != null)
+            {
+                TouchUp?.Invoke(this, penultimatePosition.Value);
+            }
+            else if (lastTouchPosition != null)
+            {
+                TouchUp?.Invoke(this, lastTouchPosition.Value);
+            }
+
+            EnableIrq();
+
+            isSampling = false;
+            firstTouch = true;
+            lastTouchPosition = null;
+            penultimatePosition = null;
+        }
+    }
+
+    private void SampleTimerProc2(object o)
     {
         if (touchInterrupt.State)
         {
@@ -137,12 +227,13 @@ public partial class Xpt2046 : ICalibratableTouchscreen
 
         isSampling = true;
 
-        var z = ReadZ();
-        var x = ReadX();
-        var y = ReadY();
-        EnableIrq();
+        var state = ReadBulk();
+        //var z = ReadZ();
+        //var x = ReadX();
+        //var y = ReadY();
+        //EnableIrq();
 
-        var position = ConvertRawToTouchPoint(x, y, z);
+        var position = ConvertRawToTouchPoint(state.X, state.Y, state.Z);
 
         try
         {
@@ -195,6 +286,29 @@ public partial class Xpt2046 : ICalibratableTouchscreen
     private void EnableIrq()
     {
         ReadChannel(Channel.Temp, PowerState.PowerDown);
+    }
+
+    private (ushort Z, ushort X, ushort Y) ReadBulk()
+    {
+        Span<byte> txBuffer = stackalloc byte[3 * 3];
+        Span<byte> rxBuffer = stackalloc byte[3 * 3];
+
+        var mode = Mode.Bits_12;
+        var vref = VoltageReference.Differential;
+        var postSamplePowerState = PowerState.Adc;
+
+        txBuffer[0] = (byte)(StartBit | (byte)Channel.Z2 | (byte)mode | (byte)vref | (byte)postSamplePowerState);
+        txBuffer[3] = (byte)(StartBit | (byte)Channel.X | (byte)mode | (byte)vref | (byte)postSamplePowerState);
+        txBuffer[6] = (byte)(StartBit | (byte)Channel.Y | (byte)mode | (byte)vref | (byte)postSamplePowerState);
+        //        txBuffer[9] = (byte)(StartBit | (byte)Channel.Temp | (byte)mode | (byte)vref | (byte)PowerState.PowerDown);
+
+        spiBus.Exchange(chipSelect, txBuffer, rxBuffer);
+
+        return (
+            (ushort)((rxBuffer[1] >> 3) << 8 | (rxBuffer[2] >> 3)),
+            (ushort)((rxBuffer[4] >> 3) << 8 | (rxBuffer[5] >> 3)),
+            (ushort)((rxBuffer[7] >> 3) << 8 | (rxBuffer[8] >> 3))
+            );
     }
 
     private ushort ReadChannel(Channel channel, PowerState postSamplePowerState = PowerState.Adc, Mode mode = Mode.Bits_12, VoltageReference vref = VoltageReference.Differential)

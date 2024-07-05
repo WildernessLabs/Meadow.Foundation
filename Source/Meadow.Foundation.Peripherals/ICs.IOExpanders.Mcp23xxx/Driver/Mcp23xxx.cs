@@ -193,6 +193,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 return;
             }
 
+            Resolver.Log.Info("MCP INTERRUPT");
+
             // determine which pin caused the interrupt
             byte interruptFlag = mcpDevice.ReadRegister(MapRegister(Registers.INTF_InterruptFlag, PortBank.A));
             byte currentStates = mcpDevice.ReadRegister(MapRegister(Registers.GPIO, PortBank.A));
@@ -352,17 +354,23 @@ namespace Meadow.Foundation.ICs.IOExpanders
         {
             if (bit > 7 || bit < 0) { throw new ArgumentOutOfRangeException(); }
 
-            var value = mcpDevice.ReadRegister(register);
-            value |= (byte)(1 << bit);
-            mcpDevice.WriteRegister(register, value);
+            lock (_lock)
+            {
+                var value = mcpDevice.ReadRegister(register);
+                value |= (byte)(1 << bit);
+                mcpDevice.WriteRegister(register, value);
+            }
         }
 
         private void ClearRegisterBit(byte register, int bit)
         {
             if (bit > 7 || bit < 0) { throw new ArgumentOutOfRangeException(); }
-            var value = mcpDevice.ReadRegister(register);
-            value &= (byte)~(1 << bit);
-            mcpDevice.WriteRegister(register, value);
+            lock (_lock)
+            {
+                var value = mcpDevice.ReadRegister(register);
+                value &= (byte)~(1 << bit);
+                mcpDevice.WriteRegister(register, value);
+            }
         }
 
         /// <summary>
@@ -393,19 +401,21 @@ namespace Meadow.Foundation.ICs.IOExpanders
             // if it's already configured, return (1 = input, 0 = output)
             var ioDir = portBank == PortBank.A ? ioDirA : ioDirB;
             var register = MapRegister(Registers.IODIR_IODirection, portBank);
-
-            if (direction == PortDirectionType.Input)
+            lock (_lock)
             {
-                if (BitHelpers.GetBitValue(ioDir, (byte)pin.Key)) { return; }
-            }
-            else
-            {
-                if (!BitHelpers.GetBitValue(ioDir, (byte)pin.Key)) { return; }
-            }
+                if (direction == PortDirectionType.Input)
+                {
+                    if (BitHelpers.GetBitValue(ioDir, (byte)pin.Key)) { return; }
+                }
+                else
+                {
+                    if (!BitHelpers.GetBitValue(ioDir, (byte)pin.Key)) { return; }
+                }
 
-            ref var ioDirLatch = ref GetIoDirLatch(portBank);
-            ioDirLatch = BitHelpers.SetBit(ioDirLatch, bitIndex, (byte)direction);
-            mcpDevice.WriteRegister(register, ioDirLatch);
+                ref var ioDirLatch = ref GetIoDirLatch(portBank);
+                ioDirLatch = BitHelpers.SetBit(ioDirLatch, bitIndex, (byte)direction);
+                mcpDevice.WriteRegister(register, ioDirLatch);
+            }
         }
 
         /// <summary>
@@ -419,26 +429,29 @@ namespace Meadow.Foundation.ICs.IOExpanders
         {
             if (IsValidPin(pin))
             {
-                // set the port direction
-                SetPortDirection(pin, PortDirectionType.Input);
-
-                var bank = GetPortBankForPin(pin);
-                byte bitIndex = (byte)(((byte)pin.Key) % 8);
-
-                var gppu = mcpDevice.ReadRegister(MapRegister(Registers.GPPU_PullupResistorConfiguration, bank));
-                gppu = BitHelpers.SetBit(gppu, bitIndex, enablePullUp);
-                mcpDevice.WriteRegister(MapRegister(Registers.GPPU_PullupResistorConfiguration, bank), gppu);
-
-                if (interruptMode != InterruptMode.None)
-                {   // we don't set DEFVAL or INTCON because we want interrupts raised for both directions
-                    // interrupt on change (raise an interrupt on the interrupt pin on state change)
-                    ClearRegisterBit(MapRegister(Registers.INTCAP_InterruptCapture, bank), bitIndex);
-                    ClearRegisterBit(MapRegister(Registers.INTF_InterruptFlag, bank), bitIndex);
-                    SetRegisterBit(MapRegister(Registers.GPINTEN_InterruptOnChange, bank), bitIndex);
-                }
-                else
+                lock (_lock)
                 {
-                    ClearRegisterBit(MapRegister(Registers.GPINTEN_InterruptOnChange, bank), bitIndex);
+                    // set the port direction
+                    SetPortDirection(pin, PortDirectionType.Input);
+
+                    var bank = GetPortBankForPin(pin);
+                    byte bitIndex = (byte)(((byte)pin.Key) % 8);
+
+                    var gppu = mcpDevice.ReadRegister(MapRegister(Registers.GPPU_PullupResistorConfiguration, bank));
+                    gppu = BitHelpers.SetBit(gppu, bitIndex, enablePullUp);
+                    mcpDevice.WriteRegister(MapRegister(Registers.GPPU_PullupResistorConfiguration, bank), gppu);
+
+                    if (interruptMode != InterruptMode.None)
+                    {   // we don't set DEFVAL or INTCON because we want interrupts raised for both directions
+                        // interrupt on change (raise an interrupt on the interrupt pin on state change)
+                        ClearRegisterBit(MapRegister(Registers.INTCAP_InterruptCapture, bank), bitIndex);
+                        ClearRegisterBit(MapRegister(Registers.INTF_InterruptFlag, bank), bitIndex);
+                        SetRegisterBit(MapRegister(Registers.GPINTEN_InterruptOnChange, bank), bitIndex);
+                    }
+                    else
+                    {
+                        ClearRegisterBit(MapRegister(Registers.GPINTEN_InterruptOnChange, bank), bitIndex);
+                    }
                 }
             }
             else
@@ -484,16 +497,19 @@ namespace Meadow.Foundation.ICs.IOExpanders
         {
             if (IsValidPin(pin))
             {
-                // if the pin isn't set for input, configure it
-                SetPortDirection(pin, PortDirectionType.Input);
+                lock (_lock)
+                {
+                    // if the pin isn't set for input, configure it
+                    SetPortDirection(pin, PortDirectionType.Input);
 
-                var bank = GetPortBankForPin(pin);
+                    var bank = GetPortBankForPin(pin);
 
-                // update our GPIO values
-                var gpio = mcpDevice.ReadRegister(MapRegister(Registers.GPIO, bank));
+                    // update our GPIO values
+                    var gpio = mcpDevice.ReadRegister(MapRegister(Registers.GPIO, bank));
 
-                // return the value on that port
-                return BitHelpers.GetBitValue(gpio, (byte)pin.Key);
+                    // return the value on that port
+                    return BitHelpers.GetBitValue(gpio, (byte)pin.Key);
+                }
             }
             throw new Exception("Pin is out of range");
         }
@@ -504,26 +520,30 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         /// <param name="mask"></param>
         public void WriteToPorts(byte mask)
-        {   // set all IO to output
-            if (ioDirA != 0)
+        {
+            lock (_lock)
             {
-                ioDirA = 0;
-                mcpDevice.WriteRegister(MapRegister(Registers.IODIR_IODirection, PortBank.A), ioDirA);
-            }
-            // write the output
-            olatA = mask;
-            mcpDevice.WriteRegister(MapRegister(Registers.OutputLatch, PortBank.A), olatA);
-
-            if (NumberOfPins == 16)
-            {
-                if (ioDirB != 0)
+                // set all IO to output
+                if (ioDirA != 0)
                 {
-                    ioDirB = 0;
-                    mcpDevice.WriteRegister(MapRegister(Registers.IODIR_IODirection, PortBank.B), ioDirB);
+                    ioDirA = 0;
+                    mcpDevice.WriteRegister(MapRegister(Registers.IODIR_IODirection, PortBank.A), ioDirA);
                 }
                 // write the output
-                olatB = mask;
-                mcpDevice.WriteRegister(MapRegister(Registers.OutputLatch, PortBank.B), olatB);
+                olatA = mask;
+                mcpDevice.WriteRegister(MapRegister(Registers.OutputLatch, PortBank.A), olatA);
+
+                if (NumberOfPins == 16)
+                {
+                    if (ioDirB != 0)
+                    {
+                        ioDirB = 0;
+                        mcpDevice.WriteRegister(MapRegister(Registers.IODIR_IODirection, PortBank.B), ioDirB);
+                    }
+                    // write the output
+                    olatB = mask;
+                    mcpDevice.WriteRegister(MapRegister(Registers.OutputLatch, PortBank.B), olatB);
+                }
             }
         }
 
@@ -535,22 +555,25 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <returns>A little-endian byte mask of the pin values.</returns>
         public byte ReadFromPorts(PortBank bank = PortBank.A)
         {
-            byte ioDir;
-            if (bank == PortBank.A)
-            {   // set all IO to input
-                if (ioDirA != 1) { ioDirA = 1; }
-                ioDir = ioDirA;
-            }
-            else
-            {   // set all IO to input
-                if (ioDirB != 1) { ioDirB = 1; }
-                ioDir = ioDirB;
-            }
-            mcpDevice.WriteRegister(MapRegister(Registers.IODIR_IODirection, bank), ioDir);
+            lock (_lock)
+            {
+                byte ioDir;
+                if (bank == PortBank.A)
+                {   // set all IO to input
+                    if (ioDirA != 1) { ioDirA = 1; }
+                    ioDir = ioDirA;
+                }
+                else
+                {   // set all IO to input
+                    if (ioDirB != 1) { ioDirB = 1; }
+                    ioDir = ioDirB;
+                }
+                mcpDevice.WriteRegister(MapRegister(Registers.IODIR_IODirection, bank), ioDir);
 
-            // read the input
-            var gpio = mcpDevice.ReadRegister(MapRegister(Registers.GPIO, bank));
-            return gpio;
+                // read the input
+                var gpio = mcpDevice.ReadRegister(MapRegister(Registers.GPIO, bank));
+                return gpio;
+            }
         }
 
         /// <summary>
