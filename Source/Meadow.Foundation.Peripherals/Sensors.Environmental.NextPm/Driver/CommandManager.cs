@@ -12,7 +12,7 @@ namespace Meadow.Foundation.Sensors.Environmental
 
             var payloadLength = 2;
 
-            if (payload != null && payload.Length > 0)
+            if (payload is { Length: > 0 })
             {
                 Array.Copy(payload, 0, buffer, 2, payload.Length);
                 payloadLength += payload.Length;

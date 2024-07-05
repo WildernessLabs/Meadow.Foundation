@@ -22,12 +22,12 @@ namespace Meadow.Foundation.Sensors.Light
         /// </summary>
         public event EventHandler RangeExceededLow = default!;
 
-        ushort config;
+        private ushort config;
 
         /// <summary>
         /// Luminosity reading from the TSL2561 sensor.
         /// </summary>
-        public Illuminance? Illuminance { get; protected set; }
+        public Illuminance? Illuminance => Conditions;
 
         /// <summary>
         /// Sensor types Data source
@@ -51,16 +51,16 @@ namespace Meadow.Foundation.Sensors.Light
         {
         }
 
-        int gain = 3;
-        int integrationTime = 0;
-        bool firstRead = true;
-        bool outOfRange = false;
+        private int gain = 3;
+        private int integrationTime = 0;
+        private bool firstRead = true;
+        private bool outOfRange = false;
 
         /// <summary>
         /// Reads data from the sensor
         /// </summary>
         /// <returns>The latest sensor reading</returns>
-        protected async override Task<Illuminance> ReadSensor()
+        protected override async Task<Illuminance> ReadSensor()
         {
             Illuminance illuminance = new Illuminance(0);
 
@@ -92,6 +92,7 @@ namespace Meadow.Foundation.Sensors.Light
                         if (++integrationTime >= 4)
                         {
                             // everything is maxed out                                
+                            integrationTime = 3;
                             RangeExceededHigh?.Invoke(this, EventArgs.Empty);
                             outOfRange = true;
                         }
@@ -113,6 +114,7 @@ namespace Meadow.Foundation.Sensors.Light
                         // we're at max gain, have to slow integration time
                         if (--integrationTime <= -2)
                         {
+                            integrationTime = -2;
                             RangeExceededLow?.Invoke(this, EventArgs.Empty);
                             outOfRange = true;
                         }
@@ -223,6 +225,15 @@ namespace Meadow.Foundation.Sensors.Light
         private async Task SetIntegrationTime(int it)
         {
             ushort cfg;
+
+            if (it < -2)
+            {
+                it = -2;
+            }
+            else if (it > 3)
+            {
+                it = 3;
+            }
 
             // bits 6-9
 

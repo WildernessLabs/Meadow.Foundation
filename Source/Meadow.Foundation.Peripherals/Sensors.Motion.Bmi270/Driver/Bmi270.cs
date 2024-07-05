@@ -7,7 +7,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Meadow.Foundation.Sensors.Accelerometers
+namespace Meadow.Foundation.Sensors.Motion
 {
     /// <summary>
     /// Represents a BMI270 inertial measurement unit (IMU) 
@@ -55,7 +55,7 @@ namespace Meadow.Foundation.Sensors.Accelerometers
         /// </summary>
         protected readonly II2cCommunications i2cComms;
 
-        private byte[] readBuffer;
+        private readonly byte[] readBuffer;
 
         /// <summary>
         /// Create a new Bmi270 instance

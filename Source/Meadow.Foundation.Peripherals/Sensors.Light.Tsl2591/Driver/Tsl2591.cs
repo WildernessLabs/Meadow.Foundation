@@ -15,7 +15,7 @@ namespace Meadow.Foundation.Sensors.Light
     /// </summary>
     public partial class Tsl2591 :
         ByteCommsSensorBase<(Illuminance? FullSpectrum, Illuminance? Infrared, Illuminance? VisibleLight, Illuminance? Integrated)>,
-        ILightSensor, IDisposable, IPowerControllablePeripheral
+        ILightSensor, IPowerControllablePeripheral
     {
         /// <summary>
         /// Raised when Full Spectrum Illuminance value changes

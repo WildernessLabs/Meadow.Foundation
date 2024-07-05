@@ -79,7 +79,10 @@ public class BidirectionalDcMotor
     /// </summary>
     public void Stop()
     {
-        _outputA.State = _outputB.State = _energizeHigh ? false : true;
+        var state = !_energizeHigh;
+        if (state == _outputA.State && state == _outputB.State) return;
+
+        _outputA.State = _outputB.State = state;
         StateChanged?.Invoke(this, State);
     }
 
@@ -88,7 +91,9 @@ public class BidirectionalDcMotor
     /// </summary>
     public void StartClockwise()
     {
-        _outputA.State = !(_outputB.State = _energizeHigh ? true : false);
+        var state = !(_outputB.State = _energizeHigh);
+        if (state == _outputA.State) return;
+        _outputA.State = state;
         StateChanged?.Invoke(this, State);
     }
 
@@ -97,7 +102,9 @@ public class BidirectionalDcMotor
     /// </summary>
     public void StartCounterClockwise()
     {
-        _outputA.State = !(_outputB.State = _energizeHigh ? false : true);
+        var state = !(_outputB.State = !_energizeHigh);
+        if (state == _outputA.State) return;
+        _outputA.State = state;
         StateChanged?.Invoke(this, State);
     }
 }

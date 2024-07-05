@@ -13,9 +13,4 @@
     <ProjectReference Include="..\..\..\..\..\..\Meadow.Core\Source\implementations\f7\Meadow.F7\Meadow.F7.csproj" />
     <ProjectReference Include="..\..\Driver\ICs.DigiPots.Mcp4xxx.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <None Update="meadow.config.yaml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
 </Project>

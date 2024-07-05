@@ -15,7 +15,7 @@ namespace Meadow.Foundation.Sensors.Temperature
     ///                        |
     ///                        +---[ TM ]--- &lt; GND
     /// </remarks>
-    public abstract class Thermistor : SamplingSensorBase<Units.Temperature>, ITemperatureSensor
+    public abstract class Thermistor : PollingSensorBase<Units.Temperature>, ITemperatureSensor
     {
         /// <summary>
         /// The analog input port used to determine output voltage of the voltage divider circuit
@@ -38,8 +38,6 @@ namespace Meadow.Foundation.Sensors.Temperature
         {
             AnalogInputPort = analogInput;
             AnalogInputPort.StartUpdating();
-
-            Updated += (s, e) => TemperatureUpdated?.Invoke(this, e);
         }
 
         /// <inheritdoc/>
@@ -51,6 +49,8 @@ namespace Meadow.Foundation.Sensors.Temperature
                 IsSampling = true;
                 AnalogInputPort.StartUpdating(updateInterval);
             }
+
+            base.StartUpdating(updateInterval);
         }
 
         /// <inheritdoc/>
@@ -62,16 +62,13 @@ namespace Meadow.Foundation.Sensors.Temperature
                 IsSampling = false;
                 AnalogInputPort.StopUpdating();
             }
+
+            base.StopUpdating();
         }
 
         /// <summary>
         /// The temperature from the last reading
         /// </summary>
-        public Units.Temperature? Temperature { get; protected set; }
-
-        /// <summary>
-        /// Raised when the temperature is updated
-        /// </summary>
-        public event EventHandler<IChangeResult<Units.Temperature>> TemperatureUpdated = default!;
+        public Units.Temperature? Temperature => Conditions;
     }
 }

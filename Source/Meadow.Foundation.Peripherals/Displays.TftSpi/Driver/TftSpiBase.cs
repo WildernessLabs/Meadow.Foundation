@@ -46,7 +46,7 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// The default SPI bus speed for the device
         /// </summary>
-        public virtual Frequency DefaultSpiBusSpeed => new Frequency(12000, Frequency.UnitType.Kilohertz);
+        public virtual Frequency DefaultSpiBusSpeed => new(12000, Frequency.UnitType.Kilohertz);
 
         /// <summary>
         /// The SPI bus speed for the device
@@ -223,7 +223,7 @@ namespace Meadow.Foundation.Displays
 
             if (imageBuffer.ColorMode != colorMode)
             {
-                CreateBuffer(colorMode, Width, Height);
+                CreateBuffer(colorMode, nativeWidth, nativeHeight);
                 Initialize();
             }
         }
@@ -256,7 +256,10 @@ namespace Meadow.Foundation.Displays
             {
                 imageBuffer = new BufferRgb888(width, height);
             }
-
+            else if (colorMode == ColorMode.Format18bppRgb666)
+            {
+                imageBuffer = new BufferRgb666(width, height);
+            }
             else if (colorMode == ColorMode.Format16bppRgb565)
             {
                 imageBuffer = new BufferRgb565(width, height);
@@ -420,15 +423,15 @@ namespace Meadow.Foundation.Displays
         {
             if (PixelBuffer.ColorMode != ColorMode.Format12bppRgb444 &&
                 PixelBuffer.ColorMode != ColorMode.Format16bppRgb565 &&
+                PixelBuffer.ColorMode != ColorMode.Format18bppRgb666 &&
                 PixelBuffer.ColorMode != ColorMode.Format24bppRgb888)
             {
-                //should cover all of these displays but just in case
                 Show();
                 return;
             }
 
             if (right < left || bottom < top)
-            {   //could throw an exception
+            {
                 return;
             }
 
@@ -444,22 +447,37 @@ namespace Meadow.Foundation.Displays
                 }
             }
 
+            float bytesPerPixel = PixelBuffer.BitDepth / 8f;
+
+            if (PixelBuffer.ColorMode == ColorMode.Format18bppRgb666)
+            {
+                bytesPerPixel = 3;
+            }
+
             SetAddressWindow(left, top, right - 1, bottom - 1);
 
-            var len = (right - left) * PixelBuffer.BitDepth / 8;
+            int len = (int)((right - left) * bytesPerPixel);
 
             dataCommandPort.State = Data;
 
-            int sourceIndex;
             for (int y = top; y < bottom; y++)
             {
-                sourceIndex = ((y * Width) + left) * PixelBuffer.BitDepth / 8;
+                int sourceIndex = (int)((y * Width + left) * bytesPerPixel);
 
                 spiDisplay.Bus.Exchange(
                     chipSelectPort,
                     imageBuffer.Buffer[sourceIndex..(sourceIndex + len)],
                     readBuffer.Span[0..len]);
             }
+        }
+
+        /// <summary>
+        /// Set the display inversion
+        /// </summary>
+        /// <param name="inverted">True to invert the display, false otherwise</param>
+        public virtual void InvertDisplay(bool inverted)
+        {
+            SendCommand(inverted ? Register.INVON : Register.INVOFF);
         }
 
         /// <summary>

@@ -192,7 +192,7 @@ namespace Meadow.Foundation
                 case ByteOrder.BigEndian:
                     for (int i = 0; i < writeBuffer.Length; i++)
                     {
-                        WriteBuffer.Span[i + 1] = writeBuffer[writeBuffer.Length - (i + 1)];
+                        WriteBuffer.Span[i + 1] = writeBuffer[^(i + 1)];
                     }
                     break;
             }

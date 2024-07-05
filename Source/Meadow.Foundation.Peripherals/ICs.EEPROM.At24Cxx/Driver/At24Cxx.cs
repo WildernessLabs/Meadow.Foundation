@@ -64,12 +64,12 @@ namespace Meadow.Foundation.ICs.EEPROM
             if (address > MemorySize)
             {
                 throw new ArgumentOutOfRangeException(
-                    "address", "startAddress should be less than the amount of memory in the module");
+                    nameof(address), "startAddress should be less than the amount of memory in the module");
             }
             if ((address + amount) > MemorySize)
             {
                 throw new ArgumentOutOfRangeException(
-                    "address", "startAddress + amount should be less than the amount of memory in the module");
+                    nameof(address), "startAddress + amount should be less than the amount of memory in the module");
             }
         }
 

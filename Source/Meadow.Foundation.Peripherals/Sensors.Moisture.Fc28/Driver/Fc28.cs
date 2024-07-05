@@ -24,7 +24,7 @@ namespace Meadow.Foundation.Sensors.Moisture
         /// <summary>
         /// Last value read from the moisture sensor
         /// </summary>
-        public double? Moisture { get; protected set; }
+        public double? Moisture => Conditions;
 
         /// <summary>
         /// Voltage value of most dry soil - default is 0 volts

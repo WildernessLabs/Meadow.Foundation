@@ -1,5 +1,4 @@
-﻿
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
 
 namespace Meadow.Foundation.ICs.IOExpanders
 {

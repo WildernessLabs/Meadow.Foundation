@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Meadow.Peripherals.Leds;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -24,6 +25,30 @@ namespace Meadow.Foundation.Leds
                 animationTask = null;
                 cancellationTokenSource = null;
             }
+        }
+
+        ///<inheritdoc/>
+        public Task StartBlink()
+        {
+            return StartBlink(TimeSpan.FromMilliseconds(500), TimeSpan.FromMilliseconds(500), 1f, 0f);
+        }
+
+        ///<inheritdoc/>
+        public Task StartBlink(RgbLedColors color)
+        {
+            return StartBlink(color.AsColor(), TimeSpan.FromMilliseconds(500), TimeSpan.FromMilliseconds(500), 1f, 0f);
+        }
+
+        ///<inheritdoc/>
+        public Task StartBlink(TimeSpan onDuration, TimeSpan offDuration)
+        {
+            return StartBlink(onDuration, offDuration, 1f, 0f);
+        }
+
+        ///<inheritdoc/>
+        public Task StartBlink(RgbLedColors color, TimeSpan onDuration, TimeSpan offDuration)
+        {
+            return StartBlink(color.AsColor(), onDuration, offDuration, 1f, 0f);
         }
 
         ///<inheritdoc/>

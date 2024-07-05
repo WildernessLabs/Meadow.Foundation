@@ -236,7 +236,7 @@
                 }
                 if (index > 159)
                 {
-                    return _fontTable[index - 55];
+                    return _fontTable[index - 0x20 - 0x21];
                 }
                 //32 to 126
                 return _fontTable[index - 0x20];

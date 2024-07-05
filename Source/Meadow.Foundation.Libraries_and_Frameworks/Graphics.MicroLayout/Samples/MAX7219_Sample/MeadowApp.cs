@@ -4,13 +4,16 @@ using Meadow.Foundation.Graphics.MicroLayout;
 using Meadow.Foundation.ICs.IOExpanders;
 using Meadow.Peripherals.Displays;
 
-public class MeadowApp : App<Windows>
+namespace MAX7219_Sample;
+
+public class MeadowApp : App<Desktop>
 {
     private DisplayScreen? screen;
 
     public override Task Initialize()
     {
         var expander = FtdiExpanderCollection.Devices[0];
+
         var display = new Max7219(
             expander.CreateSpiBus(),
             expander.Pins.C0.CreateDigitalOutputPort(), // CS
@@ -39,7 +42,6 @@ public class MeadowApp : App<Windows>
         label.Text = "HELLO";
 
         screen.Controls.Add(label);
-
     }
 
     public void TextOnBox()
@@ -57,9 +59,7 @@ public class MeadowApp : App<Windows>
         while (true)
         {
             Thread.Sleep(1000);
-            var temp = box.ForeColor;
-            box.ForeColor = label.TextColor;
-            label.TextColor = temp;
+            (box.ForeColor, label.TextColor) = (label.TextColor, box.ForeColor);
         }
     }
 
@@ -86,11 +86,5 @@ public class MeadowApp : App<Windows>
 
             Thread.Sleep(50);
         }
-
-    }
-
-    public static async Task Main(string[] args)
-    {
-        await MeadowOS.Start(args);
     }
 }

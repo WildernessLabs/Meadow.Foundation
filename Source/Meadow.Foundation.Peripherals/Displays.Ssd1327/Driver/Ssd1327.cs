@@ -108,6 +108,7 @@ namespace Meadow.Foundation.Displays
 
             this.dataCommandPort = dataCommandPort;
             this.resetPort = resetPort;
+            this.chipSelectPort = chipSelectPort;
 
             spiComms = new SpiCommunications(spiBus, this.chipSelectPort = chipSelectPort, DefaultSpiBusSpeed, DefaultSpiBusMode);
 

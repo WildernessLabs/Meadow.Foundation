@@ -52,11 +52,11 @@ namespace Leds.Led_Sample
             Resolver.Log.Error("Error level message");
             Resolver.Log.Warn("Warn level message");
 
-            Resolver.Log.Info("TestLeds...");
+            Resolver.Log.Info("Test Leds...");
 
             while (true)
             {
-                Resolver.Log.Error("Turning on each led every 100ms");
+                Resolver.Log.Info("Turning on each led every 100ms");
                 foreach (var led in leds)
                 {
                     led.IsOn = true;

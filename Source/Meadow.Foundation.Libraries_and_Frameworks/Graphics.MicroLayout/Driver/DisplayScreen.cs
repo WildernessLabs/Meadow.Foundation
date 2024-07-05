@@ -1,5 +1,6 @@
 ﻿using Meadow.Hardware;
 using Meadow.Peripherals.Displays;
+using System;
 using System.Linq;
 using System.Threading;
 
@@ -8,12 +9,17 @@ namespace Meadow.Foundation.Graphics.MicroLayout;
 /// <summary>
 /// An abstraction of a physical screen
 /// </summary>
-public class DisplayScreen
+public class DisplayScreen : IControlContainer
 {
     private readonly IPixelDisplay _display;
     private readonly MicroGraphics _graphics;
-    private readonly ITouchScreen? _touchScreen;
     private bool _updateInProgress = false;
+    private Color _backgroundColor;
+
+    /// <summary>
+    /// Gets the Touchscreen associated with the display screen
+    /// </summary>
+    public ITouchScreen? TouchScreen { get; }
 
     /// <summary>
     /// Gets the collection of controls on the display screen.
@@ -21,21 +27,17 @@ public class DisplayScreen
     public ControlsCollection Controls { get; }
 
     /// <summary>
-    /// Gets or sets the background color of the display screen.
-    /// </summary>
-    public Color BackgroundColor { get; set; }
-
-    /// <summary>
     /// Gets the width of the display screen.
     /// </summary>
-    public int Width => _graphics.Width;
+    public int Width { get => _graphics.Width; set { } }
 
     /// <summary>
     /// Gets the height of the display screen.
     /// </summary>
-    public int Height => _graphics.Height;
+    public int Height { get => _graphics.Height; set { } }
 
-    private bool IsInvalid { get; set; }
+    /// <inheritdoc/>
+    public bool IsInvalid { get; private set; }
 
     internal DisplayTheme? Theme { get; }
 
@@ -48,7 +50,7 @@ public class DisplayScreen
     /// <param name="theme">The display theme to use.</param>
     public DisplayScreen(IPixelDisplay physicalDisplay, RotationType rotation = RotationType.Normal, ITouchScreen? touchScreen = null, DisplayTheme? theme = null)
     {
-        Controls = new ControlsCollection(this, null);
+        Controls = new ControlsCollection(this);
         Theme = theme;
 
         _display = physicalDisplay;
@@ -56,12 +58,12 @@ public class DisplayScreen
 
         _graphics.Rotation = rotation;
 
-        _touchScreen = touchScreen;
+        TouchScreen = touchScreen;
 
-        if (_touchScreen != null)
+        if (TouchScreen != null)
         {
-            _touchScreen.TouchDown += _touchScreen_TouchDown;
-            _touchScreen.TouchUp += _touchScreen_TouchUp;
+            TouchScreen.TouchDown += _touchScreen_TouchDown;
+            TouchScreen.TouchUp += _touchScreen_TouchUp;
         }
 
         if (theme?.Font != null)
@@ -69,7 +71,7 @@ public class DisplayScreen
             _graphics.CurrentFont = theme.Font;
         }
 
-        BackgroundColor = theme?.BackgroundColor ?? Color.Black;
+        _backgroundColor = theme?.BackgroundColor ?? _display.DisabledColor;
 
         if (Resolver.App != null)
         {
@@ -81,37 +83,79 @@ public class DisplayScreen
         }
     }
 
-    private void _touchScreen_TouchUp(int x, int y)
+    /// <summary>
+    /// Gets or sets the background color of the display screen.
+    /// </summary>
+    public Color BackgroundColor
     {
-        lock (Controls.SyncRoot)
+        get => _backgroundColor;
+        set
         {
-            foreach (var control in Controls)
-            {
-                if (control is IClickableControl c)
-                {
-                    if (control.Contains(x, y))
-                    {
-                        c.Pressed = false;
-                    }
-                }
-            }
+            if (value == BackgroundColor) return;
+            _backgroundColor = value;
+            Invalidate();
         }
     }
 
-    private void _touchScreen_TouchDown(int x, int y)
+    private void _touchScreen_TouchUp(ITouchScreen source, TouchPoint point)
     {
-        lock (Controls.SyncRoot)
+        bool LookForUnclick(ControlsCollection controls)
         {
-            foreach (var control in Controls)
+            foreach (var control in controls)
             {
                 if (control is IClickableControl c)
                 {
-                    if (control.Contains(x, y))
+                    if (control.IsVisible && control.Contains(point.ScreenX, point.ScreenY))
                     {
-                        c.Pressed = true;
+                        c.Pressed = false;
+                        return true;
+                    }
+                }
+                else if (control is IControlContainer container)
+                {
+                    if (LookForUnclick(container.Controls))
+                    {
+                        return true;
                     }
                 }
             }
+            return false;
+        }
+
+        lock (Controls.SyncRoot)
+        {
+            LookForUnclick(Controls);
+        }
+    }
+
+    private void _touchScreen_TouchDown(ITouchScreen source, TouchPoint point)
+    {
+        bool LookForClick(ControlsCollection controls)
+        {
+            foreach (var control in controls)
+            {
+                if (control is IClickableControl c)
+                {
+                    if (control.IsVisible && control.Contains(point.ScreenX, point.ScreenY))
+                    {
+                        c.Pressed = true;
+                        return true;
+                    }
+                }
+                else if (control is IControlContainer container)
+                {
+                    if (LookForClick(container.Controls))
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        lock (Controls.SyncRoot)
+        {
+            LookForClick(Controls);
         }
     }
 
@@ -128,9 +172,9 @@ public class DisplayScreen
         control.Invalidate();
         control.Refresh(_graphics);
 
-        if (control is Layout l)
+        if (control is IControlContainer container)
         {
-            foreach (var c in l.Controls)
+            foreach (var c in container.Controls)
             {
                 RefreshTree(c);
             }
@@ -158,25 +202,32 @@ public class DisplayScreen
     {
         while (true)
         {
+            if (!_updateInProgress && (IsInvalid || Controls.Any(c => c.IsInvalid)))
             {
-                if (!_updateInProgress && (IsInvalid || Controls.Any(c => c.IsInvalid)))
-                {
-                    _graphics.Clear(BackgroundColor);
+                _graphics.Clear(BackgroundColor);
 
-                    lock (Controls.SyncRoot)
+                lock (Controls.SyncRoot)
+                {
+                    foreach (var control in Controls)
                     {
-                        foreach (var control in Controls)
+                        if (control != null)
                         {
-                            if (control != null)
-                            {
-                                // TODO: micrographics supports invalidating regions - we need to update to invalidate only regions here, too
-                                RefreshTree(control);
-                            }
+                            // TODO: micrographics supports invalidating regions - we need to update to invalidate only regions here, too
+                            RefreshTree(control);
                         }
                     }
-                    _graphics.Show();
-                    IsInvalid = false;
                 }
+                try
+                {
+                    _graphics.Show();
+                }
+                catch (Exception ex)
+                {
+                    // it possible to have a callee error (e.g. an I2C bus problem)
+                    // we'll report it and continue running
+                    Resolver.Log.Warn($"MicroGraphics.Show error while drawing screen: {ex.Message}");
+                }
+                IsInvalid = false;
             }
 
             Thread.Sleep(50);
@@ -203,7 +254,16 @@ public class DisplayScreen
                                 RefreshTree(control);
                             }
                         }
-                        _graphics.Show();
+                        try
+                        {
+                            _graphics.Show();
+                        }
+                        catch (Exception ex)
+                        {
+                            // it possible to have a callee error (e.g. an I2C bus problem)
+                            // we'll report it and continue running
+                            Resolver.Log.Warn($"MicroGraphics.Show error while drawing screen: {ex.Message}");
+                        }
                         IsInvalid = false;
                     }
                 }
@@ -212,4 +272,19 @@ public class DisplayScreen
             Thread.Sleep(50);
         }
     }
+
+    /// <inheritdoc/>
+    public void Refresh(MicroGraphics graphics)
+    {
+        this.Invalidate();
+    }
+
+    /// <inheritdoc/>
+    public int Left { get => 0; set { } }
+    /// <inheritdoc/>
+    public int Top { get => 0; set { } }
+    /// <inheritdoc/>
+    public bool IsVisible { get => true; set { } }
+    /// <inheritdoc/>
+    public IControl? Parent { get => null; set { } }
 }
