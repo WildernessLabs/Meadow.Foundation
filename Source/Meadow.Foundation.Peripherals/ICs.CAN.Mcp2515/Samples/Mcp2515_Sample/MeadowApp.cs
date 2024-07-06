@@ -1,5 +1,4 @@
 ﻿using Meadow;
-using Meadow.Devices;
 using Meadow.Foundation.ICs.CAN;
 using Meadow.Hardware;
 using System;
@@ -7,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Meadow.Devices
 {
+    /*
     public static class ProjLab
     {
         public static (
@@ -51,6 +51,7 @@ namespace Meadow.Devices
             Resolver.Device.GetPin("D07")
             );
     }
+    */
 }
 
 namespace MeadowApp
@@ -66,7 +67,7 @@ namespace MeadowApp
 
         //<!=SNIP=>
 
-        Mcp2515 _controller;
+        private Mcp2515 _controller;
 
         public override Task Initialize()
         {
