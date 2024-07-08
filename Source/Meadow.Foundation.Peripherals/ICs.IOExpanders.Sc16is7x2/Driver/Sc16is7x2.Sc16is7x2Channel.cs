@@ -162,6 +162,8 @@ public partial class Sc16is7x2
 
         private void Initialize(int baudRate, int dataBits, Parity parity, StopBits stopBits)
         {
+            _dataBits = dataBits;
+            _stopBits = stopBits;
             _controller.Reset();
             _controller.EnableFifo(_channel);
             _baudRate = _controller.SetBaudRate(_channel, baudRate);
