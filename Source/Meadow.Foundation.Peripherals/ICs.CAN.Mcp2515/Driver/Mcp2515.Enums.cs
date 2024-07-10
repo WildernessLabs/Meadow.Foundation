@@ -30,6 +30,8 @@ namespace Meadow.Foundation.ICs.CAN
             RXF2SIDL = 0x09,
             RXF2EID8 = 0x0A,
             RXF2EID0 = 0x0B,
+            BFPCTRL = 0x0C,
+            TXRTSCTRL = 0x0D,
             CANSTAT = 0x0E,
             CANCTRL = 0x0F,
             RXF3SIDH = 0x10,
@@ -170,6 +172,40 @@ namespace Meadow.Foundation.ICs.CAN
             ERRIF = 0x20,
             WAKIF = 0x40,
             MERRF = 0x80
+        }
+
+        [Flags]
+        private enum InterruptEnable : byte
+        {
+            DisableAll = 0,
+            RXB0 = 0x01,
+            RXB1 = 0x02,
+            TXB0 = 0x04,
+            TXB1 = 0x08,
+            TXB2 = 0x10,
+            ERR = 0x20,
+            WAKE = 0x40,
+            MSG_ERR = 0x80
+        }
+
+        private enum RxPinSettings : byte
+        {
+            DISABLE = 0x00,
+            RX0B_EN_INT = 0x05,
+            RX0B_EN_DIG_OUT_HIGH = 0x14,
+            RX0B_EN_DIG_OUT_LOW = 0x04,
+            RX1B_EN_INT = 0x0A,
+            RX1B_EN_DIG_OUT_HIGH = 0x18,
+            RX1B_EN_DIG_OUT_LOW = 0x08,
+        }
+
+        [Flags]
+        private enum TxRtsSettings : byte
+        {
+            RTS_PINS_DIG_IN = 0x00,
+            TX0RTS = 0x01,
+            TX1RTS = 0x02,
+            TX2RTS = 0x04,
         }
 
         private const byte MCP_SIDH = 0;
