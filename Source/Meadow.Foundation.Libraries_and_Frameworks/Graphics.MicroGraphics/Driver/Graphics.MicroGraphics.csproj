@@ -18,6 +18,7 @@
     <PackageTags>Meadow,Meadow.Foundation,Display,Graphics</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Lightweight integer accurate 2d graphics drawing system designed for embedded applications</Description>
+    <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>
     <None Include=".\Readme.md" Pack="true" PackagePath="" />
