@@ -154,7 +154,7 @@ namespace Meadow.Foundation.Displays
         /// Invert the display
         /// </summary>
         /// <param name="invert"></param>
-        public void InvertDisplay(bool invert)
+        public override void InvertDisplay(bool invert)
         {
             SendCommand(invert ? CMD_INVERTDISPLAY : CMD_NORMALDISPLAY);
         }
