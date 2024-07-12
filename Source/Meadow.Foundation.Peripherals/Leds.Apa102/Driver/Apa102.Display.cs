@@ -12,11 +12,11 @@ namespace Meadow.Foundation.Leds
         public ColorMode SupportedColorModes => ColorMode.Format24bppRgb888;
 
         /// <inheritdoc/>
-        public int Width => width;
+        public int Width => (width == 0) ? numberOfLeds : width;
         readonly int width;
 
         /// <inheritdoc/>
-        public int Height => height;
+        public int Height => (height == 0) ? 1 : height;
         readonly int height;
 
         /// <inheritdoc/>

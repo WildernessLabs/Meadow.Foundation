@@ -3,12 +3,18 @@ using System;
 
 namespace Meadow.Foundation.ICs.IOExpanders;
 
+/// <summary>
+/// Represents an FTDI expander.
+/// </summary>
 public abstract partial class FtdiExpander
 {
+    /// <summary>
+    /// Represents a digital input port for the FTDI expander.
+    /// </summary>
     public sealed class DigitalInputPort : DigitalInputPortBase
     {
-        private FtdiExpander _expander;
-        private FtdiPin _pin;
+        private readonly FtdiExpander _expander;
+        private readonly FtdiPin _pin;
 
         /// <inheritdoc/>
         public override ResistorMode Resistor { get; set; }

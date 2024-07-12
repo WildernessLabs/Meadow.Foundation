@@ -1,6 +1,6 @@
 # Meadow.Foundation.Sensors.Gnss.NeoM8
 
-**NEO M8 serial GNSS / GPS controller**
+**NEO M8 SPI, I2C, and serial GNSS / GPS controller**
 
 The **NeoM8** library is included in the **Meadow.Foundation.Sensors.Gnss.NeoM8** nuget package and is designed for the [Wilderness Labs](www.wildernesslabs.co) Meadow .NET IoT platform.
 

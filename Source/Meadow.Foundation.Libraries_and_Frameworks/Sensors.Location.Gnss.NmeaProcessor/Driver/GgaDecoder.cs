@@ -7,12 +7,10 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
     /// <summary>
     /// Decoder for GGA messages.
     /// </summary>
-    public class GgaDecoder : INmeaDecoder
+    public class GgaDecoder : INmeaDecoder, IGnssPositionEventSource
     {
-        /// <summary>
-        /// Position update received event.
-        /// </summary>
-        public event EventHandler<GnssPositionInfo> PositionReceived = default!;
+        /// <inheritdoc/>
+        public event EventHandler<GnssPositionInfo>? PositionReceived;
 
         /// <summary>
         /// Prefix for the GGA decoder.
@@ -23,6 +21,15 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
         /// Friendly name for the GGA messages.
         /// </summary>
         public string Name => "Global Positioning System Fix Data";
+
+        /// <summary>
+        /// Process a GPGGA sentence string
+        /// </summary>
+        /// <param name="sentence"></param>
+        public void Process(string sentence)
+        {
+            Process(NmeaSentence.From(sentence));
+        }
 
         /// <summary>
         /// Process the data from a GGA message
@@ -43,10 +50,11 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
             }
 
             var location = new GnssPositionInfo();
+            location.Position = new();
             location.TalkerID = sentence.TalkerID;
             location.TimeOfReading = NmeaUtilities.TimeOfReading(null, sentence.DataElements[0]);
-            location.Position!.Latitude = NmeaUtilities.DegreesMinutesDecode(sentence.DataElements[1], sentence.DataElements[2]);
-            location.Position.Longitude = NmeaUtilities.DegreesMinutesDecode(sentence.DataElements[3], sentence.DataElements[4]);
+            location.Position!.Latitude = NmeaUtilities.ParseLatitude(sentence.DataElements[1], sentence.DataElements[2]);
+            location.Position.Longitude = NmeaUtilities.ParseLongitude(sentence.DataElements[3], sentence.DataElements[4]);
             location.FixQuality = (FixType)int.Parse(sentence.DataElements[5]);
 
             if (int.TryParse(sentence.DataElements[6], out var numberOfSatellites))
@@ -59,11 +67,12 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
                 location.HorizontalDilutionOfPrecision = horizontalDilutionOfPrecision;
             }
 
-            if (decimal.TryParse(sentence.DataElements[8], out var altitude))
+            if (double.TryParse(sentence.DataElements[8], out var altitude))
             {
-                location.Position.Altitude = altitude;
+                location.Position.Altitude = new Units.Length(altitude, Units.Length.UnitType.Meters);
             }
-            PositionReceived(this, location);
+
+            PositionReceived?.Invoke(this, location);
         }
     }
 }

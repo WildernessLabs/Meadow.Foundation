@@ -1,8 +1,8 @@
-# Meadow.Foundation.ICs.IOExpanders.Ft232h
+# Meadow.Foundation.ICs.IOExpanders.Ftxxxx
 
 **Ft2xxx family of USB IOExpanders for GPIO, I2C, SPI on Windows**
 
-The **Ft2xxx** library is included in the **Meadow.Foundation.ICs.IOExpanders.Ft232h** nuget package and is designed for the [Wilderness Labs](www.wildernesslabs.co) Meadow .NET IoT platform.
+The **Ft2xxx** library is included in the **Meadow.Foundation.ICs.IOExpanders.Ftxxxx** nuget package and is designed for the [Wilderness Labs](www.wildernesslabs.co) Meadow .NET IoT platform.
 
 This driver is part of the [Meadow.Foundation](https://developer.wildernesslabs.co/Meadow/Meadow.Foundation/) peripherals library, an open-source repository of drivers and libraries that streamline and simplify adding hardware to your C# .NET Meadow IoT applications.
 
@@ -14,7 +14,7 @@ To view all Wilderness Labs open-source projects, including samples, visit [gith
 
 You can install the library from within Visual studio using the the NuGet Package Manager or from the command line using the .NET CLI:
 
-`dotnet add package Meadow.Foundation.ICs.IOExpanders.Ft232h`
+`dotnet add package Meadow.Foundation.ICs.IOExpanders.Ftxxxx`
 ## How to Contribute
 
 - **Found a bug?** [Report an issue](https://github.com/WildernessLabs/Meadow_Issues/issues)

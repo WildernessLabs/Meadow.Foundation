@@ -14,7 +14,7 @@ public class Picture : ThemedControl
     private MF.Image? _image = default!;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="MicroLayout.Picture"/> class with the specified dimensions and image.
+    /// Initializes a new instance of the Picture class with the specified dimensions and image.
     /// </summary>
     /// <param name="left">The left coordinate of the image display control.</param>
     /// <param name="top">The top coordinate of the image display control.</param>

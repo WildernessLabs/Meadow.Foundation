@@ -1,5 +1,4 @@
 ﻿using Meadow.Hardware;
-using System;
 
 namespace Meadow.Foundation.ICs.IOExpanders
 {
@@ -9,7 +8,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
     public sealed class Cp2112DigitalOutputPort : DigitalOutputPortBase
     {
         private readonly Cp2112 _device;
-        private readonly bool _state;
+        private bool _state;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Cp2112DigitalOutputPort"/> class.
@@ -39,14 +38,14 @@ namespace Meadow.Foundation.ICs.IOExpanders
             {
                 if (value)
                 {
-                    Console.WriteLine("ON");
                     _device.SetState((byte)this.Pin.Key);
+                    _state = value;
 
                 }
                 else
                 {
-                    Console.WriteLine("OFF");
                     _device.ClearState((byte)this.Pin.Key);
+                    _state = value;
                 }
             }
         }

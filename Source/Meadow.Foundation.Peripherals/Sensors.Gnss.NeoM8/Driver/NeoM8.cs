@@ -13,7 +13,7 @@ namespace Meadow.Foundation.Sensors.Gnss
     /// </summary>
     public partial class NeoM8 : IGnssSensor, IDisposable
     {
-        NmeaSentenceProcessor? nmeaProcessor;
+        private NmeaSentenceProcessor? nmeaProcessor;
 
         /// <summary>
         /// Raised when GNSS data is received
@@ -79,16 +79,12 @@ namespace Meadow.Foundation.Sensors.Gnss
         /// <summary>
         /// Did we create the port(s) used by the peripheral
         /// </summary>
-        readonly bool createdPorts = false;
-
-        CommunicationMode communicationMode;
-
-        SerialMessageProcessor? messageProcessor;
-
-        CancellationTokenSource? cts;
-
-        const byte BUFFER_SIZE = 128;
-        const byte COMMS_SLEEP_MS = 200;
+        private readonly bool createdPorts = false;
+        private CommunicationMode communicationMode;
+        private SerialMessageProcessor? messageProcessor;
+        private CancellationTokenSource? cts;
+        private const byte BUFFER_SIZE = 128;
+        private const byte COMMS_SLEEP_MS = 200;
 
         /// <summary>
         /// Reset the device
@@ -141,7 +137,7 @@ namespace Meadow.Foundation.Sensors.Gnss
             }
         }
 
-        void InitDecoders()
+        private void InitDecoders()
         {
             nmeaProcessor = new NmeaSentenceProcessor();
 
@@ -155,7 +151,7 @@ namespace Meadow.Foundation.Sensors.Gnss
 
             var gllDecoder = new GllDecoder();
             nmeaProcessor.RegisterDecoder(gllDecoder);
-            gllDecoder.GeographicLatitudeLongitudeReceived += (object sender, GnssPositionInfo location) =>
+            gllDecoder.PositionReceived += (object sender, GnssPositionInfo location) =>
             {
                 GllReceived?.Invoke(this, location);
                 GnssDataReceived?.Invoke(this, location);
@@ -171,7 +167,7 @@ namespace Meadow.Foundation.Sensors.Gnss
 
             var rmcDecoder = new RmcDecoder();
             nmeaProcessor.RegisterDecoder(rmcDecoder);
-            rmcDecoder.PositionCourseAndTimeReceived += (object sender, GnssPositionInfo positionCourseAndTime) =>
+            rmcDecoder.PositionReceived += (object sender, GnssPositionInfo positionCourseAndTime) =>
             {
                 RmcReceived?.Invoke(this, positionCourseAndTime);
                 GnssDataReceived?.Invoke(this, positionCourseAndTime);
@@ -194,7 +190,7 @@ namespace Meadow.Foundation.Sensors.Gnss
             };
         }
 
-        void MessageReceived(object sender, SerialMessageData e)
+        private void MessageReceived(object sender, SerialMessageData e)
         {
             string msg = e.GetMessageString(Encoding.ASCII);
 

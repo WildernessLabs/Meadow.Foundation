@@ -310,7 +310,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 requestBuffer[i] = (byte)(adcRequest >> (bufferSize - i - 1) * 8);
             }
 
-            SpiComms.Exchange(requestBuffer, responseBuffer);
+            SpiComms.Exchange(requestBuffer, responseBuffer, DuplexType.Full);
 
             // copy the response from the ADC to the return value
             for (int i = 0; i < bufferSize; i++)
@@ -320,13 +320,13 @@ namespace Meadow.Foundation.ICs.IOExpanders
             }
 
             // test the response from the ADC to verify the null bit is 0
-            if ((returnValue & (1 << adcResolutionInBits)) != 0)
+            if ((returnValue & (1 << AdcResolutionInBits)) != 0)
             {
                 return 0;
             }
 
             // return the ADC response with any possible higher bits masked out
-            return returnValue & (1 << adcResolutionInBits) - 1;
+            return returnValue & (1 << AdcResolutionInBits) - 1;
         }
 
         ///<inheritdoc/>

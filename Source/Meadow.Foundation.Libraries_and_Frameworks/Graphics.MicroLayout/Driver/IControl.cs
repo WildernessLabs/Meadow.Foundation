@@ -59,10 +59,10 @@ public interface IControl
     /// <returns><c>true</c> if the coordinates are contained within the display control's area; otherwise, <c>false</c>.</returns>
     public bool Contains(int x, int y)
     {
-        if (x < Left) return false;
-        if (x > Left + Width) return false;
-        if (y < Top) return false;
-        if (y > Top + Height) return false;
+        if (x < Left + Parent?.Left) return false;
+        if (x > Parent?.Left + Left + Width) return false;
+        if (y < Top + Parent?.Top) return false;
+        if (y > Parent?.Top + Top + Height) return false;
         return true;
     }
 }

@@ -280,13 +280,13 @@ public abstract partial class FtdiExpander :
     /// <inheritdoc/>
     public II2cBus CreateI2cBus(IPin[] pins, I2cBusSpeed busSpeed)
     {
-        return CreateI2cBus(1, I2cBusSpeed.Standard);
+        return CreateI2cBus(1);
     }
 
     /// <inheritdoc/>
     public II2cBus CreateI2cBus(IPin clock, IPin data, I2cBusSpeed busSpeed)
     {
-        return CreateI2cBus(1);
+        return CreateI2cBus(1, I2cBusSpeed.Standard);
     }
 
     /// <inheritdoc/>
@@ -299,6 +299,17 @@ public abstract partial class FtdiExpander :
     public ISpiBus CreateSpiBus(IPin clock, IPin copi, IPin cipo, Frequency speed)
     {
         return CreateSpiBus(0, new SpiClockConfiguration(speed));
+    }
+
+    /// <inheritdoc/>
+    public ISpiBus CreateSpiBus(int channel, Frequency speed)
+    {
+        if (channel != 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(channel), "Only channel 0 is supported");
+        }
+
+        return CreateSpiBus(channel, new SpiClockConfiguration(speed));
     }
 
     /// <summary>
