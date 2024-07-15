@@ -1,6 +1,7 @@
 using Meadow.Hardware;
 using Meadow.Logging;
 using System;
+using System.Threading;
 
 namespace Meadow.Foundation.ICs.CAN;
 
@@ -22,6 +23,7 @@ public enum CanBitrate
     Can_50kbps,
     Can_80kbps,
     Can_83kbps,
+    Can_95kbps,
     Can_100kbps,
     Can_125kbps,
     Can_200kbps,
@@ -67,6 +69,8 @@ public partial class Mcp2515
     {
         Reset();
 
+        Thread.Sleep(10);
+
         // put the chip into config mode
         var mode = GetMode();
         if (mode != Mode.Configure)
@@ -87,21 +91,24 @@ public partial class Mcp2515
         var txRtsConfig = TxRtsSettings.RTS_PINS_DIG_IN;
         var filtersEnabled = false;
 
-        var cfg = GetConfigForOscillatorAndBitrate(oscillator, bitrate);
-        WriteRegister(Register.CNF1, cfg.CFG1);
-        WriteRegister(Register.CNF2, cfg.CFG2);
-        WriteRegister(Register.CNF3, cfg.CFG3);
-        Resolver.Log.Info($"Writing config: {cfg.CFG3:X2}-{cfg.CFG2:X2}-{cfg.CFG1:X2}");
-        LogRegisters(Register.CNF3, 3);
-
         ClearFiltersAndMasks();
 
         ClearControlBuffers();
 
-        ConfigureInterrupts(InterruptEnable.RXB0 | InterruptEnable.RXB1 | InterruptEnable.ERR | InterruptEnable.MSG_ERR | InterruptEnable.TXB0);
+        ConfigureInterrupts(InterruptEnable.RXB0 | InterruptEnable.RXB1 | InterruptEnable.ERR | InterruptEnable.MSG_ERR);
 
-        WriteRegister(Register.BFPCTRL, (byte)rxConfig);
-        WriteRegister(Register.TXRTSCTRL, (byte)txRtsConfig);
+        //        EnableMasksAndFilters(filtersEnabled);
+        ModifyRegister(Register.RXB0CTRL,
+            0x60 | 0x04 | 0x07,
+            0x00 | 0x04 | 0x00);
+        ModifyRegister(Register.RXB1CTRL,
+            0x60 | 0x07,
+            0x00 | 0x01);
+
+
+
+        //        WriteRegister(Register.BFPCTRL, (byte)rxConfig);
+        //        WriteRegister(Register.TXRTSCTRL, (byte)txRtsConfig);
 
         LogRegisters(Register.RXF0SIDH, 14);
         LogRegisters(Register.CANSTAT, 2);
@@ -109,7 +116,13 @@ public partial class Mcp2515
         LogRegisters(Register.RXM0SIDH, 8);
         LogRegisters(Register.CNF3, 6);
 
-        EnableMasksAndFilters(filtersEnabled);
+        var cfg = GetConfigForOscillatorAndBitrate(oscillator, bitrate);
+        WriteRegister(Register.CNF1, cfg.CFG1);
+        WriteRegister(Register.CNF2, cfg.CFG2);
+        WriteRegister(Register.CNF3, cfg.CFG3);
+        Resolver.Log.Info($"Writing config: {cfg.CFG3:X2}-{cfg.CFG2:X2}-{cfg.CFG1:X2}");
+        LogRegisters(Register.CNF3, 3);
+
 
         SetMode(Mode.Normal);
     }
@@ -139,6 +152,14 @@ public partial class Mcp2515
     private void SetMode(Mode mode)
     {
         ModifyRegister(Register.CANCTRL, (byte)Control.REQOP, (byte)mode);
+    }
+
+    public void Foo()
+    {
+        var cfg = GetConfigForOscillatorAndBitrate(CanOscillator.Osc_8MHz, CanBitrate.Can_250kbps);
+        WriteRegister(Register.CNF3, cfg.CFG3);
+
+        LogRegisters(Register.CNF3, 1);
     }
 
     private Status GetStatus()
@@ -240,10 +261,10 @@ public partial class Mcp2515
 
     private void ClearControlBuffers()
     {
-        Span<byte> zeros13 = stackalloc byte[13];
-        WriteRegister(Register.TXB0CTRL, zeros13);
-        WriteRegister(Register.TXB1CTRL, zeros13);
-        WriteRegister(Register.TXB2CTRL, zeros13);
+        Span<byte> zeros14 = stackalloc byte[14];
+        WriteRegister(Register.TXB0CTRL, zeros14);
+        WriteRegister(Register.TXB1CTRL, zeros14);
+        WriteRegister(Register.TXB2CTRL, zeros14);
 
         WriteRegister(Register.RXB0CTRL, 0);
         WriteRegister(Register.RXB1CTRL, 0);
