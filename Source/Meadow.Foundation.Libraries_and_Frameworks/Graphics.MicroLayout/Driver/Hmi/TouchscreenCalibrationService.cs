@@ -29,6 +29,11 @@ public class TouchscreenCalibrationService
 
     public TouchscreenCalibrationService(DisplayScreen screen, FileInfo calibrationDataFile)
     {
+        if (screen.TouchScreen == null)
+        {
+            throw new ArgumentException("DisplayScreen.TouchScreen must not be null");
+        }
+
         if (screen?.TouchScreen is ICalibratableTouchscreen cts)
         {
             _touchscreen = cts;
