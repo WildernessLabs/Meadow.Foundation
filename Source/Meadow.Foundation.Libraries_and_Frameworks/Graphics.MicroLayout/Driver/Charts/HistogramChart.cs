@@ -1,13 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Meadow.Foundation.Graphics.MicroLayout;
 
-public class SpectraChart : ChartControl
+public class HistogramChart : ChartControl
 {
-    private (int x, int y)[]? _series;
-    private Color _seriesColor = Color.White;
+    private List<HistogramChartSeries> _series = new();
     private bool _showXLabels = true;
+    private int? _maxXAxisValue = null;
+    private int? _minXAxisValue = null;
 
     /// <summary>
     /// Creates a vertical bar chart instance
@@ -16,7 +18,7 @@ public class SpectraChart : ChartControl
     /// <param name="top">The control's top position</param>
     /// <param name="width">The control's width</param>
     /// <param name="height">The control's height</param>
-    public SpectraChart(int left, int top, int width, int height)
+    public HistogramChart(int left, int top, int width, int height)
         : base(left, top, width, height)
     {
     }
@@ -29,16 +31,16 @@ public class SpectraChart : ChartControl
     /// <param name="width">The control's width</param>
     /// <param name="height">The control's height</param>
     /// <param name="series">A series of data to plot</param>
-    public SpectraChart(int left, int top, int width, int height, (int x, int y)[] series)
+    public HistogramChart(int left, int top, int width, int height, IEnumerable<HistogramChartSeries> series)
         : base(left, top, width, height)
     {
-        Series = series;
+        Series = series.ToList();
     }
 
     /// <summary>
     /// Gets or sets a series of float values to plot
     /// </summary>
-    public (int x, int y)[]? Series
+    public List<HistogramChartSeries> Series
     {
         get => _series;
         set => SetInvalidatingProperty(ref _series, value);
@@ -54,12 +56,21 @@ public class SpectraChart : ChartControl
     }
 
     /// <summary>
-    /// Gets or sets the color of the plotted series (bars)
+    /// Gets or sets an optional minimum X Axis value
     /// </summary>
-    public Color SeriesColor
+    public int? MinXAxisValue
     {
-        get => _seriesColor;
-        set => SetInvalidatingProperty(ref _seriesColor, value);
+        get => _minXAxisValue;
+        set => SetInvalidatingProperty(ref _minXAxisValue, value);
+    }
+
+    /// <summary>
+    /// Gets or sets an optional maximum X Axis value
+    /// </summary>
+    public int? MaxXAxisValue
+    {
+        get => _maxXAxisValue;
+        set => SetInvalidatingProperty(ref _maxXAxisValue, value);
     }
 
     /// <inheritdoc/>
@@ -87,10 +98,7 @@ public class SpectraChart : ChartControl
 
         ChartAreaWidth = Width - DefaultMargin;
 
-        if (Series != null)
-        {
-            DrawSeries(graphics, Series, font);
-        }
+        DrawSeries(graphics, Series, font);
 
         graphics.DrawRectangle(
             ChartAreaLeft,
@@ -118,34 +126,42 @@ public class SpectraChart : ChartControl
         return xPosition;
     }
 
-    private void DrawSeries(MicroGraphics graphics, (int X, int Y)[] series, IFont font)
+    private void DrawSeries(MicroGraphics graphics, List<HistogramChartSeries> seriesList, IFont font)
     {
         var barWidth = 3;
         var halfWidth = barWidth / 2;
 
-        var minX = series.Min(s => s.X);
-        var maxX = series.Max(s => s.X);
-        var maxY = series.Max(s => s.Y);
+        var count = seriesList.SelectMany(e => e.DataElements).Count();
+        if (count == 0) return;
+
+        var minX = MinXAxisValue ?? seriesList.SelectMany(e => e.DataElements).Min(x => x.X);
+        var maxX = MaxXAxisValue ?? seriesList.SelectMany(e => e.DataElements).Max(x => x.X);
+        int maxY = seriesList.SelectMany(e => e.DataElements).Max(y => y.Y);
 
         var heightScale = ChartAreaHeight * 0.9f / maxY;
 
-        foreach (var pair in series)
+        for (var s = seriesList.Count - 1; s >= 0; s--)
         {
-            // Normalize the value to the range [0, 1]
-            double normalizedValue = (Math.Log(pair.X) - Math.Log(minX)) / (Math.Log(maxX) - Math.Log(minX));
+            if (seriesList[s].DataElements.Count() == 0) continue;
 
-            // Map the normalized value to the display width
-            int x = (int)(normalizedValue * ChartAreaWidth) + ChartAreaLeft;
+            foreach (var pair in seriesList[s].DataElements)
+            {
+                // Normalize the value to the range [0, 1]
+                double normalizedValue = (Math.Log(pair.X) - Math.Log(minX)) / (Math.Log(maxX) - Math.Log(minX));
 
-            var barHeight = (int)(heightScale * pair.Y);
+                // Map the normalized value to the display width
+                int x = (int)(normalizedValue * ChartAreaWidth) + ChartAreaLeft;
 
-            graphics.DrawRectangle(
-                x,
-                ChartAreaBottom - barHeight,
-                barWidth,
-                barHeight,
-                color: SeriesColor,
-                filled: true);
+                var barHeight = (int)(heightScale * pair.Y);
+
+                graphics.DrawRectangle(
+                    x - halfWidth,
+                    ChartAreaBottom - barHeight,
+                    barWidth,
+                    barHeight,
+                    color: seriesList[s].ForeColor,
+                    filled: true);
+            }
         }
 
         if (ShowXAxisLabels)
