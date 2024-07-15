@@ -4,6 +4,9 @@ using System.Linq;
 
 namespace Meadow.Foundation.Graphics.MicroLayout;
 
+/// <summary>
+/// Represents a histogram chart control.
+/// </summary>
 public class HistogramChart : ChartControl
 {
     private List<HistogramChartSeries> _series = new();
@@ -88,13 +91,7 @@ public class HistogramChart : ChartControl
         }
         ChartAreaHeight = Height - (DefaultMargin * 3);
 
-        int yLabelWidth = 0;
-        if (Series != null)
-        {
-            // if we add Y labels (future feature), turn this on
-            //yLabelWidth = graphics.MeasureText(Series.Max().ToString(XAxisLabelFormat), font).Width;
-        }
-        ChartAreaLeft = Left + DefaultMargin + yLabelWidth;
+        ChartAreaLeft = Left + DefaultMargin;
 
         ChartAreaWidth = Width - DefaultMargin;
 
@@ -107,23 +104,6 @@ public class HistogramChart : ChartControl
             AxisStroke,
             color: AxisColor,
             filled: true);
-
-    }
-
-    private static int CalculateLogarithmicPosition(double value, double minValue, double maxValue, int displayWidth)
-    {
-        if (value <= 0)
-        {
-            throw new ArgumentException("Value must be greater than 0 to calculate a logarithm.");
-        }
-
-        // Normalize the value to the range [0, 1]
-        double normalizedValue = (Math.Log(value) - Math.Log(minValue)) / (Math.Log(maxValue) - Math.Log(minValue));
-
-        // Map the normalized value to the display width
-        int xPosition = (int)(normalizedValue * displayWidth);
-
-        return xPosition;
     }
 
     private void DrawSeries(MicroGraphics graphics, List<HistogramChartSeries> seriesList, IFont font)
