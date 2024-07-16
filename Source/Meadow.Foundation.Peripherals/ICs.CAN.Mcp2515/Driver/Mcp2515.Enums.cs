@@ -1,21 +1,51 @@
 ﻿using System;
-using System.Runtime.InteropServices;
 
 namespace Meadow.Foundation.ICs.CAN;
 
+public class OverloadFrame : Frame
+{
+}
+
+public class ActiveErrorFrame : Frame
+{
+}
+
+public class StandardRtrFrame : RemoteTransferRequestFrame
+{
+}
+
+public class ExtendedRtrFrame : RemoteTransferRequestFrame
+{
+}
+
+public class ExtendedDataFrame : DataFrame
+{
+}
+
+public class RemoteTransferRequestFrame : DataFrame
+{
+}
+
+public class StandardDataFrame : DataFrame
+{
+}
+
+public abstract class DataFrame : Frame
+{
+    public uint ID { get; set; }
+    public byte[] Payload { get; set; }
+}
+
+public abstract class Frame : ICanFrame
+{
+}
+
+public interface ICanFrame
+{
+}
+
 public partial class Mcp2515
 {
-    [StructLayout(LayoutKind.Explicit, Pack = 1, Size = 16)]
-    public struct Frame
-    {
-        [FieldOffset(0)]
-        public uint ID;
-        [FieldOffset(4)]
-        public byte PayloadLength;
-        [FieldOffset(8)]
-        public byte[] Payload;
-    }
-
     private enum Register : byte
     {
         RXF0SIDH = 0x00,

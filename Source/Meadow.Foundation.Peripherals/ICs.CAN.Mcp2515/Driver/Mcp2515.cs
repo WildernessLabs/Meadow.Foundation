@@ -78,26 +78,12 @@ public partial class Mcp2515
             SetMode(Mode.Configure);
         }
 
-        var sjw = SJW_Default;
-        var brp = BRP_Default;
-        var bltMode = 0x80;
-        var sam = SAM_3x;
-        var phaseSeg1 = PHASE_SEG1_Default;
-        var phaseSeg2 = PHASE_SEG2_Default;
-        var propSeg = PROP_SEG_Default;
-        var sofEnabled = false;
-        var wakeFilterEnabled = false;
-        var rxConfig = RxPinSettings.DISABLE;
-        var txRtsConfig = TxRtsSettings.RTS_PINS_DIG_IN;
-        var filtersEnabled = false;
-
         ClearFiltersAndMasks();
 
         ClearControlBuffers();
 
         ConfigureInterrupts(InterruptEnable.RXB0 | InterruptEnable.RXB1 | InterruptEnable.ERR | InterruptEnable.MSG_ERR);
 
-        //        EnableMasksAndFilters(filtersEnabled);
         ModifyRegister(Register.RXB0CTRL,
             0x60 | 0x04 | 0x07,
             0x00 | 0x04 | 0x00);
@@ -105,10 +91,7 @@ public partial class Mcp2515
             0x60 | 0x07,
             0x00 | 0x01);
 
-
-
-        //        WriteRegister(Register.BFPCTRL, (byte)rxConfig);
-        //        WriteRegister(Register.TXRTSCTRL, (byte)txRtsConfig);
+        DisableFilters();
 
         LogRegisters(Register.RXF0SIDH, 14);
         LogRegisters(Register.CANSTAT, 2);
@@ -120,11 +103,109 @@ public partial class Mcp2515
         WriteRegister(Register.CNF1, cfg.CFG1);
         WriteRegister(Register.CNF2, cfg.CFG2);
         WriteRegister(Register.CNF3, cfg.CFG3);
-        Resolver.Log.Info($"Writing config: {cfg.CFG3:X2}-{cfg.CFG2:X2}-{cfg.CFG1:X2}");
         LogRegisters(Register.CNF3, 3);
 
-
         SetMode(Mode.Normal);
+    }
+
+    private void DisableFilters()
+    {
+        ModifyRegister(Register.RXB0CTRL,
+            0x60,
+            0x60);
+        ModifyRegister(Register.RXB1CTRL,
+            0x60,
+            0x60);
+    }
+
+    public bool IsFrameAvailable()
+    {
+        var status = GetStatus();
+
+        Logger?.Info($"status: 0x{(byte)status:x2}");
+
+        if ((status & Status.RX0IF) == Status.RX0IF)
+        {
+            return true;
+        }
+        else if ((status & Status.RX1IF) == Status.RX1IF)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    public ICanFrame? ReadFrame()
+    {
+        var status = GetStatus();
+
+        if ((status & Status.RX0IF) == Status.RX0IF)
+        { // message in buffer 0
+            return ReadDataFrame(RxBufferNumber.RXB0);
+        }
+        else if ((status & Status.RX1IF) == Status.RX1IF)
+        { // message in buffer 1
+            return ReadDataFrame(RxBufferNumber.RXB1);
+        }
+        else
+        { // no messages available
+            return null;
+        }
+    }
+
+    public void WriteFrame(ICanFrame frame, int bufferNumber)
+    {
+        if (frame is DataFrame df)
+        {
+            var ctrl_reg = bufferNumber switch
+            {
+                0 => Register.TXB0CTRL,
+                1 => Register.TXB1CTRL,
+                2 => Register.TXB2CTRL,
+                _ => throw new ArgumentOutOfRangeException()
+            };
+
+            if (frame is ExtendedDataFrame edf)
+            {
+                var eid0 = (byte)(edf.ID & 0xff);
+                var eid8 = (byte)(edf.ID >> 8);
+                var id = edf.ID >> 16;
+                var sidh = (byte)(id >> 5);
+                var sidl = (byte)(id & 3);
+                sidl += (byte)((id & 0x1c) << 3);
+                sidl |= TXB_EXIDE_MASK;
+
+                WriteRegister(ctrl_reg + 1, sidh);
+                WriteRegister(ctrl_reg + 2, sidl);
+                WriteRegister(ctrl_reg + 3, eid8);
+                WriteRegister(ctrl_reg + 4, eid0);
+            }
+            else if (frame is StandardDataFrame sdf)
+            {
+                // put the frame data into a buffer (0-2)
+                var sidh = (byte)(sdf.ID >> 3);
+                var sidl = (byte)(sdf.ID << 5 & 0xe0);
+                WriteRegister(ctrl_reg + 1, sidh);
+                WriteRegister(ctrl_reg + 2, sidl);
+            }
+            // TODO: handle RTR
+
+            WriteRegister(ctrl_reg + 5, (byte)df.Payload.Length);
+            byte i = 0;
+            foreach (var b in df.Payload)
+            {
+                WriteRegister(ctrl_reg + 6 + i, b);
+                i++;
+            }
+
+            // transmit the buffer
+            WriteRegister(ctrl_reg, 0x08);
+        }
+        else
+        {
+            throw new NotSupportedException($"Sending frames of type {frame.GetType().Name} is not supported");
+        }
     }
 
     private void Reset()
@@ -154,20 +235,7 @@ public partial class Mcp2515
         ModifyRegister(Register.CANCTRL, (byte)Control.REQOP, (byte)mode);
     }
 
-    public void Foo()
-    {
-        var cfg = GetConfigForOscillatorAndBitrate(CanOscillator.Osc_8MHz, CanBitrate.Can_250kbps);
-        WriteRegister(Register.CNF3, cfg.CFG3);
-
-        LogRegisters(Register.CNF3, 1);
-    }
-
     private Status GetStatus()
-    {
-        return (Status)ReadRegister(Register.CANSTAT)[0];
-    }
-
-    private Status GetStatus2()
     {
         Span<byte> tx = stackalloc byte[2];
         Span<byte> rx = stackalloc byte[2];
@@ -270,25 +338,7 @@ public partial class Mcp2515
         WriteRegister(Register.RXB1CTRL, 0);
     }
 
-    public bool IsFrameAvailable()
-    {
-        LogRegisters(Register.CANSTAT, 2);
-
-        var status = GetStatus2();
-
-        if ((status & Status.RX0IF) == Status.RX0IF)
-        {
-            return true;
-        }
-        else if ((status & Status.RX1IF) == Status.RX1IF)
-        {
-            return true;
-        }
-
-        return false;
-    }
-
-    private Frame ReadFrame(RxBufferNumber bufferNumber)
+    private DataFrame ReadDataFrame(RxBufferNumber bufferNumber)
     {
         Logger?.Trace($"Reading frame from {bufferNumber}");
 
@@ -300,9 +350,9 @@ public partial class Mcp2515
         // read 5 bytes
         var buffer = ReadRegister(sidh_reg, 5);
 
-        Logger?.Trace($"SIDH: {BitConverter.ToString(buffer)}");
-
         uint id = (uint)((buffer[MCP_SIDH] << 3) + (buffer[MCP_SIDL] >> 5));
+
+        bool isExtended = false;
 
         // check to see if it's an extended ID
         if ((buffer[MCP_SIDL] & TXB_EXIDE_MASK) == TXB_EXIDE_MASK)
@@ -310,82 +360,64 @@ public partial class Mcp2515
             id = (uint)((id << 2) + (buffer[MCP_SIDL] & 0x03));
             id = (id << 8) + buffer[MCP_EID8];
             id = (id << 8) + buffer[MCP_EID0];
-            id |= CAN_EFF_FLAG;
+            isExtended = true;
         }
 
-        var dlc = buffer[MCP_DLC] & DLC_MASK;
-        if (dlc > 8) throw new Exception($"DLC of {dlc} is > 8 bytes");
+        byte dataLengthCode = (byte)(buffer[MCP_DLC] & DLC_MASK);
+        if (dataLengthCode > 8) throw new Exception($"DLC of {dataLengthCode} is > 8 bytes");
 
         // see if it's a remote transmission request
+        var isRemoteTransmitRequest = false;
         var ctrl = ReadRegister(ctrl_reg)[0];
         if ((ctrl & RXBnCTRL_RTR) == RXBnCTRL_RTR)
         {
-            id |= CAN_RTR_FLAG;
+            isRemoteTransmitRequest = true;
         }
 
         // create the frame
-        var frame = new Frame
+        DataFrame frame;
+
+        if (isExtended)
         {
-            ID = id,
-            PayloadLength = (byte)dlc
-        };
+            if (isRemoteTransmitRequest)
+            {
+                frame = new ExtendedRtrFrame
+                {
+                    ID = id,
+                };
+            }
+            else
+            {
+                frame = new ExtendedDataFrame
+                {
+                    ID = id,
+                };
+            }
+        }
+        else
+        {
+            if (isRemoteTransmitRequest)
+            {
+                frame = new StandardRtrFrame
+                {
+                    ID = id,
+                };
+            }
+            else
+            {
+                frame = new StandardDataFrame
+                {
+                    ID = id,
+                };
+            }
+        }
 
         // read the frame data
-        frame.Payload = ReadRegister(data_reg, frame.PayloadLength);
+        frame.Payload = ReadRegister(data_reg, dataLengthCode);
 
         // clear the interrupt flag
         ModifyRegister(Register.CANINTF, (byte)int_flag, 0);
 
         return frame;
-    }
-
-    public Frame? ReadFrame()
-    {
-        var status = GetStatus2();
-
-        if ((status & Status.RX0IF) == Status.RX0IF)
-        { // message in buffer 0
-            return ReadFrame(RxBufferNumber.RXB0);
-        }
-        else if ((status & Status.RX1IF) == Status.RX1IF)
-        { // message in buffer 1
-            return ReadFrame(RxBufferNumber.RXB1);
-        }
-        else
-        { // no messages available
-            return null;
-        }
-    }
-
-    public void WriteFrame(Frame frame, int bufferNumber)
-    {
-        // TODO: handle extended frame
-
-        var ctrl_reg = bufferNumber switch
-        {
-            0 => Register.TXB0CTRL,
-            1 => Register.TXB1CTRL,
-            2 => Register.TXB2CTRL,
-            _ => throw new ArgumentOutOfRangeException()
-        };
-
-        // put the frame data into a buffer (0-2)
-        var stdIDH = (byte)(frame.ID >> 3);
-        var stdIDL = (byte)(frame.ID << 5 & 0xe0);
-        WriteRegister(ctrl_reg + 1, stdIDH);
-        WriteRegister(ctrl_reg + 2, stdIDL);
-
-        // TODO: handle RTR
-
-        WriteRegister(ctrl_reg + 5, (byte)frame.Payload.Length);
-        byte i = 0;
-        foreach (var b in frame.Payload)
-        {
-            WriteRegister(ctrl_reg + 6 + i, b);
-            i++;
-        }
-
-        // transmit the buffer
-        WriteRegister(ctrl_reg, 0x08);
     }
 }
