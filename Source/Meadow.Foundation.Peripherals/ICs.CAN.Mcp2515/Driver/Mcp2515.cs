@@ -302,7 +302,7 @@ public partial class Mcp2515
 
         Logger?.Trace($"SIDH: {BitConverter.ToString(buffer)}");
 
-        uint id = (uint)(buffer[MCP_SIDH << 3] + (buffer[MCP_SIDL] >> 5));
+        uint id = (uint)((buffer[MCP_SIDH] << 3) + (buffer[MCP_SIDL] >> 5));
 
         // check to see if it's an extended ID
         if ((buffer[MCP_SIDL] & TXB_EXIDE_MASK) == TXB_EXIDE_MASK)
@@ -341,7 +341,7 @@ public partial class Mcp2515
 
     public Frame? ReadFrame()
     {
-        var status = GetStatus();
+        var status = GetStatus2();
 
         if ((status & Status.RX0IF) == Status.RX0IF)
         { // message in buffer 0
@@ -370,12 +370,14 @@ public partial class Mcp2515
         };
 
         // put the frame data into a buffer (0-2)
-        WriteRegister(ctrl_reg + 1, (byte)(frame.ID >> 3));
-        WriteRegister(ctrl_reg + 2, (byte)(frame.ID << 5 & 0xff));
+        var stdIDH = (byte)(frame.ID >> 3);
+        var stdIDL = (byte)(frame.ID << 5 & 0xe0);
+        WriteRegister(ctrl_reg + 1, stdIDH);
+        WriteRegister(ctrl_reg + 2, stdIDL);
 
         // TODO: handle RTR
 
-        WriteRegister(ctrl_reg + 5, frame.PayloadLength);
+        WriteRegister(ctrl_reg + 5, (byte)frame.Payload.Length);
         byte i = 0;
         foreach (var b in frame.Payload)
         {
