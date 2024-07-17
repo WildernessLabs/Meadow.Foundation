@@ -42,17 +42,28 @@ public partial class Mcp2515
     private ISpiBus Bus { get; }
     private IDigitalOutputPort ChipSelect { get; }
     private Logger? Logger { get; }
+    private IDigitalInterruptPort? InterruptPort { get; }
 
     public Mcp2515(
         ISpiBus bus,
         IDigitalOutputPort chipSelect,
         CanBitrate bitrate,
         CanOscillator oscillator = CanOscillator.Osc_8MHz,
+        IDigitalInterruptPort? interruptPort = null,
         Logger? logger = null)
     {
+        if (interruptPort != null)
+        {
+            if (interruptPort.InterruptMode != InterruptMode.EdgeFalling)
+            {
+                throw new ArgumentException("InterruptPort must be a falling-edge interrupt");
+            }
+        }
+
         Bus = bus;
         ChipSelect = chipSelect;
         Logger = logger;
+        InterruptPort = interruptPort;
 
         Initialize(bitrate, oscillator);
     }
@@ -82,7 +93,17 @@ public partial class Mcp2515
 
         ClearControlBuffers();
 
-        ConfigureInterrupts(InterruptEnable.RXB0 | InterruptEnable.RXB1 | InterruptEnable.ERR | InterruptEnable.MSG_ERR);
+        if (InterruptPort != null)
+        {
+            // TODO: add error condition handling
+            //ConfigureInterrupts(InterruptEnable.RXB0 | InterruptEnable.RXB1 | InterruptEnable.ERR | InterruptEnable.MSG_ERR);
+            ConfigureInterrupts(InterruptEnable.RXB0 | InterruptEnable.RXB1);
+            ClearInterrupt((InterruptFlag)0xff);
+        }
+        else
+        {
+            ConfigureInterrupts(InterruptEnable.DisableAll);
+        }
 
         ModifyRegister(Register.RXB0CTRL,
             0x60 | 0x04 | 0x07,
@@ -122,8 +143,6 @@ public partial class Mcp2515
     {
         var status = GetStatus();
 
-        Logger?.Info($"status: 0x{(byte)status:x2}");
-
         if ((status & Status.RX0IF) == Status.RX0IF)
         {
             return true;
@@ -152,6 +171,13 @@ public partial class Mcp2515
         { // no messages available
             return null;
         }
+    }
+
+    private void ClearInterrupt(InterruptFlag flag)
+    {
+        ModifyRegister(Register.CANINTF, (byte)flag, 0);
+
+        LogRegisters(Register.CANINTF, 1);
     }
 
     public void WriteFrame(ICanFrame frame, int bufferNumber)
@@ -340,8 +366,6 @@ public partial class Mcp2515
 
     private DataFrame ReadDataFrame(RxBufferNumber bufferNumber)
     {
-        Logger?.Trace($"Reading frame from {bufferNumber}");
-
         var sidh_reg = bufferNumber == RxBufferNumber.RXB0 ? Register.RXB0SIDH : Register.RXB1SIDH;
         var ctrl_reg = bufferNumber == RxBufferNumber.RXB0 ? Register.RXB0CTRL : Register.RXB1CTRL;
         var data_reg = bufferNumber == RxBufferNumber.RXB0 ? Register.RXB0DATA : Register.RXB1DATA;
@@ -416,7 +440,10 @@ public partial class Mcp2515
         frame.Payload = ReadRegister(data_reg, dataLengthCode);
 
         // clear the interrupt flag
-        ModifyRegister(Register.CANINTF, (byte)int_flag, 0);
+        if (InterruptPort != null)
+        {
+            ModifyRegister(Register.CANINTF, (byte)int_flag, 0);
+        }
 
         return frame;
     }
