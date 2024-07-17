@@ -13,6 +13,11 @@ namespace Meadow.Foundation
         where UNIT : struct
     {
         /// <summary>
+        /// Event raised when a bus communication error occurs
+        /// </summary>
+        public event EventHandler<Exception>? CommunicationError;
+
+        /// <summary>
         /// Starts updating the sensor on the updateInterval frequency specified.
         ///
         /// This method also starts raising `Updated` events and notifying
@@ -44,19 +49,27 @@ namespace Meadow.Foundation
                 {
                     while (true)
                     {
-                        if (ct.IsCancellationRequested)
+                        try
                         {
-                            observers.ForEach(x => x.OnCompleted());
-                            IsSampling = false;
-                            break;
+                            if (ct.IsCancellationRequested)
+                            {
+                                observers.ForEach(x => x.OnCompleted());
+                                IsSampling = false;
+                                break;
+                            }
+                            oldConditions = Conditions;
+
+                            Conditions = await Read();
+
+                            result = new ChangeResult<UNIT>(Conditions, oldConditions);
+
+                            RaiseEventsAndNotify(result);
                         }
-                        oldConditions = Conditions;
-
-                        Conditions = await Read();
-
-                        result = new ChangeResult<UNIT>(Conditions, oldConditions);
-
-                        RaiseEventsAndNotify(result);
+                        catch (Exception ex)
+                        {
+                            Resolver.Log.Warn($"{this.GetType().Name} threw {ex.Message}");
+                            CommunicationError?.Invoke(this, ex);
+                        }
 
                         await Task.Delay(UpdateInterval);
                     }

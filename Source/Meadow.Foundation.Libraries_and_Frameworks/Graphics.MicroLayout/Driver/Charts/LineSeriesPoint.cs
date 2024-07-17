@@ -1,7 +1,7 @@
 ﻿namespace Meadow.Foundation.Graphics.MicroLayout;
 
 /// <summary>
-/// A single point on a LineSeriesCHart
+/// A single point on a LineSeriesChart
 /// </summary>
 public struct LineSeriesPoint
 {

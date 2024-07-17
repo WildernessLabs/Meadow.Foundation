@@ -18,8 +18,8 @@ You can install the library from within Visual studio using the the NuGet Packag
 ## Usage
 
 ```csharp
-List<string> sentences;
-NmeaSentenceProcessor nmeaProcessor;
+private List<string> sentences;
+private NmeaSentenceProcessor nmeaProcessor;
 
 public override Task Initialize()
 {
@@ -40,7 +40,7 @@ public override Task Initialize()
     return Task.CompletedTask;
 }
 
-void InitDecoders()
+private void InitDecoders()
 {
     Resolver.Log.Info("Create NMEA");
     nmeaProcessor = new NmeaSentenceProcessor();
@@ -61,7 +61,7 @@ void InitDecoders()
     // GLL
     var gllDecoder = new GllDecoder();
     nmeaProcessor.RegisterDecoder(gllDecoder);
-    gllDecoder.GeographicLatitudeLongitudeReceived += (object sender, GnssPositionInfo location) =>
+    gllDecoder.PositionReceived += (object sender, GnssPositionInfo location) =>
     {
         Resolver.Log.Info("*********************************************");
         Resolver.Log.Info(location.ToString());
@@ -81,7 +81,7 @@ void InitDecoders()
     // RMC (recommended minimum)
     var rmcDecoder = new RmcDecoder();
     nmeaProcessor.RegisterDecoder(rmcDecoder);
-    rmcDecoder.PositionCourseAndTimeReceived += (object sender, GnssPositionInfo positionCourseAndTime) =>
+    rmcDecoder.PositionReceived += (object sender, GnssPositionInfo positionCourseAndTime) =>
     {
         Resolver.Log.Info("*********************************************");
         Resolver.Log.Info(positionCourseAndTime.ToString());
@@ -110,7 +110,7 @@ void InitDecoders()
     };
 }
 
-List<string> GetSampleNmeaSentences()
+private List<string> GetSampleNmeaSentences()
 {
     List<string> sentences = new List<string>() {
         "$GPGGA,000049.799,,,,,0,00,,,M,,M,,*72", // i think not valid.
