@@ -173,8 +173,6 @@ public partial class Xpt2046 : ICalibratableTouchscreen
             // ignore any unhandled handler exceptions
         }
 
-        Resolver.Log.Info($"{x},{y}");
-
         sampleTimer.Change(SamplePeriodMilliseconds, -1);
     }
 
