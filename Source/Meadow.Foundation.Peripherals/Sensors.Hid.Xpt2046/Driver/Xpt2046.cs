@@ -1,5 +1,6 @@
 ﻿using Meadow.Hardware;
 using Meadow.Peripherals.Displays;
+using Meadow.Units;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,15 +25,14 @@ public partial class Xpt2046 : ICalibratableTouchscreen
     private const int SamplePeriodMilliseconds = 100;
     private const byte StartBit = 0x80;
 
-    private readonly ISpiBus spiBus;
     private readonly IDigitalInterruptPort touchInterrupt;
-    private readonly IDigitalOutputPort? chipSelect = null;
     private Timer sampleTimer;
     private bool isSampling = false;
     private bool firstTouch = true;
     private TouchPoint? lastTouchPosition;
     private TouchPoint? penultimatePosition;
     private float mX, mY, cX, cY; // linear calibration coefficeints
+    private readonly SpiCommunications comms;
 
     /// <inheritdoc/>
     public RotationType Rotation { get; }
@@ -60,11 +60,10 @@ public partial class Xpt2046 : ICalibratableTouchscreen
             throw new ArgumentException("The interrupt port must be set to EdgeBoth");
         }
 
+        this.touchInterrupt = touchInterrupt;
         sampleTimer = new Timer(SampleTimerProc, null, -1, -1);
 
-        this.spiBus = spiBus;
-        this.touchInterrupt = touchInterrupt;
-        this.chipSelect = chipSelect;
+        comms = new SpiCommunications(spiBus, chipSelect, 1_000_000.Hertz());
         Rotation = rotation;
         touchInterrupt.Changed += OnTouchInterrupt;
     }
@@ -174,6 +173,8 @@ public partial class Xpt2046 : ICalibratableTouchscreen
             // ignore any unhandled handler exceptions
         }
 
+        Resolver.Log.Info($"{x},{y}");
+
         sampleTimer.Change(SamplePeriodMilliseconds, -1);
     }
 
@@ -204,7 +205,7 @@ public partial class Xpt2046 : ICalibratableTouchscreen
 
         txBuffer[0] = (byte)(StartBit | (byte)channel | (byte)mode | (byte)vref | (byte)postSamplePowerState);
 
-        spiBus.Exchange(chipSelect, txBuffer, rxBuffer);
+        comms.Exchange(txBuffer, rxBuffer, DuplexType.Full);
 
         return (ushort)((rxBuffer[1] >> 3) << 8 | (rxBuffer[2] >> 3));
     }
