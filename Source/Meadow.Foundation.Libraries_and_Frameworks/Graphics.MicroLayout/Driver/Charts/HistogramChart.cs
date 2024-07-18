@@ -13,6 +13,7 @@ public class HistogramChart : ChartControl
     private bool _showXLabels = true;
     private int? _maxXAxisValue = null;
     private int? _minXAxisValue = null;
+    private int? _maxYAxisValue = null;
 
     /// <summary>
     /// Creates a vertical bar chart instance
@@ -76,6 +77,15 @@ public class HistogramChart : ChartControl
         set => SetInvalidatingProperty(ref _maxXAxisValue, value);
     }
 
+    /// <summary>
+    /// Gets or sets an optional maximum Y Axis value
+    /// </summary>
+    public int? MaxYAxisValue
+    {
+        get => _maxYAxisValue;
+        set => SetInvalidatingProperty(ref _maxYAxisValue, value);
+    }
+
     /// <inheritdoc/>
     protected override void OnDraw(MicroGraphics graphics)
     {
@@ -106,6 +116,32 @@ public class HistogramChart : ChartControl
             filled: true);
     }
 
+    /// <summary>
+    /// Called to draw a value bar in the histogram chart.
+    /// </summary>
+    /// <param name="graphics">The graphics context used to draw the bar.</param>
+    /// <param name="seriesNumber">The series number to which the bar belongs.</param>
+    /// <param name="value">The value represented by the bar.</param>
+    /// <param name="x">The X-coordinate of the top-left corner of the bar.</param>
+    /// <param name="y">The Y-coordinate of the top-left corner of the bar.</param>
+    /// <param name="width">The width of the bar.</param>
+    /// <param name="height">The height of the bar.</param>
+    /// <param name="barColor">The color of the bar.</param>
+    /// <param name="filled">A value indicating whether the bar is filled or just outlined.</param>
+    protected virtual void DrawValueBar(
+        MicroGraphics graphics,
+        int seriesNumber,
+        (int X, int Y) value,
+        int x,
+        int y,
+        int width,
+        int height,
+        Color barColor,
+        bool filled)
+    {
+        graphics.DrawRectangle(x, y, width, height, barColor, filled);
+    }
+
     private void DrawSeries(MicroGraphics graphics, List<HistogramChartSeries> seriesList, IFont font)
     {
         var barWidth = 3;
@@ -116,7 +152,7 @@ public class HistogramChart : ChartControl
 
         var minX = MinXAxisValue ?? seriesList.SelectMany(e => e.DataElements).Min(x => x.X);
         var maxX = MaxXAxisValue ?? seriesList.SelectMany(e => e.DataElements).Max(x => x.X);
-        int maxY = seriesList.SelectMany(e => e.DataElements).Max(y => y.Y);
+        int maxY = MaxYAxisValue ?? seriesList.SelectMany(e => e.DataElements).Max(y => y.Y);
 
         var heightScale = ChartAreaHeight * 0.9f / maxY;
 
@@ -134,13 +170,23 @@ public class HistogramChart : ChartControl
 
                 var barHeight = (int)(heightScale * pair.Y);
 
-                graphics.DrawRectangle(
+                DrawValueBar(
+                    graphics,
+                    s,
+                    pair,
                     x - halfWidth,
                     ChartAreaBottom - barHeight,
                     barWidth,
                     barHeight,
-                    color: seriesList[s].ForeColor,
-                    filled: true);
+                    seriesList[s].ForeColor,
+                    true);
+                //graphics.DrawRectangle(
+                //    x - halfWidth,
+                //    ChartAreaBottom - barHeight,
+                //    barWidth,
+                //    barHeight,
+                //    color: seriesList[s].ForeColor,
+                //    filled: true);
             }
         }
 
