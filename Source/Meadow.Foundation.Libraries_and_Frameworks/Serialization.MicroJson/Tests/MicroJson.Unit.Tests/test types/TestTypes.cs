@@ -7,7 +7,7 @@ namespace Unit.Tests;
 // {"stringArg":"my string","value":23}
 internal class SimpleCommand
 {
-    public string StringArg { get; set; }
+    public string StringArg { get; set; } = default!;
     public int Value { get; set; }
 }
 

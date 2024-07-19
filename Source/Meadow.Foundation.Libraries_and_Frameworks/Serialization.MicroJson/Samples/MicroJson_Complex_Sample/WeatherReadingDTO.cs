@@ -2,17 +2,17 @@
 {
     public class WeatherReadingDTO
     {
-        public Coordinates coord { get; set; }
-        public Weather[] weather { get; set; }
-        public WeatherValues main { get; set; }
+        public Coordinates coord { get; set; } = default!;
+        public Weather[] weather { get; set; } = default!;
+        public WeatherValues main { get; set; } = default!;
         public int visibility { get; set; }
-        public Wind wind { get; set; }
-        public Clouds clouds { get; set; }
+        public Wind wind { get; set; } = default!;
+        public Clouds clouds { get; set; } = default!;
         public int dt { get; set; }
-        public System sys { get; set; }
+        public System sys { get; set; } = default!;
         public long timezone { get; set; }
         public int id { get; set; }
-        public string name { get; set; }
+        public string name { get; set; } = default!;
         public int cod { get; set; }
     }
 
@@ -25,9 +25,9 @@
     public class Weather
     {
         public int id { get; set; }
-        public string nain { get; set; }
-        public string description { get; set; }
-        public string icon { get; set; }
+        public string nain { get; set; } = default!;
+        public string description { get; set; } = default!;
+        public string icon { get; set; } = default!;
     }
 
     public class WeatherValues
@@ -56,7 +56,7 @@
     {
         public int Type { get; set; }
         public int Id { get; set; }
-        public string country { get; set; }
+        public string country { get; set; } = default!;
         public long sunrise { get; set; }
         public long sunset { get; set; }
     }
