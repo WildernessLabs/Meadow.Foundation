@@ -178,7 +178,7 @@ public class BasicTests
             {
                 PropertyNameCaseInsensitive = true,
             };
-            var testResult = JsonSerializer.Deserialize<StringFieldClass>(json, opts);
+            var testResult = JsonSerializer.Deserialize<StringFieldClass>(json!, opts);
 
             Assert.NotNull(testResult);
             Assert.Equal(s, testResult.FieldA);

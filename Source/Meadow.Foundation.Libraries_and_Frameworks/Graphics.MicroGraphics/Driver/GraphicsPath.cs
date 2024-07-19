@@ -55,11 +55,6 @@ namespace Meadow.Foundation.Graphics
         public int PointCount => PathActions.Count;
 
         /// <summary>
-        /// The collection of points 
-        /// </summary>
-        public Point[] Points { get; private set; }
-
-        /// <summary>
         /// The number of verbs/actions used
         /// </summary>
         public int VerbCount => PathActions.Count;
@@ -101,7 +96,8 @@ namespace Meadow.Foundation.Graphics
         /// Create a new GraphicsPath object
         /// </summary>
         public GraphicsPath()
-        { }
+        {
+        }
 
         /// <summary>
         /// Create a new GraphicsPath object

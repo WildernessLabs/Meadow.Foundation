@@ -9,7 +9,7 @@ public class MeadowApp : App<Desktop>
 {
     private DisplayScreen? screen;
 
-    public override async Task Run()
+    public override Task Run()
     {
         var labelFont = new Font16x24();
 
@@ -39,6 +39,8 @@ public class MeadowApp : App<Desktop>
 
         // NOTE: this will not return until the display is closed
         ExecutePlatformDisplayRunner();
+
+        return Task.CompletedTask;
     }
 
     private void ExecutePlatformDisplayRunner()
