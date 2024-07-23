@@ -1573,6 +1573,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{13BA
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TankLevelSender_Sample", "Meadow.Foundation.Peripherals\Sensors.Volume.ResistiveTankLevelSender\Samples\TankLevelSender_Sample\TankLevelSender_Sample.csproj", "{91A02605-4A30-40B1-837A-8214923A395A}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ili9225_Sample", "Meadow.Foundation.Peripherals\Displays.TftSpi\Samples\Ili9225_Sample\Ili9225_Sample.csproj", "{329791B5-E833-42A5-BCFB-5FE40247D6DA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -3807,6 +3809,12 @@ Global
 		{91A02605-4A30-40B1-837A-8214923A395A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{91A02605-4A30-40B1-837A-8214923A395A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{91A02605-4A30-40B1-837A-8214923A395A}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{329791B5-E833-42A5-BCFB-5FE40247D6DA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{329791B5-E833-42A5-BCFB-5FE40247D6DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{329791B5-E833-42A5-BCFB-5FE40247D6DA}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{329791B5-E833-42A5-BCFB-5FE40247D6DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{329791B5-E833-42A5-BCFB-5FE40247D6DA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{329791B5-E833-42A5-BCFB-5FE40247D6DA}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -4590,6 +4598,7 @@ Global
 		{7C30F342-6DD6-430C-B872-4515D01F2D4E} = {8A0FAC4E-473E-4CEC-9325-71E294343D34}
 		{13BA3467-9A79-440D-A870-33CA99D344DD} = {7C30F342-6DD6-430C-B872-4515D01F2D4E}
 		{91A02605-4A30-40B1-837A-8214923A395A} = {13BA3467-9A79-440D-A870-33CA99D344DD}
+		{329791B5-E833-42A5-BCFB-5FE40247D6DA} = {8FB70D12-1111-480B-B64C-B8EB65977F58}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}

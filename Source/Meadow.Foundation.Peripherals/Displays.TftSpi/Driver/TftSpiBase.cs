@@ -532,6 +532,11 @@ namespace Meadow.Foundation.Displays
         /// <param name="command">The command to send as a byte</param>
         protected void SendCommand(byte command)
         {
+            if (dataCommandPort == null)
+            {
+                throw new InvalidOperationException("Data command port is not configured.");
+            }
+
             dataCommandPort.State = Command;
             Write(command);
         }
