@@ -24,7 +24,6 @@ public class NullablePropertyTests
 
         var json = MicroJson.Serialize(message);
 
-        var result = MicroJson.Deserialize<TestResultMessage>(json);
+        var result = MicroJson.Deserialize<TestResultMessage>(json!);
     }
-
 }
