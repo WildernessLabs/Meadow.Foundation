@@ -34,7 +34,7 @@ public class Program
             Stroke = 1
         };
 
-        image = LoadJpeg() as PixelBufferBase;
+        image = (PixelBufferBase)LoadJpeg();
     }
 
     public static void Run()
@@ -78,7 +78,7 @@ public class Program
 
         using Stream stream = assembly.GetManifestResourceStream(resourceName);
         using var ms = new MemoryStream();
-        stream.CopyTo(ms);
+        stream?.CopyTo(ms);
         return ms.ToArray();
     }
 }

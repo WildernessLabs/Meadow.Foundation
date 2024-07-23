@@ -13,7 +13,7 @@ namespace Meadow.Foundation.Displays;
 /// </summary>
 public class SilkDisplay : IResizablePixelDisplay, ITouchScreen
 {
-    private IWindow window;
+    private IWindow window = default!;
     private SkiaPixelBuffer pixelBuffer = default!;
     private GRGlInterface grglInterface;
     private GRContext context;

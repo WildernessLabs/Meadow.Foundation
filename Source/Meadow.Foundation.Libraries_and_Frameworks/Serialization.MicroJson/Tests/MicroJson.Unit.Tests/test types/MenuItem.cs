@@ -2,14 +2,14 @@
 
 internal class MenuContainer
 {
-    public MenuItem[] Menu { get; set; }
+    public MenuItem[] Menu { get; set; } = default!;
 }
 
 internal class MenuItem
 {
-    public string Text { get; set; }
-    public string Id { get; set; }
-    public string Type { get; set; }
+    public string Text { get; set; } = default!;
+    public string Id { get; set; } = default!;
+    public string Type { get; set; } = default!;
     public int Value { get; set; }
-    public MenuItem[] Sub { get; set; }
+    public MenuItem[] Sub { get; set; } = default!;
 }

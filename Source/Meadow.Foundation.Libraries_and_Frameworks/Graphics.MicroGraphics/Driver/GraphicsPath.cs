@@ -101,7 +101,8 @@ namespace Meadow.Foundation.Graphics
         /// Create a new GraphicsPath object
         /// </summary>
         public GraphicsPath()
-        { }
+        {
+        }
 
         /// <summary>
         /// Create a new GraphicsPath object
