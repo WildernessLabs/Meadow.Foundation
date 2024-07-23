@@ -1,7 +1,6 @@
 ﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.ICs.FRAM;
-using Meadow.Gateways.Bluetooth;
 using Meadow.Units;
 using System.Threading;
 using System.Threading.Tasks;
@@ -12,7 +11,7 @@ namespace MeadowApp
     {
         //<!=SNIP=>
 
-        MB85RSxx fram;
+        MB85RSxx fram = default!;
 
         public override Task Initialize()
         {

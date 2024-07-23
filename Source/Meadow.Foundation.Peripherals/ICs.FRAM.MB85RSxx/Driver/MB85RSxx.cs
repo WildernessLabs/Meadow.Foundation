@@ -1,6 +1,6 @@
-﻿using System;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
 using Meadow.Units;
+using System;
 using System.Linq;
 
 namespace Meadow.Foundation.ICs.FRAM
@@ -19,11 +19,9 @@ namespace Meadow.Foundation.ICs.FRAM
         private readonly IDigitalOutputPort? _holdPort;
         private readonly IDigitalOutputPort? _writeProtectPort;
 
-
-
         /// <summary>
         /// Gets the default SPI bus mode (Mode0).
-        /// MB85RSxx supports SPI modes 0 (CPOL = 0, CPHA = 0) & 3 (CPOL = 1, CPHA = 1).
+        /// MB85RSxx supports SPI modes 0 (CPOL = 0, CPHA = 0) and 3 (CPOL = 1, CPHA = 1).
         /// </summary>
         public SpiClockConfiguration.Mode DefaultSpiBusMode => SpiClockConfiguration.Mode.Mode0;
 
@@ -31,7 +29,7 @@ namespace Meadow.Foundation.ICs.FRAM
         /// Gets the default SPI bus speed (20 MHz).
         /// MB85RSxx supports SPI speeds upto 20 MHz.
         /// </summary>
-        public Frequency DefaultSpiBusSpeed => new Frequency(20, Frequency.UnitType.Megahertz);
+        public Frequency DefaultSpiBusSpeed => new(20, Frequency.UnitType.Megahertz);
 
         /// <summary>
         /// Gets or sets the SPI bus mode.
@@ -48,7 +46,7 @@ namespace Meadow.Foundation.ICs.FRAM
         /// <summary>
         /// MB85RSxx varient (e.g. MB85RS64 for 64 kbit)
         /// </summary>
-        public Varient ChipVarient { get; private set; }
+        public Variant ChipVarient { get; private set; }
 
         private Memory<byte> ReadBuffer { get; set; }
         private Memory<byte> WriteBuffer { get; set; }
@@ -70,7 +68,7 @@ namespace Meadow.Foundation.ICs.FRAM
             ReadBuffer = new byte[8]; // always 1 byte but we allow for upto 8 bytes to be returned per transaction)
             WriteBuffer = new byte[5]; // upto 32 bits
 
-            Varient? varient = GetDeviceVarient();
+            Variant? varient = GetDeviceVariant();
             if (varient == null)
                 throw new DeviceConfigurationException("MB85RSxx device type unknown");
             else
@@ -99,7 +97,7 @@ namespace Meadow.Foundation.ICs.FRAM
             ReadBuffer = new byte[8]; // always 1 byte but we allow for upto 8 bytes to be returned per transaction)
             WriteBuffer = new byte[5]; // upto 32 bits
 
-            Varient? varient = GetDeviceVarient();
+            Variant? varient = GetDeviceVariant();
             if (varient == null)
                 throw new DeviceConfigurationException("MB85RSxx device type unknown");
             else
@@ -131,7 +129,7 @@ namespace Meadow.Foundation.ICs.FRAM
             ReadBuffer = new byte[8]; // always 1 byte but we allow for upto 8 bytes to be returned per transaction)
             WriteBuffer = new byte[5]; // upto 32 bits
 
-            Varient? varient = GetDeviceVarient();
+            Variant? varient = GetDeviceVariant();
             if (varient == null)
                 throw new DeviceConfigurationException("MB85RSxx device type unknown");
             else
@@ -159,10 +157,9 @@ namespace Meadow.Foundation.ICs.FRAM
 
             for (ushort index = 0; index < ammount; index++)
             {
-                var address = (uint)(startAddress + index);
+                var address = startAddress + index;
                 Span<byte> dataToSend = Address(OperationCodes.OPCODE_READ, address);
                 _spiComms.Exchange(dataToSend, ReadBuffer[index..(index + 1)].Span);
-                //Thread.Sleep(10);
             }
             return ReadBuffer.Slice(0, ammount).ToArray();
         }
@@ -183,7 +180,6 @@ namespace Meadow.Foundation.ICs.FRAM
                 dataToSend[dataToSend.Length - 1] = data[index];
                 _spiComms.Write(dataToSend);
                 Resolver.Log.Trace($"  FRAM Written Dat:{data[index]} to Adr:{address}");
-                //Thread.Sleep(10);
             }
             WriteEnable(false);
         }
@@ -192,7 +188,7 @@ namespace Meadow.Foundation.ICs.FRAM
         /// Reads the device type and varient
         /// </summary>
         /// <returns></returns>
-        public Varient? GetDeviceVarient()
+        public Variant? GetDeviceVariant()
         {
             Span<byte> dataToSend = WriteBuffer.Span[0..1];
             dataToSend[0] = (byte)OperationCodes.OPCODE_RDID;
@@ -218,7 +214,7 @@ namespace Meadow.Foundation.ICs.FRAM
                 prodId = (ushort)((read[1] << 8) + read[2]);
             }
 
-            return VarientsTable.Varients.Where(x => x.ManufacturerId == manId && x.ProductId == prodId).FirstOrDefault();
+            return VariantsTable.Variants.Where(x => x.ManufacturerId == manId && x.ProductId == prodId).FirstOrDefault();
         }
 
         /// <summary>
@@ -233,7 +229,6 @@ namespace Meadow.Foundation.ICs.FRAM
             else
                 _spiComms.Write((byte)OperationCodes.OPCODE_WRDI);
             Resolver.Log.Trace($"  FRAM completed WriteEnable[{enable}]");
-            //Thread.Sleep(10);
         }
 
         /// <summary>
@@ -257,13 +252,12 @@ namespace Meadow.Foundation.ICs.FRAM
             }
         }
 
-
         /// <summary>
         /// Sets the correct address depending on the address size.
         /// </summary>
         /// <param name="code"></param>
         /// <param name="address"></param>
-        /// <returns>Span<byte> to send</returns>
+        /// <returns>byte to send</returns>
         private Span<byte> Address(OperationCodes code, uint address)
         {
             Span<byte> data = WriteBuffer.Span[0..5];
@@ -286,15 +280,11 @@ namespace Meadow.Foundation.ICs.FRAM
                 length = 4;
             }
 
-
             if (code == OperationCodes.OPCODE_WRITE)
+            {
                 length++;
+            }
             return data.Slice(0, length);
         }
-
-
-
-
-
     }
 }

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Meadow.Foundation.ICs.FRAM
+﻿namespace Meadow.Foundation.ICs.FRAM
 {
     public partial class MB85RSxx
     {

@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Meadow.Foundation.ICs.FRAM
+﻿namespace Meadow.Foundation.ICs.FRAM
 {
     public partial class MB85RSxx
     {
         /// <summary>
         /// Repersents a varient of the MB85RSxx chip
         /// </summary>
-        public sealed class Varient
+        public sealed class Variant
         {
             /// <summary>
             /// Manufacturer Id
@@ -59,7 +55,7 @@ namespace Meadow.Foundation.ICs.FRAM
             /// <param name="productId"></param>
             /// <param name="size"></param>
             /// <param name="name"></param>
-            public Varient(byte manufacturerId, ushort productId, uint size, string name)
+            public Variant(byte manufacturerId, ushort productId, uint size, string name)
             {
                 ManufacturerId = manufacturerId;
                 ProductId = productId;
