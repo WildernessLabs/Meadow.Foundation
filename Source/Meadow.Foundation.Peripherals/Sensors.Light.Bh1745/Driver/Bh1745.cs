@@ -1,5 +1,6 @@
 ﻿using Meadow.Hardware;
 using Meadow.Peripherals.Sensors;
+using Meadow.Peripherals.Sensors.Color;
 using Meadow.Peripherals.Sensors.Light;
 using Meadow.Units;
 using System;
@@ -12,9 +13,10 @@ namespace Meadow.Foundation.Sensors.Light
     /// </summary>
     public partial class Bh1745
         : ByteCommsSensorBase<(Illuminance? AmbientLight, Color? Color)>,
-        ILightSensor, II2cPeripheral
+        ILightSensor, IColorSensor, II2cPeripheral
     {
         private event EventHandler<IChangeResult<Illuminance>> _lightHandlers = default!;
+        private event EventHandler<IChangeResult<Color>> _colorHandlers = default!;
 
         event EventHandler<IChangeResult<Illuminance>> ISamplingSensor<Illuminance>.Updated
         {
@@ -22,10 +24,21 @@ namespace Meadow.Foundation.Sensors.Light
             remove => _lightHandlers -= value;
         }
 
+        event EventHandler<IChangeResult<Color>> ISamplingSensor<Color>.Updated
+        {
+            add => _colorHandlers += value;
+            remove => _colorHandlers -= value;
+        }
+
         /// <summary>
         /// The current Illuminance value
         /// </summary>
         public Illuminance? Illuminance => Conditions.AmbientLight;
+
+        /// <summary>
+        /// The current color value
+        /// </summary>
+        public Color? Color => Conditions.Color;
 
         /// <summary>
         /// Interrupt reset status
@@ -267,7 +280,7 @@ namespace Meadow.Foundation.Sensors.Light
             // get the ambient light
             var clearData = ReadClearDataRegister();
 
-            if (clearData == 0) { conditions.Color = Color.Black; }
+            if (clearData == 0) { conditions.Color = Meadow.Color.Black; }
 
             if (ReadMeasurementIsValid() == false)
             {
@@ -287,7 +300,7 @@ namespace Meadow.Foundation.Sensors.Light
             int green = (int)Math.Min(255, compensatedGreen / compensatedClear * 255);
             int blue = (int)Math.Min(255, compensatedBlue / compensatedClear * 255);
 
-            conditions.Color = Color.FromRgb(red, green, blue);
+            conditions.Color = Meadow.Color.FromRgb(red, green, blue);
 
             conditions.AmbientLight = new Illuminance(compensatedClear, Units.Illuminance.UnitType.Lux);
 
@@ -374,5 +387,8 @@ namespace Meadow.Foundation.Sensors.Light
 
         async Task<Illuminance> ISensor<Illuminance>.Read()
             => (await Read()).AmbientLight!.Value;
+
+        async Task<Color> ISensor<Color>.Read()
+    => (await Read()).Color!.Value;
     }
 }
