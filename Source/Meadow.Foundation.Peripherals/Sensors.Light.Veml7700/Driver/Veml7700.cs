@@ -25,7 +25,7 @@ namespace Meadow.Foundation.Sensors.Light
         private ushort config;
 
         /// <summary>
-        /// Luminosity reading from the TSL2561 sensor.
+        /// Luminosity reading from the Veml7700 sensor
         /// </summary>
         public Illuminance? Illuminance => Conditions;
 
@@ -62,7 +62,7 @@ namespace Meadow.Foundation.Sensors.Light
         /// <returns>The latest sensor reading</returns>
         protected override async Task<Illuminance> ReadSensor()
         {
-            Illuminance illuminance = new Illuminance(0);
+            Illuminance illuminance = new(0);
 
             if (firstRead)
             {

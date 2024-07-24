@@ -1,8 +1,8 @@
-# Meadow.Foundation.Displays.TftSpi
+# Meadow.Foundation.Sensors.Temperature.Tmp102
 
-**SPI Color TFT and OLED displays (GC9A01, HC8357B, HX8357D, ILI9163, ILI9225, ILI9341, ILI9481, ILI9488, RM68140, S6D02A1, SSD1331, SSD1351, ST7735, ST7789)**
+**A generic resistive tank level sending unit**
 
-The **TftSpi** library is included in the **Meadow.Foundation.Displays.TftSpi** nuget package and is designed for the [Wilderness Labs](www.wildernesslabs.co) Meadow .NET IoT platform.
+The **ResistiveTankLevelSender** library is included in the **Meadow.Foundation.Sensors.Temperature.Tmp102** nuget package and is designed for the [Wilderness Labs](www.wildernesslabs.co) Meadow .NET IoT platform.
 
 This driver is part of the [Meadow.Foundation](https://developer.wildernesslabs.co/Meadow/Meadow.Foundation/) peripherals library, an open-source repository of drivers and libraries that streamline and simplify adding hardware to your C# .NET Meadow IoT applications.
 
@@ -14,47 +14,21 @@ To view all Wilderness Labs open-source projects, including samples, visit [gith
 
 You can install the library from within Visual studio using the the NuGet Package Manager or from the command line using the .NET CLI:
 
-`dotnet add package Meadow.Foundation.Displays.TftSpi`
+`dotnet add package Meadow.Foundation.Sensors.Temperature.Tmp102`
 ## Usage
 
 ```csharp
-MicroGraphics graphics;
+private ResistiveTankLevelSender sender;
 
 public override Task Initialize()
 {
-    Resolver.Log.Info("Initializing ...");
+    Resolver.Log.Info("Initialize...");
 
-    var spiBus = Device.CreateSpiBus();
+    sender = new ResistiveTankLevelSender_12in_33_240(Device.Pins.A00, 4.66.Volts());
+    sender.FillLevelChanged += (s, e) => Resolver.Log.Info($"Tank level: {e}%");
+    sender.StartUpdating();
 
-    Resolver.Log.Info("Create display driver instance");
-
-    var display = new Gc9a01
-    (
-        spiBus: spiBus,
-        chipSelectPin: Device.Pins.A02,
-        dcPin: Device.Pins.D01,
-        resetPin: Device.Pins.D00
-    );
-
-    graphics = new MicroGraphics(display)
-    {
-        IgnoreOutOfBoundsPixels = true,
-        CurrentFont = new Font12x20(),
-        Rotation = RotationType._180Degrees
-    };
-
-    return base.Initialize();
-}
-
-public override Task Run()
-{
-    graphics.Clear();
-    graphics.DrawCircle(120, 120, 100, Color.Cyan, false);
-    graphics.DrawRoundedRectangle(50, 50, 140, 140, 50, Color.BlueViolet, false);
-    graphics.DrawText(120, 120, "Meadow F7", alignmentH: HorizontalAlignment.Center, alignmentV: VerticalAlignment.Center);
-    graphics.Show();
-
-    return base.Run();
+    return Task.CompletedTask;
 }
 
 ```

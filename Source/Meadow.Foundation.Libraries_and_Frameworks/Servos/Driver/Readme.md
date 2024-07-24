@@ -21,39 +21,15 @@ You can install the library from within Visual studio using the the NuGet Packag
 private IAngularServo servo;
 private IPwmPort pwm;
 
-public override async Task Initialize()
+public override Task Initialize()
 {
     Resolver.Log.Info("Initialize...");
 
-    pwm = Device.Pins.D08.CreatePwmPort(50.Hertz());
+    pwm = Device.Pins.D10.CreatePwmPort(50.Hertz());
 
-    await RangeFinder();
-    servo = new Mg90s(pwm);
+    servo = new Sg90(pwm);
 
-    //            return Task.CompletedTask;
-}
-
-private async Task RangeFinder()
-{
-    var min = 200;
-    var max = 3000;
-    var p = min;
-    var step = 10;
-    var direction = 1;
-
-    pwm.Start();
-
-    while (true)
-    {
-        Resolver.Log.Info($"Duration: {p} us");
-
-        pwm.Duration = TimePeriod.FromMicroseconds(p);
-        await Task.Delay(200);
-
-        var test = p + (step * direction);
-        if (test < min || test > max) direction *= -1;
-        p = p + (step * direction);
-    }
+    return Task.CompletedTask;
 }
 
 public override async Task Run()

@@ -1,8 +1,8 @@
-# Meadow.Foundation.Displays.Silk
+# Meadow.Foundation.Sensors.Color.Tcs3472x
 
-**Display driver for Meadow using Silk.NET and SkiaSharp**
+**Tcs3472x family of I2C color sensors (Tcs34721, Tcs34723, Tcs34725, Tcs34727)**
 
-The **Meadow.Silk** library is included in the **Meadow.Foundation.Displays.Silk** nuget package and is designed for the [Wilderness Labs](www.wildernesslabs.co) Meadow .NET IoT platform.
+The **Tcs3472x** library is included in the **Meadow.Foundation.Sensors.Color.Tcs3472x** nuget package and is designed for the [Wilderness Labs](www.wildernesslabs.co) Meadow .NET IoT platform.
 
 This driver is part of the [Meadow.Foundation](https://developer.wildernesslabs.co/Meadow/Meadow.Foundation/) peripherals library, an open-source repository of drivers and libraries that streamline and simplify adding hardware to your C# .NET Meadow IoT applications.
 
@@ -14,83 +14,49 @@ To view all Wilderness Labs open-source projects, including samples, visit [gith
 
 You can install the library from within Visual studio using the the NuGet Package Manager or from the command line using the .NET CLI:
 
-`dotnet add package Meadow.Foundation.Displays.Silk`
+`dotnet add package Meadow.Foundation.Sensors.Color.Tcs3472x`
 ## Usage
 
 ```csharp
-public class Program
+private Tcs3472x sensor;
+
+public override Task Initialize()
 {
-static SilkDisplay? display;
-static MicroGraphics graphics = default!;
+    Resolver.Log.Info("Initialize...");
 
-static PixelBufferBase image = default!;
+    // configure our sensor on the I2C Bus
+    sensor = new Tcs3472x(Device.CreateI2cBus());
 
-public static void Main()
-{
-    Initialize();
-    Run();
+    // Example that uses an IObservable subscription to only be notified when the filter is satisfied
+    var consumer = Tcs3472x.CreateObserver(
+        handler: result => Resolver.Log.Info($"Observer: filter satisfied: {result.New}, old: {result.Old}"),
+        filter: result =>
+        {
+            if (result.Old is { } old)
+            {
+                return Math.Abs(result.New.R - old.R) > 50;
+            }
+            return false;
+        });
+    sensor.Subscribe(consumer);
 
-    Thread.Sleep(Timeout.Infinite);
-}
-
-public static void Initialize()
-{
-    display = new SilkDisplay(640, 480, displayScale: 1f);
-
-    graphics = new MicroGraphics(display)
+    // classical .NET events can also be used:
+    sensor.Updated += (sender, result) =>
     {
-        CurrentFont = new Font16x24(),
-        Stroke = 1
+        Resolver.Log.Info($"  Color: {result.New}");
     };
 
-    image = (PixelBufferBase)LoadJpeg();
+    return Task.CompletedTask;
 }
 
-public static void Run()
+public override async Task Run()
 {
-    Task.Run(() =>
-    {
-        var grayImage = image.Convert<BufferGray8>();
+    var result = await sensor.Read();
+    Resolver.Log.Info($"Initial reading: {result}");
 
-        var scaledImage = image.Resize<BufferGray8>(320, 320);
-
-        var rotatedImage = image.Rotate<BufferGray8>(new Meadow.Units.Angle(60));
-
-        graphics.Clear();
-
-        //draw the image centered
-        graphics.DrawBuffer((display!.Width - rotatedImage.Width) / 2,
-            (display!.Height - rotatedImage.Height) / 2, rotatedImage);
-
-        graphics.Show();
-    });
-
-    display!.Run();
+    sensor.StartUpdating(TimeSpan.FromSeconds(1));
 }
 
-static IPixelBuffer LoadJpeg()
-{
-    var jpgData = LoadResource("maple.jpg");
-
-    var decoder = new JpegDecoder();
-    var jpg = decoder.DecodeJpeg(jpgData);
-
-    Console.WriteLine($"Jpeg decoded is {jpg.Length} bytes, W: {decoder.Width}, H: {decoder.Height}");
-
-    return new BufferRgb888(decoder.Width, decoder.Height, jpg);
-}
-
-static byte[] LoadResource(string filename)
-{
-    var assembly = Assembly.GetExecutingAssembly();
-    var resourceName = $"Silk_Image_Sample.{filename}";
-
-    using Stream stream = assembly.GetManifestResourceStream(resourceName);
-    using var ms = new MemoryStream();
-    stream?.CopyTo(ms);
-    return ms.ToArray();
-}
-}
 ```
 ## How to Contribute
 

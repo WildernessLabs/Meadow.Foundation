@@ -10,19 +10,18 @@
     <Authors>Wilderness Labs, Inc</Authors>
     <TargetFramework>netstandard2.1</TargetFramework>
     <OutputType>Library</OutputType>
-    <AssemblyName>TftSpi</AssemblyName>
+    <AssemblyName>Tcs3472x</AssemblyName>
     <Company>Wilderness Labs, Inc</Company>
     <PackageProjectUrl>http://developer.wildernesslabs.co/Meadow/Meadow.Foundation/</PackageProjectUrl>
-    <PackageId>Meadow.Foundation.Displays.TftSpi</PackageId>
+    <PackageId>Meadow.Foundation.Sensors.Color.Tcs3472x</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
-    <PackageTags>Meadow,Meadow.Foundation,Display,TFT,ILI9163,ILI9225,ILI9341,S6D02A1,SSD1331,SSD1351,ST7735,ST7789</PackageTags>
+    <PackageTags>Meadow.Foundation,Color,Tcs3472x,Tcs34721,Tcs34723,Tcs34725,Tcs34727</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Description>SPI Color TFT and OLED displays (GC9A01, HC8357B, HX8357D, ILI9163, ILI9225, ILI9341, ILI9481, ILI9488, RM68140, S6D02A1, SSD1331, SSD1351, ST7735, ST7789)</Description>
+    <Description>Tcs3472x family of I2C color sensors (Tcs34721, Tcs34723, Tcs34725, Tcs34727)</Description>
   </PropertyGroup>
   <ItemGroup>
     <None Include=".\Readme.md" Pack="true" PackagePath="" />
     <None Include="..\..\..\icon.png" Pack="true" PackagePath="" />
     <ProjectReference Include="..\..\..\Meadow.Foundation.Core\Meadow.Foundation.Core.csproj" />
-    <ProjectReference Include="..\..\..\Meadow.Foundation.Libraries_and_Frameworks\Graphics.MicroGraphics\Driver\Graphics.MicroGraphics.csproj" />
   </ItemGroup>
 </Project>
