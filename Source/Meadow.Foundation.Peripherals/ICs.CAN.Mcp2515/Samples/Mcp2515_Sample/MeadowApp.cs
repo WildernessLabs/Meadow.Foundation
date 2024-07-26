@@ -1,121 +1,76 @@
 ﻿using Meadow;
+using Meadow.Devices;
 using Meadow.Foundation.ICs.CAN;
 using Meadow.Hardware;
 using System;
 using System.Threading.Tasks;
 
-namespace Meadow.Devices
+namespace MeadowApp;
+
+public class F7FeatherV1App : MeadowApp<F7FeatherV1> { }
+public class F7FeatherV2App : MeadowApp<F7FeatherV2> { }
+
+public class MeadowApp<T> : App<T>
+    where T : F7FeatherBase
 {
-    /*
-    public static class ProjLab
+    private Mcp2515 expander;
+
+    //<!=SNIP=>
+
+    public override Task Initialize()
     {
-        public static (
-            IPin MB1_CS,
-            IPin MB1_INT,
-            IPin MB1_PWM,
-            IPin MB1_AN,
-            IPin MB1_SO,
-            IPin MB1_SI,
-            IPin MB1_SCK,
-            IPin MB1_SCL,
-            IPin MB1_SDA,
+        Resolver.Log.Info("Initialize...");
 
-            IPin MB2_CS,
-            IPin MB2_INT,
-            IPin MB2_PWM,
-            IPin MB2_AN,
-            IPin MB2_SO,
-            IPin MB2_SI,
-            IPin MB2_SCK,
-            IPin MB2_SCL,
-            IPin MB2_SDA
-            ) Pins = (
-            Resolver.Device.GetPin("D14"),
-            Resolver.Device.GetPin("D03"),
-            Resolver.Device.GetPin("D04"),
-            Resolver.Device.GetPin("A00"),
-            Resolver.Device.GetPin("CIPO"),
-            Resolver.Device.GetPin("COPI"),
-            Resolver.Device.GetPin("SCK"),
-            Resolver.Device.GetPin("D08"),
-            Resolver.Device.GetPin("D07"),
+        expander = new Mcp2515(
+            Device.CreateSpiBus(),
+            Device.Pins.D05.CreateDigitalOutputPort(true),
+            Mcp2515.CanOscillator.Osc_8MHz,
+            Device.Pins.D05.CreateDigitalInterruptPort(InterruptMode.EdgeFalling),
+            Resolver.Log);
 
-            Resolver.Device.GetPin("A02"),
-            Resolver.Device.GetPin("D04"),
-            Resolver.Device.GetPin("D03"),
-            Resolver.Device.GetPin("A01"),
-            Resolver.Device.GetPin("CIPO"),
-            Resolver.Device.GetPin("COPI"),
-            Resolver.Device.GetPin("SCK"),
-            Resolver.Device.GetPin("D08"),
-            Resolver.Device.GetPin("D07")
-            );
+
+        return base.Initialize();
     }
-    */
-}
 
-namespace MeadowApp
-{
-    public class MeadowApp : App<F7FeatherV1>
+    public override async Task Run()
     {
-        public static async Task Main(string[] args)
+        var bus = expander.CreateCanBus(CanBitrate.Can_250kbps);
+
+        Console.WriteLine($"Listening for CAN data...");
+
+        var tick = 0;
+
+        while (true)
         {
-            Console.WriteLine("+Main");
-            await MeadowOS.Main(args);
-            Console.WriteLine("-Main");
-        }
-
-        //<!=SNIP=>
-
-        private Mcp2515 _controller;
-
-        public override Task Initialize()
-        {
-            Resolver.Log.Info("Initialize...");
-
-            Resolver.Log.Loglevel = Meadow.Logging.LogLevel.Trace;
-
-            //            var chipSelect = Device.CreateDigitalOutputPort(Device.Pins.MB1_CS(), true);
-            var chipSelect = Device.CreateDigitalOutputPort(ProjLab.Pins.MB2_CS, true);
-
-            Resolver.Log.Info($"CS = {chipSelect.Pin.Name}");
-            var spi = Device.CreateSpiBus();
-            spi.Configuration.Phase = SpiClockConfiguration.ClockPhase.Zero;
-            spi.Configuration.Polarity = SpiClockConfiguration.ClockPolarity.Normal;
-            spi.Configuration.Speed = new Meadow.Units.Frequency(250, Meadow.Units.Frequency.UnitType.Kilohertz);
-
-            _controller = new Mcp2515(spi, chipSelect, Resolver.Log);
-
-            return base.Initialize();
-        }
-
-        public override async Task Run()
-        {
-            while (true)
+            var frame = bus.ReadFrame();
+            if (frame != null)
             {
-                try
+                if (frame is StandardDataFrame sdf)
                 {
-                    var frame = _controller.ReadFrame();
-
-                    if (frame == null)
-                    {
-                        Resolver.Log.Info("No frames available");
-                    }
-                    else
-                    {
-                        Resolver.Log.Info($"ID: {frame.Value.ID}");
-                    }
+                    Console.WriteLine($"Standard Frame: {sdf.ID:X3} {BitConverter.ToString(sdf.Payload)}");
                 }
-                catch (Exception ex)
+                else if (frame is ExtendedDataFrame edf)
                 {
-                    Resolver.Log.Error(ex.Message);
+                    Console.WriteLine($"Extended Frame: {edf.ID:X8} {BitConverter.ToString(edf.Payload)}");
                 }
+            }
+            else
+            {
+                await Task.Delay(100);
+            }
 
-                await Task.Delay(1000);
+            if (tick++ % 50 == 0)
+            {
+                Console.WriteLine($"Sending Standard Frame...");
 
+                bus.WriteFrame(new StandardDataFrame
+                {
+                    ID = 0x700,
+                    Payload = new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, (byte)(tick & 0xff) }
+                });
             }
         }
-
-        //<!=SNOP=>
     }
+
+    //<!=SNOP=>
 }

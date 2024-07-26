@@ -7,11 +7,14 @@ internal class Program
 {
     private static async Task Main(string[] _)
     {
+        //<!=SNIP=>
         var expander = new PCanUsb();
 
         var bus = expander.CreateCanBus(CanBitrate.Can_250kbps);
 
         Console.WriteLine($"Listening for CAN data...");
+
+        var tick = 0;
 
         while (true)
         {
@@ -31,6 +34,18 @@ internal class Program
             {
                 await Task.Delay(100);
             }
+
+            if (tick++ % 50 == 0)
+            {
+                Console.WriteLine($"Sending Standard Frame...");
+
+                bus.WriteFrame(new StandardDataFrame
+                {
+                    ID = 0x700,
+                    Payload = [0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, (byte)(tick & 0xff)]
+                });
+            }
         }
+        //<!=SNOP=>
     }
 }
