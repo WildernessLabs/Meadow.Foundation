@@ -35,6 +35,9 @@ namespace Meadow.Foundation.Displays
         public abstract ColorMode DefaultColorMode { get; }
 
         /// <inheritdoc/>
+        public bool IsColorInverted { get; private set; } = false;
+
+        /// <inheritdoc/>
         public int Width => imageBuffer.Width;
 
         /// <inheritdoc/>
@@ -471,13 +474,11 @@ namespace Meadow.Foundation.Displays
             }
         }
 
-        /// <summary>
-        /// Set the display inversion
-        /// </summary>
-        /// <param name="inverted">True to invert the display, false otherwise</param>
-        public virtual void InvertDisplay(bool inverted)
+        /// <inheritdoc/>
+        public virtual void InvertDisplayColor(bool invert)
         {
-            SendCommand(inverted ? Register.INVON : Register.INVOFF);
+            SendCommand(invert ? Register.INVON : Register.INVOFF);
+            IsColorInverted = invert;
         }
 
         /// <summary>
