@@ -3,9 +3,8 @@ using Peak.Can.Basic.BackwardCompatibility;
 
 namespace ICs.IOExpanders.PCanBasic;
 
-public class PCanConfiguration : ICanBusConfiguration
+public class PCanConfiguration
 {
     public ushort BusHandle { get; set; } = PCANBasic.PCAN_USBBUS1;
-    public bool IsFD { get; set; } = false;
-    public CanBusBitrate Bitrate { get; set; } = CanBusBitrate.Baud_250k;
+    public CanBitrate Bitrate { get; set; } = CanBitrate.Can_250kbps;
 }

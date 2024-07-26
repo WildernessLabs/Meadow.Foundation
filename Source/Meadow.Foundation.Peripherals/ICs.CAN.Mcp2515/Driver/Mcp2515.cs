@@ -50,13 +50,8 @@ public partial class Mcp2515 : ICanController
         _oscillator = oscillator;
     }
 
-    public ICanBus CreateCanBus(CanBitrate bitrate)
-    {
-        return CreateCanBus(0, bitrate);
-    }
-
     /// <inheritdoc/>
-    public ICanBus CreateCanBus(int busNumber, CanBitrate bitrate)
+    public ICanBus CreateCanBus(CanBitrate bitrate, int busNumber = 0)
     {
         if (_busInstance == null)
         {

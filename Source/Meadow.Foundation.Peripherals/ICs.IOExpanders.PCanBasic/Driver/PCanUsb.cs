@@ -1,4 +1,5 @@
 ﻿using Meadow.Hardware;
+using Peak.Can.Basic.BackwardCompatibility;
 
 namespace ICs.IOExpanders.PCanBasic;
 
@@ -11,18 +12,21 @@ public class PCanUsb : ICanController
     }
 
     /// <inheritdoc/>
-    public ICanBus CreateCanBus(ICanBusConfiguration configuration)
+    public ICanBus CreateCanBus(CanBitrate bitrate, int busNumber = 0)
     {
-        if (configuration is PCanConfiguration cfg)
+        var config = new PCanConfiguration
         {
-            if (cfg.IsFD)
-            {
-                return new PCanFdBus(cfg);
-            }
+            Bitrate = bitrate,
+            BusHandle = (ushort)(PCANBasic.PCAN_USBBUS1 + busNumber)
+        };
 
-            return new PCanBus(cfg);
+        if (bitrate == CanBitrate.Can_FD)
+        {
+            return new PCanFdBus(config);
         }
-
-        else throw new ArgumentException($"Configuration is expected to be a {nameof(PCanConfiguration)}");
+        else
+        {
+            return new PCanBus(config);
+        }
     }
 }

@@ -58,7 +58,7 @@ public partial class Mcp2515
         }
 
         /// <inheritdoc/>
-        public ICanFrame ReadFrame()
+        public ICanFrame? ReadFrame()
         {
             var status = Controller.GetStatus();
 
