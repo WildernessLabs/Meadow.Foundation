@@ -11,7 +11,7 @@ namespace Meadow.Foundation.Displays
     /// Base class for TFT SPI displays
     /// These displays typically support 16 and 18 bit, some also include 8, 9, 12 and/or 24 bit color 
     /// </summary>
-    public abstract partial class TftSpiBase : IPixelDisplay, ISpiPeripheral, IDisposable
+    public abstract partial class TftSpiBase : IPixelDisplay, IColorInvertableDisplay, ISpiPeripheral, IDisposable
     {
         /// <summary>
         /// Temporary buffer that can be used to batch set address window buffer commands
