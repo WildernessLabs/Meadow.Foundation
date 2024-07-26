@@ -219,7 +219,7 @@ namespace Meadow.Foundation.Displays
         /// Invert the entire display
         /// </summary>
         /// <param name="invert">Invert if true, normal if false</param>
-        public void InvertDisplay(bool invert)
+        public void InvertDisplayColor(bool invert)
         {
             IsColorInverted = invert;
             dataCommandPort.State = false;

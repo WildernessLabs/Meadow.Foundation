@@ -127,7 +127,7 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// Invert the entire display (true) or return to normal mode (false).
         /// </summary>
-        public void InvertDisplay(bool invert)
+        public void InvertDisplayColor(bool invert)
         {
             if (invert)
             {

@@ -35,7 +35,7 @@ namespace Meadow.Foundation.Displays
         public abstract ColorMode DefaultColorMode { get; }
 
         /// <inheritdoc/>
-        public bool IsColorInverted { get; private set; } = false;
+        public bool IsColorInverted { get; protected set; } = false;
 
         /// <inheritdoc/>
         public int Width => imageBuffer.Width;
