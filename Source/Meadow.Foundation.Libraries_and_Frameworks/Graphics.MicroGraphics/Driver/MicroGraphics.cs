@@ -84,6 +84,23 @@ namespace Meadow.Foundation.Graphics
         private RotationType _rotation = RotationType.Default;
 
         /// <summary>
+        /// Current display color inversion
+        /// Note - not all displays support color inversion
+        /// </summary>
+        public bool ColorInversion
+        {
+            get
+            {
+                if (display is IColorInvertableDisplay { } d) { return d.IsColorInverted; }
+                return false;
+            }
+            set
+            {
+                if (display is IColorInvertableDisplay { } d) { d.InvertDisplayColor(value); }
+            }
+        }
+
+        /// <summary>
         /// Stroke / line thickness when drawing lines or shape outlines
         /// </summary>
         public int Stroke { get; set; } = 1;
