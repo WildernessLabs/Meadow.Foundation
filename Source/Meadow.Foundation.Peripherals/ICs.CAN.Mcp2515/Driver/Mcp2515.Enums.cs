@@ -2,50 +2,16 @@
 
 namespace Meadow.Foundation.ICs.CAN;
 
-public class OverloadFrame : Frame
-{
-}
-
-public class ActiveErrorFrame : Frame
-{
-}
-
-public class StandardRtrFrame : RemoteTransferRequestFrame
-{
-}
-
-public class ExtendedRtrFrame : RemoteTransferRequestFrame
-{
-}
-
-public class ExtendedDataFrame : DataFrame
-{
-}
-
-public class RemoteTransferRequestFrame : DataFrame
-{
-}
-
-public class StandardDataFrame : DataFrame
-{
-}
-
-public abstract class DataFrame : Frame
-{
-    public uint ID { get; set; }
-    public byte[] Payload { get; set; }
-}
-
-public abstract class Frame : ICanFrame
-{
-}
-
-public interface ICanFrame
-{
-}
-
 public partial class Mcp2515
 {
+    public enum CanOscillator
+    {
+        Osc_8MHz,
+        Osc_10MHz,
+        Osc_16MHz,
+        Osc_20MHz,
+    }
+
     private enum Register : byte
     {
         RXF0SIDH = 0x00,

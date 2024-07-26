@@ -5,41 +5,25 @@ using System.Threading;
 
 namespace Meadow.Foundation.ICs.CAN;
 
-public enum CanOscillator
-{
-    Osc_8MHz,
-    Osc_10MHz,
-    Osc_16MHz,
-    Osc_20MHz,
-}
-
-public enum CanBitrate
-{
-    Can_5kbps,
-    Can_10kbps,
-    Can_20kbps,
-    Can_33kbps,
-    Can_40kbps,
-    Can_50kbps,
-    Can_80kbps,
-    Can_83kbps,
-    Can_95kbps,
-    Can_100kbps,
-    Can_125kbps,
-    Can_200kbps,
-    Can_250kbps,
-    Can_500kbps,
-    Can_1Mbps,
-}
-
 /// <summary>
 /// Encapsulation for the Microchip MCP2515 CAN controller
 /// </summary>
-public partial class Mcp2515
+public partial class Mcp2515 : ICanController
 {
     public const SpiClockConfiguration.Mode DefaultSpiMode = SpiClockConfiguration.Mode.Mode0;
 
-    private ISpiBus Bus { get; }
+    private byte BRP_Default = 0x01;
+    private byte SJW_Default = 0x01;
+    private byte SAM_1x = 0x00;
+    private byte SAM_3x = 0x40;
+    private byte PHASE_SEG1_Default = 0x04;// = 0x01;
+    private byte PHASE_SEG2_Default = 0x03;//0x02;
+    private byte PROP_SEG_Default = 0x02;// 0x01;
+
+    private ICanBus? _busInstance;
+    private CanOscillator _oscillator;
+
+    private ISpiBus SpiBus { get; }
     private IDigitalOutputPort ChipSelect { get; }
     private Logger? Logger { get; }
     private IDigitalInterruptPort? InterruptPort { get; }
@@ -47,7 +31,6 @@ public partial class Mcp2515
     public Mcp2515(
         ISpiBus bus,
         IDigitalOutputPort chipSelect,
-        CanBitrate bitrate,
         CanOscillator oscillator = CanOscillator.Osc_8MHz,
         IDigitalInterruptPort? interruptPort = null,
         Logger? logger = null)
@@ -60,21 +43,30 @@ public partial class Mcp2515
             }
         }
 
-        Bus = bus;
+        SpiBus = bus;
         ChipSelect = chipSelect;
         Logger = logger;
         InterruptPort = interruptPort;
-
-        Initialize(bitrate, oscillator);
+        _oscillator = oscillator;
     }
 
-    private byte BRP_Default = 0x01;
-    private byte SJW_Default = 0x01;
-    private byte SAM_1x = 0x00;
-    private byte SAM_3x = 0x40;
-    private byte PHASE_SEG1_Default = 0x04;// = 0x01;
-    private byte PHASE_SEG2_Default = 0x03;//0x02;
-    private byte PROP_SEG_Default = 0x02;// 0x01;
+    public ICanBus CreateCanBus(CanBitrate bitrate)
+    {
+        return CreateCanBus(0, bitrate);
+    }
+
+    /// <inheritdoc/>
+    public ICanBus CreateCanBus(int busNumber, CanBitrate bitrate)
+    {
+        if (_busInstance == null)
+        {
+            Initialize(bitrate, _oscillator);
+
+            _busInstance = new Mcp2515CanBus(this);
+        }
+
+        return _busInstance;
+    }
 
     private void Initialize(CanBitrate bitrate, CanOscillator oscillator)
     {
@@ -139,40 +131,6 @@ public partial class Mcp2515
             0x60);
     }
 
-    public bool IsFrameAvailable()
-    {
-        var status = GetStatus();
-
-        if ((status & Status.RX0IF) == Status.RX0IF)
-        {
-            return true;
-        }
-        else if ((status & Status.RX1IF) == Status.RX1IF)
-        {
-            return true;
-        }
-
-        return false;
-    }
-
-    public ICanFrame? ReadFrame()
-    {
-        var status = GetStatus();
-
-        if ((status & Status.RX0IF) == Status.RX0IF)
-        { // message in buffer 0
-            return ReadDataFrame(RxBufferNumber.RXB0);
-        }
-        else if ((status & Status.RX1IF) == Status.RX1IF)
-        { // message in buffer 1
-            return ReadDataFrame(RxBufferNumber.RXB1);
-        }
-        else
-        { // no messages available
-            return null;
-        }
-    }
-
     private void ClearInterrupt(InterruptFlag flag)
     {
         ModifyRegister(Register.CANINTF, (byte)flag, 0);
@@ -180,7 +138,7 @@ public partial class Mcp2515
         LogRegisters(Register.CANINTF, 1);
     }
 
-    public void WriteFrame(ICanFrame frame, int bufferNumber)
+    private void WriteFrame(ICanFrame frame, int bufferNumber)
     {
         if (frame is DataFrame df)
         {
@@ -241,7 +199,7 @@ public partial class Mcp2515
 
         tx[0] = (byte)Command.Reset;
 
-        Bus.Exchange(ChipSelect, tx, rx);
+        SpiBus.Exchange(ChipSelect, tx, rx);
     }
 
     private void LogRegisters(Register start, byte count)
@@ -269,7 +227,7 @@ public partial class Mcp2515
         tx[0] = (byte)Command.ReadStatus;
         tx[1] = 0xff;
 
-        Bus.Exchange(ChipSelect, tx, rx);
+        SpiBus.Exchange(ChipSelect, tx, rx);
 
         return (Status)rx[1];
     }
@@ -283,7 +241,7 @@ public partial class Mcp2515
         tx[1] = (byte)register;
         tx[2] = value;
 
-        Bus.Exchange(ChipSelect, tx, rx);
+        SpiBus.Exchange(ChipSelect, tx, rx);
     }
 
     private void WriteRegister(Register register, Span<byte> data)
@@ -295,7 +253,7 @@ public partial class Mcp2515
         tx[1] = (byte)register;
         data.CopyTo(tx.Slice(2));
 
-        Bus.Exchange(ChipSelect, tx, rx);
+        SpiBus.Exchange(ChipSelect, tx, rx);
     }
 
     private byte[] ReadRegister(Register register, byte length = 1)
@@ -306,7 +264,7 @@ public partial class Mcp2515
         tx[0] = (byte)Command.Read;
         tx[1] = (byte)register;
 
-        Bus.Exchange(ChipSelect, tx, rx);
+        SpiBus.Exchange(ChipSelect, tx, rx);
 
         return rx.Slice(2).ToArray();
     }
@@ -321,7 +279,7 @@ public partial class Mcp2515
         tx[2] = mask;
         tx[3] = value;
 
-        Bus.Exchange(ChipSelect, tx, rx);
+        SpiBus.Exchange(ChipSelect, tx, rx);
     }
 
     private void EnableMasksAndFilters(bool enable)
@@ -374,14 +332,14 @@ public partial class Mcp2515
         // read 5 bytes
         var buffer = ReadRegister(sidh_reg, 5);
 
-        uint id = (uint)((buffer[MCP_SIDH] << 3) + (buffer[MCP_SIDL] >> 5));
+        int id = (buffer[MCP_SIDH] << 3) + (buffer[MCP_SIDL] >> 5);
 
         bool isExtended = false;
 
         // check to see if it's an extended ID
         if ((buffer[MCP_SIDL] & TXB_EXIDE_MASK) == TXB_EXIDE_MASK)
         {
-            id = (uint)((id << 2) + (buffer[MCP_SIDL] & 0x03));
+            id = (id << 2) + (buffer[MCP_SIDL] & 0x03);
             id = (id << 8) + buffer[MCP_EID8];
             id = (id << 8) + buffer[MCP_EID0];
             isExtended = true;

@@ -1,4 +1,6 @@
-﻿namespace Meadow.Foundation.ICs.CAN;
+﻿using Meadow.Hardware;
+
+namespace Meadow.Foundation.ICs.CAN;
 
 public partial class Mcp2515
 {
