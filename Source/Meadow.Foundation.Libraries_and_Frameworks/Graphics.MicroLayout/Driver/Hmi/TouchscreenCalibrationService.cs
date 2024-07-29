@@ -109,8 +109,9 @@ public class TouchscreenCalibrationService
             _screen.Controls.Clear();
             if (saveCalibrationData)
             {
-                _instruction.Text = "Saving Calibration Data...";
+                Resolver.Log.Info($"Saving Calibration Data...");
                 SaveCalibrationData(_calPoints);
+                Resolver.Log.Info($"Saved");
             }
             CalibrationComplete?.Invoke(this, _calPoints);
         });
