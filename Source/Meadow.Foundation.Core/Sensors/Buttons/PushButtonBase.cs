@@ -148,7 +148,7 @@ public abstract class PushButtonBase : IButton, IDisposable
     /// Returns the sanitized state of the button
     /// Inverts the state when using a pull-up resistor
     /// </summary>
-    protected bool GetNormalizedState(bool state)
+    protected virtual bool GetNormalizedState(bool state)
     {
         return DigitalIn.Resistor switch
         {

@@ -55,6 +55,11 @@ namespace Meadow.Foundation.Graphics
         public int PointCount => PathActions.Count;
 
         /// <summary>
+        /// The collection of points 
+        /// </summary>
+        public Point[] Points { get; private set; } = Array.Empty<Point>();
+
+        /// <summary>
         /// The number of verbs/actions used
         /// </summary>
         public int VerbCount => PathActions.Count;
@@ -381,12 +386,12 @@ namespace Meadow.Foundation.Graphics
             PathActions.Add(new PathAction(GetPathStart().PathPoint, VerbType.Close));
         }
 
-        PathAction GetLastAction()
+        private PathAction GetLastAction()
         {
             return PathActions.Last();
         }
 
-        PathAction GetPathStart()
+        private PathAction GetPathStart()
         {
             var action = PathActions.Where(p => p.Verb == VerbType.Close).LastOrDefault();
 
