@@ -17,6 +17,8 @@ namespace Meadow.Foundation.Sensors.Light
         ByteCommsSensorBase<(Illuminance? FullSpectrum, Illuminance? Infrared, Illuminance? VisibleLight, Illuminance? Integrated)>,
         ILightSensor, IPowerControllablePeripheral
     {
+        private event EventHandler<IChangeResult<Illuminance>> _illuminanceHandlers = default!;
+
         /// <summary>
         /// Raised when Full Spectrum Illuminance value changes
         /// </summary>
@@ -35,7 +37,16 @@ namespace Meadow.Foundation.Sensors.Light
         /// <summary>
         /// Raised when Luminosity value changes
         /// </summary>
-        public event EventHandler<IChangeResult<Illuminance>> Updated = default!;
+        public event EventHandler<IChangeResult<Illuminance>> LuminosityUpdated = default!;
+
+        /// <summary>
+        /// Raised when Luminosity value changes
+        /// </summary>
+        event EventHandler<IChangeResult<Illuminance>> ISamplingSensor<Illuminance>.Updated
+        {
+            add => _illuminanceHandlers += value;
+            remove => _illuminanceHandlers -= value;
+        }
 
         /// <summary>
         /// Sensor package ID
@@ -165,7 +176,8 @@ namespace Meadow.Foundation.Sensors.Light
             }
             if (changeResult.New.Integrated is { } integrated)
             {
-                Updated?.Invoke(this, new ChangeResult<Illuminance>(integrated, changeResult.Old?.Integrated));
+                LuminosityUpdated?.Invoke(this, new ChangeResult<Illuminance>(integrated, changeResult.Old?.Integrated));
+                _illuminanceHandlers?.Invoke(this, new ChangeResult<Illuminance>(integrated, changeResult.Old?.FullSpectrum));
             }
 
             base.RaiseEventsAndNotify(changeResult);
@@ -229,7 +241,7 @@ namespace Meadow.Foundation.Sensors.Light
         /// <returns>Multiplication factor for the specified gain</returns>
         private double GainMultiplier(GainFactor gain)
         {
-            double g = 1.0;             // Default gain = 1.
+            double g = 1.0;
             switch (gain)
             {
                 case GainFactor.Low:

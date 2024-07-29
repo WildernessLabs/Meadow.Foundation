@@ -233,7 +233,6 @@ namespace Meadow.Foundation.Displays
         byte ILI9225_VCI_RECYCLING = 0x15;  // VCI Recycling
         byte ILI9225_RAM_ADDR_SET1 = 0x20;  // Horizontal GRAM Address Set
         byte ILI9225_RAM_ADDR_SET2 = 0x21;  // Vertical GRAM Address Set
-        byte ILI9225_GRAM_DATA_REG = 0x22;  // GRAM Data Register
         byte ILI9225_GATE_SCAN_CTRL = 0x30;  // Gate Scan Control Register
         byte ILI9225_VERTICAL_SCROLL_CTRL1 = 0x31;  // Vertical Scroll Control 1 Register
         byte ILI9225_VERTICAL_SCROLL_CTRL2 = 0x32;  // Vertical Scroll Control 2 Register
