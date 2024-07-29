@@ -170,6 +170,9 @@ public class HistogramChart : ChartControl
 
                 var barHeight = (int)(heightScale * pair.Y);
 
+                // make sure we don't draw off-chart for over-scale values
+                if (barHeight > ChartAreaHeight) { barHeight = ChartAreaHeight; }
+
                 DrawValueBar(
                     graphics,
                     s,
@@ -180,13 +183,6 @@ public class HistogramChart : ChartControl
                     barHeight,
                     seriesList[s].ForeColor,
                     true);
-                //graphics.DrawRectangle(
-                //    x - halfWidth,
-                //    ChartAreaBottom - barHeight,
-                //    barWidth,
-                //    barHeight,
-                //    color: seriesList[s].ForeColor,
-                //    filled: true);
             }
         }
 
