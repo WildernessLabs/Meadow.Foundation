@@ -1,18 +1,27 @@
 using Meadow.Foundation.Helpers;
 using Meadow.Hardware;
+using Meadow.Units;
 using System;
+using System.Threading.Tasks;
 
 namespace Meadow.Foundation.RTCs
 {
     /// <summary>
-    /// DS323X real-time clock
+    /// Base class for DS323x family of real-time clocks
     /// </summary>
-    public partial class Ds323x : II2cPeripheral, IDisposable
+    public partial class Ds323x : PollingSensorBase<Temperature>, IRealTimeClock, II2cPeripheral, IDisposable
     {
         /// <summary>
         /// The default I2C address for the peripheral
         /// </summary>
         public byte DefaultI2cAddress => (byte)Addresses.Default;
+
+        /// <inheritdoc/>
+        public bool IsRunning
+        {
+            get => true;
+            set => throw new NotImplementedException();
+        }
 
         /// <summary>
         /// Is the object disposed
@@ -75,68 +84,6 @@ namespace Meadow.Foundation.RTCs
         private readonly Memory<byte> readBuffer;
 
         /// <summary>
-        /// Create a new Ds323x object
-        /// </summary>
-        protected Ds323x(I2cCommunications i2cComms, IPin? interruptPin)
-        {
-            this.i2cComms = i2cComms;
-
-            if (interruptPin != null)
-            {
-                var interruptPort = interruptPin.CreateDigitalInterruptPort(InterruptMode.EdgeFalling, ResistorMode.InternalPullUp, TimeSpan.FromMilliseconds(10), TimeSpan.FromMilliseconds(10));
-                createdPort = true;
-
-                Initialize(interruptPort);
-            }
-
-            readBuffer = new byte[0x12];
-        }
-
-        /// <summary>
-        /// Create a new Ds323x object
-        /// </summary>
-        protected Ds323x(I2cCommunications i2cComms, IDigitalInterruptPort? interruptPort)
-        {
-            this.i2cComms = i2cComms;
-
-            if (interruptPort != null)
-            {
-                Initialize(interruptPort);
-            }
-        }
-
-        private void Initialize(IDigitalInterruptPort interruptPort)
-        {
-            switch (interruptPort.InterruptMode)
-            {
-                case InterruptMode.EdgeFalling:
-                case InterruptMode.EdgeBoth:
-                    // we need a rising edge, so all good;
-                    break;
-                default:
-                    throw new DeviceConfigurationException("RTC alarms require a falling-edge enabled interrupt port");
-            }
-
-            InterruptPort = interruptPort;
-            InterruptPort.Changed += (s, cr) =>
-            {
-                //Alarm interrupt has been raised, work out which one and raise the necessary event.
-                if ((alarm1Delegate != null) || (alarm2Delegate != null))
-                {
-                    var alarm = WhichAlarm;
-                    if (((alarm == Alarm.Alarm1Raised) || (alarm == Alarm.BothAlarmsRaised)) && (alarm1Delegate != null))
-                    {
-                        alarm1Delegate(this);
-                    }
-                    if (((alarm == Alarm.Alarm2Raised) || (alarm == Alarm.BothAlarmsRaised)) && (alarm2Delegate != null))
-                    {
-                        alarm2Delegate(this);
-                    }
-                }
-            };
-        }
-
-        /// <summary>
         /// Delegate for the alarm events.
         /// </summary>
         public delegate void AlarmRaised(object sender);
@@ -188,33 +135,42 @@ namespace Meadow.Foundation.RTCs
         /// <summary>
         /// Get / Set the current date and time.
         /// </summary>
-        public DateTime CurrentDateTime
+        public DateTimeOffset CurrentDateTime
         {
-            get
+            get => GetTime();
+            set => SetTime(value);
+        }
+
+        /// <inheritdoc/>
+        protected override Task<Temperature> ReadSensor()
+        {
+            var ctl = i2cComms.ReadRegister(Registers.Control);
+            ctl |= 1 << 5;
+            i2cComms.WriteRegister(Registers.Control, ctl);
+
+            byte status;
+
+            do
             {
-                var data = readBuffer.Span[0..DATE_TIME_REGISTERS_SIZE];
-                i2cComms.ReadRegister(Registers.Seconds, data);
-                return DecodeDateTimeRegisters(data);
-            }
-            set
+                status = i2cComms.ReadRegister(Registers.ControlStatus);
+            } while ((status & (1 << 2)) != (1 << 2));
+
+            var data = readBuffer.Span[0..2];
+            i2cComms.ReadRegister(Registers.TemperatureMSB, data);
+            if ((data[0] & 0x80) != 0)
             {
-                i2cComms.WriteRegister(Registers.Seconds, EncodeDateTimeRegisters(value));
+                // negative
+                data[0] = (byte)(data[0] | ~((1 << 8) - 1));
             }
+
+            var temperature = 0.25 * (data[1] >> 6) + data[0];
+            return Task.FromResult(new Temperature(temperature, Temperature.UnitType.Celsius));
         }
 
         /// <summary>
         /// Get the current die temperature.
         /// </summary>
-        public Units.Temperature Temperature
-        {
-            get
-            {
-                var data = readBuffer.Span[0..2];
-                i2cComms.ReadRegister(Registers.TemperatureMSB, data);
-                var temperature = (ushort)((data[0] << 2) | (data[1] >> 6));
-                return new Units.Temperature(temperature * 0.25, Units.Temperature.UnitType.Celsius);
-            }
-        }
+        public Temperature Temperature => Conditions;
 
         /// <summary>
         /// I2C Communication bus used to communicate with the i2cComms
@@ -279,12 +235,87 @@ namespace Meadow.Foundation.RTCs
         }
 
         /// <summary>
-        /// Decode the register contents and create a DateTime version of the
-        /// register contents.
+        /// Create a new Ds323x object
+        /// </summary>
+        protected Ds323x(I2cCommunications i2cComms, IPin? interruptPin)
+        {
+            this.i2cComms = i2cComms;
+
+            if (interruptPin != null)
+            {
+                var interruptPort = interruptPin.CreateDigitalInterruptPort(InterruptMode.EdgeFalling, ResistorMode.InternalPullUp, TimeSpan.FromMilliseconds(10), TimeSpan.FromMilliseconds(10));
+                createdPort = true;
+
+                Initialize(interruptPort);
+            }
+
+            readBuffer = new byte[0x12];
+        }
+
+        /// <summary>
+        /// Create a new Ds323x object
+        /// </summary>
+        protected Ds323x(I2cCommunications i2cComms, IDigitalInterruptPort? interruptPort)
+        {
+            this.i2cComms = i2cComms;
+
+            if (interruptPort != null)
+            {
+                Initialize(interruptPort);
+            }
+        }
+
+        private void Initialize(IDigitalInterruptPort interruptPort)
+        {
+            switch (interruptPort.InterruptMode)
+            {
+                case InterruptMode.EdgeFalling:
+                case InterruptMode.EdgeBoth:
+                    // we need a rising edge, so all good;
+                    break;
+                default:
+                    throw new DeviceConfigurationException("RTC alarms require a falling-edge enabled interrupt port");
+            }
+
+            InterruptPort = interruptPort;
+            InterruptPort.Changed += (s, cr) =>
+            {
+                //Alarm interrupt has been raised, work out which one and raise the necessary event.
+                if ((alarm1Delegate != null) || (alarm2Delegate != null))
+                {
+                    var alarm = WhichAlarm;
+                    if (((alarm == Alarm.Alarm1Raised) || (alarm == Alarm.BothAlarmsRaised)) && (alarm1Delegate != null))
+                    {
+                        alarm1Delegate(this);
+                    }
+                    if (((alarm == Alarm.Alarm2Raised) || (alarm == Alarm.BothAlarmsRaised)) && (alarm2Delegate != null))
+                    {
+                        alarm2Delegate(this);
+                    }
+                }
+            };
+        }
+
+        /// <inheritdoc/>
+        public DateTimeOffset GetTime()
+        {
+            var data = readBuffer.Span[0..DATE_TIME_REGISTERS_SIZE];
+            i2cComms.ReadRegister(Registers.Seconds, data);
+            return DecodeDateTimeRegisters(data);
+        }
+
+        /// <inheritdoc/>
+        public void SetTime(DateTimeOffset time)
+        {
+            i2cComms.WriteRegister(Registers.Seconds, EncodeDateTimeRegisters(time));
+        }
+
+        /// <summary>
+        /// Get the the date and time register contents
         /// </summary>
         /// <param name="data">Register contents.</param>
-        /// <returns>DateTime object version of the data.</returns>
-        protected DateTime DecodeDateTimeRegisters(Span<byte> data)
+        /// <returns>DateTimeOffset object version of the data.</returns>
+        protected DateTimeOffset DecodeDateTimeRegisters(Span<byte> data)
         {
             var seconds = Converters.BCDToByte(data[0]);
             var minutes = Converters.BCDToByte(data[1]);
@@ -310,7 +341,15 @@ namespace Meadow.Foundation.RTCs
             {
                 year += 100;
             }
-            return new DateTime(year, month, day, hour, minutes, seconds);
+            try
+            {
+                return new DateTime(year, month, day, hour, minutes, seconds);
+            }
+            catch
+            {
+                // uninitialized RTC will have zeros, which won't parse to a DateTimeOffset
+                return DateTime.MinValue;
+            }
         }
 
         /// <summary>
@@ -318,7 +357,7 @@ namespace Meadow.Foundation.RTCs
         /// </summary>
         /// <param name="dt">DateTime object to encode.</param>
         /// <returns>Bytes to send to the DS323x chip.</returns>
-        protected byte[] EncodeDateTimeRegisters(DateTime dt)
+        protected byte[] EncodeDateTimeRegisters(DateTimeOffset dt)
         {
             var data = new byte[7];
 
@@ -331,7 +370,7 @@ namespace Meadow.Foundation.RTCs
             if (dt.Year > 1999)
             {
                 data[5] |= 0x80;
-                data[6] = Converters.ByteToBCD((byte)((dt.Year - 2000) & 0xff));
+            data[6] = Converters.ByteToBCD((byte)((dt.Year - 2000) & 0xff));
             }
             else
             {
@@ -347,32 +386,7 @@ namespace Meadow.Foundation.RTCs
         /// <returns>Byte representation of the day of the week (Sunday = 1).</returns>
         protected byte DayOfWeekToByte(DayOfWeek day)
         {
-            byte result = 1;
-            switch (day)
-            {
-                case DayOfWeek.Sunday:
-                    result = 1;
-                    break;
-                case DayOfWeek.Monday:
-                    result = 2;
-                    break;
-                case DayOfWeek.Tuesday:
-                    result = 3;
-                    break;
-                case DayOfWeek.Wednesday:
-                    result = 4;
-                    break;
-                case DayOfWeek.Thursday:
-                    result = 5;
-                    break;
-                case DayOfWeek.Friday:
-                    result = 6;
-                    break;
-                case DayOfWeek.Saturday:
-                    result = 7;
-                    break;
-            }
-            return result;
+            return (byte)(day + 1);
         }
 
         /// <summary>
@@ -381,7 +395,7 @@ namespace Meadow.Foundation.RTCs
         /// <param name="alarm">Define the alarm to be set.</param>
         /// <param name="time">Date and time for the alarm.</param>
         /// <param name="type">Type of alarm to set.</param>
-        public void SetAlarm(Alarm alarm, DateTime time, AlarmType type)
+        public void SetAlarm(Alarm alarm, DateTimeOffset time, AlarmType type)
         {
             byte[] data;
             var register = Registers.Alarm1Seconds;

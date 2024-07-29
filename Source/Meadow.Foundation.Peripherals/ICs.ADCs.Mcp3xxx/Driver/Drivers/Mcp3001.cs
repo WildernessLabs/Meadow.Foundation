@@ -51,7 +51,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         public IAnalogInputPort CreateAnalogInputPort(int sampleCount = 64)
         {
-            return CreateAnalogInputPort(sampleCount, TimeSpan.FromSeconds(1), new Voltage(0));
+            return CreateAnalogInputPort(sampleCount, TimeSpan.FromSeconds(1), DefaultReferenceVoltage);
         }
 
         /// <summary>

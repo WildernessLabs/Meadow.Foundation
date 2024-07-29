@@ -11,9 +11,7 @@ namespace Meadow.Foundation.Leds
     {
         readonly bool createdPort = false;
 
-        /// <summary>
-        /// Turns on LED with current color or turns it off
-        /// </summary>
+        /// <inheritdoc/>
         public bool IsOn
         {
             get => isOn;

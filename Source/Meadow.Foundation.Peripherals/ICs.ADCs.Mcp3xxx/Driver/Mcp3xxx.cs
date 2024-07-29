@@ -18,7 +18,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <summary>
         /// Did we create the port(s) used by the peripheral
         /// </summary>
-        readonly bool createdPort = false;
+        private readonly bool createdPort = false;
 
         /// <summary>
         /// Gets the underlying ISpiCommunications instance
@@ -34,6 +34,11 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// The default SPI bus speed for the device
         /// </summary>
         public Frequency DefaultSpiBusSpeed => new(10000, Frequency.UnitType.Kilohertz);
+
+        /// <summary>
+        /// The default reference voltage for the device
+        /// </summary>
+        public Voltage DefaultReferenceVoltage => new Voltage(3.3);
 
         /// <summary>
         /// The SPI bus speed for the device
@@ -69,7 +74,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         internal int AdcMaxValue { get; set; }
 
-        IDigitalOutputPort chipSelectPort;
+        private IDigitalOutputPort chipSelectPort;
 
         /// <summary>
         /// Mcp3xxx base class constructor
@@ -113,7 +118,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <returns>An instance of <see cref="IAnalogInputPort"/> that represents the analog input on the specified pin</returns>
         protected IAnalogInputPort CreateAnalogInputPort(IPin pin, int sampleCount = 64)
         {
-            return CreateAnalogInputPort(pin, sampleCount, TimeSpan.FromSeconds(1), new Voltage(0));
+            return CreateAnalogInputPort(pin, sampleCount, TimeSpan.FromSeconds(1), DefaultReferenceVoltage);
         }
 
         /// <summary>
@@ -305,7 +310,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 requestBuffer[i] = (byte)(adcRequest >> (bufferSize - i - 1) * 8);
             }
 
-            SpiComms.Exchange(requestBuffer, responseBuffer);
+            SpiComms.Exchange(requestBuffer, responseBuffer, DuplexType.Full);
 
             // copy the response from the ADC to the return value
             for (int i = 0; i < bufferSize; i++)
@@ -315,13 +320,13 @@ namespace Meadow.Foundation.ICs.IOExpanders
             }
 
             // test the response from the ADC to verify the null bit is 0
-            if ((returnValue & (1 << adcResolutionInBits)) != 0)
+            if ((returnValue & (1 << AdcResolutionInBits)) != 0)
             {
                 return 0;
             }
 
             // return the ADC response with any possible higher bits masked out
-            return returnValue & (1 << adcResolutionInBits) - 1;
+            return returnValue & (1 << AdcResolutionInBits) - 1;
         }
 
         ///<inheritdoc/>

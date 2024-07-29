@@ -17,7 +17,7 @@ namespace Meadow.Foundation.Sensors.Switches
         public bool IsOn
         {
             get => DigitalInputPort.State;
-            protected set => Changed(this, new EventArgs());
+            protected set => Changed(this, EventArgs.Empty);
         }
 
         /// <summary>

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 namespace Meadow.Foundation.Sensors.Temperature
 {
     /// <summary>
-    /// TMP102 Temperature sensor object
+    /// LM75 Temperature sensor object
     /// </summary>    
     public partial class Lm75 : ByteCommsSensorBase<Units.Temperature>,
         ITemperatureSensor, II2cPeripheral
@@ -19,10 +19,10 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// <summary>
         /// The Temperature value from the last reading
         /// </summary>
-        public Units.Temperature? Temperature { get; protected set; }
+        public Units.Temperature? Temperature => Conditions;
 
         /// <summary>
-        /// Create a new TMP102 object using the default configuration for the sensor
+        /// Create a new LM75 object using the default configuration for the sensor
         /// </summary>
         /// <param name="i2cBus">The I2C bus</param>
         /// <param name="address">I2C address of the sensor</param>

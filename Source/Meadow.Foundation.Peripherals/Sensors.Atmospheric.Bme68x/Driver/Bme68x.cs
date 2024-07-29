@@ -138,7 +138,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             {
                 var gasConversion = busComms.ReadRegister((byte)Registers.CTRL_GAS_1);
                 byte mask = 0x10;
-                gasConversion = (byte)((gasConversion & (byte)~mask) | Convert.ToByte(value) << 4);
+                gasConversion = (byte)((gasConversion & (byte)~mask) | Convert.ToByte(value) << 5);
 
                 busComms.WriteRegister((byte)Registers.CTRL_GAS_1, gasConversion);
                 gasConversionIsEnabled = value;
@@ -587,10 +587,11 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         {
             if (calibration == null) throw new NullReferenceException("Calibration must be defined");
 
-            var var1 = 1340.0 + 5.0 * calibration.RangeSwErr;
-            var var2 = var1 * (1.0 + k1Lookup[gasRange] / 100.0);
-            var var3 = 1.0 + k2Lookup[gasRange] / 100.0;
-            var gasResistance = 1.0 / (var3 * 0.000000125 * (1 << gasRange) * ((adcGasRes - 512.0) / var2 + 1.0));
+            var var1 = ((uint)262144) >> gasRange;
+            var var2 = (adcGasRes) - 512;
+            var2 *= 3;
+            var2 = 4096 + var2;
+            var gasResistance = 1_000_000.0 * var1 / var2;
 
             return new Resistance(gasResistance, Resistance.UnitType.Ohms);
         }

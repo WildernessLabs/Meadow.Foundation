@@ -72,7 +72,7 @@ namespace Displays.Ssd130x.Ssd1309_Game_Sample
                 return;
 
             var head = new Point((Point)SnakePosition[0]);
-            var tail = new Point((Point)SnakePosition[SnakePosition.Count - 1]);
+            var tail = new Point((Point)SnakePosition[^1]);
 
             if (Direction == SnakeDirection.Left)
                 head.X--;

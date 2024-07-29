@@ -20,7 +20,7 @@
     <ProjectReference Include="..\..\..\..\..\..\Meadow.Core\Source\implementations\f7\Meadow.F7\Meadow.F7.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <None Update="meadow.config.yaml">
+    <None Update="app.build.yaml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

@@ -24,8 +24,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <param name="address">The I2C address</param>
         /// <param name="oscillatorFrequency">The frequency of the oscillator connected to the SC16IS</param>
         /// <param name="irq">An optional interrupt port used to detect change conditions on the peripheral</param>
-        public Sc16is7x2(II2cBus i2cBus, Frequency oscillatorFrequency, Addresses address = Addresses.Default, IDigitalInterruptPort? irq = null)
-            : this(oscillatorFrequency, irq)
+        /// <param name="latchGpioInterrupt">An interrupt triggered by a GPIO change, will remain until handled. State will also be kept.</param>
+        public Sc16is7x2(II2cBus i2cBus, Frequency oscillatorFrequency, Addresses address = Addresses.Default, IDigitalInterruptPort? irq = null, bool latchGpioInterrupt = false)
+            : this(oscillatorFrequency, irq, latchGpioInterrupt)
         {
             _i2cComms = new I2cCommunications(i2cBus, (byte)address);
         }

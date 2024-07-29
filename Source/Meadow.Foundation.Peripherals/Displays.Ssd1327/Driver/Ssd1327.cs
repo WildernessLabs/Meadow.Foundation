@@ -10,7 +10,7 @@ namespace Meadow.Foundation.Displays
     /// <summary>
     /// Provides an interface to the Ssd1327 grayscale OLED display
     /// </summary>
-    public partial class Ssd1327 : IPixelDisplay, ISpiPeripheral, IDisposable
+    public partial class Ssd1327 : IPixelDisplay, ISpiPeripheral, IColorInvertableDisplay, IDisposable
     {
         /// <inheritdoc/>
         public ColorMode ColorMode => ColorMode.Format4bppGray;
@@ -60,6 +60,9 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         public bool IsDisposed { get; private set; }
 
+        /// <inheritdoc/>
+        public bool IsColorInverted { get; private set; } = false;
+
         /// <summary>
         /// Did we create the port(s) used by the peripheral
         /// </summary>
@@ -108,10 +111,18 @@ namespace Meadow.Foundation.Displays
 
             this.dataCommandPort = dataCommandPort;
             this.resetPort = resetPort;
+            this.chipSelectPort = chipSelectPort;
 
             spiComms = new SpiCommunications(spiBus, this.chipSelectPort = chipSelectPort, DefaultSpiBusSpeed, DefaultSpiBusMode);
 
             Initialize();
+        }
+
+        /// <inheritdoc/>
+        public void InvertDisplayColor(bool invert)
+        {
+            SendCommand(invert ? (byte)0xA7 : (byte)0xA6);
+            IsColorInverted = invert;
         }
 
         /// <summary>

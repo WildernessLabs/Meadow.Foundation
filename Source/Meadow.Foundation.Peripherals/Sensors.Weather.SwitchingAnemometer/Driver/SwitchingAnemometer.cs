@@ -17,7 +17,7 @@ namespace Meadow.Foundation.Sensors.Weather
         /// <summary>
         /// The current wind speed
         /// </summary>
-        public Speed? WindSpeed { get; protected set; }
+        public Speed? WindSpeed => Conditions;
 
         /// <summary>
         /// Time to wait if no events come in to register a zero speed wind
@@ -53,7 +53,7 @@ namespace Meadow.Foundation.Sensors.Weather
 
         private readonly IDigitalInterruptPort inputPort;
         private bool running = false;
-        private readonly Queue<DigitalPortResult>? samples;
+        private readonly Queue<DigitalPortResult> samples = new();
 
         /// <summary>
         /// Is the object disposed
@@ -63,7 +63,7 @@ namespace Meadow.Foundation.Sensors.Weather
         /// <summary>
         /// Did we create the port(s) used by the peripheral
         /// </summary>
-        readonly bool createdPort = false;
+        private readonly bool createdPort = false;
 
         /// <summary>
         /// Creates a new `SwitchingAnemometer` using the specific digital input
@@ -86,8 +86,6 @@ namespace Meadow.Foundation.Sensors.Weather
         public SwitchingAnemometer(IDigitalInterruptPort inputPort)
         {
             this.inputPort = inputPort;
-
-            samples = new Queue<DigitalPortResult>();
         }
 
         private void SubscribeToInputPortEvents() => inputPort.Changed += HandleInputPortChange;
@@ -98,11 +96,14 @@ namespace Meadow.Foundation.Sensors.Weather
         {
             if (!running) { return; }
 
-            samples?.Enqueue(result);
-
-            if (samples?.Count > sampleCount)
+            lock (samples)
             {
-                samples.Dequeue();
+                samples?.Enqueue(result);
+
+                if (samples?.Count > sampleCount)
+                {
+                    samples.Dequeue();
+                }
             }
         }
 
@@ -152,28 +153,31 @@ namespace Meadow.Foundation.Sensors.Weather
                 StopUpdating();
             }
 
-            if (samples?.Count > 0 && (DateTime.UtcNow - samples?.Peek().New.Time > NoWindTimeout))
-            {   //we've exceeded the no wind interval time 
-                samples?.Clear(); //will force a zero reading
-            }
-            // if we've reached our sample count
-            else if (samples?.Count >= SampleCount)
+            lock (samples)
             {
-                float speedSum = 0f;
-
-                // sum up the speeds
-                foreach (var sample in samples)
-                {   // skip the first (old will be null)
-                    if (sample.Old is { } old)
-                    {
-                        speedSum += SwitchIntervalToKmh(sample.New.Time - old.Time);
-                    }
+                if (samples?.Count > 0 && (DateTime.UtcNow - samples?.Peek().New.Time > NoWindTimeout))
+                {   //we've exceeded the no wind interval time 
+                    samples?.Clear(); //will force a zero reading
                 }
+                // if we've reached our sample count
+                else if (samples?.Count >= SampleCount)
+                {
+                    float speedSum = 0f;
 
-                // average the speeds
-                float oversampledSpeed = speedSum / (samples.Count - 1);
+                    // sum up the speeds
+                    foreach (var sample in samples)
+                    {   // skip the first (old will be null)
+                        if (sample.Old is { } old)
+                        {
+                            speedSum += SwitchIntervalToKmh(sample.New.Time - old.Time);
+                        }
+                    }
 
-                return new Speed(oversampledSpeed, SU.KilometersPerHour);
+                    // average the speeds
+                    float oversampledSpeed = speedSum / (samples.Count - 1);
+
+                    return new Speed(oversampledSpeed, SU.KilometersPerHour);
+                }
             }
 
             //otherwise return 0 speed

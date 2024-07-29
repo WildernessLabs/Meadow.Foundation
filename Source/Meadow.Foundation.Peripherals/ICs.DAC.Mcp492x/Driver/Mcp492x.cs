@@ -96,7 +96,7 @@ public abstract partial class Mcp492x : ISpiPeripheral, IAnalogOutputController
         return CreateAnalogOutputPort(pin, Gain.Gain1x, false);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc cref="CreateAnalogOutputPort(IPin)"/>
     public IAnalogOutputPort CreateAnalogOutputPort(IPin pin, Gain gain = Gain.Gain1x, bool bufferedInput = false)
     {
         if (pin.Controller == null || !pin.Controller.Equals(this))

@@ -113,7 +113,6 @@ namespace Meadow.Foundation.Displays
             showPreamble = new byte[] { 0x21, 0x00, (byte)(width - 1), 0x22, 0x00, (byte)(height / 8 - 1) };
 
             // Finally, put the display into a known state.
-            InvertDisplay = false;
             Sleep = false;
             Contrast = 0xff;
             StopScrolling();

@@ -1,19 +1,26 @@
 # Meadow.Foundation.RTCs.Ds323x
 
-**Ds323x I2C real time clock (DS3231)**
+**Ds323x I2C family of real time clocks (DS3231, DS3231M, DS3232)**
 
-The **Ds323x** library is designed for the [Wilderness Labs](www.wildernesslabs.co) Meadow .NET IoT platform and is part of [Meadow.Foundation](https://developer.wildernesslabs.co/Meadow/Meadow.Foundation/).
+The **Ds323x** library is included in the **Meadow.Foundation.RTCs.Ds323x** nuget package and is designed for the [Wilderness Labs](www.wildernesslabs.co) Meadow .NET IoT platform.
 
-The **Meadow.Foundation** peripherals library is an open-source repository of drivers and libraries that streamline and simplify adding hardware to your C# .NET Meadow IoT application.
+This driver is part of the [Meadow.Foundation](https://developer.wildernesslabs.co/Meadow/Meadow.Foundation/) peripherals library, an open-source repository of drivers and libraries that streamline and simplify adding hardware to your C# .NET Meadow IoT applications.
 
 For more information on developing for Meadow, visit [developer.wildernesslabs.co](http://developer.wildernesslabs.co/).
 
 To view all Wilderness Labs open-source projects, including samples, visit [github.com/wildernesslabs](https://github.com/wildernesslabs/).
 
+## Installation
+
+You can install the library from within Visual studio using the the NuGet Package Manager or from the command line using the .NET CLI:
+
+`dotnet add package Meadow.Foundation.RTCs.Ds323x`
 ## Usage
 
 ```csharp
 Ds3231 sensor;
+
+readonly TimeSpan timezoneOffset = new TimeSpan(-7, 0, 0);
 
 public override Task Initialize()
 {
@@ -27,16 +34,16 @@ public override Task Initialize()
 
 public override Task Run()
 {
-    sensor.CurrentDateTime = new DateTime(2020, 1, 1);
+    sensor.CurrentDateTime = new DateTimeOffset(new DateTime(2024, 1, 1), timezoneOffset);
 
     Resolver.Log.Info($"Current time: {sensor.CurrentDateTime}");
     Resolver.Log.Info($"Temperature: {sensor.Temperature}");
 
-    sensor.ClearInterrupt(Ds323x.Alarm.BothAlarmsRaised);
+    sensor.ClearInterrupt(Ds3231.Alarm.BothAlarmsRaised);
 
-    sensor.SetAlarm(Ds323x.Alarm.Alarm1Raised,
-        new DateTime(2020, 1, 1, 1, 0, 0),
-        Ds323x.AlarmType.WhenSecondsMatch);
+    sensor.SetAlarm(Ds3231.Alarm.Alarm1Raised,
+        new DateTimeOffset(new DateTime(2024, 1, 1, 1, 0, 0), timezoneOffset),
+        Ds3231.AlarmType.WhenSecondsMatch);
 
     sensor.DisplayRegisters();
 
@@ -61,3 +68,20 @@ private void Sensor_OnAlarm1Raised(object sender)
 ## Need Help?
 
 If you have questions or need assistance, please join the Wilderness Labs [community on Slack](http://slackinvite.wildernesslabs.co/).
+## About Meadow
+
+Meadow is a complete, IoT platform with defense-grade security that runs full .NET applications on embeddable microcontrollers and Linux single-board computers including Raspberry Pi and NVIDIA Jetson.
+
+### Build
+
+Use the full .NET platform and tooling such as Visual Studio and plug-and-play hardware drivers to painlessly build IoT solutions.
+
+### Connect
+
+Utilize native support for WiFi, Ethernet, and Cellular connectivity to send sensor data to the Cloud and remotely control your peripherals.
+
+### Deploy
+
+Instantly deploy and manage your fleet in the cloud for OtA, health-monitoring, logs, command + control, and enterprise backend integrations.
+
+

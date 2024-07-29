@@ -10,7 +10,7 @@
         /// <param name="pinA2">State of A2 address pin - true if high</param>
         /// <param name="isATypeDevice">Is an A hardware variant, this shifts the address returned by 24</param>
         /// <returns>The device address</returns>
-        public static byte GetAddressFromPins(bool pinA0, bool pinA1, bool pinA2, bool isATypeDevice = false)
+        internal static byte GetAddressFromPins(bool pinA0, bool pinA1, bool pinA2, bool isATypeDevice)
         {
             /*
             A2  A1  A0   HexAddr. Dec.Addr.

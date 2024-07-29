@@ -7,8 +7,8 @@ namespace Meadow.Foundation.Displays;
 /// </summary>
 internal class WinFormsPixelBuffer : IPixelBuffer, IDisposable
 {
-    private readonly Bitmap _bmp;
-    private readonly byte[] _buffer;
+    private readonly Bitmap bmp;
+    private readonly byte[] buffer;
 
     /// <summary>
     /// Gets the buffer width, in pixels
@@ -30,15 +30,15 @@ internal class WinFormsPixelBuffer : IPixelBuffer, IDisposable
     /// <summary>
     /// Gets the buffer size in bytes
     /// </summary>
-    public int ByteCount => _buffer.Length;
+    public int ByteCount => buffer.Length;
     /// <summary>
     /// Gets the buffer backing array
     /// </summary>
-    public byte[] Buffer => _buffer;
+    public byte[] Buffer => buffer;
     /// <summary>
     /// Gets the buffer as a System.Drawing.Bitmap
     /// </summary>
-    public Bitmap Image => _bmp;
+    public Bitmap Image => bmp;
 
     /// <summary>
     /// Creates an instance of a WinFormsPixelBuffer
@@ -53,10 +53,10 @@ internal class WinFormsPixelBuffer : IPixelBuffer, IDisposable
         ColorMode = colorMode;
 
         // TODO: use this buffer in a future version for improved perf
-        _bmp = new Bitmap(Width, Height);
-        var data = _bmp.LockBits(new Rectangle(0, 0, Width, Height), System.Drawing.Imaging.ImageLockMode.ReadWrite, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
-        _buffer = new byte[Math.Abs(data.Stride * Height)];
-        _bmp.UnlockBits(data);
+        bmp = new Bitmap(Width, Height);
+        var data = bmp.LockBits(new Rectangle(0, 0, Width, Height), System.Drawing.Imaging.ImageLockMode.ReadWrite, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
+        buffer = new byte[Math.Abs(data.Stride * Height)];
+        bmp.UnlockBits(data);
     }
 
     /// <summary>
@@ -64,12 +64,10 @@ internal class WinFormsPixelBuffer : IPixelBuffer, IDisposable
     /// </summary>
     public void Clear()
     {
-        lock (_bmp)
+        lock (bmp)
         {
-            using (var g = System.Drawing.Graphics.FromImage(_bmp))
-            {
-                g.FillRectangle(new SolidBrush(System.Drawing.Color.Black), 0, 0, Width, Height);
-            }
+            using var g = System.Drawing.Graphics.FromImage(bmp);
+            g.FillRectangle(new SolidBrush(System.Drawing.Color.Black), 0, 0, Width, Height);
         }
     }
 
@@ -79,12 +77,10 @@ internal class WinFormsPixelBuffer : IPixelBuffer, IDisposable
     /// <param name="color"></param>
     public void Fill(Color color)
     {
-        lock (_bmp)
+        lock (bmp)
         {
-            using (var g = System.Drawing.Graphics.FromImage(_bmp))
-            {
-                g.FillRectangle(new SolidBrush(System.Drawing.Color.FromArgb(color.R, color.G, color.B)), 0, 0, Width, Height);
-            }
+            using var g = System.Drawing.Graphics.FromImage(bmp);
+            g.FillRectangle(new SolidBrush(System.Drawing.Color.FromArgb(color.R, color.G, color.B)), 0, 0, Width, Height);
         }
     }
 
@@ -100,12 +96,10 @@ internal class WinFormsPixelBuffer : IPixelBuffer, IDisposable
     {
         try
         {
-            lock (_bmp)
+            lock (bmp)
             {
-                using (var g = System.Drawing.Graphics.FromImage(_bmp))
-                {
-                    g.FillRectangle(new SolidBrush(System.Drawing.Color.FromArgb(color.R, color.G, color.B)), originX, originY, width, height);
-                }
+                using var g = System.Drawing.Graphics.FromImage(bmp);
+                g.FillRectangle(new SolidBrush(System.Drawing.Color.FromArgb(color.R, color.G, color.B)), originX, originY, width, height);
             }
         }
         catch (ArgumentException)
@@ -125,9 +119,9 @@ internal class WinFormsPixelBuffer : IPixelBuffer, IDisposable
     /// <param name="y"></param>
     public Color GetPixel(int x, int y)
     {
-        lock (_bmp)
+        lock (bmp)
         {
-            var p = _bmp.GetPixel(x, y);
+            var p = bmp.GetPixel(x, y);
             return Color.FromRgba(p.R, p.G, p.B, p.A);
         }
     }
@@ -151,12 +145,12 @@ internal class WinFormsPixelBuffer : IPixelBuffer, IDisposable
     /// <param name="color"></param>
     public void SetPixel(int x, int y, Color color)
     {
-        // TODO: use lockbits and set the _buffer instead
-        lock (_bmp)
+        // TODO: use lockbits and set the buffer instead
+        lock (bmp)
         {
             try
             {
-                _bmp.SetPixel(x, y, System.Drawing.Color.FromArgb(color.R, color.G, color.B));
+                bmp.SetPixel(x, y, System.Drawing.Color.FromArgb(color.R, color.G, color.B));
             }
             catch (InvalidOperationException)
             {
@@ -174,7 +168,7 @@ internal class WinFormsPixelBuffer : IPixelBuffer, IDisposable
     /// <exception cref="NotImplementedException"></exception>
     public void WriteBuffer(int originX, int originY, IPixelBuffer buffer)
     {
-        lock (_bmp)
+        lock (bmp)
         {
             for (var x = 0; x < buffer.Width; x++)
             {
@@ -188,6 +182,6 @@ internal class WinFormsPixelBuffer : IPixelBuffer, IDisposable
 
     public void Dispose()
     {
-        _bmp?.Dispose();
+        bmp?.Dispose();
     }
 }

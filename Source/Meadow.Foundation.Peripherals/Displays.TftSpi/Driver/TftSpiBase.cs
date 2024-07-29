@@ -11,7 +11,7 @@ namespace Meadow.Foundation.Displays
     /// Base class for TFT SPI displays
     /// These displays typically support 16 and 18 bit, some also include 8, 9, 12 and/or 24 bit color 
     /// </summary>
-    public abstract partial class TftSpiBase : IPixelDisplay, ISpiPeripheral, IDisposable
+    public abstract partial class TftSpiBase : IPixelDisplay, IColorInvertableDisplay, ISpiPeripheral, IDisposable
     {
         /// <summary>
         /// Temporary buffer that can be used to batch set address window buffer commands
@@ -35,6 +35,9 @@ namespace Meadow.Foundation.Displays
         public abstract ColorMode DefaultColorMode { get; }
 
         /// <inheritdoc/>
+        public bool IsColorInverted { get; protected set; } = false;
+
+        /// <inheritdoc/>
         public int Width => imageBuffer.Width;
 
         /// <inheritdoc/>
@@ -46,7 +49,7 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// The default SPI bus speed for the device
         /// </summary>
-        public virtual Frequency DefaultSpiBusSpeed => new Frequency(12000, Frequency.UnitType.Kilohertz);
+        public virtual Frequency DefaultSpiBusSpeed => new(12000, Frequency.UnitType.Kilohertz);
 
         /// <summary>
         /// The SPI bus speed for the device
@@ -223,7 +226,7 @@ namespace Meadow.Foundation.Displays
 
             if (imageBuffer.ColorMode != colorMode)
             {
-                CreateBuffer(colorMode, Width, Height);
+                CreateBuffer(colorMode, nativeWidth, nativeHeight);
                 Initialize();
             }
         }
@@ -256,7 +259,10 @@ namespace Meadow.Foundation.Displays
             {
                 imageBuffer = new BufferRgb888(width, height);
             }
-
+            else if (colorMode == ColorMode.Format18bppRgb666)
+            {
+                imageBuffer = new BufferRgb666(width, height);
+            }
             else if (colorMode == ColorMode.Format16bppRgb565)
             {
                 imageBuffer = new BufferRgb565(width, height);
@@ -420,15 +426,15 @@ namespace Meadow.Foundation.Displays
         {
             if (PixelBuffer.ColorMode != ColorMode.Format12bppRgb444 &&
                 PixelBuffer.ColorMode != ColorMode.Format16bppRgb565 &&
+                PixelBuffer.ColorMode != ColorMode.Format18bppRgb666 &&
                 PixelBuffer.ColorMode != ColorMode.Format24bppRgb888)
             {
-                //should cover all of these displays but just in case
                 Show();
                 return;
             }
 
             if (right < left || bottom < top)
-            {   //could throw an exception
+            {
                 return;
             }
 
@@ -444,22 +450,35 @@ namespace Meadow.Foundation.Displays
                 }
             }
 
+            float bytesPerPixel = PixelBuffer.BitDepth / 8f;
+
+            if (PixelBuffer.ColorMode == ColorMode.Format18bppRgb666)
+            {
+                bytesPerPixel = 3;
+            }
+
             SetAddressWindow(left, top, right - 1, bottom - 1);
 
-            var len = (right - left) * PixelBuffer.BitDepth / 8;
+            int len = (int)((right - left) * bytesPerPixel);
 
             dataCommandPort.State = Data;
 
-            int sourceIndex;
             for (int y = top; y < bottom; y++)
             {
-                sourceIndex = ((y * Width) + left) * PixelBuffer.BitDepth / 8;
+                int sourceIndex = (int)((y * Width + left) * bytesPerPixel);
 
                 spiDisplay.Bus.Exchange(
                     chipSelectPort,
                     imageBuffer.Buffer[sourceIndex..(sourceIndex + len)],
                     readBuffer.Span[0..len]);
             }
+        }
+
+        /// <inheritdoc/>
+        public virtual void InvertDisplayColor(bool invert)
+        {
+            SendCommand(invert ? Register.INVON : Register.INVOFF);
+            IsColorInverted = invert;
         }
 
         /// <summary>
@@ -514,6 +533,11 @@ namespace Meadow.Foundation.Displays
         /// <param name="command">The command to send as a byte</param>
         protected void SendCommand(byte command)
         {
+            if (dataCommandPort == null)
+            {
+                throw new InvalidOperationException("Data command port is not configured.");
+            }
+
             dataCommandPort.State = Command;
             Write(command);
         }

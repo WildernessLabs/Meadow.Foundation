@@ -13,7 +13,9 @@ public class Sc16is752 : Sc16is7x2
     /// </summary>
     /// <param name="oscillatorFrequency">The oscillator frequency of the device.</param>
     /// <param name="irq">An optional digital interrupt port for IRQ (Interrupt Request).</param>
-    public Sc16is752(Frequency oscillatorFrequency, IDigitalInterruptPort? irq) : base(oscillatorFrequency, irq)
+    /// <param name="latchGpioInterrupt">An interrupt triggered by a GPIO change, will remain until handled. State will also be kept.</param>
+    public Sc16is752(Frequency oscillatorFrequency, IDigitalInterruptPort? irq, bool latchGpioInterrupt = false)
+        : base(oscillatorFrequency, irq, latchGpioInterrupt)
     {
     }
 
@@ -24,7 +26,9 @@ public class Sc16is752 : Sc16is7x2
     /// <param name="oscillatorFrequency">The oscillator frequency of the device.</param>
     /// <param name="address">The I2C address of the device (default is 0x48).</param>
     /// <param name="irq">An optional digital interrupt port for IRQ (Interrupt Request).</param>
-    public Sc16is752(II2cBus i2cBus, Frequency oscillatorFrequency, Addresses address = Addresses.Address_0x48, IDigitalInterruptPort? irq = null) : base(i2cBus, oscillatorFrequency, address, irq)
+    /// <param name="latchGpioInterrupt">An interrupt triggered by a GPIO change, will remain until handled. State will also be kept.</param>
+    public Sc16is752(II2cBus i2cBus, Frequency oscillatorFrequency, Addresses address = Addresses.Address_0x48, IDigitalInterruptPort? irq = null, bool latchGpioInterrupt = false)
+        : base(i2cBus, oscillatorFrequency, address, irq, latchGpioInterrupt)
     {
     }
 
@@ -35,7 +39,9 @@ public class Sc16is752 : Sc16is7x2
     /// <param name="oscillatorFrequency">The oscillator frequency of the device.</param>
     /// <param name="chipSelect">An optional digital output port for chip select (CS).</param>
     /// <param name="irq">An optional digital interrupt port for IRQ (Interrupt Request).</param>
-    public Sc16is752(ISpiBus spiBus, Frequency oscillatorFrequency, IDigitalOutputPort? chipSelect = null, IDigitalInterruptPort? irq = null) : base(spiBus, oscillatorFrequency, chipSelect, irq)
+    /// <param name="latchGpioInterrupt">An interrupt triggered by a GPIO change, will remain until handled. State will also be kept.</param>
+    public Sc16is752(ISpiBus spiBus, Frequency oscillatorFrequency, IDigitalOutputPort? chipSelect = null, IDigitalInterruptPort? irq = null, bool latchGpioInterrupt = false)
+        : base(spiBus, oscillatorFrequency, chipSelect, irq, latchGpioInterrupt)
     {
     }
 }

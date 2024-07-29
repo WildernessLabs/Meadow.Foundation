@@ -9,7 +9,7 @@ namespace Meadow.Foundation.Displays
     /// <summary>
     /// Represents a Pcd8544 monochrome display
     /// </summary>
-    public class Pcd8544 : IPixelDisplay, ISpiPeripheral, IDisposable
+    public class Pcd8544 : IPixelDisplay, IColorInvertableDisplay, ISpiPeripheral, IDisposable
     {
         /// <inheritdoc/>
         public ColorMode ColorMode => ColorMode.Format1bpp;
@@ -26,10 +26,8 @@ namespace Meadow.Foundation.Displays
         /// <inheritdoc/>
         public IPixelBuffer PixelBuffer => imageBuffer;
 
-        /// <summary>
-        /// Is the display inverted 
-        /// </summary>
-        public bool IsDisplayInverted { get; private set; } = false;
+        /// <inheritdoc/>
+        public bool IsColorInverted { get; private set; } = false;
 
         /// <summary>
         /// The default SPI bus speed for the device
@@ -84,11 +82,6 @@ namespace Meadow.Foundation.Displays
         protected Buffer1bpp imageBuffer;
 
         /// <summary>
-        /// Buffer to hold internal command data to be sent over the SPI bus
-        /// </summary>
-        protected Memory<byte> commandBuffer;
-
-        /// <summary>
         /// Create a Pcd8544 object
         /// </summary>
         /// <param name="spiBus">SPI bus connected to display</param>
@@ -134,15 +127,17 @@ namespace Meadow.Foundation.Displays
 
             dataCommandPort.State = false;
 
-            commandBuffer.Span[0] = 0x21;
-            commandBuffer.Span[1] = 0xBF;
-            commandBuffer.Span[2] = 0x04;
-            commandBuffer.Span[3] = 0x14;
-            commandBuffer.Span[4] = 0x0D;
-            commandBuffer.Span[5] = 0x20;
-            commandBuffer.Span[6] = 0x0C;
+            var commandBuffer = new byte[7];
 
-            spiComms.Write(commandBuffer.Span[0..6]);
+            commandBuffer[0] = 0x21;
+            commandBuffer[1] = 0xBF;
+            commandBuffer[2] = 0x04;
+            commandBuffer[3] = 0x14;
+            commandBuffer[4] = 0x0D;
+            commandBuffer[5] = 0x20;
+            commandBuffer[6] = 0x0C;
+
+            spiComms.Write(commandBuffer);
 
             dataCommandPort.State = true;
 
@@ -223,14 +218,14 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// Invert the entire display
         /// </summary>
-        /// <param name="inverse">Invert if true, normal if false</param>
-        public void InvertDisplay(bool inverse)
+        /// <param name="invert">Invert if true, normal if false</param>
+        public void InvertDisplayColor(bool invert)
         {
-            IsDisplayInverted = inverse;
+            IsColorInverted = invert;
             dataCommandPort.State = false;
-            commandBuffer.Span[0] = inverse ? (byte)0x0D : (byte)0x0C;
 
-            spiComms.Write(commandBuffer.Span[0]);
+            spiComms.Write(invert ? (byte)0x0D : (byte)0x0C);
+
             dataCommandPort.State = true;
         }
 

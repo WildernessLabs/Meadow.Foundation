@@ -17,7 +17,7 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// The color modes supported by the display
         /// </summary>
-        public override ColorMode SupportedColorModes => ColorMode.Format16bppRgb565 | ColorMode.Format12bppRgb444;
+        public override ColorMode SupportedColorModes => ColorMode.Format16bppRgb565 | ColorMode.Format12bppRgb444 | ColorMode.Format18bppRgb666;
 
         /// <summary>
         /// SPI bus speed
@@ -111,11 +111,13 @@ namespace Meadow.Foundation.Displays
             SendCommand(Register.SLPOUT);
             DelayMs(500);
 
-            SendCommand(Register.COLOR_MODE);  // set color mode - 16 bit color (x55), 12 bit color (x53), 18 bit color (x56)
+            SendCommand(Register.COLOR_MODE);  // set color mode - 16 bit color (x55), 12 bit color (x53), 18 bit color (x66)
             if (ColorMode == ColorMode.Format16bppRgb565)
                 SendData(0x55);  // 16-bit color RGB565
-            else
-                SendData(0x53); //12-bit color RGB444
+            else if (ColorMode == ColorMode.Format12bppRgb444)
+                SendData(0x53); // 12-bit color RGB444
+            else if (ColorMode == ColorMode.Format18bppRgb666)
+                SendData(0x66); // 18-bit color RGB666
 
             DelayMs(10);
 

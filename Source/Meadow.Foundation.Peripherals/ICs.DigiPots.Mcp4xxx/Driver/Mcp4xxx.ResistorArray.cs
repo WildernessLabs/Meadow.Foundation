@@ -41,7 +41,7 @@ public abstract partial class Mcp4xxx
 
         internal ResistorArray(Mcp4xxx parent, int index, ISpiCommunications spiComms)
         {
-            if (index < 0 && index > 1) throw new ArgumentException();
+            if (index is < 0 or > 1) throw new ArgumentException();
 
             _parent = parent;
             _index = index;

@@ -1,9 +1,9 @@
 ﻿using Meadow.Foundation.Displays.UI.InputTypes;
+using Meadow.Foundation.Serialization;
 using Meadow.Peripherals.Displays;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Text.Json;
 
 namespace Meadow.Foundation.Displays.UI
 {
@@ -72,7 +72,7 @@ namespace Meadow.Foundation.Displays.UI
         {
             var menuString = System.Text.Encoding.Default.GetString(menuJson);
 
-            return JsonSerializer.Deserialize<MenuItem[]>(menuString);
+            return MicroJson.Deserialize<MenuItem[]>(menuString);
         }
 
         void Init(ITextDisplay display, MenuPage menuPage)
