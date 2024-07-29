@@ -14,7 +14,7 @@ public class MeadowApp : App<Desktop>
     {
         var labelFont = new Font12x20();
 
-        screen = new DisplayScreen(Device.Display);
+        screen = new DisplayScreen(Device.Display!);
         screen.BackgroundColor = Color.AntiqueWhite;
 
         var splashLayout = new AbsoluteLayout(0, 0, screen.Width, screen.Height);

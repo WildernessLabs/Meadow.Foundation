@@ -20,13 +20,16 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 throw new NotImplementedException();
             }
 
+            /// <inheritdoc/>
             public TimePeriod TrimOffset { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
+            /// <inheritdoc/>
             public void Disable()
             {
                 throw new NotImplementedException();
             }
 
+            /// <inheritdoc/>
             public void Neutral()
             {
                 throw new NotImplementedException();

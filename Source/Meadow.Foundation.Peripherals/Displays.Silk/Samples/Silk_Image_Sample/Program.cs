@@ -76,7 +76,7 @@ public class Program
         var assembly = Assembly.GetExecutingAssembly();
         var resourceName = $"Silk_Image_Sample.{filename}";
 
-        using Stream stream = assembly.GetManifestResourceStream(resourceName);
+        using var stream = assembly.GetManifestResourceStream(resourceName);
         using var ms = new MemoryStream();
         stream?.CopyTo(ms);
         return ms.ToArray();
