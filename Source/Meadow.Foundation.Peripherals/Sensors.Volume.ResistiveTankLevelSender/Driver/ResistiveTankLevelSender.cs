@@ -141,8 +141,12 @@ public abstract class ResistiveTankLevelSender : SamplingSensorBase<int>, IDispo
 
     private void OnInputUpdated(object? sender, IChangeResult<Voltage> e)
     {
-        var sensedVoltage = e.New;
-        var gaugeResistance = ((VRef.Volts * Resistor2.Ohms) / sensedVoltage.Volts) - Resistor1.Ohms - Resistor2.Ohms;
+        SetFillLevelForVoltage(e.New);
+    }
+
+    private void SetFillLevelForVoltage(Voltage voltage)
+    {
+        var gaugeResistance = ((VRef.Volts * Resistor2.Ohms) / voltage.Volts) - Resistor1.Ohms - Resistor2.Ohms;
         FillLevelPercent = GetFillLevelForResistance(gaugeResistance);
     }
 
@@ -153,8 +157,12 @@ public abstract class ResistiveTankLevelSender : SamplingSensorBase<int>, IDispo
     }
 
     /// <inheritdoc/>
-    public override void StartUpdating(TimeSpan? updateInterval = null)
+    public override async void StartUpdating(TimeSpan? updateInterval = null)
     {
+        // run an initial read (otherwise we wait for the ADC update loop to finish)
+        var adc = await AnalogInput.Read();
+        SetFillLevelForVoltage(adc);
+
         AnalogInput.StartUpdating(updateInterval);
     }
 
