@@ -1,8 +1,8 @@
-# Meadow.Foundation.Displays.Silk
+# Meadow.Foundation.ICs.CAN.Mcp2542
 
-**Display driver for Meadow using Silk.NET and SkiaSharp**
+**Microchip MCP2542 CAN Transceiver**
 
-The **Meadow.Silk** library is included in the **Meadow.Foundation.Displays.Silk** nuget package and is designed for the [Wilderness Labs](www.wildernesslabs.co) Meadow .NET IoT platform.
+The **Mcp2542** library is included in the **Meadow.Foundation.ICs.CAN.Mcp2542** nuget package and is designed for the [Wilderness Labs](www.wildernesslabs.co) Meadow .NET IoT platform.
 
 This driver is part of the [Meadow.Foundation](https://developer.wildernesslabs.co/Meadow/Meadow.Foundation/) peripherals library, an open-source repository of drivers and libraries that streamline and simplify adding hardware to your C# .NET Meadow IoT applications.
 
@@ -14,83 +14,50 @@ To view all Wilderness Labs open-source projects, including samples, visit [gith
 
 You can install the library from within Visual studio using the the NuGet Package Manager or from the command line using the .NET CLI:
 
-`dotnet add package Meadow.Foundation.Displays.Silk`
+`dotnet add package Meadow.Foundation.ICs.CAN.Mcp2542`
 ## Usage
 
 ```csharp
-public class Program
+Mcp2542 _can;
+
+public override Task Initialize()
 {
-static SilkDisplay? display;
-static MicroGraphics graphics = default!;
+    Resolver.Log.Info("Initialize...");
 
-static PixelBufferBase image = default!;
+    Resolver.Log.Loglevel = Meadow.Logging.LogLevel.Trace;
 
-public static void Main()
-{
-    Initialize();
-    Run();
+    var port = Device.CreateSerialPort(Device.SerialPortNames.Com1, Mcp2542.DefaultBaudRate);
+    var standby = Device.CreateDigitalOutputPort(ProjLab.Pins.MB1_AN);
+    _can = new Mcp2542(port, standby, Resolver.Log);
 
-    Thread.Sleep(Timeout.Infinite);
+    return base.Initialize();
 }
 
-public static void Initialize()
+public override async Task Run()
 {
-    display = new SilkDisplay(640, 480, displayScale: 1f);
+    _can.Standby = false;
 
-    graphics = new MicroGraphics(display)
+    while (true)
     {
-        CurrentFont = new Font16x24(),
-        Stroke = 1
-    };
+        try
+        {
+            var frame = _can.Read();
 
-    image = (PixelBufferBase)LoadJpeg();
+            if (frame == null)
+            {
+                Resolver.Log.Info("No frames available");
+            }
+        }
+        catch (Exception ex)
+        {
+            Resolver.Log.Error(ex.Message);
+        }
+
+        await Task.Delay(1000);
+
+    }
 }
 
-public static void Run()
-{
-    Task.Run(() =>
-    {
-        var grayImage = image.Convert<BufferGray8>();
-
-        var scaledImage = image.Resize<BufferGray8>(320, 320);
-
-        var rotatedImage = image.Rotate<BufferGray8>(new Meadow.Units.Angle(60));
-
-        graphics.Clear();
-
-        //draw the image centered
-        graphics.DrawBuffer((display!.Width - rotatedImage.Width) / 2,
-            (display!.Height - rotatedImage.Height) / 2, rotatedImage);
-
-        graphics.Show();
-    });
-
-    display!.Run();
-}
-
-static IPixelBuffer LoadJpeg()
-{
-    var jpgData = LoadResource("maple.jpg");
-
-    var decoder = new JpegDecoder();
-    var jpg = decoder.DecodeJpeg(jpgData);
-
-    Console.WriteLine($"Jpeg decoded is {jpg.Length} bytes, W: {decoder.Width}, H: {decoder.Height}");
-
-    return new BufferRgb888(decoder.Width, decoder.Height, jpg);
-}
-
-static byte[] LoadResource(string filename)
-{
-    var assembly = Assembly.GetExecutingAssembly();
-    var resourceName = $"Silk_Image_Sample.{filename}";
-
-    using var stream = assembly.GetManifestResourceStream(resourceName);
-    using var ms = new MemoryStream();
-    stream?.CopyTo(ms);
-    return ms.ToArray();
-}
-}
 ```
 ## How to Contribute
 

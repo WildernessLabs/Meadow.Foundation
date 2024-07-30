@@ -1,8 +1,8 @@
-# Meadow.Foundation.Displays.Silk
+# Meadow.Foundation.ICs.CAN.Mcp2515
 
-**Display driver for Meadow using Silk.NET and SkiaSharp**
+**Microchip MCP2515 CAN Controller**
 
-The **Meadow.Silk** library is included in the **Meadow.Foundation.Displays.Silk** nuget package and is designed for the [Wilderness Labs](www.wildernesslabs.co) Meadow .NET IoT platform.
+The **Mcp2515** library is included in the **Meadow.Foundation.ICs.CAN.Mcp2515** nuget package and is designed for the [Wilderness Labs](www.wildernesslabs.co) Meadow .NET IoT platform.
 
 This driver is part of the [Meadow.Foundation](https://developer.wildernesslabs.co/Meadow/Meadow.Foundation/) peripherals library, an open-source repository of drivers and libraries that streamline and simplify adding hardware to your C# .NET Meadow IoT applications.
 
@@ -14,83 +14,64 @@ To view all Wilderness Labs open-source projects, including samples, visit [gith
 
 You can install the library from within Visual studio using the the NuGet Package Manager or from the command line using the .NET CLI:
 
-`dotnet add package Meadow.Foundation.Displays.Silk`
+`dotnet add package Meadow.Foundation.ICs.CAN.Mcp2515`
 ## Usage
 
 ```csharp
-public class Program
+public override Task Initialize()
 {
-static SilkDisplay? display;
-static MicroGraphics graphics = default!;
+    Resolver.Log.Info("Initialize...");
 
-static PixelBufferBase image = default!;
+    expander = new Mcp2515(
+        Device.CreateSpiBus(),
+        Device.Pins.D05.CreateDigitalOutputPort(true),
+        Mcp2515.CanOscillator.Osc_8MHz,
+        Device.Pins.D05.CreateDigitalInterruptPort(InterruptMode.EdgeFalling),
+        Resolver.Log);
 
-public static void Main()
-{
-    Initialize();
-    Run();
-
-    Thread.Sleep(Timeout.Infinite);
+    return base.Initialize();
 }
 
-public static void Initialize()
+public override async Task Run()
 {
-    display = new SilkDisplay(640, 480, displayScale: 1f);
+    var bus = expander.CreateCanBus(CanBitrate.Can_250kbps);
 
-    graphics = new MicroGraphics(display)
+    Console.WriteLine($"Listening for CAN data...");
+
+    var tick = 0;
+
+    while (true)
     {
-        CurrentFont = new Font16x24(),
-        Stroke = 1
-    };
+        var frame = bus.ReadFrame();
+        if (frame != null)
+        {
+            if (frame is StandardDataFrame sdf)
+            {
+                Console.WriteLine($"Standard Frame: {sdf.ID:X3} {BitConverter.ToString(sdf.Payload)}");
+            }
+            else if (frame is ExtendedDataFrame edf)
+            {
+                Console.WriteLine($"Extended Frame: {edf.ID:X8} {BitConverter.ToString(edf.Payload)}");
+            }
+        }
+        else
+        {
+            await Task.Delay(100);
+        }
 
-    image = (PixelBufferBase)LoadJpeg();
+        if (tick++ % 50 == 0)
+        {
+            Console.WriteLine($"Sending Standard Frame...");
+
+            bus.WriteFrame(new StandardDataFrame
+            {
+                ID = 0x700,
+                Payload = new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, (byte)(tick & 0xff) }
+            });
+        }
+    }
 }
 
-public static void Run()
-{
-    Task.Run(() =>
-    {
-        var grayImage = image.Convert<BufferGray8>();
-
-        var scaledImage = image.Resize<BufferGray8>(320, 320);
-
-        var rotatedImage = image.Rotate<BufferGray8>(new Meadow.Units.Angle(60));
-
-        graphics.Clear();
-
-        //draw the image centered
-        graphics.DrawBuffer((display!.Width - rotatedImage.Width) / 2,
-            (display!.Height - rotatedImage.Height) / 2, rotatedImage);
-
-        graphics.Show();
-    });
-
-    display!.Run();
-}
-
-static IPixelBuffer LoadJpeg()
-{
-    var jpgData = LoadResource("maple.jpg");
-
-    var decoder = new JpegDecoder();
-    var jpg = decoder.DecodeJpeg(jpgData);
-
-    Console.WriteLine($"Jpeg decoded is {jpg.Length} bytes, W: {decoder.Width}, H: {decoder.Height}");
-
-    return new BufferRgb888(decoder.Width, decoder.Height, jpg);
-}
-
-static byte[] LoadResource(string filename)
-{
-    var assembly = Assembly.GetExecutingAssembly();
-    var resourceName = $"Silk_Image_Sample.{filename}";
-
-    using var stream = assembly.GetManifestResourceStream(resourceName);
-    using var ms = new MemoryStream();
-    stream?.CopyTo(ms);
-    return ms.ToArray();
-}
-}
 ```
 ## How to Contribute
 
