@@ -3,6 +3,9 @@ using Peak.Can.Basic.BackwardCompatibility;
 
 namespace ICs.IOExpanders.PCanBasic;
 
+/// <summary>
+/// Represents a PCAN Basic 
+/// </summary>
 public class PCanBus : ICanBus
 {
     /// <inheritdoc/>
