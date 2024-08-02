@@ -277,12 +277,61 @@ public partial class Mcp2515 : ICanController
         SpiBus.Exchange(ChipSelect, tx, rx);
     }
 
+    private byte[] GetIdBytes(int id, bool isExtended)
+    {
+        var buffer = new byte[4];
+
+        if (isExtended)
+        {
+            buffer[2] = (byte)(id & 0xFF);
+            buffer[3] = (byte)(id >> 8);
+            id = (byte)(id >> 16);
+            buffer[1] = (byte)(id & 0x03);
+            buffer[1] += (byte)((id & 0x1C) << 3);
+            buffer[1] |= TXB_EXIDE_MASK;
+            buffer[0] = (byte)(id >> 5);
+        }
+        else
+        {
+            buffer[0] = (byte)(id >> 3);            // IDH
+            buffer[1] = (byte)((id & 0x07) << 5);  // IDL
+        }
+
+        return buffer;
+    }
+
+    private void SetMaskAndFilter(bool isExtended, int mask, int filter, int filterNumber)
+    {
+        Resolver.Log.Debug($"Adding mask 0x{mask:x4} and filter 0x{filter:x4} for filter {filterNumber}");
+
+        SetMode(Mode.Configure);
+
+        var maskBytes = GetIdBytes(mask, true);
+        Resolver.Log.Debug($"mask: {BitConverter.ToString(maskBytes)}");
+        WriteRegister(Register.RXM0SIDH, maskBytes);
+
+        LogRegisters(Register.RXM0SIDH, 4);
+
+        var filterBytes = GetIdBytes(filter, isExtended);
+        Resolver.Log.Debug($"filter: {BitConverter.ToString(filterBytes)}");
+        WriteRegister((Register)((int)Register.RXF0SIDH + (4 * filterNumber)), filterBytes);
+
+        LogRegisters(Register.RXF0SIDH, 4);
+
+        EnableMasksAndFilters(true);
+
+        SetMode(Mode.Normal);
+    }
+
     private void EnableMasksAndFilters(bool enable)
     {
         if (enable)
         {
-            ModifyRegister(Register.RXB0CTRL, 0x64, 0x00);
+            ModifyRegister(Register.RXB0CTRL, 0x64, 0x04);
             ModifyRegister(Register.RXB1CTRL, 0x60, 0x00);
+
+            LogRegisters(Register.RXB0CTRL, 1);
+            LogRegisters(Register.RXB1CTRL, 1);
         }
         else
         {

@@ -13,6 +13,9 @@ public partial class Mcp2515
 
         private Mcp2515 Controller { get; }
 
+        /// <inheritdoc/>
+        public CanAcceptanceFilterCollection AcceptanceFilters { get; } = new(5);
+
         internal Mcp2515CanBus(Mcp2515 controller)
         {
             Controller = controller;
@@ -20,6 +23,39 @@ public partial class Mcp2515
             if (Controller.InterruptPort != null)
             {
                 Controller.InterruptPort.Changed += OnInterruptPortChanged;
+            }
+
+            AcceptanceFilters.CollectionChanged += OnAcceptanceFiltersChanged;
+        }
+
+        private int _currentMask = 0;
+
+        private void OnAcceptanceFiltersChanged(object sender, (System.ComponentModel.CollectionChangeAction Action, CanAcceptanceFilter Filter) e)
+        {
+            switch (e.Action)
+            {
+                case System.ComponentModel.CollectionChangeAction.Add:
+                    if (e.Filter is CanStandardExactAcceptanceFilter sef)
+                    {
+                        var newMask = _currentMask | 0x7ff;
+
+                        Controller.SetMaskAndFilter(false, newMask, sef.AcceptID, AcceptanceFilters.Count - 1);
+
+                        _currentMask = newMask;
+                    }
+                    else if (e.Filter is CanStandardRangeAcceptanceFilter srf)
+                    {
+                    }
+                    else if (e.Filter is CanExtendedExactAcceptanceFilter erf)
+                    {
+                        var newMask = _currentMask | erf.AcceptID;
+
+                        Controller.SetMaskAndFilter(true, newMask, erf.AcceptID, AcceptanceFilters.Count - 1);
+
+                        _currentMask = newMask;
+                    }
+
+                    break;
             }
         }
 
@@ -74,18 +110,6 @@ public partial class Mcp2515
             { // no messages available
                 return null;
             }
-        }
-
-        /// <inheritdoc/>
-        public void SetFilter(int filter)
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <inheritdoc/>
-        public void SetMask(int filter)
-        {
-            throw new NotImplementedException();
         }
     }
 }
