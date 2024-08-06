@@ -1,8 +1,8 @@
-# Meadow.Foundation.ICs.CAN.PCanBasic
+# Meadow.Foundation.Batteries.Voltaic.V10x
 
-**PCAN-Basic USB CAN Controller for Windows**
+**Voltaix V10x-series RS485 Modbus solar battery with charge controller**
 
-The **PCanBasic** library is included in the **Meadow.Foundation.ICs.CAN.PCanBasic** nuget package and is designed for the [Wilderness Labs](www.wildernesslabs.co) Meadow .NET IoT platform.
+The **V10x** library is included in the **Meadow.Foundation.Batteries.Voltaic.V10x** nuget package and is designed for the [Wilderness Labs](www.wildernesslabs.co) Meadow .NET IoT platform.
 
 This driver is part of the [Meadow.Foundation](https://developer.wildernesslabs.co/Meadow/Meadow.Foundation/) peripherals library, an open-source repository of drivers and libraries that streamline and simplify adding hardware to your C# .NET Meadow IoT applications.
 
@@ -14,49 +14,46 @@ To view all Wilderness Labs open-source projects, including samples, visit [gith
 
 You can install the library from within Visual studio using the the NuGet Package Manager or from the command line using the .NET CLI:
 
-`dotnet add package Meadow.Foundation.ICs.CAN.PCanBasic`
+`dotnet add package Meadow.Foundation.Batteries.Voltaic.V10x`
 ## Usage
 
 ```csharp
-var expander = new PCanUsb();
-
-var bus = expander.CreateCanBus(CanBitrate.Can_250kbps);
-
-Console.WriteLine($"Listening for CAN data...");
-
-var tick = 0;
-
-while (true)
+public override async Task Run()
 {
-    var frame = bus.ReadFrame();
-    if (frame != null)
-    {
-        if (frame is StandardDataFrame sdf)
-        {
-            Console.WriteLine($"Standard Frame: {sdf.ID:X3} {BitConverter.ToString(sdf.Payload)}");
-        }
-        else if (frame is ExtendedDataFrame edf)
-        {
-            Console.WriteLine($"Extended Frame: {edf.ID:X8} {BitConverter.ToString(edf.Payload)}");
-        }
-    }
-    else
-    {
-        await Task.Delay(100);
-    }
+    Resolver.Log.Info("Run...");
 
-    if (tick++ % 50 == 0)
+    using (var port = new SerialPortShim("COM5", V10x.DefaultBaudRate, Parity.None, 8, StopBits.One))
     {
-        Console.WriteLine($"Sending Standard Frame...");
+        port.ReadTimeout = TimeSpan.FromSeconds(15);
+        port.Open();
 
-        bus.WriteFrame(new StandardDataFrame
+        var client = new ModbusRtuClient(port);
+        var controller = new V10x(client);
+
+        controller.CommTimeout += (s, e) => Debug.WriteLine("Read Timeout");
+        controller.CommError += (s, e) => Debug.WriteLine($"Error: {e.Message}");
+
+        controller.StartPolling();
+
+        var i = 0;
+
+        while (true)
         {
-            ID = 0x700,
-            Payload = [0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, (byte)(tick & 0xff)]
-        });
+            await Task.Delay(2000);
+            Debug.WriteLine($"---------------");
+            Debug.WriteLine($"Battery voltage: {controller.BatteryVoltage.Volts:N2} V");
+            Debug.WriteLine($"Input voltage:   {controller.InputVoltage.Volts:N2} V");
+            Debug.WriteLine($"Input current:   {controller.InputCurrent.Amps:N2} A");
+            Debug.WriteLine($"Load voltage:    {controller.LoadVoltage.Volts:N2} V");
+            Debug.WriteLine($"Load current:    {controller.LoadCurrent.Amps:N2} A");
+            Debug.WriteLine($"Environ temp:    {controller.EnvironmentTemp.Fahrenheit:N2} F");
+            Debug.WriteLine($"Controller temp: {controller.ControllerTemp.Fahrenheit:N2} F");
+
+            controller.BatteryOutput = (i++ % 2 == 0);
+        }
     }
 }
-        
+
 ```
 ## How to Contribute
 
