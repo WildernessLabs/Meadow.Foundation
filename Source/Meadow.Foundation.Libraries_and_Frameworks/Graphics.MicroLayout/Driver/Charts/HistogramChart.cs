@@ -171,7 +171,14 @@ public class HistogramChart : ChartControl
                 var barHeight = (int)(heightScale * pair.Y);
 
                 // make sure we don't draw off-chart for over-scale values
-                if (barHeight > ChartAreaHeight) { barHeight = ChartAreaHeight; }
+                if (barHeight > ChartAreaHeight)
+                {
+                    barHeight = ChartAreaHeight;
+                }
+                if ((x < ChartAreaLeft) || (x > ChartAreaLeft + ChartAreaWidth))
+                {
+                    continue;
+                }
 
                 DrawValueBar(
                     graphics,
