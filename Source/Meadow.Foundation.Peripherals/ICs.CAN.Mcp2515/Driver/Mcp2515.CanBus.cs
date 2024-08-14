@@ -8,10 +8,18 @@ public partial class Mcp2515
 {
     public class Mcp2515CanBus : ICanBus
     {
+        private int _currentMask = 0;
+
         /// <inheritdoc/>
         public event EventHandler<ICanFrame>? FrameReceived;
 
         private Mcp2515 Controller { get; }
+
+        public CanBitrate BitRate
+        {
+            get => Controller._bitr
+            set;
+        }
 
         /// <inheritdoc/>
         public CanAcceptanceFilterCollection AcceptanceFilters { get; } = new(5);
@@ -28,34 +36,54 @@ public partial class Mcp2515
             AcceptanceFilters.CollectionChanged += OnAcceptanceFiltersChanged;
         }
 
-        private int _currentMask = 0;
-
         private void OnAcceptanceFiltersChanged(object sender, (System.ComponentModel.CollectionChangeAction Action, CanAcceptanceFilter Filter) e)
         {
             switch (e.Action)
             {
                 case System.ComponentModel.CollectionChangeAction.Add:
-                    if (e.Filter is CanStandardExactAcceptanceFilter sef)
+                    if (e.Filter is CanStandardExactAcceptanceFilter sefa)
                     {
-                        var newMask = _currentMask | 0x7ff;
+                        var newMask = 0x7ff;
 
-                        Controller.SetMaskAndFilter(false, newMask, sef.AcceptID, AcceptanceFilters.Count - 1);
+                        Controller.SetMaskAndFilter(false, newMask, sefa.AcceptID, AcceptanceFilters.Count - 1);
+
+                        _currentMask = newMask;
+                    }
+                    else if (e.Filter is CanExtendedExactAcceptanceFilter eef)
+                    {
+                        var newMask = _currentMask | eef.AcceptID;
+
+                        Controller.SetMaskAndFilter(true, newMask, eef.AcceptID, AcceptanceFilters.Count - 1);
 
                         _currentMask = newMask;
                     }
                     else if (e.Filter is CanStandardRangeAcceptanceFilter srf)
                     {
                     }
-                    else if (e.Filter is CanExtendedExactAcceptanceFilter erf)
+                    else if (e.Filter is CanExtendedRangeAcceptanceFilter erf)
                     {
-                        var newMask = _currentMask | erf.AcceptID;
-
-                        Controller.SetMaskAndFilter(true, newMask, erf.AcceptID, AcceptanceFilters.Count - 1);
-
-                        _currentMask = newMask;
                     }
 
                     break;
+                case System.ComponentModel.CollectionChangeAction.Remove:
+                    if (e.Filter is CanStandardExactAcceptanceFilter sefr)
+                    {
+                        var newMask = 0x00;
+
+                        _currentMask = newMask;
+                    }
+                    else if (e.Filter is CanExtendedExactAcceptanceFilter eef)
+                    {
+                    }
+                    else if (e.Filter is CanStandardRangeAcceptanceFilter srf)
+                    {
+                    }
+                    else if (e.Filter is CanExtendedRangeAcceptanceFilter erf)
+                    {
+                    }
+
+                    break;
+
             }
         }
 
@@ -110,6 +138,25 @@ public partial class Mcp2515
             { // no messages available
                 return null;
             }
+        }
+
+        /// <inheritdoc/>
+        public void ClearReceiveBuffers()
+        {
+            var status = Controller.GetStatus();
+
+            if ((status & Status.RX0IF) == Status.RX0IF)
+            { // message in buffer 0
+                Controller.ReadDataFrame(RxBufferNumber.RXB0);
+            }
+
+            if ((status & Status.RX1IF) == Status.RX1IF)
+            { // message in buffer 1
+                Controller.ReadDataFrame(RxBufferNumber.RXB1);
+            }
+
+            // clear erase rx interrupts
+            Controller.ClearInterrupt(InterruptFlag.RX0IF | InterruptFlag.RX1IF);
         }
     }
 }

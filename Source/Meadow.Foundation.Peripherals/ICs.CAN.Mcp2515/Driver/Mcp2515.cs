@@ -22,6 +22,7 @@ public partial class Mcp2515 : ICanController
 
     private ICanBus? _busInstance;
     private CanOscillator _oscillator;
+    private CanBitrate _bitrate;
 
     private ISpiBus SpiBus { get; }
     private IDigitalOutputPort ChipSelect { get; }
@@ -83,8 +84,8 @@ public partial class Mcp2515 : ICanController
         if (InterruptPort != null)
         {
             // TODO: add error condition handling
-            //ConfigureInterrupts(InterruptEnable.RXB0 | InterruptEnable.RXB1 | InterruptEnable.ERR | InterruptEnable.MSG_ERR);
-            ConfigureInterrupts(InterruptEnable.RXB0 | InterruptEnable.RXB1);
+            ConfigureInterrupts(InterruptEnable.RXB0 | InterruptEnable.RXB1 | InterruptEnable.ERR | InterruptEnable.MSG_ERR);
+            //ConfigureInterrupts(InterruptEnable.RXB0 | InterruptEnable.RXB1);
             ClearInterrupt((InterruptFlag)0xff);
         }
         else
@@ -101,6 +102,8 @@ public partial class Mcp2515 : ICanController
 
         DisableFilters();
 
+        WriteRegister(Register.BFPCTRL, 0);
+
         LogRegisters(Register.RXF0SIDH, 14);
         LogRegisters(Register.CANSTAT, 2);
         LogRegisters(Register.RXF3SIDH, 14);
@@ -111,9 +114,30 @@ public partial class Mcp2515 : ICanController
         WriteRegister(Register.CNF1, cfg.CFG1);
         WriteRegister(Register.CNF2, cfg.CFG2);
         WriteRegister(Register.CNF3, cfg.CFG3);
+        _bitrate = bitrate;
         LogRegisters(Register.CNF3, 3);
 
         SetMode(Mode.Normal);
+    }
+
+    private CanBitrate Bitrate
+    {
+        get => _bitrate;
+        set
+        {
+            var mode = GetMode();
+            SetMode(Mode.Configure);
+
+            var cfg = GetConfigForOscillatorAndBitrate(_oscillator, value);
+            WriteRegister(Register.CNF1, cfg.CFG1);
+            WriteRegister(Register.CNF2, cfg.CFG2);
+            WriteRegister(Register.CNF3, cfg.CFG3);
+            LogRegisters(Register.CNF3, 3);
+
+            SetMode(mode);
+
+            _bitrate = value;
+        }
     }
 
     private void DisableFilters()
@@ -206,12 +230,21 @@ public partial class Mcp2515 : ICanController
 
     private Mode GetMode()
     {
-        return (Mode)(ReadRegister(Register.CANSTAT)[0] | 0xE0);
+        return (Mode)(ReadRegister(Register.CANSTAT)[0] | (byte)Control.REQOP);
     }
 
     private void SetMode(Mode mode)
     {
-        ModifyRegister(Register.CANCTRL, (byte)Control.REQOP, (byte)mode);
+        byte m = (byte)mode;
+
+        if (mode == Mode.Configure)
+        {
+            m |= (byte)Control.ABAT;
+        }
+
+        ModifyRegister(Register.CANCTRL, 0xf0, m);
+
+        LogRegisters(Register.CANSTAT, 1);
     }
 
     private Status GetStatus()
@@ -296,7 +329,6 @@ public partial class Mcp2515 : ICanController
             buffer[0] = (byte)(id >> 3);            // IDH
             buffer[1] = (byte)((id & 0x07) << 5);  // IDL
         }
-
         return buffer;
     }
 
@@ -304,9 +336,10 @@ public partial class Mcp2515 : ICanController
     {
         Resolver.Log.Debug($"Adding mask 0x{mask:x4} and filter 0x{filter:x4} for filter {filterNumber}");
 
+        var mode = GetMode();
         SetMode(Mode.Configure);
 
-        var maskBytes = GetIdBytes(mask, true);
+        var maskBytes = GetIdBytes(mask, isExtended);
         Resolver.Log.Debug($"mask: {BitConverter.ToString(maskBytes)}");
         WriteRegister(Register.RXM0SIDH, maskBytes);
 
@@ -318,16 +351,16 @@ public partial class Mcp2515 : ICanController
 
         LogRegisters(Register.RXF0SIDH, 4);
 
-        EnableMasksAndFilters(true);
+        WriteRegister(Register.RXB0CTRL, new byte[] { 0, 0 });
 
-        SetMode(Mode.Normal);
+        SetMode(mode);
     }
 
     private void EnableMasksAndFilters(bool enable)
     {
         if (enable)
         {
-            ModifyRegister(Register.RXB0CTRL, 0x64, 0x04);
+            ModifyRegister(Register.RXB0CTRL, 0x64, 0x06);
             ModifyRegister(Register.RXB1CTRL, 0x60, 0x00);
 
             LogRegisters(Register.RXB0CTRL, 1);
@@ -418,6 +451,9 @@ public partial class Mcp2515 : ICanController
                 {
                     ID = id,
                 };
+
+                // read the frame data
+                frame.Payload = ReadRegister(data_reg, dataLengthCode);
             }
         }
         else
@@ -435,16 +471,16 @@ public partial class Mcp2515 : ICanController
                 {
                     ID = id,
                 };
+
+                // read the frame data
+                frame.Payload = ReadRegister(data_reg, dataLengthCode);
             }
         }
-
-        // read the frame data
-        frame.Payload = ReadRegister(data_reg, dataLengthCode);
 
         // clear the interrupt flag
         if (InterruptPort != null)
         {
-            ModifyRegister(Register.CANINTF, (byte)int_flag, 0);
+            ClearInterrupt(int_flag);
         }
 
         return frame;
