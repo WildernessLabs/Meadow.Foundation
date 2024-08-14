@@ -12,6 +12,7 @@ public partial class Mcp2515
 
         /// <inheritdoc/>
         public event EventHandler<ICanFrame>? FrameReceived;
+        public event EventHandler<byte>? BusError;
 
         private Mcp2515 Controller { get; }
 
@@ -91,11 +92,22 @@ public partial class Mcp2515
         private void OnInterruptPortChanged(object sender, DigitalPortResult e)
         {
             // TODO: check why the interrupt happened (error, frame received, etc)
+            var canstat = (InterruptCode)Controller.ReadRegister(Register.CANSTAT)[0] & InterruptCode.Mask;
 
-            if (FrameReceived != null)
+            switch (canstat)
             {
-                var frame = ReadFrame();
-                Task.Run(() => FrameReceived.Invoke(this, frame));
+                case InterruptCode.RXB0:
+                case InterruptCode.RXB1:
+                    if (FrameReceived != null)
+                    {
+                        var frame = ReadFrame();
+                        Task.Run(() => FrameReceived.Invoke(this, frame));
+                    }
+                    break;
+                case InterruptCode.Error:
+                    var errors = Controller.ReadRegister(Register.EFLG)[0];
+                    BusError?.Invoke(this, errors);
+                    break;
             }
         }
 
