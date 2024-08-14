@@ -169,6 +169,10 @@ public partial class Mcp2515 : ICanController
                 _ => throw new ArgumentOutOfRangeException()
             };
 
+            // set the length bits = max of 8 bytes
+            byte dlcRegisterValue = (byte)(df.Payload.Length & 0x0f);
+            if (dlcRegisterValue > 8) dlcRegisterValue = 8;
+
             if (frame is ExtendedDataFrame edf)
             {
                 var eid0 = (byte)(edf.ID & 0xff);
@@ -186,15 +190,50 @@ public partial class Mcp2515 : ICanController
             }
             else if (frame is StandardDataFrame sdf)
             {
-                // put the frame data into a buffer (0-2)
+                // put the frame id into a buffer (0-2)
                 var sidh = (byte)(sdf.ID >> 3);
                 var sidl = (byte)(sdf.ID << 5 & 0xe0);
                 WriteRegister(ctrl_reg + 1, sidh);
                 WriteRegister(ctrl_reg + 2, sidl);
             }
-            // TODO: handle RTR
+            else if (frame is StandardRtrFrame srf)
+            {
+                // put the frame id into a buffer (0-2)
+                var sidh = (byte)(srf.ID >> 3);
+                var sidl = (byte)(srf.ID << 5 & 0xe0);
+                WriteRegister(ctrl_reg + 1, sidh);
+                WriteRegister(ctrl_reg + 2, sidl);
 
-            WriteRegister(ctrl_reg + 5, (byte)df.Payload.Length);
+                // set the RTR bit
+                dlcRegisterValue |= 0x40;
+            }
+            else if (frame is ExtendedRtrFrame erf)
+            {
+                var eid0 = (byte)(erf.ID & 0xff);
+                var eid8 = (byte)(erf.ID >> 8);
+                var id = erf.ID >> 16;
+                var sidh = (byte)(id >> 5);
+                var sidl = (byte)(id & 3);
+                sidl += (byte)((id & 0x1c) << 3);
+                sidl |= TXB_EXIDE_MASK;
+
+                WriteRegister(ctrl_reg + 1, sidh);
+                WriteRegister(ctrl_reg + 2, sidl);
+                WriteRegister(ctrl_reg + 3, eid8);
+                WriteRegister(ctrl_reg + 4, eid0);
+
+                // set the RTR bit
+                dlcRegisterValue |= 0x40;
+            }
+            else
+            {
+                throw new NotSupportedException();
+            }
+
+            // DLC
+            WriteRegister(ctrl_reg + 5, dlcRegisterValue);
+
+            // data bytes
             byte i = 0;
             foreach (var b in df.Payload)
             {
