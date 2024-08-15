@@ -9,7 +9,16 @@ public class PCanFdBus : ICanBus
         throw new NotImplementedException();
     }
 
+    public CanBitrate BitRate { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
+    public CanAcceptanceFilterCollection AcceptanceFilters => throw new NotImplementedException();
+
     public event EventHandler<ICanFrame>? FrameReceived;
+
+    public void ClearReceiveBuffers()
+    {
+        throw new NotImplementedException();
+    }
 
     public bool IsFrameAvailable()
     {

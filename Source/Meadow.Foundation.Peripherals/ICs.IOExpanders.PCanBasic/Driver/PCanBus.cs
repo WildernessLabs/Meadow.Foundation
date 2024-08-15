@@ -11,6 +11,9 @@ public class PCanBus : ICanBus
     /// <inheritdoc/>
     public event EventHandler<ICanFrame>? FrameReceived;
 
+    /// <inheritdoc/>
+    public CanAcceptanceFilterCollection AcceptanceFilters { get; } = new(5);
+
     private PCanConfiguration configuration;
 
     internal PCanBus(PCanConfiguration configuration)
@@ -25,6 +28,57 @@ public class PCanBus : ICanBus
         }
 
         this.configuration = configuration;
+        AcceptanceFilters.CollectionChanged += OnAcceptanceFiltersChanged;
+    }
+
+    private void OnAcceptanceFiltersChanged(object? sender, (System.ComponentModel.CollectionChangeAction Action, CanAcceptanceFilter Filter) e)
+    {
+        if (e.Action == System.ComponentModel.CollectionChangeAction.Add)
+        {
+            if (e.Filter is CanStandardExactAcceptanceFilter sefa)
+            {
+                PCANBasic.FilterMessages(configuration.BusHandle, (uint)sefa.AcceptID, (uint)sefa.AcceptID, TPCANMode.PCAN_MODE_STANDARD);
+            }
+            else if (e.Filter is CanExtendedExactAcceptanceFilter eef)
+            {
+                PCANBasic.FilterMessages(configuration.BusHandle, (uint)eef.AcceptID, (uint)eef.AcceptID, TPCANMode.PCAN_MODE_EXTENDED);
+            }
+            else if (e.Filter is CanStandardRangeAcceptanceFilter srf)
+            {
+                PCANBasic.FilterMessages(configuration.BusHandle, (uint)srf.FirstAcceptID, (uint)srf.LastAcceptID, TPCANMode.PCAN_MODE_STANDARD);
+            }
+            else if (e.Filter is CanExtendedRangeAcceptanceFilter erf)
+            {
+                PCANBasic.FilterMessages(configuration.BusHandle, (uint)erf.FirstAcceptID, (uint)erf.LastAcceptID, TPCANMode.PCAN_MODE_EXTENDED);
+            }
+        }
+    }
+
+    /// <inheritdoc/>
+    public CanBitrate BitRate
+    {
+        get => configuration.Bitrate;
+        set
+        {
+            PCANBasic.Uninitialize(configuration.BusHandle);
+
+            configuration.Bitrate = value;
+
+            var result = PCANBasic.Initialize(
+                configuration.BusHandle,
+                configuration.Bitrate.ToPCANBaudrate());
+
+            if (result != TPCANStatus.PCAN_ERROR_OK)
+            {
+                throw new Exception($"{result}");
+            }
+        }
+    }
+
+    /// <inheritdoc/>
+    public void ClearReceiveBuffers()
+    {
+        PCANBasic.Reset(configuration.BusHandle);
     }
 
     /// <inheritdoc/>

@@ -38,7 +38,7 @@ public partial class Mcp2515
             AcceptanceFilters.CollectionChanged += OnAcceptanceFiltersChanged;
         }
 
-        private void OnAcceptanceFiltersChanged(object sender, (System.ComponentModel.CollectionChangeAction Action, CanAcceptanceFilter Filter) e)
+        private void OnAcceptanceFiltersChanged(object? sender, (System.ComponentModel.CollectionChangeAction Action, CanAcceptanceFilter Filter) e)
         {
             switch (e.Action)
             {
