@@ -84,6 +84,23 @@ namespace Meadow.Foundation.Graphics
         private RotationType _rotation = RotationType.Default;
 
         /// <summary>
+        /// Current display color inversion
+        /// Note - not all displays support color inversion
+        /// </summary>
+        public bool ColorInversion
+        {
+            get
+            {
+                if (display is IColorInvertableDisplay { } d) { return d.IsColorInverted; }
+                return false;
+            }
+            set
+            {
+                if (display is IColorInvertableDisplay { } d) { d.InvertDisplayColor(value); }
+            }
+        }
+
+        /// <summary>
         /// Stroke / line thickness when drawing lines or shape outlines
         /// </summary>
         public int Stroke { get; set; } = 1;
@@ -346,7 +363,6 @@ namespace Meadow.Foundation.Graphics
                 return;
             }
 
-            //ToDo ... replace this with DrawQuad that sets all four corners
             if (Stroke == 1)
             {
                 DrawSingleWidthLine(x0, y0, x1, y1, color);
@@ -371,7 +387,6 @@ namespace Meadow.Foundation.Graphics
             }
         }
 
-        // Helper method, can be integrated with DrawLine after we add DrawQuad
         private void DrawSingleWidthLine(int x0, int y0, int x1, int y1, Color color)
         {
             var steep = Math.Abs(y1 - y0) > Math.Abs(x1 - x0);

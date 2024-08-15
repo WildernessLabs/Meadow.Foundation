@@ -11,6 +11,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
         public class DigitalInterruptPort : DigitalInterruptPortBase
         {
             /// <inheritdoc/>
+            public override InterruptMode InterruptMode { get; set; }
+
+            /// <inheritdoc/>
             public override ResistorMode Resistor
             {
                 get => resistorMode;
@@ -57,7 +60,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// <param name="interruptMode">The interrupt mode used for the interrupt pin</param>
             /// <param name="resistorMode">The resistor mode used by the interrupt pin</param>
             public DigitalInterruptPort(IPin pin, InterruptMode interruptMode = InterruptMode.None, ResistorMode resistorMode = ResistorMode.Disabled)
-                : base(pin, (IDigitalChannelInfo)pin.SupportedChannels![0], interruptMode)
+                : base(pin, (IDigitalChannelInfo)pin.SupportedChannels![0])
             {
                 this.resistorMode = resistorMode;
             }

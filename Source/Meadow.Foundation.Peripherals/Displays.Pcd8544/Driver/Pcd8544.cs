@@ -9,7 +9,7 @@ namespace Meadow.Foundation.Displays
     /// <summary>
     /// Represents a Pcd8544 monochrome display
     /// </summary>
-    public class Pcd8544 : IPixelDisplay, ISpiPeripheral, IDisposable
+    public class Pcd8544 : IPixelDisplay, IColorInvertableDisplay, ISpiPeripheral, IDisposable
     {
         /// <inheritdoc/>
         public ColorMode ColorMode => ColorMode.Format1bpp;
@@ -26,10 +26,8 @@ namespace Meadow.Foundation.Displays
         /// <inheritdoc/>
         public IPixelBuffer PixelBuffer => imageBuffer;
 
-        /// <summary>
-        /// Is the display inverted 
-        /// </summary>
-        public bool IsDisplayInverted { get; private set; } = false;
+        /// <inheritdoc/>
+        public bool IsColorInverted { get; private set; } = false;
 
         /// <summary>
         /// The default SPI bus speed for the device
@@ -220,13 +218,13 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// Invert the entire display
         /// </summary>
-        /// <param name="inverse">Invert if true, normal if false</param>
-        public void InvertDisplay(bool inverse)
+        /// <param name="invert">Invert if true, normal if false</param>
+        public void InvertDisplayColor(bool invert)
         {
-            IsDisplayInverted = inverse;
+            IsColorInverted = invert;
             dataCommandPort.State = false;
 
-            spiComms.Write(inverse ? (byte)0x0D : (byte)0x0C);
+            spiComms.Write(invert ? (byte)0x0D : (byte)0x0C);
 
             dataCommandPort.State = true;
         }

@@ -150,13 +150,11 @@ namespace Meadow.Foundation.Displays
             SendCommand(CMD_WRITERAM);
         }
 
-        /// <summary>
-        /// Invert the display
-        /// </summary>
-        /// <param name="invert"></param>
-        public void InvertDisplay(bool invert)
+        ///<inheritdoc/>
+        public override void InvertDisplayColor(bool invert)
         {
             SendCommand(invert ? CMD_INVERTDISPLAY : CMD_NORMALDISPLAY);
+            IsColorInverted = invert;
         }
 
         static readonly byte CMD_SETCOLUMN = 0x15;

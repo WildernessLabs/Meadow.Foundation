@@ -18,7 +18,7 @@ You can install the library from within Visual studio using the the NuGet Packag
 ## Usage
 
 ```csharp
-private Ahtx0 sensor;
+private Ahtx0 sensor = default!;
 
 public override Task Initialize()
 {
