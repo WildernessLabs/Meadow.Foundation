@@ -22,6 +22,7 @@ public partial class Mcp2515 : ICanController
 
     private ICanBus? _busInstance;
     private CanOscillator _oscillator;
+    private CanBitrate _bitrate;
 
     private ISpiBus SpiBus { get; }
     private IDigitalOutputPort ChipSelect { get; }
@@ -83,8 +84,8 @@ public partial class Mcp2515 : ICanController
         if (InterruptPort != null)
         {
             // TODO: add error condition handling
-            //ConfigureInterrupts(InterruptEnable.RXB0 | InterruptEnable.RXB1 | InterruptEnable.ERR | InterruptEnable.MSG_ERR);
-            ConfigureInterrupts(InterruptEnable.RXB0 | InterruptEnable.RXB1);
+            ConfigureInterrupts(InterruptEnable.RXB0 | InterruptEnable.RXB1 | InterruptEnable.ERR | InterruptEnable.MSG_ERR);
+            //ConfigureInterrupts(InterruptEnable.RXB0 | InterruptEnable.RXB1);
             ClearInterrupt((InterruptFlag)0xff);
         }
         else
@@ -101,6 +102,8 @@ public partial class Mcp2515 : ICanController
 
         DisableFilters();
 
+        WriteRegister(Register.BFPCTRL, 0);
+
         LogRegisters(Register.RXF0SIDH, 14);
         LogRegisters(Register.CANSTAT, 2);
         LogRegisters(Register.RXF3SIDH, 14);
@@ -111,9 +114,30 @@ public partial class Mcp2515 : ICanController
         WriteRegister(Register.CNF1, cfg.CFG1);
         WriteRegister(Register.CNF2, cfg.CFG2);
         WriteRegister(Register.CNF3, cfg.CFG3);
+        _bitrate = bitrate;
         LogRegisters(Register.CNF3, 3);
 
         SetMode(Mode.Normal);
+    }
+
+    private CanBitrate Bitrate
+    {
+        get => _bitrate;
+        set
+        {
+            var mode = GetMode();
+            SetMode(Mode.Configure);
+
+            var cfg = GetConfigForOscillatorAndBitrate(_oscillator, value);
+            WriteRegister(Register.CNF1, cfg.CFG1);
+            WriteRegister(Register.CNF2, cfg.CFG2);
+            WriteRegister(Register.CNF3, cfg.CFG3);
+            LogRegisters(Register.CNF3, 3);
+
+            SetMode(mode);
+
+            _bitrate = value;
+        }
     }
 
     private void DisableFilters()
@@ -145,6 +169,10 @@ public partial class Mcp2515 : ICanController
                 _ => throw new ArgumentOutOfRangeException()
             };
 
+            // set the length bits = max of 8 bytes
+            byte dlcRegisterValue = (byte)(df.Payload.Length & 0x0f);
+            if (dlcRegisterValue > 8) dlcRegisterValue = 8;
+
             if (frame is ExtendedDataFrame edf)
             {
                 var eid0 = (byte)(edf.ID & 0xff);
@@ -162,15 +190,50 @@ public partial class Mcp2515 : ICanController
             }
             else if (frame is StandardDataFrame sdf)
             {
-                // put the frame data into a buffer (0-2)
+                // put the frame id into a buffer (0-2)
                 var sidh = (byte)(sdf.ID >> 3);
                 var sidl = (byte)(sdf.ID << 5 & 0xe0);
                 WriteRegister(ctrl_reg + 1, sidh);
                 WriteRegister(ctrl_reg + 2, sidl);
             }
-            // TODO: handle RTR
+            else if (frame is StandardRtrFrame srf)
+            {
+                // put the frame id into a buffer (0-2)
+                var sidh = (byte)(srf.ID >> 3);
+                var sidl = (byte)(srf.ID << 5 & 0xe0);
+                WriteRegister(ctrl_reg + 1, sidh);
+                WriteRegister(ctrl_reg + 2, sidl);
 
-            WriteRegister(ctrl_reg + 5, (byte)df.Payload.Length);
+                // set the RTR bit
+                dlcRegisterValue |= 0x40;
+            }
+            else if (frame is ExtendedRtrFrame erf)
+            {
+                var eid0 = (byte)(erf.ID & 0xff);
+                var eid8 = (byte)(erf.ID >> 8);
+                var id = erf.ID >> 16;
+                var sidh = (byte)(id >> 5);
+                var sidl = (byte)(id & 3);
+                sidl += (byte)((id & 0x1c) << 3);
+                sidl |= TXB_EXIDE_MASK;
+
+                WriteRegister(ctrl_reg + 1, sidh);
+                WriteRegister(ctrl_reg + 2, sidl);
+                WriteRegister(ctrl_reg + 3, eid8);
+                WriteRegister(ctrl_reg + 4, eid0);
+
+                // set the RTR bit
+                dlcRegisterValue |= 0x40;
+            }
+            else
+            {
+                throw new NotSupportedException();
+            }
+
+            // DLC
+            WriteRegister(ctrl_reg + 5, dlcRegisterValue);
+
+            // data bytes
             byte i = 0;
             foreach (var b in df.Payload)
             {
@@ -206,12 +269,21 @@ public partial class Mcp2515 : ICanController
 
     private Mode GetMode()
     {
-        return (Mode)(ReadRegister(Register.CANSTAT)[0] | 0xE0);
+        return (Mode)(ReadRegister(Register.CANSTAT)[0] | (byte)Control.REQOP);
     }
 
     private void SetMode(Mode mode)
     {
-        ModifyRegister(Register.CANCTRL, (byte)Control.REQOP, (byte)mode);
+        byte m = (byte)mode;
+
+        if (mode == Mode.Configure)
+        {
+            m |= (byte)Control.ABAT;
+        }
+
+        ModifyRegister(Register.CANCTRL, 0xf0, m);
+
+        LogRegisters(Register.CANSTAT, 1);
     }
 
     private Status GetStatus()
@@ -277,12 +349,61 @@ public partial class Mcp2515 : ICanController
         SpiBus.Exchange(ChipSelect, tx, rx);
     }
 
+    private byte[] GetIdBytes(int id, bool isExtended)
+    {
+        var buffer = new byte[4];
+
+        if (isExtended)
+        {
+            buffer[2] = (byte)(id & 0xFF);
+            buffer[3] = (byte)(id >> 8);
+            id = (byte)(id >> 16);
+            buffer[1] = (byte)(id & 0x03);
+            buffer[1] += (byte)((id & 0x1C) << 3);
+            buffer[1] |= TXB_EXIDE_MASK;
+            buffer[0] = (byte)(id >> 5);
+        }
+        else
+        {
+            buffer[0] = (byte)(id >> 3);            // IDH
+            buffer[1] = (byte)((id & 0x07) << 5);  // IDL
+        }
+        return buffer;
+    }
+
+    private void SetMaskAndFilter(bool isExtended, int mask, int filter, int filterNumber)
+    {
+        Resolver.Log.Debug($"Adding mask 0x{mask:x4} and filter 0x{filter:x4} for filter {filterNumber}");
+
+        var mode = GetMode();
+        SetMode(Mode.Configure);
+
+        var maskBytes = GetIdBytes(mask, isExtended);
+        Resolver.Log.Debug($"mask: {BitConverter.ToString(maskBytes)}");
+        WriteRegister(Register.RXM0SIDH, maskBytes);
+
+        LogRegisters(Register.RXM0SIDH, 4);
+
+        var filterBytes = GetIdBytes(filter, isExtended);
+        Resolver.Log.Debug($"filter: {BitConverter.ToString(filterBytes)}");
+        WriteRegister((Register)((int)Register.RXF0SIDH + (4 * filterNumber)), filterBytes);
+
+        LogRegisters(Register.RXF0SIDH, 4);
+
+        WriteRegister(Register.RXB0CTRL, new byte[] { 0, 0 });
+
+        SetMode(mode);
+    }
+
     private void EnableMasksAndFilters(bool enable)
     {
         if (enable)
         {
-            ModifyRegister(Register.RXB0CTRL, 0x64, 0x00);
+            ModifyRegister(Register.RXB0CTRL, 0x64, 0x06);
             ModifyRegister(Register.RXB1CTRL, 0x60, 0x00);
+
+            LogRegisters(Register.RXB0CTRL, 1);
+            LogRegisters(Register.RXB1CTRL, 1);
         }
         else
         {
@@ -369,6 +490,9 @@ public partial class Mcp2515 : ICanController
                 {
                     ID = id,
                 };
+
+                // read the frame data
+                frame.Payload = ReadRegister(data_reg, dataLengthCode);
             }
         }
         else
@@ -386,16 +510,16 @@ public partial class Mcp2515 : ICanController
                 {
                     ID = id,
                 };
+
+                // read the frame data
+                frame.Payload = ReadRegister(data_reg, dataLengthCode);
             }
         }
-
-        // read the frame data
-        frame.Payload = ReadRegister(data_reg, dataLengthCode);
 
         // clear the interrupt flag
         if (InterruptPort != null)
         {
-            ModifyRegister(Register.CANINTF, (byte)int_flag, 0);
+            ClearInterrupt(int_flag);
         }
 
         return frame;
