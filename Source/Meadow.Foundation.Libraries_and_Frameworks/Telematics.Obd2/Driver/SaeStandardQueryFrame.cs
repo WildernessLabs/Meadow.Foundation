@@ -14,7 +14,7 @@ public class SaeStandardQueryFrame : Obd2QueryFrame
             throw new ArgumentException("CAN frame is not a valid SAE standard request frame");
         }
 
-        Service = canFrame.Payload[1];
+        Service = (Service)canFrame.Payload[1];
         Pid = (Pid)canFrame.Payload[2];
     }
 }

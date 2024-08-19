@@ -11,15 +11,21 @@ public abstract class Obd2Frame
     {
         if (dataFrame.ID == Obd2RequestID)
         {
-            switch (dataFrame.Payload[0])
+            switch ((Obd2FrameType)dataFrame.Payload[0])
             {
-                case 2: // SAE STANDARD
+                case Obd2FrameType.Standard: // SAE STANDARD
                     return new SaeStandardQueryFrame(dataFrame);
-                case 3: // VEHICLE SPECIFIC
+                case Obd2FrameType.VehicleSpecific: // VEHICLE SPECIFIC
                     return new VehicleSpecificQueryFrame(dataFrame);
             }
         }
 
         throw new ArgumentException("data frame is not a valid ODB2 frame");
+    }
+
+    public StandardDataFrame AsCanFrame(Obd2FrameType frameType, ushort ecuID)
+    {
+
+        throw new NotImplementedException();
     }
 }

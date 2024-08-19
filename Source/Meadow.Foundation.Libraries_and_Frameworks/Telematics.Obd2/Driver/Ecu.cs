@@ -6,7 +6,9 @@ namespace Meadow.Foundation.Telematics.OBD2;
 public class Ecu
 {
     private readonly ICanBus _bus;
+
     public PidRequestHandlerCollection PidRequestHandlers { get; } = new();
+
     public short Address { get; }
 
     public Ecu(ICanBus bus, short ecuAddress = 0x7e8)
@@ -24,7 +26,7 @@ public class Ecu
 
             PidRequestHandler? handler = null;
             ushort pid = 0;
-            byte service = 0;
+            Service service = 0;
             bool standard = true;
 
             if (obdFrame is SaeStandardQueryFrame sqf)

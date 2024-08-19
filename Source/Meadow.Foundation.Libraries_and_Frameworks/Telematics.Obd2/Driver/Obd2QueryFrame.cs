@@ -2,5 +2,5 @@
 
 public abstract class Obd2QueryFrame : Obd2Frame
 {
-    public byte Service { get; protected set; }
+    public Service Service { get; protected set; }
 }
