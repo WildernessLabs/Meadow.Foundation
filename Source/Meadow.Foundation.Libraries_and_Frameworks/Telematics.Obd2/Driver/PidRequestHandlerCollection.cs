@@ -1,43 +1,10 @@
-﻿using Meadow.Hardware;
-using Meadow.Units;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Telematics.OBD2;
 
 public delegate byte[] PidRequestHandler(ushort pid);
-public delegate byte[] PidBroadcastHandlerHandler(Pid pid, Frequency reportFrequency);
-
-public class PidBroadcastHandlerCollection
-{
-    private ICanBus _bus;
-    private ushort _ecuID;
-
-    internal PidBroadcastHandlerCollection(ICanBus bus, ushort ecuID)
-    {
-        _bus = bus;
-        _ecuID = ecuID;
-    }
-
-    public void Add(ushort pid, Func<Obd2Frame> function, Frequency reportFrequency)
-    {
-        var task = Task.Run(() => BroadcastProc(pid, function, reportFrequency));
-    }
-
-    private async Task BroadcastProc(ushort pid, Func<Obd2Frame> function, Frequency reportFrequency)
-    {
-        while (true)
-        {
-            var frame = function.Invoke();
-
-            _bus.WriteFrame(frame.AsCanFrame(Obd2FrameType.Standard, _ecuID));
-
-            await Task.Delay((int)(1000d / reportFrequency.Hertz));
-        }
-    }
-}
 
 public class PidRequestHandlerCollection : IEnumerable<PidRequestHandler>
 {

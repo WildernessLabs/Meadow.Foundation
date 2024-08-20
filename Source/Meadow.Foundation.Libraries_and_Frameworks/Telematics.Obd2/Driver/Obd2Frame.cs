@@ -3,7 +3,7 @@ using System;
 
 namespace Meadow.Foundation.Telematics.OBD2;
 
-public abstract class Obd2Frame
+public abstract class Obd2Frame : StandardDataFrame
 {
     public const short Obd2RequestID = 0x7df;
 
@@ -23,7 +23,7 @@ public abstract class Obd2Frame
         throw new ArgumentException("data frame is not a valid ODB2 frame");
     }
 
-    public StandardDataFrame AsCanFrame(Obd2FrameType frameType, ushort ecuID)
+    public virtual StandardDataFrame AsCanFrame(Obd2FrameType frameType, short ecuID)
     {
 
         throw new NotImplementedException();

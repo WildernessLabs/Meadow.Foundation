@@ -2,6 +2,7 @@
 using Meadow.Devices;
 using Meadow.Foundation.ICs.CAN;
 using Meadow.Foundation.Telematics.OBD2;
+using System;
 using System.Threading.Tasks;
 
 namespace Obd2.EcuSample;
@@ -23,14 +24,17 @@ public class MeadowApp : App<F7FeatherV2>
         // these PIDs are reported only on request
         ecu.PidRequestHandlers.Add(Pid.EngineCoolantTemperature, OnCoolantTempRequested);
 
-        // These PIDs are broadcast periodically
-
         return Task.CompletedTask;
     }
 
     private byte[] OnCoolantTempRequested(ushort pid)
     {
         return new byte[] { 0x00, 0x01 };
+    }
+
+    private Obd2Frame GetFuelLevel()
+    {
+        throw new NotImplementedException();
     }
 
     public override async Task Run()
