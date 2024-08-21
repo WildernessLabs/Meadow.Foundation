@@ -10,6 +10,8 @@ public class PCanBus : ICanBus
 {
     /// <inheritdoc/>
     public event EventHandler<ICanFrame>? FrameReceived;
+    /// <inheritdoc/>
+    public event EventHandler<CanErrorInfo>? BusError;
 
     /// <inheritdoc/>
     public CanAcceptanceFilterCollection AcceptanceFilters { get; } = new(5);
