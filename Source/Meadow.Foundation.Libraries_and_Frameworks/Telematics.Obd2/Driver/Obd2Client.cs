@@ -25,7 +25,7 @@ public class Obd2Client
         // send and wait for a response
         var response = await SendAndWaitForResponse(request, TimeSpan.FromSeconds(5));
 
-        response.Payload
+        // TODO: send
     }
 
     public async Task<Obd2ResponseFrame> SendAndWaitForResponse(SaeStandardQueryFrame queryFrame, TimeSpan timeout)

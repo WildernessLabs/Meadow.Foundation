@@ -31,5 +31,7 @@ public class SaeStandardQueryFrame : Obd2QueryFrame
         {
             throw new ArgumentException("CAN frame is not a valid SAE standard request frame");
         }
+        this.ID = canFrame.ID;
+        this.Payload = canFrame.Payload;
     }
 }
