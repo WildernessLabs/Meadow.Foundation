@@ -12,7 +12,8 @@ public partial class Mcp2515
 
         /// <inheritdoc/>
         public event EventHandler<ICanFrame>? FrameReceived;
-        public event EventHandler<byte>? BusError;
+        /// <inheritdoc/>
+        public event EventHandler<CanErrorInfo>? BusError;
 
         private Mcp2515 Controller { get; }
 
@@ -105,8 +106,20 @@ public partial class Mcp2515
                     }
                     break;
                 case InterruptCode.Error:
-                    var errors = Controller.ReadRegister(Register.EFLG)[0];
-                    BusError?.Invoke(this, errors);
+                    if (BusError != null)
+                    {
+                        var errors = Controller.ReadRegister(Register.EFLG)[0];
+                        // read the error counts
+                        var tec = Controller.ReadRegister(Register.TEC)[0];
+                        var rec = Controller.ReadRegister(Register.REC)[0];
+                        BusError.Invoke(this, new CanErrorInfo
+                        {
+                            ReceiveErrorCount = rec,
+                            TransmitErrorCount = tec
+                        });
+                        // clear the error interrupt
+                        Controller.ClearInterrupt(InterruptFlag.ERRIF | InterruptFlag.MERRF);
+                    }
                     break;
             }
         }
