@@ -4,6 +4,11 @@ namespace ICs.IOExpanders.PCanBasic;
 
 public class PCanFdBus : ICanBus
 {
+    /// <inheritdoc/>
+    public event EventHandler<ICanFrame>? FrameReceived;
+    /// <inheritdoc/>
+    public event EventHandler<CanErrorInfo>? BusError;
+
     internal PCanFdBus(PCanConfiguration configuration)
     {
         throw new NotImplementedException();
@@ -12,8 +17,6 @@ public class PCanFdBus : ICanBus
     public CanBitrate BitRate { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
     public CanAcceptanceFilterCollection AcceptanceFilters => throw new NotImplementedException();
-
-    public event EventHandler<ICanFrame>? FrameReceived;
 
     public void ClearReceiveBuffers()
     {
