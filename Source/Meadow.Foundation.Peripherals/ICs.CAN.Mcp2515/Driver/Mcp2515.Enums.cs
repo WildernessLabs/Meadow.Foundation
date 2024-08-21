@@ -6,10 +6,10 @@ public partial class Mcp2515
 {
     public enum CanOscillator
     {
-        Osc_8MHz,
-        Osc_10MHz,
-        Osc_16MHz,
-        Osc_20MHz,
+        Osc_8MHz = 8_000_000,
+        Osc_10MHz = 10_000_000,
+        Osc_16MHz = 16_000_000,
+        Osc_20MHz = 20_000_000,
     }
 
     private enum Register : byte
@@ -143,8 +143,8 @@ public partial class Mcp2515
     private enum Status : byte
     {
         NONE = 0,
-        RX0IF = (1 << 0),
-        RX1IF = (1 << 1)
+        RX0IF = 1 << 0,
+        RX1IF = 1 << 1
     }
 
     private enum Result : byte

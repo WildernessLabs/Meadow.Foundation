@@ -83,9 +83,7 @@ public partial class Mcp2515 : ICanController
 
         if (InterruptPort != null)
         {
-            // TODO: add error condition handling
-            ConfigureInterrupts(InterruptEnable.RXB0 | InterruptEnable.RXB1 | InterruptEnable.ERR | InterruptEnable.MSG_ERR);
-            //ConfigureInterrupts(InterruptEnable.RXB0 | InterruptEnable.RXB1);
+            ConfigureInterrupts(InterruptEnable.RXB0 | InterruptEnable.RXB1 | InterruptEnable.ERR);
             ClearInterrupt((InterruptFlag)0xff);
         }
         else
@@ -192,7 +190,7 @@ public partial class Mcp2515 : ICanController
             {
                 // put the frame id into a buffer (0-2)
                 var sidh = (byte)(sdf.ID >> 3);
-                var sidl = (byte)(sdf.ID << 5 & 0xe0);
+                var sidl = (byte)((sdf.ID << 5) & 0xe0);
                 WriteRegister(ctrl_reg + 1, sidh);
                 WriteRegister(ctrl_reg + 2, sidl);
             }
@@ -200,7 +198,7 @@ public partial class Mcp2515 : ICanController
             {
                 // put the frame id into a buffer (0-2)
                 var sidh = (byte)(srf.ID >> 3);
-                var sidl = (byte)(srf.ID << 5 & 0xe0);
+                var sidl = (byte)((srf.ID << 5) & 0xe0);
                 WriteRegister(ctrl_reg + 1, sidh);
                 WriteRegister(ctrl_reg + 2, sidl);
 
