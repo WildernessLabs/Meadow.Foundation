@@ -1,4 +1,5 @@
 ﻿using Meadow.Hardware;
+using System;
 
 namespace Meadow.Foundation.ICs.CAN;
 
@@ -41,7 +42,18 @@ public partial class Mcp2515
                 break;
 
             case CanOscillator.Osc_10MHz:
-                // TODO: add supported things here
+                switch (bitrate)
+                {
+                    //                    case CanBitrate.Can_125kbps:
+                    //                        return (0x03, 0xb8, 0x05);
+                    case CanBitrate.Can_250kbps:
+                        return (0x01, 0x90, 0x02);
+                    case CanBitrate.Can_500kbps:
+                        return (0x00, 0x90, 0x02);
+                    case CanBitrate.Can_1Mbps:
+                        return (0x00, 0x80, 0x00);
+                        // TODO: add supported things here
+                }
                 break;
 
             case CanOscillator.Osc_16MHz:
@@ -110,6 +122,39 @@ public partial class Mcp2515
 
         }
 
-        throw new System.NotSupportedException("Provided Bitrate and Oscillator frequency is not supported");
+        // if we don't have a fixed, pre-calculated value, try to calculate one
+        var freq = oscillator switch
+        {
+            CanOscillator.Osc_8MHz => 8_000_000,
+            CanOscillator.Osc_10MHz => 10_000_000,
+            CanOscillator.Osc_16MHz => 16_000_000,
+            CanOscillator.Osc_20MHz => 20_000_000,
+            _ => throw new NotSupportedException(),
+        };
+
+        return CalculateConfigForOscillatorAndBitrate((int)oscillator, (int)bitrate);
+    }
+
+    private (byte CFG1, byte CFG2, byte CFG3) CalculateConfigForOscillatorAndBitrate(int oscillatorFreq, int bitRate)
+    {
+        int TQ = 16; // Assume 16 time quanta per bit time
+        int PropSeg = 3; // Propagation segment
+        int PhaseSeg1 = 5; // Phase Segment 1
+        int PhaseSeg2 = 5; // Phase Segment 2
+        int SJW = 1; // Synchronization Jump Width (1 TQ)
+
+        // Calculate Baud Rate Prescaler (BRP)
+        int brp = (oscillatorFreq / (2 * bitRate * TQ)) - 1;
+        if (brp < 0 || brp > 63) // BRP must fit in 6 bits
+        {
+            throw new ArgumentOutOfRangeException("Cannot calculate BRP for the given oscillator frequency and bitrate.");
+        }
+
+        // Calculate CNF1, CNF2, CNF3
+        var cfg1 = (byte)(((SJW - 1) << 6) | (brp & 0x3F)); // SJW is 2 bits, BRP is 6 bits
+        var cfg2 = (byte)(0x80 | ((PhaseSeg1 - 1) << 3) | (PropSeg - 1)); // Set SAM = 1 for single sampling
+        var cfg3 = (byte)(PhaseSeg2 - 1); // PhaseSeg2
+
+        return (cfg1, cfg2, cfg3);
     }
 }
