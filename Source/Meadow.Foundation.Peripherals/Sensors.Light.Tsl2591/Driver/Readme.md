@@ -46,7 +46,7 @@ public override Task Initialize()
     // classical .NET events can also be used:
     sensor.Updated += (sender, result) =>
     {
-        Resolver.Log.Info($"  Integrated Light: {result.New.Lux:N2}Lux");
+        Resolver.Log.Info($"  Integrated Light: {result.New.Integrated?.Lux:N2}Lux");
     };
 
     sensor.InfraredUpdated += (sender, result) =>

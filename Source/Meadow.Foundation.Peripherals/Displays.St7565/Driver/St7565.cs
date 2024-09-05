@@ -10,7 +10,7 @@ namespace Meadow.Foundation.Displays
     /// <summary>
     /// Provide an interface to the ST7565 family of displays
     /// </summary>
-    public partial class St7565 : IPixelDisplay, ISpiPeripheral, IDisposable
+    public partial class St7565 : IPixelDisplay, IColorInvertableDisplay, ISpiPeripheral, IDisposable
     {
         /// <inheritdoc/>
         public ColorMode ColorMode => ColorMode.Format1bpp;
@@ -26,6 +26,9 @@ namespace Meadow.Foundation.Displays
 
         /// <inheritdoc/>
         public IPixelBuffer PixelBuffer => imageBuffer;
+
+        /// <inheritdoc/>
+        public bool IsColorInverted { get; private set; } = false;
 
         /// <summary>
         /// The default SPI bus speed for the device
@@ -123,12 +126,10 @@ namespace Meadow.Foundation.Displays
             Initialize();
         }
 
-        /// <summary>
-        /// Invert the entire display (true) or return to normal mode (false).
-        /// </summary>
-        public void InvertDisplay(bool cmd)
+        /// <inheritdoc/>
+        public void InvertDisplayColor(bool invert)
         {
-            if (cmd)
+            if (invert)
             {
                 SendCommand(DisplayCommand.DisplayVideoReverse);
             }
@@ -136,6 +137,7 @@ namespace Meadow.Foundation.Displays
             {
                 SendCommand(DisplayCommand.DisplayVideoNormal);
             }
+            IsColorInverted = invert;
         }
 
         /// <summary>

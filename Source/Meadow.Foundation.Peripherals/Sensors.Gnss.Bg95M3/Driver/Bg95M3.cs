@@ -1,10 +1,9 @@
-﻿using System;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using Meadow.Foundation.Sensors.Location.Gnss;
+﻿using Meadow.Foundation.Sensors.Location.Gnss;
 using Meadow.Hardware;
 using Meadow.Peripherals.Sensors.Location.Gnss;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Gnss
 {
@@ -15,11 +14,11 @@ namespace Meadow.Foundation.Sensors.Gnss
     {
         private TimeSpan _updatePeriod = TimeSpan.FromMinutes(30);
 
-        private ICellNetworkAdapter _cellAdapter;
+        private ICellNetworkAdapter? _cellAdapter = null;
 
-        private CancellationTokenSource cancellationTokenSource;
+        private CancellationTokenSource? cancellationTokenSource = null;
 
-        private NmeaSentenceProcessor nmeaProcessor;
+        private NmeaSentenceProcessor? nmeaProcessor;
 
         private IGnssResult[] _supportedResultTypes = new IGnssResult[]
         {
@@ -49,14 +48,14 @@ namespace Meadow.Foundation.Sensors.Gnss
 
                     var gllDecoder = new GllDecoder();
                     nmeaProcessor.RegisterDecoder(gllDecoder);
-                    gllDecoder.GeographicLatitudeLongitudeReceived += (sender, location) =>
+                    gllDecoder.PositionReceived += (sender, location) =>
                     {
                         GnssDataReceived?.Invoke(this, location);
                     };
 
                     var rmcDecoder = new RmcDecoder();
                     nmeaProcessor.RegisterDecoder(rmcDecoder);
-                    rmcDecoder.PositionCourseAndTimeReceived += (sender, positionCourseAndTime) =>
+                    rmcDecoder.PositionReceived += (sender, positionCourseAndTime) =>
                     {
                         GnssDataReceived?.Invoke(this, positionCourseAndTime);
                     };
@@ -150,13 +149,13 @@ namespace Meadow.Foundation.Sensors.Gnss
             {
                 while (!cancellationTokenSource.Token.IsCancellationRequested)
                 {
-                    var gnssAtCmdsOutput = _cellAdapter.FetchGnssAtCmdsOutput(_supportedResultTypes);
+                    var gnssAtCmdsOutput = _cellAdapter!.FetchGnssAtCmdsOutput(_supportedResultTypes);
 
                     string[] sentences = gnssAtCmdsOutput.Split(new char[] { '\n', ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
                     foreach (string sentence in sentences)
                     {
-                        nmeaProcessor.ProcessNmeaMessage(sentence);
+                        nmeaProcessor?.ProcessNmeaMessage(sentence);
                     }
 
                     await Task.Delay(_updatePeriod);

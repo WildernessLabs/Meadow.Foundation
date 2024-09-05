@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+	<GenerateDocumentationFile>true</GenerateDocumentationFile>
+	<PackageIcon>icon.png</PackageIcon>
+	<AssemblyName>PCanBasic</AssemblyName>
+	<Authors>Wilderness Labs, Inc</Authors>
+	<Company>Wilderness Labs, Inc</Company>
+	<PackageProjectUrl>http://developer.wildernesslabs.co/Meadow/Meadow.Foundation/</PackageProjectUrl>
+	<PackageId>Meadow.Foundation.ICs.CAN.PCanBasic</PackageId>
+	<RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
+	<PackageTags>Meadow.Foundation, CAN, PCanBasic</PackageTags>
+	<Version>0.1.0</Version>
+	<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+	<Description>PCAN-Basic USB CAN Controller for Windows</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\..\icon.png" Link="icon.png">
+      <PackagePath></PackagePath>
+      <Pack>true</Pack>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Peak.PCANBasic.NET" Version="4.8.2.897" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Meadow.Contracts" Version="1.14.0" />
+  </ItemGroup>
+
+</Project>

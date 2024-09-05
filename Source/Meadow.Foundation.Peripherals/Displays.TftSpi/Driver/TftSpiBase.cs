@@ -11,7 +11,7 @@ namespace Meadow.Foundation.Displays
     /// Base class for TFT SPI displays
     /// These displays typically support 16 and 18 bit, some also include 8, 9, 12 and/or 24 bit color 
     /// </summary>
-    public abstract partial class TftSpiBase : IPixelDisplay, ISpiPeripheral, IDisposable
+    public abstract partial class TftSpiBase : IPixelDisplay, IColorInvertableDisplay, ISpiPeripheral, IDisposable
     {
         /// <summary>
         /// Temporary buffer that can be used to batch set address window buffer commands
@@ -33,6 +33,9 @@ namespace Meadow.Foundation.Displays
         /// The display default color mode
         /// </summary>
         public abstract ColorMode DefaultColorMode { get; }
+
+        /// <inheritdoc/>
+        public bool IsColorInverted { get; protected set; } = false;
 
         /// <inheritdoc/>
         public int Width => imageBuffer.Width;
@@ -426,13 +429,12 @@ namespace Meadow.Foundation.Displays
                 PixelBuffer.ColorMode != ColorMode.Format18bppRgb666 &&
                 PixelBuffer.ColorMode != ColorMode.Format24bppRgb888)
             {
-                //should cover all of these displays but just in case
                 Show();
                 return;
             }
 
             if (right < left || bottom < top)
-            {   //could throw an exception
+            {
                 return;
             }
 
@@ -448,7 +450,7 @@ namespace Meadow.Foundation.Displays
                 }
             }
 
-            int bytesPerPixel = PixelBuffer.BitDepth / 8;
+            float bytesPerPixel = PixelBuffer.BitDepth / 8f;
 
             if (PixelBuffer.ColorMode == ColorMode.Format18bppRgb666)
             {
@@ -457,20 +459,26 @@ namespace Meadow.Foundation.Displays
 
             SetAddressWindow(left, top, right - 1, bottom - 1);
 
-            var len = (right - left) * bytesPerPixel;
+            int len = (int)((right - left) * bytesPerPixel);
 
             dataCommandPort.State = Data;
 
-            int sourceIndex;
             for (int y = top; y < bottom; y++)
             {
-                sourceIndex = (y * Width + left) * bytesPerPixel;
+                int sourceIndex = (int)((y * Width + left) * bytesPerPixel);
 
                 spiDisplay.Bus.Exchange(
                     chipSelectPort,
                     imageBuffer.Buffer[sourceIndex..(sourceIndex + len)],
                     readBuffer.Span[0..len]);
             }
+        }
+
+        /// <inheritdoc/>
+        public virtual void InvertDisplayColor(bool invert)
+        {
+            SendCommand(invert ? Register.INVON : Register.INVOFF);
+            IsColorInverted = invert;
         }
 
         /// <summary>
@@ -525,6 +533,11 @@ namespace Meadow.Foundation.Displays
         /// <param name="command">The command to send as a byte</param>
         protected void SendCommand(byte command)
         {
+            if (dataCommandPort == null)
+            {
+                throw new InvalidOperationException("Data command port is not configured.");
+            }
+
             dataCommandPort.State = Command;
             Write(command);
         }

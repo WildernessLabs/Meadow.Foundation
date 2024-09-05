@@ -6,6 +6,9 @@ namespace Meadow.Foundation.ICs.IOExpanders;
 
 public abstract partial class FtdiExpander
 {
+    /// <summary>
+    /// Represents an SPI bus using the FT232H
+    /// </summary>
     public class Ft232hSpiBus : SpiBus
     {
         private FtdiExpander _expander;

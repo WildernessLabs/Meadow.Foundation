@@ -370,7 +370,7 @@ namespace Meadow.Foundation.RTCs
             if (dt.Year > 1999)
             {
                 data[5] |= 0x80;
-            data[6] = Converters.ByteToBCD((byte)((dt.Year - 2000) & 0xff));
+                data[6] = Converters.ByteToBCD((byte)((dt.Year - 2000) & 0xff));
             }
             else
             {

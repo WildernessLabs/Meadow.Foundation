@@ -107,7 +107,7 @@ namespace Meadow.Foundation
         }
 
         /// <summary>
-        /// Reads a single byte from the specified address of the peripheral
+        /// Does a half-duplex read of a single byte from the specified address of the peripheral
         /// </summary>
         /// <param name="address">Address to read</param>
         /// <returns>The byte read</returns>
@@ -116,8 +116,8 @@ namespace Meadow.Foundation
             AutoSetBusSpeedAndMode();
 
             WriteBuffer.Span[0] = address;
-            Bus.Exchange(ChipSelect, WriteBuffer.Span[0..1], ReadBuffer.Span[0..1], chipSelectMode);
-            return ReadBuffer.Span[0];
+            Bus.Exchange(ChipSelect, WriteBuffer.Span[..2], ReadBuffer.Span[..2], chipSelectMode);
+            return ReadBuffer.Span[1];
         }
 
         /// <summary>

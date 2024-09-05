@@ -10,7 +10,7 @@ namespace Meadow.Foundation.Displays
     /// <summary>
     /// Provide an interface to the Sh110x family of displays
     /// </summary>
-    public abstract partial class Sh110x : IPixelDisplay, ISpiPeripheral, II2cPeripheral, IDisposable
+    public abstract partial class Sh110x : IPixelDisplay, IColorInvertableDisplay, ISpiPeripheral, II2cPeripheral, IDisposable
     {
         /// <inheritdoc/>
         public ColorMode ColorMode => ColorMode.Format1bpp;
@@ -27,7 +27,7 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// The default SPI bus speed for the device
         /// </summary>
-        public Frequency DefaultSpiBusSpeed => new Frequency(4, Frequency.UnitType.Megahertz);
+        public Frequency DefaultSpiBusSpeed => new (4, Frequency.UnitType.Megahertz);
 
         /// <summary>
         /// The SPI bus speed for the device
@@ -56,6 +56,9 @@ namespace Meadow.Foundation.Displays
         /// The default I2C address for the peripheral
         /// </summary>
         public byte DefaultI2cAddress => (byte)Addresses.Default;
+
+        /// <inheritdoc/>
+        public bool IsColorInverted { get; private set; } = false;
 
         /// <summary>
         /// The connection type (I2C or SPI)
@@ -203,11 +206,10 @@ namespace Meadow.Foundation.Displays
             SendCommands(new[] { (byte)DisplayCommand.SetDisplayOffset, offset });
         }
 
-        /// <summary>
-        /// Invert the entire display (true) or return to normal mode (false)
-        /// </summary>
-        public void InvertDisplay(bool invert)
+        /// <inheritdoc/>
+        public void InvertDisplayColor(bool invert)
         {
+            IsColorInverted = invert;
             SendCommand(invert ? DisplayCommand.DisplayVideoReverse : DisplayCommand.DisplayVideoNormal);
         }
 
