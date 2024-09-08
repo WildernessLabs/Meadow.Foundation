@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.ICs.IOExpanders;
-using Meadow.Hardware;
 using Meadow.Units;
 
 namespace Ads1263_Sample

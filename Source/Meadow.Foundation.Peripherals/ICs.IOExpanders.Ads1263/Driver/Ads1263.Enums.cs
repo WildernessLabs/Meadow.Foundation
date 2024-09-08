@@ -1,7 +1,4 @@
-﻿
-using System.Diagnostics.CodeAnalysis;
-
-namespace Meadow.Foundation.ICs.IOExpanders
+﻿namespace Meadow.Foundation.ICs.IOExpanders
 {
     public partial class Ads1263
     {
@@ -216,57 +213,57 @@ namespace Meadow.Foundation.ICs.IOExpanders
         {
             /// <summary> ID Register </summary>
             ID = 0x00,
-            /// <summary> Register </summary>
+            /// <summary> Power Register </summary>
             POWER = 0x01,
-            /// <summary> Register </summary>
+            /// <summary> Interface Register </summary>
             INTERFACE = 0x02,
-            /// <summary> Register </summary>
+            /// <summary> ADC1 Configuration Register 0 </summary>
             MODE0 = 0x03,
-            /// <summary> Register </summary>
+            /// <summary> ADC1 Configuration Register 1 </summary>
             MODE1 = 0x04,
-            /// <summary> Register </summary>
+            /// <summary> ADC1 Configuration Register 2 </summary>
             MODE2 = 0x05,
-            /// <summary> Register </summary>
+            /// <summary> Input Multiplexer Register </summary>
             INPMUX = 0x06,
-            /// <summary> Register </summary>
+            /// <summary> Offset Calibration Register 0 </summary>
             OFCAL0 = 0x07,
-            /// <summary> Register </summary>
+            /// <summary> Offset Calibration Register 1 </summary>
             OFCAL1 = 0x08,
-            /// <summary> Register </summary>
+            /// <summary> Offset Calibration Register 2 </summary>
             OFCAL2 = 0x09,
-            /// <summary> Register </summary>
+            /// <summary> Full Scale Calibration Register 0 </summary>
             FSCAL0 = 0x0A,
-            /// <summary> Register </summary>
+            /// <summary> Full Scale Calibration Register 1 </summary>
             FSCAL1 = 0x0B,
-            /// <summary> Register </summary>
+            /// <summary> Full Scale Calibration Register 2 </summary>
             FSCAL2 = 0x0C,
-            /// <summary> Register </summary>
+            /// <summary> IDAC Multiplexer Register </summary>
             IDACMUX = 0x0D,
-            /// <summary> Register </summary>
+            /// <summary> IDAC Magnitude Register </summary>
             IDACMAG = 0x0E,
-            /// <summary> Register </summary>
+            /// <summary> Analog Reference Multiplexer Register </summary>
             REFMUX = 0x0F,
-            /// <summary> Register </summary>
+            /// <summary> TDAC Positive Control Register </summary>
             TDACP = 0x10,
-            /// <summary> Register </summary>
+            /// <summary> TDAC Negative Control Register </summary>
             TDACN = 0x11,
-            /// <summary> Register </summary>
+            /// <summary> GPIO Control Enable Register </summary>
             GPIOCON = 0x12,
-            /// <summary> Register </summary>
+            /// <summary> GPIO Direction Register </summary>
             GPIODIR = 0x13,
-            /// <summary> Register </summary>
+            /// <summary> GPIO Data Register </summary>
             GPIODAT = 0x14,
-            /// <summary> Register </summary>
+            /// <summary> ADC2 Configuration Register </summary>
             ADC2CFG = 0x15,
-            /// <summary> Register </summary>
+            /// <summary> ADC2 Multiplexer Register </summary>
             ADC2MUX = 0x16,
-            /// <summary> Register </summary>
+            /// <summary> ADC2 Offset Calibration Register 0 </summary>
             ADC2OFC0 = 0x17,
-            /// <summary> Register </summary>
+            /// <summary> ADC2 Offset Calibration Register 1 </summary>
             ADC2OFC1 = 0x18,
-            /// <summary> Register </summary>
+            /// <summary> ADC2 Scale Calibration Register 0 </summary>
             ADC2OSC0 = 0x19,
-            /// <summary> Register </summary>
+            /// <summary> ADC2 Scale Calibration Register 1 </summary>
             ADC2OSC1 = 0x1A,
         }
     }
