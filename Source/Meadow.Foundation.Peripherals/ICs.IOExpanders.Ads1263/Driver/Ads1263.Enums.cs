@@ -169,7 +169,7 @@
             Gain_32 = 0x5,
             /// <summary> 64 V/V (resulting in ±39 mV range assuming Internal reference) </summary>
             Gain_64 = 0x6,
-                /// <summary> 128 V/V (resulting in ±19.5 mV range assuming Internal reference) </summary>
+            /// <summary> 128 V/V (resulting in ±19.5 mV range assuming Internal reference) </summary>
             Gain_128 = 0x7,
         }
 

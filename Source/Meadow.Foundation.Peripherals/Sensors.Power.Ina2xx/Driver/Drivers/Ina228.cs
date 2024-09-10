@@ -117,7 +117,6 @@ public class Ina228 : Ina2xx
         DeviceRevision = (byte)(deviceInfo & 0xF);
     }
 
-    #region Measurement
     /// <inheritdoc/>
     public override Units.Current ReadCurrent()
     {
@@ -191,9 +190,6 @@ public class Ina228 : Ina2xx
         WriteRegister(Registers.Config, config);
     }
 
-    #endregion
-
-    #region Enumerations
     /// <summary>
     /// Enumeration of supported operation modes.
     /// </summary>
@@ -300,9 +296,7 @@ public class Ina228 : Ina2xx
         ManufacturerID = 0x3E,
         DeviceID = 0x3F
     }
-    #endregion
 
-    #region Shorthand
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private void WriteRegister(Registers register, byte value) => BusComms.WriteRegister((byte)register, value, ByteOrder.BigEndian);
 
@@ -320,6 +314,4 @@ public class Ina228 : Ina2xx
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private ushort ReadRegisterAsUShort(Registers register) => BusComms.ReadRegisterAsUShort((byte)register, ByteOrder.BigEndian);
-    #endregion
-
 }

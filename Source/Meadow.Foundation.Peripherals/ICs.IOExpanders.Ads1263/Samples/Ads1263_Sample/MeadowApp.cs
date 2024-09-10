@@ -1,15 +1,17 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Meadow;
+﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.ICs.IOExpanders;
 using Meadow.Units;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Ads1263_Sample
 {
     public class MeadowApp : App<F7FeatherV2>
     {
+        //<!=SNIP=>
+
         private Ads1263 ads1263;
         private Ads1263.AnalogInputPort adc1, adc2;
         private Ads1263.DigitalInputPort gpio0, gpio1;
@@ -24,7 +26,7 @@ namespace Ads1263_Sample
 
             // Setup ADC1 on the default inputs
             ads1263.ConfigureADC1(positiveSource: Ads1263.AdcSource.AIN0, negativeSource: Ads1263.AdcSource.AIN1);
-            adc1 = (Ads1263.AnalogInputPort)ads1263.CreateAnalogInputPort(ads1263.Pins.ADC1, 1, TimeSpan.Zero, 2.5.Volts() );
+            adc1 = (Ads1263.AnalogInputPort)ads1263.CreateAnalogInputPort(ads1263.Pins.ADC1, 1, TimeSpan.Zero, 2.5.Volts());
             adc1.StartConversions();
             adc1.Updated += Adc1_Updated;
             adc1.StartUpdating(TimeSpan.FromSeconds(5));
@@ -66,9 +68,8 @@ namespace Ads1263_Sample
 
                 Thread.Sleep(TimeSpan.FromSeconds(1));
             }
-
-            return base.Run();
         }
 
+        //<!=SNOP=>
     }
 }
