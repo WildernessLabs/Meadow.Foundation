@@ -1,8 +1,8 @@
 ﻿using Meadow.Hardware;
 using Meadow.Units;
-using System.Linq;
-using System;
 using Meadow.Utilities;
+using System;
+using System.Linq;
 
 namespace Meadow.Foundation.ICs.IOExpanders;
 
@@ -20,7 +20,6 @@ public partial class Ads1263 : IAnalogInputController, IDigitalInputOutputContro
     private byte ioEnable, ioDir, ioOut, gain1, gain2;
     private double vRef1, vRef2;
 
-    #region SPI
     /// <summary>
     /// Gets the underlying ISpiCommunications instance
     /// </summary>
@@ -40,9 +39,8 @@ public partial class Ads1263 : IAnalogInputController, IDigitalInputOutputContro
 
     /// <summary> Did we create the port(s) used by the peripheral </summary>
     private readonly bool createdPort = false;
-    
+
     private readonly IDigitalOutputPort chipSelectPort;
-    #endregion
 
     /// <summary>
     /// object for using lock() while modifying GPIO outputs
@@ -89,8 +87,6 @@ public partial class Ads1263 : IAnalogInputController, IDigitalInputOutputContro
         var vRef = (byte)pin.Key switch { 0x00 => vRef1, _ => vRef2 };
         return new Voltage(vRef, Voltage.UnitType.Volts);
     }
-
-    #region Configuration
     private void Initialize()
     {
         // read Device ID to confirm communications
@@ -127,19 +123,20 @@ public partial class Ads1263 : IAnalogInputController, IDigitalInputOutputContro
         double referenceVoltage = 5.0, Adc1ReferenceP positiveReference = Adc1ReferenceP.Internal, Adc1ReferenceN negativeReference = Adc1ReferenceN.Internal)
     {
         // Verify combinations of filter and data rate settings
-        if (filter == Adc1Filter.FIR && ((byte)rate > (byte)Adc1DataRate.SPS_20 || rate == Adc1DataRate.SPS_16p6)) 
+        if (filter == Adc1Filter.FIR && ((byte)rate > (byte)Adc1DataRate.SPS_20 || rate == Adc1DataRate.SPS_16p6))
             throw new ArgumentException("FIR filter can only be used with 2.5, 5, 10, or 20 samples per second");
         // Note: The three fastest data rates bypass the second filter stage, so filter may be ignored.
 
         WriteRegister(Register.MODE1, (byte)filter << 5);
         WriteRegister(Register.MODE2, (byte)gain << 4 | (byte)rate);
         WriteRegister(Register.INPMUX, (byte)positiveSource << 4 | (byte)negativeSource);
-        WriteRegister(Register.REFMUX, (byte)positiveReference << 3 | (byte) negativeReference);
+        WriteRegister(Register.REFMUX, (byte)positiveReference << 3 | (byte)negativeReference);
 
         gain1 = (byte)(1 << (byte)gain);
-        vRef1 = (positiveReference, negativeReference) switch {
+        vRef1 = (positiveReference, negativeReference) switch
+        {
             (Adc1ReferenceP.Internal, Adc1ReferenceN.Internal) => 2.5,
-            (_,_) => referenceVoltage
+            (_, _) => referenceVoltage
         };
     }
 
@@ -154,7 +151,7 @@ public partial class Ads1263 : IAnalogInputController, IDigitalInputOutputContro
     /// <param name="reference">Enumeration specifying the positive and negative reference source</param>
     public void ConfigureADC2(
         AdcSource positiveSource = AdcSource.AIN0, AdcSource negativeSource = AdcSource.AIN1,
-        Adc2Gain gain = Adc2Gain.Gain_1, Adc2DataRate rate = Adc2DataRate.SPS_10, 
+        Adc2Gain gain = Adc2Gain.Gain_1, Adc2DataRate rate = Adc2DataRate.SPS_10,
         double referenceVoltage = 5.0, Adc2Reference reference = Adc2Reference.Internal)
     {
         WriteRegister(Register.ADC2CFG, (byte)rate << 6 | (byte)reference << 3 | (byte)gain);
@@ -192,9 +189,6 @@ public partial class Ads1263 : IAnalogInputController, IDigitalInputOutputContro
         SpiComms.Write(command);
     }
 
-    #endregion
-
-    #region AnalogInputPort
     /// <inheritdoc />
     public IAnalogInputPort CreateAnalogInputPort(IPin pin, int sampleCount, TimeSpan sampleInterval, Voltage referenceVoltage)
     {
@@ -251,7 +245,7 @@ public partial class Ads1263 : IAnalogInputController, IDigitalInputOutputContro
         var gain = key switch { 0x00 => gain1, _ => gain2 };
 
         // TODO: verify conversion/scaling
-        var result = (vRef / gain) * (rawValue  / (double)0x7FFFFFFF);
+        var result = (vRef / gain) * (rawValue / (double)0x7FFFFFFF);
 
         return new Voltage(result, Voltage.UnitType.Volts);
     }
@@ -264,9 +258,6 @@ public partial class Ads1263 : IAnalogInputController, IDigitalInputOutputContro
         return new Temperature(((tempSensorVoltage.Microvolts - 122400) / 420) + 25, Temperature.UnitType.Celsius);
     }
 
-    #endregion
-
-    #region DigitalInputPort
     /// <summary>
     /// Creates a new DigitalInputPort using the specified GPIO pin
     /// </summary>
@@ -294,9 +285,7 @@ public partial class Ads1263 : IAnalogInputController, IDigitalInputOutputContro
         var ioInputs = ReadRegister(Register.GPIODAT);
         return BitHelpers.GetBitValue(ioInputs, (byte)pin.Key);
     }
-    #endregion
 
-    #region DigitalOutputPort
     /// <summary>
     /// Creates a new DigitalOutputPort using the specified pin and initial state
     /// </summary>
@@ -324,9 +313,7 @@ public partial class Ads1263 : IAnalogInputController, IDigitalInputOutputContro
 
         return port;
     }
-    #endregion
 
-    #region Digital 
     /// <summary>
     /// Sets the GPIO configuration of a port using pre-cached information. This overload
     /// assumes the pin has been pre-verified as valid.
@@ -382,9 +369,7 @@ public partial class Ads1263 : IAnalogInputController, IDigitalInputOutputContro
             WriteRegister(Register.GPIODAT, ioOut);
         }
     }
-    #endregion
 
-    #region IDisposable
     /// <summary>
     /// Is the object disposed
     /// </summary>
@@ -413,5 +398,4 @@ public partial class Ads1263 : IAnalogInputController, IDigitalInputOutputContro
             IsDisposed = true;
         }
     }
-    #endregion
 }
