@@ -2,6 +2,8 @@
 using Meadow.Peripherals.Displays;
 using Meadow.Units;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Graphics
@@ -316,9 +318,88 @@ namespace Meadow.Foundation.Graphics
             DrawLine(x0, y0, x1, y1, PenColor);
         }
 
-        private bool IsTallerThanWide(int x0, int y0, int x1, int y1)
+        private void DrawThickLine(float x0, float y0, float x1, float y1, int thickness, Color color)
         {
-            return Math.Abs(x0 - x1) < Math.Abs(y0 - y1);
+            // Calculate the direction vector of the line
+            float dx = x1 - x0;
+            float dy = y1 - y0;
+            float length = MathF.Sqrt(dx * dx + dy * dy);
+
+            if (length == 0)
+            {
+                // Avoid division by zero
+                return;
+            }
+
+            // Normalize the direction vector
+            dx /= length;
+            dy /= length;
+
+            // Calculate the perpendicular vector
+            float px = -dy;
+            float py = dx;
+
+            // Scale the perpendicular vector by half the thickness
+            float halfThickness = thickness / 2.0f;
+            px *= halfThickness;
+            py *= halfThickness;
+
+            // Calculate the four corners of the thick line's quadrilateral
+            var p1 = new PointF(x0 + px, y0 + py);
+            var p2 = new PointF(x1 + px, y1 + py);
+            var p3 = new PointF(x1 - px, y1 - py);
+            var p4 = new PointF(x0 - px, y0 - py);
+
+            // Define the points of the polygon
+            var points = new PointF[] { p1, p2, p3, p4 };
+
+            // Draw and fill the polygon
+            DrawFilledPolygon(points, color);
+        }
+
+        private void DrawFilledPolygon(PointF[] points, Color color)
+        {
+            // Convert PointF to Point by rounding to nearest integer
+            var integerPoints = points.Select(p => new Point((int)Math.Round(p.X), (int)Math.Round(p.Y))).ToArray();
+
+            // Proceed with polygon filling using integer coordinates
+            FillPolygon(integerPoints, color);
+        }
+
+        private void FillPolygon(Point[] points, Color color)
+        {
+            // Find the bounding box of the polygon
+            int minY = points.Min(p => p.Y);
+            int maxY = points.Max(p => p.Y);
+
+            // For each scanline between minY and maxY
+            for (int y = minY; y <= maxY; y++)
+            {
+                var nodeX = new List<int>();
+
+                int j = points.Length - 1;
+                for (int i = 0; i < points.Length; i++)
+                {
+                    if ((points[i].Y < y && points[j].Y >= y) || (points[j].Y < y && points[i].Y >= y))
+                    {
+                        int x = (int)(points[i].X + (float)(y - points[i].Y) / (points[j].Y - points[i].Y) * (points[j].X - points[i].X));
+                        nodeX.Add(x);
+                    }
+                    j = i;
+                }
+
+                nodeX.Sort();
+
+                for (int i = 0; i < nodeX.Count; i += 2)
+                {
+                    if (i + 1 < nodeX.Count)
+                    {
+                        int xStart = nodeX[i];
+                        int xEnd = nodeX[i + 1];
+                        DrawHorizontalLine(xStart, y, xEnd - xStart + 1, color);
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -367,23 +448,9 @@ namespace Meadow.Foundation.Graphics
             {
                 DrawSingleWidthLine(x0, y0, x1, y1, color);
             }
-            else if (IsTallerThanWide(x0, y0, x1, y1))
-            {
-                int xOffset = Stroke >> 1;
-
-                for (int i = 0; i < Stroke; i++)
-                {
-                    DrawSingleWidthLine(x0 - xOffset + i, y0, x1 - xOffset + i, y1, color);
-                }
-            }
             else
             {
-                int yOffset = Stroke >> 1;
-
-                for (int i = 0; i < Stroke; i++)
-                {
-                    DrawSingleWidthLine(x0, y0 - yOffset + i, x1, y1 - yOffset + i, color);
-                }
+                DrawThickLine(x0, y0, x1, y1, Stroke, color);
             }
         }
 
@@ -1731,11 +1798,11 @@ namespace Meadow.Foundation.Graphics
                 }
 
                 isUpdating = true;
+
+                display?.Show();
+
+                isUpdating = false;
             }
-
-            display?.Show();
-
-            isUpdating = false;
         }
 
         /// <summary>
@@ -1947,7 +2014,7 @@ namespace Meadow.Foundation.Graphics
         /// <param name="x">The non-rotated x position</param>
         /// <param name="y">The non-rotated y position</param>
         /// <returns></returns>
-        public int GetXForRotation(int x, int y)
+        protected int GetXForRotation(int x, int y)
         {
             if (display is IRotatableDisplay) { return x; }
 
@@ -1966,7 +2033,7 @@ namespace Meadow.Foundation.Graphics
         /// <param name="x">The non-rotated x position</param>
         /// <param name="y">The non-rotated y position</param>
         /// <returns></returns>
-        public int GetYForRotation(int x, int y)
+        protected int GetYForRotation(int x, int y)
         {
             if (display is IRotatableDisplay) { return y; }
 
