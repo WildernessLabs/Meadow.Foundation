@@ -43,20 +43,20 @@ internal class IgnorableContainerClass
 
 internal class RenamedPropertyClass
 {
-    [JsonPropertyName("prop_name")]
+    [JsonPropertyNameAttribute("prop_name")]
     public string? Name { get; set; }
     public string? OtherProp { get; set; }
 }
 
 public class AuthResponseMessage
 {
-    [JsonPropertyName("token_type")]
+    [JsonPropertyNameAttribute("token_type")]
     public string? TokenType { get; set; }
-    [JsonPropertyName("expires_in")]
+    [JsonPropertyNameAttribute("expires_in")]
     public int ExpiresIn { get; set; }
-    [JsonPropertyName("access_token")]
+    [JsonPropertyNameAttribute("access_token")]
     public string? AccessToken { get; set; }
-    [JsonPropertyName("scope")]
+    [JsonPropertyNameAttribute("scope")]
     public string? Scope { get; set; }
 }
 

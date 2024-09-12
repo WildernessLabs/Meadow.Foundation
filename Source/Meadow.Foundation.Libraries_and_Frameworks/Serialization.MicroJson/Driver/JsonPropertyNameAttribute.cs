@@ -6,7 +6,7 @@ namespace Meadow.Foundation.Serialization;
 /// Specifies the property name that is present in the JSON when serializing and deserializing.
 /// </summary>
 [AttributeUsage(AttributeTargets.Property, Inherited = true)]
-public class JsonPropertyName : Attribute
+public class JsonPropertyNameAttribute : Attribute
 {
     /// <summary>
     /// Gets the name of the property.
@@ -17,7 +17,7 @@ public class JsonPropertyName : Attribute
     /// Initializes a new instance of JsonPropertyNameAttribute with the specified property name.
     /// </summary>
     /// <param name="propertyName">The name of the property</param>
-    public JsonPropertyName(string propertyName)
+    public JsonPropertyNameAttribute(string propertyName)
     {
         PropertyName = propertyName;
     }

@@ -171,7 +171,7 @@ public static partial class MicroJson
             {
                 object returnObject = property.GetValue(o);
 
-                var mappedName = property.GetCustomAttribute<JsonPropertyName>(true);
+                var mappedName = property.GetCustomAttribute<JsonPropertyNameAttribute>(true);
 
                 var name = mappedName != null
                     ? mappedName.PropertyName
