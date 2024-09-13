@@ -6,6 +6,9 @@ namespace Meadow.Foundation.ICs.IOExpanders;
 
 public abstract partial class FtdiExpander
 {
+    /// <summary>
+    /// Represents an Ft232h expander I2C bus.
+    /// </summary>
     public class Ft232hI2cBus : I2CBus
     {
         internal Ft232hI2cBus(FtdiExpander expander, I2cBusSpeed busSpeed)

@@ -10,6 +10,9 @@ namespace Meadow.Foundation.ICs.CAN;
 /// </summary>
 public partial class Mcp2515 : ICanController
 {
+    /// <summary>
+    /// Default SPI clock mode for the MCP2515
+    /// </summary>
     public const SpiClockConfiguration.Mode DefaultSpiMode = SpiClockConfiguration.Mode.Mode0;
 
     private byte BRP_Default = 0x01;

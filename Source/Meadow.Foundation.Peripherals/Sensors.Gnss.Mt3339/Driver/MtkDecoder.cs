@@ -1,6 +1,5 @@
 ﻿using Meadow.Foundation.Sensors.Location.Gnss;
 using Meadow.Peripherals.Sensors.Location.Gnss;
-using System;
 
 namespace Meadow.Foundation.Sensors.Gnss
 {
@@ -9,11 +8,6 @@ namespace Meadow.Foundation.Sensors.Gnss
     /// </summary>
     public class MtkDecoder : INmeaDecoder
     {
-        /// <summary>
-        /// Event raised when a message is received 
-        /// </summary>
-        public event EventHandler<string> MessageReceived = default!;
-
         /// <summary>
         /// Friendly name for the MTK messages.
         /// </summary>
