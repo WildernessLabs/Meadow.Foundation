@@ -6,7 +6,7 @@
     <Nullable>enable</Nullable>
 	<GenerateDocumentationFile>true</GenerateDocumentationFile>
 	<PackageIcon>icon.png</PackageIcon>
-	<AssemblyName>PCanBasic</AssemblyName>
+	<AssemblyName>Meadow.PCanBasic</AssemblyName>
 	<Authors>Wilderness Labs, Inc</Authors>
 	<Company>Wilderness Labs, Inc</Company>
 	<PackageProjectUrl>http://developer.wildernesslabs.co/Meadow/Meadow.Foundation/</PackageProjectUrl>
