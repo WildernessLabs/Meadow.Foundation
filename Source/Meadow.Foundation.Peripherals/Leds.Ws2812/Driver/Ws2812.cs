@@ -23,7 +23,7 @@ public class Ws2812 : ISpiPeripheral
     /// <summary>
     /// The default SPI bus speed for the device
     /// </summary>
-    public Frequency DefaultSpiBusSpeed => new Frequency(3, Frequency.UnitType.Megahertz);
+    public Frequency DefaultSpiBusSpeed => new(3, Frequency.UnitType.Megahertz);
 
     /// <summary>
     /// The SPI bus speed for the device
@@ -77,6 +77,18 @@ public class Ws2812 : ISpiPeripheral
     public void SetLed(int index, Color color)
     {
         SetLed(index, new byte[] { color.R, color.G, color.B });
+    }
+
+    /// <summary>
+    /// Set the color of all LEDs
+    /// </summary>
+    /// <param name="color">The color</param>
+    public void SetAllLeds(Color color)
+    {
+        for (int i = 0; i < numberOfLeds; i++)
+        {
+            SetLed(i, new byte[] { color.R, color.G, color.B });
+        }
     }
 
     private static IEnumerable<byte> ByteToWs2812Byte(byte theByte)
