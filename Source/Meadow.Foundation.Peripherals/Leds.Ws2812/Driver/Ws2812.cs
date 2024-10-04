@@ -58,13 +58,10 @@ public class Ws2812 : ISpiPeripheral
     /// </summary>
     /// <param name="spiBus">SPI bus</param>
     /// <param name="numberOfLeds">Number of leds</param>
-    /// <param name="chipSelectPort">SPI chip select port (optional)</param>
-    public Ws2812(ISpiBus spiBus, int numberOfLeds, IDigitalOutputPort? chipSelectPort = null)
+    public Ws2812(ISpiBus spiBus, int numberOfLeds)
     {
-        spiComms = new SpiCommunications(spiBus, chipSelectPort, spiBus.Configuration.Speed);
-
+        spiComms = new SpiCommunications(spiBus, null, DefaultSpiBusSpeed, DefaultSpiBusMode);
         this.numberOfLeds = numberOfLeds;
-
         // To transmit 8 bits of color we need 4 bytes and there are 3 colors
         buffer = new byte[numberOfLeds * BytesPerColorPart * 3];
     }
