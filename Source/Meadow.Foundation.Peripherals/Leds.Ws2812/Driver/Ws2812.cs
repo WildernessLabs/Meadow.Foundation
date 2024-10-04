@@ -10,6 +10,16 @@ namespace Meadow.Foundation.Leds;
 /// </summary>
 public class Ws2812 : ISpiPeripheral
 {
+    private static readonly byte[] ws2812Bytes = new byte[] { 0x44, 0x46, 0x64, 0x66 };
+    private const int BytesPerColorPart = 4;
+    private readonly int numberOfLeds;
+    private readonly byte[] buffer;
+
+    /// <summary>
+    /// SPI Communication bus used to communicate with the peripheral
+    /// </summary>
+    protected ISpiCommunications spiComms;
+
     /// <summary>
     /// The default SPI bus speed for the device
     /// </summary>
@@ -43,16 +53,10 @@ public class Ws2812 : ISpiPeripheral
     /// </summary>
     public int NumberOfLeds => numberOfLeds;
 
-    private static readonly byte[] ws2812Bytes = new byte[] { 0x44, 0x46, 0x64, 0x66 };
-    private const int BytesPerColorPart = 4;
-
     /// <summary>
     /// SPI Communication bus used to communicate with the peripheral
     /// </summary>
     protected ISpiCommunications spiComms;
-
-    readonly int numberOfLeds;
-    readonly byte[] buffer;
 
     readonly IDigitalOutputPort? chipSelectPort;
 

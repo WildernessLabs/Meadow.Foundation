@@ -2,7 +2,8 @@ using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Leds;
 using System.Threading;
-using System.Threading.Tasks;
+using Meadow.Units;
+using System;
 
 namespace MeadowApp
 {
@@ -20,7 +21,7 @@ namespace MeadowApp
             return base.Initialize();
         }
 
-        public override Task Run()
+        public override async Task Run()
         {
             while (true)
             {
