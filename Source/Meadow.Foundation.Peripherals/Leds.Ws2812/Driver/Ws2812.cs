@@ -43,11 +43,6 @@ public class Ws2812 : ISpiPeripheral
     /// </summary>
     public int NumberOfLeds => numberOfLeds;
 
-    /// <summary>
-    /// Is the object disposed
-    /// </summary>
-    public bool IsDisposed { get; private set; }
-
     private static readonly byte[] ws2812Bytes = new byte[] { 0x44, 0x46, 0x64, 0x66 };
     private const int BytesPerColorPart = 4;
 
