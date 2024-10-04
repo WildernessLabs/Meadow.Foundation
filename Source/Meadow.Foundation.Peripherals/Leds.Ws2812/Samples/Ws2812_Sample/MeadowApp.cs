@@ -1,9 +1,7 @@
 using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Leds;
-using System.Threading;
-using Meadow.Units;
-using System;
+using System.Threading.Tasks;
 
 namespace MeadowApp
 {
@@ -28,9 +26,9 @@ namespace MeadowApp
                 for (int i = 0; i < neoPixels.NumberOfLeds; i++)
                 {
                     neoPixels.SetAllLeds(Color.Black);
-                    neoPixels.SetLed(i, Color.Purple);
+                    neoPixels.SetLed(i, Color.Blue);
                     neoPixels.Show();
-                    Thread.Sleep(100);
+                    await Task.Delay(100);
                 }
             }
         }

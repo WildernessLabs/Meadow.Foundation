@@ -54,13 +54,6 @@ public class Ws2812 : ISpiPeripheral
     public int NumberOfLeds => numberOfLeds;
 
     /// <summary>
-    /// SPI Communication bus used to communicate with the peripheral
-    /// </summary>
-    protected ISpiCommunications spiComms;
-
-    readonly IDigitalOutputPort? chipSelectPort;
-
-    /// <summary>
     /// Creates a new WS2812 object
     /// </summary>
     /// <param name="spiBus">SPI bus</param>
