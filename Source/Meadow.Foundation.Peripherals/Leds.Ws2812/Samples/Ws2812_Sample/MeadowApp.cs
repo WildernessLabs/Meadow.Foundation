@@ -26,7 +26,7 @@ namespace MeadowApp
             {
                 if (i % 2 == 0)
                 {
-                    _ws2812.SetLed(i, Color.Green);
+                    _ws2812.SetLed(i, Color.Yellow);
                 }
                 else
                 {

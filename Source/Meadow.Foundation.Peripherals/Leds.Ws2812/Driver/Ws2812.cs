@@ -84,6 +84,18 @@ public class Ws2812 : ISpiPeripheral
         SetLed(index, new byte[] { color.R, color.G, color.B });
     }
 
+    /// <summary>
+    /// Set the color of all LEDs
+    /// </summary>
+    /// <param name="color">The color</param>
+    public void SetAllLeds(Color color)
+    {
+        for (int i = 0; i < numberOfLeds; i++)
+        {
+            SetLed(i, new byte[] { color.R, color.G, color.B });
+        }
+    }
+
     private static IEnumerable<byte> ByteToWs2812Byte(byte theByte)
     {
         for (int counter = 0; counter < 4; ++counter)
