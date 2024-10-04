@@ -8,12 +8,12 @@ namespace Meadow.Foundation.Leds
     /// <summary>
     /// Represents WS2812/Neopixel Led(s)
     /// </summary>
-    public class Ws2812 : ISpiPeripheral, IDisposable
+    public class Ws2812 : ISpiPeripheral
     {
         /// <summary>
         /// The default SPI bus speed for the device
         /// </summary>
-        public Frequency DefaultSpiBusSpeed => new Frequency(3, Frequency.UnitType.Megahertz);
+        public Frequency DefaultSpiBusSpeed => new(3, Frequency.UnitType.Megahertz);
 
         /// <summary>
         /// The SPI bus speed for the device
@@ -48,11 +48,6 @@ namespace Meadow.Foundation.Leds
         /// </summary>
         public bool IsDisposed { get; private set; }
 
-        /// <summary>
-        /// Did we create the port(s) used by the peripheral
-        /// </summary>
-        readonly bool createdPort = false;
-
         private static readonly byte[] ws2812Bytes = new byte[] { 0x44, 0x46, 0x64, 0x66 };
         private const int BytesPerColorPart = 4;
 
@@ -70,23 +65,10 @@ namespace Meadow.Foundation.Leds
         /// Creates a new WS2812 object
         /// </summary>
         /// <param name="spiBus">SPI bus</param>
-        /// <param name="chipSelectPin">Chip select pin</param>
         /// <param name="numberOfLeds">Number of leds</param>
-        public Ws2812(ISpiBus spiBus, IPin chipSelectPin, int numberOfLeds)
-        : this(spiBus, numberOfLeds, chipSelectPin.CreateDigitalOutputPort())
+        public Ws2812(ISpiBus spiBus, int numberOfLeds)
         {
-            createdPort = true;
-        }
-
-        /// <summary>
-        /// Creates a new WS2812 object
-        /// </summary>
-        /// <param name="spiBus">SPI bus</param>
-        /// <param name="numberOfLeds">Number of leds</param>
-        /// <param name="chipSelectPort">SPI chip select port (optional)</param>
-        public Ws2812(ISpiBus spiBus, int numberOfLeds, IDigitalOutputPort? chipSelectPort = null)
-        {
-            spiComms = new SpiCommunications(spiBus, this.chipSelectPort = chipSelectPort, DefaultSpiBusSpeed, DefaultSpiBusMode);
+            spiComms = new SpiCommunications(spiBus, null, DefaultSpiBusSpeed, DefaultSpiBusMode);
             this.numberOfLeds = numberOfLeds;
             // To transmit 8 bits of color we need 4 bytes and there are 3 colors
             buffer = new byte[numberOfLeds * BytesPerColorPart * 3];
@@ -147,30 +129,6 @@ namespace Meadow.Foundation.Leds
         public void Show()
         {
             spiComms.Write(buffer);
-        }
-
-        ///<inheritdoc/>
-        public void Dispose()
-        {
-            Dispose(disposing: true);
-            GC.SuppressFinalize(this);
-        }
-
-        /// <summary>
-        /// Dispose of the object
-        /// </summary>
-        /// <param name="disposing">Is disposing</param>
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!IsDisposed)
-            {
-                if (disposing && createdPort)
-                {
-                    chipSelectPort?.Dispose();
-                }
-
-                IsDisposed = true;
-            }
         }
     }
 }

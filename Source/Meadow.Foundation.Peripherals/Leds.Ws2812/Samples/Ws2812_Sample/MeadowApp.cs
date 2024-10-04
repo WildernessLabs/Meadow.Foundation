@@ -1,6 +1,5 @@
 using Meadow;
 using Meadow.Devices;
-using Meadow.Foundation;
 using Meadow.Foundation.Leds;
 using Meadow.Units;
 using System.Threading.Tasks;
@@ -27,11 +26,11 @@ namespace MeadowApp
             {
                 if (i % 2 == 0)
                 {
-                    _ws2812.SetLed(i, Color.Blue);
+                    _ws2812.SetLed(i, Color.Green);
                 }
                 else
                 {
-                    _ws2812.SetLed(i, Color.Red);
+                    _ws2812.SetLed(i, Color.Blue);
                 }
                 _ws2812.Show();
             }
