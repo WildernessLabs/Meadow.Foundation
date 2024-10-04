@@ -7,6 +7,8 @@ namespace MeadowApp
 {
     public class MeadowApp : App<F7FeatherV2>
     {
+        //<!=SNIP=>
+
         private Ws2812 neoPixels;
 
         private readonly int ledCount = 24;
@@ -32,5 +34,7 @@ namespace MeadowApp
                 }
             }
         }
+
+        //<!=SNOP=>
     }
 }
