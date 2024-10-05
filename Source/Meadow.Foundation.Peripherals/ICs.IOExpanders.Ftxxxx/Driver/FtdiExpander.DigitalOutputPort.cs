@@ -51,29 +51,28 @@ public abstract partial class FtdiExpander
             get => _state;
             set
             {
-                throw new NotSupportedException();
-                //byte s = _pin.IsLowByte ? _expander.GpioStateLow : _expander.GpioStateHigh;
+                byte s = _pin.IsLowByte ? _expander.GpioStateLow : _expander.GpioStateHigh;
 
-                //if (value)
-                //{
-                //    s |= (byte)_pin.Key;
-                //}
-                //else
-                //{
-                //    s &= (byte)~(byte)_pin.Key;
-                //}
+                if (value)
+                {
+                    s |= (byte)_pin.Key;
+                }
+                else
+                {
+                    s &= (byte)~(byte)_pin.Key;
+                }
 
-                //if (_pin.IsLowByte)
-                //{
-                //    // Dxxx pins
-                //    _expander.SetGpioDirectionAndState(true, _expander.GpioDirectionLow, s);
-                //}
-                //else
-                //{
-                //    // Cxxx pins
-                //    _expander.SetGpioDirectionAndState(false, _expander.GpioDirectionHigh, s);
-                //}
-                //_state = value;
+                if (_pin.IsLowByte)
+                {
+                    // Dxxx pins
+                    _expander.SetGpioDirectionAndState(true, _expander.GpioDirectionLow, s);
+                }
+                else
+                {
+                    // Cxxx pins
+                    _expander.SetGpioDirectionAndState(false, _expander.GpioDirectionHigh, s);
+                }
+                _state = value;
             }
         }
     }
