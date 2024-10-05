@@ -97,6 +97,7 @@ public abstract partial class Ahtx0 :
     private bool IsBusy()
     {
         BusComms.Read(ReadBuffer.Span[0..1]);
+
         return (ReadBuffer.Span[0] & 0x80) == 0x80;
     }
 
@@ -120,7 +121,6 @@ public abstract partial class Ahtx0 :
         BusComms.Read(ReadBuffer.Span);
 
         var data = ReadBuffer.ToArray();
-        Resolver.Log.Info(BitConverter.ToString(data));
 
         var humidity = (data[1] << 12) | (data[2] << 4) | (data[3] >> 4);
         conditions.Humidity = new RelativeHumidity((humidity / (double)0x100000) * 100d, RelativeHumidity.UnitType.Percent);

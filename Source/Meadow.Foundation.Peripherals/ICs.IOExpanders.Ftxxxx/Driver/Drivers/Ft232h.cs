@@ -1,4 +1,5 @@
-﻿using Meadow.Hardware;
+﻿using FTD2XX;
+using Meadow.Hardware;
 
 namespace Meadow.Foundation.ICs.IOExpanders;
 
@@ -7,6 +8,8 @@ namespace Meadow.Foundation.ICs.IOExpanders;
 /// </summary>
 public class Ft232h : FtdiExpander
 {
+    private readonly FTDI _ftdiDevice = new();
+
     internal Ft232h()
     {
     }
@@ -16,8 +19,7 @@ public class Ft232h : FtdiExpander
     {
         // TODO: depends on part
         // TODO: make sure no SPI is in use
-        var bus = new Ft232hI2cBus(this, busSpeed);
-        bus.Configure();
+        var bus = new Ft232hI2cBus(_ftdiDevice, channel, busSpeed);
         return bus;
     }
 

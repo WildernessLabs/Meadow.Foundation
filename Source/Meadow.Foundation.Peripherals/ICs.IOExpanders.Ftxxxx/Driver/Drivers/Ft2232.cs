@@ -16,9 +16,7 @@ public class Ft2232 : FtdiExpander
     public override II2cBus CreateI2cBus(int channel = 0, I2cBusSpeed busSpeed = I2cBusSpeed.Standard)
     {
         // TODO: depends on part
-        var bus = new Ft23xxI2cBus(this, busSpeed);
-        bus.Configure();
-        return bus;
+        throw new NotSupportedException();
     }
 
     /// <inheritdoc/>

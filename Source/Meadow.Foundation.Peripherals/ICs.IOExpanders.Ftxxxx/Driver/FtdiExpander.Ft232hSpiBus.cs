@@ -45,10 +45,10 @@ public abstract partial class FtdiExpander
             toSend[idx++] = (byte)(clockDivisor & 0x00FF);
             toSend[idx++] = (byte)((clockDivisor >> 8) & 0x00FF);
 
-            _expander.Write(toSend);
+            //            _expander.Write(toSend);
 
             // make the SCK and SDO lines outputs
-            _expander.SetGpioDirectionAndState(true, _expander.GpioDirectionLow |= 0x03, _expander.GpioStateLow);
+            //            _expander.SetGpioDirectionAndState(true, _expander.GpioDirectionLow |= 0x03, _expander.GpioStateLow);
         }
 
         /// <inheritdoc/>
@@ -79,8 +79,8 @@ public abstract partial class FtdiExpander
             toSend[idx++] = (byte)((writeBuffer.Length - 1) & 0xff); // LSB of length to write 
             toSend[idx++] = (byte)((writeBuffer.Length - 1) >> 8); ; // MSB of length to write
             writeBuffer.CopyTo(toSend[3..]);
-            _expander.Write(toSend);
-            _expander.ReadInto(readBuffer);
+            //            _expander.Write(toSend);
+            //            _expander.ReadInto(readBuffer);
 
             if (chipSelect != null)
             {
@@ -116,8 +116,8 @@ public abstract partial class FtdiExpander
             toSend[idx++] = (byte)((readBuffer.Length - 1) & 0xff); // LSB of length to read 
             toSend[idx++] = (byte)((readBuffer.Length - 1) >> 8); ; // MSB of length to read
             toSend[idx++] = (byte)Native.FT_OPCODE.SendImmediate; // read now
-            _expander.Write(toSend);
-            var readCount = _expander.ReadInto(readBuffer);
+                                                                  //            _expander.Write(toSend);
+                                                                  //            var readCount = _expander.ReadInto(readBuffer);
 
             if (chipSelect != null)
             {
@@ -158,7 +158,7 @@ public abstract partial class FtdiExpander
             toSend[idx++] = (byte)((writeBuffer.Length - 1) & 0xff); // LSB of length to write 
             toSend[idx++] = (byte)((writeBuffer.Length - 1) >> 8); ; // MSB of length to write
             writeBuffer.CopyTo(toSend[3..]);
-            _expander.Write(toSend);
+            //            _expander.Write(toSend);
 
             if (chipSelect != null)
             {
