@@ -86,7 +86,7 @@ namespace Meadow.Foundation.ICs.ADC
         /// <summary>
         /// Get or set the internal sample rate
         /// </summary>
-        internal protected int InternalSampleRate
+        protected internal int InternalSampleRate
         {
             get => (config >> RateShift) & 0b111;
             set

@@ -11,6 +11,7 @@
  * Wilderness Labs did some clean-up to make it match our standardized C# formatting
  */
 
+using Meadow.Foundation.ICs.IOExpanders;
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -93,7 +94,6 @@ internal class FTDI
         // Set up our function pointers for use through our exported methods
         pFT_CreateDeviceInfoList = GetProcAddress(hFTD2XXDLL, "FT_CreateDeviceInfoList");
         pFT_GetDeviceInfoDetail = GetProcAddress(hFTD2XXDLL, "FT_GetDeviceInfoDetail");
-        pFT_Open = GetProcAddress(hFTD2XXDLL, "FT_Open");
         pFT_OpenEx = GetProcAddress(hFTD2XXDLL, "FT_OpenEx");
         pFT_Close = GetProcAddress(hFTD2XXDLL, "FT_Close");
         pFT_Read = GetProcAddress(hFTD2XXDLL, "FT_Read");
@@ -178,8 +178,6 @@ internal class FTDI
     [UnmanagedFunctionPointer(CallingConvention.StdCall)]
     private delegate FT_STATUS tFT_GetDeviceInfoDetail(int index, ref int flags, ref FT_DEVICE chiptype, ref int id, ref int locid, byte[] serialnumber, byte[] description, ref IntPtr ftHandle);
 
-    [UnmanagedFunctionPointer(CallingConvention.StdCall)]
-    private delegate FT_STATUS tFT_Open(int index, ref IntPtr ftHandle);
     [UnmanagedFunctionPointer(CallingConvention.StdCall)]
     private delegate FT_STATUS tFT_OpenEx(string devstring, int dwFlags, ref IntPtr ftHandle);
     [UnmanagedFunctionPointer(CallingConvention.StdCall)]
@@ -494,13 +492,11 @@ internal class FTDI
         // Check for our required function pointers being set up
         if ((pFT_Open != IntPtr.Zero) & (pFT_SetDataCharacteristics != IntPtr.Zero) & (pFT_SetFlowControl != IntPtr.Zero) & (pFT_SetBaudRate != IntPtr.Zero))
         {
-            tFT_Open FT_Open = (tFT_Open)Marshal.GetDelegateForFunctionPointer(pFT_Open, typeof(tFT_Open));
             tFT_SetDataCharacteristics FT_SetDataCharacteristics = (tFT_SetDataCharacteristics)Marshal.GetDelegateForFunctionPointer(pFT_SetDataCharacteristics, typeof(tFT_SetDataCharacteristics));
             tFT_SetFlowControl FT_SetFlowControl = (tFT_SetFlowControl)Marshal.GetDelegateForFunctionPointer(pFT_SetFlowControl, typeof(tFT_SetFlowControl));
             tFT_SetBaudRate FT_SetBaudRate = (tFT_SetBaudRate)Marshal.GetDelegateForFunctionPointer(pFT_SetBaudRate, typeof(tFT_SetBaudRate));
 
-            // Call FT_Open
-            ftStatus = FT_Open(index, ref _ftHandle);
+            ftStatus = (FT_STATUS)Native.Ftd2xx.FT_Open(index, out _ftHandle);
 
             // Appears that the handle value can be non-NULL on a fail, so set it explicitly
             if (ftStatus != FT_STATUS.FT_OK)
@@ -713,7 +709,8 @@ internal class FTDI
             tFT_SetBaudRate FT_SetBaudRate = (tFT_SetBaudRate)Marshal.GetDelegateForFunctionPointer(pFT_SetBaudRate, typeof(tFT_SetBaudRate));
 
             // Call FT_OpenEx
-            ftStatus = FT_OpenEx(location, FT_OPEN.BY_LOCATION, ref _ftHandle);
+            //ftStatus = FT_OpenEx(location, FT_OPEN.BY_LOCATION, ref _ftHandle);
+            ftStatus = (FT_STATUS)Native.Ftd2xx.FT_OpenEx(location, Native.FT_OPEN_TYPE.FT_OPEN_BY_LOCATION, out _ftHandle);
 
             // Appears that the handle value can be non-NULL on a fail, so set it explicitly
             if (ftStatus != FT_STATUS.FT_OK)

@@ -34,7 +34,10 @@ internal static partial class Native
         public static extern FT_STATUS FT_GetDeviceInfoDetail(uint index, out uint flags, out FtDeviceType chiptype, out uint id, out uint locid, in byte serialnumber, in byte description, out IntPtr ftHandle);
 
         [DllImport(FTDI_LIB, CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
-        public static extern FT_STATUS FT_OpenEx(uint pvArg1, FT_OPEN_TYPE dwFlags, out IntPtr ftHandle);
+        public static extern FT_STATUS FT_Open(int index, out IntPtr ftHandle);
+
+        [DllImport(FTDI_LIB, CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
+        public static extern FT_STATUS FT_OpenEx(int pvArg1, FT_OPEN_TYPE dwFlags, out IntPtr ftHandle);
 
         [DllImport(FTDI_LIB, CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
         public static extern FT_STATUS FT_Close(IntPtr ftHandle);

@@ -28,8 +28,6 @@ public abstract partial class FtdiExpander
 
         private void ConfigureMpsse()
         {
-            _device.ResetDevice();
-
             _device.SetTimeouts(1000, 1000).ThrowIfNotOK();
             _device.SetLatency(16).ThrowIfNotOK();
             _device.SetFlowControl(FT_FLOW_CONTROL.FT_FLOW_RTS_CTS, 0x00, 0x00).ThrowIfNotOK();
@@ -80,17 +78,16 @@ public abstract partial class FtdiExpander
             _device.Write(msg).ThrowIfNotOK();
         }
 
+        private const byte I2C_Data_SDAlo_SCLlo = 0x00;
+        private const byte I2C_Data_SDAlo_SCLhi = 0x01;
+        private const byte I2C_Data_SDAhi_SCLlo = 0x02;
+        private const byte I2C_Data_SDAhi_SCLhi = 0x03;
+        private const byte I2C_ADbus = 0x80;
+        private const byte I2C_Dir_SDAout_SCLout = 0x03;
+
         private void Start()
         {
             List<byte> bytes = new();
-
-            const byte I2C_Data_SDAlo_SCLlo = 0x00;
-            const byte I2C_Data_SDAlo_SCLhi = 0x01;
-            const byte I2C_Data_SDAhi_SCLlo = 0x02;
-            const byte I2C_Data_SDAhi_SCLhi = 0x03;
-
-            const byte I2C_ADbus = 0x80;
-            const byte I2C_Dir_SDAout_SCLout = 0x03;
 
             for (int i = 0; i < 6; i++)
                 bytes.AddRange(new byte[] { I2C_ADbus, I2C_Data_SDAhi_SCLhi, I2C_Dir_SDAout_SCLout, });
@@ -110,13 +107,6 @@ public abstract partial class FtdiExpander
         {
             List<byte> bytes = new();
 
-            const byte I2C_Data_SDAlo_SCLlo = 0x00;
-            const byte I2C_Data_SDAlo_SCLhi = 0x01;
-            const byte I2C_Data_SDAhi_SCLhi = 0x03;
-
-            const byte I2C_ADbus = 0x80;
-            const byte I2C_Dir_SDAout_SCLout = 0x03;
-
             for (int i = 0; i < 6; i++)
                 bytes.AddRange(new byte[] { I2C_ADbus, I2C_Data_SDAlo_SCLlo, I2C_Dir_SDAout_SCLout, });
 
@@ -129,13 +119,13 @@ public abstract partial class FtdiExpander
             _device.Write(bytes.ToArray()).ThrowIfNotOK();
         }
 
-        private bool FTDI_CommandWrite(byte address)
+        private bool CommandWrite(byte address)
         {
             address <<= 1;
             return SendDataByte(address);
         }
 
-        private bool FTDI_CommandRead(byte address)
+        private bool CommandRead(byte address)
         {
             address <<= 1;
             address |= 0x01;
@@ -231,13 +221,15 @@ public abstract partial class FtdiExpander
         public void Exchange(byte peripheralAddress, Span<byte> writeBuffer, Span<byte> readBuffer)
         {
             Start();
-            FTDI_CommandWrite(peripheralAddress);
+            CommandWrite(peripheralAddress);
             for (int i = 0; i < writeBuffer.Length; i++)
             {
                 SendDataByte(writeBuffer[i]);
             }
 
-            FTDI_CommandRead(peripheralAddress);
+            Start();
+
+            CommandRead(peripheralAddress);
             for (int i = 0; i < readBuffer.Length; i++)
             {
                 readBuffer[i] = ReadDataByte(ACK: true);
@@ -250,7 +242,7 @@ public abstract partial class FtdiExpander
         {
             Start();
 
-            FTDI_CommandRead(peripheralAddress);
+            CommandRead(peripheralAddress);
 
             for (int i = 0; i < readBuffer.Length; i++)
             {
@@ -265,7 +257,7 @@ public abstract partial class FtdiExpander
             bool[] ack = new bool[writeBuffer.Length + 1];
 
             Start();
-            ack[0] = FTDI_CommandWrite(peripheralAddress);
+            ack[0] = CommandWrite(peripheralAddress);
             for (int i = 0; i < writeBuffer.Length; i++)
             {
                 ack[i + 1] = SendDataByte(writeBuffer[i]);
