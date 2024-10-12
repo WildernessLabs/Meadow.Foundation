@@ -33,8 +33,10 @@ public abstract partial class FtdiExpander
         {
             get
             {
-                var states = _expander.GetGpioStates(_pin.IsLowByte);
-                return (states & (byte)_pin.Key) != 0;
+                return false;
+
+                //                var states = _expander.GetGpioStates(_pin.IsLowByte);
+                //                return (states & (byte)_pin.Key) != 0;
             }
         }
     }

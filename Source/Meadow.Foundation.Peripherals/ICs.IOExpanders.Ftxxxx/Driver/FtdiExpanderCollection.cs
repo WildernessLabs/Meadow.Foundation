@@ -1,9 +1,7 @@
-﻿using System;
+﻿using FTD2XX;
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using System.Text;
-using static Meadow.Foundation.ICs.IOExpanders.Native.Ftd2xx;
 
 namespace Meadow.Foundation.ICs.IOExpanders;
 
@@ -36,42 +34,47 @@ public class FtdiExpanderCollection : IEnumerable<FtdiExpander>
     /// </summary>
     public void Refresh()
     {
-        Native.CheckStatus(Native.Ftd2xx.FT_CreateDeviceInfoList(out uint count));
+        // the FTDI class is poorly designed.  It holdsan internal handle, but also can be used to query globals
+        // until I rewrite it, we'll use this hack/trash
+        var api = new FTDI();
+
+        var deviceCount = 0;
+        api.GetNumberOfDevices(ref deviceCount).ThrowIfNotOK();
+        var deviceInfos = new FT_DEVICE_INFO_NODE[deviceCount];
+        api.GetDeviceList(deviceInfos).ThrowIfNotOK();
 
         _expanders.Clear();
 
         ReadOnlySpan<byte> serialNumberBuffer = stackalloc byte[16];
         ReadOnlySpan<byte> descriptionBuffer = stackalloc byte[64];
 
-        for (uint index = 0; index < count; index++)
+        for (int index = 0; index < deviceCount; index++)
         {
-            Native.CheckStatus(FT_GetDeviceInfoDetail(
-                index,
-                out uint flags,
-                out FtDeviceType deviceType,
-                out uint id,
-                out uint locid,
-                in MemoryMarshal.GetReference(serialNumberBuffer),
-                in MemoryMarshal.GetReference(descriptionBuffer),
-                out IntPtr handle));
+            var device = new FTDI(); // create a new instance that will hold our handle
+            device.OpenByIndex(index);
 
-            switch (deviceType)
+            FT_DEVICE type = FT_DEVICE.FT_DEVICE_UNKNOWN;
+
+            device.GetDeviceType(ref type);
+
+            switch (type)
             {
-                case FtDeviceType.Ft232H:
-                case FtDeviceType.Ft2232:
-                case FtDeviceType.Ft2232H:
-                case FtDeviceType.Ft4232H:
+                case FT_DEVICE.FT_DEVICE_232H:
+                case FT_DEVICE.FT_DEVICE_2232H:
+                case FT_DEVICE.FT_DEVICE_4232H:
+                case FT_DEVICE.FT_DEVICE_2232:
                     // valid, add to list
                     break;
                 default:
                     continue;
             }
 
-            // no idea why the buffer isn't all zeros after the null terminator - thanks FTDI!
-            var serialNumber = Encoding.ASCII.GetString(serialNumberBuffer.ToArray(), 0, serialNumberBuffer.IndexOf((byte)0));
-            var description = Encoding.ASCII.GetString(descriptionBuffer.ToArray(), 0, descriptionBuffer.IndexOf((byte)0));
+            device.GetSerialNumber(out string serialNumber);
+            device.GetDescription(out string description);
 
-            _expanders.Add(FtdiExpander.Create(index, flags, deviceType, id, locid, serialNumber, description, handle));
+            device.Close();
+
+            _expanders.Add(FtdiExpander.Create(device, index, type, serialNumber, description));
         }
     }
 
