@@ -2,7 +2,7 @@
 
 **PCAN-Basic USB CAN Controller for Windows**
 
-The **PCanBasic** library is included in the **Meadow.Foundation.ICs.CAN.PCanBasic** nuget package and is designed for the [Wilderness Labs](www.wildernesslabs.co) Meadow .NET IoT platform.
+The **Meadow.PCanBasic** library is included in the **Meadow.Foundation.ICs.CAN.PCanBasic** nuget package and is designed for the [Wilderness Labs](www.wildernesslabs.co) Meadow .NET IoT platform.
 
 This driver is part of the [Meadow.Foundation](https://developer.wildernesslabs.co/Meadow/Meadow.Foundation/) peripherals library, an open-source repository of drivers and libraries that streamline and simplify adding hardware to your C# .NET Meadow IoT applications.
 

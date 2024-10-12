@@ -15,6 +15,36 @@ To view all Wilderness Labs open-source projects, including samples, visit [gith
 You can install the library from within Visual studio using the the NuGet Package Manager or from the command line using the .NET CLI:
 
 `dotnet add package Meadow.Foundation.Leds.Ws2812`
+## Usage
+
+```csharp
+private Ws2812 neoPixels;
+
+private readonly int ledCount = 24;
+
+public override Task Initialize()
+{
+    var spiBus = Device.CreateSpiBus();
+    neoPixels = new Ws2812(spiBus, ledCount);
+
+    return base.Initialize();
+}
+
+public override async Task Run()
+{
+    while (true)
+    {
+        for (int i = 0; i < neoPixels.NumberOfLeds; i++)
+        {
+            neoPixels.SetAllLeds(Color.Black);
+            neoPixels.SetLed(i, Color.Blue);
+            neoPixels.Show();
+            await Task.Delay(100);
+        }
+    }
+}
+
+```
 ## How to Contribute
 
 - **Found a bug?** [Report an issue](https://github.com/WildernessLabs/Meadow_Issues/issues)
