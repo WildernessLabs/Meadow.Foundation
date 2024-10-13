@@ -90,6 +90,45 @@ namespace Meadow.Foundation.ICs.ADC
             WriteRegisterByte(Registers.PWR_MODE, Mask.SleepMode, (byte)sleepMode);
         }
 
+        private void SetMClkDivisor(MCLKDivisor mclkDivisor)
+        {
+            WriteRegisterByte(Registers.PWR_MODE, Mask.MCLK, (byte)mclkDivisor);
+        }
+
+        private void SetCrcSelection(CrcSelection crcSelection)
+        {
+            // the C# compiler is so stupid at times - especially when doing bitwise work.
+            WriteRegisterByte(Registers.INTERFACE_CFG, Mask.CRC_SEL, (byte)((byte)crcSelection << 0x03));
+        }
+
+        private void SetPowerMode(PowerMode powerMode)
+        {
+            WriteRegisterByte(Registers.PWR_MODE, Mask.PWR_MODE, (byte)((byte)powerMode << 0x05));
+        }
+
+        private void SetDClkDivisor(DCLKDivisor dclkDivisor)
+        {
+            WriteRegisterByte(Registers.INTERFACE_CFG, Mask.DCLK_DIV, (byte)((byte)dclkDivisor << 0));
+        }
+
+        private void SetConversionType(ConversionType conversionType)
+        {
+            WriteRegisterByte(Registers.DATA_CTRL, Mask.OneShot, (byte)((byte)conversionType << 4));
+        }
+
+        private void SetModeConfiguration(ChannelMode channelMode, FilterType filterType, DecimationRate decimationRate)
+        {
+            byte value = (byte)((filterType == FilterType.Sinc) ? 1 << 3 : 0);
+            value |= (byte)Mask.DecimationRate;
+            var register = channelMode == ChannelMode.A ? Registers.CH_MODE_A : Registers.CH_MODE_B;
+            WriteRegisterByte(register, value);
+        }
+
+        private void SetChannelState(int channel, ChannelState state)
+        {
+            WriteRegisterByte(Registers.CH_STANDBY, (byte)(1 << channel), (byte)(state == ChannelState.Enabled ? 1 << channel : 0));
+        }
+
         private void ResetChip()
         {
             if (resetPort != null)
@@ -105,24 +144,34 @@ namespace Meadow.Foundation.ICs.ADC
         {
             ResetChip();
             SetSleepMode(SleepMode.Active);
-            // SetMClck(
-            // SetCrcSelection(
-            // SetPowerMode(
-            // SetDClk(
-            // SetConversion
-            // SetOperatingMode
+            SetMClkDivisor(MCLKDivisor.Div4);
+            SetCrcSelection(CrcSelection.None);
+            SetPowerMode(PowerMode.Fast);
+            SetDClkDivisor(DCLKDivisor.Div1);
+            SetConversionType(ConversionType.Standard);
+            SetModeConfiguration(ChannelMode.A, FilterType.Sinc, DecimationRate.X32);
 
             var channels = 4;
 
             for (var channel = 0; channel < channels; channel++)
             {
-                // SetChannelState(
-                // SetCoupling(
-                // SetIepe(
+                SetChannelState(channel, ChannelState.Enabled);
             }
         }
 
 
+        /// <summary>
+        /// Enables of disables a specific ADC channel
+        /// </summary>
+        /// <param name="channel">The channel to affect</param>
+        /// <param name="enabled">True to enable, False to put the channel in standby</param>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
+        public void EnableChannel(int channel, bool enabled)
+        {
+            if (channel < 0 || channel > 3) throw new ArgumentOutOfRangeException(nameof(channel));
+
+            SetChannelState(channel, enabled ? ChannelState.Enabled : ChannelState.StandBy);
+        }
 
 
         /// <inheritdoc/>

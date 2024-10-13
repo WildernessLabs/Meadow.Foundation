@@ -4,7 +4,13 @@
     {
         internal enum Mask : byte
         {
-            SleepMode = 1 << 7
+            SleepMode = 1 << 7,
+            MCLK = 0x03 << 0,
+            CRC_SEL = 0x03 << 2,
+            PWR_MODE = 0x03 << 5,
+            DCLK_DIV = 0x03 << 0,
+            OneShot = 1 << 4,
+            DecimationRate = 0x07 << 0,
         }
 
         internal enum SleepMode : byte
@@ -51,6 +57,32 @@
         {
             A = 0,
             B = 1
+        }
+
+        internal enum CrcSelection : byte
+        {
+            None = 0,
+            CRC_4,
+            CRC_16,
+            CRC_16_2ND
+        }
+
+        internal enum FilterType : byte
+        {
+            Wideband,
+            Sinc
+        }
+
+        internal enum DecimationRate : byte
+        {
+            X32,
+            X64,
+            X128,
+            X256,
+            X512,
+            X1024,
+            X1024_2ND,
+            X1024_3RD
         }
 
         internal enum Registers : byte

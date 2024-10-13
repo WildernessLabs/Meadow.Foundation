@@ -4,6 +4,8 @@ namespace Meadow.Foundation.ICs.DAC
 {
     public abstract partial class Ad569x : II2cPeripheral
     {
+        public byte DefaultI2cAddress => throw new System.NotImplementedException();
+
         public enum Addresses
         {
             Address_0C = 0b0001100,
