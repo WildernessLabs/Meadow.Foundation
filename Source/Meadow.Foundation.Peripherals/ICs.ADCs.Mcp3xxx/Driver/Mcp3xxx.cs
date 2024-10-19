@@ -74,7 +74,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         internal int AdcMaxValue { get; set; }
 
-        private IDigitalOutputPort chipSelectPort;
+        private IDigitalOutputPort? chipSelectPort = null;
 
         /// <summary>
         /// Mcp3xxx base class constructor
@@ -84,9 +84,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <param name="channelCount">The number of input channels</param>   
         /// <param name="adcResolutionInBits">The resolution in bits for the ADC</param>
         protected Mcp3xxx(ISpiBus spiBus,
-            IPin chipSelectPin,
+            IPin? chipSelectPin,
             int channelCount, int adcResolutionInBits) :
-            this(spiBus, chipSelectPin.CreateDigitalOutputPort(), channelCount, adcResolutionInBits)
+            this(spiBus, chipSelectPin?.CreateDigitalOutputPort(), channelCount, adcResolutionInBits)
         {
             createdPort = true;
         }
@@ -99,7 +99,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <param name="channelCount">The number of input channels</param>   
         /// <param name="adcResolutionInBits">The resolution in bits for the ADC</param>
         protected Mcp3xxx(ISpiBus spiBus,
-            IDigitalOutputPort chipSelectPort,
+            IDigitalOutputPort? chipSelectPort,
             int channelCount, int adcResolutionInBits)
         {
             AdcResolutionInBits = adcResolutionInBits;
