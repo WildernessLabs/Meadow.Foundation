@@ -1,11 +1,8 @@
-﻿using Meadow.Hardware;
+﻿using FTD2XX;
+using Meadow.Hardware;
 using Meadow.Units;
 using System;
-using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
-using System.Threading;
-using static Meadow.Foundation.ICs.IOExpanders.Native.Ftd2xx;
 
 namespace Meadow.Foundation.ICs.IOExpanders;
 
@@ -20,13 +17,10 @@ public abstract partial class FtdiExpander :
     internal byte GpioDirectionHigh { get; set; }
     internal byte GpioStateHigh { get; set; }
 
-    internal uint Index { get; private set; }
-    internal uint Flags { get; private set; }
-    internal uint ID { get; private set; }
-    internal uint LocID { get; private set; }
+    internal FTDI Device { get; private set; }
+    internal int Index { get; private set; }
     internal string? SerialNumber { get; private set; }
     internal string? Description { get; private set; }
-    internal IntPtr Handle { get; private set; }
 
     /// <inheritdoc/>
     public abstract II2cBus CreateI2cBus(int channel = 0, I2cBusSpeed busSpeed = I2cBusSpeed.Standard);
@@ -39,115 +33,37 @@ public abstract partial class FtdiExpander :
     public PinDefinitions Pins { get; }
 
     internal static FtdiExpander Create(
-        uint index,
-        uint flags,
-        FtDeviceType deviceType,
-        uint id,
-        uint locid,
+        FTDI device,
+        int index,
+        FT_DEVICE deviceType,
         string serialNumber,
-        string description,
-        IntPtr handle)
+        string description)
     {
         FtdiExpander expander = deviceType switch
         {
-            FtDeviceType.Ft232H => new Ft232h
+            FT_DEVICE.FT_DEVICE_232H => new Ft232h
             {
+                Device = device,
                 Index = index,
-                Flags = flags,
-                ID = id,
-                LocID = locid,
                 SerialNumber = serialNumber,
                 Description = description,
-                Handle = handle
             },
-            FtDeviceType.Ft2232 => new Ft2232
-            {
-                Index = index,
-                Flags = flags,
-                ID = id,
-                LocID = locid,
-                SerialNumber = serialNumber,
-                Description = description,
-                Handle = handle
-            },
-            FtDeviceType.Ft2232H => new Ft232h
-            {
-                Index = index,
-                Flags = flags,
-                ID = id,
-                LocID = locid,
-                SerialNumber = serialNumber,
-                Description = description,
-                Handle = handle
-            },
-            FtDeviceType.Ft4232H => throw new NotImplementedException(),
             _ => throw new NotSupportedException(),
         };
 
-        expander.Open();
-        expander.InitializeGpio();
+        if (!device.IsOpen)
+        {
+            device
+                .OpenByIndex(index)
+                .ThrowIfNotOK();
+        }
 
         return expander;
-    }
-
-    private void Open()
-    {
-        if (Handle == IntPtr.Zero)
-        {
-            Native.CheckStatus(
-                FT_OpenEx(LocID, Native.FT_OPEN_TYPE.FT_OPEN_BY_LOCATION, out IntPtr handle)
-                );
-            Handle = handle;
-        }
     }
 
     internal FtdiExpander()
     {
         Pins = new PinDefinitions(this);
-    }
-
-    private void InitializeGpio()
-    {
-        Native.FT_STATUS status;
-        status = Native.Ftd2xx.FT_SetUSBParameters(Handle, 65536, 65536);    // Set USB request transfer sizes
-        status |= Native.Ftd2xx.FT_SetChars(Handle, 0, 0, 0, 0);              // Disable event and error characters
-        status |= Native.Ftd2xx.FT_SetTimeouts(Handle, 5000, 5000);           // Set the read and write timeouts to 5 seconds
-        status |= Native.Ftd2xx.FT_SetLatencyTimer(Handle, 16);               // Keep the latency timer at default of 16ms
-
-        status |= Native.Ftd2xx.FT_SetFlowControl(Handle, Native.FT_FLOWCONTROL.FT_FLOW_RTS_CTS, 0, 0);
-
-        status |= Native.Ftd2xx.FT_SetBitMode(Handle, 0x00, Native.FT_BITMODE.FT_BITMODE_RESET); // Reset the mode to whatever is set in EEPROM
-        status |= Native.Ftd2xx.FT_SetBitMode(Handle, 0x00, Native.FT_BITMODE.FT_BITMODE_MPSSE); // Enable MPSSE mode
-
-        Native.CheckStatus(status);
-
-        Thread.Sleep(50); // the FTDI C example does this, so we keep it
-
-        ClearInputBuffer();
-        InitializeMpsse();
-    }
-
-    private void ClearInputBuffer()
-    {
-        var available = GetAvailableBytes();
-
-        if (available > 0)
-        {
-            var rxBuffer = new byte[available];
-            uint bytesRead = 0;
-            Native.CheckStatus(
-                 FT_Read(Handle, in rxBuffer[0], available, ref bytesRead));
-        }
-    }
-
-    private uint GetAvailableBytes()
-    {
-        uint availableBytes = 0;
-
-        Native.CheckStatus(
-            FT_GetQueueStatus(Handle, ref availableBytes));
-
-        return availableBytes;
     }
 
     internal byte GetGpioStates(bool lowByte)
@@ -156,8 +72,8 @@ public abstract partial class FtdiExpander :
         Span<byte> inBuffer = stackalloc byte[1];
         outBuffer[0] = (byte)(lowByte ? Native.FT_OPCODE.ReadDataBitsLowByte : Native.FT_OPCODE.ReadDataBitsHighByte);
         outBuffer[1] = (byte)Native.FT_OPCODE.SendImmediate;
-        Write(outBuffer);
-        ReadInto(inBuffer);
+        Device.Write(outBuffer.ToArray());
+        inBuffer = Device.ReadBytes(inBuffer.Length, out FT_STATUS status);
         return inBuffer[0];
     }
 
@@ -169,7 +85,7 @@ public abstract partial class FtdiExpander :
         outBuffer[2] = direction; //direction 1 == output, 0 == input
 
         // Console.WriteLine($"{(BitConverter.ToString(outBuffer.ToArray()))}");
-        Write(outBuffer);
+        Device.Write(outBuffer.ToArray());
 
         if (lowByte)
         {
@@ -181,57 +97,6 @@ public abstract partial class FtdiExpander :
             GpioStateHigh = state;
             GpioDirectionHigh = direction;
         }
-    }
-
-    private void InitializeMpsse()
-    {
-        // Synchronise the MPSSE by sending bad command AA to it
-        Span<byte> writeBuffer = stackalloc byte[1];
-        writeBuffer[0] = 0xAA;
-        Write(writeBuffer);
-        Span<byte> readBuffer = stackalloc byte[2];
-        ReadInto(readBuffer);
-        if (!((readBuffer[0] == 0xFA) && (readBuffer[1] == 0xAA)))
-        {
-            throw new IOException($"Failed to setup device in MPSSE mode using magic 0xAA sync");
-        }
-
-        // Synchronise the MPSSE by sending bad command AB to it
-        writeBuffer[0] = 0xAB;
-        Write(writeBuffer);
-        ReadInto(readBuffer);
-        if (!((readBuffer[0] == 0xFA) && (readBuffer[1] == 0xAB)))
-        {
-            throw new IOException($"Failed to setup device in MPSSE mode using magic 0xAB sync");
-        }
-    }
-
-    internal int ReadInto(Span<byte> buffer)
-    {
-        var totalRead = 0;
-        uint read = 0;
-
-        while (totalRead < buffer.Length)
-        {
-            var available = GetAvailableBytes();
-            if (available > 0)
-            {
-                Native.CheckStatus(
-                    FT_Read(Handle, in buffer[totalRead], available, ref read));
-
-                totalRead += (int)read;
-            }
-        }
-
-        return totalRead;
-    }
-
-    internal void Write(ReadOnlySpan<byte> data)
-    {
-        uint written = 0;
-
-        Native.CheckStatus(
-            FT_Write(Handle, in MemoryMarshal.GetReference(data), (ushort)data.Length, ref written));
     }
 
     /// <inheritdoc/>
@@ -335,6 +200,8 @@ public abstract partial class FtdiExpander :
     /// <inheritdoc/>
     public IDigitalInputPort CreateDigitalInputPort(IPin pin, ResistorMode resistorMode)
     {
+        throw new NotSupportedException();
+        /*
         switch (resistorMode)
         {
             case ResistorMode.InternalPullUp:
@@ -367,5 +234,6 @@ public abstract partial class FtdiExpander :
         }
 
         return new DigitalInputPort(this, pin, (pin.SupportedChannels.First() as IDigitalChannelInfo)!, resistorMode);
+        */
     }
 }

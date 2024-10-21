@@ -1,6 +1,9 @@
-﻿using Meadow.Hardware;
+﻿using FTD2XX;
+using Meadow.Hardware;
 using System;
-using System.Threading;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 
 namespace Meadow.Foundation.ICs.IOExpanders;
 
@@ -9,163 +12,263 @@ public abstract partial class FtdiExpander
     /// <summary>
     /// Represents an Ft232h expander I2C bus.
     /// </summary>
-    public class Ft232hI2cBus : I2CBus
+    public class Ft232hI2cBus : II2cBus
     {
-        internal Ft232hI2cBus(FtdiExpander expander, I2cBusSpeed busSpeed)
-            : base(expander, busSpeed)
+        private readonly FTDI _device;
+
+        internal Ft232hI2cBus(FTDI device, int channel, I2cBusSpeed busSpeed)
         {
+            _device = device;
+            ConfigureMpsse();
+
+            // TODO: figure out how to set bus speed
         }
 
-        internal override void Configure()
+        public I2cBusSpeed BusSpeed { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
+        private void ConfigureMpsse()
         {
-            // Setup the clock and other elements
-            Span<byte> toSend = stackalloc byte[10];
-            int idx = 0;
-            // Disable clock divide by 5 for 60Mhz master clock
-            toSend[idx++] = (byte)Native.FT_OPCODE.DisableClockDivideBy5;
-            // Turn off adaptive clocking
-            toSend[idx++] = (byte)Native.FT_OPCODE.TurnOffAdaptiveClocking;
-            // Enable 3 phase data clock, used by I2C to allow data on both clock edges
-            toSend[idx++] = (byte)Native.FT_OPCODE.Enable3PhaseDataClocking;
+            _device.SetTimeouts(1000, 1000).ThrowIfNotOK();
+            _device.SetLatency(16).ThrowIfNotOK();
+            _device.SetFlowControl(FT_FLOW_CONTROL.FT_FLOW_RTS_CTS, 0x00, 0x00).ThrowIfNotOK();
+            _device.SetBitMode(0x00, 0x00).ThrowIfNotOK(); // RESET
+            _device.SetBitMode(0x00, 0x02).ThrowIfNotOK(); // MPSSE
 
-            // The SK clock frequency can be worked out by below algorithm with divide by 5 set as off
-            // TCK period = 60MHz / (( 1 + [ (0xValueH * 256) OR 0xValueL] ) * 2)
-            // Command to set clock divisor
-            toSend[idx++] = (byte)Native.FT_OPCODE.SetClockDivisor;
-            uint clockDivisor = (60000 / (((uint)BusSpeed / 1000) * 2)) - 1;
-            toSend[idx++] = (byte)(clockDivisor & 0x00FF);
-            toSend[idx++] = (byte)((clockDivisor >> 8) & 0x00FF);
+            _device.FlushBuffer();
 
-            // loopback off
-            toSend[idx++] = (byte)Native.FT_OPCODE.DisconnectTDItoTDOforLoopback;
+            /***** Synchronize the MPSSE interface by sending bad command 0xAA *****/
+            _device.Write(new byte[] { 0xAA }).ThrowIfNotOK();
+            byte[] rx1 = _device.ReadBytes(2, out FT_STATUS status1);
+            status1.ThrowIfNotOK();
+            if ((rx1[0] != 0xFA) || (rx1[1] != 0xAA))
+                throw new InvalidOperationException($"bad echo bytes: {rx1[0]} {rx1[1]}");
 
-            // DEV NOTE (21 Fed 20204):
-            // the following is in FTDI's FT232H samples, but makes the clock signal an ugly sawtooth instead of squares
+            /***** Synchronize the MPSSE interface by sending bad command 0xAB *****/
+            _device.Write(new byte[] { 0xAB }).ThrowIfNotOK();
+            byte[] rx2 = _device.ReadBytes(2, out FT_STATUS status2);
+            status2.ThrowIfNotOK();
+            if ((rx2[0] != 0xFA) || (rx2[1] != 0xAB))
+                throw new InvalidOperationException($"bad echo bytes: {rx2[0]} {rx2[1]}");
 
-            // Enable the FT232H's drive-zero mode with the following enable mask
-            //toSend[idx++] = (byte)Native.FT_OPCODE.SetIOOnlyDriveOn0AndTristateOn1;
-            // Low byte (ADx) enables - bits 0, 1 and 2
-            //toSend[idx++] = 0x07;
-            // High byte (ACx) enables - all off
-            //toSend[idx++] = 0x00;
+            const uint ClockDivisor = 199; //49 for 200 KHz, 199 for 100 KHz
+            const byte I2C_Data_SDAhi_SCLhi = 0x03;
+            const byte I2C_Dir_SDAout_SCLout = 0x03;
 
+            int numBytesToSend = 0;
+            byte[] buffer = new byte[100];
+            buffer[numBytesToSend++] = 0x8A;   // Disable clock divide by 5 for 60Mhz master clock
+            buffer[numBytesToSend++] = 0x97;   // Turn off adaptive clocking
+            buffer[numBytesToSend++] = 0x8C;   // Enable 3 phase data clock, used by I2C to allow data on both clock edges
+                                               // The SK clock frequency can be worked out by below algorithm with divide by 5 set as off
+                                               // SK frequency  = 60MHz /((1 +  [(1 +0xValueH*256) OR 0xValueL])*2)
+            buffer[numBytesToSend++] = 0x86;   //Command to set clock divisor
+            buffer[numBytesToSend++] = (byte)(ClockDivisor & 0x00FF);  //Set 0xValueL of clock divisor
+            buffer[numBytesToSend++] = (byte)((ClockDivisor >> 8) & 0x00FF);   //Set 0xValueH of clock divisor
+            buffer[numBytesToSend++] = 0x85;           // loopback off
 
-            // modify the GPIO state and direction without breaking other stuff
-            // SDA and SCL both output high(open drain)
-            toSend[idx++] = (byte)Native.FT_OPCODE.SetDataBitsLowByte;
-            _expander.GpioStateLow = (byte)(PinData.SDAhiSCLhi | (_expander.GpioStateLow & MaskGpio));
-            _expander.GpioDirectionLow = (byte)(PinDirection.SDAoutSCLout | (_expander.GpioDirectionLow & MaskGpio));
-            toSend[idx++] = _expander.GpioStateLow;
-            toSend[idx++] = _expander.GpioDirectionLow;
+            buffer[numBytesToSend++] = 0x9E;       //Enable the FT232H's drive-zero mode with the following enable mask...
+            buffer[numBytesToSend++] = 0x07;       // ... Low byte (ADx) enables - bits 0, 1 and 2 and ... 
+            buffer[numBytesToSend++] = 0x00;       //...High byte (ACx) enables - all off
 
-            _expander.Write(toSend);
+            buffer[numBytesToSend++] = 0x80;   //Command to set directions of lower 8 pins and force value on bits set as output 
+            buffer[numBytesToSend++] = I2C_Data_SDAhi_SCLhi;
+            buffer[numBytesToSend++] = I2C_Dir_SDAout_SCLout;
 
-            Thread.Sleep(20);
-            Idle();
-            Thread.Sleep(30);
+            byte[] msg = buffer.Take(numBytesToSend).ToArray();
+            _device.Write(msg).ThrowIfNotOK();
         }
 
-        internal override void Start()
+        private const byte I2C_Data_SDAlo_SCLlo = 0x00;
+        private const byte I2C_Data_SDAlo_SCLhi = 0x01;
+        private const byte I2C_Data_SDAhi_SCLlo = 0x02;
+        private const byte I2C_Data_SDAhi_SCLhi = 0x03;
+        private const byte I2C_ADbus = 0x80;
+        private const byte I2C_Dir_SDAout_SCLout = 0x03;
+
+        private void Start()
         {
-            // SDA high, SCL high
-            var direction = (byte)(PinDirection.SDAoutSCLout | (_expander.GpioDirectionLow & MaskGpio));
-            Idle();
-            //            Wait(2);
+            List<byte> bytes = new();
 
-            // SDA lo, SCL high
-            var state = (byte)(PinData.SDAloSCLhi | (_expander.GpioStateLow & MaskGpio));
-            _expander.SetGpioDirectionAndState(true, direction, state);
-            //            Wait(2);
+            for (int i = 0; i < 6; i++)
+                bytes.AddRange(new byte[] { I2C_ADbus, I2C_Data_SDAhi_SCLhi, I2C_Dir_SDAout_SCLout, });
 
-            // SDA lo, SCL lo
-            state = (byte)(PinData.SDAloSCLlo | (_expander.GpioStateLow & MaskGpio));
-            _expander.SetGpioDirectionAndState(true, direction, state);
-            //            Wait(2);
+            for (int i = 0; i < 6; i++)
+                bytes.AddRange(new byte[] { I2C_ADbus, I2C_Data_SDAlo_SCLhi, I2C_Dir_SDAout_SCLout, });
 
-            // Release SDA
-            //            state = (byte)(PinData.SDAhiSCLlo | (_expander.GpioStateLow & MaskGpio));
-            //            _expander.SetGpioDirectionAndState(true, direction, state);
-            //            Wait(6);
+            for (int i = 0; i < 6; i++)
+                bytes.AddRange(new byte[] { I2C_ADbus, I2C_Data_SDAlo_SCLlo, I2C_Dir_SDAout_SCLout, });
+
+            bytes.AddRange(new byte[] { I2C_ADbus, I2C_Data_SDAhi_SCLlo, I2C_Dir_SDAout_SCLout, });
+
+            _device.Write(bytes.ToArray()).ThrowIfNotOK();
         }
 
-        internal override void Stop()
+        private void Stop()
         {
-            // SDA low, SCL low
-            var state = (byte)(PinData.SDAloSCLlo | (_expander.GpioStateLow & MaskGpio));
-            var direction = (byte)(PinDirection.SDAoutSCLout | (_expander.GpioDirectionLow & MaskGpio));
+            List<byte> bytes = new();
 
-            // SDA low, SCL high
-            state = (byte)(PinData.SDAloSCLhi | (_expander.GpioStateLow & MaskGpio));
-            _expander.SetGpioDirectionAndState(true, direction, state);
-            Wait(6);
+            for (int i = 0; i < 6; i++)
+                bytes.AddRange(new byte[] { I2C_ADbus, I2C_Data_SDAlo_SCLlo, I2C_Dir_SDAout_SCLout, });
 
-            // SDA high, SCL high
-            state = (byte)(PinData.SDAhiSCLhi | (_expander.GpioStateLow & MaskGpio));
-            _expander.SetGpioDirectionAndState(true, direction, state);
-            Wait(6);
+            for (int i = 0; i < 6; i++)
+                bytes.AddRange(new byte[] { I2C_ADbus, I2C_Data_SDAlo_SCLhi, I2C_Dir_SDAout_SCLout, });
+
+            for (int i = 0; i < 6; i++)
+                bytes.AddRange(new byte[] { I2C_ADbus, I2C_Data_SDAhi_SCLhi, I2C_Dir_SDAout_SCLout, });
+
+            _device.Write(bytes.ToArray()).ThrowIfNotOK();
         }
 
-        internal override void Idle()
+        private bool CommandWrite(byte address)
         {
-            // SDA high, SCL high
-            // FT232H always output due to open drain capability
-            var state = (byte)(PinData.SDAhiSCLhi | (_expander.GpioStateLow & MaskGpio));
-            var direction = (byte)(PinDirection.SDAoutSCLout | (_expander.GpioDirectionLow & MaskGpio));
-            _expander.SetGpioDirectionAndState(true, direction, state);
+            address <<= 1;
+            return SendDataByte(address);
         }
 
-        internal override TransferStatus SendDataByte(byte data)
+        private bool CommandRead(byte address)
         {
-            Span<byte> txBuffer = stackalloc byte[10];
-            Span<byte> rxBuffer = stackalloc byte[1];
-            var idx = 0;
+            address <<= 1;
+            address |= 0x01;
+            return SendDataByte(address);
+        }
 
-            // Just clock with one byte (0 = 1 byte)
-            txBuffer[idx++] = (byte)Native.FT_OPCODE.ClockDataBytesOutOnMinusVeClockMSBFirst;
-            txBuffer[idx++] = 0;
-            txBuffer[idx++] = 0;
-            txBuffer[idx++] = data;
+        private bool SendDataByte(byte byteToSend)
+        {
+            const byte I2C_Data_SDAhi_SCLlo = 0x02;
+            const byte MSB_FALLING_EDGE_CLOCK_BYTE_OUT = 0x11;
+            const byte I2C_Dir_SDAout_SCLout = 0x03;
+            const byte MSB_RISING_EDGE_CLOCK_BIT_IN = 0x22;
+
+            byte[] buffer = new byte[100];
+            int bytesToSend = 0;
+            buffer[bytesToSend++] = MSB_FALLING_EDGE_CLOCK_BYTE_OUT;        // clock data byte out
+            buffer[bytesToSend++] = 0x00;                                   // 
+            buffer[bytesToSend++] = 0x00;                                   //  Data length of 0x0000 means 1 byte data to clock in
+            buffer[bytesToSend++] = byteToSend;                             //  Byte to send
+
             // Put line back to idle (data released, clock pulled low)
-            _expander.GpioStateLow = (byte)(PinData.SDAloSCLlo | (_expander.GpioStateLow & MaskGpio));
-            _expander.GpioDirectionLow = (byte)(PinDirection.SDAoutSCLout | (_expander.GpioDirectionLow & MaskGpio));
-            txBuffer[idx++] = (byte)Native.FT_OPCODE.SetDataBitsLowByte;
-            txBuffer[idx++] = _expander.GpioStateLow;
-            txBuffer[idx++] = _expander.GpioDirectionLow;
-            // Clock in (0 = 1 bit)
-            txBuffer[idx++] = (byte)Native.FT_OPCODE.ClockDataBitsInOnPlusVeClockMSBFirst;
-            txBuffer[idx++] = 0;
-            txBuffer[idx++] = (byte)Native.FT_OPCODE.SendImmediate;
-            _expander.Write(txBuffer);
-            _expander.ReadInto(rxBuffer);
+            buffer[bytesToSend++] = 0x80;                                   // Command - set low byte
+            buffer[bytesToSend++] = I2C_Data_SDAhi_SCLlo;                   // Set the values
+            buffer[bytesToSend++] = I2C_Dir_SDAout_SCLout;                  // Set the directions
 
-            return (rxBuffer[0] & 0x01) == 0 ? TransferStatus.Ack : TransferStatus.Nack;
+            // CLOCK IN ACK
+            buffer[bytesToSend++] = MSB_RISING_EDGE_CLOCK_BIT_IN;           // clock data bits in
+            buffer[bytesToSend++] = 0x00;                                   // Length of 0 means 1 bit
+
+            // This command then tells the MPSSE to send any results gathered (in this case the ack bit) back immediately
+            buffer[bytesToSend++] = 0x87;
+
+            // send commands to chip
+            byte[] msg = buffer.Take(bytesToSend).ToArray();
+            _device.Write(msg).ThrowIfNotOK();
+
+            byte[] rx1 = _device.ReadBytes(1, out FT_STATUS status);
+            status.ThrowIfNotOK();
+
+            // if ack bit is 0 then sensor acked the transfer, otherwise it nak'd the transfer
+            bool ack = (rx1[0] & 0x01) == 0;
+
+            return ack;
         }
 
-        internal override byte ReadDataByte(bool ackAfterRead)
+        private byte ReadDataByte(bool ACK = true)
         {
-            int idx = 0;
-            Span<byte> toSend = stackalloc byte[10];
-            Span<byte> toRead = stackalloc byte[1];
+            const byte MSB_RISING_EDGE_CLOCK_BYTE_IN = 0x20;
+            const byte MSB_FALLING_EDGE_CLOCK_BIT_OUT = 0x13;
+            const byte I2C_Data_SDAhi_SCLlo = 0x02;
+            const byte I2C_Dir_SDAout_SCLout = 0x03;
+            int bytesToSend = 0;
 
-            // The behavior is a bit different for FT232H and FT2232H/FT4232H
-            // Read one byte
-            toSend[idx++] = (byte)Native.FT_OPCODE.ClockDataBytesInOnPlusVeClockMSBFirst;
-            toSend[idx++] = 0;
-            toSend[idx++] = 0;
-            // Send out either ack either nak
-            toSend[idx++] = (byte)Native.FT_OPCODE.ClockDataBitsOutOnMinusVeClockMSBFirst;
-            toSend[idx++] = 0;
-            toSend[idx++] = (byte)(ackAfterRead ? 0x00 : 0xFF);
-            // I2C lines back to idle state
-            toSend[idx++] = (byte)Native.FT_OPCODE.SetDataBitsLowByte;
-            _expander.GpioStateLow = (byte)(PinData.SDAhiSCLlo | (_expander.GpioStateLow & MaskGpio));
-            _expander.GpioDirectionLow = (byte)(PinDirection.SDAoutSCLout | (_expander.GpioDirectionLow & MaskGpio));
-            toSend[idx++] = _expander.GpioStateLow;
-            toSend[idx++] = _expander.GpioDirectionLow;
-            toSend[idx++] = (byte)Native.FT_OPCODE.SendImmediate;
-            _expander.Write(toSend);
-            _expander.ReadInto(toRead);
-            return toRead[0];
+            // Clock in one data byte
+            byte[] buffer = new byte[100];
+            buffer[bytesToSend++] = MSB_RISING_EDGE_CLOCK_BYTE_IN;      // Clock data byte in
+            buffer[bytesToSend++] = 0x00;
+            buffer[bytesToSend++] = 0x00;                               // Data length of 0x0000 means 1 byte data to clock in
+
+            // clock out one bit as ack/nak bit
+            buffer[bytesToSend++] = MSB_FALLING_EDGE_CLOCK_BIT_OUT;     // Clock data bit out
+            buffer[bytesToSend++] = 0x00;                               // Length of 0 means 1 bit
+            if (ACK == true)
+                buffer[bytesToSend++] = 0x00;                           // Data bit to send is a '0'
+            else
+                buffer[bytesToSend++] = 0xFF;                           // Data bit to send is a '1'
+
+            // I2C lines back to idle state 
+            buffer[bytesToSend++] = 0x80;                               //       ' Command - set low byte
+            buffer[bytesToSend++] = I2C_Data_SDAhi_SCLlo;                            //      ' Set the values
+            buffer[bytesToSend++] = I2C_Dir_SDAout_SCLout;                             //     ' Set the directions
+
+            // This command then tells the MPSSE to send any results gathered back immediately
+            buffer[bytesToSend++] = 0x87;                                  //    ' Send answer back immediate command
+
+            // send commands to chip
+            byte[] msg = buffer.Take(bytesToSend).ToArray();
+            _device.Write(msg).ThrowIfNotOK();
+
+            // get the byte which has been read from the driver's receive buffer
+            byte[] readBuffer = new byte[1];
+            int bytesRead = 0;
+            _device.Read(readBuffer, 1, ref bytesRead).ThrowIfNotOK();
+
+            return readBuffer[0];
+        }
+
+        public void Dispose()
+        {
+            _device.Close();
+        }
+
+        public void Exchange(byte peripheralAddress, Span<byte> writeBuffer, Span<byte> readBuffer)
+        {
+            Start();
+            CommandWrite(peripheralAddress);
+            for (int i = 0; i < writeBuffer.Length; i++)
+            {
+                SendDataByte(writeBuffer[i]);
+            }
+
+            Start();
+
+            CommandRead(peripheralAddress);
+            for (int i = 0; i < readBuffer.Length; i++)
+            {
+                readBuffer[i] = ReadDataByte(ACK: true);
+            }
+
+            Stop();
+        }
+
+        public void Read(byte peripheralAddress, Span<byte> readBuffer)
+        {
+            Start();
+
+            CommandRead(peripheralAddress);
+
+            for (int i = 0; i < readBuffer.Length; i++)
+            {
+                readBuffer[i] = ReadDataByte(ACK: true);
+            }
+
+            Stop();
+        }
+
+        public void Write(byte peripheralAddress, Span<byte> writeBuffer)
+        {
+            bool[] ack = new bool[writeBuffer.Length + 1];
+
+            Start();
+            ack[0] = CommandWrite(peripheralAddress);
+            for (int i = 0; i < writeBuffer.Length; i++)
+            {
+                ack[i + 1] = SendDataByte(writeBuffer[i]);
+            }
+            Stop();
+
+            if (ack.Where(x => x == false).Any())
+            {
+                Debug.WriteLine("WARNING: not all writes were ACK'd");
+                Debug.WriteLine(string.Join(",", ack.Select(x => x.ToString())));
+            }
         }
     }
 }
