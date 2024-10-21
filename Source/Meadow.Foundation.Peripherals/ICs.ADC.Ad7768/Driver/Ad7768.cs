@@ -13,6 +13,7 @@ namespace Meadow.Foundation.ICs.ADC
         private IDigitalOutputPort? csPort;
         private IDigitalOutputPort? resetPort;
         private IDigitalInterruptPort? dataReadyPort;
+        private IDigitalOutputPort? dataClockPort;
 
         /// <inheritdoc/>
         public SpiClockConfiguration.Mode DefaultSpiBusMode => SpiClockConfiguration.Mode.Mode3;
@@ -23,28 +24,50 @@ namespace Meadow.Foundation.ICs.ADC
             ISpiBus spiBus,
             IPin? chipSelectPin,
             IPin? resetPin,
-            IPin? dataReadyPin)
+            IPin? dataReadyPin,
+            IPin? dataClockPin)
         {
             this.spiBus = spiBus;
 
             if (chipSelectPin != null)
             {
+                Resolver.Log.Info("Creating CS");
                 csPort = chipSelectPin.CreateDigitalOutputPort(true); // start high (disabled)
             }
             if (resetPin != null)
             {
+                Resolver.Log.Info("Creating RST");
                 // this has an internal pull up.  Drive it low to reset (> 2ms)
                 resetPort = resetPin.CreateDigitalOutputPort(true);
             }
             if (dataReadyPin != null)
             {
+                Resolver.Log.Info("Creating DR");
                 // also active low
                 dataReadyPort = dataReadyPin.CreateDigitalInterruptPort(InterruptMode.EdgeFalling, ResistorMode.InternalPullUp);
+            }
+            if (dataClockPin != null)
+            {
+                dataClockPort = dataClockPin.CreateDigitalOutputPort(false); // active high
             }
 
             portsCreated = true;
 
             Initialize();
+        }
+
+        public int ClockDataValue()
+        {
+            if (dataClockPort == null) return -1;
+
+            // clock in 24 bits(TODO: support channels)
+            for (var i = 0; i < 24; i++)
+            {
+                dataClockPort.State = true;
+                dataClockPort.State = false;
+            }
+
+            return 0;
         }
 
         private void WriteRegisterByte(Registers register, byte data)
@@ -140,14 +163,25 @@ namespace Meadow.Foundation.ICs.ADC
             }
         }
 
-        private void Initialize()
+        public void Initialize()
         {
             ResetChip();
+
+            if (csPort != null)
+            {
+                Resolver.Log.Info("CS HIGH");
+                csPort.State = true;
+                Thread.Sleep(100);
+                Resolver.Log.Info("CS LOW");
+                csPort.State = false;
+                Thread.Sleep(100);
+            }
+
             SetSleepMode(SleepMode.Active);
-            SetMClkDivisor(MCLKDivisor.Div4);
+            SetMClkDivisor(MCLKDivisor.Div32);
             SetCrcSelection(CrcSelection.None);
-            SetPowerMode(PowerMode.Fast);
-            SetDClkDivisor(DCLKDivisor.Div1);
+            SetPowerMode(PowerMode.Eco);
+            SetDClkDivisor(DCLKDivisor.Div8);
             SetConversionType(ConversionType.Standard);
             SetModeConfiguration(ChannelMode.A, FilterType.Sinc, DecimationRate.X32);
 
@@ -189,7 +223,7 @@ namespace Meadow.Foundation.ICs.ADC
 
         protected override Task<Voltage> ReadSensor()
         {
-            throw new NotImplementedException();
+            return Task.FromResult(0.Volts());
         }
 
     }
