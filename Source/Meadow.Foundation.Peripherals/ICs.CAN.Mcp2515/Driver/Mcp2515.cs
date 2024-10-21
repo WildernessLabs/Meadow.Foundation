@@ -154,8 +154,6 @@ public partial class Mcp2515 : ICanController
     private void ClearInterrupt(InterruptFlag flag)
     {
         ModifyRegister(Register.CANINTF, (byte)flag, 0);
-
-        LogRegisters(Register.CANINTF, 1);
     }
 
     private void WriteFrame(ICanFrame frame, int bufferNumber)
