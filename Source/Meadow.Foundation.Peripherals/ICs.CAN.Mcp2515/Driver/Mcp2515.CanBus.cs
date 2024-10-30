@@ -20,8 +20,8 @@ public partial class Mcp2515
         /// <inheritdoc/>
         public CanBitrate BitRate
         {
-            get => Controller._bitrate;
-            set => Controller.Initialize(value, Controller._oscillator);
+            get => Controller.bitrate;
+            set => Controller.Initialize(value, Controller.oscillator);
         }
 
         /// <inheritdoc/>
