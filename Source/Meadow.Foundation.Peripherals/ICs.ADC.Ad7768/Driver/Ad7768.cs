@@ -13,7 +13,7 @@ namespace Meadow.Foundation.ICs.ADC
         private IDigitalOutputPort? csPort;
         private IDigitalOutputPort? resetPort;
         private IDigitalInterruptPort? dataReadyPort;
-        private IDigitalOutputPort? dataClockPort;
+        private IDigitalInterruptPort? dataClockPort;
 
         /// <inheritdoc/>
         public SpiClockConfiguration.Mode DefaultSpiBusMode => SpiClockConfiguration.Mode.Mode3;
@@ -48,35 +48,32 @@ namespace Meadow.Foundation.ICs.ADC
             }
             if (dataClockPin != null)
             {
-                dataClockPort = dataClockPin.CreateDigitalOutputPort(false); // active high
+                dataClockPort = dataClockPin.CreateDigitalInterruptPort(InterruptMode.EdgeRising, ResistorMode.Disabled); // active high
             }
 
             portsCreated = true;
-
-            Initialize();
         }
 
         public int ClockDataValue()
         {
             if (dataClockPort == null) return -1;
 
-            // clock in 24 bits(TODO: support channels)
-            for (var i = 0; i < 24; i++)
-            {
-                dataClockPort.State = true;
-                dataClockPort.State = false;
-            }
+            // todo: clock in 24 bits(TODO: support channels)
 
             return 0;
         }
 
         private void WriteRegisterByte(Registers register, byte data)
         {
-            Span<byte> buffer = stackalloc byte[2];
+            Span<byte> tx = stackalloc byte[2];
+            Span<byte> rx = stackalloc byte[2];
             // high bit indicates read/write (off == write)
-            buffer[0] = (byte)(0x7f & (byte)register);
-            buffer[1] = data;
-            spiBus.Exchange(csPort, buffer, buffer);
+            tx[0] = (byte)(0x7f & (byte)register);
+            tx[1] = data;
+
+            Resolver.Log.Info($"WRITE: {BitConverter.ToString(tx.ToArray())}");
+            spiBus.Exchange(csPort, tx, rx);
+            var reg = ReadRegisterByte(register);
         }
 
         private void WriteRegisterByte(Registers register, Mask mask, byte data)
@@ -95,9 +92,18 @@ namespace Meadow.Foundation.ICs.ADC
         private byte ReadRegisterByte(Registers register)
         {
             Span<byte> buffer = stackalloc byte[2];
+
             // high bit indicates read/write (on == read)
-            buffer[0] = (byte)(0x80 | (0x7f & (byte)register));
+            // dev note: we MUST send this twice.
+            // Page 51 of the data sheet explains.
+            // "The SPI control interface uses an off frame protocol"
+            var value = (byte)(0x80 | (0x7f & (byte)register));
+            buffer[0] = value;
             spiBus.Exchange(csPort, buffer, buffer);
+            buffer[0] = value;
+            spiBus.Exchange(csPort, buffer, buffer);
+
+            Resolver.Log.Info($"READ:  {buffer[1]:x2}");
 
             return buffer[1];
         }
@@ -111,11 +117,32 @@ namespace Meadow.Foundation.ICs.ADC
         private void SetSleepMode(SleepMode sleepMode)
         {
             WriteRegisterByte(Registers.PWR_MODE, Mask.SleepMode, (byte)sleepMode);
+            SynchronizeAdc();
+        }
+
+        private void SynchronizeAdc()
+        {
+            WriteRegisterByte(Registers.DATA_CTRL, Mask.SYNC_OFF, 0x00);
+            WriteRegisterByte(Registers.DATA_CTRL, Mask.SYNC_ON, 0x80);
+        }
+
+        public void Test()
+        {
+            Resolver.Log.Info("MCLK4");
+            SetMClkDivisor(MCLKDivisor.Div4);
+            Thread.Sleep(1000);
+            Resolver.Log.Info("MCLK8");
+            SetMClkDivisor(MCLKDivisor.Div8);
+            Thread.Sleep(1000);
+            Resolver.Log.Info("MCLK32");
+            SetMClkDivisor(MCLKDivisor.Div32);
+            Thread.Sleep(1000);
         }
 
         private void SetMClkDivisor(MCLKDivisor mclkDivisor)
         {
             WriteRegisterByte(Registers.PWR_MODE, Mask.MCLK, (byte)mclkDivisor);
+            SynchronizeAdc();
         }
 
         private void SetCrcSelection(CrcSelection crcSelection)
@@ -127,16 +154,19 @@ namespace Meadow.Foundation.ICs.ADC
         private void SetPowerMode(PowerMode powerMode)
         {
             WriteRegisterByte(Registers.PWR_MODE, Mask.PWR_MODE, (byte)((byte)powerMode << 0x05));
+            SynchronizeAdc();
         }
 
         private void SetDClkDivisor(DCLKDivisor dclkDivisor)
         {
             WriteRegisterByte(Registers.INTERFACE_CFG, Mask.DCLK_DIV, (byte)((byte)dclkDivisor << 0));
+            SynchronizeAdc();
         }
 
         private void SetConversionType(ConversionType conversionType)
         {
             WriteRegisterByte(Registers.DATA_CTRL, Mask.OneShot, (byte)((byte)conversionType << 4));
+            SynchronizeAdc();
         }
 
         private void SetModeConfiguration(ChannelMode channelMode, FilterType filterType, DecimationRate decimationRate)
@@ -145,11 +175,13 @@ namespace Meadow.Foundation.ICs.ADC
             value |= (byte)Mask.DecimationRate;
             var register = channelMode == ChannelMode.A ? Registers.CH_MODE_A : Registers.CH_MODE_B;
             WriteRegisterByte(register, value);
+            SynchronizeAdc();
         }
 
         private void SetChannelState(int channel, ChannelState state)
         {
             WriteRegisterByte(Registers.CH_STANDBY, (byte)(1 << channel), (byte)(state == ChannelState.Enabled ? 1 << channel : 0));
+            SynchronizeAdc();
         }
 
         private void ResetChip()
@@ -183,7 +215,7 @@ namespace Meadow.Foundation.ICs.ADC
             SetPowerMode(PowerMode.Eco);
             SetDClkDivisor(DCLKDivisor.Div8);
             SetConversionType(ConversionType.Standard);
-            SetModeConfiguration(ChannelMode.A, FilterType.Sinc, DecimationRate.X32);
+            SetModeConfiguration(ChannelMode.A, FilterType.Sinc, DecimationRate.X1024);
 
             var channels = 4;
 

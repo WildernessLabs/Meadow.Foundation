@@ -11,6 +11,8 @@
             DCLK_DIV = 0x03 << 0,
             OneShot = 1 << 4,
             DecimationRate = 0x07 << 0,
+            SYNC_OFF = 0x7f,
+            SYNC_ON = 0x80
         }
 
         internal enum SleepMode : byte

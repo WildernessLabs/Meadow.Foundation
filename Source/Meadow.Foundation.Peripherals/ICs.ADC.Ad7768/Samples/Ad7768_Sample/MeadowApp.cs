@@ -3,7 +3,7 @@ using Meadow.Devices;
 using Meadow.Foundation.ICs.ADC;
 using System.Threading.Tasks;
 
-namespace ADC.Ad7760_Sample
+namespace ADC.Ad7768_Sample
 {
     public class MeadowApp : App<F7FeatherV2>
     {
@@ -27,8 +27,7 @@ namespace ADC.Ad7760_Sample
 
             while (true)
             {
-
-                adc.ClockDataValue();
+                adc.Test();
                 await Task.Delay(1000);
             }
         }
