@@ -10,7 +10,7 @@ namespace Meadow.Foundation.Sensors.Environmental
         //check for infinity and switch to zero
         //populate all of the properties 
 
-        enum Measurement
+        private enum Measurement
         {
             DissolvedOxygen, //DO
             Turbidity,
@@ -27,11 +27,6 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// </summary>
         public struct Measurements
         {
-            /// <summary>
-            /// Concentration of dissolved Oxygen in water
-            /// </summary>
-            public ConcentrationInWater DissolvedOxygen { get; private set; }
-
             /// <summary>
             /// Turbidity (NTU)
             /// </summary>
@@ -54,14 +49,9 @@ namespace Meadow.Foundation.Sensors.Environmental
             public Voltage OxidationReductionPotential { get; private set; }
 
             /// <summary>
-            /// Chlorophyll Concentration (CHL)
+            /// Water quality concentraions
             /// </summary>
-            public ConcentrationInWater Chlorophyl { get; private set; }
-
-            /// <summary>
-            /// Salination (SAL)
-            /// </summary>
-            public ConcentrationInWater BlueGreenAlgae { get; private set; }
+            public WaterQualityConcentrations Concentrations { get; private set; }
 
             /// <summary>
             /// Temperature
@@ -79,8 +69,8 @@ namespace Meadow.Foundation.Sensors.Environmental
                     throw new ArgumentException($"Measurements record expects 8 values, received {data.Length}");
                 }
 
-                float value = Normalize(data[(int)Measurement.DissolvedOxygen]);
-                DissolvedOxygen = new ConcentrationInWater(value, ConcentrationInWater.UnitType.MilligramsPerLiter);
+                var value = Normalize(data[(int)Measurement.Temperature]);
+                Temperature = new Units.Temperature(value, Units.Temperature.UnitType.Celsius);
 
                 value = Normalize(data[(int)Measurement.Turbidity]);
                 Turbidity = new Turbidity(value);
@@ -95,16 +85,23 @@ namespace Meadow.Foundation.Sensors.Environmental
                 OxidationReductionPotential = new Voltage(value, Voltage.UnitType.Volts);
 
                 value = Normalize(data[(int)Measurement.Chlorophyl]);
-                Chlorophyl = new ConcentrationInWater(value, ConcentrationInWater.UnitType.MicrogramsPerLiter);
+                var chlorophyl = new ConcentrationInWater(value, ConcentrationInWater.UnitType.MicrogramsPerLiter);
 
                 value = Normalize(data[(int)Measurement.BlueGreenAlgae]);
-                BlueGreenAlgae = new ConcentrationInWater(value, ConcentrationInWater.UnitType.MilligramsPerLiter);
+                var blueGreenAlgae = new ConcentrationInWater(value, ConcentrationInWater.UnitType.MilligramsPerLiter);
 
-                value = Normalize(data[(int)Measurement.Temperature]);
-                Temperature = new Units.Temperature(value, Units.Temperature.UnitType.Celsius);
+                value = Normalize(data[(int)Measurement.DissolvedOxygen]);
+                var dissolvedOxygen = new ConcentrationInWater(value, ConcentrationInWater.UnitType.MilligramsPerLiter);
+
+                Concentrations = new WaterQualityConcentrations
+                {
+                    Chlorophyl = chlorophyl,
+                    BlueGreenAlgae = blueGreenAlgae,
+                    DissolvedOxygen = dissolvedOxygen
+                };
             }
 
-            static float Normalize(float value) => float.IsNormal(value) ? value : 0;
+            private static float Normalize(float value) => float.IsNormal(value) ? value : 0;
 
             /// <summary>
             /// Returns a string that represents the current Y4000 measurement data.
@@ -113,13 +110,13 @@ namespace Meadow.Foundation.Sensors.Environmental
             public override string ToString()
             {
                 StringBuilder sb = new StringBuilder();
-                sb.AppendLine($"DissolvedOxygen: {DissolvedOxygen} mg/L");
+                sb.AppendLine($"DissolvedOxygen: {Concentrations.DissolvedOxygen} mg/L");
                 sb.AppendLine($"Turbidity: {Turbidity} NTU");
                 sb.AppendLine($"ElectricalConductivity: {ElectricalConductivity.MilliSiemensPerCentimeter} mS/cm");
                 sb.AppendLine($"PH: {PH}");
                 sb.AppendLine($"OxidationReductionPotential: {OxidationReductionPotential.Millivolts} mV");
-                sb.AppendLine($"Chlorophyll: {Chlorophyl.MicrogramsPerLiter} ug/L");
-                sb.AppendLine($"BlueGreenAlgae: {BlueGreenAlgae.PartsPerMillion} ppm");
+                sb.AppendLine($"Chlorophyll: {Concentrations.Chlorophyl.Value.MicrogramsPerLiter} ug/L");
+                sb.AppendLine($"BlueGreenAlgae: {Concentrations.BlueGreenAlgae.Value.PartsPerMillion} ppm");
                 sb.AppendLine($"Temperature: {Temperature.Celsius} C");
 
                 return sb.ToString();
