@@ -30,33 +30,33 @@ namespace Meadow.Foundation.Sensors.Environmental
             /// <summary>
             /// Turbidity (NTU)
             /// </summary>
-            public Turbidity Turbidity { get; private set; }
+            public Turbidity Turbidity { get; set; }
 
             /// <summary>
             /// Electrical conductivity (CT)
             /// </summary>
-            public Conductivity ElectricalConductivity { get; private set; }
+            public Conductivity ElectricalConductivity { get; set; }
 
             /// <summary>
             /// PotentialHydrogren (pH)
             /// </summary>
-            public PotentialHydrogen PH { get; private set; }
+            public PotentialHydrogen PH { get; set; }
 
             /// <summary>
             /// ORP or Redox
             /// ORP is a measurement of the net voltage potential of excess oxidizers or reducers present in a liquid
             /// </summary>
-            public Voltage OxidationReductionPotential { get; private set; }
+            public Voltage OxidationReductionPotential { get; set; }
 
             /// <summary>
             /// Water quality concentraions
             /// </summary>
-            public WaterQualityConcentrations Concentrations { get; private set; }
+            public WaterQualityConcentrations Concentrations { get; set; }
 
             /// <summary>
             /// Temperature
             /// </summary>
-            public Units.Temperature Temperature { get; private set; }
+            public Units.Temperature Temperature { get; set; }
 
             /// <summary>
             /// Measurements constructor, converts float array to Y4000 Measurements.
