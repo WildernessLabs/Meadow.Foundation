@@ -20,9 +20,9 @@
             /// </summary>
             Address_0x4A = 0x4A,
             /// <summary>
-            /// Bus address 0x4C
+            /// Bus address 0x4B
             /// </summary>
-            Address_0x4B = 0x4C,
+            Address_0x4B = 0x4B,
             /// <summary>
             /// Default bus address
             /// </summary>
