@@ -157,7 +157,7 @@ public class SimulatedTemperatureSensor : ITemperatureSensor, ISimulatedSensor
     }
 
     /// <inheritdoc/>
-    public void StartSimulation(SimulationBehavior behavior)
+    public void StartSimulation(SimulationBehavior behavior = SimulationBehavior.RandomWalk)
     {
         _behavior = behavior;
         _simulationTimer = new Timer(SimulationProc, null, TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1));
