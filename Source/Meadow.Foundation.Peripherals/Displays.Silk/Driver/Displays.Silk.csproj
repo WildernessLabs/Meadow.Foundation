@@ -25,7 +25,7 @@
     <None Include=".\Readme.md" Pack="true" PackagePath="" />
     <PackageReference Include="Silk.NET" Version="2.21.0" />
     <PackageReference Include="SkiaSharp" Version="2.88.8" />
-    <PackageReference Include="System.Text.Json" Version="8.0.4" />
+    <PackageReference Include="System.Text.Json" Version="8.0.5" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\icon.png" Link="icon.png" Pack="true" PackagePath="" />
