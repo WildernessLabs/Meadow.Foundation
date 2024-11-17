@@ -21,17 +21,17 @@ public partial class Keyboard
                 if ((state & 0x8000) != 0)
                 {
                     // key is currently down
-                    key.Value.SetState(true);
+                    key.Value.SetState(false);
                 }
                 else if ((state & 0x0001) != 0)
                 {
                     // state was down since last  call (is now up)
-                    key.Value.SetState(true);
                     key.Value.SetState(false);
+                    key.Value.SetState(true);
                 }
                 else
                 {
-                    key.Value.SetState(false);
+                    key.Value.SetState(true);
                 }
 
             }
