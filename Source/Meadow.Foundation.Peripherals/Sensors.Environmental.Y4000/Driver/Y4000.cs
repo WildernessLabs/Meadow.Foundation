@@ -4,6 +4,8 @@ using Meadow.Peripherals.Sensors;
 using Meadow.Peripherals.Sensors.Environmental;
 using Meadow.Units;
 using System;
+using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -101,8 +103,8 @@ public partial class Y4000 :
     /// <inheritdoc/>
     public void StartUpdating(TimeSpan? updateInterval)
     {
-        this.updateInterval = updateInterval ?? TimeSpan.FromSeconds(5);
-        updateTimer.Change(TimeSpan.Zero, this.updateInterval.Value);
+        this.updateInterval = updateInterval;
+        updateTimer.Change(TimeSpan.Zero, UpdateInterval);
     }
 
     /// <inheritdoc/>
@@ -110,6 +112,19 @@ public partial class Y4000 :
     {
         this.updateInterval = null;
         updateTimer.Change(Timeout.Infinite, Timeout.Infinite);
+    }
+
+    /// <summary>
+    /// Creates a new Y4000 object
+    /// </summary>
+    public Y4000(
+        IModbusBusClient modbusClient,
+        byte modbusAddress = 0x01)
+    {
+        this.modbusClient = modbusClient;
+        ModbusAddress = modbusAddress;
+
+        updateTimer = new Timer(UpdateTimerProc);
     }
 
     /// <summary>
@@ -268,17 +283,6 @@ public partial class Y4000 :
     public byte ModbusAddress { get; private set; } = 0x01;
 
     /// <summary>
-    /// Creates a new Y4000 object
-    /// </summary>
-    public Y4000(
-        IModbusBusClient modbusClient,
-        byte modbusAddress = 0x01)
-    {
-        this.modbusClient = modbusClient;
-        ModbusAddress = modbusAddress;
-    }
-
-    /// <summary>
     /// Initialize sensor
     /// </summary>
     /// <returns></returns>
@@ -308,9 +312,9 @@ public partial class Y4000 :
     {
         if (ModbusAddress == modbusAddress) { return; }
 
-        await modbusClient.WriteHoldingRegisters(ModbusAddress,
+        await modbusClient.WriteHoldingRegister(ModbusAddress,
             Registers.ISDN.Offset,
-            new ushort[] { (ushort)(modbusAddress << 8) });
+            (ushort)(modbusAddress << 8));
 
         ModbusAddress = modbusAddress;
     }
@@ -328,12 +332,17 @@ public partial class Y4000 :
     /// <summary>
     /// Get the device serial number 
     /// </summary>
-    /// <returns>The serial number as a ushort array</returns>
-    public async Task<ushort[]> GetSerialNumber()
+    /// <returns>The serial number</returns>
+    public async Task<string> GetSerialNumber()
     {
         var data = await modbusClient.ReadHoldingRegisters(ModbusAddress, Registers.SerialNumber.Offset, Registers.SerialNumber.Length);
 
-        return data;
+        // according to the manual, bytes 0 and 13 are reserved.  bytes 1-12 contain the ascii serial number
+        var bytes = data
+            .SelectMany(r => new byte[] { (byte)(r >> 8), (byte)(r & 0xff) })
+            .ToArray();
+
+        return Encoding.ASCII.GetString(bytes);
     }
 
     /// <summary>

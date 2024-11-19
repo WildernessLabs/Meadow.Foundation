@@ -2,7 +2,7 @@
 {
     public partial class Y4000
     {
-        static class Registers
+        private static class Registers
         {
             public static HoldingRegister Version = new HoldingRegister(0x0700, 0x02);
             public static HoldingRegister ErrorCode = new HoldingRegister(0x0800, 0x01);
@@ -15,7 +15,7 @@
             public static HoldingRegister ISDN = new HoldingRegister(0x3000, 0x01);
         }
 
-        struct HoldingRegister
+        private struct HoldingRegister
         {
             public ushort Offset { get; private set; }
             public int Length { get; private set; }
