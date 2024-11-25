@@ -24,10 +24,9 @@ public override Task Initialize()
 
     expander = new Mcp2515(
         Device.CreateSpiBus(),
-        Device.Pins.D05.CreateDigitalOutputPort(true),
+        Device.Pins.D05,
         Mcp2515.CanOscillator.Osc_8MHz,
-        Device.Pins.D05.CreateDigitalInterruptPort(InterruptMode.EdgeFalling),
-        Resolver.Log);
+        Device.Pins.D06);
 
     return base.Initialize();
 }
