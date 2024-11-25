@@ -11,6 +11,17 @@ using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Environmental;
 
+public interface IY4000 :
+    IWaterQualityConcentrationsSensor,
+    IElectricalConductivitySensor,
+    IPotentialHydrogenSensor,
+    ITurbiditySensor,
+    ITemperatureSensor,
+    IRedoxPotentialSensor
+{
+    Task<string> GetSerialNumber();
+}
+
 /// <summary>
 /// Represents a Yosemitech Y4000 Multiparameter Sonde water quality sensor 
 /// for dissolved oxygen, conductivity, turbidity, pH, chlorophyll, 
@@ -18,12 +29,7 @@ namespace Meadow.Foundation.Sensors.Environmental;
 /// </summary>
 public partial class Y4000 :
     IDisposable,
-    IWaterQualityConcentrationsSensor,
-    IElectricalConductivitySensor,
-    IPotentialHydrogenSensor,
-    ITurbiditySensor,
-    ITemperatureSensor,
-    IRedoxPotentialSensor
+    IY4000
 {
     private Timer updateTimer;
     private TimeSpan? updateInterval = null;
@@ -157,22 +163,38 @@ public partial class Y4000 :
 
     private async void UpdateTimerProc(object _)
     {
-        var currentmeasurements = await ReadSensor();
-        RaiseEventsAndNotify(currentmeasurements);
+        try
+        {
+            var currentmeasurements = await ReadSensor();
+            if (currentmeasurements != null)
+            {
+                RaiseEventsAndNotify(currentmeasurements.Value);
+            }
+        }
+        catch (Exception ex)
+        {
+            Resolver.Log.Debug($"Failed to read: {ex.Message}");
+        }
     }
 
     /// <summary>
     /// Reads all measurements of the sensor
     /// </summary>
-    public async Task<Measurements> ReadSensor()
+    public async Task<Measurements?> ReadSensor()
     {
         var values = await modbusClient.ReadHoldingRegistersFloat(ModbusAddress, Registers.Data.Offset, Registers.Data.Length / 2);
+
+        if (values.Length != 8)
+        {
+            Resolver.Log.Debug($"Reading sonde at 0x{ModbusAddress} returned {values.Length} bytes");
+            return null;
+        }
         return new Measurements(values);
     }
 
     async Task<Units.Temperature> ISensor<Units.Temperature>.Read()
     {
-        Measurements measurements;
+        Measurements? measurements;
 
         if (!IsSampling || lastMeasurements == null)
         {
@@ -182,12 +204,12 @@ public partial class Y4000 :
         {
             measurements = lastMeasurements.Value;
         }
-        return measurements.Temperature;
+        return measurements.Value.Temperature;
     }
 
     async Task<Turbidity> ISensor<Turbidity>.Read()
     {
-        Measurements measurements;
+        Measurements? measurements;
 
         if (!IsSampling || lastMeasurements == null)
         {
@@ -197,12 +219,12 @@ public partial class Y4000 :
         {
             measurements = lastMeasurements.Value;
         }
-        return measurements.Turbidity;
+        return measurements.Value.Turbidity;
     }
 
     async Task<PotentialHydrogen> ISensor<PotentialHydrogen>.Read()
     {
-        Measurements measurements;
+        Measurements? measurements;
 
         if (!IsSampling || lastMeasurements == null)
         {
@@ -212,12 +234,12 @@ public partial class Y4000 :
         {
             measurements = lastMeasurements.Value;
         }
-        return measurements.PH;
+        return measurements.Value.PH;
     }
 
     async Task<Conductivity> ISensor<Conductivity>.Read()
     {
-        Measurements measurements;
+        Measurements? measurements;
 
         if (!IsSampling || lastMeasurements == null)
         {
@@ -227,12 +249,12 @@ public partial class Y4000 :
         {
             measurements = lastMeasurements.Value;
         }
-        return measurements.ElectricalConductivity;
+        return measurements.Value.ElectricalConductivity;
     }
 
     async Task<Voltage> ISensor<Voltage>.Read()
     {
-        Measurements measurements;
+        Measurements? measurements;
 
         if (!IsSampling || lastMeasurements == null)
         {
@@ -242,12 +264,12 @@ public partial class Y4000 :
         {
             measurements = lastMeasurements.Value;
         }
-        return measurements.OxidationReductionPotential;
+        return measurements.Value.OxidationReductionPotential;
     }
 
     async Task<WaterQualityConcentrations> ISensor<WaterQualityConcentrations>.Read()
     {
-        Measurements measurements;
+        Measurements? measurements;
 
         if (!IsSampling || lastMeasurements == null)
         {
@@ -257,7 +279,7 @@ public partial class Y4000 :
         {
             measurements = lastMeasurements.Value;
         }
-        return measurements.Concentrations;
+        return measurements.Value.Concentrations;
     }
 
     private void RaiseEventsAndNotify(Measurements currentmeasurements)
