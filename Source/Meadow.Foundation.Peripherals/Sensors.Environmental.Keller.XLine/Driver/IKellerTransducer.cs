@@ -7,4 +7,6 @@ public interface IKellerTransducer
 {
     Task<Units.Temperature> ReadTemperature(TemperatureChannel channel);
     Task<Pressure> ReadPressure(PressureChannel channel);
+    Task<byte> ReadModbusAddress();
+    Task<int> ReadSerialNumber();
 }

@@ -8,47 +8,68 @@ namespace Meadow.Foundation.Sensors.Environmental;
 public class KellerTransducer : IKellerTransducer
 {
     private ModbusRtuClient modbusClient;
-    private byte modbusAddress = 250;
-    private ushort activePressureChannels;
-    private ushort activeTemperatureChannels;
-
-    public int? SerialNumber { get; private set; }
-    public byte ModbusAddress { get; }
+    private ushort? activePressureChannels;
+    private ushort? activeTemperatureChannels;
+    private byte communicationAddress;
 
     public KellerTransducer(ModbusRtuClient modbus, byte modbusAddress = 1)
     {
-        ModbusAddress = modbusAddress;
+        communicationAddress = modbusAddress;
         this.modbusClient = modbus;
 
         if (!modbus.IsConnected)
         {
             modbus.Connect();
         }
-
-        _ = ReadConfiguration();
-
     }
-
-    private bool isReady = false;
 
     private async Task ReadConfiguration()
     {
         // the device doesn't appear to like reading > 4 registers at a time
-        var registers = await modbusClient.ReadHoldingRegisters(ModbusAddress, 0x0200, 4);
-        SerialNumber = registers.ExtractInt32(2);
+        try
+        {
+            var registers = await modbusClient.ReadHoldingRegisters(communicationAddress, 0x0204, 4);
+            activePressureChannels = registers[0];
+            activeTemperatureChannels = registers[1];
+        }
+        catch (Exception ex)
+        {
+            Resolver.Log.Warn($"Transducer initialization failure: {ex.Message}", "keller xline");
+        }
+    }
 
-        registers = await modbusClient.ReadHoldingRegisters(ModbusAddress, 0x0204, 4);
-        activePressureChannels = registers[0];
-        activeTemperatureChannels = registers[1];
+    /// <summary>
+    /// Reads the device's Modbus Address.
+    /// </summary>
+    /// <remarks>
+    /// The Keller Transducer can be discovered using an initial broadcast address of 250, then the actual sensor can be read using this method
+    /// </remarks>
+    public async Task<byte> ReadModbusAddress()
+    {
+        var registers = await modbusClient.ReadHoldingRegisters(communicationAddress, 0x020D, 1);
+        return (byte)registers[0];
+    }
 
-        isReady = true;
+    public async Task<int> ReadSerialNumber()
+    {
+        var registers = await modbusClient.ReadHoldingRegisters(communicationAddress, 0x0202, 2);
+        return registers.ExtractInt32();
+    }
+
+    public Task WriteModbusAddress(byte address)
+    {
+        return modbusClient.WriteHoldingRegister(communicationAddress, 0x020D, address);
     }
 
     public async Task<Units.Temperature> ReadTemperature(TemperatureChannel channel)
     {
-        while (!isReady)
+        Resolver.Log.Info($"Reading transducer temp");
+
+        var count = 6;
+
+        if (activeTemperatureChannels == null)
         {
-            await Task.Delay(500);
+            await ReadConfiguration();
         }
 
         if (((ushort)channel & activeTemperatureChannels) == 0)
@@ -64,16 +85,16 @@ public class KellerTransducer : IKellerTransducer
             _ => throw new ArgumentException()
         };
 
-        var r = await modbusClient.ReadHoldingRegisters(ModbusAddress, address, 2);
+        var r = await modbusClient.ReadHoldingRegisters(communicationAddress, address, 2);
         var temp = r.ExtractSingle();
         return new Units.Temperature(temp, Units.Temperature.UnitType.Celsius);
     }
 
     public async Task<Pressure> ReadPressure(PressureChannel channel)
     {
-        while (!isReady)
+        if (activePressureChannels == null)
         {
-            await Task.Delay(500);
+            await ReadConfiguration();
         }
 
         if (((ushort)channel & activePressureChannels) == 0)
@@ -88,7 +109,7 @@ public class KellerTransducer : IKellerTransducer
             _ => throw new ArgumentException()
         };
 
-        var r = await modbusClient.ReadHoldingRegisters(ModbusAddress, address, 2);
+        var r = await modbusClient.ReadHoldingRegisters(communicationAddress, address, 2);
         var p = r.ExtractSingle();
         return new Pressure(p, Pressure.UnitType.Bar);
     }
