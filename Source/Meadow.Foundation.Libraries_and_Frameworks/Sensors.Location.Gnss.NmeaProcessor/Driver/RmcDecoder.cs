@@ -34,7 +34,11 @@ public class RmcDecoder : INmeaDecoder, IGnssPositionEventSource
     /// <param name="sentence">The sentence</param>
     public void Process(string sentence)
     {
-        Process(NmeaSentence.From(sentence));
+        if (NmeaSentence.TryParse(sentence, out var s))
+        {
+            Resolver.Log.Debug($"Failure parsing {sentence}", Constants.LogGroup);
+            Process(NmeaSentence.From(sentence));
+        }
     }
 
     /// <summary>

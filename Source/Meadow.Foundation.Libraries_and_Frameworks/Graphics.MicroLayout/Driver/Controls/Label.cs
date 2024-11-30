@@ -3,7 +3,7 @@
 /// <summary>
 /// Represents a label display control in the user interface.
 /// </summary>
-public class Label : ThemedControl
+public class Label : ClickableControl
 {
     private static Color DefaultTextColor = Color.White;
     private static Color DefaultBackColor = Color.Transparent;
