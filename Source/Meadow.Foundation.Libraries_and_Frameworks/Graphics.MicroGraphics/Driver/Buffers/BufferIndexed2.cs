@@ -5,40 +5,40 @@ using System.Linq;
 namespace Meadow.Foundation.Graphics.Buffers
 {
     /// <summary>
-    /// Represents a 4bpp pixel buffer with indexed colors
-    /// Each pixel is represented by 4 bits, allowing for 8 distinct colors
+    /// Represents a 2bpp pixel buffer with indexed colors
+    /// Each pixel is represented by 2 bits, allowing for 4 distinct colors
     /// </summary>
-    public class BufferIndexed4 : PixelBufferBase
+    public class BufferIndexed2 : PixelBufferBase
     {
         /// <summary>
         /// Color mode of the buffer
         /// </summary>
-        public override ColorMode ColorMode => ColorMode.Format4bppIndexed;
+        public override ColorMode ColorMode => ColorMode.Format2bppIndexed;
 
         /// <summary>
-        /// The indexed colors as an 8 element array of Color values
+        /// The indexed colors as a 4 element array of Color values
         /// </summary>
-        public readonly Color[] IndexedColors = new Color[8];
+        public readonly Color[] IndexedColors = new Color[4];
 
         /// <summary>
-        /// Create a new BufferIndexed4 object
+        /// Create a new BufferIndexed2 object
         /// </summary>
         /// <param name="width">The width in pixels</param>
         /// <param name="height">The height in pixels</param>
         /// <param name="buffer">The backing buffer</param>
-        public BufferIndexed4(int width, int height, byte[] buffer) : base(width, height, buffer) { }
+        public BufferIndexed2(int width, int height, byte[] buffer) : base(width, height, buffer) { }
 
         /// <summary>
-        /// Create a new BufferIndexed4 object
+        /// Create a new BufferIndexed2 object
         /// </summary>
         /// <param name="width">The width in pixels</param>
         /// <param name="height">The height in pixels</param>
-        public BufferIndexed4(int width, int height) : base(width, height) { }
+        public BufferIndexed2(int width, int height) : base(width, height) { }
 
         /// <summary>
-        /// Create a new BufferIndexed4 object
+        /// Create a new BufferIndexed2 object
         /// </summary>
-        public BufferIndexed4() : base() { }
+        public BufferIndexed2() : base() { }
 
         /// <summary>
         /// Fill buffer with a color
@@ -47,7 +47,7 @@ namespace Meadow.Foundation.Graphics.Buffers
         public override void Fill(Color color)
         {
             byte colorValue = (byte)GetIndexForColor(color);
-            Buffer[0] = (byte)(colorValue | colorValue << 4);
+            Buffer[0] = (byte)(colorValue << 2 | colorValue << 4 | colorValue << 6);
 
             int arrayMidPoint = Buffer.Length / 2;
             int copyLength;
@@ -117,19 +117,16 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// </summary>
         /// <param name="x">X pixel position</param>
         /// <param name="y">Y pixel position</param>
-        /// <param name="colorIndex">The color index (0-7)</param>
+        /// <param name="colorIndex">The color index (0-3)</param>
         public void SetPixel(int x, int y, int colorIndex)
         {
-            int index = y * Width / 2 + x / 2;
+            int byteIndex = (y * Width + x) >> 2; // divide by 4 to find the byte
+            int pixelOffset = (x & 0x03) << 1;    // (x % 4)*2 bits offset
 
-            if ((x % 2) == 0)
-            {   //even pixel - shift to the significant nibble
-                Buffer[index] = (byte)((Buffer[index] & 0x0f) | (colorIndex << 4));
-            }
-            else
-            {   //odd pixel
-                Buffer[index] = (byte)((Buffer[index] & 0xf0) | (colorIndex));
-            }
+            // Clear current 2 bits
+            Buffer[byteIndex] &= (byte)~(0x03 << pixelOffset);
+            // Set new bits
+            Buffer[byteIndex] |= (byte)((colorIndex & 0x03) << pixelOffset);
         }
 
         /// <summary>
@@ -151,8 +148,8 @@ namespace Meadow.Foundation.Graphics.Buffers
         public override void WriteBuffer(int x, int y, IPixelBuffer buffer)
         {
             if (buffer.ColorMode == ColorMode &&
-                x % 2 == 0 &&
-                buffer.Width % 2 == 0)
+                x % 4 == 0 &&
+                buffer.Width % 4 == 0)
             {
                 // We can do a direct block copy row by row
                 int sourceIndex, destinationIndex;
@@ -173,25 +170,18 @@ namespace Meadow.Foundation.Graphics.Buffers
         }
 
         /// <summary>
-        /// Get the pixel's color index (0-7) at a given coordinate
+        /// Get the pixel's color index (0-3) at a given coordinate
         /// </summary>
         /// <param name="x">The X pixel position</param>
         /// <param name="y">The Y pixel position</param>
-        /// <returns>The 4-bit color index</returns>
+        /// <returns>The 2-bit color index</returns>
         public byte GetColorIndexForPixel(int x, int y)
         {
-            int index = y * Width / 2 + x / 2;
-            byte color;
+            int byteIndex = (y * Width + x) >> 2;
+            int pixelOffset = (x & 0x03) << 1;
 
-            if ((x % 2) == 0)
-            {   //even pixel - shift to the significant nibble
-                color = (byte)((Buffer[index] & 0x0f) >> 4);
-            }
-            else
-            {   //odd pixel
-                color = (byte)((Buffer[index] & 0xf0));
-            }
-            return color;
+            byte value = (byte)((Buffer[byteIndex] >> pixelOffset) & 0x03);
+            return value;
         }
 
         Color GetClosestColor(Color color)
