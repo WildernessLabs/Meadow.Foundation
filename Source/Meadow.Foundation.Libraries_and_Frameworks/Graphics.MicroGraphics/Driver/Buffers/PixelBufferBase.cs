@@ -36,6 +36,7 @@ namespace Meadow.Foundation.Graphics.Buffers
                 {
                     ColorMode.Format1bpp => 1,
                     ColorMode.Format2bpp => 2,
+                    ColorMode.Format2bppIndexed => 2,
                     ColorMode.Format4bppGray => 4,
                     ColorMode.Format4bppIndexed => 4,
                     ColorMode.Format8bppGray => 8,
