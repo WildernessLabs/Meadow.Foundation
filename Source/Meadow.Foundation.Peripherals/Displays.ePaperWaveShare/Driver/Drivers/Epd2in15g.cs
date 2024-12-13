@@ -4,7 +4,6 @@ using Meadow.Foundation.Displays;
 using Meadow.Foundation.Graphics.Buffers;
 using Meadow.Hardware;
 using Meadow.Peripherals.Displays;
-using System;
 
 namespace Displays.ePaperWaveShare.Drivers
 {
@@ -78,9 +77,7 @@ namespace Displays.ePaperWaveShare.Drivers
 
             spiComms = new SpiCommunications(spiBus, chipSelectPort, DefaultSpiBusSpeed, DefaultSpiBusMode);
 
-            Console.WriteLine("Epd2in15g constructor");
             imageBuffer = new BufferIndexed2(Width, Height);
-            Console.WriteLine("Epd2in15g constructor done");
 
             //set the indexed colors
             imageBuffer.IndexedColors[0] = Color.Black;
@@ -217,8 +214,6 @@ namespace Displays.ePaperWaveShare.Drivers
         /// </summary>
         public void Show()
         {
-            Console.WriteLine("Show");
-
             var w = (Width % 4 == 0) ? (Width / 4) : (Width / 4 + 1);
             var h = Height;
 
@@ -228,6 +223,11 @@ namespace Displays.ePaperWaveShare.Drivers
                 for (int i = 0; i < w; i++)
                 {
                     SendData(PixelBuffer.Buffer[i + j * w]);
+                    //SendData(0xFF); //all red                     11 (3)
+                    //SendData(0x00); //black                       00 (0)
+                    //SendData(0x01); //thin white thick black
+                    //SendData(0x55);// 0101 0101 all white         01 (1)
+                    //SendData(0xAA); // 1010 1010 all yellow         10 (2)
                 }
             }
 
