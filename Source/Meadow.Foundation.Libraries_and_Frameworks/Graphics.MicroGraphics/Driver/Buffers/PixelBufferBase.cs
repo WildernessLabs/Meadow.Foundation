@@ -527,6 +527,11 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// <returns>The distance as a float</returns>
         public float GetColorDistance(Color color1, Color color2)
         {
+            if (color1 == color2)
+            {
+                return 0;
+            }
+
             var rDeltaSquared = MathF.Pow(MathF.Abs(color1.R - color2.R), 2);
             var gDeltaSquared = MathF.Pow(MathF.Abs(color1.G - color2.G), 2);
             var bDeltaSquared = MathF.Pow(MathF.Abs(color1.B - color2.B), 2);
