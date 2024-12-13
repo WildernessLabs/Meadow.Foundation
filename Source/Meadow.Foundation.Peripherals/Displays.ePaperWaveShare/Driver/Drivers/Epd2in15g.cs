@@ -223,11 +223,6 @@ namespace Displays.ePaperWaveShare.Drivers
                 for (int i = 0; i < w; i++)
                 {
                     SendData(PixelBuffer.Buffer[i + j * w]);
-                    //SendData(0xFF); //all red                     11 (3)
-                    //SendData(0x00); //black                       00 (0)
-                    //SendData(0x01); //thin white thick black
-                    //SendData(0x55);// 0101 0101 all white         01 (1)
-                    //SendData(0xAA); // 1010 1010 all yellow         10 (2)
                 }
             }
 
