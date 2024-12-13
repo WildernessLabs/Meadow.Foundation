@@ -1,6 +1,6 @@
-﻿using Meadow;
+﻿using Displays.ePaperWaveShare.Drivers;
+using Meadow;
 using Meadow.Devices;
-using Meadow.Foundation.Displays;
 using Meadow.Foundation.Graphics;
 using System.Threading.Tasks;
 
@@ -16,7 +16,7 @@ namespace Displays.ePaper.EpdColor_Sample
         {
             Resolver.Log.Info("Initialize ...");
 
-            var display = new Epd5in65f(
+            var display = new Epd2in15g(
                     spiBus: Device.CreateSpiBus(),
                     chipSelectPin: Device.Pins.A04,
                     dcPin: Device.Pins.A03,
@@ -36,11 +36,8 @@ namespace Displays.ePaper.EpdColor_Sample
 
             graphics.CurrentFont = new Font12x16();
             graphics.DrawText(0, 0, "Meadow F7", Color.Black, scaleFactor: ScaleFactor.X2);
-            graphics.DrawText(0, 50, "Green", Color.Green, scaleFactor: ScaleFactor.X2);
-            graphics.DrawText(0, 100, "Yellow", Color.Yellow, scaleFactor: ScaleFactor.X2);
-            graphics.DrawText(0, 150, "Orange", Color.Orange, scaleFactor: ScaleFactor.X2);
-            graphics.DrawText(0, 200, "Red", Color.Red, scaleFactor: ScaleFactor.X2);
-            graphics.DrawText(0, 250, "Blue", Color.Blue, scaleFactor: ScaleFactor.X2);
+            graphics.DrawText(0, 50, "Yellow", Color.Yellow, scaleFactor: ScaleFactor.X2);
+            graphics.DrawText(0, 100, "Red", Color.Red, scaleFactor: ScaleFactor.X2);
 
             graphics.Show();
 

@@ -47,7 +47,7 @@ namespace Meadow.Foundation.Graphics.Buffers
         public override void Fill(Color color)
         {
             byte colorValue = (byte)GetIndexForColor(color);
-            Buffer[0] = (byte)(colorValue << 2 | colorValue << 4 | colorValue << 6);
+            Buffer[0] = (byte)(colorValue | colorValue << 2 | colorValue << 4 | colorValue << 6);
 
             int arrayMidPoint = Buffer.Length / 2;
             int copyLength;
@@ -121,7 +121,7 @@ namespace Meadow.Foundation.Graphics.Buffers
         public void SetPixel(int x, int y, int colorIndex)
         {
             int byteIndex = (y * Width + x) >> 2; // divide by 4 to find the byte
-            int pixelOffset = (x & 0x03) << 1;    // (x % 4)*2 bits offset
+            int pixelOffset = (3 - (x & 0x03)) << 1; // Reverse offset calculation
 
             // Clear current 2 bits
             Buffer[byteIndex] &= (byte)~(0x03 << pixelOffset);
@@ -184,11 +184,6 @@ namespace Meadow.Foundation.Graphics.Buffers
             return value;
         }
 
-        Color GetClosestColor(Color color)
-        {
-            return IndexedColors[GetIndexForColor(color)];
-        }
-
         int GetIndexForColor(Color color)
         {
             if (IndexedColors == null || IndexedColors.All(x => x == null))
@@ -204,6 +199,7 @@ namespace Meadow.Foundation.Graphics.Buffers
                 if (IndexedColors[i] != null)
                 {
                     double distance = GetColorDistance(color, IndexedColors[i]);
+
                     if (distance < shortestDistance)
                     {
                         shortestDistance = distance;

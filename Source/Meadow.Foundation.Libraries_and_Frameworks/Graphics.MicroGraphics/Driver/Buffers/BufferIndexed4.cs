@@ -194,11 +194,6 @@ namespace Meadow.Foundation.Graphics.Buffers
             return color;
         }
 
-        Color GetClosestColor(Color color)
-        {
-            return IndexedColors[GetIndexForColor(color)];
-        }
-
         int GetIndexForColor(Color color)
         {
             if (IndexedColors == null || IndexedColors.All(x => x == null))

@@ -1629,6 +1629,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ICs.IOExpanders.Ads1263", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ads1263_Sample", "Meadow.Foundation.Peripherals\ICs.IOExpanders.Ads1263\Samples\Ads1263_Sample\Ads1263_Sample.csproj", "{3A402704-9390-4492-93D4-B377BE8F034C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Epd2in15g_Sample", "Meadow.Foundation.Peripherals\Displays.ePaperWaveShare\Samples\Epd2in15g_Sample\Epd2in15g_Sample.csproj", "{EA8D8CA1-BB32-49D6-88CF-9EB50ABDC44B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -3937,6 +3939,12 @@ Global
 		{3A402704-9390-4492-93D4-B377BE8F034C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3A402704-9390-4492-93D4-B377BE8F034C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{3A402704-9390-4492-93D4-B377BE8F034C}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{EA8D8CA1-BB32-49D6-88CF-9EB50ABDC44B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EA8D8CA1-BB32-49D6-88CF-9EB50ABDC44B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EA8D8CA1-BB32-49D6-88CF-9EB50ABDC44B}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{EA8D8CA1-BB32-49D6-88CF-9EB50ABDC44B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EA8D8CA1-BB32-49D6-88CF-9EB50ABDC44B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EA8D8CA1-BB32-49D6-88CF-9EB50ABDC44B}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -4748,6 +4756,7 @@ Global
 		{BEAD51B2-CF51-4836-ACBA-0911841E00F6} = {6D5016B9-7BF5-4E9D-BBA4-A621BAE0E638}
 		{B414A340-EA69-4CD3-AB8B-D0B3835527B2} = {6D5016B9-7BF5-4E9D-BBA4-A621BAE0E638}
 		{3A402704-9390-4492-93D4-B377BE8F034C} = {BEAD51B2-CF51-4836-ACBA-0911841E00F6}
+		{EA8D8CA1-BB32-49D6-88CF-9EB50ABDC44B} = {7311794D-7D2F-47E8-A5B0-C216CBD64A13}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}
