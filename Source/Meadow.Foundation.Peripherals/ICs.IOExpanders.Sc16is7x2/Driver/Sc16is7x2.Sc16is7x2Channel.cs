@@ -51,6 +51,9 @@ public partial class Sc16is7x2
 
         private readonly FifoBuffer? _irqReadBuffer;
 
+        /// <summary>
+        /// Returns true if the UART channel is IRQ driven.
+        /// </summary>
         public bool IsIrqDriven => _irq != null;
 
         // Optimizations for fast read. Precalculated values for this channel.
@@ -360,7 +363,7 @@ public partial class Sc16is7x2
         {
             ResetReadHwFifo();
             if (IsIrqDriven)
-                _irqReadBuffer.Clear();
+                _irqReadBuffer?.Clear();
         }
 
         /// <inheritdoc/>
@@ -378,7 +381,7 @@ public partial class Sc16is7x2
                 ResetWriteHwFifo();
                 ClearReceiveBuffer();
                 if (IsIrqDriven)
-                    _irq.Changed += UartChannelInterruptHandler;
+                    _irq!.Changed += UartChannelInterruptHandler;
                 EnableReceiveInterrupts();
             }
         }
@@ -391,7 +394,7 @@ public partial class Sc16is7x2
                 IsOpen = false;
                 DisableReceiveInterrupts();
                 if (IsIrqDriven)
-                    _irq.Changed -= UartChannelInterruptHandler;
+                    _irq!.Changed -= UartChannelInterruptHandler;
             }
         }
 

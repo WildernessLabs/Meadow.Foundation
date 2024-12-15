@@ -22,6 +22,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
         private Sc16is7x2Channel? _channelA;
         private Sc16is7x2Channel? _channelB;
+        /// <summary>
+        /// The oscilator frequency of the crystal connected to the SC16IS7x2
+        /// </summary>
         public Frequency OscillatorFrequency { get; private set; }
         private IDigitalInterruptPort? _irq;
         private bool _latchGpioInterrupt;
