@@ -63,8 +63,6 @@ public class KellerTransducer : IKellerTransducer
 
     public async Task<Units.Temperature> ReadTemperature(TemperatureChannel channel)
     {
-        Resolver.Log.Info($"Reading transducer temp");
-
         var count = 6;
 
         if (activeTemperatureChannels == null)
