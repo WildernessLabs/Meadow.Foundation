@@ -1,6 +1,7 @@
 ﻿using Meadow.Modbus;
 using Meadow.Units;
 using System;
+using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Batteries.Voltaic;
 
@@ -132,5 +133,29 @@ public class V10x : ModbusPolledDevice
     {
         // value is one register in 1/100 of a unit
         return registers[0] / 100d;
+    }
+
+    /// <summary>
+    /// Reads the device's Modbus Address.
+    /// </summary>
+    /// <remarks>
+    /// The device can be discovered using an initial broadcast address of 254, then the actual sensor can be read using this method
+    /// </remarks>
+    public async Task<byte> ReadModbusAddress()
+    {
+        var registers = await base.ReadHoldingRegisters(9020, 1);
+        return (byte)registers[0];
+    }
+
+    /// <summary>
+    /// Reads the device's Modbus Address.
+    /// </summary>
+    /// <remarks>
+    /// The device can be discovered using an initial broadcast address of 254, then the actual sensor can be read using this method
+    /// </remarks>
+    public async Task WriteModbusAddress(byte address)
+    {
+        await base.WriteHoldingRegister(9020, address);
+        base.BusAddress = address;
     }
 }
