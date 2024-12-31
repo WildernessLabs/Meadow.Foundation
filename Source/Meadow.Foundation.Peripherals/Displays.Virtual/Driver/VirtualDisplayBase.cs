@@ -8,7 +8,7 @@ public class VirtualDisplayBase : IVirtualDisplay
     /// <inheritdoc/>
     public ColorMode ColorMode { get; }
     /// <inheritdoc/>
-    public ColorMode SupportedColorModes { get; }
+    public ColorMode SupportedColorModes { get; protected set; }
     /// <inheritdoc/>
     public int Width { get; }
     /// <inheritdoc/>
