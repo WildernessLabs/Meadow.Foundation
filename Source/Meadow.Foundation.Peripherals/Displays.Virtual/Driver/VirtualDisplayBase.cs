@@ -14,6 +14,7 @@ public class VirtualDisplayBase : IVirtualDisplay
     /// <inheritdoc/>
     public int Height { get; }
 
+    // TODO: Needs ColorMode
     protected VirtualDisplayBase(int width, int height, RotationType rotationType)
     {
         Width = width;
