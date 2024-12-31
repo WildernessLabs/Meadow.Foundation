@@ -13,13 +13,16 @@ public class VirtualDisplayBase : IVirtualDisplay
     public int Width { get; }
     /// <inheritdoc/>
     public int Height { get; }
-
-    // TODO: Needs ColorMode
-    protected VirtualDisplayBase(int width, int height, RotationType rotationType)
+    
+    protected VirtualDisplayBase(
+        int width, int height, 
+        RotationType rotationType, 
+        ColorMode colorMode = ColorMode.Format24bppRgb888)
     {
         Width = width;
         Height = height;
         Rotation = rotationType;
+        ColorMode = colorMode;
     }
 
     /// <inheritdoc/>
