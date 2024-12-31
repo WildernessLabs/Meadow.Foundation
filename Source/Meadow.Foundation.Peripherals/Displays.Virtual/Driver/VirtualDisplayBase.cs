@@ -2,7 +2,7 @@
 
 namespace Meadow.Foundation.Displays;
 
-public class VirtualDisplayBase : IVirtualDisplay
+public class VirtualDisplayBase : IResizablePixelDisplay
 {
     public RotationType Rotation { get; }
     /// <inheritdoc/>
@@ -78,6 +78,11 @@ public class VirtualDisplayBase : IVirtualDisplay
 
     /// <inheritdoc/>
     public void WriteBuffer(int x, int y, IPixelBuffer displayBuffer)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public void Resize(int width, int height, float displayScale = 1)
     {
         throw new System.NotImplementedException();
     }
