@@ -643,5 +643,11 @@ namespace Meadow.Foundation.ICs.IOExpanders
             }
             return PortBank.A;
         }
+
+        /// <inheritdoc/>
+        public IDigitalSignalAnalyzer CreateDigitalSignalAnalyzer(IPin pin, bool captureDutyCycle)
+        {
+            return new SoftDigitalSignalAnalyzer(pin, captureDutyCycle: captureDutyCycle);
+        }
     }
 }

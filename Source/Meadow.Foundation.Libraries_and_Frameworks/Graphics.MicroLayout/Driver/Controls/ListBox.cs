@@ -27,6 +27,12 @@ public class ListBox : MicroLayout
     /// Spacing, in pixels, between items
     /// </summary>
     public int ItemSpacing { get; } = 1;
+
+    /// <summary>
+    /// Spacing, in pixels, between the control left and the left of each item
+    /// </summary>
+    public int ItemLeftMargin { get; set; } = 2;
+
     /// <summary>
     /// Items to display in the ListBox
     /// </summary>
@@ -53,11 +59,11 @@ public class ListBox : MicroLayout
 
     private void CreateRowLabels(int rowCount)
     {
-        var y = 0;
+        var y = 2;
         for (var i = 0; i < rowCount; i++)
         {
             Controls.Add(
-                new Label(Left, Top + y, this.Width, _rowHeight)
+                new Label(Left + ItemLeftMargin, Top + y, this.Width, _rowHeight)
                 {
                     Font = _font,
                     TextColor = TextColor,
@@ -182,6 +188,7 @@ public class ListBox : MicroLayout
         switch (e.Action)
         {
             case NotifyCollectionChangedAction.Add:
+            case NotifyCollectionChangedAction.Replace:
                 // is the added item visible?
                 if (e.NewStartingIndex < TopIndex + Controls.Count)
                 {
