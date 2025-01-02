@@ -17,7 +17,7 @@ namespace Meadow.Peripherals.Sensors.Flow;
 public abstract class HallEffectFlowSensor : PollingSensorBase<VolumetricFlow>, IVolumetricFlowSensor
 {
     private IDigitalSignalAnalyzer analyzer;
-    private double flowCoefficeint;
+    private double flowCoefficient;
 
     /// <summary>
     /// Initializes a new instance of a Hall effect flow sensor.
@@ -26,7 +26,7 @@ public abstract class HallEffectFlowSensor : PollingSensorBase<VolumetricFlow>, 
     /// <param name="flowCoefficient">The calibration coefficient in Hz per L/min used to convert frequency to flow rate.</param>
     protected HallEffectFlowSensor(IPin pin, double flowCoefficient)
     {
-        this.flowCoefficeint = flowCoefficient;
+        this.flowCoefficient = flowCoefficient;
         analyzer = pin.CreateDigitalSignalAnalyzer(false);
     }
 
@@ -42,7 +42,7 @@ public abstract class HallEffectFlowSensor : PollingSensorBase<VolumetricFlow>, 
     private VolumetricFlow GetInstantaneousFlowRate()
     {
         return new VolumetricFlow(
-            analyzer.GetFrequency().Hertz / flowCoefficeint,
+            analyzer.GetFrequency().Hertz / flowCoefficient,
              VolumetricFlow.UnitType.LitersPerMinute);
     }
 }
