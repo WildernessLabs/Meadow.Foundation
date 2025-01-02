@@ -6,8 +6,8 @@ namespace Meadow.Peripherals.Sensors.Flow;
 /// Driver for the GR-105 Hall effect water flow sensor.
 /// </summary>
 /// <remarks>
-/// The GR-105 is a Hall effect flow sensor that outputs frequency proportional to flow rate.
-/// Calibration factor is approximately 5.5 Hz per L/min.
+/// Configures the sensor with its factory calibration values:
+/// - Scale factor: 5.5 Hz per L/min
 /// </remarks>
 public class Gr105 : HallEffectFlowSensor
 {

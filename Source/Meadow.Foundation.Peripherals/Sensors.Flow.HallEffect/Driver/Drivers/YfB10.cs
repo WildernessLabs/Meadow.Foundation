@@ -6,8 +6,9 @@ namespace Meadow.Peripherals.Sensors.Flow;
 /// Driver for the YF-B10 Hall effect water flow sensor.
 /// </summary>
 /// <remarks>
-/// The YF-B10 is a Hall effect flow sensor that outputs frequency proportional to flow rate.
-/// Calibration factor is approximately 80 Hz per L/min.
+/// Configures the sensor with its factory calibration values:
+/// - Scale factor: 7.5 Hz per L/min
+/// - Offset: 4 Hz
 /// </remarks>
 public class YfB10 : HallEffectFlowSensor
 {
@@ -16,7 +17,7 @@ public class YfB10 : HallEffectFlowSensor
     /// </summary>
     /// <param name="pin">The digital input pin connected to the sensor's signal line.</param>
     public YfB10(IPin pin)
-        : base(pin, 80d)
+        : base(pin, 7.5, 4)
     {
     }
 }

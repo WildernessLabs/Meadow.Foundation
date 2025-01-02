@@ -6,8 +6,8 @@ namespace Meadow.Peripherals.Sensors.Flow;
 /// Driver for the GR-216 Hall effect water flow sensor.
 /// </summary>
 /// <remarks>
-/// The GR-216 is a Hall effect flow sensor that outputs frequency proportional to flow rate.
-/// Calibration factor is approximately 0.2 Hz per L/min.
+/// Configures the sensor with its factory calibration values:
+/// - Scale factor: 0.2 Hz per L/min
 /// </remarks>
 public class Gr216 : HallEffectFlowSensor
 {
