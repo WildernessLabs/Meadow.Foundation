@@ -70,8 +70,6 @@ public class SimulatedTemperatureSensor : ITemperatureSensor, ISimulatedSensor
         _temperature = initialTemperature;
         _minTemperature = minimumTemperature;
         _maxTemperature = maximumTemperature;
-
-        StartSimulation(behavior);
     }
 
     private void SimulationProc(object? o)
@@ -104,7 +102,7 @@ public class SimulatedTemperatureSensor : ITemperatureSensor, ISimulatedSensor
     public Units.Temperature? Temperature
     {
         get => _temperature;
-        private set
+        set
         {
             if (value == Temperature) return;
 

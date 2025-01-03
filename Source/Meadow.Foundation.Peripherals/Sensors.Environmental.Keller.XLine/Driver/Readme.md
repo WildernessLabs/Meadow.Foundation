@@ -1,8 +1,8 @@
-# Meadow.Foundation.Sensors.Environmental.Y4000
+# Meadow.Foundation.Sensors.Environmental.Keller.XLine
 
-**Y4000 Sonde RS485 Modbus water quality sensor**
+**Driver for the line of Keller X-Line Modbus Pressure Transducers**
 
-The **Y4000** library is included in the **Meadow.Foundation.Sensors.Environmental.Y4000** nuget package and is designed for the [Wilderness Labs](www.wildernesslabs.co) Meadow .NET IoT platform.
+The **Keller.XLine** library is included in the **Meadow.Foundation.Sensors.Environmental.Keller.XLine** nuget package and is designed for the [Wilderness Labs](www.wildernesslabs.co) Meadow .NET IoT platform.
 
 This driver is part of the [Meadow.Foundation](https://developer.wildernesslabs.co/Meadow/Meadow.Foundation/) peripherals library, an open-source repository of drivers and libraries that streamline and simplify adding hardware to your C# .NET Meadow IoT applications.
 
@@ -14,39 +14,7 @@ To view all Wilderness Labs open-source projects, including samples, visit [gith
 
 You can install the library from within Visual studio using the the NuGet Package Manager or from the command line using the .NET CLI:
 
-`dotnet add package Meadow.Foundation.Sensors.Environmental.Y4000`
-## Usage
-
-```csharp
-private Y4000 sensor;
-
-public override async Task Initialize()
-{
-    Resolver.Log.Info("Initialize...");
-    await Task.Delay(2000);
-
-    sensor = new Y4000(Device, Device.PlatformOS.GetSerialPortName("COM4"), 0x01, Device.Pins.D09);
-    await sensor.Initialize();
-
-    await Task.Delay(2000);
-}
-
-public override async Task Run()
-{
-    Resolver.Log.Info("Run...");
-
-    var isdn = await sensor.GetISDN();
-    Resolver.Log.Info($"Address: {isdn}");
-
-    var supplyVoltage = await sensor.GetSupplyVoltage();
-    Resolver.Log.Info($"Supply voltage: {supplyVoltage}");
-
-    var measurements = await sensor.ReadSensor();
-
-    Resolver.Log.Info($"Sensor data: {measurements}");
-}
-
-```
+`dotnet add package Meadow.Foundation.Sensors.Environmental.Keller.XLine`
 ## How to Contribute
 
 - **Found a bug?** [Report an issue](https://github.com/WildernessLabs/Meadow_Issues/issues)
