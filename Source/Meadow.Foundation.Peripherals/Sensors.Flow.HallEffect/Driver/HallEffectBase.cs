@@ -22,7 +22,7 @@ namespace Meadow.Peripherals.Sensors.Flow;
 /// S = Scale
 /// O = Offset
 /// </remarks>
-public abstract class HallEffectFlowSensor : PollingSensorBase<VolumetricFlow>, IVolumetricFlowSensor
+public abstract class HallEffectBase : PollingSensorBase<VolumetricFlow>, IVolumetricFlowSensor
 {
     private readonly IDigitalSignalAnalyzer analyzer;
     private readonly double scale;
@@ -34,7 +34,7 @@ public abstract class HallEffectFlowSensor : PollingSensorBase<VolumetricFlow>, 
     /// <param name="pin">The digital input pin connected to the sensor's signal line.</param>
     /// <param name="scale">The sensor scale factor (S) in Hz per L/min</param>
     /// <param name="offset">The sensor offset (O) in Hz</param>
-    protected HallEffectFlowSensor(IPin pin, double scale, double offset = 0)
+    protected HallEffectBase(IPin pin, double scale, double offset = 0)
     {
         this.scale = scale;
         this.offset = offset;
