@@ -6,36 +6,6 @@ using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors;
 
-/*
-/// <summary>
-/// Represents a simulated tone generator that implements both IToneGenerator and ISimulatedSensor interfaces.
-/// </summary>
-public class SimulatedToneGenerator : IToneGenerator, ISimulatedSensor
-{
-}
-
-/// <summary>
-/// Represents a simulated RgbPwmLed that implements both IRgbPwmLed and ISimulatedSensor interfaces.
-/// </summary>
-public class SimulatedRgbPwmLed : IRgbPwmLed, ISimulatedSensor
-{
-}
-
-/// <summary>
-/// Represents a simulated barometric pressure sensor that implements both IBarometricPressureSensor and ISimulatedSensor interfaces.
-/// </summary>
-public class SimulatedBarometricPressureSensor : IBarometricPressureSensor, ISimulatedSensor
-{
-}
-
-/// <summary>
-/// Represents a simulated gas resistance sensor that implements both IGasResistanceSensor and ISimulatedSensor interfaces.
-/// </summary>
-public class SimulatedGasResistanceSensor : IGasResistanceSensor, ISimulatedSensor
-{
-}
-*/
-
 /// <summary>
 /// A base class for simple simulated single-unit sensors
 /// </summary>
