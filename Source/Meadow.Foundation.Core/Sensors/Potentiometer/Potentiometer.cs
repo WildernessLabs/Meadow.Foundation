@@ -10,9 +10,7 @@ namespace Meadow.Foundation.Sensors;
 /// </summary>
 public class Potentiometer : IPotentiometer, IDisposable
 {
-    /// <inheritdoc/>
-    public event EventHandler<IChangeResult<Resistance>>? Changed;
-
+    private EventHandler<IChangeResult<Resistance>>? changedEvent;
     private IAnalogInputPort inputPort;
     private Voltage referenceVoltage;
     private bool portCreated = false;
@@ -66,19 +64,40 @@ public class Potentiometer : IPotentiometer, IDisposable
         portCreated = true;
     }
 
+    /// <inheritdoc/>
+    public event EventHandler<IChangeResult<Resistance>>? Changed
+    {
+        add
+        {
+            if (changedEvent == null || changedEvent?.GetInvocationList().Length == 0)
+            {
+                inputPort.Updated += OnInputPortUpdated;
+                inputPort.StartUpdating();
+            }
+            changedEvent += value;
+        }
+        remove
+        {
+            changedEvent -= value;
+            if (changedEvent?.GetInvocationList().Length == 0)
+            {
+                inputPort.StopUpdating();
+                inputPort.Updated -= OnInputPortUpdated;
+            }
+        }
+    }
+
     private void Initialize(IAnalogInputPort inputPort, Resistance maxResistance, Voltage refereceVoltage)
     {
         this.inputPort = inputPort;
         MaxResistance = maxResistance;
         referenceVoltage = inputPort.ReferenceVoltage;
-
-        inputPort.Updated += OnInputPortUpdated;
     }
 
     private void OnInputPortUpdated(object sender, IChangeResult<Voltage> e)
     {
         var newValue = new Resistance(MaxResistance.Ohms * e.New.Volts / referenceVoltage.Volts);
-        Changed?.Invoke(this, new ChangeResult<Resistance>(newValue, oldValue));
+        changedEvent?.Invoke(this, new ChangeResult<Resistance>(newValue, oldValue));
         oldValue = newValue;
     }
 
