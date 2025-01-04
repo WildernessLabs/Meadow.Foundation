@@ -62,6 +62,11 @@ public abstract class HallEffectBase : PollingSensorBase<VolumetricFlow>, IVolum
         // First solve for Q (L/min): F = (S * Q - O)
         // F + O = S * Q
         // Q = (F + O) / S
+        if (frequency.Hertz == 0)
+        {
+            return VolumetricFlow.Zero;
+        }
+
         double litersPerMinute = (frequency.Hertz + offset) / scale;
 
         return new VolumetricFlow(litersPerMinute, VolumetricFlow.UnitType.LitersPerMinute);
