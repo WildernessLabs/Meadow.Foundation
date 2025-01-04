@@ -10,9 +10,13 @@ namespace Meadow.Foundation.Sensors;
 /// </summary>
 public class Potentiometer : IPotentiometer, IDisposable
 {
+    /// <inheritdoc/>
+    public event EventHandler<IChangeResult<Resistance>>? Changed;
+
     private IAnalogInputPort inputPort;
     private Voltage referenceVoltage;
     private bool portCreated = false;
+    private Resistance? oldValue;
 
     /// <summary>
     /// Gets whether this instance has been disposed.
@@ -22,7 +26,7 @@ public class Potentiometer : IPotentiometer, IDisposable
     /// <summary>
     /// Gets the maximum resistance value of the potentiometer.
     /// </summary>
-    public Resistance MaxResistance { get; }
+    public Resistance MaxResistance { get; private set; }
 
     /// <summary>
     /// Initializes a new instance of the Potentiometer class with default reference voltage.
@@ -31,9 +35,8 @@ public class Potentiometer : IPotentiometer, IDisposable
     /// <param name="maxResistance">The maximum resistance value of the potentiometer.</param>
     public Potentiometer(IAnalogInputPort inputPort, Resistance maxResistance)
     {
-        this.inputPort = inputPort;
-        MaxResistance = maxResistance;
-        referenceVoltage = inputPort.ReferenceVoltage;
+        Initialize(inputPort, maxResistance, inputPort.ReferenceVoltage);
+        portCreated = false;
     }
 
     /// <summary>
@@ -61,6 +64,22 @@ public class Potentiometer : IPotentiometer, IDisposable
         MaxResistance = maxResistance;
         this.referenceVoltage = referenceVoltage;
         portCreated = true;
+    }
+
+    private void Initialize(IAnalogInputPort inputPort, Resistance maxResistance, Voltage refereceVoltage)
+    {
+        this.inputPort = inputPort;
+        MaxResistance = maxResistance;
+        referenceVoltage = inputPort.ReferenceVoltage;
+
+        inputPort.Updated += OnInputPortUpdated;
+    }
+
+    private void OnInputPortUpdated(object sender, IChangeResult<Voltage> e)
+    {
+        var newValue = new Resistance(MaxResistance.Ohms * e.New.Volts / referenceVoltage.Volts);
+        Changed?.Invoke(this, new ChangeResult<Resistance>(newValue, oldValue));
+        oldValue = newValue;
     }
 
     /// <summary>
