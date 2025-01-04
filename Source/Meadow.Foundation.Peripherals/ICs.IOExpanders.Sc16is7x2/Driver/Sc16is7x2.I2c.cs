@@ -29,7 +29,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             : this(oscillatorFrequency, irq, latchGpioInterrupt)
         {
             _i2cComms = new I2cCommunications(i2cBus, (byte)address);
-            Reset();    // We need to call this _after_ the I2C communications object is created
+            Reset();
         }
     }
 }
