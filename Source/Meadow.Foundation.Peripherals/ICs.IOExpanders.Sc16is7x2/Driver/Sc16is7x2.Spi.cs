@@ -39,7 +39,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             : this(oscillatorFrequency, irq, latchGpioInterrupt)
         {
             _spiComms = new SpiCommunications(spiBus, chipSelect, DefaultSpiBusSpeed);
-            Reset();    // We need to call this _after_ the SPI communications object is created
+            Reset();
         }
     }
 }
