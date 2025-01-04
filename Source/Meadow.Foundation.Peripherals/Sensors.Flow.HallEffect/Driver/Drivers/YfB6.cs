@@ -10,7 +10,7 @@ namespace Meadow.Peripherals.Sensors.Flow;
 /// - Scale factor: 6.6 Hz per L/min
 /// - Offset: 0 Hz
 /// </remarks>
-public class YfB6 : HallEffectFlowSensor
+public class YfB6 : HallEffectBase
 {
     /// <summary>
     /// Initializes a new instance of the YF-B6 flow sensor.

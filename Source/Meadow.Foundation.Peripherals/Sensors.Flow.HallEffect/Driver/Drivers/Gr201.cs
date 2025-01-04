@@ -9,7 +9,7 @@ namespace Meadow.Peripherals.Sensors.Flow;
 /// Configures the sensor with its factory calibration values:
 /// - Scale factor: 7.5 Hz per L/min
 /// </remarks>
-public class Gr201 : HallEffectFlowSensor
+public class Gr201 : HallEffectBase
 {
     /// <summary>
     /// Initializes a new instance of the GR-201 flow sensor.
