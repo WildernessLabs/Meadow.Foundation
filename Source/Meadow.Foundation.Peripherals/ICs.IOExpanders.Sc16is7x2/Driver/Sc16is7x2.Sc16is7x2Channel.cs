@@ -23,8 +23,8 @@ public partial class Sc16is7x2
         private StopBits _stopBits;
 
         /// <inheritdoc/>
-        public int BytesToRead => (_irqReadBuffer == null)
-            ? GetReadHwFifoCount()
+        public int BytesToRead => (_irqReadBuffer == null) 
+            ? GetReadHwFifoCount() 
             : GetReadHwFifoCount() + _irqReadBuffer.Count;
 
         /// <inheritdoc/>
@@ -49,7 +49,7 @@ public partial class Sc16is7x2
         private readonly Channels _channel;
         private readonly IDigitalInterruptPort? _irq;
 
-        private readonly CircularBuffer<byte> _irqReadBuffer;
+        private readonly FifoBuffer? _irqReadBuffer;
 
         public bool IsIrqDriven => _irq != null;
 
@@ -97,7 +97,7 @@ public partial class Sc16is7x2
             {
                 // Setting up IRQ read with a large software FIFO buffer to offload the hardware FIFO of only 64 bytes.
                 _irq = irq;
-                _irqReadBuffer = new CircularBuffer<byte>(readBufferSize);
+                _irqReadBuffer = new FifoBuffer(readBufferSize);
                 // 21.04.2024, KW: We'll try to move this to Open(). And we'll remove this handler in Close().
                 //EnableReceiveInterrupts();
                 //_irq.Changed += UartChannelInterruptHandler;
@@ -131,9 +131,9 @@ public partial class Sc16is7x2
                     this.DataReceived?.Invoke(this, new SerialDataReceivedEventArgs(SerialDataType.Chars));
             }
             else
-            {
+            { 
                 // If this is IRQ reading, shortcut the user callback. Empty FIFO ASAP.
-                ReadAllIrqFifo();
+                ReadAllIrqFifo();              
                 if (_irqReadBuffer.Count > 0)
                     this.DataReceived?.Invoke(this, new SerialDataReceivedEventArgs(SerialDataType.Chars));
             }
@@ -198,13 +198,13 @@ public partial class Sc16is7x2
             int count = GetReadHwFifoCount();   // How may bytes to read.
             //int count = _comms.ReadRegister(_rxlvlAddress);     // How may bytes to read.
             while (count > 0)
-            {
+            {                
                 for (int i = 0; i < count; i++)
                 {
                     byte b = _comms.ReadRegister(_rhrAddress);
                     try
                     {
-                        _irqReadBuffer.Append(b);
+                        _irqReadBuffer.Write(b);
                     }
                     catch (Exception ex)
                     {
@@ -219,7 +219,7 @@ public partial class Sc16is7x2
                 byte lsr = _comms.ReadRegister(_lsrAddress);
                 if ((lsr & RegisterBits.LSR_OVERRUN_ERROR) > 0)
                 {
-                    Resolver.Log.Error("[OVERRUN]");     // Not sure to keep this, but nice when debugging.
+                    _irqReadBuffer.WriteString("[OVERRUN]");     // Not sure to keep this, but nice when debugging.
                     BufferOverrun?.Invoke(this, EventArgs.Empty);
                 }
 
@@ -254,7 +254,7 @@ public partial class Sc16is7x2
                 if (_irqReadBuffer.Count == 0)
                     return -1;
                 else
-                    return _irqReadBuffer.Remove();
+                    return _irqReadBuffer.Read();
             }
         }
 
@@ -323,7 +323,7 @@ public partial class Sc16is7x2
                 var toRead = _irqReadBuffer.Count <= count ? _irqReadBuffer.Count : count;
                 for (var i = 0; i < toRead; i++)
                 {
-                    buffer[i + offset] = _irqReadBuffer.Remove();
+                    buffer[i + offset] = _irqReadBuffer.Read();
                 }
                 return toRead;
             }
@@ -660,7 +660,7 @@ public partial class Sc16is7x2
         private byte CalculateChannelAddress(byte register)
         {
             // see page 40 of the data sheet for explanation of this
-            var subaddress = (byte)((register << 3) | ((byte)_channel << 1));
+            var subaddress = (byte)(((byte)register << 3) | ((byte)_channel << 1));
             return subaddress;
         }
 

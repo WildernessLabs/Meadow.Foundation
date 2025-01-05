@@ -1,82 +1,7 @@
-﻿using System;
-
-namespace Meadow.Foundation.ICs.IOExpanders
+﻿namespace Meadow.Foundation.ICs.IOExpanders
 {
     public partial class Sc16is7x2
     {
-        /// <summary>
-        /// Address pin connection used for calculating peripherla addresses
-        /// </summary>
-        public enum AddressConnection
-        {
-            /// <summary>
-            /// Address pin tied to VDD
-            /// </summary>
-            VDD,
-            /// <summary>
-            /// Address pin tied to GND
-            /// </summary>
-            GND,
-            /// <summary>
-            /// Address pin tied to SCL
-            /// </summary>
-            SCL,
-            /// <summary>
-            /// Address pin tied to SDA
-            /// </summary>
-            SDA
-        }
-
-        /// <summary>
-        /// Calculates a bus address based on the connection of the address pins
-        /// </summary>
-        /// <param name="a0">A0's pin connection</param>
-        /// <param name="a1">A1's pin connection</param>
-        public static Addresses CalculateAddress(AddressConnection a0, AddressConnection a1)
-        {
-            switch (a1)
-            {
-                case AddressConnection.VDD:
-                    switch (a0)
-                    {
-                        case AddressConnection.VDD: return Addresses.Address_0x48;
-                        case AddressConnection.GND: return Addresses.Address_0x49;
-                        case AddressConnection.SCL: return Addresses.Address_0x4A;
-                        case AddressConnection.SDA: return Addresses.Address_0x4B;
-                    }
-                    break;
-                case AddressConnection.GND:
-                    switch (a0)
-                    {
-                        case AddressConnection.VDD: return Addresses.Address_0x4C;
-                        case AddressConnection.GND: return Addresses.Address_0x4D;
-                        case AddressConnection.SCL: return Addresses.Address_0x4E;
-                        case AddressConnection.SDA: return Addresses.Address_0x4F;
-                    }
-                    break;
-                case AddressConnection.SCL:
-                    switch (a0)
-                    {
-                        case AddressConnection.VDD: return Addresses.Address_0x50;
-                        case AddressConnection.GND: return Addresses.Address_0x51;
-                        case AddressConnection.SCL: return Addresses.Address_0x52;
-                        case AddressConnection.SDA: return Addresses.Address_0x53;
-                    }
-                    break;
-                case AddressConnection.SDA:
-                    switch (a0)
-                    {
-                        case AddressConnection.VDD: return Addresses.Address_0x54;
-                        case AddressConnection.GND: return Addresses.Address_0x55;
-                        case AddressConnection.SCL: return Addresses.Address_0x56;
-                        case AddressConnection.SDA: return Addresses.Address_0x57;
-                    }
-                    break;
-            }
-
-            throw new ArgumentException();
-        }
-
         /// <summary>
         /// The list of possible I2C addresses for the peripheral
         /// </summary>
@@ -150,6 +75,75 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// The default bus address (0x48)
             /// </summary>
             Default = Address_0x48,
+
+            // A new set of constants that show the direct relationship between the address pins and the I2C address
+            // Please refer to the datasheet for the SC16IS752/SC16IS762 page 39.
+            // Note that the address in the datasheet multiplied by 2, because they include a left shit for the R/W bit.
+
+            /// <summary>
+            /// A1 pin connected to Vdd, A0 pin connected to Vdd
+            /// </summary>
+            A1Vdd_A0Vdd = 0x48,
+            /// <summary>
+            /// A1 pin connected to Vdd, A0 pin connected to Gnd
+            /// </summary>
+            A1Vdd_A0Gnd = 0x49,
+            /// <summary>
+            /// A1 pin connected to Vdd, A0 pin connected to SCL
+            /// </summary>
+            A1Vdd_A0Scl = 0x4A,
+            /// <summary>
+            /// A1 pin connected to Vdd, A0 pin connected to SDA
+            /// </summary>
+            A1Vdd_A0Sda = 0x4B,
+            /// <summary>
+            /// A1 pin connected to Gnd, A0 pin connected to Vdd
+            /// </summary>
+            A1Gnd_A0Vdd = 0x4C,
+            /// <summary>
+            /// A1 pin connected to Gnd, A0 pin connected to Gnd
+            /// </summary>
+            A1Gnd_A0Gnd = 0x4D,
+            /// <summary>
+            /// A1 pin connected to Gnd, A0 pin connected to SCL
+            /// </summary>
+            A1Gnd_A0Scl = 0x4E,
+            /// <summary>
+            /// A1 pin connected to Gnd, A0 pin connected to SDA
+            /// </summary>
+            A1Gnd_A0Sda = 0x4F,
+            /// <summary>
+            /// A1 pin connected to SCL, A0 pin connected to Vdd
+            /// </summary>
+            A1Scl_A0Vdd = 0x50,
+            /// <summary>
+            /// A1 pin connected to SCL, A0 pin connected to Gnd
+            /// </summary>
+            A1Scl_A0Gnd = 0x51,
+            /// <summary>
+            /// A1 pin connected to SCL, A0 pin connected to SCL
+            /// </summary>
+            A1Scl_A0Scl = 0x52,
+            /// <summary>
+            /// A1 pin connected to SCL, A0 pin connected to SDA
+            /// </summary>
+            A1Scl_A0Sda = 0x53,
+            /// <summary>
+            /// A1 pin connected to SDA, A0 pin connected to Vdd
+            /// </summary>
+            A1Sda_A0Vdd = 0x54,
+            /// <summary>
+            /// A1 pin connected to SDA, A0 pin connected to Gnd
+            /// </summary>
+            A1Sda_A0Gnd = 0x55,
+            /// <summary>
+            /// A1 pin connected to SDA, A0 pin connected to SCL
+            /// </summary>
+            A1Sda_A0Scl = 0x56,
+            /// <summary>
+            /// A1 pin connected to SDA, A0 pin connected to SDA
+            /// </summary>
+            A1Sda_A0Sda = 0x57,
         }
 
         internal enum Registers : byte
