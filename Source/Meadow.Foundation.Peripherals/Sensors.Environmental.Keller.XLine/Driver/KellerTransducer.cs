@@ -5,6 +5,14 @@ using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Environmental;
 
+/// <summary>
+/// Represents a Keller pressure transducer or transmitter that communicates via Modbus RTU.
+/// </summary>
+/// <remarks>
+/// Keller transducers provide high-precision pressure and temperature measurements
+/// for industrial and scientific applications. This implementation supports reading
+/// pressure, temperature, device address, and serial number via Modbus RTU protocol.
+/// </remarks>
 public class KellerTransducer : IKellerTransducer
 {
     private ModbusRtuClient modbusClient;
@@ -12,6 +20,21 @@ public class KellerTransducer : IKellerTransducer
     private ushort? activeTemperatureChannels;
     private byte communicationAddress;
 
+    /// <summary>
+    /// The default Modbus address for the device.
+    /// </summary>
+    public const int DefaultModbusAddress = 1;
+
+    /// <summary>
+    /// The default baud rate for communication with the device.
+    /// </summary>
+    public const int DefaultBaudRate = 9600;
+
+    /// <summary>
+    /// Creates a new instance of the KellerTransducer connected via Modbus RTU.
+    /// </summary>
+    /// <param name="modbus">The Modbus RTU client used to communicate with the device.</param>
+    /// <param name="modbusAddress">The Modbus address of the device. Defaults to 1 if not specified.</param>
     public KellerTransducer(ModbusRtuClient modbus, byte modbusAddress = 1)
     {
         communicationAddress = modbusAddress;
@@ -29,8 +52,11 @@ public class KellerTransducer : IKellerTransducer
         try
         {
             var registers = await modbusClient.ReadHoldingRegisters(communicationAddress, 0x0204, 4);
-            activePressureChannels = registers[0];
-            activeTemperatureChannels = registers[1];
+            if (registers.Length == 2)
+            {
+                activePressureChannels = registers[0];
+                activeTemperatureChannels = registers[1];
+            }
         }
         catch (Exception ex)
         {
@@ -50,21 +76,21 @@ public class KellerTransducer : IKellerTransducer
         return (byte)registers[0];
     }
 
+    /// <inheritdoc/>
     public async Task<int> ReadSerialNumber()
     {
         var registers = await modbusClient.ReadHoldingRegisters(communicationAddress, 0x0202, 2);
         return registers.ExtractInt32();
     }
 
-    public Task WriteModbusAddress(byte address)
+    internal Task WriteModbusAddress(byte address)
     {
         return modbusClient.WriteHoldingRegister(communicationAddress, 0x020D, address);
     }
 
+    /// <inheritdoc/>
     public async Task<Units.Temperature> ReadTemperature(TemperatureChannel channel)
     {
-        var count = 6;
-
         if (activeTemperatureChannels == null)
         {
             await ReadConfiguration();
@@ -88,6 +114,7 @@ public class KellerTransducer : IKellerTransducer
         return new Units.Temperature(temp, Units.Temperature.UnitType.Celsius);
     }
 
+    /// <inheritdoc/>
     public async Task<Pressure> ReadPressure(PressureChannel channel)
     {
         if (activePressureChannels == null)
