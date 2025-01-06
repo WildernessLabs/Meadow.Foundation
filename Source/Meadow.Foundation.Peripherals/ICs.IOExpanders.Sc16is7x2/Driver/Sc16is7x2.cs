@@ -22,7 +22,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
         private Sc16is7x2Channel? _channelA;
         private Sc16is7x2Channel? _channelB;
-        public Frequency OscillatorFrequency { get; private set; }
+        private Frequency _oscillatorFrequency;
         private IDigitalInterruptPort? _irq;
         private bool _latchGpioInterrupt;
 
@@ -33,17 +33,16 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
         internal Sc16is7x2(Frequency oscillatorFrequency, IDigitalInterruptPort? irq, bool latchGpioInterrupt = false)
         {
-            OscillatorFrequency = oscillatorFrequency;
+            _oscillatorFrequency = oscillatorFrequency;
             _irq = irq;
             _latchGpioInterrupt = latchGpioInterrupt;
 
             Pins = new PinDefinitions(this);
 
-            // This has to move to GPIO init. We don't know yet if comms init will succeed.
-            //if (irq != null)
-            //{
-            //    irq.Changed += GpioInterruptHandler;
-            //}
+            if (irq != null)
+            {
+                irq.Changed += GpioInterruptHandler;
+            }
         }
 
         private IByteCommunications Comms
@@ -67,10 +66,10 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <param name="readBufferSize">The software FIFO read buffer size. (Not the 64 bytes on chip FIFO)</param>
         public ISerialPort CreateSerialPort(SerialPortName portName, int baudRate = 9600, int dataBits = 8, Parity parity = Parity.None, StopBits stopBits = StopBits.One, int readBufferSize = 1024)
         {
-            if (_irq != null && _irq.InterruptMode != InterruptMode.EdgeFalling)
-            {
-                Resolver.Log.Warn($"Warning: You have specified InterruptMode={_irq.InterruptMode}. SC16IS7x2 have a falling edge IRQ signal.");
-            }
+            //if (_irq != null && _irq.InterruptMode != InterruptMode.EdgeRising)
+            //{
+            //    throw new ArgumentException("If an interrupt port is provided, it must be a rising edge interrupt");
+            //}
 
             switch (portName.SystemName)
             {
@@ -130,101 +129,305 @@ namespace Meadow.Foundation.ICs.IOExpanders
             throw new Exception("Unknown port");
         }
 
+        internal bool ReceiveInterruptPending(Channels channel)
+        {
+            // IIR[0] is 0 for any pending interrupt
+            // RHR will be IIR[2] *exclusively*
+            var iir = ReadChannelRegister(Registers.IIR, channel);
+            return (iir & RegisterBits.IIR_RHR_INTERRUPT) == RegisterBits.IIR_RHR_INTERRUPT;
+        }
+
+        internal void EnableReceiveInterrupts(Channels channel)
+        {
+            var ier = ReadChannelRegister(Registers.IER, channel);
+            ier |= RegisterBits.IER_RHR_ENABLE;
+            WriteChannelRegister(Registers.IER, channel, ier);
+        }
+
+        internal void EnableRS485(Channels channel, bool invertDE)
+        {
+            var efcr = ReadChannelRegister(Registers.EFCR, channel);
+            efcr |= RegisterBits.EFCR_9BITMODE | RegisterBits.EFCR_RTSCON;
+
+            if (invertDE)
+            {
+                efcr |= RegisterBits.EFCR_RTSINVER;
+            }
+            else
+            {
+                efcr &= unchecked((byte)~RegisterBits.EFCR_RTSINVER);
+            }
+
+            WriteChannelRegister(Registers.EFCR, channel, efcr);
+        }
+
+        internal void WriteByte(Channels channel, byte data)
+        {
+            WriteChannelRegister(Registers.THR, channel, data);
+        }
+
         /// <summary>
-        /// Reset the device
+        /// Reads the empty space in the transmit fifo
         /// </summary>
+        /// <param name="channel"></param>
+        /// <returns></returns>
+        internal int GetWriteFifoSpace(Channels channel)
+        {
+            return ReadChannelRegister(Registers.TXLVL, channel);
+        }
+
+        internal int GetReadFifoCount(Channels channel)
+        {
+            return ReadChannelRegister(Registers.RXLVL, channel);
+        }
+
+        internal void ResetReadFifo(Channels channel)
+        {
+            var fcr = ReadChannelRegister(Registers.FCR, channel);
+            fcr |= RegisterBits.FCR_RX_FIFO_RESET;
+            WriteChannelRegister(Registers.FCR, channel, fcr);
+        }
+
+        internal bool IsTransmitHoldingRegisterEmpty(Channels channel)
+        {
+            var thr = ReadChannelRegister(Registers.LSR, channel);
+            return (thr & RegisterBits.LSR_THR_EMPTY) == RegisterBits.LSR_THR_EMPTY;
+        }
+
+        internal bool IsFifoDataAvailable(Channels channel)
+        {
+            return GetReadFifoCount(channel) > 0;
+        }
+
+        internal byte ReadByte(Channels channel)
+        {
+            return ReadChannelRegister(Registers.RHR, channel);
+        }
+
+        internal void SetLineSettings(Channels channel, int dataBits, Parity parity, StopBits stopBits)
+        {
+            var lcr = ReadChannelRegister(Registers.LCR, channel);
+            lcr &= unchecked((byte)~0x3f); // clear all of the line setting bits for simplicity
+
+            switch (dataBits)
+            {
+                case 5:
+                    lcr |= RegisterBits.LCR_5_DATA_BITS;
+                    break;
+                case 6:
+                    lcr |= RegisterBits.LCR_6_DATA_BITS;
+                    break;
+                case 7:
+                    lcr |= RegisterBits.LCR_7_DATA_BITS;
+                    break;
+                case 8:
+                    lcr |= RegisterBits.LCR_8_DATA_BITS;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(dataBits));
+
+            }
+
+            if (stopBits == StopBits.Two)
+            {
+                lcr |= RegisterBits.LCR_2_STOP_BITS;
+            }
+
+            switch (parity)
+            {
+                case Parity.None:
+                    lcr |= RegisterBits.LCR_PARITY_NONE;
+                    break;
+                case Parity.Odd:
+                    lcr |= RegisterBits.LCR_PARITY_ODD;
+                    break;
+                case Parity.Even:
+                    lcr |= RegisterBits.LCR_PARITY_EVEN;
+                    break;
+                    // device supports mark and space, but Meadow doesn't have values for it
+            }
+
+            WriteChannelRegister(Registers.LCR, channel, lcr);
+        }
+
+        internal int SetBaudRate(Channels channel, int baudRate)
+        {
+            // the part baud rate is a division of the oscillator frequency, not necessarily the value requested
+            var mcr = ReadChannelRegister(Registers.MCR, channel);
+            var prescaler = ((mcr & RegisterBits.MCR_CLOCK_DIVISOR) == 0) ? 1 : 4;
+            var divisor1 = _oscillatorFrequency.Hertz / prescaler;
+            var divisor2 = baudRate * 16;
+
+            if (divisor2 > divisor1) throw new ArgumentOutOfRangeException(nameof(baudRate), "Oscillator does not allow requested baud rate");
+
+            var divisor = (ushort)Math.Ceiling(divisor1 / divisor2);
+
+            // enable the divisor latch
+            var lcr = ReadChannelRegister(Registers.LCR, channel);
+            lcr |= RegisterBits.LCR_DIVISOR_LATCH_ENABLE;
+            WriteChannelRegister(Registers.LCR, channel, lcr);
+
+            // set the baud rate
+            WriteChannelRegister(Registers.DLL, channel, (byte)(divisor & 0xff));
+            WriteChannelRegister(Registers.DLH, channel, (byte)(divisor >> 8));
+
+            // disable the divisor latch
+            lcr &= unchecked((byte)~RegisterBits.LCR_DIVISOR_LATCH_ENABLE);
+            WriteChannelRegister(Registers.LCR, channel, lcr);
+
+            // return the actual baud rate achieved
+            return (int)(divisor1 / divisor / 16);
+        }
+
         internal void Reset()
         {
-            var value = ReadRegister(Registers.IOControl);
+            var value = ReadChannelRegister(Registers.IOControl, Channels.Both);
             value |= RegisterBits.IOCTL_RESET;
             try
             {
-                WriteRegister(Registers.IOControl, value);
+                WriteChannelRegister(Registers.IOControl, Channels.Both, value);
             }
-            catch (Exception ex)
+            catch
             {
                 // we expect to get a NACK on this.  Very confusing
-                // 06.10.2024, KW: Ignore this error. We get it even when the device works fine. ("Error code 70")
-                Resolver.Log.Trace($"Ignoring SC16IS7x2 error on reset: {ex.Message}");
             }
         }
+
+        internal void EnableFifo(Channels channel)
+        {
+            var fcr = ReadChannelRegister(Registers.FCR, channel);
+            fcr |= RegisterBits.FCR_FIFO_ENABLE;
+            WriteChannelRegister(Registers.FCR, channel, fcr);
+        }
+
+        private byte ReadChannelRegister(Registers register, Channels channel)
+        {
+            // see page 40 of the data sheet for explanation of this
+            var subaddress = (byte)(((byte)register << 3) | ((byte)channel << 1));
+            byte v = Comms.ReadRegister(subaddress);
+            if (register == Registers.IOState)
+            {
+                //Resolver.Log.Info($"ReadChannelRegister: {register} {channel} {v:X2}");
+                if (v == 0)
+                {
+                    byte v2 = Comms.ReadRegister(subaddress);
+                    if (v2 != v)
+                    {
+                        v = v2;     // Fix buggy value!
+                        Resolver.Log.Info($"ReadChannelRegister: {register} {channel} {v2:X2} (Corrected value!)");
+                    }
+                }
+            }
+            return v;
+        }
+
+        private void WriteChannelRegister(Registers register, Channels channel, byte value)
+        {
+            // see page 40 of the data sheet for explanation of this
+            var subaddress = (byte)(((byte)register << 3) | ((byte)channel << 1));
+            //if (register == Registers.IOState)
+            //{
+            //    Resolver.Log.Info($"WriteChannelRegister: {register} {channel} {value:X2}");
+            //}
+            Comms.WriteRegister(subaddress, value);
+        }
+
+        private void SetChannelRegisterBits(Registers register, Channels channel, byte value)
+        {
+            byte currentValue = ReadChannelRegister(register, channel);
+            currentValue |= value;          // Set the bits we're going to change
+            WriteChannelRegister(register, channel, currentValue);
+        }
+
+        private void ClearChannelRegisterBits(Registers register, Channels channel, byte mask)
+        {
+            byte currentValue = ReadChannelRegister(register, channel);
+            currentValue &= (byte)~mask;          // Flip all bits in value, then AND with currentValue
+            WriteChannelRegister(register, channel, currentValue);
+        }
+
 
         /********************* GPIO **********************/
 
-        private IDigitalPort[] gpioPorts = new IDigitalPort[8];
-
-        /// <summary>
-        /// Is the pin valid for this device instance
-        /// </summary>
-        /// <param name="pin">The IPin to validate</param>
-        /// <returns>True if pin is valid</returns>
-        protected bool IsValidPin(IPin pin) => Pins.AllPins.Contains(pin);
-
-        private bool initGpioDone = false;
+        private bool initDone = false;
         private void InitGpio()
         {
-            if (initGpioDone) return;
+            if (initDone) return;
 
+            var a = ReadChannelRegister(Registers.IER, Channels.A);
+            a &= unchecked((byte)~RegisterBits.IER_SLEEP_MODE_ENABLE);
+            WriteChannelRegister(Registers.IER, Channels.A, a);
+            var b = ReadChannelRegister(Registers.IER, Channels.B);
+            b &= unchecked((byte)~RegisterBits.IER_SLEEP_MODE_ENABLE);
+            WriteChannelRegister(Registers.IER, Channels.B, b);
+
+            byte ioControlBefore = ReadGpioRegister(Registers.IOControl);
             if (_latchGpioInterrupt)
-                SetRegisterBit(Registers.IOControl, RegisterBits.IOCTL_IO_LATCH);
+                SetGpioRegisterBit(Registers.IOControl, RegisterBits.IOCTL_IO_LATCH);
             else
-                ClearRegisterBit(Registers.IOControl, RegisterBits.IOCTL_IO_LATCH);
-            ClearRegisterBit(Registers.IOControl, RegisterBits.IOCTL_GPIO_7to4);
-            ClearRegisterBit(Registers.IOControl, RegisterBits.IOCTL_GPIO_3to0);
+                ClearGpioRegisterBits(Registers.IOControl, RegisterBits.IOCTL_IO_LATCH);
+            ClearGpioRegisterBits(Registers.IOControl, RegisterBits.IOCTL_GPIO_7to4);
+            ClearGpioRegisterBits(Registers.IOControl, RegisterBits.IOCTL_GPIO_3to0);
+            byte ioControlAfter = ReadGpioRegister(Registers.IOControl);
+            //Resolver.Log.Info($"ioControl: {ioControlBefore} -> {ioControlAfter}");
 
             // Set direction of all GPIO's to input
-            WriteRegister(Registers.IODir, ioDir);
+            WriteGpioRegister(Registers.IODir, ioDir);
 
-            // 22.04.2024, KW: This has been moved here from the constructor. Add the handler _after_ comms init is OK.
-            if (_irq != null)
-            {
-                _irq.Changed += GpioInterruptHandler;
-            }
-
-            initGpioDone = true;
+            initDone = true;
         }
 
-        /// <summary>
-        /// Get the Interrupt Identification Register (IIR) value.
-        /// </summary>
-        /// <returns></returns>
-        public byte GetInterruptSource()
-        {
-            byte iir = ReadRegister(Registers.IIR);
-            iir &= RegisterBits.IIR_Id0 + RegisterBits.IIR_Id1 + RegisterBits.IIR_Id2 +
-                   RegisterBits.IIR_Id3 + RegisterBits.IIR_Id4 + RegisterBits.IIR_Id5;
-            return iir;
-        }
-
+        int debugId = 0;
         byte lastInputState = 0;
         private void GpioInterruptHandler(object sender, DigitalPortResult e)
         {
             try
             {
-                //byte iir = GetInterruptSource();
-
-                //Resolver.Log.Info($"HandleGpioInterrupt. Interrupt pin state: {e.Old?.State} {e.New.State} {e.New.Time.ToString("hh:mm:ss.fffffff")} {_irq?.State}");
-                byte state = ReadIoState();
-                byte dirMask = (byte)~ioDir;    // Only look at the input pins
-                byte masked = (byte)(state & dirMask);
-                //Resolver.Log.Info($"State: {state:X2} {dirMask:X2} {masked:X2}");
-                //Resolver.Log.Info($"LastState: {lastState} NewState: {state}");
-                if (masked == lastInputState) return;
-
-                byte diff = (byte)(masked ^ lastInputState);
-                //Resolver.Log.Info($"GPIO state: {lastInputState} -> {state}");
-                for (byte i = 0; i < 8; i++)
+                //lock(this)
                 {
-                    if ((diff & (1 << i)) == 0) continue;   // No change on this pin
-                    if (gpioPorts[i] == null) continue;     // No port defined for this pin
-                    if (gpioPorts[i] is DigitalInputPort port)
+                    //int id = debugId++; 
+                    //Resolver.Log.Info($"GpioInterruptHandler... {id}");
+
+                    //// Prioritize reading the IRQ FIFO's
+                    //if (_channelA?.IsOpen ?? false)
+                    //    _channelA.OnInterruptLineChanged(sender, e);
+                    //if (_channelB?.IsOpen ?? false)
+                    //    _channelB.OnInterruptLineChanged(sender, e);
+
+                    byte iir = GetInterruptSource();
+
+                    //Resolver.Log.Info($"HandleGpioInterrupt. Interrupt pin state: {e.Old?.State} {e.New.State} {e.New.Time.ToString("hh:mm:ss.fffffff")} {_irq?.State}");
+                    byte state = ReadGpioRegister(Registers.IOState);
+                    byte dirMask = (byte)~ioDir;  // Only look at the input pins
+                    byte masked = (byte)(state & dirMask);
+                    //Resolver.Log.Info($"State: {state:X2} {dirMask:X2} {masked:X2}");
+                    //Resolver.Log.Info($"LastState: {lastState} NewState: {state}");
+                    if (masked == lastInputState) return;
+
+                    byte diff = (byte)(masked ^ lastInputState);
+                    //Resolver.Log.Info($"GPIO state: {lastState} -> {state}");
+                    for (byte i = 0; i < 8; i++)
                     {
-                        var newState = BitHelpers.GetBitValue(state, i);
-                        //Resolver.Log.Info($"Pin {i} new state: {newState}");
-                        port.Update(newState);
+                        if ((diff & (1 << i)) == 0) continue;    // No change on this pin
+                        if (gpioPorts[i] == null) continue;    // No input port defined for this pin
+                        if (gpioPorts[i] is DigitalInputPort port)
+                        {
+                            var newState = BitHelpers.GetBitValue(state, i);
+                            port.Update(newState);
+                        }
                     }
+                    lastInputState = masked;
+
+                    //PrintAddressContent();
+                    //byte irqTest = ReadGpioRegister(Registers.IOIntEna);
+                    //if (irqTest != irqEna)
+                    //{
+                    //    Resolver.Log.Info($"irqTest: {irqTest} irqEna: {irqEna}");
+                    //    WriteGpioRegister(Registers.IOIntEna, irqEna);
+                    //}
+
+                    //Resolver.Log.Info($"DONE. {id}");
                 }
-                lastInputState = masked;
             }
             catch (Exception ex)
             {
@@ -232,8 +435,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
             }
         }
 
-
         /****************** INPUT PORTS ******************/
+
+        private IDigitalPort[] gpioPorts = new IDigitalPort[8];
 
         /// <summary>
         /// Create a digital input port on a SC16IS7x2 IO expander.
@@ -260,7 +464,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
                     throw new Exception("Only ResistorMode.Disabled is supported. The GPIO ports of SC16IS7x2 does not need/support external pull-up or pull-down resistors.");
                 }
 
-                var state = ReadIoState();
+                var state = ReadGpioRegister(Registers.IOState);
                 var initState = BitHelpers.GetBitValue(state, pinIndex);
                 var port = new DigitalInputPort(pin, initState);
                 gpioPorts[pinIndex] = port;
@@ -273,6 +477,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
             }
             throw new Exception("Pin is out of range");
         }
+
+        byte irqEna = 0;
 
         /// <summary>
         /// Configure the hardware port settings on the SC16IS7x2
@@ -290,11 +496,12 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
                 if (_irq != null)
                 {   
-                    SetRegisterBit(Registers.IOIntEna, bitIndex);
+                    irqEna = BitHelpers.SetBit(irqEna, bitIndex, true);
+                    SetGpioRegisterBit(Registers.IOIntEna, bitIndex);
                 }
                 else
                 {
-                    ClearRegisterBit(Registers.IOIntEna, bitIndex);
+                    ClearGpioRegisterBit(Registers.IOIntEna, bitIndex);
                 }
             }
             else
@@ -317,7 +524,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             if (newIoDir == ioDir) return;
 
             //Resolver.Log.Info($"newIoDir: {newIoDir}");
-            WriteRegister(Registers.IODir, newIoDir);
+            WriteGpioRegister(Registers.IODir, newIoDir);
             ioDir = newIoDir;
         }
 
@@ -353,7 +560,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             if (portDir == true)
                 throw new Exception($"Cant read from port {pin.Name}. It is not configured as input");
 
-            var gpio = ReadIoState();
+            var gpio = ReadGpioRegister(Registers.IOState);
 
             // Return the value on that port
             return BitHelpers.GetBitValue(gpio, (byte)pin.Key);
@@ -420,133 +627,27 @@ namespace Meadow.Foundation.ICs.IOExpanders
         {
             byte bitIndex = (byte)pin.Key;
             if (value)
-                SetIoStateBit(bitIndex);
+                SetGpioRegisterBit(Registers.IOState, bitIndex);
             else
-                ClearIoStateBit(bitIndex);
+                ClearGpioRegisterBit(Registers.IOState, bitIndex);
         }
-
 
         /*********** INPUT/OUTPUT PORT HELPERS ***********/
 
-        private void SetRegisterBit(Registers register, int bitIndex)
-        {
-            if (bitIndex > 7 || bitIndex < 0) { throw new ArgumentOutOfRangeException(); }
-
-            var oldValue = ReadRegister(register);
-            byte newValue = (byte)(oldValue | ((byte)(1 << bitIndex)));
-            WriteRegister(register, newValue);
-        }
-
-        private void ClearRegisterBit(Registers register, int bitIndex)
-        {
-            if (bitIndex > 7 || bitIndex < 0) { throw new ArgumentOutOfRangeException(); }
-            var oldValue = ReadRegister(register);
-            var newValue = (byte)(oldValue & ((byte)~(1 << bitIndex)));
-            WriteRegister(register, newValue);
-        }
-
-        // Read a register that is not channel specific.
-        private byte ReadRegister(Registers register)
-        {
-            byte v = Comms.ReadRegister((byte)((byte)register << 3));
-            return v;
-        }
-
-        // Write to a register that is not channel specific.
-        private void WriteRegister(Registers register, byte value)
-        {
-            Comms.WriteRegister((byte)((byte)register << 3), value);
-        }
-
-
-        /********************* OPTIMIZATIONS **********************/
-
         /// <summary>
-        /// Specific method to read the IOState register. This is an optimization.
-        /// We don't want to slow down all other register reads with the validation
-        /// for this specific register.
+        /// Get the Interrupt Identification Register (IIR) value.
         /// </summary>
         /// <returns></returns>
-        private byte ReadIoState()
+        public byte GetInterruptSource()
         {
-            // See page 40 of the data sheet for explanation of this
-            byte v = Comms.ReadRegister((byte)Registers.IOState << 3);
-            if (v == 0)
-            {
-                byte v2 = Comms.ReadRegister((byte)Registers.IOState << 3);
-                if (v2 != v)
-                {
-                    v = v2;     // Fix buggy value!
-                    Resolver.Log.Info($"ReadIoState: {v2:X2} (Corrected value!)");
-                }
-            }
-            return v;
-        }
-
-        private void WriteIoState(byte value)
-        {
-            // see page 40 of the data sheet for explanation of this
-            Comms.WriteRegister((byte)Registers.IOState << 3, value);
-        }
-
-        // This is an optimization for the GPIO ports.
-        private void ClearIoStateBit(int bitIndex)
-        {
-            if (bitIndex > 7 || bitIndex < 0) { throw new ArgumentOutOfRangeException(); }
-
-            var oldValue = ReadIoState();
-            byte newValue = (byte)(oldValue & ((byte)~(1 << bitIndex)));
-            if (oldValue != newValue)
-                WriteIoState(newValue);
-        }
-
-        // This is an optimization for the IOState register.
-        private void SetIoStateBit(int bitIndex)
-        {
-            if (bitIndex > 7 || bitIndex < 0) { throw new ArgumentOutOfRangeException(); }
-
-            var oldValue = ReadIoState();
-            byte newValue = (byte)(oldValue | ((byte)(1 << bitIndex)));
-            if (oldValue != newValue)
-                WriteIoState(newValue);
-        }
-
-        /*********************** NICE TO HAVE METHODS ***********************/
-
-        private byte DebugReadChannelRegister(Registers register, Channels channel)
-        {
-            // see page 40 of the data sheet for explanation of this
-            var subaddress = (byte)(((byte)register << 3) | ((byte)channel << 1));
-            byte v = Comms.ReadRegister(subaddress);
-            return v;
-        }
-
-        /// <summary>
-        /// Print the content of the address space for debugging purposes.
-        /// </summary>
-        public void PrintAddressContent()
-        {
-            Resolver.Log.Info($"Register:  00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F");
-            string a = $"Channel A: ";
-            for (int r = 0; r < 16; r++)
-                a += $"{DebugReadChannelRegister((Registers)r, Channels.A):X2} ";
-            Resolver.Log.Info(a);
-            string b = $"Channel B: ";
-            for (int r = 0; r < 16; r++)
-                b += $"{DebugReadChannelRegister((Registers)r, Channels.B):X2} ";
-            Resolver.Log.Info(b);
-        }
-
-        /// <summary>
-        /// Nice-to-have conversion from byte to binary string.
-        /// </summary>
-        /// <param name="b"></param>
-        /// <returns></returns>
-        public string ByteToBinaryString(byte b)
-        {
-            // Format the byte as a binary string and pad it with zeroes
-            string binaryString = $"0b{Convert.ToString(b, 2).PadLeft(8, '0')}";
-            return binaryString;
+            byte iir = ReadGpioRegister(Registers.IIR);
+            iir &= RegisterBits.IIR_Id0 +
+                   RegisterBits.IIR_Id1 +
+                   RegisterBits.IIR_Id2 +
+                   RegisterBits.IIR_Id3 +
+                   RegisterBits.IIR_Id4 +
+                   RegisterBits.IIR_Id5;
+            return iir;
         }
 
         /// <summary>
@@ -575,6 +676,85 @@ namespace Meadow.Foundation.ICs.IOExpanders
             if (iir == RegisterBits.IIR_IdCtsRts) return InterruptSourceType.CtsRts;
             Resolver.Log.Info($"UNKNOWN INTERRUPT SOURCE (or combination): {iir}");
             return InterruptSourceType.Unknown;
+        }
+
+        /// <summary>
+        /// Is the pin valid for this device instance
+        /// </summary>
+        /// <param name="pin">The IPin to validate</param>
+        /// <returns>True if pin is valid</returns>
+        protected bool IsValidPin(IPin pin) => Pins.AllPins.Contains(pin);
+
+        private byte ReadGpioRegister(Registers register)
+        {
+            return ReadChannelRegister(register, Channels.Both);
+        }
+
+        private void WriteGpioRegister(Registers register, byte value)
+        {
+            WriteChannelRegister(register, Channels.Both, value);
+        }
+
+        private void SetGpioRegisterBits(Registers register, byte value)
+        {
+            SetChannelRegisterBits(register, Channels.Both, value);
+        }
+
+        private void ClearGpioRegisterBits(Registers register, byte mask)
+        {
+            ClearChannelRegisterBits(register, Channels.Both, mask);
+        }
+
+        private void SetGpioRegisterBit(Registers register, int bitIndex)
+        {
+            SetChannelRegisterBit(register, Channels.Both, bitIndex);
+        }
+
+        private void SetChannelRegisterBit(Registers register, Channels channel, int bitIndex)
+        {
+            if (bitIndex > 7 || bitIndex < 0) { throw new ArgumentOutOfRangeException(); }
+
+            var oldValue = ReadChannelRegister(register, channel);
+            byte newValue = (byte)(oldValue | ((byte)(1 << bitIndex)));
+            WriteChannelRegister(register, channel, newValue);
+        }
+
+        private void ClearGpioRegisterBit(Registers register, int bitIndex)
+        {
+            ClearChannelRegisterBit(register, Channels.Both, bitIndex);
+        }
+
+        private void ClearChannelRegisterBit(Registers register, Channels channel, int bitIndex)
+        {
+            if (bitIndex > 7 || bitIndex < 0) { throw new ArgumentOutOfRangeException(); }
+            var oldValue = ReadChannelRegister(register, channel);
+            var newValue = (byte)(oldValue & ((byte)~(1 << bitIndex)));
+            WriteChannelRegister(register, channel, newValue);
+            //var check = ReadChannelRegister(register, channel);
+            //Resolver.Log.Info($"ClearChannelRegisterBit: Old={oldValue} New={newValue} Check={check}");
+        }
+
+        /// <summary>
+        /// Print the content of the address space for debugging purposes.
+        /// </summary>
+        public void PrintAddressContent()
+        {
+            Resolver.Log.Info($"Register:  00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F");
+            string a = $"Channel A: ";
+            for (int r = 0; r < 16; r++)
+                a += $"{ReadChannelRegister((Registers)r, Channels.A):X2} ";
+            Resolver.Log.Info(a);
+            string b = $"Channel B: ";
+            for (int r = 0; r < 16; r++)
+                b += $"{ReadChannelRegister((Registers)r, Channels.B):X2} ";
+            Resolver.Log.Info(b);
+        }
+
+        public string ByteToBinaryString(byte b)
+        {
+            // Format the byte as a binary string and pad it with zeroes
+            string binaryString = $"0b{Convert.ToString(b, 2).PadLeft(8, '0')}";
+            return binaryString;
         }
     }
 }

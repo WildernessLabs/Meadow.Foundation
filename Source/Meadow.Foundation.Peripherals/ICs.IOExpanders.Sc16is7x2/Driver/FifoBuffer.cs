@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Text;
-using System.Threading;
 
 namespace Meadow.Foundation.ICs.IOExpanders;
 
@@ -8,10 +7,6 @@ namespace Meadow.Foundation.ICs.IOExpanders;
 /// This FIFO buffer is implemented as a circular buffer. (Standard computer science stuff)
 /// It operates on bytes. The only special method is WriteString,
 /// which writes a string to the buffer after converting it with Encoding.ASCII.GetBytes().
-///
-/// 2024.04.20, KW: I've recently discovered the CircularBuffer class in the Meadow.Contracts library.
-///                 We should perhaps use that instead of this custom implementation.
-///                 But this method is specific to bytes, so it might still be more efficient.
 /// </summary>
 public class FifoBuffer
 {
@@ -44,8 +39,8 @@ public class FifoBuffer
             throw new ArgumentException("Capacity must be greater than 0.", nameof(capacity));
 
         _buffer = new byte[capacity];
-        _nextRead = 0;  // The next read position.  (Tail)
-        _nextWrite = 0; // The next write position. (Head)
+        _nextRead = 0;  // The next read position.
+        _nextWrite = 0; // The next write position.
         _count = 0;     // The number of items in the buffer.
     }
 
@@ -59,8 +54,6 @@ public class FifoBuffer
         _count = 0;     // The number of items in the buffer.
     }
 
-    private int skippedBytes = 0;
-    private DateTime skippedBytesLastLogged = DateTime.MinValue;
     /// <summary>
     /// Add new item to the _nestWrite position in the buffer.
     /// Then move the _nextWrite position. If it goes beyond the capacity, it will wrap around to 0.
@@ -71,18 +64,7 @@ public class FifoBuffer
     public void Write(byte item)
     {
         if (_count == Capacity)
-        {
-            //throw new InvalidOperationException($"The software FIFO buffer is full. Capacity is {Capacity} bytes.");
-            // 21.04.2024, KW: These exception must be handled by the caller. We count the occurences and throw an error every 5 seconds.
-            skippedBytes++;
-            if (DateTime.Now - skippedBytesLastLogged > TimeSpan.FromSeconds(5))
-            {
-                skippedBytesLastLogged = DateTime.Now;
-                //Resolver.Log.Info($"The software FIFO buffer is full. Capacity is {Capacity} bytes. Skipped bytes: {skippedBytes} (This message will be repeated every 5 seconds)");
-                throw new Exception($"The software FIFO buffer is full. Capacity is {Capacity} bytes. Skipped bytes: {skippedBytes} (This message will be repeated every 5 seconds)");
-            }
-            return;
-        }
+            throw new InvalidOperationException("The buffer is full.");
 
         _buffer[_nextWrite] = item;
         _nextWrite = (_nextWrite + 1) % Capacity;   // Move _nextWrite forward and possibly wrap.
@@ -151,54 +133,5 @@ public class FifoBuffer
         {
             Write((byte)c);
         }
-    }
-
-    /// <summary>
-    /// Copied from the CircularBuffer class in the Meadow.Contracts library.
-    /// Removes items from the buffer and places them in a target array
-    /// </summary>
-    /// <param name="destination">The destination array for the move</param>
-    /// <param name="index">The beginning index of the destination</param>
-    /// <param name="count">The desired number of items to move</param>
-    /// <returns>The actual number of items moved</returns>
-    public int MoveItemsTo(byte[] destination, int index, int count)
-    {
-        if (count <= 0) { return 0; }
-
-        // How many are we moving?
-        // Move from current toward the tail
-        var actual = (count > Count) ? Count : count;
-        var fromReadToEnd = _buffer.Length - _nextRead;
-
-        //Resolver.Log.Info($"MoveItemsTo() _nextRead={_nextRead} _nextWrite={_nextWrite} actual={actual} fromReadToEnd={fromReadToEnd}");
-
-        if ((_nextRead < _nextWrite)
-            || (_nextRead == 0 && _count == Capacity)
-            || (fromReadToEnd >= actual))
-        {
-            // the data is linear, just copy
-            Array.Copy(_buffer, _nextRead, destination, index, actual);
-
-            // move the tail pointer
-            _nextRead += actual;
-            _count -= actual;
-        }
-        else
-        {
-            // there's a data wrap
-            // copy from here to the end
-            Array.Copy(_buffer, _nextRead, destination, index, fromReadToEnd);
-            // now copy from the start (tail == 0) the remaining data
-            _nextRead = 0;
-            _count -= fromReadToEnd;
-            var remaining = actual - fromReadToEnd;
-            Array.Copy(_buffer, _nextRead, destination, index + fromReadToEnd, remaining);
-
-            // move the tail pointer
-            _nextRead = remaining;
-            _count -= remaining;
-        }
-
-        return actual;
     }
 }

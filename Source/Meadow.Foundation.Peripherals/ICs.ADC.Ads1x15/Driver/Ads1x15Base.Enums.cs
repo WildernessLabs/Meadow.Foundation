@@ -35,27 +35,27 @@
         public enum FsrGain
         {
             /// <summary>
-            /// Gain = 2/3rds. Range: ±6.144 V
+            /// 2/3rds
             /// </summary>
             TwoThirds = 0x00,
             /// <summary>
-            /// Gain = 1. Range: ±4.096 V
+            /// 1
             /// </summary>
             One = 0x01,
             /// <summary>
-            /// Gain = 2. Range: ±2.048 V
+            /// 2
             /// </summary>
             Two = 0x02,
             /// <summary>
-            /// Gain = 4. Range: ±1.024 V
+            /// 4
             /// </summary>
             Four = 0x03,
             /// <summary>
-            /// Gain = 8. Range: ±0.512 V
+            /// 8
             /// </summary>
             Eight = 0x04,
             /// <summary>
-            /// Gain = 16. Range: ±0.256 V
+            /// 16
             /// </summary>
             Sixteen = 0x05
         }
