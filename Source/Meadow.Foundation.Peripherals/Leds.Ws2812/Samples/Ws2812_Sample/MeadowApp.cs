@@ -1,41 +1,40 @@
 using Meadow;
 using Meadow.Devices;
-using Meadow.Foundation;
 using Meadow.Foundation.Leds;
-using Meadow.Units;
 using System.Threading.Tasks;
 
 namespace MeadowApp
 {
     public class MeadowApp : App<F7FeatherV2>
     {
-        private Ws2812 _ws2812;
+        //<!=SNIP=>
 
-        private readonly int ledCount = 10;
+        private Ws2812 neoPixels;
+
+        private readonly int ledCount = 24;
 
         public override Task Initialize()
         {
-            var _spiBus = Device.CreateSpiBus(new Frequency(3.2, Frequency.UnitType.Megahertz));
-            _ws2812 = new Ws2812(_spiBus, ledCount);
+            var spiBus = Device.CreateSpiBus();
+            neoPixels = new Ws2812(spiBus, ledCount);
 
             return base.Initialize();
         }
 
-        public override Task Run()
+        public override async Task Run()
         {
-            for (var i = 0; i < ledCount; i++)
+            while (true)
             {
-                if (i % 2 == 0)
+                for (int i = 0; i < neoPixels.NumberOfLeds; i++)
                 {
-                    _ws2812.SetLed(i, Color.Blue);
+                    neoPixels.SetAllLeds(Color.Black);
+                    neoPixels.SetLed(i, Color.Blue);
+                    neoPixels.Show();
+                    await Task.Delay(100);
                 }
-                else
-                {
-                    _ws2812.SetLed(i, Color.Red);
-                }
-                _ws2812.Show();
             }
-            return Task.CompletedTask;
         }
+
+        //<!=SNOP=>
     }
 }

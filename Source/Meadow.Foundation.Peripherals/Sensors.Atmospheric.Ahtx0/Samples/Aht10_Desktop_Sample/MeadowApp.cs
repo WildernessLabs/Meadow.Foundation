@@ -16,7 +16,7 @@ public class MeadowApp : App<Windows>
 
     //<!=SNIP=>
 
-    private Ahtx0 sensor;
+    private Ahtx0 sensor = default!;
 
     public override Task Initialize()
     {

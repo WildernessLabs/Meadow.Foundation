@@ -3,9 +3,8 @@ using System.Collections.Generic;
 
 namespace Meadow.Foundation.Graphics.MicroLayout;
 
-internal interface IControlContainer
+internal interface IControlContainer : IControl
 {
-    IControl? Parent { get; }
     ControlsCollection Controls { get; }
 }
 
@@ -78,7 +77,9 @@ public sealed class ControlsCollection : IEnumerable<IControl>
         {
             foreach (var control in controls)
             {
-                control.Parent = _container?.Parent;
+                if (control is null) continue;
+
+                control.Parent = _container;
                 _controls.Add(control);
             }
         }

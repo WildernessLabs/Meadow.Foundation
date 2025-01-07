@@ -34,7 +34,17 @@ namespace Meadow.Foundation.ICs.IOExpanders
             /// <summary>
             /// Current port voltage
             /// </summary>
-            public Voltage Voltage { get; private set; }
+            public Voltage Voltage
+            {
+                get
+                {
+                    if (!IsSampling)
+                    {
+                        return Read().Result;
+                    }
+                    return _previousVoltageReading ?? Voltage.Zero;
+                }
+            }
 
             /// <summary>
             /// Port reference voltage

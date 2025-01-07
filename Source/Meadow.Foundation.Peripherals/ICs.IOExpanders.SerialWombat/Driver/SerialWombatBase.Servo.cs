@@ -1,5 +1,6 @@
-﻿using Meadow.Foundation.Servos;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
+using Meadow.Peripherals.Servos;
+using Meadow.Units;
 using System;
 
 namespace Meadow.Foundation.ICs.IOExpanders
@@ -12,14 +13,24 @@ namespace Meadow.Foundation.ICs.IOExpanders
         public class Servo : IServo
         {
             /// <summary>
-            /// Servo configuration 
-            /// </summary>
-            public ServoConfig Config => throw new NotImplementedException();
-
-            /// <summary>
             /// Create a new Servo object
             /// </summary>
             public Servo(IPin pin)
+            {
+                throw new NotImplementedException();
+            }
+
+            /// <inheritdoc/>
+            public TimePeriod TrimOffset { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
+            /// <inheritdoc/>
+            public void Disable()
+            {
+                throw new NotImplementedException();
+            }
+
+            /// <inheritdoc/>
+            public void Neutral()
             {
                 throw new NotImplementedException();
             }

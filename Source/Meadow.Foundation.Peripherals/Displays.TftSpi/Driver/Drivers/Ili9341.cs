@@ -104,6 +104,7 @@ namespace Meadow.Foundation.Displays
                     SendCommand((byte)Register.COLOR_MODE, new byte[] { 0x66 }); // Color mode - 18bpp
                     break;
             }
+            SendCommand(Register.INVOFF);
 
             SendCommand((byte)Register.FRMCTR1, new byte[] { 0x00, 0x18 });
             SendCommand(ILI9341_DFUNCTR, new byte[] { 0x08, 0x82, 0x27 });

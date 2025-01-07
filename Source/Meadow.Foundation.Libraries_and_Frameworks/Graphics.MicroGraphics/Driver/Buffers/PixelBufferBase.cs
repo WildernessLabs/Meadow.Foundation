@@ -36,6 +36,7 @@ namespace Meadow.Foundation.Graphics.Buffers
                 {
                     ColorMode.Format1bpp => 1,
                     ColorMode.Format2bpp => 2,
+                    ColorMode.Format2bppIndexed => 2,
                     ColorMode.Format4bppGray => 4,
                     ColorMode.Format4bppIndexed => 4,
                     ColorMode.Format8bppGray => 8,
@@ -357,6 +358,7 @@ namespace Meadow.Foundation.Graphics.Buffers
                 Width = newWidth,
                 Height = newHeight,
             };
+            newBuffer.InitializeBuffer(true);
 
             float xRatio = (float)Width / newWidth;
             float yRatio = (float)Height / newHeight;
@@ -483,6 +485,41 @@ namespace Meadow.Foundation.Graphics.Buffers
         }
 
         /// <summary>
+        /// Crop a region of the pixel buffer
+        /// </summary>
+        /// <typeparam name="T">The buffer type</typeparam>
+        /// <param name="startX">The X coordinate of the top-left corner of the crop rectangle</param>
+        /// <param name="startY">The Y coordinate of the top-left corner of the crop rectangle</param>
+        /// <param name="cropWidth">The width of the crop rectangle</param>
+        /// <param name="cropHeight">The height of the crop rectangle</param>
+        /// <returns>A new buffer containing the cropped region</returns>
+        public T Crop<T>(int startX, int startY, int cropWidth, int cropHeight)
+            where T : PixelBufferBase, new()
+        {
+            if (startX < 0 || startY < 0 || startX + cropWidth > Width || startY + cropHeight > Height)
+            {
+                throw new ArgumentException("Invalid crop dimensions or coordinates.");
+            }
+
+            T croppedBuffer = new()
+            {
+                Width = cropWidth,
+                Height = cropHeight,
+            };
+            croppedBuffer.InitializeBuffer(true);
+
+            for (int x = 0; x < cropWidth; x++)
+            {
+                for (int y = 0; y < cropHeight; y++)
+                {
+                    croppedBuffer.SetPixel(x, y, GetPixel(startX + x, startY + y));
+                }
+            }
+
+            return croppedBuffer;
+        }
+
+        /// <summary>
         /// Calculate the uncorrected distance between two colors using bytes for red, green, blue
         /// </summary>
         /// <param name="color1"></param>
@@ -490,6 +527,11 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// <returns>The distance as a float</returns>
         public float GetColorDistance(Color color1, Color color2)
         {
+            if (color1 == color2)
+            {
+                return 0;
+            }
+
             var rDeltaSquared = MathF.Pow(MathF.Abs(color1.R - color2.R), 2);
             var gDeltaSquared = MathF.Pow(MathF.Abs(color1.G - color2.G), 2);
             var bDeltaSquared = MathF.Pow(MathF.Abs(color1.B - color2.B), 2);
