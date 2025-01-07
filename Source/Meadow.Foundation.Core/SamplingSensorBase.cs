@@ -47,7 +47,7 @@ namespace Meadow.Foundation
         /// </summary>
         public UNIT Conditions
         {
-            get => IsSampling ? _conditions : ReadSensor().Result;
+            get => IsSampling ? _conditions : Read().Result;
             protected set => _conditions = value;
         }
 

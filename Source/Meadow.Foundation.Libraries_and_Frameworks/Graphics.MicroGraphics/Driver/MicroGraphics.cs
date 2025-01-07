@@ -346,7 +346,6 @@ namespace Meadow.Foundation.Graphics
                 return;
             }
 
-            //ToDo ... replace this with DrawQuad that sets all four corners
             if (Stroke == 1)
             {
                 DrawSingleWidthLine(x0, y0, x1, y1, color);
@@ -371,7 +370,6 @@ namespace Meadow.Foundation.Graphics
             }
         }
 
-        // Helper method, can be integrated with DrawLine after we add DrawQuad
         private void DrawSingleWidthLine(int x0, int y0, int x1, int y1, Color color)
         {
             var steep = Math.Abs(y1 - y0) > Math.Abs(x1 - x0);

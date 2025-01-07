@@ -22,11 +22,9 @@ Bg95M3 bg95M3;
 
 void ProcessGnssPosition(object sender, IGnssResult location)
 {
-    Resolver.Log.Info("*********************************************");
-    Resolver.Log.Info(location.ToString());
-    Resolver.Log.Info("*********************************************");  
+    Resolver.Log.Info($"{location}");
 }
-        
+
 public override Task Initialize()
 {
     Resolver.Log.Info("Initializing ...");

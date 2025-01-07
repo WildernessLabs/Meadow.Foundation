@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 
@@ -12,7 +11,6 @@ public class ListBox : MicroLayout
 {
     private int _selectedIndex = -1;
     private int _topIndex = 0;
-    private readonly List<string> _items = new();
     private Color _textColor = Color.White;
     private Color _selectedRowColor = Color.LightGray;
     private Color _selectedTextColor = Color.Black;
@@ -49,11 +47,11 @@ public class ListBox : MicroLayout
         BackgroundColor = Color.Black;
         _rowHeight = font.Height + ItemSpacing;
         var rowCount = this.Height / _rowHeight;
-        CreateRowlabels(rowCount);
+        CreateRowLabels(rowCount);
         Items.CollectionChanged += OnItemsCollectionChanged;
     }
 
-    private void CreateRowlabels(int rowCount)
+    private void CreateRowLabels(int rowCount)
     {
         var y = 0;
         for (var i = 0; i < rowCount; i++)
