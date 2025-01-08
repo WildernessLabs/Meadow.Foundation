@@ -43,12 +43,26 @@ public class F55B150_24GL_30S : IMotor
 
     private async Task Initialize()
     {
-        await controller.SetStartStopTerminal(false);
-        await controller.SetNumberOfMotorPolePairs(10);
-        await controller.SetSpeedControl(SpeedControl.RS485);
-        Direction = DefaultRotationDirection;
-        await controller.SetDirectionTerminal(Direction);
-        await SetSpeed(DefaultSpeed);
+        var succeeded = false;
+
+        while (!succeeded)
+        {
+            try
+            {
+                await controller.SetStartStopTerminal(false);
+                await controller.SetNumberOfMotorPolePairs(10);
+                await controller.SetSpeedControl(SpeedControl.RS485);
+                Direction = DefaultRotationDirection;
+                await controller.SetDirectionTerminal(Direction);
+                await SetSpeed(DefaultSpeed);
+                succeeded = true;
+            }
+            catch (TimeoutException)
+            {
+                Resolver.Log.Warn("Timeout initializing");
+                await Task.Delay(500);
+            }
+        }
     }
 
     public async Task Run(RotationDirection direction, CancellationToken cancellationToken = default)
