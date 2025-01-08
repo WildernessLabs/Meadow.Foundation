@@ -1631,7 +1631,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ads1263_Sample", "Meadow.Fo
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "StepperOnline", "StepperOnline", "{CC1FB401-1B19-4254-9208-339661134D9B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Meadow.Foundation.Motors.StepperOnline", "Meadow.Foundation.Peripherals\Motors.StepperOnline\Driver\Meadow.Foundation.Motors.StepperOnline.csproj", "{D8D26232-ECA0-4042-88F4-7ECF1BC3E62F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Motors.StepperOnline", "Meadow.Foundation.Peripherals\Motors.StepperOnline\Driver\Motors.StepperOnline.csproj", "{D8D26232-ECA0-4042-88F4-7ECF1BC3E62F}"
+EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Keller XLine", "Keller XLine", "{2240AB38-3CC6-4800-8556-D3BB5C44B720}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensors.Environmental.Keller.XLine", "Meadow.Foundation.Peripherals\Sensors.Environmental.Keller.XLine\Driver\Sensors.Environmental.Keller.XLine.csproj", "{729B86E1-49EE-4668-A599-8D7C28842F9E}"
