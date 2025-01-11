@@ -15,6 +15,9 @@ public class F55B150_24GL_30S : IMotor
 {
     private BLD510B controller;
 
+    /// <summary>
+    /// The default motor rotation direction
+    /// </summary>
     public const RotationDirection DefaultRotationDirection = RotationDirection.Clockwise;
     public static AngularVelocity DefaultSpeed = new AngularVelocity(100, AngularVelocity.UnitType.RevolutionsPerMinute);
 
@@ -22,10 +25,7 @@ public class F55B150_24GL_30S : IMotor
     public RotationDirection Direction { get; private set; }
 
     /// <inheritdoc/>
-    public bool IsMoving
-    {
-        get => controller.GetActualSpeed().Result > 0;
-    }
+    public bool IsMoving => controller.GetActualSpeed().Result > 0;
 
     public F55B150_24GL_30S(BLD510B controller)
     {

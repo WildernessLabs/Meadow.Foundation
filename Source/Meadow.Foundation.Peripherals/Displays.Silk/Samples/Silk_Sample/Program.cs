@@ -8,7 +8,7 @@ namespace SilkDisplay_Sample;
 
 public class Program
 {
-    static SilkDisplay? display;
+    static Meadow.Foundation.Displays.Silk? display;
     static MicroGraphics graphics = default!;
 
     public static void Main()
@@ -21,7 +21,7 @@ public class Program
 
     public static void Initialize()
     {
-        display = new SilkDisplay(640, 480, displayScale: 1f);
+        display = new Meadow.Foundation.Displays.Silk(640, 480, displayScale: 1f);
 
         graphics = new MicroGraphics(display)
         {

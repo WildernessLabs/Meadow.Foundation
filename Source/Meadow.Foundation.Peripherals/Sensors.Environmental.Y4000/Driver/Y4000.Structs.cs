@@ -109,14 +109,14 @@ namespace Meadow.Foundation.Sensors.Environmental
             /// <returns>A string that represents the current Y4000 measurement data.</returns>
             public override string ToString()
             {
-                StringBuilder sb = new StringBuilder();
+                StringBuilder sb = new();
                 sb.AppendLine($"DissolvedOxygen: {Concentrations.DissolvedOxygen} mg/L");
                 sb.AppendLine($"Turbidity: {Turbidity} NTU");
                 sb.AppendLine($"ElectricalConductivity: {ElectricalConductivity.MilliSiemensPerCentimeter} mS/cm");
                 sb.AppendLine($"PH: {PH}");
                 sb.AppendLine($"OxidationReductionPotential: {OxidationReductionPotential.Millivolts} mV");
-                sb.AppendLine($"Chlorophyll: {Concentrations.Chlorophyl.Value.MicrogramsPerLiter} ug/L");
-                sb.AppendLine($"BlueGreenAlgae: {Concentrations.BlueGreenAlgae.Value.PartsPerMillion} ppm");
+                sb.AppendLine($"Chlorophyll: {Concentrations.Chlorophyl!.Value.MicrogramsPerLiter} ug/L");
+                sb.AppendLine($"BlueGreenAlgae: {Concentrations!.BlueGreenAlgae!.Value.PartsPerMillion} ppm");
                 sb.AppendLine($"Temperature: {Temperature.Celsius} C");
 
                 return sb.ToString();

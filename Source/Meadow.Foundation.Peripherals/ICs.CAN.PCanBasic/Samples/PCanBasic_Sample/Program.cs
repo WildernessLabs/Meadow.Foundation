@@ -1,7 +1,7 @@
-﻿using ICs.IOExpanders.PCanBasic;
+﻿using Meadow.Foundation.ICs.CAN;
 using Meadow.Hardware;
 
-namespace PCanBasic_ReadSample;
+namespace PCanBus_ReadSample;
 
 internal class Program
 {

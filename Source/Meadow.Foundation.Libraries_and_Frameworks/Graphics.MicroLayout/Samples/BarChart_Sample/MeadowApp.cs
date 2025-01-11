@@ -73,7 +73,7 @@ public class MeadowApp : App<Desktop>
 
     private void ExecutePlatformDisplayRunner()
     {
-        if (Device.Display is SilkDisplay sd)
+        if (Device.Display is Meadow.Foundation.Displays.Silk sd)
         {
             sd.Run();
         }
