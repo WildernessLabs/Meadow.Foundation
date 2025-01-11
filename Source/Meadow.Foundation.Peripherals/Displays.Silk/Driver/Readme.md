@@ -20,7 +20,7 @@ You can install the library from within Visual studio using the the NuGet Packag
 ```csharp
 public class Program
 {
-static SilkDisplay? display;
+static Meadow.Foundation.Displays.Silk? display;
 static MicroGraphics graphics = default!;
 
 static PixelBufferBase image = default!;
@@ -35,7 +35,7 @@ public static void Main()
 
 public static void Initialize()
 {
-    display = new SilkDisplay(640, 480, displayScale: 1f);
+    display = new Meadow.Foundation.Displays.Silk(640, 480, displayScale: 1f);
 
     graphics = new MicroGraphics(display)
     {
