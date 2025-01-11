@@ -1,4 +1,5 @@
-﻿using Meadow.Foundation.Graphics;
+﻿using Meadow.Foundation.Displays;
+using Meadow.Foundation.Graphics;
 using Meadow.Foundation.Graphics.Buffers;
 using Meadow.Peripherals.Displays;
 using SimpleJpegDecoder;
@@ -10,7 +11,7 @@ namespace SilkDisplay_Image_Sample;
 
 public class Program
 {
-    static Meadow.Foundation.Displays.SilkDisplay? display;
+    static SilkDisplay? display;
     static MicroGraphics graphics = default!;
 
     static PixelBufferBase image = default!;
@@ -25,7 +26,7 @@ public class Program
 
     public static void Initialize()
     {
-        display = new Meadow.Foundation.Displays.SilkDisplay(640, 480, displayScale: 1f);
+        display = new SilkDisplay(640, 480, displayScale: 1f);
 
         graphics = new MicroGraphics(display)
         {
