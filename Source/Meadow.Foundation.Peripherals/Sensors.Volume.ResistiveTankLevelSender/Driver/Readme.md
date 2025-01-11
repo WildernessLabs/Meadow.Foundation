@@ -1,8 +1,8 @@
-# Meadow.Foundation.Sensors.Temperature.Tmp102
+# Meadow.Foundation.Sensors.Volume.ResistiveTankLevelSender
 
 **A generic resistive tank level sending unit**
 
-The **ResistiveTankLevelSender** library is included in the **Meadow.Foundation.Sensors.Temperature.Tmp102** nuget package and is designed for the [Wilderness Labs](www.wildernesslabs.co) Meadow .NET IoT platform.
+The **ResistiveTankLevelSender** library is included in the **Meadow.Foundation.Sensors.Volume.ResistiveTankLevelSender** nuget package and is designed for the [Wilderness Labs](www.wildernesslabs.co) Meadow .NET IoT platform.
 
 This driver is part of the [Meadow.Foundation](https://developer.wildernesslabs.co/Meadow/Meadow.Foundation/) peripherals library, an open-source repository of drivers and libraries that streamline and simplify adding hardware to your C# .NET Meadow IoT applications.
 
@@ -14,7 +14,7 @@ To view all Wilderness Labs open-source projects, including samples, visit [gith
 
 You can install the library from within Visual studio using the the NuGet Package Manager or from the command line using the .NET CLI:
 
-`dotnet add package Meadow.Foundation.Sensors.Temperature.Tmp102`
+`dotnet add package Meadow.Foundation.Sensors.Volume.ResistiveTankLevelSender`
 ## Usage
 
 ```csharp
