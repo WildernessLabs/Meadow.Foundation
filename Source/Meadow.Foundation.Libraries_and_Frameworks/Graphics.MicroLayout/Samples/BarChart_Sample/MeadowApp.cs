@@ -77,6 +77,6 @@ public class MeadowApp : App<Desktop>
             sd.Run();
         }
         MeadowOS.TerminateRun();
-        System.Environment.Exit(0);
+        Environment.Exit(0);
     }
 }
