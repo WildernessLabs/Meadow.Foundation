@@ -126,6 +126,32 @@ public partial class Pca9685
         /// </summary>
         public void Start()
         {
+            if (DutyCycle >= 1.0)
+            {
+                // Special case for always ON - set bit 4 of ON_H register
+                if (Inverted)
+                {
+                    controller.SetPwm(portNumber, 0, 4096);  // This signals always-off
+                }
+                else
+                {
+                    controller.SetPwm(portNumber, 4096, 0);  // 4096 signals always-on
+                }
+            }
+            else if (DutyCycle <= 0)
+            {
+                // Special case for always OFF
+                if (Inverted)
+                {
+                    controller.SetPwm(portNumber, 4096, 0);  // This signals always-off
+                }
+                else
+                {
+                    controller.SetPwm(portNumber, 0, 4096);  // This signals always-off
+                }
+            }
+
+
             // DEV NOTE: according to the data sheetdiagrams (starting on page 17)
             //           You tell it at what "tick" to turn on (from the start) and what tick to turn off
             //           Since it's a repeated tick, we can just always turn on a 0 (start of the cycle)
