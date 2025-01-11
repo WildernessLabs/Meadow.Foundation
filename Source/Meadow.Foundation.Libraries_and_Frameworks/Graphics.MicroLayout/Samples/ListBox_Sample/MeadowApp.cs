@@ -1,5 +1,4 @@
 ﻿using Meadow;
-using Meadow.Foundation.Displays;
 using Meadow.Foundation.Graphics;
 using Meadow.Foundation.Graphics.MicroLayout;
 
@@ -52,7 +51,7 @@ public class MeadowApp : App<Desktop>
 
     private void ExecutePlatformDisplayRunner()
     {
-        if (Device.Display is Meadow.Foundation.Displays.Silk sd)
+        if (Device.Display is Meadow.Foundation.Displays.SilkDisplay sd)
         {
             sd.Run();
         }
