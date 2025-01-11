@@ -11,7 +11,7 @@ namespace Meadow.Foundation.Displays;
 /// <summary>
 /// Represents a pixel display using Silk.NET and OpenGL
 /// </summary>
-public class Silk : IResizablePixelDisplay, ITouchScreen
+public class SilkDisplay : IResizablePixelDisplay, ITouchScreen
 {
     private IWindow window = default!;
     private SkiaPixelBuffer pixelBuffer = default!;
@@ -64,7 +64,7 @@ public class Silk : IResizablePixelDisplay, ITouchScreen
     /// <param name="width">Width of display in pixels</param>
     /// <param name="height">Height of display in pixels</param>
     /// <param name="displayScale">The scale factor to visualize the display</param>
-    public Silk(int width = 800, int height = 600, float displayScale = 1.0f)
+    public SilkDisplay(int width = 800, int height = 600, float displayScale = 1.0f)
     {
         Initialize(width, height, displayScale);
     }
