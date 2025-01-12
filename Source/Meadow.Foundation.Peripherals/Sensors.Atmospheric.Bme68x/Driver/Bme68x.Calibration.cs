@@ -43,8 +43,6 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             public sbyte ResHeatVal { get; set; }
             public sbyte RangeSwErr { get; set; }
 
-
-
             public void LoadCalibrationDataFromSensor(IByteCommunications byteComms)
             {
                 // --- 1) Read the first calibration block (0x88..0xA1) ---
@@ -58,29 +56,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 byte[] calib2 = new byte[15];
                 byteComms.ReadRegister(0xE1, calib2);
 
-                //
-                // NOTE on Index Mapping:
-                //  - 'calib1[0]' corresponds to register 0x88
-                //  - 'calib1[1]' corresponds to register 0x89
-                //  - ...
-                //  - 'calib1[13]' corresponds to register 0x95, etc.
-                //
-                //  - 'calib2[0]' corresponds to register 0xE1
-                //  - 'calib2[1]' corresponds to register 0xE2
-                //  - ...
-                //  - 'calib2[14]' corresponds to register 0xEF
-                //
-                // The parameter layout below matches the official Bosch BME680 reference.
-
-                // ------------------------------------------------
-                // Parse Temperature Calibration: T2, T3, T1
-                // ------------------------------------------------
-                // T2 => registers 0x8A/0x8B => calib1[2]/[3], LSB then MSB
-                // T3 => register 0x8C       => calib1[4]
-                // T1 => registers 0x8E/0x8F => calib1[6]/[7], LSB then MSB
+                T1 = byteComms.ReadRegisterAsUShort(0xE9, ByteOrder.LittleEndian);
                 T2 = (short)((calib1[3] << 8) | calib1[2]);
-                T3 = (sbyte)calib1[4];
-                T1 = (ushort)((calib1[7] << 8) | calib1[6]);
+                T3 = calib1[4];
 
                 // ------------------------------------------------
                 // Parse Pressure Calibration: P1..P9, P10
@@ -103,8 +81,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 // ------------------------------------------------
                 // BME680 humidity regs are tricky because H1 & H2 share nibble fields
                 // across 0xE2/0xE3 (calib2[1]/[2]). Bosch’s ref code does bit manipulations:
-                //   H2 = ((calib2[1] & 0xFF) << 4) | (calib2[2] & 0x0F)
                 //   H1 = ((calib2[2] & 0xF0) << 0) | (calib2[3] & 0xFF)
+                //   H2 = ((calib2[1] & 0xFF) << 4) | (calib2[2] & 0x0F)
                 //   H3 = calib2[4], etc.
                 byte e1 = calib2[0]; // 0xE1
                 byte e2 = calib2[1]; // 0xE2
@@ -117,9 +95,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
                 // Combine nibbles for H2/H1
                 // (In many docs, H2 = bits from e2/e1, H1 = bits from e2/e3.  Implementation varies.)
-                H2 = (ushort)(((e2 << 4) | (e1 & 0x0F)) & 0x0FFF);
                 H1 = (ushort)(((e2 & 0xF0) << 4) | e3);
-
+                H2 = (ushort)(((e2 << 4) | (e1 & 0x0F)) & 0x0FFF);
                 H3 = (sbyte)e4;
                 H4 = (sbyte)e5;
                 H5 = (sbyte)e6;
@@ -127,8 +104,8 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 H7 = (sbyte)calib2[7];
 
                 // Gas calibration
-                GH2 = (short)((calib2[12] << 8) | calib2[11]);  // 0xEC/0xED
                 GH1 = (sbyte)calib2[13];                        // 0xEE
+                GH2 = (short)((calib2[12] << 8) | calib2[11]);  // 0xEC/0xED
                 GH3 = (sbyte)calib2[14];                        // 0xEF
             }
         }
