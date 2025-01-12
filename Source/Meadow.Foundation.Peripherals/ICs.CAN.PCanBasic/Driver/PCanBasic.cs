@@ -1,12 +1,12 @@
 ﻿using Meadow.Hardware;
 using Peak.Can.Basic.BackwardCompatibility;
 
-namespace ICs.IOExpanders.PCanBasic;
+namespace Meadow.Foundation.ICs.CAN;
 
 /// <summary>
 /// Represents a PCAN Basic 
 /// </summary>
-public class PCanBus : ICanBus
+public class PCanBasic : ICanBus
 {
     /// <inheritdoc/>
     public event EventHandler<ICanFrame>? FrameReceived;
@@ -18,7 +18,7 @@ public class PCanBus : ICanBus
 
     private PCanConfiguration configuration;
 
-    internal PCanBus(PCanConfiguration configuration)
+    internal PCanBasic(PCanConfiguration configuration)
     {
         var result = PCANBasic.Initialize(
             configuration.BusHandle,

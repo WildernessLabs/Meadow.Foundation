@@ -1,7 +1,7 @@
 ﻿using Meadow.Hardware;
 using Peak.Can.Basic.BackwardCompatibility;
 
-namespace ICs.IOExpanders.PCanBasic;
+namespace Meadow.Foundation.ICs.CAN;
 
 internal static class PCanExtensions
 {

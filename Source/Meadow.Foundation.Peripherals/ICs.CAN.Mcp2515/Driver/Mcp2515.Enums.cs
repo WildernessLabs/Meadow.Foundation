@@ -4,13 +4,32 @@ namespace Meadow.Foundation.ICs.CAN;
 
 public partial class Mcp2515
 {
+    /// <summary>
+    /// Represents the available CAN oscillator frequencies.
+    /// </summary>
     public enum CanOscillator
     {
+        /// <summary>
+        /// 8 MHz oscillator frequency.
+        /// </summary>
         Osc_8MHz = 8_000_000,
+
+        /// <summary>
+        /// 10 MHz oscillator frequency.
+        /// </summary>
         Osc_10MHz = 10_000_000,
+
+        /// <summary>
+        /// 16 MHz oscillator frequency.
+        /// </summary>
         Osc_16MHz = 16_000_000,
+
+        /// <summary>
+        /// 20 MHz oscillator frequency.
+        /// </summary>
         Osc_20MHz = 20_000_000,
     }
+
 
     private enum Register : byte
     {

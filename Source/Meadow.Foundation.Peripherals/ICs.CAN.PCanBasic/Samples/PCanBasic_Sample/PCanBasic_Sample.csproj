@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Driver\ICs.IOExpanders.PCanBasic.csproj" />
+    <ProjectReference Include="..\..\Driver\ICs.CAN.PCanBasic.csproj" />
   </ItemGroup>
 
 </Project>

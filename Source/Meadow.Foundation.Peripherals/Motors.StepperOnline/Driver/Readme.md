@@ -1,8 +1,8 @@
-# Meadow.Foundation.Sensors.Atmospheric.Bme68x
+# Meadow.Foundation.Motors.StepperOnline
 
-**Bosch BME68x SPI / I2C humidity, barometric pressure, ambient temperature and gas (VOC) sensor**
+**Drivers for motors and moto controllers from Stepper Online**
 
-The **Bme68x** library is included in the **Meadow.Foundation.Sensors.Atmospheric.Bme68x** nuget package and is designed for the [Wilderness Labs](www.wildernesslabs.co) Meadow .NET IoT platform.
+The **Motors.StepperOnline** library is included in the **Meadow.Foundation.Motors.StepperOnline** nuget package and is designed for the [Wilderness Labs](www.wildernesslabs.co) Meadow .NET IoT platform.
 
 This driver is part of the [Meadow.Foundation](https://developer.wildernesslabs.co/Meadow/Meadow.Foundation/) peripherals library, an open-source repository of drivers and libraries that streamline and simplify adding hardware to your C# .NET Meadow IoT applications.
 
@@ -14,105 +14,7 @@ To view all Wilderness Labs open-source projects, including samples, visit [gith
 
 You can install the library from within Visual studio using the the NuGet Package Manager or from the command line using the .NET CLI:
 
-`dotnet add package Meadow.Foundation.Sensors.Atmospheric.Bme68x`
-## Usage
-
-```csharp
-Bme680? sensor;
-
-public override Task Initialize()
-{
-    Resolver.Log.Info("Initializing...");
-
-    //CreateSpiSensor();
-    CreateI2CSensor();
-
-    //uncomment to enable on sensor heater for gas readings
-    //EnableGasHeater();
-
-    var consumer = Bme680.CreateObserver(
-        handler: result =>
-        {
-            Resolver.Log.Info($"Observer: Temp changed by threshold; new temp: {result.New.Temperature?.Celsius:N2}C, old: {result.Old?.Temperature?.Celsius:N2}C");
-        },
-        filter: result =>
-        {
-            if (result.Old?.Temperature is { } oldTemp &&
-                result.Old?.Humidity is { } oldHumidity &&
-                result.New.Temperature is { } newTemp &&
-                result.New.Humidity is { } newHumidity)
-            {
-                return ((newTemp - oldTemp).Abs().Celsius > 0.5 &&
-                        (newHumidity - oldHumidity).Percent > 0.05);
-            }
-            return false;
-        }
-    );
-
-    sensor?.Subscribe(consumer);
-
-    if (sensor != null)
-    {
-        sensor.Updated += (sender, result) =>
-        {
-            Resolver.Log.Info($"  Temperature: {result.New.Temperature?.Celsius:N2}C");
-            Resolver.Log.Info($"  Relative Humidity: {result.New.Humidity:N2}%");
-            Resolver.Log.Info($"  Pressure: {result.New.Pressure?.Millibar:N2}mbar ({result.New.Pressure?.Pascal:N2}Pa)");
-            if (sensor.GasConversionIsEnabled)
-            {
-                Resolver.Log.Info($"  Gas Resistance: {result.New.GasResistance:N0}Ohms");
-            }
-        };
-    }
-
-    sensor?.StartUpdating(TimeSpan.FromSeconds(2));
-
-    ReadConditions().Wait();
-
-    return base.Initialize();
-}
-
-void EnableGasHeater()
-{
-    if (sensor != null)
-    {
-        sensor.GasConversionIsEnabled = true;
-        sensor.HeaterIsEnabled = true;
-        sensor.ConfigureHeatingProfile(Bme688.HeaterProfileType.Profile1, new Meadow.Units.Temperature(300), TimeSpan.FromMilliseconds(100), new Meadow.Units.Temperature(22));
-        sensor.HeaterProfile = Bme688.HeaterProfileType.Profile1;
-    }
-}
-
-void CreateSpiSensor()
-{
-    Resolver.Log.Info("Create BME680 sensor with SPI...");
-
-    var spiBus = Device.CreateSpiBus();
-    sensor = new Bme680(spiBus, Device.CreateDigitalOutputPort(Device.Pins.D14));
-}
-
-void CreateI2CSensor()
-{
-    Resolver.Log.Info("Create BME680 sensor with I2C...");
-
-    var i2c = Device.CreateI2cBus();
-    sensor = new Bme680(i2c, (byte)Bme688.Addresses.Address_0x76);
-}
-
-async Task ReadConditions()
-{
-    if (sensor == null) { return; }
-
-    var (Temperature, Humidity, Pressure, Resistance) = await sensor.Read();
-
-    Resolver.Log.Info("Initial Readings:");
-    Resolver.Log.Info($"  Temperature: {Temperature?.Celsius:N2}C");
-    Resolver.Log.Info($"  Pressure: {Pressure?.Hectopascal:N2}hPa");
-    Resolver.Log.Info($"  Relative Humidity: {Humidity?.Percent:N2}%");
-    Resolver.Log.Info($"  Gas Resistance: {Resistance?.Ohms:N0}Ohms");
-}
-
-```
+`dotnet add package Meadow.Foundation.Motors.StepperOnline`
 ## How to Contribute
 
 - **Found a bug?** [Report an issue](https://github.com/WildernessLabs/Meadow_Issues/issues)

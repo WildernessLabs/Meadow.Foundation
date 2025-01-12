@@ -5,8 +5,14 @@ using System.Threading.Tasks;
 
 namespace Meadow.Foundation.MotorControllers.StepperOnline;
 
+/// <summary>
+/// Represents the BLD510B motor controller, a Modbus-controlled device.
+/// </summary>
 public class BLD510B : ModbusPolledDevice
 {
+    /// <summary>
+    /// Event triggered when the error conditions change.
+    /// </summary>
     public event EventHandler<ErrorConditions> ErrorConditionsChanged;
 
     private ErrorConditions _lastError;
@@ -22,6 +28,12 @@ public class BLD510B : ModbusPolledDevice
     /// </summary>
     public const int DefaultBaudRate = 9600;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BLD510B"/> class.
+    /// </summary>
+    /// <param name="client">The Modbus RTU client to communicate with the device.</param>
+    /// <param name="modbusAddress">The Modbus address of the device.</param>
+    /// <param name="refreshPeriod">The refresh period for polling the device.</param>
     public BLD510B(ModbusRtuClient client, byte modbusAddress = 0x01, TimeSpan? refreshPeriod = null)
         : base(client, modbusAddress, refreshPeriod)
     {
@@ -33,6 +45,10 @@ public class BLD510B : ModbusPolledDevice
             );
     }
 
+    /// <summary>
+    /// Gets the status of the start/stop terminal.
+    /// </summary>
+    /// <returns>A task that represents the asynchronous operation. The result contains a boolean indicating the terminal status.</returns>
     public async Task<bool> GetStartStopTerminal()
     {
         var r = await ReadHoldingRegisters(0x8000, 1);
@@ -40,6 +56,10 @@ public class BLD510B : ModbusPolledDevice
         return ((r[0] >> 8) & 1) != 0;
     }
 
+    /// <summary>
+    /// Sets the status of the start/stop terminal.
+    /// </summary>
+    /// <param name="startEnabled">True to enable start; otherwise, false.</param>
     public async Task SetStartStopTerminal(bool startEnabled)
     {
         var current = (int)(await ReadHoldingRegisters(0x8000, 1))[0];
@@ -54,12 +74,21 @@ public class BLD510B : ModbusPolledDevice
         await WriteHoldingRegister(0x8000, (ushort)current);
     }
 
+    /// <summary>
+    /// Gets the rotation direction from the direction terminal.
+    /// </summary>
+    /// <returns>A task that represents the asynchronous operation. The result contains the rotation direction.</returns>
+
     public async Task<RotationDirection> GetDirectionTerminal()
     {
         var r = await ReadHoldingRegisters(0x8000, 1);
         return ((r[0] >> 9) & 1) == 0 ? RotationDirection.Clockwise : RotationDirection.CounterClockwise;
     }
 
+    /// <summary>
+    /// Sets the rotation direction for the direction terminal.
+    /// </summary>
+    /// <param name="direction">The desired rotation direction.</param>
     public async Task SetDirectionTerminal(RotationDirection direction)
     {
         int current = ReadHoldingRegisters(0x8000, 1).Result[0];
