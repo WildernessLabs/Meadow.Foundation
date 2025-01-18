@@ -21,7 +21,7 @@ public static class Inputs
         }
 
         return new StreamReader(
-            Assembly.GetExecutingAssembly().GetManifestResourceStream(resName))
+            Assembly.GetExecutingAssembly().GetManifestResourceStream(resName)!)
             .ReadToEnd();
     }
 }

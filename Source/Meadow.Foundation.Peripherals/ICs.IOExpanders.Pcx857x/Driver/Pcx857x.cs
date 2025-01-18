@@ -286,7 +286,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <param name="state"><b>True</b> to set the pin state high, <b>False</b> to set it low</param>
         protected abstract void SetPinState(IPin pin, bool state);
 
-        void WriteUint16(ushort value)
+        private void WriteUint16(ushort value)
         {
             Span<byte> buffer = stackalloc byte[2];
             buffer[0] = (byte)value;
@@ -311,6 +311,12 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
                 port.Value.Update(state);
             }
+        }
+
+        /// <inheritdoc/>
+        public IDigitalSignalAnalyzer CreateDigitalSignalAnalyzer(IPin pin, bool captureDutyCycle)
+        {
+            return new SoftDigitalSignalAnalyzer(pin, captureDutyCycle: captureDutyCycle);
         }
 
         /// <summary>

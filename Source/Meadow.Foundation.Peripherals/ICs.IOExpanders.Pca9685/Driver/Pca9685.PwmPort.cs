@@ -15,8 +15,8 @@ public partial class Pca9685
         private readonly Pca9685 controller;
         private double dutyCycle;
         private readonly byte portNumber;
-        private readonly Frequency frequency;
-        private int onCount = 0;
+        private bool isRunning;
+        private bool inverted;
 
         /// <summary>
         /// Channel info
@@ -43,8 +43,8 @@ public partial class Pca9685
         /// </summary>
         public TimePeriod Period
         {
-            get => TimePeriod.FromSeconds(1 / frequency.Hertz);
-            set => Frequency = new Frequency(1 / value.Seconds, Units.Frequency.UnitType.Hertz);
+            get => TimePeriod.FromSeconds(1 / Frequency.Hertz);
+            set => throw new Exception("Frequency is set for the controller and cannot be changed per port");
         }
 
         /// <summary>
@@ -52,16 +52,14 @@ public partial class Pca9685
         /// </summary>
         public Units.Frequency Frequency
         {
-            get => frequency;
-            set
-            {
-            }
+            get => controller.Frequency;
+            set => throw new Exception("Frequency is set for the controller and cannot be changed per port");
         }
 
         /// <summary>
         /// State
         /// </summary>
-        public bool State => onCount > 0;
+        public bool State => isRunning;
 
         /// <summary>
         /// Pin
@@ -84,7 +82,19 @@ public partial class Pca9685
         /// <summary>
         /// Get or set inversion
         /// </summary>
-        public bool Inverted { get; set; }
+        public bool Inverted
+        {
+            get => inverted;
+            set
+            {
+                if (Inverted == value) return;
+                inverted = value;
+                if (isRunning)
+                {
+                    Start();
+                }
+            }
+        }
 
         /// <summary>
         /// Create new PwmPort
@@ -106,7 +116,6 @@ public partial class Pca9685
             this.Channel = (IPwmChannelInfo)pin.SupportedChannels.First(c => c is IPwmChannelInfo);
             this.dutyCycle = dutyCycle;
             this.portNumber = (byte)pin.Key;
-            this.frequency = frequency;
             this.Inverted = inverted;
 
             Stop();
@@ -117,24 +126,54 @@ public partial class Pca9685
         /// </summary>
         public void Start()
         {
-            // the 9685 PWM pulse is 4096 cycles long.  You must tell it how many to be on and off
-            var newOnCount = (int)(DutyCycle * 4096);
-            if (newOnCount == onCount)
+            if (DutyCycle >= 1.0)
             {
-                return;
+                // Special case for always ON - set bit 4 of ON_H register
+                if (Inverted)
+                {
+                    controller.SetPwm(portNumber, 0, 4096);  // This signals always-off
+                }
+                else
+                {
+                    controller.SetPwm(portNumber, 4096, 0);  // 4096 signals always-on
+                }
+            }
+            else if (DutyCycle <= 0)
+            {
+                // Special case for always OFF
+                if (Inverted)
+                {
+                    controller.SetPwm(portNumber, 4096, 0);  // This signals always-off
+                }
+                else
+                {
+                    controller.SetPwm(portNumber, 0, 4096);  // This signals always-off
+                }
             }
 
-            onCount = newOnCount;
-            var offCount = 4096 - onCount;
+
+            // DEV NOTE: according to the data sheetdiagrams (starting on page 17)
+            //           You tell it at what "tick" to turn on (from the start) and what tick to turn off
+            //           Since it's a repeated tick, we can just always turn on a 0 (start of the cycle)
+            //           and off at the end of the duty cycle.  There are 4096 (0-4095) "ticks"
+
+            var on = 0;
+            var off = (int)(4096d * DutyCycle);
+            if (Inverted)
+            {
+                off = 4095 - off;
+            }
 
             if (Inverted)
             {
-                controller.SetPwm(portNumber, onCount, offCount);
+                controller.SetPwm(portNumber, off, on);
             }
             else
             {
-                controller.SetPwm(portNumber, offCount, onCount);
+                controller.SetPwm(portNumber, on, off);
             }
+
+            isRunning = true;
         }
 
         /// <summary>
@@ -142,8 +181,8 @@ public partial class Pca9685
         /// </summary>
         public void Stop()
         {
-            onCount = 0;
-            controller.SetPwm(portNumber, onCount, 4096);
+            controller.SetPwm(portNumber, 4096, 4096);
+            isRunning = false;
         }
 
         /// <summary>

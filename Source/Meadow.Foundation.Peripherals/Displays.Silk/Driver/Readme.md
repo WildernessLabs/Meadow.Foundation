@@ -43,7 +43,7 @@ public static void Initialize()
         Stroke = 1
     };
 
-    image = LoadJpeg() as PixelBufferBase;
+    image = (PixelBufferBase)LoadJpeg();
 }
 
 public static void Run()
@@ -85,9 +85,9 @@ static byte[] LoadResource(string filename)
     var assembly = Assembly.GetExecutingAssembly();
     var resourceName = $"Silk_Image_Sample.{filename}";
 
-    using Stream stream = assembly.GetManifestResourceStream(resourceName);
+    using var stream = assembly.GetManifestResourceStream(resourceName);
     using var ms = new MemoryStream();
-    stream.CopyTo(ms);
+    stream?.CopyTo(ms);
     return ms.ToArray();
 }
 }

@@ -11,7 +11,7 @@ namespace Meadow.Foundation.Displays
     /// Base class for TFT SPI displays
     /// These displays typically support 16 and 18 bit, some also include 8, 9, 12 and/or 24 bit color 
     /// </summary>
-    public abstract partial class TftSpiBase : IPixelDisplay, ISpiPeripheral, IDisposable
+    public abstract partial class TftSpiBase : IPixelDisplay, IColorInvertableDisplay, ISpiPeripheral, IDisposable
     {
         /// <summary>
         /// Temporary buffer that can be used to batch set address window buffer commands
@@ -33,6 +33,9 @@ namespace Meadow.Foundation.Displays
         /// The display default color mode
         /// </summary>
         public abstract ColorMode DefaultColorMode { get; }
+
+        /// <inheritdoc/>
+        public bool IsColorInverted { get; protected set; } = false;
 
         /// <inheritdoc/>
         public int Width => imageBuffer.Width;
@@ -471,13 +474,11 @@ namespace Meadow.Foundation.Displays
             }
         }
 
-        /// <summary>
-        /// Set the display inversion
-        /// </summary>
-        /// <param name="inverted">True to invert the display, false otherwise</param>
-        public virtual void InvertDisplay(bool inverted)
+        /// <inheritdoc/>
+        public virtual void InvertDisplayColor(bool invert)
         {
-            SendCommand(inverted ? Register.INVON : Register.INVOFF);
+            SendCommand(invert ? Register.INVON : Register.INVOFF);
+            IsColorInverted = invert;
         }
 
         /// <summary>
@@ -532,6 +533,11 @@ namespace Meadow.Foundation.Displays
         /// <param name="command">The command to send as a byte</param>
         protected void SendCommand(byte command)
         {
+            if (dataCommandPort == null)
+            {
+                throw new InvalidOperationException("Data command port is not configured.");
+            }
+
             dataCommandPort.State = Command;
             Write(command);
         }

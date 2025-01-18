@@ -28,7 +28,7 @@ public abstract partial class SerialWombatBase
             SerialWombatBase controller,
             IPin pin,
             IPwmChannelInfo channel)
-            : base(pin, channel, DefaultFrequency)
+            : base(pin, channel)
         {
             Resolver.Log.Info($"+pwmPort: {channel}");
             _controller = controller;

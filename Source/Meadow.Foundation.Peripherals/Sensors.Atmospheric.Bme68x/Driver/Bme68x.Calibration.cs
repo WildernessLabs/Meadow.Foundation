@@ -34,9 +34,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
 
             //Gas heater calibration
-            public sbyte Gh1 { get; set; }
-            public short Gh2 { get; set; }
-            public sbyte Gh3 { get; set; }
+            public sbyte GH1 { get; set; }
+            public short GH2 { get; set; }
+            public sbyte GH3 { get; set; }
 
 
             public byte ResHeatRange { get; set; }
@@ -45,41 +45,68 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
             public void LoadCalibrationDataFromSensor(IByteCommunications byteComms)
             {
-                // Read temperature calibration data.
-                T1 = byteComms.ReadRegisterAsUShort((byte)Registers.T1);
-                T2 = (short)byteComms.ReadRegisterAsUShort((byte)Registers.T2);
-                T3 = byteComms.ReadRegister((byte)Registers.T3);
+                // --- 1) Read the first calibration block (0x88..0xA1) ---
+                //     That’s 0xA1 - 0x88 + 1 = 0x1A = 26 bytes total.
+                byte[] calib1 = new byte[26];
+                byteComms.ReadRegister(0x88, calib1);
 
-                // Read humidity calibration data.
-                H1 = (ushort)((byteComms.ReadRegister((byte)Registers.H1_MSB) << 4) | (byteComms.ReadRegister((byte)Registers.H1_LSB) & 0x0F));
-                H2 = (ushort)((byteComms.ReadRegister((byte)Registers.H2_MSB) << 4) | (byteComms.ReadRegister((byte)Registers.H2_LSB) >> 4));
-                H3 = (sbyte)byteComms.ReadRegister((byte)Registers.H3);
-                H4 = (sbyte)byteComms.ReadRegister((byte)Registers.H4);
-                H5 = (sbyte)byteComms.ReadRegister((byte)Registers.H5);
-                H6 = byteComms.ReadRegister((byte)Registers.H6);
-                H7 = (sbyte)(byteComms.ReadRegister((byte)Registers.H7));
+                // --- 2) Read the second calibration block (0xE1..0xEF) ---
+                //     That’s 0xEF - 0xE1 + 1 = 0x0F = 15 bytes total.
+                //     Some libraries read 16 bytes (0xE1..0xF0); you can do that as well.
+                byte[] calib2 = new byte[15];
+                byteComms.ReadRegister(0xE1, calib2);
 
-                // Read pressure calibration data.
-                P1 = byteComms.ReadRegisterAsUShort((byte)Registers.P1_LSB);
-                P2 = (short)byteComms.ReadRegisterAsUShort((byte)Registers.P2_LSB);
-                P3 = byteComms.ReadRegister((byte)Registers.P3);
-                P4 = (short)byteComms.ReadRegisterAsUShort((byte)Registers.P4_LSB);
-                P5 = (short)byteComms.ReadRegisterAsUShort((byte)Registers.P5_LSB);
-                P6 = byteComms.ReadRegister((byte)Registers.P6);
-                P7 = byteComms.ReadRegister((byte)Registers.P7);
-                P8 = (short)byteComms.ReadRegisterAsUShort((byte)Registers.P8_LSB);
-                P9 = (short)byteComms.ReadRegisterAsUShort((byte)Registers.P9_LSB);
-                P10 = byteComms.ReadRegister((byte)Registers.P10);
+                T1 = byteComms.ReadRegisterAsUShort(0xE9, ByteOrder.LittleEndian);
+                T2 = (short)((calib1[3] << 8) | calib1[2]);
+                T3 = calib1[4];
 
-                // read gas calibration data.
-                Gh1 = (sbyte)byteComms.ReadRegister((byte)Registers.GH1);
-                Gh2 = (short)byteComms.ReadRegisterAsUShort((byte)Registers.GH2);
-                Gh3 = (sbyte)byteComms.ReadRegister((byte)Registers.GH3);
+                // ------------------------------------------------
+                // Parse Pressure Calibration: P1..P9, P10
+                // ------------------------------------------------
+                // P1 => registers 0x8E/0x8F => note overlap with T1, but per Bosch doc:
+                //        some references show T1 in 0x8A..0x8B instead.
+                P1 = (ushort)((calib1[9] << 8) | calib1[8]);
+                P2 = (short)((calib1[11] << 8) | calib1[10]);
+                P3 = (short)calib1[12];
+                P4 = (short)((calib1[14] << 8) | calib1[13]);
+                P5 = (short)((calib1[16] << 8) | calib1[15]);
+                P6 = (short)calib1[17];
+                P7 = (short)calib1[18];
+                P8 = (short)((calib1[20] << 8) | calib1[19]);
+                P9 = (short)((calib1[22] << 8) | calib1[21]);
+                P10 = calib1[23];
 
-                // read heater calibration data
-                ResHeatRange = (byte)(byteComms.ReadRegister(((byte)Registers.RES_HEAT_RANGE) & 0x30) >> 4);
-                RangeSwErr = (sbyte)(byteComms.ReadRegister(((byte)Registers.RANGE_SW_ERR) & 0xF0) >> 4);
-                ResHeatVal = (sbyte)byteComms.ReadRegister((byte)Registers.RES_HEAT_VAL);
+                // ------------------------------------------------
+                // Parse Humidity Calibration: H1..H7
+                // ------------------------------------------------
+                // BME680 humidity regs are tricky because H1 & H2 share nibble fields
+                // across 0xE2/0xE3 (calib2[1]/[2]). Bosch’s ref code does bit manipulations:
+                //   H1 = ((calib2[2] & 0xF0) << 0) | (calib2[3] & 0xFF)
+                //   H2 = ((calib2[1] & 0xFF) << 4) | (calib2[2] & 0x0F)
+                //   H3 = calib2[4], etc.
+                byte e1 = calib2[0]; // 0xE1
+                byte e2 = calib2[1]; // 0xE2
+                byte e3 = calib2[2]; // 0xE3
+                byte e4 = calib2[3]; // 0xE4
+                byte e5 = calib2[4];
+                byte e6 = calib2[5];
+                byte e7 = calib2[6];
+                // etc. if needed up to calib2[14]
+
+                // Combine nibbles for H2/H1
+                // (In many docs, H2 = bits from e2/e1, H1 = bits from e2/e3.  Implementation varies.)
+                H1 = (ushort)(((e2 & 0xF0) << 4) | e3);
+                H2 = (ushort)(((e2 << 4) | (e1 & 0x0F)) & 0x0FFF);
+                H3 = (sbyte)e4;
+                H4 = (sbyte)e5;
+                H5 = (sbyte)e6;
+                H6 = e7;          // (byte)e7
+                H7 = (sbyte)calib2[7];
+
+                // Gas calibration
+                GH1 = (sbyte)calib2[13];                        // 0xEE
+                GH2 = (short)((calib2[12] << 8) | calib2[11]);  // 0xEC/0xED
+                GH3 = (sbyte)calib2[14];                        // 0xEF
             }
         }
     }

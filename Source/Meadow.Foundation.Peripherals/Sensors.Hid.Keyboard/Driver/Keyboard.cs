@@ -166,4 +166,10 @@ public partial class Keyboard : IDigitalInterruptController, IDigitalOutputContr
 
         return new KeyboardIndicator(pin, ci, initialState ? true : null);
     }
+
+    /// <inheritdoc/>
+    public IDigitalSignalAnalyzer CreateDigitalSignalAnalyzer(IPin pin, bool captureDutyCycle)
+    {
+        return new SoftDigitalSignalAnalyzer(pin, captureDutyCycle: captureDutyCycle);
+    }
 }

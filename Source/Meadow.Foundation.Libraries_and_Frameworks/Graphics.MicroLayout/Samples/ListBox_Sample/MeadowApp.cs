@@ -13,7 +13,7 @@ public class MeadowApp : App<Desktop>
     {
         var labelFont = new Font16x24();
 
-        screen = new DisplayScreen(Device.Display)
+        screen = new DisplayScreen(Device.Display!)
         {
             BackgroundColor = Color.Cyan
         };

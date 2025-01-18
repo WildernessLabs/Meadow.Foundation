@@ -12,7 +12,7 @@
     <LangVersion>8.0</LangVersion>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.F7" Version="1.12.8" />
-    <PackageReference Include="Meadow.Foundation.Sensors.Motion.Mpu6050" Version="1.12.8" />
+    <PackageReference Include="Meadow.F7" Version="2.0.1.2" />
+    <PackageReference Include="Meadow.Foundation.Sensors.Motion.Mpu6050" Version="2.0.1.2" />
   </ItemGroup>
 </Project>

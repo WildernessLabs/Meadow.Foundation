@@ -18,7 +18,7 @@ namespace Meadow.Foundation.Sensors.Gnss
 
         private CancellationTokenSource? cancellationTokenSource = null;
 
-        private NmeaSentenceProcessor nmeaProcessor;
+        private NmeaSentenceProcessor? nmeaProcessor;
 
         private IGnssResult[] _supportedResultTypes = new IGnssResult[]
         {
@@ -149,13 +149,13 @@ namespace Meadow.Foundation.Sensors.Gnss
             {
                 while (!cancellationTokenSource.Token.IsCancellationRequested)
                 {
-                    var gnssAtCmdsOutput = _cellAdapter.FetchGnssAtCmdsOutput(_supportedResultTypes);
+                    var gnssAtCmdsOutput = _cellAdapter!.FetchGnssAtCmdsOutput(_supportedResultTypes);
 
                     string[] sentences = gnssAtCmdsOutput.Split(new char[] { '\n', ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
                     foreach (string sentence in sentences)
                     {
-                        nmeaProcessor.ProcessNmeaMessage(sentence);
+                        nmeaProcessor?.ProcessNmeaMessage(sentence);
                     }
 
                     await Task.Delay(_updatePeriod);

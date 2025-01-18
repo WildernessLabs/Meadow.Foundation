@@ -25,6 +25,9 @@ public class ScrollingTextArea : MicroLayout
     /// </summary>
     public Color DefaultRowColor { get; set; }
 
+    /// <summary>
+    /// Creates a new ScrollingTextArea
+    /// </summary>
     public ScrollingTextArea(int left, int top, int width, int height, IFont font)
         : base(left, top, width, height)
     {

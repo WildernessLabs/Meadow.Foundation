@@ -23,8 +23,8 @@ public partial class Sc16is7x2
         private StopBits _stopBits;
 
         /// <inheritdoc/>
-        public int BytesToRead => (_irqReadBuffer == null) 
-            ? _controller.GetReadFifoCount(_channel) 
+        public int BytesToRead => (_irqReadBuffer == null)
+            ? _controller.GetReadFifoCount(_channel)
             : _controller.GetReadFifoCount(_channel) + _irqReadBuffer.Count;
 
         /// <inheritdoc/>
@@ -49,7 +49,7 @@ public partial class Sc16is7x2
         private readonly Channels _channel;
         private readonly IDigitalInterruptPort? _irq;
 
-        private readonly FifoBuffer? _irqReadBuffer;
+        private readonly CircularBuffer<byte>? _irqReadBuffer;
 
         /// <summary>
         /// This method is never called directly from user code.
@@ -81,7 +81,7 @@ public partial class Sc16is7x2
             {
                 // Setting up IRQ read with a large software FIFO buffer to offload the hardware FIFO of only 64 bytes.
                 _irq = irq;
-                _irqReadBuffer = new FifoBuffer(readBufferSize);
+                _irqReadBuffer = new CircularBuffer<byte>(readBufferSize);
                 _controller.EnableReceiveInterrupts(_channel);
                 _irq.Changed += OnInterruptLineChanged;
             }
@@ -112,9 +112,9 @@ public partial class Sc16is7x2
                     this.DataReceived?.Invoke(this, new SerialDataReceivedEventArgs(SerialDataType.Chars));
             }
             else
-            { 
+            {
                 // If this is IRQ reading, shortcut the user callback. Empty FIFO ASAP.
-                ReadAllIrqFifo();              
+                ReadAllIrqFifo();
                 if (_irqReadBuffer.Count > 0)
                     this.DataReceived?.Invoke(this, new SerialDataReceivedEventArgs(SerialDataType.Chars));
             }
@@ -186,14 +186,15 @@ public partial class Sc16is7x2
             while (count > 0)
             {
                 for (int i = 0; i < count; i++)
-                    _irqReadBuffer.Write((byte)_controller.ReadByte(_channel));
+                    _irqReadBuffer.Append(_controller.ReadByte(_channel));
                 totalRead += count;
                 count = _controller.GetReadFifoCount(_channel);     // Check that we're all done. To make sure IRQ is reset.
 
                 byte lsr = _controller.ReadChannelRegister(Registers.LSR, _channel);
                 if ((lsr & RegisterBits.LSR_OVERRUN_ERROR) > 0)
                 {
-                    _irqReadBuffer.WriteString("[BUFFER OVERRUN]");     // Not sure to keep this, but nice when debugging.
+                    Resolver.Log.Warn("[BUFFER OVERRUN]", this.GetType().Name);
+                    //_irqReadBuffer.WriteString("[BUFFER OVERRUN]");     // Not sure to keep this, but nice when debugging.
                     BufferOverrun?.Invoke(this, EventArgs.Empty);
                 }
             }
@@ -225,7 +226,7 @@ public partial class Sc16is7x2
                 if (_irqReadBuffer.Count == 0)
                     return -1;
                 else
-                    return _irqReadBuffer.Read();
+                    return _irqReadBuffer.Remove();
             }
         }
 
@@ -294,7 +295,7 @@ public partial class Sc16is7x2
                 var toRead = _irqReadBuffer.Count <= count ? _irqReadBuffer.Count : count;
                 for (var i = 0; i < toRead; i++)
                 {
-                    buffer[i + offset] = _irqReadBuffer.Read();
+                    buffer[i + offset] = _irqReadBuffer.Remove();
                 }
                 return toRead;
             }
@@ -319,7 +320,7 @@ public partial class Sc16is7x2
                 var buffer = new byte[available];
                 for (int i = 0; i < available; i++)
                 {
-                    buffer[i] = _irqReadBuffer.Read();
+                    buffer[i] = _irqReadBuffer.Remove();
                 }
                 return buffer;
             }

@@ -2,33 +2,33 @@
 
 public class WeatherReadingDTOCamelCase
 {
-    public Coordinates Coord { get; set; }
-    public Weather[] Weather { get; set; }
-    public WeatherValues Main { get; set; }
+    public Coordinates Coord { get; set; } = default!;
+    public Weather[] Weather { get; set; } = default!;
+    public WeatherValues Main { get; set; } = default!;
     public int Visibility { get; set; }
-    public Wind Wind { get; set; }
-    public Clouds Clouds { get; set; }
+    public Wind Wind { get; set; } = default!;
+    public Clouds Clouds { get; set; } = default!;
     public int Dt { get; set; }
-    public System Sys { get; set; }
+    public System Sys { get; set; } = default!;
     public long Timezone { get; set; }
     public int Id { get; set; }
-    public string Name { get; set; }
+    public string Name { get; set; } = default!;
     public int Cod { get; set; }
 }
 
 public class WeatherReadingDTO
 {
-    public Coordinates coord { get; set; }
-    public Weather[] weather { get; set; }
-    public WeatherValues main { get; set; }
-    public int visibility { get; set; }
-    public Wind wind { get; set; }
-    public Clouds clouds { get; set; }
+    public Coordinates coord { get; set; } = default!;
+    public Weather[] weather { get; set; } = default!;
+    public WeatherValues main { get; set; } = default!;
+    public int visibility { get; set; } = default!;
+    public Wind wind { get; set; } = default!;
+    public Clouds clouds { get; set; } = default!;
     public int dt { get; set; }
-    public System sys { get; set; }
+    public System sys { get; set; } = default!;
     public long timezone { get; set; }
     public int id { get; set; }
-    public string name { get; set; }
+    public string name { get; set; } = default!;
     public int cod { get; set; }
 }
 
@@ -41,9 +41,9 @@ public class Coordinates
 public class Weather
 {
     public int id { get; set; }
-    public string nain { get; set; }
-    public string description { get; set; }
-    public string icon { get; set; }
+    public string nain { get; set; } = default!;
+    public string description { get; set; } = default!;
+    public string icon { get; set; } = default!;
 }
 
 public class WeatherValues
@@ -72,7 +72,7 @@ public class System
 {
     public int Type { get; set; }
     public int Id { get; set; }
-    public string country { get; set; }
+    public string country { get; set; } = default!;
     public long sunrise { get; set; }
     public long sunset { get; set; }
 }

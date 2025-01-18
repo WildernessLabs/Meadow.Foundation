@@ -6,11 +6,16 @@
 public class Box : ThemedControl
 {
     private Color _foreColor;
+    private bool _isFilled = true;
 
     /// <summary>
     /// Gets or sets a value indicating whether the display box is filled with the foreground color.
     /// </summary>
-    public bool IsFilled { get; set; } = true;
+    public bool IsFilled
+    {
+        get => _isFilled;
+        set => SetInvalidatingProperty(ref _isFilled, value);
+    }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Box"/> class with the specified dimensions.

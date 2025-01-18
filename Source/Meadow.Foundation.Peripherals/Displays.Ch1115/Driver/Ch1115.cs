@@ -10,7 +10,7 @@ namespace Meadow.Foundation.Displays
     /// <summary>
     /// Provide an interface to the Ch1115 family of displays
     /// </summary>
-    public partial class Ch1115 : IPixelDisplay, ISpiPeripheral, IDisposable
+    public partial class Ch1115 : IPixelDisplay, IColorInvertableDisplay, ISpiPeripheral, IDisposable
     {
         /// <inheritdoc/>
         public ColorMode ColorMode => ColorMode.Format1bpp;
@@ -54,6 +54,9 @@ namespace Meadow.Foundation.Displays
             get => spiComms.BusMode;
             set => spiComms.BusMode = value;
         }
+
+        /// <inheritdoc/>
+        public bool IsColorInverted { get; private set; } = false;
 
         /// <summary>
         /// Is the object disposed
@@ -124,7 +127,7 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// Invert the entire display (true) or return to normal mode (false).
         /// </summary>
-        public void InvertDisplay(bool invert)
+        public void InvertDisplayColor(bool invert)
         {
             if (invert)
             {
@@ -134,6 +137,7 @@ namespace Meadow.Foundation.Displays
             {
                 SendCommand(DisplayCommand.DisplayVideoNormal);
             }
+            IsColorInverted = invert;
         }
 
         /// <summary>

@@ -1,5 +1,6 @@
 ﻿using Meadow.Hardware;
 using Meadow.Peripherals.Sensors;
+using Meadow.Peripherals.Sensors.Color;
 using Meadow.Peripherals.Sensors.Light;
 using Meadow.Units;
 using System;
@@ -11,10 +12,11 @@ namespace Meadow.Foundation.Sensors.Light
     /// Represents a BH1745 Luminance and Color Sensor
     /// </summary>
     public partial class Bh1745
-        : ByteCommsSensorBase<(Illuminance? AmbientLight, Color? Color, bool Valid)>,
-        ILightSensor, II2cPeripheral
+        : ByteCommsSensorBase<(Illuminance? AmbientLight, Color? Color)>,
+        ILightSensor, IColorSensor, II2cPeripheral
     {
         private event EventHandler<IChangeResult<Illuminance>> _lightHandlers = default!;
+        private event EventHandler<IChangeResult<Color>> _colorHandlers = default!;
 
         event EventHandler<IChangeResult<Illuminance>> ISamplingSensor<Illuminance>.Updated
         {
@@ -22,10 +24,21 @@ namespace Meadow.Foundation.Sensors.Light
             remove => _lightHandlers -= value;
         }
 
+        event EventHandler<IChangeResult<Color>> ISamplingSensor<Color>.Updated
+        {
+            add => _colorHandlers += value;
+            remove => _colorHandlers -= value;
+        }
+
         /// <summary>
         /// The current Illuminance value
         /// </summary>
         public Illuminance? Illuminance => Conditions.AmbientLight;
+
+        /// <summary>
+        /// The current color value
+        /// </summary>
+        public Color? Color => Conditions.Color;
 
         /// <summary>
         /// Interrupt reset status
@@ -260,14 +273,21 @@ namespace Meadow.Foundation.Sensors.Light
         /// Reads data from the sensor
         /// </summary>
         /// <returns>The latest sensor reading</returns>
-        protected override Task<(Illuminance? AmbientLight, Color? Color, bool Valid)> ReadSensor()
+        protected override Task<(Illuminance? AmbientLight, Color? Color)> ReadSensor()
         {
-            (Illuminance? AmbientLight, Color? Color, bool Valid) conditions;
+            (Illuminance? AmbientLight, Color? Color) conditions;
 
             // get the ambient light
             var clearData = ReadClearDataRegister();
 
-            if (clearData == 0) { conditions.Color = Color.Black; }
+            if (clearData == 0) { conditions.Color = Meadow.Color.Black; }
+
+            if (ReadMeasurementIsValid() == false)
+            {
+                conditions.AmbientLight = null;
+                conditions.Color = null;
+                return Task.FromResult(conditions);
+            }
 
             // apply channel multipliers and normalize
             double compensatedRed = ReadRedDataRegister() * CompensationMultipliers.Red / (int)MeasurementTime * 360;
@@ -280,11 +300,9 @@ namespace Meadow.Foundation.Sensors.Light
             int green = (int)Math.Min(255, compensatedGreen / compensatedClear * 255);
             int blue = (int)Math.Min(255, compensatedBlue / compensatedClear * 255);
 
-            conditions.Color = Color.FromRgb(red, green, blue);
+            conditions.Color = Meadow.Color.FromRgb(red, green, blue);
 
             conditions.AmbientLight = new Illuminance(compensatedClear, Units.Illuminance.UnitType.Lux);
-
-            conditions.Valid = ReadMeasurementIsValid();
 
             return Task.FromResult(conditions);
         }
@@ -293,7 +311,7 @@ namespace Meadow.Foundation.Sensors.Light
         /// Raise events for subscribers and notify of value changes
         /// </summary>
         /// <param name="changeResult">The updated sensor data</param>
-        protected override void RaiseEventsAndNotify(IChangeResult<(Illuminance? AmbientLight, Color? Color, bool Valid)> changeResult)
+        protected override void RaiseEventsAndNotify(IChangeResult<(Illuminance? AmbientLight, Color? Color)> changeResult)
         {
             if (changeResult.New.AmbientLight is { } ambient)
             {
@@ -369,5 +387,8 @@ namespace Meadow.Foundation.Sensors.Light
 
         async Task<Illuminance> ISensor<Illuminance>.Read()
             => (await Read()).AmbientLight!.Value;
+
+        async Task<Color> ISensor<Color>.Read()
+    => (await Read()).Color!.Value;
     }
 }
