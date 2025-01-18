@@ -473,14 +473,14 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 //read temperature
                 byte[] data = new byte[3];
                 busComms.ReadRegister((byte)Registers.TEMPDATA, data);
-                var rawTemperature = (data[0] << 12) | (data[1] << 4) | ((data[2] >> 4) & 0x0);
+                var rawTemperature = (data[0] << 12) | (data[1] << 4) | (data[2] >> 4);
 
                 //read humidity
                 var rawHumidity = busComms.ReadRegisterAsUShort((byte)Registers.HUMIDITYDATA, ByteOrder.BigEndian);
 
                 //read pressure
                 busComms.ReadRegister((byte)Registers.PRESSUREDATA, data);
-                var rawPressure = (data[0] << 12) | (data[1] << 4) | ((data[2] >> 4) & 0x0);
+                var rawPressure = (data[0] << 12) | (data[1] << 4) | (data[2] >> 4);
 
                 if (GasConversionIsEnabled)
                 {
@@ -607,9 +607,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 temp = 400;
             }
 
-            var var1 = calibration.Gh1 / 16.0 + 49.0;
-            var var2 = calibration.Gh2 / 32768.0 * 0.0005 + 0.00235;
-            var var3 = calibration.Gh3 / 1024.0;
+            var var1 = calibration.GH1 / 16.0 + 49.0;
+            var var2 = calibration.GH2 / 32768.0 * 0.0005 + 0.00235;
+            var var3 = calibration.GH3 / 1024.0;
             var var4 = var1 * (1.0 + var2 * temp);
             var var5 = var4 + var3 * ambientTemp.Celsius;
             var heaterResistance = (byte)(3.4 * (var5 * (4.0 / (4.0 + calibration.ResHeatRange)) * (1.0 / (1.0 + calibration.ResHeatVal * 0.002)) - 25));

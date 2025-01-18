@@ -9,7 +9,7 @@ namespace Meadow.Foundation.Displays
     /// <summary>
     /// Represents the SSD130x family of OLED displays
     /// </summary>
-    public abstract partial class Ssd130xBase : IPixelDisplay, ISpiPeripheral, II2cPeripheral, IDisposable
+    public abstract partial class Ssd130xBase : IPixelDisplay, IColorInvertableDisplay, ISpiPeripheral, II2cPeripheral, IDisposable
     {
         /// <inheritdoc/>
         public ColorMode ColorMode => ColorMode.Format1bpp;
@@ -139,25 +139,8 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         protected byte[]? showPreamble;
 
-        /// <summary>
-        /// Invert the entire display (true) or return to normal mode (false)
-        /// </summary>
-        /// <remarks>
-        /// See section 10.1.10 in the datasheet.
-        /// </remarks>
-        public bool InvertDisplay
-        {
-            get => invertDisplay;
-            set
-            {
-                invertDisplay = value;
-                SendCommand((byte)(value ? 0xa7 : 0xa6));
-            }
-        }
-        /// <summary>
-        /// Backing variable for the InvertDisplay property
-        /// </summary>
-        private bool invertDisplay;
+        /// <inheritdoc/>
+        public bool IsColorInverted { get; private set; } = false;
 
         /// <summary>
         /// Get / Set the contrast of the display
@@ -165,7 +148,6 @@ namespace Meadow.Foundation.Displays
         public byte Contrast
         {
             get => contrast;
-
             set
             {
                 contrast = value;
@@ -422,6 +404,13 @@ namespace Meadow.Foundation.Displays
         public virtual void WriteBuffer(int x, int y, IPixelBuffer displayBuffer)
         {
             imageBuffer.WriteBuffer(x, y, displayBuffer);
+        }
+
+        /// <inheritdoc/>
+        public void InvertDisplayColor(bool invert)
+        {
+            IsColorInverted = invert;
+            SendCommand((byte)(invert ? 0xa7 : 0xa6));
         }
 
         ///<inheritdoc/>

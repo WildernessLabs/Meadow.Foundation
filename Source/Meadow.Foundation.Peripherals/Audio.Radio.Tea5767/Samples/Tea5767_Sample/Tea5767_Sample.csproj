@@ -9,9 +9,9 @@
     <AssemblyName>App</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.F7" Version="1.12.8" />
+    <PackageReference Include="Meadow.F7" Version="2.0.1" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.Foundation.Audio.Radio.Tea5767" Version="1.12.8" />
+    <PackageReference Include="Meadow.Foundation.Audio.Radio.Tea5767" Version="2.0.1" />
   </ItemGroup>
 </Project>

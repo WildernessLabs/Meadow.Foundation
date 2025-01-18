@@ -76,4 +76,14 @@ public class PushButton : PushButtonBase
     {
         UpdateEvents(GetNormalizedState(result.New.State));
     }
+
+    /// <inheritdoc/>
+    protected override bool GetNormalizedState(bool state)
+    {
+        return DigitalIn.Resistor switch
+        {
+            ResistorMode.ExternalPullUp or ResistorMode.InternalPullUp => !state,
+            _ => state,
+        };
+    }
 }

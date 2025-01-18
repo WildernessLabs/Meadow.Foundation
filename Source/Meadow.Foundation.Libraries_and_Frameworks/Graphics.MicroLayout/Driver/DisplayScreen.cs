@@ -62,8 +62,8 @@ public class DisplayScreen : IControlContainer
 
         if (TouchScreen != null)
         {
-            TouchScreen.TouchDown += _touchScreen_TouchDown;
-            TouchScreen.TouchUp += _touchScreen_TouchUp;
+            TouchScreen.TouchDown += OnTouchDown;
+            TouchScreen.TouchUp += OnTouchUp;
         }
 
         if (theme?.Font != null)
@@ -97,7 +97,7 @@ public class DisplayScreen : IControlContainer
         }
     }
 
-    private void _touchScreen_TouchUp(ITouchScreen source, TouchPoint point)
+    private void OnTouchUp(ITouchScreen source, TouchPoint point)
     {
         bool LookForUnclick(ControlsCollection controls)
         {
@@ -128,7 +128,7 @@ public class DisplayScreen : IControlContainer
         }
     }
 
-    private void _touchScreen_TouchDown(ITouchScreen source, TouchPoint point)
+    private void OnTouchDown(ITouchScreen source, TouchPoint point)
     {
         bool LookForClick(ControlsCollection controls)
         {

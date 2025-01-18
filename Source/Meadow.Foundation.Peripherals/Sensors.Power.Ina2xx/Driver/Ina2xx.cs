@@ -99,7 +99,6 @@ public abstract partial class Ina2xx
         BusComms.WriteRegister(ConfigRegister, ResetIna2xx, ByteOrder.BigEndian);
     }
 
-    #region Sensor Values and Events
     /// <summary>
     /// The value of the current (in Amps) flowing through the shunt resistor from the last reading.
     /// </summary>
@@ -165,7 +164,6 @@ public abstract partial class Ina2xx
 
     /// <summary> Read the Power measurement from the power monitor IC. </summary>
     public abstract Units.Power ReadPower();
-    #endregion
 
     /// <summary> The manufacturer identification, if supported. Otherwise returns an empty string. </summary>
     public string ManufacturerID { get; internal set; } = string.Empty;

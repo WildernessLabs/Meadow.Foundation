@@ -147,7 +147,6 @@ public class Ina219 : Ina2xx
         DeviceID = DeviceRevision = 0;
     }
 
-    #region Enumerations
     private enum Registers : byte
     {
         Config = 0x00,
@@ -240,9 +239,6 @@ public class Ina219 : Ina2xx
         ContinuousAll = 0x7, // default at POR
     }
 
-    #endregion
-
-    #region Shorthand
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private void WriteRegister(Registers register, byte value) => BusComms.WriteRegister((byte)register, value, ByteOrder.BigEndian);
 
@@ -260,6 +256,4 @@ public class Ina219 : Ina2xx
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private ushort ReadRegisterAsUShort(Registers register) => BusComms.ReadRegisterAsUShort((byte)register, ByteOrder.BigEndian);
-    #endregion
-
 }

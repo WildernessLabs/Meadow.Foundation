@@ -10,13 +10,16 @@ namespace Meadow.Foundation.Displays
     /// <summary>
     /// Represents a UC1609C single color LCD display
     /// </summary>
-    public partial class Uc1609c : IPixelDisplay, ISpiPeripheral, IDisposable
+    public partial class Uc1609c : IPixelDisplay, IColorInvertableDisplay, ISpiPeripheral, IDisposable
     {
         /// <inheritdoc/>
         public ColorMode ColorMode => ColorMode.Format1bpp;
 
         /// <inheritdoc/>
         public ColorMode SupportedColorModes => ColorMode.Format1bpp;
+
+        /// <inheritdoc/>
+        public bool IsColorInverted { get; private set; } = false;
 
         /// <inheritdoc/>
         public int Width => imageBuffer.Width;
@@ -281,11 +284,8 @@ namespace Meadow.Foundation.Displays
             SendCommand(UC1609_SCROLL, scrollValue);
         }
 
-        /// <summary>
-        /// Invert the display
-        /// </summary>
-        /// <param name="invert">True for inverted, False for normal</param>
-        public void InvertDisplay(bool invert)
+        /// <inheritdoc/>
+        public void InvertDisplayColor(bool invert)
         {
             SendCommand(UC1609_INVERSE_DISPLAY, (byte)(invert ? 1 : 0));
         }

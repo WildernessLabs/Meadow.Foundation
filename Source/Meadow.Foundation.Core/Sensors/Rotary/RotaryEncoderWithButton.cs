@@ -24,22 +24,22 @@ public class RotaryEncoderWithButton : RotaryEncoder, IRotaryEncoderWithButton
     /// <summary>
     /// Raised when the button circuit is re-opened after it has been closed
     /// </summary>
-    public event EventHandler Clicked = default!;
+    public event EventHandler? Clicked;
 
     /// <summary>
     /// Raised when a press ends
     /// </summary>
-    public event EventHandler PressEnded = default!;
+    public event EventHandler? PressEnded;
 
     /// <summary>
     /// Raised when a press starts
     /// </summary>
-    public event EventHandler PressStarted = default!;
+    public event EventHandler? PressStarted;
 
     /// <summary>
     /// Raised when the button circuit is pressed for LongPressDuration
     /// </summary>
-    public event EventHandler LongClicked = default!;
+    public event EventHandler? LongClicked;
 
     /// <summary>
     /// The minimum duration for a long press
@@ -70,7 +70,7 @@ public class RotaryEncoderWithButton : RotaryEncoder, IRotaryEncoderWithButton
 
     private void ButtonLongClicked(object sender, EventArgs e)
     {
-        LongClicked(this, e);
+        LongClicked?.Invoke(this, e);
     }
 
     /// <summary>
@@ -80,7 +80,7 @@ public class RotaryEncoderWithButton : RotaryEncoder, IRotaryEncoderWithButton
     /// <param name="e">event arguments</param>
     protected void ButtonClicked(object sender, EventArgs e)
     {
-        Clicked(this, e);
+        Clicked?.Invoke(this, e);
     }
 
     /// <summary>
@@ -90,7 +90,7 @@ public class RotaryEncoderWithButton : RotaryEncoder, IRotaryEncoderWithButton
     /// <param name="e">event arguments</param>
     protected void ButtonPressEnded(object sender, EventArgs e)
     {
-        PressEnded(this, e);
+        PressEnded?.Invoke(this, e);
     }
 
     /// <summary>
@@ -100,7 +100,7 @@ public class RotaryEncoderWithButton : RotaryEncoder, IRotaryEncoderWithButton
     /// <param name="e">event arguments</param>
     protected void ButtonPressStarted(object sender, EventArgs e)
     {
-        PressStarted(this, e);
+        PressStarted?.Invoke(this, e);
     }
 
     /// <summary>

@@ -24,7 +24,7 @@ internal class Program
         var assembly = Assembly.GetExecutingAssembly();
         var resourceName = $"MicroJson_Complex_Sample.{filename}";
 
-        using Stream stream = assembly.GetManifestResourceStream(resourceName);
+        using Stream stream = assembly.GetManifestResourceStream(resourceName)!;
         using var ms = new MemoryStream();
 
         stream?.CopyTo(ms);

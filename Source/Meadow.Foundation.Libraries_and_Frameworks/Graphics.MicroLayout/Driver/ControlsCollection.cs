@@ -77,6 +77,8 @@ public sealed class ControlsCollection : IEnumerable<IControl>
         {
             foreach (var control in controls)
             {
+                if (control is null) continue;
+
                 control.Parent = _container;
                 _controls.Add(control);
             }

@@ -71,7 +71,7 @@ public class WinFormsDisplay : Form, IResizablePixelDisplay, ITouchScreen
     }
 
     /// <inheritdoc/>
-    public void Resize(int width, int height, float displayScale = 1)
+    void IResizablePixelDisplay.Resize(int width, int height, float displayScale)
     {
         lock (buffer)
         {

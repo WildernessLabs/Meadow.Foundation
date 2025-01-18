@@ -94,7 +94,6 @@ public class Ina260 : Ina2xx
     }
     private readonly IDigitalInterruptPort? _alertPort;
 
-    #region Alerts
     /// <summary>
     /// Raised when the Alert signal changes.
     /// </summary>
@@ -195,7 +194,6 @@ public class Ina260 : Ina2xx
 
         WriteRegister(Registers.MaskEnable, (ushort)maskValue);
     }
-    #endregion
 
     /// <summary>
     /// Reads all status bits.
@@ -211,7 +209,6 @@ public class Ina260 : Ina2xx
         overflow = (maskValue & MaskEnable.MathOverFlow) != 0;
     }
 
-    #region Enumerations
     private enum Registers : byte
     {
         Config = 0x00,
@@ -309,9 +306,7 @@ public class Ina260 : Ina2xx
         AlertUnderCurrentLimit = 0x4000,
         AlertOverCurrentLimit = 0x8000,
     }
-    #endregion
 
-    #region Shorthand
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private void WriteRegister(Registers register, byte value) => BusComms.WriteRegister((byte)register, value, ByteOrder.BigEndian);
 
@@ -329,9 +324,7 @@ public class Ina260 : Ina2xx
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private ushort ReadRegisterAsUShort(Registers register) => BusComms.ReadRegisterAsUShort((byte)register, ByteOrder.BigEndian);
-    #endregion
 
-    #region IDisposable extras
     /// <inheritdoc/>
     protected override void Dispose(bool disposing)
     {
@@ -342,5 +335,4 @@ public class Ina260 : Ina2xx
             base.Dispose(disposing);
         }
     }
-    #endregion
 }

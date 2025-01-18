@@ -1,6 +1,6 @@
 # Meadow.Foundation.Displays.TftSpi
 
-**SPI Color TFT and OLED displays (GC9A01, HC8357B, HX8357D, ILI9163, ILI9341, ILI9481, ILI9488, RM68140, S6D02A1, SSD1331, SSD1351, ST7735, ST7789)**
+**SPI Color TFT and OLED displays (GC9A01, HC8357B, HX8357D, ILI9163, ILI9225, ILI9341, ILI9481, ILI9488, RM68140, S6D02A1, SSD1331, SSD1351, ST7735, ST7789)**
 
 The **TftSpi** library is included in the **Meadow.Foundation.Displays.TftSpi** nuget package and is designed for the [Wilderness Labs](www.wildernesslabs.co) Meadow .NET IoT platform.
 

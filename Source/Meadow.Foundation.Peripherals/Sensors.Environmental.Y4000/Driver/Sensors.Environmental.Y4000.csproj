@@ -22,7 +22,8 @@
   <ItemGroup>
     <None Include=".\Readme.md" Pack="true" PackagePath="" />
     <None Include="..\..\..\icon.png" Pack="true" PackagePath="" />
-    <PackageReference Include="Meadow.Foundation" Version="1.12.8" />
-    <PackageReference Include="Meadow.Modbus" Version="1.12.8" />
+    <PackageReference Include="System.IO.Ports" Version="9.0.0" />
+    <PackageReference Include="Meadow.Foundation" Version="2.0.1" />
+    <PackageReference Include="Meadow.Modbus" Version="2.0.1" />
   </ItemGroup>
 </Project>

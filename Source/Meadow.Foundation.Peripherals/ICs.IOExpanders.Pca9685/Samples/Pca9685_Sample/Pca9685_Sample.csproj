@@ -11,7 +11,7 @@
     <LangVersion>10</LangVersion>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.F7" Version="1.12.8" />
-    <PackageReference Include="Meadow.Foundation.ICs.IOExpanders.Pca9685" Version="1.12.8" />
+    <PackageReference Include="Meadow.F7" Version="2.0.1" />
+    <PackageReference Include="Meadow.Foundation.ICs.IOExpanders.Pca9685" Version="2.0.1" />
   </ItemGroup>
 </Project>
