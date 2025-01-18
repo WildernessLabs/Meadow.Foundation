@@ -8,8 +8,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Meadow.Desktop" Version="1.12.8" />
-    <PackageReference Include="Meadow.Foundation.Graphics.MicroLayout" Version="1.12.8" />
+    <PackageReference Include="Meadow.Desktop" Version="2.0.1" />
+    <PackageReference Include="Meadow.Foundation.Graphics.MicroLayout" Version="2.0.1" />
   </ItemGroup>
 
   <ItemGroup>

@@ -34,6 +34,9 @@ public partial class Mcp23xxx
             set => _ = value; //fail silently
         }
 
+        /// <inheritdoc/>
+        public override InterruptMode InterruptMode { get; set; }
+
         /// <summary>
         /// Create a new DigitalInterruptPort object
         /// </summary>
@@ -41,8 +44,9 @@ public partial class Mcp23xxx
         /// <param name="interruptMode">The interrupt mode used for the interrupt pin</param>
         /// <param name="resistorMode">The resistor mode used by the interrupt pin</param>
         public DigitalInterruptPort(IPin pin, InterruptMode interruptMode = InterruptMode.None, ResistorMode resistorMode = ResistorMode.Disabled)
-            : base(pin, (IDigitalChannelInfo)pin.SupportedChannels![0], interruptMode)
+            : base(pin, (IDigitalChannelInfo)pin.SupportedChannels![0])
         {
+            InterruptMode = interruptMode;
             portResistorMode = resistorMode;
 
             // seed the initial state

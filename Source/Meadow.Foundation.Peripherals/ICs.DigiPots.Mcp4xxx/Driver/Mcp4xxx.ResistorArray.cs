@@ -1,6 +1,8 @@
 ﻿using Meadow.Hardware;
 using Meadow.Units;
 using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Meadow.Foundation.ICs.DigiPots;
 
@@ -20,6 +22,9 @@ public abstract partial class Mcp4xxx
         private Mcp4xxx _parent;
         private int _index;
         private ISpiCommunications _spiComms;
+        private EventHandler<IChangeResult<Resistance>>? _changedEvent;
+        private Timer? _pollTimer;
+        private Resistance? _lastValue;
 
         /// <inheritdoc/>
         public Resistance MaxResistance => _parent.MaxResistance;
@@ -36,6 +41,35 @@ public abstract partial class Mcp4xxx
             {
                 var w = (short)((_parent.MaxSteps / _parent.MaxResistance.Ohms) * value.Ohms);
                 SetWiper(w);
+            }
+        }
+
+        /// <inheritdoc/>
+        public event EventHandler<IChangeResult<Resistance>>? Changed
+        {
+            remove
+            {
+                _changedEvent -= value;
+
+                if (_changedEvent?.GetInvocationList().Length == 0)
+                {
+                    _pollTimer?.Dispose();
+                    _pollTimer = null;
+                }
+            }
+            add
+            {
+                _changedEvent += value;
+                if (_pollTimer == null)
+                {
+                    _pollTimer = new Timer(async (_) =>
+                    {
+                        var r = Resistance;
+                        _changedEvent?.Invoke(this, new ChangeResult<Resistance>(r, _lastValue));
+                        _lastValue = r;
+                        await Task.Delay(500);
+                    });
+                }
             }
         }
 

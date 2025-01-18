@@ -29,9 +29,13 @@ public partial class Keyboard
         /// </summary>
         public override TimeSpan GlitchDuration { get => throw new NotSupportedException(); set => throw new NotSupportedException(); }
 
+        /// <inheritdoc/>
+        public override InterruptMode InterruptMode { get; set; }
+
         internal KeyboardKey(KeyboardKeyPin pin, IDigitalChannelInfo info, InterruptMode interruptMode)
-            : base(pin, info, interruptMode)
+            : base(pin, info)
         {
+            InterruptMode = interruptMode;
         }
 
         internal void SetState(bool newState)

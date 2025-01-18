@@ -9,8 +9,14 @@ using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Hmi;
 
+/// <summary>
+/// Service for calibrating a touchscreen.
+/// </summary>
 public class TouchscreenCalibrationService
 {
+    /// <summary>
+    /// Event that occurs when the calibration is complete.
+    /// </summary>
     public event EventHandler<CalibrationPoint[]> CalibrationComplete;
 
     private readonly DisplayScreen _screen;
@@ -19,16 +25,36 @@ public class TouchscreenCalibrationService
     private readonly FileInfo _calibrationDataFile;
 
     private int _currentPoint = 0;
-    private CalibrationPoint[] _calPoints;
+    private readonly CalibrationPoint[] _calPoints;
     private int _lastTouch = Environment.TickCount;
-    private Label _instruction;
+    private readonly Label _instruction;
 
+    /// <summary>
+    /// The current screen color
+    /// </summary>
     public static Color ScreenColor = Color.White;
+    /// <summary>
+    /// The current crosshair color
+    /// </summary>
     public static Color CrosshairColor = Color.Black;
+    /// <summary>
+    /// The current text color
+    /// </summary>
     public static Color TextColor = Color.DarkBlue;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TouchscreenCalibrationService"/> class.
+    /// </summary>
+    /// <param name="screen">The display screen to be calibrated.</param>
+    /// <param name="calibrationDataFile">The file to save calibration data.</param>
+    /// <exception cref="ArgumentException">Thrown when the touchscreen is not calibratable or is null.</exception>
     public TouchscreenCalibrationService(DisplayScreen screen, FileInfo calibrationDataFile)
     {
+        if (screen.TouchScreen == null)
+        {
+            throw new ArgumentException("DisplayScreen.TouchScreen must not be null");
+        }
+
         if (screen?.TouchScreen is ICalibratableTouchscreen cts)
         {
             _touchscreen = cts;
@@ -54,12 +80,16 @@ public class TouchscreenCalibrationService
 
         _calibrationPoints = new Crosshair[]
         {
-            new Crosshair(margin, margin) { ForeColor = CrosshairColor },
-            new Crosshair(_screen.Width - margin, _screen.Height - margin) { ForeColor = CrosshairColor }
+            new (margin, margin) { ForeColor = CrosshairColor },
+            new (_screen.Width - margin, _screen.Height - margin) { ForeColor = CrosshairColor }
         };
         _calPoints = new CalibrationPoint[_calibrationPoints.Length];
     }
 
+    /// <summary>
+    /// Gets the saved calibration data.
+    /// </summary>
+    /// <returns>A collection of <see cref="CalibrationPoint"/> if data exists; otherwise, null.</returns>
     public IEnumerable<CalibrationPoint>? GetSavedCalibrationData()
     {
         if (!_calibrationDataFile.Exists) { return null; }
@@ -69,11 +99,18 @@ public class TouchscreenCalibrationService
         return data;
     }
 
+    /// <summary>
+    /// Erases the saved calibration data.
+    /// </summary>
     public void EraseCalibrationData()
     {
         if (_calibrationDataFile.Exists) { _calibrationDataFile.Delete(); }
     }
 
+    /// <summary>
+    /// Saves the calibration data.
+    /// </summary>
+    /// <param name="data">The calibration data to save.</param>
     public void SaveCalibrationData(IEnumerable<CalibrationPoint> data)
     {
         if (_calibrationDataFile.Exists) { _calibrationDataFile.Delete(); }
@@ -82,6 +119,11 @@ public class TouchscreenCalibrationService
         file.Write(json);
     }
 
+    /// <summary>
+    /// Starts the calibration process.
+    /// </summary>
+    /// <param name="saveCalibrationData">Whether to save the calibration data after calibration.</param>
+    /// <returns>A task representing the calibration process.</returns>
     public Task Calibrate(bool saveCalibrationData = true)
     {
         _touchscreen.TouchUp += OnTouchUp;
@@ -104,13 +146,19 @@ public class TouchscreenCalibrationService
             _screen.Controls.Clear();
             if (saveCalibrationData)
             {
-                _instruction.Text = "Saving Calibration Data...";
+                Resolver.Log.Info($"Saving Calibration Data...");
                 SaveCalibrationData(_calPoints);
+                Resolver.Log.Info($"Saved");
             }
             CalibrationComplete?.Invoke(this, _calPoints);
         });
     }
 
+    /// <summary>
+    /// Handles the touch up event during calibration.
+    /// </summary>
+    /// <param name="sender">The touch screen sender.</param>
+    /// <param name="point">The touch point data.</param>
     private void OnTouchUp(ITouchScreen sender, TouchPoint point)
     {
         var now = Environment.TickCount;

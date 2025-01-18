@@ -18,10 +18,11 @@
     <PackageTags>Meadow,Meadow.Foundation,Display,Graphics</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Lightweight integer accurate 2d graphics drawing system designed for embedded applications</Description>
+    <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>
     <None Include=".\Readme.md" Pack="true" PackagePath="" />
     <None Include="..\..\..\icon.png" Pack="true" PackagePath="" />
-    <PackageReference Include="Meadow.Foundation" Version="1.12.8" />
+    <PackageReference Include="Meadow.Foundation" Version="2.0.1" />
   </ItemGroup>
 </Project>

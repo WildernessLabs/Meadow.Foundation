@@ -31,7 +31,7 @@ public abstract class Control : IControl
             _parent = value;
             if (_parent != null && _parent is not DisplayScreen)
             {
-                this.IsVisible = _parent.IsVisible;
+                IsVisible = _parent.IsVisible;
             }
         }
     }
@@ -84,7 +84,7 @@ public abstract class Control : IControl
     /// </summary>
     public virtual bool IsVisible
     {
-        get => _isVisible;
+        get => (_isVisible == false || _parent?.IsVisible == false) ? false : true;
         set => SetInvalidatingProperty(ref _isVisible, value);
     }
 

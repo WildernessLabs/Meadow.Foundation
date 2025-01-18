@@ -225,7 +225,7 @@ public static partial class MicroJson
 
         (PropertyInfo Property, string MappedTo)[] nameMap =
             props.Select((propertyInfo, index) => (
-                propertyInfo.CustomAttributes.FirstOrDefault(a => a.AttributeType == typeof(JsonPropertyName)),
+                propertyInfo.CustomAttributes.FirstOrDefault(a => a.AttributeType == typeof(JsonPropertyNameAttribute)),
                 props[index]))
             .Where(p => p.Item1 != null)
             .Select(t => (t.Item2, t.Item1.ConstructorArguments[0].Value.ToString()))

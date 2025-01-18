@@ -24,8 +24,8 @@ public abstract partial class FtdiExpander :
     internal uint Flags { get; private set; }
     internal uint ID { get; private set; }
     internal uint LocID { get; private set; }
-    internal string SerialNumber { get; private set; }
-    internal string Description { get; private set; }
+    internal string? SerialNumber { get; private set; }
+    internal string? Description { get; private set; }
     internal IntPtr Handle { get; private set; }
 
     /// <inheritdoc/>
