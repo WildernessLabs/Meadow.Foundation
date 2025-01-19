@@ -6,8 +6,8 @@
     <AssemblyName>App</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Meadow.F7" Version="2.0.1.2" />
-    <PackageReference Include="Meadow.Foundation.ICs.DAC.Mcp4728" Version="2.0.1.2" />
+    <PackageReference Include="Meadow.F7" Version="2.0.1" />
+    <PackageReference Include="Meadow.Foundation.ICs.DAC.Mcp4728" Version="2.0.1" />
   </ItemGroup>
   <ItemGroup>
     <None Update="meadow.config.yaml">

@@ -8,9 +8,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Meadow.Windows" Version="2.0.1.2" />
-    <PackageReference Include="Meadow.Foundation.ICs.IOExpanders.Ftxxxx" Version="2.0.1.2" />
-    <PackageReference Include="Meadow.Foundation.Sensors.Atmospheric.Ahtx0" Version="2.0.1.2" />
+    <PackageReference Include="Meadow.Windows" Version="2.0.1" />
+    <PackageReference Include="Meadow.Foundation.ICs.IOExpanders.Ftxxxx" Version="2.0.1" />
+    <PackageReference Include="Meadow.Foundation.Sensors.Atmospheric.Ahtx0" Version="2.0.1" />
   </ItemGroup>
 
 </Project>
