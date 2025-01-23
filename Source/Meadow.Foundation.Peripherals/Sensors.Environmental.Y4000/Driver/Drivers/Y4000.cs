@@ -12,24 +12,6 @@ using System.Threading.Tasks;
 namespace Meadow.Foundation.Sensors.Environmental;
 
 /// <summary>
-/// Y4000 hardware interface
-/// </summary>
-public interface IY4000 :
-    IWaterQualityConcentrationsSensor,
-    IElectricalConductivitySensor,
-    IPotentialHydrogenSensor,
-    ITurbiditySensor,
-    ITemperatureSensor,
-    IRedoxPotentialSensor
-{
-    /// <summary>
-    /// Get the Y4000 serial number
-    /// </summary>
-    /// <returns></returns>
-    Task<string> GetSerialNumber();
-}
-
-/// <summary>
 /// Represents a Yosemitech Y4000 Multiparameter Sonde water quality sensor 
 /// for dissolved oxygen, conductivity, turbidity, pH, chlorophyll, 
 /// blue green algae, chlorophyll, and temperature
