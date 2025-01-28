@@ -1,5 +1,8 @@
 ﻿namespace Meadow.Foundation.Sensors.Environmental;
 
+/// <summary>
+/// Represents the available temperature channels
+/// </summary>
 public enum TemperatureChannel
 {
     T = 1 << 3,

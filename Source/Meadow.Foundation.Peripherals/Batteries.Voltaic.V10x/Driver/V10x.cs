@@ -65,6 +65,12 @@ public class V10x : ModbusPolledDevice
     /// </summary>
     public Temperature ControllerTemp => new Temperature(_rawControllerTemp, Temperature.UnitType.Celsius);
 
+    /// <summary>
+    /// Creates a new V10x instance.
+    /// </summary>
+    /// <param name="client">The modbus client</param>
+    /// <param name="modbusAddress">The modbuss address</param>
+    /// <param name="refreshPeriod">The refresh period</param>
     public V10x(
         ModbusClientBase client,
         byte modbusAddress = DefaultModbusAddress,

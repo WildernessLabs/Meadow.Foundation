@@ -11,7 +11,7 @@ namespace Meadow.Foundation.Sensors;
 public class Potentiometer : IPotentiometer, IDisposable
 {
     private EventHandler<IChangeResult<Resistance>>? changedEvent;
-    private IAnalogInputPort inputPort;
+    private IAnalogInputPort inputPort = null!;
     private Voltage referenceVoltage;
     private bool portCreated = false;
     private Resistance? oldValue;
