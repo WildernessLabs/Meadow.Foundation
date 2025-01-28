@@ -21,6 +21,7 @@
     <Description>Core peripheral drivers for Wilderness Labs Meadow</Description>
     <Nullable>enable</Nullable>
     <LangVersion>10.0</LangVersion>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>  
   </PropertyGroup>
   <ItemGroup>
     <None Include=".\Readme.md" Pack="true" PackagePath="" />

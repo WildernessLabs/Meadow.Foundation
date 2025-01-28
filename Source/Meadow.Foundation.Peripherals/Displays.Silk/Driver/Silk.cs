@@ -15,10 +15,10 @@ public class SilkDisplay : IResizablePixelDisplay, ITouchScreen
 {
     private IWindow window = default!;
     private SkiaPixelBuffer pixelBuffer = default!;
-    private GRGlInterface grglInterface;
-    private GRContext context;
-    private SKSurface surface;
-    private SKCanvas canvas;
+    private GRGlInterface grglInterface = default!;
+    private GRContext context = default!;
+    private SKSurface surface = default!;
+    private SKCanvas canvas = default!;
     private int virtualWidth;
     private int virtualHeight;
     private float displayScale;

@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -26,7 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Peak.PCANBasic.NET" Version="4.9.0.942" />
+    <PackageReference Include="Peak.PCANBasic.NET" Version="4.10.0.964" />
   </ItemGroup>
 
   <ItemGroup>

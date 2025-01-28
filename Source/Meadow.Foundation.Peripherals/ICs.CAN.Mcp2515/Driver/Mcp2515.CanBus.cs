@@ -6,6 +6,9 @@ namespace Meadow.Foundation.ICs.CAN;
 
 public partial class Mcp2515
 {
+    /// <summary>
+    /// Represents a CAN bus using the MCP2515
+    /// </summary>
     public class Mcp2515CanBus : ICanBus
     {
         private int _currentMask = 0;
