@@ -23,7 +23,7 @@
     <None Include=".\Readme.md" Pack="true" PackagePath="" />
     <None Include="..\..\..\icon.png" Pack="true" PackagePath="" />
     <PackageReference Include="System.IO.Ports" Version="9.0.0" />
-    <PackageReference Include="Meadow.Modbus" Version="2.0.1" />
-    <PackageReference Include="Meadow.Foundation" Version="2.0.1" />
+    <PackageReference Include="Meadow.Modbus" Version="2.0.1.2" />
+    <PackageReference Include="Meadow.Foundation" Version="2.0.1.2" />
   </ItemGroup>
 </Project>
