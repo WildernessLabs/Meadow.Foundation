@@ -9,7 +9,7 @@
     <AssemblyName>ResistiveTankLevelSender</AssemblyName>
     <Company>Wilderness Labs, Inc</Company>
     <PackageProjectUrl>http://developer.wildernesslabs.co/Meadow/Meadow.Foundation/</PackageProjectUrl>
-    <PackageId>Meadow.Foundation.Sensors.Temperature.Tmp102</PackageId>
+    <PackageId>Meadow.Foundation.Sensors.Volume.ResistiveTankLevelSender</PackageId>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <PackageTags>Fuel level sender, gas tank sender, water level sender</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>

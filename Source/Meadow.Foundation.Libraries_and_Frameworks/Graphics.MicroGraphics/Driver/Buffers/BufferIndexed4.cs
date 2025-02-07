@@ -6,6 +6,7 @@ namespace Meadow.Foundation.Graphics.Buffers
 {
     /// <summary>
     /// Represents a 4bpp pixel buffer with indexed colors
+    /// Each pixel is represented by 4 bits, allowing for 8 distinct colors
     /// </summary>
     public class BufferIndexed4 : PixelBufferBase
     {
@@ -60,7 +61,7 @@ namespace Meadow.Foundation.Graphics.Buffers
         }
 
         /// <summary>
-        /// Fill with a color
+        /// Fill a rectangular area with a color
         /// </summary>
         /// <param name="x">X start position in pixels</param>
         /// <param name="y">Y start position in pixels</param>
@@ -88,15 +89,14 @@ namespace Meadow.Foundation.Graphics.Buffers
         }
 
         /// <summary>
-        /// Get the pixel color
+        /// Get the pixel color at a given coordinate
         /// </summary>
         /// <param name="x">The X pixel position</param>
         /// <param name="y">The Y pixel position</param>
         /// <returns>The pixel color</returns>
         public override Color GetPixel(int x, int y)
-        {   //comes back as a 4bit value
+        {
             var index = GetColorIndexForPixel(x, y);
-
             return IndexedColors[index];
         }
 
@@ -113,11 +113,11 @@ namespace Meadow.Foundation.Graphics.Buffers
         }
 
         /// <summary>
-        /// Set the pixel to a shade of gray
+        /// Set the pixel using a color index
         /// </summary>
         /// <param name="x">X pixel position</param>
         /// <param name="y">Y pixel position</param>
-        /// <param name="colorIndex">The color index</param>
+        /// <param name="colorIndex">The color index (0-7)</param>
         public void SetPixel(int x, int y, int colorIndex)
         {
             int index = y * Width / 2 + x / 2;
@@ -133,7 +133,7 @@ namespace Meadow.Foundation.Graphics.Buffers
         }
 
         /// <summary>
-        /// Invert the pixel
+        /// Invert the pixel color
         /// </summary>
         /// <param name="x">x position of pixel</param>
         /// <param name="y">y position of pixel</param>
@@ -143,7 +143,7 @@ namespace Meadow.Foundation.Graphics.Buffers
         }
 
         /// <summary>
-        /// Write a buffer to specific location to the current buffer
+        /// Write a buffer into this buffer at a specified location
         /// </summary>
         /// <param name="x">x origin</param>
         /// <param name="y">y origin</param>
@@ -154,14 +154,14 @@ namespace Meadow.Foundation.Graphics.Buffers
                 x % 2 == 0 &&
                 buffer.Width % 2 == 0)
             {
-                //we have a happy path
+                // We can do a direct block copy row by row
                 int sourceIndex, destinationIndex;
                 int length = buffer.Width / 2;
 
                 for (int i = 0; i < buffer.Height; i++)
                 {
                     sourceIndex = length * i;
-                    destinationIndex = (Width * (y + i) + x) >> 2; //divide by 2
+                    destinationIndex = (Width * (y + i) + x) >> 2;
 
                     Array.Copy(buffer.Buffer, sourceIndex, Buffer, destinationIndex, length);
                 }
@@ -173,11 +173,11 @@ namespace Meadow.Foundation.Graphics.Buffers
         }
 
         /// <summary>
-        /// Get the pixel color index
+        /// Get the pixel's color index (0-7) at a given coordinate
         /// </summary>
         /// <param name="x">The X pixel position</param>
         /// <param name="y">The Y pixel position</param>
-        /// <returns>The pixel color as a 4bpp gray value</returns>
+        /// <returns>The 4-bit color index</returns>
         public byte GetColorIndexForPixel(int x, int y)
         {
             int index = y * Width / 2 + x / 2;
@@ -194,11 +194,6 @@ namespace Meadow.Foundation.Graphics.Buffers
             return color;
         }
 
-        Color GetClosestColor(Color color)
-        {
-            return IndexedColors[GetIndexForColor(color)];
-        }
-
         int GetIndexForColor(Color color)
         {
             if (IndexedColors == null || IndexedColors.All(x => x == null))
@@ -211,15 +206,14 @@ namespace Meadow.Foundation.Graphics.Buffers
 
             for (int i = 0; i < IndexedColors.Length; i++)
             {
-                double distance;
                 if (IndexedColors[i] != null)
                 {
-                    distance = GetColorDistance(color, IndexedColors[i]);
+                    double distance = GetColorDistance(color, IndexedColors[i]);
                     if (distance < shortestDistance)
                     {
                         shortestDistance = distance;
                         closestIndex = i;
-                        if (distance == 0) { break; } //perfect match
+                        if (distance == 0) { break; } // perfect match
                     }
                 }
             }

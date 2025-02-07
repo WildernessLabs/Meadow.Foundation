@@ -30,12 +30,12 @@ namespace Meadow.Foundation.Sensors.Distance
         //The baud rate is 9600, 8 bits, no parity, with one stop bit
         private readonly ISerialPort serialPort;
 
-        private static readonly int portSpeed = 9600;
+        public static readonly int BaudRate = 9600;
 
         //Serial read variables 
-        readonly byte[] readBuffer = new byte[16];
-        int serialDataBytesRead = 0;
-        byte serialDataFirstByte;
+        private readonly byte[] readBuffer = new byte[16];
+        private int serialDataBytesRead = 0;
+        private byte serialDataFirstByte;
 
         private TaskCompletionSource<Length>? dataReceivedTaskCompletionSource;
 
@@ -49,7 +49,7 @@ namespace Meadow.Foundation.Sensors.Distance
         /// <param name="device">The device connected to the sensor</param>
         /// <param name="serialPortName">The serial port</param>
         public A02yyuw(IMeadowDevice device, SerialPortName serialPortName)
-            : this(device.CreateSerialPort(serialPortName, portSpeed))
+            : this(device.CreateSerialPort(serialPortName, BaudRate))
         {
             createdPort = true;
         }

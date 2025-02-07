@@ -6,6 +6,9 @@ namespace Meadow.Foundation.ICs.CAN;
 
 public partial class Mcp2515
 {
+    /// <summary>
+    /// Represents a CAN bus using the MCP2515
+    /// </summary>
     public class Mcp2515CanBus : ICanBus
     {
         private int _currentMask = 0;
@@ -20,8 +23,8 @@ public partial class Mcp2515
         /// <inheritdoc/>
         public CanBitrate BitRate
         {
-            get => Controller._bitrate;
-            set => Controller.Initialize(value, Controller._oscillator);
+            get => Controller.bitrate;
+            set => Controller.Initialize(value, Controller.oscillator);
         }
 
         /// <inheritdoc/>

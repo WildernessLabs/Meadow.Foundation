@@ -92,6 +92,23 @@ namespace Meadow.Foundation.Sensors.Environmental
         }
 
         /// <summary>
+        /// Create a new ENS160 object
+        /// </summary>
+        /// <remarks>
+        /// The constructor sends the stop periodic updates method otherwise 
+        /// the sensor may not respond to new commands
+        /// </remarks>
+        /// <param name="i2cBus">The I2C bus</param>
+        /// <param name="address">The I2C address</param>
+        public Ens160(II2cBus i2cBus, Ens160.Addresses address = Addresses.Default)
+            : base(i2cBus, (byte)address, readBufferSize: 9, writeBufferSize: 9)
+        {
+            Initialize().Wait();
+
+            CurrentOperatingMode = OperatingMode.Standard;
+        }
+
+        /// <summary>
         /// Initialize the sensor
         /// </summary>
         protected async Task Initialize()
@@ -175,7 +192,7 @@ namespace Meadow.Foundation.Sensors.Environmental
         {
             var value = BusComms.ReadRegister((byte)Registers.DATA_AQI);
 
-            var aqi = value >> 5;
+            var aqi = value & 0b0111;
 
             return (UBAAirQualityIndex)aqi;
         }

@@ -1,7 +1,7 @@
-﻿using System;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
 using Meadow.Units;
 using Meadow.Utilities;
+using System;
 
 namespace Meadow.Foundation.ICs.IOExpanders
 {
@@ -495,7 +495,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 PreValidatedSetPortDirection(pin, PortDirectionType.Input);
 
                 if (_irq != null)
-                {   
+                {
                     irqEna = BitHelpers.SetBit(irqEna, bitIndex, true);
                     SetGpioRegisterBit(Registers.IOIntEna, bitIndex);
                 }
@@ -750,7 +750,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
             Resolver.Log.Info(b);
         }
 
-        public string ByteToBinaryString(byte b)
+        internal string ByteToBinaryString(byte b)
         {
             // Format the byte as a binary string and pad it with zeroes
             string binaryString = $"0b{Convert.ToString(b, 2).PadLeft(8, '0')}";

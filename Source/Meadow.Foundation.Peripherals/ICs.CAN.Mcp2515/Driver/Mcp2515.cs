@@ -6,9 +6,9 @@ using System.Threading;
 namespace Meadow.Foundation.ICs.CAN;
 
 /// <summary>
-/// Encapsulation for the Microchip MCP2515 CAN controller
+/// Represents a Microchip MCP2515 CAN controller, providing SPI-based communication with CAN functionality.
 /// </summary>
-public partial class Mcp2515 : ICanController
+public partial class Mcp2515 : ICanController, IDisposable
 {
     /// <summary>
     /// Default SPI clock mode for the MCP2515
@@ -23,20 +23,65 @@ public partial class Mcp2515 : ICanController
     private byte PHASE_SEG2_Default = 0x03;//0x02;
     private byte PROP_SEG_Default = 0x02;// 0x01;
 
-    private ICanBus? _busInstance;
-    private CanOscillator _oscillator;
-    private CanBitrate _bitrate;
+    private bool portsCreated;
+    private ICanBus? busInstance;
+    private CanOscillator oscillator;
+    private CanBitrate bitrate;
 
     private ISpiBus SpiBus { get; }
     private IDigitalOutputPort ChipSelect { get; }
     private Logger? Logger { get; }
     private IDigitalInterruptPort? InterruptPort { get; }
+    private IDigitalOutputPort? ResetPort { get; }
 
+    /// <summary>
+    /// Returns true if the instance has been disposed, otherwise false
+    /// </summary>
+    public bool IsDisposed { get; private set; }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Mcp2515"/> class with specified SPI bus, chip select pin, and optional parameters.
+    /// </summary>
+    /// <param name="bus">The SPI bus for communication.</param>
+    /// <param name="chipSelectPin">The pin for chip select functionality.</param>
+    /// <param name="oscillator">The oscillator setting, default is 8 MHz.</param>
+    /// <param name="interruptPin">Optional interrupt pin for CAN interrupts.</param>
+    /// <param name="resetPin">Optional reset pin for hardware resets.</param>
+    /// <param name="logger">Optional logger for diagnostic messages.</param>
+    public Mcp2515(
+        ISpiBus bus,
+        IPin chipSelectPin,
+        CanOscillator oscillator = CanOscillator.Osc_8MHz,
+        IPin? interruptPin = null,
+        IPin? resetPin = null,
+        Logger? logger = null)
+    {
+        SpiBus = bus;
+        Logger = logger;
+        this.oscillator = oscillator;
+
+        ChipSelect = chipSelectPin.CreateDigitalOutputPort(true);
+        InterruptPort = interruptPin?.CreateDigitalInterruptPort(InterruptMode.EdgeFalling, ResistorMode.InternalPullUp);
+        ResetPort = resetPin?.CreateDigitalOutputPort(true);
+
+        portsCreated = true;
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Mcp2515"/> class with a digital output chip select port and optional parameters.
+    /// </summary>
+    /// <param name="bus">The SPI bus for communication.</param>
+    /// <param name="chipSelect">The digital output port for chip select.</param>
+    /// <param name="oscillator">The oscillator setting, default is 8 MHz.</param>
+    /// <param name="interruptPort">Optional interrupt port for CAN interrupts.</param>
+    /// <param name="resetPort">Optional reset port for hardware resets.</param>
+    /// <param name="logger">Optional logger for diagnostic messages.</param>
     public Mcp2515(
         ISpiBus bus,
         IDigitalOutputPort chipSelect,
         CanOscillator oscillator = CanOscillator.Osc_8MHz,
         IDigitalInterruptPort? interruptPort = null,
+        IDigitalOutputPort? resetPort = null,
         Logger? logger = null)
     {
         if (interruptPort != null)
@@ -51,20 +96,22 @@ public partial class Mcp2515 : ICanController
         ChipSelect = chipSelect;
         Logger = logger;
         InterruptPort = interruptPort;
-        _oscillator = oscillator;
+        ResetPort = resetPort;
+
+        this.oscillator = oscillator;
     }
 
     /// <inheritdoc/>
     public ICanBus CreateCanBus(CanBitrate bitrate, int busNumber = 0)
     {
-        if (_busInstance == null)
+        if (busInstance == null)
         {
-            Initialize(bitrate, _oscillator);
+            Initialize(bitrate, oscillator);
 
-            _busInstance = new Mcp2515CanBus(this);
+            busInstance = new Mcp2515CanBus(this);
         }
 
-        return _busInstance;
+        return busInstance;
     }
 
     private void Initialize(CanBitrate bitrate, CanOscillator oscillator)
@@ -78,6 +125,12 @@ public partial class Mcp2515 : ICanController
         if (mode != Mode.Configure)
         {
             SetMode(Mode.Configure);
+
+            var check = ReadRegister(Register.CANSTAT)[0];
+            if (check == 0x00)
+            {
+                throw new Exception("Unable to read configuration register.  Check signal lines are properly connected, including the RST.");
+            }
         }
 
         ClearFiltersAndMasks();
@@ -115,7 +168,7 @@ public partial class Mcp2515 : ICanController
         WriteRegister(Register.CNF1, cfg.CFG1);
         WriteRegister(Register.CNF2, cfg.CFG2);
         WriteRegister(Register.CNF3, cfg.CFG3);
-        _bitrate = bitrate;
+        this.bitrate = bitrate;
         LogRegisters(Register.CNF3, 3);
 
         SetMode(Mode.Normal);
@@ -123,13 +176,13 @@ public partial class Mcp2515 : ICanController
 
     private CanBitrate Bitrate
     {
-        get => _bitrate;
+        get => bitrate;
         set
         {
             var mode = GetMode();
             SetMode(Mode.Configure);
 
-            var cfg = GetConfigForOscillatorAndBitrate(_oscillator, value);
+            var cfg = GetConfigForOscillatorAndBitrate(oscillator, value);
             WriteRegister(Register.CNF1, cfg.CFG1);
             WriteRegister(Register.CNF2, cfg.CFG2);
             WriteRegister(Register.CNF3, cfg.CFG3);
@@ -137,7 +190,7 @@ public partial class Mcp2515 : ICanController
 
             SetMode(mode);
 
-            _bitrate = value;
+            bitrate = value;
         }
     }
 
@@ -154,8 +207,6 @@ public partial class Mcp2515 : ICanController
     private void ClearInterrupt(InterruptFlag flag)
     {
         ModifyRegister(Register.CANINTF, (byte)flag, 0);
-
-        LogRegisters(Register.CANINTF, 1);
     }
 
     private void WriteFrame(ICanFrame frame, int bufferNumber)
@@ -253,6 +304,13 @@ public partial class Mcp2515 : ICanController
 
     private void Reset()
     {
+        if (ResetPort != null)
+        {
+            ResetPort.State = false;
+            Thread.Sleep(10);
+            ResetPort.State = true;
+        }
+
         Span<byte> tx = stackalloc byte[1];
         Span<byte> rx = stackalloc byte[1];
 
@@ -265,7 +323,7 @@ public partial class Mcp2515 : ICanController
     {
         var values = ReadRegister(start, count);
 
-        Resolver.Log.Info($"{(byte)start:X2} ({start}): {BitConverter.ToString(values)}");
+        Resolver.Log.Debug($"{(byte)start:X2} ({start}): {BitConverter.ToString(values)}", "driver");
     }
 
     private Mode GetMode()
@@ -524,5 +582,32 @@ public partial class Mcp2515 : ICanController
         }
 
         return frame;
+    }
+
+    /// <inheritdoc/>
+    protected virtual void Dispose(bool disposing)
+    {
+        if (!IsDisposed)
+        {
+            if (disposing)
+            {
+                if (portsCreated)
+                {
+                    ChipSelect.Dispose();
+                    InterruptPort?.Dispose();
+                    ResetPort?.Dispose();
+                }
+            }
+
+            IsDisposed = true;
+        }
+    }
+
+
+    /// <inheritdoc/>
+    public void Dispose()
+    {
+        Dispose(disposing: true);
+        GC.SuppressFinalize(this);
     }
 }
