@@ -1,21 +1,32 @@
-﻿using Meadow;
+﻿using System.IO;
+using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Weather;
 using System.Threading.Tasks;
+using Meadow.Hardware;
+using Meadow.Units;
 
 namespace MeadowApp
 {
-    public class MeadowApp : App<F7FeatherV2>
+    public class MeadowApp : App<F7CoreComputeV2>
     {
         //<!=SNIP=>
 
-        SwitchingAnemometer anemometer;
+        private SwitchingAnemometer anemometer;
 
         public override Task Initialize()
         {
             Resolver.Log.Info("Initialize...");
 
             anemometer = new SwitchingAnemometer(Device.Pins.A01);
+
+            // Uncomment to test SwitchingAnemometer implementation.
+            // Assumes external wire connected between a PWM capable output and the above configured 
+            // SwitchingAnemometer input. 
+            //double speed = 24; // km/hr
+            //double frequency = speed / (anemometer.KmhPerSwitchPerSecond);
+            //IPwmPort pwm = Device.CreatePwmPort(Device.Pins.D20, new Frequency(frequency, Frequency.UnitType.Hertz));
+            //pwm.Start();
 
             //==== classic events example
             anemometer.Updated += (sender, result) =>
