@@ -97,6 +97,7 @@ public abstract partial class Ahtx0 :
     private bool IsBusy()
     {
         BusComms.Read(ReadBuffer.Span[0..1]);
+
         return (ReadBuffer.Span[0] & 0x80) == 0x80;
     }
 

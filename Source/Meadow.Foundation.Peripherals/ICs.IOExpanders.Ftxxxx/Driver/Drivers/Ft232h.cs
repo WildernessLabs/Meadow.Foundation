@@ -16,8 +16,7 @@ public class Ft232h : FtdiExpander
     {
         // TODO: depends on part
         // TODO: make sure no SPI is in use
-        var bus = new Ft232hI2cBus(this, busSpeed);
-        bus.Configure();
+        var bus = new Ft232hI2cBus(Device, channel, busSpeed);
         return bus;
     }
 
@@ -25,8 +24,7 @@ public class Ft232h : FtdiExpander
     public override ISpiBus CreateSpiBus(int channel, SpiClockConfiguration configuration)
     {
         // TODO: make sure no SPI is in use
-        var bus = new Ft232hSpiBus(this, configuration);
-        bus.Configure();
+        var bus = new Ft232hSpiBus(Device, channel, configuration);
         return bus;
     }
 }
