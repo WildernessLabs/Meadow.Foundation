@@ -110,11 +110,6 @@ namespace Meadow.Foundation.Displays
         protected IPixelBuffer imageBuffer = default!;
 
         /// <summary>
-        /// The read buffer
-        /// </summary>
-        protected Memory<byte> readBuffer;
-
-        /// <summary>
         /// Data convenience bool
         /// </summary>
         protected const bool Data = true;
@@ -271,7 +266,6 @@ namespace Meadow.Foundation.Displays
             {
                 imageBuffer = new BufferRgb444(width, height);
             }
-            readBuffer = new byte[imageBuffer.ByteCount];
         }
 
         /// <summary>
@@ -415,7 +409,7 @@ namespace Meadow.Foundation.Displays
 
             dataCommandPort.State = Data;
 
-            spiDisplay.Bus.Exchange(chipSelectPort, imageBuffer.Buffer, readBuffer.Span);
+            spiDisplay.Bus.Write(chipSelectPort, imageBuffer.Buffer);
         }
 
         /// <summary>
@@ -467,10 +461,9 @@ namespace Meadow.Foundation.Displays
             {
                 int sourceIndex = (int)((y * Width + left) * bytesPerPixel);
 
-                spiDisplay.Bus.Exchange(
+                spiDisplay.Bus.Write(
                     chipSelectPort,
-                    imageBuffer.Buffer[sourceIndex..(sourceIndex + len)],
-                    readBuffer.Span[0..len]);
+                    imageBuffer.Buffer[sourceIndex..(sourceIndex + len)]);
             }
         }
 

@@ -45,7 +45,7 @@ namespace Meadow.Foundation.Displays
         /// <param name="width">Width of display in pixels</param>
         /// <param name="height">Height of display in pixels</param>
         /// <param name="colorMode">The color mode to use for the display buffer</param>
-        public St7789(ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
+        public St7789(ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin? resetPin,
             int width, int height, ColorMode colorMode = ColorMode.Format12bppRgb444)
             : base(spiBus, chipSelectPin, dcPin, resetPin, width, height, colorMode)
         {
@@ -63,7 +63,7 @@ namespace Meadow.Foundation.Displays
         /// <param name="height">Height of display in pixels</param>
         /// <param name="colorMode">The color mode to use for the display buffer</param>
         public St7789(ISpiBus spiBus, IDigitalOutputPort chipSelectPort,
-                IDigitalOutputPort dataCommandPort, IDigitalOutputPort resetPort,
+                IDigitalOutputPort dataCommandPort, IDigitalOutputPort? resetPort,
                 int width, int height, ColorMode colorMode = ColorMode.Format12bppRgb444) :
             base(spiBus, chipSelectPort, dataCommandPort, resetPort, width, height, colorMode)
         {
