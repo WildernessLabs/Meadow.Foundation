@@ -4,6 +4,7 @@ using Meadow.Foundation.Displays;
 using Meadow.Foundation.Graphics;
 using Meadow.Foundation.ICs.IOExpanders;
 using Meadow.Foundation.Sensors.Light;
+using Meadow.Foundation.Sensors.Radio.Rfid;
 using Meadow.Hardware;
 using Meadow.Peripherals.Displays;
 using System.Diagnostics;
@@ -16,7 +17,19 @@ var expander = FtdiExpanderCollection.Devices[0];
 //await TestGpio(FtdiExpanderCollection.Devices);
 //await TestI2C(FtdiExpanderCollection.Devices[0]);
 //await TestSPI(FtdiExpanderCollection.Devices[0]);
-await TestSPIDisplay(FtdiExpanderCollection.Devices[0]);
+//await TestSPIDisplay(FtdiExpanderCollection.Devices[0]);
+await TestRfid(FtdiExpanderCollection.Devices[0]);
+
+async Task TestRfid(FtdiExpander expander)
+{
+    var sensor = new Mfrc522(
+        spiBus: expander.CreateSpiBus(),
+        chipSelectPort: expander.Pins.C0.CreateDigitalOutputPort(true),
+        resetPort: expander.Pins.C1.CreateDigitalOutputPort(false)
+    );
+
+    var result = sensor.SelfTest();
+}
 
 async Task TestSPIDisplay(FtdiExpander expander)
 {
