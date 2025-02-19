@@ -17,6 +17,18 @@ var expander = FtdiExpanderCollection.Devices[0];
 //await TestI2C(FtdiExpanderCollection.Devices[0]);
 //await TestSPI(FtdiExpanderCollection.Devices[0]);
 await TestSPIDisplay(FtdiExpanderCollection.Devices[0]);
+//await TestRfid(FtdiExpanderCollection.Devices[0]);
+
+//async Task TestRfid(FtdiExpander expander)
+//{
+//    var sensor = new Mfrc522(
+//        spiBus: expander.CreateSpiBus(),
+//        chipSelectPort: expander.Pins.C0.CreateDigitalOutputPort(true),
+//        resetPort: expander.Pins.C1.CreateDigitalOutputPort(false)
+//    );
+
+//    var result = sensor.SelfTest();
+//}
 
 async Task TestSPIDisplay(FtdiExpander expander)
 {
