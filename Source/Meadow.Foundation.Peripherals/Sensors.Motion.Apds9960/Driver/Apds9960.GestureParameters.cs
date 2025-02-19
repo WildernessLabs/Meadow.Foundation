@@ -1,13 +1,12 @@
-﻿namespace Meadow.Foundation.Sensors.Motion
+﻿namespace Meadow.Foundation.Sensors.Motion;
+
+public partial class Apds9960
 {
-    public partial class Apds9960
+    private static class GestureParameters
     {
-        static class GestureParameters
-        {
-            /* Gesture parameters */
-            public const byte GESTURE_THRESHOLD_OUT = 10;
-            public const byte GESTURE_SENSITIVITY_1 = 50;
-            public const byte GESTURE_SENSITIVITY_2 = 20;
-        }
+        /* Gesture parameters */
+        public const byte THRESHOLD_OUT = 10;
+        public const byte SENSITIVITY_1 = 50;
+        public const byte SENSITIVITY_2 = 20;
     }
 }
