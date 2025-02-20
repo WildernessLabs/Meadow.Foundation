@@ -11,19 +11,18 @@ namespace Meadow.Foundation.Motors.StepperOnline;
 /// <summary>
 /// A 24V, 100RPM, 30:1 gear-reduction BLDC motor
 /// </summary>
-public class F55B150_24GL_30S : IMotor
+public class F55B150_24GL_30S : IVariableSpeedMotor
 {
+    private static AngularVelocity? maxVelocity;
+    private readonly BLD510B controller;
+
     /// <summary>
     /// The default motor rotation direction.
     /// </summary>
     public const RotationDirection DefaultRotationDirection = RotationDirection.Clockwise;
 
-    /// <summary>
-    /// The default speed (100 RPM).
-    /// </summary>
-    public static AngularVelocity DefaultSpeed = new(100, AngularVelocity.UnitType.RevolutionsPerMinute);
-
-    private readonly BLD510B controller;
+    /// <inheritdoc/>
+    public AngularVelocity MaxVelocity => maxVelocity ??= new AngularVelocity(100, AngularVelocity.UnitType.RevolutionsPerSecond);
 
     /// <inheritdoc/>
     public RotationDirection Direction { get; private set; }
@@ -81,7 +80,7 @@ public class F55B150_24GL_30S : IMotor
 
                 Direction = DefaultRotationDirection;
                 await controller.SetDirectionTerminal(Direction);
-                await SetSpeed(DefaultSpeed);
+                await SetSpeed(MaxVelocity);
                 succeeded = true;
             }
             catch (TimeoutException)
@@ -185,5 +184,27 @@ public class F55B150_24GL_30S : IMotor
         var rawSpeed = await controller.GetActualSpeed();
         // 1 count equals approximately 0.0133 RPM for this driver/motor combination.
         return new AngularVelocity(rawSpeed * 0.0133, AngularVelocity.UnitType.RevolutionsPerMinute);
+    }
+
+    /// <inheritdoc/>
+    public async Task RunFor(TimeSpan runTime, RotationDirection direction, AngularVelocity angularVelocity, CancellationToken cancellationToken = default)
+    {
+        if (angularVelocity > MaxVelocity)
+        {
+            throw new ArgumentOutOfRangeException(nameof(angularVelocity));
+        }
+        await SetSpeed(angularVelocity);
+        await RunFor(runTime, direction, cancellationToken);
+    }
+
+    /// <inheritdoc/>
+    public async Task Run(RotationDirection direction, AngularVelocity angularVelocity, CancellationToken cancellationToken = default)
+    {
+        if (angularVelocity > MaxVelocity)
+        {
+            throw new ArgumentOutOfRangeException(nameof(angularVelocity));
+        }
+        await SetSpeed(angularVelocity);
+        await Run(direction, cancellationToken);
     }
 }
