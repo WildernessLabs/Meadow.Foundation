@@ -1,7 +1,7 @@
 ﻿using Meadow.Hardware;
+using Meadow.Units;
 using System;
 using System.Threading.Tasks;
-using Meadow.Units;
 
 namespace Meadow.Foundation.ICs.DAC;
 

@@ -148,8 +148,10 @@ namespace TextDisplayMenu_GameMenu_Sample
                     microGraphics.DrawText(0, 0, $"{command}:");
                     microGraphics.DrawText(0, 20, $"{count++}");
                     microGraphics.DrawPixel(x += xD, y += yD);
-                    if (x == microGraphics.Width || x == 0) { xD *= -1; };
-                    if (y == microGraphics.Height || y == 0) { yD *= -1; };
+                    if (x == microGraphics.Width || x == 0) { xD *= -1; }
+                    ;
+                    if (y == microGraphics.Height || y == 0) { yD *= -1; }
+                    ;
                     microGraphics.Show();
                 }
             }).ConfigureAwait(false);

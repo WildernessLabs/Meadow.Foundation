@@ -1,10 +1,10 @@
-﻿using System;
-using Meadow;
-using Meadow.Units;
+﻿using Meadow;
 using Meadow.Devices;
-using System.Threading.Tasks;
 using Meadow.Foundation.ICs.DAC;
 using Meadow.Hardware;
+using Meadow.Units;
+using System;
+using System.Threading.Tasks;
 
 namespace MeadowApp
 {
@@ -25,7 +25,7 @@ namespace MeadowApp
             // This example requires the VA output of the Mcp4728 to be connected to the A0 analog input on the device. 
             analogOutputPort = mcp4728.CreateAnalogOutputPort(mcp4728.Pins.ChannelA) as Mcp4728.AnalogOutputPort;
             analogInputPort = Device.CreateAnalogInputPort(Device.Pins.A00);
-            
+
             Resolver.Log.Info($"--- MCP4728 Sample App ---");
             analogOutputPort?.HighZ();
             return Task.CompletedTask;
@@ -34,11 +34,11 @@ namespace MeadowApp
         public override Task Run()
         {
             Resolver.Log.Debug("Run...");
-         
+
             var centerValue = analogOutputPort.MaxOutputValue / 2.0;
-            
+
             // Generate a sine wave and read it back using an analog input.
-            for (int angle = 0; angle < 360; angle+=5)
+            for (int angle = 0; angle < 360; angle += 5)
             {
                 var value = (uint)(centerValue + (centerValue * Math.Sin(new Angle(angle).Radians)));
                 analogOutputPort.GenerateOutput(value);

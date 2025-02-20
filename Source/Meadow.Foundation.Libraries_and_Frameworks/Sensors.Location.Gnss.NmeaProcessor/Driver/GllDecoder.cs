@@ -41,10 +41,10 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
             //  Status is stored in element 7 (position 6), A = valid, V = not valid.
             //
             var location = new GnssPositionInfo();
-            
+
             location.IsValid = sentence.DataElements[5].ToLower() == "a";
 
-            if(location.IsValid)
+            if (location.IsValid)
             {
                 location.Position = new();
                 location.TalkerID = sentence.TalkerID;
@@ -52,7 +52,7 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
                 location.Position.Longitude = NmeaUtilities.ParseLongitude(sentence.DataElements[2], sentence.DataElements[3]);
                 location.TimeOfReading = NmeaUtilities.TimeOfReading(null, sentence.DataElements[4]);
             }
-            
+
             PositionReceived?.Invoke(this, location);
         }
     }
