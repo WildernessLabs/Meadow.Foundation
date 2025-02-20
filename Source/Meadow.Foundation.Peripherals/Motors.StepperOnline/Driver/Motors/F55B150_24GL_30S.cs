@@ -13,6 +13,9 @@ namespace Meadow.Foundation.Motors.StepperOnline;
 /// </summary>
 public class F55B150_24GL_30S : IVariableSpeedMotor
 {
+    /// <inheritdoc/>
+    public event EventHandler<bool>? StateChanged;
+
     private static AngularVelocity? maxVelocity;
     private readonly BLD510B controller;
 
@@ -126,6 +129,8 @@ public class F55B150_24GL_30S : IVariableSpeedMotor
         // The code here sets the terminal to true, which might be a typo.
         // If you actually want to stop the motor, consider setting it to false. 
         await controller.SetStartStopTerminal(true);
+
+        StateChanged?.Invoke(this, true);
     }
 
     /// <summary>
@@ -135,9 +140,11 @@ public class F55B150_24GL_30S : IVariableSpeedMotor
     /// A token to observe while waiting for the task to complete.
     /// </param>
     /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-    public Task Stop(CancellationToken cancellationToken = default)
+    public async Task Stop(CancellationToken cancellationToken = default)
     {
-        return controller.SetStartStopTerminal(false);
+        await controller.SetStartStopTerminal(false);
+        StateChanged?.Invoke(this, false);
+
     }
 
     /// <summary>
@@ -147,9 +154,10 @@ public class F55B150_24GL_30S : IVariableSpeedMotor
     /// <see langword="true" /> to enable the brake; <see langword="false" /> to disable.
     /// </param>
     /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-    public Task SetBrakeState(bool enabled)
+    public async Task SetBrakeState(bool enabled)
     {
-        return controller.SetBrakeTerminal(enabled);
+        await controller.SetBrakeTerminal(enabled);
+        StateChanged?.Invoke(this, false);
     }
 
     /// <summary>
