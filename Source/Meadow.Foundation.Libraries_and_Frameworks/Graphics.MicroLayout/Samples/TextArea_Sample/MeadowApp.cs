@@ -35,7 +35,6 @@ public class MeadowApp : App<Desktop>
                 textArea.Add($"{DateTime.UtcNow:HH:mm:ss} TestItem {tick}", color);
                 Thread.Sleep(1000);
             }
-            ;
         });
 
         // NOTE: this will not return until the display is closed
