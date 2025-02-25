@@ -1,8 +1,8 @@
-# Meadow.Foundation.Sensors.Atmospheric.Hc2
+# Meadow.Foundation.Sensors.Battery.Max1704x
 
-**HC2 Analog and Serial humidity and temperature probe**
+**Max1704x I2C Fuel Gauge**
 
-The **Hc2** library is included in the **Meadow.Foundation.Sensors.Atmospheric.Hc2** nuget package and is designed for the [Wilderness Labs](www.wildernesslabs.co) Meadow .NET IoT platform.
+The **Max17043** library is included in the **Meadow.Foundation.Sensors.Battery.Max1704x** nuget package and is designed for the [Wilderness Labs](www.wildernesslabs.co) Meadow .NET IoT platform.
 
 This driver is part of the [Meadow.Foundation](https://developer.wildernesslabs.co/Meadow/Meadow.Foundation/) peripherals library, an open-source repository of drivers and libraries that streamline and simplify adding hardware to your C# .NET Meadow IoT applications.
 
@@ -14,53 +14,29 @@ To view all Wilderness Labs open-source projects, including samples, visit [gith
 
 You can install the library from within Visual studio using the the NuGet Package Manager or from the command line using the .NET CLI:
 
-`dotnet add package Meadow.Foundation.Sensors.Atmospheric.Hc2`
+`dotnet add package Meadow.Foundation.Sensors.Battery.Max1704x`
 ## Usage
 
 ```csharp
-HC2 sensor;
+private Max17043 sensor;
 
 public override Task Initialize()
 {
     Resolver.Log.Info("Initializing...");
 
-    // Analog
-    //sensor = new HC2(Device.Pins.A00, Device.Pins.A01);
+    sensor = new Max17043(Device.CreateI2cBus());
 
-    // Serial
-    sensor = new HC2(Device, Device.PlatformOS.GetSerialPortName("COM4"));
-
-    var consumer = HC2.CreateObserver(
-        handler: result =>
-        {
-            Resolver.Log.Info($"Observer: Temp changed by threshold; new Temp: {result.New.Temperature?.Celsius:N2} °C, old: {result.Old?.Temperature?.Celsius:N2} °C");
-        },
-        filter: result =>
-        {
-            if (result.Old is { } old)
-            {
-                if (result.New.Temperature.HasValue && old.Temperature.HasValue)
-                    return ((result.New.Temperature.Value - old.Temperature.Value).Abs().Celsius > 0.5);
-            }
-            return false;
-        }
-    );
-    sensor.Subscribe(consumer);
-
-    sensor.Updated += (sender, result) =>
-    {
-        Resolver.Log.Info($"Relative Humidity: {result.New.Humidity?.Percent:N2} %, Temperature: {result.New.Temperature?.Celsius:N2} °C");
-    };
     return Task.CompletedTask;
 }
 
 public override async Task Run()
 {
-    Resolver.Log.Info($"Initial Read:");
-    var conditions = await sensor.Read();
-    Resolver.Log.Info($"Relative Humidity: {conditions.Humidity?.Percent:N2} %, Temperature: {conditions.Temperature?.Celsius:N2} °C");
-
-    sensor.StartUpdating(TimeSpan.FromSeconds(5));
+    while (true)
+    {
+        Resolver.Log.Info($"Voltage: {sensor.ReadVoltage().Volts:N2}V ");
+        Resolver.Log.Info($"SoC: {sensor.ReadStateOfCharge():N0}% ");
+        await Task.Delay(1000);
+    }
 }
 
 ```
