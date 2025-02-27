@@ -183,7 +183,26 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         public override void Show()
         {
-            DisplayFrame(imageBuffer.Buffer);
+            var buffer = imageBuffer.Buffer;
+
+            if (buffer == null)
+            {
+                return;
+            }
+
+            SendCommand(DATA_START_TRANSMISSION_1);
+            for (int i = 0; i < Width / 8 * Height; i++)
+            {
+                SendData(buffer[i]);
+            }
+
+            SendCommand(DATA_START_TRANSMISSION_2);
+            for (int i = 0; i < Width / 8 * Height; i++)
+            {
+                SendData(~buffer[i]);
+            }
+
+            DisplayFrame();
         }
 
         /// <summary>
@@ -205,28 +224,6 @@ namespace Meadow.Foundation.Displays
                 SendData(0xFF);
             }
             DelayMs(2);
-        }
-
-        void DisplayFrame(byte[] buffer)
-        {
-            if (buffer == null)
-            {
-                return;
-            }
-
-            SendCommand(DATA_START_TRANSMISSION_1);
-            for (int i = 0; i < Width / 8 * Height; i++)
-            {
-                SendData(buffer[i]);
-            }
-
-            SendCommand(DATA_START_TRANSMISSION_2);
-            for (int i = 0; i < Width / 8 * Height; i++)
-            {
-                SendData(~buffer[i]);
-            }
-
-            DisplayFrame();
         }
 
         /// <summary>
