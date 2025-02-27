@@ -17,6 +17,7 @@ namespace Displays.ePaper.EpdMonochrome_Sample
             Epd2in13,
             Epd2in9,
             Epd4in2,
+            Epd7in5V2
         }
 
         EPaperMonoBase display;
@@ -26,7 +27,7 @@ namespace Displays.ePaper.EpdMonochrome_Sample
         {
             Resolver.Log.Info("Initialize ...");
 
-            var displayType = EpdMonochromeDisplay.Epd1in54;
+            var displayType = EpdMonochromeDisplay.Epd7in5V2;
 
             Resolver.Log.Info($"{displayType} selected - change displayType to select a different display");
 
@@ -45,6 +46,8 @@ namespace Displays.ePaper.EpdMonochrome_Sample
         {
             Resolver.Log.Info("Run");
 
+            graphics.Clear();
+
             for (int i = 0; i < 100; i++)
             {
                 graphics.DrawPixel(i, i, Color.Black);
@@ -53,6 +56,8 @@ namespace Displays.ePaper.EpdMonochrome_Sample
             graphics.DrawRectangle(10, 40, 100, 60, Color.Black, true);
             graphics.DrawRectangle(20, 80, 100, 90, Color.White, true);
             graphics.DrawRectangle(20, 80, 100, 90, Color.Black, false);
+
+            graphics.DrawRectangle(0, 0, graphics.Width, graphics.Height, false);
 
             graphics.CurrentFont = new Font12x16();
             graphics.DrawText(2, 20, "Meadow F7", Color.Black);
@@ -97,6 +102,13 @@ namespace Displays.ePaper.EpdMonochrome_Sample
                     dcPin: Device.Pins.D02,
                     resetPin: Device.Pins.D01,
                     busyPin: Device.Pins.D00),
+
+                EpdMonochromeDisplay.Epd7in5V2 => new Epd7in5V2(
+                spiBus: Device.CreateSpiBus(),
+                chipSelectPin: Device.Pins.D03,
+                dcPin: Device.Pins.D02,
+                resetPin: Device.Pins.D01,
+                busyPin: Device.Pins.D00),
 
                 _ => null
             };
