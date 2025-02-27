@@ -173,12 +173,11 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// Set partial address window to update display
         /// </summary>
-        /// <param name="buffer">The internal display buffer</param>
         /// <param name="x">X start position in pixels</param>
         /// <param name="y">Y start position in pixels</param>
         /// <param name="width">Width in pixels</param>
         /// <param name="height">Height in pixels</param>
-        protected void SetPartialWindow(byte[] buffer, int x, int y, int width, int height)
+        protected void SetPartialWindow(int x, int y, int width, int height)
         {
             SendCommand(PARTIAL_IN);
             SendCommand(PARTIAL_WINDOW);
@@ -192,24 +191,6 @@ namespace Meadow.Foundation.Displays
             SendData((y + height - 1) & 0xff);
             SendData(0x01);         // Gates scan both inside and outside of the partial window. (default) 
             DelayMs(2);
-            SendCommand(DATA_START_TRANSMISSION_2);
-
-            if (buffer != null)
-            {
-                for (int i = 0; i < width / 8 * height; i++)
-                {
-                    SendData(buffer[i]);
-                }
-            }
-            else
-            {
-                for (int i = 0; i < width / 8 * height; i++)
-                {
-                    SendData(0x00);
-                }
-            }
-            DelayMs(2);
-            SendCommand(PARTIAL_OUT);
         }
 
         /// <summary>
@@ -221,7 +202,29 @@ namespace Meadow.Foundation.Displays
         /// <param name="bottom">bottom bounds of region in pixels</param>
         public override void Show(int left, int top, int right, int bottom)
         {
-            SetPartialWindow(imageBuffer.Buffer, left, top, right - left, top - bottom);
+            int width = right - left;
+            int height = top - bottom;
+
+            SetPartialWindow(left, top, width, height);
+
+            SendCommand(DATA_START_TRANSMISSION_2);
+
+            if (imageBuffer.Buffer != null)
+            {
+                for (int i = 0; i < width / 8 * height; i++)
+                {
+                    SendData(imageBuffer.Buffer[i]);
+                }
+            }
+            else
+            {
+                for (int i = 0; i < width / 8 * height; i++)
+                {
+                    SendData(0x00);
+                }
+            }
+            DelayMs(2);
+            SendCommand(PARTIAL_OUT);
 
             DisplayFrame();
         }
