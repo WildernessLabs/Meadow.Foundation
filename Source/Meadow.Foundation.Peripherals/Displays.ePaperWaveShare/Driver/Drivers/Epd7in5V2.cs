@@ -133,14 +133,30 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// Set partial address window to update display
         /// </summary>
-        /// <param name="buffer">The internal display buffer</param>
         /// <param name="x">X start position in pixels</param>
         /// <param name="y">Y start position in pixels</param>
         /// <param name="width">Width in pixels</param>
         /// <param name="height">Height in pixels</param>
-        protected void SetPartialWindow(byte[] buffer, int x, int y, int width, int height)
+        protected void SetPartialWindow(int x, int y, int width, int height)
         {
+            SendCommand(VCOM_AND_DATA_INTERVAL_SETTING);
+            SendData(0xA9);
+            SendData(0x07);
 
+            SendCommand(PARTIAL_IN);
+            SendCommand(PARTIAL_WINDOW);
+            SendData(x / 256);
+            SendData(x % 256); //x start    
+
+            SendData(x + width / 256);
+            SendData(x + width % 256 - 1); //x end	
+
+            SendData(y / 256);
+            SendData(y % 256); //y start    
+
+            SendData(y + height / 256);
+            SendData(y + height % 256 - 1); //y end
+            SendData(0x01);
         }
 
         /// <summary>
@@ -152,11 +168,14 @@ namespace Meadow.Foundation.Displays
         /// <param name="bottom">bottom bounds of region in pixels</param>
         public override void Show(int left, int top, int right, int bottom)
         {
-            Show();
+            int width = right - left;
+            int height = top - bottom;
 
-            //SetPartialWindow(imageBuffer.Buffer, left, top, right - left, top - bottom);
+            SetPartialWindow(left, top, width, height);
 
-            //DisplayFrame();
+
+
+            DisplayFrame();
         }
 
         /// <summary>
