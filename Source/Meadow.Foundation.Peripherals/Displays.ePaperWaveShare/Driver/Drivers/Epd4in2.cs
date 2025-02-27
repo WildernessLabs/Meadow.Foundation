@@ -234,7 +234,38 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         public override void Show()
         {
-            DisplayFrame(imageBuffer.Buffer);
+            SendCommand(RESOLUTION_SETTING);
+            SendData(Width >> 8);
+            SendData(Width & 0xff);
+            SendData(Height >> 8);
+            SendData(Height & 0xff);
+
+            SendCommand(VCM_DC_SETTING);
+            SendData(0x12);
+
+            SendCommand(VCOM_AND_DATA_INTERVAL_SETTING);
+            SendCommand(0x97);    //VBDF 17|D7 VBDW 97  VBDB 57  VBDF F7  VBDW 77  VBDB 37  VBDR B7
+
+            var buffer = imageBuffer.Buffer;
+
+            if (buffer != null)
+            {
+                SendCommand(DATA_START_TRANSMISSION_1);
+                for (int i = 0; i < Width / 8 * Height; i++)
+                {   // bit set: white, bit reset: black
+                    SendData(0xFF);
+                }
+                DelayMs(2);
+                SendCommand(DATA_START_TRANSMISSION_2);
+                for (int i = 0; i < Width / 8 * Height; i++)
+                {   //Set this to 0xFF for white when in single color mode
+                    SendData(buffer[i]);
+                }
+
+                DelayMs(2);
+            }
+
+            DisplayFrame();
         }
 
         /// <summary>
@@ -262,40 +293,6 @@ namespace Meadow.Foundation.Displays
                 SendData(0xFF);
             }
             DelayMs(2);
-        }
-
-        void DisplayFrame(byte[] buffer)
-        {
-            SendCommand(RESOLUTION_SETTING);
-            SendData(Width >> 8);
-            SendData(Width & 0xff);
-            SendData(Height >> 8);
-            SendData(Height & 0xff);
-
-            SendCommand(VCM_DC_SETTING);
-            SendData(0x12);
-
-            SendCommand(VCOM_AND_DATA_INTERVAL_SETTING);
-            SendCommand(0x97);    //VBDF 17|D7 VBDW 97  VBDB 57  VBDF F7  VBDW 77  VBDB 37  VBDR B7
-
-            if (buffer != null)
-            {
-                SendCommand(DATA_START_TRANSMISSION_1);
-                for (int i = 0; i < Width / 8 * Height; i++)
-                {   // bit set: white, bit reset: black
-                    SendData(0xFF);
-                }
-                DelayMs(2);
-                SendCommand(DATA_START_TRANSMISSION_2);
-                for (int i = 0; i < Width / 8 * Height; i++)
-                {   //Set this to 0xFF for white when in single color mode
-                    SendData(buffer[i]);
-                }
-
-                DelayMs(2);
-            }
-
-            DisplayFrame();
         }
 
         /// <summary>
