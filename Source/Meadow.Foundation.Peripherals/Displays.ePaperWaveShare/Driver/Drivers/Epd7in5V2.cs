@@ -191,10 +191,8 @@ namespace Meadow.Foundation.Displays
             }
 
             SendCommand(DATA_START_TRANSMISSION_1);
-            for (int i = 0; i < Width / 8 * Height; i++)
-            {
-                SendData(buffer[i]);
-            }
+            dataCommandPort!.State = DataState;
+            spiComms?.Write(buffer);
 
             SendCommand(DATA_START_TRANSMISSION_2);
             for (int i = 0; i < Width / 8 * Height; i++)
@@ -211,19 +209,15 @@ namespace Meadow.Foundation.Displays
         protected virtual void ClearFrame()
         {
             SendCommand(DATA_START_TRANSMISSION_1);
-            DelayMs(2);
             for (int i = 0; i < Width / 8 * Height; i++)
             {
                 SendData(0xFF);
             }
-            DelayMs(2);
             SendCommand(DATA_START_TRANSMISSION_2);
-            DelayMs(2);
             for (int i = 0; i < Width / 8 * Height; i++)
             {
                 SendData(0xFF);
             }
-            DelayMs(2);
         }
 
         /// <summary>
