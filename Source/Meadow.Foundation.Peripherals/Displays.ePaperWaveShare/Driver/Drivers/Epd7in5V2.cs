@@ -1,4 +1,5 @@
 ﻿using Meadow.Hardware;
+using System;
 
 namespace Meadow.Foundation.Displays
 {
@@ -8,6 +9,14 @@ namespace Meadow.Foundation.Displays
     /// </summary>
     public class Epd7in5V2 : EPaperMonoBase
     {
+        /// <summary>
+        /// The minimum delay required by the hardware between screen redraws
+        /// </summary>
+        public TimeSpan MinimumRefreshInterval => TimeSpan.FromSeconds(3);
+
+        private int lastUpdatedTick = -1;
+
+
         /// <summary>
         /// Create a new WaveShare Epd7in5 v2 800x480 pixel display object
         /// </summary>
@@ -149,19 +158,27 @@ namespace Meadow.Foundation.Displays
 
         /// <summary>
         /// Copy the display buffer to the display for a set region
+        /// If called more frequently than every 3 seconds, a not supported exception will be thrown
         /// </summary>
         /// <param name="left">left bounds of region in pixels</param>
         /// <param name="top">top bounds of region in pixels</param>
         /// <param name="right">right bounds of region in pixels</param>
         /// <param name="bottom">bottom bounds of region in pixels</param>
+        /// <exception cref="NotSupportedException">Thrown if called more frequently than every 3 seconds</exception>
         public override void Show(int left, int top, int right, int bottom)
         {
+            if (Environment.TickCount - lastUpdatedTick < MinimumRefreshInterval.TotalMilliseconds)
+            {
+                throw new NotSupportedException("The minimum update interval for this display is 3 seconds");
+            }
+            lastUpdatedTick = Environment.TickCount;
+
             // Align to 8-pixel boundaries
             left &= ~7;
             right = (right + 7) & ~7;
 
             int width = right - left;
-            int height = top - bottom;
+            int height = bottom - top;
 
             SetPartialWindow(left, top, width, height);
 
@@ -191,10 +208,18 @@ namespace Meadow.Foundation.Displays
 
         /// <summary>
         /// Copy the display buffer to the display
+        /// If called more frequently than every 3 seconds, a not supported exception will be thrown
         /// </summary>
+        /// <exception cref="NotSupportedException">Thrown if called more frequently than every 3 seconds</exception>
         public override void Show()
         {
             Initialize();
+
+            if (Environment.TickCount - lastUpdatedTick < MinimumRefreshInterval.TotalMilliseconds)
+            {
+                throw new NotSupportedException("The minimum update interval for this display is 3 seconds");
+            }
+            lastUpdatedTick = Environment.TickCount;
 
             var buffer = imageBuffer.Buffer;
 
