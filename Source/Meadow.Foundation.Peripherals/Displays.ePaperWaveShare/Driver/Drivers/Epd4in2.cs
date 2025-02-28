@@ -173,12 +173,11 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// Set partial address window to update display
         /// </summary>
-        /// <param name="buffer">The internal display buffer</param>
         /// <param name="x">X start position in pixels</param>
         /// <param name="y">Y start position in pixels</param>
         /// <param name="width">Width in pixels</param>
         /// <param name="height">Height in pixels</param>
-        protected void SetPartialWindow(byte[] buffer, int x, int y, int width, int height)
+        protected void SetPartialWindow(int x, int y, int width, int height)
         {
             SendCommand(PARTIAL_IN);
             SendCommand(PARTIAL_WINDOW);
@@ -192,24 +191,6 @@ namespace Meadow.Foundation.Displays
             SendData((y + height - 1) & 0xff);
             SendData(0x01);         // Gates scan both inside and outside of the partial window. (default) 
             DelayMs(2);
-            SendCommand(DATA_START_TRANSMISSION_2);
-
-            if (buffer != null)
-            {
-                for (int i = 0; i < width / 8 * height; i++)
-                {
-                    SendData(buffer[i]);
-                }
-            }
-            else
-            {
-                for (int i = 0; i < width / 8 * height; i++)
-                {
-                    SendData(0x00);
-                }
-            }
-            DelayMs(2);
-            SendCommand(PARTIAL_OUT);
         }
 
         /// <summary>
@@ -221,7 +202,29 @@ namespace Meadow.Foundation.Displays
         /// <param name="bottom">bottom bounds of region in pixels</param>
         public override void Show(int left, int top, int right, int bottom)
         {
-            SetPartialWindow(imageBuffer.Buffer, left, top, right - left, top - bottom);
+            int width = right - left;
+            int height = top - bottom;
+
+            SetPartialWindow(left, top, width, height);
+
+            SendCommand(DATA_START_TRANSMISSION_2);
+
+            if (imageBuffer.Buffer != null)
+            {
+                for (int i = 0; i < width / 8 * height; i++)
+                {
+                    SendData(imageBuffer.Buffer[i]);
+                }
+            }
+            else
+            {
+                for (int i = 0; i < width / 8 * height; i++)
+                {
+                    SendData(0x00);
+                }
+            }
+            DelayMs(2);
+            SendCommand(PARTIAL_OUT);
 
             DisplayFrame();
         }
@@ -231,7 +234,38 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         public override void Show()
         {
-            DisplayFrame(imageBuffer.Buffer);
+            SendCommand(RESOLUTION_SETTING);
+            SendData(Width >> 8);
+            SendData(Width & 0xff);
+            SendData(Height >> 8);
+            SendData(Height & 0xff);
+
+            SendCommand(VCM_DC_SETTING);
+            SendData(0x12);
+
+            SendCommand(VCOM_AND_DATA_INTERVAL_SETTING);
+            SendCommand(0x97);    //VBDF 17|D7 VBDW 97  VBDB 57  VBDF F7  VBDW 77  VBDB 37  VBDR B7
+
+            var buffer = imageBuffer.Buffer;
+
+            if (buffer != null)
+            {
+                SendCommand(DATA_START_TRANSMISSION_1);
+                for (int i = 0; i < Width / 8 * Height; i++)
+                {   // bit set: white, bit reset: black
+                    SendData(0xFF);
+                }
+                DelayMs(2);
+                SendCommand(DATA_START_TRANSMISSION_2);
+                for (int i = 0; i < Width / 8 * Height; i++)
+                {   //Set this to 0xFF for white when in single color mode
+                    SendData(buffer[i]);
+                }
+
+                DelayMs(2);
+            }
+
+            DisplayFrame();
         }
 
         /// <summary>
@@ -259,40 +293,6 @@ namespace Meadow.Foundation.Displays
                 SendData(0xFF);
             }
             DelayMs(2);
-        }
-
-        void DisplayFrame(byte[] buffer)
-        {
-            SendCommand(RESOLUTION_SETTING);
-            SendData(Width >> 8);
-            SendData(Width & 0xff);
-            SendData(Height >> 8);
-            SendData(Height & 0xff);
-
-            SendCommand(VCM_DC_SETTING);
-            SendData(0x12);
-
-            SendCommand(VCOM_AND_DATA_INTERVAL_SETTING);
-            SendCommand(0x97);    //VBDF 17|D7 VBDW 97  VBDB 57  VBDF F7  VBDW 77  VBDB 37  VBDR B7
-
-            if (buffer != null)
-            {
-                SendCommand(DATA_START_TRANSMISSION_1);
-                for (int i = 0; i < Width / 8 * Height; i++)
-                {   // bit set: white, bit reset: black
-                    SendData(0xFF);
-                }
-                DelayMs(2);
-                SendCommand(DATA_START_TRANSMISSION_2);
-                for (int i = 0; i < Width / 8 * Height; i++)
-                {   //Set this to 0xFF for white when in single color mode
-                    SendData(buffer[i]);
-                }
-
-                DelayMs(2);
-            }
-
-            DisplayFrame();
         }
 
         /// <summary>
