@@ -11,7 +11,7 @@ namespace Meadow.Foundation.Sensors.Power;
 /// </summary>
 public abstract partial class Ina2xx
     : ByteCommsSensorBase<(Units.Current? Current, Units.Voltage? Voltage, Units.Power? Power)>,
-    ICurrentSensor, IVoltageSensor, IPowerSensor, II2cPeripheral
+    ICurrentSensor, IVoltageSensor, IPowerSensor, II2cPeripheral, ISamplingSensor<Voltage>
 {
     /// <summary>
     /// The default I2C address for the peripheral
@@ -155,6 +155,9 @@ public abstract partial class Ina2xx
 
     /// <summary> Read the Current measurement from the power monitor IC. </summary>
     public abstract Units.Current ReadCurrent();
+
+    /// <inheritdoc/>
+    public ValueTask<Units.Voltage> ReadVoltage() => new ValueTask<Voltage>(ReadBusVoltage());
 
     /// <summary> Read the Voltage measurement from the power monitor IC. </summary>
     public abstract Units.Voltage ReadBusVoltage();

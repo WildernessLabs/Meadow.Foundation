@@ -4,138 +4,137 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Meadow.Foundation.ICs.IOExpanders
+namespace Meadow.Foundation.ICs.IOExpanders;
+
+public partial class Ads1263
 {
-    public partial class Ads1263
+    /// <summary>
+    /// Represents an Ads1263 analog input port
+    /// </summary>
+    public class AnalogInputPort : AnalogInputPortBase, IAnalogInputPort
     {
         /// <summary>
-        /// Represents an Ads1263 analog input port
+        /// Is the port sampling
         /// </summary>
-        public class AnalogInputPort : AnalogInputPortBase, IAnalogInputPort
+        public bool IsSampling { get; protected set; } = false;
+
+        private readonly Ads1263 controller;
+
+        private Voltage previousVoltageReading;
+
+        private CancellationTokenSource? SamplingTokenSource;
+
+        private readonly object _lock = new();
+
+        /// <summary>
+        /// Create a new AnalogInputPort object with a non-default reference voltage
+        /// </summary>
+        /// <param name="controller">The parent Ads1263 controller.</param>
+        /// <param name="pin">The pin associated with the port.</param>
+        /// <param name="channel">The channel information for the port.</param>
+        /// <param name="sampleCount">The number of samples to be taken during each reading.</param>
+        /// <param name="sampleInterval">The time interval between samples during each reading.</param>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="pin"/> or <paramref name="channel"/> is <c>null</c>.</exception>
+        public AnalogInputPort(Ads1263 controller,
+            IPin pin,
+            IAnalogChannelInfo channel,
+            int sampleCount, TimeSpan sampleInterval)
+            : base(pin, channel, sampleCount, sampleInterval, controller.GetADCReferenceVoltage(pin))
         {
-            /// <summary>
-            /// Is the port sampling
-            /// </summary>
-            public bool IsSampling { get; protected set; } = false;
+            // TODO: Validate pin is valid before using it?
+            this.controller = controller;
 
-            private readonly Ads1263 controller;
+            SampleCount = sampleCount;
+        }
 
-            private Voltage previousVoltageReading;
+        /// <summary>
+        /// Start the ADC conversions
+        /// </summary>
+        public void StartConversions()
+        {
+            controller.ADCStart(Pin);
+        }
 
-            private CancellationTokenSource? SamplingTokenSource;
+        /// <summary>
+        /// Stop the ADC conversions
+        /// </summary>
+        public void StopConversions()
+        {
+            controller.ADCStop(Pin);
+        }
 
-            private readonly object _lock = new();
+        /// <inheritdoc />
+        /// <remarks>Assumes conversions have been started</remarks>
+        public override async Task<Voltage> Read()
+        {
+            var result = controller.ReadAnalog(Pin);
+            await Task.Delay(SampleInterval);
+            return result;
+        }
 
-            /// <summary>
-            /// Create a new AnalogInputPort object with a non-default reference voltage
-            /// </summary>
-            /// <param name="controller">The parent Ads1263 controller.</param>
-            /// <param name="pin">The pin associated with the port.</param>
-            /// <param name="channel">The channel information for the port.</param>
-            /// <param name="sampleCount">The number of samples to be taken during each reading.</param>
-            /// <param name="sampleInterval">The time interval between samples during each reading.</param>
-            /// <exception cref="ArgumentNullException">Thrown if <paramref name="pin"/> or <paramref name="channel"/> is <c>null</c>.</exception>
-            public AnalogInputPort(Ads1263 controller,
-                IPin pin,
-                IAnalogChannelInfo channel,
-                int sampleCount, TimeSpan sampleInterval)
-                : base(pin, channel, sampleCount, sampleInterval, controller.GetADCReferenceVoltage(pin))
+        /// <summary>
+        /// Start updating
+        /// </summary>
+        public override void StartUpdating(TimeSpan? updateInterval = null)
+        {
+            // thread safety
+            lock (_lock)
             {
-                // TODO: Validate pin is valid before using it?
-                this.controller = controller;
+                if (IsSampling)
+                    return;
 
-                SampleCount = sampleCount;
-            }
+                StartConversions();
+                IsSampling = true;
 
-            /// <summary>
-            /// Start the ADC conversions
-            /// </summary>
-            public void StartConversions()
-            {
-                controller.ADCStart(Pin);
-            }
+                // if an update interval was passed in, override the default value
+                if (updateInterval is { } ui)
+                { UpdateInterval = ui; }
 
-            /// <summary>
-            /// Stop the ADC conversions
-            /// </summary>
-            public void StopConversions()
-            {
-                controller.ADCStop(Pin);
-            }
+                SamplingTokenSource = new CancellationTokenSource();
+                var ct = SamplingTokenSource.Token;
 
-            /// <inheritdoc />
-            /// <remarks>Assumes conversions have been started</remarks>
-            public override async Task<Voltage> Read()
-            {
-                var result = controller.ReadAnalog(Pin);
-                await Task.Delay(SampleInterval);
-                return result;
-            }
-
-            /// <summary>
-            /// Start updating
-            /// </summary>
-            public override void StartUpdating(TimeSpan? updateInterval = null)
-            {
-                // thread safety
-                lock (_lock)
+                Task.Factory.StartNew(async () =>
                 {
-                    if (IsSampling)
-                        return;
-
-                    StartConversions();
-                    IsSampling = true;
-
-                    // if an update interval was passed in, override the default value
-                    if (updateInterval is { } ui)
-                    { UpdateInterval = ui; }
-
-                    SamplingTokenSource = new CancellationTokenSource();
-                    var ct = SamplingTokenSource.Token;
-
-                    Task.Factory.StartNew(async () =>
+                    while (true)
                     {
-                        while (true)
+                        // cleanup
+                        if (ct.IsCancellationRequested)
                         {
-                            // cleanup
-                            if (ct.IsCancellationRequested)
-                            {
-                                // do task clean up here
-                                Observers.ForEach(x => x.OnCompleted());
-                                break;
-                            }
-
-                            var newVoltage = await Read();
-                            var result = new ChangeResult<Voltage>(newVoltage, previousVoltageReading);
-                            previousVoltageReading = newVoltage;
-
-                            // raise our events and notify our subs
-                            RaiseChangedAndNotify(result);
-
-                            await Task.Delay(UpdateInterval, ct);
+                            // do task clean up here
+                            Observers.ForEach(x => x.OnCompleted());
+                            break;
                         }
 
-                        IsSampling = false;
-                    }, SamplingTokenSource.Token);
-                }
-            }
+                        var newVoltage = await Read();
+                        var result = new ChangeResult<Voltage>(newVoltage, previousVoltageReading);
+                        previousVoltageReading = newVoltage;
 
-            /// <summary>
-            /// Stop updating the port
-            /// </summary>
-            public override void StopUpdating()
-            {
-                lock (_lock)
-                {
-                    if (!IsSampling)
-                        return;
+                        // raise our events and notify our subs
+                        RaiseChangedAndNotify(result);
 
-                    SamplingTokenSource?.Cancel();
+                        await Task.Delay(UpdateInterval, ct);
+                    }
 
                     IsSampling = false;
+                }, SamplingTokenSource.Token);
+            }
+        }
 
-                    StopConversions();
-                }
+        /// <summary>
+        /// Stop updating the port
+        /// </summary>
+        public override void StopUpdating()
+        {
+            lock (_lock)
+            {
+                if (!IsSampling)
+                    return;
+
+                SamplingTokenSource?.Cancel();
+
+                IsSampling = false;
+
+                StopConversions();
             }
         }
     }

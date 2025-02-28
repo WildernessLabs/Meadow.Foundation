@@ -1,4 +1,5 @@
 ﻿using Meadow.Hardware;
+using Meadow.Peripherals.Sensors;
 using Meadow.Units;
 using System;
 using System.Threading.Tasks;
@@ -8,7 +9,7 @@ namespace Meadow.Foundation.Sensors.Light
     /// <summary>
     /// Represents an Alspt19315C analog light sensor
     /// </summary>
-    public class Alspt19315C : SamplingSensorBase<Voltage>
+    public class Alspt19315C : SamplingSensorBase<Voltage>, IVoltageSensor
     {
         /// <summary>
         /// Analog port connected to the sensor
@@ -18,7 +19,7 @@ namespace Meadow.Foundation.Sensors.Light
         /// <summary>
         /// The current voltage reading of the sensor
         /// </summary>
-        public Voltage Voltage { get; protected set; }
+        public Voltage? Voltage { get; protected set; }
 
         /// <summary>
         /// Create a new light sensor object using a static reference voltage
@@ -98,7 +99,21 @@ namespace Meadow.Foundation.Sensors.Light
         protected override async Task<Voltage> ReadSensor()
         {
             Voltage = await AnalogInputPort.Read();
-            return Voltage;
+            return Voltage.Value;
+        }
+
+        /// <inheritdoc/>
+        public ValueTask<Voltage> ReadVoltage()
+        {
+            var t = AnalogInputPort.Read();
+            if (t.IsCompletedSuccessfully)
+            {
+                return new ValueTask<Voltage>(t.Result);
+            }
+            else
+            {
+                return new ValueTask<Voltage>(t);
+            }
         }
     }
 }
