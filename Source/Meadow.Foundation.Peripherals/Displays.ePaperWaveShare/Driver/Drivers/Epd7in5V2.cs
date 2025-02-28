@@ -45,11 +45,10 @@ namespace Meadow.Foundation.Displays
 
             SendCommand(POWER_SETTING);
             SendData(0x07);
-            SendData(0x07);    //VGH=20V,VGL=-20V
-            SendData(0x3f);     //VDH=15V
-            SendData(0x3f);     //VDL=-15V
+            SendData(0x07);
+            SendData(0x3f);
+            SendData(0x3f);
 
-            //Enhanced display drive(Add 0x06 command)
             SendCommand(BOOSTER_SOFT_START);
             SendData(0x17);
             SendData(0x17);
@@ -61,7 +60,7 @@ namespace Meadow.Foundation.Displays
             WaitUntilIdle();
 
             SendCommand(PANEL_SETTING);
-            SendData(0x1F);   //KW-3f   KWR-2F	BWROTP 0f	BWOTP 1f
+            SendData(0x1F);
 
             SendCommand(RESOLUTION_SETTING);
             SendData(0x03);     //source 800
@@ -72,15 +71,9 @@ namespace Meadow.Foundation.Displays
             SendCommand(0x15);
             SendData(0x00);
 
-            // If the screen appears gray, use the annotated initialization command
             SendCommand(VCOM_AND_DATA_INTERVAL_SETTING);
             SendData(0x10);
             SendData(0x07);
-            // SendCommand(VCOM_AND_DATA_INTERVAL_SETTING);			
-            // SendData(0x10);
-            // SendData(0x17);
-            // SendCommand(0x52);			
-            // SendData(0x03);
 
             SendCommand(TCON_SETTING);
             SendData(0x22);
@@ -92,7 +85,7 @@ namespace Meadow.Foundation.Displays
             Reset();
 
             SendCommand(PANEL_SETTING);
-            SendData(0x1F);   //KW-3f   KWR-2F	BWROTP 0f	BWOTP 1f
+            SendData(0x1F);
 
             SendCommand(VCOM_AND_DATA_INTERVAL_SETTING);
             SendData(0x10);
@@ -100,7 +93,7 @@ namespace Meadow.Foundation.Displays
 
             SendCommand(POWER_ON);
             DelayMs(100);
-            WaitUntilIdle();        //waiting for the electronic paper IC to release the idle signal
+            WaitUntilIdle();
 
             SendCommand(BOOSTER_SOFT_START);
             SendData(0x27);
@@ -141,17 +134,16 @@ namespace Meadow.Foundation.Displays
         {
             SendCommand(PARTIAL_IN);
             SendCommand(PARTIAL_WINDOW);
+
             SendData(x >> 8);
-            SendData(x & 0xFF); //x start    
-
+            SendData(x & 0xFF);
             SendData((x + width - 1) >> 8);
-            SendData((x + width - 1) & 0xFF); //x end	
-
+            SendData((x + width - 1) & 0xFF);
             SendData(y >> 8);
-            SendData(y & 0xFF); //y start    
-
+            SendData(y & 0xFF);
             SendData((y + height - 1) >> 8);
-            SendData((y + height - 1) & 0xFF); //y end
+            SendData((y + height - 1) & 0xFF);
+
             SendData(0x01);
         }
 
@@ -253,10 +245,10 @@ namespace Meadow.Foundation.Displays
         protected override void Sleep()
         {
             SendCommand(VCOM_AND_DATA_INTERVAL_SETTING);
-            SendData(0XF7);                  //border floating    
-            SendCommand(POWER_OFF);          //power off
+            SendData(0XF7);
+            SendCommand(POWER_OFF);
             WaitUntilIdle();
-            SendCommand(DEEP_SLEEP);         //deep sleep
+            SendCommand(DEEP_SLEEP);
             SendData(0xA5);
         }
 
@@ -272,9 +264,7 @@ namespace Meadow.Foundation.Displays
         readonly byte VCOM_AND_DATA_INTERVAL_SETTING = 0x50;
         readonly byte TCON_SETTING = 0x60;
         readonly byte RESOLUTION_SETTING = 0x61;
-        readonly byte VCM_DC_SETTING = 0x82;
         readonly byte PARTIAL_WINDOW = 0x90;
         readonly byte PARTIAL_IN = 0x91;
-        readonly byte PARTIAL_OUT = 0x92;
     }
 }
