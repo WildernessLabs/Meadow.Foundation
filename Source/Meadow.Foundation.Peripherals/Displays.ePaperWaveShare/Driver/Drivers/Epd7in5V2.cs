@@ -102,7 +102,7 @@ namespace Meadow.Foundation.Displays
             DelayMs(100);
             WaitUntilIdle();        //waiting for the electronic paper IC to release the idle signal
 
-            SendCommand(0x06);          //Booster Soft Start 
+            SendCommand(BOOSTER_SOFT_START);
             SendData(0x27);
             SendData(0x27);
             SendData(0x18);
@@ -139,23 +139,19 @@ namespace Meadow.Foundation.Displays
         /// <param name="height">Height in pixels</param>
         protected void SetPartialWindow(int x, int y, int width, int height)
         {
-            SendCommand(VCOM_AND_DATA_INTERVAL_SETTING);
-            SendData(0xA9);
-            SendData(0x07);
-
             SendCommand(PARTIAL_IN);
             SendCommand(PARTIAL_WINDOW);
-            SendData(x / 256);
-            SendData(x % 256); //x start    
+            SendData(x >> 8);
+            SendData(x & 0xFF); //x start    
 
-            SendData(x + width / 256);
-            SendData(x + width % 256 - 1); //x end	
+            SendData((x + width - 1) >> 8);
+            SendData((x + width - 1) & 0xFF); //x end	
 
-            SendData(y / 256);
-            SendData(y % 256); //y start    
+            SendData(y >> 8);
+            SendData(y & 0xFF); //y start    
 
-            SendData(y + height / 256);
-            SendData(y + height % 256 - 1); //y end
+            SendData((y + height - 1) >> 8);
+            SendData((y + height - 1) & 0xFF); //y end
             SendData(0x01);
         }
 
@@ -168,12 +164,35 @@ namespace Meadow.Foundation.Displays
         /// <param name="bottom">bottom bounds of region in pixels</param>
         public override void Show(int left, int top, int right, int bottom)
         {
+            // Align to 8-pixel boundaries
+            left &= ~7;
+            right = (right + 7) & ~7;
+
             int width = right - left;
             int height = top - bottom;
 
             SetPartialWindow(left, top, width, height);
 
+            var buffer = imageBuffer.Buffer;
 
+
+            SendCommand(DATA_START_TRANSMISSION_1);
+            for (int i = top; i < bottom; i++)
+            {
+                for (int j = left / 8; j < (right / 8); j++)
+                {
+                    SendData(buffer[j + i * Width / 8]);
+                }
+            }
+
+            SendCommand(DATA_START_TRANSMISSION_2);
+            for (int i = top; i < bottom; i++)
+            {
+                for (int j = left / 8; j < (right / 8); j++)
+                {
+                    SendData(~buffer[j + i * Width / 8]);
+                }
+            }
 
             DisplayFrame();
         }
@@ -183,19 +202,16 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         public override void Show()
         {
-            var buffer = imageBuffer.Buffer;
+            Initialize();
 
-            if (buffer == null)
-            {
-                return;
-            }
+            var buffer = imageBuffer.Buffer;
 
             SendCommand(DATA_START_TRANSMISSION_1);
             dataCommandPort!.State = DataState;
             spiComms?.Write(buffer);
 
             SendCommand(DATA_START_TRANSMISSION_2);
-            for (int i = 0; i < Width / 8 * Height; i++)
+            for (int i = 0; i < buffer.Length; i++)
             {
                 SendData(~buffer[i]);
             }
@@ -237,7 +253,7 @@ namespace Meadow.Foundation.Displays
         protected override void Sleep()
         {
             SendCommand(VCOM_AND_DATA_INTERVAL_SETTING);
-            SendData(0XF7);                     //border floating    
+            SendData(0XF7);                  //border floating    
             SendCommand(POWER_OFF);          //power off
             WaitUntilIdle();
             SendCommand(DEEP_SLEEP);         //deep sleep
