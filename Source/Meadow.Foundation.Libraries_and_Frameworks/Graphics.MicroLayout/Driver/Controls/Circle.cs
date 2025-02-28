@@ -113,7 +113,7 @@ public class Circle : ThemedControl
     {
         if (ForeColor != Color.Transparent)
         {
-            graphics.DrawCircle(center.X, center.Y, radius, ForeColor, IsFilled);
+            graphics.DrawCircle(center.X + (Parent?.Left ?? 0), center.Y + (Parent?.Top ?? 0), radius, ForeColor, IsFilled);
         }
     }
 }
