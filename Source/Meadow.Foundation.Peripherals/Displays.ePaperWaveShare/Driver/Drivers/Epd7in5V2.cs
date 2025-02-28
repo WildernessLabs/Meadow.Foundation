@@ -167,7 +167,7 @@ namespace Meadow.Foundation.Displays
         /// <exception cref="NotSupportedException">Thrown if called more frequently than every 3 seconds</exception>
         public override void Show(int left, int top, int right, int bottom)
         {
-            if (Environment.TickCount - lastUpdatedTick < 3000)
+            if (Environment.TickCount - lastUpdatedTick < MinimumRefreshInterval.TotalMilliseconds)
             {
                 throw new NotSupportedException("The minimum update interval for this display is 3 seconds");
             }
@@ -215,7 +215,7 @@ namespace Meadow.Foundation.Displays
         {
             Initialize();
 
-            if (Environment.TickCount - lastUpdatedTick < 3000)
+            if (Environment.TickCount - lastUpdatedTick < MinimumRefreshInterval.TotalMilliseconds)
             {
                 throw new NotSupportedException("The minimum update interval for this display is 3 seconds");
             }
