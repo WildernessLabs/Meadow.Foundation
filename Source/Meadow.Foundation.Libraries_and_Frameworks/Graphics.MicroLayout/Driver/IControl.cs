@@ -16,9 +16,19 @@ public interface IControl
     int Left { get; set; }
 
     /// <summary>
+    /// Gets right coordinate of the display control.
+    /// </summary>
+    int Right => Left + Width;
+
+    /// <summary>
     /// Gets or sets the top coordinate of the display control.
     /// </summary>
     int Top { get; set; }
+
+    /// <summary>
+    /// Gets bottom coordinate of the display control.
+    /// </summary>
+    int Bottom => Top + Height;
 
     /// <summary>
     /// Gets or sets whether the control is visible.

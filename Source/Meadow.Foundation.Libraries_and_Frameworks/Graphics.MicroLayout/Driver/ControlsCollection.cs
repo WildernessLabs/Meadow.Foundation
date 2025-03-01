@@ -80,6 +80,7 @@ public sealed class ControlsCollection : IEnumerable<IControl>
                 if (control is null) continue;
 
                 control.Parent = _container;
+                control.Invalidate();
                 _controls.Add(control);
             }
         }
