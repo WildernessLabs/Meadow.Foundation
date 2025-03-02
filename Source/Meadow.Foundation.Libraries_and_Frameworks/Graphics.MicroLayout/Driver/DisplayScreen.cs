@@ -223,7 +223,6 @@ public class DisplayScreen : IControlContainer
                     {
                         if (control != null)
                         {
-                            // TODO: micrographics supports invalidating regions - we need to update to invalidate only regions here, too
                             RefreshTree(control, ref dirtyRegion);
                         }
                     }
@@ -255,7 +254,7 @@ public class DisplayScreen : IControlContainer
                 {
                     var dirtyRegion = new Rect();
 
-                    if (!_updateInProgress && (IsInvalid || Controls.Any(c => c.IsInvalid)))
+                    if (!_updateInProgress)// && (IsInvalid || Controls.Any(c => c.IsInvalid)))
                     {
                         _graphics.Clear(BackgroundColor);
 
@@ -263,13 +262,15 @@ public class DisplayScreen : IControlContainer
                         {
                             if (control != null)
                             {
-                                // TODO: micrographics supports invalidating regions - we need to update to invalidate only regions here, too
                                 RefreshTree(control, ref dirtyRegion);
                             }
                         }
                         try
                         {
-                            _graphics.Show(dirtyRegion);
+                            if (dirtyRegion.Width > 0 && dirtyRegion.Height > 0)
+                            {
+                                _graphics.Show(dirtyRegion);
+                            }
                         }
                         catch (Exception ex)
                         {
