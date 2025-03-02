@@ -16,6 +16,26 @@ public interface IControl
     int Left { get; set; }
 
     /// <summary>
+    /// Gets left coordinate of the control with respect to the screen
+    /// </summary>
+    int ScreenLeft => Left + Parent?.ScreenLeft ?? 0;
+
+    /// <summary>
+    /// Gets top coordinate of the control with respect to the screen
+    /// </summary>
+    int ScreenTop => Top + Parent?.ScreenTop ?? 0;
+
+    /// <summary>
+    /// Gets right coordinate of the control with respect to the screen
+    /// </summary>
+    int ScreenRight => ScreenLeft + Width;
+
+    /// <summary>
+    /// Gets bottom coordinate of the control with respect to the screen
+    /// </summary>
+    int ScreenBottom => ScreenTop + Height;
+
+    /// <summary>
     /// Gets right coordinate of the display control.
     /// </summary>
     int Right => Left + Width;
