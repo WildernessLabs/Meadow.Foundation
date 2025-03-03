@@ -1,8 +1,8 @@
-# Meadow.Foundation.Sensors.Environmental.Keller.XLine
+# Meadow.Foundation.Sensors.Environmental.GroPoint
 
-**Driver for the line of Keller X-Line Modbus Pressure Transducers**
+**Driver for the EXO line of YSI Modbus Water Quality Sensors**
 
-The **Keller.XLine** library is included in the **Meadow.Foundation.Sensors.Environmental.Keller.XLine** nuget package and is designed for the [Wilderness Labs](www.wildernesslabs.co) Meadow .NET IoT platform.
+The **Ysi.Exo** library is included in the **Meadow.Foundation.Sensors.Environmental.GroPoint** nuget package and is designed for the [Wilderness Labs](www.wildernesslabs.co) Meadow .NET IoT platform.
 
 This driver is part of the [Meadow.Foundation](https://developer.wildernesslabs.co/Meadow/Meadow.Foundation/) peripherals library, an open-source repository of drivers and libraries that streamline and simplify adding hardware to your C# .NET Meadow IoT applications.
 
@@ -14,7 +14,37 @@ To view all Wilderness Labs open-source projects, including samples, visit [gith
 
 You can install the library from within Visual studio using the the NuGet Package Manager or from the command line using the .NET CLI:
 
-`dotnet add package Meadow.Foundation.Sensors.Environmental.Keller.XLine`
+`dotnet add package Meadow.Foundation.Sensors.Environmental.GroPoint`
+## Usage
+
+```csharp
+Console.WriteLine("EXO Sonde Reader");
+
+var port = new SerialPortShim(
+"COM11",
+Exo.DefaultBaudRate,
+Parity.None, 8, StopBits.One);
+dTimeout = TimeSpan.FromMilliseconds(2000);
+
+nt = new ModbusRtuClient(port);
+
+ient.Connect();
+
+or = new Exo(client);
+
+parms = await sensor.GetParametersToRead();
+period = await sensor.GetParameterStatus();
+ole.WriteLine("Getting current data...");
+values = await sensor.GetCurrentData();
+ach (var v in values)
+    {
+Console.WriteLine($" {v.ParameterCode}: {v.Value:N3}");
+    }
+xception ex)
+{
+ole.WriteLine($"{ex.Message}");
+}
+```
 ## How to Contribute
 
 - **Found a bug?** [Report an issue](https://github.com/WildernessLabs/Meadow_Issues/issues)
