@@ -1658,6 +1658,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{1F80A5E8-1D9A-4C7F-9731-D45865357BC7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Exo2_Sample", "Meadow.Foundation.Peripherals\Sensors.Environmental.Ysi.Exo\Samples\Exo2_Sample\Exo2_Sample.csproj", "{9F57784C-6422-1780-15AB-93448BD39DC2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Epd7in5V2_Sample", "Meadow.Foundation.Peripherals\Displays.ePaperWaveShare\Samples\Epd7in5V2_Sample\Epd7in5V2_Sample.csproj", "{FE7CD185-5DA4-40FE-2AF7-E487EEC8730D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -4007,6 +4008,12 @@ Global
 		{9F57784C-6422-1780-15AB-93448BD39DC2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9F57784C-6422-1780-15AB-93448BD39DC2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9F57784C-6422-1780-15AB-93448BD39DC2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FE7CD185-5DA4-40FE-2AF7-E487EEC8730D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FE7CD185-5DA4-40FE-2AF7-E487EEC8730D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FE7CD185-5DA4-40FE-2AF7-E487EEC8730D}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{FE7CD185-5DA4-40FE-2AF7-E487EEC8730D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FE7CD185-5DA4-40FE-2AF7-E487EEC8730D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FE7CD185-5DA4-40FE-2AF7-E487EEC8730D}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -4835,6 +4842,7 @@ Global
 		{A648DC3D-E773-D16F-D163-929E69AC02D2} = {83C93BCF-1857-40E5-8A2A-2AA6034A6D61}
 		{1F80A5E8-1D9A-4C7F-9731-D45865357BC7} = {83C93BCF-1857-40E5-8A2A-2AA6034A6D61}
 		{9F57784C-6422-1780-15AB-93448BD39DC2} = {1F80A5E8-1D9A-4C7F-9731-D45865357BC7}
+		{FE7CD185-5DA4-40FE-2AF7-E487EEC8730D} = {7311794D-7D2F-47E8-A5B0-C216CBD64A13}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AF7CA16F-8C38-4546-87A2-5DAAF58A1520}

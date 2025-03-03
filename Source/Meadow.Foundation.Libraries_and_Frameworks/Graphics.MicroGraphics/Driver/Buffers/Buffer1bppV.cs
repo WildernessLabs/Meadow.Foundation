@@ -92,7 +92,7 @@ namespace Meadow.Foundation.Graphics.Buffers
             if (x < 0 || x + width > Width ||
                 y < 0 || y + height > Height)
             {
-                throw new ArgumentOutOfRangeException();
+                throw new ArgumentOutOfRangeException(nameof(Fill), "Fill area is out of bounds");
             }
 
             var isColored = color.Color1bpp;
