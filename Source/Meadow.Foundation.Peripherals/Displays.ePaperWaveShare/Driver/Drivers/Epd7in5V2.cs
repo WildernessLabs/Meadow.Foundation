@@ -392,17 +392,12 @@ namespace Meadow.Foundation.Displays
         void Show2bpp()
         {
             var buffer = imageBuffer as Buffer2bppGreyEPaper;
-            Console.WriteLine($"Show2bpp - len: {buffer!.DarkBuffer.Length}");
 
             SendCommand(DATA_START_TRANSMISSION_1);
-            for (int i = 0; i < buffer.DarkBuffer.Length; i++)
+            for (int i = 0; i < buffer!.DarkBuffer.Length; i++)
             {
                 SendData(buffer.LightBuffer[i]);
             }
-
-
-            //dataCommandPort!.State = DataState;
-            //spiComms?.Write(buffer!.DarkBuffer);
 
             SendCommand(DATA_START_TRANSMISSION_2);
             for (int i = 0; i < buffer.DarkBuffer.Length; i++)
@@ -411,26 +406,6 @@ namespace Meadow.Foundation.Displays
             }
 
             DisplayFrame();
-
-            //White
-            //0x00
-            //0x00
-
-            //Black
-            //0xFF
-            //0xFF
-
-            //Light Grey
-            //0x00
-            //0xFF
-
-            //Dark grey
-            //0xFF
-            //0x00
-
-            //dark and light grey stripes
-            //0x55   0101010101
-            //0xAA   1010101010
         }
 
         /// <summary>
