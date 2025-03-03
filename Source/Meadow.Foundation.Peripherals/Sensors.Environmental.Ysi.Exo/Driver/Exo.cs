@@ -116,7 +116,7 @@ public partial class Exo
     /// Gets the current sensor data from the EXO device for all configured parameters.
     /// </summary>
     /// <returns>A task representing the asynchronous operation that returns an array of tuples containing parameter codes and their corresponding values.</returns>
-    public async Task<(ParameterCode ParameterCodes, object Value)[]> GetCurrentData()
+    public async Task<(ParameterCode ParameterCode, object Value)[]> GetCurrentData()
     {
         var list = new List<(ParameterCode ParameterCodes, object Value)>();
 

@@ -26,7 +26,7 @@ try
     var values = await sensor.GetCurrentData();
     foreach (var v in values)
     {
-        Console.WriteLine($" {v.ParameterCodes}: {v.Value:N3}");
+        Console.WriteLine($" {v.ParameterCode}: {v.Value:N3}");
     }
 }
 catch (Exception ex)
