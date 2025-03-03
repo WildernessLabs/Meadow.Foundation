@@ -63,7 +63,7 @@ public class ListBox : MicroLayout
         for (var i = 0; i < rowCount; i++)
         {
             Controls.Add(
-                new Label(ItemLeftMargin, y, this.Width, _rowHeight)
+                new Label(ItemLeftMargin + Parent?.Left ?? 0, y + Parent?.Top ?? 0, this.Width, _rowHeight)
                 {
                     Font = _font,
                     TextColor = TextColor,
