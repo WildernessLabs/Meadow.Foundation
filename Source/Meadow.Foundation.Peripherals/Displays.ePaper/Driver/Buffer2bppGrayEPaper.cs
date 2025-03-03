@@ -3,27 +3,28 @@
 namespace Meadow.Foundation.Graphics.Buffers
 {
     /// <summary>
-    /// Represents a 2bpp buffer
-    /// This is specifically built for 3 color eInk displays and wraps two 1bpp buffers
+    /// Represents a 2bpp greysacle buffer
+    /// This is specifically built for 4 color grayscale eInk displays and wraps two 1bpp buffers
     /// </summary>
-    public class Buffer2bppEPaper : IPixelBuffer
+    public class Buffer2bppGreyEPaper : IPixelBuffer
     {
-        enum PixelState
+        enum PixelState : byte
         {
-            On,
-            Off,
-            ColorOn,
+            Black = 0,
+            DarkGray = 1,
+            LightGray = 2,
+            White = 3,
         }
 
         /// <summary>
         /// Width of buffer in pixels
         /// </summary>
-        public int Width => blackBuffer.Width;
+        public int Width => lightBuffer.Width;
 
         /// <summary>
         /// Height of buffer in pixels
         /// </summary>
-        public int Height => blackBuffer.Height;
+        public int Height => lightBuffer.Height;
 
         /// <inheritdoc/>
         public ColorMode ColorMode => ColorMode.Format2bpp;
@@ -37,7 +38,7 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// Number of bytes in buffer
         /// The totals the byte count from both internal 1bpp buffers
         /// </summary>
-        public int ByteCount => (Width * Height * BitDepth) / 4;
+        public int ByteCount => (Width * Height * BitDepth) / 8;
 
         /// <summary>
         /// No direct access to a unified buffer
@@ -46,30 +47,30 @@ namespace Meadow.Foundation.Graphics.Buffers
         public byte[] Buffer => throw new System.NotImplementedException();
 
         /// <summary>
-        /// The buffer for black pixels
+        /// The buffer for light and dark grey pixels
         /// </summary>
-        public byte[] BlackBuffer => blackBuffer.Buffer;
+        public byte[] LightBuffer => lightBuffer.Buffer;
 
         /// <summary>
-        /// The buffer for color pixels
+        /// The buffer to darken pixels to light gray and black
         /// </summary>
-        public byte[] ColorBuffer => colorBuffer.Buffer;
+        public byte[] DarkBuffer => darkBuffer.Buffer;
 
-        readonly Buffer1bppV blackBuffer;
-        readonly Buffer1bppV colorBuffer;
+        readonly Buffer1bppV lightBuffer;
+        readonly Buffer1bppV darkBuffer;
 
         /// <summary>
-        /// Create a new Buffer2bppEPaper object
+        /// Create a new Buffer2bppGreyEPaper object
         /// </summary>
         /// <param name="width">the buffer width in pixels</param>
         /// <param name="height">the buffer height in pixels</param>
-        public Buffer2bppEPaper(int width, int height)
+        public Buffer2bppGreyEPaper(int width, int height)
         {
-            blackBuffer = new Buffer1bppV(width, height);
-            colorBuffer = new Buffer1bppV(width, height);
+            lightBuffer = new Buffer1bppV(width, height);
+            darkBuffer = new Buffer1bppV(width, height);
 
-            blackBuffer.InitializeBuffer();
-            colorBuffer.InitializeBuffer();
+            lightBuffer.InitializeBuffer();
+            darkBuffer.InitializeBuffer();
         }
 
         /// <summary>
@@ -77,8 +78,8 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// </summary>
         public void Clear()
         {
-            blackBuffer.Clear(true);
-            colorBuffer.Clear(true);
+            lightBuffer.Clear(false);
+            darkBuffer.Clear(false);
         }
 
         /// <summary>
@@ -94,25 +95,6 @@ namespace Meadow.Foundation.Graphics.Buffers
                     SetPixel(x, y, color);
                 }
             }
-
-            var state = GetStateFromColor(color);
-
-            /*
-            if (state == PixelState.ColorOn)
-            {
-                colorBuffer.Fill(Color.White);
-                blackBuffer.Fill(Color.Black);
-            }
-            else if (state == PixelState.On)
-            {
-                colorBuffer.SetPixel(x, y, false);
-                blackBuffer.SetPixel(x, y, true);
-            }
-            else
-            {
-                colorBuffer.SetPixel(x, y, false);
-                blackBuffer.SetPixel(x, y, false);
-            }*/
         }
 
         /// <summary>
@@ -157,46 +139,6 @@ namespace Meadow.Foundation.Graphics.Buffers
         }
 
         /// <summary>
-        /// Set a color pixel on or off
-        /// </summary>
-        /// <param name="x">x location in pixels</param>
-        /// <param name="y">y location in pixels</param>
-        /// <param name="isOn">true for on, false for off</param>
-        public void SetColorPixel(int x, int y, bool isOn)
-        {
-            if (isOn)
-            {
-                colorBuffer.SetPixel(x, y, false);
-                blackBuffer.SetPixel(x, y, true);
-            }
-            else
-            {
-                colorBuffer.SetPixel(x, y, true);
-                blackBuffer.SetPixel(x, y, true);
-            }
-        }
-
-        /// <summary>
-        /// Set a black pixel on or off
-        /// </summary>
-        /// <param name="x">x location in pixels</param>
-        /// <param name="y">y location in pixels</param>
-        /// <param name="isOn">true for on, false for off</param>
-        public void SetBlackPixel(int x, int y, bool isOn)
-        {
-            if (isOn)
-            {
-                colorBuffer.SetPixel(x, y, true);
-                blackBuffer.SetPixel(x, y, false);
-            }
-            else
-            {
-                colorBuffer.SetPixel(x, y, true);
-                blackBuffer.SetPixel(x, y, true);
-            }
-        }
-
-        /// <summary>
         /// Set a pixel to a color
         /// </summary>
         /// <param name="x">x location in pixels</param>
@@ -206,20 +148,24 @@ namespace Meadow.Foundation.Graphics.Buffers
         {
             var state = GetStateFromColor(color);
 
-            if (state == PixelState.ColorOn)
+            switch (state)
             {
-                colorBuffer.SetPixel(x, y, false);
-                blackBuffer.SetPixel(x, y, true);
-            }
-            else if (state == PixelState.On)
-            {
-                colorBuffer.SetPixel(x, y, true);
-                blackBuffer.SetPixel(x, y, false);
-            }
-            else
-            {
-                colorBuffer.SetPixel(x, y, true);
-                blackBuffer.SetPixel(x, y, true);
+                case PixelState.Black:
+                    lightBuffer.SetPixel(x, y, true);
+                    darkBuffer.SetPixel(x, y, true);
+                    break;
+                case PixelState.DarkGray:
+                    lightBuffer.SetPixel(x, y, false);
+                    darkBuffer.SetPixel(x, y, true);
+                    break;
+                case PixelState.LightGray:
+                    lightBuffer.SetPixel(x, y, true);
+                    darkBuffer.SetPixel(x, y, false);
+                    break;
+                case PixelState.White:
+                    lightBuffer.SetPixel(x, y, false);
+                    darkBuffer.SetPixel(x, y, false);
+                    break;
             }
         }
 
@@ -231,16 +177,9 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// <param name="buffer">The buffer to write</param>
         public void WriteBuffer(int x, int y, IPixelBuffer buffer)
         {
-            blackBuffer.WriteBuffer(x, y, buffer);
+            lightBuffer.WriteBuffer(x, y, buffer);
         }
 
-        PixelState GetStateFromColor(Color color)
-        {
-            if (color == Color.Black)
-                return PixelState.On;
-            if (color == Color.White)
-                return PixelState.Off;
-            return PixelState.ColorOn;
-        }
+        PixelState GetStateFromColor(Color color) => (PixelState)color.Color2bppGray;
     }
 }

@@ -16,8 +16,7 @@ namespace Displays.ePaper.EpdMonochrome_Sample
             Epd1in54,
             Epd2in13,
             Epd2in9,
-            Epd4in2,
-            Epd7in5V2
+            Epd4in2
         }
 
         EPaperMonoBase display;
@@ -27,7 +26,7 @@ namespace Displays.ePaper.EpdMonochrome_Sample
         {
             Resolver.Log.Info("Initialize ...");
 
-            var displayType = EpdMonochromeDisplay.Epd7in5V2;
+            var displayType = EpdMonochromeDisplay.Epd2in9;
 
             Resolver.Log.Info($"{displayType} selected - change displayType to select a different display");
 
@@ -102,13 +101,6 @@ namespace Displays.ePaper.EpdMonochrome_Sample
                     dcPin: Device.Pins.D02,
                     resetPin: Device.Pins.D01,
                     busyPin: Device.Pins.D00),
-
-                EpdMonochromeDisplay.Epd7in5V2 => new Epd7in5V2(
-                spiBus: Device.CreateSpiBus(),
-                chipSelectPin: Device.Pins.D03,
-                dcPin: Device.Pins.D02,
-                resetPin: Device.Pins.D01,
-                busyPin: Device.Pins.D00),
 
                 _ => null
             };
