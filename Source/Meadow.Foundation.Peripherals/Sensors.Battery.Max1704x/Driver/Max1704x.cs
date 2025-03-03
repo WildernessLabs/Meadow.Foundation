@@ -2,13 +2,14 @@
 using Meadow.Peripherals.Sensors;
 using Meadow.Units;
 using System;
+using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Battery;
 
 /// <summary>
 /// Base class for MAX1704x fuel gauge family, which monitors battery state of charge for lithium-ion batteries
 /// </summary>
-public abstract partial class Max1704x : II2cPeripheral, ISensor
+public abstract partial class Max1704x : II2cPeripheral, IVoltageSensor, IStateOfChargeSensor
 {
     /// <summary>
     /// Event that fires when battery charge falls below alert threshold
@@ -18,7 +19,7 @@ public abstract partial class Max1704x : II2cPeripheral, ISensor
     /// </remarks>
     public event EventHandler<double>? LowChargeAlert;
 
-    private readonly I2cCommunications i2c;
+    private readonly I2cCommunications i2cComms;
 
     /// <inheritdoc/>
     public byte DefaultI2cAddress => 0x36; // this sensor only supports this address
@@ -27,6 +28,9 @@ public abstract partial class Max1704x : II2cPeripheral, ISensor
     /// Gets the version of the MAX1704x chip
     /// </summary>
     public byte Version { get; }
+
+    /// <inheritdoc/>
+    public Voltage? Voltage => ReadVoltage().Result;
 
     private double vbattScale;
     private IDigitalInterruptPort? alertPort;
@@ -43,10 +47,9 @@ public abstract partial class Max1704x : II2cPeripheral, ISensor
         )
     {
         this.vbattScale = vbattScale;
-        i2c = new I2cCommunications(i2cBus, DefaultI2cAddress, 2);
-        var v = i2c.ReadRegisterAsUShort((byte)Registers.Version);
+        i2cComms = new I2cCommunications(i2cBus, DefaultI2cAddress, 2);
+        var v = i2cComms.ReadRegisterAsUShort((byte)Registers.Version);
         Version = (byte)(v & 0xff);
-        Resolver.Log.Info($"Version: {Version} v:0x{v:x}");
     }
 
     /// <summary>
@@ -75,30 +78,33 @@ public abstract partial class Max1704x : II2cPeripheral, ISensor
     /// </summary>
     /// <param name="sender">The source of the event</param>
     /// <param name="e">The interrupt state</param>
-    private void OnAlertInterrupt(object sender, DigitalPortResult e)
+    private async void OnAlertInterrupt(object sender, DigitalPortResult e)
     {
-        LowChargeAlert?.Invoke(this, ReadStateOfCharge());
+        var soc = await ReadStateOfCharge();
+        LowChargeAlert?.Invoke(this, soc);
     }
 
     /// <summary>
     /// Reads the current battery voltage
     /// </summary>
     /// <returns>The battery voltage in volts</returns>
-    public Voltage ReadVoltage()
+    public ValueTask<Voltage> ReadVoltage()
     {
-        var raw = i2c.ReadRegisterAsUShort((byte)Registers.VCell, ByteOrder.BigEndian);
-        return new Voltage((raw >> 4) * vbattScale / 1000, Voltage.UnitType.Volts);
+        var raw = i2cComms.ReadRegisterAsUShort((byte)Registers.VCell, ByteOrder.BigEndian);
+        return new ValueTask<Voltage>(
+            new Voltage((raw >> 4) * vbattScale / 1000, Units.Voltage.UnitType.Volts)
+            );
     }
 
     /// <summary>
     /// Reads the current state of charge (battery percentage)
     /// </summary>
     /// <returns>Battery percentage from 0.0 to 100.0</returns>
-    public double ReadStateOfCharge()
+    public ValueTask<double> ReadStateOfCharge()
     {
-        var raw = i2c.ReadRegisterAsUShort((byte)Registers.SoC, ByteOrder.BigEndian);
+        var raw = i2cComms.ReadRegisterAsUShort((byte)Registers.SoC, ByteOrder.BigEndian);
         var soc = (raw >> 8) + (raw & 0xff) / 256d;
-        return soc;
+        return new ValueTask<double>(soc);
     }
 
     /// <summary>
@@ -119,10 +125,10 @@ public abstract partial class Max1704x : II2cPeripheral, ISensor
         if (percent < 0 || percent > 32) throw new ArgumentOutOfRangeException();
         byte thresholdValue = (byte)(32 - percent);
         byte[] configData = new byte[2];
-        var register = i2c.ReadRegisterAsUShort((byte)Registers.Config, ByteOrder.BigEndian);
+        var register = i2cComms.ReadRegisterAsUShort((byte)Registers.Config, ByteOrder.BigEndian);
         register &= 0xFFE0;
         register |= thresholdValue;
-        i2c.WriteRegister((byte)Registers.Config, register, ByteOrder.BigEndian);
+        i2cComms.WriteRegister((byte)Registers.Config, register, ByteOrder.BigEndian);
     }
 
     /// <summary>
@@ -134,7 +140,7 @@ public abstract partial class Max1704x : II2cPeripheral, ISensor
     /// </remarks>
     public bool IsAlertSet()
     {
-        ushort register = i2c.ReadRegisterAsUShort((byte)Registers.Config, ByteOrder.BigEndian);
+        ushort register = i2cComms.ReadRegisterAsUShort((byte)Registers.Config, ByteOrder.BigEndian);
         return (register & 0x20) == 0x20;
     }
 
@@ -146,9 +152,9 @@ public abstract partial class Max1704x : II2cPeripheral, ISensor
     /// </remarks>
     public void ClearAlert()
     {
-        ushort register = i2c.ReadRegisterAsUShort((byte)Registers.Config, ByteOrder.BigEndian);
+        ushort register = i2cComms.ReadRegisterAsUShort((byte)Registers.Config, ByteOrder.BigEndian);
         register = (ushort)(register & ~0x20); // ~0x20 = 11011111
-        i2c.WriteRegister((byte)Registers.Config, register, ByteOrder.BigEndian);
+        i2cComms.WriteRegister((byte)Registers.Config, register, ByteOrder.BigEndian);
     }
 
     /// <summary>
@@ -161,7 +167,7 @@ public abstract partial class Max1704x : II2cPeripheral, ISensor
     /// </remarks>
     public void SetSleepMode(bool sleep)
     {
-        ushort register = i2c.ReadRegisterAsUShort((byte)Registers.Config, ByteOrder.BigEndian);
+        ushort register = i2cComms.ReadRegisterAsUShort((byte)Registers.Config, ByteOrder.BigEndian);
         if (sleep)
         {
             register |= 0b1000_0000;
@@ -170,6 +176,16 @@ public abstract partial class Max1704x : II2cPeripheral, ISensor
         {
             register &= 0b0111_1111;
         }
-        i2c.WriteRegister((byte)Registers.Config, register, ByteOrder.BigEndian);
+        i2cComms.WriteRegister((byte)Registers.Config, register, ByteOrder.BigEndian);
+    }
+
+    Task<Voltage> ISensor<Voltage>.Read()
+    {
+        return ReadVoltage().AsTask();
+    }
+
+    Task<double> ISensor<double>.Read()
+    {
+        return ReadStateOfCharge().AsTask();
     }
 }

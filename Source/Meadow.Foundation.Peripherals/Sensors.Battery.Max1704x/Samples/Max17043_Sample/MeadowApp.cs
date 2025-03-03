@@ -24,8 +24,8 @@ namespace Sensors.Battery.Max17043_Sample
         {
             while (true)
             {
-                Resolver.Log.Info($"Voltage: {sensor.ReadVoltage().Volts:N2}V ");
-                Resolver.Log.Info($"SoC: {sensor.ReadStateOfCharge():N0}% ");
+                Resolver.Log.Info($"Voltage: {(await sensor.ReadVoltage()).Volts:N2}V ");
+                Resolver.Log.Info($"SoC: {await sensor.ReadStateOfCharge():N0}% ");
                 await Task.Delay(1000);
             }
         }
