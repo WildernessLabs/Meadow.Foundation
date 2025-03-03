@@ -40,7 +40,7 @@ namespace Meadow.Foundation.Displays
         /// The buffer the holds the black pixel data for the display
         /// </summary>
 
-        protected Buffer2bppEPaper imageBuffer = default!;
+        protected Buffer2bppColorEPaper imageBuffer = default!;
 
         /// <inheritdoc/>
         public virtual int Width => width;
@@ -50,7 +50,7 @@ namespace Meadow.Foundation.Displays
 
         /// <summary>
         /// The pixel buffer - not directly accessible
-        /// Use buffer.BlackBuffer and buffer.ColorBuffer to access byte arrays
+        /// Use buffer.LightBuffer and buffer.DarkBuffer to access byte arrays
         /// </summary>
         public IPixelBuffer PixelBuffer => imageBuffer;
 
@@ -117,7 +117,7 @@ namespace Meadow.Foundation.Displays
         /// <param name="height">The height in pixels</param>
         protected virtual void CreateBuffer(int width, int height)
         {
-            imageBuffer = new Buffer2bppEPaper(width, height);
+            imageBuffer = new Buffer2bppColorEPaper(width, height);
         }
 
         /// <summary>
