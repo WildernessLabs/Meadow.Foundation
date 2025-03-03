@@ -29,7 +29,7 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// Buffer to hold display data
         /// </summary>
-        protected PixelBufferBase imageBuffer;
+        protected IPixelBuffer imageBuffer;
 
         /// <summary>
         /// Width of display in pixels
@@ -104,7 +104,7 @@ namespace Meadow.Foundation.Displays
             }
             else
             {
-                imageBuffer = new BufferGray2V(Width, Height);
+                imageBuffer = new Buffer2bppGreyEPaper(Width, Height);
             }
 
             imageBuffer.Clear();
@@ -177,6 +177,8 @@ namespace Meadow.Foundation.Displays
             SendCommand(VCOM_AND_DATA_INTERVAL_SETTING);
             SendData(0x10);
             SendData(0x07);
+            SendCommand(0x52);
+            SendData(0x03);
 
             SendCommand(POWER_ON);
             DelayMs(100);
@@ -214,9 +216,9 @@ namespace Meadow.Foundation.Displays
             {
                 buf.Clear(enabled);
             }
-            else if (imageBuffer is BufferGray2V buf2)
+            else if (imageBuffer is Buffer2bppGreyEPaper buf2)
             {
-                buf2.Clear(enabled);
+                buf2.Clear();
             }
 
             if (updateDisplay)
@@ -236,7 +238,7 @@ namespace Meadow.Foundation.Displays
             {
                 buf.Clear(color.Color1bpp);
             }
-            else if (imageBuffer is BufferGray2V buf2)
+            else if (imageBuffer is Buffer2bppGreyEPaper buf2)
             {
                 buf2.Fill(color);
             }
@@ -346,56 +348,6 @@ namespace Meadow.Foundation.Displays
         }
 
         /// <summary>
-        /// Copy the display buffer to the display for a set region
-        /// If called more frequently than every 3 seconds, a not supported exception will be thrown
-        /// </summary>
-        /// <param name="left">left bounds of region in pixels</param>
-        /// <param name="top">top bounds of region in pixels</param>
-        /// <param name="right">right bounds of region in pixels</param>
-        /// <param name="bottom">bottom bounds of region in pixels</param>
-        /// <exception cref="NotSupportedException">Thrown if called more frequently than every 3 seconds</exception>
-        public void Show(int left, int top, int right, int bottom)
-        {
-            if (Environment.TickCount - lastUpdatedTick < MinimumRefreshInterval.TotalMilliseconds)
-            {
-                throw new NotSupportedException("The minimum update interval for this display is 3 seconds");
-            }
-            lastUpdatedTick = Environment.TickCount;
-
-            // Align to 8-pixel boundaries
-            left &= ~7;
-            right = (right + 7) & ~7;
-
-            int width = right - left;
-            int height = bottom - top;
-
-            SetPartialWindow(left, top, width, height);
-
-            var buffer = imageBuffer.Buffer;
-
-
-            SendCommand(DATA_START_TRANSMISSION_1);
-            for (int i = top; i < bottom; i++)
-            {
-                for (int j = left / 8; j < (right / 8); j++)
-                {
-                    SendData(buffer[j + i * Width / 8]);
-                }
-            }
-
-            SendCommand(DATA_START_TRANSMISSION_2);
-            for (int i = top; i < bottom; i++)
-            {
-                for (int j = left / 8; j < (right / 8); j++)
-                {
-                    SendData(~buffer[j + i * Width / 8]);
-                }
-            }
-
-            DisplayFrame();
-        }
-
-        /// <summary>
         /// Copy the display buffer to the display
         /// If called more frequently than every 3 seconds, a not supported exception will be thrown
         /// </summary>
@@ -439,24 +391,132 @@ namespace Meadow.Foundation.Displays
 
         void Show2bpp()
         {
+            var buffer = imageBuffer as Buffer2bppGreyEPaper;
+            Console.WriteLine($"Show2bpp - len: {buffer!.DarkBuffer.Length}");
 
+            SendCommand(DATA_START_TRANSMISSION_1);
+            for (int i = 0; i < buffer.DarkBuffer.Length; i++)
+            {
+                SendData(buffer.LightBuffer[i]);
+            }
+
+
+            //dataCommandPort!.State = DataState;
+            //spiComms?.Write(buffer!.DarkBuffer);
+
+            SendCommand(DATA_START_TRANSMISSION_2);
+            for (int i = 0; i < buffer.DarkBuffer.Length; i++)
+            {
+                SendData(buffer.DarkBuffer[i]);
+            }
+
+            DisplayFrame();
+
+            //White
+            //0x00
+            //0x00
+
+            //Black
+            //0xFF
+            //0xFF
+
+            //Light Grey
+            //0x00
+            //0xFF
+
+            //Dark grey
+            //0xFF
+            //0x00
+
+            //dark and light grey stripes
+            //0x55   0101010101
+            //0xAA   1010101010
         }
 
         /// <summary>
-        /// Clear the frame data from the SRAM, this doesn't update the display 
+        /// Copy the display buffer to the display for a set region
+        /// If called more frequently than every 3 seconds, a not supported exception will be thrown
         /// </summary>
-        protected virtual void ClearFrame()
+        /// <param name="left">left bounds of region in pixels</param>
+        /// <param name="top">top bounds of region in pixels</param>
+        /// <param name="right">right bounds of region in pixels</param>
+        /// <param name="bottom">bottom bounds of region in pixels</param>
+        /// <exception cref="NotSupportedException">Thrown if called more frequently than every 3 seconds</exception>
+        public void Show(int left, int top, int right, int bottom)
         {
+            if (Environment.TickCount - lastUpdatedTick < MinimumRefreshInterval.TotalMilliseconds)
+            {
+                throw new NotSupportedException("The minimum update interval for this display is 3 seconds");
+            }
+            lastUpdatedTick = Environment.TickCount;
+
+            // Align to 8-pixel boundaries
+            left &= ~7;
+            right = (right + 7) & ~7;
+
+            int width = right - left;
+            int height = bottom - top;
+
+            SetPartialWindow(left, top, width, height);
+
+            if (ColorMode == ColorMode.Format1bpp)
+            {
+                Show1bpp(left, top, width, height);
+            }
+            else
+            {
+                Show2bpp(left, top, width, height);
+            }
+        }
+
+        void Show1bpp(int left, int top, int right, int bottom)
+        {
+            var buffer = imageBuffer.Buffer;
+
             SendCommand(DATA_START_TRANSMISSION_1);
-            for (int i = 0; i < Width / 8 * Height; i++)
+            for (int i = top; i < bottom; i++)
             {
-                SendData(0xFF);
+                for (int j = left / 8; j < (right / 8); j++)
+                {
+                    SendData(buffer[j + i * Width / 8]);
+                }
             }
+
             SendCommand(DATA_START_TRANSMISSION_2);
-            for (int i = 0; i < Width / 8 * Height; i++)
+            for (int i = top; i < bottom; i++)
             {
-                SendData(0xFF);
+                for (int j = left / 8; j < (right / 8); j++)
+                {
+                    SendData(~buffer[j + i * Width / 8]);
+                }
             }
+
+            DisplayFrame();
+        }
+
+        void Show2bpp(int left, int top, int right, int bottom)
+        {
+            var buffer = imageBuffer as Buffer2bppGreyEPaper;
+
+            SendCommand(DATA_START_TRANSMISSION_1);
+            for (int i = top; i < bottom; i++)
+            {
+                for (int j = left / 8; j < (right / 8); j++)
+                {
+                    SendData(buffer!.LightBuffer[j + i * Width / 8]);
+                }
+            }
+
+            SendCommand(DATA_START_TRANSMISSION_2);
+            for (int i = top; i < bottom; i++)
+            {
+                for (int j = left / 8; j < (right / 8); j++)
+                {
+                    SendData(buffer!.DarkBuffer[j + i * Width / 8]);
+                }
+            }
+
+            DisplayFrame();
         }
 
         /// <summary>
