@@ -1,6 +1,4 @@
-﻿using System.Linq;
-
-namespace Meadow.Foundation.Graphics.MicroLayout;
+﻿namespace Meadow.Foundation.Graphics.MicroLayout;
 
 /// <summary>
 /// A base class for display layouts
@@ -32,7 +30,7 @@ public abstract class MicroLayout : ThemedControl, IControlContainer
     }
 
     /// <inheritdoc/>
-    public override bool IsInvalid => base.IsInvalid || Controls.Any(c => c.IsInvalid);
+    public override bool IsInvalid => base.IsInvalid;//  || Controls.Any(c => c.IsInvalid);
 
     /// <inheritdoc/>
     public override void ApplyTheme(DisplayTheme theme)
