@@ -25,7 +25,7 @@ public class F55B150_24GL_30S : IVariableSpeedMotor
     public const RotationDirection DefaultRotationDirection = RotationDirection.Clockwise;
 
     /// <inheritdoc/>
-    public AngularVelocity MaxVelocity => maxVelocity ??= new AngularVelocity(100, AngularVelocity.UnitType.RevolutionsPerSecond);
+    public AngularVelocity MaxVelocity => maxVelocity ??= new AngularVelocity(100, AngularVelocity.UnitType.RevolutionsPerMinute);
 
     /// <inheritdoc/>
     public RotationDirection Direction { get; private set; }
@@ -83,7 +83,7 @@ public class F55B150_24GL_30S : IVariableSpeedMotor
 
                 Direction = DefaultRotationDirection;
                 await controller.SetDirectionTerminal(Direction);
-                await SetSpeed(MaxVelocity);
+                await SetSpeed(MaxVelocity / 2);
                 succeeded = true;
             }
             catch (TimeoutException)
