@@ -1,6 +1,7 @@
 ﻿using Meadow.Hardware;
 using Meadow.Peripherals.Displays;
 using System;
+using System.Linq;
 using System.Threading;
 
 namespace Meadow.Foundation.Graphics.MicroLayout;
@@ -166,24 +167,16 @@ public class DisplayScreen : IControlContainer
         IsInvalid = true;
     }
 
-    private void RefreshTree(IControl control, ref Rect dirtyRegion)
+    private void RefreshTree(IControl control)
     {
-        if (control.IsInvalid && control.IsVisible)
-        {
-            // update dirty region
-            if (control.ScreenLeft < dirtyRegion.Left) dirtyRegion.Left = control.ScreenLeft;
-            if (control.ScreenRight > dirtyRegion.Right) dirtyRegion.Right = control.ScreenRight;
-            if (control.ScreenTop < dirtyRegion.Top) dirtyRegion.Top = control.ScreenTop;
-            if (control.ScreenBottom > dirtyRegion.Bottom) dirtyRegion.Bottom = control.ScreenBottom;
-
-            control.Refresh(_graphics);
-        }
+        control.Invalidate();
+        control.Refresh(_graphics);
 
         if (control is IControlContainer container)
         {
             foreach (var c in container.Controls)
             {
-                RefreshTree(c, ref dirtyRegion);
+                RefreshTree(c);
             }
         }
     }
@@ -209,9 +202,9 @@ public class DisplayScreen : IControlContainer
     {
         while (true)
         {
-            if (!_updateInProgress)
+            if (!_updateInProgress && (IsInvalid || Controls.Any(c => c.IsInvalid)))
             {
-                var dirtyRegion = new Rect(this.Width, this.Height, 0, 0);
+                _graphics.Clear(BackgroundColor);
 
                 lock (Controls.SyncRoot)
                 {
@@ -219,16 +212,14 @@ public class DisplayScreen : IControlContainer
                     {
                         if (control != null)
                         {
-                            RefreshTree(control, ref dirtyRegion);
+                            // TODO: micrographics supports invalidating regions - we need to update to invalidate only regions here, too
+                            RefreshTree(control);
                         }
                     }
                 }
                 try
                 {
-                    if (dirtyRegion.Width > 0 && dirtyRegion.Height > 0)
-                    {
-                        _graphics.Show(dirtyRegion);
-                    }
+                    _graphics.Show();
                 }
                 catch (Exception ex)
                 {
@@ -251,23 +242,21 @@ public class DisplayScreen : IControlContainer
             {
                 lock (Controls.SyncRoot)
                 {
-                    var dirtyRegion = new Rect(this.Width, this.Height, 0, 0);
-
-                    if (!_updateInProgress)
+                    if (!_updateInProgress && (IsInvalid || Controls.Any(c => c.IsInvalid)))
                     {
+                        _graphics.Clear(BackgroundColor);
+
                         foreach (var control in Controls)
                         {
                             if (control != null)
                             {
-                                RefreshTree(control, ref dirtyRegion);
+                                // TODO: micrographics supports invalidating regions - we need to update to invalidate only regions here, too
+                                RefreshTree(control);
                             }
                         }
                         try
                         {
-                            if (dirtyRegion.Width > 0 && dirtyRegion.Height > 0)
-                            {
-                                _graphics.Show(dirtyRegion);
-                            }
+                            _graphics.Show();
                         }
                         catch (Exception ex)
                         {
