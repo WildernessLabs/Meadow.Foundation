@@ -38,7 +38,7 @@ ole.WriteLine("Getting current data...");
 values = await sensor.GetCurrentData();
 ach (var v in values)
     {
-Console.WriteLine($" {v.ParameterCode}: {v.Value:N3}");
+Console.WriteLine($" {v.ParameterCode}: {v.Value}");
     }
 xception ex)
 {
