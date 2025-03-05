@@ -432,6 +432,11 @@ namespace Meadow.Foundation.Displays
                 return;
             }
 
+            left = Math.Max(left, 0);
+            top = Math.Max(top, 0);
+            right = Math.Min(right, Width);
+            bottom = Math.Min(bottom, Height);
+
             if (PixelBuffer.ColorMode == ColorMode.Format12bppRgb444)
             {
                 left &= ~1;
