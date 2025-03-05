@@ -214,7 +214,15 @@ public class SilkDisplay : IResizablePixelDisplay, ITouchScreen
     /// <param name="bottom"></param>
     public void Show(int left, int top, int right, int bottom)
     {
-        Show();
+        if (frameBuffer == null)
+        {
+            return;
+        }
+
+        lock (frameBuffer)
+        {
+            frameBuffer?.WritePartialBuffer(left, top, right, bottom, pixelBuffer);
+        }
     }
 
     /// <summary>
