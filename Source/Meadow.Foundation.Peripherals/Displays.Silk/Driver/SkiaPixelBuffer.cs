@@ -157,7 +157,7 @@ public class SkiaPixelBuffer : IPixelBuffer
         {
             for (var y = top; y < bottom; y++)
             {
-                SetPixel(x + left, y + right, buffer.GetPixel(x + left, y + right));
+                SetPixel(x, y, buffer.GetPixel(x, y));
             }
         }
     }
