@@ -141,4 +141,24 @@ public class SkiaPixelBuffer : IPixelBuffer
             }
         }
     }
+
+    /// <summary>
+    /// Writes the pixel data from another pixel buffer into this buffer at the specified location
+    /// Assumes both buffers are the same dimensions
+    /// </summary>
+    /// <param name="left"></param>
+    /// <param name="top"></param>
+    /// <param name="right"></param>
+    /// <param name="bottom"></param>
+    /// <param name="buffer">The pixel buffer to copy data from</param>
+    public void WritePartialBuffer(int left, int top, int right, int bottom, IPixelBuffer buffer)
+    {
+        for (var x = left; x < right; x++)
+        {
+            for (var y = top; y < bottom; y++)
+            {
+                SetPixel(x + left, y + right, buffer.GetPixel(x + left, y + right));
+            }
+        }
+    }
 }
