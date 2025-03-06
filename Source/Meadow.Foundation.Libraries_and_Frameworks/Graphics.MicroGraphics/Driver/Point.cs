@@ -1,4 +1,6 @@
-﻿namespace Meadow.Foundation.Graphics
+﻿using System;
+
+namespace Meadow.Foundation.Graphics
 {
     /// <summary>
     /// Represents a 2D point 
@@ -132,7 +134,7 @@
         /// <returns>An int that represents the hash code for this instance</returns>
         public override int GetHashCode()
         {
-            return X.GetHashCode() ^ Y.GetHashCode();
+            return HashCode.Combine(X, Y);
         }
 
         /// <summary>
