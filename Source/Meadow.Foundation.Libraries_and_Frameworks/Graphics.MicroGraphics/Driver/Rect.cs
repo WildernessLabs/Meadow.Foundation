@@ -10,7 +10,17 @@ namespace Meadow.Foundation.Graphics
         /// <summary>
         /// Create an empty / zero rect
         /// </summary>
-        public static Rect Empty => new Rect(0, 0, 0, 0);
+        public static Rect Empty => new(0, 0, 0, 0);
+
+        /// <summary>
+        /// The position of the rectangle
+        /// </summary>
+        public Point Position => new(Left, Top);
+
+        /// <summary>
+        /// The size of the rectangle
+        /// </summary>
+        public Size Size => new(Width, Height);
 
         /// <summary>
         /// The bottom rect value
@@ -35,12 +45,12 @@ namespace Meadow.Foundation.Graphics
         /// <summary>
         /// The x mid value
         /// </summary>
-        public int MidX => Right - Left / 2;
+        public int MidX => (Right - Left) / 2;
 
         /// <summary>
         /// The y mid value
         /// </summary>
-        public int MidY => Bottom - Top / 2;
+        public int MidY => (Bottom - Top) / 2;
 
         /// <summary>
         /// The rect width
@@ -82,8 +92,8 @@ namespace Meadow.Foundation.Graphics
         {
             return (x >= Left &&
                     x <= Right &&
-                    y >= Bottom &&
-                    y <= Top);
+                    y <= Bottom &&
+                    y >= Top);
         }
 
         /// <summary>
@@ -136,9 +146,9 @@ namespace Meadow.Foundation.Graphics
         /// <param name="rect">The rect values to inflate</param>
         public void Inflate(Rect rect)
         {
-            Left += rect.Left;
+            Left -= rect.Left;
             Right += rect.Right;
-            Top += rect.Top;
+            Top -= rect.Top;
             Bottom += rect.Bottom;
         }
 
@@ -149,10 +159,8 @@ namespace Meadow.Foundation.Graphics
         /// <returns></returns>
         public bool Intersects(Rect rect)
         {
-            return Contains(rect.Left, rect.Top) ||
-                   Contains(rect.Left, rect.Bottom) ||
-                   Contains(rect.Right, rect.Top) ||
-                   Contains(rect.Right, rect.Bottom);
+            return Left < rect.Right && Right > rect.Left &&
+                   Top < rect.Bottom && Bottom > rect.Top;
         }
 
         /// <summary>
@@ -167,6 +175,7 @@ namespace Meadow.Foundation.Graphics
                 Right = 0;
                 Top = 0;
                 Bottom = 0;
+                return;
             }
 
             Left = Math.Max(Left, rect.Left);
@@ -180,7 +189,7 @@ namespace Meadow.Foundation.Graphics
         /// </summary>
         /// <param name="x">The x amount to offset</param>
         /// <param name="y">The y amount to offset</param>
-        public void OffSet(int x, int y)
+        public void Offset(int x, int y)
         {
             Left += x;
             Right += x;
@@ -194,7 +203,7 @@ namespace Meadow.Foundation.Graphics
         /// <param name="point">The point values to offset</param>
         public void Offset(Point point)
         {
-            OffSet(point.X, point.Y);
+            Offset(point.X, point.Y);
         }
 
         /// <summary>
@@ -204,9 +213,9 @@ namespace Meadow.Foundation.Graphics
         public void Union(Rect rect)
         {
             Left = Math.Min(Left, rect.Left);
-            Top = Math.Max(Top, rect.Top);
+            Top = Math.Min(Top, rect.Top);
             Right = Math.Max(Right, rect.Right);
-            Bottom = Math.Min(Bottom, rect.Bottom);
+            Bottom = Math.Max(Bottom, rect.Bottom);
         }
 
         /// <summary>
@@ -280,7 +289,7 @@ namespace Meadow.Foundation.Graphics
         /// <returns>A <see cref="System.Int32"/> that represents the hash code for this instance./></returns>
         public override int GetHashCode()
         {
-            return Left.GetHashCode() ^ Top.GetHashCode() ^ Right.GetHashCode() ^ Bottom.GetHashCode();
+            return HashCode.Combine(Left, Top, Right, Bottom);
         }
 
         /// <summary>
@@ -289,7 +298,7 @@ namespace Meadow.Foundation.Graphics
         /// <returns>The string with left, top, right and bottom values</returns>
         public override string ToString()
         {
-            return $"Left: {Left}, Top: {Top}, Right: {Right}, Bottom {Bottom}";
+            return $"Left: {Left}, Top: {Top}, Right: {Right}, Bottom: {Bottom}";
         }
     }
 }
