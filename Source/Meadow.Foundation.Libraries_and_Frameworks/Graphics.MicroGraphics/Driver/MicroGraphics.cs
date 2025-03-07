@@ -1901,8 +1901,23 @@ namespace Meadow.Foundation.Graphics
                 isUpdating = true;
             }
 
-            display?.Show(left, top, right, bottom);
+            if (display is IRotatableDisplay)
+            {
+                display?.Show(left, top, right, bottom);
+            }
+            else
+            {
+                int l = GetXForRotation(left, top);
+                int t = GetYForRotation(left, top);
 
+                int r = GetXForRotation(right, bottom);
+                int b = GetYForRotation(right, bottom);
+
+                if (l > r) { Swap(ref l, ref r); }
+                if (t > b) { Swap(ref t, ref b); }
+
+                display?.Show(l, t, r, b);
+            }
             isUpdating = false;
         }
 
