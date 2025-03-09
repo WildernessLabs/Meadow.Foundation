@@ -8,7 +8,7 @@ namespace Meadow.Foundation.Sensors;
 /// <summary>
 /// Represents a simulated light sensor that implements both ILightSensor and ISimulatedSensor interfaces.
 /// </summary>
-public class SimulatedLightSensor : BaseSimulatedSensor<Illuminance>, ILightSensor
+public class SimulatedLightSensor : SimulatedSensorBase<Illuminance>, ILightSensor
 {
     /// <summary>
     /// Creates a SimulatedLightSensor

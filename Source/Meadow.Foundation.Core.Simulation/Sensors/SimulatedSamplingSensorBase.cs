@@ -1,4 +1,5 @@
-﻿using Meadow.Peripherals.Sensors;
+﻿using Meadow.Hardware;
+using Meadow.Peripherals.Sensors;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -8,11 +9,11 @@ namespace Meadow.Foundation.Sensors;
 /// <summary>
 /// Represents the base logic for a simulated sample sensor
 /// </summary>
-public abstract class SimulatedSamplingSensorBase<UNIT> : SimulatedSensorBase, ISamplingSensor<UNIT>
-    where UNIT : struct
+public abstract class SimulatedSamplingSensorBase<TUNIT> : SimulatedSensorBase<TUNIT>, ISamplingSensor<TUNIT>
+    where TUNIT : struct, IComparable
 {
     /// <inheritdoc/>
-    public event EventHandler<IChangeResult<UNIT>>? Updated;
+    public event EventHandler<IChangeResult<TUNIT>>? Updated;
 
     private Timer updateTimer;
 
@@ -21,18 +22,24 @@ public abstract class SimulatedSamplingSensorBase<UNIT> : SimulatedSensorBase, I
     /// <inheritdoc/>
     public bool IsSampling { get; private set; }
     /// <inheritdoc/>
-    protected UNIT? PreviousReading { get; private set; }
+    protected TUNIT? PreviousReading { get; private set; }
 
     /// <summary>
     /// Generates a value based on the provided behavior
     /// </summary>
     /// <param name="behavior">The behavior to use when generating a value</param>
-    protected abstract UNIT GenerateSimulatedValue(SimulationBehavior behavior);
+    protected abstract TUNIT GenerateSimulatedValue(SimulationBehavior behavior);
 
     /// <summary>
     /// Called from derived classes
     /// </summary>
-    protected SimulatedSamplingSensorBase()
+    protected SimulatedSamplingSensorBase(
+        TUNIT initialCondition,
+        TUNIT minimumCondition,
+        TUNIT maximumCondition,
+        IDigitalInterruptPort incrementPort,
+        IDigitalInterruptPort decrementPort)
+        : base(initialCondition, minimumCondition, maximumCondition, incrementPort, decrementPort)
     {
         UpdateInterval = TimeSpan.FromSeconds(5);
         updateTimer = new Timer(UpdateTimerProc, null, -1, -1);
@@ -42,14 +49,14 @@ public abstract class SimulatedSamplingSensorBase<UNIT> : SimulatedSensorBase, I
     {
         var newVal = await Read();
 
-        Updated?.Invoke(this, new ChangeResult<UNIT>(newVal, PreviousReading));
+        Updated?.Invoke(this, new ChangeResult<TUNIT>(newVal, PreviousReading));
         PreviousReading = newVal;
 
         updateTimer.Change(UpdateInterval, TimeSpan.FromMilliseconds(-1));
     }
 
     /// <inheritdoc/>
-    public Task<UNIT> Read()
+    public Task<TUNIT> Read()
     {
         return Task.FromResult(GenerateSimulatedValue(SimulationBehavior));
     }

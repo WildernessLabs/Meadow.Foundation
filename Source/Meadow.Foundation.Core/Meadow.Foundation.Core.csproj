@@ -30,4 +30,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\Meadow.Contracts\Source\Meadow.Contracts\Meadow.Contracts.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Simulation\Sensors\" />
+  </ItemGroup>
 </Project>

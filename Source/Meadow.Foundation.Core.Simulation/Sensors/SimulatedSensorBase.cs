@@ -10,14 +10,13 @@ namespace Meadow.Foundation.Sensors;
 /// A base class for simple simulated single-unit sensors
 /// </summary>
 /// <typeparam name="TUNIT">The type of Unit the device simulates</typeparam>
-public abstract class BaseSimulatedSensor<TUNIT> : ISimulatedSensor
+public abstract class SimulatedSensorBase<TUNIT> : ISimulatedSensor
     where TUNIT : struct, IComparable
 {
     private readonly Random _random = new();
     private TUNIT? _currentCondition;
     private readonly TUNIT? _minCondition;
     private readonly TUNIT? _maxCondition;
-    private SimulationBehavior _behavior;
     private Timer? _simulationTimer;
     private int _sawtoothDirection = 1;
     private Timer? _reportTimer;
@@ -76,7 +75,7 @@ public abstract class BaseSimulatedSensor<TUNIT> : ISimulatedSensor
     /// <param name="maximumCondition">The maximum temperature value for the simulation.</param>
     /// <param name="incrementPort">The digital interrupt port used for incrementing the temperature.</param>
     /// <param name="decrementPort">The digital interrupt port used for decrementing the temperature.</param>
-    public BaseSimulatedSensor(
+    public SimulatedSensorBase(
         TUNIT initialCondition,
         TUNIT minimumCondition,
         TUNIT maximumCondition,
@@ -112,7 +111,7 @@ public abstract class BaseSimulatedSensor<TUNIT> : ISimulatedSensor
     /// <param name="minimumCondition">The minimum temperature value for the simulation.</param>
     /// <param name="maximumCondition">The maximum temperature value for the simulation.</param>
     /// <param name="behavior">The simulation behavior for the sensor (default is SimulationBehavior.RandomWalk).</param>
-    public BaseSimulatedSensor(
+    public SimulatedSensorBase(
         TUNIT initialCondition,
         TUNIT minimumCondition,
         TUNIT maximumCondition,
@@ -125,13 +124,18 @@ public abstract class BaseSimulatedSensor<TUNIT> : ISimulatedSensor
         StartSimulation(behavior);
     }
 
+    /// <summary>
+    /// The currently set behavior for the sensor
+    /// </summary>
+    protected SimulationBehavior SimulationBehavior { get; private set; }
+
     private void SimulationProc(object? o)
     {
         try
         {
-            var delta = _behavior switch
+            var delta = SimulationBehavior switch
             {
-                SimulationBehavior.RandomWalk => _random.NextDouble() * (RandomWalkRange * 2) - RandomWalkRange,
+                SimulationBehavior.RandomWalk => (_random.NextDouble() * (RandomWalkRange * 2)) - RandomWalkRange,
                 _ => SawtoothStepAmount * _sawtoothDirection
             };
 
@@ -218,7 +222,7 @@ public abstract class BaseSimulatedSensor<TUNIT> : ISimulatedSensor
     /// <inheritdoc/>
     public void StartSimulation(SimulationBehavior behavior)
     {
-        _behavior = behavior;
+        SimulationBehavior = behavior;
         _simulationTimer = new Timer(SimulationProc, null, TimeSpan.FromSeconds(1), TimeSpan.FromMilliseconds(-1));
     }
 }
