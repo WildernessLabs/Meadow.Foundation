@@ -18,6 +18,7 @@ public class F55B150_24GL_30S : IVariableSpeedMotor
 
     private static AngularVelocity? maxVelocity;
     private readonly BLD510B controller;
+    private readonly bool successfullyInitialized = false;
 
     /// <summary>
     /// The default motor rotation direction.
@@ -43,7 +44,17 @@ public class F55B150_24GL_30S : IVariableSpeedMotor
     public F55B150_24GL_30S(BLD510B controller)
     {
         this.controller = controller;
-        Initialize().Wait();
+
+        // block until connect or timeout
+        try
+        {
+            Initialize(TimeSpan.FromSeconds(5)).GetAwaiter().GetResult();
+            successfullyInitialized = true;
+        }
+        catch (TimeoutException)
+        {
+            successfullyInitialized = false;
+        }
     }
 
     /// <summary>
@@ -69,14 +80,18 @@ public class F55B150_24GL_30S : IVariableSpeedMotor
     /// <remarks>
     /// If initialization times out, it will retry until success.
     /// </remarks>
-    private async Task Initialize()
+    private async Task Initialize(TimeSpan timeout)
     {
+        using var cancellationTokenSource = new CancellationTokenSource(timeout);
+        var token = cancellationTokenSource.Token;
         var succeeded = false;
 
         while (!succeeded)
         {
             try
             {
+                token.ThrowIfCancellationRequested(); // check for a timeout
+
                 await controller.SetStartStopTerminal(false);
                 await controller.SetNumberOfMotorPolePairs(10);
                 await controller.SetSpeedControl(SpeedControl.RS485);
@@ -86,8 +101,14 @@ public class F55B150_24GL_30S : IVariableSpeedMotor
                 await SetSpeed(MaxVelocity / 2);
                 succeeded = true;
             }
+            catch (OperationCanceledException)
+            {
+                Resolver.Log.Error("Timeout connecting to motor controller", this.GetType().Name);
+                throw new TimeoutException();
+            }
             catch (TimeoutException)
             {
+                // this will retry the serial port
                 Resolver.Log.Warn("Timeout initializing");
                 await Task.Delay(500);
             }
