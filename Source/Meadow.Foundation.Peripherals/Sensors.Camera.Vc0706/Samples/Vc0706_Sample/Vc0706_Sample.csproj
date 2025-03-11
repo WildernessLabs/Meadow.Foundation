@@ -9,7 +9,7 @@
     <AssemblyName>App</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="BitMiracle.LibJpeg.NET" Version="1.5.324" />
+	<PackageReference Include="SimpleJpegDecoder" Version="0.4.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Driver\Sensors.Camera.Vc0706.csproj" />
