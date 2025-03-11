@@ -86,7 +86,7 @@ public partial class ArducamMini2MP : Arducam
     protected override Task Validate()
     {
         WriteRegister(ARDUCHIP_TEST1, 0x55);
-        var value = ReadRegsiter(0x00);
+        var value = ReadRegister(0x00);
         if (value != 0x55)
         {
             throw new Exception("Could not communicate with camera");

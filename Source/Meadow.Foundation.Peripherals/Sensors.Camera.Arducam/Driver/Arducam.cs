@@ -159,7 +159,7 @@ public abstract partial class Arducam : IPhotoCamera, ISpiPeripheral, II2cPeriph
         int footer = -1;
 
         //search for jpeg header and footer
-        for (int i = 0; i < rx.Length; i++)
+        for (int i = 0; i < rx.Length - 1; i++)
         {
             if (rx[i] == 0xFF && rx[i + 1] == 0xD8)
             {
@@ -191,9 +191,9 @@ public abstract partial class Arducam : IPhotoCamera, ISpiPeripheral, II2cPeriph
     private uint ReadFifoLength()
     {
         uint len1, len2, len3, length;
-        len1 = ReadRegsiter(FIFO_SIZE1);
-        len2 = ReadRegsiter(FIFO_SIZE2);
-        len3 = (uint)(ReadRegsiter(FIFO_SIZE3) & 0x7f);
+        len1 = ReadRegister(FIFO_SIZE1);
+        len2 = ReadRegister(FIFO_SIZE2);
+        len3 = (uint)(ReadRegister(FIFO_SIZE3) & 0x7f);
         length = ((len3 << 16) | (len2 << 8) | len1) & 0x07fffff;
         return length;
     }
@@ -211,18 +211,18 @@ public abstract partial class Arducam : IPhotoCamera, ISpiPeripheral, II2cPeriph
     private void SetBit(byte address, byte bit)
     {
         byte temp;
-        temp = ReadRegsiter(address);
+        temp = ReadRegister(address);
         WriteRegister(address, (byte)(temp | bit));
     }
 
     private void ClearBit(byte address, byte bit)
     {
         byte temp;
-        temp = ReadRegsiter(address);
+        temp = ReadRegister(address);
         WriteRegister(address, (byte)(temp & (~bit)));
     }
 
-    protected byte ReadRegsiter(byte address)
+    protected byte ReadRegister(byte address)
     {
         return BusReadSpi(address);
     }
@@ -230,12 +230,12 @@ public abstract partial class Arducam : IPhotoCamera, ISpiPeripheral, II2cPeriph
     protected byte GetBit(byte address, byte bit)
     {
         byte temp;
-        temp = ReadRegsiter(address);
+        temp = ReadRegister(address);
         temp &= bit;
         return temp;
     }
 
-    private void SetMode(byte mode)
+    protected void SetMode(byte mode)
     {
         switch (mode)
         {
@@ -285,19 +285,16 @@ public abstract partial class Arducam : IPhotoCamera, ISpiPeripheral, II2cPeriph
         return ret[0];
     }
 
-    protected int WriteSensorRegister(byte register, byte value)
+    protected void WriteSensorRegister(byte register, byte value)
     {
         i2cComms.WriteRegister(register, value);
-        return 0;
     }
 
-    protected internal int WriteSensorRegisters(SensorReg[] reglist)
+    protected internal void WriteSensorRegisters(SensorReg[] reglist)
     {
         for (int i = 0; i < reglist.Length; i++)
         {
             WriteSensorRegister(reglist[i].Register, reglist[i].Value);
         }
-
-        return 0;
     }
 }
