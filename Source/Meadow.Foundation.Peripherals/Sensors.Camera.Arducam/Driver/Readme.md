@@ -1,8 +1,8 @@
-# Meadow.Foundation.Sensors.Camera.Vc0706
+# Meadow.Foundation.Sensors.Camera.Arducam
 
-**VC0706 serial VGA CMOS camera**
+**Arducam SPI CMOS camera**
 
-The **Vc0706** library is included in the **Meadow.Foundation.Sensors.Camera.Vc0706** nuget package and is designed for the [Wilderness Labs](www.wildernesslabs.co) Meadow .NET IoT platform.
+The **Arducam** library is included in the **Meadow.Foundation.Sensors.Camera.Arducam** nuget package and is designed for the [Wilderness Labs](www.wildernesslabs.co) Meadow .NET IoT platform.
 
 This driver is part of the [Meadow.Foundation](https://developer.wildernesslabs.co/Meadow/Meadow.Foundation/) peripherals library, an open-source repository of drivers and libraries that streamline and simplify adding hardware to your C# .NET Meadow IoT applications.
 
@@ -14,27 +14,28 @@ To view all Wilderness Labs open-source projects, including samples, visit [gith
 
 You can install the library from within Visual studio using the the NuGet Package Manager or from the command line using the .NET CLI:
 
-`dotnet add package Meadow.Foundation.Sensors.Camera.Vc0706`
+`dotnet add package Meadow.Foundation.Sensors.Camera.Arducam`
 ## Usage
 
 ```csharp
-Vc0706 camera;
+ArducamMini2MP camera;
 
 public override Task Initialize()
 {
     Resolver.Log.Info("Initialize...");
 
-    camera = new Vc0706(Device, Device.PlatformOS.GetSerialPortName("COM4"), 38400);
+    camera = new ArducamMini2MP(Device.CreateSpiBus(), Device.Pins.D00, Device.CreateI2cBus());
+
+    Console.WriteLine("Camera initialized");
 
     return Task.CompletedTask;
 }
 
-public async override Task Run()
+public override async Task Run()
 {
-    if (!camera.SetCaptureResolution(Vc0706.ImageResolution._160x120))
-    {
-        Resolver.Log.Info("Set resolution failed");
-    }
+    Console.WriteLine("Run...");
+
+    await camera.SetJpegSize(Arducam.ImageSize._160x120);
 
     var jpegData = await camera.CapturePhoto();
 
