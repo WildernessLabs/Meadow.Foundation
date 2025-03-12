@@ -2,11 +2,25 @@
 
 public partial class Arducam
 {
+    /// <summary>
+    /// Represents a register/value 
+    /// </summary>
     protected internal struct SensorReg
     {
+        /// <summary>
+        /// The register
+        /// </summary>
         public byte Register;
+        /// <summary>
+        /// The value
+        /// </summary>
         public byte Value;
 
+        /// <summary>
+        /// Create a new sensor reg instance
+        /// </summary>
+        /// <param name="register"></param>
+        /// <param name="value"></param>
         public SensorReg(byte register, byte value)
         {
             Register = register;

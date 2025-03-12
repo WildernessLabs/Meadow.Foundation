@@ -2,7 +2,7 @@
 
 public partial class ArducamMini2MP
 {
-    public class Ov2640Regs
+    internal class Ov2640Regs
     {
         public static byte OV2640_CHIPID_HIGH = 0x0A;
         public static byte OV2640_CHIPID_LOW = 0x0B;

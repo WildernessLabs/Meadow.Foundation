@@ -5,16 +5,25 @@ using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Camera;
 
+/// <summary>
+/// Represents the Arducam Mini 2MP camera module
+/// </summary>
 public partial class ArducamMini2MP : Arducam
 {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ArducamMini2MP"/> class
+    /// </summary>
+    /// <param name="spiBus">SPI bus instance</param>
+    /// <param name="chipSelectPin">Chip select pin</param>
+    /// <param name="i2cBus">I2C bus instance</param>
     public ArducamMini2MP(ISpiBus spiBus, IPin chipSelectPin, II2cBus i2cBus)
         : base(spiBus, chipSelectPin, i2cBus, 0x30)
     { }
 
     /// <summary>
-    /// Init for OV2640 + Mini + Mini 2mp Plus Arudcam
+    /// Initializes the camera module
     /// </summary>
-    public override async Task Initialize()
+    protected override async Task Initialize()
     {
         CurrentImageFormat = ImageFormat.Jpeg;
 
@@ -42,6 +51,10 @@ public partial class ArducamMini2MP : Arducam
         WriteRegister(ARDUCHIP_FRAMES, 0x00); //number of frames to capture
     }
 
+    /// <summary>
+    /// Sets the Jpeg capture resolution
+    /// </summary>
+    /// <param name="size">The desired image size</param>
     public override async Task SetJpegSize(ImageSize size)
     {
         switch (size)
@@ -83,6 +96,10 @@ public partial class ArducamMini2MP : Arducam
         ClearFifoFlag();
     }
 
+    /// <summary>
+    /// Validate the camera
+    /// </summary>
+    /// <returns></returns>
     protected override Task Validate()
     {
         WriteRegister(ARDUCHIP_TEST1, 0x55);
@@ -104,9 +121,13 @@ public partial class ArducamMini2MP : Arducam
         return Task.CompletedTask;
     }
 
-    public void SetLightMode(LightMode Light_Mode)
+    /// <summary>
+    /// The camera lighting mode
+    /// </summary>
+    /// <param name="lightMode"></param>
+    public void SetLightMode(LightMode lightMode)
     {
-        switch (Light_Mode)
+        switch (lightMode)
         {
             case LightMode.Auto:
                 WriteSensorRegister(0xff, 0x00);
@@ -147,6 +168,10 @@ public partial class ArducamMini2MP : Arducam
         }
     }
 
+    /// <summary>
+    /// Set the camera color saturation
+    /// </summary>
+    /// <param name="saturation"></param>
     public void SetColorSaturation(ColorSaturation saturation)
     {
         switch (saturation)
@@ -195,6 +220,10 @@ public partial class ArducamMini2MP : Arducam
         }
     }
 
+    /// <summary>
+    /// Set the camera brightness
+    /// </summary>
+    /// <param name="brightness"></param>
     public void SetBrightness(Brightness brightness)
     {
         switch (brightness)
@@ -242,6 +271,10 @@ public partial class ArducamMini2MP : Arducam
         }
     }
 
+    /// <summary>
+    /// Set the camera contrast
+    /// </summary>
+    /// <param name="contrast"></param>
     public void SetContrast(Contrast contrast)
     {
         switch (contrast)

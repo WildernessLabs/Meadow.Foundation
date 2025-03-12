@@ -87,9 +87,9 @@ public abstract partial class Arducam : IPhotoCamera, ISpiPeripheral, II2cPeriph
     }
 
     /// <summary>
-    /// Initializes the camera
+    /// Initializes the camera module
     /// </summary>
-    public abstract Task Initialize();
+    protected abstract Task Initialize();
 
     /// <summary>
     /// Resets the camera
