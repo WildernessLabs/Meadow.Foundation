@@ -18,13 +18,19 @@ public partial class Arducam
     private const byte CAM2LCD_MODE = 0x01;
     private const byte LCD2MCU_MODE = 0x02;
 
-    public const byte ARDUCHIP_TEST1 = 0x00;  //TEST register
-    public const byte ARDUCHIP_FRAMES = 0x01;
-    public const byte ARDUCHIP_MODE = 0x02;  //Mode register
+    /// <summary>
+    /// The camera test register
+    /// </summary>
+    protected const byte ARDUCHIP_TEST1 = 0x00;
+    /// <summary>
+    /// The number of frames to capture (0 based)
+    /// </summary>
+    protected const byte ARDUCHIP_FRAMES = 0x01;
+    private const byte ARDUCHIP_MODE = 0x02;  //Mode register
     private const byte ARDUCHIP_TIM = 0x03;
     private const byte ARDUCHIP_FIFO = 0x04;  //FIFO and I2C control
     private const byte ARDUCHIP_REV = 0x40;  //ArduCHIP revision
-    public const byte ARDUCHIP_TRIG = 0x41;
+    private const byte ARDUCHIP_TRIG = 0x41;
     private const byte FIFO_CLEAR_MASK = 0x01;
     private const byte FIFO_START_MASK = 0x02;
     private const byte FIFO_RDPTR_RST_MASK = 0x10;
@@ -39,5 +45,5 @@ public partial class Arducam
 
     private const byte VSYNC_MASK = 0x01;
     private const byte SHUTTER_MASK = 0x02;
-    public const byte CAP_DONE_MASK = 0x08;
+    private const byte CAP_DONE_MASK = 0x08;
 }

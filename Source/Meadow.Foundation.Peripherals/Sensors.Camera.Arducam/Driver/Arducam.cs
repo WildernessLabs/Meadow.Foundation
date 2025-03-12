@@ -12,9 +12,14 @@ namespace Meadow.Foundation.Sensors.Camera;
 /// </summary>
 public abstract partial class Arducam : IPhotoCamera, ISpiPeripheral, II2cPeripheral
 {
-    // make public when support for BMP and RAW are added
+    /// <summary>
+    /// The current image format for capturing photos
+    /// </summary>
     protected ImageFormat CurrentImageFormat { get; set; } = ImageFormat.Jpeg;
 
+    /// <summary>
+    /// The maximum amount of data that can be read from the camera memory
+    /// </summary>
     protected virtual uint MAX_FIFO_SIZE => 0x5FFFF; //384KByte - OV2640 support
 
     /// <summary>
@@ -60,10 +65,16 @@ public abstract partial class Arducam : IPhotoCamera, ISpiPeripheral, II2cPeriph
     /// </summary>
     protected readonly II2cCommunications i2cComms;
 
+    /// <summary>
+    /// Initializes a new instance of the Arducam class
+    /// </summary>
     public Arducam(ISpiBus spiBus, IPin chipSelectPin, II2cBus i2cBus, byte i2cAddress)
         : this(spiBus, chipSelectPin.CreateDigitalOutputPort(), i2cBus, i2cAddress)
     { }
 
+    /// <summary>
+    /// Initializes a new instance of the Arducam class
+    /// </summary>
     public Arducam(ISpiBus spiBus, IDigitalOutputPort chipSelectPort, II2cBus i2cBus, byte i2cAddress)
     {
         i2cComms = new I2cCommunications(i2cBus, i2cAddress);
@@ -75,8 +86,14 @@ public abstract partial class Arducam : IPhotoCamera, ISpiPeripheral, II2cPeriph
         Initialize().Wait();
     }
 
+    /// <summary>
+    /// Initializes the camera
+    /// </summary>
     public abstract Task Initialize();
 
+    /// <summary>
+    /// Resets the camera
+    /// </summary>
     protected void Reset()
     {
         WriteRegister(0x07, 0x80);
@@ -85,8 +102,14 @@ public abstract partial class Arducam : IPhotoCamera, ISpiPeripheral, II2cPeriph
         Thread.Sleep(100);
     }
 
+    /// <summary>
+    /// Validates the camera connection
+    /// </summary>
     protected abstract Task Validate();
 
+    /// <summary>
+    /// Captures a photo and returns the image data
+    /// </summary>
     public async Task<byte[]> CapturePhoto()
     {
         StartCapture();
@@ -126,11 +149,17 @@ public abstract partial class Arducam : IPhotoCamera, ISpiPeripheral, II2cPeriph
         return GetBit(ARDUCHIP_TRIG, CAP_DONE_MASK) > 0;
     }
 
+    /// <summary>
+    /// Clears the FIFO buffer
+    /// </summary>
     protected void FlushFifo()
     {
         WriteRegister(ARDUCHIP_FIFO, FIFO_CLEAR_MASK);
     }
 
+    /// <summary>
+    /// Clears the FIFO buffer
+    /// </summary>
     protected void ClearFifoFlag()
     {
         WriteRegister(ARDUCHIP_FIFO, FIFO_CLEAR_MASK);
@@ -222,11 +251,22 @@ public abstract partial class Arducam : IPhotoCamera, ISpiPeripheral, II2cPeriph
         WriteRegister(address, (byte)(temp & (~bit)));
     }
 
+    /// <summary>
+    /// Read an SPI register
+    /// </summary>
+    /// <param name="address"></param>
+    /// <returns></returns>
     protected byte ReadRegister(byte address)
     {
         return BusReadSpi(address);
     }
 
+    /// <summary>
+    /// Get the value of a single bit from a byte
+    /// </summary>
+    /// <param name="address"></param>
+    /// <param name="bit"></param>
+    /// <returns></returns>
     protected byte GetBit(byte address, byte bit)
     {
         byte temp;
@@ -235,6 +275,10 @@ public abstract partial class Arducam : IPhotoCamera, ISpiPeripheral, II2cPeriph
         return temp;
     }
 
+    /// <summary>
+    /// Set the camera mode
+    /// </summary>
+    /// <param name="mode"></param>
     protected void SetMode(byte mode)
     {
         switch (mode)
@@ -254,16 +298,30 @@ public abstract partial class Arducam : IPhotoCamera, ISpiPeripheral, II2cPeriph
         }
     }
 
+    /// <summary>
+    /// Set the jpeg capture resolution
+    /// </summary>
+    /// <param name="size"></param>
+    /// <returns></returns>
     public abstract Task SetJpegSize(ImageSize size);
 
+    /// <summary>
+    /// Set the capture image format
+    /// </summary>
+    /// <param name="format"></param>
     protected void SetImageFormat(ImageFormat format)
     {
         CurrentImageFormat = format;
     }
 
+    /// <summary>
+    /// Write an SPI register
+    /// </summary>
+    /// <param name="address"></param>
+    /// <param name="data"></param>
     protected void WriteRegister(byte address, byte data)
     {
-        BusWrite(address, data);
+        spiComms.WriteRegister((byte)(address | 0x80), data);
     }
 
     private byte BusReadSpi(byte address)
@@ -271,11 +329,11 @@ public abstract partial class Arducam : IPhotoCamera, ISpiPeripheral, II2cPeriph
         return spiComms.ReadRegister((byte)(address & 0x7F));
     }
 
-    private void BusWrite(byte address, byte data)
-    {
-        spiComms.WriteRegister((byte)(address | 0x80), data);
-    }
-
+    /// <summary>
+    /// Read an I2C register
+    /// </summary>
+    /// <param name="regID"></param>
+    /// <returns></returns>
     protected byte ReadSensorRegister(byte regID)
     {
         i2cComms.Write(regID);
@@ -285,16 +343,26 @@ public abstract partial class Arducam : IPhotoCamera, ISpiPeripheral, II2cPeriph
         return ret[0];
     }
 
+    /// <summary>
+    /// Write an I2C register
+    /// </summary>
+    /// <param name="register"></param>
+    /// <param name="value"></param>
     protected void WriteSensorRegister(byte register, byte value)
     {
         i2cComms.WriteRegister(register, value);
     }
 
-    protected internal void WriteSensorRegisters(SensorReg[] reglist)
+    /// <summary>
+    /// Write an array of I2C registers
+    /// Used for camera configuration
+    /// </summary>
+    /// <param name="registerList"></param>
+    protected internal void WriteSensorRegisters(SensorReg[] registerList)
     {
-        for (int i = 0; i < reglist.Length; i++)
+        for (int i = 0; i < registerList.Length; i++)
         {
-            WriteSensorRegister(reglist[i].Register, reglist[i].Value);
+            WriteSensorRegister(registerList[i].Register, registerList[i].Value);
         }
     }
 }

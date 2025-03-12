@@ -1,6 +1,6 @@
 ﻿using Meadow.Hardware;
 using System;
-using System.Threading;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Camera;
@@ -21,7 +21,7 @@ public partial class ArducamMini2MP : Arducam
         WriteSensorRegister(0xff, 0x01);
         WriteSensorRegister(0x12, 0x80);
 
-        Thread.Sleep(100);
+        await Task.Delay(100);
 
         if (CurrentImageFormat == ImageFormat.Jpeg)
         {
@@ -89,7 +89,7 @@ public partial class ArducamMini2MP : Arducam
         var value = ReadRegister(0x00);
         if (value != 0x55)
         {
-            throw new Exception("Could not communicate with camera");
+            throw new IOException("Could not communicate with camera");
         }
 
         WriteSensorRegister(0xff, 0x01);
