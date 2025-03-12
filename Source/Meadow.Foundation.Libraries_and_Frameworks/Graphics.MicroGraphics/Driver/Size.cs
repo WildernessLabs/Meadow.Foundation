@@ -1,4 +1,6 @@
-﻿namespace Meadow.Foundation.Graphics
+﻿using System;
+
+namespace Meadow.Foundation.Graphics
 {
     /// <summary>
     /// Represents a 2d size
@@ -23,7 +25,7 @@
         /// <summary>
         /// Get an empty / zero size
         /// </summary>
-        public static Size Empty => new Size(0, 0);
+        public static readonly Size Empty = new Size(0, 0);
 
         /// <summary>
         /// Create a new size struct
@@ -119,7 +121,7 @@
         /// <returns>An int that represents the hash code for this instance</returns>
         public override int GetHashCode()
         {
-            return Width.GetHashCode() ^ Height.GetHashCode();
+            return HashCode.Combine(Width, Height);
         }
 
         /// <summary>

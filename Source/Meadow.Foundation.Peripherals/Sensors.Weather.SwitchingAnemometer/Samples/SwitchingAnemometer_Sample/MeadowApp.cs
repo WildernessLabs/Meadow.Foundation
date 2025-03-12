@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace MeadowApp
 {
-    public class MeadowApp : App<F7FeatherV2>
+    public class MeadowApp : App<F7CoreComputeV2>
     {
         //<!=SNIP=>
 
@@ -38,7 +38,6 @@ namespace MeadowApp
 
         public override Task Run()
         {
-            // start raising updates
             anemometer.StartUpdating();
             Resolver.Log.Info("Hardware initialized.");
 

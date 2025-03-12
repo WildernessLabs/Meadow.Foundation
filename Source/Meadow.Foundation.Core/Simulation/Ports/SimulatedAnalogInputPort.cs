@@ -59,6 +59,16 @@ public class SimulatedAnalogInputPort : SimulatedSensorBase, IAnalogInputPort
         simulationTimer = new Timer(SimulationTimerProc, null, -1, -1);
     }
 
+    /// <summary>
+    /// Creates a SimulatedAnalogInputPort instance
+    /// </summary>
+    /// <param name="initialValue">An initial voltage value</param>
+    public SimulatedAnalogInputPort(Voltage initialValue)
+        : this()
+    {
+        SetSensorValue(initialValue);
+    }
+
     private void SimulationTimerProc(object _)
     {
         for (var i = 0; i < VoltageSampleBuffer.Length; i++)
@@ -123,6 +133,7 @@ public class SimulatedAnalogInputPort : SimulatedSensorBase, IAnalogInputPort
         {
             VoltageSampleBuffer[i] = (Voltage)value;
         }
+        Voltage = (Voltage)value;
 
         RaiseChangedAndNotify();
     }

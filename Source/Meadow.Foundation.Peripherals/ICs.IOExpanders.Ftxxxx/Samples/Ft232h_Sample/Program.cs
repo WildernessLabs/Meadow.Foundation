@@ -1,8 +1,11 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using Meadow;
+using Meadow.Foundation.Displays;
+using Meadow.Foundation.Graphics;
 using Meadow.Foundation.ICs.IOExpanders;
 using Meadow.Foundation.Sensors.Light;
 using Meadow.Hardware;
+using Meadow.Peripherals.Displays;
 using System.Diagnostics;
 
 Console.WriteLine("HELLO FROM THE WILDERNESS FT232H DRIVER!");
@@ -12,7 +15,49 @@ var expander = FtdiExpanderCollection.Devices[0];
 
 //await TestGpio(FtdiExpanderCollection.Devices);
 //await TestI2C(FtdiExpanderCollection.Devices[0]);
-await TestSPI(FtdiExpanderCollection.Devices[0]);
+//await TestSPI(FtdiExpanderCollection.Devices[0]);
+await TestSPIDisplay(FtdiExpanderCollection.Devices[0]);
+//await TestRfid(FtdiExpanderCollection.Devices[0]);
+
+//async Task TestRfid(FtdiExpander expander)
+//{
+//    var sensor = new Mfrc522(
+//        spiBus: expander.CreateSpiBus(),
+//        chipSelectPort: expander.Pins.C0.CreateDigitalOutputPort(true),
+//        resetPort: expander.Pins.C1.CreateDigitalOutputPort(false)
+//    );
+
+//    var result = sensor.SelfTest();
+//}
+
+async Task TestSPIDisplay(FtdiExpander expander)
+{
+    var display = new St7789
+        (
+            spiBus: expander.CreateSpiBus(),
+            chipSelectPin: expander.Pins.D0,
+            dcPin: expander.Pins.D1,
+            resetPin: null,
+            135, 240
+        );
+
+    var microGraphics = new MicroGraphics(display)
+    {
+        CurrentFont = new Font12x16(),
+        Rotation = RotationType._270Degrees
+    };
+
+    microGraphics.Clear();
+    microGraphics.DrawText(0, 0, "Loading Menu");
+    microGraphics.Show();
+
+    while (true)
+    {
+        Debug.WriteLine("Sleeping...");
+
+        await Task.Delay(1000);
+    }
+}
 
 async Task TestSPI(FtdiExpander expander)
 {

@@ -95,13 +95,13 @@ namespace Meadow.Foundation.Displays
             switch (ColorMode)
             {
                 case ColorMode.Format16bppRgb565:
-                    SendCommand((byte)Register.COLOR_MODE, new byte[] { 0x55 }); // Color mode - 16bpp
+                    SendCommand((byte)Register.COLOR_MODE, new byte[] { 0x55 });
                     break;
                 case ColorMode.Format12bppRgb444:
-                    SendCommand((byte)Register.COLOR_MODE, new byte[] { 0x53 }); // Color mode - 12bpp
+                    SendCommand((byte)Register.COLOR_MODE, new byte[] { 0x53 });
                     break;
                 case ColorMode.Format18bppRgb666:
-                    SendCommand((byte)Register.COLOR_MODE, new byte[] { 0x66 }); // Color mode - 18bpp
+                    SendCommand((byte)Register.COLOR_MODE, new byte[] { 0x66 });
                     break;
             }
             SendCommand(Register.INVOFF);

@@ -15,10 +15,10 @@ public class SilkDisplay : IResizablePixelDisplay, ITouchScreen
 {
     private IWindow window = default!;
     private SkiaPixelBuffer pixelBuffer = default!;
-    private GRGlInterface grglInterface;
-    private GRContext context;
-    private SKSurface surface;
-    private SKCanvas canvas;
+    private GRGlInterface grglInterface = default!;
+    private GRContext context = default!;
+    private SKSurface surface = default!;
+    private SKCanvas canvas = default!;
     private int virtualWidth;
     private int virtualHeight;
     private float displayScale;
@@ -214,7 +214,15 @@ public class SilkDisplay : IResizablePixelDisplay, ITouchScreen
     /// <param name="bottom"></param>
     public void Show(int left, int top, int right, int bottom)
     {
-        Show();
+        if (frameBuffer == null)
+        {
+            return;
+        }
+
+        lock (frameBuffer)
+        {
+            frameBuffer?.WritePartialBuffer(left, top, right, bottom, pixelBuffer);
+        }
     }
 
     /// <summary>

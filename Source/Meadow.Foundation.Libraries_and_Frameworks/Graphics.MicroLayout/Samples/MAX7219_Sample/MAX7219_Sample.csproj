@@ -8,10 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Meadow.Desktop" Version="2.0.1.2" />
-    <PackageReference Include="Meadow.Foundation.Displays.Max7219" Version="2.0.1.2" />
-    <PackageReference Include="Meadow.Foundation.ICs.IOExpanders.Ftxxxx" Version="2.0.1.2" />
-    <PackageReference Include="Meadow.Foundation.Graphics.MicroLayout" Version="2.0.1.2" />
+    <PackageReference Include="Meadow.Desktop" Version="2.1.0.1" />
+    <PackageReference Include="Meadow.Foundation.Displays.Max7219" Version="2.1.0.1" />
+    <PackageReference Include="Meadow.Foundation.ICs.IOExpanders.Ftxxxx" Version="2.1.0.1" />
+    <PackageReference Include="Meadow.Foundation.Graphics.MicroLayout" Version="2.1.0.1" />
   </ItemGroup>
 
 </Project>

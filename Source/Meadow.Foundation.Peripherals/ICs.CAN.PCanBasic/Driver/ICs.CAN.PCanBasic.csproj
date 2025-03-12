@@ -26,11 +26,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Peak.PCANBasic.NET" Version="4.9.0.942" />
+    <PackageReference Include="Peak.PCANBasic.NET" Version="4.10.0.964" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Meadow.Contracts" Version="2.0.1.2" />
+    <PackageReference Include="Meadow.Contracts" Version="2.1.0.1" />
   </ItemGroup>
 
 </Project>

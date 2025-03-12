@@ -2,15 +2,16 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Meadow.Foundation.ICs.ADCs.Mcp3xxx" Version="2.0.1.2" />
-    <PackageReference Include="Meadow.Foundation.Sensors.Light.Veml7700" Version="2.0.1.2" />
-    <PackageReference Include="Meadow.Foundation.ICs.IOExpanders.Ftxxxx" Version="2.0.1.2" />
+    <PackageReference Include="Meadow.Foundation.Displays.TftSpi" Version="2.1.0.1" />
+    <PackageReference Include="Meadow.Foundation.ICs.ADCs.Mcp3xxx" Version="2.1.0.1" />
+    <PackageReference Include="Meadow.Foundation.Sensors.Light.Veml7700" Version="2.1.0.1" />
+    <PackageReference Include="Meadow.Foundation.ICs.IOExpanders.Ftxxxx" Version="2.1.0.1" />
   </ItemGroup>
 
 </Project>

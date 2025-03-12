@@ -1192,6 +1192,17 @@ namespace Meadow.Foundation.Graphics
         /// <summary>
         /// Draw a rectangle
         /// </summary>
+        /// <param name="rectangle">Rectangle to draw</param>
+        /// <param name="filled">Fill the rectangle (true) or draw the outline (false, default)</param>
+        public void DrawRectangle(Rect rectangle, bool filled = false)
+        {
+            DrawRectangle(rectangle.Left, rectangle.Top,
+                rectangle.Width, rectangle.Height, PenColor, filled);
+        }
+
+        /// <summary>
+        /// Draw a rectangle
+        /// </summary>
         /// <param name="x">Abscissa of the top left corner</param>
         /// <param name="y">Ordinate of the top left corner</param>
         /// <param name="width">Width of the rectangle</param>
@@ -1200,6 +1211,18 @@ namespace Meadow.Foundation.Graphics
         public void DrawRectangle(int x, int y, int width, int height, bool filled = false)
         {
             DrawRectangle(x, y, width, height, PenColor, filled);
+        }
+
+        /// <summary>
+        /// Draw a rectangle
+        /// </summary>
+        /// <param name="rectangle">Rectangle to draw</param>
+        /// <param name="color">The color of the rectangle</param>
+        /// <param name="filled">Fill the rectangle (true) or draw the outline (false, default)</param>
+        public void DrawRectangle(Rect rectangle, Color color, bool filled = false)
+        {
+            DrawRectangle(rectangle.Left, rectangle.Top,
+                rectangle.Width, rectangle.Height, color, filled);
         }
 
         /// <summary>
@@ -1878,8 +1901,23 @@ namespace Meadow.Foundation.Graphics
                 isUpdating = true;
             }
 
-            display?.Show(left, top, right, bottom);
+            if (display is IRotatableDisplay)
+            {
+                display?.Show(left, top, right, bottom);
+            }
+            else
+            {
+                int l = GetXForRotation(left, top);
+                int t = GetYForRotation(left, top);
 
+                int r = GetXForRotation(right, bottom);
+                int b = GetYForRotation(right, bottom);
+
+                if (l > r) { Swap(ref l, ref r); }
+                if (t > b) { Swap(ref t, ref b); }
+
+                display?.Show(l, t, r, b);
+            }
             isUpdating = false;
         }
 

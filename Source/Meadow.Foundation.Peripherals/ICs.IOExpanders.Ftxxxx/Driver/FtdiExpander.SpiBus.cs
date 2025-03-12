@@ -6,6 +6,9 @@ namespace Meadow.Foundation.ICs.IOExpanders;
 
 public abstract partial class FtdiExpander
 {
+    /// <summary>
+    /// Represnets the SPI bus for the FTDI expander
+    /// </summary>
     public abstract class SpiBus : ISpiBus
     {
         /// <inheritdoc/>

@@ -17,7 +17,7 @@ public class TouchscreenCalibrationService
     /// <summary>
     /// Event that occurs when the calibration is complete.
     /// </summary>
-    public event EventHandler<CalibrationPoint[]> CalibrationComplete;
+    public event EventHandler<CalibrationPoint[]>? CalibrationComplete;
 
     private readonly DisplayScreen _screen;
     private readonly Crosshair[] _calibrationPoints;

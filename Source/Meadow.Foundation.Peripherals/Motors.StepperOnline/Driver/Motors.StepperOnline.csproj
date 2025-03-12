@@ -22,12 +22,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Meadow.Modbus" Version="2.0.1.2" />
+    <PackageReference Include="Meadow.Modbus" Version="2.1.0.1" />
   </ItemGroup>
 
     <ItemGroup>
         <None Include=".\Readme.md" Pack="true" PackagePath="" />
         <None Include="..\..\..\icon.png" Pack="true" PackagePath="" />
-    <PackageReference Include="Meadow.Foundation" Version="2.0.1.2" />
+    <PackageReference Include="Meadow.Foundation" Version="2.1.0.1" />
     </ItemGroup>
 </Project>
