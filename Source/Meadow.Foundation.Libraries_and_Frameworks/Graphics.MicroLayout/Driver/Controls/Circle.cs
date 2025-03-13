@@ -5,7 +5,7 @@
 /// </summary>
 public class Circle : ThemedControl
 {
-    private Color foreColor;
+    private Color foregroundColor;
     private Point center;
     private int radius;
 
@@ -45,17 +45,17 @@ public class Circle : ThemedControl
     {
         if (theme != null)
         {
-            if (theme.ForegroundColor != null) this.ForeColor = theme.ForegroundColor.Value;
+            if (theme.ForegroundColor != null) this.ForegroundColor = theme.ForegroundColor.Value;
         }
     }
 
     /// <summary>
     /// Gets or sets the foreground color of the Circle.
     /// </summary>
-    public Color ForeColor
+    public Color ForegroundColor
     {
-        get => foreColor;
-        set => SetInvalidatingProperty(ref foreColor, value);
+        get => foregroundColor;
+        set => SetInvalidatingProperty(ref foregroundColor, value);
     }
 
     /// <summary>
@@ -111,9 +111,9 @@ public class Circle : ThemedControl
     /// <param name="graphics">The <see cref="MicroGraphics"/> surface to draw the Circle on.</param>
     protected override void OnDraw(MicroGraphics graphics)
     {
-        if (ForeColor != Color.Transparent)
+        if (ForegroundColor != Color.Transparent)
         {
-            graphics.DrawCircle(center.X + (Parent?.Left ?? 0), center.Y + (Parent?.Top ?? 0), radius, ForeColor, IsFilled);
+            graphics.DrawCircle(center.X + (Parent?.Left ?? 0), center.Y + (Parent?.Top ?? 0), radius, ForegroundColor, IsFilled);
         }
     }
 }
