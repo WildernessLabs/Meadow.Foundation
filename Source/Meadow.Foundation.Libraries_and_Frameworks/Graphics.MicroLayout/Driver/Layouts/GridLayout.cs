@@ -8,13 +8,34 @@ namespace Meadow.Foundation.Graphics.MicroLayout;
 /// </summary>
 public class GridLayout : MicroLayout
 {
+    /// <summary>
+    /// Defines the alignment options for controls within grid cells.
+    /// </summary>
     public enum Alignment
     {
+        /// <summary>
+        /// Align left
+        /// </summary>
         Left,
+        /// <summary>
+        /// Align to top
+        /// </summary>
         Top,
+        /// <summary>
+        /// align right
+        /// </summary>
         Right,
+        /// <summary>
+        /// Align bottom
+        /// </summary>
         Bottom,
+        /// <summary>
+        /// Center
+        /// </summary>
         Center,
+        /// <summary>
+        /// Stretch to fill
+        /// </summary>
         Stretch
     }
 
@@ -22,9 +43,25 @@ public class GridLayout : MicroLayout
     private readonly int _columns;
     private readonly Dictionary<IControl, (int row, int col, int rowspan, int colspan, Alignment alignment)> _controlPositions = new();
 
+    /// <summary>
+    /// Gets or sets the spacing between rows.
+    /// </summary>
     public int RowSpacing { get; set; } = 2;
+
+    /// <summary>
+    /// Gets or sets the spacing between columns.
+    /// </summary>
     public int ColumnSpacing { get; set; } = 2;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="GridLayout"/> class.
+    /// </summary>
+    /// <param name="left">The left position of the grid.</param>
+    /// <param name="top">The top position of the grid.</param>
+    /// <param name="width">The width of the grid.</param>
+    /// <param name="height">The height of the grid.</param>
+    /// <param name="rows">The number of rows in the grid.</param>
+    /// <param name="columns">The number of columns in the grid.</param>
     public GridLayout(int left, int top, int width, int height, int rows, int columns)
         : base(left, top, width, height)
     {
@@ -37,6 +74,15 @@ public class GridLayout : MicroLayout
         _columns = columns;
     }
 
+    /// <summary>
+    /// Adds a control to the grid at the specified position with optional spanning and alignment.
+    /// </summary>
+    /// <param name="control">The control to add.</param>
+    /// <param name="row">The row index of the control.</param>
+    /// <param name="col">The column index of the control.</param>
+    /// <param name="rowspan">The number of rows the control spans.</param>
+    /// <param name="colspan">The number of columns the control spans.</param>
+    /// <param name="alignment">The alignment of the control within the cell.</param>
     public void Add(IControl control, int row, int col, int rowspan = 1, int colspan = 1, Alignment alignment = Alignment.Center)
     {
         if (row < 0 || row >= _rows || col < 0 || col >= _columns || row + rowspan > _rows || col + colspan > _columns)
@@ -49,6 +95,22 @@ public class GridLayout : MicroLayout
         SetControlPosition(control, row, col, rowspan, colspan, alignment);
     }
 
+    /// <summary>
+    /// Removes a control from the grid layout.
+    /// </summary>
+    /// <param name="control">The control to remove.</param>
+    public void Remove(IControl control)
+    {
+        if (_controlPositions.ContainsKey(control))
+        {
+            _controlPositions.Remove(control);
+            Controls.Remove(control);
+        }
+    }
+
+    /// <summary>
+    /// Sets the position and size of a control based on its grid placement.
+    /// </summary>
     private void SetControlPosition(IControl control, int row, int col, int rowspan, int colspan, Alignment alignment)
     {
         int cellWidth = (Width - (_columns - 1) * ColumnSpacing) / _columns;
@@ -89,6 +151,9 @@ public class GridLayout : MicroLayout
         }
     }
 
+    /// <summary>
+    /// Updates the layout of all controls in the grid.
+    /// </summary>
     public void UpdateLayout()
     {
         foreach (var kvp in _controlPositions)
@@ -99,6 +164,9 @@ public class GridLayout : MicroLayout
         }
     }
 
+    /// <summary>
+    /// Draws the grid layout.
+    /// </summary>
     protected override void OnDraw(MicroGraphics graphics)
     {
         if (IsVisible && BackgroundColor != null)

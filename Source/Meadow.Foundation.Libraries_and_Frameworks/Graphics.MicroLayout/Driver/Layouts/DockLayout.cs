@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace Meadow.Foundation.Graphics.MicroLayout;
 
@@ -16,42 +17,34 @@ public class DockLayout : MicroLayout
         /// Positions the control at the top of the layout.
         /// </summary>
         Top,
-
         /// <summary>
         /// Positions the control at the bottom of the layout.
         /// </summary>
         Bottom,
-
         /// <summary>
         /// Positions the control on the left side of the layout.
         /// </summary>
         Left,
-
         /// <summary>
         /// Positions the control on the right side of the layout.
         /// </summary>
         Right,
-
         /// <summary>
         /// Positions the control at the top-left corner of the layout.
         /// </summary>
         TopLeft,
-
         /// <summary>
         /// Positions the control at the top-right corner of the layout.
         /// </summary>
         TopRight,
-
         /// <summary>
         /// Positions the control at the bottom-left corner of the layout.
         /// </summary>
         BottomLeft,
-
         /// <summary>
         /// Positions the control at the bottom-right corner of the layout.
         /// </summary>
         BottomRight,
-
         /// <summary>
         /// Positions the control at the center of the layout.
         /// </summary>
@@ -88,6 +81,19 @@ public class DockLayout : MicroLayout
         _dockPositions[control] = position;
 
         SetControlPosition(control, position);
+    }
+
+    /// <summary>
+    /// Removes a control from the layout.
+    /// </summary>
+    /// <param name="control">The control to remove.</param>
+    public void Remove(IControl control)
+    {
+        if (Controls.Contains(control))
+        {
+            Controls.Remove(control);
+            _dockPositions.Remove(control);
+        }
     }
 
     /// <summary>

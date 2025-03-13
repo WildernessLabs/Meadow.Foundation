@@ -87,6 +87,27 @@ public sealed class ControlsCollection : IEnumerable<IControl>
     }
 
     /// <summary>
+    /// Removes a control from the collection.
+    /// </summary>
+    /// <param name="control">The control to remove.</param>
+    /// <returns>True if the control was removed; otherwise, false.</returns>
+    public bool Remove(IControl control)
+    {
+        if (control is null) { return false; }
+
+        lock (SyncRoot)
+        {
+            if (_controls.Remove(control))
+            {
+                _container?.Parent?.Invalidate();
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /// <summary>
     /// Returns an enumerator that iterates through the collection of display controls.
     /// </summary>
     /// <returns>An enumerator that can be used to iterate through the collection.</returns>
