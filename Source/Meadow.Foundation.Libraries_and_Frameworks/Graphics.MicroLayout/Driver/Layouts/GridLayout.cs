@@ -46,12 +46,32 @@ public class GridLayout : MicroLayout
     /// <summary>
     /// Gets or sets the spacing between rows.
     /// </summary>
-    public int RowSpacing { get; set; } = 2;
+    public int RowSpacing
+    {
+        get => _rowSpacing;
+        set
+        {
+            _rowSpacing = value;
+            LayoutControls();
+            Invalidate();
+        }
+    }
+    int _rowSpacing = 2;
 
     /// <summary>
     /// Gets or sets the spacing between columns.
     /// </summary>
-    public int ColumnSpacing { get; set; } = 2;
+    public int ColumnSpacing
+    {
+        get => _colSpacing;
+        set
+        {
+            _colSpacing = value;
+            LayoutControls();
+            Invalidate();
+        }
+    }
+    int _colSpacing = 2;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="GridLayout"/> class.
@@ -154,7 +174,7 @@ public class GridLayout : MicroLayout
     /// <summary>
     /// Updates the layout of all controls in the grid.
     /// </summary>
-    public void UpdateLayout()
+    public void LayoutControls()
     {
         foreach (var kvp in _controlPositions)
         {
