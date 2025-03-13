@@ -12,8 +12,7 @@ public class AbsoluteLayout : MicroLayout
     /// <param name="height">The layout's height</param>
     public AbsoluteLayout(int width, int height)
         : base(0, 0, width, height)
-    {
-    }
+    { }
 
     /// <summary>
     /// Creates a full-screen DisplayAbsoluteLayout
@@ -39,15 +38,15 @@ public class AbsoluteLayout : MicroLayout
     /// <inheritdoc/>
     protected override void OnDraw(MicroGraphics graphics)
     {
-        if (IsVisible && BackgroundColor != null)
-        {
-            graphics.DrawRectangle(
-                Left + (Parent?.Left ?? 0),
-                Top + (Parent?.Top ?? 0),
-                Width,
-                Height,
-                BackgroundColor.Value,
-                true);
-        }
+        if (!IsVisible || BackgroundColor == null)
+            return;
+
+        graphics.DrawRectangle(
+            Left + (Parent?.Left ?? 0),
+            Top + (Parent?.Top ?? 0),
+            Width,
+            Height,
+            BackgroundColor.Value,
+            true);
     }
 }

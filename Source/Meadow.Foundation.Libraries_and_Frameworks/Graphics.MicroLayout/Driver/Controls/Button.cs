@@ -5,7 +5,7 @@
 /// </summary>
 public class Button : ClickableControl
 {
-    private const int ButtonDepth = 3; // TODO: make this settable?
+    private const int ButtonDepth = 2; // TODO: make this settable?
     private string _text = string.Empty;
     private Image? _image;
     private Color _foreColor = Color.Gray;
@@ -147,8 +147,8 @@ public class Button : ClickableControl
             graphics.DrawHorizontalLine(Left + parentOffsetX, Top + parentOffsetY, Width, ShadowColor);
             graphics.DrawVerticalLine(Left + parentOffsetX, Top + parentOffsetY, Height, ShadowColor);
 
-            graphics.DrawHorizontalLine(Left + parentOffsetX, Bottom + parentOffsetY, Width, HighlightColor);
-            graphics.DrawVerticalLine(Right + parentOffsetX, Top + parentOffsetY, Height, HighlightColor);
+            graphics.DrawHorizontalLine(Left + parentOffsetX, Bottom + parentOffsetY - 1, Width, HighlightColor);
+            graphics.DrawVerticalLine(Right + parentOffsetX - 1, Top + parentOffsetY, Height, HighlightColor);
 
             if (Image != null) // image always wins over text
             {
@@ -177,8 +177,8 @@ public class Button : ClickableControl
             graphics.DrawHorizontalLine(Left + parentOffsetX, Top + parentOffsetY, Width, HighlightColor);
             graphics.DrawVerticalLine(Left + parentOffsetX, Top + parentOffsetY, Height, HighlightColor);
 
-            graphics.DrawHorizontalLine(Left + parentOffsetX, Bottom + parentOffsetY, Width, ShadowColor);
-            graphics.DrawVerticalLine(Right + parentOffsetX, Top + parentOffsetY, Height, ShadowColor);
+            graphics.DrawHorizontalLine(Left + parentOffsetX, Bottom + parentOffsetY - 1, Width, ShadowColor);
+            graphics.DrawVerticalLine(Right + parentOffsetX - 1, Top + parentOffsetY, Height, ShadowColor);
 
             if (Image != null) // image always wins over text
             {
