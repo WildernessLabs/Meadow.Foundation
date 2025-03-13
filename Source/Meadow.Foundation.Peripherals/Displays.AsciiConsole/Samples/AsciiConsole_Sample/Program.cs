@@ -25,7 +25,7 @@ internal class Program
         var screen = new DisplayScreen(display);
         var box = new Box(0, 0, 4, 3)
         {
-            ForeColor = colors[colorIndex]
+            ForegroundColor = colors[colorIndex]
         };
         screen.Controls.Add(box);
 
@@ -39,7 +39,7 @@ internal class Program
             screen.BeginUpdate();
             box.Top = y;
             box.Left = x;
-            box.ForeColor = colors[colorIndex];
+            box.ForegroundColor = colors[colorIndex];
             screen.EndUpdate();
 
             await Task.Delay(500);
