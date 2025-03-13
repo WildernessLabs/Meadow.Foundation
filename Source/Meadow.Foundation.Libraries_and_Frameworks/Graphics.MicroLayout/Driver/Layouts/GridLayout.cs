@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace Meadow.Foundation.Graphics.MicroLayout;
 
 /// <summary>
-/// A layout that arranges child controls in a grid with alignment options.
+/// A layout that arranges child controls in a grid with alignment and spanning options.
 /// </summary>
 public class GridLayout : MicroLayout
 {
@@ -20,7 +20,7 @@ public class GridLayout : MicroLayout
 
     private readonly int _rows;
     private readonly int _columns;
-    private readonly Dictionary<IControl, (int row, int col, Alignment alignment)> _controlPositions = new();
+    private readonly Dictionary<IControl, (int row, int col, int rowspan, int colspan, Alignment alignment)> _controlPositions = new();
 
     public int RowSpacing { get; set; } = 2;
     public int ColumnSpacing { get; set; } = 2;
@@ -37,22 +37,24 @@ public class GridLayout : MicroLayout
         _columns = columns;
     }
 
-    public void Add(IControl control, int row, int col, Alignment alignment = Alignment.Center)
+    public void Add(IControl control, int row, int col, int rowspan = 1, int colspan = 1, Alignment alignment = Alignment.Center)
     {
-        if (row < 0 || row >= _rows || col < 0 || col >= _columns)
+        if (row < 0 || row >= _rows || col < 0 || col >= _columns || row + rowspan > _rows || col + colspan > _columns)
         {
-            throw new ArgumentOutOfRangeException("Row or column is out of range.");
+            throw new ArgumentOutOfRangeException("Row, column, rowspan, or colspan is out of range.");
         }
 
         Controls.Add(control);
-        _controlPositions[control] = (row, col, alignment);
-        SetControlPosition(control, row, col, alignment);
+        _controlPositions[control] = (row, col, rowspan, colspan, alignment);
+        SetControlPosition(control, row, col, rowspan, colspan, alignment);
     }
 
-    private void SetControlPosition(IControl control, int row, int col, Alignment alignment)
+    private void SetControlPosition(IControl control, int row, int col, int rowspan, int colspan, Alignment alignment)
     {
         int cellWidth = (Width - (_columns - 1) * ColumnSpacing) / _columns;
         int cellHeight = (Height - (_rows - 1) * RowSpacing) / _rows;
+        int totalWidth = cellWidth * colspan + ColumnSpacing * (colspan - 1);
+        int totalHeight = cellHeight * rowspan + RowSpacing * (rowspan - 1);
         int cellLeft = Left + col * (cellWidth + ColumnSpacing);
         int cellTop = Top + row * (cellHeight + RowSpacing);
 
@@ -60,29 +62,29 @@ public class GridLayout : MicroLayout
         {
             case Alignment.Left:
                 control.Left = cellLeft;
-                control.Top = cellTop + (cellHeight - control.Height) / 2;
+                control.Top = cellTop + (totalHeight - control.Height) / 2;
                 break;
             case Alignment.Top:
-                control.Left = cellLeft + (cellWidth - control.Width) / 2;
+                control.Left = cellLeft + (totalWidth - control.Width) / 2;
                 control.Top = cellTop;
                 break;
             case Alignment.Right:
-                control.Left = cellLeft + cellWidth - control.Width;
-                control.Top = cellTop + (cellHeight - control.Height) / 2;
+                control.Left = cellLeft + totalWidth - control.Width;
+                control.Top = cellTop + (totalHeight - control.Height) / 2;
                 break;
             case Alignment.Bottom:
-                control.Left = cellLeft + (cellWidth - control.Width) / 2;
-                control.Top = cellTop + cellHeight - control.Height;
+                control.Left = cellLeft + (totalWidth - control.Width) / 2;
+                control.Top = cellTop + totalHeight - control.Height;
                 break;
             case Alignment.Center:
-                control.Left = cellLeft + (cellWidth - control.Width) / 2;
-                control.Top = cellTop + (cellHeight - control.Height) / 2;
+                control.Left = cellLeft + (totalWidth - control.Width) / 2;
+                control.Top = cellTop + (totalHeight - control.Height) / 2;
                 break;
             case Alignment.Stretch:
                 control.Left = cellLeft;
                 control.Top = cellTop;
-                control.Width = cellWidth;
-                control.Height = cellHeight;
+                control.Width = totalWidth;
+                control.Height = totalHeight;
                 break;
         }
     }
@@ -92,8 +94,8 @@ public class GridLayout : MicroLayout
         foreach (var kvp in _controlPositions)
         {
             var control = kvp.Key;
-            var (row, col, alignment) = kvp.Value;
-            SetControlPosition(control, row, col, alignment);
+            var (row, col, rowspan, colspan, alignment) = kvp.Value;
+            SetControlPosition(control, row, col, rowspan, colspan, alignment);
         }
     }
 
