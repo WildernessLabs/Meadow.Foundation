@@ -20,7 +20,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// <summary>
         /// The analog input port used to determine output voltage of the voltage divider circuit
         /// </summary>
-        protected IAnalogInputPort AnalogInputPort { get; }
+        protected IObservableAnalogInputPort AnalogInputPort { get; }
         /// <summary>
         /// The nominal resistance of the thermistor (e.g. 10kOhm for a 10k thermistor)
         /// </summary>
@@ -34,7 +34,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// Creates a new Thermistor object using the provided analog input
         /// </summary>
         /// <param name="analogInput">The analog input reading the thermistor voltage divider output</param>
-        protected Thermistor(IAnalogInputPort analogInput)
+        protected Thermistor(IObservableAnalogInputPort analogInput)
         {
             AnalogInputPort = analogInput;
             AnalogInputPort.StartUpdating();

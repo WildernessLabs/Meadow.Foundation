@@ -12,7 +12,7 @@ namespace ICs.IOExpanders.Sw18AB_ADC_Sample
         //<!=SNIP=>
 
         private Sw18AB serialWombat;
-        private IAnalogInputPort analogInputPort;
+        private IObservableAnalogInputPort analogInputPort;
 
         public override Task Initialize()
         {

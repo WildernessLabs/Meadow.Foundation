@@ -49,7 +49,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <summary>
         /// Create an analog input port for a pin
         /// </summary>
-        public IAnalogInputPort CreateAnalogInputPort(int sampleCount = 64)
+        public IObservableAnalogInputPort CreateAnalogInputPort(int sampleCount = 64)
         {
             return CreateAnalogInputPort(sampleCount, TimeSpan.FromSeconds(1), DefaultReferenceVoltage);
         }
@@ -57,7 +57,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <summary>
         /// Create an analog input port for a pin
         /// </summary>
-        public IAnalogInputPort CreateAnalogInputPort(int sampleCount, TimeSpan sampleInterval, Voltage voltageReference)
+        public IObservableAnalogInputPort CreateAnalogInputPort(int sampleCount, TimeSpan sampleInterval, Voltage voltageReference)
         {
             var channel = Pins.INPlus.SupportedChannels.OfType<IAnalogChannelInfo>().FirstOrDefault();
 

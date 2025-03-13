@@ -11,7 +11,7 @@ public partial class Ads1263
     /// <summary>
     /// Represents an Ads1263 analog input port
     /// </summary>
-    public class AnalogInputPort : AnalogInputPortBase, IAnalogInputPort
+    public class AnalogInputPort : AnalogInputPortBase, IObservableAnalogInputPort
     {
         /// <summary>
         /// Is the port sampling

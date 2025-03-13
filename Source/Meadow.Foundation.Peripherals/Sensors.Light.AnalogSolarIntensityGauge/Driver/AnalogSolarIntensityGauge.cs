@@ -12,7 +12,7 @@ namespace Meadow.Foundation.Sensors.Light
     /// </summary>
     public class AnalogSolarIntensityGauge : SamplingSensorBase<float>, ISolarIntensityGauge, IDisposable
     {
-        readonly IAnalogInputPort analogInputPort;
+        readonly IObservableAnalogInputPort analogInputPort;
 
         /// <summary>
         /// Minimum voltage reference
@@ -75,7 +75,7 @@ namespace Meadow.Foundation.Sensors.Light
         /// <param name="minVoltageReference">The minimum voltage expected when the solar panel isn't receiving light. Default is 0.</param>
         /// <param name="maxVoltageReference">The maximum voltage expected when the solar panel is in full sun. Default is 3.3V.</param>
         public AnalogSolarIntensityGauge(
-            IAnalogInputPort analogPort,
+            IObservableAnalogInputPort analogPort,
             Voltage? minVoltageReference = null, Voltage? maxVoltageReference = null)
         {
             if (minVoltageReference is { } minV) { MinVoltageReference = minV; }
@@ -91,7 +91,7 @@ namespace Meadow.Foundation.Sensors.Light
         /// </summary>
         protected void Initialize()
         {
-            var observer = IAnalogInputPort.CreateObserver(
+            var observer = IObservableAnalogInputPort.CreateObserver(
                 handler: result =>
                 {
                     ChangeResult<float> changeResult = new ChangeResult<float>()

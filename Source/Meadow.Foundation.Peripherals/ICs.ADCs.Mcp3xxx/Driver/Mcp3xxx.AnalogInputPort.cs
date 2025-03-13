@@ -14,7 +14,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <summary>
         /// Represents an Mcp3xxx analog input port
         /// </summary>
-        public class AnalogInputPort : AnalogPortBase, IAnalogInputPort
+        public class AnalogInputPort : AnalogPortBase, IObservableAnalogInputPort
         {
             /// <summary>
             /// Raised when the port voltage value changes

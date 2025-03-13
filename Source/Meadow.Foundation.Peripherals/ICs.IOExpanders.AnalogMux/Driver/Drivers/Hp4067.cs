@@ -11,7 +11,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <summary>
         /// Creates a new Hp4067 object
         /// </summary>
-        public Hp4067(IAnalogInputPort z, IDigitalOutputPort s0, IDigitalOutputPort? s1 = null, IDigitalOutputPort? s2 = null, IDigitalOutputPort? s3 = null, IDigitalOutputPort? enable = null)
+        public Hp4067(IObservableAnalogInputPort z, IDigitalOutputPort s0, IDigitalOutputPort? s1 = null, IDigitalOutputPort? s2 = null, IDigitalOutputPort? s3 = null, IDigitalOutputPort? enable = null)
             : base(z, s0, s1, s2, s3, enable)
         {
         }

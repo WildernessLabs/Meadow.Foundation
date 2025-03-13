@@ -19,7 +19,7 @@ public partial class AtlasScientificGravityDOMeter : SamplingSensorBase<double>,
     /// <summary>
     /// Returns the analog input port
     /// </summary>
-    protected IAnalogInputPort AnalogInputPort { get; }
+    protected IObservableAnalogInputPort AnalogInputPort { get; }
 
     /// <summary>
     /// Last saturation value read from the sensor (0.0-1.0)
@@ -40,13 +40,13 @@ public partial class AtlasScientificGravityDOMeter : SamplingSensorBase<double>,
     /// Creates a new AtlasScientificGravityDOMeter object
     /// </summary>
     /// <param name="analogInputPort">The port for the analog input pin</param>
-    public AtlasScientificGravityDOMeter(IAnalogInputPort analogInputPort)
+    public AtlasScientificGravityDOMeter(IObservableAnalogInputPort analogInputPort)
     {
         AnalogInputPort = analogInputPort;
 
         AnalogInputPort.Subscribe
         (
-            IAnalogInputPort.CreateObserver(
+            IObservableAnalogInputPort.CreateObserver(
                 result =>
                 {
                     ChangeResult<double> changeResult = new()

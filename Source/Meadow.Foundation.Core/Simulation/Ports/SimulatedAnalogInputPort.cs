@@ -11,7 +11,7 @@ namespace Meadow.Foundation.Sensors;
 /// <summary>
 /// Represents a simulated analog input port
 /// </summary>
-public class SimulatedAnalogInputPort : SimulatedSensorBase, IAnalogInputPort
+public class SimulatedAnalogInputPort : SimulatedSensorBase, IObservableAnalogInputPort
 {
     private Timer simulationTimer;
     private Voltage oldVoltage;

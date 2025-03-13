@@ -9,7 +9,7 @@ namespace Meadow.Foundation.Sensors.Sound
     /// </summary>
     public class Ky038 : IDisposable
     {
-        private readonly IAnalogInputPort analogPort;
+        private readonly IObservableAnalogInputPort analogPort;
         private readonly IDigitalInputPort digitalInputPort;
 
         /// <summary>
@@ -44,7 +44,7 @@ namespace Meadow.Foundation.Sensors.Sound
         /// </summary>
         /// <param name="analogPort">The port for the to A0 pin</param>
         /// <param name="digitalInputPort">The port for the to D0 pin</param>
-        public Ky038(IAnalogInputPort analogPort, IDigitalInterruptPort digitalInputPort)
+        public Ky038(IObservableAnalogInputPort analogPort, IDigitalInterruptPort digitalInputPort)
         {
             this.analogPort = analogPort;
             this.digitalInputPort = digitalInputPort;

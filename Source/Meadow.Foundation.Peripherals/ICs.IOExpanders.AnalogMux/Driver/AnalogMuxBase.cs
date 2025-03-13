@@ -20,7 +20,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <summary>
         /// The analog input connected to the Mux output pin (Z)
         /// </summary>
-        public IAnalogInputPort Signal { get; }
+        public IObservableAnalogInputPort Signal { get; }
 
         /// <summary>
         /// Set input channel
@@ -28,7 +28,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <param name="channel">he input channel</param>
         public abstract void SetInputChannel(int channel);
 
-        internal AnalogMuxBase(IAnalogInputPort signalPort, IDigitalOutputPort? enablePort)
+        internal AnalogMuxBase(IObservableAnalogInputPort signalPort, IDigitalOutputPort? enablePort)
         {
             Signal = signalPort;
             EnablePort = enablePort;

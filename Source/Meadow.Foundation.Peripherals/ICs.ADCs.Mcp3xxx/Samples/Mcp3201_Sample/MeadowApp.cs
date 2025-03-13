@@ -12,7 +12,7 @@ namespace ICs.IOExpanders.Mcp3001_Sample
 
         Mcp3201 mcp;
 
-        IAnalogInputPort port;
+        IObservableAnalogInputPort port;
 
         public override Task Initialize()
         {
@@ -29,7 +29,7 @@ namespace ICs.IOExpanders.Mcp3001_Sample
                 Resolver.Log.Info($"Analog event, new voltage: {result.New.Volts}V, old: {result.Old?.Volts}V");
             };
 
-            var observer = IAnalogInputPort.CreateObserver(
+            var observer = IObservableAnalogInputPort.CreateObserver(
                 handler: result =>
                 {
                     Resolver.Log.Info($"Analog observer triggered; new: {result.New.Volts}V, old: {result.Old?.Volts}V");

@@ -28,7 +28,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <summary>
         /// Creates a new Nxp74HC4051 object
         /// </summary>
-        public Nxp74HC4067(IAnalogInputPort z, IDigitalOutputPort s0, IDigitalOutputPort? s1 = null, IDigitalOutputPort? s2 = null, IDigitalOutputPort? s3 = null, IDigitalOutputPort? enable = null)
+        public Nxp74HC4067(IObservableAnalogInputPort z, IDigitalOutputPort s0, IDigitalOutputPort? s1 = null, IDigitalOutputPort? s2 = null, IDigitalOutputPort? s3 = null, IDigitalOutputPort? enable = null)
             : base(z, enable)
         {
             S0 = s0;

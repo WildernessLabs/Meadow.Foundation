@@ -8,7 +8,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
     /// <summary>
     /// Provide an interface to connect to a MCP3xxx analog to digital converter (ADC)
     /// </summary>
-    public abstract partial class Mcp3xxx : IAnalogInputController, ISpiPeripheral, IDisposable
+    public abstract partial class Mcp3xxx : IObservableAnalogInputController, ISpiPeripheral, IDisposable
     {
         /// <summary>
         /// Is the object disposed
@@ -115,8 +115,8 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         /// <param name="pin">The pin to use for the analog input port</param>
         /// <param name="sampleCount">The number of samples to take when measuring the pin's voltage</param>
-        /// <returns>An instance of <see cref="IAnalogInputPort"/> that represents the analog input on the specified pin</returns>
-        protected IAnalogInputPort CreateAnalogInputPort(IPin pin, int sampleCount = 64)
+        /// <returns>An instance of <see cref="IObservableAnalogInputPort"/> that represents the analog input on the specified pin</returns>
+        protected IObservableAnalogInputPort CreateAnalogInputPort(IPin pin, int sampleCount = 64)
         {
             return CreateAnalogInputPort(pin, sampleCount, TimeSpan.FromSeconds(1), DefaultReferenceVoltage);
         }
@@ -129,7 +129,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <param name="sampleInterval">The interval delay between samples</param>
         /// <param name="voltageReference">The `Voltage` reference for ADC readings</param>
         /// <returns>A new instance of an `IAnalogInputPort`</returns>
-        public IAnalogInputPort CreateAnalogInputPort(IPin pin,
+        public IObservableAnalogInputPort CreateAnalogInputPort(IPin pin,
             int sampleCount,
             TimeSpan sampleInterval,
             Voltage voltageReference)
@@ -153,7 +153,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <param name="voltageReference">The `Voltage` reference for ADC readings</param>
         /// <param name="inputType">The pin channel input type</param>
         /// <returns>A new instance of an `IAnalogInputPort`</returns>
-        public IAnalogInputPort CreateAnalogInputPort(IPin pin,
+        public IObservableAnalogInputPort CreateAnalogInputPort(IPin pin,
             int sampleCount,
             TimeSpan sampleInterval,
             Voltage voltageReference,
@@ -168,7 +168,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
             return channel == null
                 ? throw new NotSupportedException($"Pin {pin.Name} Does not support ADC")
-                : (IAnalogInputPort)new AnalogInputPort(this, pin, channel, sampleCount, inputType);
+                : (IObservableAnalogInputPort)new AnalogInputPort(this, pin, channel, sampleCount, inputType);
         }
 
         ///<inheritdoc/>

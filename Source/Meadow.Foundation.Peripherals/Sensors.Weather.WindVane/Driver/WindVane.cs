@@ -40,7 +40,7 @@ namespace Meadow.Foundation.Sensors.Weather
         /// </summary>
         public ReadOnlyDictionary<Voltage, Azimuth>? AzimuthVoltages { get; protected set; }
 
-        readonly IAnalogInputPort inputPort;
+        readonly IObservableAnalogInputPort inputPort;
 
         /// <summary>
         /// Is the object disposed
@@ -78,7 +78,7 @@ namespace Meadow.Foundation.Sensors.Weather
         /// </summary>
         /// <param name="inputPort">The analog input</param>
         /// <param name="azimuthVoltages">Optional. Supply if you have custom azimuth voltages</param>
-        public WindVane(IAnalogInputPort inputPort, IDictionary<Voltage, Azimuth>? azimuthVoltages = null)
+        public WindVane(IObservableAnalogInputPort inputPort, IDictionary<Voltage, Azimuth>? azimuthVoltages = null)
         {
             this.inputPort = inputPort;
 
@@ -91,7 +91,7 @@ namespace Meadow.Foundation.Sensors.Weather
                 GetDefaultAzimuthVoltages() : new ReadOnlyDictionary<Voltage, Azimuth>(azimuthVoltages);
 
             inputPort.Subscribe(
-                IAnalogInputPort.CreateObserver(
+                IObservableAnalogInputPort.CreateObserver(
                 handler: HandleAnalogUpdate,
                 filter: null));
         }

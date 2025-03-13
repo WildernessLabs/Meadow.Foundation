@@ -14,7 +14,7 @@ namespace Meadow.Foundation.Sensors.Moisture
         /// <summary>
         /// Returns the analog input port
         /// </summary>
-        protected IAnalogInputPort AnalogInputPort { get; }
+        protected IObservableAnalogInputPort AnalogInputPort { get; }
 
         /// <summary>
         /// Returns the digital output port
@@ -84,7 +84,7 @@ namespace Meadow.Foundation.Sensors.Moisture
         /// <param name="minimumVoltageCalibration">Minimum Voltage Calibration value</param>
         /// <param name="maximumVoltageCalibration">Maximum Voltage Calibration value</param>
         public Fc28(
-            IAnalogInputPort analogInputPort,
+            IObservableAnalogInputPort analogInputPort,
             IDigitalOutputPort digitalOutputPort,
             Voltage? minimumVoltageCalibration,
             Voltage? maximumVoltageCalibration)

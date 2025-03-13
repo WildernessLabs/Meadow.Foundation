@@ -14,17 +14,17 @@ namespace Meadow.Foundation.Sensors.Motion
         /// <summary>
         /// The X analog input port
         /// </summary>
-        protected IAnalogInputPort XAnalogInputPort { get; }
+        protected IObservableAnalogInputPort XAnalogInputPort { get; }
 
         /// <summary>
         /// The Y analog input port
         /// </summary>
-        protected IAnalogInputPort YAnalogInputPort { get; }
+        protected IObservableAnalogInputPort YAnalogInputPort { get; }
 
         /// <summary>
         /// The Z analog input port
         /// </summary>
-        protected IAnalogInputPort ZAnalogInputPort { get; }
+        protected IObservableAnalogInputPort ZAnalogInputPort { get; }
 
         /// <summary>
         /// Power supply voltage applied to the sensor - this will be set (in the constructor)

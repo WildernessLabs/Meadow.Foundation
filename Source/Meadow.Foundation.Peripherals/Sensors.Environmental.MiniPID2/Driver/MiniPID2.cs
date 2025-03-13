@@ -24,7 +24,7 @@ namespace Meadow.Foundation.Sensors.Environmental
         ///<Summary>
         /// AnalogInputPort connected to temperature sensor
         ///</Summary>
-        protected IAnalogInputPort AnalogInputPort { get; }
+        protected IObservableAnalogInputPort AnalogInputPort { get; }
 
         /// <summary>
         /// Is the object disposed
@@ -62,7 +62,7 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// </summary>
         /// <param name="analogInputPort">The analog port connected to the sensor</param>
         /// <param name="pid2Type">The MiniPID sensor type</param>
-        public MiniPID2(IAnalogInputPort analogInputPort, MiniPID2Type pid2Type)
+        public MiniPID2(IObservableAnalogInputPort analogInputPort, MiniPID2Type pid2Type)
         {
             MiniPID2DeviceType = pid2Type;
             AnalogInputPort = analogInputPort;
@@ -112,7 +112,7 @@ namespace Meadow.Foundation.Sensors.Environmental
 
             AnalogInputPort.Subscribe
             (
-                IAnalogInputPort.CreateObserver(
+                IObservableAnalogInputPort.CreateObserver(
                     result =>
                     {
                         ChangeResult<Concentration> changeResult = new()

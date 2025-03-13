@@ -14,7 +14,7 @@ namespace MeadowApp
 
         Mcp4728 mcp4728;
         Mcp4728.AnalogOutputPort analogOutputPort;
-        IAnalogInputPort analogInputPort;
+        IObservableAnalogInputPort analogInputPort;
 
         public override Task Initialize()
         {

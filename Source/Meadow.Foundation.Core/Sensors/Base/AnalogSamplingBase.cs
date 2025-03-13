@@ -13,7 +13,7 @@ namespace Meadow.Foundation.Sensors.Base
         /// <summary>
         /// Analog port connected to the sensor
         /// </summary>
-        private readonly IAnalogInputPort AnalogInputPort;
+        private readonly IObservableAnalogInputPort AnalogInputPort;
 
         /// <summary>
         /// Current voltage
@@ -35,13 +35,13 @@ namespace Meadow.Foundation.Sensors.Base
         /// Creates a new AnalogObservableBase driver
         /// </summary>
         /// <param name="port">analog input port</param>
-        public AnalogSamplingBase(IAnalogInputPort port)
+        public AnalogSamplingBase(IObservableAnalogInputPort port)
         {
             AnalogInputPort = port;
 
             AnalogInputPort.Subscribe
             (
-                IAnalogInputPort.CreateObserver(
+                IObservableAnalogInputPort.CreateObserver(
                     result =>
                     {
                         ChangeResult<Voltage> changeResult = new ChangeResult<Voltage>()

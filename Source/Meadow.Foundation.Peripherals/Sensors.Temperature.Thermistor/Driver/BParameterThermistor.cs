@@ -26,7 +26,7 @@ public class BParameterThermistor : Thermistor
     /// Creates an instance of a BParameterThermistor using a 10k resistor and a 10k thermistor
     /// </summary>
     /// <param name="analogInput">The analog input reading the thermistor voltage divider output</param>
-    public BParameterThermistor(IAnalogInputPort analogInput)
+    public BParameterThermistor(IObservableAnalogInputPort analogInput)
         : this(analogInput, 10_000.Ohms(), 10_000.Ohms())
     {
     }
@@ -38,7 +38,7 @@ public class BParameterThermistor : Thermistor
     /// <param name="nominalResistance">The nominal resistance of the thermistor (e.g. 10kOhm for a 10k thermistor)</param>
     /// <param name="seriesResistance">The resistance of the fixed-value series resistor in your voltage divider circuit</param>
     public BParameterThermistor(
-        IAnalogInputPort analogInput,
+        IObservableAnalogInputPort analogInput,
         Resistance nominalResistance,
         Resistance seriesResistance
         )

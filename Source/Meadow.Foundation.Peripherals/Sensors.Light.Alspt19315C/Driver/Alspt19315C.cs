@@ -14,7 +14,7 @@ namespace Meadow.Foundation.Sensors.Light
         /// <summary>
         /// Analog port connected to the sensor
         /// </summary>
-        private readonly IAnalogInputPort AnalogInputPort;
+        private readonly IObservableAnalogInputPort AnalogInputPort;
 
         /// <summary>
         /// The current voltage reading of the sensor
@@ -36,13 +36,13 @@ namespace Meadow.Foundation.Sensors.Light
         /// Create a new light sensor object using a static reference voltage
         /// </summary>
         /// <param name="port"></param>
-        public Alspt19315C(IAnalogInputPort port)
+        public Alspt19315C(IObservableAnalogInputPort port)
         {
             AnalogInputPort = port;
 
             AnalogInputPort.Subscribe
             (
-                IAnalogInputPort.CreateObserver(
+                IObservableAnalogInputPort.CreateObserver(
                     result =>
                     {
                         ChangeResult<Voltage> changeResult = new ChangeResult<Voltage>()

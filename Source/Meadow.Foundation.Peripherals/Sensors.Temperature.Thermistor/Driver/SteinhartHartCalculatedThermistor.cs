@@ -36,7 +36,7 @@ public class SteinhartHartCalculatedThermistor : Thermistor
     /// <param name="analogInput">The analog input reading the thermistor voltage divider output</param>
     /// <param name="nominalResistance">The nominal resistance of the thermistor (e.g. 10kOhm for a 10k thermistor)</param>
     /// <remarks>The fixed resistor value will be assumed to match the thermistor's nominal resistance</remarks>
-    public SteinhartHartCalculatedThermistor(IAnalogInputPort analogInput, Resistance nominalResistance)
+    public SteinhartHartCalculatedThermistor(IObservableAnalogInputPort analogInput, Resistance nominalResistance)
         : base(analogInput)
     {
         NominalResistance = nominalResistance;
@@ -49,7 +49,7 @@ public class SteinhartHartCalculatedThermistor : Thermistor
     /// <param name="analogInput">The analog input reading the thermistor voltage divider output</param>
     /// <param name="nominalResistance">The nominal resistance of the thermistor (e.g. 10kOhm for a 10k thermistor)</param>
     /// <param name="seriesResistance">The resistance of the fixed-value series resistor in your voltage divider circuit</param>
-    public SteinhartHartCalculatedThermistor(IAnalogInputPort analogInput, Resistance nominalResistance, Resistance seriesResistance)
+    public SteinhartHartCalculatedThermistor(IObservableAnalogInputPort analogInput, Resistance nominalResistance, Resistance seriesResistance)
         : base(analogInput)
     {
         NominalResistance = nominalResistance;
@@ -63,7 +63,7 @@ public class SteinhartHartCalculatedThermistor : Thermistor
     /// <param name="nominalResistance">The nominal resistance of the thermistor (e.g. 10kOhm for a 10k thermistor)</param>
     /// <param name="seriesResistance">The resistance of the fixed-value series resistor in your voltage divider circuit</param>
     /// <param name="betaCoefficient">The beta coefficient of the thermistor used in the Steinhart-Hart equation</param>
-    public SteinhartHartCalculatedThermistor(IAnalogInputPort analogInput, Resistance nominalResistance, Resistance seriesResistance, double betaCoefficient)
+    public SteinhartHartCalculatedThermistor(IObservableAnalogInputPort analogInput, Resistance nominalResistance, Resistance seriesResistance, double betaCoefficient)
         : base(analogInput)
     {
         NominalResistance = nominalResistance;
@@ -78,7 +78,7 @@ public class SteinhartHartCalculatedThermistor : Thermistor
     /// <param name="nominalResistance">The nominal resistance of the thermistor (e.g. 10kOhm for a 10k thermistor)</param>
     /// <param name="betaCoefficient">The beta coefficient of the thermistor used in the Steinhart-Hart equation</param>
     /// <remarks>The fixed resistor value will be assumed to match the thermistor's nominal resistance</remarks>
-    public SteinhartHartCalculatedThermistor(IAnalogInputPort analogInput, Resistance nominalResistance, double betaCoefficient)
+    public SteinhartHartCalculatedThermistor(IObservableAnalogInputPort analogInput, Resistance nominalResistance, double betaCoefficient)
         : base(analogInput)
     {
         NominalResistance = nominalResistance;

@@ -7,14 +7,14 @@ namespace Meadow.Foundation.Sensors.Distance
 {
     public partial class MaxBotix
     {
-        readonly IAnalogInputPort? analogInputPort;
+        readonly IObservableAnalogInputPort? analogInputPort;
 
         /// <summary>
         /// Creates a new MaxBotix object communicating over analog
         /// </summary>
         /// <param name="analogInputPort">The port for the analog input pin</param>
         /// <param name="sensor">The distance sensor type</param>
-        public MaxBotix(IAnalogInputPort analogInputPort, SensorType sensor)
+        public MaxBotix(IObservableAnalogInputPort analogInputPort, SensorType sensor)
         {
             this.analogInputPort = analogInputPort;
 
@@ -50,7 +50,7 @@ namespace Meadow.Foundation.Sensors.Distance
             // pattern through the sensor driver
             analogInputPort?.Subscribe
             (
-                IAnalogInputPort.CreateObserver(
+                IObservableAnalogInputPort.CreateObserver(
                     async result =>
                     {
                         // create a new change result from the new value

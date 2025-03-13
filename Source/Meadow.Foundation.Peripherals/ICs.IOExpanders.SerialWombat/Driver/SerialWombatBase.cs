@@ -10,7 +10,7 @@ using System.Text;
 namespace Meadow.Foundation.ICs.IOExpanders
 {
     public abstract partial class SerialWombatBase : IDigitalInputOutputController, IPwmOutputController,
-        IAnalogInputController, II2cPeripheral
+        IObservableAnalogInputController, II2cPeripheral
     {
         private readonly II2cBus i2cBus;
         private WombatVersion version = null!;
@@ -454,7 +454,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <summary>
         /// Create an analog input port for a pin
         /// </summary>
-        public IAnalogInputPort CreateAnalogInputPort(IPin pin, int sampleCount = 64)
+        public IObservableAnalogInputPort CreateAnalogInputPort(IPin pin, int sampleCount = 64)
         {
             return CreateAnalogInputPort(pin, sampleCount, TimeSpan.FromSeconds(1), new Voltage(0));
         }
@@ -462,7 +462,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <summary>
         /// Create an analog input port for a pin
         /// </summary>
-        public IAnalogInputPort CreateAnalogInputPort(IPin pin, int sampleCount, TimeSpan sampleInterval, Voltage voltageReference)
+        public IObservableAnalogInputPort CreateAnalogInputPort(IPin pin, int sampleCount, TimeSpan sampleInterval, Voltage voltageReference)
         {
             var channel = pin.SupportedChannels.OfType<IAnalogChannelInfo>().FirstOrDefault();
 

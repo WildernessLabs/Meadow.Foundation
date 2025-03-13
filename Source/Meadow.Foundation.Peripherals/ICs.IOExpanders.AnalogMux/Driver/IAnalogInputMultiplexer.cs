@@ -16,7 +16,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <summary>
         /// The analog input connected to the Mux output pin (Z)
         /// </summary>
-        IAnalogInputPort Signal { get; }
+        IObservableAnalogInputPort Signal { get; }
 
         /// <summary>
         /// Disables the multiplexer (if an enable port was provided)
