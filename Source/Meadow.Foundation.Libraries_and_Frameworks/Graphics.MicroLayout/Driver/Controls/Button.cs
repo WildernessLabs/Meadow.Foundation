@@ -8,7 +8,7 @@ public class Button : ClickableControl
     private const int ButtonDepth = 2; // TODO: make this settable?
     private string _text = string.Empty;
     private Image? _image;
-    private Color _foreColor = Color.Gray;
+    private Color _foregroundColor = Color.Gray;
     private Color _pressedColor;
     private Color _highlightColor;
     private Color _shadowColor;
@@ -38,7 +38,7 @@ public class Button : ClickableControl
     {
         if (theme != null)
         {
-            if (theme.ForegroundColor != null) this.ForeColor = theme.ForegroundColor.Value;
+            if (theme.ForegroundColor != null) this.ForegroundColor = theme.ForegroundColor.Value;
             if (theme.PressedColor != null) this.PressedColor = theme.PressedColor.Value;
             if (theme.HighlightColor != null) this.HighlightColor = theme.HighlightColor.Value;
             if (theme.ShadowColor != null) this.ShadowColor = theme.ShadowColor.Value;
@@ -51,10 +51,10 @@ public class Button : ClickableControl
     /// <summary>
     /// Gets or sets the foreground color of the button when not pressed.
     /// </summary>
-    public Color ForeColor
+    public Color ForegroundColor
     {
-        get => _foreColor;
-        set => SetInvalidatingProperty(ref _foreColor, value);
+        get => _foregroundColor;
+        set => SetInvalidatingProperty(ref _foregroundColor, value);
     }
 
     /// <summary>
@@ -172,7 +172,7 @@ public class Button : ClickableControl
         }
         else
         {
-            graphics.DrawRectangle(Left + parentOffsetX, Top + parentOffsetY, Width, Height, ForeColor, true);
+            graphics.DrawRectangle(Left + parentOffsetX, Top + parentOffsetY, Width, Height, ForegroundColor, true);
 
             graphics.DrawHorizontalLine(Left + parentOffsetX, Top + parentOffsetY, Width, HighlightColor);
             graphics.DrawVerticalLine(Left + parentOffsetX, Top + parentOffsetY, Height, HighlightColor);

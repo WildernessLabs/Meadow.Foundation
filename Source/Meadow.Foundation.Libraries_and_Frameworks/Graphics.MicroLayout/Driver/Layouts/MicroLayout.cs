@@ -1,4 +1,6 @@
-﻿namespace Meadow.Foundation.Graphics.MicroLayout;
+﻿using System.Linq;
+
+namespace Meadow.Foundation.Graphics.MicroLayout;
 
 /// <summary>
 /// A base class for display layouts
@@ -37,7 +39,7 @@ public abstract class MicroLayout : ThemedControl, IControlContainer
     {
         lock (Controls.SyncRoot)
         {
-            foreach (IThemedControl control in Controls)
+            foreach (var control in Controls.OfType<IThemedControl>())
             {
                 control.ApplyTheme(theme);
             }
