@@ -20,8 +20,7 @@ public class AbsoluteLayout : MicroLayout
     /// <param name="screen">The DisplayScreen to associate this layout with</param>
     public AbsoluteLayout(DisplayScreen screen)
         : base(0, 0, screen.Width, screen.Height)
-    {
-    }
+    { }
 
     /// <summary>
     /// Creates a DisplayAbsoluteLayout
@@ -32,8 +31,7 @@ public class AbsoluteLayout : MicroLayout
     /// <param name="height">The layout's height</param>
     public AbsoluteLayout(int left, int top, int width, int height)
         : base(left, top, width, height)
-    {
-    }
+    { }
 
     /// <inheritdoc/>
     protected override void OnDraw(MicroGraphics graphics)
