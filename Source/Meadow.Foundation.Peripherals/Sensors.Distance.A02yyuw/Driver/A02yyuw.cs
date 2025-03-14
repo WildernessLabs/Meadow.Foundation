@@ -27,12 +27,13 @@ namespace Meadow.Foundation.Sensors.Distance
         /// </summary>
         public TimeSpan SensorReadTimeOut { get; set; } = TimeSpan.FromSeconds(1000);
 
-        //The baud rate is 9600, 8 bits, no parity, with one stop bit
         private readonly ISerialPort serialPort;
 
+        /// <summary>
+        /// The baud rate of the sensor (9600)
+        /// </summary>
         public static readonly int BaudRate = 9600;
 
-        //Serial read variables 
         private readonly byte[] readBuffer = new byte[16];
         private int serialDataBytesRead = 0;
         private byte serialDataFirstByte;
