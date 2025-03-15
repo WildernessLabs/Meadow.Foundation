@@ -68,9 +68,8 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// <summary>
         /// Did we create the buffer (true) or was it passed in (false)
         /// </summary>
-        readonly bool createdBuffer = true;
-
-        bool isDisposed = false;
+        private readonly bool createdBuffer = true;
+        private bool isDisposed = false;
 
         /// <summary>
         /// Create a new PixelBufferBase object
@@ -332,7 +331,7 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// </summary>
         /// <typeparam name="T">The buffer type</typeparam>
         /// <returns>A new pixel buffer object</returns>
-        T Clone<T>() where T : PixelBufferBase, new()
+        private T Clone<T>() where T : PixelBufferBase, new()
         {
             var newBuffer = new T
             {
@@ -359,6 +358,29 @@ namespace Meadow.Foundation.Graphics.Buffers
                 Width = newWidth,
                 Height = newHeight,
             };
+            newBuffer.InitializeBuffer(true);
+
+            float xRatio = (float)Width / newWidth;
+            float yRatio = (float)Height / newHeight;
+
+            for (int i = 0; i < newWidth; i++)
+            {
+                for (int j = 0; j < newHeight; j++)
+                {
+                    int srcX = (int)(i * xRatio);
+                    int srcY = (int)(j * yRatio);
+                    newBuffer.SetPixel(i, j, GetPixel(srcX, srcY));
+                }
+            }
+            return newBuffer;
+        }
+
+        internal PixelBufferBase Resize(Type bufferType, int newWidth, int newHeight)
+        {
+            var newBuffer = Activator.CreateInstance(bufferType) as PixelBufferBase;
+            if (newBuffer == null) throw new Exception();
+            newBuffer.Width = newWidth;
+            newBuffer.Height = newHeight;
             newBuffer.InitializeBuffer(true);
 
             float xRatio = (float)Width / newWidth;

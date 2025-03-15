@@ -318,5 +318,57 @@ namespace Meadow.Foundation.Graphics
             }
             return count;
         }
+
+        /// <summary>
+        /// Creates an Image from the existing with new dimensions and the same color depth
+        /// </summary>
+        /// <param name="newWidth"></param>
+        /// <param name="newHeight"></param>
+        public Image Resize(int newWidth, int newHeight)
+        {
+            if (DisplayBuffer == null)
+            {
+                throw new InvalidOperationException("PixelBuffer is null");
+            }
+
+            var bufferBase = DisplayBuffer as PixelBufferBase;
+
+            if (bufferBase == null)
+            {
+                throw new InvalidOperationException("PixelBuffer must be a PixelBufferBase to resize");
+            }
+
+            return LoadFromPixelData(bufferBase.Resize(this.DisplayBuffer.GetType(), newWidth, newHeight));
+        }
+
+        /// <summary>
+        /// Creates an Image from the existing with new dimensions and the same color depth
+        /// </summary>
+        /// <param name="newWidth"></param>
+        /// <param name="newHeight"></param>
+        /// <param name="newMode"></param>
+        public Image ConvertAndResize(ColorMode newMode, int newWidth, int newHeight)
+        {
+            var bufferType = newMode switch
+            {
+                ColorMode.Format1bpp => typeof(Buffer1bpp),
+                ColorMode.Format2bpp => throw new NotSupportedException(),
+                ColorMode.Format4bppGray => typeof(BufferGray4),
+                ColorMode.Format4bppIndexed => typeof(BufferIndexed4),
+                ColorMode.Format8bppGray => typeof(BufferGray8),
+                ColorMode.Format8bppRgb332 => typeof(BufferRgb332),
+                ColorMode.Format12bppRgb444 => typeof(BufferRgb444),
+                ColorMode.Format16bppRgb555 => throw new NotSupportedException(),
+                ColorMode.Format16bppRgb565 => typeof(BufferRgb565),
+                ColorMode.Format18bppRgb666 => typeof(BufferRgb666),
+                ColorMode.Format24bppRgb888 => typeof(BufferRgb888),
+                ColorMode.Format24bppGrb888 => throw new NotSupportedException(),
+                ColorMode.Format32bppRgba8888 => typeof(BufferRgba8888),
+                _ => throw new NotImplementedException($"Unknown or unsupported ColorMode: {newMode}"),
+            };
+
+            return LoadFromPixelData((DisplayBuffer as PixelBufferBase)?.Resize(bufferType, newWidth, newHeight)
+                ?? throw new NotSupportedException());
+        }
     }
 }
