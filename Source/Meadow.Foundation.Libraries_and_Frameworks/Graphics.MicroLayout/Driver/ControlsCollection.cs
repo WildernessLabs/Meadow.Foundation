@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace Meadow.Foundation.Graphics.MicroLayout;
@@ -35,7 +36,14 @@ public sealed class ControlsCollection : IEnumerable<IControl>
     /// <param name="index">index of the control to retrieve</param>
     public IControl this[int index]
     {
-        get => _controls[index];
+        get
+        {
+            if (index < 0 || index >= _controls.Count)
+            {
+                throw new ArgumentOutOfRangeException(nameof(index));
+            }
+            return _controls[index];
+        }
     }
 
     /// <summary>
@@ -77,13 +85,34 @@ public sealed class ControlsCollection : IEnumerable<IControl>
         {
             foreach (var control in controls)
             {
-                if (control is null) continue;
+                if (control is null) { continue; }
 
                 control.Parent = _container;
                 control.Invalidate();
                 _controls.Add(control);
             }
         }
+    }
+
+    /// <summary>
+    /// Removes a control from the collection.
+    /// </summary>
+    /// <param name="control">The control to remove.</param>
+    /// <returns>True if the control was removed; otherwise, false.</returns>
+    public bool Remove(IControl control)
+    {
+        if (control is null) { return false; }
+
+        lock (SyncRoot)
+        {
+            if (_controls.Remove(control))
+            {
+                _container?.Parent?.Invalidate();
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /// <summary>

@@ -9,7 +9,7 @@ namespace Meadow.Foundation.Graphics.MicroLayout;
 /// </summary>
 public class HistogramChartSeries : INotifyPropertyChanged
 {
-    private Color _foreColor = Color.White;
+    private Color _foregroundColor = Color.White;
     private IEnumerable<(int X, int Y)> _elements = Array.Empty<(int X, int Y)>();
 
     /// <inheritdoc/>
@@ -18,14 +18,14 @@ public class HistogramChartSeries : INotifyPropertyChanged
     /// <summary>
     /// Gets or sets the foreground color of the series.
     /// </summary>
-    public Color ForeColor
+    public Color ForegroundColor
     {
-        get => _foreColor;
+        get => _foregroundColor;
         set
         {
-            if (value == ForeColor) { return; }
-            _foreColor = value;
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ForeColor)));
+            if (value == ForegroundColor) { return; }
+            _foregroundColor = value;
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ForegroundColor)));
         }
     }
 

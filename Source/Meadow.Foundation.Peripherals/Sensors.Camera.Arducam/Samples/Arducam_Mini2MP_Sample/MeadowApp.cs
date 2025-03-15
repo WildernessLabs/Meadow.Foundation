@@ -5,29 +5,30 @@ using SimpleJpegDecoder;
 using System;
 using System.Threading.Tasks;
 
-namespace Sensors.Camera.Vc0706_Sample
+namespace Sensors.Camera.Arducam_Sample
 {
     public class MeadowApp : App<F7FeatherV2>
     {
         //<!=SNIP=>
 
-        Vc0706 camera;
+        ArducamMini2MP camera;
 
         public override Task Initialize()
         {
             Resolver.Log.Info("Initialize...");
 
-            camera = new Vc0706(Device, Device.PlatformOS.GetSerialPortName("COM4"), 38400);
+            camera = new ArducamMini2MP(Device.CreateSpiBus(), Device.Pins.D00, Device.CreateI2cBus());
+
+            Console.WriteLine("Camera initialized");
 
             return Task.CompletedTask;
         }
 
-        public async override Task Run()
+        public override async Task Run()
         {
-            if (!camera.SetCaptureResolution(Vc0706.ImageResolution._160x120))
-            {
-                Resolver.Log.Info("Set resolution failed");
-            }
+            Console.WriteLine("Run...");
+
+            await camera.SetJpegSize(Arducam.ImageSize._160x120);
 
             var jpegData = await camera.CapturePhoto();
 
