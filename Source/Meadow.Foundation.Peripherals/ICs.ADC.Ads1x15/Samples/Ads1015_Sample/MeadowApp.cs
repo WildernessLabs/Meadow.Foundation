@@ -10,7 +10,7 @@ namespace ADC.Ads1015_Sample
     {
         //<!=SNIP=>
 
-        Ads1015 adc;
+        private Ads1015 adc;
 
         public override async Task Initialize()
         {
@@ -51,7 +51,7 @@ namespace ADC.Ads1015_Sample
             await adc.Read();
         }
 
-        //<!=SNIP=>
+        //<!=SNOP=>
 
         public override Task Run()
         {
@@ -60,7 +60,7 @@ namespace ADC.Ads1015_Sample
             return base.Run();
         }
 
-        async Task TestSpeed()
+        private async Task TestSpeed()
         {
             var totalSamples = 1000;
 
@@ -78,7 +78,7 @@ namespace ADC.Ads1015_Sample
             Resolver.Log.Info($"{totalSamples} reads in {end - start} ticks gave a raw mean of {mean:0.00}");
         }
 
-        async Task TakeMeasurements()
+        private async Task TakeMeasurements()
         {
             var i = 0;
 

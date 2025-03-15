@@ -121,6 +121,12 @@ namespace Meadow.Foundation.ICs.IOExpanders
             return CreateAnalogInputPort(pin, sampleCount, TimeSpan.FromSeconds(1), DefaultReferenceVoltage);
         }
 
+        /// <inheritdoc/>
+        public IAnalogInputPort CreateAnalogInputPort(IPin pin, Voltage? voltageReference)
+        {
+            return CreateAnalogInputPort(pin, 1, TimeSpan.FromSeconds(1), voltageReference ?? DefaultReferenceVoltage, InputType.SingleEnded);
+        }
+
         /// <summary>
         /// Creates a new instance of an `IAnalogInputPort` for the specified pin
         /// </summary>

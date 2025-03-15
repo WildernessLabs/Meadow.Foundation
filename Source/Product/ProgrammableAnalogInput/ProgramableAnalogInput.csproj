@@ -24,5 +24,12 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Meadow.Foundation\Source\Meadow.Foundation.Peripherals\ICs.IOExpanders.Pcx857x\Driver\ICs.IOExpanders.Pcx857x.csproj" />
+    <ProjectReference Include="..\..\Meadow.Foundation.Peripherals\ICs.ADC.Ads7128\Driver\ICs.ADC.Ads7128.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="Readme.md">
+      <PackagePath></PackagePath>
+      <Pack>true</Pack>
+    </None>
   </ItemGroup>
 </Project>

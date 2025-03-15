@@ -1,4 +1,4 @@
-<Project Sdk="Meadow.Sdk/1.1.0">
+﻿<Project Sdk="Meadow.Sdk/1.1.0">
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
@@ -7,6 +7,7 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\..\..\Meadow.Core\Source\implementations\f7\Meadow.F7\Meadow.F7.csproj" />
-    <ProjectReference Include="..\..\Driver\ICs.ADC.Ads1x15.csproj" />
+    <ProjectReference Include="..\..\..\ICs.IOExpanders.Pcx857x\Driver\ICs.IOExpanders.Pcx857x.csproj" />
+    <ProjectReference Include="..\..\Driver\ICs.ADC.Ads7128.csproj" />
   </ItemGroup>
 </Project>

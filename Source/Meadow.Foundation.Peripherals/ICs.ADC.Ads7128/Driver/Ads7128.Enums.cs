@@ -2,7 +2,7 @@
 
 namespace Meadow.Foundation.ICs.ADC;
 
-public abstract partial class Ads7128
+public partial class Ads7128
 {
     /// <summary>
     /// Valid I2C addresses for the sensor
@@ -47,6 +47,14 @@ public abstract partial class Ads7128
         Default = Address_0x10
     }
 
+    internal enum Mode
+    {
+        NotSet,
+        Manual, // reading single AINs
+        AutoSequence, // using an AnalogInputArray
+        Autonomous // monitoring a voltage and setting an alert
+    }
+
     [Flags]
     internal enum Status
     {
@@ -59,72 +67,51 @@ public abstract partial class Ads7128
         SequencerBusy = 1 << 6
     }
 
+    internal enum Opcodes : byte
+    {
+        RegisterRead = 0b0001_0000,
+        RegisterWrite = 0b0000_1000,
+        SetBit = 0b0001_1000,
+        ClearBit = 0b0010_0000,
+        BlockRead = 0b0011_0000,
+        BlockWrite = 0b0010_1000
+    }
+
+    public enum Oversampling : byte
+    {
+        Samples_1 = 0b000,
+        Samples_2 = 0b001,
+        Samples_4 = 0b010,
+        Samples_8 = 0b011,
+        Samples_16 = 0b100,
+        Samples_32 = 0b101,
+        Samples_64 = 0b110,
+        Samples_128 = 0b111,
+    }
+
     internal enum Registers : byte
     {
         // System Control Registers
-        SystemControl = 0x00,
-        SequenceStart = 0x01,
-        DeviceId = 0x02,
-
-        // Configuration Registers
-        GlobalChannelConfig = 0x03,
-        OsrConfig = 0x04,
-        OpModeConfig = 0x05,
-        PinConfig = 0x06,
-        GpioDataDirection = 0x07,
-        GpioDataIn = 0x08,
-        GpioDataOut = 0x09,
-        GpioPinConfig = 0x0A,
-        SequenceConfig = 0x0B,
-
-        // Channel Configuration Registers
-        Channel0Config = 0x10,
-        Channel1Config = 0x11,
-        Channel2Config = 0x12,
-        Channel3Config = 0x13,
-        Channel4Config = 0x14,
-        Channel5Config = 0x15,
-        Channel6Config = 0x16,
-        Channel7Config = 0x17,
-
-        // Auto-Sequence Channel Configuration Registers
-        AutoSequenceChannel0Config = 0x20,
-        AutoSequenceChannel1Config = 0x21,
-        AutoSequenceChannel2Config = 0x22,
-        AutoSequenceChannel3Config = 0x23,
-        AutoSequenceChannel4Config = 0x24,
-        AutoSequenceChannel5Config = 0x25,
-        AutoSequenceChannel6Config = 0x26,
-        AutoSequenceChannel7Config = 0x27,
-
-        // Result Registers
-        Channel0Result = 0x30,
-        Channel1Result = 0x31,
-        Channel2Result = 0x32,
-        Channel3Result = 0x33,
-        Channel4Result = 0x34,
-        Channel5Result = 0x35,
-        Channel6Result = 0x36,
-        Channel7Result = 0x37,
-
-        // Alert Registers
-        AlertConfig = 0x40,
-        AlertStatus = 0x41,
-        Channel0HighThreshold = 0x42,
-        Channel0LowThreshold = 0x43,
-        Channel1HighThreshold = 0x44,
-        Channel1LowThreshold = 0x45,
-        Channel2HighThreshold = 0x46,
-        Channel2LowThreshold = 0x47,
-        Channel3HighThreshold = 0x48,
-        Channel3LowThreshold = 0x49,
-        Channel4HighThreshold = 0x4A,
-        Channel4LowThreshold = 0x4B,
-        Channel5HighThreshold = 0x4C,
-        Channel5LowThreshold = 0x4D,
-        Channel6HighThreshold = 0x4E,
-        Channel6LowThreshold = 0x4F,
-        Channel7HighThreshold = 0x50,
-        Channel7LowThreshold = 0x51
+        SystemStatus = 0x00,
+        GeneralConfig = 0x01,
+        DataConfig = 0x02,
+        OsrConfig = 0x03,
+        OpModeConfig = 0x04,
+        PinConfig = 0x05,
+        GpioConfig = 0x07,
+        GpioDriveConfig = 0x09,
+        GpioValueOut = 0x0B,
+        GpioValueIn = 0x0D,
+        ZCDBlanking = 0x0F,
+        SequenceConfig = 0x10,
+        ChannelSel = 0x11,
+        AutoSequenceChannelSel = 0x12,
+        AlertChannelSel = 0x14,
+        AlertMap = 0x16,
+        AlertPinConfig = 0x17,
+        EventFlag = 0x18,
+        EventHighFlag = 0x1A,
+        EventLowFlag = 0x1C,
+        EventRegion = 0x1E,
     }
 }

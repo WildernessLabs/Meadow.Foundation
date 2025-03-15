@@ -6,8 +6,19 @@ namespace Meadow.Foundation.ICs.ADC;
 
 public partial class Ads7128
 {
+    public class Ads7128Pin : Pin
+    {
+        internal byte Index => (byte)Key;
+
+        internal Ads7128Pin(Ads7128? controller, string name, object key, IList<IChannelInfo>? supportedChannels)
+            : base(controller, name, key, supportedChannels)
+        {
+        }
+    }
+
     public class PinDefinitions : IPinDefinitions
     {
+        private Ads7128 controller;
 
         /// <summary>
         /// Collection of pins
@@ -15,19 +26,23 @@ public partial class Ads7128
         public IList<IPin> AllPins { get; } = new List<IPin>();
 
         /// <inheritdoc/>
-        public IPinController? Controller { get; set; }
+        public IPinController? Controller
+        {
+            get => controller;
+            set { }
+        }
 
         /// <summary>
         /// Create a new PinDefinitions object
         /// </summary>
         public PinDefinitions(Ads7128 device)
         {
-            Controller = device;
+            controller = device;
             InitAllPins();
         }
 
-        public IPin AIN0 => new Pin(
-            Controller,
+        public IPin AIN0 => new Ads7128Pin(
+            controller,
             "AIN0",
             (byte)0x00,
             new List<IChannelInfo> {
@@ -36,8 +51,8 @@ public partial class Ads7128
             }
         );
 
-        public IPin AIN1 => new Pin(
-            Controller,
+        public IPin AIN1 => new Ads7128Pin(
+            controller,
             "AIN1",
             (byte)0x01,
             new List<IChannelInfo> {
@@ -46,8 +61,8 @@ public partial class Ads7128
             }
         );
 
-        public IPin AIN2 => new Pin(
-            Controller,
+        public IPin AIN2 => new Ads7128Pin(
+            controller,
             "AIN2",
             (byte)0x02,
             new List<IChannelInfo> {
@@ -56,8 +71,8 @@ public partial class Ads7128
             }
         );
 
-        public IPin AIN3 => new Pin(
-            Controller,
+        public IPin AIN3 => new Ads7128Pin(
+            controller,
             "AIN3",
             (byte)0x03,
             new List<IChannelInfo> {
@@ -66,8 +81,8 @@ public partial class Ads7128
             }
         );
 
-        public IPin AIN4 => new Pin(
-            Controller,
+        public IPin AIN4 => new Ads7128Pin(
+            controller,
             "AIN4",
             (byte)0x04,
             new List<IChannelInfo> {
@@ -76,8 +91,8 @@ public partial class Ads7128
             }
         );
 
-        public IPin AIN5 => new Pin(
-            Controller,
+        public IPin AIN5 => new Ads7128Pin(
+            controller,
             "AIN5",
             (byte)0x05,
             new List<IChannelInfo> {
@@ -86,8 +101,8 @@ public partial class Ads7128
             }
         );
 
-        public IPin AIN6 => new Pin(
-            Controller,
+        public IPin AIN6 => new Ads7128Pin(
+            controller,
             "AIN6",
             (byte)0x06,
             new List<IChannelInfo> {
@@ -96,8 +111,8 @@ public partial class Ads7128
             }
         );
 
-        public IPin AIN7 => new Pin(
-            Controller,
+        public IPin AIN7 => new Ads7128Pin(
+            controller,
             "AIN7",
             (byte)0x07,
             new List<IChannelInfo> {

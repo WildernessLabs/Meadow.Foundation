@@ -1,0 +1,14 @@
+﻿<Project Sdk="Meadow.Sdk/1.1.0">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <OutputType>Library</OutputType>
+    <AssemblyName>App</AssemblyName>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\Meadow.Core\Source\implementations\f7\Meadow.F7\Meadow.F7.csproj" />
+    <ProjectReference Include="..\..\Meadow.Foundation.Peripherals\ICs.ADC.Ads7128\Driver\ICs.ADC.Ads7128.csproj" />
+    <ProjectReference Include="..\..\Meadow.Foundation.Peripherals\ICs.IOExpanders.Pcx857x\Driver\ICs.IOExpanders.Pcx857x.csproj" />
+    <ProjectReference Include="..\ProgrammableAnalogInput\ProgramableAnalogInput.csproj" />
+  </ItemGroup>
+</Project>
