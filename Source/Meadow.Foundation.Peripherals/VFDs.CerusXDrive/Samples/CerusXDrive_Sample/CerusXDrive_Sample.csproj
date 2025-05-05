@@ -1,11 +1,11 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
-		<Company>Wilderness Labs, Inc</Company>
-		<Authors>Wilderness Labs, Inc</Authors>
+    <Company>Wilderness Labs, Inc</Company>
+    <Authors>Wilderness Labs, Inc</Authors>
 		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
 		<TargetFramework>netstandard2.1</TargetFramework>
-		<LangVersion>10.0</LangVersion>
+    <LangVersion>12.0</LangVersion>
 		<OutputType>Library</OutputType>
 		<AssemblyName>App</AssemblyName>
 	</PropertyGroup>
