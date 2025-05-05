@@ -1,6 +1,8 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <LangVersion>12.0</LangVersion>
+    <PackageReadmeFile>Readme.md</PackageReadmeFile>
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
@@ -13,12 +15,12 @@
 	<PackageId>Meadow.Foundation.ICs.CAN.PCanBasic</PackageId>
 	<RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
 	<PackageTags>Meadow.Foundation, CAN, PCanBasic</PackageTags>
-	<Version>0.1.0</Version>
 	<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 	<Description>PCAN-Basic USB CAN Controller for Windows</Description>
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include=".\Readme.md" Pack="true" PackagePath="" />
     <None Include="..\..\..\icon.png" Link="icon.png">
       <PackagePath></PackagePath>
       <Pack>true</Pack>

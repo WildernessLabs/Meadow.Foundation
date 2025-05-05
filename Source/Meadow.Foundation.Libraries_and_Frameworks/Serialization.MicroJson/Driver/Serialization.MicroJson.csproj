@@ -1,7 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<Version>1.11.0</Version>
-		<PackageReadmeFile>Readme.md</PackageReadmeFile>
+    <PackageReadmeFile>Readme.md</PackageReadmeFile>
 		<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<Authors>Wilderness Labs, Inc</Authors>
@@ -17,7 +16,7 @@
 			<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 			<Description>Lightweight .NET Json serializer/deserializer</Description>
 		<Nullable>enable</Nullable>
-		<LangVersion>10.0</LangVersion>
+    <LangVersion>12.0</LangVersion>
         <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
     </PropertyGroup>
 	<ItemGroup>

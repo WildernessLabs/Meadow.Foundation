@@ -1,6 +1,5 @@
 <Project Sdk="Meadow.Sdk/1.1.0">
   <PropertyGroup>
-    <Version>1.11.0</Version>
     <PackageReadmeFile>Readme.md</PackageReadmeFile>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
@@ -18,7 +17,7 @@
     <Description>Mpu6050 I2C MEMS 3 axis gyroscope accelerometer motion sensor</Description>
     <Nullable>enable</Nullable>
     <RootNamespace>Meadow.Foundation.Sensors.Motion</RootNamespace>
-    <LangVersion>10.0</LangVersion>
+    <LangVersion>12.0</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <None Include=".\Readme.md" Pack="true" PackagePath="" />
