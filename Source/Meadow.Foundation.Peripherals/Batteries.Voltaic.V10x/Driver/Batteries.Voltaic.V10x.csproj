@@ -17,6 +17,7 @@
     <PackageTags>Meadow,Meadow.Foundation,Battery,Solar Battery,Voltaic,V10x,V107</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Voltaix V10x-series RS485 Modbus solar battery with charge controller</Description>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>
     <None Include=".\Readme.md" Pack="true" PackagePath="" />
