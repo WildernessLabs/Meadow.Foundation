@@ -15,8 +15,11 @@ namespace Meadow.Foundation.Sensors.Temperature;
 /// and ISpiPeripheral interface for SPI communication. It follows the IDisposable pattern
 /// for proper resource management.
 /// </remarks>
-public class Max31865 : SamplingSensorBase<Temperature>, ITemperatureSensor, ISpiPeripheral, IDisposable
+public class Max31865 : ITemperatureSensor, ISpiPeripheral, IDisposable
 {
+    private const float RTD_A = 3.9083e-3f;
+    private const float RTD_B = -5.775e-7f;
+
     private static class Configuration
     {
         public const byte Bias = 0b_1000_0000;
@@ -43,16 +46,46 @@ public class Max31865 : SamplingSensorBase<Temperature>, ITemperatureSensor, ISp
         public const byte ConfigurationWrite = 0x80;
     }
 
-    public static class Fault
+    /// <summary>
+    /// Class containing fault status bits for the MAX31865.
+    /// </summary>
+    [Flags]
+    public enum Fault : byte
     {
-        public const byte HighThresh = 0x80;
-        public const byte LowThresh = 0x40;
-        public const byte RefInLow = 0x20;
-        public const byte RefInHigh = 0x10;
-        public const byte RtdInLow = 0x08;
-        public const byte OvUv = 0x04;
+        /// <summary>
+        /// The high threshold has been exceeded.
+        /// </summary>
+        HighThreshold = 0x80,
+
+        /// <summary>
+        /// The low threshold has been exceeded.
+        /// </summary>
+        LowThreshold = 0x40,
+
+        /// <summary>
+        /// The reference resistor is in a low state.
+        /// </summary>
+        RefInLow = 0x20,
+
+        /// <summary>
+        /// The reference resistor is in a high state.
+        /// </summary>
+        RefInHigh = 0x10,
+
+        /// <summary>
+        /// The RTD is in a high state.
+        /// </summary>
+        RtdInLow = 0x08,
+
+        /// <summary>
+        /// There is an over-voltage or under-voltage condition.
+        /// </summary>
+        OverVoltageUnderVoltage = 0x04
     }
 
+    /// <summary>
+    /// Enumeration of the supported wire configurations for the MAX31865 sensor.
+    /// </summary>
     public enum Wires : byte
     {
         /// <summary>
@@ -131,8 +164,6 @@ public class Max31865 : SamplingSensorBase<Temperature>, ITemperatureSensor, ISp
 
     private readonly ConversionFilterMode conversionFilterMode;
 
-    private readonly IResistanceTemperatureDetectorConverter rtdConverter;
-
     /// <summary>
     /// Gets whether this object has been disposed.
     /// </summary>
@@ -178,7 +209,6 @@ public class Max31865 : SamplingSensorBase<Temperature>, ITemperatureSensor, ISp
         spiComms = new SpiCommunications(bus, chipSelect, DefaultSpiBusSpeed);
         this.knownSensorType = knownSensorType;
         this.wires = wires;
-        rtdConverter = new DirectMathematicalMethod();
         conversionFilterMode = filterMode;
 
         Initialize();
@@ -202,81 +232,78 @@ public class Max31865 : SamplingSensorBase<Temperature>, ITemperatureSensor, ISp
         set => spiComms.BusSpeed = value;
     }
 
-    /// <inheritdoc />
-    protected override async Task<Temperature> ReadSensor()
-    {
-        var rtd = await ReadInternal();
-
-        return new Temperature(this.rtdConverter.Convert(rtd, (float)knownSensorType, referenceResistor));
-    }
-
     /// <summary>
-    /// Starts continuously sampling the sensor.
-    ///
-    /// This method also starts raising `Changed` events and IObservable
-    /// subscribers getting notified. Use the `readIntervalDuration` parameter
-    /// to specify how often events and notifications are raised/sent.
+    /// Reads the fault status of the MAX31865.
     /// </summary>
-    /// <param name="updateInterval">A `TimeSpan` that specifies how long to
-    /// wait between readings. This value influences how often `*Updated`
-    /// events are raised and `IObservable` consumers are notified.
-    ///</param>
-    public override void StartUpdating(TimeSpan? updateInterval = null)
-    {
-        lock (samplingLock)
-        {
-            if (IsSampling) { return; }
-            IsSampling = true;
-
-            if (updateInterval.HasValue)
-            {
-                TimeSpan valueOrDefault = updateInterval.GetValueOrDefault();
-                base.UpdateInterval = valueOrDefault;
-            }
-
-            SamplingTokenSource = new CancellationTokenSource();
-            CancellationToken ct = SamplingTokenSource.Token;
-            Task.Run(async delegate
-            {
-                while (!ct.IsCancellationRequested)
-                {
-                    var result = await ReadSensor();
-                    
-                    // create a new change result from the new value
-                    ChangeResult<Units.Temperature> changeResult = new ChangeResult<Units.Temperature>()
-                    {
-                        New = result,
-                        Old = Temperature
-                    };
-                    Temperature = changeResult.New;
-                    RaiseEventsAndNotify(changeResult);
-
-                    await Task.Delay(base.UpdateInterval);
-                }
-
-                base.Observers.ForEach(delegate (IObserver<IChangeResult<Units.Temperature>> x)
-                {
-                    x.OnCompleted();
-                });
-            }, SamplingTokenSource.Token).RethrowUnhandledExceptions(SamplingTokenSource.Token);
-        }
-    }
-
-    /// <summary>
-    /// Stops sampling the temperature
-    /// </summary>
-    public override void StopUpdating()
-    {
-        lock (samplingLock)
-        {
-            if (!IsSampling) { return; }
-            IsSampling = false;
-        }
-    }
-
+    /// <returns>A <see cref="byte"/> containing the fault code.</returns>
+    /// <remarks>Combine with the <see cref="Fault"/> class to interpret the fault status.</remarks>
     public byte ReadFault()
     {
         return this.spiComms.ReadRegister(Registers.FaultStat);
+    }
+
+    /// <summary>
+    /// Reads the current temperature from the MAX31865 RTD.
+    /// </summary>
+    /// <returns>A task containing the temperature in Celsius.</returns>
+    /// <remarks>
+    /// The MAX31865 reads the resistance of the RTD and converts it to temperature
+    /// using the Callendar-Van Dusen equation. If you wish to use a different
+    /// equation or method for temperature calculation, you can override the
+    /// <see cref="CalculateTemperature(float, float, float)"/> method.
+    /// </remarks>
+    public Task<Units.Temperature> Read()
+    {
+        var rtd = await ReadInternal();
+
+        return new Temperature(CalculateTemperature(rtd));
+    }
+
+    /// <summary>
+    /// Calculates the temperature based on the raw RTD value.
+    /// </summary>
+    /// <param name="rtdRaw">The raw value read from the RTD.</param>
+    /// <returns>The measured temperature in Celsius.</returns>
+    protected virtual float CalculateTemperature(float rtdRaw)
+    {
+        float Z1, Z2, Z3, Z4, resistance, temp;
+
+        // This maths originates from:
+        // http://www.analog.com/media/en/technical-documentation/application-notes/AN709_0.pdf
+        resistance = rtdRaw;
+        resistance /= 32768;
+        resistance *= referenceResistor;
+
+        Z1 = -RTD_A;
+        Z2 = RTD_A * RTD_A - (4 * RTD_B);
+        Z3 = (4 * RTD_B) / (float)knownSensorType;
+        Z4 = 2 * RTD_B;
+
+        temp = Z2 + (Z3 * resistance);
+        temp = (MathF.Sqrt(temp) + Z1) / Z4;
+
+        if (temp >= 0)
+        {
+            return temp;
+        }
+
+        resistance /= (float)knownSensorType;
+        resistance *= 100; // normalize to 100 ohm
+
+        float rpoly = resistance;
+
+        temp = -242.02f;
+        temp += 2.2228f * rpoly;
+        rpoly *= resistance; // square
+        temp += 2.5859e-3f * rpoly;
+        rpoly *= resistance; // ^3
+        temp -= 4.8260e-6f * rpoly;
+        rpoly *= resistance; // ^4
+        temp -= 2.8183e-8f * rpoly;
+        rpoly *= resistance; // ^5
+        temp += 1.5243e-10f * rpoly;
+
+        return temp;
     }
 
     private async Task<ushort> ReadInternal()
@@ -368,58 +395,5 @@ public class Max31865 : SamplingSensorBase<Temperature>, ITemperatureSensor, ISp
         // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
         Dispose(disposing: true);
         GC.SuppressFinalize(this);
-    }
-}
-
-public interface IResistanceTemperatureDetectorConverter
-{
-    float Convert(float raw, float nominal, float referenceResistor);
-}
-
-public class DirectMathematicalMethod : IResistanceTemperatureDetectorConverter
-{
-    private const float RTD_A = 3.9083e-3f;
-    private const float RTD_B = -5.775e-7f;
-
-    public float Convert(float rtdRaw, float rtdNominal, float refResistor)
-    {
-        float Z1, Z2, Z3, Z4, resistance, temp;
-        
-        // This math originates from:
-        // http://www.analog.com/media/en/technical-documentation/application-notes/AN709_0.pdf
-        resistance = rtdRaw;
-        resistance /= 32768;
-        resistance *= refResistor;
-
-        Z1 = -RTD_A;
-        Z2 = RTD_A * RTD_A - (4 * RTD_B);
-        Z3 = (4 * RTD_B) / rtdNominal;
-        Z4 = 2 * RTD_B;
-
-        temp = Z2 + (Z3 * resistance);
-        temp = (MathF.Sqrt(temp) + Z1) / Z4;
-
-        if (temp >= 0)
-        {
-            return temp;
-        }
-
-        resistance /= rtdNominal;
-        resistance *= 100; // normalize to 100 ohm
-
-        float rpoly = resistance;
-
-        temp = -242.02f;
-        temp += 2.2228f * rpoly;
-        rpoly *= resistance; // square
-        temp += 2.5859e-3f * rpoly;
-        rpoly *= resistance; // ^3
-        temp -= 4.8260e-6f * rpoly;
-        rpoly *= resistance; // ^4
-        temp -= 2.8183e-8f * rpoly;
-        rpoly *= resistance; // ^5
-        temp += 1.5243e-10f * rpoly;
-
-        return temp;
     }
 }
