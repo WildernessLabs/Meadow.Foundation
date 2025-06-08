@@ -1,8 +1,8 @@
 # Meadow.Foundation.Motors.StepperOnline
 
-**Drivers for motors and moto controllers from Stepper Online**
+**Drivers for motors and motor controllers from Stepper Online**
 
-The **Motors.StepperOnline** library is included in the **Meadow.Foundation.Motors.StepperOnline** nuget package and is designed for the [Wilderness Labs](www.wildernesslabs.co) Meadow .NET IoT platform.
+The **StepperOnline** library is included in the **Meadow.Foundation.Motors.StepperOnline** nuget package and is designed for the [Wilderness Labs](www.wildernesslabs.co) Meadow .NET IoT platform.
 
 This driver is part of the [Meadow.Foundation](https://developer.wildernesslabs.co/Meadow/Meadow.Foundation/) peripherals library, an open-source repository of drivers and libraries that streamline and simplify adding hardware to your C# .NET Meadow IoT applications.
 

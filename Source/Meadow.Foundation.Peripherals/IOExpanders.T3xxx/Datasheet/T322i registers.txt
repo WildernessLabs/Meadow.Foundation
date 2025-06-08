@@ -1,0 +1,253 @@
+ID	Register_Address	Operation	Register_Length	Register_Name	Data_Format	Description
+1	0	03 Read Holding Registers (4x)	4	MODBUS_SERIALNUMBER	32 Bit Unsigned Integer LO_HI	serial numbler
+2	4	03 Read Holding Registers (4x)	2	MODBUS_FIRMWARE_VERSION	16 Bit Unsigned Integer	firmware Version
+3	6	03_06 Read Holding and Write Single	1	MODBUS_ADDRESS	8 Bit Unsigned Integer	Modbus device address
+4	7	03 Read Holding Registers (4x)	1	MODBUS_PRODUCT_MODEL	16 Bit Unsigned Integer	Prodouct model
+5	8	03 Read Holding Registers (4x)	1	MODBUS_HARDWARE_REV	16 Bit Unsigned Integer	Hardware Version Number
+6	100	03_06 Read Holding and Write Single	2	MODBUS_AI_CHANNLE0_HI	16 Bit Unsigned Integer	analog input 0 high byte
+7	101	03_06 Read Holding and Write Single	2	MODBUS_AI_CHANNLE0_LO	16 Bit Unsigned Integer	analog input 0 low byte
+8	102	03_06 Read Holding and Write Single	2	MODBUS_AI_CHANNLE1_HI	16 Bit Unsigned Integer	analog input 1 high byte
+9	103	03_06 Read Holding and Write Single	2	MODBUS_AI_CHANNLE1_LO	16 Bit Unsigned Integer	analog input 1 low byte
+10	104	03_06 Read Holding and Write Single	2	MODBUS_AI_CHANNLE2_HI	16 Bit Unsigned Integer	analog input 2 high byte
+11	105	03_06 Read Holding and Write Single	2	MODBUS_AI_CHANNLE2_LO	16 Bit Unsigned Integer	analog input 2 low byte
+12	106	03_06 Read Holding and Write Single	2	MODBUS_AI_CHANNLE3_HI	16 Bit Unsigned Integer	analog input 3 high byte
+13	107	03_06 Read Holding and Write Single	2	MODBUS_AI_CHANNLE3_LO	16 Bit Unsigned Integer	analog input 3 low byte
+14	108	03_06 Read Holding and Write Single	2	MODBUS_AI_CHANNLE4_HI	16 Bit Unsigned Integer	analog input 4 high byte
+15	109	03_06 Read Holding and Write Single	2	MODBUS_AI_CHANNLE4_LO	16 Bit Unsigned Integer	analog input 4 low byte
+16	110	03_06 Read Holding and Write Single	2	MODBUS_AI_CHANNLE5_HI	16 Bit Unsigned Integer	analog input 5 high byte
+17	111	03_06 Read Holding and Write Single	2	MODBUS_AI_CHANNLE5_LO	16 Bit Unsigned Integer	analog input 5 low byte
+18	112	03_06 Read Holding and Write Single	2	MODBUS_AI_CHANNLE6_HI	16 Bit Unsigned Integer	analog input 6 high byte
+19	113	03_06 Read Holding and Write Single	2	MODBUS_AI_CHANNLE6_LO	16 Bit Unsigned Integer	analog input 6 low byte
+20	114	03_06 Read Holding and Write Single	2	MODBUS_AI_CHANNLE7_HI	16 Bit Unsigned Integer	analog input 7 high byte
+21	115	03_06 Read Holding and Write Single	2	MODBUS_AI_CHANNLE7_LO	16 Bit Unsigned Integer	analog input 7 low byte
+22	116	03_06 Read Holding and Write Single	2	MODBUS_AI_CHANNLE8_HI	16 Bit Unsigned Integer	analog input 8 high byte
+23	117	03_06 Read Holding and Write Single	2	MODBUS_AI_CHANNLE8_LO	16 Bit Unsigned Integer	analog input 8 low byte
+24	118	03_06 Read Holding and Write Single	2	MODBUS_AI_CHANNLE9_HI	16 Bit Unsigned Integer	analog input 9 high byte
+25	119	03_06 Read Holding and Write Single	2	MODBUS_AI_CHANNLE9_LO	16 Bit Unsigned Integer	analog input 9 low byte
+26	120	03_06 Read Holding and Write Single	2	MODBUS_AI_CHANNLE10_HI	16 Bit Unsigned Integer	analog input 10 high byte
+27	121	03_06 Read Holding and Write Single	2	MODBUS_AI_CHANNLE10_LO	16 Bit Unsigned Integer	analog input 10 low byte
+28	122	03_06 Read Holding and Write Single	2	MODBUS_AI_CHANNLE11_HI	16 Bit Unsigned Integer	analog input 11 high byte
+29	123	03_06 Read Holding and Write Single	2	MODBUS_AI_CHANNLE11_LO	16 Bit Unsigned Integer	analog input 11 low byte
+30	124	03_06 Read Holding and Write Single	2	MODBUS_AI_CHANNLE12_HI	16 Bit Unsigned Integer	analog input 12 high byte
+31	125	03_06 Read Holding and Write Single	2	MODBUS_AI_CHANNLE12_LO	16 Bit Unsigned Integer	analog input 12 low byte
+32	126	03_06 Read Holding and Write Single	2	MODBUS_AI_CHANNLE13_HI	16 Bit Unsigned Integer	analog input 13 high byte
+33	127	03_06 Read Holding and Write Single	2	MODBUS_AI_CHANNLE13_LO	16 Bit Unsigned Integer	analog input 13 low byte
+34	128	03_06 Read Holding and Write Single	2	MODBUS_AI_CHANNLE14_HI	16 Bit Unsigned Integer	analog input 14 high byte
+35	129	03_06 Read Holding and Write Single	2	MODBUS_AI_CHANNLE14_LO	16 Bit Unsigned Integer	analog input 14 low byte
+36	130	03_06 Read Holding and Write Single	2	MODBUS_AI_CHANNLE15_HI	16 Bit Unsigned Integer	analog input 15 high byte
+37	131	03_06 Read Holding and Write Single	2	MODBUS_AI_CHANNLE15_LO	16 Bit Unsigned Integer	analog input 15 low byte
+38	132	03_06 Read Holding and Write Single	2	MODBUS_AI_CHANNLE16_HI	16 Bit Unsigned Integer	analog input 16 high byte
+39	133	03_06 Read Holding and Write Single	2	MODBUS_AI_CHANNLE16_LO	16 Bit Unsigned Integer	analog input 16 low byte
+40	134	03_06 Read Holding and Write Single	2	MODBUS_AI_CHANNLE17_HI	16 Bit Unsigned Integer	analog input 17 high byte
+41	135	03_06 Read Holding and Write Single	2	MODBUS_AI_CHANNLE17_LO	16 Bit Unsigned Integer	analog input 17 low byte
+42	136	03_06 Read Holding and Write Single	2	MODBUS_AI_CHANNLE18_HI	16 Bit Unsigned Integer	analog input 18 high byte
+43	137	03_06 Read Holding and Write Single	2	MODBUS_AI_CHANNLE18_LO	16 Bit Unsigned Integer	analog input 18 low byte
+44	138	03_06 Read Holding and Write Single	2	MODBUS_AI_CHANNLE19_HI	16 Bit Unsigned Integer	analog input 19 high byte
+45	139	03_06 Read Holding and Write Single	2	MODBUS_AI_CHANNLE19_LO	16 Bit Unsigned Integer	analog input 19 low byte
+46	140	03_06 Read Holding and Write Single	2	MODBUS_AI_CHANNLE20_HI	16 Bit Unsigned Integer	analog input 20 high byte
+47	141	03_06 Read Holding and Write Single	2	MODBUS_AI_CHANNLE20_LO	16 Bit Unsigned Integer	analog input 20 low byte
+48	142	03_06 Read Holding and Write Single	2	MODBUS_AI_CHANNLE21_HI	16 Bit Unsigned Integer	analog input 21 high byte
+49	143	03_06 Read Holding and Write Single	2	MODBUS_AI_CHANNLE21_LO	16 Bit Unsigned Integer	analog input 21 low byte
+50	200	03_06 Read Holding and Write Single	1	MODBUS_AI_FILTER0	8 Bit Unsigned Integer	analog input 0 filter
+51	201	03_06 Read Holding and Write Single	1	MODBUS_AI_FILTER1	8 Bit Unsigned Integer	analog input 1 filter
+52	202	03_06 Read Holding and Write Single	1	MODBUS_AI_FILTER2	8 Bit Unsigned Integer	analog input 2 filter
+53	203	03_06 Read Holding and Write Single	1	MODBUS_AI_FILTER3	8 Bit Unsigned Integer	analog input 3 filter
+54	204	03_06 Read Holding and Write Single	1	MODBUS_AI_FILTER4	8 Bit Unsigned Integer	analog input 4 filter
+55	205	03_06 Read Holding and Write Single	1	MODBUS_AI_FILTER5	8 Bit Unsigned Integer	analog input 5 filter
+56	206	03_06 Read Holding and Write Single	1	MODBUS_AI_FILTER6	8 Bit Unsigned Integer	analog input 6 filter
+57	207	03_06 Read Holding and Write Single	1	MODBUS_AI_FILTER7	8 Bit Unsigned Integer	analog input 7 filter
+58	208	03_06 Read Holding and Write Single	1	MODBUS_AI_FILTER8	8 Bit Unsigned Integer	analog input 8 filter
+59	209	03_06 Read Holding and Write Single	1	MODBUS_AI_FILTER9	8 Bit Unsigned Integer	analog input 9 filter
+60	210	03_06 Read Holding and Write Single	2	MODBUS_AI_FILTER10	8 Bit Unsigned Integer	analog input 10 filter
+61	211	03_06 Read Holding and Write Single	2	MODBUS_AI_FILTER11	8 Bit Unsigned Integer	analog input 11 filter
+62	212	03_06 Read Holding and Write Single	2	MODBUS_AI_FILTER12	8 Bit Unsigned Integer	analog input 12 filter
+63	213	03_06 Read Holding and Write Single	2	MODBUS_AI_FILTER13	8 Bit Unsigned Integer	analog input 13 filter
+64	214	03_06 Read Holding and Write Single	2	MODBUS_AI_FILTER14	8 Bit Unsigned Integer	analog input 14 filter
+65	215	03_06 Read Holding and Write Single	2	MODBUS_AI_FILTER15	8 Bit Unsigned Integer	analog input 15 filter
+66	216	03_06 Read Holding and Write Single	2	MODBUS_AI_FILTER16	8 Bit Unsigned Integer	analog input 16 filter
+67	217	03_06 Read Holding and Write Single	2	MODBUS_AI_FILTER17	8 Bit Unsigned Integer	analog input 17 filter
+68	218	03_06 Read Holding and Write Single	1	MODBUS_AI_FILTER18	8 Bit Unsigned Integer	analog input 18 filter
+69	219	03_06 Read Holding and Write Single	1	MODBUS_AI_FILTER19	8 Bit Unsigned Integer	analog input 19 filter
+70	220	03_06 Read Holding and Write Single	1	MODBUS_AI_FILTER20	8 Bit Unsigned Integer	analog input 20 filter
+71	221	03_06 Read Holding and Write Single	1	MODBUS_AI_FILTER21	8 Bit Unsigned Integer	analog input 21 filter
+72	225	03_06 Read Holding and Write Single	1	MODBUS_AI_RANGE0	8 Bit Unsigned Integer	"analog input 0 range. if analog inputs (not_used_input = 0, Y3K_40_150DegC, Y3K_40_300DegF, R10K_40_120DegC,
+ R10K_40_250DegF, R3K_40_150DegC, R3K_40_300DegF, KM10K_40_120DegC,
+ KM10K_40_250DegF, A10K_50_110DegC, A10K_60_200DegF, V0_5, I0_100Amps,
+ I0_20m"
+73	226	03_06 Read Holding and Write Single	1	MODBUS_AI_RANGE1	8 Bit Unsigned Integer	analog input 1 range
+74	227	03_06 Read Holding and Write Single	1	MODBUS_AI_RANGE2	8 Bit Unsigned Integer	analog input 2 range
+75	228	03_06 Read Holding and Write Single	1	MODBUS_AI_RANGE3	8 Bit Unsigned Integer	analog input 3 range
+76	229	03_06 Read Holding and Write Single	1	MODBUS_AI_RANGE4	8 Bit Unsigned Integer	analog input 4 range
+77	230	03_06 Read Holding and Write Single	1	MODBUS_AI_RANGE5	8 Bit Unsigned Integer	analog input 5 range
+78	231	03_06 Read Holding and Write Single	1	MODBUS_AI_RANGE6	8 Bit Unsigned Integer	analog input 6 range
+79	232	03_06 Read Holding and Write Single	1	MODBUS_AI_RANGE7	8 Bit Unsigned Integer	analog input 7 range
+80	233	03_06 Read Holding and Write Single	1	MODBUS_AI_RANGE8	8 Bit Unsigned Integer	analog input 8 range
+81	234	03_06 Read Holding and Write Single	1	MODBUS_AI_RANGE9	8 Bit Unsigned Integer	analog input 9 range
+82	235	03_06 Read Holding and Write Single	1	MODBUS_AI_RANGE10	8 Bit Unsigned Integer	analog input 10 range
+83	236	03_06 Read Holding and Write Single	1	MODBUS_AI_RANGE11	8 Bit Unsigned Integer	analog input 11 range
+84	237	03_06 Read Holding and Write Single	1	MODBUS_AI_RANGE12	8 Bit Unsigned Integer	analog input 12 range
+85	238	03_06 Read Holding and Write Single	1	MODBUS_AI_RANGE13	8 Bit Unsigned Integer	analog input 13 range
+86	239	03_06 Read Holding and Write Single	1	MODBUS_AI_RANGE14	8 Bit Unsigned Integer	analog input 14 range
+87	240	03_06 Read Holding and Write Single	1	MODBUS_AI_RANGE15	8 Bit Unsigned Integer	analog input 15 range
+88	241	03_06 Read Holding and Write Single	1	MODBUS_AI_RANGE16	8 Bit Unsigned Integer	analog input 16 range
+89	242	03_06 Read Holding and Write Single	1	MODBUS_AI_RANGE17	8 Bit Unsigned Integer	analog input 17 range
+90	243	03_06 Read Holding and Write Single	1	MODBUS_AI_RANGE18	8 Bit Unsigned Integer	analog input 18 range
+91	244	03_06 Read Holding and Write Single	1	MODBUS_AI_RANGE19	8 Bit Unsigned Integer	analog input 19 range
+92	245	03_06 Read Holding and Write Single	1	MODBUS_AI_RANGE20	8 Bit Unsigned Integer	analog input 20 range
+93	246	03_06 Read Holding and Write Single	1	MODBUS_AI_RANGE21	8 Bit Unsigned Integer	analog input 21 range
+94	247	03_06 Read Holding and Write Single	1	MODBUS_AUTO_MANUAL_0	8 Bit Unsigned Integer	auto manual setting for input 0
+95	248	03_06 Read Holding and Write Single	1	MODBUS_AUTO_MANUAL_1	8 Bit Unsigned Integer	auto manual setting for input 1
+96	249	03_06 Read Holding and Write Single	1	MODBUS_AUTO_MANUAL_2	8 Bit Unsigned Integer	auto manual setting for input 2
+97	250	03_06 Read Holding and Write Single	1	MODBUS_AUTO_MANUAL_3	8 Bit Unsigned Integer	auto manual setting for input 3
+98	251	03_06 Read Holding and Write Single	1	MODBUS_AUTO_MANUAL_4	8 Bit Unsigned Integer	auto manual setting for input 4
+99	252	03_06 Read Holding and Write Single	1	MODBUS_AUTO_MANUAL_5	8 Bit Unsigned Integer	auto manual setting for input 5
+100	253	03_06 Read Holding and Write Single	1	MODBUS_AUTO_MANUAL_6	8 Bit Unsigned Integer	auto manual setting for input 6
+101	254	03_06 Read Holding and Write Single	1	MODBUS_AUTO_MANUAL_7	8 Bit Unsigned Integer	auto manual setting for input 7
+102	255	03_06 Read Holding and Write Single	1	MODBUS_AUTO_MANUAL_8	8 Bit Unsigned Integer	auto manual setting for input 8
+103	256	03_06 Read Holding and Write Single	1	MODBUS_AUTO_MANUAL_9	8 Bit Unsigned Integer	auto manual setting for input 9
+104	257	03_06 Read Holding and Write Single	1	MODBUS_AUTO_MANUAL_10	8 Bit Unsigned Integer	auto manual setting for input 10
+105	258	03_06 Read Holding and Write Single	1	MODBUS_AUTO_MANUAL_11	8 Bit Unsigned Integer	auto manual setting for input 11
+106	259	03_06 Read Holding and Write Single	1	MODBUS_AUTO_MANUAL_12	8 Bit Unsigned Integer	auto manual setting for input 12
+107	260	03_06 Read Holding and Write Single	1	MODBUS_AUTO_MANUAL_13	8 Bit Unsigned Integer	auto manual setting for input 13
+108	261	03_06 Read Holding and Write Single	1	MODBUS_AUTO_MANUAL_14	8 Bit Unsigned Integer	auto manual setting for input 14
+109	262	03_06 Read Holding and Write Single	1	MODBUS_AUTO_MANUAL_15	8 Bit Unsigned Integer	auto manual setting for input 15
+110	263	03_06 Read Holding and Write Single	1	MODBUS_AUTO_MANUAL_16	8 Bit Unsigned Integer	auto manual setting for input 16
+111	264	03_06 Read Holding and Write Single	1	MODBUS_AUTO_MANUAL_17	8 Bit Unsigned Integer	auto manual setting for input 17
+112	265	03_06 Read Holding and Write Single	1	MODBUS_AUTO_MANUAL_18	8 Bit Unsigned Integer	auto manual setting for input 18
+113	266	03_06 Read Holding and Write Single	1	MODBUS_AUTO_MANUAL_19	8 Bit Unsigned Integer	auto manual setting for input 19
+114	267	03_06 Read Holding and Write Single	1	MODBUS_AUTO_MANUAL_20	8 Bit Unsigned Integer	auto manual setting for input 20
+115	268	03_06 Read Holding and Write Single	1	MODBUS_AUTO_MANUAL_21	8 Bit Unsigned Integer	auto manual setting for input 21
+116	269	03_06 Read Holding and Write Single	1	MODBUS_AI_DI_AI0	8 Bit Unsigned Integer	digit and analog setting for input0 ( 0 - digital 1 - analog)
+117	270	03_06 Read Holding and Write Single	1	MODBUS_AI_DI_AI1	8 Bit Unsigned Integer	digit and analog setting for input1
+118	271	03_06 Read Holding and Write Single	1	MODBUS_AI_DI_AI2	8 Bit Unsigned Integer	digit and analog setting for input2
+119	272	03_06 Read Holding and Write Single	1	MODBUS_AI_DI_AI3	8 Bit Unsigned Integer	digit and analog setting for input3
+120	273	03_06 Read Holding and Write Single	1	MODBUS_AI_DI_AI4	8 Bit Unsigned Integer	digit and analog setting for input4
+121	274	03_06 Read Holding and Write Single	1	MODBUS_AI_DI_AI5	8 Bit Unsigned Integer	digit and analog setting for input5
+122	275	03_06 Read Holding and Write Single	1	MODBUS_AI_DI_AI6	8 Bit Unsigned Integer	digit and analog setting for input6
+123	276	03_06 Read Holding and Write Single	1	MODBUS_AI_DI_AI7	8 Bit Unsigned Integer	digit and analog setting for input7
+124	277	03_06 Read Holding and Write Single	1	MODBUS_AI_DI_AI8	8 Bit Unsigned Integer	digit and analog setting for input8
+125	278	03_06 Read Holding and Write Single	1	MODBUS_AI_DI_AI9	8 Bit Unsigned Integer	digit and analog setting for input9
+126	279	03_06 Read Holding and Write Single	1	MODBUS_AI_DI_AI10	8 Bit Unsigned Integer	digit and analog setting for input10
+127	280	03_06 Read Holding and Write Single	1	MODBUS_AI_DI_AI11	8 Bit Unsigned Integer	digit and analog setting for input11
+128	281	03_06 Read Holding and Write Single	1	MODBUS_AI_DI_AI12	8 Bit Unsigned Integer	digit and analog setting for input12
+129	282	03_06 Read Holding and Write Single	1	MODBUS_AI_DI_AI13	8 Bit Unsigned Integer	digit and analog setting for input13
+130	283	03_06 Read Holding and Write Single	1	MODBUS_AI_DI_AI14	8 Bit Unsigned Integer	digit and analog setting for input14
+131	284	03_06 Read Holding and Write Single	1	MODBUS_AI_DI_AI15	8 Bit Unsigned Integer	digit and analog setting for input15
+132	285	03_06 Read Holding and Write Single	1	MODBUS_AI_DI_AI16	8 Bit Unsigned Integer	digit and analog setting for input16
+133	286	03_06 Read Holding and Write Single	1	MODBUS_AI_DI_AI17	8 Bit Unsigned Integer	digit and analog setting for input17
+134	287	03_06 Read Holding and Write Single	1	MODBUS_AI_DI_AI18	8 Bit Unsigned Integer	digit and analog setting for input18
+135	288	03_06 Read Holding and Write Single	1	MODBUS_AI_DI_AI19	8 Bit Unsigned Integer	digit and analog setting for input19
+136	289	03_06 Read Holding and Write Single	1	MODBUS_AI_DI_AI20	8 Bit Unsigned Integer	digit and analog setting for input20
+137	290	03_06 Read Holding and Write Single	1	MODBUS_AI_DI_AI21	8 Bit Unsigned Integer	digit and analog setting for input21
+138	291	03_06 Read Holding and Write Single	1	MODBUS_AI_JUPER0	8 Bit Unsigned Integer	
+139	292	03_06 Read Holding and Write Single	1	MODBUS_AI_JUPER1	8 Bit Unsigned Integer	
+140	293	03_06 Read Holding and Write Single	1	MODBUS_AI_JUPER2	8 Bit Unsigned Integer	
+141	294	03_06 Read Holding and Write Single	1	MODBUS_AI_JUPER3	8 Bit Unsigned Integer	
+142	295	03_06 Read Holding and Write Single	1	MODBUS_AI_JUPER4	8 Bit Unsigned Integer	
+143	296	03_06 Read Holding and Write Single	1	MODBUS_AI_JUPER5	8 Bit Unsigned Integer	
+144	297	03_06 Read Holding and Write Single	1	MODBUS_AI_JUPER6	8 Bit Unsigned Integer	
+145	298	03_06 Read Holding and Write Single	1	MODBUS_AI_JUPER7	8 Bit Unsigned Integer	
+146	299	03_06 Read Holding and Write Single	1	MODBUS_AI_JUPER8	8 Bit Unsigned Integer	
+147	300	03_06 Read Holding and Write Single	1	MODBUS_AI_JUPER9	8 Bit Unsigned Integer	
+148	301	03_06 Read Holding and Write Single	1	MODBUS_AI_JUPER10	8 Bit Unsigned Integer	
+149	302	03_06 Read Holding and Write Single	1	MODBUS_AI_JUPER11	8 Bit Unsigned Integer	
+150	303	03_06 Read Holding and Write Single	1	MODBUS_AI_JUPER12	8 Bit Unsigned Integer	
+151	304	03_06 Read Holding and Write Single	1	MODBUS_AI_JUPER13	8 Bit Unsigned Integer	
+152	305	03_06 Read Holding and Write Single	1	MODBUS_AI_JUPER14	8 Bit Unsigned Integer	
+153	306	03_06 Read Holding and Write Single	1	MODBUS_AI_JUPER15	8 Bit Unsigned Integer	
+154	307	03_06 Read Holding and Write Single	1	MODBUS_AI_JUPER16	8 Bit Unsigned Integer	
+155	308	03_06 Read Holding and Write Single	1	MODBUS_AI_JUPER17	8 Bit Unsigned Integer	
+156	309	03_06 Read Holding and Write Single	1	MODBUS_AI_JUPER18	8 Bit Unsigned Integer	
+157	310	03_06 Read Holding and Write Single	1	MODBUS_AI_JUPER19	8 Bit Unsigned Integer	
+158	311	03_06 Read Holding and Write Single	1	MODBUS_AI_JUPER20	8 Bit Unsigned Integer	
+159	312	03_06 Read Holding and Write Single	1	MODBUS_AI_JUPER21	8 Bit Unsigned Integer	
+160	313	03_06 Read Holding and Write Single	1	MODBUS_CAL_SIGN0	8 Bit Unsigned Integer	Analog input calibration sign 0
+161	314	03_06 Read Holding and Write Single	1	MODBUS_CAL_SIGN1	8 Bit Unsigned Integer	Analog input calibration sign 1
+162	315	03_06 Read Holding and Write Single	1	MODBUS_CAL_SIGN2	8 Bit Unsigned Integer	Analog input calibration sign 2
+163	316	03_06 Read Holding and Write Single	1	MODBUS_CAL_SIGN3	8 Bit Unsigned Integer	Analog input calibration sign 3
+164	317	03_06 Read Holding and Write Single	1	MODBUS_CAL_SIGN4	8 Bit Unsigned Integer	Analog input calibration sign 4
+165	318	03_06 Read Holding and Write Single	1	MODBUS_CAL_SIGN5	8 Bit Unsigned Integer	Analog input calibration sign 5
+166	319	03_06 Read Holding and Write Single	1	MODBUS_CAL_SIGN6	8 Bit Unsigned Integer	Analog input calibration sign 6
+167	320	03_06 Read Holding and Write Single	1	MODBUS_CAL_SIGN7	8 Bit Unsigned Integer	Analog input calibration sign 7
+168	321	03_06 Read Holding and Write Single	1	MODBUS_CAL_SIGN8	8 Bit Unsigned Integer	Analog input calibration sign 8
+169	322	03_06 Read Holding and Write Single	1	MODBUS_CAL_SIGN9	8 Bit Unsigned Integer	Analog input calibration sign 9
+170	323	03_06 Read Holding and Write Single	1	MODBUS_CAL_SIGN10	8 Bit Unsigned Integer	Analog input calibration sign 10
+171	324	03_06 Read Holding and Write Single	1	MODBUS_CAL_SIGN11	8 Bit Unsigned Integer	Analog input calibration sign 11
+172	325	03_06 Read Holding and Write Single	1	MODBUS_CAL_SIGN12	8 Bit Unsigned Integer	Analog input calibration sign 12
+173	326	03_06 Read Holding and Write Single	1	MODBUS_CAL_SIGN13	8 Bit Unsigned Integer	Analog input calibration sign 13
+174	327	03_06 Read Holding and Write Single	1	MODBUS_CAL_SIGN14	8 Bit Unsigned Integer	Analog input calibration sign 14
+175	328	03_06 Read Holding and Write Single	1	MODBUS_CAL_SIGN15	8 Bit Unsigned Integer	Analog input calibration sign 15
+176	329	03_06 Read Holding and Write Single	1	MODBUS_CAL_SIGN16	8 Bit Unsigned Integer	Analog input calibration sign 16
+177	330	03_06 Read Holding and Write Single	1	MODBUS_CAL_SIGN17	8 Bit Unsigned Integer	Analog input calibration sign 17
+178	331	03_06 Read Holding and Write Single	1	MODBUS_CAL_SIGN18	8 Bit Unsigned Integer	Analog input calibration sign 18
+179	332	03_06 Read Holding and Write Single	1	MODBUS_CAL_SIGN19	8 Bit Unsigned Integer	Analog input calibration sign 19
+180	333	03_06 Read Holding and Write Single	1	MODBUS_CAL_SIGN20	8 Bit Unsigned Integer	Analog input calibration sign 20
+181	334	03_06 Read Holding and Write Single	1	MODBUS_CAL_SIGN21	8 Bit Unsigned Integer	Analog input calibration sign 21
+182	335	03_06 Read Holding and Write Single	2	MODBUS_CAL0_HI	16 Bit Unsigned Integer	calibrate value high byte input0
+183	336	03_06 Read Holding and Write Single	2	MODBUS_CAL0_LO	16 Bit Unsigned Integer	calibrate value low byte input0
+184	337	03_06 Read Holding and Write Single	2	MODBUS_CAL1_HI	16 Bit Unsigned Integer	calibrate value high byte input1
+185	338	03_06 Read Holding and Write Single	2	MODBUS_CAL1_LO	16 Bit Unsigned Integer	calibrate value low byte input1
+186	339	03_06 Read Holding and Write Single	2	MODBUS_CAL2_HI	16 Bit Unsigned Integer	calibrate value high byte input2
+187	340	03_06 Read Holding and Write Single	2	MODBUS_CAL2_LO	16 Bit Unsigned Integer	calibrate value low byte input2
+188	341	03_06 Read Holding and Write Single	2	MODBUS_CAL3_HI	16 Bit Unsigned Integer	calibrate value high byte input3
+189	342	03_06 Read Holding and Write Single	2	MODBUS_CAL3_LO	16 Bit Unsigned Integer	calibrate value low byte input3
+190	343	03_06 Read Holding and Write Single	2	MODBUS_CAL4_HI	16 Bit Unsigned Integer	calibrate value high byte input4
+191	344	03_06 Read Holding and Write Single	2	MODBUS_CAL4_LO	16 Bit Unsigned Integer	calibrate value low byte input4
+192	345	03_06 Read Holding and Write Single	2	MODBUS_CAL5_HI	16 Bit Unsigned Integer	calibrate value high byte input5
+193	346	03_06 Read Holding and Write Single	2	MODBUS_CAL5_LO	16 Bit Unsigned Integer	calibrate value low byte input5
+194	347	03_06 Read Holding and Write Single	2	MODBUS_CAL6_HI	16 Bit Unsigned Integer	calibrate value high byte input6
+195	348	03_06 Read Holding and Write Single	2	MODBUS_CAL6_LO	16 Bit Unsigned Integer	calibrate value low byte input6
+196	349	03_06 Read Holding and Write Single	2	MODBUS_CAL7_HI	16 Bit Unsigned Integer	calibrate value high byte input7
+197	350	03_06 Read Holding and Write Single	2	MODBUS_CAL7_LO	16 Bit Unsigned Integer	calibrate value low byte input7
+198	351	03_06 Read Holding and Write Single	2	MODBUS_CAL8_HI	16 Bit Unsigned Integer	calibrate value high byte input8
+199	352	03_06 Read Holding and Write Single	2	MODBUS_CAL8_LO	16 Bit Unsigned Integer	calibrate value low byte input8
+200	353	03_06 Read Holding and Write Single	2	MODBUS_CAL9_HI	16 Bit Unsigned Integer	calibrate value high byte input9
+201	354	03_06 Read Holding and Write Single	2	MODBUS_CAL9_LO	16 Bit Unsigned Integer	calibrate value low byte input9
+202	355	03_06 Read Holding and Write Single	2	MODBUS_CAL10_HI	16 Bit Unsigned Integer	calibrate value high byte input10
+203	356	03_06 Read Holding and Write Single	2	MODBUS_CAL10_LO	16 Bit Unsigned Integer	calibrate value low byte input10
+204	357	03_06 Read Holding and Write Single	2	MODBUS_CAL11_HI	16 Bit Unsigned Integer	calibrate value high byte input11
+205	358	03_06 Read Holding and Write Single	2	MODBUS_CAL11_LO	16 Bit Unsigned Integer	calibrate value low byte input11
+206	359	03_06 Read Holding and Write Single	2	MODBUS_CAL12_HI	16 Bit Unsigned Integer	calibrate value high byte input12
+207	360	03_06 Read Holding and Write Single	2	MODBUS_CAL12_LO	16 Bit Unsigned Integer	calibrate value low byte input12
+208	361	03_06 Read Holding and Write Single	2	MODBUS_CAL13_HI	16 Bit Unsigned Integer	calibrate value high byte input13
+209	362	03_06 Read Holding and Write Single	2	MODBUS_CAL13_LO	16 Bit Unsigned Integer	calibrate value low byte input13
+210	363	03_06 Read Holding and Write Single	2	MODBUS_CAL14_HI	16 Bit Unsigned Integer	calibrate value high byte input14
+211	364	03_06 Read Holding and Write Single	2	MODBUS_CAL14_LO	16 Bit Unsigned Integer	calibrate value low byte input14
+212	365	03_06 Read Holding and Write Single	2	MODBUS_CAL15_HI	16 Bit Unsigned Integer	calibrate value high byte input15
+213	366	03_06 Read Holding and Write Single	2	MODBUS_CAL15_LO	16 Bit Unsigned Integer	calibrate value low byte input15
+214	367	03_06 Read Holding and Write Single	2	MODBUS_CAL16_HI	16 Bit Unsigned Integer	calibrate value high byte input16
+215	368	03_06 Read Holding and Write Single	2	MODBUS_CAL16_LO	16 Bit Unsigned Integer	calibrate value low byte input16
+216	369	03_06 Read Holding and Write Single	2	MODBUS_CAL17_HI	16 Bit Unsigned Integer	calibrate value high byte input17
+217	370	03_06 Read Holding and Write Single	2	MODBUS_CAL17_LO	16 Bit Unsigned Integer	calibrate value low byte input17
+218	371	03_06 Read Holding and Write Single	2	MODBUS_CAL18_HI	16 Bit Unsigned Integer	calibrate value high byte input18
+219	372	03_06 Read Holding and Write Single	2	MODBUS_CAL18_LO	16 Bit Unsigned Integer	calibrate value low byte input18
+220	373	03_06 Read Holding and Write Single	2	MODBUS_CAL19_HI	16 Bit Unsigned Integer	calibrate value high byte input19
+221	374	03_06 Read Holding and Write Single	2	MODBUS_CAL19_LO	16 Bit Unsigned Integer	calibrate value low byte input19
+222	375	03_06 Read Holding and Write Single	2	MODBUS_CAL20_HI	16 Bit Unsigned Integer	calibrate value high byte input20
+223	376	03_06 Read Holding and Write Single	2	MODBUS_CAL20_LO	16 Bit Unsigned Integer	calibrate value low byte input20
+224	377	03_06 Read Holding and Write Single	2	MODBUS_CAL21_HI	16 Bit Unsigned Integer	calibrate value high byte input21
+225	378	03_06 Read Holding and Write Single	2	MODBUS_CAL21_LO	16 Bit Unsigned Integer	calibrate value low byte input21
+226	379	03_06 Read Holding and Write Single	1	MODBUS_AI0_STATUS	8 Bit Unsigned Integer	
+227	380	03_06 Read Holding and Write Single	1	MODBUS_AI1_STATUS	8 Bit Unsigned Integer	
+228	381	03_06 Read Holding and Write Single	1	MODBUS_AI2_STATUS	8 Bit Unsigned Integer	
+229	382	03_06 Read Holding and Write Single	1	MODBUS_AI3_STATUS	8 Bit Unsigned Integer	
+230	383	03_06 Read Holding and Write Single	1	MODBUS_AI4_STATUS	8 Bit Unsigned Integer	
+231	384	03_06 Read Holding and Write Single	1	MODBUS_AI5_STATUS	8 Bit Unsigned Integer	
+232	385	03_06 Read Holding and Write Single	1	MODBUS_AI6_STATUS	8 Bit Unsigned Integer	
+233	386	03_06 Read Holding and Write Single	1	MODBUS_AI7_STATUS	8 Bit Unsigned Integer	
+234	387	03_06 Read Holding and Write Single	1	MODBUS_AI8_STATUS	8 Bit Unsigned Integer	
+235	388	03_06 Read Holding and Write Single	1	MODBUS_AI9_STATUS	8 Bit Unsigned Integer	
+236	389	03_06 Read Holding and Write Single	1	MODBUS_AI10_STATUS	8 Bit Unsigned Integer	
+237	390	03_06 Read Holding and Write Single	1	MODBUS_AI11_STATUS	8 Bit Unsigned Integer	
+238	391	03_06 Read Holding and Write Single	1	MODBUS_AI12_STATUS	8 Bit Unsigned Integer	
+239	392	03_06 Read Holding and Write Single	1	MODBUS_AI13_STATUS	8 Bit Unsigned Integer	
+240	393	03_06 Read Holding and Write Single	1	MODBUS_AI14_STATUS	8 Bit Unsigned Integer	
+241	394	03_06 Read Holding and Write Single	1	MODBUS_AI15_STATUS	8 Bit Unsigned Integer	
+242	395	03_06 Read Holding and Write Single	1	MODBUS_AI16_STATUS	8 Bit Unsigned Integer	
+243	396	03_06 Read Holding and Write Single	1	MODBUS_AI17_STATUS	8 Bit Unsigned Integer	
+244	397	03_06 Read Holding and Write Single	1	MODBUS_AI18_STATUS	8 Bit Unsigned Integer	
+245	398	03_06 Read Holding and Write Single	1	MODBUS_AI19_STATUS	8 Bit Unsigned Integer	
+246	399	03_06 Read Holding and Write Single	1	MODBUS_AI20_STATUS	8 Bit Unsigned Integer	
+247	400	03_06 Read Holding and Write Single	1	MODBUS_AI21_STATUS	8 Bit Unsigned Integer	
+248	401	03_06 Read Holding and Write Single	1	MODBUS_AI22_STATUS	8 Bit Unsigned Integer	
+249	800	03_06 Read Holding and Write Single	1	MODBUS_RESET	16 Bit Unsigned Integer	1-> reset to factory, other -> reset

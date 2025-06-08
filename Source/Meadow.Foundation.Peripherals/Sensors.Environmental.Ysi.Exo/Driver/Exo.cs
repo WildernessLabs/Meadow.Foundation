@@ -8,7 +8,7 @@ namespace Meadow.Foundation.Sensors.Environmental.Ysi;
 /// <summary>
 /// Represents a YSI EXO multiparameter water quality sonde with Modbus RTU communication.
 /// </summary>
-public partial class Exo
+public partial class Exo : IExoSonde
 {
     /// <summary>
     /// The default Modbus address for EXO devices.

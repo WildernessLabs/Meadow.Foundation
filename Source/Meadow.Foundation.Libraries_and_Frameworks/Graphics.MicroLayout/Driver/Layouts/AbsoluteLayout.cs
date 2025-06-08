@@ -33,6 +33,15 @@ public class AbsoluteLayout : MicroLayout
         : base(left, top, width, height)
     { }
 
+    /// <summary>
+    /// Adds a control to the absolute layout
+    /// </summary>
+    /// <param name="controls">The control(s) to add</param>
+    public void Add(params IControl[] controls)
+    {
+        Controls.Add(controls);
+    }
+
     /// <inheritdoc/>
     protected override void OnDraw(MicroGraphics graphics)
     {

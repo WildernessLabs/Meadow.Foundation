@@ -27,7 +27,7 @@ public enum Addresses : byte
 /// </summary>
 public abstract class Htux1dBase :
     ByteCommsSensorBase<(Units.Temperature? Temperature, RelativeHumidity? Humidity)>,
-    ITemperatureSensor, IHumiditySensor, II2cPeripheral
+    ISamplingTemperatureSensor, IHumiditySensor, II2cPeripheral
 {
     private event EventHandler<IChangeResult<Units.Temperature>> _temperatureHandlers = default!;
     private event EventHandler<IChangeResult<RelativeHumidity>> _humidityHandlers = default!;

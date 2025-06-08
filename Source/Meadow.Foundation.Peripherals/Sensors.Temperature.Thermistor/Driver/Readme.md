@@ -18,15 +18,15 @@ You can install the library from within Visual studio using the the NuGet Packag
 ## Usage
 
 ```csharp
-private SteinhartHartCalculatedThermistor thermistor;
+private Thermistor thermistor;
 
 public override Task Initialize()
 {
     Resolver.Log.Info("Initialize...");
 
-    thermistor = new SteinhartHartCalculatedThermistor(Device.CreateAnalogInputPort(Device.Pins.A00), new Resistance(10, Meadow.Units.Resistance.UnitType.Kiloohms));
+    thermistor = new Thermistor(Device.CreateAnalogInputPort(Device.Pins.A00), new Resistance(10, Meadow.Units.Resistance.UnitType.Kiloohms));
 
-    var consumer = SteinhartHartCalculatedThermistor.CreateObserver(
+    var consumer = Thermistor.CreateObserver(
         handler: result =>
         {
             Resolver.Log.Info($"Temperature New Value {result.New.Fahrenheit:N1}F/{result.New.Celsius:N1}C");

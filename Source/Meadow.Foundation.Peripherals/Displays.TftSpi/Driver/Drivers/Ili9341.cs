@@ -15,11 +15,6 @@ namespace Meadow.Foundation.Displays
         public override Frequency DefaultSpiBusSpeed => new Frequency(24000, Frequency.UnitType.Kilohertz);
 
         /// <summary>
-        /// The default display color mode
-        /// </summary>
-        public override ColorMode DefaultColorMode => ColorMode.Format12bppRgb444;
-
-        /// <summary>
         /// The color modes supported by the display
         /// </summary>
         public override ColorMode SupportedColorModes => ColorMode.Format16bppRgb565 | ColorMode.Format12bppRgb444 | ColorMode.Format18bppRgb666;

@@ -1,0 +1,35 @@
+<Project Sdk="Meadow.Sdk/1.1.0">
+  <PropertyGroup>
+    <PackageReadmeFile>Readme.md</PackageReadmeFile>
+    <LangVersion>12.0</LangVersion>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <PackageIcon>icon.png</PackageIcon>
+    <Authors>Wilderness Labs, Inc</Authors>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <OutputType>Library</OutputType>
+    <AssemblyName>ProgrammableAnalogInput</AssemblyName>
+    <Company>Wilderness Labs, Inc</Company>
+    <PackageProjectUrl>http://developer.wildernesslabs.co/Meadow/Meadow.Foundation/</PackageProjectUrl>
+    <PackageId>Meadow.Foundation.ProgrammableAnalogInput</PackageId>
+    <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
+    <PackageTags>Meadow.Foundation,Meadow,programmable,analog,input</PackageTags>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Description>Meadow Programmable Analog Input module</Description>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include=".\Readme.md" Pack="true" PackagePath="" />
+    <None Include="..\..\..\icon.png" Pack="true" PackagePath="" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Meadow.Foundation.Peripherals\ICs.ADC.Ads7128\Driver\ICs.ADC.Ads7128.csproj" />
+    <ProjectReference Include="..\..\..\Meadow.Foundation.Peripherals\ICs.IOExpanders.Tca95x5\Driver\ICs.IOExpanders.Tca95x5.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="Readme.md">
+      <PackagePath></PackagePath>
+      <Pack>true</Pack>
+    </None>
+  </ItemGroup>
+</Project>

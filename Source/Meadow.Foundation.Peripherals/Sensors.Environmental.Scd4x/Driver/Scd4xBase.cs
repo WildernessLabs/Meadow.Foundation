@@ -14,7 +14,7 @@ namespace Meadow.Foundation.Sensors.Environmental
     /// </summary>
     public abstract partial class Scd4xBase
         : PollingSensorBase<(Concentration? Concentration, Units.Temperature? Temperature, RelativeHumidity? Humidity)>,
-            ITemperatureSensor, IHumiditySensor, ICO2ConcentrationSensor, II2cPeripheral
+            ISamplingTemperatureSensor, IHumiditySensor, ICO2ConcentrationSensor, II2cPeripheral
     {
         private event EventHandler<IChangeResult<Units.Temperature>> _temperatureHandlers = default!;
         private event EventHandler<IChangeResult<RelativeHumidity>> _humidityHandlers = default!;

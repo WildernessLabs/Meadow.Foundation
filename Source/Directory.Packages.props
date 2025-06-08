@@ -1,7 +1,5 @@
 <Project>
-  <Import Project="../../Meadow.Contracts/Source/Directory.Packages.props" 
-          Condition="'$(MeadowContractsPackagePropsImported)' != 'true'" />
-          
+  <Import Project="../../Meadow.Contracts/Source/Directory.Packages.props" Condition="'$(MeadowContractsPackagePropsImported)' != 'true'" />
   <PropertyGroup>
     <MeadowContractsPackagePropsImported>true</MeadowContractsPackagePropsImported>
   </PropertyGroup>

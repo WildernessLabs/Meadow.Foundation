@@ -266,25 +266,28 @@ public static partial class MicroJson
                 {
                     var al = values[v] as ArrayList;
                     var elementType = propType.GetElementType();
-                    var targetArray = Array.CreateInstance(elementType, al!.Count);
-                    for (int i = 0; i < al.Count; i++)
+                    if (al != null)
                     {
-                        if (elementType == typeof(string))
+                        var targetArray = Array.CreateInstance(elementType, al!.Count);
+                        for (int i = 0; i < al.Count; i++)
                         {
-                            targetArray.SetValue(al[i], i);
+                            if (elementType == typeof(string))
+                            {
+                                targetArray.SetValue(al[i], i);
+                            }
+                            else if (elementType.IsValueType || elementType.IsEnum)
+                            {
+                                targetArray.SetValue(Convert.ChangeType(al[i], elementType), i);
+                            }
+                            else
+                            {
+                                object arrayItem = Activator.CreateInstance(elementType);
+                                Deserialize(al[i] as Hashtable, elementType, ref arrayItem);
+                                targetArray.SetValue(arrayItem, i);
+                            }
                         }
-                        else if (elementType.IsValueType || elementType.IsEnum)
-                        {
-                            targetArray.SetValue(Convert.ChangeType(al[i], elementType), i);
-                        }
-                        else
-                        {
-                            object arrayItem = Activator.CreateInstance(elementType);
-                            Deserialize(al[i] as Hashtable, elementType, ref arrayItem);
-                            targetArray.SetValue(arrayItem, i);
-                        }
+                        prop.SetValue(instance, targetArray);
                     }
-                    prop.SetValue(instance, targetArray);
                 }
                 else if (propType.IsGenericType && propType.GetGenericTypeDefinition() == typeof(List<>))
                 {

@@ -29,11 +29,6 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         public RotationType Rotation { get; protected set; } = RotationType.Normal;
 
-        /// <summary>
-        /// The display default color mode
-        /// </summary>
-        public abstract ColorMode DefaultColorMode { get; }
-
         /// <inheritdoc/>
         public bool IsColorInverted { get; protected set; } = false;
 

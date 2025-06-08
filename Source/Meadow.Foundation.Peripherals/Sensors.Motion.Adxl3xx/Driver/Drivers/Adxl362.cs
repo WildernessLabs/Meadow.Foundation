@@ -16,7 +16,7 @@ namespace Meadow.Foundation.Sensors.Motion
     /// </summary>
     public partial class Adxl362
         : ByteCommsSensorBase<(Acceleration3D? Acceleration3D, Units.Temperature? Temperature)>,
-        IAccelerometer, ITemperatureSensor, ISpiPeripheral
+        IAccelerometer, ISamplingTemperatureSensor, ISpiPeripheral
     {
         private event EventHandler<IChangeResult<Units.Temperature>> _temperatureHandlers = default!;
         private event EventHandler<IChangeResult<Acceleration3D>> _accelerationHandlers = default!;

@@ -11,7 +11,7 @@ namespace Meadow.Peripherals.Sensors.Flow;
 /// - Offset: 4 Hz
 /// Note: Different data sheets differ on what the scale is on this device.  Adjust the constructor parameters if required.
 /// </remarks>
-public class YfB10 : HallEffectBase
+public class YfB10 : HallEffectFlowSensor
 {
     /// <summary>
     /// Initializes a new instance of the YF-B10 flow sensor.

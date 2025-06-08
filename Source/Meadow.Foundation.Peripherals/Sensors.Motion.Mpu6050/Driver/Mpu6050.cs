@@ -13,7 +13,7 @@ namespace Meadow.Foundation.Sensors.Motion;
 /// </summary>
 public partial class Mpu6050 :
     ByteCommsSensorBase<(Acceleration3D? Acceleration3D, AngularVelocity3D? AngularVelocity3D, Units.Temperature? Temperature)>,
-    IAccelerometer, IGyroscope, ITemperatureSensor, II2cPeripheral
+    IAccelerometer, IGyroscope, ISamplingTemperatureSensor, II2cPeripheral
 {
     /// <summary>
     /// The default I2C address for the peripheral

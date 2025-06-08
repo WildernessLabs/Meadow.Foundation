@@ -30,7 +30,7 @@ namespace Meadow.Foundation.Sensors.Temperature
     /// TMP37                   500                     20                
     /// TMP236                  887.5                   19.5                    
     /// </remarks>
-    public partial class AnalogTemperature : SamplingSensorBase<Units.Temperature>, ITemperatureSensor, IDisposable
+    public partial class AnalogTemperature : SamplingSensorBase<Units.Temperature>, ISamplingTemperatureSensor, IDisposable
     {
         ///<Summary>
         /// AnalogInputPort connected to temperature sensor

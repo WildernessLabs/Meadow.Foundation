@@ -32,7 +32,7 @@ public abstract class MicroLayout : ThemedControl, IControlContainer
     }
 
     /// <inheritdoc/>
-    public override bool IsInvalid => base.IsInvalid;//  || Controls.Any(c => c.IsInvalid);
+    public override bool IsInvalid => base.IsInvalid || Controls.Any(c => c.IsInvalid);
 
     /// <inheritdoc/>
     public override void ApplyTheme(DisplayTheme theme)

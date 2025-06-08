@@ -83,7 +83,18 @@ namespace Meadow.Foundation.ICs.IOExpanders
                     {
                         throw new PortInUseException($"{GetType().Name} pin {pin.Name} is already in use");
                     }
-                    var port = new DigitalOutputPort(this, pin, initialState);
+
+                    DigitalOutputPort port;
+
+                    try
+                    {
+                        port = new DigitalOutputPort(this, pin, initialState);
+                    }
+                    catch (Exception ex)
+                    {
+                        Resolver.Log.Error($"Unable to create DigitalOutputPort on pin {pin.Name}", this.GetType().Name);
+                        throw;
+                    }
 
                     pinsInUse.Add(pin);
 
