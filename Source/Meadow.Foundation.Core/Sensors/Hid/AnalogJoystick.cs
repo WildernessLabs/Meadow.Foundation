@@ -27,12 +27,12 @@ namespace Meadow.Foundation.Sensors.Hid
         /// <summary>
         /// Analog port connected to horizontal joystick pin
         /// </summary>
-        protected IAnalogInputPort HorizontalInputPort { get; set; }
+        protected IObservableAnalogInputPort HorizontalInputPort { get; set; }
 
         /// <summary>
         /// Analog port connected to vertical joystick pin
         /// </summary>
-        protected IAnalogInputPort VerticalInputPort { get; set; }
+        protected IObservableAnalogInputPort VerticalInputPort { get; set; }
 
         /// <summary>
         /// Is the horizontal / x-axis inverted 
@@ -118,8 +118,8 @@ namespace Meadow.Foundation.Sensors.Hid
         /// <param name="verticalInputPort"></param>
         /// <param name="calibration"></param>
         public AnalogJoystick(
-            IAnalogInputPort horizontalInputPort,
-            IAnalogInputPort verticalInputPort,
+            IObservableAnalogInputPort horizontalInputPort,
+            IObservableAnalogInputPort verticalInputPort,
             JoystickCalibration? calibration = null)
         {
             HorizontalInputPort = horizontalInputPort;
@@ -141,7 +141,7 @@ namespace Meadow.Foundation.Sensors.Hid
         {
             _ = HorizontalInputPort.Subscribe
             (
-                IAnalogInputPort.CreateObserver(
+                IObservableAnalogInputPort.CreateObserver(
                     h =>
                     {
                         if ((((h.Old - Calibration.HorizontalCenter)?.Abs()) < Calibration.DeadZone) &&
@@ -174,7 +174,7 @@ namespace Meadow.Foundation.Sensors.Hid
 
             VerticalInputPort.Subscribe
             (
-               IAnalogInputPort.CreateObserver(
+               IObservableAnalogInputPort.CreateObserver(
                     v =>
                     {
                         //var newVerticalValue = v.New;

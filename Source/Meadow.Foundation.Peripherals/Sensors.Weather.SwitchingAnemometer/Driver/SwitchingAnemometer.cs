@@ -189,14 +189,14 @@ namespace Meadow.Foundation.Sensors.Weather
 
                     // sum up the speeds
                     foreach (var sample in samples)
-                    {   
+                    {
                         // Check delta is not null and reasonable. (0 ms would be infinite speed. What is a reasonable maximum speed?)
                         if (sample.Delta is { Milliseconds: > 0 } delta)
                         {
                             double speed = SwitchIntervalToKmh(delta);
 
                             // skip speeds that are unreasonably high
-                            if (MaxSpeed?.KilometersPerHour >= speed )
+                            if (MaxSpeed?.KilometersPerHour >= speed)
                             {
                                 speedSum += speed;
                                 count++;

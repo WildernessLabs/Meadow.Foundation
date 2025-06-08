@@ -188,7 +188,7 @@ public class HistogramChart : ChartControl
                     ChartAreaBottom - barHeight,
                     barWidth,
                     barHeight,
-                    seriesList[s].ForeColor,
+                    seriesList[s].ForegroundColor,
                     true);
             }
         }

@@ -1,5 +1,6 @@
 <Project Sdk="Meadow.Sdk/1.1.0">
   <PropertyGroup>
+    <LangVersion>12.0</LangVersion>
     <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
     <Company>Wilderness Labs, Inc</Company>
     <Authors>Wilderness Labs, Inc</Authors>
@@ -15,7 +16,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\..\..\Meadow.Core\Source\implementations\f7\Meadow.F7\Meadow.F7.csproj" />
     <ProjectReference Include="..\..\Driver\Displays.TftSpi.csproj" />
-    <PackageReference Include="SimpleJpegDecoder" Version="0.4.0" />
+    <PackageReference Include="SimpleJpegDecoder" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="meadow-logo.jpg">

@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 
 namespace Meadow.Foundation.Graphics
 {
@@ -25,7 +26,7 @@ namespace Meadow.Foundation.Graphics
         /// <summary>
         /// Indicates whether the point is at (0, 0)
         /// </summary>
-        public bool IsEmpty => X == 0f && Y == 0f;
+        public bool IsEmpty => MathF.Abs(X) < float.Epsilon && MathF.Abs(Y) < float.Epsilon;
 
         /// <summary>
         /// Creates a new PointF struct
@@ -108,7 +109,8 @@ namespace Meadow.Foundation.Graphics
         {
             if (obj is PointF point)
             {
-                return X == point.X && Y == point.Y;
+                return MathF.Abs(X - point.X) < float.Epsilon &&
+                       MathF.Abs(Y - point.Y) < float.Epsilon;
             }
             return false;
         }

@@ -1,10 +1,10 @@
 ﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Power;
-using System;
-using System.Threading.Tasks;
 using Meadow.Hardware;
 using Meadow.Units;
+using System;
+using System.Threading.Tasks;
 
 namespace MeadowApp
 {
@@ -20,7 +20,7 @@ namespace MeadowApp
 
             var bus = Device.CreateI2cBus(I2cBusSpeed.Fast);
             ina228 = new Ina228(bus);
-            ina228.ConfigureConversion(averaging:Ina228.Averaging.Average_4);
+            ina228.ConfigureConversion(averaging: Ina228.Averaging.Average_4);
             ina228.SetCalibration(new Current(10.0, Current.UnitType.Amps), false);
             Resolver.SensorService.RegisterSensor(ina228);
 
@@ -39,7 +39,7 @@ namespace MeadowApp
 
         public override Task Run()
         {
-            Resolver.Log.Debug("Run..."); 
+            Resolver.Log.Debug("Run...");
             ina228.StartUpdating(TimeSpan.FromSeconds(2));
             return Task.CompletedTask;
         }

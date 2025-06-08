@@ -1,3 +1,4 @@
+using Gapotchenko.FX.Data.Integrity.Checksum;
 using Meadow.Hardware;
 using Meadow.Peripherals.Sensors;
 using Meadow.Peripherals.Sensors.Atmospheric;
@@ -7,7 +8,6 @@ using System;
 using System.Buffers.Binary;
 using System.Threading;
 using System.Threading.Tasks;
-using Gapotchenko.FX.Data.Integrity.Checksum;
 
 namespace Meadow.Foundation.Sensors.Environmental
 {
@@ -18,7 +18,7 @@ namespace Meadow.Foundation.Sensors.Environmental
         : ByteCommsSensorBase<(Concentration? Concentration,
                 Units.Temperature? Temperature,
                 RelativeHumidity? Humidity)>,
-            ITemperatureSensor, IHumiditySensor, ICO2ConcentrationSensor, II2cPeripheral
+            ISamplingTemperatureSensor, IHumiditySensor, ICO2ConcentrationSensor, II2cPeripheral
     {
         private event EventHandler<IChangeResult<Units.Temperature>> _temperatureHandlers = default!;
         private event EventHandler<IChangeResult<RelativeHumidity>> _humidityHandlers = default!;
@@ -73,7 +73,7 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// <param name="address">The I2C address</param>
         public Scd30Base(II2cBus i2cBus, byte address = (byte)Addresses.Default)
             : base(i2cBus, address, readBufferSize: 18, writeBufferSize: 16)
-        {       
+        {
         }
 
         /// <summary>

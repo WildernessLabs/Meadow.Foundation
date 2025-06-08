@@ -26,7 +26,7 @@ public class SimulatedY4000 :
     private EventHandler<IChangeResult<Voltage>>? redoxEvents;
     private EventHandler<IChangeResult<WaterQualityConcentrations>>? concentrationEvents;
 
-    Units.Temperature? ITemperatureSensor.Temperature => lastMeasurements.Temperature;
+    Units.Temperature? ISamplingTemperatureSensor.Temperature => lastMeasurements.Temperature;
     Turbidity? ITurbiditySensor.Turbidity => lastMeasurements.Turbidity;
     PotentialHydrogen? IPotentialHydrogenSensor.pH => lastMeasurements.PH;
     Conductivity? IElectricalConductivitySensor.Conductivity => lastMeasurements.ElectricalConductivity;

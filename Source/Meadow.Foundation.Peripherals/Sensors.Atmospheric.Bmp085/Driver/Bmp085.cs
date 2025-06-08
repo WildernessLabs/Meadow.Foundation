@@ -13,7 +13,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric;
 /// </summary>
 public partial class Bmp085 :
     ByteCommsSensorBase<(Units.Temperature? Temperature, Pressure? Pressure)>,
-    ITemperatureSensor, IBarometricPressureSensor, II2cPeripheral
+    ISamplingTemperatureSensor, IBarometricPressureSensor, II2cPeripheral
 {
     private event EventHandler<IChangeResult<Units.Temperature>> _temperatureHandlers = default!;
     private event EventHandler<IChangeResult<Pressure>> _pressureHandlers = default!;

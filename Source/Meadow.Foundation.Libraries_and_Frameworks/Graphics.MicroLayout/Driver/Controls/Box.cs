@@ -5,7 +5,7 @@
 /// </summary>
 public class Box : ThemedControl
 {
-    private Color _foreColor;
+    private Color _foregroundColor;
     private bool _isFilled = true;
 
     /// <summary>
@@ -37,17 +37,17 @@ public class Box : ThemedControl
     {
         if (theme != null)
         {
-            if (theme.ForegroundColor != null) this.ForeColor = theme.ForegroundColor.Value;
+            if (theme.ForegroundColor != null) this.ForegroundColor = theme.ForegroundColor.Value;
         }
     }
 
     /// <summary>
     /// Gets or sets the foreground color of the display box.
     /// </summary>
-    public Color ForeColor
+    public Color ForegroundColor
     {
-        get => _foreColor;
-        set => SetInvalidatingProperty(ref _foreColor, value);
+        get => _foregroundColor;
+        set => SetInvalidatingProperty(ref _foregroundColor, value);
     }
 
     /// <summary>
@@ -56,9 +56,9 @@ public class Box : ThemedControl
     /// <param name="graphics">The <see cref="MicroGraphics"/> surface to draw the display box on.</param>
     protected override void OnDraw(MicroGraphics graphics)
     {
-        if (ForeColor != Color.Transparent)
+        if (ForegroundColor != Color.Transparent)
         {
-            graphics.DrawRectangle(Left + (Parent?.Left ?? 0), Top + (Parent?.Top ?? 0), Width, Height, ForeColor, IsFilled);
+            graphics.DrawRectangle(Left + (Parent?.Left ?? 0), Top + (Parent?.Top ?? 0), Width, Height, ForegroundColor, IsFilled);
         }
     }
 }

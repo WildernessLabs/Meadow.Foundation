@@ -12,7 +12,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// <summary>
         /// Represents a serial wombat analog input port
         /// </summary>
-        public class AnalogInputPort : AnalogPortBase, IAnalogInputPort
+        public class AnalogInputPort : AnalogPortBase, IObservableAnalogInputPort
         {
             /// <summary>
             /// Raised when the port voltage value changes

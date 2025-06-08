@@ -63,11 +63,11 @@ public class ListBox : MicroLayout
         for (var i = 0; i < rowCount; i++)
         {
             Controls.Add(
-                new Label(ItemLeftMargin, y, this.Width, _rowHeight)
+                new Label(ItemLeftMargin + Parent?.Left ?? 0, y + Parent?.Top ?? 0, this.Width, _rowHeight)
                 {
                     Font = _font,
                     TextColor = TextColor,
-                    BackColor = this.BackgroundColor ?? Color.Transparent,
+                    BackgroundColor = this.BackgroundColor ?? Color.Transparent,
                     VerticalAlignment = VerticalAlignment.Center,
                 });
 
@@ -87,7 +87,7 @@ public class ListBox : MicroLayout
 
             if (_selectedIndex >= 0)
             {
-                (Controls[_selectedIndex] as Label)!.BackColor = SelectedRowColor;
+                (Controls[_selectedIndex] as Label)!.BackgroundColor = SelectedRowColor;
             }
         }
     }
@@ -164,12 +164,12 @@ public class ListBox : MicroLayout
         if (_selectedLabelIndex >= 0)
         {
             (Controls[_selectedLabelIndex] as Label)!.TextColor = TextColor;
-            (Controls[_selectedLabelIndex] as Label)!.BackColor = BackgroundColor ?? Color.Transparent;
+            (Controls[_selectedLabelIndex] as Label)!.BackgroundColor = BackgroundColor ?? Color.Transparent;
         }
         if (index >= 0)
         {
             (Controls[index] as Label)!.TextColor = SelectedTextColor;
-            (Controls[index] as Label)!.BackColor = SelectedRowColor;
+            (Controls[index] as Label)!.BackgroundColor = SelectedRowColor;
         }
         _selectedLabelIndex = index;
     }

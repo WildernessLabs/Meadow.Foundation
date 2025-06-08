@@ -14,7 +14,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     /// </summary>
     public partial class Th02 :
         ByteCommsSensorBase<(Units.Temperature? Temperature, RelativeHumidity? Humidity)>,
-        ITemperatureSensor, IHumiditySensor, II2cPeripheral
+        ISamplingTemperatureSensor, IHumiditySensor, II2cPeripheral
     {
         private event EventHandler<IChangeResult<Units.Temperature>> _temperatureHandlers = default!;
         private event EventHandler<IChangeResult<RelativeHumidity>> _humidityHandlers = default!;

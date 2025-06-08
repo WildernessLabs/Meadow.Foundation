@@ -12,6 +12,9 @@ namespace Meadow.Foundation.Motors.Stepper;
 /// </summary>
 public abstract class GpioStepperBase : IStepperMotor
 {
+    /// <inheritdoc/>
+    public event EventHandler<bool>? StateChanged;
+
     private double _stepsPerDegree;
 
     /// <inheritdoc/>
@@ -43,6 +46,15 @@ public abstract class GpioStepperBase : IStepperMotor
     /// </summary>
     protected GpioStepperBase()
     {
+    }
+
+    /// <summary>
+    /// Called by inherited classes to raise the StateChanged event
+    /// </summary>
+    /// <param name="isMoving">True if the motor is moving</param>
+    protected void RaiseStateChanged(bool isMoving)
+    {
+        StateChanged?.Invoke(this, isMoving);
     }
 
     /// <summary>

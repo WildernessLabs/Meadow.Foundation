@@ -8,7 +8,7 @@ namespace Meadow.Foundation.Sensors.Temperature
     /// Represents a Mcp9808 temperature sensor
     /// </summary>
     public partial class Mcp9808 : ByteCommsSensorBase<Units.Temperature>,
-        ITemperatureSensor, II2cPeripheral
+        ISamplingTemperatureSensor, II2cPeripheral
     {
         /// <summary>
         /// The default I2C address for the peripheral

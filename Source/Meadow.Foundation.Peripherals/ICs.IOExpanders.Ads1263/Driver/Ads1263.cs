@@ -9,7 +9,7 @@ namespace Meadow.Foundation.ICs.IOExpanders;
 /// <summary>
 /// Driver Class for the Ads1263 analog-to-digital (ADC) converter
 /// </summary>
-public partial class Ads1263 : IAnalogInputController, IDigitalInputOutputController, ISpiPeripheral, IDisposable
+public partial class Ads1263 : IObservableAnalogInputController, IDigitalInputOutputController, ISpiPeripheral, IDisposable
 {
     /// <summary>
     /// Ads1263 pin definitions
@@ -190,13 +190,25 @@ public partial class Ads1263 : IAnalogInputController, IDigitalInputOutputContro
     }
 
     /// <inheritdoc />
-    public IAnalogInputPort CreateAnalogInputPort(IPin pin, int sampleCount, TimeSpan sampleInterval, Voltage referenceVoltage)
+    public IObservableAnalogInputPort CreateAnalogInputPort(IPin pin, int sampleCount, TimeSpan sampleInterval, Voltage referenceVoltage)
     {
         var channel = pin.SupportedChannels?.OfType<IAnalogChannelInfo>().FirstOrDefault();
 
         return channel == null
             ? throw new NotSupportedException($"Pin {pin.Name} does not support ADC")
-            : (IAnalogInputPort)new AnalogInputPort(this, pin, channel, sampleCount, sampleInterval);
+            : (IObservableAnalogInputPort)new AnalogInputPort(this, pin, channel, sampleCount, sampleInterval);
+    }
+
+    /// <summary>
+    /// Create an analog input port for a pin
+    /// </summary>
+    public IAnalogInputPort CreateAnalogInputPort(IPin pin, Voltage? voltageReference)
+    {
+        var channel = pin.SupportedChannels.OfType<IAnalogChannelInfo>().FirstOrDefault();
+
+        if (channel == null) { throw new NotSupportedException($"Pin {pin.Name} Does not support ADC"); }
+
+        return new AnalogInputPort(this, pin, channel, 1, TimeSpan.Zero);
     }
 
     /// <inheritdoc />

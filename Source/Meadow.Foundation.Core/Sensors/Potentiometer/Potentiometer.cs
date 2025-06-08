@@ -11,7 +11,7 @@ namespace Meadow.Foundation.Sensors;
 public class Potentiometer : IPotentiometer, IDisposable
 {
     private EventHandler<IChangeResult<Resistance>>? changedEvent;
-    private IAnalogInputPort inputPort = null!;
+    private IObservableAnalogInputPort inputPort = null!;
     private Voltage referenceVoltage;
     private bool portCreated = false;
     private Resistance? oldValue;
@@ -31,7 +31,7 @@ public class Potentiometer : IPotentiometer, IDisposable
     /// </summary>
     /// <param name="inputPort">The input port to read the potentiometer value from.</param>
     /// <param name="maxResistance">The maximum resistance value of the potentiometer.</param>
-    public Potentiometer(IAnalogInputPort inputPort, Resistance maxResistance)
+    public Potentiometer(IObservableAnalogInputPort inputPort, Resistance maxResistance)
     {
         Initialize(inputPort, maxResistance, inputPort.ReferenceVoltage);
         portCreated = false;
@@ -87,7 +87,7 @@ public class Potentiometer : IPotentiometer, IDisposable
         }
     }
 
-    private void Initialize(IAnalogInputPort inputPort, Resistance maxResistance, Voltage refereceVoltage)
+    private void Initialize(IObservableAnalogInputPort inputPort, Resistance maxResistance, Voltage refereceVoltage)
     {
         this.inputPort = inputPort;
         MaxResistance = maxResistance;

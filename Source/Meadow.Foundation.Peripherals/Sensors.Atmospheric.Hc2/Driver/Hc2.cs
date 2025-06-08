@@ -11,7 +11,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric;
 /// </summary>
 public partial class HC2 :
     PollingSensorBase<(RelativeHumidity? Humidity, Units.Temperature? Temperature)>,
-    ITemperatureSensor, IHumiditySensor
+    ISamplingTemperatureSensor, IHumiditySensor
 {
     private event EventHandler<IChangeResult<Units.Temperature>> _temperatureHandlers = default!;
     private event EventHandler<IChangeResult<RelativeHumidity>> _humidityHandlers = default!;

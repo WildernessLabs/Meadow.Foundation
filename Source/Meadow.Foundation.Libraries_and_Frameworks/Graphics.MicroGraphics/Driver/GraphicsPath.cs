@@ -286,7 +286,7 @@ namespace Meadow.Foundation.Graphics
         /// <param name="path">The path to add</param>
         public void AddPathReverse(GraphicsPath path)
         {
-            for (int i = path.PathActions.Count - 1; i > 0; i--)
+            for (int i = path.PathActions.Count - 1; i >= 0; i--)
             {
                 PathActions.Add(path.PathActions[i]);
             }

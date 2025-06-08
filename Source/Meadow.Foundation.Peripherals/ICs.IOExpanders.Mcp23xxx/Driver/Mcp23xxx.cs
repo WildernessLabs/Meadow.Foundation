@@ -396,11 +396,11 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
             if (direction == PortDirectionType.Input)
             {
-                if (BitHelpers.GetBitValue(ioDir, (byte)pin.Key)) { return; }
+                if (BitHelpers.GetBitValue(ioDir, bitIndex)) { return; }
             }
             else
             {
-                if (!BitHelpers.GetBitValue(ioDir, (byte)pin.Key)) { return; }
+                if (!BitHelpers.GetBitValue(ioDir, bitIndex)) { return; }
             }
 
             ref var ioDirLatch = ref GetIoDirLatch(portBank);

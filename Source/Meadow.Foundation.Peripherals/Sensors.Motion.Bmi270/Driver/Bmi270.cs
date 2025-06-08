@@ -14,7 +14,7 @@ namespace Meadow.Foundation.Sensors.Motion
     /// </summary>
     public partial class Bmi270 :
         PollingSensorBase<(Acceleration3D? Acceleration3D, AngularVelocity3D? AngularVelocity3D, Units.Temperature? Temperature)>,
-        II2cPeripheral, IGyroscope, IAccelerometer, ITemperatureSensor, ISleepAwarePeripheral
+        II2cPeripheral, IGyroscope, IAccelerometer, ISamplingTemperatureSensor, ISleepAwarePeripheral
     {
         private event EventHandler<IChangeResult<AngularVelocity3D>> _angularVelocityHandlers = default!;
         private event EventHandler<IChangeResult<Acceleration3D>> _accelerationHandlers = default!;

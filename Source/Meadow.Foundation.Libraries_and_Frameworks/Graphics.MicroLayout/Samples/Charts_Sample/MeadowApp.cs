@@ -49,7 +49,7 @@ public class MeadowApp : App<Desktop>
     public void TextOnBox()
     {
         var box = new Box(0, 0, screen!.Width / 4, screen.Height);
-        box.ForeColor = Color.Red;
+        box.ForegroundColor = Color.Red;
         var label = new Label(0, 0, screen.Width / 4, screen.Height);
         label.HorizontalAlignment = HorizontalAlignment.Center;
         label.VerticalAlignment = VerticalAlignment.Center;
@@ -61,14 +61,14 @@ public class MeadowApp : App<Desktop>
         while (true)
         {
             Thread.Sleep(1000);
-            (box.ForeColor, label.TextColor) = (label.TextColor, box.ForeColor);
+            (box.ForegroundColor, label.TextColor) = (label.TextColor, box.ForegroundColor);
         }
     }
 
     public void Sweep()
     {
         var box = new Box(0, 0, screen!.Width / 4, screen.Height);
-        box.ForeColor = Color.Red;
+        box.ForegroundColor = Color.Red;
 
         screen.Controls.Add(box);
 

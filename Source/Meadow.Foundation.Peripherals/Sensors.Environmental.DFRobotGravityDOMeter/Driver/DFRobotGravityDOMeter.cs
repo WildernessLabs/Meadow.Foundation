@@ -24,7 +24,7 @@ public partial class DFRobotGravityDOMeter : SamplingSensorBase<ConcentrationInW
     /// <summary>
     /// Returns the analog input port
     /// </summary>
-    protected IAnalogInputPort AnalogInputPort { get; }
+    protected IObservableAnalogInputPort AnalogInputPort { get; }
 
     /// <summary>
     /// Last concentration value read from the sensor
@@ -54,13 +54,13 @@ public partial class DFRobotGravityDOMeter : SamplingSensorBase<ConcentrationInW
     /// Creates a new DFRobotGravityDOMeter object
     /// </summary>
     /// <param name="analogInputPort">The port for the analog input pin</param>
-    public DFRobotGravityDOMeter(IAnalogInputPort analogInputPort)
+    public DFRobotGravityDOMeter(IObservableAnalogInputPort analogInputPort)
     {
         AnalogInputPort = analogInputPort;
 
         AnalogInputPort.Subscribe
         (
-            IAnalogInputPort.CreateObserver(
+            IObservableAnalogInputPort.CreateObserver(
                 result =>
                 {
                     ChangeResult<ConcentrationInWater> changeResult = new()

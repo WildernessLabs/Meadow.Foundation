@@ -90,12 +90,13 @@ public static partial class MicroJson
     /// </summary>
     /// <typeparam name="T">The type of object to deserialize.</typeparam>
     /// <param name="json">The JSON string to deserialize.</param>
+    /// <param name="unitJsonConverter">An optional Meadow.Units JSON converter</param>
     /// <returns>An object of type T.</returns>
-    public static T Deserialize<T>(string json)
+    public static T Deserialize<T>(string json, IUnitJsonConverter? unitJsonConverter = null)
     {
         var type = typeof(T);
 
-        return (T)Deserialize(json, type);
+        return (T)Deserialize(json, type, unitJsonConverter);
     }
 
     /// <summary>
@@ -103,9 +104,19 @@ public static partial class MicroJson
     /// </summary>
     /// <param name="type">The type of object to deserialize.</param>
     /// <param name="json">The JSON string to deserialize.</param>
+    /// <param name="unitJsonConverter">An optional Meadow.Units JSON converter</param>
     /// <returns>An object of the specified type</returns>
-    public static object Deserialize(string json, Type type)
+    public static object Deserialize(string json, Type type, IUnitJsonConverter? unitJsonConverter = null)
     {
+        if (unitJsonConverter != null)
+        {
+            var result = unitJsonConverter.Deserialize(json, type);
+            if (result != null)
+            {
+                return result;
+            }
+        }
+
         if (type.IsArray)
         {
             var elementType = type.GetElementType();
@@ -255,25 +266,28 @@ public static partial class MicroJson
                 {
                     var al = values[v] as ArrayList;
                     var elementType = propType.GetElementType();
-                    var targetArray = Array.CreateInstance(elementType, al!.Count);
-                    for (int i = 0; i < al.Count; i++)
+                    if (al != null)
                     {
-                        if (elementType == typeof(string))
+                        var targetArray = Array.CreateInstance(elementType, al!.Count);
+                        for (int i = 0; i < al.Count; i++)
                         {
-                            targetArray.SetValue(al[i], i);
+                            if (elementType == typeof(string))
+                            {
+                                targetArray.SetValue(al[i], i);
+                            }
+                            else if (elementType.IsValueType || elementType.IsEnum)
+                            {
+                                targetArray.SetValue(Convert.ChangeType(al[i], elementType), i);
+                            }
+                            else
+                            {
+                                object arrayItem = Activator.CreateInstance(elementType);
+                                Deserialize(al[i] as Hashtable, elementType, ref arrayItem);
+                                targetArray.SetValue(arrayItem, i);
+                            }
                         }
-                        else if (elementType.IsValueType || elementType.IsEnum)
-                        {
-                            targetArray.SetValue(Convert.ChangeType(al[i], elementType), i);
-                        }
-                        else
-                        {
-                            object arrayItem = Activator.CreateInstance(elementType);
-                            Deserialize(al[i] as Hashtable, elementType, ref arrayItem);
-                            targetArray.SetValue(arrayItem, i);
-                        }
+                        prop.SetValue(instance, targetArray);
                     }
-                    prop.SetValue(instance, targetArray);
                 }
                 else if (propType.IsGenericType && propType.GetGenericTypeDefinition() == typeof(List<>))
                 {

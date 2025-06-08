@@ -12,7 +12,7 @@ namespace Meadow.Foundation.Sensors.Motion;
 /// </summary>
 public partial class Mag3110 :
     ByteCommsSensorBase<(MagneticField3D? MagneticField3D, Units.Temperature? Temperature)>,
-    ITemperatureSensor, IMagnetometer, II2cPeripheral
+    ISamplingTemperatureSensor, IMagnetometer, II2cPeripheral
 {
     /// <summary>
     /// The default I2C address for the peripheral

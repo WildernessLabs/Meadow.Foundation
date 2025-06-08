@@ -5,7 +5,7 @@
 /// </summary>
 public class Crosshair : ThemedControl
 {
-    private Color _foreColor = Color.Black;
+    private Color _foregroundColor = Color.Black;
     private int _lineWidth;
 
     /// <summary>
@@ -26,27 +26,27 @@ public class Crosshair : ThemedControl
     {
         if (theme != null)
         {
-            if (theme.ForegroundColor != null) this.ForeColor = theme.ForegroundColor.Value;
+            if (theme.ForegroundColor != null) this.ForegroundColor = theme.ForegroundColor.Value;
         }
     }
 
     /// <summary>
     /// Gets or sets the foreground color of the Crosshair.
     /// </summary>
-    public Color ForeColor
+    public Color ForegroundColor
     {
-        get => _foreColor;
-        set => SetInvalidatingProperty(ref _foreColor, value);
+        get => _foregroundColor;
+        set => SetInvalidatingProperty(ref _foregroundColor, value);
     }
 
     /// <inheritdoc/>
     protected override void OnDraw(MicroGraphics graphics)
     {
-        if (ForeColor != Color.Transparent)
+        if (ForegroundColor != Color.Transparent)
         {
             // position is the center of the crosshair
-            graphics.DrawRectangle(Left - Width / 2, Top - _lineWidth / 2, Width, _lineWidth, ForeColor, true);
-            graphics.DrawRectangle(Left - _lineWidth / 2, Top - Height / 2, _lineWidth, Height, ForeColor, true);
+            graphics.DrawRectangle(Left - Width / 2, Top - _lineWidth / 2, Width, _lineWidth, ForegroundColor, true);
+            graphics.DrawRectangle(Left - _lineWidth / 2, Top - Height / 2, _lineWidth, Height, ForegroundColor, true);
         }
     }
 }

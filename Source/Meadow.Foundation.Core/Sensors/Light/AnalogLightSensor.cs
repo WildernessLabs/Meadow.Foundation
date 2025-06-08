@@ -15,7 +15,7 @@ namespace Meadow.Foundation.Sensors.Light
         /// <summary>
         /// Analog port connected to sensor
         /// </summary>
-        protected IAnalogInputPort AnalogInputPort { get; }
+        protected IObservableAnalogInputPort AnalogInputPort { get; }
 
         /// <summary>
         /// Illuminance sensor calibration
@@ -61,7 +61,7 @@ namespace Meadow.Foundation.Sensors.Light
         /// </summary>
         /// <param name="analogInputPort">Analog port the sensor is connected to.</param>
         /// <param name="calibration">Calibration for the analog sensor.</param> 
-        public AnalogLightSensor(IAnalogInputPort analogInputPort,
+        public AnalogLightSensor(IObservableAnalogInputPort analogInputPort,
                                  Calibration? calibration = null)
         {
             AnalogInputPort = analogInputPort;
@@ -70,7 +70,7 @@ namespace Meadow.Foundation.Sensors.Light
 
             AnalogInputPort.Subscribe
             (
-                IAnalogInputPort.CreateObserver(
+                IObservableAnalogInputPort.CreateObserver(
                     h =>
                     {
                         var oldLuminance = illuminance;
