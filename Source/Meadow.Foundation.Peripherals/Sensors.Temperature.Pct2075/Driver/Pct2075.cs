@@ -9,7 +9,7 @@ namespace Meadow.Foundation.Sensors.Temperature;
 /// <summary>
 /// Represents a PCT2075 temperature sensor
 /// </summary>
-public partial class Pct2075 : PollingSensorBase<Units.Temperature>, ITemperatureSensor, II2cPeripheral
+public partial class Pct2075 : PollingSensorBase<Units.Temperature>, ISamplingTemperatureSensor, II2cPeripheral
 {
     private II2cCommunications _comms;
 

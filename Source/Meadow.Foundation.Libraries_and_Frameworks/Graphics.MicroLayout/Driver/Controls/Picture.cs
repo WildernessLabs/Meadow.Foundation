@@ -16,6 +16,18 @@ public class Picture : ThemedControl
     /// <summary>
     /// Initializes a new instance of the Picture class with the specified dimensions and image.
     /// </summary>
+    /// <param name="width">The width of the image display control.</param>
+    /// <param name="height">The height of the image display control.</param>
+    /// <param name="image">The image to be displayed.</param>
+    public Picture(int width, int height, MF.Image? image = null)
+        : base(0, 0, width, height)
+    {
+        Image = image;
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the Picture class with the specified dimensions and image.
+    /// </summary>
     /// <param name="left">The left coordinate of the image display control.</param>
     /// <param name="top">The top coordinate of the image display control.</param>
     /// <param name="width">The width of the image display control.</param>

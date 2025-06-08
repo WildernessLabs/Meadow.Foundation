@@ -1,7 +1,8 @@
-﻿using FTD2XX;
-using Meadow.Hardware;
+﻿using Meadow.Hardware;
 using Meadow.Units;
 using System;
+using System.Diagnostics;
+using System.IO;
 using System.Threading;
 
 namespace Meadow.Foundation.ICs.IOExpanders;
@@ -11,181 +12,282 @@ public abstract partial class FtdiExpander
     /// <summary>
     /// Represents an SPI bus using the FT232H
     /// </summary>
-    public class Ft232hSpiBus : ISpiBus
+    public class Ft232hSpiBus : SpiBus
     {
-        private readonly FTDI _device;
+        private FtdiExpander _expander;
         private SpiClockConfiguration _configuration;
+        private const int DefaultTimeoutMs = 1000;  // 1 second default timeout
+        private const int PollIntervalMs = 1;       // Poll interval for data checks
 
         /// <inheritdoc/>
-        public Frequency[] SupportedSpeeds =>
+        public override Frequency[] SupportedSpeeds =>
             new Frequency[]
             {
                 1000000.Hertz()
             };
 
         /// <inheritdoc/>
-        public SpiClockConfiguration Configuration => _configuration;
+        public override SpiClockConfiguration Configuration => _configuration;
 
-        internal Ft232hSpiBus(FTDI device, int channel, SpiClockConfiguration configuration)
+        internal Ft232hSpiBus(FtdiExpander expander, SpiClockConfiguration configuration)
         {
-            _device = device;
             _configuration = configuration;
-            ConfigureMpsse();
+            _expander = expander;
         }
 
-        private void ConfigureMpsse()
+        internal override void Configure()
         {
-            _device.ResetDevice().ThrowIfNotOK();
-            _device.SetBitMode(0, 0).ThrowIfNotOK(); // reset
-            _device.SetBitMode(0, 0x02).ThrowIfNotOK(); // MPSSE 
-            _device.SetLatency(16).ThrowIfNotOK();
-            _device.SetTimeouts(1000, 1000).ThrowIfNotOK(); // long
+            // Reset the MPSSE
+            _expander.Write(new byte[] { (byte)Native.FT_OPCODE.DisconnectTDItoTDOforLoopback });
             Thread.Sleep(50);
 
-            // Configure the MPSSE for SPI communication (app note FT_000109 section 6)
-            byte[] bytes1 = new byte[]
+            // Clear any pending data
+            ClearInputBuffer();
+
+            // Synchronize the MPSSE interface
+            _expander.Write(new byte[] { 0xAA });
+            Span<byte> response = stackalloc byte[2];
+            _expander.ReadInto(response);
+
+            if (response[0] != 0xFA || response[1] != 0xAA)
             {
-                0x8A, // disable clock divide by 5 for 60Mhz master clock
-                0x97, // turn off adaptive clocking
-                0x8d // disable 3 phase data clock
-            };
-            _device.Write(bytes1).ThrowIfNotOK();
-
-            // The SK clock frequency can be worked out by below algorithm with divide by 5 set as off
-            // SCL Frequency (MHz) = 60 / ((1 + DIVISOR) * 2)
-            var clockDivisor = 29; // for 1 MHz
-
-            // increase clock divisor to slow down signaling
-            var slowDownFactor = 1;
-            clockDivisor *= slowDownFactor;
-
-            // set the SCK and MOSI as outputs, with a value of low
-            byte[] bytes2 = new byte[]
-            {
-                0x80, // Set directions of lower 8 pins
-                0b00000000, // all low
-                0x00000011, // MOSI and SCK output, others input
-                0x86, // use clock divisor
-                (byte)(clockDivisor & 0xFF), // clock divisor low byte
-                (byte)(clockDivisor >> 8), // clock divisor high byte
-            };
-            _device.Write(bytes2).ThrowIfNotOK();
-            Thread.Sleep(50);
-
-            // disable loopback
-            _device.Write(new byte[] { 0x85 }).ThrowIfNotOK();
-            Thread.Sleep(50);
-
-            //_expander.SetGpioDirectionAndState(true, _expander.GpioDirectionLow |= 0x03, _expander.GpioStateLow);
-        }
-
-        /// <inheritdoc/>
-        public void Exchange(IDigitalOutputPort? chipSelect, Span<byte> writeBuffer, Span<byte> readBuffer, ChipSelectMode csMode = ChipSelectMode.ActiveLow)
-        {
-            if (writeBuffer.Length > 65535)
-            {
-                throw new ArgumentException("Buffer too large, maximum size if 65535");
+                throw new IOException($"MPSSE sync failed. Got {response[0]:X2} {response[1]:X2}");
             }
 
-            if (chipSelect != null)
+            _expander.Write(new byte[] { 0xAB });
+            _expander.ReadInto(response);
+            if (response[0] != 0xFA || response[1] != 0xAB)
             {
-                chipSelect.State = csMode == ChipSelectMode.ActiveLow ? false : true;
+                throw new IOException($"MPSSE sync failed. Got {response[0]:X2} {response[1]:X2}");
             }
 
-            var shiftOut = new byte[3 + writeBuffer.Length];
-            shiftOut[0] = _configuration.SpiMode switch
-            {
-                SpiClockConfiguration.Mode.Mode0 => 0x31,
-                SpiClockConfiguration.Mode.Mode3 => 0x31,
-                _ => 0x34
-            };
-            shiftOut[1] = (byte)writeBuffer.Length;
-            shiftOut[2] = (byte)(writeBuffer.Length >> 8);
-            writeBuffer.CopyTo(shiftOut[3..]);
-
-            _device.FlushBuffer();
-            _device.Write(shiftOut).ThrowIfNotOK();
-
-            byte[] rx = new byte[readBuffer.Length];
-            int bytesRead = 0;
-            _device.Read(rx, writeBuffer.Length, ref bytesRead).ThrowIfNotOK();
-            rx.CopyTo(readBuffer);
-
-            if (chipSelect != null)
-            {
-                chipSelect.State = csMode == ChipSelectMode.ActiveLow ? true : false;
-            }
-        }
-
-        /// <inheritdoc/>
-        public void Read(IDigitalOutputPort? chipSelect, Span<byte> readBuffer, ChipSelectMode csMode = ChipSelectMode.ActiveLow)
-        {
-            if (chipSelect != null)
-            {
-                chipSelect.State = csMode == ChipSelectMode.ActiveLow ? false : true;
-            }
-
-            byte[] shiftOut = new byte[3];
-            shiftOut[0] = _configuration.SpiMode switch
-            {
-                SpiClockConfiguration.Mode.Mode0 => 0x20,
-                SpiClockConfiguration.Mode.Mode3 => 0x20,
-                _ => 0x24
-            };
-            shiftOut[1] = (byte)readBuffer.Length;
-            shiftOut[2] = (byte)(readBuffer.Length >> 8);
-
-            _device.Write(shiftOut).ThrowIfNotOK();
-
-            int bytesRead = 0;
-            var read = new byte[readBuffer.Length];
-            _device.Read(read, readBuffer.Length, ref bytesRead).ThrowIfNotOK();
-            read.CopyTo(readBuffer);
-
-            if (chipSelect != null)
-            {
-                chipSelect.State = csMode == ChipSelectMode.ActiveLow ? true : false;
-            }
-        }
-
-        /// <inheritdoc/>
-        public void Write(IDigitalOutputPort? chipSelect, Span<byte> writeBuffer, ChipSelectMode csMode = ChipSelectMode.ActiveLow)
-        {
-            if (writeBuffer.Length > 65535)
-            {
-                throw new ArgumentException("Buffer too large, maximum size if 65535");
-            }
-
-            byte clock;
-            switch (_configuration.SpiMode)
-            {
-                default:
-                case SpiClockConfiguration.Mode.Mode3:
-                case SpiClockConfiguration.Mode.Mode0:
-                    clock = (byte)Native.FT_OPCODE.ClockDataBytesOutOnMinusVeClockMSBFirst;
-                    break;
-                case SpiClockConfiguration.Mode.Mode2:
-                case SpiClockConfiguration.Mode.Mode1:
-                    clock = (byte)Native.FT_OPCODE.ClockDataBytesOutOnPlusVeClockMSBFirst;
-                    break;
-            }
-
-            if (chipSelect != null)
-            {
-                chipSelect.State = csMode == ChipSelectMode.ActiveLow ? false : true;
-            }
-
+            // Now configure for SPI operation
+            Span<byte> config = stackalloc byte[13];
             int idx = 0;
-            Span<byte> toSend = stackalloc byte[3 + writeBuffer.Length];
-            toSend[idx++] = clock;
-            toSend[idx++] = (byte)((writeBuffer.Length - 1) & 0xff); // LSB of length to write 
-            toSend[idx++] = (byte)((writeBuffer.Length - 1) >> 8); ; // MSB of length to write
-            writeBuffer.CopyTo(toSend[3..]);
-            //            _expander.Write(toSend);
+
+            // Disable clock divide by 5 for 60Mhz master clock
+            config[idx++] = (byte)Native.FT_OPCODE.DisableClockDivideBy5;
+
+            // Turn off adaptive clocking
+            config[idx++] = (byte)Native.FT_OPCODE.TurnOffAdaptiveClocking;
+
+            // Disable 3 phase data clocking
+            config[idx++] = (byte)Native.FT_OPCODE.Disable3PhaseDataClocking;
+
+            // Set clock divisor for desired frequency
+            config[idx++] = (byte)Native.FT_OPCODE.SetClockDivisor;
+            uint clockDivisor = (uint)(60000 / (_configuration.Speed.Kilohertz * 2)) - 1;
+            config[idx++] = (byte)(clockDivisor & 0x00FF);
+            config[idx++] = (byte)((clockDivisor >> 8) & 0x00FF);
+
+            // Set initial pin states and directions
+            config[idx++] = (byte)Native.FT_OPCODE.SetDataBitsLowByte;
+            byte initialState = (_configuration.SpiMode == SpiClockConfiguration.Mode.Mode2 ||
+                              _configuration.SpiMode == SpiClockConfiguration.Mode.Mode3) ? (byte)0x01 : (byte)0x00;
+
+            _expander.GpioStateLow = initialState;
+            _expander.GpioDirectionLow = 0x0B; // SCK, MOSI, CS as outputs, MISO as input
+
+            config[idx++] = _expander.GpioStateLow;
+            config[idx++] = _expander.GpioDirectionLow;
+
+            _expander.Write(config.Slice(0, idx));
+
+            // Verify configuration
+            _expander.Write(new byte[] { (byte)Native.FT_OPCODE.ReadDataBitsLowByte });
+            Span<byte> pinState = stackalloc byte[1];
+            _expander.ReadInto(pinState);
+        }
+
+        private uint GetAvailableBytes(int timeoutMs = DefaultTimeoutMs)
+        {
+            var sw = Stopwatch.StartNew();
+            uint available = 0;
+
+            while (sw.ElapsedMilliseconds < timeoutMs)
+            {
+                Native.CheckStatus(
+                    Native.Ftd2xx.FT_GetQueueStatus(_expander.Handle, ref available));
+
+                if (available > 0)
+                {
+                    return available;
+                }
+
+                // Simple fixed delay instead of exponential backoff
+                Thread.Sleep(PollIntervalMs);
+            }
+
+            throw new TimeoutException($"No data available after {timeoutMs}ms");
+        }
+
+        /// <inheritdoc/>
+        public override void Exchange(IDigitalOutputPort? chipSelect, Span<byte> writeBuffer, Span<byte> readBuffer, ChipSelectMode csMode = ChipSelectMode.ActiveLow)
+        {
+            if (writeBuffer.Length != readBuffer.Length)
+            {
+                throw new ArgumentException("Write and read buffers must be the same length for full-duplex operation");
+            }
 
             if (chipSelect != null)
             {
-                chipSelect.State = csMode == ChipSelectMode.ActiveLow ? true : false;
+                chipSelect.State = csMode == ChipSelectMode.ActiveLow ? false : true;
+            }
+
+            try
+            {
+                // Verify GPIO state before transfer
+                _expander.Write(new byte[] { (byte)Native.FT_OPCODE.ReadDataBitsLowByte });
+                Span<byte> currentState = stackalloc byte[1];
+                _expander.ReadInto(currentState);
+
+                // Clear any existing data
+                ClearInputBuffer();
+
+                // Build and send command for combined write/read
+                Span<byte> commandBuffer = stackalloc byte[3 + writeBuffer.Length];
+
+                // Use combined read/write command
+                commandBuffer[0] = (byte)Native.FT_OPCODE.ClockDataBytesOutOnMinusBytesInOnPlusVeClockMSBFirst;
+                commandBuffer[1] = (byte)((writeBuffer.Length - 1) & 0xFF);
+                commandBuffer[2] = (byte)(((writeBuffer.Length - 1) >> 8) & 0xFF);
+                writeBuffer.CopyTo(commandBuffer.Slice(3));
+
+                // Send complete command
+                _expander.Write(commandBuffer);
+
+                // Read response with timeout
+                var sw = Stopwatch.StartNew();
+                int bytesRead = 0;
+
+                while (bytesRead < readBuffer.Length && sw.ElapsedMilliseconds < 1000)
+                {
+                    uint available = 0;
+                    Native.CheckStatus(Native.Ftd2xx.FT_GetQueueStatus(_expander.Handle, ref available));
+
+                    if (available > 0)
+                    {
+                        int toRead = Math.Min((int)available, readBuffer.Length - bytesRead);
+                        _expander.ReadInto(readBuffer.Slice(bytesRead, toRead));
+                        bytesRead += toRead;
+                    }
+                    else
+                    {
+                        Thread.Sleep(1);
+                    }
+                }
+
+                if (bytesRead < readBuffer.Length)
+                {
+                    throw new TimeoutException(
+                        $"Timeout waiting for data. Expected {readBuffer.Length} bytes, got {bytesRead} bytes");
+                }
+            }
+            finally
+            {
+                if (chipSelect != null)
+                {
+                    chipSelect.State = csMode == ChipSelectMode.ActiveLow ? true : false;
+                }
+            }
+        }
+
+        private void ClearInputBuffer()
+        {
+            uint available = 0;
+            Native.CheckStatus(Native.Ftd2xx.FT_GetQueueStatus(_expander.Handle, ref available));
+
+            if (available > 0)
+            {
+                Span<byte> clearBuffer = stackalloc byte[(int)available];
+                _expander.ReadInto(clearBuffer);
+            }
+        }
+
+        public override void Write(IDigitalOutputPort? chipSelect, Span<byte> writeBuffer, ChipSelectMode csMode = ChipSelectMode.ActiveLow)
+        {
+            if (writeBuffer.Length > 65536)
+            {
+                throw new ArgumentException("Buffer too large, maximum size is 65536 bytes");
+            }
+
+            if (chipSelect != null)
+            {
+                chipSelect.State = csMode == ChipSelectMode.ActiveLow ? false : true;
+            }
+
+            try
+            {
+                Span<byte> commandBuffer = stackalloc byte[3 + writeBuffer.Length];
+                int idx = 0;
+
+                // Select appropriate command based on SPI mode
+                byte command = _configuration.SpiMode switch
+                {
+                    SpiClockConfiguration.Mode.Mode0 => (byte)Native.FT_OPCODE.ClockDataBytesOutOnMinusVeClockMSBFirst,
+                    SpiClockConfiguration.Mode.Mode1 => (byte)Native.FT_OPCODE.ClockDataBytesOutOnPlusVeClockMSBFirst,
+                    SpiClockConfiguration.Mode.Mode2 => (byte)Native.FT_OPCODE.ClockDataBytesOutOnPlusVeClockMSBFirst,
+                    SpiClockConfiguration.Mode.Mode3 => (byte)Native.FT_OPCODE.ClockDataBytesOutOnMinusVeClockMSBFirst,
+                    _ => throw new ArgumentException("Invalid SPI mode")
+                };
+
+                commandBuffer[idx++] = command;
+                commandBuffer[idx++] = (byte)((writeBuffer.Length - 1) & 0xFF);
+                commandBuffer[idx++] = (byte)(((writeBuffer.Length - 1) >> 8) & 0xFF);
+
+                writeBuffer.CopyTo(commandBuffer.Slice(idx));
+                _expander.Write(commandBuffer);
+            }
+            finally
+            {
+                if (chipSelect != null)
+                {
+                    chipSelect.State = csMode == ChipSelectMode.ActiveLow ? true : false;
+                }
+            }
+        }
+
+        public override void Read(IDigitalOutputPort? chipSelect, Span<byte> readBuffer, ChipSelectMode csMode = ChipSelectMode.ActiveLow)
+        {
+            if (readBuffer.Length > 65536)
+            {
+                throw new ArgumentException("Buffer too large, maximum size is 65536 bytes");
+            }
+
+            if (chipSelect != null)
+            {
+                chipSelect.State = csMode == ChipSelectMode.ActiveLow ? false : true;
+            }
+
+            try
+            {
+                Span<byte> commandBuffer = stackalloc byte[4];  // Command + length (2) + SendImmediate
+                int idx = 0;
+
+                // Select appropriate command based on SPI mode
+                byte command = _configuration.SpiMode switch
+                {
+                    SpiClockConfiguration.Mode.Mode0 => (byte)Native.FT_OPCODE.ClockDataBytesInOnPlusVeClockMSBFirst,
+                    SpiClockConfiguration.Mode.Mode1 => (byte)Native.FT_OPCODE.ClockDataBytesInOnMinusVeClockMSBFirst,
+                    SpiClockConfiguration.Mode.Mode2 => (byte)Native.FT_OPCODE.ClockDataBytesInOnMinusVeClockMSBFirst,
+                    SpiClockConfiguration.Mode.Mode3 => (byte)Native.FT_OPCODE.ClockDataBytesInOnPlusVeClockMSBFirst,
+                    _ => throw new ArgumentException("Invalid SPI mode")
+                };
+
+                commandBuffer[idx++] = command;
+                commandBuffer[idx++] = (byte)((readBuffer.Length - 1) & 0xFF);
+                commandBuffer[idx++] = (byte)(((readBuffer.Length - 1) >> 8) & 0xFF);
+                commandBuffer[idx++] = (byte)Native.FT_OPCODE.SendImmediate;
+
+                _expander.Write(commandBuffer);
+                _expander.ReadInto(readBuffer);
+            }
+            finally
+            {
+                if (chipSelect != null)
+                {
+                    chipSelect.State = csMode == ChipSelectMode.ActiveLow ? true : false;
+                }
             }
         }
     }

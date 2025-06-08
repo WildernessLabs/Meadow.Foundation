@@ -37,7 +37,7 @@ public abstract class ResistiveTankLevelSender : SamplingSensorBase<int>, IDispo
     /// </summary>
     public event EventHandler<int>? FillLevelChanged;
 
-    private IAnalogInputPort AnalogInput { get; }
+    private IObservableAnalogInputPort AnalogInput { get; }
     private Voltage VRef { get; }
     private Resistance Resistor1 { get; }
     private Resistance Resistor2 { get; }
@@ -73,7 +73,7 @@ public abstract class ResistiveTankLevelSender : SamplingSensorBase<int>, IDispo
     /// <param name="inputPort">The input port.</param>
     /// <param name="vRef">The reference voltage.</param>
     protected ResistiveTankLevelSender(
-        IAnalogInputPort inputPort,
+        IObservableAnalogInputPort inputPort,
         Voltage vRef)
         : this(inputPort, vRef, 120.Ohms(), 47.Ohms())
     {
@@ -105,7 +105,7 @@ public abstract class ResistiveTankLevelSender : SamplingSensorBase<int>, IDispo
     /// <param name="lowSideResistor">The resistance of the low-side resistor.</param>
     /// <param name="highSideResistor">The resistance of the high-side resistor.</param>
     protected ResistiveTankLevelSender(
-        IAnalogInputPort inputPort,
+        IObservableAnalogInputPort inputPort,
         Voltage vRef,
         Resistance lowSideResistor,
         Resistance highSideResistor

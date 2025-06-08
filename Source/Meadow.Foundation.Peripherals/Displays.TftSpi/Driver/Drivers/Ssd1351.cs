@@ -9,11 +9,6 @@ namespace Meadow.Foundation.Displays
     public class Ssd1351 : TftSpiBase
     {
         /// <summary>
-        /// The default display color mode
-        /// </summary>
-        public override ColorMode DefaultColorMode => ColorMode.Format16bppRgb565;
-
-        /// <summary>
         /// The color modes supported by the display
         /// </summary>
         public override ColorMode SupportedColorModes => ColorMode.Format16bppRgb565;

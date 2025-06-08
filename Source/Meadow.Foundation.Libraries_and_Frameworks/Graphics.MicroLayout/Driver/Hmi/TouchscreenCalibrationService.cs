@@ -80,8 +80,8 @@ public class TouchscreenCalibrationService
 
         _calibrationPoints = new Crosshair[]
         {
-            new (margin, margin) { ForeColor = CrosshairColor },
-            new (_screen.Width - margin, _screen.Height - margin) { ForeColor = CrosshairColor }
+            new (margin, margin) { ForegroundColor = CrosshairColor },
+            new (_screen.Width - margin, _screen.Height - margin) { ForegroundColor = CrosshairColor }
         };
         _calPoints = new CalibrationPoint[_calibrationPoints.Length];
     }

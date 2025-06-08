@@ -28,8 +28,8 @@ namespace ICs.IOExpanders.Mcp23017_Sample
         {
             while (true)
             {
-                TestBulkDigitalOutputPortWrites(20);
-                TestDigitalOutputPorts(2);
+                //TestBulkDigitalOutputPortWrites(20);
+                TestDigitalOutputPorts(20);
             }
         }
 
@@ -44,30 +44,31 @@ namespace ICs.IOExpanders.Mcp23017_Sample
             var out06 = mcp.CreateDigitalOutputPort(mcp.Pins.GPA6);
             var out07 = mcp.CreateDigitalOutputPort(mcp.Pins.GPA7);
 
+            var out10 = mcp.CreateDigitalOutputPort(mcp.Pins.GPB0);
+            var out11 = mcp.CreateDigitalOutputPort(mcp.Pins.GPB1);
+            var out12 = mcp.CreateDigitalOutputPort(mcp.Pins.GPB2);
+            var out13 = mcp.CreateDigitalOutputPort(mcp.Pins.GPB3);
+            var out14 = mcp.CreateDigitalOutputPort(mcp.Pins.GPB4);
+            var out15 = mcp.CreateDigitalOutputPort(mcp.Pins.GPB5);
+            var out16 = mcp.CreateDigitalOutputPort(mcp.Pins.GPB6);
+            var out17 = mcp.CreateDigitalOutputPort(mcp.Pins.GPB7);
+
             var outputPorts = new List<IDigitalOutputPort>()
             {
-                out00, out01, out02, out03, out04, out05, out06, out07
+                out00, out01, out02, out03, out04, out05, out06, out07,
+                out10, out11, out12, out13, out14, out15, out16, out17
             };
-
-            foreach (var outputPort in outputPorts)
-            {
-                outputPort.State = true;
-            }
 
             for (int l = 0; l < loopCount; l++)
             {
-                // loop through all the outputs
-                for (int i = 0; i < outputPorts.Count; i++)
+                foreach (var outputPort in outputPorts)
                 {
-                    // turn them all off
-                    foreach (var outputPort in outputPorts)
-                    {
-                        outputPort.State = false;
-                    }
-
-                    // turn on just one
-                    outputPorts[i].State = true;
-                    Thread.Sleep(250);
+                    Resolver.Log.Info($"{outputPort.Pin.Name} on");
+                    outputPort.State = true;
+                    Thread.Sleep(500);
+                    Resolver.Log.Info($"{outputPort.Pin.Name} off");
+                    outputPort.State = false;
+                    Thread.Sleep(500);
                 }
             }
 

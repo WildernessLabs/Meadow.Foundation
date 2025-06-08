@@ -1,0 +1,62 @@
+{
+  "DigitalInputs": [
+    {
+      "ChannelNumber": 0,
+      "Name": "Float",
+      "IsSimulated": true,
+      "SenseIntervalSeconds": 1
+    }
+  ],
+  "ModbusDevices": [
+    {
+      "Driver": "CerusXDrive",
+      "Address": 1,
+      "Name": "Pump1",
+      "IsSimulated": false,
+      "SenseIntervalSeconds": 10
+    }
+  ],
+  "FrequencyInputs": [
+    {
+      "ChannelNumber": 0,
+      "UnitType": "VolumetricFlow",
+      "Scale": 1.0,
+      "Offset": 0,
+      "Name": "Pump1 Output",
+      "IsSimulated": true,
+      "SenseIntervalSeconds": 1
+    },
+    {
+      "ChannelNumber": 1,
+      "UnitType": "VolumetricFlow",
+      "Scale": 1.0,
+      "Offset": 0,
+      "Name": "Pump2 Output",
+      "IsSimulated": true,
+      "SenseIntervalSeconds": 5
+    }
+  ],
+  "ConfigurableAnalogs": {
+    "IsSimulated": true,
+    "Channels": [
+      {
+        "ChannelNumber": 0,
+        "ChannelType": "Current_4_20",
+        "Scale": 1,
+        "Offset": 0,
+        "UnitType": "Pressure",
+        "Name": "Pressure 1",
+        "SenseIntervalSeconds": 4
+      },
+      {
+        "ChannelNumber": 1,
+        "ChannelType": "Current_4_20",
+        "Scale": 1,
+        "Offset": 0,
+        "UnitType": "Pressure",
+        "Name": "Pressure 2",
+        "SenseIntervalSeconds": 7
+      }
+    ]
+  }
+}

@@ -29,28 +29,25 @@ public override Task Initialize()
     return Task.CompletedTask;
 }
 
-public override Task Run()
+public async override Task Run()
 {
     if (!camera.SetCaptureResolution(Vc0706.ImageResolution._160x120))
     {
         Resolver.Log.Info("Set resolution failed");
     }
 
-    _ = TakePicture();
+    var jpegData = await camera.CapturePhoto();
 
-    return Task.CompletedTask;
-}
-
-async Task TakePicture()
-{
-    Resolver.Log.Info($"Image size is {camera.GetCaptureResolution()}");
-
-    camera.CapturePhoto();
-
-    using var jpegStream = await camera.GetPhotoStream();
-
-    var jpeg = new JpegImage(jpegStream);
-    Resolver.Log.Info($"Image decoded - width:{jpeg.Width}, height:{jpeg.Height}");
+    if (jpegData.Length > 0)
+    {
+        var decoder = new JpegDecoder();
+        var jpg = decoder.DecodeJpeg(jpegData);
+        Console.WriteLine($"Jpeg decoded is {jpg.Length} bytes, W: {decoder.Width}, H: {decoder.Height}");
+    }
+    else
+    {
+        Console.WriteLine("Image capture failed");
+    }
 }
 
 ```

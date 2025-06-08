@@ -15,10 +15,10 @@ namespace Meadow.Foundation.Sensors.Environmental;
 /// </remarks>
 public class KellerTransducer : IKellerTransducer
 {
-    private ModbusRtuClient modbusClient;
+    private readonly ModbusRtuClient modbusClient;
     private ushort? activePressureChannels;
     private ushort? activeTemperatureChannels;
-    private byte communicationAddress;
+    private readonly byte communicationAddress;
 
     /// <summary>
     /// The default Modbus address for the device.
@@ -83,7 +83,7 @@ public class KellerTransducer : IKellerTransducer
         return registers.ExtractInt32();
     }
 
-    internal Task WriteModbusAddress(byte address)
+    public Task WriteModbusAddress(byte address)
     {
         return modbusClient.WriteHoldingRegister(communicationAddress, 0x020D, address);
     }

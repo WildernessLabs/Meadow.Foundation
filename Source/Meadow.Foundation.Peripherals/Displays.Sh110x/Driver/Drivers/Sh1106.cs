@@ -30,7 +30,7 @@ namespace Meadow.Foundation.Displays
         /// <param name="width">Display width in pixels</param>
         /// <param name="height">Display height in pixels</param>
         /// <param name="firstColumn">The first visible column on the display (if display is cropped)</param>
-        public Sh1106(ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, 
+        public Sh1106(ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
             int width = 128, int height = 64, int firstColumn = 0)
             : base(spiBus, chipSelectPin, dcPin, resetPin, width, height, firstColumn)
         { }

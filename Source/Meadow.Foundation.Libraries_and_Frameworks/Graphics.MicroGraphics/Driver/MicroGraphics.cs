@@ -960,13 +960,13 @@ namespace Meadow.Foundation.Graphics
         /// <summary>
         /// Draws a circle quadrant (quarter circle)
         /// </summary>
-        /// <param name="centerX"></param>
-        /// <param name="centerY"></param>
-        /// <param name="radius"></param>
-        /// <param name="quadrant"></param>
-        /// <param name="enabled"></param>
-        /// <param name="filled"></param>
-        /// <param name="centerBetweenPixels"></param>
+        /// <param name="centerX">Abscissa of the center point of the circle</param>
+        /// <param name="centerY">Ordinate of the center point of the circle</param>
+        /// <param name="radius">Radius of the circle</param>
+        /// <param name="quadrant">The quadrant to draw</param>
+        /// <param name="enabled">Is enabled (on or off)</param>
+        /// <param name="filled">Draw a filled quadrant?</param>
+        /// <param name="centerBetweenPixels">If true, the center of the circle is between the assigned pixel and the next pixel, false it's directly on the center pixel</param>
         public void DrawCircleQuadrant(int centerX, int centerY, int radius, int quadrant, bool enabled = true, bool filled = false, bool centerBetweenPixels = false)
         {
             DrawCircleQuadrant(centerX, centerY, radius, quadrant, enabled ? EnabledColor : DisabledColor, filled, centerBetweenPixels);
@@ -975,12 +975,12 @@ namespace Meadow.Foundation.Graphics
         /// <summary>
         /// Draws a circle quadrant (quarter circle)
         /// </summary>
-        /// <param name="centerX"></param>
-        /// <param name="centerY"></param>
-        /// <param name="radius"></param>
-        /// <param name="quadrant"></param>
-        /// <param name="filled"></param>
-        /// <param name="centerBetweenPixels"></param>
+        /// <param name="centerX">Abscissa of the center point of the circle</param>
+        /// <param name="centerY">Ordinate of the center point of the circle</param>
+        /// <param name="radius">Radius of the circle</param>
+        /// <param name="quadrant">The quadrant to draw</param>
+        /// <param name="filled">Draw a filled quadrant?</param>
+        /// <param name="centerBetweenPixels">If true, the center of the circle is between the assigned pixel and the next pixel, false it's directly on the center pixel</param>
         public void DrawCircleQuadrant(int centerX, int centerY, int radius, int quadrant, bool filled = false, bool centerBetweenPixels = false)
         {
             DrawCircleQuadrant(centerX, centerY, radius, quadrant, PenColor, filled, centerBetweenPixels);
@@ -989,13 +989,13 @@ namespace Meadow.Foundation.Graphics
         /// <summary>
         /// Draws a circle quadrant (quarter circle)
         /// </summary>
-        /// <param name="centerX"></param>
-        /// <param name="centerY"></param>
-        /// <param name="radius"></param>
-        /// <param name="quadrant"></param>
-        /// <param name="color"></param>
-        /// <param name="filled"></param>
-        /// <param name="centerBetweenPixels"></param>
+        /// <param name="centerX">Abscissa of the center point of the circle</param>
+        /// <param name="centerY">Ordinate of the center point of the circle</param>
+        /// <param name="radius">Radius of the circle</param>
+        /// <param name="quadrant">The quadrant to draw</param>
+        /// <param name="color">Color of the quadrant</param>
+        /// <param name="filled">Draw a filled quadrant?</param>
+        /// <param name="centerBetweenPixels">If true, the center of the circle is between the assigned pixel and the next pixel, false it's directly on the center pixel</param>
         public void DrawCircleQuadrant(int centerX, int centerY, int radius, int quadrant, Color color, bool filled = false, bool centerBetweenPixels = false)
         {
             if (quadrant < 0 || quadrant > 3) { throw new ArgumentOutOfRangeException("DrawCircleQuadrant: quadrant must be between 0 & 3 inclusive"); }
@@ -1192,6 +1192,17 @@ namespace Meadow.Foundation.Graphics
         /// <summary>
         /// Draw a rectangle
         /// </summary>
+        /// <param name="rectangle">Rectangle to draw</param>
+        /// <param name="filled">Fill the rectangle (true) or draw the outline (false, default)</param>
+        public void DrawRectangle(Rect rectangle, bool filled = false)
+        {
+            DrawRectangle(rectangle.Left, rectangle.Top,
+                rectangle.Width, rectangle.Height, PenColor, filled);
+        }
+
+        /// <summary>
+        /// Draw a rectangle
+        /// </summary>
         /// <param name="x">Abscissa of the top left corner</param>
         /// <param name="y">Ordinate of the top left corner</param>
         /// <param name="width">Width of the rectangle</param>
@@ -1200,6 +1211,18 @@ namespace Meadow.Foundation.Graphics
         public void DrawRectangle(int x, int y, int width, int height, bool filled = false)
         {
             DrawRectangle(x, y, width, height, PenColor, filled);
+        }
+
+        /// <summary>
+        /// Draw a rectangle
+        /// </summary>
+        /// <param name="rectangle">Rectangle to draw</param>
+        /// <param name="color">The color of the rectangle</param>
+        /// <param name="filled">Fill the rectangle (true) or draw the outline (false, default)</param>
+        public void DrawRectangle(Rect rectangle, Color color, bool filled = false)
+        {
+            DrawRectangle(rectangle.Left, rectangle.Top,
+                rectangle.Width, rectangle.Height, color, filled);
         }
 
         /// <summary>
@@ -1878,8 +1901,23 @@ namespace Meadow.Foundation.Graphics
                 isUpdating = true;
             }
 
-            display?.Show(left, top, right, bottom);
+            if (display is IRotatableDisplay)
+            {
+                display?.Show(left, top, right, bottom);
+            }
+            else
+            {
+                int l = GetXForRotation(left, top);
+                int t = GetYForRotation(left, top);
 
+                int r = GetXForRotation(right, bottom);
+                int b = GetYForRotation(right, bottom);
+
+                if (l > r) { Swap(ref l, ref r); }
+                if (t > b) { Swap(ref t, ref b); }
+
+                display?.Show(l, t, r, b);
+            }
             isUpdating = false;
         }
 

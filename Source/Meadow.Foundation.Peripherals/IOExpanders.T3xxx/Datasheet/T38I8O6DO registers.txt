@@ -1,0 +1,195 @@
+ID	Register_Address	Operation	Register_Length	Register_Name	Data_Format	Description
+1	0	03 Read Holding Registers (4x)	4	MODBUS_SERIALNUMBER	32 Bit Unsigned Integer LO_HI	serial numbler
+2	4	03 Read Holding Registers (4x)	2	MODBUS_FIRMWARE_VERSION	16 Bit Unsigned Integer	firmware Version
+3	6	03_06 Read Holding and Write Single	1	MODBUS_ADDRESS	8 Bit Unsigned Integer	Modbus device address
+4	7	03 Read Holding Registers (4x)	1	MODBUS_PRODUCT_MODEL	16 Bit Unsigned Integer	Prodouct model
+5	8	03 Read Holding Registers (4x)	1	MODBUS_HARDWARE_REV	16 Bit Unsigned Integer	Hardware Version Number
+6	30	03_06 Read Holding and Write Single	1	MODBUS_OUTPUT_DEAD_MASTER	16 Bit Unsigned Integer	dead master of outputs
+7	100	03_06 Read Holding and Write Single	1	MODBUS_AO_CHANNLE0	16 Bit Signed Integer	analog output1
+8	101	03_06 Read Holding and Write Single	1	MODBUS_AO_CHANNLE1	16 Bit Signed Integer	analog output2
+9	102	03_06 Read Holding and Write Single	1	MODBUS_AO_CHANNLE2	16 Bit Signed Integer	analog output3
+10	103	03_06 Read Holding and Write Single	1	MODBUS_AO_CHANNLE3	16 Bit Signed Integer	analog output4
+11	104	03_06 Read Holding and Write Single	1	MODBUS_AO_CHANNLE4	16 Bit Signed Integer	analog output5
+12	105	03_06 Read Holding and Write Single	1	MODBUS_AO_CHANNLE5	16 Bit Signed Integer	analog output6
+13	106	03_06 Read Holding and Write Single	1	MODBUS_AO_CHANNLE6	16 Bit Signed Integer	analog output7
+14	107	03_06 Read Holding and Write Single	1	MODBUS_AO_CHANNLE7	16 Bit Signed Integer	analog output8
+15	108	03_06 Read Holding and Write Single	1	MODBUS_DO_CHANNLE0	16 Bit Unsigned Integer	digit output1
+16	109	03_06 Read Holding and Write Single	1	MODBUS_DO_CHANNLE1	16 Bit Unsigned Integer	digit output2
+17	110	03_06 Read Holding and Write Single	1	MODBUS_DO_CHANNLE2	16 Bit Unsigned Integer	digit output3
+18	111	03_06 Read Holding and Write Single	1	MODBUS_DO_CHANNLE3	16 Bit Unsigned Integer	digit output4
+19	112	03_06 Read Holding and Write Single	1	MODBUS_DO_CHANNLE4	16 Bit Unsigned Integer	digit output5
+20	113	03_06 Read Holding and Write Single	1	MODBUS_DO_CHANNLE5	16 Bit Unsigned Integer	digit output6
+21	116	03_06 Read Holding and Write Single	2	MODBUS_AI_CHANNLE0	Floating HI_LO/1000	
+22	118	03_06 Read Holding and Write Single	2	MODBUS_AI_CHANNLE1	Floating HI_LO/1000	
+23	120	03_06 Read Holding and Write Single	2	MODBUS_AI_CHANNLE2	Floating HI_LO/1000	
+24	122	03_06 Read Holding and Write Single	2	MODBUS_AI_CHANNLE3	Floating HI_LO/1000	
+25	124	03_06 Read Holding and Write Single	2	MODBUS_AI_CHANNLE4	Floating HI_LO/1000	
+26	126	03_06 Read Holding and Write Single	2	MODBUS_AI_CHANNLE5	Floating HI_LO/1000	
+27	128	03_06 Read Holding and Write Single	2	MODBUS_AI_CHANNLE6	Floating HI_LO/1000	
+28	130	03_06 Read Holding and Write Single	2	MODBUS_AI_CHANNLE7	Floating HI_LO/1000	
+29	140	03_06 Read Holding and Write Single	1	MODBUS_AI_CHANNEL_JUMP0	16 Bit Unsigned Integer	jumper setting for input0
+30	141	03_06 Read Holding and Write Single	1	MODBUS_AI_CHANNEL_JUMP1	16 Bit Unsigned Integer	jumper setting for input1
+31	142	03_06 Read Holding and Write Single	1	MODBUS_AI_CHANNEL_JUMP2	16 Bit Unsigned Integer	jumper setting for input2
+32	143	03_06 Read Holding and Write Single	1	MODBUS_AI_CHANNEL_JUMP3	16 Bit Unsigned Integer	jumper setting for input3
+33	144	03_06 Read Holding and Write Single	1	MODBUS_AI_CHANNEL_JUMP4	16 Bit Unsigned Integer	jumper setting for input4
+34	145	03_06 Read Holding and Write Single	1	MODBUS_AI_CHANNEL_JUMP5	16 Bit Unsigned Integer	jumper setting for input5
+35	146	03_06 Read Holding and Write Single	1	MODBUS_AI_CHANNEL_JUMP6	16 Bit Unsigned Integer	jumper setting for input6
+36	147	03_06 Read Holding and Write Single	1	MODBUS_AI_CHANNEL_JUMP7	16 Bit Unsigned Integer	jumper setting for input7
+37	149	03_06 Read Holding and Write Single	1	MODBUS_AUTO_MANUAL0	16 Bit Unsigned Integer	auto manual setting for input0
+38	150	03_06 Read Holding and Write Single	1	MODBUS_AUTO_MANUAL1	16 Bit Unsigned Integer	auto manual setting for input1
+39	151	03_06 Read Holding and Write Single	1	MODBUS_AUTO_MANUAL2	16 Bit Unsigned Integer	auto manual setting for input2
+40	152	03_06 Read Holding and Write Single	1	MODBUS_AUTO_MANUAL3	16 Bit Unsigned Integer	auto manual setting for input3
+41	153	03_06 Read Holding and Write Single	1	MODBUS_AUTO_MANUAL4	16 Bit Unsigned Integer	auto manual setting for input4
+42	154	03_06 Read Holding and Write Single	1	MODBUS_AUTO_MANUAL5	16 Bit Unsigned Integer	auto manual setting for input5
+43	155	03_06 Read Holding and Write Single	1	MODBUS_AUTO_MANUAL6	16 Bit Unsigned Integer	auto manual setting for input6
+44	156	03_06 Read Holding and Write Single	1	MODBUS_AUTO_MANUAL7	16 Bit Unsigned Integer	auto manual setting for input7
+45	157	03_06 Read Holding and Write Single	1	MODBUS_AI_DI_AI0	16 Bit Unsigned Integer	digit and analog setting for input0
+46	158	03_06 Read Holding and Write Single	1	MODBUS_AI_DI_AI1	16 Bit Unsigned Integer	digit and analog setting for input1
+47	159	03_06 Read Holding and Write Single	1	MODBUS_AI_DI_AI2	16 Bit Unsigned Integer	digit and analog setting for input2
+48	160	03_06 Read Holding and Write Single	1	MODBUS_AI_DI_AI3	16 Bit Unsigned Integer	digit and analog setting for input3
+49	161	03_06 Read Holding and Write Single	1	MODBUS_AI_DI_AI4	16 Bit Unsigned Integer	digit and analog setting for input4
+50	162	03_06 Read Holding and Write Single	1	MODBUS_AI_DI_AI5	16 Bit Unsigned Integer	digit and analog setting for input5
+51	163	03_06 Read Holding and Write Single	1	MODBUS_AI_DI_AI6	16 Bit Unsigned Integer	digit and analog setting for input6
+52	164	03_06 Read Holding and Write Single	1	MODBUS_AI_DI_AI7	16 Bit Unsigned Integer	digit and analog setting for input7
+53	165	03_06 Read Holding and Write Single	1	MODBUS_CAL_SIGN0	16 Bit Unsigned Integer	calibrate sign for input0
+54	166	03_06 Read Holding and Write Single	1	MODBUS_CAL_SIGN1	16 Bit Unsigned Integer	calibrate sign for input1
+55	167	03_06 Read Holding and Write Single	1	MODBUS_CAL_SIGN2	16 Bit Unsigned Integer	calibrate sign for input2
+56	168	03_06 Read Holding and Write Single	1	MODBUS_CAL_SIGN3	16 Bit Unsigned Integer	calibrate sign for input3
+57	169	03_06 Read Holding and Write Single	1	MODBUS_CAL_SIGN4	16 Bit Unsigned Integer	calibrate sign for input4
+58	170	03_06 Read Holding and Write Single	1	MODBUS_CAL_SIGN5	16 Bit Unsigned Integer	calibrate sign for input5
+59	171	03_06 Read Holding and Write Single	1	MODBUS_CAL_SIGN6	16 Bit Unsigned Integer	calibrate sign for input6
+60	172	03_06 Read Holding and Write Single	1	MODBUS_CAL_SIGN7	16 Bit Unsigned Integer	calibrate sign for input7
+61	173	03_06 Read Holding and Write Single	2	MODBUS_CAL_VALUE0	32 Bit Unsigned Integer HI_LO	calibrate value  which has high byte and low byte  for input0
+62	175	03_06 Read Holding and Write Single	2	MODBUS_CAL_VALUE1	32 Bit Unsigned Integer HI_LO	calibrate value  which has high byte and low byte  for input1
+63	177	03_06 Read Holding and Write Single	2	MODBUS_CAL_VALUE2	32 Bit Unsigned Integer HI_LO	calibrate value  which has high byte and low byte  for input2
+64	179	03_06 Read Holding and Write Single	2	MODBUS_CAL_VALUE3	32 Bit Unsigned Integer HI_LO	calibrate value  which has high byte and low byte  for input3
+65	181	03_06 Read Holding and Write Single	2	MODBUS_CAL_VALUE4	32 Bit Unsigned Integer HI_LO	calibrate value  which has high byte and low byte  for input4
+66	183	03_06 Read Holding and Write Single	2	MODBUS_CAL_VALUE5	32 Bit Unsigned Integer HI_LO	calibrate value  which has high byte and low byte  for input5
+67	185	03_06 Read Holding and Write Single	2	MODBUS_CAL_VALUE6	32 Bit Unsigned Integer HI_LO	calibrate value  which has high byte and low byte  for input6
+68	187	03_06 Read Holding and Write Single	2	MODBUS_CAL_VALUE7	32 Bit Unsigned Integer HI_LO	calibrate value  which has high byte and low byte  for input7
+69	189	03_06 Read Holding and Write Single	1	MODBUS_AI_STATUS_0	16 Bit Unsigned Integer	status for input0
+70	190	03_06 Read Holding and Write Single	1	MODBUS_AI_STATUS_1	16 Bit Unsigned Integer	status for input1
+71	191	03_06 Read Holding and Write Single	1	MODBUS_AI_STATUS_2	16 Bit Unsigned Integer	status for input2
+72	192	03_06 Read Holding and Write Single	1	MODBUS_AI_STATUS_3	16 Bit Unsigned Integer	status for input3
+73	193	03_06 Read Holding and Write Single	1	MODBUS_AI_STATUS_4	16 Bit Unsigned Integer	status for input4
+74	194	03_06 Read Holding and Write Single	1	MODBUS_AI_STATUS_5	16 Bit Unsigned Integer	status for input5
+75	195	03_06 Read Holding and Write Single	1	MODBUS_AI_STATUS_6	16 Bit Unsigned Integer	status for input6
+76	196	03_06 Read Holding and Write Single	1	MODBUS_AI_STATUS_7	16 Bit Unsigned Integer	status for input7
+77	200	03_06 Read Holding and Write Single	1	MODBUS_AI_FILTER0	16 Bit Unsigned Integer	filter value for input0
+78	201	03_06 Read Holding and Write Single	1	MODBUS_AI_FILTER1	16 Bit Unsigned Integer	filter value for input1
+79	202	03_06 Read Holding and Write Single	1	MODBUS_AI_FILTER2	16 Bit Unsigned Integer	filter value for input2
+80	203	03_06 Read Holding and Write Single	1	MODBUS_AI_FILTER3	16 Bit Unsigned Integer	filter value for input3
+81	204	03_06 Read Holding and Write Single	1	MODBUS_AI_FILTER4	16 Bit Unsigned Integer	filter value for input4
+82	205	03_06 Read Holding and Write Single	1	MODBUS_AI_FILTER5	16 Bit Unsigned Integer	filter value for input5
+83	206	03_06 Read Holding and Write Single	1	MODBUS_AI_FILTER6	16 Bit Unsigned Integer	filter value for input6
+84	207	03_06 Read Holding and Write Single	1	MODBUS_AI_FILTER7	16 Bit Unsigned Integer	filter value for input7
+85	225	03_06 Read Holding and Write Single	1	MODBUS_AI_RANGE0	16 Bit Unsigned Integer	"analog input 0 range. if analog inputs (not_used_input = 0, Y3K_40_150DegC = 1, Y3K_40_300DegF, R10K_40_120DegC,
+ R10K_40_250DegF, R3K_40_150DegC, R3K_40_300DegF, KM10K_40_120DegC,
+ KM10K_40_250DegF, A10K_50_110DegC, A10K_60_200DegF, V0_5, I0_100Amps,
+ I0"
+86	226	03_06 Read Holding and Write Single	1	MODBUS_AI_RANGE1	16 Bit Unsigned Integer	range value for input1
+87	227	03_06 Read Holding and Write Single	1	MODBUS_AI_RANGE2	16 Bit Unsigned Integer	range value for input2
+88	228	03_06 Read Holding and Write Single	1	MODBUS_AI_RANGE3	16 Bit Unsigned Integer	range value for input3
+89	229	03_06 Read Holding and Write Single	1	MODBUS_AI_RANGE4	16 Bit Unsigned Integer	range value for input4
+90	230	03_06 Read Holding and Write Single	1	MODBUS_AI_RANGE5	16 Bit Unsigned Integer	range value for input5
+91	231	03_06 Read Holding and Write Single	1	MODBUS_AI_RANGE6	16 Bit Unsigned Integer	range value for input6
+92	232	03_06 Read Holding and Write Single	1	MODBUS_AI_RANGE7	16 Bit Unsigned Integer	range value for input7
+93	240	03_06 Read Holding and Write Single	1	MODBUS_AUTO_MANUAL_OUT0	16 Bit Unsigned Integer	auto manual setting for output0
+94	241	03_06 Read Holding and Write Single	1	MODBUS_AUTO_MANUAL_OUT1	16 Bit Unsigned Integer	auto manual setting for output1
+95	242	03_06 Read Holding and Write Single	1	MODBUS_AUTO_MANUAL_OUT2	16 Bit Unsigned Integer	auto manual setting for output2
+96	243	03_06 Read Holding and Write Single	1	MODBUS_AUTO_MANUAL_OUT3	16 Bit Unsigned Integer	auto manual setting for output3
+97	244	03_06 Read Holding and Write Single	1	MODBUS_AUTO_MANUAL_OUT4	16 Bit Unsigned Integer	auto manual setting for output4
+98	245	03_06 Read Holding and Write Single	1	MODBUS_AUTO_MANUAL_OUT5	16 Bit Unsigned Integer	auto manual setting for output5
+99	246	03_06 Read Holding and Write Single	1	MODBUS_AUTO_MANUAL_OUT6	16 Bit Unsigned Integer	auto manual setting for output6
+100	247	03_06 Read Holding and Write Single	1	MODBUS_AUTO_MANUAL_OUT7	16 Bit Unsigned Integer	auto manual setting for output7
+101	248	03_06 Read Holding and Write Single	1	MODBUS_AUTO_MANUAL_OUT8	16 Bit Unsigned Integer	auto manual setting for output8
+102	249	03_06 Read Holding and Write Single	1	MODBUS_AUTO_MANUAL_OUT9	16 Bit Unsigned Integer	auto manual setting for output9
+103	250	03_06 Read Holding and Write Single	1	MODBUS_AUTO_MANUAL_OUT10	16 Bit Unsigned Integer	auto manual setting for output10
+104	251	03_06 Read Holding and Write Single	1	MODBUS_AUTO_MANUAL_OUT11	16 Bit Unsigned Integer	auto manual setting for output11
+105	252	03_06 Read Holding and Write Single	1	MODBUS_AUTO_MANUAL_OUT12	16 Bit Unsigned Integer	auto manual setting for output12
+106	253	03_06 Read Holding and Write Single	1	MODBUS_AUTO_MANUAL_OUT13	16 Bit Unsigned Integer	auto manual setting for output13
+107	254	03_06 Read Holding and Write Single	1	MODBUS_OUTPUT_STATUS_0	16 Bit Unsigned Integer	status for outputs0
+108	255	03_06 Read Holding and Write Single	1	MODBUS_OUTPUT_STATUS_1	16 Bit Unsigned Integer	status for outputs1
+109	256	03_06 Read Holding and Write Single	1	MODBUS_OUTPUT_STATUS_2	16 Bit Unsigned Integer	status for outputs2
+110	257	03_06 Read Holding and Write Single	1	MODBUS_OUTPUT_STATUS_3	16 Bit Unsigned Integer	status for outputs3
+111	258	03_06 Read Holding and Write Single	1	MODBUS_OUTPUT_STATUS_4	16 Bit Unsigned Integer	status for outputs4
+112	259	03_06 Read Holding and Write Single	1	MODBUS_OUTPUT_STATUS_5	16 Bit Unsigned Integer	status for outputs5
+113	260	03_06 Read Holding and Write Single	1	MODBUS_OUTPUT_STATUS_6	16 Bit Unsigned Integer	status for outputs6
+114	261	03_06 Read Holding and Write Single	1	MODBUS_OUTPUT_STATUS_7	16 Bit Unsigned Integer	status for outputs7
+115	262	03_06 Read Holding and Write Single	1	MODBUS_OUTPUT_STATUS_8	16 Bit Unsigned Integer	status for outputs8
+116	263	03_06 Read Holding and Write Single	1	MODBUS_OUTPUT_STATUS_9	16 Bit Unsigned Integer	status for outputs9
+117	264	03_06 Read Holding and Write Single	1	MODBUS_OUTPUT_STATUS_10	16 Bit Unsigned Integer	status for outputs10
+118	265	03_06 Read Holding and Write Single	1	MODBUS_OUTPUT_STATUS_11	16 Bit Unsigned Integer	status for outputs11
+119	266	03_06 Read Holding and Write Single	1	MODBUS_OUTPUT_STATUS_12	16 Bit Unsigned Integer	status for outputs12
+120	267	03_06 Read Holding and Write Single	1	MODBUS_OUTPUT_STATUS_13	16 Bit Unsigned Integer	status for outputs13
+121	268	03_06 Read Holding and Write Single	1	MODBUS_OUTPUT_RANGE_0	16 Bit Unsigned Integer	high bye is analog or digital (digital is 0, analog is 1), low byte is range.                                                                                               if analog inputs (not_used_input = 0, Y3K_40_150DegC, Y3K_40_300DegF, R10K_40_120De
+122	269	03_06 Read Holding and Write Single	1	MODBUS_OUTPUT_RANGE_1	16 Bit Unsigned Integer	
+123	270	03_06 Read Holding and Write Single	1	MODBUS_OUTPUT_RANGE_2	16 Bit Unsigned Integer	
+124	271	03_06 Read Holding and Write Single	1	MODBUS_OUTPUT_RANGE_3	16 Bit Unsigned Integer	
+125	272	03_06 Read Holding and Write Single	1	MODBUS_OUTPUT_RANGE_4	16 Bit Unsigned Integer	
+126	273	03_06 Read Holding and Write Single	1	MODBUS_OUTPUT_RANGE_5	16 Bit Unsigned Integer	
+127	274	03_06 Read Holding and Write Single	1	MODBUS_OUTPUT_RANGE_6	16 Bit Unsigned Integer	
+128	275	03_06 Read Holding and Write Single	1	MODBUS_OUTPUT_RANGE_7	16 Bit Unsigned Integer	
+129	276	03_06 Read Holding and Write Single	1	MODBUS_OUTPUT_RANGE_8	16 Bit Unsigned Integer	
+130	277	03_06 Read Holding and Write Single	1	MODBUS_OUTPUT_RANGE_9	16 Bit Unsigned Integer	
+131	278	03_06 Read Holding and Write Single	1	MODBUS_OUTPUT_RANGE_10	16 Bit Unsigned Integer	
+132	279	03_06 Read Holding and Write Single	1	MODBUS_OUTPUT_RANGE_11	16 Bit Unsigned Integer	
+133	280	03_06 Read Holding and Write Single	1	MODBUS_OUTPUT_RANGE_12	16 Bit Unsigned Integer	
+134	281	03_06 Read Holding and Write Single	1	MODBUS_OUTPUT_RANGE_13	16 Bit Unsigned Integer	
+135	282	03 Read Holding Registers (4x)	1	MODBUS_OUTPUT_SWITCH1	16 Bit Unsigned Integer	0 - OFF, 1 - HAND, 2 - AUTO
+136	283	03 Read Holding Registers (4x)	1	MODBUS_OUTPUT_SWITCH2	16 Bit Unsigned Integer	
+137	284	03 Read Holding Registers (4x)	1	MODBUS_OUTPUT_SWITCH3	16 Bit Unsigned Integer	
+138	285	03 Read Holding Registers (4x)	1	MODBUS_OUTPUT_SWITCH4	16 Bit Unsigned Integer	
+139	286	03 Read Holding Registers (4x)	1	MODBUS_OUTPUT_SWITCH5	16 Bit Unsigned Integer	
+140	287	03 Read Holding Registers (4x)	1	MODBUS_OUTPUT_SWITCH6	16 Bit Unsigned Integer	
+141	288	03 Read Holding Registers (4x)	1	MODBUS_OUTPUT_SWITCH7	16 Bit Unsigned Integer	
+142	289	03 Read Holding Registers (4x)	1	MODBUS_OUTPUT_SWITCH8	16 Bit Unsigned Integer	
+143	290	03 Read Holding Registers (4x)	1	MODBUS_OUTPUT_SWITCH9	16 Bit Unsigned Integer	
+144	291	03 Read Holding Registers (4x)	1	MODBUS_OUTPUT_SWITCH10	16 Bit Unsigned Integer	
+145	292	03 Read Holding Registers (4x)	1	MODBUS_OUTPUT_SWITCH11	16 Bit Unsigned Integer	
+146	293	03 Read Holding Registers (4x)	1	MODBUS_OUTPUT_SWITCH12	16 Bit Unsigned Integer	
+147	294	03 Read Holding Registers (4x)	1	MODBUS_OUTPUT_SWITCH13	16 Bit Unsigned Integer	
+148	295	03 Read Holding Registers (4x)	1	MODBUS_OUTPUT_SWITCH14	16 Bit Unsigned Integer	
+149	342	03_06 Read Holding and Write Single	1	MODBUS_OUTPUT_AD0	16 Bit Unsigned Integer	analog or digital  (0 is digtal output, 1 is analog output) for output 0 
+150	343	03_06 Read Holding and Write Single	1	MODBUS_OUTPUT_AD1	16 Bit Unsigned Integer	analog or digital  (0 is digtal output, 1 is analog output) for output 1
+151	344	03_06 Read Holding and Write Single	1	MODBUS_OUTPUT_AD2	16 Bit Unsigned Integer	analog or digital  (0 is digtal output, 1 is analog output) for output 2
+152	345	03_06 Read Holding and Write Single	1	MODBUS_OUTPUT_AD3	16 Bit Unsigned Integer	analog or digital  (0 is digtal output, 1 is analog output) for output 3
+153	346	03_06 Read Holding and Write Single	1	MODBUS_OUTPUT_AD4	16 Bit Unsigned Integer	analog or digital  (0 is digtal output, 1 is analog output) for output 4
+154	347	03_06 Read Holding and Write Single	1	MODBUS_OUTPUT_AD5	16 Bit Unsigned Integer	analog or digital  (0 is digtal output, 1 is analog output) for output 5
+155	348	03_06 Read Holding and Write Single	1	MODBUS_OUTPUT_AD6	16 Bit Unsigned Integer	analog or digital  (0 is digtal output, 1 is analog output) for output 6
+156	349	03_06 Read Holding and Write Single	1	MODBUS_OUTPUT_AD7	16 Bit Unsigned Integer	analog or digital  (0 is digtal output, 1 is analog output) for output 7
+157	350	03_06 Read Holding and Write Single	1	MODBUS_OUTPUT_AD8	16 Bit Unsigned Integer	analog or digital  (0 is digtal output, 1 is analog output) for output 8
+158	351	03_06 Read Holding and Write Single	1	MODBUS_OUTPUT_AD9	16 Bit Unsigned Integer	analog or digital  (0 is digtal output, 1 is analog output) for output 9
+159	352	03_06 Read Holding and Write Single	1	MODBUS_OUTPUT_AD10	16 Bit Unsigned Integer	analog or digital  (0 is digtal output, 1 is analog output) for output 10
+160	353	03_06 Read Holding and Write Single	1	MODBUS_OUTPUT_AD11	16 Bit Unsigned Integer	analog or digital  (0 is digtal output, 1 is analog output) for output 11
+161	354	03_06 Read Holding and Write Single	1	MODBUS_OUTPUT_AD12	16 Bit Unsigned Integer	analog or digital  (0 is digtal output, 1 is analog output) for output 12
+162	355	03_06 Read Holding and Write Single	1	MODBUS_OUTPUT_AD13	16 Bit Unsigned Integer	analog or digital  (0 is digtal output, 1 is analog output) for output 13
+163	800	03_06 Read Holding and Write Single	1	MODBUS_RESET	16 Bit Unsigned Integer	1-> reset to factory, other -> reset
+164	9400	03_06 Read Holding and Write Single	1	MODBUS_OUTPUT_RELINQUISH_HI_1	Floating HI_LO/1000	high word of output1 relinquish
+165	9401	03_06 Read Holding and Write Single	1	MODBUS_OUTPUT_RELINQUISH_LO_1	Floating HI_LO/1000	low word of output1 relinquish
+166	9402	03_06 Read Holding and Write Single	1	MODBUS_OUTPUT_RELINQUISH_HI_2	Floating HI_LO/1000	high word of output2 relinquish
+167	9403	03_06 Read Holding and Write Single	1	MODBUS_OUTPUT_RELINQUISH_LO_2	Floating HI_LO/1000	low word of output2 relinquish
+168	9404	03_06 Read Holding and Write Single	1	MODBUS_OUTPUT_RELINQUISH_HI_3	Floating HI_LO/1000	high word of output3 relinquish
+169	9405	03_06 Read Holding and Write Single	1	MODBUS_OUTPUT_RELINQUISH_LO_3	Floating HI_LO/1000	low word of output3 relinquish
+170	9406	03_06 Read Holding and Write Single	1	MODBUS_OUTPUT_RELINQUISH_HI_4	Floating HI_LO/1000	high word of output4 relinquish
+171	9407	03_06 Read Holding and Write Single	1	MODBUS_OUTPUT_RELINQUISH_LO_4	Floating HI_LO/1000	low word of output4 relinquish
+172	9408	03_06 Read Holding and Write Single	1	MODBUS_OUTPUT_RELINQUISH_HI_5	Floating HI_LO/1000	high word of output5 relinquish
+173	9409	03_06 Read Holding and Write Single	1	MODBUS_OUTPUT_RELINQUISH_LO_5	Floating HI_LO/1000	low word of output5 relinquish
+174	9410	03_06 Read Holding and Write Single	1	MODBUS_OUTPUT_RELINQUISH_HI_6	Floating HI_LO/1000	high word of output6 relinquish
+175	9411	03_06 Read Holding and Write Single	1	MODBUS_OUTPUT_RELINQUISH_LO_6	Floating HI_LO/1000	low word of output6 relinquish
+176	9412	03_06 Read Holding and Write Single	1	MODBUS_OUTPUT_RELINQUISH_HI_7	Floating HI_LO/1000	high word of output7 relinquish
+177	9413	03_06 Read Holding and Write Single	1	MODBUS_OUTPUT_RELINQUISH_LO_7	Floating HI_LO/1000	low word of output7 relinquish
+178	9414	03_06 Read Holding and Write Single	1	MODBUS_OUTPUT_RELINQUISH_HI_8	Floating HI_LO/1000	high word of output8 relinquish
+179	9415	03_06 Read Holding and Write Single	1	MODBUS_OUTPUT_RELINQUISH_LO_8	Floating HI_LO/1000	low word of output8 relinquish
+180	9416	03_06 Read Holding and Write Single	1	MODBUS_OUTPUT_RELINQUISH_HI_9	Floating HI_LO/1000	high word of output9 relinquish
+181	9417	03_06 Read Holding and Write Single	1	MODBUS_OUTPUT_RELINQUISH_LO_9	Floating HI_LO/1000	low word of output9 relinquish
+182	9418	03_06 Read Holding and Write Single	1	MODBUS_OUTPUT_RELINQUISH_HI_10	Floating HI_LO/1000	high word of output10 relinquish
+183	9419	03_06 Read Holding and Write Single	1	MODBUS_OUTPUT_RELINQUISH_LO_10	Floating HI_LO/1000	low word of output10 relinquish
+184	9420	03_06 Read Holding and Write Single	1	MODBUS_OUTPUT_RELINQUISH_HI_11	Floating HI_LO/1000	high word of output11 relinquish
+185	9421	03_06 Read Holding and Write Single	1	MODBUS_OUTPUT_RELINQUISH_LO_11	Floating HI_LO/1000	low word of output11 relinquish
+186	9422	03_06 Read Holding and Write Single	1	MODBUS_OUTPUT_RELINQUISH_HI_12	Floating HI_LO/1000	high word of output12 relinquish
+187	9423	03_06 Read Holding and Write Single	1	MODBUS_OUTPUT_RELINQUISH_LO_12	Floating HI_LO/1000	low word of output12 relinquish
+188	9424	03_06 Read Holding and Write Single	1	MODBUS_OUTPUT_RELINQUISH_HI_13	Floating HI_LO/1000	high word of output13 relinquish
+189	9425	03_06 Read Holding and Write Single	1	MODBUS_OUTPUT_RELINQUISH_LO_13	Floating HI_LO/1000	low word of output13 relinquish
+190	9426	03_06 Read Holding and Write Single	1	MODBUS_OUTPUT_RELINQUISH_HI_14	Floating HI_LO/1000	high word of output14 relinquish
+191	9427	03_06 Read Holding and Write Single	1	MODBUS_OUTPUT_RELINQUISH_LO_14	Floating HI_LO/1000	low word of output14 relinquish

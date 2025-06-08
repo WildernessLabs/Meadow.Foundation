@@ -39,7 +39,7 @@ public abstract class MicroLayout : ThemedControl, IControlContainer
     {
         lock (Controls.SyncRoot)
         {
-            foreach (IThemedControl control in Controls)
+            foreach (var control in Controls.OfType<IThemedControl>())
             {
                 control.ApplyTheme(theme);
             }

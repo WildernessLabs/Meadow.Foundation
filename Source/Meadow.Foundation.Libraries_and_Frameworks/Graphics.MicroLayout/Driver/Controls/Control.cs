@@ -45,10 +45,10 @@ public abstract class Control : IControl
     /// <param name="height">The height of the control.</param>
     public Control(int left, int top, int width, int height)
     {
-        Left = left;
-        Top = top;
-        Width = width;
-        Height = height;
+        _left = left;
+        _top = top;
+        _width = width;
+        _height = height;
 
         IsInvalid = true;
     }
@@ -145,8 +145,8 @@ public abstract class Control : IControl
             if (IsVisible)
             {
                 OnDraw(graphics);
+                IsInvalid = false;
             }
-            IsInvalid = false;
         }
     }
 

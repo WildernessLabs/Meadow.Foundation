@@ -47,7 +47,6 @@ public override Task Initialize()
 
 public override Task Run()
 {
-    // start raising updates
     anemometer.StartUpdating();
     Resolver.Log.Info("Hardware initialized.");
 

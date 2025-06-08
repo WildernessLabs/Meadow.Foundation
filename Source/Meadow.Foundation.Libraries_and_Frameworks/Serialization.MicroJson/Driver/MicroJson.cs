@@ -68,13 +68,26 @@ public static partial class MicroJson
     /// <param name="o">The value to convert.</param>
     /// <param name="dateTimeFormat">The format to use for DateTime values. Defaults to ISO 8601 format.</param>
     /// <param name="convertNamesToCamelCase">True to convert all properties to camel case during serialization</param>
+    /// <param name="unitJsonConverter">An optional serialization converter used for Meadow.Units</param>
     /// <returns>The JSON object as a string or null when the value type is not supported.</returns>
     /// <remarks>For objects, only public properties with getters are converted.</remarks>
-    public static string? Serialize(object o, DateTimeFormat dateTimeFormat = DateTimeFormat.ISO8601, bool convertNamesToCamelCase = true)
+    public static string? Serialize(object o,
+        DateTimeFormat dateTimeFormat = DateTimeFormat.ISO8601,
+        bool convertNamesToCamelCase = true,
+        IUnitJsonConverter? unitJsonConverter = null)
     {
         if (o == null)
         {
             return "null";
+        }
+
+        if (unitJsonConverter != null)
+        {
+            var result = unitJsonConverter.Serialize(o, convertNamesToCamelCase);
+            if (result != null)
+            {
+                return result; ;
+            }
         }
 
         Type type = o.GetType();

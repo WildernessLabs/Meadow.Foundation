@@ -15,6 +15,51 @@ To view all Wilderness Labs open-source projects, including samples, visit [gith
 You can install the library from within Visual studio using the the NuGet Package Manager or from the command line using the .NET CLI:
 
 `dotnet add package Meadow.Foundation.ICs.ADC.Ads1x15`
+## Usage
+
+```csharp
+private Ads1015 adc;
+
+public override async Task Initialize()
+{
+    Resolver.Log.Info("Initialize...");
+
+    adc = new Ads1015(
+        Device.CreateI2cBus(Meadow.Hardware.I2cBusSpeed.FastPlus),
+        Ads1x15Base.Addresses.Default,
+        Ads1x15Base.MeasureMode.Continuous,
+        Ads1x15Base.ChannelSetting.A0SingleEnded,
+        Ads1015.SampleRateSetting.Sps3300);
+
+    adc.Gain = Ads1x15Base.FsrGain.TwoThirds;
+
+    var observer = Ads1015.CreateObserver(
+        handler: result =>
+        {
+            Resolver.Log.Info($"Observer: Voltage changed by threshold; new temp: {result.New.Volts:N2}C, old: {result.Old?.Volts:N2}C");
+        },
+        filter: result =>
+        {
+            if (result.Old is { } old)
+            {
+                // TODO: you can check to see if the voltage change is > your desired threshold.
+                // here we look to see if it's > 0.5V
+                return Math.Abs(result.New.Volts - old.Volts) > 0.5d;
+            }
+            return false;
+        }
+        );
+    adc.Subscribe(observer);
+
+    adc.Updated += (sender, result) =>
+    {
+        Resolver.Log.Info($"  Voltage: {result.New.Volts:N2}V");
+    };
+
+    await adc.Read();
+}
+
+```
 ## How to Contribute
 
 - **Found a bug?** [Report an issue](https://github.com/WildernessLabs/Meadow_Issues/issues)

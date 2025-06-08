@@ -23,7 +23,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                             RelativeHumidity? Humidity,
                             Pressure? Pressure,
                             Resistance? GasResistance)>,
-        ITemperatureSensor, IHumiditySensor, IBarometricPressureSensor, IGasResistanceSensor, ISpiPeripheral, II2cPeripheral, ISleepAwarePeripheral, IDisposable
+        ISamplingTemperatureSensor, IHumiditySensor, IBarometricPressureSensor, IGasResistanceSensor, ISpiPeripheral, II2cPeripheral, ISleepAwarePeripheral, IDisposable
     {
         private event EventHandler<IChangeResult<Units.Temperature>> _temperatureHandlers = default!;
         private event EventHandler<IChangeResult<RelativeHumidity>> _humidityHandlers = default!;

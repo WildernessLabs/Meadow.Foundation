@@ -27,7 +27,7 @@ namespace Meadow.Foundation.Sensors.Motion
         MagneticField3D? MagneticField3D, Quaternion? QuaternionOrientation,
         Acceleration3D? LinearAcceleration, Acceleration3D? GravityVector,
         EulerAngles? EulerOrientation, Units.Temperature? Temperature)>,
-        IAccelerometer, IGyroscope, ITemperatureSensor, II2cPeripheral
+        IAccelerometer, IGyroscope, ISamplingTemperatureSensor, II2cPeripheral
     {
         /// <summary>
         /// The default I2C address for the peripheral

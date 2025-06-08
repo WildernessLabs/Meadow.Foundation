@@ -23,7 +23,7 @@ public class MeadowApp : App<Desktop>
         var wlLabel = new Label(0, 10, screen.Width, 32)
         {
             TextColor = Color.White,
-            BackColor = Color.DarkRed,
+            BackgroundColor = Color.DarkRed,
             Text = "Hello Meadow"
         };
         var logoImg = new Picture(
@@ -40,7 +40,7 @@ public class MeadowApp : App<Desktop>
         {
             Text = "Values for process A",
             TextColor = Color.Aquamarine,
-            BackColor = Color.Black,
+            BackgroundColor = Color.Black,
             Font = labelFont,
         };
 
@@ -58,7 +58,7 @@ public class MeadowApp : App<Desktop>
         {
             Text = "Values for process B",
             TextColor = Color.BlueViolet,
-            BackColor = Color.Black,
+            BackgroundColor = Color.Black,
             Font = labelFont,
         };
 

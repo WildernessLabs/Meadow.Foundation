@@ -1,9 +1,9 @@
-using System;
 using Meadow.Hardware;
+using Meadow.Units;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Meadow.Units;
 
 namespace Meadow.Foundation.ICs.DAC;
 

@@ -27,7 +27,7 @@ namespace Meadow.Foundation.Displays
         /// <summary>
         /// The default SPI bus speed for the device
         /// </summary>
-        public Frequency DefaultSpiBusSpeed => new (4, Frequency.UnitType.Megahertz);
+        public Frequency DefaultSpiBusSpeed => new(4, Frequency.UnitType.Megahertz);
 
         /// <summary>
         /// The SPI bus speed for the device

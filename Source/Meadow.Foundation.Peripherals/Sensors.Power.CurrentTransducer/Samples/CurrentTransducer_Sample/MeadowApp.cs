@@ -1,7 +1,6 @@
 ﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.Sensors.Power;
-using Meadow.Hardware;
 using Meadow.Units;
 using System;
 using System.Threading.Tasks;

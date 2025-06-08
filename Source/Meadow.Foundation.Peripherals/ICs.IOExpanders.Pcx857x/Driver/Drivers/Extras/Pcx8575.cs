@@ -53,6 +53,10 @@ namespace Meadow.Foundation.ICs.IOExpanders
         protected Pcx8575(II2cBus i2cBus, byte address, IDigitalInterruptPort? interruptPort = null)
             : base(i2cBus, address, interruptPort)
         {
+            Pins = new PinDefinitions(this)
+            {
+                Controller = this
+            };
         }
 
         /// <summary>

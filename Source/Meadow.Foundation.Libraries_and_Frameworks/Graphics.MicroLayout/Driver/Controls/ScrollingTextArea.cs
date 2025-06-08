@@ -53,7 +53,7 @@ public class ScrollingTextArea : MicroLayout
                 {
                     Font = _font,
                     TextColor = DefaultRowColor,
-                    BackColor = this.BackgroundColor ?? Color.Transparent,
+                    BackgroundColor = this.BackgroundColor ?? Color.Transparent,
                     VerticalAlignment = VerticalAlignment.Center,
                 };
 

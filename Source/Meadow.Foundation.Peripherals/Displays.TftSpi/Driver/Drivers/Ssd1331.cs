@@ -8,12 +8,6 @@ namespace Meadow.Foundation.Displays
     /// </summary>
     public class Ssd1331 : TftSpiBase
     {
-        //the SSD1331 also supports 8 bit RGB332 color but this isn't currently supported (but should be quick to add if anyone wants it
-        /// <summary>
-        /// The default display color mode
-        /// </summary>
-        public override ColorMode DefaultColorMode => ColorMode.Format16bppRgb565;
-
         /// <summary>
         /// The color modes supported by the display
         /// </summary>

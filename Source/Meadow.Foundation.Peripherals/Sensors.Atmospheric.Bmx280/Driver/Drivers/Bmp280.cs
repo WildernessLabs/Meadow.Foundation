@@ -17,7 +17,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric;
 /// </remarks>
 public partial class Bmp280 :
     PollingSensorBase<(Units.Temperature? Temperature, Pressure? Pressure)>,
-    ITemperatureSensor, IBarometricPressureSensor, ISpiPeripheral, II2cPeripheral, IDisposable
+    ISamplingTemperatureSensor, IBarometricPressureSensor, ISpiPeripheral, II2cPeripheral, IDisposable
 {
     private event EventHandler<IChangeResult<Units.Temperature>> _temperatureHandlers = default!;
     private event EventHandler<IChangeResult<Pressure>> _pressureHandlers = default!;

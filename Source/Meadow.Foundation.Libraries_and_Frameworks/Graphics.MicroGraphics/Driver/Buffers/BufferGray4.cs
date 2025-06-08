@@ -53,7 +53,7 @@ namespace Meadow.Foundation.Graphics.Buffers
         }
 
         /// <summary>
-        /// Fill with a color
+        /// Fill a region with a color
         /// </summary>
         /// <param name="x">X start position in pixels</param>
         /// <param name="y">Y start position in pixels</param>
@@ -68,7 +68,6 @@ namespace Meadow.Foundation.Graphics.Buffers
                 throw new ArgumentOutOfRangeException();
             }
 
-            //TODO optimize
             var bColor = color.Color4bppGray;
 
             for (int i = 0; i < width; i++)
@@ -114,14 +113,9 @@ namespace Meadow.Foundation.Graphics.Buffers
         {
             int index = y * Width / 2 + x / 2;
 
-            if ((x % 2) == 0)
-            {   //even pixel - shift to the significant nibble
-                Buffer[index] = (byte)((Buffer[index] & 0x0f) | (gray << 4));
-            }
-            else
-            {   //odd pixel
-                Buffer[index] = (byte)((Buffer[index] & 0xf0) | (gray));
-            }
+            Buffer[index] = (x % 2 == 0)
+                ? (byte)((Buffer[index] & 0x0F) | (gray << 4))
+                : (byte)((Buffer[index] & 0xF0) | gray);
         }
 
         /// <summary>
@@ -139,7 +133,7 @@ namespace Meadow.Foundation.Graphics.Buffers
         }
 
         /// <summary>
-        /// Write a buffer to specific location to the current buffer
+        /// Write a buffer to a specific location in the current buffer
         /// </summary>
         /// <param name="x">x origin</param>
         /// <param name="y">y origin</param>
@@ -150,26 +144,26 @@ namespace Meadow.Foundation.Graphics.Buffers
                 x % 2 == 0 &&
                 buffer.Width % 2 == 0)
             {
-                //we have a happy path
+                // Optimized fast path
                 int sourceIndex, destinationIndex;
                 int length = buffer.Width / 2;
 
                 for (int i = 0; i < buffer.Height; i++)
                 {
                     sourceIndex = length * i;
-                    destinationIndex = (Width * (y + i) + x) >> 2; //divide by 2
+                    destinationIndex = (Width * (y + i) + x) >> 2;
 
                     Array.Copy(buffer.Buffer, sourceIndex, Buffer, destinationIndex, length);
                 }
             }
             else
-            {   // fall back to a slow write
+            {   // Fall back to slow write
                 base.WriteBuffer(x, y, buffer);
             }
         }
 
         /// <summary>
-        /// Get the pixel color
+        /// Get a pixel's 4bpp grayscale value
         /// </summary>
         /// <param name="x">The X pixel position</param>
         /// <param name="y">The Y pixel position</param>
@@ -181,11 +175,11 @@ namespace Meadow.Foundation.Graphics.Buffers
 
             if ((x % 2) == 0)
             {   //even pixel - shift to the significant nibble
-                color = (byte)((Buffer[index] & 0x0f) >> 4);
+                color = (byte)((Buffer[index] & 0xF0) >> 4);
             }
             else
             {   //odd pixel
-                color = (byte)((Buffer[index] & 0xf0));
+                color = (byte)(Buffer[index] & 0x0F);
             }
             return color;
         }
