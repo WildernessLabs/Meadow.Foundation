@@ -12,9 +12,6 @@ namespace Meadow.Foundation.Graphics
         /// <param name="x1">The x-coordinate of the ending point of the line</param>
         /// <param name="y1">The y-coordinate of the ending point of the line</param>
         /// <param name="color">The color of the line</param>
-        /// <remarks>
-        /// This method uses the Xiaolin Wu line algorithm to draw an anti-aliased line between two points.
-        /// </remarks>
         public void DrawLineAntialiased(float x0, float y0, float x1, float y1, Color color)
         {
             bool steep = MathF.Abs(y1 - y0) > MathF.Abs(x1 - x0);

@@ -1,5 +1,6 @@
 ﻿using Meadow.Peripherals.Displays;
 using System;
+using System.Runtime.CompilerServices;
 
 namespace Meadow.Foundation.Graphics.Buffers
 {
@@ -112,6 +113,7 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// <param name="x">X pixel position</param>
         /// <param name="y">Y pixel position</param>
         /// <param name="color">The pixel color packed as a 12 bpp ushort</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SetPixel(int x, int y, ushort color)
         {
             int index;
@@ -141,10 +143,10 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// <param name="color">The fill color</param>
         public override void Fill(Color color)
         {
-            // could do a minor optimization by caching the ushort 444 value 
-            Buffer[0] = (byte)(color.Color12bppRgb444 >> 4);
-            Buffer[1] = (byte)((color.Color12bppRgb444 << 4) | (color.Color12bppRgb444 >> 8));
-            Buffer[2] = (byte)color.Color12bppRgb444;
+            var color12bpp = color.Color12bppRgb444;
+            Buffer[0] = (byte)(color12bpp >> 4);
+            Buffer[1] = (byte)((color12bpp << 4) | (color12bpp >> 8));
+            Buffer[2] = (byte)color12bpp;
 
             int arrayMidPoint = Buffer.Length / 2;
             int copyLength;

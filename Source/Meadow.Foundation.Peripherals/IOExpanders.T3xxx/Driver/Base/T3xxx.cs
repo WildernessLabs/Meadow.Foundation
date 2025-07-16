@@ -27,7 +27,7 @@ public abstract partial class T3xxx
     /// Gets the Modbus address of this T3 module on the bus.
     /// </summary>
     /// <value>The byte address used to identify this module in Modbus communications.</value>
-    public byte ModbusAddress { get; private set; }
+    public byte ModbusAddress { get; protected set; }
 
     /// <summary>
     /// Initializes a new instance of the T3xxx class using Modbus RTU communication.
@@ -139,4 +139,13 @@ public abstract partial class T3xxx
         await ReadAndParseHeaderRegisters();
         return _hardwareRevision!.Value;
     }
+
+    /// <inheritdoc/>
+    public abstract Task<int> ReadBaudRate();
+
+    /// <inheritdoc/>
+    public abstract Task WriteBaudRate(int bitrate);
+
+    /// <inheritdoc/>
+    public abstract Task WriteModbusAddress(byte newAddress);
 }

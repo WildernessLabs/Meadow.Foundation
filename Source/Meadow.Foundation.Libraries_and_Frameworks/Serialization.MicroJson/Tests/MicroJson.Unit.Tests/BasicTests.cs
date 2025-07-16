@@ -149,7 +149,8 @@ public class BasicTests
     public void SerializeToNonCamelCaseTest()
     {
         var item = new IntegerClass { Value = 23 };
-        var json = MicroJson.Serialize(item, convertNamesToCamelCase: false);
+        var json = MicroJson.Serialize(item,
+            new SerializerOptions { ConvertNamesToCamelCase = false });
 
         Assert.Contains("Value", json);
         Assert.DoesNotContain("value", json);

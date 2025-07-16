@@ -7,7 +7,7 @@ namespace Meadow.Foundation.Graphics.MicroLayout;
 /// <summary>
 /// Represents a list box control in the user interface.
 /// </summary>
-public class ListBox : MicroLayout
+public class ListBox : LayoutBase
 {
     private int _selectedIndex = -1;
     private int _topIndex = 0;
@@ -246,5 +246,11 @@ public class ListBox : MicroLayout
     /// <inheritdoc/>
     protected override void OnDraw(MicroGraphics graphics)
     {
+    }
+
+    /// <inheritdoc/>
+    internal override void PerformLayout()
+    {
+        // No layout needed for ListBox, items are managed by the Items collection
     }
 }

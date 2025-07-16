@@ -33,6 +33,11 @@ public partial class T322ai
         HardwareRev = 8,
 
         /// <summary>
+        /// Modbus comms baud rate
+        /// </summary>
+        BaudRate = 15,
+
+        /// <summary>
         /// MODBUS_AI_CHANNLE0_HI
         /// </summary>
         AiChannel0Hi = 100,

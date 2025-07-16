@@ -3,7 +3,7 @@
 /// <summary>
 /// A layout requiring absolute positioning of all child controls
 /// </summary>
-public class AbsoluteLayout : MicroLayout
+public class AbsoluteLayout : LayoutBase
 {
     /// <summary>
     /// Creates a full-screen DisplayAbsoluteLayout
@@ -33,6 +33,12 @@ public class AbsoluteLayout : MicroLayout
         : base(left, top, width, height)
     { }
 
+    /// <inheritdoc/>
+    internal override void PerformLayout()
+    {
+        //nop
+    }
+
     /// <summary>
     /// Adds a control to the absolute layout
     /// </summary>
@@ -40,20 +46,5 @@ public class AbsoluteLayout : MicroLayout
     public void Add(params IControl[] controls)
     {
         Controls.Add(controls);
-    }
-
-    /// <inheritdoc/>
-    protected override void OnDraw(MicroGraphics graphics)
-    {
-        if (!IsVisible || BackgroundColor == null)
-            return;
-
-        graphics.DrawRectangle(
-            Left + (Parent?.Left ?? 0),
-            Top + (Parent?.Top ?? 0),
-            Width,
-            Height,
-            BackgroundColor.Value,
-            true);
     }
 }

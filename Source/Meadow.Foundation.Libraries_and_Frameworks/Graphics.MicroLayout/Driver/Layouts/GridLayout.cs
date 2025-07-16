@@ -6,7 +6,7 @@ namespace Meadow.Foundation.Graphics.MicroLayout;
 /// <summary>
 /// A layout that arranges child controls in a grid with alignment and spanning options.
 /// </summary>
-public class GridLayout : MicroLayout
+public class GridLayout : LayoutBase
 {
     /// <summary>
     /// Defines the alignment options for controls within grid cells.
@@ -14,27 +14,27 @@ public class GridLayout : MicroLayout
     public enum Alignment
     {
         /// <summary>
-        /// Align left
+        /// Aligns the control to the left edge of its allocated grid cell space, maintaining its height and centering it vertically.
         /// </summary>
         Left,
         /// <summary>
-        /// Align to top
+        /// Aligns the control to the top edge of its allocated grid cell space, maintaining its width and centering it horizontally.
         /// </summary>
         Top,
         /// <summary>
-        /// align right
+        /// Aligns the control to the right edge of its allocated grid cell space, maintaining its height and centering it vertically.
         /// </summary>
         Right,
         /// <summary>
-        /// Align bottom
+        /// Aligns the control to the bottom edge of its allocated grid cell space, maintaining its width and centering it horizontally.
         /// </summary>
         Bottom,
         /// <summary>
-        /// Center
+        /// Centers the control within its allocated grid cell space horizontally and vertically, maintaining its original size.
         /// </summary>
         Center,
         /// <summary>
-        /// Stretch to fill
+        /// Stretches the control to fill its entire allocated grid cell space, overriding its original size.
         /// </summary>
         Stretch
     }
@@ -51,6 +51,7 @@ public class GridLayout : MicroLayout
         get => _padding;
         set
         {
+            if (_padding == value) { return; }
             _padding = value;
             LayoutControls();
             Invalidate();
@@ -66,6 +67,7 @@ public class GridLayout : MicroLayout
         get => _rowSpacing;
         set
         {
+            if (_rowSpacing == value) { return; }
             _rowSpacing = value;
             LayoutControls();
             Invalidate();
@@ -81,6 +83,7 @@ public class GridLayout : MicroLayout
         get => _colSpacing;
         set
         {
+            if (_colSpacing == value) { return; }
             _colSpacing = value;
             LayoutControls();
             Invalidate();
@@ -125,6 +128,11 @@ public class GridLayout : MicroLayout
             throw new ArgumentOutOfRangeException("Row, column, rowspan, or colspan is out of range.");
         }
 
+        if (control == null)
+        {
+            throw new ArgumentNullException(nameof(control), "Control cannot be null.");
+        }
+
         Controls.Add(control);
         _controlPositions[control] = (row, col, rowspan, colspan, alignment);
         SetControlPosition(control, row, col, rowspan, colspan, alignment);
@@ -136,6 +144,11 @@ public class GridLayout : MicroLayout
     /// <param name="control">The control to remove.</param>
     public void Remove(IControl control)
     {
+        if (control == null)
+        {
+            return;
+        }
+
         if (_controlPositions.ContainsKey(control))
         {
             _controlPositions.Remove(control);
@@ -154,6 +167,9 @@ public class GridLayout : MicroLayout
         int totalHeight = cellHeight * rowspan + RowSpacing * (rowspan - 1);
         int cellLeft = Left + Padding + col * (cellWidth + ColumnSpacing);
         int cellTop = Top + Padding + row * (cellHeight + RowSpacing);
+
+        control.Width = totalWidth;
+        control.Height = totalHeight;
 
         switch (alignment)
         {
@@ -199,14 +215,9 @@ public class GridLayout : MicroLayout
         }
     }
 
-    /// <summary>
-    /// Draws the grid layout.
-    /// </summary>
-    protected override void OnDraw(MicroGraphics graphics)
+    /// <inheritdoc/>
+    internal override void PerformLayout()
     {
-        if (IsVisible && BackgroundColor != null)
-        {
-            graphics.DrawRectangle(Left, Top, Width, Height, BackgroundColor.Value, true);
-        }
+        LayoutControls();
     }
 }

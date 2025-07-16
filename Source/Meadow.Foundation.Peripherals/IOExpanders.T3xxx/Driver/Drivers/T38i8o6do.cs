@@ -1,6 +1,7 @@
 ﻿using Meadow.Hardware;
 using Meadow.Modbus;
 using Meadow.Units;
+using System.Threading.Tasks;
 
 namespace Meadow.Foundation.IOExpanders;
 
@@ -70,15 +71,15 @@ public partial class T38i8o6do
     /// </summary>
     /// <param name="pin">The pin to configure as a current input port.</param>
     /// <returns>A new ICurrentInputPort instance configured for current measurement.</returns>
-    public ICurrentInputPort CreateCurrentInputPort(IPin pin)
+    public async Task<ICurrentInputPort> CreateCurrentInputPort(IPin pin)
     {
         var offset = (int)pin.Key;
 
         // 13 == 4-20 input
-        WriteHoldingRegister((ushort)T38i806doRegisters.AiRange0, (ushort)AnalogInputRange.Current_4_20).Wait();
+        await WriteHoldingRegister((ushort)T38i806doRegisters.AiRange0, (ushort)AnalogInputRange.Current_4_20);
 
         // mode must be set to 1 (manual)
-        WriteHoldingRegister((ushort)(T38i806doRegisters.AiDiAi0 + offset), 1).Wait();
+        await WriteHoldingRegister((ushort)(T38i806doRegisters.AiDiAi0 + offset), 1);
 
         return new T3xxx.CurrentInputPort(this, pin,
             // each input is 2 registers, the data for current is in the low
@@ -92,15 +93,15 @@ public partial class T38i8o6do
     /// </summary>
     /// <param name="pin">The pin to configure as a voltage input port.</param>
     /// <returns>A new IVoltageInputPort instance configured for voltage measurement.</returns>
-    public IVoltageInputPort CreateVoltageInputPort(IPin pin)
+    public async Task<IVoltageInputPort> CreateVoltageInputPort(IPin pin)
     {
         var offset = (int)pin.Key;
 
         // 19 == 0-10V input, 11 == 0-5V
         // not sure the utility of 0-5, since 0-10 will also do 0-5...
-        WriteHoldingRegister((ushort)(T38i806doRegisters.AiRange0 + offset), (ushort)AnalogInputRange.Voltage_0_10).Wait();
+        await WriteHoldingRegister((ushort)(T38i806doRegisters.AiRange0 + offset), (ushort)AnalogInputRange.Voltage_0_10);
         // mode must be set to 1 (manual) in the T38o.  No idea why.
-        WriteHoldingRegister((ushort)(T38i806doRegisters.AiDiAi0 + offset), 0).Wait();
+        await WriteHoldingRegister((ushort)(T38i806doRegisters.AiDiAi0 + offset), 0);
 
         return new T3xxx.VoltageInputPort(this, pin,
             // each input is 2 registers, the data for voltage is in the low
@@ -136,5 +137,23 @@ public partial class T38i8o6do
     public IVoltageOutputPort CreateVoltageOutputPort(IPin pin)
     {
         return CreateVoltageOutputPort(pin, Voltage.Zero);
+    }
+
+    /// <inheritdoc/>
+    public override Task<int> ReadBaudRate()
+    {
+        throw new System.NotImplementedException();
+    }
+
+    /// <inheritdoc/>
+    public override Task WriteBaudRate(int bitrate)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    /// <inheritdoc/>
+    public override Task WriteModbusAddress(byte newAddress)
+    {
+        throw new System.NotImplementedException();
     }
 }

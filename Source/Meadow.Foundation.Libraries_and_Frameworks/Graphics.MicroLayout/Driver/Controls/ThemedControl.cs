@@ -14,6 +14,5 @@ public abstract class ThemedControl : Control, IThemedControl
     /// <inheritdoc/>
     public ThemedControl(int left, int top, int width, int height)
         : base(left, top, width, height)
-    {
-    }
+    { }
 }

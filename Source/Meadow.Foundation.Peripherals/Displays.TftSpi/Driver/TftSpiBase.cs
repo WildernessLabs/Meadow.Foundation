@@ -245,22 +245,13 @@ namespace Meadow.Foundation.Displays
                 throw new ArgumentException($"color mode {colorMode} not supported");
             }
 
-            if (colorMode == ColorMode.Format24bppRgb888)
+            imageBuffer = colorMode switch
             {
-                imageBuffer = new BufferRgb888(width, height);
-            }
-            else if (colorMode == ColorMode.Format18bppRgb666)
-            {
-                imageBuffer = new BufferRgb666(width, height);
-            }
-            else if (colorMode == ColorMode.Format16bppRgb565)
-            {
-                imageBuffer = new BufferRgb565(width, height);
-            }
-            else
-            {
-                imageBuffer = new BufferRgb444(width, height);
-            }
+                ColorMode.Format24bppRgb888 => new BufferRgb888(width, height),
+                ColorMode.Format18bppRgb666 => new BufferRgb666(width, height),
+                ColorMode.Format16bppRgb565 => new BufferRgb565(width, height),
+                _ => new BufferRgb444(width, height),
+            };
         }
 
         /// <summary>

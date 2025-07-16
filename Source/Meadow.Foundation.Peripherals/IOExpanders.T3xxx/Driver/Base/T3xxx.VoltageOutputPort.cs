@@ -43,8 +43,8 @@ public abstract partial class T3xxx
             Pin = pin;
 
             // mode must be set to 1 (manual)
-            _module.WriteHoldingRegister(autoManualRegister, 1).Wait();
-            _module.WriteHoldingRegister(rangeRegister, (ushort)AnalogOutputRange.Voltage_0_10).Wait();
+            _module.WriteHoldingRegister(autoManualRegister, 1).GetAwaiter().GetResult();
+            _module.WriteHoldingRegister(rangeRegister, (ushort)AnalogOutputRange.Voltage_0_10).GetAwaiter().GetResult();
 
             _outputRegister = outputRegister;
 

@@ -97,23 +97,6 @@ public partial class Pca9685 : II2cPeripheral, IDigitalOutputController, IPwmOut
         }
     }
 
-    /*
-    /// <summary>
-    /// Turns the specified pin On or Off
-    /// </summary>
-    /// <param name="pin">The pin to set</param>
-    /// <param name="on">true is on, false if off</param>
-    public virtual void SetPin(byte pin, bool on)
-    {
-        if (pin is < 0 or > 15)
-        {
-            throw new ArgumentException("PWM pin must be between 0 and 15");
-        }
-
-        SetPwm(pin, on ? 4096 : 0, 0);
-    }
-    */
-
     /// <summary>
     /// Set the values for specified output pin.
     /// </summary>

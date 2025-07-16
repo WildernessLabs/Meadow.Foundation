@@ -11,7 +11,7 @@ namespace Meadow.Foundation.Sensors.Power;
 /// </summary>
 public abstract partial class Ina2xx
     : ByteCommsSensorBase<(Units.Current? Current, Units.Voltage? Voltage, Units.Power? Power)>,
-    ICurrentSensor, IVoltageSensor, IPowerSensor, II2cPeripheral, ISamplingSensor<Voltage>
+    ISamplingCurrentSensor, IVoltageSensor, IPowerSensor, II2cPeripheral, ISamplingSensor<Voltage>
 {
     /// <summary>
     /// The default I2C address for the peripheral
@@ -146,7 +146,7 @@ public abstract partial class Ina2xx
         (Units.Current? Current, Units.Voltage? Voltage, Units.Power? Power) conditions;
 
         // TODO: What if Mode is not ContinuousAll, so some data might be stale?
-        conditions.Current = ReadCurrent();
+        conditions.Current = ReadCurrent().GetAwaiter().GetResult();
         conditions.Voltage = ReadBusVoltage();
         conditions.Power = ReadPower();
 
@@ -154,7 +154,7 @@ public abstract partial class Ina2xx
     }
 
     /// <summary> Read the Current measurement from the power monitor IC. </summary>
-    public abstract Units.Current ReadCurrent();
+    public abstract ValueTask<Units.Current> ReadCurrent();
 
     /// <inheritdoc/>
     public ValueTask<Units.Voltage> ReadVoltage() => new ValueTask<Voltage>(ReadBusVoltage());

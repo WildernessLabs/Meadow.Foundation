@@ -9,7 +9,9 @@ namespace Meadow.Foundation.IOExpanders;
 public interface IT322ai
     : IT3Module,
     ICurrentInputController,
-    IVoltageInputController
+    IVoltageInputController,
+    IDigitalInputController,
+    ICounterController
 {
     /// <summary>
     /// Gets the pin definitions for this T322ai module, providing access to all 22 analog input pins.

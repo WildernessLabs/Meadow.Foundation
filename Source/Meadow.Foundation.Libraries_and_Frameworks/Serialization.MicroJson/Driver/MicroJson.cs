@@ -1,10 +1,53 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using static Meadow.Foundation.Serialization.MicroJson;
 
 namespace Meadow.Foundation.Serialization;
+
+/// <summary>
+/// Options for controlling JSON serialization behavior.
+/// </summary>
+public class SerializerOptions
+{
+    /// <summary>
+    /// Gets or sets whether to omit properties with null values from the JSON output.
+    /// Default is false.
+    /// </summary>
+    public bool OmitNulls { get; set; } = false;
+
+    /// <summary>
+    /// Gets or sets whether to format the JSON output with indentation and line breaks.
+    /// Default is false (compact output).
+    /// </summary>
+    public bool WriteIndented { get; set; } = false;
+
+    /// <summary>
+    /// Gets or sets the string used for indentation when WriteIndented is true.
+    /// Default is two spaces.
+    /// </summary>
+    public string IndentString { get; set; } = "  ";
+
+    /// <summary>
+    /// Gets or sets whether to convert property names to camelCase during serialization.
+    /// Default is true.
+    /// </summary>
+    public bool ConvertNamesToCamelCase { get; set; } = true;
+
+    /// <summary>
+    /// Gets or sets the format to use for DateTime values.
+    /// Default is ISO8601.
+    /// </summary>
+    public DateTimeFormat DateTimeFormat { get; set; } = DateTimeFormat.ISO8601;
+
+    /// <summary>
+    /// Gets the default serializer options with standard settings.
+    /// </summary>
+    public static SerializerOptions Default => new SerializerOptions();
+}
 
 /// <summary>
 /// JSON Serialization and Deserialization library for .NET
@@ -63,18 +106,34 @@ public static partial class MicroJson
     }
 
     /// <summary>
-    /// Converts an object to a JSON string.
+    /// Converts an object to a JSON string using the specified options.
     /// </summary>
     /// <param name="o">The value to convert.</param>
-    /// <param name="dateTimeFormat">The format to use for DateTime values. Defaults to ISO 8601 format.</param>
-    /// <param name="convertNamesToCamelCase">True to convert all properties to camel case during serialization</param>
+    /// <param name="options">The serialization options to use.</param>
+    /// <returns>The JSON object as a string or null when the value type is not supported.</returns>
+    public static string? Serialize(object o, SerializerOptions? options = null)
+    {
+        return Serialize(o, options, null);
+    }
+
+    /// <summary>
+    /// Converts an object to a JSON string using the specified options.
+    /// </summary>
+    /// <param name="o">The value to convert.</param>
+    /// <param name="options">The serialization options to use.</param>
     /// <param name="unitJsonConverter">An optional serialization converter used for Meadow.Units</param>
     /// <returns>The JSON object as a string or null when the value type is not supported.</returns>
     /// <remarks>For objects, only public properties with getters are converted.</remarks>
-    public static string? Serialize(object o,
-        DateTimeFormat dateTimeFormat = DateTimeFormat.ISO8601,
-        bool convertNamesToCamelCase = true,
-        IUnitJsonConverter? unitJsonConverter = null)
+    public static string? Serialize(object o, SerializerOptions? options, IUnitJsonConverter? unitJsonConverter = null)
+    {
+        options ??= SerializerOptions.Default;
+        return SerializeInternal(o, options, unitJsonConverter, 0);
+    }
+
+    /// <summary>
+    /// Internal serialization method that handles the actual serialization logic.
+    /// </summary>
+    private static string? SerializeInternal(object o, SerializerOptions options, IUnitJsonConverter? unitJsonConverter, int indentLevel)
     {
         if (o == null)
         {
@@ -83,10 +142,10 @@ public static partial class MicroJson
 
         if (unitJsonConverter != null)
         {
-            var result = unitJsonConverter.Serialize(o, convertNamesToCamelCase);
+            var result = unitJsonConverter.Serialize(o, options.ConvertNamesToCamelCase);
             if (result != null)
             {
-                return result; ;
+                return result;
             }
         }
 
@@ -126,7 +185,7 @@ public static partial class MicroJson
                     return o.ToString();
                 }
             case TypeCode.DateTime:
-                return dateTimeFormat switch
+                return options.DateTimeFormat switch
                 {
                     DateTimeFormat.Ajax => $"\"{DateTimeConverters.ToASPNetAjax((DateTime)o)}\"",
                     _ => $"\"{DateTimeConverters.ToIso8601((DateTime)o)}\"",
@@ -134,7 +193,7 @@ public static partial class MicroJson
             default:
                 if (type == typeof(DateTimeOffset))
                 {
-                    return dateTimeFormat switch
+                    return options.DateTimeFormat switch
                     {
                         DateTimeFormat.Ajax => $"\"{DateTimeConverters.ToASPNetAjax((DateTimeOffset)o)}\"",
                         _ => $"\"{DateTimeConverters.ToIso8601((DateTimeOffset)o)}\"",
@@ -153,12 +212,12 @@ public static partial class MicroJson
 
         if (o is IDictionary dictionary && !type.IsArray)
         {
-            return SerializeIDictionary(dictionary, dateTimeFormat);
+            return SerializeIDictionary(dictionary, options, indentLevel);
         }
 
         if (o is IEnumerable enumerable)
         {
-            return SerializeIEnumerable(enumerable, dateTimeFormat);
+            return SerializeIEnumerable(enumerable, options, indentLevel);
         }
 
         if (o is DictionaryEntry entry)
@@ -167,7 +226,7 @@ public static partial class MicroJson
             {
                 { entry.Key, entry.Value }
             };
-            return SerializeIDictionary(hashtable, dateTimeFormat);
+            return SerializeIDictionary(hashtable, options, indentLevel);
         }
 
         if (type.IsClass || type.IsValueType && !ExplicitlyUnsupportedTypes.Any(e => e == type.FullName))
@@ -184,19 +243,24 @@ public static partial class MicroJson
             {
                 object returnObject = property.GetValue(o);
 
+                // Skip null properties if OmitNulls is enabled
+                if (options.OmitNulls && returnObject == null)
+                {
+                    continue;
+                }
+
                 var mappedName = property.GetCustomAttribute<JsonPropertyNameAttribute>(true);
 
                 var name = mappedName != null
                     ? mappedName.PropertyName
-                    : convertNamesToCamelCase
+                    : options.ConvertNamesToCamelCase
                         ? char.ToLowerInvariant(property.Name[0]) + property.Name[1..]
                         : property.Name;
 
-                // camel case the name
                 hashtable.Add(name, returnObject);
             }
 
-            return SerializeIDictionary(hashtable, dateTimeFormat);
+            return SerializeIDictionary(hashtable, options, indentLevel);
         }
 
         throw new NotSupportedException($"Serialization of type {type.Name} is not supported");
@@ -206,20 +270,45 @@ public static partial class MicroJson
     /// Converts an IEnumerable to a JSON string.
     /// </summary>
     /// <param name="enumerable">The IEnumerable to convert.</param>
-    /// <param name="dateTimeFormat">The format to use for DateTime values. Defaults to ISO 8601 format.</param>
+    /// <param name="options">The serialization options to use.</param>
+    /// <param name="indentLevel">The current indentation level.</param>
     /// <returns>The JSON array as a string or null when the value type is not supported.</returns>
-    private static string SerializeIEnumerable(IEnumerable enumerable, DateTimeFormat dateTimeFormat = DateTimeFormat.ISO8601)
+    private static string SerializeIEnumerable(IEnumerable enumerable, SerializerOptions options, int indentLevel)
     {
         var result = new StringBuilder("[");
+        var elements = new List<string>();
 
+        // Collect all elements first to avoid comma issues
         foreach (object current in enumerable)
         {
-            if (result.Length > 1)
+            var serializedValue = SerializeInternal(current, options, null, indentLevel + 1);
+            
+            var elementString = new StringBuilder();
+            
+            if (options.WriteIndented)
             {
-                result.Append(",");
+                elementString.Append(GetIndentString(options.IndentString, indentLevel + 1));
             }
+            
+            elementString.Append(serializedValue);
+            
+            elements.Add(elementString.ToString());
+        }
 
-            result.Append(Serialize(current, dateTimeFormat));
+        // Join elements with commas
+        if (elements.Count > 0)
+        {
+            if (options.WriteIndented)
+            {
+                result.AppendLine();
+                result.Append(string.Join(",\n", elements));
+                result.AppendLine();
+                result.Append(GetIndentString(options.IndentString, indentLevel));
+            }
+            else
+            {
+                result.Append(string.Join(",", elements));
+            }
         }
 
         result.Append("]");
@@ -230,23 +319,79 @@ public static partial class MicroJson
     /// Converts an IDictionary to a JSON string.
     /// </summary>
     /// <param name="dictionary">The IDictionary to convert.</param>
-    /// <param name="dateTimeFormat">The format to use for DateTime values. Defaults to ISO 8601 format.</param>
+    /// <param name="options">The serialization options to use.</param>
+    /// <param name="indentLevel">The current indentation level.</param>
     /// <returns>The JSON object as a string or null when the value type is not supported.</returns>
-    private static string SerializeIDictionary(IDictionary dictionary, DateTimeFormat dateTimeFormat = DateTimeFormat.ISO8601)
+    private static string SerializeIDictionary(IDictionary dictionary, SerializerOptions options, int indentLevel)
     {
         var result = new StringBuilder("{");
+        var entries = new List<string>();
 
+        // Collect all valid entries first to avoid comma issues
         foreach (DictionaryEntry entry in dictionary)
         {
-            if (result.Length > 1)
+            var serializedValue = SerializeInternal(entry.Value, options, null, indentLevel + 1);
+            
+            // Skip null values if OmitNulls is enabled
+            if (options.OmitNulls && serializedValue == "null")
             {
-                result.Append(",");
+                continue;
             }
 
-            result.Append($"\"{entry.Key}\":{Serialize(entry.Value, dateTimeFormat)}");
+            var entryString = new StringBuilder();
+            
+            if (options.WriteIndented)
+            {
+                entryString.Append(GetIndentString(options.IndentString, indentLevel + 1));
+            }
+
+            entryString.Append($"\"{entry.Key}\":");
+            
+            if (options.WriteIndented)
+            {
+                entryString.Append(" ");
+            }
+            
+            entryString.Append(serializedValue);
+            
+            entries.Add(entryString.ToString());
+        }
+
+        // Join entries with commas
+        if (entries.Count > 0)
+        {
+            if (options.WriteIndented)
+            {
+                result.AppendLine();
+                result.Append(string.Join(",\n", entries));
+                result.AppendLine();
+                result.Append(GetIndentString(options.IndentString, indentLevel));
+            }
+            else
+            {
+                result.Append(string.Join(",", entries));
+            }
         }
 
         result.Append("}");
+        return result.ToString();
+    }
+
+    /// <summary>
+    /// Gets the indentation string for the specified level.
+    /// </summary>
+    /// <param name="indentString">The string to use for each indentation level.</param>
+    /// <param name="level">The indentation level.</param>
+    /// <returns>The indentation string.</returns>
+    private static string GetIndentString(string indentString, int level)
+    {
+        if (level <= 0) return string.Empty;
+
+        var result = new StringBuilder();
+        for (int i = 0; i < level; i++)
+        {
+            result.Append(indentString);
+        }
         return result.ToString();
     }
 

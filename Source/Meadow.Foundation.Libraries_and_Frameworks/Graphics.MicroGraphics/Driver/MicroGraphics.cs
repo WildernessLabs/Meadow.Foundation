@@ -1394,7 +1394,7 @@ namespace Meadow.Foundation.Graphics
         /// <param name="text">The string to measure</param>
         /// <param name="font">The font used to calculate the text size</param>
         /// <param name="scaleFactor">Scale factor used to calculate the size</param>
-        public Size MeasureText(string text, IFont font, ScaleFactor scaleFactor = ScaleFactor.X1)
+        public static Size MeasureText(string text, IFont font, ScaleFactor scaleFactor = ScaleFactor.X1)
         {
             return new Size(text.Length * (int)scaleFactor * font.Width, (int)scaleFactor * font.Height);
         }
@@ -1976,7 +1976,7 @@ namespace Meadow.Foundation.Graphics
         /// <param name="color">Color to set display</param>
         public virtual void Clear(Color color, bool updateDisplay = false)
         {
-            DrawRectangle(0, 0, Width, Height, color, true);
+            PixelBuffer.Fill(color);
 
             if (updateDisplay) { Show(); }
         }

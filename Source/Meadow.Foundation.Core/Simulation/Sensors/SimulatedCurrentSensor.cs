@@ -1,16 +1,17 @@
 ﻿using Meadow.Peripherals.Sensors;
 using Meadow.Units;
 using System;
+using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors;
 
 /// <summary>
 /// Represents a simulated current sensor
 /// </summary>
-public class SimulatedCurrentSensor : SimulatedSamplingSensorBase<Current>, ICurrentSensor
+public class SimulatedCurrentSensor : SimulatedSamplingSensorBase<Current>, ISamplingCurrentSensor
 {
-    private Current maxCurrent;
-    private Current minCurrent;
+    private readonly Current maxCurrent;
+    private readonly Current minCurrent;
 
     /// <inheritdoc/>
     public Current? Current { get; private set; }
@@ -50,5 +51,11 @@ public class SimulatedCurrentSensor : SimulatedSamplingSensorBase<Current>, ICur
         }
 
         return Current!.Value;
+    }
+
+    /// <inheritdoc/>
+    public ValueTask<Current> ReadCurrent()
+    {
+        return new ValueTask<Current>(Current ?? Units.Current.Zero);
     }
 }

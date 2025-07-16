@@ -5,68 +5,6 @@
 /// </summary>
 public class Label : ClickableControl
 {
-    private static Color DefaultTextColor = Color.White;
-    private static Color DefaultBackColor = Color.Transparent;
-
-    private string _text = string.Empty;
-
-    private DisplayTheme? _theme;
-    private Color? _textColor;
-    private Color? _backColor;
-    private VerticalAlignment _verticalAlignment = VerticalAlignment.Center;
-    private HorizontalAlignment _horizontalAlignment;
-    private IFont? _font;
-    private ScaleFactor _scaleFactor = ScaleFactor.X1;
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="Label"/> class with the specified dimensions.
-    /// </summary>
-    /// <param name="width">The width of the label display control.</param>
-    /// <param name="height">The height of the label display control.</param>
-    /// <param name="text">The initial Text for the control</param>
-    public Label(int width, int height, string text = nameof(Label))
-        : this(0, 0, width, height, ScaleFactor.X1, text)
-    {
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="Label"/> class with the specified dimensions.
-    /// </summary>
-    /// <param name="width">The width of the label display control.</param>
-    /// <param name="height">The height of the label display control.</param>
-    /// <param name="scaleFactor">The scale factor used for drawing text</param>
-    /// <param name="text">The initial Text for the control</param>
-    public Label(int width, int height, ScaleFactor scaleFactor = ScaleFactor.X1, string text = nameof(Label))
-        : this(0, 0, width, height, scaleFactor, text)
-    {
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="Label"/> class with the specified dimensions.
-    /// </summary>
-    /// <param name="left">The left coordinate of the label display control.</param>
-    /// <param name="top">The top coordinate of the label display control.</param>
-    /// <param name="width">The width of the label display control.</param>
-    /// <param name="height">The height of the label display control.</param>
-    /// <param name="scaleFactor">The scale factor used for drawing text</param>
-    /// <param name="text">The initial Text for the control</param>
-    public Label(int left, int top, int width, int height, ScaleFactor scaleFactor = ScaleFactor.X1, string text = nameof(Label))
-        : base(left, top, width, height)
-    {
-        ScaleFactor = scaleFactor;
-        Text = text;
-    }
-
-    /// <summary>
-    /// Applies the specified display theme to the label display control.
-    /// </summary>
-    /// <param name="theme">The display theme to apply.</param>
-    public override void ApplyTheme(DisplayTheme theme)
-    {
-        _theme = theme;
-        this.Invalidate();
-    }
-
     /// <summary>
     /// Gets or sets the vertical alignment of the label text within the label display control.
     /// </summary>
@@ -130,6 +68,66 @@ public class Label : ClickableControl
         set => SetInvalidatingProperty(ref _scaleFactor, value);
     }
 
+    private static Color DefaultTextColor = Color.White;
+    private static Color DefaultBackColor = Color.Transparent;
+
+    private string _text = string.Empty;
+
+    private DisplayTheme? _theme;
+    private Color? _textColor;
+    private Color? _backColor;
+    private VerticalAlignment _verticalAlignment = VerticalAlignment.Center;
+    private HorizontalAlignment _horizontalAlignment;
+    private IFont? _font;
+    private ScaleFactor _scaleFactor = ScaleFactor.X1;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Label"/> class with the specified dimensions.
+    /// </summary>
+    /// <param name="width">The width of the label display control.</param>
+    /// <param name="height">The height of the label display control.</param>
+    /// <param name="text">The initial Text for the control</param>
+    public Label(int width, int height, string text = nameof(Label))
+        : this(0, 0, width, height, ScaleFactor.X1, text)
+    { }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Label"/> class with the specified dimensions.
+    /// </summary>
+    /// <param name="width">The width of the label display control.</param>
+    /// <param name="height">The height of the label display control.</param>
+    /// <param name="scaleFactor">The scale factor used for drawing text</param>
+    /// <param name="text">The initial Text for the control</param>
+    public Label(int width, int height, ScaleFactor scaleFactor = ScaleFactor.X1, string text = nameof(Label))
+        : this(0, 0, width, height, scaleFactor, text)
+    { }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Label"/> class with the specified dimensions.
+    /// </summary>
+    /// <param name="left">The left coordinate of the label display control.</param>
+    /// <param name="top">The top coordinate of the label display control.</param>
+    /// <param name="width">The width of the label display control.</param>
+    /// <param name="height">The height of the label display control.</param>
+    /// <param name="scaleFactor">The scale factor used for drawing text</param>
+    /// <param name="text">The initial Text for the control</param>
+    public Label(int left, int top, int width, int height, ScaleFactor scaleFactor = ScaleFactor.X1, string text = nameof(Label))
+        : base(left, top, width, height)
+    {
+        ScaleFactor = scaleFactor;
+        Text = text;
+    }
+
+    /// <summary>
+    /// Applies the specified display theme to the label display control.
+    /// </summary>
+    /// <param name="theme">The display theme to apply.</param>
+    public override void ApplyTheme(DisplayTheme theme)
+    {
+        _theme = theme;
+        Invalidate();
+    }
+
     /// <summary>
     /// Draws the label display control on the specified <see cref="MicroGraphics"/> surface.
     /// </summary>
@@ -138,35 +136,21 @@ public class Label : ClickableControl
     {
         if (BackgroundColor != Color.Transparent)
         {
-            graphics.DrawRectangle(Left + (Parent?.Left ?? 0), Top + (Parent?.Top ?? 0), Width, Height, BackgroundColor, true);
+            graphics.DrawRectangle(ScreenLeft, ScreenTop, Width, Height, BackgroundColor, true);
         }
 
-        int x, y;
-
-        switch (HorizontalAlignment)
+        var x = HorizontalAlignment switch
         {
-            case HorizontalAlignment.Center:
-                x = Width / 2;
-                break;
-            case HorizontalAlignment.Right:
-                x = Width;
-                break;
-            default:
-                x = 0;
-                break;
-        }
-        switch (VerticalAlignment)
+            HorizontalAlignment.Center => Width / 2,
+            HorizontalAlignment.Right => Width,
+            _ => 0,
+        };
+        var y = VerticalAlignment switch
         {
-            case VerticalAlignment.Center:
-                y = Height / 2;
-                break;
-            case VerticalAlignment.Bottom:
-                y = Height;
-                break;
-            default:
-                y = 0;
-                break;
-        }
+            VerticalAlignment.Center => Height / 2,
+            VerticalAlignment.Bottom => Height,
+            _ => 0,
+        };
 
         x += Parent?.Left ?? 0;
         y += Parent?.Top ?? 0;

@@ -10,7 +10,7 @@ namespace Meadow.Foundation.Sensors.Power;
 /// <summary>
 /// Represents a general Current Transducer (CT) sensor
 /// </summary>
-public partial class CurrentTransducer : SamplingSensorBase<Current>, ICurrentSensor
+public partial class CurrentTransducer : SamplingSensorBase<Current>, ISamplingCurrentSensor
 {
     /// <summary>
     /// The analog input port connected to the transducer
@@ -113,6 +113,12 @@ public partial class CurrentTransducer : SamplingSensorBase<Current>, ICurrentSe
             (MaxCurrent.Amps - MinCurrent.Amps) /
             (MaxVoltage.Volts - MinVoltage.Volts)
             * voltage.Volts);
+    }
+
+    ///<inheritdoc/>
+    public async ValueTask<Current> ReadCurrent()
+    {
+        return await ReadSensor();
     }
 
     ///<inheritdoc/>

@@ -15,6 +15,7 @@ public abstract partial class FtdiExpander :
     ISpiController,
     II2cController
 {
+
     internal byte GpioDirectionLow { get; set; }
     internal byte GpioStateLow { get; set; }
     internal byte GpioDirectionHigh { get; set; }
@@ -24,8 +25,8 @@ public abstract partial class FtdiExpander :
     internal uint Flags { get; private set; }
     internal uint ID { get; private set; }
     internal uint LocID { get; private set; }
-    internal string? SerialNumber { get; private set; }
-    internal string? Description { get; private set; }
+    public string? SerialNumber { get; private set; }
+    public string? Description { get; private set; }
     internal IntPtr Handle { get; private set; }
 
     /// <inheritdoc/>
@@ -168,7 +169,6 @@ public abstract partial class FtdiExpander :
         outBuffer[1] = state; //data
         outBuffer[2] = direction; //direction 1 == output, 0 == input
 
-        // Console.WriteLine($"{(BitConverter.ToString(outBuffer.ToArray()))}");
         Write(outBuffer);
 
         if (lowByte)
@@ -206,20 +206,56 @@ public abstract partial class FtdiExpander :
         }
     }
 
-    internal int ReadInto(Span<byte> buffer)
+    internal int ReadInto(Span<byte> buffer, int timeoutMs = 5000)
     {
         var totalRead = 0;
-        uint read = 0;
+        var startTime = Environment.TickCount;
 
         while (totalRead < buffer.Length)
         {
             var available = GetAvailableBytes();
+
             if (available > 0)
             {
-                Native.CheckStatus(
-                    FT_Read(Handle, in buffer[totalRead], available, ref read));
+                // Calculate how many bytes to read (don't read more than needed)
+                var toRead = Math.Min((int)available, buffer.Length - totalRead);
+                uint bytesRead = 0;
 
-                totalRead += (int)read;
+                // FIXED: Properly get reference to the buffer slice
+                var remainingBuffer = buffer.Slice(totalRead, toRead);
+
+                try
+                {
+                    var status = Native.Ftd2xx.FT_Read(
+                        Handle,
+                        ref MemoryMarshal.GetReference(remainingBuffer), // Correct way to get buffer reference
+                        (uint)toRead,
+                        ref bytesRead);
+
+                    Native.CheckStatus(status);
+                    totalRead += (int)bytesRead;
+
+                    // If we didn't read any bytes despite them being available, something is wrong
+                    if (bytesRead == 0 && available > 0)
+                    {
+                        Thread.Sleep(1); // Small delay before retry
+                    }
+                }
+                catch (Exception ex)
+                {
+                    throw;
+                }
+            }
+            else
+            {
+                // Check for timeout
+                if (Environment.TickCount - startTime > timeoutMs)
+                {
+                    throw new TimeoutException($"Timeout reading data. Expected {buffer.Length} bytes, got {totalRead} bytes");
+                }
+
+                // Small delay to prevent busy waiting
+                Thread.Sleep(1);
             }
         }
 

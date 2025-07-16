@@ -27,4 +27,23 @@ public interface IT3Module : IPinController
     /// Reads the hardware revision of the T3 module.
     /// </summary>
     Task<byte> ReadHardwareRevision();
+
+    /// <summary>
+    /// Gets the Modbus communication bitrate the sensor is configured to use
+    /// </summary>
+    /// <returns>A task containing the bitrate in bits per second</returns>
+    Task<int> ReadBaudRate();
+
+    /// <summary>
+    /// Sets the Modbus communication bitrate the sensor is configured to use
+    /// </summary>
+    /// <remarks>
+    /// Supports only 9600, 19200, 38400, 57600, 115200
+    /// </remarks>
+    Task WriteBaudRate(int bitrate);
+
+    /// <summary>
+    /// Sets the Modbus node address of the sensor
+    /// </summary>
+    Task WriteModbusAddress(byte newAddress);
 }

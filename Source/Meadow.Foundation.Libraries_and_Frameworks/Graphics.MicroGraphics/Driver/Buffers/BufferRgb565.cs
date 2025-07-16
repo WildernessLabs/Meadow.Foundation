@@ -39,12 +39,14 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// <param name="x">The X pixel position</param>
         /// <param name="y">The Y pixel position</param>
         /// <returns>The pixel color as a 565 16bpp value</returns>
-        public ushort GetPixel16bpp(int x, int y)
+        public unsafe ushort GetPixel16bpp(int x, int y)
         {
-            //get current color
-            var index = ((y * Width) + x) * sizeof(ushort);
-
-            return (ushort)(Buffer[index] << 8 | Buffer[++index]);
+            fixed (byte* ptr = Buffer)
+            {
+                var pixelPtr = (ushort*)(ptr + ((y * Width + x) << 1));
+                var value = *pixelPtr;
+                return (ushort)((value << 8) | (value >> 8)); // Handle endianness
+            }
         }
 
         /// <summary>
@@ -70,12 +72,13 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// <param name="x">X pixel position</param>
         /// <param name="y">Y pixel position</param>
         /// <param name="color">The pixel color packed as a 565 16bpp ushort</param>
-        public void SetPixel(int x, int y, ushort color)
+        public unsafe void SetPixel(int x, int y, ushort color)
         {
-            var index = ((y * Width) + x) * 2;
-
-            Buffer[index] = (byte)(color >> 8);
-            Buffer[++index] = (byte)color;
+            fixed (byte* ptr = Buffer)
+            {
+                var pixelPtr = (ushort*)(ptr + ((y * Width + x) << 1));
+                *pixelPtr = (ushort)((color << 8) | (color >> 8));
+            }
         }
 
         /// <summary>
@@ -107,7 +110,7 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// <param name="height">Height in pixels</param>
         /// <param name="color">The fill color</param>
         /// <exception cref="ArgumentOutOfRangeException">Throws an exception if fill area is beyond the buffer bounds</exception>
-        public override void Fill(int x, int y, int width, int height, Color color)
+        public unsafe override void Fill(int x, int y, int width, int height, Color color)
         {
             if (x < 0 || x + width > Width ||
                 y < 0 || y + height > Height)
@@ -142,19 +145,19 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// <param name="color">The color as a ushort</param>
         public void Clear(ushort color)
         {
-            // split the color in to two byte values
-            Buffer[0] = (byte)(color >> 8);
-            Buffer[1] = (byte)color;
-
-            int arrayMidPoint = Buffer.Length / 2;
-            int copyLength;
-
-            for (copyLength = 2; copyLength < arrayMidPoint; copyLength <<= 1)
+            unsafe
             {
-                Array.Copy(Buffer, 0, Buffer, copyLength, copyLength);
+                fixed (byte* ptr = Buffer)
+                {
+                    var colorPtr = (ushort*)ptr;
+                    var pixelCount = Buffer.Length >> 1;
+
+                    for (int i = 0; i < pixelCount; i++)
+                    {
+                        colorPtr[i] = color;
+                    }
+                }
             }
-            //copy whatever is remaining
-            Array.Copy(Buffer, 0, Buffer, copyLength, Buffer.Length - copyLength);
         }
 
         /// <summary>
@@ -176,6 +179,14 @@ namespace Meadow.Foundation.Graphics.Buffers
             color = (ushort)(r << 11 | g << 5 | b);
 
             SetPixel(x, y, color);
+        }
+
+        /// <summary>
+        ///  fast and no checks
+        /// </summary>
+        public void WriteBufferRaw(BufferRgb565 bufferToDraw)
+        {
+            Array.Copy(bufferToDraw.Buffer, Buffer, bufferToDraw.Buffer.Length);
         }
 
         /// <summary>

@@ -4,20 +4,28 @@ using System.Collections.Generic;
 
 namespace Meadow.Foundation.Graphics.MicroLayout;
 
-internal interface IControlContainer : IControl
-{
-    ControlsCollection Controls { get; }
-}
-
 /// <summary>
 /// Represents a collection of display controls on a <see cref="DisplayScreen"/>.
 /// </summary>
-public sealed class ControlsCollection : IEnumerable<IControl>
+public class ControlsCollection : IEnumerable<IControl>
 {
-    private readonly List<IControl> _controls = new();
+    /// <summary>
+    /// Occurs when a control is added to the collection.
+    /// </summary>
+    public event EventHandler<IControl>? ControlAdded;
+
+    /// <summary>
+    /// Occurs when a control is removed from the collection.
+    /// </summary>
+    public event EventHandler<IControl>? ControlRemoved;
+
+    internal readonly List<IControl> _controls = new();
     private readonly object _syncRoot = new();
 
-    private readonly IControlContainer? _container;
+    /// <summary>
+    /// The control container that owns this collection, if it exists.
+    /// </summary>
+    internal readonly IControlContainer? _container;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ControlsCollection"/> class.
@@ -51,11 +59,21 @@ public sealed class ControlsCollection : IEnumerable<IControl>
     /// </summary>
     public void Clear()
     {
+        List<IControl> controlsToClear;
         lock (SyncRoot)
         {
+            controlsToClear = [.. _controls];
             _controls.Clear();
-            _container?.Parent?.Invalidate();
         }
+
+        foreach (var control in controlsToClear)
+        {
+            control.Parent = null;
+            control.Invalidate();
+            OnControlRemoved(control);
+        }
+
+        _container?.Parent?.Invalidate();
     }
 
     /// <summary>
@@ -81,15 +99,32 @@ public sealed class ControlsCollection : IEnumerable<IControl>
             }
         }
 
-        lock (SyncRoot)
+        try
+        {
+            lock (SyncRoot)
+            {
+                foreach (var control in controls)
+                {
+                    if (control is null) { continue; }
+
+                    if (_controls.Contains(control))
+                    {
+                        continue;
+                    }
+
+                    control.Parent = _container;
+                    control.Invalidate();
+                    _controls.Add(control);
+                }
+            }
+        }
+        finally
         {
             foreach (var control in controls)
             {
                 if (control is null) { continue; }
 
-                control.Parent = _container;
-                control.Invalidate();
-                _controls.Add(control);
+                ControlAdded?.Invoke(this, control);
             }
         }
     }
@@ -103,16 +138,22 @@ public sealed class ControlsCollection : IEnumerable<IControl>
     {
         if (control is null) { return false; }
 
-        lock (SyncRoot)
+        try
         {
-            if (_controls.Remove(control))
+            lock (SyncRoot)
             {
-                _container?.Parent?.Invalidate();
-                return true;
+                if (_controls.Remove(control))
+                {
+                    _container?.Parent?.Invalidate();
+                    return true;
+                }
             }
+            return false;
         }
-
-        return false;
+        finally
+        {
+            ControlRemoved?.Invoke(this, control);
+        }
     }
 
     /// <summary>
@@ -131,5 +172,29 @@ public sealed class ControlsCollection : IEnumerable<IControl>
     IEnumerator IEnumerable.GetEnumerator()
     {
         return GetEnumerator();
+    }
+
+    /// <summary>
+    /// Invoked when a control is added to the container.
+    /// </summary>
+    /// <remarks>This method raises the <see cref="ControlAdded"/> event, allowing subscribers to respond  to
+    /// the addition of a new control. Override this method in a derived class to provide  custom behavior when a
+    /// control is added.</remarks>
+    /// <param name="control">The control that was added. Cannot be null.</param>
+    protected virtual void OnControlAdded(IControl control)
+    {
+        ControlAdded?.Invoke(this, control);
+    }
+
+    /// <summary>
+    /// Invoked when a control is removed from the current instance.
+    /// </summary>
+    /// <remarks>This method raises the <see cref="ControlRemoved"/> event to notify subscribers  that a
+    /// control has been removed. Override this method in a derived class to  provide custom behavior when a control is
+    /// removed, ensuring the base implementation  is called to maintain event invocation.</remarks>
+    /// <param name="control">The control that was removed. Cannot be null.</param>
+    protected virtual void OnControlRemoved(IControl control)
+    {
+        ControlRemoved?.Invoke(this, control);
     }
 }

@@ -16,6 +16,8 @@ public class DisplayScreen : IControlContainer
     private bool _updateInProgress = false;
     private Color _backgroundColor;
 
+    public event EventHandler? BoundsChanged;
+
     /// <summary>
     /// Gets the Touchscreen associated with the display screen
     /// </summary>
@@ -167,18 +169,10 @@ public class DisplayScreen : IControlContainer
         IsInvalid = true;
     }
 
-    private void RefreshTree(IControl control)
+    private void Refresh(IControl control)
     {
         control.Invalidate();
         control.Refresh(_graphics);
-
-        if (control is IControlContainer container)
-        {
-            foreach (var c in container.Controls)
-            {
-                RefreshTree(c);
-            }
-        }
     }
 
     /// <summary>
@@ -213,7 +207,7 @@ public class DisplayScreen : IControlContainer
                         if (control != null)
                         {
                             // TODO: micrographics supports invalidating regions - we need to update to invalidate only regions here, too
-                            RefreshTree(control);
+                            Refresh(control);
                         }
                     }
                 }
@@ -251,7 +245,7 @@ public class DisplayScreen : IControlContainer
                             if (control != null)
                             {
                                 // TODO: micrographics supports invalidating regions - we need to update to invalidate only regions here, too
-                                RefreshTree(control);
+                                Refresh(control);
                             }
                         }
                         try

@@ -7,6 +7,8 @@ public abstract partial class T3xxx
     /// </summary>
     internal enum AnalogInputRange
     {
+        Disabled = 0,
+
         /// <summary>
         /// 0-5 volt input range.
         /// </summary>
@@ -20,6 +22,9 @@ public abstract partial class T3xxx
         /// <summary>
         /// 0-10 volt input range.
         /// </summary>
-        Voltage_0_10 = 19
+        Voltage_0_10 = 19,
+
+        pulseCountSlow = 15,
+        PulseCountFast = 25,
     }
 }

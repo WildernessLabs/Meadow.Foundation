@@ -1,0 +1,1906 @@
+<Solution>
+  <Folder Name="/Meadow.Foundation.Core.Samples/">
+    <Project Path="Meadow.Foundation.Core.Samples/Audio.PiezoSpeaker_Sample/Audio.PiezoSpeaker_Sample.csproj" />
+    <Project Path="Meadow.Foundation.Core.Samples/Generators.SoftPwmPort_Sample/Generators.SoftPwmPort_Sample.csproj">
+      <Deploy />
+    </Project>
+    <Project Path="Meadow.Foundation.Core.Samples/Leds.LedBarGraph_Sample/Leds.LedBarGraph_Sample.csproj" />
+    <Project Path="Meadow.Foundation.Core.Samples/Leds.Led_Sample/Leds.Led_Sample.csproj" />
+    <Project Path="Meadow.Foundation.Core.Samples/Leds.PwmLedBarGraph_Sample/Leds.PwmLedBarGraph_Sample.csproj">
+      <Deploy />
+    </Project>
+    <Project Path="Meadow.Foundation.Core.Samples/Leds.PwmLed_Onboard_Sample/Leds.PwmLed_Onboard_Sample.csproj" />
+    <Project Path="Meadow.Foundation.Core.Samples/Leds.PwmLed_Sample/Leds.PwmLed_Sample.csproj" />
+    <Project Path="Meadow.Foundation.Core.Samples/Leds.RgbLed_Sample/Leds.RgbLed_Sample.csproj" />
+    <Project Path="Meadow.Foundation.Core.Samples/Leds.RgbPwmLed_Onboard_Sample/Leds.RgbPwmLed_Onboard_Sample.csproj" />
+    <Project Path="Meadow.Foundation.Core.Samples/Leds.RgbPwmLed_Sample/Leds.RgbPwmLed_Sample.csproj" />
+    <Project Path="Meadow.Foundation.Core.Samples/Motor.BidirectionalDcMotor_Sample/Motor.BidirectionalDcMotor_Sample.csproj">
+      <Deploy />
+    </Project>
+    <Project Path="Meadow.Foundation.Core.Samples/Motor.HBridgeMotor_Sample/Motor.HBridgeMotor_Sample.csproj" />
+    <Project Path="Meadow.Foundation.Core.Samples/Relays.Relay_Sample/Relays.Relay_Sample.csproj" />
+    <Project Path="Meadow.Foundation.Core.Samples/Sensors.Buttons.PushButton_BasicSample/Sensors.Buttons.PushButton_BasicSample.csproj" />
+    <Project Path="Meadow.Foundation.Core.Samples/Sensors.Buttons.PushButton_Sample/Sensors.Buttons.PushButton_Sample.csproj" />
+    <Project Path="Meadow.Foundation.Core.Samples/Sensors.Environmental.AnalogWaterLevel_Sample/Sensors.Environmental.AnalogWaterLevel_Sample.csproj">
+      <Deploy />
+    </Project>
+    <Project Path="Meadow.Foundation.Core.Samples/Sensors.HallEffect_Sample/Sensors.HallEffect_Sample.csproj">
+      <Deploy />
+    </Project>
+    <Project Path="Meadow.Foundation.Core.Samples/Sensors.Hid.AnalogJoystick_Sample/Sensors.Hid.AnalogJoystick_Sample.csproj" />
+    <Project Path="Meadow.Foundation.Core.Samples/Sensors.Light.AnalogLightSensor_Sample/Sensors.Light.AnalogLightSensor_Sample.csproj">
+      <Deploy />
+    </Project>
+    <Project Path="Meadow.Foundation.Core.Samples/Sensors.Rotary.RotaryEncoderWithButton_Sample/Sensors.Rotary.RotaryEncoderWithButton_Sample.csproj" />
+    <Project Path="Meadow.Foundation.Core.Samples/Sensors.Rotary.RotaryEncoder_Sample/Sensors.Rotary.RotaryEncoder_Sample.csproj" />
+    <Project Path="Meadow.Foundation.Core.Samples/Sensors.Switches.DipSwitch_Sample/Sensors.Switches.DipSwitch_Sample.csproj" />
+    <Project Path="Meadow.Foundation.Core.Samples/Sensors.Switches.SpdtSwitch_Sample/Sensors.Switches.SpdtSwitch_Sample.csproj" />
+    <Project Path="Meadow.Foundation.Core.Samples/Sensors.Switches.SpstSwitch_Sample/Sensors.Switches.SpstSwitch_Sample.csproj" />
+    <Project Path="Meadow.Foundation.Core.Samples/Sensors.Temperature.AnalogTemperature_Sample/Sensors.Temperature.AnalogTemperature_Sample.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Libraries_and_Frameworks/" />
+  <Folder Name="/Meadow.Foundation.Libraries_and_Frameworks/Audio.MicroAudio/">
+    <Project Path="Meadow.Foundation.Libraries_and_Frameworks/Audio.MicroAudio/Driver/Audio.MicroAudio.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Libraries_and_Frameworks/Audio.MicroAudio/Samples/">
+    <Project Path="Meadow.Foundation.Libraries_and_Frameworks/Audio.MicroAudio/Samples/Audio.MicroAudio_Sample/Audio.MicroAudio_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Libraries_and_Frameworks/DataLoggers.AdafruitIO/" />
+  <Folder Name="/Meadow.Foundation.Libraries_and_Frameworks/DataLoggers.AdafruitIO/Driver/">
+    <Project Path="Meadow.Foundation.Libraries_and_Frameworks/DataLoggers.AdafruitIO/Driver/DataLoggers.AdafruitIO.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Libraries_and_Frameworks/DataLoggers.SensorReading/" />
+  <Folder Name="/Meadow.Foundation.Libraries_and_Frameworks/DataLoggers.SensorReading/Driver/">
+    <Project Path="Meadow.Foundation.Libraries_and_Frameworks/DataLoggers.SensorReading/Driver/DataLoggers.SensorReading.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Libraries_and_Frameworks/DataLoggers.ThingSpeak/" />
+  <Folder Name="/Meadow.Foundation.Libraries_and_Frameworks/DataLoggers.ThingSpeak/Driver/">
+    <Project Path="Meadow.Foundation.Libraries_and_Frameworks/DataLoggers.ThingSpeak/Driver/DataLoggers.ThingSpeak.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Libraries_and_Frameworks/Displays.TextDisplayMenu/" />
+  <Folder Name="/Meadow.Foundation.Libraries_and_Frameworks/Displays.TextDisplayMenu/Driver/">
+    <Project Path="Meadow.Foundation.Libraries_and_Frameworks/Displays.TextDisplayMenu/Driver/Displays.TextDisplayMenu.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Libraries_and_Frameworks/Displays.TextDisplayMenu/Samples/">
+    <Project Path="Meadow.Foundation.Libraries_and_Frameworks/Displays.TextDisplayMenu/Samples/TextDisplayMenuTft_Sample/TextDisplayMenuTft_Sample.csproj">
+      <Deploy />
+    </Project>
+    <Project Path="Meadow.Foundation.Libraries_and_Frameworks/Displays.TextDisplayMenu/Samples/TextDisplayMenu_GameMenu_Sample/TextDisplayMenu_GameMenu_Sample.csproj">
+      <Deploy />
+    </Project>
+    <Project Path="Meadow.Foundation.Libraries_and_Frameworks/Displays.TextDisplayMenu/Samples/TextDisplayMenu_Sample/TextDisplayMenu_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Libraries_and_Frameworks/Graphics.MicroGraphics/" />
+  <Folder Name="/Meadow.Foundation.Libraries_and_Frameworks/Graphics.MicroGraphics/Driver/">
+    <Project Path="Meadow.Foundation.Libraries_and_Frameworks/Graphics.MicroGraphics/Driver/Graphics.MicroGraphics.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Libraries_and_Frameworks/Graphics.MicroGraphics/Samples/">
+    <Project Path="Meadow.Foundation.Libraries_and_Frameworks/Graphics.MicroGraphics/Samples/ImageLoadSample/ImageLoad_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Libraries_and_Frameworks/Graphics.MicroLayout/" />
+  <Folder Name="/Meadow.Foundation.Libraries_and_Frameworks/Graphics.MicroLayout/Driver/">
+    <Project Path="Meadow.Foundation.Libraries_and_Frameworks/Graphics.MicroLayout/Driver/Graphics.MicroLayout.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Libraries_and_Frameworks/Graphics.MicroLayout/Samples/">
+    <Project Path="Meadow.Foundation.Libraries_and_Frameworks/Graphics.MicroLayout/Samples/BarChart_Sample/BarChart_Sample.csproj" />
+    <Project Path="Meadow.Foundation.Libraries_and_Frameworks/Graphics.MicroLayout/Samples/Charts_Sample/Charts_Sample.csproj" />
+    <Project Path="Meadow.Foundation.Libraries_and_Frameworks/Graphics.MicroLayout/Samples/HMI_Sample/HMI_Sample.csproj" />
+    <Project Path="Meadow.Foundation.Libraries_and_Frameworks/Graphics.MicroLayout/Samples/ListBox_Sample/ListBox_Sample.csproj" />
+    <Project Path="Meadow.Foundation.Libraries_and_Frameworks/Graphics.MicroLayout/Samples/MAX7219_Sample/MAX7219_Sample.csproj" />
+    <Project Path="Meadow.Foundation.Libraries_and_Frameworks/Graphics.MicroLayout/Samples/TextArea_Sample/TextArea_Sample.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Libraries_and_Frameworks/MicroScheduler/">
+    <Project Path="Meadow.Foundation.Libraries_and_Frameworks/MicroScheduler/Driver/Meadow.Foundation.MicroScheduler/Meadow.Foundation.MicroScheduler.csproj" />
+    <Project Path="Meadow.Foundation.Libraries_and_Frameworks/MicroScheduler/Tests/Meadow.Foundation.MicroScheduler.Unit.Tests/Meadow.Foundation.MicroScheduler.Unit.Tests.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Libraries_and_Frameworks/MicroScheduler/Samples/" />
+  <Folder Name="/Meadow.Foundation.Libraries_and_Frameworks/Sensors.Location.Gnss.NmeaProcessor/" />
+  <Folder Name="/Meadow.Foundation.Libraries_and_Frameworks/Sensors.Location.Gnss.NmeaProcessor/Driver/">
+    <Project Path="Meadow.Foundation.Libraries_and_Frameworks/Sensors.Location.Gnss.NmeaProcessor/Driver/Sensors.Location.Gnss.NmeaProcessor.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Libraries_and_Frameworks/Sensors.Location.Gnss.NmeaProcessor/Samples/">
+    <Project Path="Meadow.Foundation.Libraries_and_Frameworks/Sensors.Location.Gnss.NmeaProcessor/Samples/NmeaProcessor_Sample/NmeaProcessor_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Libraries_and_Frameworks/Sensors.Location.Gnss.NmeaProcessor/Tests/">
+    <Project Path="Meadow.Foundation.Libraries_and_Frameworks/Sensors.Location.Gnss.NmeaProcessor/Tests/NmeaProcess.Unit.Tests/NmeaProcess.Unit.Tests.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Libraries_and_Frameworks/Serialization.MicroJson/" />
+  <Folder Name="/Meadow.Foundation.Libraries_and_Frameworks/Serialization.MicroJson/Driver/">
+    <Project Path="Meadow.Foundation.Libraries_and_Frameworks/Serialization.MicroJson/Driver/Serialization.MicroJson.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Libraries_and_Frameworks/Serialization.MicroJson/Samples/">
+    <Project Path="Meadow.Foundation.Libraries_and_Frameworks/Serialization.MicroJson/Samples/MicroJson_ArrayList_Sample/MicroJson_ArrayList_Sample.csproj" />
+    <Project Path="Meadow.Foundation.Libraries_and_Frameworks/Serialization.MicroJson/Samples/MicroJson_Complex_Sample/MicroJson_Complex_Sample.csproj" />
+    <Project Path="Meadow.Foundation.Libraries_and_Frameworks/Serialization.MicroJson/Samples/MicroJson_Sample/MicroJson_Sample.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Libraries_and_Frameworks/Serialization.MicroJson/Tests/">
+    <Project Path="Meadow.Foundation.Libraries_and_Frameworks/Serialization.MicroJson/Tests/MicroJson.Unit.Tests/MicroJson.Unit.Tests.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Libraries_and_Frameworks/Servos/">
+    <Project Path="Meadow.Foundation.Libraries_and_Frameworks/Servos/Driver/Servos.csproj">
+      <Deploy />
+    </Project>
+    <Project Path="Meadow.Foundation.Libraries_and_Frameworks/Servos/Samples/Servo_Sample/Servo_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/" />
+  <Folder Name="/Meadow.Foundation.Peripherals/Audio/" />
+  <Folder Name="/Meadow.Foundation.Peripherals/Audio/Mp3.Yx5300/">
+    <Project Path="Meadow.Foundation.Peripherals/Audio.Mp3.Yx5300/Driver/Audio.Mp3.Yx5300.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Audio/Mp3.Yx5300/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Audio.Mp3.Yx5300/Samples/Yx5300_Sample/Yx5300_Sample.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Audio/Radio.Tea5767/">
+    <Project Path="Meadow.Foundation.Peripherals/Audio.Radio.Tea5767/Driver/Audio.Radio.Tea5767.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Audio/Radio.Tea5767/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Audio.Radio.Tea5767/Samples/Tea5767_Sample/Tea5767_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Batteries/" />
+  <Folder Name="/Meadow.Foundation.Peripherals/Batteries/V10x/">
+    <Project Path="Meadow.Foundation.Peripherals/Batteries.Voltaic.V10x/Driver/Batteries.Voltaic.V10x.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Batteries/V10x/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Batteries.Voltaic.V10x/Samples/V10x_Sample/V10x_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/CurrentLoop/">
+    <Project Path="Meadow.Foundation.Peripherals/CurrentLoop/Driver/CurrentLoop.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Displays/" />
+  <Folder Name="/Meadow.Foundation.Peripherals/Displays/AsciiConsole/">
+    <Project Path="Meadow.Foundation.Peripherals/Displays.AsciiConsole/Driver/Displays.AsciiConsole.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Displays/AsciiConsole/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Displays.AsciiConsole/Samples/AsciiConsole_Sample/AsciiConsole_Sample.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Displays/Ch1115/">
+    <Project Path="Meadow.Foundation.Peripherals/Displays.Ch1115/Driver/Displays.Ch1115.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Displays/Ch1115/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Displays.Ch1115/Samples/Ch1115_Sample/Ch1115_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Displays/ePaper/">
+    <Project Path="Meadow.Foundation.Peripherals/Displays.ePaper/Driver/Displays.ePaper.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Displays/ePaper/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Displays.ePaper/Samples/IL0373_Sample/IL0373_Sample.csproj" />
+    <Project Path="Meadow.Foundation.Peripherals/Displays.ePaper/Samples/IL0376F_Sample/IL0376F_Sample.csproj" />
+    <Project Path="Meadow.Foundation.Peripherals/Displays.ePaper/Samples/IL0398_Sample/IL0398_Sample.csproj" />
+    <Project Path="Meadow.Foundation.Peripherals/Displays.ePaper/Samples/IL3897_Sample/IL3897_Sample.csproj" />
+    <Project Path="Meadow.Foundation.Peripherals/Displays.ePaper/Samples/IL91874V03_Sample/IL91874V03_Sample.csproj" />
+    <Project Path="Meadow.Foundation.Peripherals/Displays.ePaper/Samples/IL91874_Sample/IL91874_Sample.csproj" />
+    <Project Path="Meadow.Foundation.Peripherals/Displays.ePaper/Samples/SSD1608_Sample/SSD1608_Sample.csproj" />
+    <Project Path="Meadow.Foundation.Peripherals/Displays.ePaper/Samples/SSD1680_Sample/SSD1680_Sample.csproj">
+      <Deploy />
+    </Project>
+    <Project Path="Meadow.Foundation.Peripherals/Displays.ePaper/Samples/SSD1681_Sample/SSD1681_Sample.csproj">
+      <Deploy />
+    </Project>
+    <Project Path="Meadow.Foundation.Peripherals/Displays.ePaper/Samples/UC8151C_Sample/UC8151C_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Displays/ePaperWaveShare/">
+    <Project Path="Meadow.Foundation.Peripherals/Displays.ePaperWaveShare/Driver/Displays.ePaperWaveShare.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Displays/ePaperWaveShare/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Displays.ePaperWaveShare/Samples/Epd2in15g_Sample/Epd2in15g_Sample.csproj">
+      <Deploy />
+    </Project>
+    <Project Path="Meadow.Foundation.Peripherals/Displays.ePaperWaveShare/Samples/Epd5in65f_Sample/Epd5in65f_Sample.csproj">
+      <Deploy />
+    </Project>
+    <Project Path="Meadow.Foundation.Peripherals/Displays.ePaperWaveShare/Samples/Epd7in5V2_Sample/Epd7in5V2_Sample.csproj">
+      <Deploy />
+    </Project>
+    <Project Path="Meadow.Foundation.Peripherals/Displays.ePaperWaveShare/Samples/EpdColor_Sample/EpdColor_Sample.csproj">
+      <Deploy />
+    </Project>
+    <Project Path="Meadow.Foundation.Peripherals/Displays.ePaperWaveShare/Samples/EpdMonochrome_Sample/EpdMonochrome_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Displays/Gtk/">
+    <Project Path="Meadow.Foundation.Peripherals/Displays.Gtk/Driver/Displays.Gtk.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Displays/Lcd.CharacterDisplay/">
+    <Project Path="Meadow.Foundation.Peripherals/Displays.Lcd.CharacterDisplay/Driver/Displays.Lcd.CharacterDisplay.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Displays/Lcd.CharacterDisplay/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Displays.Lcd.CharacterDisplay/Samples/CharacterDisplay_Sample/CharacterDisplay_Sample.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Displays/Led.FourDigitSevenSegment/">
+    <Project Path="Meadow.Foundation.Peripherals/Displays.Led.FourDigitSevenSegment/Driver/Displays.Led.FourDigitSevenSegment.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Displays/Led.FourDigitSevenSegment/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Displays.Led.FourDigitSevenSegment/Samples/FourDigitSevenSegment_Sample/FourDigitSevenSegment_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Displays/Led.FourteenSegment/">
+    <Project Path="Meadow.Foundation.Peripherals/Displays.Led.FourteenSegment/Driver/Displays.Led.FourteenSegment.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Displays/Led.FourteenSegment/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Displays.Led.FourteenSegment/Samples/FourteenSegment_Sample/FourteenSegment_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Displays/Led.SevenSegment/">
+    <Project Path="Meadow.Foundation.Peripherals/Displays.Led.SevenSegment/Driver/Displays.Led.SevenSegment.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Displays/Led.SevenSegment/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Displays.Led.SevenSegment/Samples/SevenSegment_Sample/SevenSegment_Sample.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Displays/Led.SixteenSegment/">
+    <Project Path="Meadow.Foundation.Peripherals/Displays.Led.SixteenSegment/Driver/Displays.Led.SixteenSegment.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Displays/Led.SixteenSegment/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Displays.Led.SixteenSegment/Samples/SixteenSegment_Sample/SixteenSegment_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Displays/Max7219/">
+    <Project Path="Meadow.Foundation.Peripherals/Displays.Max7219/Driver/Displays.Max7219.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Displays/Max7219/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Displays.Max7219/Samples/Max7219_8x8x4x2_Sample/Max7219_8x8x4x2_Sample.csproj" />
+    <Project Path="Meadow.Foundation.Peripherals/Displays.Max7219/Samples/Max7219_8x8x4_Sample/Max7219_8x8x4_Sample.csproj" />
+    <Project Path="Meadow.Foundation.Peripherals/Displays.Max7219/Samples/Max7219_Sample/Max7219_7Segment_Sample.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Displays/Pcd8544/">
+    <Project Path="Meadow.Foundation.Peripherals/Displays.Pcd8544/Driver/Displays.Pcd8544.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Displays/Pcd8544/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Displays.Pcd8544/Samples/Pcd8544_Sample/Pcd8544_Sample.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Displays/Sh110x/">
+    <Project Path="Meadow.Foundation.Peripherals/Displays.Sh110x/Driver/Displays.Sh110x.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Displays/Sh110x/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Displays.Sh110x/Samples/Sh1106_Sample/Sh1106_Sample.csproj">
+      <Deploy />
+    </Project>
+    <Project Path="Meadow.Foundation.Peripherals/Displays.Sh110x/Samples/Sh1107_Sample/Sh1107_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Displays/Silk/">
+    <Project Path="Meadow.Foundation.Peripherals/Displays.Silk/Driver/Displays.Silk.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Displays/Silk/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Displays.Silk/Samples/Silk_Image_Sample/Silk_Image_Sample.csproj" />
+    <Project Path="Meadow.Foundation.Peripherals/Displays.Silk/Samples/Silk_Sample/Silk_Sample.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Displays/Ssd130x/">
+    <Project Path="Meadow.Foundation.Peripherals/Displays.Ssd130x/Driver/Displays.Ssd130x.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Displays/Ssd130x/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Displays.Ssd130x/Samples/Ssd1039_3DCube_Sample/Ssd1039_3DCube_Sample.csproj" />
+    <Project Path="Meadow.Foundation.Peripherals/Displays.Ssd130x/Samples/Ssd1306_Sample/Ssd1306_Sample.csproj" />
+    <Project Path="Meadow.Foundation.Peripherals/Displays.Ssd130x/Samples/Ssd1309_Game_Sample/Ssd1309_Game_Sample.csproj" />
+    <Project Path="Meadow.Foundation.Peripherals/Displays.Ssd130x/Samples/Ssd1309_Sample/Ssd1309_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Displays/Ssd1327/">
+    <Project Path="Meadow.Foundation.Peripherals/Displays.Ssd1327/Driver/Displays.Ssd1327.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Displays/Ssd1327/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Displays.Ssd1327/Samples/Ssd1327_Sample/Ssd1327_Sample.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Displays/St7565/">
+    <Project Path="Meadow.Foundation.Peripherals/Displays.St7565/Driver/Displays.St7565.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Displays/St7565/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Displays.St7565/Samples/St7565_Sample/St7565_Sample.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Displays/TftSpi/">
+    <Project Path="Meadow.Foundation.Peripherals/Displays.TftSpi/Driver/Displays.TftSpi.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Displays/TftSpi/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Displays.TftSpi/Samples/Gc9a01_Sample/Gc9a01_Sample.csproj">
+      <Deploy />
+    </Project>
+    <Project Path="Meadow.Foundation.Peripherals/Displays.TftSpi/Samples/Hx8357b_Sample/Hx8357b_Sample.csproj">
+      <Deploy />
+    </Project>
+    <Project Path="Meadow.Foundation.Peripherals/Displays.TftSpi/Samples/Hx8357d_Sample/Hx8357d_Sample.csproj">
+      <Deploy />
+    </Project>
+    <Project Path="Meadow.Foundation.Peripherals/Displays.TftSpi/Samples/Ili9163_Sample/Ili9163_Sample.csproj" />
+    <Project Path="Meadow.Foundation.Peripherals/Displays.TftSpi/Samples/Ili9225_Sample/Ili9225_Sample.csproj">
+      <Deploy />
+    </Project>
+    <Project Path="Meadow.Foundation.Peripherals/Displays.TftSpi/Samples/Ili9341_Jpg_Sample/Ili9341_Jpg_Sample.csproj" />
+    <Project Path="Meadow.Foundation.Peripherals/Displays.TftSpi/Samples/Ili9341_Sample/Ili9341_Sample.csproj" />
+    <Project Path="Meadow.Foundation.Peripherals/Displays.TftSpi/Samples/Ili9481_Sample/Ili9481_Sample.csproj">
+      <Deploy />
+    </Project>
+    <Project Path="Meadow.Foundation.Peripherals/Displays.TftSpi/Samples/Ili9486_Sample/Ili9486_Sample.csproj">
+      <Deploy />
+    </Project>
+    <Project Path="Meadow.Foundation.Peripherals/Displays.TftSpi/Samples/Ili9488_Sample/Ili9488_Sample.csproj">
+      <Deploy />
+    </Project>
+    <Project Path="Meadow.Foundation.Peripherals/Displays.TftSpi/Samples/Rm68140_Sample/Rm68140_Sample.csproj">
+      <Deploy />
+    </Project>
+    <Project Path="Meadow.Foundation.Peripherals/Displays.TftSpi/Samples/S6D02A1_Sample/S6D02A1_Sample.csproj">
+      <Deploy />
+    </Project>
+    <Project Path="Meadow.Foundation.Peripherals/Displays.TftSpi/Samples/Ssd1331_Sample/Ssd1331_Sample.csproj">
+      <Deploy />
+    </Project>
+    <Project Path="Meadow.Foundation.Peripherals/Displays.TftSpi/Samples/Ssd1351_Sample/Ssd1351_Sample.csproj" />
+    <Project Path="Meadow.Foundation.Peripherals/Displays.TftSpi/Samples/St7735_Sample/St7735_Sample.csproj">
+      <Deploy />
+    </Project>
+    <Project Path="Meadow.Foundation.Peripherals/Displays.TftSpi/Samples/ST7789_Sample/ST7789_Sample.csproj" />
+    <Project Path="Meadow.Foundation.Peripherals/Displays.TftSpi/Samples/St7796s_Sample/St7796s_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Displays/Tm1637/">
+    <Project Path="Meadow.Foundation.Peripherals/Displays.Tm1637/Driver/Displays.Tm1637.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Displays/Tm1637/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Displays.Tm1637/Samples/Tm1637_Sample/Tm1637_Sample.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Displays/Uc1609c/">
+    <Project Path="Meadow.Foundation.Peripherals/Displays.Uc1609c/Driver/Displays.Uc1609c.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Displays/Uc1609c/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Displays.Uc1609c/Samples/Uc1609c_Sample/Uc1609c_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Displays/WinForms/">
+    <Project Path="Meadow.Foundation.Peripherals/Displays.WinForms/Driver/Displays.WinForms.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Displays/WinForms/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Displays.WinForms/Samples/WinForms_Sample/WinForms_Sample.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/ICs/" />
+  <Folder Name="/Meadow.Foundation.Peripherals/ICs/ADC/" />
+  <Folder Name="/Meadow.Foundation.Peripherals/ICs/ADC/Ads1x15/">
+    <Project Path="Meadow.Foundation.Peripherals/ICs.ADC.Ads1x15/Driver/ICs.ADC.Ads1x15.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/ICs/ADC/Ads1x15/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/ICs.ADC.Ads1x15/Samples/Ads1015_Sample/Ads1015_Sample.csproj">
+      <Deploy />
+    </Project>
+    <Project Path="Meadow.Foundation.Peripherals/ICs.ADC.Ads1x15/Samples/Ads1115_Sample/Ads1115_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/ICs/ADC/Ads7128/">
+    <Project Path="Meadow.Foundation.Peripherals/ICs.ADC.Ads7128/Driver/ICs.ADC.Ads7128.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/ICs/ADC/Ads7128/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/ICs.ADC.Ads7128/Samples/Ads7128_Ft232_Sample/Ads7128_Ft232_Sample.csproj" />
+    <Project Path="Meadow.Foundation.Peripherals/ICs.ADC.Ads7128/Samples/Ads7128_Sample/Ads7128_Sample.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/ICs/ADC/AnalogMux/">
+    <Project Path="Meadow.Foundation.Peripherals/ICs.ADC.AnalogMux/Driver/ICs.ADC.AnalogMux.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/ICs/ADC/AnalogMux/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/ICs.ADC.AnalogMux/Samples/Nxp74HC4051_Sample/Nxp74HC4051_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/ICs/ADC/Mcp3xxx/">
+    <Project Path="Meadow.Foundation.Peripherals/ICs.ADC.Mcp3xxx/Driver/ICs.ADC.Mcp3xxx.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/ICs/ADC/Mcp3xxx/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/ICs.ADC.Mcp3xxx/Samples/Mcp3001_Sample/Mcp3001_Sample.csproj">
+      <Deploy />
+    </Project>
+    <Project Path="Meadow.Foundation.Peripherals/ICs.ADC.Mcp3xxx/Samples/Mcp3002_Sample/Mcp3002_Sample.csproj">
+      <Deploy />
+    </Project>
+    <Project Path="Meadow.Foundation.Peripherals/ICs.ADC.Mcp3xxx/Samples/Mcp3004_Sample/Mcp3004_Sample.csproj">
+      <Deploy />
+    </Project>
+    <Project Path="Meadow.Foundation.Peripherals/ICs.ADC.Mcp3xxx/Samples/Mcp3008_Sample/Mcp3008_Sample.csproj">
+      <Deploy />
+    </Project>
+    <Project Path="Meadow.Foundation.Peripherals/ICs.ADC.Mcp3xxx/Samples/Mcp3201_Sample/Mcp3201_Sample.csproj">
+      <Deploy />
+    </Project>
+    <Project Path="Meadow.Foundation.Peripherals/ICs.ADC.Mcp3xxx/Samples/Mcp3202_Sample/Mcp3202_Sample.csproj">
+      <Deploy />
+    </Project>
+    <Project Path="Meadow.Foundation.Peripherals/ICs.ADC.Mcp3xxx/Samples/Mcp3204_Sample/Mcp3204_Sample.csproj">
+      <Deploy />
+    </Project>
+    <Project Path="Meadow.Foundation.Peripherals/ICs.ADC.Mcp3xxx/Samples/Mcp3208_Sample/Mcp3208_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/ICs/CAN/" />
+  <Folder Name="/Meadow.Foundation.Peripherals/ICs/CAN/Mcp2515/">
+    <Project Path="Meadow.Foundation.Peripherals/ICs.CAN.Mcp2515/Driver/ICs.CAN.Mcp2515.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/ICs/CAN/Mcp2515/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/ICs.CAN.Mcp2515/Samples/Mcp2515_Sample/Mcp2515_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/ICs/CAN/PCanBasic/">
+    <Project Path="Meadow.Foundation.Peripherals/ICs.CAN.PCanBasic/Driver/ICs.CAN.PCanBasic.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/ICs/CAN/PCanBasic/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/ICs.CAN.PCanBasic/Samples/PCanBasic_Sample/PCanBasic_Sample.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/ICs/DAC/" />
+  <Folder Name="/Meadow.Foundation.Peripherals/ICs/DAC/Mcp4728/">
+    <Project Path="Meadow.Foundation.Peripherals/ICs.DAC.Mcp4728/Driver/ICs.DAC.Mcp4728.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/ICs/DAC/Mcp4728/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/ICs.DAC.Mcp4728/Sample/Mcp4728_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/ICs/DAC/Mcp492x/">
+    <Project Path="Meadow.Foundation.Peripherals/ICs.DAC.Mcp492x/Driver/ICs.DAC.Mcp492x.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/ICs/DigiPots/" />
+  <Folder Name="/Meadow.Foundation.Peripherals/ICs/DigiPots/Ds3502/">
+    <Project Path="Meadow.Foundation.Peripherals/ICs.DigiPots.Ds3502/Driver/ICs.DigiPots.Ds3502.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/ICs/DigiPots/Ds3502/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/ICs.DigiPots.Ds3502/Samples/Ds3502_Sample/Ds3502_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/ICs/DigiPots/Mcp4xxx/">
+    <Project Path="Meadow.Foundation.Peripherals/ICs.DigiPots.Mcp4xxx/Driver/ICs.DigiPots.Mcp4xxx.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/ICs/DigiPots/Mcp4xxx/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/ICs.DigiPots.Mcp4xxx/Samples/Mcp4162_Sample/Mcp4162_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/ICs/Eeprom/" />
+  <Folder Name="/Meadow.Foundation.Peripherals/ICs/Eeprom/At24Cxx/">
+    <Project Path="Meadow.Foundation.Peripherals/ICs.EEPROM.At24Cxx/Driver/ICs.EEPROM.At24Cxx.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/ICs/Eeprom/At24Cxx/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/ICs.EEPROM.At24Cxx/Samples/At24Cxx_Sample/At24Cxx_Sample.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/ICs/FanControllers/" />
+  <Folder Name="/Meadow.Foundation.Peripherals/ICs/FanControllers/Emc2101/">
+    <Project Path="Meadow.Foundation.Peripherals/ICs.FanControllers.Emc2101/Driver/ICs.FanControllers.Emc2101.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/ICs/FanControllers/Emc2101/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/ICs.FanControllers.Emc2101/Samples/Emc2101_Sample/Emc2101_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/ICs/IOExpanders/" />
+  <Folder Name="/Meadow.Foundation.Peripherals/ICs/IOExpanders/Ads1263/">
+    <Project Path="Meadow.Foundation.Peripherals/ICs.IOExpanders.Ads1263/Driver/ICs.IOExpanders.Ads1263.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/ICs/IOExpanders/Ads1263/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/ICs.IOExpanders.Ads1263/Samples/Ads1263_Sample/Ads1263_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/ICs/IOExpanders/As1115/">
+    <Project Path="Meadow.Foundation.Peripherals/ICs.IOExpanders.As1115/Driver/ICs.IOExpanders.As1115.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/ICs/IOExpanders/As1115/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/ICs.IOExpanders.As1115/Samples/As1115_Sample/As1115_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/ICs/IOExpanders/Cp2112/">
+    <Project Path="Meadow.Foundation.Peripherals/ICs.IOExpanders.Cp2112/Driver/ICs.IOExpanders.Cp2112.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/ICs/IOExpanders/Ft232h/">
+    <Project Path="Meadow.Foundation.Peripherals/ICs.IOExpanders.Ftxxxx/Driver/ICs.IOExpanders.Ftxxxx.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/ICs/IOExpanders/Ft232h/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/ICs.IOExpanders.Ftxxxx/Samples/Ft232h_Sample/Ft232h_Sample.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/ICs/IOExpanders/Ft232h/Tests/">
+    <Project Path="Meadow.Foundation.Peripherals/ICs.IOExpanders.Ftxxxx/Tests/FT232.Unit.Tests/FT232.Unit.Tests.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/ICs/IOExpanders/Ht16k33/">
+    <Project Path="Meadow.Foundation.Peripherals/ICs.IOExpanders.Ht16k33/Driver/ICs.IOExpanders.Ht16k33.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/ICs/IOExpanders/Ht16k33/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/ICs.IOExpanders.Ht16k33/Samples/Ht16k33_Character_Sample/Ht16k33_Character_Sample.csproj">
+      <Deploy />
+    </Project>
+    <Project Path="Meadow.Foundation.Peripherals/ICs.IOExpanders.Ht16k33/Samples/Ht16k33_Sample/Ht16k33_Sample.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/ICs/IOExpanders/Is31fl3731/">
+    <Project Path="Meadow.Foundation.Peripherals/ICs.IOExpanders.Is31fl3731/Driver/ICs.IOExpanders.Is31fl3731.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/ICs/IOExpanders/Is31fl3731/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/ICs.IOExpanders.Is31fl3731/Samples/Is31fl3731_Sample/Is31fl3731_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/ICs/IOExpanders/Mcp23xxx/">
+    <Project Path="Meadow.Foundation.Peripherals/ICs.IOExpanders.Mcp23xxx/Driver/ICs.IOExpanders.Mcp23xxx.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/ICs/IOExpanders/Mcp23xxx/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/ICs.IOExpanders.Mcp23xxx/Samples/Mcp23008_Sample/Mcp23008_Sample.csproj">
+      <Deploy />
+    </Project>
+    <Project Path="Meadow.Foundation.Peripherals/ICs.IOExpanders.Mcp23xxx/Samples/Mcp23009_Sample/Mcp23009_Sample.csproj">
+      <Deploy />
+    </Project>
+    <Project Path="Meadow.Foundation.Peripherals/ICs.IOExpanders.Mcp23xxx/Samples/Mcp23017_Sample/Mcp23017_Sample.csproj">
+      <Deploy />
+    </Project>
+    <Project Path="Meadow.Foundation.Peripherals/ICs.IOExpanders.Mcp23xxx/Samples/Mcp23018_Sample/Mcp23018_Sample.csproj">
+      <Deploy />
+    </Project>
+    <Project Path="Meadow.Foundation.Peripherals/ICs.IOExpanders.Mcp23xxx/Samples/Mcp23s08_Sample/Mcp23s08_Sample.csproj">
+      <Deploy />
+    </Project>
+    <Project Path="Meadow.Foundation.Peripherals/ICs.IOExpanders.Mcp23xxx/Samples/Mcp23s09_Sample/Mcp23s09_Sample.csproj">
+      <Deploy />
+    </Project>
+    <Project Path="Meadow.Foundation.Peripherals/ICs.IOExpanders.Mcp23xxx/Samples/Mcp23s17_Sample/Mcp23s17_Sample.csproj">
+      <Deploy />
+    </Project>
+    <Project Path="Meadow.Foundation.Peripherals/ICs.IOExpanders.Mcp23xxx/Samples/Mcp23s18_Sample/Mcp23s18_Sample.csproj">
+      <Deploy />
+    </Project>
+    <Project Path="Meadow.Foundation.Peripherals/ICs.IOExpanders.Mcp23xxx/Samples/Mcp23x08_Input_Sample/Mcp23x08_Input_Sample.csproj">
+      <Deploy />
+    </Project>
+    <Project Path="Meadow.Foundation.Peripherals/ICs.IOExpanders.Mcp23xxx/Samples/Mcp23x17_Input_Sample/Mcp23x17_Input_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/ICs/IOExpanders/Pca9671/">
+    <Project Path="Meadow.Foundation.Peripherals/ICs.IOExpanders.Pca9671/Driver/ICs.IOExpanders.Pca9671.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/ICs/IOExpanders/Pca9671/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/ICs.IOExpanders.Pca9671/Samples/Pca9671_Sample/Pca9671_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/ICs/IOExpanders/Pca9685/">
+    <Project Path="Meadow.Foundation.Peripherals/ICs.IOExpanders.Pca9685/Driver/ICs.IOExpanders.Pca9685.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/ICs/IOExpanders/Pca9685/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/ICs.IOExpanders.Pca9685/Samples/Pca9685_Sample/Pca9685_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/ICs/IOExpanders/Pcx857x/">
+    <Project Path="Meadow.Foundation.Peripherals/ICs.IOExpanders.Pcx857x/Driver/ICs.IOExpanders.Pcx857x.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/ICs/IOExpanders/Pcx857x/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/ICs.IOExpanders.Pcx857x/Samples/Pca8574_Sample/Pca8574_Sample.csproj">
+      <Deploy />
+    </Project>
+    <Project Path="Meadow.Foundation.Peripherals/ICs.IOExpanders.Pcx857x/Samples/Pca8575_Sample/Pca8575_Sample.csproj">
+      <Deploy />
+    </Project>
+    <Project Path="Meadow.Foundation.Peripherals/ICs.IOExpanders.Pcx857x/Samples/Pcf8574_Sample/Pcf8574_Sample.csproj">
+      <Deploy />
+    </Project>
+    <Project Path="Meadow.Foundation.Peripherals/ICs.IOExpanders.Pcx857x/Samples/Pcf8575_Sample/Pcf8575_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/ICs/IOExpanders/Sc16is7x2/">
+    <Project Path="Meadow.Foundation.Peripherals/ICs.IOExpanders.Sc16is7x2/Driver/ICs.IOExpanders.Sc16is7x2.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/ICs/IOExpanders/Sc16is7x2/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/ICs.IOExpanders.Sc16is7x2/Samples/Sc16is752_Sample/Sc16is752_Sample.csproj">
+      <Deploy />
+    </Project>
+    <Project Path="Meadow.Foundation.Peripherals/ICs.IOExpanders.Sc16is7x2/Samples/Sc16is762_Sample/Sc16is762_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/ICs/IOExpanders/SerialWombat/">
+    <Project Path="Meadow.Foundation.Peripherals/ICs.IOExpanders.SerialWombat/Driver/ICs.IOExpanders.SerialWombat.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/ICs/IOExpanders/SerialWombat/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/ICs.IOExpanders.SerialWombat/Samples/Sw18AB_ADC_Sample/Sw18AB_ADC_Sample.csproj">
+      <Deploy />
+    </Project>
+    <Project Path="Meadow.Foundation.Peripherals/ICs.IOExpanders.SerialWombat/Samples/Sw18AB_Core_Sample/Sw18AB_Core_Sample.csproj">
+      <Deploy />
+    </Project>
+    <Project Path="Meadow.Foundation.Peripherals/ICs.IOExpanders.SerialWombat/Samples/Sw18AB_PWM_Sample/Sw18AB_PWM_Sample.csproj">
+      <Deploy />
+    </Project>
+    <Project Path="Meadow.Foundation.Peripherals/ICs.IOExpanders.SerialWombat/Samples/Sw18AB_Sample/Sw18AB_Sample.csproj">
+      <Deploy />
+    </Project>
+    <Project Path="Meadow.Foundation.Peripherals/ICs.IOExpanders.SerialWombat/Samples/Sw18AB_Ultrasonic_Sample/Sw18AB_Ultrasonic_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/ICs/IOExpanders/T3xxx/">
+    <Project Path="Meadow.Foundation.Peripherals/IOExpanders.T3xxx/Driver/IOExpanders.T3xxx.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/ICs/IOExpanders/T3xxx/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/IOExpanders.T3xxx/Samples/T322ai_Sample/T322ai_Sample.csproj" />
+    <Project Path="Meadow.Foundation.Peripherals/IOExpanders.T3xxx/Samples/T38i8o6do_Sample/T38i8o6do_Sample.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/ICs/IOExpanders/Tca9548a/">
+    <Project Path="Meadow.Foundation.Peripherals/ICs.IOExpanders.Tca9548a/Driver/ICs.IOExpanders.Tca9548a.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/ICs/IOExpanders/Tca9548a/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/ICs.IOExpanders.Tca9548a/Samples/Tca9548a_Sample/Tca9548a_Sample.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/ICs/IOExpanders/Tca95x5/">
+    <Project Path="Meadow.Foundation.Peripherals/ICs.IOExpanders.Tca95x5/Driver/ICs.IOExpanders.Tca95x5.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/ICs/IOExpanders/Tca95x5/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/ICs.IOExpanders.Tca95x5/Samples/Tca9535_Sample/Tca9535_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/ICs/IOExpanders/x74595/">
+    <Project Path="Meadow.Foundation.Peripherals/ICs.IOExpanders.x74595/Driver/ICs.IOExpanders.x74595.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/ICs/IOExpanders/x74595/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/ICs.IOExpanders.x74595/Samples/x74595_Sample/x74595_Sample.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Leds/" />
+  <Folder Name="/Meadow.Foundation.Peripherals/Leds/Apa102/">
+    <Project Path="Meadow.Foundation.Peripherals/Leds.Apa102/Driver/Leds.Apa102.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Leds/Apa102/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Leds.Apa102/Samples/Apa102_Display_Sample/Apa102_Display_Sample.csproj">
+      <Deploy />
+    </Project>
+    <Project Path="Meadow.Foundation.Peripherals/Leds.Apa102/Samples/Apa102_Sample/Apa102_Sample.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Leds/Pca9633/">
+    <Project Path="Meadow.Foundation.Peripherals/Leds.Pca9633/Driver/Leds.Pca9633.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Leds/Pca9633/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Leds.Pca9633/Samples/Pca9633_Sample/Pca9633_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Leds/Ws2812/">
+    <Project Path="Meadow.Foundation.Peripherals/Leds.Ws2812/Driver/Leds.Ws2812.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Leds/Ws2812/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Leds.Ws2812/Samples/Ws2812_Sample/Ws2812_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/mikroBus/" />
+  <Folder Name="/Meadow.Foundation.Peripherals/mikroBus/C16x9/">
+    <Project Path="Meadow.Foundation.Peripherals/mikroBus/C16x9/Driver/C16x9.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/mikroBus/C16x9/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/mikroBus/C16x9/Sample/C16x9_Sample/C16x9_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/mikroBus/C420R/">
+    <Project Path="Meadow.Foundation.Peripherals/mikroBus/C420R/Driver/C420R.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/mikroBus/C420R/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/mikroBus/C420R/Sample/C420R_Sample/C420R_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/mikroBus/C420T/">
+    <Project Path="Meadow.Foundation.Peripherals/mikroBus/C420T/Driver/C420T.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/mikroBus/C420T/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/mikroBus/C420T/Sample/C420T_Sample/C420T_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/mikroBus/C8800Retro/">
+    <Project Path="Meadow.Foundation.Peripherals/mikroBus/C8800Retro/Driver/C8800Retro.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/mikroBus/C8800Retro/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/mikroBus/C8800Retro/Sample/C8800Retro_Sample/C8800Retro_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/mikroBus/C8x8/">
+    <Project Path="Meadow.Foundation.Peripherals/mikroBus/C8x8/Driver/C8x8.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/mikroBus/C8x8/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/mikroBus/C8x8/Sample/C8x8_Sample/C8x8_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/mikroBus/CACCurrent/">
+    <Project Path="Meadow.Foundation.Peripherals/mikroBus/CACCurrent/Driver/CACCurrent.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/mikroBus/CACCurrent/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/mikroBus/CACCurrent/Sample/CACCurrent_Sample/CACCurrent_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/mikroBus/CButton/">
+    <Project Path="Meadow.Foundation.Peripherals/mikroBus/CButton/Driver/CButton.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/mikroBus/CButton/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/mikroBus/CButton/Sample/CButton_Sample/CButton_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/mikroBus/CGNSS10/">
+    <Project Path="Meadow.Foundation.Peripherals/mikroBus/CGNSS10/Driver/CGNSS10.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/mikroBus/CGNSS10/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/mikroBus/CGNSS10/Sample/CGNSS10_Sample/CGNSS10_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/mikroBus/CGNSS5/">
+    <Project Path="Meadow.Foundation.Peripherals/mikroBus/CGNSS5/Driver/CGNSS5.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/mikroBus/CGNSS5/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/mikroBus/CGNSS5/Sample/CGNSS5_Sample/CGNSS5_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/mikroBus/CJoystick/">
+    <Project Path="Meadow.Foundation.Peripherals/mikroBus/CJoystick/Driver/CJoystick.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/mikroBus/CJoystick/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/mikroBus/CJoystick/Sample/CJoystick_Sample/CJoystick_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/mikroBus/CLEM/">
+    <Project Path="Meadow.Foundation.Peripherals/mikroBus/CLEM/Driver/CLEM.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/mikroBus/CLEM/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/mikroBus/CLEM/Sample/CLEM_Sample/CLEM_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/mikroBus/CTempHum15/">
+    <Project Path="Meadow.Foundation.Peripherals/mikroBus/CTempHum15/Driver/CTempHum15.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/mikroBus/CTempHum15/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/mikroBus/CTempHum15/Sample/CTempHum15_Sample/CTempHum15_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/mikroBus/CThermo13/">
+    <Project Path="Meadow.Foundation.Peripherals/mikroBus/CThermo13/Driver/CThermo13.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/mikroBus/CThermo13/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/mikroBus/CThermo13/Sample/CThermo13_Sample/Thermo13_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Motors/" />
+  <Folder Name="/Meadow.Foundation.Peripherals/Motors/ElectronicSpeedController/">
+    <Project Path="Meadow.Foundation.Peripherals/Motors.ElectronicSpeedController/Driver/Motors.ElectronicSpeedController.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Motors/ElectronicSpeedController/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Motors.ElectronicSpeedController/Samples/ElectronicSpeedController_Sample/ElectronicSpeedController_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Motors/GpioStepper/">
+    <Project Path="Meadow.Foundation.Peripherals/Motors.GpioStepper/Driver/Motors.GpioStepper.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Motors/GpioStepper/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Motors.GpioStepper/Samples/GpioStepper_Sample/GpioStepper_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Motors/Stepper.A4988/">
+    <Project Path="Meadow.Foundation.Peripherals/Motors.Stepper.A4988/Driver/Motors.Stepper.A4988.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Motors/Stepper.A4988/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Motors.Stepper.A4988/Samples/A4988_Sample/A4988_Sample.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Motors/Stepper.Uln2003/">
+    <Project Path="Meadow.Foundation.Peripherals/Motors.Stepper.Uln2003/Driver/Motors.Stepper.Uln2003.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Motors/Stepper.Uln2003/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Motors.Stepper.Uln2003/Samples/Uln2003_Sample/Uln2003_Sample.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Motors/StepperOnline/">
+    <Project Path="Meadow.Foundation.Peripherals/Motors.StepperOnline/Driver/Motors.StepperOnline.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Motors/Tb67h420ftg/">
+    <Project Path="Meadow.Foundation.Peripherals/Motors.Tb67h420ftg/Driver/Motors.Tb67h420ftg.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Motors/Tb67h420ftg/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Motors.Tb67h420ftg/Samples/Tb67h420ftg_Encoder_Sample/Tb67h420ftg_Encoder_Sample.csproj">
+      <Deploy />
+    </Project>
+    <Project Path="Meadow.Foundation.Peripherals/Motors.Tb67h420ftg/Samples/Tb67h420ftg_Sample/Tb67h420ftg_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/RTCs/" />
+  <Folder Name="/Meadow.Foundation.Peripherals/RTCs/Ds1307/">
+    <Project Path="Meadow.Foundation.Peripherals/RTCs.Ds1307/Driver/RTCs.Ds1307.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/RTCs/Ds1307/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/RTCs.Ds1307/Samples/Ds1307_Sample/Ds1307_Sample.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/RTCs/Ds323x/">
+    <Project Path="Meadow.Foundation.Peripherals/RTCs.Ds323x/Driver/RTCs.Ds323x.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/RTCs/Ds323x/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/RTCs.Ds323x/Samples/Ds3231_Sample/Ds3231_Sample.csproj" />
+    <Project Path="Meadow.Foundation.Peripherals/RTCs.Ds323x/Samples/Ds3232_Sample/Ds3232_Sample.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/RTCs/Pcf8523/">
+    <Project Path="Meadow.Foundation.Peripherals/RTCs.Pcf8523/Driver/RTCs.Pcf8523.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/RTCs/Pcf8523/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/RTCs.Pcf8523/Samples/Pcf8523_Sample/Pcf8523_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/" />
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Atmospheric/" />
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Atmospheric/AdafruitMPRLS/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Atmospheric.AdafruitMPRLS/Driver/Sensors.Atmospheric.AdafruitMPRLS.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Atmospheric/AdafruitMPRLS/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Atmospheric.AdafruitMPRLS/Samples/AdafruitMPRLS_Sample/AdafruitMPRLS_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Atmospheric/Ahtx0/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Atmospheric.Ahtx0/Driver/Sensors.Atmospheric.Ahtx0.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Atmospheric/Ahtx0/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Atmospheric.Ahtx0/Samples/Aht10_Desktop_Sample/Aht10_Desktop_Sample.csproj" />
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Atmospheric.Ahtx0/Samples/Aht10_Sample/Aht10_Sample.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Atmospheric/Bh1900Nux/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Atmospheric.Bh1900Nux/Driver/Sensors.Atmospheric.Bh1900Nux.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Atmospheric/Bh1900Nux/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Atmospheric.Bh1900Nux/Samples/Bh1900Nux_Sample/Bh1900Nux_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Atmospheric/Bme68x/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Atmospheric.Bme68x/Driver/Sensors.Atmospheric.Bme68x.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Atmospheric/Bme68x/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Atmospheric.Bme68x/Samples/Bme680_Sample/Bme680_Sample.csproj" />
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Atmospheric.Bme68x/Samples/Bme688_Sample/Bme688_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Atmospheric/Bmp085/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Atmospheric.Bmp085/Driver/Sensors.Atmospheric.Bmp085.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Atmospheric/Bmp085/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Atmospheric.Bmp085/Samples/Bmp085_Sample/Bmp085_Sample.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Atmospheric/Bmp180/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Atmospheric.Bmp180/Driver/Sensors.Atmospheric.Bmp180.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Atmospheric/Bmp180/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Atmospheric.Bmp180/Samples/Bmp180_Sample/Bmp180_Sample.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Atmospheric/Bmx280/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Atmospheric.Bmx280/Driver/Sensors.Atmospheric.Bmx280.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Atmospheric/Bmx280/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Atmospheric.Bmx280/Samples/Bme280_Sample/Bme280_Sample.csproj" />
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Atmospheric.Bmx280/Samples/Bmp280_Sample/Bmp280_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Atmospheric/Ccs811/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Atmospheric.Ccs811/Driver/Sensors.Atmospheric.Ccs811.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Atmospheric/Ccs811/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Atmospheric.Ccs811/Samples/Ccs811_Sample/Ccs811_Sample.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Atmospheric/Dhtxx/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Atmospheric.Dhtxx/Driver/Sensors.Atmospheric.Dhtxx.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Atmospheric/Dhtxx/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Atmospheric.Dhtxx/Samples/Dht10_Sample/Dht10_Sample.csproj">
+      <Deploy />
+    </Project>
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Atmospheric.Dhtxx/Samples/Dht12_Sample/Dht12_Sample.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Atmospheric/Hc2/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Atmospheric.Hc2/Driver/Sensors.Atmospheric.Hc2.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Atmospheric/Hc2/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Atmospheric.Hc2/Samples/Hc2_Sample/Hc2_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Atmospheric/Hih6130/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Atmospheric.Hih6130/Driver/Sensors.Atmospheric.Hih6130.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Atmospheric/Hih6130/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Atmospheric.Hih6130/Samples/Hih6130_Sample/Hih6130_Sample.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Atmospheric/Htux1d/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Atmospheric.Htu2xd/Driver/Sensors.Atmospheric.Htux1d.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Atmospheric/Htux1d/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Atmospheric.Htu2xd/Samples/Htu21d_Sample/Htu21d_Sample.csproj">
+      <Deploy />
+    </Project>
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Atmospheric.Htu2xd/Samples/Htu31d_Sample/Htu31d_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Atmospheric/Mpl3115a2/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Atmospheric.Mpl3115a2/Driver/Sensors.Atmospheric.Mpl3115a2.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Atmospheric/Mpl3115a2/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Atmospheric.Mpl3115a2/Samples/Mpl3115a2_Sample/Mpl3115a2_Sample.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Atmospheric/Ms5611/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Atmospheric.Ms5611/Driver/Sensors.Atmospheric.Ms5611.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Atmospheric/Ms5611/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Atmospheric.Ms5611/Samples/Ms5611_Sample/Ms5611_Sample.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Atmospheric/Sgp40/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Atmospheric.Sgp40/Driver/Sensors.Atmospheric.Sgp40.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Atmospheric/Sgp40/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Atmospheric.Sgp40/Samples/Sgp40_Sample/Sgp40_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Atmospheric/Sht31d/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Atmospheric.Sht31d/Driver/Sensors.Atmospheric.Sht31d.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Atmospheric/Sht31d/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Atmospheric.Sht31d/Samples/Sht31d_Sample/Sht31d_Sample.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Atmospheric/Sht4x/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Atmospheric.Sht4x/Driver/Sensors.Atmospheric.Sht4x.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Atmospheric/Sht4x/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Atmospheric.Sht4x/Samples/Sht4x_Sample/Sht4x_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Atmospheric/Si70xx/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Atmospheric.Si70xx/Driver/Sensors.Atmospheric.Si70xx.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Atmospheric/Si70xx/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Atmospheric.Si70xx/Samples/Si70xx_Sample/Si70xx_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Atmospheric/Th02/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Atmospheric.Th02/Driver/Sensors.Atmospheric.Th02.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Atmospheric/Th02/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Atmospheric.Th02/Samples/Th02_Sample/Th02_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Battery/" />
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Battery/Max1704x/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Battery.Max1704x/Driver/Sensors.Battery.Max1704x.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Battery/Max1704x/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Battery.Max1704x/Samples/Max17043_Sample/Max17043_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Cameras/" />
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Cameras/Amg8833/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Camera.Amg8833/Driver/Sensors.Camera.Amg8833.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Cameras/Amg8833/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Camera.Amg8833/Samples/Amg8833_Sample/Amg8833_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Cameras/Arducam/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Camera.Arducam/Driver/Sensors.Camera.Arducam.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Cameras/Arducam/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Camera.Arducam/Samples/Arducam_Mini2MP_Sample/Arducam_Mini2MP_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Cameras/Mlx90640/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Camera.Mlx90640/Driver/Sensors.Camera.Mlx90640.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Cameras/Mlx90640/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Camera.Mlx90640/Samples/Mlx90640_Sample/Mlx90640_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Cameras/Vc0706/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Camera.Vc0706/Driver/Sensors.Camera.Vc0706.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Cameras/Vc0706/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Camera.Vc0706/Samples/Vc0706_Sample/Vc0706_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Color/" />
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Color/Tcs3472x/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Color.Tcs3472x/Driver/Sensors.Color.Tcs3472x.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Color/Tcs3472x/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Color.Tcs3472x/Samples/Tcs3472x_Sample/Tcs3472x_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Distance/" />
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Distance/A02yyuw/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Distance.A02yyuw/Driver/Sensors.Distance.A02yyuw.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Distance/A02yyuw/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Distance.A02yyuw/Samples/A02yyuw_Sample/A02yyuw_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Distance/Hcsr04/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Distance.Hcsr04/Driver/Sensors.Distance.Hcsr04.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Distance/Hcsr04/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Distance.Hcsr04/Samples/Hcsr04_Sample/Hcsr04_Sample.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Distance/MaxBotix/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Distance.MaxBotix/Driver/Sensors.Distance.MaxBotix.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Distance/MaxBotix/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Distance.MaxBotix/Samples/MaxBotix_Sample/MaxBotix_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Distance/Me007ys/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Distance.Me007ys/Driver/Sensors.Distance.Me007ys.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Distance/Me007ys/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Distance.Me007ys/Samples/Me007ys_Sample/Me007ys_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Distance/Vl53l0x/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Distance.Vl53l0x/Driver/Sensors.Distance.Vl53l0x.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Distance/Vl53l0x/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Distance.Vl53l0x/Samples/Vl53l0x_Sample/Vl53l0x_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Environmental/" />
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Environmental/Ags01Db/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Environmental.Ags01Db/Driver/Sensors.Environmental.Ags01Db.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Environmental/Ags01Db/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Environmental.Ags01Db/Samples/Ags01Db_Sample/Ags01Db_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Environmental/AltasScientificGravityDOMeter/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Environmental.AtlasScientificGravityDOMeter/Driver/Sensors.Environmental.AtlasScientificGravityDOMeter.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Environmental/AltasScientificGravityDOMeter/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Environmental.AtlasScientificGravityDOMeter/Samples/AtlasScientificGravityDOMeter_Sample/AtlasScientificGravityDOMeter_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Environmental/DFRobotGravityDOMeter/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Environmental.DFRobotGravityDOMeter/Driver/Sensors.Environmental.DFRobotGravityDOMeter.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Environmental/DFRobotGravityDOMeter/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Environmental.DFRobotGravityDOMeter/Samples/DFRobotGravityDOMeter_Sample/DFRobotGravityDOMeter_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Environmental/Ens160/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Environmental.Ens160/Driver/Sensors.Environmental.Ens160.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Environmental/Ens160/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Environmental.Ens160/Samples/Ens160_Sample/Ens160_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Environmental/GroPoint/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Environmental.GroPoint/Driver/Sensors.Environmental.GroPoint.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Environmental/GroPoint/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Environmental.GroPoint/Samples/Gplp8_Sample/Gplp8_Sample.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Environmental/Keller.XLine/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Environmental.Keller.XLine/Driver/Sensors.Environmental.Keller.XLine.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Environmental/MiniPID2/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Environmental.MiniPID2/Driver/Sensors.Environmental.MiniPID2.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Environmental/MiniPID2/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Environmental.MiniPID2/Samples/MiniPID2_Sample/MiniPID2_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Environmental/NextPm/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Environmental.NextPm/Driver/Sensors.Environmental.NextPm.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Environmental/NextPm/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Environmental.NextPm/Samples/NextPm_Sample/NextPm_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Environmental/Pmsa003i/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Environmental.Pmsa003I/Driver/Sensors.Environmental.Pmsa003i.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Environmental/Pmsa003i/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Environmental.Pmsa003I/Samples/Pmsa003I_Sample/Pmsa003I_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Environmental/Scd30/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Environmental.Scd30/Driver/Sensors.Environmental.Scd30.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Environmental/Scd30/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Environmental.Scd30/Samples/Scd30_Sample/Scd30_Sample.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Environmental/Scd4x/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Environmental.Scd4x/Driver/Sensors.Environmental.Scd4x.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Environmental/Scd4x/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Environmental.Scd4x/Samples/Scd40_Sample/Scd40_Sample.csproj">
+      <Deploy />
+    </Project>
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Environmental.Scd4x/Samples/Scd41_Sample/Scd41_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Environmental/Y4000/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Environmental.Y4000/Driver/Sensors.Environmental.Y4000.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Environmental/Y4000/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Environmental.Y4000/Samples/Y4000_Sample/Y4000_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Environmental/Ysi/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Environmental.Ysi.Exo/Driver/Sensors.Environmental.Ysi.Exo.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Environmental/Ysi/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Environmental.Ysi.Exo/Samples/Exo2_Sample/Exo2_Sample.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Flow/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Flow.HallEffect/Driver/Sensors.Flow.HallEffect.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Gnss/" />
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Gnss/Bg95M3/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Gnss.Bg95M3/Driver/Sensors.Gnss.Bg95M3.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Gnss/Bg95M3/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Gnss.Bg95M3/Samples/Bg95M3_Sample/Bg95M3_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Gnss/Mt3339/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Gnss.Mt3339/Driver/Sensors.Gnss.Mt3339.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Gnss/Mt3339/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Gnss.Mt3339/Samples/Mt3339_Sample/Mt3339_Sample.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Gnss/NeoM8/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Gnss.NeoM8/Driver/Sensors.Gnss.NeoM8.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Gnss/NeoM8/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Gnss.NeoM8/Samples/NeoM8_Sample/NeoM8_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Hid/" />
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Hid/ANONavigationEncoder/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Hid.ANONavigationEncoder/Driver/Sensors.Hid.ANONavigationEncoder.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Hid/ANONavigationEncoder/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Hid.ANONavigationEncoder/Samples/ANONavigationEncoder_Sample/ANONavigationEncoder_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Hid/As5013/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Hid.As5013/Driver/Sensors.Hid.As5013.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Hid/As5013/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Hid.As5013/Samples/As5013_Sample/As5013_Sample.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Hid/Bbq10Keyboard/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Hid.BBQ10Keyboard/Driver/Sensors.Hid.Bbq10Keyboard.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Hid/Bbq10Keyboard/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Hid.BBQ10Keyboard/Samples/Bbq10Keyboard_Sample/Bbq10Keyboard_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Hid/Keyboard/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Hid.Keyboard/Driver/Sensors.Hid.Keyboard.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Hid/Mpr121/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Hid.Mpr121/Driver/Sensors.Hid.Mpr121.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Hid/Mpr121/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Hid.Mpr121/Samples/Mpr121_Sample/Mpr121_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Hid/Touchscreen/" />
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Hid/Touchscreen/Tsc2004/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Hid.Tsc2004/Driver/Sensors.Hid.Tsc2004.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Hid/Touchscreen/Tsc2004/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Hid.Tsc2004/Samples/Tsc2004_Sample/Tsc2004_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Hid/Touchscreen/Xpt2046/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Hid.Xpt2046/Driver/Sensors.Hid.Xpt2046.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Hid/Touchscreen/Xpt2046/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Hid.Xpt2046/Samples/Xpt2046_Sample/Xpt2046_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Hid/WiiExtensionControllers/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Hid.WiiExtensionControllers/Driver/Sensors.Hid.WiiExtensionControllers.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Hid/WiiExtensionControllers/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Hid.WiiExtensionControllers/Samples/NesClassicController_Sample/NesClassicController_Sample.csproj">
+      <Deploy />
+    </Project>
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Hid.WiiExtensionControllers/Samples/SnesClassicController_Sample/SnesClassicController_Sample.csproj">
+      <Deploy />
+    </Project>
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Hid.WiiExtensionControllers/Samples/WiiClassicControllerPro_Sample/WiiClassicControllerPro_Sample.csproj">
+      <Deploy />
+    </Project>
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Hid.WiiExtensionControllers/Samples/WiiClassicController_Sample/WiiClassicController_Sample.csproj">
+      <Deploy />
+    </Project>
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Hid.WiiExtensionControllers/Samples/WiiNunchuck_Sample/WiiNunchuck_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Light/" />
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Light/Alspt19315C/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Light.Alspt19315C/Driver/Sensors.Light.Alspt19315C.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Light/Alspt19315C/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Light.Alspt19315C/Samples/Alspt19315C_Sample/Alspt19315C_Sample.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Light/AnalogSolarIntensityGauge/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Light.AnalogSolarIntensityGauge/Driver/Sensors.Light.AnalogSolarIntensityGauge.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Light/AnalogSolarIntensityGauge/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Light.AnalogSolarIntensityGauge/Samples/AnalogSolarIntensityGauge_Sample/AnalogSolarIntensityGauge_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Light/Bh1745/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Light.Bh1745/Driver/Sensors.Light.Bh1745.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Light/Bh1745/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Light.Bh1745/Samples/Bh1745_Sample/Bh1745_Sample.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Light/Bh1750/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Light.Bh1750/Driver/Sensors.Light.Bh1750.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Light/Bh1750/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Light.Bh1750/Samples/Bh1750_Sample/Bh1750_Sample.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Light/Max44009/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Light.Max44009/Driver/Sensors.Light.Max44009.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Light/Max44009/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Light.Max44009/Samples/Max44009_Sample/Max44009_Sample.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Light/Si1145/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Light.Si1145/Driver/Sensors.Light.Si1145.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Light/Si1145/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Light.Si1145/Samples/Si1145_Sample/Si1145_Sample.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Light/Temt6000/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Light.Temt6000/Driver/Sensors.Light.Temt6000.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Light/Temt6000/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Light.Temt6000/Samples/Temt6000_Sample/Temt6000_Sample.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Light/Tsl2591/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Light.Tsl2591/Driver/Sensors.Light.Tsl2591.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Light/Tsl2591/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Light.Tsl2591/Samples/Tsl2591_Sample/Tsl2591_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Light/Veml7700/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Light.Veml7700/Driver/Sensors.Light.Veml7700.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Light/Veml7700/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Light.Veml7700/Samples/Veml7700_Sample/Veml7700_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/LoadCell/" />
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/LoadCell/Hx711/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.LoadCell.Hx711/Driver/Sensors.LoadCell.Hx711.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/LoadCell/Hx711/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.LoadCell.Hx711/Samples/Hx711_Sample/Hx711_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/LoadCell/Nau7802/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.LoadCell.Nau7802/Driver/Sensors.LoadCell.Nau7802.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/LoadCell/Nau7802/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.LoadCell.Nau7802/Samples/Nau7802_Sample/Nau7802_Sample.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Moisture/" />
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Moisture/Capacitive/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Moisture.Capacitive/Driver/Sensors.Moisture.Capacitive.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Moisture/Capacitive/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Moisture.Capacitive/Samples/Capacitive_Sample/Capacitive_Sample.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Moisture/Fc28/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Moisture.Fc28/Driver/Sensors.Moisture.Fc28.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Moisture/Fc28/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Moisture.Fc28/Samples/Fc28_Sample/Fc28_Sample.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Motion/" />
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Motion/Adxl3xx/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Motion.Adxl3xx/Driver/Sensors.Motion.Adxl3xx.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Motion/Adxl3xx/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Motion.Adxl3xx/Samples/Adxl335_Sample/Adxl335_Sample.csproj">
+      <Deploy />
+    </Project>
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Motion.Adxl3xx/Samples/Adxl337_Sample/Adxl337_Sample.csproj">
+      <Deploy />
+    </Project>
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Motion.Adxl3xx/Samples/Adxl343_Sample/Adxl343_Sample.csproj" />
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Motion.Adxl3xx/Samples/Adxl345_Sample/Adxl345_Sample.csproj">
+      <Deploy />
+    </Project>
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Motion.Adxl3xx/Samples/Adxl362_Sample/Adxl362_Sample.csproj">
+      <Deploy />
+    </Project>
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Motion.Adxl3xx/Samples/Adxl377_Sample/Adxl377_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Motion/Apds9960/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Motion.Apds9960/Driver/Sensors.Motion.Apds9960.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Motion/Apds9960/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Motion.Apds9960/Samples/Apds9960_Sample/Apds9960_Sample.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Motion/Bmi270/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Motion.Bmi270/Driver/Sensors.Motion.Bmi270.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Motion/Bmi270/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Motion.Bmi270/Samples/Bmi270_Sample/Bmi270_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Motion/Bno055/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Motion.Bno055/Driver/Sensors.Motion.Bno055.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Motion/Bno055/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Motion.Bno055/Samples/Bno055_Sample/Bno055_Sample.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Motion/Hcsens0040/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Motion.Hcsens0040/Driver/Sensors.Motion.Hcsens0040.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Motion/Hcsens0040/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Motion.Hcsens0040/Samples/Hcsens0040_Sample/Hcsens0040_Sample.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Motion/Hmc5883/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Motion.Hmc5883/Driver/Sensors.Motion.Hmc5883.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Motion/Hmc5883/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Motion.Hmc5883/Samples/Hmc5883_Sample/Hmc5883_Sample.csproj" />
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Motion.Hmc5883/Samples/Qmc5883_Sample/Qmc5883_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Motion/Lis2mdl/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Motion.Lis2mdl/Driver/Sensors.Motion.Lis2mdl.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Motion/Lis2mdl/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Motion.Lis2mdl/Samples/Lis2mdl_Sample/Lis2mdl_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Motion/Lis3mdl/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Motion.Lis3mdl/Driver/Sensors.Motion.Lis3mdl.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Motion/Lis3mdl/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Motion.Lis3mdl/Samples/Lis3mdl_Sample/Lis3mdl_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Motion/Lsm303agr/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Motion.Lsm303agr/Driver/Sensors.Motion.Lsm303agr.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Motion/Lsm303agr/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Motion.Lsm303agr/Samples/Lsm303agr_Sample/Lsm303agr_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Motion/Lsm6dsox/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Motion.Lsm6dsox/Driver/Sensors.Motion.Lsm6dsox.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Motion/Lsm6dsox/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Motion.Lsm6dsox/Samples/Lsm6dsox_Sample/Lsm6dsox_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Motion/Mag3110/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Motion.Mag3110/Driver/Sensors.Motion.Mag3110.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Motion/Mag3110/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Motion.Mag3110/Samples/Mag3110_Sample/Mag3110_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Motion/Mma7660fc/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Motion.Mma7660fc/Driver/Sensors.Motion.Mma7660fc.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Motion/Mma7660fc/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Motion.Mma7660fc/Samples/Mma7660fc_Sample/Mma7660fc_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Motion/Mmc5603/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Motion.Mmc5603/Driver/Sensors.Motion.Mmc5603.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Motion/Mmc5603/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Motion.Mmc5603/Samples/Mmc5603_Sample/Mmc5603_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Motion/Mpu6050/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Motion.Mpu6050/Driver/Sensors.Motion.Mpu6050.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Motion/Mpu6050/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Motion.Mpu6050/Samples/Mpu6050_Sample/Mpu6050_Sample.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Motion/ParallaxPir/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Motion.ParallaxPir/Driver/Sensors.Motion.ParallaxPir.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Motion/ParallaxPir/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Motion.ParallaxPir/Samples/ParallaxPir_Sample/ParallaxPir_Sample.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Power/" />
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Power/CurrentTransducer/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Power.CurrentTransducer/Driver/Sensors.Power.CurrentTransducer.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Power/CurrentTransducer/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Power.CurrentTransducer/Samples/CurrentTransducer_Sample/CurrentTransducer_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Power/Ina2xx/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Power.Ina2xx/Driver/Sensors.Power.Ina2xx.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Power/Ina2xx/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Power.Ina2xx/Samples/Ina219_Sample/Ina219_Sample.csproj">
+      <Deploy />
+    </Project>
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Power.Ina2xx/Samples/Ina228_Sample/Ina228_Sample.csproj">
+      <Deploy />
+    </Project>
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Power.Ina2xx/Samples/Ina260_Sample/Ina260_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Power/Spm1x/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Power.Spm1x/Driver/Sensors.Power.Spm1x.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Power/Spm1x/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Power.Spm1x/Samples/Spm1x_DesktopSample/Spm1x_DesktopSample.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Radio/" />
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Radio/Rfid.IDxxLA/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Radio.Rfid.IDxxLA/Driver/Sensors.Radio.Rfid.IDxxLA.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Radio/Rfid.IDxxLA/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Radio.Rfid.IDxxLA/Samples/IDxxLA_Sample/IDxxLA_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Sound/" />
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Sound/Ky038/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Sound.Ky038/Driver/Sensors.Sound.Ky038.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Sound/Ky038/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Sound.Ky038/Samples/Ky038_Sample/Ky038_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Temperature/" />
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Temperature/Adt7410/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Temperature.Adt7410/Driver/Sensors.Temperature.Adt7410.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Temperature/Adt7410/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Temperature.Adt7410/Samples/Adt7410_Sample/Adt7410_Sample.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Temperature/Lm75/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Temperature.Lm75/Driver/Sensors.Temperature.Lm75.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Temperature/Lm75/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Temperature.Lm75/Samples/Lm75_Sample/Lm75_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Temperature/Max6675/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Temperature.Max6675/Driver/Sensors.Temperature.Max6675.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Temperature/Max6675/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Temperature.Max6675/Samples/Max6675_Sample/Max6675_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Temperature/Mcp960x/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Temperature.Mcp960x/Driver/Sensors.Temperature.Mcp960x.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Temperature/Mcp960x/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Temperature.Mcp960x/Samples/Mcp9600_Sample/Mcp9600_Sample.csproj">
+      <Deploy />
+    </Project>
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Temperature.Mcp960x/Samples/Mcp9601_Sample/Mcp9601_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Temperature/Mcp9808/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Temperature.Mcp9808/Driver/Sensors.Temperature.Mcp9808.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Temperature/Mcp9808/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Temperature.Mcp9808/Samples/Mcp9808_Sample/Mcp9808_Sample.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Temperature/Pct2075/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Temperature.Pct2075/Driver/Sensors.Temperature.Pct2075.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Temperature/Pct2075/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Temperature.Pct2075/Samples/Pct2075_Sample/Pct2075_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Temperature/Thermistor/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Temperature.Thermistor/Driver/Sensors.Temperature.Thermistor.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Temperature/Thermistor/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Temperature.Thermistor/Samples/Thermistor_Sample/Thermistor_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Temperature/Tmp102/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Temperature.Tmp102/Driver/Sensors.Temperature.Tmp102.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Temperature/Tmp102/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Temperature.Tmp102/Samples/Tmp102_Sample/Tmp102_Sample.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Volume/" />
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Volume/ResistiveTankLevel/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Volume.ResistiveTankLevelSender/Driver/Sensors.Volume.ResistiveTankLevelSender.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Volume/ResistiveTankLevel/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Volume.ResistiveTankLevelSender/Samples/TankLevelSender_Sample/TankLevelSender_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Weather/" />
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Weather/SwitchingAnemometer/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Weather.SwitchingAnemometer/Driver/Sensors.Weather.SwitchingAnemometer.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Weather/SwitchingAnemometer/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Weather.SwitchingAnemometer/Samples/SwitchingAnemometer_Sample/SwitchingAnemometer_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Weather/SwitchingRainGauge/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Weather.SwitchingRainGauge/Driver/Sensors.Weather.SwitchingRainGauge.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Weather/SwitchingRainGauge/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Weather.SwitchingRainGauge/Samples/SwitchingRainGauge_Sample/SwitchingRainGauge_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Weather/WindVane/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Weather.WindVane/Driver/Sensors.Weather.WindVane.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Weather/WindVane/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Weather.WindVane/Samples/WindVane_Sample/WindVane_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/VFDs/" />
+  <Folder Name="/Meadow.Foundation.Peripherals/VFDs/CerusXDrive/">
+    <Project Path="Meadow.Foundation.Peripherals/VFDs.CerusXDrive/Driver/Motors.CerusXDrive.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/VFDs/CerusXDrive/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/VFDs.CerusXDrive/Samples/CerusXDrive_Sample/CerusXDrive_Sample.csproj" />
+  </Folder>
+  <Folder Name="/Product/" />
+  <Folder Name="/Product/ProgrammableAnalogInputModule/" />
+  <Folder Name="/Product/ProgrammableAnalogInputModule/Driver/">
+    <Project Path="Product/ProgrammableAnalogInput/Driver/ProgramableAnalogInput.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Product/ProgrammableAnalogInputModule/Samples/">
+    <Project Path="Product/ProgrammableAnalogInput/Samples/ProgrammableAnalogInput_Sample/ProgrammableAnalogInput_Sample.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Product/ProgrammableAnalogInputModule/Tests/">
+    <Project Path="Product/ProgrammableAnalogInput/Tests/ProgrammableAnalogInputTests.csproj" />
+  </Folder>
+  <Folder Name="/_External/">
+    <Project Path="../../Meadow.Contracts/Source/Meadow.Contracts/Meadow.Contracts.csproj" />
+    <Project Path="../../Meadow.Core/Source/implementations/desktop/Meadow.Desktop/Meadow.Desktop.csproj" />
+    <Project Path="../../Meadow.Core/Source/implementations/f7/Meadow.F7/Meadow.F7.csproj">
+      <Deploy />
+    </Project>
+    <Project Path="../../Meadow.Core/Source/implementations/linux/Meadow.Linux/Meadow.Linux.csproj">
+      <Deploy />
+    </Project>
+    <Project Path="../../Meadow.Core/Source/implementations/mac/Meadow.Mac/Meadow.Mac.csproj" />
+    <Project Path="../../Meadow.Core/Source/implementations/windows/Meadow.Windows/Meadow.Windows.csproj" />
+    <Project Path="../../Meadow.Core/Source/Meadow.Core/Meadow.Core.csproj">
+      <Deploy />
+    </Project>
+    <Project Path="../../Meadow.Logging/Source/Meadow.Logging/lib/Meadow.Logging.csproj" />
+    <Project Path="../../Meadow.Modbus/src/Meadow.Modbus/Meadow.Modbus.csproj" />
+    <Project Path="../../Meadow.Units/Source/Meadow.Units/Meadow.Units.csproj" />
+    <Project Path="../../MQTTnet/Source/MQTTnet/MQTTnet.csproj" />
+  </Folder>
+  <Project Path="Meadow.Foundation.Core/Meadow.Foundation.Core.csproj" />
+</Solution>

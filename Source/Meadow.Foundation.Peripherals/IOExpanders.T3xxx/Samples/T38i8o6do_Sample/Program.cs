@@ -21,8 +21,8 @@ internal class Program
         //        var d01 = t3.Pins.DO1.CreateDigitalOutputPort(false);
         //        var d02 = t3.Pins.DO2.CreateDigitalOutputPort(false);
 
-        //var vi = t3.CreateVoltageInputPort(t3.Pins.AI7);
-        var ci = t3.CreateCurrentInputPort(t3.Pins.AI2);
+        //var vi = await t3.CreateVoltageInputPort(t3.Pins.AI7);
+        var ci = await t3.CreateCurrentInputPort(t3.Pins.AI2);
 
         while (true)
         {

@@ -1,9 +1,11 @@
-﻿namespace Meadow.Foundation.Graphics.MicroLayout;
+﻿using System.Linq;
+
+namespace Meadow.Foundation.Graphics.MicroLayout;
 
 /// <summary>
 /// Represents an auto-scrolling text area
 /// </summary>
-public class ScrollingTextArea : MicroLayout
+public class ScrollingTextArea : LayoutBase
 {
     private readonly int _rowHeight;
     private readonly IFont _font;
@@ -127,7 +129,7 @@ public class ScrollingTextArea : MicroLayout
     /// <inheritdoc/>
     public override void ApplyTheme(DisplayTheme theme)
     {
-        foreach (Label label in Controls)
+        foreach (Label label in Controls.Cast<Label>())
         {
             label.ApplyTheme(theme);
         }
@@ -136,5 +138,11 @@ public class ScrollingTextArea : MicroLayout
     /// <inheritdoc/>
     protected override void OnDraw(MicroGraphics graphics)
     {
+    }
+
+    /// <inheritdoc/>
+    internal override void PerformLayout()
+    {
+        // nop
     }
 }

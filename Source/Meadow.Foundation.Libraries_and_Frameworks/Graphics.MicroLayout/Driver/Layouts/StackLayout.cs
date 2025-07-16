@@ -1,9 +1,11 @@
-﻿namespace Meadow.Foundation.Graphics.MicroLayout;
+﻿using System;
+
+namespace Meadow.Foundation.Graphics.MicroLayout;
 
 /// <summary>
 /// A layout that arranges child elements in a horizontal or vertical stack.
 /// </summary>
-public class StackLayout : MicroLayout
+public class StackLayout : LayoutBase
 {
     /// <summary>
     /// Defines the stacking orientation (Vertical or Horizontal).
@@ -20,8 +22,33 @@ public class StackLayout : MicroLayout
         Horizontal
     }
 
+    /// <summary>
+    /// Defines how child controls are aligned on the axis perpendicular to the stacking direction.
+    /// </summary>
+    public enum CrossAxisAlignment
+    {
+        /// <summary>
+        /// Aligns controls to the start of the cross-axis (Left for Vertical stack, Top for Horizontal stack).
+        /// </summary>
+        Start,
+        /// <summary>
+        /// Centers controls on the cross-axis.
+        /// </summary>
+        Center,
+        /// <summary>
+        /// Aligns controls to the end of the cross-axis (Right for Vertical stack, Bottom for Horizontal stack).
+        /// </summary>
+        End,
+        /// <summary>
+        /// Stretches controls to fill the available space on the cross-axis.
+        /// </summary>
+        Stretch
+    }
+
     private Orientation _stackOrientation;
+    private CrossAxisAlignment _crossAxisAlignment = CrossAxisAlignment.Center;
     private int _spacing = 2;
+    private int _padding = 2;
 
     /// <summary>
     /// Gets or sets the stack orientation.
@@ -34,6 +61,23 @@ public class StackLayout : MicroLayout
             if (_stackOrientation != value)
             {
                 _stackOrientation = value;
+                LayoutControls();
+                Invalidate();
+            }
+        }
+    }
+
+    /// <summary>
+    /// Gets or sets the alignment of controls perpendicular to the stacking direction.
+    /// </summary>
+    public CrossAxisAlignment AxisAlignment
+    {
+        get => _crossAxisAlignment;
+        set
+        {
+            if (_crossAxisAlignment != value)
+            {
+                _crossAxisAlignment = value;
                 LayoutControls();
                 Invalidate();
             }
@@ -58,6 +102,27 @@ public class StackLayout : MicroLayout
     }
 
     /// <summary>
+    /// Gets or sets the padding (or indentation) of all controls from all 4 edges.
+    /// </summary>
+    public int Padding
+    {
+        get => _padding;
+        set
+        {
+            if (_padding == value) { return; }
+            _padding = value;
+            LayoutControls();
+            Invalidate();
+        }
+    }
+
+    /// <summary>
+    /// Creates a new StackLayout.
+    /// </summary>
+    public StackLayout() : this(0, 0, 0, 0)
+    { }
+
+    /// <summary>
     /// Creates a new StackLayout.
     /// </summary>
     /// <param name="left">The left position of the layout.</param>
@@ -65,18 +130,43 @@ public class StackLayout : MicroLayout
     /// <param name="width">The width of the layout.</param>
     /// <param name="height">The height of the layout.</param>
     /// <param name="orientation">The stacking orientation.</param>
-    public StackLayout(int left, int top, int width, int height, Orientation orientation = Orientation.Vertical)
+    /// <param name="crossAxisAlignment">The alignment of controls perpendicular to the stacking direction.</param>
+    public StackLayout(int left, int top, int width, int height,
+                       Orientation orientation = Orientation.Vertical,
+                       CrossAxisAlignment crossAxisAlignment = CrossAxisAlignment.Center)
         : base(left, top, width, height)
     {
-        StackOrientation = orientation;
+        _stackOrientation = orientation;
+        _crossAxisAlignment = crossAxisAlignment;
+
+        Controls.ControlAdded += OnControlsChanged;
+        Controls.ControlRemoved += OnControlsChanged;
+    }
+
+    private void OnControlsChanged(object sender, IControl e)
+    {
+        LayoutControls();
+        Invalidate();
     }
 
     /// <summary>
-    /// Arranges child controls based on the stack orientation and indentation.
+    /// Arranges child controls based on the stack orientation and cross-axis alignment,
+    /// respecting the layout's padding and spacing.
     /// </summary>
     public void LayoutControls()
     {
-        int offset = 0;
+        if (Width <= 0 || Height <= 0)
+        {
+            return;
+        }
+
+        int currentMainAxisOffset = Padding;
+
+        int paddedWidth = Width - (2 * Padding);
+        int paddedHeight = Height - (2 * Padding);
+
+        if (paddedWidth < 0) paddedWidth = 0;
+        if (paddedHeight < 0) paddedHeight = 0;
 
         lock (Controls.SyncRoot)
         {
@@ -87,62 +177,71 @@ public class StackLayout : MicroLayout
                     continue;
                 }
 
+                int controlX;
+                int controlY;
+                int controlWidth = control.Width;
+                int controlHeight = control.Height;
+
                 if (StackOrientation == Orientation.Vertical)
                 {
-                    control.Left = Width / 2 - control.Width / 2;
-                    control.Top = offset;
-                    offset += control.Height + Spacing;
+                    controlY = currentMainAxisOffset;
+
+                    switch (AxisAlignment)
+                    {
+                        case CrossAxisAlignment.Start:
+                            controlX = Padding;
+                            break;
+                        case CrossAxisAlignment.Center:
+                            controlX = Padding + (paddedWidth / 2) - (controlWidth / 2);
+                            break;
+                        case CrossAxisAlignment.End:
+                            controlX = Padding + paddedWidth - controlWidth;
+                            break;
+                        case CrossAxisAlignment.Stretch:
+                            controlX = Padding;
+                            controlWidth = paddedWidth;
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException(nameof(CrossAxisAlignment), "Unknown CrossAxisAlignment value.");
+                    }
+                    currentMainAxisOffset += controlHeight + Spacing;
                 }
-                else
+                else // Orientation.Horizontal
                 {
-                    control.Left = offset;
-                    control.Top = Height / 2 - control.Height / 2;
-                    offset += control.Width + Spacing;
+                    controlX = currentMainAxisOffset;
+
+                    switch (AxisAlignment)
+                    {
+                        case CrossAxisAlignment.Start:
+                            controlY = Padding;
+                            break;
+                        case CrossAxisAlignment.Center:
+                            controlY = Padding - (controlHeight / 2) + (paddedHeight / 2);
+                            break;
+                        case CrossAxisAlignment.End:
+                            controlY = Padding + paddedHeight - controlHeight;
+                            break;
+                        case CrossAxisAlignment.Stretch:
+                            controlY = Padding;
+                            controlHeight = paddedHeight;
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException(nameof(CrossAxisAlignment), "Unknown CrossAxisAlignment value.");
+                    }
+                    currentMainAxisOffset += controlWidth + Spacing;
                 }
+
+                control.Left = controlX;
+                control.Top = controlY;
+                control.Width = controlWidth;
+                control.Height = controlHeight;
             }
         }
     }
 
-    /// <summary>
-    /// Adds a control to the layout and updates positions.
-    /// </summary>
-    /// <param name="control">The control to add.</param>
-    public void Add(IControl control)
-    {
-        lock (Controls.SyncRoot)
-        {
-            Controls.Add(control);
-        }
-        LayoutControls();
-        Invalidate();
-    }
-
-    /// <summary>
-    /// Adds controls to the layout and updates positions.
-    /// </summary>
-    /// <param name="controls">The controls to add.</param>
-    public void Add(params IControl[] controls)
-    {
-        lock (Controls.SyncRoot)
-        {
-            Controls.Add(controls);
-        }
-        LayoutControls();
-        Invalidate();
-    }
-
     /// <inheritdoc/>
-    protected override void OnDraw(MicroGraphics graphics)
+    internal override void PerformLayout()
     {
-        if (!IsVisible || !BackgroundColor.HasValue)
-            return;
-
-        graphics.DrawRectangle(
-            Left + (Parent?.Left ?? 0),
-            Top + (Parent?.Top ?? 0),
-            Width,
-            Height,
-            BackgroundColor.Value,
-            true);
+        LayoutControls();
     }
 }

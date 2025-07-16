@@ -1,7 +1,9 @@
 ﻿using Meadow.Hardware;
+using Meadow.Units;
 using System;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Power;
 
@@ -118,13 +120,13 @@ public class Ina228 : Ina2xx
     }
 
     /// <inheritdoc/>
-    public override Units.Current ReadCurrent()
+    public override ValueTask<Units.Current> ReadCurrent()
     {
         Span<byte> buffer = stackalloc byte[3];
         ReadRegister(Registers.Current, buffer);
         var sign = buffer[0] >= 0x80;
         int register = (sign ? 0x0FFF : 0x0000) << 20 | buffer[0] << 12 | buffer[1] << 4 | buffer[2] >> 4;
-        return new Units.Current(register * _currentScale.Amps);
+        return new ValueTask<Current>(new Current(register * _currentScale.Amps));
     }
 
     /// <inheritdoc/>

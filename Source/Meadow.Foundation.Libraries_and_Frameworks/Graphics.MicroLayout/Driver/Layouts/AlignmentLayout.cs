@@ -6,7 +6,7 @@ namespace Meadow.Foundation.Graphics.MicroLayout;
 /// <summary>
 /// A layout that arranges child controls based on a docking position.
 /// </summary>
-public class DockLayout : MicroLayout
+public class AlignmentLayout : LayoutBase
 {
     /// <summary>
     /// Specifies the docking position of a control within the layout.
@@ -59,16 +59,15 @@ public class DockLayout : MicroLayout
     private readonly Dictionary<IControl, DockPosition> _dockPositions = new();
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="DockLayout"/> class.
+    /// Initializes a new instance of the <see cref="AlignmentLayout"/> class.
     /// </summary>
     /// <param name="left">The left position of the layout.</param>
     /// <param name="top">The top position of the layout.</param>
     /// <param name="width">The width of the layout.</param>
     /// <param name="height">The height of the layout.</param>
-    public DockLayout(int left, int top, int width, int height)
+    public AlignmentLayout(int left, int top, int width, int height)
         : base(left, top, width, height)
-    {
-    }
+    { }
 
     /// <summary>
     /// Adds a control to the layout at the specified docking position.
@@ -79,8 +78,6 @@ public class DockLayout : MicroLayout
     {
         Controls.Add(control);
         _dockPositions[control] = position;
-
-        SetControlPosition(control, position);
     }
 
     /// <summary>
@@ -144,21 +141,18 @@ public class DockLayout : MicroLayout
         }
     }
 
-    /// <summary>
-    /// Draws the layout using the specified graphics context.
-    /// </summary>
-    /// <param name="graphics">The graphics context used to render the layout.</param>
-    protected override void OnDraw(MicroGraphics graphics)
+    /// <InheritDoc/>
+    internal override void PerformLayout()
     {
-        if (!IsVisible || BackgroundColor == null)
-            return;
-
-        graphics.DrawRectangle(
-            Left + (Parent?.Left ?? 0),
-            Top + (Parent?.Top ?? 0),
-            Width,
-            Height,
-            BackgroundColor.Value,
-            true);
+        lock (Controls.SyncRoot)
+        {
+            foreach (var control in Controls) // Iterate through the actual children
+            {
+                if (_dockPositions.TryGetValue(control, out DockPosition position))
+                {
+                    SetControlPosition(control, position);
+                }
+            }
+        }
     }
 }

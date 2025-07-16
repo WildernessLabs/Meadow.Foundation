@@ -5,9 +5,6 @@
 /// </summary>
 public class Box : ThemedControl
 {
-    private Color _foregroundColor;
-    private bool _isFilled = true;
-
     /// <summary>
     /// Gets or sets a value indicating whether the display box is filled with the foreground color.
     /// </summary>
@@ -15,30 +12,6 @@ public class Box : ThemedControl
     {
         get => _isFilled;
         set => SetInvalidatingProperty(ref _isFilled, value);
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="Box"/> class with the specified dimensions.
-    /// </summary>
-    /// <param name="left">The left coordinate of the display box.</param>
-    /// <param name="top">The top coordinate of the display box.</param>
-    /// <param name="width">The width of the display box.</param>
-    /// <param name="height">The height of the display box.</param>
-    public Box(int left, int top, int width, int height)
-        : base(left, top, width, height)
-    {
-    }
-
-    /// <summary>
-    /// Applies the specified display theme to the display box.
-    /// </summary>
-    /// <param name="theme">The display theme to apply.</param>
-    public override void ApplyTheme(DisplayTheme theme)
-    {
-        if (theme != null)
-        {
-            if (theme.ForegroundColor != null) this.ForegroundColor = theme.ForegroundColor.Value;
-        }
     }
 
     /// <summary>
@@ -50,6 +23,41 @@ public class Box : ThemedControl
         set => SetInvalidatingProperty(ref _foregroundColor, value);
     }
 
+    private Color _foregroundColor;
+    private bool _isFilled = true;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Box"/> class with the specified dimensions.
+    /// </summary>
+    public Box() : base(0, 0, 0, 0)
+    { }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Box"/> class with the specified dimensions.
+    /// </summary>
+    /// <param name="left">The left coordinate of the display box.</param>
+    /// <param name="top">The top coordinate of the display box.</param>
+    /// <param name="width">The width of the display box.</param>
+    /// <param name="height">The height of the display box.</param>
+    public Box(int left, int top, int width, int height)
+        : base(left, top, width, height)
+    { }
+
+    /// <summary>
+    /// Applies the specified display theme to the display box.
+    /// </summary>
+    /// <param name="theme">The display theme to apply.</param>
+    public override void ApplyTheme(DisplayTheme theme)
+    {
+        if (theme != null)
+        {
+            if (theme.ForegroundColor != null)
+            {
+                ForegroundColor = theme.ForegroundColor.Value;
+            }
+        }
+    }
+
     /// <summary>
     /// Draws the display box on the specified <see cref="MicroGraphics"/> surface.
     /// </summary>
@@ -58,7 +66,7 @@ public class Box : ThemedControl
     {
         if (ForegroundColor != Color.Transparent)
         {
-            graphics.DrawRectangle(Left + (Parent?.Left ?? 0), Top + (Parent?.Top ?? 0), Width, Height, ForegroundColor, IsFilled);
+            graphics.DrawRectangle(ScreenLeft, ScreenTop, Width, Height, ForegroundColor, IsFilled);
         }
     }
 }

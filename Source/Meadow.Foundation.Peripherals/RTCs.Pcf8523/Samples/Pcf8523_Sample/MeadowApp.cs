@@ -4,7 +4,7 @@ using Meadow.Foundation.RTCs;
 using System;
 using System.Threading.Tasks;
 
-namespace RTCs.Pcf8523_Sample
+namespace Pcf8523_Sample
 {
     public class MeadowApp : App<F7FeatherV2>
     {
@@ -23,7 +23,7 @@ namespace RTCs.Pcf8523_Sample
 
         public override async Task Run()
         {
-            var dateTime = new DateTimeOffset();
+            DateTimeOffset dateTime;
             var running = rtc.IsRunning;
 
             Resolver.Log.Info($"{(running ? "is running" : "is not running")}");
@@ -35,14 +35,14 @@ namespace RTCs.Pcf8523_Sample
             }
 
             dateTime = rtc.GetTime();
-            Resolver.Log.Info($" RTC current time is: {dateTime.ToString("MM/dd/yy HH:mm:ss")}");
+            Resolver.Log.Info($" RTC current time is: {dateTime:MM/dd/yy HH:mm:ss}");
 
             dateTime = new DateTime(2030, 2, 15);
-            Resolver.Log.Info($" Setting RTC to : {dateTime.ToString("MM/dd/yy HH:mm:ss")}");
+            Resolver.Log.Info($" Setting RTC to : {dateTime:MM/dd/yy HH:mm:ss}");
             rtc.SetTime(dateTime);
 
             dateTime = rtc.GetTime();
-            Resolver.Log.Info($" RTC current time is: {dateTime.ToString("MM/dd/yy HH:mm:ss")}");
+            Resolver.Log.Info($" RTC current time is: {dateTime:MM/dd/yy HH:mm:ss}");
 
             // Test Timer A
             Resolver.Log.Info("Setting Timer A for 5 seconds...");

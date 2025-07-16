@@ -1,4 +1,6 @@
-﻿namespace Meadow.Foundation.Graphics.MicroLayout;
+﻿using System;
+
+namespace Meadow.Foundation.Graphics.MicroLayout;
 
 /// <summary>
 /// Represents a display control in the user interface.
@@ -9,6 +11,11 @@ public interface IControl
     /// Gets of sets the Control's Parent, if it has one.  If the Control is unparented (i.e. Parent is null) then it is directly on the DisplayScreen
     /// </summary>
     IControl? Parent { get; set; }
+
+    /// <summary>
+    /// Occurs when the position or size of the control changes.
+    /// </summary>
+    event EventHandler? BoundsChanged;
 
     /// <summary>
     /// Gets or sets the left coordinate of the display control.
@@ -89,10 +96,7 @@ public interface IControl
     /// <returns><c>true</c> if the coordinates are contained within the display control's area; otherwise, <c>false</c>.</returns>
     public bool Contains(int x, int y)
     {
-        if (x < Left + Parent?.Left) return false;
-        if (x > Parent?.Left + Left + Width) return false;
-        if (y < Top + Parent?.Top) return false;
-        if (y > Parent?.Top + Top + Height) return false;
-        return true;
+        return x >= ScreenLeft && x < ScreenRight &&
+               y >= ScreenTop && y < ScreenBottom;
     }
 }

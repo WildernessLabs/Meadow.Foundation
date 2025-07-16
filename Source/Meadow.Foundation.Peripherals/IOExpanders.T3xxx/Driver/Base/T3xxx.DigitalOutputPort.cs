@@ -58,10 +58,10 @@ public abstract partial class T3xxx
             Channel = (IDigitalChannelInfo)pin.SupportedChannels.First(c => c is IDigitalChannelInfo);
 
             // range set to on/off
-            _module.WriteHoldingRegister(rangeRegister, 1).Wait();
+            _module.WriteHoldingRegister(rangeRegister, 1).GetAwaiter().GetResult();
 
             // mode must be set to 1 (manual)
-            _module.WriteHoldingRegister(autoManualRegister, 1).Wait();
+            _module.WriteHoldingRegister(autoManualRegister, 1).GetAwaiter().GetResult();
 
             State = InitialState = initialState;
         }

@@ -19,6 +19,18 @@ public class Button : ClickableControl
     /// <summary>
     /// Initializes a new instance of the <see cref="Button"/> class with the specified dimensions.
     /// </summary>
+    /// <param name="width">The width of the button.</param>
+    /// <param name="height">The height of the button.</param>
+    /// <param name="text">The initial Text for the control</param>
+    public Button(int width, int height, string text = nameof(Button))
+        : base(0, 0, width, height)
+    {
+        Text = text;
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Button"/> class with the specified dimensions.
+    /// </summary>
     /// <param name="left">The left coordinate of the button.</param>
     /// <param name="top">The top coordinate of the button.</param>
     /// <param name="width">The width of the button.</param>
@@ -183,15 +195,15 @@ public class Button : ClickableControl
             if (Image != null) // image always wins over text
             {
                 graphics.DrawImage(
-                    Left + ((this.Width - Image.Width) / 2) + parentOffsetX,
-                    Top + ((this.Height - Image.Height) / 2) + parentOffsetY,
+                    Left + ((Width - Image.Width) / 2) + parentOffsetX,
+                    Top + ((Height - Image.Height) / 2) + parentOffsetY,
                     Image);
             }
             else if (!string.IsNullOrEmpty(Text))
             {
                 graphics.DrawText(
-                    Left + (this.Width / 2) + parentOffsetX,
-                    Top + (this.Height / 2) + parentOffsetY,
+                    Left + (Width / 2) + parentOffsetX,
+                    Top + (Height / 2) + parentOffsetY,
                     Text,
                     TextColor,
                     scaleFactor: ScaleFactor,
