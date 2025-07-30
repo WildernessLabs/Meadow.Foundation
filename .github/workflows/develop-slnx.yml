@@ -20,6 +20,13 @@ jobs:
         path: Meadow.Contracts
         ref: develop
         
+    - name: Checkout Meadow.CLI
+      uses: actions/checkout@v4
+      with:
+        repository: WildernessLabs/Meadow.CLI
+        path: Meadow.Contracts
+        ref: develop
+
     - name: Checkout Meadow.Logging
       uses: actions/checkout@v4
       with:
