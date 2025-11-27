@@ -481,6 +481,12 @@ namespace Meadow.Foundation.Graphics
                 }
             }
 
+            // Save original coordinates before any swapping for accurate bounds check
+            int origMinX = Math.Min(x0, x1);
+            int origMaxX = Math.Max(x0, x1);
+            int origMinY = Math.Min(y0, y1);
+            int origMaxY = Math.Max(y0, y1);
+
             var steep = Math.Abs(y1 - y0) > Math.Abs(x1 - x0);
             if (steep)
             {
@@ -498,30 +504,13 @@ namespace Meadow.Foundation.Graphics
             var ystep = y0 < y1 ? 1 : -1;
             var y = y0;
 
-            // Determine the actual min/max y values to check bounds
-            int minY = Math.Min(y0, y1);
-            int maxY = Math.Max(y0, y1);
-            int minX, maxX;
-            if (steep)
-            {
-                minX = minY;
-                maxX = maxY;
-                minY = x0;
-                maxY = x1;
-            }
-            else
-            {
-                minX = x0;
-                maxX = x1;
-            }
-
-            // Determine if we can use the fast unchecked path
+            // Determine if we can use the fast unchecked path using original bounds
             bool useUncheckedPath = !IgnoreOutOfBoundsPixels ||
-                (minX >= 0 && maxX < Width && minY >= 0 && maxY < Height);
+                (origMinX >= 0 && origMaxX < Width && origMinY >= 0 && origMaxY < Height);
 
             if (useUncheckedPath && _isRotatableDisplay)
             {
-                // Fast path: no bounds checking, no rotation transformation needed
+                // Fast path: display handles rotation, no bounds checking needed
                 for (var x = x0; x <= x1; x++)
                 {
                     DrawPixelUnchecked(steep ? y : x, steep ? x : y, color);
@@ -535,7 +524,7 @@ namespace Meadow.Foundation.Graphics
             }
             else if (useUncheckedPath && Rotation == RotationType.Default)
             {
-                // Fast path: no bounds checking, no rotation
+                // Fast path: no rotation transformation, no bounds checking needed
                 for (var x = x0; x <= x1; x++)
                 {
                     DrawPixelUnchecked(steep ? y : x, steep ? x : y, color);
@@ -549,7 +538,7 @@ namespace Meadow.Foundation.Graphics
             }
             else if (useUncheckedPath)
             {
-                // Medium path: no bounds checking, but need rotation
+                // Medium path: no bounds checking, but need rotation transformation
                 for (var x = x0; x <= x1; x++)
                 {
                     DrawPixelRotatedUnchecked(steep ? y : x, steep ? x : y, color);
@@ -1199,7 +1188,7 @@ namespace Meadow.Foundation.Graphics
 
             if (isInBounds && _isRotatableDisplay)
             {
-                // Fast path: no bounds checking, no rotation transformation needed
+                // Fast path: display handles rotation internally, no bounds checking needed
                 while (x <= y)
                 {
                     DrawPixelUnchecked(centerX + x - offset, centerY + y - offset, color);
@@ -1228,7 +1217,7 @@ namespace Meadow.Foundation.Graphics
             }
             else if (isInBounds && Rotation == RotationType.Default)
             {
-                // Fast path: no bounds checking, no rotation
+                // Fast path: no rotation transformation, no bounds checking needed
                 while (x <= y)
                 {
                     DrawPixelUnchecked(centerX + x - offset, centerY + y - offset, color);
@@ -1257,7 +1246,7 @@ namespace Meadow.Foundation.Graphics
             }
             else if (isInBounds)
             {
-                // Medium path: no bounds checking, but need rotation
+                // Medium path: no bounds checking, but need rotation transformation
                 while (x <= y)
                 {
                     DrawPixelRotatedUnchecked(centerX + x - offset, centerY + y - offset, color);
@@ -2223,7 +2212,7 @@ namespace Meadow.Foundation.Graphics
 
                 if (canUseUnchecked || canUseUncheckedNoRotation)
                 {
-                    // Fast path: no bounds checking, no rotation
+                    // Fast path: display handles rotation or no rotation needed, no bounds checking
                     for (var ordinate = 0; ordinate < height; ordinate++)
                     {
                         for (var abscissa = 0; abscissa < width; abscissa++)
@@ -2244,7 +2233,7 @@ namespace Meadow.Foundation.Graphics
                 }
                 else if (canUseUncheckedWithRotation)
                 {
-                    // Medium path: no bounds checking, but need rotation
+                    // Medium path: no bounds checking, but need rotation transformation
                     for (var ordinate = 0; ordinate < height; ordinate++)
                     {
                         for (var abscissa = 0; abscissa < width; abscissa++)
