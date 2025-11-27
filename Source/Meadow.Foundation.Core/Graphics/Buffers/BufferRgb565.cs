@@ -214,5 +214,52 @@ namespace Meadow.Foundation.Graphics.Buffers
                 base.WriteBuffer(x, y, buffer);
             }
         }
+
+        /// <summary>
+        /// Draw a horizontal line using a native 16bpp color value
+        /// </summary>
+        /// <param name="x">X start position</param>
+        /// <param name="y">Y position</param>
+        /// <param name="length">Length of the line in pixels</param>
+        /// <param name="color">The color as a 16bpp RGB565 ushort</param>
+        public unsafe void DrawHorizontalLine(int x, int y, int length, ushort color)
+        {
+            if (length <= 0) return;
+
+            fixed (byte* ptr = Buffer)
+            {
+                var pixelPtr = (ushort*)(ptr + ((y * Width + x) << 1));
+                ushort swappedColor = (ushort)((color << 8) | (color >> 8));
+
+                for (int i = 0; i < length; i++)
+                {
+                    pixelPtr[i] = swappedColor;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Draw a vertical line using a native 16bpp color value
+        /// </summary>
+        /// <param name="x">X position</param>
+        /// <param name="y">Y start position</param>
+        /// <param name="length">Length of the line in pixels</param>
+        /// <param name="color">The color as a 16bpp RGB565 ushort</param>
+        public unsafe void DrawVerticalLine(int x, int y, int length, ushort color)
+        {
+            if (length <= 0) return;
+
+            fixed (byte* ptr = Buffer)
+            {
+                ushort swappedColor = (ushort)((color << 8) | (color >> 8));
+                int stride = Width;
+
+                for (int i = 0; i < length; i++)
+                {
+                    var pixelPtr = (ushort*)(ptr + (((y + i) * stride + x) << 1));
+                    *pixelPtr = swappedColor;
+                }
+            }
+        }
     }
 }

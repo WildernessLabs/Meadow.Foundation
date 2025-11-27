@@ -116,7 +116,37 @@ namespace Meadow.Foundation.Graphics
         /// <summary>
         /// Current pen color 
         /// </summary>
-        public Color PenColor { get; set; } = Color.White;
+        public Color PenColor
+        {
+            get => _penColor;
+            set
+            {
+                _penColor = value;
+                _penColorCacheValid = false;
+            }
+        }
+
+        private Color _penColor = Color.White;
+
+        /// <summary>
+        /// Cached 16bpp representation of PenColor for performance
+        /// </summary>
+        private ushort _penColor16bpp;
+
+        /// <summary>
+        /// Cached 8bpp representation of PenColor for performance
+        /// </summary>
+        private byte _penColor8bpp;
+
+        /// <summary>
+        /// Cached 1bpp representation of PenColor for performance
+        /// </summary>
+        private bool _penColor1bpp;
+
+        /// <summary>
+        /// Indicates whether the cached pen color values are valid
+        /// </summary>
+        private bool _penColorCacheValid;
 
         /// <summary>
         /// Return the height of the display after accounting for the rotation
@@ -172,6 +202,56 @@ namespace Meadow.Foundation.Graphics
         /// Time of last display update when calling ShowBuffered
         /// </summary>
         private DateTime lastUpdated;
+
+        /// <summary>
+        /// Ensures the cached pen color values are valid and up-to-date
+        /// </summary>
+        private void EnsurePenColorCached()
+        {
+            if (!_penColorCacheValid)
+            {
+                _penColor16bpp = _penColor.Color16bppRgb565;
+                _penColor8bpp = _penColor.Color8bppRgb332;
+                _penColor1bpp = _penColor.Color1bpp;
+                _penColorCacheValid = true;
+            }
+        }
+
+        /// <summary>
+        /// Draws a pixel using the cached pen color in native buffer format
+        /// This avoids repeated color conversion when drawing with PenColor
+        /// </summary>
+        /// <param name="x">X coordinate</param>
+        /// <param name="y">Y coordinate</param>
+        private void DrawPixelWithCachedColor(int x, int y)
+        {
+            if (IgnoreOutOfBoundsPixels && !IsCoordinateInBounds(x, y))
+            {
+                return;
+            }
+
+            int rx = GetXForRotation(x, y);
+            int ry = GetYForRotation(x, y);
+
+            EnsurePenColorCached();
+
+            if (PixelBuffer is BufferRgb565 buf565)
+            {
+                buf565.SetPixel(rx, ry, _penColor16bpp);
+            }
+            else if (PixelBuffer is BufferRgb332 buf332)
+            {
+                buf332.SetPixel(rx, ry, _penColor8bpp);
+            }
+            else if (PixelBuffer is Buffer1bpp buf1)
+            {
+                buf1.SetPixel(rx, ry, _penColor1bpp);
+            }
+            else
+            {
+                PixelBuffer.SetPixel(rx, ry, _penColor);
+            }
+        }
 
         /// <summary>
         /// Create a new MicroGraphics instance from a display peripheral driver instance
@@ -487,14 +567,33 @@ namespace Meadow.Foundation.Graphics
             var ystep = y0 < y1 ? 1 : -1;
             var y = y0;
 
-            for (var x = x0; x <= x1; x++)
+            // Use cached color path when drawing with PenColor for better performance
+            bool useCachedPath = (color == PenColor);
+
+            if (useCachedPath)
             {
-                DrawPixel(steep ? y : x, steep ? x : y, color);
-                error -= dy;
-                if (error < 0)
+                for (var x = x0; x <= x1; x++)
                 {
-                    y += ystep;
-                    error += dx;
+                    DrawPixelWithCachedColor(steep ? y : x, steep ? x : y);
+                    error -= dy;
+                    if (error < 0)
+                    {
+                        y += ystep;
+                        error += dx;
+                    }
+                }
+            }
+            else
+            {
+                for (var x = x0; x <= x1; x++)
+                {
+                    DrawPixel(steep ? y : x, steep ? x : y, color);
+                    error -= dy;
+                    if (error < 0)
+                    {
+                        y += ystep;
+                        error += dx;
+                    }
                 }
             }
         }
@@ -1106,37 +1205,71 @@ namespace Meadow.Foundation.Graphics
 
         private void DrawCircleOutline(int centerX, int centerY, int radius, bool centerBetweenPixels, Color color)
         {
-            //I prefer the look of the original Bresenham’s decision param calculation
+            //I prefer the look of the original Bresenham's decision param calculation
             var d = 3 - (2 * radius);
             var x = 0;
             var y = radius;
 
             int offset = centerBetweenPixels ? 1 : 0;
 
-            while (x <= y)
+            // Use cached color path when drawing with PenColor for better performance
+            bool useCachedPath = (color == PenColor);
+
+            if (useCachedPath)
             {
-                DrawPixel(centerX + x - offset, centerY + y - offset, color);
-                DrawPixel(centerX + y - offset, centerY + x - offset, color);
-
-                DrawPixel(centerX - y, centerY + x - offset, color);
-                DrawPixel(centerX - x, centerY + y - offset, color);
-
-                DrawPixel(centerX - x, centerY - y, color);
-                DrawPixel(centerX - y, centerY - x, color);
-
-                DrawPixel(centerX + x - offset, centerY - y, color);
-                DrawPixel(centerX + y - offset, centerY - x, color);
-
-                if (d < 0)
+                while (x <= y)
                 {
-                    d += (2 * x) + 1;
+                    DrawPixelWithCachedColor(centerX + x - offset, centerY + y - offset);
+                    DrawPixelWithCachedColor(centerX + y - offset, centerY + x - offset);
+
+                    DrawPixelWithCachedColor(centerX - y, centerY + x - offset);
+                    DrawPixelWithCachedColor(centerX - x, centerY + y - offset);
+
+                    DrawPixelWithCachedColor(centerX - x, centerY - y);
+                    DrawPixelWithCachedColor(centerX - y, centerY - x);
+
+                    DrawPixelWithCachedColor(centerX + x - offset, centerY - y);
+                    DrawPixelWithCachedColor(centerX + y - offset, centerY - x);
+
+                    if (d < 0)
+                    {
+                        d += (2 * x) + 1;
+                    }
+                    else
+                    {
+                        d += (2 * (x - y)) + 1;
+                        y--;
+                    }
+                    x++;
                 }
-                else
+            }
+            else
+            {
+                while (x <= y)
                 {
-                    d += (2 * (x - y)) + 1;
-                    y--;
+                    DrawPixel(centerX + x - offset, centerY + y - offset, color);
+                    DrawPixel(centerX + y - offset, centerY + x - offset, color);
+
+                    DrawPixel(centerX - y, centerY + x - offset, color);
+                    DrawPixel(centerX - x, centerY + y - offset, color);
+
+                    DrawPixel(centerX - x, centerY - y, color);
+                    DrawPixel(centerX - y, centerY - x, color);
+
+                    DrawPixel(centerX + x - offset, centerY - y, color);
+                    DrawPixel(centerX + y - offset, centerY - x, color);
+
+                    if (d < 0)
+                    {
+                        d += (2 * x) + 1;
+                    }
+                    else
+                    {
+                        d += (2 * (x - y)) + 1;
+                        y--;
+                    }
+                    x++;
                 }
-                x++;
             }
         }
 
@@ -2036,21 +2169,47 @@ namespace Meadow.Foundation.Graphics
                 throw new ArgumentException("Width and height do not match the bitmap size.");
             }
 
+            // Use cached color path when drawing with PenColor for better performance
+            bool useCachedPath = (color == PenColor);
+
             if (scaleFactor == ScaleFactor.X1) //split into two paths for performance
             {
-                for (var ordinate = 0; ordinate < height; ordinate++)
+                if (useCachedPath)
                 {
-                    for (var abscissa = 0; abscissa < width; abscissa++)
+                    for (var ordinate = 0; ordinate < height; ordinate++)
                     {
-                        var b = bitmap[(ordinate * width) + abscissa];
-
-                        if (b == 0) continue; //save a loop if a byte is empty
-
-                        for (var pixel = 0; pixel < 8; pixel++)
+                        for (var abscissa = 0; abscissa < width; abscissa++)
                         {
-                            if (((b >> pixel) & 1) == 1)
+                            var b = bitmap[(ordinate * width) + abscissa];
+
+                            if (b == 0) continue; //save a loop if a byte is empty
+
+                            for (var pixel = 0; pixel < 8; pixel++)
                             {
-                                DrawPixel(x + (8 * abscissa) + pixel, y + ordinate, color);
+                                if (((b >> pixel) & 1) == 1)
+                                {
+                                    DrawPixelWithCachedColor(x + (8 * abscissa) + pixel, y + ordinate);
+                                }
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    for (var ordinate = 0; ordinate < height; ordinate++)
+                    {
+                        for (var abscissa = 0; abscissa < width; abscissa++)
+                        {
+                            var b = bitmap[(ordinate * width) + abscissa];
+
+                            if (b == 0) continue; //save a loop if a byte is empty
+
+                            for (var pixel = 0; pixel < 8; pixel++)
+                            {
+                                if (((b >> pixel) & 1) == 1)
+                                {
+                                    DrawPixel(x + (8 * abscissa) + pixel, y + ordinate, color);
+                                }
                             }
                         }
                     }

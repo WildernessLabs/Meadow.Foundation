@@ -218,5 +218,39 @@ namespace Meadow.Foundation.Graphics.Buffers
                 base.WriteBuffer(x, y, buffer);
             }
         }
+
+        /// <summary>
+        /// Draw a horizontal line using a native 1bpp value
+        /// </summary>
+        /// <param name="x">X start position</param>
+        /// <param name="y">Y position</param>
+        /// <param name="length">Length of the line in pixels</param>
+        /// <param name="enabled">True to enable (on) or false to disable (off)</param>
+        public void DrawHorizontalLine(int x, int y, int length, bool enabled)
+        {
+            if (length <= 0) return;
+
+            for (int i = 0; i < length; i++)
+            {
+                SetPixel(x + i, y, enabled);
+            }
+        }
+
+        /// <summary>
+        /// Draw a vertical line using a native 1bpp value
+        /// </summary>
+        /// <param name="x">X position</param>
+        /// <param name="y">Y start position</param>
+        /// <param name="length">Length of the line in pixels</param>
+        /// <param name="enabled">True to enable (on) or false to disable (off)</param>
+        public void DrawVerticalLine(int x, int y, int length, bool enabled)
+        {
+            if (length <= 0) return;
+
+            for (int i = 0; i < length; i++)
+            {
+                SetPixel(x, y + i, enabled);
+            }
+        }
     }
 }

@@ -181,5 +181,42 @@ namespace Meadow.Foundation.Graphics.Buffers
                 base.WriteBuffer(x, y, buffer);
             }
         }
+
+        /// <summary>
+        /// Draw a horizontal line using a native 8bpp color value
+        /// </summary>
+        /// <param name="x">X start position</param>
+        /// <param name="y">Y position</param>
+        /// <param name="length">Length of the line in pixels</param>
+        /// <param name="color">The color as an 8bpp RGB332 byte</param>
+        public void DrawHorizontalLine(int x, int y, int length, byte color)
+        {
+            if (length <= 0) return;
+
+            int index = y * Width + x;
+            for (int i = 0; i < length; i++)
+            {
+                Buffer[index + i] = color;
+            }
+        }
+
+        /// <summary>
+        /// Draw a vertical line using a native 8bpp color value
+        /// </summary>
+        /// <param name="x">X position</param>
+        /// <param name="y">Y start position</param>
+        /// <param name="length">Length of the line in pixels</param>
+        /// <param name="color">The color as an 8bpp RGB332 byte</param>
+        public void DrawVerticalLine(int x, int y, int length, byte color)
+        {
+            if (length <= 0) return;
+
+            int index = y * Width + x;
+            for (int i = 0; i < length; i++)
+            {
+                Buffer[index] = color;
+                index += Width;
+            }
+        }
     }
 }
