@@ -5,6 +5,7 @@ using System;
 using System.Buffers;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Graphics
@@ -470,6 +471,16 @@ namespace Meadow.Foundation.Graphics
 
         private void DrawSingleWidthLine(int x0, int y0, int x1, int y1, Color color)
         {
+            // Early exit if line is completely outside bounds
+            if (IgnoreOutOfBoundsPixels)
+            {
+                if ((x0 < 0 && x1 < 0) || (x0 >= Width && x1 >= Width) ||
+                    (y0 < 0 && y1 < 0) || (y0 >= Height && y1 >= Height))
+                {
+                    return;
+                }
+            }
+
             var steep = Math.Abs(y1 - y0) > Math.Abs(x1 - x0);
             if (steep)
             {
@@ -487,14 +498,81 @@ namespace Meadow.Foundation.Graphics
             var ystep = y0 < y1 ? 1 : -1;
             var y = y0;
 
-            for (var x = x0; x <= x1; x++)
+            // Determine the actual min/max y values to check bounds
+            int minY = Math.Min(y0, y1);
+            int maxY = Math.Max(y0, y1);
+            int minX, maxX;
+            if (steep)
             {
-                DrawPixel(steep ? y : x, steep ? x : y, color);
-                error -= dy;
-                if (error < 0)
+                minX = minY;
+                maxX = maxY;
+                minY = x0;
+                maxY = x1;
+            }
+            else
+            {
+                minX = x0;
+                maxX = x1;
+            }
+
+            // Determine if we can use the fast unchecked path
+            bool useUncheckedPath = !IgnoreOutOfBoundsPixels ||
+                (minX >= 0 && maxX < Width && minY >= 0 && maxY < Height);
+
+            if (useUncheckedPath && _isRotatableDisplay)
+            {
+                // Fast path: no bounds checking, no rotation transformation needed
+                for (var x = x0; x <= x1; x++)
                 {
-                    y += ystep;
-                    error += dx;
+                    DrawPixelUnchecked(steep ? y : x, steep ? x : y, color);
+                    error -= dy;
+                    if (error < 0)
+                    {
+                        y += ystep;
+                        error += dx;
+                    }
+                }
+            }
+            else if (useUncheckedPath && Rotation == RotationType.Default)
+            {
+                // Fast path: no bounds checking, no rotation
+                for (var x = x0; x <= x1; x++)
+                {
+                    DrawPixelUnchecked(steep ? y : x, steep ? x : y, color);
+                    error -= dy;
+                    if (error < 0)
+                    {
+                        y += ystep;
+                        error += dx;
+                    }
+                }
+            }
+            else if (useUncheckedPath)
+            {
+                // Medium path: no bounds checking, but need rotation
+                for (var x = x0; x <= x1; x++)
+                {
+                    DrawPixelRotatedUnchecked(steep ? y : x, steep ? x : y, color);
+                    error -= dy;
+                    if (error < 0)
+                    {
+                        y += ystep;
+                        error += dx;
+                    }
+                }
+            }
+            else
+            {
+                // Slow path: need bounds checking
+                for (var x = x0; x <= x1; x++)
+                {
+                    DrawPixel(steep ? y : x, steep ? x : y, color);
+                    error -= dy;
+                    if (error < 0)
+                    {
+                        y += ystep;
+                        error += dx;
+                    }
                 }
             }
         }
@@ -800,6 +878,7 @@ namespace Meadow.Foundation.Graphics
             DrawTriangle(x0, y0, x1, y1, x2, y2, PenColor, filled);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void Swap(ref int value1, ref int value2)
         {
             (value2, value1) = (value1, value2);
@@ -1113,30 +1192,126 @@ namespace Meadow.Foundation.Graphics
 
             int offset = centerBetweenPixels ? 1 : 0;
 
-            while (x <= y)
+            // Check if entire circle is within bounds for fast path
+            bool isInBounds = !IgnoreOutOfBoundsPixels ||
+                (centerX - radius >= 0 && centerX + radius < Width &&
+                 centerY - radius >= 0 && centerY + radius < Height);
+
+            if (isInBounds && _isRotatableDisplay)
             {
-                DrawPixel(centerX + x - offset, centerY + y - offset, color);
-                DrawPixel(centerX + y - offset, centerY + x - offset, color);
-
-                DrawPixel(centerX - y, centerY + x - offset, color);
-                DrawPixel(centerX - x, centerY + y - offset, color);
-
-                DrawPixel(centerX - x, centerY - y, color);
-                DrawPixel(centerX - y, centerY - x, color);
-
-                DrawPixel(centerX + x - offset, centerY - y, color);
-                DrawPixel(centerX + y - offset, centerY - x, color);
-
-                if (d < 0)
+                // Fast path: no bounds checking, no rotation transformation needed
+                while (x <= y)
                 {
-                    d += (2 * x) + 1;
+                    DrawPixelUnchecked(centerX + x - offset, centerY + y - offset, color);
+                    DrawPixelUnchecked(centerX + y - offset, centerY + x - offset, color);
+
+                    DrawPixelUnchecked(centerX - y, centerY + x - offset, color);
+                    DrawPixelUnchecked(centerX - x, centerY + y - offset, color);
+
+                    DrawPixelUnchecked(centerX - x, centerY - y, color);
+                    DrawPixelUnchecked(centerX - y, centerY - x, color);
+
+                    DrawPixelUnchecked(centerX + x - offset, centerY - y, color);
+                    DrawPixelUnchecked(centerX + y - offset, centerY - x, color);
+
+                    if (d < 0)
+                    {
+                        d += (2 * x) + 1;
+                    }
+                    else
+                    {
+                        d += (2 * (x - y)) + 1;
+                        y--;
+                    }
+                    x++;
                 }
-                else
+            }
+            else if (isInBounds && Rotation == RotationType.Default)
+            {
+                // Fast path: no bounds checking, no rotation
+                while (x <= y)
                 {
-                    d += (2 * (x - y)) + 1;
-                    y--;
+                    DrawPixelUnchecked(centerX + x - offset, centerY + y - offset, color);
+                    DrawPixelUnchecked(centerX + y - offset, centerY + x - offset, color);
+
+                    DrawPixelUnchecked(centerX - y, centerY + x - offset, color);
+                    DrawPixelUnchecked(centerX - x, centerY + y - offset, color);
+
+                    DrawPixelUnchecked(centerX - x, centerY - y, color);
+                    DrawPixelUnchecked(centerX - y, centerY - x, color);
+
+                    DrawPixelUnchecked(centerX + x - offset, centerY - y, color);
+                    DrawPixelUnchecked(centerX + y - offset, centerY - x, color);
+
+                    if (d < 0)
+                    {
+                        d += (2 * x) + 1;
+                    }
+                    else
+                    {
+                        d += (2 * (x - y)) + 1;
+                        y--;
+                    }
+                    x++;
                 }
-                x++;
+            }
+            else if (isInBounds)
+            {
+                // Medium path: no bounds checking, but need rotation
+                while (x <= y)
+                {
+                    DrawPixelRotatedUnchecked(centerX + x - offset, centerY + y - offset, color);
+                    DrawPixelRotatedUnchecked(centerX + y - offset, centerY + x - offset, color);
+
+                    DrawPixelRotatedUnchecked(centerX - y, centerY + x - offset, color);
+                    DrawPixelRotatedUnchecked(centerX - x, centerY + y - offset, color);
+
+                    DrawPixelRotatedUnchecked(centerX - x, centerY - y, color);
+                    DrawPixelRotatedUnchecked(centerX - y, centerY - x, color);
+
+                    DrawPixelRotatedUnchecked(centerX + x - offset, centerY - y, color);
+                    DrawPixelRotatedUnchecked(centerX + y - offset, centerY - x, color);
+
+                    if (d < 0)
+                    {
+                        d += (2 * x) + 1;
+                    }
+                    else
+                    {
+                        d += (2 * (x - y)) + 1;
+                        y--;
+                    }
+                    x++;
+                }
+            }
+            else
+            {
+                // Slow path: need bounds checking
+                while (x <= y)
+                {
+                    DrawPixel(centerX + x - offset, centerY + y - offset, color);
+                    DrawPixel(centerX + y - offset, centerY + x - offset, color);
+
+                    DrawPixel(centerX - y, centerY + x - offset, color);
+                    DrawPixel(centerX - x, centerY + y - offset, color);
+
+                    DrawPixel(centerX - x, centerY - y, color);
+                    DrawPixel(centerX - y, centerY - x, color);
+
+                    DrawPixel(centerX + x - offset, centerY - y, color);
+                    DrawPixel(centerX + y - offset, centerY - x, color);
+
+                    if (d < 0)
+                    {
+                        d += (2 * x) + 1;
+                    }
+                    else
+                    {
+                        d += (2 * (x - y)) + 1;
+                        y--;
+                    }
+                    x++;
+                }
             }
         }
 
@@ -2038,19 +2213,73 @@ namespace Meadow.Foundation.Graphics
 
             if (scaleFactor == ScaleFactor.X1) //split into two paths for performance
             {
-                for (var ordinate = 0; ordinate < height; ordinate++)
+                // Check if entire bitmap region is in bounds for fast path
+                bool isFullyInBounds = x >= 0 && y >= 0 &&
+                                       x + (width * 8) <= Width &&
+                                       y + height <= Height;
+                bool canUseUnchecked = isFullyInBounds && _isRotatableDisplay;
+                bool canUseUncheckedNoRotation = isFullyInBounds && Rotation == RotationType.Default;
+                bool canUseUncheckedWithRotation = isFullyInBounds && !_isRotatableDisplay && Rotation != RotationType.Default;
+
+                if (canUseUnchecked || canUseUncheckedNoRotation)
                 {
-                    for (var abscissa = 0; abscissa < width; abscissa++)
+                    // Fast path: no bounds checking, no rotation
+                    for (var ordinate = 0; ordinate < height; ordinate++)
                     {
-                        var b = bitmap[(ordinate * width) + abscissa];
-
-                        if (b == 0) continue; //save a loop if a byte is empty
-
-                        for (var pixel = 0; pixel < 8; pixel++)
+                        for (var abscissa = 0; abscissa < width; abscissa++)
                         {
-                            if (((b >> pixel) & 1) == 1)
+                            var b = bitmap[(ordinate * width) + abscissa];
+
+                            if (b == 0) continue; //save a loop if a byte is empty
+
+                            for (var pixel = 0; pixel < 8; pixel++)
                             {
-                                DrawPixel(x + (8 * abscissa) + pixel, y + ordinate, color);
+                                if (((b >> pixel) & 1) == 1)
+                                {
+                                    DrawPixelUnchecked(x + (8 * abscissa) + pixel, y + ordinate, color);
+                                }
+                            }
+                        }
+                    }
+                }
+                else if (canUseUncheckedWithRotation)
+                {
+                    // Medium path: no bounds checking, but need rotation
+                    for (var ordinate = 0; ordinate < height; ordinate++)
+                    {
+                        for (var abscissa = 0; abscissa < width; abscissa++)
+                        {
+                            var b = bitmap[(ordinate * width) + abscissa];
+
+                            if (b == 0) continue; //save a loop if a byte is empty
+
+                            for (var pixel = 0; pixel < 8; pixel++)
+                            {
+                                if (((b >> pixel) & 1) == 1)
+                                {
+                                    DrawPixelRotatedUnchecked(x + (8 * abscissa) + pixel, y + ordinate, color);
+                                }
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    // Slow path: need bounds checking
+                    for (var ordinate = 0; ordinate < height; ordinate++)
+                    {
+                        for (var abscissa = 0; abscissa < width; abscissa++)
+                        {
+                            var b = bitmap[(ordinate * width) + abscissa];
+
+                            if (b == 0) continue; //save a loop if a byte is empty
+
+                            for (var pixel = 0; pixel < 8; pixel++)
+                            {
+                                if (((b >> pixel) & 1) == 1)
+                                {
+                                    DrawPixel(x + (8 * abscissa) + pixel, y + ordinate, color);
+                                }
                             }
                         }
                     }
@@ -2104,6 +2333,7 @@ namespace Meadow.Foundation.Graphics
         /// <param name="x">The non-rotated x position</param>
         /// <param name="y">The non-rotated y position</param>
         /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected int GetXForRotation(int x, int y)
         {
             if (_isRotatableDisplay) { return x; }
@@ -2123,6 +2353,7 @@ namespace Meadow.Foundation.Graphics
         /// <param name="x">The non-rotated x position</param>
         /// <param name="y">The non-rotated y position</param>
         /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected int GetYForRotation(int x, int y)
         {
             if (_isRotatableDisplay) { return y; }
@@ -2136,12 +2367,31 @@ namespace Meadow.Foundation.Graphics
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private bool IsCoordinateInBounds(int x, int y)
         {
             if (x < 0 || y < 0 || x >= Width || y >= Height)
                 return false;
 
             return true;
+        }
+
+        /// <summary>
+        /// Draw a pixel without bounds checking - caller must ensure coordinates are valid
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void DrawPixelUnchecked(int x, int y, Color color)
+        {
+            PixelBuffer.SetPixel(x, y, color);
+        }
+
+        /// <summary>
+        /// Draw a pixel with rotation but without bounds checking
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void DrawPixelRotatedUnchecked(int x, int y, Color color)
+        {
+            PixelBuffer.SetPixel(GetXForRotation(x, y), GetYForRotation(x, y), color);
         }
 
         private void Fill(int x, int y, int width, int height, Color color)
