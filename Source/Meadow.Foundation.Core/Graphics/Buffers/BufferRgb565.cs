@@ -224,6 +224,18 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// <param name="color">The color as a 16bpp RGB565 ushort</param>
         public unsafe void DrawHorizontalLine(int x, int y, int length, ushort color)
         {
+            if (length <= 0 || y < 0 || y >= Height || x >= Width) return;
+
+            // Clamp to buffer bounds
+            if (x < 0)
+            {
+                length += x;
+                x = 0;
+            }
+            if (x + length > Width)
+            {
+                length = Width - x;
+            }
             if (length <= 0) return;
 
             fixed (byte* ptr = Buffer)
@@ -247,6 +259,18 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// <param name="color">The color as a 16bpp RGB565 ushort</param>
         public unsafe void DrawVerticalLine(int x, int y, int length, ushort color)
         {
+            if (length <= 0 || x < 0 || x >= Width || y >= Height) return;
+
+            // Clamp to buffer bounds
+            if (y < 0)
+            {
+                length += y;
+                y = 0;
+            }
+            if (y + length > Height)
+            {
+                length = Height - y;
+            }
             if (length <= 0) return;
 
             fixed (byte* ptr = Buffer)

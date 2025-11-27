@@ -228,6 +228,18 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// <param name="enabled">True to enable (on) or false to disable (off)</param>
         public void DrawHorizontalLine(int x, int y, int length, bool enabled)
         {
+            if (length <= 0 || y < 0 || y >= Height || x >= Width) return;
+
+            // Clamp to buffer bounds
+            if (x < 0)
+            {
+                length += x;
+                x = 0;
+            }
+            if (x + length > Width)
+            {
+                length = Width - x;
+            }
             if (length <= 0) return;
 
             for (int i = 0; i < length; i++)
@@ -245,6 +257,18 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// <param name="enabled">True to enable (on) or false to disable (off)</param>
         public void DrawVerticalLine(int x, int y, int length, bool enabled)
         {
+            if (length <= 0 || x < 0 || x >= Width || y >= Height) return;
+
+            // Clamp to buffer bounds
+            if (y < 0)
+            {
+                length += y;
+                y = 0;
+            }
+            if (y + length > Height)
+            {
+                length = Height - y;
+            }
             if (length <= 0) return;
 
             for (int i = 0; i < length; i++)

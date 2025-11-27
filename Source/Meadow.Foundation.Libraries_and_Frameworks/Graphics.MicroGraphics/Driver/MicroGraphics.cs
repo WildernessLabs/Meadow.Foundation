@@ -218,11 +218,12 @@ namespace Meadow.Foundation.Graphics
         }
 
         /// <summary>
-        /// Draws a pixel using the cached pen color in native buffer format
-        /// This avoids repeated color conversion when drawing with PenColor
+        /// Draws a pixel using the cached pen color in native buffer format.
+        /// This avoids repeated color conversion when drawing with PenColor.
+        /// The method handles bounds checking and rotation transformation.
         /// </summary>
-        /// <param name="x">X coordinate</param>
-        /// <param name="y">Y coordinate</param>
+        /// <param name="x">X coordinate in screen space (before rotation)</param>
+        /// <param name="y">Y coordinate in screen space (before rotation)</param>
         private void DrawPixelWithCachedColor(int x, int y)
         {
             if (IgnoreOutOfBoundsPixels && !IsCoordinateInBounds(x, y))
