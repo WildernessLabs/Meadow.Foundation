@@ -248,12 +248,8 @@ public class DisplayScreen : IControlContainer
             if (control.IsVisible && IntersectsRegion(control, left, top, right, bottom))
             {
                 controlsToRedraw.Add(control);
-            }
-
-            // Recursively collect controls from nested containers
-            if (control is IControlContainer container)
-            {
-                CollectControlsInRegion(container.Controls, left, top, right, bottom, controlsToRedraw);
+                // Note: We don't need to recursively collect nested controls here because
+                // when we refresh a container, it will automatically refresh all its children
             }
         }
     }
