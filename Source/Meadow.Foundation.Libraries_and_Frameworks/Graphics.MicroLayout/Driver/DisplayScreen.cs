@@ -1,6 +1,7 @@
 ﻿using Meadow.Hardware;
 using Meadow.Peripherals.Displays;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 
@@ -181,6 +182,79 @@ public class DisplayScreen : IControlContainer
     }
 
     /// <summary>
+    /// Collects all invalid controls recursively, including nested controls in containers
+    /// </summary>
+    private void CollectInvalidControls(ControlsCollection controls, List<IControl> invalidControls)
+    {
+        foreach (var control in controls)
+        {
+            if (control.IsInvalid && control.IsVisible)
+            {
+                invalidControls.Add(control);
+            }
+
+            // Recursively collect invalid controls from nested containers
+            if (control is IControlContainer container)
+            {
+                CollectInvalidControls(container.Controls, invalidControls);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Calculates the bounding rectangle that encompasses all invalid controls
+    /// </summary>
+    private bool TryGetDirtyRegion(out int left, out int top, out int right, out int bottom)
+    {
+        var invalidControls = new List<IControl>();
+        CollectInvalidControls(Controls, invalidControls);
+
+        if (invalidControls.Count == 0)
+        {
+            left = top = right = bottom = 0;
+            return false;
+        }
+
+        left = invalidControls.Min(c => c.ScreenLeft);
+        top = invalidControls.Min(c => c.ScreenTop);
+        right = invalidControls.Max(c => c.ScreenRight);
+        bottom = invalidControls.Max(c => c.ScreenBottom);
+
+        // Clamp to screen bounds
+        left = Math.Max(0, left);
+        top = Math.Max(0, top);
+        right = Math.Min(Width, right);
+        bottom = Math.Min(Height, bottom);
+
+        return true;
+    }
+
+    /// <summary>
+    /// Checks if a control's bounds intersect with the given region
+    /// </summary>
+    private bool IntersectsRegion(IControl control, int left, int top, int right, int bottom)
+    {
+        return control.ScreenLeft < right && control.ScreenRight > left &&
+               control.ScreenTop < bottom && control.ScreenBottom > top;
+    }
+
+    /// <summary>
+    /// Collects all controls that intersect with the dirty region (for redrawing overlapping controls)
+    /// </summary>
+    private void CollectControlsInRegion(ControlsCollection controls, int left, int top, int right, int bottom, List<IControl> controlsToRedraw)
+    {
+        foreach (var control in controls)
+        {
+            if (control.IsVisible && IntersectsRegion(control, left, top, right, bottom))
+            {
+                controlsToRedraw.Add(control);
+                // Note: We don't need to recursively collect nested controls here because
+                // when we refresh a container, it will automatically refresh all its children
+            }
+        }
+    }
+
+    /// <summary>
     /// Begins an update process for the display screen, indicating that no drawing should take place until EndUpdate is called
     /// </summary>
     public void BeginUpdate()
@@ -203,26 +277,62 @@ public class DisplayScreen : IControlContainer
         {
             if (!_updateInProgress && (IsInvalid || Controls.Any(c => c.IsInvalid)))
             {
-                _graphics.Clear(BackgroundColor);
-
-                foreach (var control in Controls)
+                if (IsInvalid)
                 {
-                    if (control != null)
+                    // Full screen invalidation - clear and redraw everything
+                    _graphics.Clear(BackgroundColor);
+
+                    foreach (var control in Controls)
                     {
-                        // TODO: micrographics supports invalidating regions - we need to update to invalidate only regions here, too
-                        Refresh(control);
+                        if (control != null)
+                        {
+                            Refresh(control);
+                        }
+                    }
+
+                    try
+                    {
+                        _graphics.Show();
+                    }
+                    catch (Exception ex)
+                    {
+                        // it's possible to have a callee error (e.g. an I2C bus problem)
+                        // we'll report it and continue running
+                        Resolver.Log.Warn($"MicroGraphics.Show error while drawing screen: {ex.Message}");
                     }
                 }
-                try
+                else if (TryGetDirtyRegion(out int left, out int top, out int right, out int bottom))
                 {
-                    _graphics.Show();
+                    // Partial screen invalidation - only update dirty region
+                    int width = right - left;
+                    int height = bottom - top;
+
+                    // Clear only the dirty region
+                    _graphics.DrawRectangle(left, top, width, height, BackgroundColor, true);
+
+                    // Collect all controls that intersect with the dirty region (including overlapping ones)
+                    var controlsToRedraw = new List<IControl>();
+                    CollectControlsInRegion(Controls, left, top, right, bottom, controlsToRedraw);
+
+                    // Redraw all controls in the dirty region
+                    foreach (var control in controlsToRedraw)
+                    {
+                        Refresh(control);
+                    }
+
+                    try
+                    {
+                        // Update only the dirty region on the display
+                        _graphics.Show(left, top, right, bottom);
+                    }
+                    catch (Exception ex)
+                    {
+                        // it's possible to have a callee error (e.g. an I2C bus problem)
+                        // we'll report it and continue running
+                        Resolver.Log.Warn($"MicroGraphics.Show error while drawing screen: {ex.Message}");
+                    }
                 }
-                catch (Exception ex)
-                {
-                    // it possible to have a callee error (e.g. an I2C bus problem)
-                    // we'll report it and continue running
-                    Resolver.Log.Warn($"MicroGraphics.Show error while drawing screen: {ex.Message}");
-                }
+
                 IsInvalid = false;
             }
         }
