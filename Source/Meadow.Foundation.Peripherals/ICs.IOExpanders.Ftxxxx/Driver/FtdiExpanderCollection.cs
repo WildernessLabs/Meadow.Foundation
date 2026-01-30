@@ -73,9 +73,6 @@ public class FtdiExpanderCollection : IEnumerable<FtdiExpander>
             var serialNumber = Encoding.ASCII.GetString(serialNumberBuffer.ToArray(), 0, serialNumberBuffer.IndexOf((byte)0));
             var description = Encoding.ASCII.GetString(descriptionBuffer.ToArray(), 0, descriptionBuffer.IndexOf((byte)0));
 
-            // Debug output
-            Console.WriteLine($"[DEBUG] FTDI Device {index}: Type={deviceType} ({(int)deviceType}), Desc='{description}', Serial='{serialNumber}'");
-
             _expanders.Add(FtdiExpander.Create(index, flags, deviceType, id, locid, serialNumber, description, handle));
         }
     }
