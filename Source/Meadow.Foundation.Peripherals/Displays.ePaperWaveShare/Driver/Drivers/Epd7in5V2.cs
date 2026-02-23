@@ -92,7 +92,7 @@ public class Epd7in5V2 : EPaperBase, IPixelDisplay, IRefreshableDisplay
         }
     }
 
-    private int lastUpdatedTick = -1;
+    private long lastUpdatedTick = -1;
     private RefreshMode? lastInitializedMode = null;
 
     /// <summary>
@@ -138,7 +138,7 @@ public class Epd7in5V2 : EPaperBase, IPixelDisplay, IRefreshableDisplay
 
         spiComms = new SpiCommunications(spiBus, chipSelectPort, DefaultSpiBusSpeed, DefaultSpiBusMode);
 
-        if ((SupportedColorModes | colorMode) == 0)
+        if ((SupportedColorModes & colorMode) == 0)
         {
             throw new ArgumentException($"ColorMode {colorMode} is not supported");
         }
@@ -463,11 +463,11 @@ public class Epd7in5V2 : EPaperBase, IPixelDisplay, IRefreshableDisplay
     /// <exception cref="NotSupportedException">Thrown if called more frequently than the minimum refresh interval</exception>
     public void Show()
     {
-        if (Environment.TickCount - lastUpdatedTick < MinimumRefreshInterval.TotalMilliseconds)
+        if (Environment.TickCount64 - lastUpdatedTick < MinimumRefreshInterval.TotalMilliseconds)
         {
             throw new NotSupportedException($"The minimum update interval for this display is {MinimumRefreshInterval.TotalMilliseconds} milliseconds");
         }
-        lastUpdatedTick = Environment.TickCount;
+        lastUpdatedTick = Environment.TickCount64;
 
         // Re-initialize only if switching refresh modes
 
@@ -584,11 +584,11 @@ public class Epd7in5V2 : EPaperBase, IPixelDisplay, IRefreshableDisplay
     /// <exception cref="NotSupportedException">Thrown if called more frequently than the minimum refresh interval</exception>
     public void Show(int left, int top, int right, int bottom)
     {
-        if (Environment.TickCount - lastUpdatedTick < MinimumRefreshInterval.TotalMilliseconds)
+        if (Environment.TickCount64 - lastUpdatedTick < MinimumRefreshInterval.TotalMilliseconds)
         {
             throw new NotSupportedException($"The minimum update interval for this display is {MinimumRefreshInterval.TotalMilliseconds} milliseconds");
         }
-        lastUpdatedTick = Environment.TickCount;
+        lastUpdatedTick = Environment.TickCount64;
 
         // Initialize partial refresh if not already in that mode
         switch (CurrentRefreshMode)
