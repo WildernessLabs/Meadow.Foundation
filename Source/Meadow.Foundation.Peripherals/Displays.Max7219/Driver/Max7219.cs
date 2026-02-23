@@ -90,7 +90,7 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         private readonly byte[,] buffer;
 
-        private readonly byte DECIMAL = 0b10000000;
+        private const byte DECIMAL = 0b10000000;
 
         /// <summary>
         /// Create a new Max7219 object
@@ -166,7 +166,7 @@ namespace Meadow.Foundation.Displays
         }
 
         /// <summary>
-        /// Set number to display (left aligned)
+        /// Set number to display (right aligned)
         /// </summary>
         /// <param name="value">the number to display</param>
         /// <param name="deviceId">the cascaded device id</param>
@@ -215,7 +215,7 @@ namespace Meadow.Foundation.Displays
         public CharacterType GetCharacter(int digit, int deviceId = 0)
         {
             ValidatePosition(deviceId, digit);
-            return (CharacterType)buffer[deviceId, digit];
+            return (CharacterType)(buffer[deviceId, digit] & ~DECIMAL);
         }
 
         /// <summary>
@@ -374,7 +374,7 @@ namespace Meadow.Foundation.Displays
 
             if (start < 0 || start >= end)
             {
-                throw new ArgumentOutOfRangeException(nameof(end));
+                throw new ArgumentOutOfRangeException(nameof(start));
             }
 
             for (int deviceId = start; deviceId < end; deviceId++)

@@ -80,7 +80,7 @@ namespace Meadow.Foundation.Displays
 
             var display = (y >> 3) + (x >> 3) * DigitRows;
 
-            if (display > DeviceCount)
+            if (display >= DeviceCount)
             {
                 return;
             }
@@ -106,7 +106,7 @@ namespace Meadow.Foundation.Displays
 
             var display = (y >> 3) + (x >> 3) * DigitRows;
 
-            if (display > DeviceCount)
+            if (display >= DeviceCount)
             {
                 return;
             }
