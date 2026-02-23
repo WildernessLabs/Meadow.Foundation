@@ -493,7 +493,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 var gpio = mcpDevice.ReadRegister(MapRegister(Registers.GPIO, bank));
 
                 // return the value on that port
-                return BitHelpers.GetBitValue(gpio, (byte)pin.Key);
+                return BitHelpers.GetBitValue(gpio, (byte)((byte)pin.Key % 8));
             }
             throw new Exception("Pin is out of range");
         }
