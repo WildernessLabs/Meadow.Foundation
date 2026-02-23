@@ -179,9 +179,9 @@ namespace Meadow.Foundation.Graphics
             }
 
             Left = Math.Max(Left, rect.Left);
-            Top = Math.Min(Top, rect.Top);
+            Top = Math.Max(Top, rect.Top);
             Right = Math.Min(Right, rect.Right);
-            Bottom = Math.Max(Bottom, rect.Bottom);
+            Bottom = Math.Min(Bottom, rect.Bottom);
         }
 
         /// <summary>
