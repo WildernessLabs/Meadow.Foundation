@@ -52,7 +52,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         {
             if (outputType != OutputType.OpenDrain)
             {
-                throw new System.ArgumentException("Output type must be OpenDrain for Mcp23S09");
+                throw new System.ArgumentException("Output type must be OpenDrain for Mcp23S18");
             }
 
             return base.CreateDigitalOutputPort(pin, initialState, outputType);
