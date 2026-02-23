@@ -194,10 +194,12 @@ namespace Meadow.Foundation.ICs.IOExpanders
             byte interruptFlag = mcpDevice.ReadRegister(MapRegister(Registers.INTF_InterruptFlag, PortBank.A));
             byte currentStates = mcpDevice.ReadRegister(MapRegister(Registers.GPIO, PortBank.A));
             byte currentStatesB = 0;
+            byte interruptFlagB = 0;
 
             if (NumberOfPins == 16)
             {
                 currentStatesB = mcpDevice.ReadRegister(MapRegister(Registers.GPIO, PortBank.B));
+                interruptFlagB = mcpDevice.ReadRegister(MapRegister(Registers.INTF_InterruptFlag, PortBank.B));
             }
 
             bool state;
@@ -218,7 +220,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 }
             }
 
-            InputChanged?.Invoke(this, new IOExpanderInputChangedEventArgs(interruptFlag, (ushort)((currentStatesB << 8) | currentStates)));
+            InputChanged?.Invoke(this, new IOExpanderInputChangedEventArgs((ushort)((interruptFlagB << 8) | interruptFlag), (ushort)((currentStatesB << 8) | currentStates)));
         }
 
         /// <summary>
