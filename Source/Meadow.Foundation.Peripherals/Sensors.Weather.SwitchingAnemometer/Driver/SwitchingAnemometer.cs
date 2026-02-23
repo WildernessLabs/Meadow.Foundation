@@ -25,7 +25,7 @@ namespace Meadow.Foundation.Sensors.Weather
         /// <remarks>
         /// This value determines the minimum wind speed that can be measured.
         /// i.e. minimum speed is KmhPerSwitchPerSecond / NoWindTimeout(seconds)
-        /// e.g. (2.4 km/hr/s) / (4s) = 600 m/s 
+        /// e.g. (2.4 km/hr) / (4s) = 0.6 km/hr
         /// <see cref="KmhPerSwitchPerSecond"/>
         /// </remarks>
         public TimeSpan NoWindTimeout { get; set; } = TimeSpan.FromSeconds(4);
@@ -69,6 +69,7 @@ namespace Meadow.Foundation.Sensors.Weather
         private readonly IDigitalInterruptPort inputPort;
         private bool running = false;
         private readonly Queue<DigitalPortResult> samples = new();
+        private DateTime lastSwitchTime = DateTime.MinValue;
 
         /// <summary>
         /// Is the object disposed
@@ -114,6 +115,8 @@ namespace Meadow.Foundation.Sensors.Weather
         private void HandleInputPortChange(object sender, DigitalPortResult result)
         {
             if (!running) { return; }
+
+            lastSwitchTime = DateTime.UtcNow;
 
             lock (samples)
             {
@@ -176,8 +179,8 @@ namespace Meadow.Foundation.Sensors.Weather
             {
                 int count = 0;
 
-                if (samples?.Count > 0 && samples?.Peek().Delta > NoWindTimeout)
-                {   //we've exceeded the no wind interval time 
+                if (lastSwitchTime != DateTime.MinValue && DateTime.UtcNow - lastSwitchTime > NoWindTimeout)
+                {   //we've exceeded the no wind interval time
                     samples?.Clear(); //will force a zero reading
                     return new Speed(0);
                 }
