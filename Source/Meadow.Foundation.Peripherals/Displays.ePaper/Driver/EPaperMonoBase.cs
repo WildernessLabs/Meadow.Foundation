@@ -181,7 +181,7 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         public virtual void Show(int left, int top, int right, int bottom)
         {
-            SetFrameMemory(imageBuffer.Buffer, left, top, right - left, top - bottom);
+            SetFrameMemory(imageBuffer.Buffer, left, top, right - left, bottom - top);
             DisplayFrame();
         }
 
