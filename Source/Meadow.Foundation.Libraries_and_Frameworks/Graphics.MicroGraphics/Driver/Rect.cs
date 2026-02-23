@@ -126,13 +126,13 @@ namespace Meadow.Foundation.Graphics
         public void Inflate(int width, int height)
         {
             Right += width;
-            Top += height;
+            Bottom += height;
         }
 
         /// <summary>
         /// Increase the size in both dimensions
         /// This makes the rect wider by increasing the right value
-        /// And taller by increasing the top value
+        /// And taller by increasing the bottom value
         /// </summary>
         /// <param name="size">The amount to increase</param>
         public void Inflate(Size size)
@@ -179,9 +179,9 @@ namespace Meadow.Foundation.Graphics
             }
 
             Left = Math.Max(Left, rect.Left);
-            Top = Math.Min(Top, rect.Top);
+            Top = Math.Max(Top, rect.Top);
             Right = Math.Min(Right, rect.Right);
-            Bottom = Math.Max(Bottom, rect.Bottom);
+            Bottom = Math.Min(Bottom, rect.Bottom);
         }
 
         /// <summary>
