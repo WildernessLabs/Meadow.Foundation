@@ -162,9 +162,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 }
             }
 
-            // TODO: more interrupt 
-            // check the interrupt mode and make sure it's correct
-            // raise an exception if not. also, doc in constructor what we expect from an interrupt port
             if (interruptPort != null)
             {
                 interruptPort.Changed += InterruptPortChanged;
@@ -538,12 +535,12 @@ namespace Meadow.Foundation.ICs.IOExpanders
             byte ioDir;
             if (bank == PortBank.A)
             {   // set all IO to input
-                if (ioDirA != 1) { ioDirA = 1; }
+                if (ioDirA != 0xFF) { ioDirA = 0xFF; }
                 ioDir = ioDirA;
             }
             else
             {   // set all IO to input
-                if (ioDirB != 1) { ioDirB = 1; }
+                if (ioDirB != 0xFF) { ioDirB = 0xFF; }
                 ioDir = ioDirB;
             }
             mcpDevice.WriteRegister(MapRegister(Registers.IODIR_IODirection, bank), ioDir);
