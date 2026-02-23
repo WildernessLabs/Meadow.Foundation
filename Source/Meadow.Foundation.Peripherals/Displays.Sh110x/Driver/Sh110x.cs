@@ -182,6 +182,7 @@ namespace Meadow.Foundation.Displays
             imageBuffer = new Buffer1bpp(Width, Height);
             startColumnOffset = (byte)firstColumn;
             pageWidth = Width;
+            totalPages = height >> 3;
             pageBuffer = new byte[pageWidth];
 
             Initialize();
@@ -352,7 +353,7 @@ namespace Meadow.Foundation.Displays
             // iterate over all pages and check if they're in range
             for (byte page = 0; page < totalPages; page++)
             {
-                if (top > pageHeight * page || bottom < (page + 1) * pageHeight)
+                if (bottom < pageHeight * page || top >= (page + 1) * pageHeight)
                 {
                     continue;
                 }
