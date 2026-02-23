@@ -50,6 +50,7 @@ namespace Meadow.Foundation.Displays
             base(spiBus, chipSelectPort, dataCommandPort, resetPort, 176, 220, colorMode)
         {
             Initialize();
+            SetRotation(RotationType.Default);
         }
 
         /// <summary>
@@ -212,41 +213,41 @@ namespace Meadow.Foundation.Displays
             UpdateBuffer();
         }
 
-        byte ILI9225_DRIVER_OUTPUT_CTRL = 0x01;  // Driver Output Control
-        byte ILI9225_LCD_AC_DRIVING_CTRL = 0x02;  // LCD AC Driving Control
-        byte ILI9225_ENTRY_MODE = 0x03;  // Entry Mode
-        byte ILI9225_DISP_CTRL1 = 0x07;  // Display Control 1
-        byte ILI9225_BLANK_PERIOD_CTRL1 = 0x08;  // Blank Period Control
-        byte ILI9225_FRAME_CYCLE_CTRL = 0x0B;  // Frame Cycle Control
-        byte ILI9225_INTERFACE_CTRL = 0x0C;  // Interface Control
-        byte ILI9225_OSC_CTRL = 0x0F;  // Osc Control
-        byte ILI9225_POWER_CTRL1 = 0x10;  // Power Control 1
-        byte ILI9225_POWER_CTRL2 = 0x11;  // Power Control 2
-        byte ILI9225_POWER_CTRL3 = 0x12;  // Power Control 3
-        byte ILI9225_POWER_CTRL4 = 0x13;  // Power Control 4
-        byte ILI9225_POWER_CTRL5 = 0x14;  // Power Control 5
-        byte ILI9225_VCI_RECYCLING = 0x15;  // VCI Recycling
-        byte ILI9225_RAM_ADDR_SET1 = 0x20;  // Horizontal GRAM Address Set
-        byte ILI9225_RAM_ADDR_SET2 = 0x21;  // Vertical GRAM Address Set
-        byte ILI9225_GATE_SCAN_CTRL = 0x30;  // Gate Scan Control Register
-        byte ILI9225_VERTICAL_SCROLL_CTRL1 = 0x31;  // Vertical Scroll Control 1 Register
-        byte ILI9225_VERTICAL_SCROLL_CTRL2 = 0x32;  // Vertical Scroll Control 2 Register
-        byte ILI9225_VERTICAL_SCROLL_CTRL3 = 0x33;  // Vertical Scroll Control 3 Register
-        byte ILI9225_PARTIAL_DRIVING_POS1 = 0x34;  // Partial Driving Position 1 Register
-        byte ILI9225_PARTIAL_DRIVING_POS2 = 0x35;  // Partial Driving Position 2 Register
-        byte ILI9225_HORIZONTAL_WINDOW_ADDR1 = 0x36;  // Horizontal Address Start Position
-        byte ILI9225_HORIZONTAL_WINDOW_ADDR2 = 0x37;  // Horizontal Address End Position
-        byte ILI9225_VERTICAL_WINDOW_ADDR1 = 0x38;  // Vertical Address Start Position
-        byte ILI9225_VERTICAL_WINDOW_ADDR2 = 0x39;  // Vertical Address End Position
-        byte ILI9225_GAMMA_CTRL1 = 0x50;  // Gamma Control 1
-        byte ILI9225_GAMMA_CTRL2 = 0x51;  // Gamma Control 2
-        byte ILI9225_GAMMA_CTRL3 = 0x52;  // Gamma Control 3
-        byte ILI9225_GAMMA_CTRL4 = 0x53;  // Gamma Control 4
-        byte ILI9225_GAMMA_CTRL5 = 0x54;  // Gamma Control 5
-        byte ILI9225_GAMMA_CTRL6 = 0x55;  // Gamma Control 6
-        byte ILI9225_GAMMA_CTRL7 = 0x56;  // Gamma Control 7
-        byte ILI9225_GAMMA_CTRL8 = 0x57;  // Gamma Control 8
-        byte ILI9225_GAMMA_CTRL9 = 0x58;  // Gamma Control 9
-        byte ILI9225_GAMMA_CTRL10 = 0x59;  // Gamma Control 10
+        const byte ILI9225_DRIVER_OUTPUT_CTRL = 0x01;  // Driver Output Control
+        const byte ILI9225_LCD_AC_DRIVING_CTRL = 0x02;  // LCD AC Driving Control
+        const byte ILI9225_ENTRY_MODE = 0x03;  // Entry Mode
+        const byte ILI9225_DISP_CTRL1 = 0x07;  // Display Control 1
+        const byte ILI9225_BLANK_PERIOD_CTRL1 = 0x08;  // Blank Period Control
+        const byte ILI9225_FRAME_CYCLE_CTRL = 0x0B;  // Frame Cycle Control
+        const byte ILI9225_INTERFACE_CTRL = 0x0C;  // Interface Control
+        const byte ILI9225_OSC_CTRL = 0x0F;  // Osc Control
+        const byte ILI9225_POWER_CTRL1 = 0x10;  // Power Control 1
+        const byte ILI9225_POWER_CTRL2 = 0x11;  // Power Control 2
+        const byte ILI9225_POWER_CTRL3 = 0x12;  // Power Control 3
+        const byte ILI9225_POWER_CTRL4 = 0x13;  // Power Control 4
+        const byte ILI9225_POWER_CTRL5 = 0x14;  // Power Control 5
+        const byte ILI9225_VCI_RECYCLING = 0x15;  // VCI Recycling
+        const byte ILI9225_RAM_ADDR_SET1 = 0x20;  // Horizontal GRAM Address Set
+        const byte ILI9225_RAM_ADDR_SET2 = 0x21;  // Vertical GRAM Address Set
+        const byte ILI9225_GATE_SCAN_CTRL = 0x30;  // Gate Scan Control Register
+        const byte ILI9225_VERTICAL_SCROLL_CTRL1 = 0x31;  // Vertical Scroll Control 1 Register
+        const byte ILI9225_VERTICAL_SCROLL_CTRL2 = 0x32;  // Vertical Scroll Control 2 Register
+        const byte ILI9225_VERTICAL_SCROLL_CTRL3 = 0x33;  // Vertical Scroll Control 3 Register
+        const byte ILI9225_PARTIAL_DRIVING_POS1 = 0x34;  // Partial Driving Position 1 Register
+        const byte ILI9225_PARTIAL_DRIVING_POS2 = 0x35;  // Partial Driving Position 2 Register
+        const byte ILI9225_HORIZONTAL_WINDOW_ADDR1 = 0x36;  // Horizontal Address Start Position
+        const byte ILI9225_HORIZONTAL_WINDOW_ADDR2 = 0x37;  // Horizontal Address End Position
+        const byte ILI9225_VERTICAL_WINDOW_ADDR1 = 0x38;  // Vertical Address Start Position
+        const byte ILI9225_VERTICAL_WINDOW_ADDR2 = 0x39;  // Vertical Address End Position
+        const byte ILI9225_GAMMA_CTRL1 = 0x50;  // Gamma Control 1
+        const byte ILI9225_GAMMA_CTRL2 = 0x51;  // Gamma Control 2
+        const byte ILI9225_GAMMA_CTRL3 = 0x52;  // Gamma Control 3
+        const byte ILI9225_GAMMA_CTRL4 = 0x53;  // Gamma Control 4
+        const byte ILI9225_GAMMA_CTRL5 = 0x54;  // Gamma Control 5
+        const byte ILI9225_GAMMA_CTRL6 = 0x55;  // Gamma Control 6
+        const byte ILI9225_GAMMA_CTRL7 = 0x56;  // Gamma Control 7
+        const byte ILI9225_GAMMA_CTRL8 = 0x57;  // Gamma Control 8
+        const byte ILI9225_GAMMA_CTRL9 = 0x58;  // Gamma Control 9
+        const byte ILI9225_GAMMA_CTRL10 = 0x59;  // Gamma Control 10
     }
 }
