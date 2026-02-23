@@ -13,7 +13,7 @@ namespace Meadow.Foundation.Sensors.Hid
 
         public WiiExtensionAnalogTrigger(byte precision)
         {
-            precisionMultiplier = 1.0 / Math.Pow(2, precision);
+            precisionMultiplier = 1.0 / (Math.Pow(2, precision) - 1);
         }
 
         public void Update(byte triggerPosition)

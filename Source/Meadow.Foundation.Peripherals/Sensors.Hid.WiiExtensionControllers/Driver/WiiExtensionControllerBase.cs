@@ -85,12 +85,10 @@ namespace Meadow.Foundation.Sensors.Hid
         /// <returns>The ID as a byte</returns>
         public byte[] GetIdentification()
         {
+            var idBuffer = new byte[6];
             i2cComms.Write(0xFA);
-            i2cComms.Read(ReadBuffer[..6]);
-
-            Resolver.Log.Info(BitConverter.ToString(ReadBuffer[..6].ToArray()));
-
-            return ReadBuffer[..6].ToArray();
+            i2cComms.Read(idBuffer);
+            return idBuffer;
         }
 
         /// <summary>
