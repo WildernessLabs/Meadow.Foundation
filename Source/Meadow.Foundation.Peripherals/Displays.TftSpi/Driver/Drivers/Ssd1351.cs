@@ -129,8 +129,8 @@ namespace Meadow.Foundation.Displays
         /// Set address window to update
         /// </summary>
         /// <param name="x0">Start x position in pixels</param>
-        /// <param name="y0">End x position in pixels</param>
-        /// <param name="x1">Start y position in pixels</param>
+        /// <param name="y0">Start y position in pixels</param>
+        /// <param name="x1">End x position in pixels</param>
         /// <param name="y1">End y position in pixels</param>
         protected override void SetAddressWindow(int x0, int y0, int x1, int y1)
         {

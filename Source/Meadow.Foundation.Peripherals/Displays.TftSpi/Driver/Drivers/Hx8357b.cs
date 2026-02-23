@@ -167,10 +167,6 @@ namespace Meadow.Foundation.Displays
             /// </summary>
             SETDISPLAYFRAME = 0xC5,
             /// <summary>
-            /// Set gamma correction
-            /// </summary>
-            GAMMASET = 0xC8,
-            /// <summary>
             /// Set CABC
             /// </summary>
             SETCABC = 0xC9,
