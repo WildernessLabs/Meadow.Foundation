@@ -1437,6 +1437,7 @@ namespace Meadow.Foundation.Graphics
                 8 => text.Length,
                 16 => text.Length * 2,
                 12 => ((text.Length + (text.Length % 2)) * 3) >> 1,
+                6 => (text.Length + 3) / 4 * 3,
                 _ => (text.Length * fontToDraw.Width + 7) / 8  // Round up for other widths
             };
 
