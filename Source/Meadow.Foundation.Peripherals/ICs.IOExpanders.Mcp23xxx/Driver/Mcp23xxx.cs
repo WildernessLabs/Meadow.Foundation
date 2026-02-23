@@ -162,9 +162,6 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 }
             }
 
-            // TODO: more interrupt 
-            // check the interrupt mode and make sure it's correct
-            // raise an exception if not. also, doc in constructor what we expect from an interrupt port
             if (interruptPort != null)
             {
                 interruptPort.Changed += InterruptPortChanged;
@@ -197,10 +194,12 @@ namespace Meadow.Foundation.ICs.IOExpanders
             byte interruptFlag = mcpDevice.ReadRegister(MapRegister(Registers.INTF_InterruptFlag, PortBank.A));
             byte currentStates = mcpDevice.ReadRegister(MapRegister(Registers.GPIO, PortBank.A));
             byte currentStatesB = 0;
+            byte interruptFlagB = 0;
 
             if (NumberOfPins == 16)
             {
                 currentStatesB = mcpDevice.ReadRegister(MapRegister(Registers.GPIO, PortBank.B));
+                interruptFlagB = mcpDevice.ReadRegister(MapRegister(Registers.INTF_InterruptFlag, PortBank.B));
             }
 
             bool state;
@@ -221,7 +220,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 }
             }
 
-            InputChanged?.Invoke(this, new IOExpanderInputChangedEventArgs(interruptFlag, (ushort)((currentStatesB << 8) | currentStates)));
+            InputChanged?.Invoke(this, new IOExpanderInputChangedEventArgs((ushort)((interruptFlagB << 8) | interruptFlag), (ushort)((currentStatesB << 8) | currentStates)));
         }
 
         /// <summary>
@@ -493,7 +492,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
                 var gpio = mcpDevice.ReadRegister(MapRegister(Registers.GPIO, bank));
 
                 // return the value on that port
-                return BitHelpers.GetBitValue(gpio, (byte)pin.Key);
+                return BitHelpers.GetBitValue(gpio, (byte)((byte)pin.Key % 8));
             }
             throw new Exception("Pin is out of range");
         }
@@ -538,12 +537,12 @@ namespace Meadow.Foundation.ICs.IOExpanders
             byte ioDir;
             if (bank == PortBank.A)
             {   // set all IO to input
-                if (ioDirA != 1) { ioDirA = 1; }
+                if (ioDirA != 0xFF) { ioDirA = 0xFF; }
                 ioDir = ioDirA;
             }
             else
             {   // set all IO to input
-                if (ioDirB != 1) { ioDirB = 1; }
+                if (ioDirB != 0xFF) { ioDirB = 0xFF; }
                 ioDir = ioDirB;
             }
             mcpDevice.WriteRegister(MapRegister(Registers.IODIR_IODirection, bank), ioDir);
