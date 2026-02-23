@@ -65,14 +65,14 @@ public partial class Pca9685
         /// <param name="initialState">The initial state of the digital output port.</param>
         internal DigitalOutputPort(Pca9685 controller, IPin pin, bool initialState)
         {
+            // Must assign controller first since State setter uses it
+            this.controller = controller;
+            Pin = pin;
+            Channel = (IDigitalChannelInfo)pin.SupportedChannels.First(c => c is IDigitalChannelInfo);
+            portNumber = (byte)pin.Key;
+            
             InitialState = initialState;
             State = initialState;
-            Pin = pin;
-
-            this.controller = controller;
-            Channel = (IDigitalChannelInfo)pin.SupportedChannels.First(c => c is IDigitalChannelInfo);
-
-            portNumber = (byte)pin.Key;
         }
 
         /// <summary>
