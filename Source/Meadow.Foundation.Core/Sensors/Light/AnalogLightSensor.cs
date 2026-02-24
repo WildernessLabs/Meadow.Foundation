@@ -51,7 +51,7 @@ namespace Meadow.Foundation.Sensors.Light
             IPin analogPin,
             Calibration? calibration = null,
             int sampleCount = 5, TimeSpan? sampleInterval = null)
-                : this(analogPin.CreateAnalogInputPort(sampleCount, sampleInterval ?? new TimeSpan(0, 0, 40), new Voltage(3.3)), calibration)
+                : this(analogPin.CreateAnalogInputPort(sampleCount, sampleInterval ?? TimeSpan.FromMilliseconds(40), new Voltage(3.3)), calibration)
         {
             createdPort = true;
         }

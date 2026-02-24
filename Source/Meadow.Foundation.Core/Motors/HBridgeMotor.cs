@@ -100,7 +100,7 @@ public class HBridgeMotor : IDCMotor
     /// <param name="enablePin"></param>
     /// <param name="pwmFrequency"></param>
     public HBridgeMotor(IPin a1Pin, IPin a2Pin, IPin enablePin, Frequency pwmFrequency) :
-        this(a1Pin.CreatePwmPort(DefaultFrequency), a2Pin.CreatePwmPort(DefaultFrequency), enablePin.CreateDigitalOutputPort(), pwmFrequency)
+        this(a1Pin.CreatePwmPort(pwmFrequency), a2Pin.CreatePwmPort(pwmFrequency), enablePin.CreateDigitalOutputPort(), pwmFrequency)
     { }
 
     /// <summary>

@@ -40,8 +40,8 @@ namespace Meadow.Foundation.Controllers.Pid
             _integral += error * seconds; // add to the integral history
             var integral = IntegralComponent * _integral; // calculate the integral action
 
-            // calculate the derivative (rate of change, slop of line) term
-            var diff = error - _lastError / seconds;
+            // calculate the derivative (rate of change, slope of line) term
+            var diff = (error - _lastError) / seconds;
             var derivative = DerivativeComponent * diff;
 
             // init vars
