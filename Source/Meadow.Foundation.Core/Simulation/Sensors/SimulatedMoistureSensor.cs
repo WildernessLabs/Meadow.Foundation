@@ -52,7 +52,7 @@ public class SimulatedMoistureSensor : SimulatedSamplingSensorBase<double>, IMoi
         switch (behavior)
         {
             case SimulationBehavior.RandomWalk:
-                var delta = random.NextDouble() / 100d - 0.5;
+                var delta = (random.NextDouble() - 0.5) / 100d;
                 return Moisture!.Value + delta;
         }
         return Moisture ?? 0;
