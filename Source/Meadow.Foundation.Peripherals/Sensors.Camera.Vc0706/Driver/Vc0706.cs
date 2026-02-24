@@ -325,11 +325,11 @@ namespace Meadow.Foundation.Sensors.Camera
         {
             byte[] args = {0x08,
                             (byte)(horizontalZoom >> 8), (byte)horizontalZoom,
-                            (byte)(verticalZoom >> 8), (byte)horizontalZoom,
+                            (byte)(verticalZoom >> 8), (byte)verticalZoom,
                             (byte)(pan >> 8), (byte)pan,
                             (byte)(tilt >> 8), (byte)tilt};
 
-            return (!RunCommand(SET_ZOOM, args, (byte)args.Length, 5));
+            return RunCommand(SET_ZOOM, args, (byte)args.Length, 5);
         }
 
         /// <summary>
