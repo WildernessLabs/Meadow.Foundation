@@ -136,9 +136,9 @@ namespace Meadow.Foundation.Leds
         /// <param name="brightness">The brightness 0.0 - 1.0f</param>
         public virtual void SetLed(int index, byte[] rgb, float brightness = 1f)
         {
-            if (rgb.Length % 3 != 0)
+            if (rgb.Length != 3)
             {
-                throw new ArgumentException("Data length must be a multiple of 3 (RGB sets).");
+                throw new ArgumentException("rgb must be a 3-element array (Red, Green, Blue).");
             }
 
             var requestedBrightness = ConvertBrightness(brightness);
@@ -233,7 +233,10 @@ namespace Meadow.Foundation.Leds
             Array.Clear(buffer[2], 0, buffer[0].Length);
             Array.Clear(buffer[3], 0, buffer[0].Length);
 
-            base.Write((byte)Register.AllOff);
+            if (update)
+            {
+                base.Write((byte)Register.AllOff);
+            }
         }
     }
 }

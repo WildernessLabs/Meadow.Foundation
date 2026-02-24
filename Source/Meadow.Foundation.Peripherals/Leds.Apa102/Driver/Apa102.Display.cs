@@ -104,11 +104,11 @@ namespace Meadow.Foundation.Leds
         /// <param name="y">y position of pixel</param>
         public void InvertPixel(int x, int y)
         {
-            var index = 3 * GetIndexForCoordinate(x, y);
+            var offset = StartHeaderSize + GetIndexForCoordinate(x, y) * 4 + 1;
 
-            buffer[index] ^= 0xFF;
-            buffer[index + 1] ^= 0xFF;
-            buffer[index + 2] ^= 0xFF;
+            buffer[offset] ^= 0xFF;
+            buffer[offset + 1] ^= 0xFF;
+            buffer[offset + 2] ^= 0xFF;
         }
 
         /// <summary>
@@ -145,7 +145,7 @@ namespace Meadow.Foundation.Leds
             {
                 for (int j = 0; j < height; j++)
                 {
-                    DrawPixel(i, j, fillColor);
+                    DrawPixel(x + i, y + j, fillColor);
                 }
             }
         }

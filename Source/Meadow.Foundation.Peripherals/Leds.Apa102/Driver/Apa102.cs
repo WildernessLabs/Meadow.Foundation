@@ -80,7 +80,7 @@ namespace Meadow.Foundation.Leds
         public float Brightness
         {
             get => brightness;
-            set => brightness = Math.Clamp(brightness, 0.0f, 1.0f);
+            set => brightness = Math.Clamp(value, 0.0f, 1.0f);
         }
         float brightness = 0.5f;
 
@@ -185,7 +185,7 @@ namespace Meadow.Foundation.Leds
         /// <param name="brightness">The brightness 0.0 - 1.0f</param>
         public virtual void SetLed(int index, byte[] rgb, float brightness = 1f)
         {
-            if (index > numberOfLeds || index < 0)
+            if (index >= numberOfLeds || index < 0)
             {
                 throw new ArgumentOutOfRangeException("Index must be less than the number of leds specified");
             }
@@ -221,6 +221,8 @@ namespace Meadow.Foundation.Leds
             {
                 SetLed(i, off);
             }
+
+            if (update) Show();
         }
 
         /// <summary>

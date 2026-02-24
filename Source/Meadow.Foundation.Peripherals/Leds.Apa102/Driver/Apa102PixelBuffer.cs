@@ -33,11 +33,14 @@ namespace Meadow.Foundation.Leds
         /// <returns></returns>
         public Color GetPixel(int x, int y)
         {
-            var index = 3 * GetIndexForCoordinate(x, y);
+            var offset = StartHeaderSize + GetIndexForCoordinate(x, y) * 4 + 1;
 
-            return new Color(red: buffer[index + pixelOrder[0]],
-                             green: buffer[index + pixelOrder[1]],
-                             blue: buffer[index + pixelOrder[2]]);
+            byte[] rgb = new byte[3];
+            rgb[pixelOrder[0]] = buffer[offset];
+            rgb[pixelOrder[1]] = buffer[offset + 1];
+            rgb[pixelOrder[2]] = buffer[offset + 2];
+
+            return new Color(red: rgb[0], green: rgb[1], blue: rgb[2]);
         }
 
         /// <summary>
