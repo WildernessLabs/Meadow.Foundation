@@ -103,7 +103,7 @@ namespace Meadow.Foundation.Sensors.Distance
                 {
                     analogInputPort?.StopUpdating();
                 }
-                else if (communication != CommunicationType.Serial)
+                else if (communication == CommunicationType.Serial)
                 {
                     serialMessagePort?.Close();
                 }
