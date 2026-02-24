@@ -119,8 +119,16 @@ namespace Meadow.Foundation.Sensors.Hid
         /// </summary>
         /// <param name="i2cBus">the I2C bus connected to the extension controller</param>
         /// <param name="address">The extension controller address</param>
-        protected WiiClassicControllerBase(II2cBus i2cBus, byte address) : base(i2cBus, address)
+        /// <param name="useHighResolutionMode">Enable high resolution mode for analog controls</param>
+        protected WiiClassicControllerBase(II2cBus i2cBus, byte address, bool useHighResolutionMode = false) : base(i2cBus, address)
         {
+            // base constructor calls Initialize() via virtual dispatch before this field is set,
+            // so we set it here and re-apply the mode register with the correct value
+            if (useHighResolutionMode)
+            {
+                this.useHighResolutionMode = true;
+                i2cComms.WriteRegister(0xFE, 0x03);
+            }
         }
 
         /// <summary>
@@ -129,14 +137,9 @@ namespace Meadow.Foundation.Sensors.Hid
         protected override void Initialize()
         {
             base.Initialize();
-            if (useHighResolutionMode)
-            {
-                i2cComms.WriteRegister(0xFE, 0x03);
-            }
-            else
-            {
-                i2cComms.WriteRegister(0xFE, 0x00);
-            }
+            // useHighResolutionMode is always false here due to virtual call in base constructor;
+            // the correct register value is written in the WiiClassicControllerBase constructor body
+            i2cComms.WriteRegister(0xFE, 0x00);
         }
     }
 }
