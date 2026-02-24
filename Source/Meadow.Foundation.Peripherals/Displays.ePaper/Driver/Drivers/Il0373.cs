@@ -220,7 +220,7 @@ namespace Meadow.Foundation.Displays
             }
 
             DelayMs(2);
-            SendData((byte)Command.PARTIAL_OUT);
+            SendCommand(Command.PARTIAL_OUT);
         }
 
         /// <summary>
@@ -233,7 +233,7 @@ namespace Meadow.Foundation.Displays
         public override void Show(int left, int top, int right, int bottom)
         {
             SetPartialWindow(imageBuffer.BlackBuffer, imageBuffer.ColorBuffer,
-                left, top, right - left, top - bottom);
+                left, top, right - left, bottom - top);
 
             DisplayFrame();
         }
