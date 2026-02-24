@@ -467,7 +467,7 @@ public class Epd7in5V2 : EPaperBase, IPixelDisplay, IRefreshableDisplay
         {
             throw new NotSupportedException($"The minimum update interval for this display is {MinimumRefreshInterval.TotalMilliseconds} milliseconds");
         }
-        lastUpdatedTick = Environment.TickCount64;
+        lastUpdatedTick = Environment.TickCount;
 
         // Re-initialize only if switching refresh modes
 
@@ -584,11 +584,11 @@ public class Epd7in5V2 : EPaperBase, IPixelDisplay, IRefreshableDisplay
     /// <exception cref="NotSupportedException">Thrown if called more frequently than the minimum refresh interval</exception>
     public void Show(int left, int top, int right, int bottom)
     {
-        if (Environment.TickCount64 - lastUpdatedTick < MinimumRefreshInterval.TotalMilliseconds)
+        if (Environment.TickCount - lastUpdatedTick < MinimumRefreshInterval.TotalMilliseconds)
         {
             throw new NotSupportedException($"The minimum update interval for this display is {MinimumRefreshInterval.TotalMilliseconds} milliseconds");
         }
-        lastUpdatedTick = Environment.TickCount64;
+        lastUpdatedTick = Environment.TickCount;
 
         // Initialize partial refresh if not already in that mode
         switch (CurrentRefreshMode)
