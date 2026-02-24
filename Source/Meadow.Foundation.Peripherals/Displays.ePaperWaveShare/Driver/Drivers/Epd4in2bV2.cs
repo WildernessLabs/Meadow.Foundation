@@ -92,8 +92,8 @@ namespace Meadow.Foundation.Displays
             SendCommand(Command.PARTIAL_WINDOW);
             SendData(x >> 8);
             SendData(x & 0xf8);     // x should be the multiple of 8, the last 3 bit will always be ignored
-            SendData(((x & 0x1f8) + width - 1) >> 8);
-            SendData(((x & 0x1f8) + width - 1) | 0x07);
+            SendData(((x & 0xf8) + width - 1) >> 8);
+            SendData(((x & 0xf8) + width - 1) | 0x07);
             SendData(y >> 8);
             SendData(y & 0xff);
             SendData((y + height - 1) >> 8);
@@ -139,8 +139,8 @@ namespace Meadow.Foundation.Displays
             SendCommand(Command.PARTIAL_WINDOW);
             SendData(x >> 8);
             SendData(x & 0xf8);     // x should be the multiple of 8, the last 3 bit will always be ignored
-            SendData(((x & 0x1f8) + width - 1) >> 8);
-            SendData(((x & 0x1f8) + width - 1) | 0x07);
+            SendData(((x & 0xf8) + width - 1) >> 8);
+            SendData(((x & 0xf8) + width - 1) | 0x07);
             SendData(y >> 8);
             SendData(y & 0xff);
             SendData((y + height - 1) >> 8);
