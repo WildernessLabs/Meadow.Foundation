@@ -19,7 +19,7 @@ namespace Meadow.Foundation.Sensors.Light
         public double LightTransmittance
         {
             get => lightTransmittance;
-            set => SetLightTransmittance(lightTransmittance = value);
+            set => SetLightTransmittance(value);
         }
         private double lightTransmittance;
 
@@ -90,7 +90,7 @@ namespace Meadow.Foundation.Sensors.Light
             if (MeasuringMode == MeasuringModes.ContinuouslyHighResolutionMode2 ||
                 MeasuringMode == MeasuringModes.OneTimeHighResolutionMode2)
             {
-                result *= 2;
+                result /= 2;
             }
 
             return new Illuminance(result, IU.Lux);
@@ -125,6 +125,7 @@ namespace Meadow.Foundation.Sensors.Light
 
             BusComms.Write((byte)((byte)Commands.MeasurementTimeHigh | (val >> 5)));
             BusComms.Write((byte)((byte)Commands.MeasurementTimeLow | (val & 0b_0001_1111)));
+            lightTransmittance = transmittance;
         }
     }
 }
