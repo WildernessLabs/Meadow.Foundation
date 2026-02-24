@@ -203,7 +203,7 @@ namespace Meadow.Foundation.Displays
         public override void Show(int left, int top, int right, int bottom)
         {
             int width = right - left;
-            int height = top - bottom;
+            int height = bottom - top;
 
             SetPartialWindow(left, top, width, height);
 
@@ -244,7 +244,7 @@ namespace Meadow.Foundation.Displays
             SendData(0x12);
 
             SendCommand(VCOM_AND_DATA_INTERVAL_SETTING);
-            SendCommand(0x97);    //VBDF 17|D7 VBDW 97  VBDB 57  VBDF F7  VBDW 77  VBDB 37  VBDR B7
+            SendData(0x97);    //VBDF 17|D7 VBDW 97  VBDB 57  VBDF F7  VBDW 77  VBDB 37  VBDR B7
 
             var buffer = imageBuffer.Buffer;
 

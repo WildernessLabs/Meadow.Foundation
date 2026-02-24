@@ -1,5 +1,4 @@
 ﻿using Meadow.Hardware;
-using System.Threading;
 
 namespace Meadow.Foundation.Displays
 {
@@ -140,13 +139,13 @@ namespace Meadow.Foundation.Displays
             SendCommand(Command.PARTIAL_WINDOW);
             SendData(x >> 8);
             SendData(x & 0xf8);     // x should be the multiple of 8, the last 3 bit will always be ignored
-            SendData(((x & 0x1f8) + width - 1) >> 8);
-            SendData(((x & 0x1f8) + width - 1) | 0x07);
+            SendData(((x & 0xf8) + width - 1) >> 8);
+            SendData(((x & 0xf8) + width - 1) | 0x07);
             SendData(y >> 8);
             SendData(y & 0xff);
             SendData((y + height - 1) >> 8);
             SendData((y + height - 1) & 0xff);
-            SendData(0x01);         // Gates scan both inside and outside of the partial window. (default) 
+            SendData(0x01);         // Gates scan both inside and outside of the partial window. (default)
             DelayMs(2);
             SendCommand(Command.DATA_START_TRANSMISSION_1);
 
@@ -176,13 +175,13 @@ namespace Meadow.Foundation.Displays
             SendCommand(Command.PARTIAL_WINDOW);
             SendData(x >> 8);
             SendData(x & 0xf8);     // x should be the multiple of 8, the last 3 bit will always be ignored
-            SendData(((x & 0x1f8) + width - 1) >> 8);
-            SendData(((x & 0x1f8) + width - 1) | 0x07);
+            SendData(((x & 0xf8) + width - 1) >> 8);
+            SendData(((x & 0xf8) + width - 1) | 0x07);
             SendData(y >> 8);
             SendData(y & 0xff);
             SendData((y + height - 1) >> 8);
             SendData((y + height - 1) & 0xff);
-            SendData(0x01);         // Gates scan both inside and outside of the partial window. (default) 
+            SendData(0x01);         // Gates scan both inside and outside of the partial window. (default)
             DelayMs(2);
             SendCommand(Command.DATA_START_TRANSMISSION_2);
 
@@ -195,7 +194,7 @@ namespace Meadow.Foundation.Displays
             }
 
             DelayMs(2);
-            SendData((byte)Command.PARTIAL_OUT);
+            SendCommand(Command.PARTIAL_OUT);
         }
 
         /// <summary>
@@ -208,7 +207,7 @@ namespace Meadow.Foundation.Displays
         public override void Show(int left, int top, int right, int bottom)
         {
             SetPartialWindow(imageBuffer.BlackBuffer, imageBuffer.ColorBuffer,
-                left, top, right - left, top - bottom);
+                left, top, right - left, bottom - top);
 
             DisplayFrame();
         }
@@ -227,46 +226,41 @@ namespace Meadow.Foundation.Displays
         protected virtual void ClearFrame()
         {
             SendCommand(Command.DATA_START_TRANSMISSION_1);
-            Thread.Sleep(2);
+            DelayMs(2);
 
             for (int i = 0; i < Width * Height / 8; i++)
             {
                 SendData(0xFF);
             }
-            Thread.Sleep(2);
+            DelayMs(2);
 
             SendCommand(Command.DATA_START_TRANSMISSION_2);
-            Thread.Sleep(2);
+            DelayMs(2);
             for (int i = 0; i < Width * Height / 8; i++)
             {
                 SendData(0xFF);
             }
-            Thread.Sleep(2);
+            DelayMs(2);
         }
 
         void DisplayFrame(byte[] blackBuffer, byte[] colorBuffer)
         {
-            Resolver.Log.Info($"Display frame - width {Width}, height {Height}");
-
             SendCommand(Command.DATA_START_TRANSMISSION_1);
-            Thread.Sleep(2);
+            DelayMs(2);
 
             for (int i = 0; i < Width * Height / 8; i++)
             {
                 SendData(blackBuffer[i]);
-
             }
-            Thread.Sleep(2);
-
+            DelayMs(2);
 
             SendCommand(Command.DATA_START_TRANSMISSION_2);
-            Thread.Sleep(2);
+            DelayMs(2);
             for (int i = 0; i < Width * Height / 8; i++)
             {
-                //SendData(0xFF); //white for clear, black for on
                 SendData(colorBuffer[i]);
             }
-            Thread.Sleep(2);
+            DelayMs(2);
 
             DisplayFrame();
         }

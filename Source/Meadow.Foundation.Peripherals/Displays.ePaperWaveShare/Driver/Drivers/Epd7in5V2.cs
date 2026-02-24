@@ -138,7 +138,7 @@ public class Epd7in5V2 : EPaperBase, IPixelDisplay, IRefreshableDisplay
 
         spiComms = new SpiCommunications(spiBus, chipSelectPort, DefaultSpiBusSpeed, DefaultSpiBusMode);
 
-        if ((SupportedColorModes | colorMode) == 0)
+        if ((SupportedColorModes & colorMode) == 0)
         {
             throw new ArgumentException($"ColorMode {colorMode} is not supported");
         }
