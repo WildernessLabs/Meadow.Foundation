@@ -21,7 +21,7 @@ public class SimulatedGc9a01 : SimulatedDisplayBase
     public SimulatedGc9a01(IResizablePixelDisplay displayRenderer,
         bool rotate = true,
         ColorMode colorMode = ColorMode.Format16bppRgb565)
-        : base(displayRenderer, 320, 480, rotate, colorMode)
+        : base(displayRenderer, 240, 240, rotate, colorMode)
     { }
 
     /// <summary>
@@ -29,6 +29,6 @@ public class SimulatedGc9a01 : SimulatedDisplayBase
     /// </summary>
     /// <param name="displayRenderer"></param>
     public SimulatedGc9a01(IResizablePixelDisplay displayRenderer)
-        : base(displayRenderer, 320, 480, true, ColorMode.Format16bppRgb565)
+        : base(displayRenderer, 240, 240, true, ColorMode.Format16bppRgb565)
     { }
 }

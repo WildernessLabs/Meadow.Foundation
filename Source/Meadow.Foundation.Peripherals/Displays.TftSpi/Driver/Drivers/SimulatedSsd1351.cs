@@ -21,7 +21,7 @@ public class SimulatedSsd1351 : SimulatedDisplayBase
     public SimulatedSsd1351(IResizablePixelDisplay displayRenderer,
         bool rotate = true,
         ColorMode colorMode = ColorMode.Format16bppRgb565)
-        : base(displayRenderer, 128, 160, rotate, colorMode)
+        : base(displayRenderer, 128, 128, rotate, colorMode)
     { }
 
     /// <summary>
@@ -29,6 +29,6 @@ public class SimulatedSsd1351 : SimulatedDisplayBase
     /// </summary>
     /// <param name="displayRenderer"></param>
     public SimulatedSsd1351(IResizablePixelDisplay displayRenderer)
-        : base(displayRenderer, 128, 160, true, ColorMode.Format16bppRgb565)
+        : base(displayRenderer, 128, 128, true, ColorMode.Format16bppRgb565)
     { }
 }

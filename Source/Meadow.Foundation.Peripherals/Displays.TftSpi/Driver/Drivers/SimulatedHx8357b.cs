@@ -21,7 +21,7 @@ public class SimulatedHx8357b : SimulatedDisplayBase
     public SimulatedHx8357b(IResizablePixelDisplay displayRenderer,
         bool rotate = true,
         ColorMode colorMode = ColorMode.Format16bppRgb565)
-        : base(displayRenderer, 240, 240, rotate, colorMode)
+        : base(displayRenderer, 320, 480, rotate, colorMode)
     { }
 
     /// <summary>
@@ -29,6 +29,6 @@ public class SimulatedHx8357b : SimulatedDisplayBase
     /// </summary>
     /// <param name="displayRenderer"></param>
     public SimulatedHx8357b(IResizablePixelDisplay displayRenderer)
-        : base(displayRenderer, 240, 240, true, ColorMode.Format16bppRgb565)
+        : base(displayRenderer, 320, 480, true, ColorMode.Format16bppRgb565)
     { }
 }

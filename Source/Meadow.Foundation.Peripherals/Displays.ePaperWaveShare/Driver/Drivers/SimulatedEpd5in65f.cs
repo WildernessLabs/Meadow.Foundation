@@ -23,7 +23,7 @@ public class SimulatedEpd5in65f : SimulatedDisplayBase
     /// <param name="displayRenderer"></param>
     /// <param name="rotate"></param>rotate
     public SimulatedEpd5in65f(IResizablePixelDisplay displayRenderer, bool rotate = true)
-        : base(displayRenderer, 600, 448, false, ColorMode.Format4bppIndexed)
+        : base(displayRenderer, 600, 448, rotate, ColorMode.Format4bppIndexed)
     {
         SupportedColorModes = ColorMode.Format4bppIndexed;
 

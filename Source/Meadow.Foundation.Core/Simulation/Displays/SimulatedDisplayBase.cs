@@ -153,6 +153,11 @@ public class SimulatedDisplayBase : IVirtualPixelDisplay
     {
         pixelBufferSimulated.Fill(fillColor);
         pixelBufferDisplay.Fill(pixelBufferSimulated.GetPixel(0, 0));
+
+        if (updateDisplay)
+        {
+            Show();
+        }
     }
 
     /// <inheritdoc/>

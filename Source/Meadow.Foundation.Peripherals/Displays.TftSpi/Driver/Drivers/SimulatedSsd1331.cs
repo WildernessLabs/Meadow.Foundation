@@ -29,6 +29,6 @@ public class SimulatedSsd1331 : SimulatedDisplayBase
     /// </summary>
     /// <param name="displayRenderer"></param>
     public SimulatedSsd1331(IResizablePixelDisplay displayRenderer)
-        : base(displayRenderer, 96, 64, true, ColorMode.Format12bppRgb444)
+        : base(displayRenderer, 96, 64, true, ColorMode.Format16bppRgb565)
     { }
 }
