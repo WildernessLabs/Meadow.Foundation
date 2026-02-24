@@ -89,7 +89,7 @@ namespace Meadow.Foundation.Graphics.Buffers
         {   //comes back as a 4bit value
             var gray = GetPixel4bpp(x, y);
 
-            return new Color(gray << 4, gray << 4, gray << 4);
+            return new Color((byte)(gray * 255 / 15), (byte)(gray * 255 / 15), (byte)(gray * 255 / 15));
         }
 
         /// <summary>
