@@ -145,7 +145,7 @@ namespace Meadow.Foundation.Graphics.Buffers
         {
             var color12bpp = color.Color12bppRgb444;
             Buffer[0] = (byte)(color12bpp >> 4);
-            Buffer[1] = (byte)((color12bpp << 4) | (color12bpp >> 8));
+            Buffer[1] = (byte)(((color12bpp & 0x0F) << 4) | (color12bpp >> 8));
             Buffer[2] = (byte)color12bpp;
 
             int arrayMidPoint = Buffer.Length / 2;

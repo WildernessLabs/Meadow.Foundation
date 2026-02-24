@@ -192,7 +192,7 @@ namespace Meadow.Foundation.Sensors.Hid
 
                         // calculate new vertical position, combine with previous
                         // horizontal (if any)
-                        var newV = GetNormalizedPosition(v.New, true);
+                        var newV = GetNormalizedPosition(v.New, false);
                         var newH = Position?.Horizontal; // old horizontal
                         AnalogJoystickPosition newPosition = new AnalogJoystickPosition(newH, newV);
 

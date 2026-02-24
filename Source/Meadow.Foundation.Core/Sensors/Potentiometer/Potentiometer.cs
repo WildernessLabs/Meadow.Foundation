@@ -87,11 +87,11 @@ public class Potentiometer : IPotentiometer, IDisposable
         }
     }
 
-    private void Initialize(IObservableAnalogInputPort inputPort, Resistance maxResistance, Voltage refereceVoltage)
+    private void Initialize(IObservableAnalogInputPort inputPort, Resistance maxResistance, Voltage referenceVoltage)
     {
         this.inputPort = inputPort;
         MaxResistance = maxResistance;
-        referenceVoltage = inputPort.ReferenceVoltage;
+        this.referenceVoltage = referenceVoltage;
     }
 
     private void OnInputPortUpdated(object sender, IChangeResult<Voltage> e)

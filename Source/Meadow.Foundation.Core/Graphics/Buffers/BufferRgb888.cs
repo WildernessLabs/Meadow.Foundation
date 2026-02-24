@@ -44,7 +44,7 @@ namespace Meadow.Foundation.Graphics.Buffers
             //get current color
             var index = ((y * Width) + x) * 3;
 
-            return (ushort)(Buffer[index] << 16 | Buffer[++index] << 8 | Buffer[++index]);
+            return (Buffer[index] << 16 | Buffer[++index] << 8 | Buffer[++index]);
         }
 
         /// <summary>

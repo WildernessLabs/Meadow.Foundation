@@ -32,17 +32,15 @@ namespace Meadow.Foundation.Leds
         /// <inheritdoc/>
         public Task StartBlink(TimeSpan onDuration, TimeSpan offDuration)
         {
-            return StartBlink(TimeSpan.FromMilliseconds(500), TimeSpan.FromMilliseconds(500));
+            return StartBlink(onDuration, offDuration, 1f, 0f);
         }
 
         /// <inheritdoc/>
         public async Task StartBlink(float highBrightness, float lowBrightness)
         {
-            ValidateBrightness(highBrightness, lowBrightness);
-
             await StopAnimation();
 
-            await StartBlink(TimeSpan.FromMilliseconds(500), TimeSpan.FromMilliseconds(500));
+            await StartBlink(TimeSpan.FromMilliseconds(500), TimeSpan.FromMilliseconds(500), highBrightness, lowBrightness);
         }
 
         /// <inheritdoc/>

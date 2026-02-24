@@ -181,7 +181,7 @@ namespace Meadow.Foundation.Communications
                 while (eolMarkerPosition >= 0)
                 {
                     var line = buffer.Substring(0, eolMarkerPosition);
-                    buffer = buffer.Substring(eolMarkerPosition + 2);
+                    buffer = buffer.Substring(eolMarkerPosition + LINE_END.Length);
                     eolMarkerPosition = buffer.IndexOf(LINE_END);
 
                     // Resolver.Log.Info($"Line: {line}");

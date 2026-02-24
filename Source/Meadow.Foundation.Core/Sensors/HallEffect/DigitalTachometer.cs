@@ -123,7 +123,7 @@ namespace Meadow.Foundation.Sensors.HallEffect
                 // calculate how much time has elapsed since the start of the revolution 
                 var revolutionTime = time - revolutionTimeStart;
 
-                if (revolutionTime.Milliseconds < 3)
+                if (revolutionTime.TotalMilliseconds < 3)
                 {
                     numberOfReads = 0;
                     revolutionTimeStart = time;
@@ -131,7 +131,7 @@ namespace Meadow.Foundation.Sensors.HallEffect
                 }
 
                 // calculate our rpms
-                rpms = 1000 / (float)revolutionTime.Milliseconds * 60;
+                rpms = 1000 / (float)revolutionTime.TotalMilliseconds * 60;
 
                 // reset our number of reads and store our revolution time start
                 numberOfReads = 0;
@@ -150,7 +150,7 @@ namespace Meadow.Foundation.Sensors.HallEffect
         /// </summary>
         protected void OnRaiseRPMChanged()
         {
-            RPMsChanged(this, new ChangeResult<float>(lastNotifiedRPMs, rpms));
+            RPMsChanged(this, new ChangeResult<float>(rpms, lastNotifiedRPMs));
             lastNotifiedRPMs = rpms;
         }
 

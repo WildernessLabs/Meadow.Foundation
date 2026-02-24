@@ -190,7 +190,7 @@ public abstract class BaseSimulatedSensor<TUNIT> : ISimulatedSensor
     {
         UpdateInterval = updateInterval ?? TimeSpan.FromSeconds(1);
         IsSampling = true;
-        _reportTimer = new Timer(ReportTimerProc, null, updateInterval!.Value, updateInterval.Value);
+        _reportTimer = new Timer(ReportTimerProc, null, UpdateInterval, UpdateInterval);
     }
 
     /// <summary>

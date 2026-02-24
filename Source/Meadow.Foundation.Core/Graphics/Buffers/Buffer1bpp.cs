@@ -139,7 +139,7 @@ namespace Meadow.Foundation.Graphics.Buffers
             {
                 for (int j = 0; j < height; j++)
                 {   //byte aligned and at least 8 rows to go
-                    if ((j + y) % 8 == 0 && j + y + 8 <= height)
+                    if ((j + y) % 8 == 0 && j + 8 <= height)
                     {
                         //set an entire byte - fast
                         Buffer[((j + y) >> 3) * Width + x + i] = (byte)((isColored) ? 0xFF : 0);
