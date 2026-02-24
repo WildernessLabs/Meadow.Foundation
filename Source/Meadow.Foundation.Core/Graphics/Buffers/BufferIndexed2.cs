@@ -153,7 +153,7 @@ namespace Meadow.Foundation.Graphics.Buffers
             {
                 // We can do a direct block copy row by row
                 int sourceIndex, destinationIndex;
-                int length = buffer.Width / 2;
+                int length = buffer.Width / 4;
 
                 for (int i = 0; i < buffer.Height; i++)
                 {
@@ -178,7 +178,7 @@ namespace Meadow.Foundation.Graphics.Buffers
         public byte GetColorIndexForPixel(int x, int y)
         {
             int byteIndex = (y * Width + x) >> 2;
-            int pixelOffset = (x & 0x03) << 1;
+            int pixelOffset = (3 - (x & 0x03)) << 1;
 
             byte value = (byte)((Buffer[byteIndex] >> pixelOffset) & 0x03);
             return value;

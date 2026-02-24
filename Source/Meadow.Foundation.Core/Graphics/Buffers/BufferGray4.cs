@@ -151,7 +151,7 @@ namespace Meadow.Foundation.Graphics.Buffers
                 for (int i = 0; i < buffer.Height; i++)
                 {
                     sourceIndex = length * i;
-                    destinationIndex = (Width * (y + i) + x) >> 2;
+                    destinationIndex = (Width * (y + i) + x) >> 1;
 
                     Array.Copy(buffer.Buffer, sourceIndex, Buffer, destinationIndex, length);
                 }
