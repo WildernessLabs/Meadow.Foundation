@@ -111,7 +111,7 @@ public partial class Tca95x5
         /// </summary>
         public IPin P10 => new Pin(
             Controller,
-            "P10", (byte)0x10,
+            "P10", (byte)0x08,
             new List<IChannelInfo> {
                 new DigitalChannelInfo("P10", true, true, true, false, false, false)
             }
@@ -122,7 +122,7 @@ public partial class Tca95x5
         /// </summary>
         public IPin P11 => new Pin(
             Controller,
-            "P11", (byte)0x11,
+            "P11", (byte)0x09,
             new List<IChannelInfo> {
                 new DigitalChannelInfo("P11", true, true, true, false, false, false)
             }
@@ -133,7 +133,7 @@ public partial class Tca95x5
         /// </summary>
         public IPin P12 => new Pin(
             Controller,
-            "P12", (byte)0x12,
+            "P12", (byte)0x0A,
             new List<IChannelInfo> {
                 new DigitalChannelInfo("P12", true, true, true, false, false, false)
             }
@@ -144,7 +144,7 @@ public partial class Tca95x5
         /// </summary>
         public IPin P13 => new Pin(
             Controller,
-            "P13", (byte)0x13,
+            "P13", (byte)0x0B,
             new List<IChannelInfo> {
                 new DigitalChannelInfo("P13", true, true, true, false, false, false)
             }
@@ -155,7 +155,7 @@ public partial class Tca95x5
         /// </summary>
         public IPin P14 => new Pin(
             Controller,
-            "P14", (byte)0x14,
+            "P14", (byte)0x0C,
             new List<IChannelInfo> {
                 new DigitalChannelInfo("P14", true, true, true, false, false, false)
             }
@@ -166,7 +166,7 @@ public partial class Tca95x5
         /// </summary>
         public IPin P15 => new Pin(
             Controller,
-            "P15", (byte)0x15,
+            "P15", (byte)0x0D,
             new List<IChannelInfo> {
                 new DigitalChannelInfo("P15", true, true, true, false, false, false)
             }
@@ -177,7 +177,7 @@ public partial class Tca95x5
         /// </summary>
         public IPin P16 => new Pin(
             Controller,
-            "P16", (byte)0x16,
+            "P16", (byte)0x0E,
             new List<IChannelInfo> {
                 new DigitalChannelInfo("P16", true, true, true, false, false, false)
             }
@@ -188,7 +188,7 @@ public partial class Tca95x5
         /// </summary>
         public IPin P17 => new Pin(
             Controller,
-            "P17", (byte)0x17,
+            "P17", (byte)0x0F,
             new List<IChannelInfo> {
                 new DigitalChannelInfo("P17", true, true, true, false, false, false)
             }

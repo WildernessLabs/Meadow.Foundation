@@ -24,8 +24,6 @@ public partial class Tca95x5
             set => controller.SetState(portNumber, value);
         }
 
-        private readonly bool state;
-
         /// <summary>
         /// Gets the digital channel information for the port.
         /// </summary>
@@ -55,10 +53,11 @@ public partial class Tca95x5
         }
 
         /// <summary>
-        /// Disposes of the digital output port.
+        /// Disposes of the digital output port, releasing the pin for reuse.
         /// </summary>
         public void Dispose()
         {
+            controller.ReleasePin(portNumber);
         }
     }
 }
