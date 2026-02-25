@@ -32,6 +32,16 @@ namespace Meadow.Foundation.Displays
         /// <inheritdoc/>
         public ColorMode SupportedColorModes => ColorMode.Format1bpp;
 
+        /// <summary>
+        /// The color used when a pixel is enabled - black on Sharp Memory Displays
+        /// </summary>
+        public Color EnabledColor => Color.Black;
+
+        /// <summary>
+        /// The color used when a pixel is disabled - white on Sharp Memory Displays
+        /// </summary>
+        public Color DisabledColor => Color.White;
+
         /// <inheritdoc/>
         public int Width => imageBuffer.Width;
 
@@ -120,14 +130,12 @@ namespace Meadow.Foundation.Displays
             chipSelectPort.State = false; // CS idle LOW (active-high device)
 
             // Pass null for CS - we drive it manually because ActiveHigh support
-            // varies across platform implementations
             spiComms = new SpiCommunications(spiBus, null, DefaultSpiBusSpeed, DefaultSpiBusMode);
 
             imageBuffer = new Buffer1bppV(width, height);
 
             bytesPerRow = width / 8;
 
-            // Frame layout: 1 cmd + height*(1 addr + bytesPerRow data + 1 trailing) + 1 final trailing
             spiFrameBuffer = new byte[2 + height * (2 + bytesPerRow)];
 
             // Pre-fill row address bytes (bit-reversed: Sharp is LSB-first, Meadow SPI is MSB-first)
@@ -136,7 +144,6 @@ namespace Meadow.Foundation.Displays
                 spiFrameBuffer[1 + (row - 1) * (2 + bytesPerRow)] = ReverseBits((byte)row);
             }
 
-            // Start with a cleared white display
             imageBuffer.Clear(true);
             ClearDisplay();
         }
@@ -163,7 +170,7 @@ namespace Meadow.Foundation.Displays
         /// <param name="updateDisplay">If true, calls Show() to push the cleared buffer to the display</param>
         public void Clear(bool updateDisplay = false)
         {
-            imageBuffer.Clear(true); // 1 = white on Sharp Memory Display
+            imageBuffer.Clear(true);
 
             if (updateDisplay)
             {
@@ -231,11 +238,8 @@ namespace Meadow.Foundation.Displays
             {
                 int frameOffset = 1 + (row - 1) * (2 + bytesPerRow);
                 int bufferOffset = (row - 1) * bytesPerRow;
-                // spiFrameBuffer[frameOffset] = row address (pre-filled in constructor)
                 Array.Copy(imageBuffer.Buffer, bufferOffset, spiFrameBuffer, frameOffset + 1, bytesPerRow);
-                // spiFrameBuffer[frameOffset + 1 + bytesPerRow] = 0x00 trailing (pre-zeroed)
             }
-            // spiFrameBuffer[last] = 0x00 final trailing (pre-zeroed)
 
             chipSelectPort!.State = true;
             spiComms.Write(spiFrameBuffer);
@@ -268,9 +272,7 @@ namespace Meadow.Foundation.Displays
                 int frameOffset = 1 + i * (2 + bytesPerRow);
                 frame[frameOffset] = ReverseBits((byte)row);
                 Array.Copy(imageBuffer.Buffer, (top + i) * bytesPerRow, frame, frameOffset + 1, bytesPerRow);
-                // frame[frameOffset + 1 + bytesPerRow] = 0x00 trailing (pre-zeroed)
             }
-            // frame[last] = 0x00 final trailing (pre-zeroed)
 
             chipSelectPort!.State = true;
             spiComms.Write(frame);

@@ -24,7 +24,8 @@ namespace SharpMemoryDisplay_Sample
 
             graphics = new MicroGraphics(display)
             {
-                CurrentFont = new Font8x12()
+                CurrentFont = new Font8x12(),
+                PenColor = Color.Black
             };
 
             return base.Initialize();
@@ -34,9 +35,9 @@ namespace SharpMemoryDisplay_Sample
         {
             graphics.Clear();
             graphics.DrawText(0, 0, "Sharp Memory");
-            graphics.DrawText(0, 14, "168x144");
-            graphics.DrawRectangle(0, 30, 168, 108);
-            graphics.DrawCircle(84, 90, 40);
+            graphics.DrawText(0, 14, "144x168");
+            graphics.DrawRectangle(0, 24, 108, 108);
+            graphics.DrawCircle(60, 100, 40);
             graphics.Show();
 
             return base.Run();

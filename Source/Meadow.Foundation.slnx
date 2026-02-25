@@ -314,6 +314,13 @@
     <Project Path="Meadow.Foundation.Peripherals/Displays.Silk/Samples/Silk_Sample/Silk_Sample.csproj" />
     <Project Path="Meadow.Foundation.Peripherals/Displays.Silk/Samples/Silk_Simulator_Sample/Silk_Simulator_Sample.csproj" />
   </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Displays/SharpMemory/">
+    <Project Path="Meadow.Foundation.Peripherals/Displays.SharpMemory/Driver/Displays.SharpMemory.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Displays/SharpMemory/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Displays.SharpMemory/Samples/SharpMemoryDisplay_Sample/SharpMemoryDisplay_Sample.csproj" />
+    <Project Path="Meadow.Foundation.Peripherals/Displays.SharpMemory/Samples/SharpMemoryDisplay_3dCube_Sample/SharpMemoryDisplay_3dCube_Sample.csproj" />
+  </Folder>
   <Folder Name="/Meadow.Foundation.Peripherals/Displays/Ssd130x/">
     <Project Path="Meadow.Foundation.Peripherals/Displays.Ssd130x/Driver/Displays.Ssd130x.csproj" />
   </Folder>
