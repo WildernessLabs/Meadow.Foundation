@@ -33,6 +33,15 @@ internal class Program
 
         var version = modem.GetVersion();
         Console.WriteLine($"VERSION: 0x{version:X2}");
+
+        // OTP_STATUS (0x6182): bit 0 = FSM_READY, bits 7:4 = CHECKSUM_STATUS
+        // The OTP FSM needs a free-running clock (normally the radio clock after
+        // sx1302_radio_clock_select).  Print raw status so we can diagnose.
+        var otpStatus = modem.ReadOtpDiagnostics(out var otpByte0, out var otpByteD0);
+        Console.WriteLine($"OTP_STATUS: 0x{otpStatus:X2}  (FSM_READY={(otpStatus & 1)})");
+        Console.WriteLine($"OTP byte[0x00] = 0x{otpByte0:X2}  (first EUI byte)");
+        Console.WriteLine($"OTP byte[0xD0] = 0x{otpByteD0:X2}  (model ID raw)");
+
         var model = modem.GetModelId();
         Console.WriteLine($"Model ID: {model} (0x{(byte)model:X2})");
 

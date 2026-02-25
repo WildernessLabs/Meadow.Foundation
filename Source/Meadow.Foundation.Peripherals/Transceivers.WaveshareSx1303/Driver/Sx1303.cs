@@ -54,8 +54,33 @@ public partial class Sx1303
     public ChipModel GetModelId()
     {
         // Per sx1302_get_model_id() in the reference library:
-        // write OTP address 0xD0 to select the model ID cell, then read OTP data.
+        // write OTP address 0xD0 to select the model ID cell, then poll FSM_READY,
+        // then read OTP data.
+        //
+        // NOTE: The OTP block FSM requires a free-running internal clock (normally
+        // provided by the radio after sx1302_radio_clock_select).  Without radio
+        // initialisation FSM_READY may never assert, in which case Unknown is returned.
         WriteRegister(Registers.OtpByteAddr, 0xD0);
+
+        // OtpStatus (0x6182) bit 0 = FSM_READY.  Poll until ready or ~10 ms timeout.
+        bool ready = false;
+        for (int i = 0; i < 20; i++)
+        {
+            byte status = ReadRegister(Registers.OtpStatus);
+            if ((status & 0x01) != 0)
+            {
+                ready = true;
+                break;
+            }
+            Task.Delay(1).Wait();
+        }
+
+        if (!ready)
+        {
+            // OTP block is not ready — likely needs radio clock to be enabled first.
+            return ChipModel.Unknown;
+        }
+
         byte raw = ReadRegister(Registers.OtpReadData);
 
         return raw switch
@@ -64,6 +89,24 @@ public partial class Sx1303
             0x03 => ChipModel.Sx1303,
             _    => ChipModel.Unknown,
         };
+    }
+
+    /// <summary>
+    /// Reads raw OTP diagnostic bytes without FSM_READY gating, so callers can
+    /// observe the OTP block state even before radio clock is enabled.
+    /// </summary>
+    /// <param name="byte00">Raw value at OTP address 0x00 (first EUI byte).</param>
+    /// <param name="byteD0">Raw value at OTP address 0xD0 (model ID byte).</param>
+    /// <returns>Raw value of OTP_STATUS register (bit 0 = FSM_READY).</returns>
+    public byte ReadOtpDiagnostics(out byte byte00, out byte byteD0)
+    {
+        WriteRegister(Registers.OtpByteAddr, 0x00);
+        byte00 = ReadRegister(Registers.OtpReadData);
+
+        WriteRegister(Registers.OtpByteAddr, 0xD0);
+        byteD0 = ReadRegister(Registers.OtpReadData);
+
+        return ReadRegister(Registers.OtpStatus);
     }
 
     private byte ReadRegister(Registers reg) => ReadRegister((ushort)reg);
