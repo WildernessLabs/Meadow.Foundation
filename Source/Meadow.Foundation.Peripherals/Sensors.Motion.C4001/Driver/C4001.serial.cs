@@ -27,7 +27,7 @@ public partial class C4001
 
     private void SerialWrite(string command)
     {
-        _serialPort!.Write(Encoding.ASCII.GetBytes(command + "\r\n"));
+        _serialPort!.Write(Encoding.ASCII.GetBytes(command));
     }
 
     private string SerialRead(int timeoutMs = SerialReadTimeoutMs)
@@ -254,6 +254,10 @@ public partial class C4001
 
     internal bool SetDetectionRangeSerial(ushort min, ushort max, ushort trig)
     {
+        if (max < 240 || max > 2000) return false;
+        if (min < 30 || min > max) return false;
+        if (trig < min || trig > max) return false;
+
         // Values are in cm; serial protocol takes meters with one decimal place
         var minM = (min / 100.0f).ToString("F1", CultureInfo.InvariantCulture);
         var maxM = (max / 100.0f).ToString("F1", CultureInfo.InvariantCulture);
@@ -276,7 +280,7 @@ public partial class C4001
 
     internal ushort GetMinRangeSerial()
     {
-        var r = QuerySerial("getRange", 1);
+        var r = QuerySerial("getRange", 2);
         return r.Status ? (ushort)(r.Response1 * 100) : (ushort)0;
     }
 
