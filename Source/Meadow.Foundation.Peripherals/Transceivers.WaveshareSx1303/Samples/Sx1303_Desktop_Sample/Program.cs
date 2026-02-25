@@ -34,6 +34,11 @@ internal class Program
         var version = modem.GetVersion();
         Console.WriteLine($"VERSION: 0x{version:X2}");
 
+        var (written, readBack) = modem.WriteVerify(0x42);
+        Console.WriteLine($"Write verify: wrote 0x{written:X2}, read back 0x{readBack:X2}  " +
+                          $"({(written == readBack ? "WRITES WORK" : "WRITES BROKEN or reg not readback-capable")})");
+
+
         // OTP diagnostics — reads EUI bytes 0x00–0x07 and model-ID byte 0xD0,
         // each with a FSM_READY poll so we can tell which addresses are accessible.
         modem.ReadOtpDiagnostics(out var euiBytes, out var otpByteD0,

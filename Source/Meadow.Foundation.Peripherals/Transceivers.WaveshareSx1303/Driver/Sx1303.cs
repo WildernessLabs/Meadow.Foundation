@@ -92,6 +92,19 @@ public partial class Sx1303
     }
 
     /// <summary>
+    /// Writes a test value to OTP_BYTE_ADDR (0x6180) and reads it back to verify
+    /// that SPI write transactions are actually reaching the chip.
+    /// OTP_BYTE_ADDR is readable/writable, so readBack should equal testValue if
+    /// writes work; a stuck value (e.g. 0x09) means writes are no-ops.
+    /// </summary>
+    public (byte written, byte readBack) WriteVerify(byte testValue = 0x42)
+    {
+        WriteRegister(Registers.OtpByteAddr, testValue);
+        byte readBack = ReadRegister(Registers.OtpByteAddr);
+        return (testValue, readBack);
+    }
+
+    /// <summary>
     /// Reads OTP diagnostic bytes with per-address FSM_READY polling.
     /// Returns whether the FSM became ready for each address, plus the raw byte values.
     /// </summary>
