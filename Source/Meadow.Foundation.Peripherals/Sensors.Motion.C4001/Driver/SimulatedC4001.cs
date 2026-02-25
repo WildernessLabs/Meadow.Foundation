@@ -18,6 +18,9 @@ public class SimulatedC4001 : IC4001, IDisposable
     private uint energy;
     private bool motion;
 
+    private TimeSpan _trigDelay = TimeSpan.Zero;
+    private TimeSpan _keepTimeout = TimeSpan.FromSeconds(2);
+
     private CancellationTokenSource? simulationCTS;
     private Task? simulationTask;
     private readonly Random random = new();
@@ -80,6 +83,9 @@ public class SimulatedC4001 : IC4001, IDisposable
 
         simulationTask = Task.Run(async () =>
         {
+            DateTime? inRangeSince = null;
+            DateTime? outOfRangeSince = null;
+
             while (ct.IsCancellationRequested == false)
             {
                 if (range.Meters > 40)
@@ -87,21 +93,32 @@ public class SimulatedC4001 : IC4001, IDisposable
                     range = new Length(options.MaxRangeMeters + 1, Length.UnitType.Meters);
                 }
 
-                var rand = random.Next(50);
-
                 range = new Length(range.Centimeters + random.Next(80) - 40, Length.UnitType.Centimeters);
-                energy = (uint)rand * 1000;
+                energy = (uint)(random.Next(50) * 1000);
 
-                await Task.Delay((int)(1000 / options.UpdateHz));
+                var now = DateTime.UtcNow;
+                var targetInRange = range.Meters < options.MaxRangeMeters;
 
-                if (range.Meters < options.MaxRangeMeters)
+                if (targetInRange)
                 {
-                    motion = true;
+                    outOfRangeSince = null;
+                    inRangeSince ??= now;
+
+                    // only trigger after trig delay has elapsed
+                    if (now - inRangeSince >= _trigDelay)
+                        motion = true;
                 }
                 else
                 {
-                    motion = false;
+                    inRangeSince = null;
+                    outOfRangeSince ??= now;
+
+                    // keep motion true until keep timeout expires
+                    if (now - outOfRangeSince >= _keepTimeout)
+                        motion = false;
                 }
+
+                await Task.Delay((int)(1000 / options.UpdateHz));
             }
 
         }, ct);
@@ -153,8 +170,13 @@ public class SimulatedC4001 : IC4001, IDisposable
     public bool SetKeepSensitivity(byte sensitivity) => true;
 
     /// <inheritdoc/>
-    public bool SetDelay(TimeSpan trig, TimeSpan keep) => true;
+    public bool SetDelay(TimeSpan trig, TimeSpan keep)
+    {
+        _trigDelay = trig;
+        _keepTimeout = keep;
+        return true;
+    }
 
     /// <inheritdoc/>
-    public TimeSpan GetKeepTimeout() => TimeSpan.FromSeconds(2);
+    public TimeSpan GetKeepTimeout() => _keepTimeout;
 }
