@@ -27,7 +27,10 @@ public partial class C4001 : IC4001
     /// </summary>
     public bool SetSensorMode(SensorMode mode)
     {
-        return SetSensorModeI2c(mode);
+        if (communication == CommunicationType.I2C)
+            return SetSensorModeI2c(mode);
+        SetSensorModeSerial(mode);
+        return true;
     }
 
     /// <summary>
@@ -36,7 +39,9 @@ public partial class C4001 : IC4001
     /// <returns>The current status of the sensor.</returns>
     public SensorStatus GetStatus()
     {
-        return GetStatusI2c();
+        if (communication == CommunicationType.I2C)
+            return GetStatusI2c();
+        return GetStatusSerial();
     }
 
     /// <summary>
@@ -44,7 +49,9 @@ public partial class C4001 : IC4001
     /// </summary>
     public byte GetTargetNumber()
     {
-        return GetTargetNumberI2c();
+        if (communication == CommunicationType.I2C)
+            return GetTargetNumberI2c();
+        return GetTargetNumberSerial();
     }
 
     /// <summary>
@@ -62,7 +69,7 @@ public partial class C4001 : IC4001
     /// <returns>The target range as a float.</returns>
     public Length GetTargetRange()
     {
-        return GetTargetRangeI2c();
+        return new Length(motionData.Range, Length.UnitType.Meters);
     }
 
     /// <summary>
@@ -71,7 +78,7 @@ public partial class C4001 : IC4001
     /// <returns>The target energy as an unsigned integer.</returns>
     public uint GetTargetEnergy()
     {
-        return GetTargetEnergyI2c();
+        return motionData.Energy;
     }
 
     /// <summary>
@@ -94,13 +101,9 @@ public partial class C4001 : IC4001
     public void SetDetectionRange(ushort min, ushort max, ushort trig)
     {
         if (communication == CommunicationType.I2C)
-        {
             SetDetectionRangeI2c(min, max, trig);
-        }
         else
-        {
-            SetDetectionRangeSerial(max);
-        }
+            SetDetectionRangeSerial(min, max, trig);
     }
 
     /// <inheritdoc/>
@@ -132,12 +135,16 @@ public partial class C4001 : IC4001
     /// <inheritdoc/>
     public bool SetDelay(byte trig, ushort keep)
     {
-        return SetDelayI2c(trig, keep);
+        if (communication == CommunicationType.I2C)
+            return SetDelayI2c(trig, keep);
+        return SetDelaySerial(trig, keep);
     }
 
     /// <inheritdoc/>
     public ushort GetKeepTimeout()
     {
-        return GetKeepTimeoutI2c();
+        if (communication == CommunicationType.I2C)
+            return GetKeepTimeoutI2c();
+        return GetKeepTimeoutSerial();
     }
 }
