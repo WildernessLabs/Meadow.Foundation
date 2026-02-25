@@ -276,7 +276,7 @@ public partial class C4001 : II2cPeripheral
     /// <summary>
     /// Returns the cached energy from the last GetTargetNumber() call.
     /// </summary>
-    public uint GetTargetEnergyI2c()
+    internal uint GetTargetEnergyI2c()
     {
         return motionData.Energy;
     }
