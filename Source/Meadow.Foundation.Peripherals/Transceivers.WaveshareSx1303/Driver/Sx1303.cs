@@ -92,21 +92,46 @@ public partial class Sx1303
     }
 
     /// <summary>
-    /// Reads raw OTP diagnostic bytes without FSM_READY gating, so callers can
-    /// observe the OTP block state even before radio clock is enabled.
+    /// Reads OTP diagnostic bytes with per-address FSM_READY polling.
+    /// Returns whether the FSM became ready for each address, plus the raw byte values.
     /// </summary>
-    /// <param name="byte00">Raw value at OTP address 0x00 (first EUI byte).</param>
+    /// <param name="euiBytes">8-byte concentrator EUI from OTP addresses 0x00–0x07.</param>
     /// <param name="byteD0">Raw value at OTP address 0xD0 (model ID byte).</param>
-    /// <returns>Raw value of OTP_STATUS register (bit 0 = FSM_READY).</returns>
-    public byte ReadOtpDiagnostics(out byte byte00, out byte byteD0)
+    /// <param name="byte00Ready">Whether FSM_READY asserted for address 0x00.</param>
+    /// <param name="byteD0Ready">Whether FSM_READY asserted for address 0xD0.</param>
+    public void ReadOtpDiagnostics(out byte[] euiBytes, out byte byteD0,
+                                    out bool byte00Ready, out bool byteD0Ready)
     {
-        WriteRegister(Registers.OtpByteAddr, 0x00);
-        byte00 = ReadRegister(Registers.OtpReadData);
+        euiBytes = new byte[8];
+        for (int i = 0; i < 8; i++)
+        {
+            euiBytes[i] = OtpReadByte((byte)i, out _);
+        }
 
-        WriteRegister(Registers.OtpByteAddr, 0xD0);
-        byteD0 = ReadRegister(Registers.OtpReadData);
+        // Re-read byte 0 with ready flag for reporting
+        euiBytes[0] = OtpReadByte(0x00, out byte00Ready);
 
-        return ReadRegister(Registers.OtpStatus);
+        byteD0 = OtpReadByte(0xD0, out byteD0Ready);
+    }
+
+    // Writes BYTE_ADDR, waits up to ~10 ms for FSM_READY, then reads RD_DATA.
+    private byte OtpReadByte(byte addr, out bool fsmReady)
+    {
+        WriteRegister(Registers.OtpByteAddr, addr);
+
+        fsmReady = false;
+        for (int i = 0; i < 20; i++)
+        {
+            byte status = ReadRegister(Registers.OtpStatus);
+            if ((status & 0x01) != 0)
+            {
+                fsmReady = true;
+                break;
+            }
+            Task.Delay(1).Wait();
+        }
+
+        return ReadRegister(Registers.OtpReadData);
     }
 
     private byte ReadRegister(Registers reg) => ReadRegister((ushort)reg);
