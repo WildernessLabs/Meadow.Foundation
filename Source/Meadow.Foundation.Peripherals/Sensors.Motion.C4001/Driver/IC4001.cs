@@ -1,5 +1,6 @@
 ﻿using Meadow.Peripherals.Sensors;
 using Meadow.Units;
+using System;
 using static Meadow.Foundation.Sensors.Motion.C4001;
 
 namespace Meadow.Foundation.Sensors.Motion;
@@ -50,8 +51,11 @@ public interface IC4001 : ISensor
     /// <summary>
     /// Sets the detection range for the sensor.
     /// </summary>
+    /// <param name="min">Minimum detection range (2.4 m – 20.0 m).</param>
+    /// <param name="max">Maximum detection range (must be ≥ min, up to 20.0 m).</param>
+    /// <param name="trig">Trigger range (must be within min–max).</param>
     /// <returns><c>true</c> if the range was set successfully; <c>false</c> if any parameter was out of range.</returns>
-    bool SetDetectionRange(ushort min, ushort max, ushort trig);
+    bool SetDetectionRange(Length min, Length max, Length trig);
 
     /// <summary>
     /// Sets the trigger sensitivity for the sensor.
@@ -68,14 +72,14 @@ public interface IC4001 : ISensor
     /// <summary>
     /// Sets the trigger delay and keep timeout.
     /// </summary>
-    /// <param name="trig">Trigger delay in units of 0.01s, range 0–200 (0–2s).</param>
-    /// <param name="keep">Keep timeout in units of 0.5s, range 4–3000 (2–1500s).</param>
-    bool SetDelay(byte trig, ushort keep);
+    /// <param name="trig">Trigger delay (0–2 s, resolution 10 ms).</param>
+    /// <param name="keep">Keep timeout (1–1500 s, resolution 0.5 s).</param>
+    bool SetDelay(TimeSpan trig, TimeSpan keep);
 
     /// <summary>
-    /// Returns the current keep timeout value (units of 0.5s).
+    /// Returns the current keep timeout.
     /// </summary>
-    ushort GetKeepTimeout();
+    TimeSpan GetKeepTimeout();
 
     /// <summary>
     /// Indicates whether motion is currently detected by the sensor.

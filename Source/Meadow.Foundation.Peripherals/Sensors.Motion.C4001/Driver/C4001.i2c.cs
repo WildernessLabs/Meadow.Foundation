@@ -117,18 +117,23 @@ public partial class C4001 : II2cPeripheral
         return I2cComms!.ReadRegister((byte)Registers.KEEP_SENSITIVITY);
     }
 
-    internal bool SetDelayI2c(byte trig, ushort keep)
+    internal bool SetDelayI2c(TimeSpan trig, TimeSpan keep)
     {
-        if (trig > 200)
+        // trig: 0–2 s in 0.01s units → 0–200
+        var trigRaw = (int)Math.Round(trig.TotalSeconds * 100);
+        // keep: 1–1500 s in 0.5s units → 2–3000
+        var keepRaw = (int)Math.Round(keep.TotalSeconds * 2);
+
+        if (trigRaw < 0 || trigRaw > 200)
             return false;
-        if (keep < 4 || keep > 3000)
+        if (keepRaw < 4 || keepRaw > 3000)
             return false;
 
         byte[] data =
         [
-            trig,
-            (byte)(keep & 0xFF),
-            (byte)((keep >> 8) & 0xFF),
+            (byte)trigRaw,
+            (byte)(keepRaw & 0xFF),
+            (byte)((keepRaw >> 8) & 0xFF),
         ];
         I2cComms!.WriteRegister((byte)Registers.TRIG_DELAY, data);
         SetSensorI2c(SensorCommand.SaveParams);
@@ -140,32 +145,38 @@ public partial class C4001 : II2cPeripheral
         return I2cComms!.ReadRegister((byte)Registers.TRIG_DELAY);
     }
 
-    internal ushort GetKeepTimeoutI2c()
+    internal TimeSpan GetKeepTimeoutI2c()
     {
         Span<byte> buffer = stackalloc byte[2];
         I2cComms!.ReadRegister((byte)Registers.KEEP_TIMEOUT_L, buffer);
-        return (ushort)((buffer[1] << 8) | buffer[0]);
+        ushort raw = (ushort)((buffer[1] << 8) | buffer[0]);
+        return TimeSpan.FromSeconds(raw * 0.5);
     }
 
-    internal bool SetDetectionRangeI2c(ushort min, ushort max, ushort trig)
+    internal bool SetDetectionRangeI2c(Length min, Length max, Length trig)
     {
-        if (max < 240 || max > 2000)
+        // Protocol values are in cm (ushort)
+        var minCm = (ushort)Math.Round(min.Centimeters);
+        var maxCm = (ushort)Math.Round(max.Centimeters);
+        var trigCm = (ushort)Math.Round(trig.Centimeters);
+
+        if (maxCm < 240 || maxCm > 2000)
             return false;
-        if (min < 30 || min > max)
+        if (minCm < 30 || minCm > maxCm)
             return false;
-        if (trig < min || trig > max)
+        if (trigCm < minCm || trigCm > maxCm)
             return false;
         if (I2cComms is null)
             return false;
 
         byte[] data =
         [
-            (byte)(min & 0xFF),
-            (byte)((min >> 8) & 0xFF),
-            (byte)(max & 0xFF),
-            (byte)((max >> 8) & 0xFF),
-            (byte)(trig & 0xFF),
-            (byte)((trig >> 8) & 0xFF),
+            (byte)(minCm & 0xFF),
+            (byte)((minCm >> 8) & 0xFF),
+            (byte)(maxCm & 0xFF),
+            (byte)((maxCm >> 8) & 0xFF),
+            (byte)(trigCm & 0xFF),
+            (byte)((trigCm >> 8) & 0xFF),
         ];
         I2cComms.WriteRegister((byte)Registers.E_MIN_RANGE_L, data);
         SetSensorI2c(SensorCommand.SaveParams);

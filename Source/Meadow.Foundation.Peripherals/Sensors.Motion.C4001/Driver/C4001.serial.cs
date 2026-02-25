@@ -1,4 +1,5 @@
 using Meadow.Hardware;
+using Meadow.Units;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -231,11 +232,10 @@ public partial class C4001
         return r.Status ? (byte)r.Response2 : (byte)0;
     }
 
-    internal bool SetDelaySerial(byte trig, ushort keep)
+    internal bool SetDelaySerial(TimeSpan trig, TimeSpan keep)
     {
-        // trig is in 0.01s units → seconds; keep is in 0.5s units → seconds
-        var trigSec = (trig * 0.01f).ToString("F1", CultureInfo.InvariantCulture);
-        var keepSec = (keep * 0.5f).ToString("F1", CultureInfo.InvariantCulture);
+        var trigSec = trig.TotalSeconds.ToString("F1", CultureInfo.InvariantCulture);
+        var keepSec = keep.TotalSeconds.ToString("F1", CultureInfo.InvariantCulture);
         WriteConfigSerial($"setLatency {trigSec} {keepSec}");
         return true;
     }
@@ -246,22 +246,26 @@ public partial class C4001
         return r.Status ? (byte)(r.Response1 * 100) : (byte)0;
     }
 
-    internal ushort GetKeepTimeoutSerial()
+    internal TimeSpan GetKeepTimeoutSerial()
     {
         var r = QuerySerial("getLatency", 2);
-        return r.Status ? (ushort)(r.Response2 * 2) : (ushort)0;
+        return r.Status ? TimeSpan.FromSeconds(r.Response2) : TimeSpan.Zero;
     }
 
-    internal bool SetDetectionRangeSerial(ushort min, ushort max, ushort trig)
+    internal bool SetDetectionRangeSerial(Length min, Length max, Length trig)
     {
-        if (max < 240 || max > 2000) return false;
-        if (min < 30 || min > max) return false;
-        if (trig < min || trig > max) return false;
+        var minCm = (int)Math.Round(min.Centimeters);
+        var maxCm = (int)Math.Round(max.Centimeters);
+        var trigCm = (int)Math.Round(trig.Centimeters);
 
-        // Values are in cm; serial protocol takes meters with one decimal place
-        var minM = (min / 100.0f).ToString("F1", CultureInfo.InvariantCulture);
-        var maxM = (max / 100.0f).ToString("F1", CultureInfo.InvariantCulture);
-        var trigM = (trig / 100.0f).ToString("F1", CultureInfo.InvariantCulture);
+        if (maxCm < 240 || maxCm > 2000) return false;
+        if (minCm < 30 || minCm > maxCm) return false;
+        if (trigCm < minCm || trigCm > maxCm) return false;
+
+        // Serial protocol takes meters with one decimal place
+        var minM = (minCm / 100.0).ToString("F1", CultureInfo.InvariantCulture);
+        var maxM = (maxCm / 100.0).ToString("F1", CultureInfo.InvariantCulture);
+        var trigM = (trigCm / 100.0).ToString("F1", CultureInfo.InvariantCulture);
         WriteConfigSerial($"setRange {minM} {maxM}", $"setTrigRange {trigM}");
         return true;
     }

@@ -1,4 +1,5 @@
 ﻿using Meadow.Units;
+using System;
 
 namespace Meadow.Foundation.Sensors.Motion;
 
@@ -98,7 +99,7 @@ public partial class C4001 : IC4001
     }
 
     /// <inheritdoc/>
-    public bool SetDetectionRange(ushort min, ushort max, ushort trig)
+    public bool SetDetectionRange(Length min, Length max, Length trig)
     {
         if (communication == CommunicationType.I2C)
             return SetDetectionRangeI2c(min, max, trig);
@@ -122,7 +123,7 @@ public partial class C4001 : IC4001
     }
 
     /// <inheritdoc/>
-    public bool SetDelay(byte trig, ushort keep)
+    public bool SetDelay(TimeSpan trig, TimeSpan keep)
     {
         if (communication == CommunicationType.I2C)
             return SetDelayI2c(trig, keep);
@@ -130,7 +131,7 @@ public partial class C4001 : IC4001
     }
 
     /// <inheritdoc/>
-    public ushort GetKeepTimeout()
+    public TimeSpan GetKeepTimeout()
     {
         if (communication == CommunicationType.I2C)
             return GetKeepTimeoutI2c();

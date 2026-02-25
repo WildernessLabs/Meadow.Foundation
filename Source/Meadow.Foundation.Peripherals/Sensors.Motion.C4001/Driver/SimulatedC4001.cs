@@ -144,7 +144,7 @@ public class SimulatedC4001 : IC4001, IDisposable
     public void Dispose() => StopSimulation();
 
     /// <inheritdoc/>
-    public bool SetDetectionRange(ushort min, ushort max, ushort trig) => true;
+    public bool SetDetectionRange(Length min, Length max, Length trig) => true;
 
     /// <inheritdoc/>
     public bool SetTrigSensitivity(byte sensitivity) => true;
@@ -153,8 +153,8 @@ public class SimulatedC4001 : IC4001, IDisposable
     public bool SetKeepSensitivity(byte sensitivity) => true;
 
     /// <inheritdoc/>
-    public bool SetDelay(byte trig, ushort keep) => true;
+    public bool SetDelay(TimeSpan trig, TimeSpan keep) => true;
 
     /// <inheritdoc/>
-    public ushort GetKeepTimeout() => 4;
+    public TimeSpan GetKeepTimeout() => TimeSpan.FromSeconds(2);
 }
