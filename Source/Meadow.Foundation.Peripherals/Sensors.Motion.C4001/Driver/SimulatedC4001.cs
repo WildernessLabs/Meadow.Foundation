@@ -32,7 +32,7 @@ public class SimulatedC4001 : IC4001, IDisposable
     public SensorStatus GetStatus() => status;
 
     /// <inheritdoc/>
-    public byte GetTargetNumber() => targetNumber;
+    public byte GetTargetNumber() => motion ? targetNumber : (byte)0;
 
     /// <inheritdoc/>
     public Speed GetTargetSpeed() { return speed; }
@@ -121,6 +121,7 @@ public class SimulatedC4001 : IC4001, IDisposable
             simulationCTS?.Dispose();
             simulationCTS = null;
             simulationTask = null;
+            status = new SensorStatus();
         }
     }
 
@@ -143,13 +144,13 @@ public class SimulatedC4001 : IC4001, IDisposable
     public void Dispose() => StopSimulation();
 
     /// <inheritdoc/>
-    public void SetDetectionRange(ushort min, ushort max, ushort trig) { }
+    public bool SetDetectionRange(ushort min, ushort max, ushort trig) => true;
 
     /// <inheritdoc/>
-    public void SetTrigSensitivity(byte sensitivity) { }
+    public bool SetTrigSensitivity(byte sensitivity) => true;
 
     /// <inheritdoc/>
-    public void SetKeepSensitivity(byte sensitivity) { }
+    public bool SetKeepSensitivity(byte sensitivity) => true;
 
     /// <inheritdoc/>
     public bool SetDelay(byte trig, ushort keep) => true;

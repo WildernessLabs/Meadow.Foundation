@@ -50,17 +50,20 @@ public interface IC4001 : ISensor
     /// <summary>
     /// Sets the detection range for the sensor.
     /// </summary>
-    void SetDetectionRange(ushort min, ushort max, ushort trig);
+    /// <returns><c>true</c> if the range was set successfully; <c>false</c> if any parameter was out of range.</returns>
+    bool SetDetectionRange(ushort min, ushort max, ushort trig);
 
     /// <summary>
     /// Sets the trigger sensitivity for the sensor.
     /// </summary>
-    void SetTrigSensitivity(byte sensitivity);
+    /// <returns><c>true</c> if the sensitivity was set successfully; <c>false</c> if the value was out of range (0–9).</returns>
+    bool SetTrigSensitivity(byte sensitivity);
 
     /// <summary>
     /// Sets the keep sensitivity for the sensor, which determines the sensor's ability to maintain detection of a target once triggered.
     /// </summary>
-    void SetKeepSensitivity(byte sensitivity);
+    /// <returns><c>true</c> if the sensitivity was set successfully; <c>false</c> if the value was out of range (0–9).</returns>
+    bool SetKeepSensitivity(byte sensitivity);
 
     /// <summary>
     /// Sets the trigger delay and keep timeout.
