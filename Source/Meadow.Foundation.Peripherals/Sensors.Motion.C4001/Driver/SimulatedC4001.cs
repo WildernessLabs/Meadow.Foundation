@@ -72,7 +72,7 @@ public class SimulatedC4001 : IC4001, IDisposable
         simulationCTS = new CancellationTokenSource();
         var ct = simulationCTS.Token;
 
-        status = new SensorStatus();
+        status = new SensorStatus { InitStatus = 1, WorkStatus = 1, WorkMode = 0 };
         targetNumber = 1;
         range = new Length(options.MaxRangeMeters + 0.5, Length.UnitType.Meters);
         speed = new Speed(0, Speed.UnitType.MetersPerSecond);
@@ -143,22 +143,13 @@ public class SimulatedC4001 : IC4001, IDisposable
     public void Dispose() => StopSimulation();
 
     /// <inheritdoc/>
-    public void SetDetectionRange(ushort min, ushort max, ushort trig)
-    {
-        throw new NotImplementedException();
-    }
+    public void SetDetectionRange(ushort min, ushort max, ushort trig) { }
 
     /// <inheritdoc/>
-    public void SetTrigSensitivity(byte sensitivity)
-    {
-        throw new NotImplementedException();
-    }
+    public void SetTrigSensitivity(byte sensitivity) { }
 
     /// <inheritdoc/>
-    public void SetKeepSensitivity(byte sensitivity)
-    {
-        throw new NotImplementedException();
-    }
+    public void SetKeepSensitivity(byte sensitivity) { }
 
     /// <inheritdoc/>
     public bool SetDelay(byte trig, ushort keep) => true;
