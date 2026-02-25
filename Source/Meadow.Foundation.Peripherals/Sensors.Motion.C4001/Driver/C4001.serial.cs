@@ -1,4 +1,5 @@
-﻿using Meadow.Hardware;
+using Meadow.Hardware;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
@@ -25,122 +26,25 @@ public partial class C4001
         communication = CommunicationType.Serial;
     }
 
-    internal SensorStatus GetStatusSerial()
-    {
-        SensorStatus status = new();
-
-        //TODO
-
-        return status;
-    }
-
-    internal bool IsMotionDetectedSerial()
-    {
-        //TODO
-        return false;
-    }
-
-    internal void SetSensorSerial(SensorCommand command)
-    {
-        //TODO
-    }
-
-    internal void SetSensorModeSerial(SensorMode mode)
-    {
-        //TODO
-    }
-
-    internal bool SetTrigSensitivitySerial(byte sensitivity)
-    {
-        //TODO
-        return false;
-    }
-
-    internal byte GetTrigSensitivitySerial()
-    {
-        //TODO
-        return 0;
-    }
-
-    internal bool SetKeepSensitivitySerial(byte sensitivity)
-    {
-        //TODO
-        return false;
-    }
-
-
-    internal byte GetKeepSensitivitySerial()
-    {
-        //TODO
-        return 0;
-    }
-
-    internal bool SetDelaySerial(byte delay)
-    {
-        //TODO
-        return false;
-    }
-
-    internal byte GetTrigDelaySerial()
-    {
-        //TODO
-        return 0;
-    }
-
-    internal ushort GetKeepTimeoutSerial()
-    {
-        //TODO
-        return 0;
-    }
-
-    internal bool SetDetectionRangeSerial(ushort range)
-    {
-        //TODO
-        return false;
-    }
-
-    internal ushort GetTrigRangeSerial()
-    {
-        //TODO
-        return 0;
-    }
-
-    internal ushort GetMaxRangeSerial()
-    {
-        //TODO
-        return 0;
-    }
-
-    internal ushort GetMinRangeSerial()
-    {
-        //TODO
-        return 0;
-    }
-
-    internal byte GetTargetNumberSerial()
-    {
-        //TODO
-        return 0;
-    }
-
-    internal bool SetDetectThresholdSerial(ushort min, ushort max, ushort threshold)
-    {
-        //TODO
-        return false;
-    }
-
-    internal bool SetIoPolaritySerial(byte polarity)
-    {
-        //TODO
-        return false;
-    }
-
-    internal bool SetPwmI2cSerial(byte pwm1, byte pwm2, byte timer)
-    {
-        //TODO
-        return false;
-    }
-
+    internal SensorStatus GetStatusSerial() => throw new NotImplementedException();
+    internal bool IsMotionDetectedSerial() => throw new NotImplementedException();
+    internal void SetSensorSerial(SensorCommand command) => throw new NotImplementedException();
+    internal void SetSensorModeSerial(SensorMode mode) => throw new NotImplementedException();
+    internal bool SetTrigSensitivitySerial(byte sensitivity) => throw new NotImplementedException();
+    internal byte GetTrigSensitivitySerial() => throw new NotImplementedException();
+    internal bool SetKeepSensitivitySerial(byte sensitivity) => throw new NotImplementedException();
+    internal byte GetKeepSensitivitySerial() => throw new NotImplementedException();
+    internal bool SetDelaySerial(byte delay) => throw new NotImplementedException();
+    internal byte GetTrigDelaySerial() => throw new NotImplementedException();
+    internal ushort GetKeepTimeoutSerial() => throw new NotImplementedException();
+    internal bool SetDetectionRangeSerial(ushort range) => throw new NotImplementedException();
+    internal ushort GetTrigRangeSerial() => throw new NotImplementedException();
+    internal ushort GetMaxRangeSerial() => throw new NotImplementedException();
+    internal ushort GetMinRangeSerial() => throw new NotImplementedException();
+    internal byte GetTargetNumberSerial() => throw new NotImplementedException();
+    internal bool SetDetectThresholdSerial(ushort min, ushort max, ushort threshold) => throw new NotImplementedException();
+    internal bool SetIoPolaritySerial(byte polarity) => throw new NotImplementedException();
+    internal bool SetPwmI2cSerial(byte pwm1, byte pwm2, byte timer) => throw new NotImplementedException();
 
     private void SerialMessagePort_MessageReceived(object sender, SerialMessageData e)
     {
