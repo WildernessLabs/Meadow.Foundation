@@ -153,6 +153,8 @@ public partial class C4001 : II2cPeripheral
             return false;
         if (min < 30 || min > max)
             return false;
+        if (trig < min || trig > max)
+            return false;
         if (I2cComms is null)
             return false;
 
@@ -263,22 +265,6 @@ public partial class C4001 : II2cPeripheral
     {
         UpdateMotionDataI2c();
         return motionData.Number;
-    }
-
-    /// <summary>
-    /// Returns the cached range from the last GetTargetNumber() call.
-    /// </summary>
-    internal Length GetTargetRangeI2c()
-    {
-        return new Length(motionData.Range, Length.UnitType.Meters);
-    }
-
-    /// <summary>
-    /// Returns the cached energy from the last GetTargetNumber() call.
-    /// </summary>
-    internal uint GetTargetEnergyI2c()
-    {
-        return motionData.Energy;
     }
 
     internal bool SetDetectThresholdI2c(ushort min, ushort max, ushort threshold)
