@@ -63,6 +63,18 @@ public interface IC4001 : ISensor
     void SetKeepSensitivity(byte sensitivity);
 
     /// <summary>
+    /// Sets the trigger delay and keep timeout.
+    /// </summary>
+    /// <param name="trig">Trigger delay in units of 0.01s, range 0–200 (0–2s).</param>
+    /// <param name="keep">Keep timeout in units of 0.5s, range 4–3000 (2–1500s).</param>
+    bool SetDelay(byte trig, ushort keep);
+
+    /// <summary>
+    /// Returns the current keep timeout value (units of 0.5s).
+    /// </summary>
+    ushort GetKeepTimeout();
+
+    /// <summary>
     /// Indicates whether motion is currently detected by the sensor.
     /// </summary>
     /// <returns><c>true</c> if motion is detected; otherwise, <c>false</c>.</returns>

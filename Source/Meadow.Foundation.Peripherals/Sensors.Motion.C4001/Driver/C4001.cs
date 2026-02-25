@@ -128,4 +128,16 @@ public partial class C4001 : IC4001
             SetKeepSensitivitySerial(sensitivity);
         }
     }
+
+    /// <inheritdoc/>
+    public bool SetDelay(byte trig, ushort keep)
+    {
+        return SetDelayI2c(trig, keep);
+    }
+
+    /// <inheritdoc/>
+    public ushort GetKeepTimeout()
+    {
+        return GetKeepTimeoutI2c();
+    }
 }

@@ -159,4 +159,10 @@ public class SimulatedC4001 : IC4001, IDisposable
     {
         throw new NotImplementedException();
     }
+
+    /// <inheritdoc/>
+    public bool SetDelay(byte trig, ushort keep) => true;
+
+    /// <inheritdoc/>
+    public ushort GetKeepTimeout() => 4;
 }
