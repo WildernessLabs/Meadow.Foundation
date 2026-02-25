@@ -6,7 +6,7 @@ namespace Meadow.Foundation.Sensors.Motion;
 /// <summary>
 /// Create a new C4001 object
 /// </summary>
-public partial class C4001 : IC4001
+public partial class C4001 : IC4001, IDisposable
 {
     /// <summary>
     /// The type of communication used by the sensor (I2C or Serial).
@@ -136,5 +136,14 @@ public partial class C4001 : IC4001
         if (communication == CommunicationType.I2C)
             return GetKeepTimeoutI2c();
         return GetKeepTimeoutSerial();
+    }
+
+    /// <summary>
+    /// Releases resources held by this instance. The serial port is not closed
+    /// because it was provided by the caller and its lifecycle is the caller's responsibility.
+    /// </summary>
+    public void Dispose()
+    {
+        _serialPort = null;
     }
 }

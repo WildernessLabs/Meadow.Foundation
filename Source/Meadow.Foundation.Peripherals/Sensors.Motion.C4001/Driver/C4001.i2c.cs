@@ -121,7 +121,7 @@ public partial class C4001 : II2cPeripheral
     {
         // trig: 0–2 s in 0.01s units → 0–200
         var trigRaw = (int)Math.Round(trig.TotalSeconds * 100);
-        // keep: 1–1500 s in 0.5s units → 2–3000
+        // keep: 2–1500 s in 0.5s units → 4–3000
         var keepRaw = (int)Math.Round(keep.TotalSeconds * 2);
 
         if (trigRaw < 0 || trigRaw > 200)

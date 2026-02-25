@@ -91,9 +91,9 @@ public partial class C4001
                 if (byte.TryParse(parts[1], out var num))
                     result.Target.Number = num;
                 if (float.TryParse(parts[3], NumberStyles.Any, CultureInfo.InvariantCulture, out var range))
-                    result.Target.Range = range * 100;   // meters → cm to match I2C units
+                    result.Target.Range = range;
                 if (float.TryParse(parts[4], NumberStyles.Any, CultureInfo.InvariantCulture, out var speed))
-                    result.Target.Speed = speed * 100;
+                    result.Target.Speed = speed;
                 if (float.TryParse(parts[5].TrimEnd('*', '\r', '\n', ' '), NumberStyles.Any, CultureInfo.InvariantCulture, out var energy))
                     result.Target.Energy = (uint)energy;
             }
@@ -295,8 +295,8 @@ public partial class C4001
         {
             motionTimeoutCount = 0;
             motionData.Number = frame.Target.Number;
-            motionData.Range = frame.Target.Range / 100.0f;  // cm → meters
-            motionData.Speed = frame.Target.Speed / 100.0f;
+            motionData.Range = frame.Target.Range;
+            motionData.Speed = frame.Target.Speed;
             motionData.Energy = frame.Target.Energy;
         }
         else

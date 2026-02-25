@@ -51,8 +51,8 @@ public interface IC4001 : ISensor
     /// <summary>
     /// Sets the detection range for the sensor.
     /// </summary>
-    /// <param name="min">Minimum detection range (2.4 m – 20.0 m).</param>
-    /// <param name="max">Maximum detection range (must be ≥ min, up to 20.0 m).</param>
+    /// <param name="min">Minimum detection range (0.3 m – max).</param>
+    /// <param name="max">Maximum detection range (2.4 m – 20.0 m).</param>
     /// <param name="trig">Trigger range (must be within min–max).</param>
     /// <returns><c>true</c> if the range was set successfully; <c>false</c> if any parameter was out of range.</returns>
     bool SetDetectionRange(Length min, Length max, Length trig);
@@ -73,7 +73,7 @@ public interface IC4001 : ISensor
     /// Sets the trigger delay and keep timeout.
     /// </summary>
     /// <param name="trig">Trigger delay (0–2 s, resolution 10 ms).</param>
-    /// <param name="keep">Keep timeout (1–1500 s, resolution 0.5 s).</param>
+    /// <param name="keep">Keep timeout (2–1500 s, resolution 0.5 s).</param>
     bool SetDelay(TimeSpan trig, TimeSpan keep);
 
     /// <summary>
