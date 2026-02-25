@@ -235,9 +235,9 @@ public partial class C4001 : II2cPeripheral
         {
             var rangeRaw = BitConverter.ToInt16(temp, 1);
 
-            // Filter corrupted reads — happens when I2C bus contention causes the high byte
-            // of range to be 0xFF (sign-extends to a large negative value). These reads have
-            // 0xFF filling the trailing bytes and are not usable.
+            // A range ≤ 0 is always invalid when a target is reported (minimum real range is
+            // 30 cm). The most common cause is I2C bus contention filling bytes with 0xFF,
+            // which sign-extends to a large negative value, but any non-positive value is rejected.
             if (rangeRaw <= 0)
             {
                 if (++motionTimeoutCount > 10)
@@ -301,10 +301,10 @@ public partial class C4001 : II2cPeripheral
         return true;
     }
 
-    internal bool SetIoPolarityI2c(byte value) => true;   // not supported over I2C
-    internal byte GetIoPolarityI2c() => 0;                // not supported over I2C
-    internal bool SetPwmI2c(byte pwm1, byte pwm2, byte timer) => false;  // not supported over I2C
-    internal PwmData GetPwmI2c() => new PwmData();        // not supported over I2C
+    internal bool SetIoPolarityI2c(byte value) => throw new NotSupportedException("IO polarity is not supported over I2C");
+    internal byte GetIoPolarityI2c() => 0;                // not supported over I2C; returns 0 as default
+    internal bool SetPwmI2c(byte pwm1, byte pwm2, byte timer) => throw new NotSupportedException("PWM is not supported over I2C");
+    internal PwmData GetPwmI2c() => new PwmData();        // not supported over I2C; returns empty struct
 
     internal ushort GetTMinRangeI2c()
     {
