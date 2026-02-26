@@ -18,6 +18,9 @@ public class SimulatedC4001 : IC4001, IDisposable
     private uint energy;
     private bool motion;
 
+    private TimeSpan _trigDelay = TimeSpan.Zero;
+    private TimeSpan _keepTimeout = TimeSpan.FromSeconds(2);
+
     private CancellationTokenSource? simulationCTS;
     private Task? simulationTask;
     private readonly Random random = new();
@@ -32,7 +35,7 @@ public class SimulatedC4001 : IC4001, IDisposable
     public SensorStatus GetStatus() => status;
 
     /// <inheritdoc/>
-    public byte GetTargetNumber() => targetNumber;
+    public byte GetTargetNumber() => motion ? targetNumber : (byte)0;
 
     /// <inheritdoc/>
     public Speed GetTargetSpeed() { return speed; }
@@ -72,7 +75,7 @@ public class SimulatedC4001 : IC4001, IDisposable
         simulationCTS = new CancellationTokenSource();
         var ct = simulationCTS.Token;
 
-        status = new SensorStatus();
+        status = new SensorStatus { InitStatus = 1, WorkStatus = 1, WorkMode = 0 };
         targetNumber = 1;
         range = new Length(options.MaxRangeMeters + 0.5, Length.UnitType.Meters);
         speed = new Speed(0, Speed.UnitType.MetersPerSecond);
@@ -80,6 +83,9 @@ public class SimulatedC4001 : IC4001, IDisposable
 
         simulationTask = Task.Run(async () =>
         {
+            DateTime? inRangeSince = null;
+            DateTime? outOfRangeSince = null;
+
             while (ct.IsCancellationRequested == false)
             {
                 if (range.Meters > 40)
@@ -87,21 +93,32 @@ public class SimulatedC4001 : IC4001, IDisposable
                     range = new Length(options.MaxRangeMeters + 1, Length.UnitType.Meters);
                 }
 
-                var rand = random.Next(50);
-
                 range = new Length(range.Centimeters + random.Next(80) - 40, Length.UnitType.Centimeters);
-                energy = (uint)rand * 1000;
+                energy = (uint)(random.Next(50) * 1000);
 
-                await Task.Delay((int)(1000 / options.UpdateHz));
+                var now = DateTime.UtcNow;
+                var targetInRange = range.Meters < options.MaxRangeMeters;
 
-                if (range.Meters < options.MaxRangeMeters)
+                if (targetInRange)
                 {
-                    motion = true;
+                    outOfRangeSince = null;
+                    inRangeSince ??= now;
+
+                    // only trigger after trig delay has elapsed
+                    if (now - inRangeSince >= _trigDelay)
+                        motion = true;
                 }
                 else
                 {
-                    motion = false;
+                    inRangeSince = null;
+                    outOfRangeSince ??= now;
+
+                    // keep motion true until keep timeout expires
+                    if (now - outOfRangeSince >= _keepTimeout)
+                        motion = false;
                 }
+
+                await Task.Delay((int)(1000 / options.UpdateHz));
             }
 
         }, ct);
@@ -121,6 +138,7 @@ public class SimulatedC4001 : IC4001, IDisposable
             simulationCTS?.Dispose();
             simulationCTS = null;
             simulationTask = null;
+            status = new SensorStatus();
         }
     }
 
@@ -143,20 +161,22 @@ public class SimulatedC4001 : IC4001, IDisposable
     public void Dispose() => StopSimulation();
 
     /// <inheritdoc/>
-    public void SetDetectionRange(ushort min, ushort max, ushort trig)
+    public bool SetDetectionRange(Length min, Length max, Length trig) => true;
+
+    /// <inheritdoc/>
+    public bool SetTrigSensitivity(byte sensitivity) => true;
+
+    /// <inheritdoc/>
+    public bool SetKeepSensitivity(byte sensitivity) => true;
+
+    /// <inheritdoc/>
+    public bool SetDelay(TimeSpan trig, TimeSpan keep)
     {
-        throw new NotImplementedException();
+        _trigDelay = trig;
+        _keepTimeout = keep;
+        return true;
     }
 
     /// <inheritdoc/>
-    public void SetTrigSensitivity(byte sensitivity)
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <inheritdoc/>
-    public void SetKeepSensitivity(byte sensitivity)
-    {
-        throw new NotImplementedException();
-    }
+    public TimeSpan GetKeepTimeout() => _keepTimeout;
 }

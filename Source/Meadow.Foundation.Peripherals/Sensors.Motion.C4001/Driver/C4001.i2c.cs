@@ -1,4 +1,4 @@
-﻿using Meadow.Hardware;
+using Meadow.Hardware;
 using Meadow.Units;
 using System;
 using System.Threading;
@@ -13,34 +13,28 @@ public partial class C4001 : II2cPeripheral
     private II2cCommunications? I2cComms = null;
 
     /// <summary>
-    /// Create a new C4001 object connected to an input pin and IO Device
+    /// Create a new C4001 object connected via I2C
     /// </summary>
-    /// <param name="i2cBus">The I2C bus</param>
-    /// <param name="address"> The I2C address of the device</param>
     public C4001(II2cBus i2cBus, byte address = (byte)Addresses.Default)
     {
         I2cComms = new I2cCommunications(i2cBus, address);
-
         communication = CommunicationType.I2C;
     }
 
     internal SensorStatus GetStatusI2c()
     {
-        var status = new SensorStatus();
-
         byte val = I2cComms!.ReadRegister((byte)Registers.STATUS);
-
-        status.WorkStatus = (byte)(val & 0x01);
-        status.WorkMode = (byte)((val & 0x02) >> 1);
-        status.InitStatus = (byte)((val & 0x80) >> 7);
-
-        return status;
+        return new SensorStatus
+        {
+            WorkStatus = (byte)(val & 0x01),
+            WorkMode = (byte)((val & 0x02) >> 1),
+            InitStatus = (byte)((val & 0x80) >> 7),
+        };
     }
 
     internal bool IsMotionDetectedI2c()
     {
         byte val = I2cComms!.ReadRegister((byte)Registers.RESULT_STATUS);
-
         return (val & 0x01) != 0;
     }
 
@@ -75,7 +69,6 @@ public partial class C4001 : II2cPeripheral
                 register = (byte)Registers.CTRL1;
                 delayMs = 1500;
                 break;
-
             default:
                 throw new ArgumentOutOfRangeException(nameof(command), command, "Unknown sensor command");
         }
@@ -87,12 +80,10 @@ public partial class C4001 : II2cPeripheral
     internal bool SetSensorModeI2c(SensorMode mode)
     {
         var status = GetStatusI2c();
-
         if (status.WorkMode == (byte)mode)
         {
             return true;
         }
-
         SetSensorI2c(SensorCommand.ChangeMode);
         status = GetStatusI2c();
         return status.WorkMode == (byte)mode;
@@ -102,10 +93,8 @@ public partial class C4001 : II2cPeripheral
     {
         if (sensitivity > 9)
             return false;
-
         I2cComms!.WriteRegister((byte)Registers.TRIG_SENSITIVITY, sensitivity);
         SetSensorI2c(SensorCommand.SaveParams);
-
         return true;
     }
 
@@ -117,9 +106,7 @@ public partial class C4001 : II2cPeripheral
     internal bool SetKeepSensitivityI2c(byte sensitivity)
     {
         if (sensitivity > 9)
-        {
             return false;
-        }
         I2cComms!.WriteRegister((byte)Registers.KEEP_SENSITIVITY, sensitivity);
         SetSensorI2c(SensorCommand.SaveParams);
         return true;
@@ -130,25 +117,26 @@ public partial class C4001 : II2cPeripheral
         return I2cComms!.ReadRegister((byte)Registers.KEEP_SENSITIVITY);
     }
 
-    internal bool SetDelayI2c(byte trig, ushort keep)
+    internal bool SetDelayI2c(TimeSpan trig, TimeSpan keep)
     {
-        if (trig > 200)
-        {
-            return false;
-        }
+        // trig: 0–2 s in 0.01s units → 0–200
+        var trigRaw = (int)Math.Round(trig.TotalSeconds * 100);
+        // keep: 2–1500 s in 0.5s units → 4–3000
+        var keepRaw = (int)Math.Round(keep.TotalSeconds * 2);
 
-        if (keep < 4 || keep > 3000)
-        { return false; }
+        if (trigRaw < 0 || trigRaw > 200)
+            return false;
+        if (keepRaw < 4 || keepRaw > 3000)
+            return false;
 
         byte[] data =
         [
-            trig,
-            (byte)(keep & 0xFF),      // low byte
-            (byte)((keep >> 8) & 0xFF), // high byte
+            (byte)trigRaw,
+            (byte)(keepRaw & 0xFF),
+            (byte)((keepRaw >> 8) & 0xFF),
         ];
         I2cComms!.WriteRegister((byte)Registers.TRIG_DELAY, data);
         SetSensorI2c(SensorCommand.SaveParams);
-
         return true;
     }
 
@@ -157,37 +145,41 @@ public partial class C4001 : II2cPeripheral
         return I2cComms!.ReadRegister((byte)Registers.TRIG_DELAY);
     }
 
-    internal ushort GetKeepTimeoutI2c()
+    internal TimeSpan GetKeepTimeoutI2c()
     {
         Span<byte> buffer = stackalloc byte[2];
         I2cComms!.ReadRegister((byte)Registers.KEEP_TIMEOUT_L, buffer);
-
-        return (ushort)((buffer[1] << 8) | buffer[0]);
+        ushort raw = (ushort)((buffer[1] << 8) | buffer[0]);
+        return TimeSpan.FromSeconds(raw * 0.5);
     }
 
-    internal bool SetDetectionRangeI2c(ushort min, ushort max, ushort trig)
+    internal bool SetDetectionRangeI2c(Length min, Length max, Length trig)
     {
-        if (max < 240 || max > 2000)
-        { return false; }
+        // Protocol values are in cm (ushort)
+        var minCm = (ushort)Math.Round(min.Centimeters);
+        var maxCm = (ushort)Math.Round(max.Centimeters);
+        var trigCm = (ushort)Math.Round(trig.Centimeters);
 
-        if (min < 30 || min > max)
-        { return false; }
-
+        if (maxCm < 240 || maxCm > 2000)
+            return false;
+        if (minCm < 30 || minCm > maxCm)
+            return false;
+        if (trigCm < minCm || trigCm > maxCm)
+            return false;
         if (I2cComms is null)
-        { return false; }
+            return false;
 
         byte[] data =
         [
-            (byte)(min & 0xFF),      // min low byte
-            (byte)((min >> 8) & 0xFF), // min high byte
-            (byte)(max & 0xFF),      // max low byte
-            (byte)((max >> 8) & 0xFF), // max high byte
-            (byte)(trig & 0xFF),     // trig low byte
-            (byte)((trig >> 8) & 0xFF), // trig high byte
+            (byte)(minCm & 0xFF),
+            (byte)((minCm >> 8) & 0xFF),
+            (byte)(maxCm & 0xFF),
+            (byte)((maxCm >> 8) & 0xFF),
+            (byte)(trigCm & 0xFF),
+            (byte)((trigCm >> 8) & 0xFF),
         ];
         I2cComms.WriteRegister((byte)Registers.E_MIN_RANGE_L, data);
         SetSensorI2c(SensorCommand.SaveParams);
-
         return true;
     }
 
@@ -195,7 +187,6 @@ public partial class C4001 : II2cPeripheral
     {
         Span<byte> buffer = stackalloc byte[2];
         I2cComms!.ReadRegister((byte)Registers.E_TRIG_RANGE_L, buffer);
-
         return (ushort)(buffer[0] | (buffer[1] << 8));
     }
 
@@ -203,7 +194,6 @@ public partial class C4001 : II2cPeripheral
     {
         Span<byte> buffer = stackalloc byte[2];
         I2cComms!.ReadRegister((byte)Registers.E_MAX_RANGE_L, buffer);
-
         return (ushort)(buffer[0] | (buffer[1] << 8));
     }
 
@@ -211,22 +201,60 @@ public partial class C4001 : II2cPeripheral
     {
         Span<byte> buffer = stackalloc byte[2];
         I2cComms!.ReadRegister((byte)Registers.E_MIN_RANGE_L, buffer);
-
         return (ushort)(buffer[0] | (buffer[1] << 8));
     }
 
+    /// <summary>
+    /// Performs a single I2C read and updates all cached motion data.
+    /// Must be called before reading range, speed, or energy.
+    /// Matches the reference driver pattern where getTargetNumber() is the sole refresh point.
+    /// </summary>
     private void UpdateMotionDataI2c()
     {
         byte[] temp = new byte[7];
-        I2cComms!.ReadRegister((byte)Registers.RESULT_OBJ_MUN, temp);
+
+        // Retry on transient bus-busy errors (e.g. when sharing I2C1 with onboard MCPs on ProjectLab)
+        Exception? lastEx = null;
+        for (int attempt = 0; attempt < 3; attempt++)
+        {
+            try
+            {
+                I2cComms!.ReadRegister((byte)Registers.RESULT_OBJ_MUN, temp);
+                lastEx = null;
+                break;
+            }
+            catch (Exception ex)
+            {
+                lastEx = ex;
+                Thread.Sleep(15);
+            }
+        }
+        if (lastEx != null) throw lastEx;
 
         if (temp[0] == 1)
         {
+            var rangeRaw = BitConverter.ToInt16(temp, 1);
+
+            // A range ≤ 0 is always invalid when a target is reported (minimum real range is
+            // 30 cm). The most common cause is I2C bus contention filling bytes with 0xFF,
+            // which sign-extends to a large negative value, but any non-positive value is rejected.
+            if (rangeRaw <= 0)
+            {
+                if (++motionTimeoutCount > 10)
+                {
+                    motionData.Number = 0;
+                    motionData.Range = 0;
+                    motionData.Speed = 0;
+                    motionData.Energy = 0;
+                }
+                return;
+            }
+
             motionTimeoutCount = 0;
             motionData.Number = 1;
-            motionData.Range = BitConverter.ToInt16(temp, 1) / 100.0f;
-            motionData.Speed = BitConverter.ToInt16(temp, 3) / 100.0f;
-            motionData.Energy = (uint)BitConverter.ToInt16(temp, 5);
+            motionData.Range = rangeRaw / 100.0f;
+            motionData.Speed = BitConverter.ToInt16(temp, 3) / 100.0f;   // signed: negative = approaching
+            motionData.Energy = BitConverter.ToUInt16(temp, 5);
         }
         else
         {
@@ -240,71 +268,43 @@ public partial class C4001 : II2cPeripheral
         }
     }
 
+    /// <summary>
+    /// Performs the I2C read and refreshes all cached values.
+    /// Call this first, then read range/speed/energy from cache.
+    /// </summary>
     internal byte GetTargetNumberI2c()
     {
         UpdateMotionDataI2c();
         return motionData.Number;
     }
 
-    internal Length GetTargetRangeI2c()
-    {
-        UpdateMotionDataI2c();
-        return new Length(motionData.Range, Length.UnitType.Meters);
-    }
-
-    public uint GetTargetEnergyI2c()
-    {
-        UpdateMotionDataI2c();
-        return motionData.Energy;
-    }
-
     internal bool SetDetectThresholdI2c(ushort min, ushort max, ushort threshold)
     {
         if (max > 2500)
             return false;
-
         if (min > max)
             return false;
-
         if (I2cComms is null)
             return false;
 
         byte[] data =
         [
-            (byte)(threshold & 0xFF),         // threshold low byte
-            (byte)((threshold >> 8) & 0xFF),  // threshold high byte
-            (byte)(min & 0xFF),               // min low byte
-            (byte)((min >> 8) & 0xFF),        // min high byte
-            (byte)(max & 0xFF),               // max low byte
-            (byte)((max >> 8) & 0xFF),        // max high byte
+            (byte)(threshold & 0xFF),
+            (byte)((threshold >> 8) & 0xFF),
+            (byte)(min & 0xFF),
+            (byte)((min >> 8) & 0xFF),
+            (byte)(max & 0xFF),
+            (byte)((max >> 8) & 0xFF),
         ];
         I2cComms.WriteRegister((byte)Registers.CFAR_THR_L, data);
         SetSensorI2c(SensorCommand.SaveParams);
-
         return true;
     }
 
-    internal bool SetIoPolarityI2c(byte value)
-    {
-        return true;
-    }
-
-    internal byte GetIoPolarityI2c()
-    {
-        return 0;
-    }
-
-    internal bool SetPwmI2c(byte pwm1, byte pwm2, byte timer)
-    {
-        // PWM isn't supported over I2C
-        return false;
-    }
-
-    internal PwmData GetPwmI2c()
-    {
-        // PWM isn't supported over I2C
-        return new PwmData();
-    }
+    internal bool SetIoPolarityI2c(byte value) => throw new NotSupportedException("IO polarity is not supported over I2C");
+    internal byte GetIoPolarityI2c() => 0;                // not supported over I2C; returns 0 as default
+    internal bool SetPwmI2c(byte pwm1, byte pwm2, byte timer) => throw new NotSupportedException("PWM is not supported over I2C");
+    internal PwmData GetPwmI2c() => new PwmData();        // not supported over I2C; returns empty struct
 
     internal ushort GetTMinRangeI2c()
     {

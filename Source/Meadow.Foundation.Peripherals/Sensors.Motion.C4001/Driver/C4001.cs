@@ -1,11 +1,12 @@
 ﻿using Meadow.Units;
+using System;
 
 namespace Meadow.Foundation.Sensors.Motion;
 
 /// <summary>
 /// Create a new C4001 object
 /// </summary>
-public partial class C4001 : IC4001
+public partial class C4001 : IC4001, IDisposable
 {
     /// <summary>
     /// The type of communication used by the sensor (I2C or Serial).
@@ -27,7 +28,10 @@ public partial class C4001 : IC4001
     /// </summary>
     public bool SetSensorMode(SensorMode mode)
     {
-        return SetSensorModeI2c(mode);
+        if (communication == CommunicationType.I2C)
+            return SetSensorModeI2c(mode);
+        SetSensorModeSerial(mode);
+        return true;
     }
 
     /// <summary>
@@ -36,7 +40,9 @@ public partial class C4001 : IC4001
     /// <returns>The current status of the sensor.</returns>
     public SensorStatus GetStatus()
     {
-        return GetStatusI2c();
+        if (communication == CommunicationType.I2C)
+            return GetStatusI2c();
+        return GetStatusSerial();
     }
 
     /// <summary>
@@ -44,7 +50,9 @@ public partial class C4001 : IC4001
     /// </summary>
     public byte GetTargetNumber()
     {
-        return GetTargetNumberI2c();
+        if (communication == CommunicationType.I2C)
+            return GetTargetNumberI2c();
+        return GetTargetNumberSerial();
     }
 
     /// <summary>
@@ -62,7 +70,7 @@ public partial class C4001 : IC4001
     /// <returns>The target range as a float.</returns>
     public Length GetTargetRange()
     {
-        return GetTargetRangeI2c();
+        return new Length(motionData.Range, Length.UnitType.Meters);
     }
 
     /// <summary>
@@ -71,7 +79,7 @@ public partial class C4001 : IC4001
     /// <returns>The target energy as an unsigned integer.</returns>
     public uint GetTargetEnergy()
     {
-        return GetTargetEnergyI2c();
+        return motionData.Energy;
     }
 
     /// <summary>
@@ -91,41 +99,51 @@ public partial class C4001 : IC4001
     }
 
     /// <inheritdoc/>
-    public void SetDetectionRange(ushort min, ushort max, ushort trig)
+    public bool SetDetectionRange(Length min, Length max, Length trig)
     {
         if (communication == CommunicationType.I2C)
-        {
-            SetDetectionRangeI2c(min, max, trig);
-        }
-        else
-        {
-            SetDetectionRangeSerial(max);
-        }
+            return SetDetectionRangeI2c(min, max, trig);
+        return SetDetectionRangeSerial(min, max, trig);
     }
 
     /// <inheritdoc/>
-    public void SetTrigSensitivity(byte sensitivity)
+    public bool SetTrigSensitivity(byte sensitivity)
     {
         if (communication == CommunicationType.I2C)
-        {
-            SetTrigSensitivityI2c(sensitivity);
-        }
-        else
-        {
-            SetTrigSensitivitySerial(sensitivity);
-        }
+            return SetTrigSensitivityI2c(sensitivity);
+        return SetTrigSensitivitySerial(sensitivity);
     }
 
     /// <inheritdoc/>
-    public void SetKeepSensitivity(byte sensitivity)
+    public bool SetKeepSensitivity(byte sensitivity)
     {
         if (communication == CommunicationType.I2C)
-        {
-            SetKeepSensitivityI2c(sensitivity);
-        }
-        else
-        {
-            SetKeepSensitivitySerial(sensitivity);
-        }
+            return SetKeepSensitivityI2c(sensitivity);
+        return SetKeepSensitivitySerial(sensitivity);
+    }
+
+    /// <inheritdoc/>
+    public bool SetDelay(TimeSpan trig, TimeSpan keep)
+    {
+        if (communication == CommunicationType.I2C)
+            return SetDelayI2c(trig, keep);
+        return SetDelaySerial(trig, keep);
+    }
+
+    /// <inheritdoc/>
+    public TimeSpan GetKeepTimeout()
+    {
+        if (communication == CommunicationType.I2C)
+            return GetKeepTimeoutI2c();
+        return GetKeepTimeoutSerial();
+    }
+
+    /// <summary>
+    /// Releases resources held by this instance. The serial port is not closed
+    /// because it was provided by the caller and its lifecycle is the caller's responsibility.
+    /// </summary>
+    public void Dispose()
+    {
+        _serialPort = null;
     }
 }
