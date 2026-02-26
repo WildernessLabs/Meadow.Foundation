@@ -9,8 +9,6 @@ namespace Meadow.Foundation.ICs.IOExpanders;
 public abstract partial class Tca95x5 : II2cPeripheral,
     IDigitalInputOutputController
 {
-    private readonly byte address;
-
     /// <inheritdoc/>
     public byte DefaultI2cAddress => (byte)Addresses.Default;
 
@@ -33,14 +31,11 @@ public abstract partial class Tca95x5 : II2cPeripheral,
             Controller = this
         };
 
-        this.address = address;
         i2cComms = new I2cCommunications(i2cBus, address);
     }
 
     private ushort portsInUse = 0x0000;
-    private ushort configRegister = 0xffff; // power-up default is 0xffff
-    private const int Input = 1;
-    private const int Output = 0;
+    private ushort configRegister = 0xffff; // power-up default is 0xffff (all inputs)
 
     /// <inheritdoc/>
     public IDigitalOutputPort CreateDigitalOutputPort(IPin pin, bool initialState = false, OutputType initialOutputType = OutputType.PushPull)
@@ -63,15 +58,10 @@ public abstract partial class Tca95x5 : II2cPeripheral,
         i2cComms.ReadRegister(Registers.ConfigurationPort0, readBuffer);
         var currentConfig = (ushort)(readBuffer[1] << 8 | readBuffer[0]);
 
-        Resolver.Log.Info($"cfg: 0x{configRegister:X4}");
-
         // outputs are zeros - clear this bit
         configRegister = (ushort)(currentConfig & ~bit);
-
-        // write the config
-        Resolver.Log.Info($"setting cfg: 0x{configRegister:X4}");
-        i2cComms.WriteRegister(Registers.ConfigurationPort0, (byte)(configRegister >> 8));
-        i2cComms.WriteRegister(Registers.ConfigurationPort1, (byte)(configRegister & 0xff));
+        i2cComms.WriteRegister(Registers.ConfigurationPort0, (byte)(configRegister & 0xff));
+        i2cComms.WriteRegister(Registers.ConfigurationPort1, (byte)(configRegister >> 8));
 
         return new DigitalOutputPort(this, pin, initialState);
     }
@@ -94,7 +84,6 @@ public abstract partial class Tca95x5 : II2cPeripheral,
         Span<byte> readBuffer = stackalloc byte[2];
         i2cComms.ReadRegister(Registers.OutputPort0, readBuffer);
         var currentState = (ushort)(readBuffer[1] << 8 | readBuffer[0]);
-        Resolver.Log.Info($"current: 0x{currentState:X4}");
 
         if (state)
         {
@@ -104,16 +93,26 @@ public abstract partial class Tca95x5 : II2cPeripheral,
         {
             currentState &= (ushort)~bit;
         }
-        Resolver.Log.Info($"setting: 0x{currentState:X4}");
 
         if (portNumber < 8)
         {
-            i2cComms.WriteRegister(Registers.OutputPort0, (byte)(currentState >> 8));
+            i2cComms.WriteRegister(Registers.OutputPort0, (byte)(currentState & 0xff));
         }
         else
         {
-            i2cComms.WriteRegister(Registers.OutputPort1, (byte)(currentState & 0xff));
+            i2cComms.WriteRegister(Registers.OutputPort1, (byte)(currentState >> 8));
         }
+    }
+
+    internal void ReleasePin(byte portNumber)
+    {
+        ushort bit = (ushort)(1 << portNumber);
+        portsInUse &= (ushort)~bit;
+
+        // restore pin to input mode on the device (set bit = input)
+        configRegister |= bit;
+        i2cComms.WriteRegister(Registers.ConfigurationPort0, (byte)(configRegister & 0xff));
+        i2cComms.WriteRegister(Registers.ConfigurationPort1, (byte)(configRegister >> 8));
     }
 
     /// <inheritdoc/>
