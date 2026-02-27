@@ -102,7 +102,7 @@ public partial class Bme280 :
     public Pressure? Pressure => Conditions.Pressure;
 
     /// <summary>
-    /// The realtive humidity from the last reading
+    /// The relative humidity from the last reading
     /// </summary>
     public RelativeHumidity? Humidity => Conditions.Humidity;
 
@@ -295,7 +295,7 @@ public partial class Bme280 :
     /// <summary>
     /// Start updating 
     /// </summary>
-    /// <param name="updateInterval">The update inverval</param>
+    /// <param name="updateInterval">The update interval</param>
     public override void StartUpdating(TimeSpan? updateInterval = null)
     {
         configuration.Mode = Modes.Normal;

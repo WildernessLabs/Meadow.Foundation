@@ -189,17 +189,17 @@ public partial class Bmp280 :
     }
 
     /// <summary>
-    /// Update the sensor information from the BME280.
+    /// Update the sensor information from the BMP280.
     /// </summary>
     /// <remarks>
-    /// Reads the raw temperature, pressure and humidity data from the BME280 and applies
+    /// Reads the raw temperature and pressure data from the BMP280 and applies
     /// the compensation data to get the actual readings.  These are made available through the
-    /// Temperature, Pressure and Humidity properties.
-    /// All three readings are taken at once to ensure that the three readings are consistent.
-    /// Register locations and formulas taken from the Bosch BME280 datasheet revision 1.1, May 2015.
+    /// Temperature and Pressure properties.
+    /// Both readings are taken at once to ensure that they are consistent.
+    /// Register locations and formulas taken from the Bosch BMP280 datasheet revision 1.1, May 2015.
     /// Register locations - section 5.3 Memory Map
     /// Formulas - section 4.2.3 Compensation Formulas
-    /// The integer formulas have been used to try and keep the calculations per formant.
+    /// The integer formulas have been used to try and keep the calculations performant.
     /// </remarks>
     protected override async Task<(Units.Temperature? Temperature, Pressure? Pressure)> ReadSensor()
     {
@@ -274,7 +274,7 @@ public partial class Bmp280 :
     /// <summary>
     /// Start updating 
     /// </summary>
-    /// <param name="updateInterval">The update inverval</param>
+    /// <param name="updateInterval">The update interval</param>
     public override void StartUpdating(TimeSpan? updateInterval = null)
     {
         configuration.Mode = Modes.Normal;
