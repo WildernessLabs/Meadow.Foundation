@@ -1597,6 +1597,12 @@
       <Deploy />
     </Project>
   </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Motion/Ak9753/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Motion.Ak9753/Driver/Sensors.Motion.Ak9753.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Motion/Ak9753/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Sensors.Motion.Ak9753/Samples/Ak9753_Sample/Ak9753_Sample.csproj" />
+  </Folder>
   <Folder Name="/Meadow.Foundation.Peripherals/Sensors/Motion/Apds9960/">
     <Project Path="Meadow.Foundation.Peripherals/Sensors.Motion.Apds9960/Driver/Sensors.Motion.Apds9960.csproj" />
   </Folder>
