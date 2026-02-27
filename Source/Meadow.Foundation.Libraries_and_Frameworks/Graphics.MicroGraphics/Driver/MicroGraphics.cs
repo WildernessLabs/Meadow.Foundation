@@ -652,6 +652,14 @@ namespace Meadow.Foundation.Graphics
             if (e < 0) e += 2 * MathF.PI;
             if (s > e) (e, s) = (s, e);
 
+            // Arc spans past 2π — split at the boundary and draw each half separately
+            if (e > 2 * MathF.PI)
+            {
+                DrawArc(centerX, centerY, radius, new Angle(s, Angle.UnitType.Radians), new Angle(2 * MathF.PI, Angle.UnitType.Radians), color, centerBetweenPixels);
+                DrawArc(centerX, centerY, radius, new Angle(0, Angle.UnitType.Radians), new Angle(e - 2 * MathF.PI, Angle.UnitType.Radians), color, centerBetweenPixels);
+                return;
+            }
+
             // Precompute octant coverage to eliminate redundant Atan2 calls in the hot loop.
             // Code-space angle ranges per octant (verified by tracing Bresenham Atan2 values):
             //   o1:[π/2, 3π/4]   o2:[3π/4, π]    o3:[π, 5π/4]    o4:[5π/4, 3π/2]
