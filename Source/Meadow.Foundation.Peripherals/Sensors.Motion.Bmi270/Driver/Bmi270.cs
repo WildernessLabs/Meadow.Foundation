@@ -140,7 +140,7 @@ namespace Meadow.Foundation.Sensors.Motion
                 Thread.Sleep(10);
                 byte status = i2cComms.ReadRegister(INTERNAL_STATUS);
 
-                if (status == 0x01) { break; }
+                if ((status & 0x0F) == 0x01) { break; }
             }
             //After initialization - power mode is set to "configuration mode"
             //Need to change power modes before you can sample data
@@ -161,8 +161,9 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
         /// <param name="angRange">AngularAccelerationRange</param>
         public void SetAngularVelocityRange(AngularVelocityRange angRange)
-        {   //This register also sets the OIS range but it's not implemented so we can ignore it 
+        {   //This register also sets the OIS range but it's not implemented so we can ignore it
             i2cComms.WriteRegister(GYR_RANGE, (byte)angRange);
+            CurrentAngularVelocityRange = angRange;
         }
 
         /// <summary>

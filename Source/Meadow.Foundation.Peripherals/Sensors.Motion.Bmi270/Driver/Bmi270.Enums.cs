@@ -60,7 +60,7 @@
             /// </summary>
             _1000dps,
             /// <summary>
-            /// +/- 5000 degrees per second
+            /// +/- 500 degrees per second
             /// </summary>
             _500dps,
             /// <summary>
