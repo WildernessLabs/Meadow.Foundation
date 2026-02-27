@@ -675,7 +675,7 @@ namespace Meadow.Foundation.Graphics
             bool o3In = OctIn(p4*4, p4*5),  o3Full = OctFull(p4*4, p4*5);
             bool o4In = OctIn(p4*5, p4*6),  o4Full = OctFull(p4*5, p4*6);
             bool o5In = OctIn(p4*6, p4*7),  o5Full = OctFull(p4*6, p4*7);
-            bool o6In = e >= p4*7 || s == 0, o6Full = e >= 2 * MathF.PI; // wraps through 0
+            bool o6In = e >= p4*7, o6Full = s <= p4*7 && e >= 2 * MathF.PI; // wraps through 0
             bool o7In = OctIn(0,    p4  ),  o7Full = OctFull(0,    p4  );
             bool o8In = OctIn(p4,   p4*2),  o8Full = OctFull(p4,   p4*2);
 
