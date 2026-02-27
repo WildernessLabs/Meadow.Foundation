@@ -644,61 +644,65 @@ namespace Meadow.Foundation.Graphics
         /// <param name="centerBetweenPixels">If true, the center of the arc is between the assigned pixel and the next pixel, false it's directly on the center pixel</param>
         public void DrawArc(int centerX, int centerY, int radius, Angle startAngle, Angle endAngle, Color color, bool centerBetweenPixels = true)
         {
+            static float Normalize(float a) => a < 0 ? a + 2 * MathF.PI : a;
+
+            float s = (float)startAngle.Radians;
+            float e = (float)endAngle.Radians;
+            if (s < 0) s += 2 * MathF.PI;
+            if (e < 0) e += 2 * MathF.PI;
+            if (s > e) (e, s) = (s, e);
+
+            // Arc spans past 2π — split at the boundary and draw each half separately
+            if (e > 2 * MathF.PI)
+            {
+                DrawArc(centerX, centerY, radius, new Angle(s, Angle.UnitType.Radians), new Angle(2 * MathF.PI, Angle.UnitType.Radians), color, centerBetweenPixels);
+                DrawArc(centerX, centerY, radius, new Angle(0, Angle.UnitType.Radians), new Angle(e - 2 * MathF.PI, Angle.UnitType.Radians), color, centerBetweenPixels);
+                return;
+            }
+
+            // Precompute octant coverage to eliminate redundant Atan2 calls in the hot loop.
+            // Code-space angle ranges per octant (verified by tracing Bresenham Atan2 values):
+            //   o1:[π/2, 3π/4]   o2:[3π/4, π]    o3:[π, 5π/4]    o4:[5π/4, 3π/2]
+            //   o5:[3π/2, 7π/4]  o6:[7π/4, 2π]   o7:[0, π/4]     o8:[π/4, π/2]
+            // o6 spans the 0/2π boundary so it is handled separately.
+            float p4 = MathF.PI / 4;
+            bool OctIn(float lo, float hi)   => s <= hi && e >= lo;
+            bool OctFull(float lo, float hi) => s <= lo && e >= hi;
+            bool InRange(float a)            => a >= s && a <= e;
+
+            bool o1In = OctIn(p4*2, p4*3),  o1Full = OctFull(p4*2, p4*3);
+            bool o2In = OctIn(p4*3, p4*4),  o2Full = OctFull(p4*3, p4*4);
+            bool o3In = OctIn(p4*4, p4*5),  o3Full = OctFull(p4*4, p4*5);
+            bool o4In = OctIn(p4*5, p4*6),  o4Full = OctFull(p4*5, p4*6);
+            bool o5In = OctIn(p4*6, p4*7),  o5Full = OctFull(p4*6, p4*7);
+            bool o6In = e >= p4*7, o6Full = s <= p4*7 && e >= 2 * MathF.PI; // wraps through 0
+            bool o7In = OctIn(0,    p4  ),  o7Full = OctFull(0,    p4  );
+            bool o8In = OctIn(p4,   p4*2),  o8Full = OctFull(p4,   p4*2);
+
+            void DrawPoint(int px, int py)
+            {
+                if (Stroke == 1) DrawPixel(px, py, color);
+                else DrawCircleFilled(px, py, Stroke / 2, true, color);
+            }
+
             var d = 3 - (2 * radius);
             var x = 0;
             var y = radius;
-
             int offset = centerBetweenPixels ? 1 : 0;
-
-            float startAngleRadians = (float)startAngle.Radians;
-            float endAngleRadians = (float)endAngle.Radians;
-
-            if (startAngleRadians > endAngleRadians)
-            {
-                (endAngleRadians, startAngleRadians) = (startAngleRadians, endAngleRadians);
-            }
-
-            void DrawArcPoint(int x, int y, Color color)
-            {
-                if (Stroke == 1)
-                {
-                    DrawPixel(x, y, color);
-                }
-                else
-                {
-                    DrawCircleFilled(x, y, Stroke / 2, true, color);
-                }
-            }
 
             while (x <= y)
             {
-                float angle1 = MathF.Atan2(y, -x);
-                float angle2 = MathF.Atan2(x, -y);
-                float angle3 = MathF.Atan2(-x, -y);
-                float angle4 = MathF.Atan2(-y, -x);
-                float angle5 = MathF.Atan2(-y, x);
-                float angle6 = MathF.Atan2(-x, y);
-                float angle7 = MathF.Atan2(x, y);
-                float angle8 = MathF.Atan2(y, x);
+                if (o1In && (o1Full || InRange(Normalize(MathF.Atan2( y, -x))))) DrawPoint(centerX + y - offset, centerY - x);
+                if (o2In && (o2Full || InRange(Normalize(MathF.Atan2( x, -y))))) DrawPoint(centerX + x - offset, centerY - y);
+                if (o3In && (o3Full || InRange(Normalize(MathF.Atan2(-x, -y))))) DrawPoint(centerX - x,          centerY - y);
+                if (o4In && (o4Full || InRange(Normalize(MathF.Atan2(-y, -x))))) DrawPoint(centerX - y,          centerY - x);
+                if (o5In && (o5Full || InRange(Normalize(MathF.Atan2(-y,  x))))) DrawPoint(centerX - y,          centerY + x - offset);
+                if (o6In && (o6Full || InRange(Normalize(MathF.Atan2(-x,  y))))) DrawPoint(centerX - x,          centerY + y - offset);
+                if (o7In && (o7Full || InRange(Normalize(MathF.Atan2( x,  y))))) DrawPoint(centerX + x - offset, centerY + y - offset);
+                if (o8In && (o8Full || InRange(Normalize(MathF.Atan2( y,  x))))) DrawPoint(centerX + y - offset, centerY + x - offset);
 
-                if (angle1 >= startAngleRadians && angle1 <= endAngleRadians) { DrawArcPoint(centerX + y - offset, centerY - x, color); }
-                if (angle2 >= startAngleRadians && angle2 <= endAngleRadians) { DrawArcPoint(centerX + x - offset, centerY - y, color); }
-                if (angle3 >= startAngleRadians && angle3 <= endAngleRadians) { DrawArcPoint(centerX - x, centerY - y, color); }
-                if (angle4 >= startAngleRadians && angle4 <= endAngleRadians) { DrawArcPoint(centerX - y, centerY - x, color); }
-                if (angle5 >= startAngleRadians && angle5 <= endAngleRadians) { DrawArcPoint(centerX - y, centerY + x - offset, color); }
-                if (angle6 >= startAngleRadians && angle6 <= endAngleRadians) { DrawArcPoint(centerX - x, centerY + y - offset, color); }
-                if (angle7 >= startAngleRadians && angle7 <= endAngleRadians) { DrawArcPoint(centerX + x - offset, centerY + y - offset, color); }
-                if (angle8 >= startAngleRadians && angle8 <= endAngleRadians) { DrawArcPoint(centerX + y - offset, centerY + x - offset, color); }
-
-                if (d < 0)
-                {
-                    d += (2 * x) + 1;
-                }
-                else
-                {
-                    d += (2 * (x - y)) + 1;
-                    y--;
-                }
+                if (d < 0) d += 2 * x + 1;
+                else { d += 2 * (x - y) + 1; y--; }
                 x++;
             }
         }
