@@ -80,6 +80,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         public byte DefaultI2cAddress => (byte)Addresses.Default;
 
         private readonly II2cBus[] i2cBuses;
+        private readonly I2cCommunications i2cComms;
         private byte selectedBus = 0xff;
 
         internal SemaphoreSlim BusSelectorSemaphore = new(1, 1);
@@ -95,6 +96,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         {
             I2cBus = i2cBus;
             Address = address;
+            i2cComms = new I2cCommunications(i2cBus, address);
 
             i2cBuses = Enumerable.Range(0, 8).Select(i => new Tca9548AI2cBus(this, (byte)i) as II2cBus).ToArray();
         }
@@ -123,46 +125,10 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
             if (selectedBus == busIndex) { return; }
 
-            //  BusSelectorSemaphore.Wait();
-            try
-            {
-                byte mask = BitHelpers.SetBit(0x00, busIndex, true);
-                Write(mask);
-
-                var buf = ReadBytes(1);
-                byte readBack = buf.Length > 0 ? buf[0] : (byte)0xFF;
-
-                if (readBack != mask)
-                {
-                    throw new InvalidOperationException($"Failed to switch bus. Expected 0x{mask:X2}, got 0x{readBack:X2}");
-                }
-
-                selectedBus = busIndex;
-            }
-            finally
-            {
-                //     BusSelectorSemaphore.Release();
-            }
+            byte mask = BitHelpers.SetBit(0x00, busIndex, true);
+            i2cComms.Write(new byte[] { mask });
+            selectedBus = busIndex;
         }
 
-        /// <summary>
-        /// Write a single byte to the peripheral.
-        /// </summary>
-        /// <param name="value">Value to be written (8-bits)</param>
-        void Write(byte value)
-        {
-            I2cBus.Write(Address, [value]);
-        }
-
-        /// <summary>
-        /// Read bytes from the I2cBus
-        /// </summary>
-        /// <param name="numberOfBytes"></param>
-        byte[] ReadBytes(ushort numberOfBytes)
-        {
-            var data = new byte[numberOfBytes];
-            I2cBus.Read(Address, data);
-            return data;
-        }
     }
 }

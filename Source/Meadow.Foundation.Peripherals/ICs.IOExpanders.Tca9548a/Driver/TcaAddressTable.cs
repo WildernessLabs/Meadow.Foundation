@@ -8,12 +8,12 @@
         /// <summary>
         /// Minimum/lowest address
         /// </summary>
-        public static byte MinAddress = 0x70;
+        public const byte MinAddress = 0x70;
 
         /// <summary>
         /// Maximum/highest address
         /// </summary>
-        public static byte MaxAddress = 0x77;
+        public const byte MaxAddress = 0x77;
 
         /// <summary>
         /// Get the device address from the high/low status of pins.
@@ -38,7 +38,7 @@
             0   1	0	0	1	1	0	 0x76	  38
             0   1	0	0	1	1	1	 0x77	  39
             */
-            var address = 70;
+            var address = 0x70;
             address |= (pinA0 ? 1 : 0);
             address |= (pinA1 ? 2 : 0);
             address |= (pinA2 ? 4 : 0);
