@@ -35,7 +35,7 @@ partial class Bmx280
         var pvar2 = pvar1 * pvar1 * compensationData.P6;
         pvar2 += (pvar1 * compensationData.P5) << 17;
         pvar2 += (long)compensationData.P4 << 35;
-        pvar1 = ((pvar1 * pvar1 * compensationData.P8) >> 8) + ((pvar1 * compensationData.P2) << 12);
+        pvar1 = ((pvar1 * pvar1 * compensationData.P3) >> 8) + ((pvar1 * compensationData.P2) << 12);
         pvar1 = ((((long)1 << 47) + pvar1) * compensationData.P1) >> 33;
         if (pvar1 == 0)
         {
@@ -100,7 +100,7 @@ partial class Bmx280
         compensationData.H2 = (short)(readBuffer.Span[0] + (readBuffer.Span[1] << 8));
         compensationData.H3 = readBuffer.Span[2];
         compensationData.H4 = (short)((readBuffer.Span[3] << 4) + (readBuffer.Span[4] & 0xf));
-        compensationData.H5 = (short)(((readBuffer.Span[4] & 0xf) >> 4) + (readBuffer.Span[5] << 4));
+        compensationData.H5 = (short)((readBuffer.Span[4] >> 4) + (readBuffer.Span[5] << 4));
         compensationData.H6 = (sbyte)readBuffer.Span[6];
     }
 }
