@@ -66,13 +66,13 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             get => heaterProfile;
             set
             {
+                if (!Enum.IsDefined(typeof(HeaterProfileType), value))
+                {
+                    throw new ArgumentOutOfRangeException(nameof(value));
+                }
+
                 if (heaterConfigs.Exists(config => config.HeaterProfile == value))
                 {
-                    if (!Enum.IsDefined(typeof(HeaterProfileType), value))
-                    {
-                        throw new ArgumentOutOfRangeException(nameof(value));
-                    }
-
                     var profile = busComms.ReadRegister((byte)Registers.CTRL_GAS_1);
                     profile = (byte)((profile & 0xF0) | (byte)value);
 
@@ -137,7 +137,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             set
             {
                 var gasConversion = busComms.ReadRegister((byte)Registers.CTRL_GAS_1);
-                byte mask = 0x10;
+                byte mask = 0x20;
                 gasConversion = (byte)((gasConversion & (byte)~mask) | Convert.ToByte(value) << 5);
 
                 busComms.WriteRegister((byte)Registers.CTRL_GAS_1, gasConversion);
@@ -409,7 +409,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
             if (GasConversionIsEnabled && heaterConfigs.Exists(config => config.HeaterProfile == profile))
             {
-                measDuration += heaterConfigs.Single(config => config.HeaterProfile == profile).HeaterDuration.Milliseconds;
+                measDuration += heaterConfigs.Single(config => config.HeaterProfile == profile).HeaterDuration.TotalMilliseconds;
             }
 
             return TimeSpan.FromMilliseconds(Math.Ceiling(measDuration));
@@ -625,7 +625,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             byte factor = 0;
             byte durationValue;
 
-            ushort shortDuration = (ushort)duration.Milliseconds;
+            ushort shortDuration = (ushort)duration.TotalMilliseconds;
             // check if value exceeds maximum duration
             if (shortDuration > 0xFC0)
             {
