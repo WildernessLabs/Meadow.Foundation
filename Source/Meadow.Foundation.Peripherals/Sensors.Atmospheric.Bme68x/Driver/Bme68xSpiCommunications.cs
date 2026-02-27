@@ -38,7 +38,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             SetPageForRegister(address);
 
             //adjust register for paging
-            if (address > 0x7F) { address -= 0x7F; }
+            if (address > 0x7F) { address -= 0x80; }
 
             return base.ReadRegister(address);
         }
@@ -48,7 +48,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             SetPageForRegister(address);
 
             //adjust register for paging
-            if (address > 0x7F) { address -= 0x7F; }
+            if (address > 0x7F) { address -= 0x80; }
 
             return base.ReadRegisterAsUShort(address, order);
         }
@@ -58,7 +58,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             SetPageForRegister(startRegister);
 
             //adjust register for paging
-            if (startRegister > 0x7F) { startRegister -= 0x7F; }
+            if (startRegister > 0x7F) { startRegister -= 0x80; }
 
             base.ReadRegister(startRegister, readBuffer);
         }

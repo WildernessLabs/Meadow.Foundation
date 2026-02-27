@@ -31,7 +31,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <param name="chipSelectPort">The chip select pin</param>
         /// <param name="configuration">The BMP68x configuration (optional)</param>
         public Bme680(ISpiBus spiBus, IDigitalOutputPort chipSelectPort, Configuration? configuration = null) :
-            base(spiBus, chipSelectPort)
+            base(spiBus, chipSelectPort, configuration)
         { }
     }
 }
