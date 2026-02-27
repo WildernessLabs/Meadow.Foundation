@@ -74,17 +74,17 @@ namespace Sensors.Cameras.Mlx90640_Sample
                         }
                         else
                         {
-                            //Write the ASCII art character
+                            //Write the ASCII art character (thresholds in Celsius)
                             char c = '&';
-                            if (t < 68) c = ' ';
-                            else if (t < 73.4) c = '.';
-                            else if (t < 77) c = '-';
-                            else if (t < 80.6) c = '*';
-                            else if (t < 84) c = '+';
-                            else if (t < 87) c = 'x';
-                            else if (t < 91) c = '%';
-                            else if (t < 95) c = '#';
-                            else if (t < 98.6) c = '$';
+                            if (t < 20) c = ' ';
+                            else if (t < 23) c = '.';
+                            else if (t < 25) c = '-';
+                            else if (t < 27) c = '*';
+                            else if (t < 29) c = '+';
+                            else if (t < 31) c = 'x';
+                            else if (t < 33) c = '%';
+                            else if (t < 35) c = '#';
+                            else if (t < 37) c = '$';
                             logLine.Append(c);
                         }
                     }
