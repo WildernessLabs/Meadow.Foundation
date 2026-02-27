@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace Meadow.Foundation.Sensors.Atmospheric;
 
 /// <summary>
-/// Represents a Boche BMP180 temperature and pressure sensor
+/// Represents a Bosch BMP180 temperature and pressure sensor
 /// </summary>
 public partial class Bmp180 :
     ByteCommsSensorBase<(Units.Temperature? Temperature, Pressure? Pressure)>,
@@ -76,7 +76,7 @@ public partial class Bmp180 :
     /// <param name="deviceMode">The device mode</param>
     public Bmp180(II2cBus i2cBus, byte address = (byte)Addresses.Default,
         DeviceMode deviceMode = DeviceMode.Standard)
-            : base(i2cBus, address, 2, 2)
+            : base(i2cBus, address, 3, 2)
     {
         oversamplingSetting = (byte)deviceMode;
 
@@ -123,14 +123,7 @@ public partial class Bmp180 :
         x1 = (_b2 * (b6 * b6 >> 12)) >> 11;
         x2 = _ac2 * b6 >> 11;
         x3 = x1 + x2;
-        var b3 = oversamplingSetting switch
-        {
-            0 => ((_ac1 * 4 + x3) + 2) >> 2,
-            1 => ((_ac1 * 4 + x3) + 2) >> 1,
-            2 => ((_ac1 * 4 + x3) + 2),
-            3 => ((_ac1 * 4 + x3) + 2) << 1,
-            _ => throw new Exception("Oversampling setting must be 0-3"),
-        };
+        var b3 = (((_ac1 * 4 + x3) << oversamplingSetting) + 2) >> 2;
         x1 = _ac3 * b6 >> 13;
         x2 = (_b1 * (b6 * b6 >> 12)) >> 16;
         x3 = ((x1 + x2) + 2) >> 2;
@@ -156,18 +149,16 @@ public partial class Bmp180 :
 
         Thread.Sleep(5);
 
-        WriteBuffer.Span[0] = 0xf6;
-        BusComms?.Write(WriteBuffer.Span[0]);
+        BusComms?.ReadRegister(0xf6, ReadBuffer.Span[0..2]);
 
-        BusComms?.Read(ReadBuffer.Span[0..2]);
-
-        return ((ReadBuffer.Span[0] << 8) | ReadBuffer.Span[1]);
+        return (ReadBuffer.Span[0] << 8) | ReadBuffer.Span[1];
     }
 
     private long ReadUncompensatedPressure()
     {
         WriteBuffer.Span[0] = 0xf4;
         WriteBuffer.Span[1] = (byte)(0x34 + (oversamplingSetting << 6));
+        BusComms?.Write(WriteBuffer.Span[0..2]);
 
         Thread.Sleep(pressureWaitTime[oversamplingSetting]);
 
