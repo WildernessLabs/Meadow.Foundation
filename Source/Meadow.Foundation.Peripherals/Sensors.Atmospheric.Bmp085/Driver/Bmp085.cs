@@ -122,14 +122,7 @@ public partial class Bmp085 :
         x1 = (_b2 * (b6 * b6 >> 12)) >> 11;
         x2 = _ac2 * b6 >> 11;
         x3 = x1 + x2;
-        var b3 = oversamplingSetting switch
-        {
-            0 => (_ac1 * 4 + x3 + 2) >> 2,
-            1 => (_ac1 * 4 + x3 + 2) >> 1,
-            2 => (_ac1 * 4 + x3 + 2),
-            3 => (_ac1 * 4 + x3 + 2) << 1,
-            _ => throw new Exception("Oversampling setting must be 0-3"),
-        };
+        var b3 = (((_ac1 * 4 + x3) << oversamplingSetting) + 2) >> 2;
 
         x1 = _ac3 * b6 >> 13;
         x2 = (_b1 * (b6 * b6 >> 12)) >> 16;
@@ -156,10 +149,7 @@ public partial class Bmp085 :
 
         Thread.Sleep(5);
 
-        WriteBuffer.Span[0] = 0xf6;
-        BusComms?.Write(WriteBuffer.Span[0]);
-
-        BusComms?.Read(ReadBuffer.Span[0..2]);
+        BusComms?.ReadRegister(0xf6, ReadBuffer.Span[0..2]);
 
         return (ReadBuffer.Span[0] << 8) | ReadBuffer.Span[1];
     }
@@ -168,6 +158,7 @@ public partial class Bmp085 :
     {
         WriteBuffer.Span[0] = 0xf4;
         WriteBuffer.Span[1] = (byte)(0x34 + (oversamplingSetting << 6));
+        BusComms?.Write(WriteBuffer.Span[0..2]);
 
         Thread.Sleep(pressureWaitTime[oversamplingSetting]);
 
