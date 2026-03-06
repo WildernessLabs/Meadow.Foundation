@@ -89,7 +89,6 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// Is there sensor measurement data ready
         /// </summary>
         /// <returns>True if ready</returns>
-        /// TODO
         protected bool IsDataReady()
         {
             return ReadRegister(RegisterAddresses.IsDataReady)[1] == 1;
