@@ -550,10 +550,7 @@ namespace Meadow.Foundation.Graphics.Buffers
             {
                 if (disposing && createdBuffer)
                 {
-                    if (disposing)
-                    {
-                        Buffer = [];
-                    }
+                    Buffer = [];
                 }
             }
             isDisposed = true;
