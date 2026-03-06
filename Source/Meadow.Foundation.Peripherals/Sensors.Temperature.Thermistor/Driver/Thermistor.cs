@@ -48,7 +48,7 @@ public class Thermistor : PollingSensorBase<Units.Temperature>, ISamplingTempera
     public double BetaValue { get; set; }
 
     /// <summary>
-    /// Resistance at reference temperature (typically 25°C)
+    /// Resistance at reference temperature (typically 25ï¿½C)
     /// </summary>
     public Resistance ReferenceResistance { get; set; }
 
@@ -76,7 +76,7 @@ public class Thermistor : PollingSensorBase<Units.Temperature>, ISamplingTempera
     /// <param name="placement">The placement of the thermistor in the circuit (high-side or low-side)</param>
     /// <param name="referenceVoltage">The reference voltage for the circuit</param>
     /// <param name="referenceResistance">The resistance at reference temperature</param>
-    /// <param name="referenceTemperature">The reference temperature (typically 25°C)</param>
+    /// <param name="referenceTemperature">The reference temperature (typically 25ï¿½C)</param>
     /// <param name="betaValue">The beta value for NTC thermistors</param>
     /// <param name="updateInterval">The time between reads</param>
     public Thermistor(
@@ -156,7 +156,7 @@ public class Thermistor : PollingSensorBase<Units.Temperature>, ISamplingTempera
     }
 
     /// <summary>
-    /// Gets the current temperature
+    /// Synchronously reads the thermistor and returns the current calculated temperature, applying any calibration offset.
     /// </summary>
     /// <returns>The current temperature</returns>
     public Units.Temperature GetTemperature()

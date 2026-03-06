@@ -110,7 +110,7 @@ public class ListBox : LayoutBase
     }
 
     /// <summary>
-    /// Gets or sets the foreground color of list items
+    /// The text color applied to all unselected list item labels.
     /// </summary>
     public Color TextColor
     {
@@ -175,7 +175,7 @@ public class ListBox : LayoutBase
     }
 
     /// <summary>
-    /// Gets or sets the index of the top visible Item
+    /// The zero-based index of the data item displayed in the topmost visible row of the list box.
     /// </summary>
     public int TopIndex
     {

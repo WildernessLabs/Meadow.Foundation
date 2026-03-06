@@ -23,7 +23,7 @@ public abstract class ClickableControl : ThemedControl, IClickableControl
     private TimeSpan _longClickDuration = TimeSpan.FromMilliseconds(500);
 
     /// <summary>
-    /// Gets or sets the Enabled state of the control
+    /// When false, click and long-click events are suppressed and the control does not respond to touch input.
     /// </summary>
     public bool IsEnabled { get; set; } = true;
 

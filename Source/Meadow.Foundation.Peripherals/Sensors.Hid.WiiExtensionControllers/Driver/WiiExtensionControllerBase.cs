@@ -80,7 +80,7 @@ namespace Meadow.Foundation.Sensors.Hid
         }
 
         /// <summary>
-        /// Gets the device ID
+        /// Reads and returns the 6-byte identification string from the Wii extension controller, identifying the controller type.
         /// </summary>
         /// <returns>The ID as a byte</returns>
         public byte[] GetIdentification()

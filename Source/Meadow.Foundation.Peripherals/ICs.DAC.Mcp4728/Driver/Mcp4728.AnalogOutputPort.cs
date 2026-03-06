@@ -76,7 +76,7 @@ public partial class Mcp4728
         public Units.Voltage VoltageResolution { get; internal set; }
 
         /// <summary>
-        /// Gets or sets the Channel Settings for the port
+        /// The DAC channel configuration, including gain, power-down mode, and voltage reference selection.
         /// </summary>
         public ChannelSettings Settings { get; set; }
 

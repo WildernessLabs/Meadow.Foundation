@@ -116,7 +116,7 @@ namespace Meadow.Foundation.Graphics
         }
 
         /// <summary>
-        /// Gets the hash code for this instance
+        /// Returns a hash code derived from the X and Y coordinate values of this point.
         /// </summary>
         public override int GetHashCode()
         {

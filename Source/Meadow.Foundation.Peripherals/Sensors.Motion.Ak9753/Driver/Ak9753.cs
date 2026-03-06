@@ -59,7 +59,7 @@ namespace Meadow.Foundation.Sensors.Motion
         }
 
         /// <summary>
-        /// Sets the sensor operating mode
+        /// Writes the desired operating mode (e.g., continuous, single-shot, or standby) to the ECNTL1 register.
         /// </summary>
         /// <param name="mode">Desired operating mode</param>
         public void SetMode(Mode mode)

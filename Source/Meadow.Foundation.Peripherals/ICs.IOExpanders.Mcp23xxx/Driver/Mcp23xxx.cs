@@ -365,7 +365,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         }
 
         /// <summary>
-        /// Sets the direction of a port
+        /// Configures a pin on the MCP23xxx as either an input or output by updating the IODIR register for its port bank.
         /// </summary>
         /// <param name="pin">The pin representing the port</param>
         /// <param name="direction">The port direction (input or output)</param>
@@ -553,7 +553,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         }
 
         /// <summary>
-        /// Sets the pin back to an input
+        /// Reconfigures the specified pin as a digital input, releasing it from output mode.
         /// </summary>
         /// <param name="pin"></param>
         protected void ResetPin(IPin pin) => SetPortDirection(pin, PortDirectionType.Input);

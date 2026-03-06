@@ -57,7 +57,7 @@ public class DeepSleep
     public void SetTime(DateTimeOffset time) => rtc.SetTime(time);
 
     /// <summary>
-    /// Sets the alarm time
+    /// Programs the underlying RTC to assert its alarm interrupt at the specified date and time, enabling deep sleep wake-up.
     /// </summary>
     /// <param name="alarmTime">The DateTimeOffset to trigger the alarm</param>
     public void SetAlarm(DateTimeOffset alarmTime) => rtc.SetAlarm(alarmTime);

@@ -18,7 +18,7 @@ public class ScheduleEventTriggeredEventArgs : EventArgs
     public IScheduleEvent ScheduleEvent { get; }
 
     /// <summary>
-    /// Gets the data for this event
+    /// Optional payload string associated with the triggered schedule event, or null if none was provided.
     /// </summary>
     public string? Data { get; }
 

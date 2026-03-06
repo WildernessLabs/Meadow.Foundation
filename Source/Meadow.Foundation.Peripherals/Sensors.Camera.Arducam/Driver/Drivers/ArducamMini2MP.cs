@@ -52,7 +52,7 @@ public partial class ArducamMini2MP : Arducam
     }
 
     /// <summary>
-    /// Sets the Jpeg capture resolution
+    /// Configures the OV2640 sensor register set to capture JPEG images at the specified resolution.
     /// </summary>
     /// <param name="size">The desired image size</param>
     public override async Task SetJpegSize(ImageSize size)

@@ -34,7 +34,7 @@ public class LineSeriesPointCollection : IEnumerable<LineSeriesPoint>
     public int Count => _points.Count;
 
     /// <summary>
-    /// Gets the last point in the collection
+    /// The most recently added data point in the collection, or a default value if the collection is empty.
     /// </summary>
     public LineSeriesPoint Last => _points.LastOrDefault();
 

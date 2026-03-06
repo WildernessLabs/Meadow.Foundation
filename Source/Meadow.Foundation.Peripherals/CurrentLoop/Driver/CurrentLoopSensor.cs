@@ -45,7 +45,7 @@ public abstract class CurrentLoopSensor
     }
 
     /// <summary>
-    /// Sets the currently set output current
+    /// Reads and returns the output current currently configured on the transmitter.
     /// </summary>
     public Current GetOutputCurrent()
     {

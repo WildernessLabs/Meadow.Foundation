@@ -33,7 +33,7 @@ public class SimulatedSpstSwitch : ISwitch
     }
 
     /// <summary>
-    /// Sets the state of the simulated switch
+    /// Programmatically opens or closes the simulated switch, firing the Changed event if the state changes.
     /// </summary>
     /// <param name="newState"></param>
     public void SetState(bool newState)

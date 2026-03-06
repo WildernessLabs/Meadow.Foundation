@@ -20,7 +20,7 @@ public class SimulatedRelay : IRelay, ISimulatedSensor
     public RelayType Type => RelayType.NormallyOpen;
 
     /// <summary>
-    /// Gets the name of the Relay
+    /// The human-readable identifier assigned to this simulated relay instance.
     /// </summary>
     public string Name { get; }
 

@@ -483,7 +483,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         }
 
         /// <summary>
-        /// Sets the direction of a port
+        /// Configures a GPIO pin on the SC16IS7x2 as either an input or output by updating the IODir register.
         /// </summary>
         /// <param name="pin">The pin representing the port</param>
         /// <param name="direction">The port direction (input or output)</param>

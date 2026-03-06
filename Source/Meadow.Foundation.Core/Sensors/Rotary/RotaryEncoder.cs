@@ -26,7 +26,7 @@ public class RotaryEncoder : IRotaryEncoder, IDisposable
     protected IDigitalInterruptPort BPhasePort { get; }
 
     /// <summary>
-    /// Gets the last direction of rotation
+    /// The direction of the most recent rotation detected, or null if no rotation has occurred yet.
     /// </summary>
     public RotationDirection? LastDirectionOfRotation { get; protected set; }
 

@@ -18,12 +18,12 @@ public class ScrollingTextArea : LayoutBase
     public int ItemSpacing { get; } = 1;
 
     /// <summary>
-    /// Gets the number of rows shown
+    /// The number of text rows that fit within the visible height of the control, based on the font height and item spacing.
     /// </summary>
     public int RowCount { get; }
 
     /// <summary>
-    /// Gets or sets the default row text color
+    /// The text color applied to rows that have not been given an explicit color override.
     /// </summary>
     public Color DefaultRowColor { get; set; }
 

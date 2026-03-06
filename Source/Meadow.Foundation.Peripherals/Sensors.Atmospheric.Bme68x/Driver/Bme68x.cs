@@ -365,7 +365,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         }
 
         /// <summary>
-        /// Sets the power mode to the given mode
+        /// Writes the specified power mode (sleep, forced, or parallel) to the CTRL_MEAS register and records it as the last running mode.
         /// </summary>
         /// <param name="powerMode">The <see cref="PowerMode"/> to set.</param>
         public void SetPowerMode(PowerMode powerMode)

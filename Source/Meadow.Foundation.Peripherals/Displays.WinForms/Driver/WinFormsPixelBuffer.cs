@@ -20,19 +20,19 @@ internal class WinFormsPixelBuffer : IPixelBuffer, IDisposable
     public int Height { get; private set; }
 
     /// <summary>
-    /// Gets the color mode of the buffer
+    /// The pixel color encoding format used by this buffer (e.g., 24bpp RGB888).
     /// </summary>
     public ColorMode ColorMode { get; }
     /// <summary>
-    /// Gets the buffer bit depth
+    /// The number of bits used to represent each pixel; always 24 for this buffer implementation.
     /// </summary>
     public int BitDepth => 24;
     /// <summary>
-    /// Gets the buffer size in bytes
+    /// The total size of the backing byte array, in bytes, equal to stride times height.
     /// </summary>
     public int ByteCount => buffer.Length;
     /// <summary>
-    /// Gets the buffer backing array
+    /// The raw byte array that backs the pixel data for this buffer.
     /// </summary>
     public byte[] Buffer => buffer;
     /// <summary>
@@ -113,7 +113,7 @@ internal class WinFormsPixelBuffer : IPixelBuffer, IDisposable
     }
 
     /// <summary>
-    /// Gets the color of a single pixel
+    /// Reads and returns the color of the pixel at the specified (x, y) coordinates.
     /// </summary>
     /// <param name="x"></param>
     /// <param name="y"></param>
@@ -138,7 +138,7 @@ internal class WinFormsPixelBuffer : IPixelBuffer, IDisposable
     }
 
     /// <summary>
-    /// Sets the color of a single pixel
+    /// Writes the specified color to the pixel at the given (x, y) coordinates in the backing bitmap.
     /// </summary>
     /// <param name="x"></param>
     /// <param name="y"></param>

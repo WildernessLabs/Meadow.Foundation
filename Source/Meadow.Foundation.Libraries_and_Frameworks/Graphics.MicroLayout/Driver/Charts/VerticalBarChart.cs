@@ -49,7 +49,7 @@ public class VerticalBarChart : ChartControl
     }
 
     /// <summary>
-    /// Gets or sets the padding around a bar
+    /// The spacing, in pixels, applied around each bar as a margin; the gap between adjacent bars equals twice this value.
     /// </summary>
     /// <remarks>This property behaves like a margin, so the space between any two bars will be twice this value</remarks>
     public int BarSpacing

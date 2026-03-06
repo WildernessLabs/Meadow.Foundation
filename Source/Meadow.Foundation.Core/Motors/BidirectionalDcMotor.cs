@@ -37,7 +37,7 @@ public class BidirectionalDcMotor
     private readonly bool _energizeHigh;
 
     /// <summary>
-    /// Gets the current run state of the motor
+    /// The current running state of the motor (forward, reverse, or stopped), derived from the output pin logic levels.
     /// </summary>
     public MotorState State
     {

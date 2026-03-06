@@ -10,11 +10,11 @@ public class LineChartSeries
     /// </summary>
     public bool ShowLines { get; set; }
     /// <summary>
-    /// Gets or sets the color of lines between points
+    /// The color used to draw connecting lines between data points when ShowLines is enabled.
     /// </summary>
     public Color LineColor { get; set; }
     /// <summary>
-    /// Gets or sets the width of lines between points
+    /// The stroke width, in pixels, of lines drawn between data points when ShowLines is enabled.
     /// </summary>
     public int LineStroke { get; set; }
 
@@ -32,7 +32,7 @@ public class LineChartSeries
     public int PointSize { get; set; }
 
     /// <summary>
-    /// Gets or sets the points in the series
+    /// The collection of X/Y data points that define the data set for this series.
     /// </summary>
     public LineSeriesPointCollection Points { get; set; } = new();
 }

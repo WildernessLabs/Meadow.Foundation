@@ -163,7 +163,7 @@ public partial class Ab0805 : II2cPeripheral, IRealTimeClock
     }
 
     /// <summary>
-    /// Sets the alarm time
+    /// Programs the RTC alarm to trigger at the specified date and time, enabling the interrupt and FOUT output.
     /// </summary>
     /// <param name="alarmTime">The DateTimeOffset to trigger the alarm</param>
     public void SetAlarm(DateTimeOffset alarmTime)
