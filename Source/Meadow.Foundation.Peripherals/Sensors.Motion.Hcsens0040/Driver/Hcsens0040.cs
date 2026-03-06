@@ -4,7 +4,10 @@ using System;
 namespace Meadow.Foundation.Sensors.Motion
 {
     /// <summary>
-    /// Create a new Hscens0040 object
+    /// Driver for the HCSENS0040 (RCWL-0516) microwave Doppler radar motion sensor.
+    /// The output pin goes high for approximately 2 seconds when motion is detected.
+    /// The timer is retriggerable — sustained motion keeps the output high continuously.
+    /// The output goes low approximately 2 seconds after the last detected movement.
     /// </summary>
     public class Hcsens0040 : IDisposable
     {
@@ -19,9 +22,16 @@ namespace Meadow.Foundation.Sensors.Motion
         public delegate void MotionChange(object sender);
 
         /// <summary>
-        /// Event raised when motion is detected
+        /// Event raised when motion is first detected (rising edge). The output remains
+        /// high while motion continues due to the sensor's retriggerable 2-second timer.
         /// </summary>
         public event MotionChange OnMotionDetected = default!;
+
+        /// <summary>
+        /// Event raised when motion ends (falling edge), approximately 2 seconds after
+        /// the last detected movement.
+        /// </summary>
+        public event MotionChange OnMotionEnded = default!;
 
         /// <summary>
         /// Is the object disposed
@@ -34,19 +44,19 @@ namespace Meadow.Foundation.Sensors.Motion
         readonly bool createdPort = false;
 
         /// <summary>
-        /// Create a new Parallax PIR object connected to an input pin and IO Device
+        /// Create a new Hcsens0040 object connected to an input pin
         /// </summary>
-        /// <param name="inputPin">The input pin</param>        
+        /// <param name="inputPin">The input pin</param>
         public Hcsens0040(IPin inputPin) :
-            this(inputPin.CreateDigitalInterruptPort(InterruptMode.EdgeRising, ResistorMode.InternalPullDown))
+            this(inputPin.CreateDigitalInterruptPort(InterruptMode.EdgeBoth, ResistorMode.InternalPullDown))
         {
             createdPort = true;
         }
 
         /// <summary>
-        /// Create a new Parallax PIR object connected to a interrupt port
+        /// Create a new Hcsens0040 object connected to a digital interrupt port
         /// </summary>
-        /// <param name="digitalInputPort"></param>        
+        /// <param name="digitalInputPort">The digital interrupt port. Must be configured for EdgeBoth.</param>
         public Hcsens0040(IDigitalInterruptPort digitalInputPort)
         {
             if (digitalInputPort != null)
@@ -56,18 +66,22 @@ namespace Meadow.Foundation.Sensors.Motion
             }
             else
             {
-                throw new Exception("Invalid pin for the PIR interrupts.");
+                throw new Exception("Invalid digital interrupt port for Hcsens0040.");
             }
         }
 
         /// <summary>
-        /// Catch the PIR motion change interrupts and work out which interrupt should be raised
+        /// Handles rising and falling edge interrupts and raises the appropriate motion event
         /// </summary>
         private void DigitalInputPortChanged(object sender, DigitalPortResult e)
         {
-            if (digitalInputPort.State == true)
+            if (e.New.State)
             {
                 OnMotionDetected?.Invoke(this);
+            }
+            else
+            {
+                OnMotionEnded?.Invoke(this);
             }
         }
 
