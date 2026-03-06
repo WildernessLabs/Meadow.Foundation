@@ -7,7 +7,7 @@ using static Meadow.Foundation.Sensors.Motion.C4001;
 namespace Meadow.Foundation.Sensors.Motion;
 
 /// <summary>
-/// Create a new simulated C4001 object
+/// Simulated C4001 radar presence and motion sensor driver for desktop/testing use
 /// </summary>
 public class SimulatedC4001 : IC4001, IDisposable
 {

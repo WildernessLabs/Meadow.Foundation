@@ -4,7 +4,7 @@ using System;
 namespace Meadow.Foundation.Sensors.Motion;
 
 /// <summary>
-/// Create a new C4001 object
+/// Represents the C4001 radar presence and motion sensor driver
 /// </summary>
 public partial class C4001 : IC4001, IDisposable
 {
