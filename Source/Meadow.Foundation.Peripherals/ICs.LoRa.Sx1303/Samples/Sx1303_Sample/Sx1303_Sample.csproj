@@ -1,0 +1,25 @@
+<Project Sdk="Meadow.Sdk/1.1.0">
+  <PropertyGroup>
+    <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
+    <Company>Wilderness Labs, Inc</Company>
+    <Authors>Wilderness Labs, Inc</Authors>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <OutputType>Library</OutputType>
+    <AssemblyName>App</AssemblyName>
+    <LangVersion>12.0</LangVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Remove="appconfig.yaml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="appconfig.yaml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <!-- Target Meadow.Linux for Raspberry Pi -->
+    <ProjectReference Include="..\..\..\..\..\..\..\Meadow.Core\Source\implementations\linux\Meadow.Linux\Meadow.Linux.csproj" />
+    <ProjectReference Include="..\..\Driver\ICs.LoRa.Sx1303.csproj" />
+  </ItemGroup>
+</Project>
