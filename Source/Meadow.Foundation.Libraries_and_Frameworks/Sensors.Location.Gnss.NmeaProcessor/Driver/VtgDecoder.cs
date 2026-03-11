@@ -24,6 +24,20 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
         public string Name => "Velocity made good";
 
         /// <summary>
+        /// Process a GPVTG sentence string
+        /// </summary>
+        /// <param name="sentence">The raw NMEA sentence string</param>
+        public void Process(string sentence)
+        {
+            if (!NmeaSentence.TryParse(sentence, out var s))
+            {
+                Resolver.Log.Debug($"Failure parsing {sentence}", Constants.LogGroup);
+                return;
+            }
+            Process(s);
+        }
+
+        /// <summary>
         /// Process the data from a VTG message.
         /// </summary>
         /// <param name="sentence">String array of the message components for a VTG message.</param>

@@ -7,7 +7,7 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
     /// Process GLL (Geographic position Latitude / Longitude) messages from a
     /// GPS receiver.
     /// </summary>
-    public class GllDecoder : INmeaDecoder, IGnssPositionEventSource
+    public class GllDecoder : INmeaDecoder
     {
         /// <inheritdoc/>
         public event EventHandler<GnssPositionInfo>? PositionReceived;
@@ -23,12 +23,17 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
         public string Name => "Geographic Position - Latitude/Longitude";
 
         /// <summary>
-        /// Process a GPRMC sentence string
+        /// Process a GPGLL sentence string
         /// </summary>
-        /// <param name="sentence">The sentence</param>
+        /// <param name="sentence">The raw NMEA sentence string</param>
         public void Process(string sentence)
         {
-            Process(NmeaSentence.From(sentence));
+            if (!NmeaSentence.TryParse(sentence, out var s))
+            {
+                Resolver.Log.Debug($"Failure parsing {sentence}", Constants.LogGroup);
+                return;
+            }
+            Process(s);
         }
 
         /// <summary>

@@ -19,8 +19,14 @@ public interface INmeaDecoder
     string Name { get; }
 
     /// <summary>
+    /// Process a raw NMEA sentence string
+    /// </summary>
+    /// <param name="sentence">The raw NMEA sentence string</param>
+    void Process(string sentence);
+
+    /// <summary>
     /// Process the message from the GPS
     /// </summary>
-    /// <param name="sentence">String array of the elements of the message</param>
+    /// <param name="sentence">Parsed NMEA sentence</param>
     void Process(NmeaSentence sentence);
 }

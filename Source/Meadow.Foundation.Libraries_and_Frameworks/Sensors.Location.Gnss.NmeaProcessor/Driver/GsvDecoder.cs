@@ -57,6 +57,20 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
         public string Name => "Satellites in view";
 
         /// <summary>
+        /// Process a GPGSV sentence string
+        /// </summary>
+        /// <param name="sentence">The raw NMEA sentence string</param>
+        public void Process(string sentence)
+        {
+            if (!NmeaSentence.TryParse(sentence, out var s))
+            {
+                Resolver.Log.Debug($"Failure parsing {sentence}", Constants.LogGroup);
+                return;
+            }
+            Process(s);
+        }
+
+        /// <summary>
         /// Process the message from the GPS.
         /// </summary>
         /// <param name="sentence">String array of the elements of the message.</param>

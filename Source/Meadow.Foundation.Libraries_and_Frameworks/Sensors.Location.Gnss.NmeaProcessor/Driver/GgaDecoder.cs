@@ -7,7 +7,7 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
     /// <summary>
     /// Decoder for GGA messages.
     /// </summary>
-    public class GgaDecoder : INmeaDecoder, IGnssPositionEventSource
+    public class GgaDecoder : INmeaDecoder
     {
         /// <inheritdoc/>
         public event EventHandler<GnssPositionInfo>? PositionReceived;
@@ -25,10 +25,15 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
         /// <summary>
         /// Process a GPGGA sentence string
         /// </summary>
-        /// <param name="sentence"></param>
+        /// <param name="sentence">The raw NMEA sentence string</param>
         public void Process(string sentence)
         {
-            Process(NmeaSentence.From(sentence));
+            if (!NmeaSentence.TryParse(sentence, out var s))
+            {
+                Resolver.Log.Debug($"Failure parsing {sentence}", Constants.LogGroup);
+                return;
+            }
+            Process(s);
         }
 
         /// <summary>

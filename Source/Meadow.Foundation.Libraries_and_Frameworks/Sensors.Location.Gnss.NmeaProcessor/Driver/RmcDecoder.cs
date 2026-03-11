@@ -7,7 +7,7 @@ namespace Meadow.Foundation.Sensors.Location.Gnss;
 /// <summary>
 /// Decode RMC - Recommended Minimum Specific GPS messages.
 /// </summary>
-public class RmcDecoder : INmeaDecoder, IGnssPositionEventSource
+public class RmcDecoder : INmeaDecoder
 {
     /// <inheritdoc/>
     public event EventHandler<GnssPositionInfo>? PositionReceived;

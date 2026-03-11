@@ -24,6 +24,20 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
         public string Name => "GSA - DOP and number of active satellites.";
 
         /// <summary>
+        /// Process a GPGSA sentence string
+        /// </summary>
+        /// <param name="sentence">The raw NMEA sentence string</param>
+        public void Process(string sentence)
+        {
+            if (!NmeaSentence.TryParse(sentence, out var s))
+            {
+                Resolver.Log.Debug($"Failure parsing {sentence}", Constants.LogGroup);
+                return;
+            }
+            Process(s);
+        }
+
+        /// <summary>
         /// Process the data from a GSA message
         /// </summary>
         /// <param name="sentence">String array of the message components for a GSA message.</param>
