@@ -52,6 +52,20 @@ namespace Meadow.Foundation.mikroBUS.Sensors
             InitializeMcp(sampleCount, sampleInterval);
         }
 
+        /// <summary>
+        /// Creates a new C420R object using a MikroBus connector
+        /// </summary>
+        /// <param name="connector">The MikroBus connector</param>
+        /// <param name="sampleCount">How many samples to take during a given reading (default is 5)</param>
+        /// <param name="sampleInterval">The time between sample readings (default is 5 seconds)</param>
+        public C420R(MikroBusConnector connector,
+            int sampleCount = 5,
+            TimeSpan? sampleInterval = null)
+        {
+            mcp3201 = new Mcp3201(connector.SpiBus, connector.Pins.CS);
+            InitializeMcp(sampleCount, sampleInterval);
+        }
+
         private void InitializeMcp(int sampleCount = 1, TimeSpan? sampleInterval = null)
         {
             analogInputPort = mcp3201.CreateAnalogInputPort(sampleCount, sampleInterval ?? TimeSpan.FromSeconds(5), ReferenceVoltage);
