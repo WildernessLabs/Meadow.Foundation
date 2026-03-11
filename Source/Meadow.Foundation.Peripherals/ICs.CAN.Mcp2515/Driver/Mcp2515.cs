@@ -529,6 +529,10 @@ public partial class Mcp2515 : ICanController, IDisposable
         SetMode(mode);
     }
 
+    /// <summary>
+    /// Enables or disables hardware acceptance filtering on both RX buffers
+    /// </summary>
+    /// <param name="enable">True to enable filtering; false to accept all frames</param>
     private void EnableMasksAndFilters(bool enable)
     {
         if (enable)
@@ -546,11 +550,18 @@ public partial class Mcp2515 : ICanController, IDisposable
         }
     }
 
+    /// <summary>
+    /// Writes the interrupt enable mask to the CANINTE register
+    /// </summary>
+    /// <param name="interrupts">The interrupt sources to enable</param>
     private void ConfigureInterrupts(InterruptEnable interrupts)
     {
         WriteRegister(Register.CANINTE, (byte)interrupts);
     }
 
+    /// <summary>
+    /// Zeroes all six RXF filter registers and both RXM mask registers
+    /// </summary>
     private void ClearFiltersAndMasks()
     {
         Span<byte> zeros12 = stackalloc byte[12];
@@ -561,6 +572,9 @@ public partial class Mcp2515 : ICanController, IDisposable
         WriteRegister(Register.RXM0SIDH, zeros8);
     }
 
+    /// <summary>
+    /// Clears all TX and RX control buffer registers to their reset state
+    /// </summary>
     private void ClearControlBuffers()
     {
         Span<byte> zeros14 = stackalloc byte[14];
@@ -572,6 +586,12 @@ public partial class Mcp2515 : ICanController, IDisposable
         WriteRegister(Register.RXB1CTRL, 0);
     }
 
+    /// <summary>
+    /// Reads a received CAN frame from the specified RX buffer, decodes the ID and payload,
+    /// and clears the corresponding interrupt flag
+    /// </summary>
+    /// <param name="bufferNumber">The RX buffer to read from</param>
+    /// <returns>The decoded <see cref="DataFrame"/> (Standard, Extended, RTR, or ExtendedRTR)</returns>
     private DataFrame ReadDataFrame(RxBufferNumber bufferNumber)
     {
         var sidh_reg = bufferNumber == RxBufferNumber.RXB0 ? Register.RXB0SIDH : Register.RXB1SIDH;

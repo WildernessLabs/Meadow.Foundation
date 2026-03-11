@@ -49,7 +49,7 @@ public partial class ProgrammableAnalogInputModule : ProgrammableAnalogInputModu
                 bus,
                 (Ads7128.Addresses)adcAddress);
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             Resolver.Log.Error("Failed to initialize module ICs", "ProgrammableAnalogInputModule");
             return;

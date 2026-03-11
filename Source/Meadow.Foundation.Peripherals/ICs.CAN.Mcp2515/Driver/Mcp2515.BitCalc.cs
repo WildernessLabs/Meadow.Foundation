@@ -5,6 +5,14 @@ namespace Meadow.Foundation.ICs.CAN;
 
 public partial class Mcp2515
 {
+    /// <summary>
+    /// Returns the CNF1/CNF2/CNF3 register values for the given oscillator and bitrate combination.
+    /// Uses a pre-calculated lookup table where available, falling back to
+    /// <see cref="CalculateConfigForOscillatorAndBitrate"/> for unsupported combinations.
+    /// </summary>
+    /// <param name="oscillator">The oscillator frequency</param>
+    /// <param name="bitrate">The desired CAN bitrate</param>
+    /// <returns>A tuple of (CFG1, CFG2, CFG3) register values</returns>
     private (byte CFG1, byte CFG2, byte CFG3) GetConfigForOscillatorAndBitrate(CanOscillator oscillator, CanBitrate bitrate)
     {
         switch (oscillator)
@@ -135,6 +143,14 @@ public partial class Mcp2515
         return CalculateConfigForOscillatorAndBitrate((int)oscillator, (int)bitrate);
     }
 
+    /// <summary>
+    /// Calculates CNF1/CNF2/CNF3 register values from first principles using a fixed 16-TQ bit timing model.
+    /// Used as a fallback when the oscillator/bitrate combination has no pre-calculated entry in the lookup table.
+    /// </summary>
+    /// <param name="oscillatorFreq">The oscillator frequency in Hz</param>
+    /// <param name="bitRate">The desired CAN bitrate in bps</param>
+    /// <returns>A tuple of (CFG1, CFG2, CFG3) register values</returns>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when the calculated BRP does not fit in 6 bits</exception>
     private (byte CFG1, byte CFG2, byte CFG3) CalculateConfigForOscillatorAndBitrate(int oscillatorFreq, int bitRate)
     {
         int TQ = 16; // Assume 16 time quanta per bit time
