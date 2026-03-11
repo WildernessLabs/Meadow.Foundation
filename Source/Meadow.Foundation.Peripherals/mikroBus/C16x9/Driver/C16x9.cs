@@ -62,7 +62,7 @@ namespace Meadow.Foundation.mikroBUS.Displays
         }
 
         /// <summary>
-        /// Creates a CharlieWing driver
+        /// Creates a C16x9 driver
         /// </summary>
         /// <param name="onOffPort">On/Off port</param>
         /// <param name="i2cBus">I2C bus</param>
@@ -90,12 +90,21 @@ namespace Meadow.Foundation.mikroBUS.Displays
         }
 
         /// <summary>
-        /// Creates a CharlieWing driver
+        /// Creates a C16x9 driver
         /// </summary>
-        /// <param name="onOffPin">IO pin to controller display on/off state</param>
+        /// <param name="onOffPin">IO pin to control display on/off state</param>
         /// <param name="i2cBus">I2C bus</param>
         public C16x9(IPin onOffPin, II2cBus i2cBus) :
             this(onOffPin.CreateDigitalOutputPort(), i2cBus, (byte)Is31fl3731.Addresses.Default)
+        {
+        }
+
+        /// <summary>
+        /// Creates a C16x9 driver using a MikroBus connector
+        /// </summary>
+        /// <param name="connector">The MikroBus connector</param>
+        public C16x9(MikroBusConnector connector) :
+            this(connector.Pins.RST.CreateDigitalOutputPort(), connector.I2cBus, (byte)Is31fl3731.Addresses.Default)
         {
         }
 
@@ -218,6 +227,7 @@ namespace Meadow.Foundation.mikroBUS.Displays
         /// <param name="top"></param>
         /// <param name="right"></param>
         /// <param name="bottom"></param>
+        /// <remarks>Partial updates are not supported on LED matrix displays; a full refresh is always performed.</remarks>
         public void Show(int left, int top, int right, int bottom)
         {
             Show();
