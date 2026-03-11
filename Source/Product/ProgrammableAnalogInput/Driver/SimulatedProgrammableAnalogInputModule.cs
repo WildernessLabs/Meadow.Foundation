@@ -1,17 +1,27 @@
-﻿using Meadow.Units;
+using Meadow.Units;
 using System;
 using System.Threading.Tasks;
 
 namespace Meadow.Foundation;
 
+/// <summary>
+/// Simulated implementation of the programmable analog input module for testing purposes
+/// </summary>
 public class SimulatedProgrammableAnalogInputModule : ProgrammableAnalogInputModuleBase
 {
     private readonly (ChannelConfig Config, double State)[] _configs;
     private readonly Voltage AdcReferenceVoltage = 3.3.Volts();
     private readonly Random _random = new Random();
 
+    /// <summary>
+    /// Gets the number of simulated analog input channels
+    /// </summary>
     public int ChannelCount { get; }
 
+    /// <summary>
+    /// Creates a new SimulatedProgrammableAnalogInputModule with the specified number of channels
+    /// </summary>
+    /// <param name="channels">The number of simulated channels to create</param>
     public SimulatedProgrammableAnalogInputModule(int channels = 8)
         : base(channels)
     {
@@ -26,6 +36,9 @@ public class SimulatedProgrammableAnalogInputModule : ProgrammableAnalogInputMod
         }
     }
 
+    /// <summary>
+    /// Starts background simulation, randomly walking each channel's raw voltage value over time
+    /// </summary>
     public void StartSimulation()
     {
         _ = Task.Run(async () =>
@@ -50,17 +63,24 @@ public class SimulatedProgrammableAnalogInputModule : ProgrammableAnalogInputMod
         });
     }
 
+    /// <summary>
+    /// Sets the raw ADC voltage for the specified channel
+    /// </summary>
+    /// <param name="channelNumber">The zero-based channel index to set</param>
+    /// <param name="voltage">The voltage to report when the channel is read</param>
     public void SetChannelRawVoltage(int channelNumber, Voltage voltage)
     {
         _configs[channelNumber].State = voltage.Volts;
     }
 
+    /// <inheritdoc/>
     public override void ConfigureChannel(ChannelConfig channelConfiguration)
     {
         _configs[channelConfiguration.ChannelNumber].Config = channelConfiguration;
         base.ConfigureChannel(channelConfiguration);
     }
 
+    /// <inheritdoc/>
     public override Voltage Read0_10V(int channelNumber)
     {
         switch (_configs[channelNumber].Config.ChannelType)
@@ -72,6 +92,7 @@ public class SimulatedProgrammableAnalogInputModule : ProgrammableAnalogInputMod
         }
     }
 
+    /// <inheritdoc/>
     public override Current Read0_20mA(int channelNumber)
     {
         switch (_configs[channelNumber].Config.ChannelType)
@@ -83,6 +104,7 @@ public class SimulatedProgrammableAnalogInputModule : ProgrammableAnalogInputMod
         }
     }
 
+    /// <inheritdoc/>
     public override Current Read4_20mA(int channelNumber)
     {
         switch (_configs[channelNumber].Config.ChannelType)
@@ -95,6 +117,7 @@ public class SimulatedProgrammableAnalogInputModule : ProgrammableAnalogInputMod
         }
     }
 
+    /// <inheritdoc/>
     public override Temperature ReadNtc(int channelNumber, double beta, Temperature referenceTemperature, Resistance resistanceAtRefTemp)
     {
         switch (_configs[channelNumber].Config.ChannelType)
@@ -106,6 +129,7 @@ public class SimulatedProgrammableAnalogInputModule : ProgrammableAnalogInputMod
         }
     }
 
+    /// <inheritdoc/>
     public override Voltage ReadChannelRaw(int channelNumber)
     {
         return new Voltage(_configs[channelNumber].State);

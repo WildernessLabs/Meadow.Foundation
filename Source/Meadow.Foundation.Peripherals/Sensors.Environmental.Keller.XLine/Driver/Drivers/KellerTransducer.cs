@@ -83,6 +83,13 @@ public class KellerTransducer : IKellerTransducer
         return registers.ExtractInt32();
     }
 
+    /// <summary>
+    /// Writes the specified Modbus device address to the holding register asynchronously.
+    /// </summary>
+    /// <remarks>Ensure that the Modbus client is properly initialized and connected before calling this
+    /// method. The address is written to register 0x020D at the configured communication address.</remarks>
+    /// <param name="address">The Modbus device address to write. Valid values are 0 through 255.</param>
+    /// <returns>A task that represents the asynchronous write operation.</returns>
     public Task WriteModbusAddress(byte address)
     {
         return modbusClient.WriteHoldingRegister(communicationAddress, 0x020D, address);

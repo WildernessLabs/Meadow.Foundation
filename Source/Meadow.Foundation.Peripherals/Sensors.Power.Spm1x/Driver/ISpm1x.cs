@@ -2,6 +2,10 @@
 
 namespace Meadow.Foundation.Sensors.Power;
 
+/// <summary>
+/// Represents a sensor interface that provides access to current and voltage measurements, as well as hardware and
+/// software identification details.
+/// </summary>
 public interface ISpm1x : ICurrentSensor, IVoltageSensor
 {
     /// <summary>
