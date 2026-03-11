@@ -20,7 +20,7 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
         /// <summary>
         /// Friendly name for the GLL messages.
         /// </summary>
-        public string Name => "GLL - Global Positioning System Fix Data";
+        public string Name => "Geographic Position - Latitude/Longitude";
 
         /// <summary>
         /// Process a GPRMC sentence string

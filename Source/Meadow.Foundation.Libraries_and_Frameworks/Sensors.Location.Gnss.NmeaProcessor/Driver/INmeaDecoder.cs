@@ -3,7 +3,7 @@
 namespace Meadow.Foundation.Sensors.Location.Gnss;
 
 /// <summary>
-/// Base class for NMEA sentence decoder classes
+/// Interface for NMEA sentence decoder classes
 /// </summary>
 public interface INmeaDecoder
 {
