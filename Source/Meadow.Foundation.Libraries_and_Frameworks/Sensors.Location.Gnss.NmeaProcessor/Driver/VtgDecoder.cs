@@ -11,7 +11,7 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
         /// <summary>
         /// Event to be raised when a course and velocity message is received and decoded.
         /// </summary>
-        public event EventHandler<CourseOverGround> CourseAndVelocityReceived = default!;
+        public event EventHandler<CourseOverGround>? CourseAndVelocityReceived;
 
         /// <summary>
         /// Prefix for the VTG decoder.
@@ -55,7 +55,7 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
                 course.Kph = kph;
             }
             //Resolver.Log.Info($"VTG process finished: trueHeading:{course.TrueHeading}, magneticHeading:{course.MagneticHeading}, knots:{course.Knots}, kph:{course.Kph}");
-            CourseAndVelocityReceived(this, course);
+            CourseAndVelocityReceived?.Invoke(this, course);
         }
 
 

@@ -37,10 +37,10 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
         /// <param name="sentence">String array of the message components for a CGA message</param>
         public void Process(NmeaSentence sentence)
         {
-            // make sure all fields are present
-            for (var index = 0; index <= 7; index++)
+            // make sure all required fields are present
+            for (var index = 0; index <= 8; index++)
             {
-                if (string.IsNullOrEmpty(sentence.DataElements[index]))
+                if (sentence.DataElements.Count <= index || string.IsNullOrEmpty(sentence.DataElements[index]))
                 {
                     //Resolver.Log.Warn("Not all elements present");
                     // TODO: should we throw an exception and have callers wrap in a try/catch?

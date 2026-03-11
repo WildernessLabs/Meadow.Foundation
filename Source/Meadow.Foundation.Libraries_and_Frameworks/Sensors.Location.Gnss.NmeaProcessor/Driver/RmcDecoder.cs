@@ -34,11 +34,12 @@ public class RmcDecoder : INmeaDecoder, IGnssPositionEventSource
     /// <param name="sentence">The sentence</param>
     public void Process(string sentence)
     {
-        if (NmeaSentence.TryParse(sentence, out var s))
+        if (!NmeaSentence.TryParse(sentence, out var s))
         {
             Resolver.Log.Debug($"Failure parsing {sentence}", Constants.LogGroup);
-            Process(NmeaSentence.From(sentence));
+            return;
         }
+        Process(s);
     }
 
     /// <summary>
@@ -79,17 +80,14 @@ public class RmcDecoder : INmeaDecoder, IGnssPositionEventSource
                 position.CourseHeading = new Units.Azimuth(courseHeading);
             }
 
-            if (sentence.DataElements[10].ToLower() == "e")
+            if (sentence.DataElements.Count > 10)
             {
-                position.MagneticVariation = CardinalDirection.East;
-            }
-            else if (sentence.DataElements[10].ToLower() == "w")
-            {
-                position.MagneticVariation = CardinalDirection.West;
-            }
-            else
-            {
-                position.MagneticVariation = CardinalDirection.Unknown;
+                position.MagneticVariation = sentence.DataElements[10].ToLower() switch
+                {
+                    "e" => CardinalDirection.East,
+                    "w" => CardinalDirection.West,
+                    _ => CardinalDirection.Unknown,
+                };
             }
         }
 

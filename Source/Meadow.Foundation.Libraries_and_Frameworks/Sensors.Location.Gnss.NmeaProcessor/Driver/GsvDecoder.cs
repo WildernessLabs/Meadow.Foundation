@@ -18,7 +18,7 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
         /// <summary>
         /// Event raised when valid GSV data is received.
         /// </summary>
-        public event EventHandler<SatellitesInView> SatellitesInViewReceived = default!;
+        public event EventHandler<SatellitesInView>? SatellitesInViewReceived;
 
         /// <summary>
         /// Current sentence being processed, 0 indicates nothing being processed.
@@ -132,7 +132,7 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
                 if (_currentSatelliteIndex == _satellites!.Length)
                 {
 
-                    SatellitesInViewReceived(this, new SatellitesInView(_satellites) { TalkerID = sentence.TalkerID });
+                    SatellitesInViewReceived?.Invoke(this, new SatellitesInView(_satellites) { TalkerID = sentence.TalkerID });
                     CleanUp();
                 }
             }
