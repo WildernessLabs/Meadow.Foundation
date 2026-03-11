@@ -59,10 +59,24 @@ namespace Meadow.Foundation.mikroBUS.Sensors.Hid
         {
             button = new PushButton(tstPin);
 
-            button.PressStarted += (s, e) => PressStarted?.Invoke(s, e);
-            button.PressEnded += (s, e) => PressEnded?.Invoke(s, e);
-            button.Clicked += (s, e) => Clicked?.Invoke(s, e);
-            button.LongClicked += (s, e) => LongClicked?.Invoke(s, e);
+            button.PressStarted += (s, e) => PressStarted.Invoke(s, e);
+            button.PressEnded += (s, e) => PressEnded.Invoke(s, e);
+            button.Clicked += (s, e) => Clicked.Invoke(s, e);
+            button.LongClicked += (s, e) => LongClicked.Invoke(s, e);
+        }
+
+        /// <summary>
+        /// Creates a mikroBUS Joystick Click board instance using a MikroBus connector
+        /// </summary>
+        /// <param name="connector">The MikroBus connector</param>
+        public CJoystick(MikroBusConnector connector) : base(connector.I2cBus, (byte)Addresses.Default)
+        {
+            button = new PushButton(connector.Pins.INT);
+
+            button.PressStarted += (s, e) => PressStarted.Invoke(s, e);
+            button.PressEnded += (s, e) => PressEnded.Invoke(s, e);
+            button.Clicked += (s, e) => Clicked.Invoke(s, e);
+            button.LongClicked += (s, e) => LongClicked.Invoke(s, e);
         }
 
         /// <summary>
