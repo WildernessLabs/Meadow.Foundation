@@ -65,7 +65,7 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
                 Resolver.Log.Debug($"Failure parsing {sentence}", Constants.LogGroup);
                 return;
             }
-            Process(s);
+            Process(s!);
         }
 
         /// <summary>
