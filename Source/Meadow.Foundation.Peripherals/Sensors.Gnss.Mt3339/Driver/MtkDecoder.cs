@@ -19,9 +19,23 @@ namespace Meadow.Foundation.Sensors.Gnss
         public string Prefix => "MTK";
 
         /// <summary>
-        /// Process the data from a RMC
+        /// Process a raw MTK sentence string
         /// </summary>
-        /// <param name="sentence">String array of the message components for a RMC message.</param>
+        /// <param name="sentence">The raw NMEA sentence string</param>
+        public void Process(string sentence)
+        {
+            if (!NmeaSentence.TryParse(sentence, out var s))
+            {
+                Resolver.Log.Debug($"Failure parsing {sentence}", "nmea processor");
+                return;
+            }
+            Process(s);
+        }
+
+        /// <summary>
+        /// Process the data from an MTK sentence
+        /// </summary>
+        /// <param name="sentence">Parsed NMEA sentence</param>
         public void Process(NmeaSentence sentence)
         {
             // get the packet type (command number)
