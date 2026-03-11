@@ -26,9 +26,8 @@ public class NmeaSentenceProcessor
     /// <summary>
     /// NMEA decoders available to the GPS
     /// </summary>
-    private readonly Dictionary<string, INmeaDecoder/*<IGnssResult>*/> decoders = new Dictionary<string, INmeaDecoder/*<IGnssResult>*/>();
+    private readonly Dictionary<string, INmeaDecoder> decoders = new Dictionary<string, INmeaDecoder>();
 
-    // ToDo - remove this
     /// <summary>
     /// Enable / disable debug mode
     /// </summary>
@@ -76,22 +75,17 @@ public class NmeaSentenceProcessor
             return;
         }
 
-        INmeaDecoder decoder;
-        if (decoders.ContainsKey(sentence.Prefix!))
+        if (decoders.TryGetValue(sentence.Prefix!, out var decoder))
         {
-            decoder = decoders[sentence.Prefix!];
-            if (decoder != null)
-            {
-                if (DebugMode) { Resolver.Log.Info($"Found appropriate decoder:{decoder.Prefix}"); }
+            if (DebugMode) { Resolver.Log.Info($"Found appropriate decoder:{decoder.Prefix}"); }
 
-                try
-                {
-                    decoder.Process(sentence);
-                }
-                catch (Exception ex)
-                {
-                    Resolver.Log.Warn($"{ex.Message}{Environment.NewLine}Failed to process {sentence}");
-                }
+            try
+            {
+                decoder.Process(sentence);
+            }
+            catch (Exception ex)
+            {
+                Resolver.Log.Warn($"{ex.Message}{Environment.NewLine}Failed to process {sentence}");
             }
         }
         else
