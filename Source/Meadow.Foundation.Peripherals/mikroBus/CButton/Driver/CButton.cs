@@ -36,10 +36,11 @@ namespace Meadow.Foundation.mikroBUS.Sensors.Buttons
         /// </summary>
         /// <param name="ledPin">Led pin</param>
         /// <param name="buttonPin">Button pin</param>
-        public CButton(IPin ledPin, IPin buttonPin)
+        /// <param name="ledForwardVoltage">The forward voltage of the LED (use Green, Red, or Yellow to match button colour)</param>
+        public CButton(IPin ledPin, IPin buttonPin, TypicalForwardVoltage ledForwardVoltage = TypicalForwardVoltage.Green)
             : base(buttonPin, ResistorMode.InternalPullUp)
         {
-            pwmLed = new PwmLed(ledPin, new Units.Voltage(TypicalForwardVoltage.Green));
+            pwmLed = new PwmLed(ledPin, new Units.Voltage(ledForwardVoltage));
         }
 
         /// <summary>
@@ -47,10 +48,22 @@ namespace Meadow.Foundation.mikroBUS.Sensors.Buttons
         /// </summary>
         /// <param name="ledPwmPort">Led PWM port</param>
         /// <param name="buttonInterruptPort">Button interrupt port</param>
-        public CButton(IPwmPort ledPwmPort, IDigitalInterruptPort buttonInterruptPort)
+        /// <param name="ledForwardVoltage">The forward voltage of the LED (use Green, Red, or Yellow to match button colour)</param>
+        public CButton(IPwmPort ledPwmPort, IDigitalInterruptPort buttonInterruptPort, TypicalForwardVoltage ledForwardVoltage = TypicalForwardVoltage.Green)
             : base(buttonInterruptPort)
         {
-            pwmLed = new PwmLed(ledPwmPort, new Units.Voltage(TypicalForwardVoltage.Green));
+            pwmLed = new PwmLed(ledPwmPort, new Units.Voltage(ledForwardVoltage));
+        }
+
+        /// <summary>
+        /// Creates a new CButton object using a MikroBus connector
+        /// </summary>
+        /// <param name="connector">The MikroBus connector</param>
+        /// <param name="ledForwardVoltage">The forward voltage of the LED (use Green, Red, or Yellow to match button colour)</param>
+        public CButton(MikroBusConnector connector, TypicalForwardVoltage ledForwardVoltage = TypicalForwardVoltage.Green)
+            : base(connector.Pins.INT, ResistorMode.InternalPullUp)
+        {
+            pwmLed = new PwmLed(connector.Pins.PWM, new Units.Voltage(ledForwardVoltage));
         }
 
         /// <summary>
