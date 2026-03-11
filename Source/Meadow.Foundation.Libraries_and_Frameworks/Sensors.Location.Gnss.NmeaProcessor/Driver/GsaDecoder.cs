@@ -11,7 +11,7 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
         /// <summary>
         /// Event raised when valid GSA data is received
         /// </summary>
-        public event EventHandler<ActiveSatellites> ActiveSatellitesReceived = default!;
+        public event EventHandler<ActiveSatellites>? ActiveSatellitesReceived;
 
         /// <summary>
         /// Prefix for the GSA decoder
@@ -22,6 +22,20 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
         /// Friendly name for the GSA messages.
         /// </summary>
         public string Name => "GSA - DOP and number of active satellites.";
+
+        /// <summary>
+        /// Process a GPGSA sentence string
+        /// </summary>
+        /// <param name="sentence">The raw NMEA sentence string</param>
+        public void Process(string sentence)
+        {
+            if (!NmeaSentence.TryParse(sentence, out var s))
+            {
+                Resolver.Log.Debug($"Failure parsing {sentence}", Constants.LogGroup);
+                return;
+            }
+            Process(s);
+        }
 
         /// <summary>
         /// Process the data from a GSA message
@@ -71,22 +85,22 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
                 satellites.SatellitesUsedForFix = null;
             }
 
-            if (decimal.TryParse(sentence.DataElements[14], out var dilutionOfPrecision))
+            if (sentence.DataElements.Count > 14 && decimal.TryParse(sentence.DataElements[14], out var dilutionOfPrecision))
             {
                 satellites.DilutionOfPrecision = dilutionOfPrecision;
             }
 
-            if (decimal.TryParse(sentence.DataElements[15], out var horizontalDilutionOfPrecision))
+            if (sentence.DataElements.Count > 15 && decimal.TryParse(sentence.DataElements[15], out var horizontalDilutionOfPrecision))
             {
                 satellites.HorizontalDilutionOfPrecision = horizontalDilutionOfPrecision;
             }
 
-            if (decimal.TryParse(sentence.DataElements[16], out var verticalDilutionOfPrecision))
+            if (sentence.DataElements.Count > 16 && decimal.TryParse(sentence.DataElements[16], out var verticalDilutionOfPrecision))
             {
                 satellites.VerticalDilutionOfPrecision = verticalDilutionOfPrecision;
             }
 
-            ActiveSatellitesReceived(this, satellites);
+            ActiveSatellitesReceived?.Invoke(this, satellites);
         }
     }
 }

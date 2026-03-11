@@ -7,7 +7,7 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
     /// Process GLL (Geographic position Latitude / Longitude) messages from a
     /// GPS receiver.
     /// </summary>
-    public class GllDecoder : INmeaDecoder, IGnssPositionEventSource
+    public class GllDecoder : INmeaDecoder
     {
         /// <inheritdoc/>
         public event EventHandler<GnssPositionInfo>? PositionReceived;
@@ -20,15 +20,20 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
         /// <summary>
         /// Friendly name for the GLL messages.
         /// </summary>
-        public string Name => "GLL - Global Positioning System Fix Data";
+        public string Name => "Geographic Position - Latitude/Longitude";
 
         /// <summary>
-        /// Process a GPRMC sentence string
+        /// Process a GPGLL sentence string
         /// </summary>
-        /// <param name="sentence">The sentence</param>
+        /// <param name="sentence">The raw NMEA sentence string</param>
         public void Process(string sentence)
         {
-            Process(NmeaSentence.From(sentence));
+            if (!NmeaSentence.TryParse(sentence, out var s))
+            {
+                Resolver.Log.Debug($"Failure parsing {sentence}", Constants.LogGroup);
+                return;
+            }
+            Process(s);
         }
 
         /// <summary>
@@ -37,9 +42,7 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
         /// <param name="sentence">String array of the message components for a GLL message.</param>
         public void Process(NmeaSentence sentence)
         {
-            //
-            //  Status is stored in element 7 (position 6), A = valid, V = not valid.
-            //
+            // Status is at index 5 (6th field), A = valid, V = not valid.
             var location = new GnssPositionInfo();
 
             location.IsValid = sentence.DataElements[5].ToLower() == "a";

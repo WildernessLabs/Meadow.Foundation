@@ -7,26 +7,20 @@ namespace Meadow.Foundation.Sensors.Location.Gnss;
 /// <summary>
 /// Decode RMC - Recommended Minimum Specific GPS messages.
 /// </summary>
-public class RmcDecoder : INmeaDecoder, IGnssPositionEventSource
+public class RmcDecoder : INmeaDecoder
 {
     /// <inheritdoc/>
     public event EventHandler<GnssPositionInfo>? PositionReceived;
 
     /// <summary>
-    /// Prefix for the RMBC decoder.
+    /// Prefix for the RMC decoder.
     /// </summary>
-    public string Prefix
-    {
-        get => "RMC";
-    }
+    public string Prefix => "RMC";
 
     /// <summary>
     /// Friendly name for the RMC messages.
     /// </summary>
-    public string Name
-    {
-        get => "Recommended Minimum";
-    }
+    public string Name => "Recommended Minimum";
 
     /// <summary>
     /// Process a GPRMC sentence string
@@ -34,11 +28,12 @@ public class RmcDecoder : INmeaDecoder, IGnssPositionEventSource
     /// <param name="sentence">The sentence</param>
     public void Process(string sentence)
     {
-        if (NmeaSentence.TryParse(sentence, out var s))
+        if (!NmeaSentence.TryParse(sentence, out var s))
         {
             Resolver.Log.Debug($"Failure parsing {sentence}", Constants.LogGroup);
-            Process(NmeaSentence.From(sentence));
+            return;
         }
+        Process(s);
     }
 
     /// <summary>
@@ -79,17 +74,14 @@ public class RmcDecoder : INmeaDecoder, IGnssPositionEventSource
                 position.CourseHeading = new Units.Azimuth(courseHeading);
             }
 
-            if (sentence.DataElements[10].ToLower() == "e")
+            if (sentence.DataElements.Count > 10)
             {
-                position.MagneticVariation = CardinalDirection.East;
-            }
-            else if (sentence.DataElements[10].ToLower() == "w")
-            {
-                position.MagneticVariation = CardinalDirection.West;
-            }
-            else
-            {
-                position.MagneticVariation = CardinalDirection.Unknown;
+                position.MagneticVariation = sentence.DataElements[10].ToLower() switch
+                {
+                    "e" => CardinalDirection.East,
+                    "w" => CardinalDirection.West,
+                    _ => CardinalDirection.Unknown,
+                };
             }
         }
 

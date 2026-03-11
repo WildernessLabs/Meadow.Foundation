@@ -7,7 +7,7 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
     /// <summary>
     /// Decoder for GGA messages.
     /// </summary>
-    public class GgaDecoder : INmeaDecoder, IGnssPositionEventSource
+    public class GgaDecoder : INmeaDecoder
     {
         /// <inheritdoc/>
         public event EventHandler<GnssPositionInfo>? PositionReceived;
@@ -25,22 +25,27 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
         /// <summary>
         /// Process a GPGGA sentence string
         /// </summary>
-        /// <param name="sentence"></param>
+        /// <param name="sentence">The raw NMEA sentence string</param>
         public void Process(string sentence)
         {
-            Process(NmeaSentence.From(sentence));
+            if (!NmeaSentence.TryParse(sentence, out var s))
+            {
+                Resolver.Log.Debug($"Failure parsing {sentence}", Constants.LogGroup);
+                return;
+            }
+            Process(s);
         }
 
         /// <summary>
         /// Process the data from a GGA message
         /// </summary>
-        /// <param name="sentence">String array of the message components for a CGA message</param>
+        /// <param name="sentence">Parsed NMEA sentence for a GGA message</param>
         public void Process(NmeaSentence sentence)
         {
-            // make sure all fields are present
-            for (var index = 0; index <= 7; index++)
+            // make sure all required fields are present
+            for (var index = 0; index <= 8; index++)
             {
-                if (string.IsNullOrEmpty(sentence.DataElements[index]))
+                if (sentence.DataElements.Count <= index || string.IsNullOrEmpty(sentence.DataElements[index]))
                 {
                     //Resolver.Log.Warn("Not all elements present");
                     // TODO: should we throw an exception and have callers wrap in a try/catch?
