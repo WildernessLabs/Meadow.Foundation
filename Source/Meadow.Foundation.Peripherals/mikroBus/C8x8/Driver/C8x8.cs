@@ -18,12 +18,20 @@ namespace Meadow.Foundation.mikroBUS.Displays
         { }
 
         /// <summary>
-        /// Creates a new MikroBus 8x8 object 
+        /// Creates a new MikroBus 8x8 object
         /// </summary>
         /// <param name="spiBus">SPI bus</param>
         /// <param name="chipSelectPin">Chip select pin</param>
-        public C8x8(ISpiBus spiBus, IPin chipSelectPin) 
+        public C8x8(ISpiBus spiBus, IPin chipSelectPin)
             : base(spiBus, chipSelectPin, 1, Max7219Mode.Display)
+        { }
+
+        /// <summary>
+        /// Creates a new MikroBus 8x8 object using a MikroBus connector
+        /// </summary>
+        /// <param name="connector">The MikroBus connector</param>
+        public C8x8(MikroBusConnector connector)
+            : base(connector.SpiBus, connector.Pins.CS, 1, Max7219Mode.Display)
         { }
     }
 }
