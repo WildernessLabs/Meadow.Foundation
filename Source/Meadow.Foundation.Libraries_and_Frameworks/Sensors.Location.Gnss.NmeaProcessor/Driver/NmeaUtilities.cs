@@ -44,7 +44,7 @@ public static class NmeaUtilities
             hour = (int)(t / 10000);
             minute = (int)((t - (hour * 10000)) / 100);
             second = (int)(t - (hour * 10000) - (minute * 100));
-            milliseconds = (int)(t - (int)t) * 100;
+            milliseconds = (int)((t - (int)t) * 1000);
         }
         else
         {
