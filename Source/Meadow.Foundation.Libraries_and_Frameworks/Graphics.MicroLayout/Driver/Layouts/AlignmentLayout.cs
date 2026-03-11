@@ -119,7 +119,6 @@ public class AlignmentLayout : LayoutBase
     /// </summary>
     /// <param name="control">The control to arrange.</param>
     /// <param name="position">The docking position of the control.</param>
-    /// <summary>
     private void SetControlPosition(IControl control, DockPosition position)
     {
         int contentX = Padding;

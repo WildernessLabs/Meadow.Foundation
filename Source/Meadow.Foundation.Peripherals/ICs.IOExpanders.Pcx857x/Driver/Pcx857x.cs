@@ -90,7 +90,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
                     {
                         port = new DigitalOutputPort(this, pin, initialState);
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
                         Resolver.Log.Error($"Unable to create DigitalOutputPort on pin {pin.Name}", this.GetType().Name);
                         throw;

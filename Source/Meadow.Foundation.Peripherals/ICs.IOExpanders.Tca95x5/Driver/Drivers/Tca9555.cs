@@ -16,7 +16,7 @@ public class Tca9555 : Tca95x5
     /// Initializes a new instance of the <see cref="Tca9555"/> class.
     /// </summary>
     /// <param name="i2cBus">The I2C bus to use for communication.</param>
-    /// <param name="address">The I2C address of the device. Defaults to the address enumerated in <see cref="Addresses"/>.Default.</param>
+    /// <param name="address">The I2C address of the device.</param>
     public Tca9555(II2cBus i2cBus, byte address = (byte)Addresses.Default)
         : base(i2cBus, address)
     {

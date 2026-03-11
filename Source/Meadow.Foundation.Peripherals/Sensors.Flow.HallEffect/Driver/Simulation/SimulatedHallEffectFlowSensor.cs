@@ -7,12 +7,19 @@ using System.Threading;
 
 namespace Sensors.Flow.HallEffect.Simulation;
 
+/// <summary>
+/// Simulated implementation of a Hall effect flow sensor for testing purposes
+/// </summary>
 public class SimulatedHallEffectFlowSensor : HallEffectFlowSensor, ISimulatedSensor<VolumetricFlow>
 {
     private readonly SimulatedDigitalSignalAnalyzer analyzer = new SimulatedDigitalSignalAnalyzer(Frequency.Zero);
 
+    /// <summary>
+    /// Gets the current simulated volumetric flow rate
+    /// </summary>
     public VolumetricFlow Flow { get; private set; }
 
+    /// <inheritdoc/>
     public SimulationBehavior[] SupportedBehaviors =>
         [
         SimulationBehavior.Sawtooth,
@@ -20,8 +27,12 @@ public class SimulatedHallEffectFlowSensor : HallEffectFlowSensor, ISimulatedSen
         SimulationBehavior.Sine
         ];
 
+    /// <inheritdoc/>
     public Type ValueType => typeof(VolumetricFlow);
 
+    /// <summary>
+    /// Creates a new SimulatedHallEffectFlowSensor with a default scale of 10 Hz per L/min
+    /// </summary>
     public SimulatedHallEffectFlowSensor()
         : this(new SimulatedDigitalSignalAnalyzer(Frequency.Zero))
     {
@@ -34,6 +45,7 @@ public class SimulatedHallEffectFlowSensor : HallEffectFlowSensor, ISimulatedSen
         this.analyzer = analyzer;
     }
 
+    /// <inheritdoc/>
     public void SetSensorValue(object value)
     {
         if (value is VolumetricFlow flow)
@@ -46,7 +58,14 @@ public class SimulatedHallEffectFlowSensor : HallEffectFlowSensor, ISimulatedSen
         }
     }
 
+    /// <summary>
+    /// Gets or sets the minimum flow rate used during simulation
+    /// </summary>
     public VolumetricFlow MinimumSimulatedValue { get; set; } = VolumetricFlow.Zero;
+
+    /// <summary>
+    /// Gets or sets the maximum flow rate used during simulation
+    /// </summary>
     public VolumetricFlow MaximumSimulatedValue { get; set; } = new VolumetricFlow(10, VolumetricFlow.UnitType.GallonsPerMinute);
 
     private Timer? _simulationTimer;
@@ -54,6 +73,7 @@ public class SimulatedHallEffectFlowSensor : HallEffectFlowSensor, ISimulatedSen
     private double _simulationStep = 0;
     private readonly Random _random = new Random();
 
+    /// <inheritdoc/>
     public void StartSimulation(SimulationBehavior behavior)
     {
         _currentBehavior = behavior;

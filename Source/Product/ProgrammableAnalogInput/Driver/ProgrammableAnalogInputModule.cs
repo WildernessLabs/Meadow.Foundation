@@ -6,8 +6,14 @@ using System;
 
 namespace Meadow.Foundation;
 
+/// <summary>
+/// Hardware driver for the 8-channel programmable analog input module using an ADS7128 ADC and two TCA9535 GPIO expanders
+/// </summary>
 public partial class ProgrammableAnalogInputModule : ProgrammableAnalogInputModuleBase
 {
+    /// <summary>
+    /// Gets the number of analog input channels on this module
+    /// </summary>
     public int ChannelCount { get; } = 8;
 
     private readonly Resistance NtcFixedResistor = 10_000.Ohms();
@@ -18,6 +24,13 @@ public partial class ProgrammableAnalogInputModule : ProgrammableAnalogInputModu
     private readonly IDigitalOutputPort[] configBits;
     private readonly IAnalogInputPort[] analogInputs;
 
+    /// <summary>
+    /// Creates a new ProgrammableAnalogInputModule on the specified I2C bus
+    /// </summary>
+    /// <param name="bus">The I2C bus the module is connected to</param>
+    /// <param name="adcAddress">The I2C address of the ADS7128 ADC</param>
+    /// <param name="gpio1Address">The I2C address of the first TCA9535 GPIO expander</param>
+    /// <param name="gpio2Address">The I2C address of the second TCA9535 GPIO expander</param>
     public ProgrammableAnalogInputModule(
         II2cBus bus,
         byte adcAddress,
@@ -36,7 +49,7 @@ public partial class ProgrammableAnalogInputModule : ProgrammableAnalogInputModu
                 bus,
                 (Ads7128.Addresses)adcAddress);
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             Resolver.Log.Error("Failed to initialize module ICs", "ProgrammableAnalogInputModule");
             return;
@@ -161,6 +174,7 @@ public partial class ProgrammableAnalogInputModule : ProgrammableAnalogInputModu
     | NTC         | HIGH   | HIGH   | LOW    | LOW    |
     +-------------+--------+--------+--------+--------+    
     */
+    /// <inheritdoc/>
     public override void ConfigureChannel(ChannelConfig channelConfiguration)
     {
         base.ConfigureChannel(channelConfiguration);
@@ -191,6 +205,7 @@ public partial class ProgrammableAnalogInputModule : ProgrammableAnalogInputModu
         }
     }
 
+    /// <inheritdoc/>
     public override Voltage ReadChannelRaw(int channelNumber)
     {
         if (channelNumber < 0 || channelNumber > ChannelCount - 1)
@@ -201,6 +216,7 @@ public partial class ProgrammableAnalogInputModule : ProgrammableAnalogInputModu
         return analogInputs[channelNumber].Read().GetAwaiter().GetResult();
     }
 
+    /// <inheritdoc/>
     public override Voltage Read0_10V(int channelNumber)
     {
         if (channelConfigs[channelNumber].ChannelType != ConfigurableAnalogInputChannelType.Voltage_0_10)
@@ -217,6 +233,7 @@ public partial class ProgrammableAnalogInputModule : ProgrammableAnalogInputModu
 
     private static readonly Voltage AdcVoltageAt20Ma = 2.59.Volts();
 
+    /// <inheritdoc/>
     public override Current Read0_20mA(int channelNumber)
     {
         if (channelConfigs[channelNumber].ChannelType != ConfigurableAnalogInputChannelType.Current_4_20)
@@ -230,11 +247,13 @@ public partial class ProgrammableAnalogInputModule : ProgrammableAnalogInputModu
         //return new Current((raw.Volts / adc.ReferenceVoltage.Volts) * 20, Current.UnitType.Milliamps);
     }
 
+    /// <inheritdoc/>
     public override Current Read4_20mA(int channelNumber)
     {
         return Read0_20mA(channelNumber);
     }
 
+    /// <inheritdoc/>
     public override Temperature ReadNtc(int channelNumber, double beta, Temperature referenceTemperature, Resistance resistanceAtRefTemp)
     {
         if (channelConfigs[channelNumber].ChannelType != ConfigurableAnalogInputChannelType.ThermistorNtc)

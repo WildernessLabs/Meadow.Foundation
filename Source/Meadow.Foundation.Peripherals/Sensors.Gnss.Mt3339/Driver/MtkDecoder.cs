@@ -29,7 +29,7 @@ namespace Meadow.Foundation.Sensors.Gnss
                 Resolver.Log.Debug($"Failure parsing {sentence}", "nmea processor");
                 return;
             }
-            Process(s);
+            Process(s!);
         }
 
         /// <summary>

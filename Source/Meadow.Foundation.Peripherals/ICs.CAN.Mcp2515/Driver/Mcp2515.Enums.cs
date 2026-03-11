@@ -185,7 +185,7 @@ public partial class Mcp2515
         Error = 0b0010,
         Wake = 0b0100,
         TXB0 = 0b0110,
-        TXB1 = 0b0010,
+        TXB1 = 0b1000,
         TXB2 = 0b1010,
         RXB0 = 0b1100,
         RXB1 = 0b1110,
