@@ -69,23 +69,21 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
                 return;
             }
 
-            if (_currentSentence == 0)
+            if (thisSentenceNumber == 1)
             {
-                if (thisSentenceNumber == 1)
+                // Start of a new sequence — reset any prior in-progress state
+                CleanUp();
+
+                if (!int.TryParse(sentence.DataElements[2], out int totalNumberOfSatellites))
                 {
-                    if (!int.TryParse(sentence.DataElements[2], out int totalNumberOfSatellites))
-                    {
-                        CleanUp();
-                        return;
-                    }
-                    _satellites = new Satellite[totalNumberOfSatellites];
-
-                    _currentSentence = 1;
-                    _totalSentences = int.Parse(sentence.DataElements[0]);
-
-                    _currentSatelliteIndex = 0;
+                    return;
                 }
+                _satellites = new Satellite[totalNumberOfSatellites];
+                _currentSentence = 1;
+                _totalSentences = int.Parse(sentence.DataElements[0]);
+                _currentSatelliteIndex = 0;
             }
+
             if (thisSentenceNumber == _currentSentence)
             {
                 _currentSentence++;
