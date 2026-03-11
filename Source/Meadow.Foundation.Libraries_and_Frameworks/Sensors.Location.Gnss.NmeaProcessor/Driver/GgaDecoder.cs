@@ -39,7 +39,7 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
         /// <summary>
         /// Process the data from a GGA message
         /// </summary>
-        /// <param name="sentence">String array of the message components for a CGA message</param>
+        /// <param name="sentence">Parsed NMEA sentence for a GGA message</param>
         public void Process(NmeaSentence sentence)
         {
             // make sure all required fields are present

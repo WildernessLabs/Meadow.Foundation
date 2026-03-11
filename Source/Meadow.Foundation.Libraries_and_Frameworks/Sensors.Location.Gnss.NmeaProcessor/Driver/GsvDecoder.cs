@@ -7,11 +7,9 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
     /// Process the Satellites in view messages from a GPS module.
     /// </summary>
     /// <remarks>
-    /// The satellites in view messages can contain multiple sentences; one for
-    /// each satellite. There can also be multiple messages making up the total list
-    /// of satellites.
-    /// This class brings all of the messages together in a single message for the
-    /// consumer.
+    /// A GSV sequence consists of one or more sentences, each carrying up to four
+    /// satellites. This class accumulates all sentences in a sequence and raises
+    /// a single event with the complete satellite list once all have been received.
     /// </remarks>
     public class GsvDecoder : INmeaDecoder
     {
@@ -45,8 +43,8 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
         /// Get the prefix for the decoder.
         /// </summary>
         /// <remarks>
-        /// The lines of text from the GPS start with text such as $GPGGA, $GPGLL, $GPGSA etc.  The prefix
-        /// is the start of the line (i.e. $GPCGA).
+        /// The talker ID prefix (GP, GN, GL, etc.) is stripped by the sentence parser,
+        /// so this matches any constellation's GSV sentences.
         /// </remarks>
         public string Prefix => "GSV";
 

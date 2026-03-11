@@ -12,7 +12,7 @@ namespace Meadow.Foundation.Sensors.Location.Gnss;
 /// </summary>
 /// <remarks>
 /// To use, call `RegisterDecoder` for each NMEA sentence decoder that you
-/// want to use, passing an `INmeaDecoder`, and then call `ParseNmeaMessage`,
+/// want to use, passing an `INmeaDecoder`, and then call `ProcessNmeaMessage`,
 /// and pass the NMEA sentence string,
 /// e.g. "$GPRMC,000049.799,V,,,,,0.00,0.00,060180,,,N*48".
 ///

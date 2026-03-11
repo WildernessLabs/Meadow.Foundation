@@ -42,9 +42,7 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
         /// <param name="sentence">String array of the message components for a GLL message.</param>
         public void Process(NmeaSentence sentence)
         {
-            //
-            //  Status is stored in element 7 (position 6), A = valid, V = not valid.
-            //
+            // Status is at index 5 (6th field), A = valid, V = not valid.
             var location = new GnssPositionInfo();
 
             location.IsValid = sentence.DataElements[5].ToLower() == "a";

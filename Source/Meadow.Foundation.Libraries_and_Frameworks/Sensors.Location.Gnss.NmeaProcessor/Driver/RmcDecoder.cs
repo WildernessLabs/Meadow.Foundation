@@ -13,20 +13,14 @@ public class RmcDecoder : INmeaDecoder
     public event EventHandler<GnssPositionInfo>? PositionReceived;
 
     /// <summary>
-    /// Prefix for the RMBC decoder.
+    /// Prefix for the RMC decoder.
     /// </summary>
-    public string Prefix
-    {
-        get => "RMC";
-    }
+    public string Prefix => "RMC";
 
     /// <summary>
     /// Friendly name for the RMC messages.
     /// </summary>
-    public string Name
-    {
-        get => "Recommended Minimum";
-    }
+    public string Name => "Recommended Minimum";
 
     /// <summary>
     /// Process a GPRMC sentence string
