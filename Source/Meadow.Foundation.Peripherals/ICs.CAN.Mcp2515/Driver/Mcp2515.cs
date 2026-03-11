@@ -114,6 +114,11 @@ public partial class Mcp2515 : ICanController, IDisposable
         return busInstance;
     }
 
+    /// <summary>
+    /// Resets the device, configures registers, and sets the requested bitrate and oscillator
+    /// </summary>
+    /// <param name="bitrate">The desired CAN bus bitrate</param>
+    /// <param name="oscillator">The oscillator frequency of the MCP2515 crystal</param>
     private void Initialize(CanBitrate bitrate, CanOscillator oscillator)
     {
         Reset();
@@ -174,6 +179,9 @@ public partial class Mcp2515 : ICanController, IDisposable
         SetMode(Mode.Normal);
     }
 
+    /// <summary>
+    /// Gets or sets the active CAN bitrate, reconfiguring the CNF registers without a full reset
+    /// </summary>
     private CanBitrate Bitrate
     {
         get => bitrate;
@@ -194,6 +202,9 @@ public partial class Mcp2515 : ICanController, IDisposable
         }
     }
 
+    /// <summary>
+    /// Disables hardware acceptance filters on both RX buffers, allowing all frames to be received
+    /// </summary>
     private void DisableFilters()
     {
         ModifyRegister(Register.RXB0CTRL,
@@ -204,11 +215,20 @@ public partial class Mcp2515 : ICanController, IDisposable
             0x60);
     }
 
+    /// <summary>
+    /// Clears one or more interrupt flags in the CANINTF register
+    /// </summary>
+    /// <param name="flag">The interrupt flag(s) to clear</param>
     private void ClearInterrupt(InterruptFlag flag)
     {
         ModifyRegister(Register.CANINTF, (byte)flag, 0);
     }
 
+    /// <summary>
+    /// Encodes and writes a CAN frame into the specified TX buffer, then requests transmission
+    /// </summary>
+    /// <param name="frame">The CAN frame to transmit</param>
+    /// <param name="bufferNumber">The TX buffer index (0-2)</param>
     private void WriteFrame(ICanFrame frame, int bufferNumber)
     {
         if (frame is DataFrame df)
@@ -302,6 +322,9 @@ public partial class Mcp2515 : ICanController, IDisposable
         }
     }
 
+    /// <summary>
+    /// Resets the MCP2515 via the reset pin (if present) and the SPI reset command
+    /// </summary>
     private void Reset()
     {
         if (ResetPort != null)
@@ -319,6 +342,11 @@ public partial class Mcp2515 : ICanController, IDisposable
         SpiBus.Exchange(ChipSelect, tx, rx);
     }
 
+    /// <summary>
+    /// Reads <paramref name="count"/> consecutive registers starting at <paramref name="start"/> and writes their hex values to the debug log
+    /// </summary>
+    /// <param name="start">The first register to read</param>
+    /// <param name="count">The number of registers to read</param>
     private void LogRegisters(Register start, byte count)
     {
         var values = ReadRegister(start, count);
@@ -326,11 +354,19 @@ public partial class Mcp2515 : ICanController, IDisposable
         Resolver.Log.Debug($"{(byte)start:X2} ({start}): {BitConverter.ToString(values)}", "driver");
     }
 
+    /// <summary>
+    /// Reads the current operating mode from the CANSTAT register
+    /// </summary>
+    /// <returns>The current <see cref="Mode"/></returns>
     private Mode GetMode()
     {
-        return (Mode)(ReadRegister(Register.CANSTAT)[0] | (byte)Control.REQOP);
+        return (Mode)(ReadRegister(Register.CANSTAT)[0] & (byte)Control.REQOP);
     }
 
+    /// <summary>
+    /// Writes the requested operating mode to CANCTRL.REQOP
+    /// </summary>
+    /// <param name="mode">The desired operating mode</param>
     private void SetMode(Mode mode)
     {
         byte m = (byte)mode;
@@ -345,6 +381,10 @@ public partial class Mcp2515 : ICanController, IDisposable
         LogRegisters(Register.CANSTAT, 1);
     }
 
+    /// <summary>
+    /// Issues the Read Status SPI command and returns the RX buffer interrupt flags
+    /// </summary>
+    /// <returns>The current <see cref="Status"/> flags indicating which RX buffers have data</returns>
     private Status GetStatus()
     {
         Span<byte> tx = stackalloc byte[2];
@@ -358,6 +398,11 @@ public partial class Mcp2515 : ICanController, IDisposable
         return (Status)rx[1];
     }
 
+    /// <summary>
+    /// Writes a single byte to the specified register via SPI
+    /// </summary>
+    /// <param name="register">The target register</param>
+    /// <param name="value">The value to write</param>
     private void WriteRegister(Register register, byte value)
     {
         Span<byte> tx = stackalloc byte[3];
@@ -370,6 +415,11 @@ public partial class Mcp2515 : ICanController, IDisposable
         SpiBus.Exchange(ChipSelect, tx, rx);
     }
 
+    /// <summary>
+    /// Writes a span of bytes to consecutive registers starting at <paramref name="register"/> via SPI
+    /// </summary>
+    /// <param name="register">The first target register</param>
+    /// <param name="data">The bytes to write</param>
     private void WriteRegister(Register register, Span<byte> data)
     {
         Span<byte> tx = stackalloc byte[data.Length + 2];
@@ -382,6 +432,12 @@ public partial class Mcp2515 : ICanController, IDisposable
         SpiBus.Exchange(ChipSelect, tx, rx);
     }
 
+    /// <summary>
+    /// Reads one or more consecutive registers via SPI
+    /// </summary>
+    /// <param name="register">The first register to read</param>
+    /// <param name="length">The number of bytes to read</param>
+    /// <returns>The register bytes</returns>
     private byte[] ReadRegister(Register register, byte length = 1)
     {
         Span<byte> tx = stackalloc byte[2 + length];
@@ -395,6 +451,12 @@ public partial class Mcp2515 : ICanController, IDisposable
         return rx.Slice(2).ToArray();
     }
 
+    /// <summary>
+    /// Issues the Bit Modify SPI command to set or clear specific bits in a register without affecting others
+    /// </summary>
+    /// <param name="register">The target register</param>
+    /// <param name="mask">Bitmask of bits to modify (1 = modify, 0 = leave unchanged)</param>
+    /// <param name="value">The new values for the masked bits</param>
     private void ModifyRegister(Register register, byte mask, byte value)
     {
         Span<byte> tx = stackalloc byte[4];
@@ -408,6 +470,12 @@ public partial class Mcp2515 : ICanController, IDisposable
         SpiBus.Exchange(ChipSelect, tx, rx);
     }
 
+    /// <summary>
+    /// Encodes a CAN ID into the 4-byte SIDH/SIDL/EID8/EID0 register format used by the MCP2515
+    /// </summary>
+    /// <param name="id">The CAN ID to encode</param>
+    /// <param name="isExtended">True for a 29-bit extended ID; false for an 11-bit standard ID</param>
+    /// <returns>A 4-byte array ordered SIDH, SIDL, EID8, EID0</returns>
     private byte[] GetIdBytes(int id, bool isExtended)
     {
         var buffer = new byte[4];
@@ -430,6 +498,13 @@ public partial class Mcp2515 : ICanController, IDisposable
         return buffer;
     }
 
+    /// <summary>
+    /// Programs an RXM mask and RXF filter pair into the hardware acceptance filter registers
+    /// </summary>
+    /// <param name="isExtended">True for extended 29-bit IDs; false for standard 11-bit IDs</param>
+    /// <param name="mask">The acceptance mask (1 = bit must match filter, 0 = don't care)</param>
+    /// <param name="filter">The acceptance filter ID to match</param>
+    /// <param name="filterNumber">The filter slot index (0-5)</param>
     private void SetMaskAndFilter(bool isExtended, int mask, int filter, int filterNumber)
     {
         Resolver.Log.Debug($"Adding mask 0x{mask:x4} and filter 0x{filter:x4} for filter {filterNumber}");

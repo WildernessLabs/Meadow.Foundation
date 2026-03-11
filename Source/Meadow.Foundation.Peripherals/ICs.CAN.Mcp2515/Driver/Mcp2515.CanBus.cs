@@ -1,4 +1,4 @@
-﻿using Meadow.Hardware;
+using Meadow.Hardware;
 using System;
 using System.Threading.Tasks;
 
@@ -30,6 +30,10 @@ public partial class Mcp2515
         /// <inheritdoc/>
         public CanAcceptanceFilterCollection AcceptanceFilters { get; } = new(5);
 
+        /// <summary>
+        /// Creates a new Mcp2515CanBus instance bound to the specified MCP2515 controller
+        /// </summary>
+        /// <param name="controller">The MCP2515 controller that owns this bus</param>
         internal Mcp2515CanBus(Mcp2515 controller)
         {
             Controller = controller;
@@ -42,6 +46,9 @@ public partial class Mcp2515
             AcceptanceFilters.CollectionChanged += OnAcceptanceFiltersChanged;
         }
 
+        /// <summary>
+        /// Handles changes to the acceptance filter collection by programming the hardware mask and filter registers
+        /// </summary>
         private void OnAcceptanceFiltersChanged(object? sender, (System.ComponentModel.CollectionChangeAction Action, CanAcceptanceFilter Filter) e)
         {
             switch (e.Action)
@@ -49,6 +56,7 @@ public partial class Mcp2515
                 case System.ComponentModel.CollectionChangeAction.Add:
                     if (e.Filter is CanStandardExactAcceptanceFilter sefa)
                     {
+                        // Standard 11-bit frame: all 11 ID bits must match
                         var newMask = 0x7ff;
 
                         Controller.SetMaskAndFilter(false, newMask, sefa.AcceptID, AcceptanceFilters.Count - 1);
@@ -57,35 +65,38 @@ public partial class Mcp2515
                     }
                     else if (e.Filter is CanExtendedExactAcceptanceFilter eef)
                     {
-                        var newMask = _currentMask | eef.AcceptID;
+                        // Extended 29-bit frame: all 29 ID bits must match
+                        var newMask = 0x1FFFFFFF;
 
                         Controller.SetMaskAndFilter(true, newMask, eef.AcceptID, AcceptanceFilters.Count - 1);
 
                         _currentMask = newMask;
                     }
-                    else if (e.Filter is CanStandardRangeAcceptanceFilter srf)
+                    else if (e.Filter is CanStandardRangeAcceptanceFilter)
                     {
+                        throw new NotSupportedException("Range-based acceptance filters are not supported by the MCP2515 hardware");
                     }
-                    else if (e.Filter is CanExtendedRangeAcceptanceFilter erf)
+                    else if (e.Filter is CanExtendedRangeAcceptanceFilter)
                     {
+                        throw new NotSupportedException("Range-based acceptance filters are not supported by the MCP2515 hardware");
                     }
 
                     break;
                 case System.ComponentModel.CollectionChangeAction.Remove:
-                    if (e.Filter is CanStandardExactAcceptanceFilter sefr)
+                    if (e.Filter is CanStandardExactAcceptanceFilter)
                     {
-                        var newMask = 0x00;
-
-                        _currentMask = newMask;
+                        _currentMask = 0x00;
                     }
-                    else if (e.Filter is CanExtendedExactAcceptanceFilter eef)
+                    else if (e.Filter is CanExtendedExactAcceptanceFilter)
                     {
                     }
-                    else if (e.Filter is CanStandardRangeAcceptanceFilter srf)
+                    else if (e.Filter is CanStandardRangeAcceptanceFilter)
                     {
+                        throw new NotSupportedException("Range-based acceptance filters are not supported by the MCP2515 hardware");
                     }
-                    else if (e.Filter is CanExtendedRangeAcceptanceFilter erf)
+                    else if (e.Filter is CanExtendedRangeAcceptanceFilter)
                     {
+                        throw new NotSupportedException("Range-based acceptance filters are not supported by the MCP2515 hardware");
                     }
 
                     break;
@@ -93,9 +104,12 @@ public partial class Mcp2515
             }
         }
 
+        /// <summary>
+        /// Handles interrupt pin transitions, reads the interrupt cause from CANSTAT.ICOD,
+        /// and dispatches to <see cref="FrameReceived"/> or <see cref="BusError"/> as appropriate
+        /// </summary>
         private void OnInterruptPortChanged(object sender, DigitalPortResult e)
         {
-            // TODO: check why the interrupt happened (error, frame received, etc)
             var canstat = (InterruptCode)Controller.ReadRegister(Register.CANSTAT)[0] & InterruptCode.Mask;
 
             switch (canstat)
