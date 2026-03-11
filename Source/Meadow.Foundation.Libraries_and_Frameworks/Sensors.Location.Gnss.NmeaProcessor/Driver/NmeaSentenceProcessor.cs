@@ -29,40 +29,46 @@ public class NmeaSentenceProcessor
     private readonly Dictionary<string, INmeaDecoder> decoders = new Dictionary<string, INmeaDecoder>();
 
     /// <summary>
-    /// Enable / disable debug mode
-    /// </summary>
-    public bool DebugMode { get; set; } = false;
-
-    /// <summary>
     /// Creates a new instance of the NmeaSentenceProcessor
     /// </summary>
     public NmeaSentenceProcessor()
     { }
 
     /// <summary>
-    /// Add a new NMEA decoder to the GPS
+    /// Registers an NMEA decoder for its sentence prefix
     /// </summary>
     /// <param name="decoder">NMEA decoder</param>
+    /// <exception cref="Exception">Thrown if a decoder for the same prefix is already registered</exception>
     public void RegisterDecoder(INmeaDecoder decoder)
     {
         Resolver.Log.Trace($"Registering decoder: {decoder.Prefix}");
         if (decoders.ContainsKey(decoder.Prefix))
         {
-            throw new Exception(decoder.Prefix + " already registered.");
+            throw new Exception($"{decoder.Prefix} already registered.");
         }
         decoders.Add(decoder.Prefix, decoder);
     }
 
     /// <summary>
-    /// GPS message ready for processing
+    /// Unregisters a previously registered NMEA decoder
+    /// </summary>
+    /// <param name="decoder">NMEA decoder to remove</param>
+    public void UnregisterDecoder(INmeaDecoder decoder)
+    {
+        Resolver.Log.Trace($"Unregistering decoder: {decoder.Prefix}");
+        decoders.Remove(decoder.Prefix);
+    }
+
+    /// <summary>
+    /// Processes a raw NMEA sentence string, routing it to the appropriate registered decoder
     /// </summary>
     /// <remarks>
     /// Unknown message types will be discarded
     /// </remarks>
-    /// <param name="line">GPS text for processing</param>
+    /// <param name="line">Raw NMEA sentence string</param>
     public void ProcessNmeaMessage(string line)
     {
-        if (DebugMode) { Resolver.Log.Info("NmeaSentenceProcessor.ProcessNmeaMessage"); }
+        Resolver.Log.Trace("NmeaSentenceProcessor.ProcessNmeaMessage");
 
         NmeaSentence sentence;
         try
@@ -71,13 +77,13 @@ public class NmeaSentenceProcessor
         }
         catch (Exception e)
         {
-            if (DebugMode) { Resolver.Log.Warn($"Could not parse message. {e.Message}"); }
+            Resolver.Log.Debug($"Could not parse message. {e.Message}");
             return;
         }
 
         if (decoders.TryGetValue(sentence.Prefix!, out var decoder))
         {
-            if (DebugMode) { Resolver.Log.Info($"Found appropriate decoder:{decoder.Prefix}"); }
+            Resolver.Log.Trace($"Found decoder for: {decoder.Prefix}");
 
             try
             {
@@ -90,7 +96,7 @@ public class NmeaSentenceProcessor
         }
         else
         {
-            if (DebugMode) { Resolver.Log.Warn($"Could not find appropriate decoder for {sentence.Prefix}"); }
+            Resolver.Log.Trace($"No decoder registered for {sentence.Prefix}");
         }
     }
 }
