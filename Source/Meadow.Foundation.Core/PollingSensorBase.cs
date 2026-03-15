@@ -53,7 +53,8 @@ namespace Meadow.Foundation
                         {
                             if (ct.IsCancellationRequested)
                             {
-                                observers.ForEach(x => x.OnCompleted());
+                                for (int i = 0; i < observers.Count; i++)
+                                    observers[i].OnCompleted();
                                 IsSampling = false;
                                 break;
                             }
