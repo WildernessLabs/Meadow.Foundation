@@ -32,7 +32,11 @@ namespace Meadow.Foundation
         {
             lock (samplingLock)
             {
-                if (IsSampling && updateInterval == UpdateInterval) { return; }
+                if (IsSampling)
+                {
+                    if (updateInterval == null || updateInterval == UpdateInterval) { return; }
+                    SamplingTokenSource?.Cancel();
+                }
 
                 IsSampling = true;
 
