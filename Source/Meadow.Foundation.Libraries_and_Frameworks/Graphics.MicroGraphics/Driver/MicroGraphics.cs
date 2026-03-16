@@ -373,44 +373,47 @@ namespace Meadow.Foundation.Graphics
 
         private void DrawFilledPolygon(PointF[] points, Color color)
         {
-            // Convert PointF to Point by rounding to nearest integer
-            var integerPoints = points.Select(p => new Point((int)Math.Round(p.X), (int)Math.Round(p.Y))).ToArray();
+            var integerPoints = new Point[points.Length];
+            for (int i = 0; i < points.Length; i++)
+                integerPoints[i] = new Point((int)Math.Round(points[i].X), (int)Math.Round(points[i].Y));
 
-            // Proceed with polygon filling using integer coordinates
             FillPolygon(integerPoints, color);
         }
 
         private void FillPolygon(Point[] points, Color color)
         {
             // Find the bounding box of the polygon
-            int minY = points.Min(p => p.Y);
-            int maxY = points.Max(p => p.Y);
+            int minY = points[0].Y;
+            int maxY = points[0].Y;
+            for (int i = 1; i < points.Length; i++)
+            {
+                if (points[i].Y < minY) minY = points[i].Y;
+                if (points[i].Y > maxY) maxY = points[i].Y;
+            }
 
-            // For each scanline between minY and maxY
+            // Pre-allocate intersection buffer — reused every scanline
+            var nodeX = new int[points.Length];
+
             for (int y = minY; y <= maxY; y++)
             {
-                var nodeX = new List<int>();
-
+                int nodeCount = 0;
                 int j = points.Length - 1;
                 for (int i = 0; i < points.Length; i++)
                 {
                     if ((points[i].Y < y && points[j].Y >= y) || (points[j].Y < y && points[i].Y >= y))
                     {
-                        int x = (int)(points[i].X + (float)(y - points[i].Y) / (points[j].Y - points[i].Y) * (points[j].X - points[i].X));
-                        nodeX.Add(x);
+                        nodeX[nodeCount++] = (int)(points[i].X + (float)(y - points[i].Y) / (points[j].Y - points[i].Y) * (points[j].X - points[i].X));
                     }
                     j = i;
                 }
 
-                nodeX.Sort();
+                Array.Sort(nodeX, 0, nodeCount);
 
-                for (int i = 0; i < nodeX.Count; i += 2)
+                for (int i = 0; i < nodeCount; i += 2)
                 {
-                    if (i + 1 < nodeX.Count)
+                    if (i + 1 < nodeCount)
                     {
-                        int xStart = nodeX[i];
-                        int xEnd = nodeX[i + 1];
-                        DrawHorizontalLine(xStart, y, xEnd - xStart + 1, color);
+                        DrawHorizontalLine(nodeX[i], y, nodeX[i + 1] - nodeX[i] + 1, color);
                     }
                 }
             }
