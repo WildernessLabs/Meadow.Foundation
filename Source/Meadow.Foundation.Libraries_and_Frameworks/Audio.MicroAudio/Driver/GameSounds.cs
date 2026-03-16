@@ -51,6 +51,7 @@ namespace Meadow.Foundation.Audio
                 GameSoundEffect.PowerDown => PlayPowerDown(),
                 GameSoundEffect.PowerUp => PlayPowerUp(),
                 GameSoundEffect.SecretFound => PlaySecretFound(),
+                GameSoundEffect.Splash => PlaySplash(),
                 GameSoundEffect.Teleport => PlayTeleport(),
                 GameSoundEffect.Victory => PlayVictory(),
                 GameSoundEffect.Warning => PlayWarning(),
@@ -309,7 +310,7 @@ namespace Meadow.Foundation.Audio
         /// <summary>
         /// Plays a splash sound effect
         /// </summary>
-        public async Task PlaySplash()
+        private async Task PlaySplash()
         {
             await toneGenerator.PlayTone(new Frequency(220), TimeSpan.FromMilliseconds(defaultDuration >> 2));
             await Task.Delay(TimeSpan.FromMilliseconds(defaultPause));

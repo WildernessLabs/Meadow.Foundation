@@ -6,7 +6,7 @@ namespace Meadow.Foundation.Audio
     /// <summary>
     /// A utility class for converting musical notes to their corresponding frequencies in hertz
     /// </summary>
-    public class NotesToFrequency
+    public static class NotesToFrequency
     {
         /// <summary>
         /// The frequency of the A4 note, in hertz
