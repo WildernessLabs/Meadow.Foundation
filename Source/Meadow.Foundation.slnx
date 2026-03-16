@@ -1897,6 +1897,15 @@
       <Deploy />
     </Project>
   </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Transceivers/" />
+  <Folder Name="/Meadow.Foundation.Peripherals/Transceivers/GroveWioE5/">
+    <Project Path="Meadow.Foundation.Peripherals/Transceivers.GroveWioE5/Driver/Transceivers.GroveWioE5.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Transceivers/GroveWioE5/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Transceivers.GroveWioE5/Samples/WioE5_Desktop_Sample/WioE5_Desktop_Sample.csproj" Id="d85310e0-01fd-44a0-9656-b3ce861f336e" />
+  </Folder>
   <Folder Name="/Meadow.Foundation.Peripherals/VFDs/" />
   <Folder Name="/Meadow.Foundation.Peripherals/VFDs/CerusXDrive/">
     <Project Path="Meadow.Foundation.Peripherals/VFDs.CerusXDrive/Driver/Motors.CerusXDrive.csproj" />
