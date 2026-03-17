@@ -14,7 +14,8 @@ public class VehicleSpecificQueryFrame : Obd2QueryFrame
             throw new ArgumentException("CAN frame is not a valid vehicle-specific request frame");
         }
 
-        Service = (Service)canFrame.Payload[1];
+        ID = canFrame.ID;
+        Payload = canFrame.Payload;
         Pid = (ushort)((canFrame.Payload[2] << 8) | canFrame.Payload[3]);
     }
 }
