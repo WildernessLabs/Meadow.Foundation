@@ -13,13 +13,13 @@ public class Obd2ResponseFrame : Obd2Frame
 
     public Pid Pid => (Pid)Payload[2];
 
-    internal Obd2ResponseFrame(StandardDataFrame dataFrame)
+    public Obd2ResponseFrame(StandardDataFrame dataFrame)
     {
         ID = dataFrame.ID;
         Payload = dataFrame.Payload;
     }
 
-    internal Obd2ResponseFrame(Service requestService, Pid pid, byte[] data, short ecuAddress)
+    public Obd2ResponseFrame(Service requestService, Pid pid, byte[] data, short ecuAddress)
     {
         ID = ecuAddress;
         Payload = new byte[8];

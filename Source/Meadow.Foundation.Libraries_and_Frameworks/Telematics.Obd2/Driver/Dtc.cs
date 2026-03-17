@@ -39,6 +39,8 @@ public partial class Dtc
         _data = data;
     }
 
+    public byte[] ToBytes() => new byte[] { _data[0], _data[1] };
+
     public override string ToString()
     {
         return $"{Category}{Code:N4}";

@@ -17,6 +17,8 @@ public static class IsoTp
         FlowControl = 3
     }
 
+    private static int _receivedFCWaits;
+
     private enum PduState
     {
         SendingFirstFrame,
@@ -90,9 +92,29 @@ public static class IsoTp
 
     private static async Task WaitForFCFrame(Pdu pdu)
     {
-        // listen for a CAN message
-        // is it from our requested ECU?
-        // is it a flow-control?
+        var tcs = new TaskCompletionSource<bool>();
+
+        EventHandler<ICanFrame>? handler = null;
+        handler = (_, frame) =>
+        {
+            if (frame is StandardDataFrame sdf && (sdf.Payload[0] & 0xF0) == 0x30)
+            {
+                pdu.Bus.FrameReceived -= handler;
+                tcs.TrySetResult(true);
+            }
+        };
+
+        pdu.Bus.FrameReceived += handler;
+
+        var completed = await Task.WhenAny(tcs.Task, Task.Delay(1000));
+        if (completed != tcs.Task)
+        {
+            pdu.Bus.FrameReceived -= handler;
+            pdu.State = PduState.Error;
+            return;
+        }
+
+        pdu.State = PduState.SendingData;
     }
 
     private static void SendFrameMessage(Pdu pdu)
@@ -109,7 +131,7 @@ public static class IsoTp
             payload[1] = (byte)(pdu.Data.Length & 0x00FF);
             Array.Copy(pdu.Data, pdu.BytesSent, payload, 2, 6);
 
-            _receivedFCWaits = 0; // Reset counter
+            _receivedFCWaits = 0;
         }
         else
         {
@@ -174,7 +196,7 @@ public static class IsoTp
 
         // first frame
         payload = new byte[8];
-        payload[0] = (byte)((count >> 8) & 0x10);
+        payload[0] = (byte)(0x10 | ((count >> 8) & 0x0F));
         payload[1] = (byte)(count & 0xff);
         Array.Copy(data, sourceIndex, payload, 2, 6);
         frames.Add(
@@ -190,16 +212,10 @@ public static class IsoTp
             remaining = count - sourceIndex;
             if (remaining <= 0) break;
 
-            if (remaining > 7)
-            {
-                payload = new byte[8];
-            }
-            else
-            {
-                payload = new byte[remaining];
-            }
+            var copyLen = Math.Min(remaining, 7);
+            payload = new byte[8];
             payload[0] = (byte)(0x20 | (frameIndex & 0x0f));
-            Array.Copy(data, sourceIndex, payload, 1, payload.Length - 1);
+            Array.Copy(data, sourceIndex, payload, 1, copyLen);
             frames.Add(
                     new StandardDataFrame
                     {
@@ -208,7 +224,7 @@ public static class IsoTp
                 );
 
             frameIndex++;
-            sourceIndex += 7;
+            sourceIndex += copyLen;
         }
 
         return frames.ToArray();

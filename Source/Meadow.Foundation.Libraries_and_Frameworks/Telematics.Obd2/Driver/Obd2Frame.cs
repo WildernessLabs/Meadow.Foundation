@@ -13,6 +13,8 @@ public abstract class Obd2Frame : StandardDataFrame
         {
             switch ((Obd2FrameType)dataFrame.Payload[0])
             {
+                case Obd2FrameType.ServiceOnly: // SERVICE ONLY (no PID)
+                    return new ServiceOnlyQueryFrame(dataFrame);
                 case Obd2FrameType.Standard: // SAE STANDARD
                     return new SaeStandardQueryFrame(dataFrame);
                 case Obd2FrameType.VehicleSpecific: // VEHICLE SPECIFIC
