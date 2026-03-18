@@ -20,7 +20,6 @@ public abstract class ControllerBase : IController
     public const short TesterAddress = 0x7E0;
 
     private readonly List<CanBusMonitor> _busMonitors = new();
-    private byte[]? _supportedPidMask;
     private readonly Dictionary<Pid, Func<byte[]?>> _pidHandlers = new();
     private readonly IControlModuleStore _store;
 
@@ -28,28 +27,23 @@ public abstract class ControllerBase : IController
     public virtual Pid[] SupportedPids => _pidHandlers.Keys.ToArray();
     public short ModuleAddress { get; }
 
-    private byte[] SupportedPidMask
+    // Builds the 4-byte supported-PID mask for a given range base (0x00, 0x20, 0x40, ...).
+    // Bits 31-1 cover PIDs rangeBase+1 through rangeBase+0x1F.
+    // Bit 0 is set when any PID exists beyond this window, advertising the next range PID.
+    private byte[] BuildSupportedPidMask(byte rangeBase)
     {
-        get
+        uint mask = 0;
+        foreach (var pid in SupportedPids)
         {
-            if (_supportedPidMask is null)
-            {
-                uint mask = 0;
-                foreach (var pid in SupportedPids)
-                {
-                    byte p = (byte)pid;
-                    if (p >= 0x01 && p <= 0x1F)
-                        mask |= 1u << (32 - p);
-                }
-                // Advertise the 0x21-0x40 range extension if we have PIDs there
-                if (SupportedPids.Any(p => (byte)p >= 0x21 && (byte)p <= 0x3F))
-                    mask |= 1u; // bit 0 = PID 0x20 (SupportedPids_21_40) supported
-                var maskBytes = BitConverter.GetBytes(mask);
-                if (BitConverter.IsLittleEndian) Array.Reverse(maskBytes);
-                _supportedPidMask = maskBytes;
-            }
-            return _supportedPidMask;
+            byte p = (byte)pid;
+            if (p > rangeBase && p <= rangeBase + 0x1F)
+                mask |= 1u << (32 - (p - rangeBase));
         }
+        if (SupportedPids.Any(p => (byte)p > rangeBase + 0x1F))
+            mask |= 1u; // advertise next range extension PID
+        var bytes = BitConverter.GetBytes(mask);
+        if (BitConverter.IsLittleEndian) Array.Reverse(bytes);
+        return bytes;
     }
 
     protected ControllerBase(ICanBus[] canBuses, short moduleAddress, IControlModuleStore? store = null)
@@ -68,7 +62,6 @@ public abstract class ControllerBase : IController
     protected void RegisterPid(Pid pid, Func<byte[]?> liveData)
     {
         _pidHandlers[pid] = liveData;
-        _supportedPidMask = null;
     }
 
     protected virtual void RegisterPids()
@@ -145,9 +138,12 @@ public abstract class ControllerBase : IController
 
     private void HandleService01(ICanBus bus, Pid pid)
     {
-        if (pid == Pid.SupportedPids_01_20)
+        // Range-extension PIDs are multiples of 0x20 (0x00, 0x20, 0x40, 0x60, ...).
+        // Each returns a 4-byte mask covering the next 32 PIDs in that window.
+        byte pidByte = (byte)pid;
+        if (pidByte % 0x20 == 0)
         {
-            SendResponse(bus, new Obd2ResponseFrame(Service.Current, pid, SupportedPidMask, ModuleAddress));
+            SendResponse(bus, new Obd2ResponseFrame(Service.Current, pid, BuildSupportedPidMask(pidByte), ModuleAddress));
             return;
         }
 
