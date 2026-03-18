@@ -1,4 +1,4 @@
-﻿using Meadow.Hardware;
+using Meadow.Hardware;
 using Meadow.Units;
 using System;
 using System.Collections.Generic;
@@ -21,13 +21,11 @@ public abstract class ControllerBase : IController
 
     private readonly List<CanBusMonitor> _busMonitors = new();
     private byte[]? _supportedPidMask;
-    private readonly List<Dtc> _storedDtcs = new();
-    private readonly List<Dtc> _pendingDtcs = new();
-    private readonly List<Dtc> _permanentDtcs = new();
-    private FreezeFrameSnapshot? _freezeFrame;
+    private readonly Dictionary<Pid, Func<byte[]?>> _pidHandlers = new();
+    private readonly IControlModuleStore _store;
 
     public abstract string Vin { get; }
-    public abstract Pid[] SupportedPids { get; }
+    public virtual Pid[] SupportedPids => _pidHandlers.Keys.ToArray();
     public short ModuleAddress { get; }
 
     private byte[] SupportedPidMask
@@ -54,15 +52,44 @@ public abstract class ControllerBase : IController
         }
     }
 
-    protected ControllerBase(ICanBus[] canBuses, short moduleAddress)
+    protected ControllerBase(ICanBus[] canBuses, short moduleAddress, IControlModuleStore? store = null)
     {
         ModuleAddress = moduleAddress;
+        _store = store ?? new InMemoryControlModuleStore();
+        RegisterPids();
         foreach (var canBus in canBuses)
         {
             var monitor = new CanBusMonitor(canBus);
             monitor.QueryReceived += (_, query) => OnQueryReceived(monitor.Bus, query);
             _busMonitors.Add(monitor);
         }
+    }
+
+    protected void RegisterPid(Pid pid, Func<byte[]?> liveData)
+    {
+        _pidHandlers[pid] = liveData;
+        _supportedPidMask = null;
+    }
+
+    protected virtual void RegisterPids()
+    {
+        RegisterPid(Pid.MonitorStatus,
+            () => GetEmissionsReadiness().ToBytes(GetStoredDtcs().Count > 0, (byte)GetStoredDtcs().Count));
+
+        RegisterPid(Pid.EngineCoolantTemperature,
+            () => { var t = GetEngineCoolantTemperature(); return t.HasValue ? [(byte)(t.Value.Celsius + 40)] : null; });
+
+        RegisterPid(Pid.EngineRpm,
+            () => { var r = GetEngineRpm(); if (!r.HasValue) return null; var raw = (ushort)(r.Value * 4); return [(byte)(raw >> 8), (byte)(raw & 0xFF)]; });
+
+        RegisterPid(Pid.VehicleSpeed,
+            () => { var s = GetVehicleSpeed(); return s.HasValue ? [(byte)s.Value.KilometersPerHour] : null; });
+
+        RegisterPid(Pid.ThrottlePosition,
+            () => { var t = GetThrottlePosition(); return t.HasValue ? [(byte)(t.Value * 255f / 100f)] : null; });
+
+        RegisterPid(Pid.EngineOilTemperature,
+            () => { var t = GetTransFluidTemp(); return t.HasValue ? [(byte)(t.Value.Celsius + 40)] : null; });
     }
 
     private void OnQueryReceived(ICanBus sourceBus, Obd2QueryFrame queryFrame)
@@ -111,84 +138,57 @@ public abstract class ControllerBase : IController
         }
     }
 
-    private void HandleService02(ICanBus bus, Pid pid, byte frameNumber)
+    private void HandleService01(ICanBus bus, Pid pid)
     {
-        if (_freezeFrame is null) return; // no freeze frame stored
-
-        // Freeze frame response: [length, 0x42, PID, frameNumber, data...]
-        // Prepend frameNumber to data so Obd2ResponseFrame formats the payload correctly.
-        switch (pid)
+        if (pid == Pid.SupportedPids_01_20)
         {
-            case Pid.SupportedPids_01_20:
-                var ffMask = BuildFreezeFrameSupportedPidMask();
-                SendResponse(bus, new Obd2ResponseFrame(Service.FreezeFrame, pid, Prepend(frameNumber, ffMask), ModuleAddress));
-                break;
+            SendResponse(bus, new Obd2ResponseFrame(Service.Current, pid, SupportedPidMask, ModuleAddress));
+            return;
+        }
 
-            case Pid.FreezeDtc:
-                var dtcBytes = _freezeFrame.TriggeringDtc.ToBytes();
-                SendResponse(bus, new Obd2ResponseFrame(Service.FreezeFrame, pid, [frameNumber, dtcBytes[0], dtcBytes[1]], ModuleAddress));
-                break;
-
-            case Pid.MonitorStatus:
-                var monitorBytes = _freezeFrame.EmissionsReadiness.ToBytes(_freezeFrame.MilOn, _freezeFrame.DtcCount);
-                SendResponse(bus, new Obd2ResponseFrame(Service.FreezeFrame, pid, Prepend(frameNumber, monitorBytes), ModuleAddress));
-                break;
-
-            case Pid.EngineCoolantTemperature:
-                if (_freezeFrame.EngineCoolantTemperature.HasValue)
-                {
-                    SendResponse(bus, new Obd2ResponseFrame(Service.FreezeFrame, pid, [frameNumber, (byte)(_freezeFrame.EngineCoolantTemperature.Value.Celsius + 40)], ModuleAddress));
-                }
-                break;
-
-            case Pid.EngineRpm:
-                if (_freezeFrame.EngineRpm.HasValue)
-                {
-                    var raw = (ushort)(_freezeFrame.EngineRpm.Value * 4);
-                    SendResponse(bus, new Obd2ResponseFrame(Service.FreezeFrame, pid, [frameNumber, (byte)(raw >> 8), (byte)(raw & 0xFF)], ModuleAddress));
-                }
-                break;
-
-            case Pid.VehicleSpeed:
-                if (_freezeFrame.VehicleSpeed.HasValue)
-                {
-                    SendResponse(bus, new Obd2ResponseFrame(Service.FreezeFrame, pid, [frameNumber, (byte)_freezeFrame.VehicleSpeed.Value.KilometersPerHour], ModuleAddress));
-                }
-                break;
-
-            case Pid.ThrottlePosition:
-                if (_freezeFrame.ThrottlePosition.HasValue)
-                {
-                    SendResponse(bus, new Obd2ResponseFrame(Service.FreezeFrame, pid, [frameNumber, (byte)(_freezeFrame.ThrottlePosition.Value * 255f / 100f)], ModuleAddress));
-                }
-                break;
-
-            case Pid.EngineOilTemperature:
-                if (_freezeFrame.TransFluidTemp.HasValue)
-                {
-                    SendResponse(bus, new Obd2ResponseFrame(Service.FreezeFrame, pid, [frameNumber, (byte)(_freezeFrame.TransFluidTemp.Value.Celsius + 40)], ModuleAddress));
-                }
-                break;
+        if (_pidHandlers.TryGetValue(pid, out var handler))
+        {
+            var data = handler();
+            if (data != null)
+                SendResponse(bus, new Obd2ResponseFrame(Service.Current, pid, data, ModuleAddress));
         }
     }
 
-    private byte[] BuildFreezeFrameSupportedPidMask()
+    private void HandleService02(ICanBus bus, Pid pid, byte frameNumber)
+    {
+        var ff = _store.FreezeFrame;
+        if (ff is null) return;
+
+        if (pid == Pid.SupportedPids_01_20)
+        {
+            var ffMask = BuildFreezeFrameSupportedPidMask(ff);
+            SendResponse(bus, new Obd2ResponseFrame(Service.FreezeFrame, pid, Prepend(frameNumber, ffMask), ModuleAddress));
+            return;
+        }
+
+        if (pid == Pid.FreezeDtc)
+        {
+            var dtcBytes = ff.TriggeringDtc.ToBytes();
+            SendResponse(bus, new Obd2ResponseFrame(Service.FreezeFrame, pid, [frameNumber, dtcBytes[0], dtcBytes[1]], ModuleAddress));
+            return;
+        }
+
+        if (ff.Data.TryGetValue(pid, out var data))
+            SendResponse(bus, new Obd2ResponseFrame(Service.FreezeFrame, pid, Prepend(frameNumber, data), ModuleAddress));
+    }
+
+    private static byte[] BuildFreezeFrameSupportedPidMask(FreezeFrameSnapshot ff)
     {
         uint mask = 0;
-
-        // PID 0x01 MonitorStatus - always present
-        mask |= 1u << (32 - 0x01);
         // PID 0x02 FreezeDtc - always present
         mask |= 1u << (32 - 0x02);
 
-        if (_freezeFrame!.EngineCoolantTemperature.HasValue)
-            mask |= 1u << (32 - 0x05);
-        if (_freezeFrame.EngineRpm.HasValue)
-            mask |= 1u << (32 - 0x0C);
-        if (_freezeFrame.VehicleSpeed.HasValue)
-            mask |= 1u << (32 - 0x0D);
-        if (_freezeFrame.ThrottlePosition.HasValue)
-            mask |= 1u << (32 - 0x11);
+        foreach (var pid in ff.Data.Keys)
+        {
+            byte p = (byte)pid;
+            if (p >= 0x01 && p <= 0x1F)
+                mask |= 1u << (32 - p);
+        }
 
         var bytes = BitConverter.GetBytes(mask);
         if (BitConverter.IsLittleEndian) Array.Reverse(bytes);
@@ -247,74 +247,6 @@ public abstract class ControllerBase : IController
 
     protected virtual void OnDtcsCleared() { }
 
-    private void HandleService01(ICanBus bus, Pid pid)
-    {
-        switch (pid)
-        {
-            case Pid.SupportedPids_01_20:
-                SendResponse(bus, new Obd2ResponseFrame(Service.Current, pid, SupportedPidMask, ModuleAddress));
-                break;
-            case Pid.SupportedPids_21_40:
-                // not implemented - no PIDs > 0x20 supported
-                break;
-
-            case Pid.MonitorStatus:
-                var readiness = GetEmissionsReadiness();
-                var milOn = GetStoredDtcs().Count > 0;
-                var dtcCount = (byte)GetStoredDtcs().Count;
-                SendResponse(bus, new Obd2ResponseFrame(Service.Current, pid, readiness.ToBytes(milOn, dtcCount), ModuleAddress));
-                break;
-
-            case Pid.EngineCoolantTemperature:
-                var temp = GetEngineCoolantTemperature();
-                if (temp.HasValue)
-                {
-                    // A - 40 = °C
-                    var tempValue = (byte)(temp.Value.Celsius + 40);
-                    SendResponse(bus, new Obd2ResponseFrame(Service.Current, pid, [tempValue], ModuleAddress));
-                }
-                break;
-
-            case Pid.EngineRpm:
-                var rpm = GetEngineRpm();
-                if (rpm.HasValue)
-                {
-                    // (A*256 + B) / 4 = RPM
-                    var raw = (ushort)(rpm.Value * 4);
-                    SendResponse(bus, new Obd2ResponseFrame(Service.Current, pid, [(byte)(raw >> 8), (byte)(raw & 0xFF)], ModuleAddress));
-                }
-                break;
-
-            case Pid.VehicleSpeed:
-                var speed = GetVehicleSpeed();
-                if (speed.HasValue)
-                {
-                    // A = km/h
-                    SendResponse(bus, new Obd2ResponseFrame(Service.Current, pid, [(byte)speed.Value.KilometersPerHour], ModuleAddress));
-                }
-                break;
-
-            case Pid.ThrottlePosition:
-                var throttle = GetThrottlePosition();
-                if (throttle.HasValue)
-                {
-                    // A * 100/255 = %
-                    SendResponse(bus, new Obd2ResponseFrame(Service.Current, pid, [(byte)(throttle.Value * 255f / 100f)], ModuleAddress));
-                }
-                break;
-
-            case Pid.EngineOilTemperature:
-                var transTemp = GetTransFluidTemp();
-                if (transTemp.HasValue)
-                {
-                    // A - 40 = °C (same encoding as coolant temp)
-                    var transTempValue = (byte)(transTemp.Value.Celsius + 40);
-                    SendResponse(bus, new Obd2ResponseFrame(Service.Current, pid, [transTempValue], ModuleAddress));
-                }
-                break;
-        }
-    }
-
     private void HandleService09(ICanBus bus, Pid pid)
     {
         switch (pid)
@@ -343,35 +275,33 @@ public abstract class ControllerBase : IController
 
     public void SetDtc(Dtc dtc)
     {
-        if (!_storedDtcs.Contains(dtc)) _storedDtcs.Add(dtc);
+        _store.AddStoredDtc(dtc);
 
-        // Capture freeze frame on first DTC set; preserve it for subsequent DTCs
-        _freezeFrame ??= new FreezeFrameSnapshot
+        if (_store.FreezeFrame is null)
         {
-            TriggeringDtc = dtc,
-            EngineCoolantTemperature = GetEngineCoolantTemperature(),
-            EngineRpm = GetEngineRpm(),
-            VehicleSpeed = GetVehicleSpeed(),
-            ThrottlePosition = GetThrottlePosition(),
-            TransFluidTemp = GetTransFluidTemp(),
-            EmissionsReadiness = GetEmissionsReadiness(),
-            MilOn = true,
-            DtcCount = (byte)(_storedDtcs.Count),
-        };
+            var data = new Dictionary<Pid, byte[]>();
+            foreach (var (pid, handler) in _pidHandlers)
+            {
+                var bytes = handler();
+                if (bytes != null) data[pid] = bytes;
+            }
+            _store.SetFreezeFrame(new FreezeFrameSnapshot { TriggeringDtc = dtc, Data = data });
+        }
     }
-    public void ClearDtc(Dtc dtc) => _storedDtcs.Remove(dtc);
 
-    public void SetPendingDtc(Dtc dtc) { if (!_pendingDtcs.Contains(dtc)) _pendingDtcs.Add(dtc); }
-    public void ClearPendingDtc(Dtc dtc) => _pendingDtcs.Remove(dtc);
+    public void ClearDtc(Dtc dtc) => _store.RemoveStoredDtc(dtc);
 
-    public void SetPermanentDtc(Dtc dtc) { if (!_permanentDtcs.Contains(dtc)) _permanentDtcs.Add(dtc); }
-    public void ClearPermanentDtc(Dtc dtc) => _permanentDtcs.Remove(dtc);
+    public void SetPendingDtc(Dtc dtc) => _store.AddPendingDtc(dtc);
+    public void ClearPendingDtc(Dtc dtc) => _store.RemovePendingDtc(dtc);
 
-    public void ClearAllDtcs() { _storedDtcs.Clear(); _pendingDtcs.Clear(); _permanentDtcs.Clear(); _freezeFrame = null; }
+    public void SetPermanentDtc(Dtc dtc) => _store.AddPermanentDtc(dtc);
+    public void ClearPermanentDtc(Dtc dtc) => _store.RemovePermanentDtc(dtc);
 
-    protected virtual IReadOnlyList<Dtc> GetStoredDtcs() => _storedDtcs;
-    protected virtual IReadOnlyList<Dtc> GetPendingDtcs() => _pendingDtcs;
-    protected virtual IReadOnlyList<Dtc> GetPermanentDtcs() => _permanentDtcs;
+    public void ClearAllDtcs() => _store.ClearAllDtcs();
+
+    protected virtual IReadOnlyList<Dtc> GetStoredDtcs() => _store.StoredDtcs;
+    protected virtual IReadOnlyList<Dtc> GetPendingDtcs() => _store.PendingDtcs;
+    protected virtual IReadOnlyList<Dtc> GetPermanentDtcs() => _store.PermanentDtcs;
 
     protected virtual EmissionsReadinessStatus GetEmissionsReadiness() => new EmissionsReadinessStatus();
     protected virtual Temperature? GetEngineCoolantTemperature() => null;
