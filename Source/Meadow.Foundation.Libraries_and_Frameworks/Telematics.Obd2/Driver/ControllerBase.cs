@@ -2,6 +2,7 @@
 using Meadow.Units;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,6 +24,7 @@ public abstract class ControllerBase : IController
     private readonly List<Dtc> _storedDtcs = new();
     private readonly List<Dtc> _pendingDtcs = new();
     private readonly List<Dtc> _permanentDtcs = new();
+    private FreezeFrameSnapshot? _freezeFrame;
 
     public abstract string Vin { get; }
     public abstract Pid[] SupportedPids { get; }
@@ -66,7 +68,7 @@ public abstract class ControllerBase : IController
     private void OnQueryReceived(ICanBus sourceBus, Obd2QueryFrame queryFrame)
     {
         // TODO: raise an event
-        Console.WriteLine($"[PCM] Query received: Service=0x{(byte)queryFrame.Service:X2}");
+        Debug.WriteLine($"[PCM] Query received: Service=0x{(byte)queryFrame.Service:X2}");
 
         if (queryFrame is SaeStandardQueryFrame saeQuery)
         {
@@ -76,11 +78,15 @@ public abstract class ControllerBase : IController
         {
             HandleServiceOnlyQuery(sourceBus, serviceOnlyQuery);
         }
+        else if (queryFrame is VehicleSpecificQueryFrame vehicleQuery)
+        {
+            HandleVehicleSpecificQuery(sourceBus, vehicleQuery);
+        }
     }
 
     private void HandleSaeQuery(ICanBus bus, SaeStandardQueryFrame query)
     {
-        Console.WriteLine($"[PCM]   SAE: Service=0x{(byte)query.Service:X2} PID=0x{(byte)query.Pid:X2}");
+        Debug.WriteLine($"[PCM]   SAE: Service=0x{(byte)query.Service:X2} PID=0x{(byte)query.Pid:X2}");
 
         switch (query.Service)
         {
@@ -93,9 +99,113 @@ public abstract class ControllerBase : IController
         }
     }
 
+    private void HandleVehicleSpecificQuery(ICanBus bus, VehicleSpecificQueryFrame query)
+    {
+        Debug.WriteLine($"[PCM]   Vehicle-specific: Service=0x{(byte)query.Service:X2} PID=0x{(byte)query.Pid:X2} Frame={query.FrameNumber}");
+
+        switch (query.Service)
+        {
+            case Service.FreezeFrame:
+                HandleService02(bus, query.Pid, query.FrameNumber);
+                break;
+        }
+    }
+
+    private void HandleService02(ICanBus bus, Pid pid, byte frameNumber)
+    {
+        if (_freezeFrame is null) return; // no freeze frame stored
+
+        // Freeze frame response: [length, 0x42, PID, frameNumber, data...]
+        // Prepend frameNumber to data so Obd2ResponseFrame formats the payload correctly.
+        switch (pid)
+        {
+            case Pid.SupportedPids_01_20:
+                var ffMask = BuildFreezeFrameSupportedPidMask();
+                SendResponse(bus, new Obd2ResponseFrame(Service.FreezeFrame, pid, Prepend(frameNumber, ffMask), ModuleAddress));
+                break;
+
+            case Pid.FreezeDtc:
+                var dtcBytes = _freezeFrame.TriggeringDtc.ToBytes();
+                SendResponse(bus, new Obd2ResponseFrame(Service.FreezeFrame, pid, [frameNumber, dtcBytes[0], dtcBytes[1]], ModuleAddress));
+                break;
+
+            case Pid.MonitorStatus:
+                var monitorBytes = _freezeFrame.EmissionsReadiness.ToBytes(_freezeFrame.MilOn, _freezeFrame.DtcCount);
+                SendResponse(bus, new Obd2ResponseFrame(Service.FreezeFrame, pid, Prepend(frameNumber, monitorBytes), ModuleAddress));
+                break;
+
+            case Pid.EngineCoolantTemperature:
+                if (_freezeFrame.EngineCoolantTemperature.HasValue)
+                {
+                    SendResponse(bus, new Obd2ResponseFrame(Service.FreezeFrame, pid, [frameNumber, (byte)(_freezeFrame.EngineCoolantTemperature.Value.Celsius + 40)], ModuleAddress));
+                }
+                break;
+
+            case Pid.EngineRpm:
+                if (_freezeFrame.EngineRpm.HasValue)
+                {
+                    var raw = (ushort)(_freezeFrame.EngineRpm.Value * 4);
+                    SendResponse(bus, new Obd2ResponseFrame(Service.FreezeFrame, pid, [frameNumber, (byte)(raw >> 8), (byte)(raw & 0xFF)], ModuleAddress));
+                }
+                break;
+
+            case Pid.VehicleSpeed:
+                if (_freezeFrame.VehicleSpeed.HasValue)
+                {
+                    SendResponse(bus, new Obd2ResponseFrame(Service.FreezeFrame, pid, [frameNumber, (byte)_freezeFrame.VehicleSpeed.Value.KilometersPerHour], ModuleAddress));
+                }
+                break;
+
+            case Pid.ThrottlePosition:
+                if (_freezeFrame.ThrottlePosition.HasValue)
+                {
+                    SendResponse(bus, new Obd2ResponseFrame(Service.FreezeFrame, pid, [frameNumber, (byte)(_freezeFrame.ThrottlePosition.Value * 255f / 100f)], ModuleAddress));
+                }
+                break;
+
+            case Pid.EngineOilTemperature:
+                if (_freezeFrame.TransFluidTemp.HasValue)
+                {
+                    SendResponse(bus, new Obd2ResponseFrame(Service.FreezeFrame, pid, [frameNumber, (byte)(_freezeFrame.TransFluidTemp.Value.Celsius + 40)], ModuleAddress));
+                }
+                break;
+        }
+    }
+
+    private byte[] BuildFreezeFrameSupportedPidMask()
+    {
+        uint mask = 0;
+
+        // PID 0x01 MonitorStatus - always present
+        mask |= 1u << (32 - 0x01);
+        // PID 0x02 FreezeDtc - always present
+        mask |= 1u << (32 - 0x02);
+
+        if (_freezeFrame!.EngineCoolantTemperature.HasValue)
+            mask |= 1u << (32 - 0x05);
+        if (_freezeFrame.EngineRpm.HasValue)
+            mask |= 1u << (32 - 0x0C);
+        if (_freezeFrame.VehicleSpeed.HasValue)
+            mask |= 1u << (32 - 0x0D);
+        if (_freezeFrame.ThrottlePosition.HasValue)
+            mask |= 1u << (32 - 0x11);
+
+        var bytes = BitConverter.GetBytes(mask);
+        if (BitConverter.IsLittleEndian) Array.Reverse(bytes);
+        return bytes;
+    }
+
+    private static byte[] Prepend(byte prefix, byte[] data)
+    {
+        var result = new byte[data.Length + 1];
+        result[0] = prefix;
+        Array.Copy(data, 0, result, 1, data.Length);
+        return result;
+    }
+
     private void HandleServiceOnlyQuery(ICanBus bus, ServiceOnlyQueryFrame query)
     {
-        Console.WriteLine($"[PCM]   SAE: Service=0x{(byte)query.Service:X2} (no PID)");
+        Debug.WriteLine($"[PCM]   SAE: Service=0x{(byte)query.Service:X2} (no PID)");
 
         switch (query.Service)
         {
@@ -231,7 +341,24 @@ public abstract class ControllerBase : IController
         }
     }
 
-    public void SetDtc(Dtc dtc) { if (!_storedDtcs.Contains(dtc)) _storedDtcs.Add(dtc); }
+    public void SetDtc(Dtc dtc)
+    {
+        if (!_storedDtcs.Contains(dtc)) _storedDtcs.Add(dtc);
+
+        // Capture freeze frame on first DTC set; preserve it for subsequent DTCs
+        _freezeFrame ??= new FreezeFrameSnapshot
+        {
+            TriggeringDtc = dtc,
+            EngineCoolantTemperature = GetEngineCoolantTemperature(),
+            EngineRpm = GetEngineRpm(),
+            VehicleSpeed = GetVehicleSpeed(),
+            ThrottlePosition = GetThrottlePosition(),
+            TransFluidTemp = GetTransFluidTemp(),
+            EmissionsReadiness = GetEmissionsReadiness(),
+            MilOn = true,
+            DtcCount = (byte)(_storedDtcs.Count),
+        };
+    }
     public void ClearDtc(Dtc dtc) => _storedDtcs.Remove(dtc);
 
     public void SetPendingDtc(Dtc dtc) { if (!_pendingDtcs.Contains(dtc)) _pendingDtcs.Add(dtc); }
@@ -240,7 +367,7 @@ public abstract class ControllerBase : IController
     public void SetPermanentDtc(Dtc dtc) { if (!_permanentDtcs.Contains(dtc)) _permanentDtcs.Add(dtc); }
     public void ClearPermanentDtc(Dtc dtc) => _permanentDtcs.Remove(dtc);
 
-    public void ClearAllDtcs() { _storedDtcs.Clear(); _pendingDtcs.Clear(); _permanentDtcs.Clear(); }
+    public void ClearAllDtcs() { _storedDtcs.Clear(); _pendingDtcs.Clear(); _permanentDtcs.Clear(); _freezeFrame = null; }
 
     protected virtual IReadOnlyList<Dtc> GetStoredDtcs() => _storedDtcs;
     protected virtual IReadOnlyList<Dtc> GetPendingDtcs() => _pendingDtcs;
@@ -297,7 +424,7 @@ public abstract class ControllerBase : IController
         if (completed != tcs.Task)
         {
             bus.FrameReceived -= fcHandler;
-            Console.WriteLine("[PCM] ISO-TP: timeout waiting for flow control");
+            Debug.WriteLine("[PCM] ISO-TP: timeout waiting for flow control");
             return;
         }
 
@@ -331,16 +458,29 @@ internal class CanBusMonitor
         if (frame is not StandardDataFrame sdf) return;
         if (sdf.ID != Obd2Frame.Obd2RequestID) return;
 
+        Obd2QueryFrame query;
         try
         {
-            if (Obd2Frame.FromCanFrame(sdf) is Obd2QueryFrame query)
-            {
-                QueryReceived?.Invoke(this, query);
-            }
+            if (Obd2Frame.FromCanFrame(sdf) is not Obd2QueryFrame q) return;
+            query = q;
         }
         catch
         {
             // not a valid OBD2 frame - ignore
+            return;
         }
+
+        // Dispatch off the receive thread to avoid re-entrancy issues with the CAN driver
+        _ = Task.Run(() =>
+        {
+            try
+            {
+                QueryReceived?.Invoke(this, query);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[OBD2] Exception handling query: {ex}");
+            }
+        });
     }
 }

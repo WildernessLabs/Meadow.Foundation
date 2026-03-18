@@ -1,11 +1,12 @@
-﻿using Meadow.Hardware;
+using Meadow.Hardware;
 using System;
 
 namespace Meadow.Foundation.Telematics.OBD2;
 
 public class VehicleSpecificQueryFrame : Obd2QueryFrame
 {
-    public ushort Pid { get; }
+    public Pid Pid => (Pid)Payload[2];
+    public byte FrameNumber => Payload[3];
 
     internal VehicleSpecificQueryFrame(StandardDataFrame canFrame)
     {
@@ -16,6 +17,5 @@ public class VehicleSpecificQueryFrame : Obd2QueryFrame
 
         ID = canFrame.ID;
         Payload = canFrame.Payload;
-        Pid = (ushort)((canFrame.Payload[2] << 8) | canFrame.Payload[3]);
     }
 }

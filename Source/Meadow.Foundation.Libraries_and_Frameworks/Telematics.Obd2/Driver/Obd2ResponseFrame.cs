@@ -24,7 +24,7 @@ public class Obd2ResponseFrame : Obd2Frame
         ID = ecuAddress;
         Payload = new byte[8];
 
-        if (data.Length > 4) throw new ArgumentOutOfRangeException();
+        if (data.Length > 5) throw new ArgumentOutOfRangeException();
 
         Payload[0] = (byte)(data.Length + 2);
         Payload[1] = (byte)((byte)requestService | 0x40);
