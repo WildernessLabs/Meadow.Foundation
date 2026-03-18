@@ -252,23 +252,63 @@ public abstract class ControllerBase : IController
         switch (pid)
         {
             case Pid.SupportedPids_01_20:
-                // Service 09 supported PIDs bitmask: bit 30 = PID 02 (VIN)
                 uint mask = 0;
-                mask |= 1u << (32 - 0x02); // VIN
+                mask |= 1u << (32 - 0x02); // VIN always present
+                if (CalibrationId != null)               mask |= 1u << (32 - 0x04);
+                if (CalibrationVerificationNumber != null) mask |= 1u << (32 - 0x06);
+                if (EcuName != null)                     mask |= 1u << (32 - 0x0A);
                 var maskBytes = BitConverter.GetBytes(mask);
                 if (BitConverter.IsLittleEndian) Array.Reverse(maskBytes);
                 SendResponse(bus, new Obd2ResponseFrame(Service.VehicleInfo, pid, maskBytes, ModuleAddress));
                 break;
 
             case (Pid)0x02: // VIN
-                // Payload: [0x49, 0x02, 0x01, VIN bytes (17)]
                 var vinBytes = Encoding.ASCII.GetBytes(Vin.PadRight(17).Substring(0, 17));
-                var payload = new byte[3 + vinBytes.Length];
-                payload[0] = 0x49; // Service 09 response (0x09 | 0x40)
-                payload[1] = 0x02; // PID
-                payload[2] = 0x01; // message count
-                Array.Copy(vinBytes, 0, payload, 3, vinBytes.Length);
-                _ = SendIsoTpResponse(bus, ModuleAddress, TesterAddress, payload);
+                var vinPayload = new byte[3 + vinBytes.Length];
+                vinPayload[0] = 0x49;
+                vinPayload[1] = 0x02;
+                vinPayload[2] = 0x01; // message count
+                Array.Copy(vinBytes, 0, vinPayload, 3, vinBytes.Length);
+                _ = SendIsoTpResponse(bus, ModuleAddress, TesterAddress, vinPayload);
+                break;
+
+            case (Pid)0x04: // Calibration ID — 16 ASCII bytes, null-padded
+                if (CalibrationId is { } calId)
+                {
+                    var calBytes = Encoding.ASCII.GetBytes(calId.PadRight(16).Substring(0, 16));
+                    var calPayload = new byte[3 + calBytes.Length];
+                    calPayload[0] = 0x49;
+                    calPayload[1] = 0x04;
+                    calPayload[2] = 0x01; // message count
+                    Array.Copy(calBytes, 0, calPayload, 3, calBytes.Length);
+                    _ = SendIsoTpResponse(bus, ModuleAddress, TesterAddress, calPayload);
+                }
+                break;
+
+            case (Pid)0x06: // CVN — 4 bytes, big-endian
+                if (CalibrationVerificationNumber is { } cvn)
+                {
+                    var cvnPayload = new byte[]
+                    {
+                        0x49, 0x06,
+                        0x01, // message count
+                        (byte)(cvn >> 24), (byte)(cvn >> 16), (byte)(cvn >> 8), (byte)cvn
+                    };
+                    _ = SendIsoTpResponse(bus, ModuleAddress, TesterAddress, cvnPayload);
+                }
+                break;
+
+            case (Pid)0x0A: // ECU Name — 20 ASCII bytes, null-padded
+                if (EcuName is { } name)
+                {
+                    var nameBytes = Encoding.ASCII.GetBytes(name.PadRight(20).Substring(0, 20));
+                    var namePayload = new byte[3 + nameBytes.Length];
+                    namePayload[0] = 0x49;
+                    namePayload[1] = 0x0A;
+                    namePayload[2] = 0x01; // message count
+                    Array.Copy(nameBytes, 0, namePayload, 3, nameBytes.Length);
+                    _ = SendIsoTpResponse(bus, ModuleAddress, TesterAddress, namePayload);
+                }
                 break;
         }
     }
@@ -309,6 +349,11 @@ public abstract class ControllerBase : IController
     protected virtual Speed? GetVehicleSpeed() => null;
     protected virtual float? GetThrottlePosition() => null; // percent 0-100
     protected virtual Temperature? GetTransFluidTemp() => null;
+
+    // Mode 09 vehicle info — override to advertise
+    public virtual string? CalibrationId => null;           // PID 0x04: up to 16 ASCII chars
+    public virtual uint? CalibrationVerificationNumber => null; // PID 0x06: 4-byte checksum
+    public virtual string? EcuName => null;                 // PID 0x0A: up to 20 ASCII chars
 
     protected void SendResponse(ICanBus bus, Obd2ResponseFrame response)
     {
