@@ -9,12 +9,6 @@ using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Telematics.OBD2;
 
-public interface IController
-{
-    Pid[] SupportedPids { get; }
-    short ModuleAddress { get; }
-}
-
 public abstract class ControllerBase : IController
 {
     public const short TesterAddress = 0x7E0;
@@ -255,9 +249,9 @@ public abstract class ControllerBase : IController
             case Pid.SupportedPids_01_20:
                 uint mask = 0;
                 mask |= 1u << (32 - 0x02); // VIN always present
-                if (CalibrationId != null)               mask |= 1u << (32 - 0x04);
+                if (CalibrationId != null) mask |= 1u << (32 - 0x04);
                 if (CalibrationVerificationNumber != null) mask |= 1u << (32 - 0x06);
-                if (EcuName != null)                     mask |= 1u << (32 - 0x0A);
+                if (EcuName != null) mask |= 1u << (32 - 0x0A);
                 var maskBytes = BitConverter.GetBytes(mask);
                 if (BitConverter.IsLittleEndian) Array.Reverse(maskBytes);
                 SendResponse(bus, new Obd2ResponseFrame(Service.VehicleInfo, pid, maskBytes, ModuleAddress));
