@@ -9,17 +9,11 @@ public abstract class Obd2Frame : StandardDataFrame
 
     public static Obd2Frame FromCanFrame(StandardDataFrame dataFrame)
     {
-        if (dataFrame.ID == Obd2RequestID)
+        switch ((Obd2FrameType)dataFrame.Payload[0])
         {
-            switch ((Obd2FrameType)dataFrame.Payload[0])
-            {
-                case Obd2FrameType.ServiceOnly: // SERVICE ONLY (no PID)
-                    return new ServiceOnlyQueryFrame(dataFrame);
-                case Obd2FrameType.Standard: // SAE STANDARD
-                    return new SaeStandardQueryFrame(dataFrame);
-                case Obd2FrameType.VehicleSpecific: // VEHICLE SPECIFIC
-                    return new VehicleSpecificQueryFrame(dataFrame);
-            }
+            case Obd2FrameType.ServiceOnly:    return new ServiceOnlyQueryFrame(dataFrame);
+            case Obd2FrameType.Standard:       return new SaeStandardQueryFrame(dataFrame);
+            case Obd2FrameType.VehicleSpecific: return new VehicleSpecificQueryFrame(dataFrame);
         }
 
         throw new ArgumentException("data frame is not a valid ODB2 frame");

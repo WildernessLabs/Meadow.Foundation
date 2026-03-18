@@ -59,7 +59,7 @@ public abstract class ControllerBase : IController
         RegisterPids();
         foreach (var canBus in canBuses)
         {
-            var monitor = new CanBusMonitor(canBus);
+            var monitor = new CanBusMonitor(canBus, moduleAddress);
             monitor.QueryReceived += (_, query) => OnQueryReceived(monitor.Bus, query);
             _busMonitors.Add(monitor);
         }
@@ -134,6 +134,11 @@ public abstract class ControllerBase : IController
         {
             case Service.FreezeFrame:
                 HandleService02(bus, query.Pid, query.FrameNumber);
+                break;
+            case Service.VehicleInfo:
+                // SAE J1979 sends Service 09 as a 3-byte frame (with frame number 0x01).
+                // Frame number is always 0x01 for single-message responses; ignore it.
+                HandleService09(bus, query.Pid);
                 break;
         }
     }
@@ -422,16 +427,24 @@ internal class CanBusMonitor
 
     public ICanBus Bus { get; }
 
-    public CanBusMonitor(ICanBus bus)
+    // Physical request address for this module: moduleAddress - 8
+    // e.g. PCM at 0x7E8 listens on 0x7E0; TCU at 0x7E9 listens on 0x7E1
+    private readonly short _physicalRequestId;
+
+    public CanBusMonitor(ICanBus bus, short moduleAddress)
     {
         Bus = bus;
+        _physicalRequestId = (short)(moduleAddress - 8);
         bus.FrameReceived += OnFrameReceived;
     }
 
     private void OnFrameReceived(object? sender, ICanFrame frame)
     {
         if (frame is not StandardDataFrame sdf) return;
-        if (sdf.ID != Obd2Frame.Obd2RequestID) return;
+        if (sdf.ID != Obd2Frame.Obd2RequestID && sdf.ID != _physicalRequestId) return;
+        // Only single-frame ISO-TP packets are OBD2 queries (upper nibble == 0).
+        // Upper nibble 0x1=FirstFrame, 0x2=Consecutive, 0x3=FlowControl — all ignored.
+        if (sdf.Payload.Length == 0 || (sdf.Payload[0] & 0xF0) != 0) return;
 
         Obd2QueryFrame query;
         try
