@@ -1,5 +1,6 @@
 ﻿using Meadow.Foundation.Sensors;
 using Meadow.Hardware;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace Meadow.Foundation.IOExpanders;
@@ -73,6 +74,12 @@ public class SimulatedT322ai
     public Task WriteModbusAddress(byte newAddress)
     {
         throw new System.NotImplementedException();
+    }
+
+    /// <inheritdoc/>
+    public Task<bool> ChangeIpAddress(IPAddress localAddress, IPAddress currentDeviceIp, IPAddress newIp, IPAddress subnetMask, IPAddress gateway, int retries = 3)
+    {
+        return Task.FromResult(true);
     }
 
     /// <inheritdoc/>

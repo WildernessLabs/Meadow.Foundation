@@ -33,6 +33,11 @@ public partial class T38i8o6do
         HardwareRev = 8,
 
         /// <summary>
+        /// Modbus comms baud rate
+        /// </summary>
+        BaudRate = 15,
+
+        /// <summary>
         /// MODBUS_OUTPUT_DEAD_MASTER
         /// </summary>
         OutputDeadMaster = 30,

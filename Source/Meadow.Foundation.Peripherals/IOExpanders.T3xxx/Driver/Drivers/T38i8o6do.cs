@@ -140,20 +140,39 @@ public partial class T38i8o6do
     }
 
     /// <inheritdoc/>
-    public override Task<int> ReadBaudRate()
+    public override async Task<int> ReadBaudRate()
     {
-        throw new System.NotImplementedException();
+        var register = await ReadHoldingRegister((ushort)T38i806doRegisters.BaudRate);
+        return (ModuleBaudRate)register switch
+        {
+            ModuleBaudRate.BitRate_115200 => 115200,
+            ModuleBaudRate.BitRate_57600 => 57600,
+            ModuleBaudRate.BitRate_38400 => 38400,
+            ModuleBaudRate.BitRate_19200 => 19200,
+            ModuleBaudRate.Bitrate_9600 => 9600,
+            _ => 9600
+        };
     }
 
     /// <inheritdoc/>
-    public override Task WriteBaudRate(int bitrate)
+    public override async Task WriteBaudRate(int bitrate)
     {
-        throw new System.NotImplementedException();
+        var rate = bitrate switch
+        {
+            115200 => ModuleBaudRate.BitRate_115200,
+            57600 => ModuleBaudRate.BitRate_57600,
+            38400 => ModuleBaudRate.BitRate_38400,
+            19200 => ModuleBaudRate.BitRate_19200,
+            9600 => ModuleBaudRate.Bitrate_9600,
+            _ => throw new System.ArgumentException("Invalid baud rate")
+        };
+
+        await WriteHoldingRegister((ushort)T38i806doRegisters.BaudRate, (ushort)rate);
     }
 
     /// <inheritdoc/>
     public override Task WriteModbusAddress(byte newAddress)
     {
-        throw new System.NotImplementedException();
+        return WriteHoldingRegister((ushort)T38i806doRegisters.Address, newAddress);
     }
 }
