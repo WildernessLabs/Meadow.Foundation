@@ -35,7 +35,7 @@ namespace Meadow.Foundation.Graphics
         /// <summary>
         /// Is the struct empty / zero?
         /// </summary>
-        public bool IsEmpty => X == 0 && Y == 0;
+        public bool IsEmpty => X == 0 && Y == 0 && Z == 0;
 
         /// <summary>
         /// Create a new Point3d struct
@@ -145,7 +145,7 @@ namespace Meadow.Foundation.Graphics
         /// <returns>An int that represents the hash code for this instance</returns>
         public override int GetHashCode()
         {
-            return X.GetHashCode() ^ Y.GetHashCode();
+            return X.GetHashCode() ^ Y.GetHashCode() ^ Z.GetHashCode();
         }
 
         /// <summary>

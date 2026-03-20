@@ -1,9 +1,32 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 
 namespace Meadow.Foundation.ICs.IOExpanders;
 
 internal static partial class Native
 {
+#if NET5_0_OR_GREATER
+    static Native()
+    {
+        NativeLibrary.SetDllImportResolver(System.Reflection.Assembly.GetExecutingAssembly(), DllImportResolver);
+    }
+
+    private static IntPtr DllImportResolver(string libraryName, System.Reflection.Assembly assembly, DllImportSearchPath? searchPath)
+    {
+        if (libraryName == "ftd2xx")
+        {
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                return NativeLibrary.Load("libftd2xx.so", assembly, searchPath);
+            }
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                return NativeLibrary.Load("libftd2xx.dylib", assembly, searchPath);
+            }
+        }
+        return IntPtr.Zero;
+    }
+#endif
     public static bool CheckStatus(FT_STATUS status)
     {
         if (status == FT_STATUS.FT_OK)

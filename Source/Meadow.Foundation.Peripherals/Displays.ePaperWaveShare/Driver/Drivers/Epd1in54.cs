@@ -16,12 +16,7 @@ namespace Meadow.Foundation.Displays
         /// <param name="dcPin">Data command pin</param>
         /// <param name="resetPin">Reset pin</param>
         /// <param name="busyPin">Busy pin</param>
-        public Epd1in54(
-                        ISpiBus spiBus,
-                        IPin chipSelectPin,
-                        IPin dcPin,
-                        IPin resetPin,
-                        IPin busyPin) :
+        public Epd1in54(ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, IPin busyPin) :
             base(spiBus, chipSelectPin, dcPin, resetPin, busyPin, 200, 200)
         { }
 

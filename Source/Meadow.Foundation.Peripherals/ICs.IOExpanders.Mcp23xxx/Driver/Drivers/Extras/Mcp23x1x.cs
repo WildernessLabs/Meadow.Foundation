@@ -51,6 +51,10 @@ namespace Meadow.Foundation.ICs.IOExpanders
         protected Mcp23x1x(ISpiBus spiBus, IDigitalOutputPort chipSelectPort, IDigitalInterruptPort? interruptPort = null, IDigitalOutputPort? resetPort = null) :
             base(spiBus, chipSelectPort, interruptPort, resetPort)
         {
+            Pins = new PinDefinitions(this)
+            {
+                Controller = this
+            };
         }
 
         /// <summary>

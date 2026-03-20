@@ -23,7 +23,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                             RelativeHumidity? Humidity,
                             Pressure? Pressure,
                             Resistance? GasResistance)>,
-        ITemperatureSensor, IHumiditySensor, IBarometricPressureSensor, IGasResistanceSensor, ISpiPeripheral, II2cPeripheral, ISleepAwarePeripheral, IDisposable
+        ISamplingTemperatureSensor, IHumiditySensor, IBarometricPressureSensor, IGasResistanceSensor, ISpiPeripheral, II2cPeripheral, ISleepAwarePeripheral, IDisposable
     {
         private event EventHandler<IChangeResult<Units.Temperature>> _temperatureHandlers = default!;
         private event EventHandler<IChangeResult<RelativeHumidity>> _humidityHandlers = default!;
@@ -66,13 +66,13 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             get => heaterProfile;
             set
             {
+                if (!Enum.IsDefined(typeof(HeaterProfileType), value))
+                {
+                    throw new ArgumentOutOfRangeException(nameof(value));
+                }
+
                 if (heaterConfigs.Exists(config => config.HeaterProfile == value))
                 {
-                    if (!Enum.IsDefined(typeof(HeaterProfileType), value))
-                    {
-                        throw new ArgumentOutOfRangeException(nameof(value));
-                    }
-
                     var profile = busComms.ReadRegister((byte)Registers.CTRL_GAS_1);
                     profile = (byte)((profile & 0xF0) | (byte)value);
 
@@ -137,7 +137,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             set
             {
                 var gasConversion = busComms.ReadRegister((byte)Registers.CTRL_GAS_1);
-                byte mask = 0x10;
+                byte mask = 0x20;
                 gasConversion = (byte)((gasConversion & (byte)~mask) | Convert.ToByte(value) << 5);
 
                 busComms.WriteRegister((byte)Registers.CTRL_GAS_1, gasConversion);
@@ -365,7 +365,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         }
 
         /// <summary>
-        /// Sets the power mode to the given mode
+        /// Writes the specified power mode (sleep, forced, or parallel) to the CTRL_MEAS register and records it as the last running mode.
         /// </summary>
         /// <param name="powerMode">The <see cref="PowerMode"/> to set.</param>
         public void SetPowerMode(PowerMode powerMode)
@@ -409,7 +409,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
 
             if (GasConversionIsEnabled && heaterConfigs.Exists(config => config.HeaterProfile == profile))
             {
-                measDuration += heaterConfigs.Single(config => config.HeaterProfile == profile).HeaterDuration.Milliseconds;
+                measDuration += heaterConfigs.Single(config => config.HeaterProfile == profile).HeaterDuration.TotalMilliseconds;
             }
 
             return TimeSpan.FromMilliseconds(Math.Ceiling(measDuration));
@@ -473,14 +473,14 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 //read temperature
                 byte[] data = new byte[3];
                 busComms.ReadRegister((byte)Registers.TEMPDATA, data);
-                var rawTemperature = (data[0] << 12) | (data[1] << 4) | ((data[2] >> 4) & 0x0);
+                var rawTemperature = (data[0] << 12) | (data[1] << 4) | (data[2] >> 4);
 
                 //read humidity
                 var rawHumidity = busComms.ReadRegisterAsUShort((byte)Registers.HUMIDITYDATA, ByteOrder.BigEndian);
 
                 //read pressure
                 busComms.ReadRegister((byte)Registers.PRESSUREDATA, data);
-                var rawPressure = (data[0] << 12) | (data[1] << 4) | ((data[2] >> 4) & 0x0);
+                var rawPressure = (data[0] << 12) | (data[1] << 4) | (data[2] >> 4);
 
                 if (GasConversionIsEnabled)
                 {
@@ -607,9 +607,9 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 temp = 400;
             }
 
-            var var1 = calibration.Gh1 / 16.0 + 49.0;
-            var var2 = calibration.Gh2 / 32768.0 * 0.0005 + 0.00235;
-            var var3 = calibration.Gh3 / 1024.0;
+            var var1 = calibration.GH1 / 16.0 + 49.0;
+            var var2 = calibration.GH2 / 32768.0 * 0.0005 + 0.00235;
+            var var3 = calibration.GH3 / 1024.0;
             var var4 = var1 * (1.0 + var2 * temp);
             var var5 = var4 + var3 * ambientTemp.Celsius;
             var heaterResistance = (byte)(3.4 * (var5 * (4.0 / (4.0 + calibration.ResHeatRange)) * (1.0 / (1.0 + calibration.ResHeatVal * 0.002)) - 25));
@@ -625,7 +625,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             byte factor = 0;
             byte durationValue;
 
-            ushort shortDuration = (ushort)duration.Milliseconds;
+            ushort shortDuration = (ushort)duration.TotalMilliseconds;
             // check if value exceeds maximum duration
             if (shortDuration > 0xFC0)
             {

@@ -14,7 +14,7 @@ namespace Meadow.Foundation.Sensors.Environmental
     /// </summary>
     public abstract partial class Scd4xBase
         : PollingSensorBase<(Concentration? Concentration, Units.Temperature? Temperature, RelativeHumidity? Humidity)>,
-            ITemperatureSensor, IHumiditySensor, ICO2ConcentrationSensor, II2cPeripheral
+            ISamplingTemperatureSensor, IHumiditySensor, ICO2ConcentrationSensor, II2cPeripheral
     {
         private event EventHandler<IChangeResult<Units.Temperature>> _temperatureHandlers = default!;
         private event EventHandler<IChangeResult<RelativeHumidity>> _humidityHandlers = default!;
@@ -103,17 +103,19 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// <summary>
         /// Persist settings to EEPROM
         /// </summary>
-        public void PersistSettings()
+        public Task PersistSettings()
         {
             SendCommand(Commands.PersistSettings);
+            return Task.Delay(800);
         }
 
         /// <summary>
         /// Device factory reset and clear all saved settings
         /// </summary>
-        public void PerformFactoryReset()
+        public Task PerformFactoryReset()
         {
             SendCommand(Commands.PerformFactoryReset);
+            return Task.Delay(1200);
         }
 
         /// <summary>
@@ -220,19 +222,14 @@ namespace Meadow.Foundation.Sensors.Environmental
         {
             bool isSampling = IsSampling;
 
-            if (IsSampling == false)
+            if (!isSampling)
             {
-                StartUpdating();
+                SendCommand(Commands.StartPeriodicMeasurement);
             }
 
             while (IsDataReady() == false)
             {
                 await Task.Delay(500);
-            }
-
-            if (isSampling == false)
-            {
-                StopUpdating();
             }
 
             (Concentration Concentration, Units.Temperature Temperature, RelativeHumidity Humidity) conditions;
@@ -241,12 +238,18 @@ namespace Meadow.Foundation.Sensors.Environmental
             Thread.Sleep(1);
             i2cComms.Read(readBuffer);
 
+            if (!isSampling)
+            {
+                SendCommand(Commands.StopPeriodicMeasurement);
+                await Task.Delay(500);
+            }
+
             int value = readBuffer[0] << 8 | readBuffer[1];
             conditions.Concentration = new Concentration(value, Concentration.UnitType.PartsPerMillion);
 
             conditions.Temperature = CalcTemperature(readBuffer[3], readBuffer[4]);
 
-            value = readBuffer[6] << 8 | readBuffer[8];
+            value = readBuffer[6] << 8 | readBuffer[7];
             double humidiy = 100 * value / 65536.0;
             conditions.Humidity = new RelativeHumidity(humidiy, RelativeHumidity.UnitType.Percent);
 

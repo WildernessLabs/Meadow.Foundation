@@ -1,0 +1,95 @@
+﻿{
+  "timezone": {
+    "timezoneName": "America/Chicago",
+    "utcOffsetHours": -6.0,
+    "daylightSavingTime": {
+      "startMonth": 3,
+      "startDay": 0,
+      "startDayOfWeek": "Sunday",
+      "startHour": 2,
+      "endMonth": 11,
+      "endDay": 0,
+      "endDayOfWeek": "Sunday",
+      "endHour": 2,
+      "offsetHours": 1.0
+    }
+  },
+  "schedules": [
+    {
+      "name": "light",
+      "events": [
+        {
+          "eventType": "Daily",
+          "isDisabled": false,
+          "data": "true",
+          "eventTime": "2024-01-01T18:00:00"
+        },
+        {
+          "eventType": "Daily",
+          "isDisabled": false,
+          "data": "false",
+          "eventTime": "2024-01-01T23:30:00"
+        },
+        {
+          "eventType": "Weekday",
+          "isDisabled": false,
+          "data": "true",
+          "eventTime": "2024-01-01T17:30:00",
+          "daysOfWeek": [ "Monday", "Tuesday", "Wednesday", "Thursday", "Friday" ]
+        },
+        {
+          "eventType": "SunsetOffset",
+          "isDisabled": false,
+          "data": "true",
+          "offset": "-00:30:00",
+          "daysOfWeek": [ "Saturday", "Sunday" ]
+        },
+        {
+          "eventType": "SunriseOffset",
+          "isDisabled": true,
+          "data": "false",
+          "offset": "01:00:00",
+          "daysOfWeek": null
+        }
+      ]
+    },
+    {
+      "name": "fountain",
+      "events": [
+        {
+          "eventType": "Daily",
+          "isDisabled": false,
+          "data": "true",
+          "eventTime": "2024-01-01T08:00:00"
+        },
+        {
+          "eventType": "Daily",
+          "isDisabled": false,
+          "data": "false",
+          "eventTime": "2024-01-01T22:00:00"
+        },
+        {
+          "eventType": "Weekday",
+          "isDisabled": false,
+          "data": "true",
+          "eventTime": "2024-01-01T06:30:00",
+          "daysOfWeek": [ "Monday", "Wednesday", "Friday" ]
+        },
+        {
+          "eventType": "SunriseOffset",
+          "isDisabled": false,
+          "data": "true",
+          "offset": "00:15:00",
+          "daysOfWeek": [ "Saturday", "Sunday" ]
+        },
+        {
+          "eventType": "SunsetOffset",
+          "isDisabled": false,
+          "data": "false",
+          "offset": "02:00:00",
+          "daysOfWeek": null
+        }
+      ]
+    }
+  ]
+}

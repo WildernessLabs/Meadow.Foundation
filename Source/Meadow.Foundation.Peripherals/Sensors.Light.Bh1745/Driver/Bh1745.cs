@@ -64,7 +64,7 @@ namespace Meadow.Foundation.Sensors.Light
         }
 
         /// <summary>
-        /// Gets or sets the currently set measurement time
+        /// The integration time for each RGBC measurement cycle; longer times improve accuracy at the cost of sample rate.
         /// </summary>
         public MeasurementTimeType MeasurementTime
         {
@@ -102,7 +102,7 @@ namespace Meadow.Foundation.Sensors.Light
         private bool isMeasurementActive;
 
         /// <summary>
-        /// Gets or sets the ADC gain of the sensor
+        /// The analog gain multiplier applied to RGBC channel ADC readings, trading sensitivity against saturation headroom.
         /// </summary>
         public AdcGainTypes AdcGain
         {
@@ -213,7 +213,7 @@ namespace Meadow.Foundation.Sensors.Light
         private InterruptTypes interruptPersistence;
 
         /// <summary>
-        /// Gets or sets the lower interrupt threshold
+        /// The minimum RGBC count value below which the interrupt output is asserted, written to the TL register.
         /// </summary>
         public ushort LowerInterruptThreshold
         {
@@ -228,7 +228,7 @@ namespace Meadow.Foundation.Sensors.Light
         private ushort lowerInterruptThreshold;
 
         /// <summary>
-        /// Gets or sets the upper interrupt threshold
+        /// The maximum RGBC count value above which the interrupt output is asserted, written to the TH register.
         /// </summary>
         public ushort UpperInterruptThreshold
         {

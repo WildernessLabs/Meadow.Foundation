@@ -7,18 +7,16 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
     /// Process the Satellites in view messages from a GPS module.
     /// </summary>
     /// <remarks>
-    /// The satellites in view messages can contain multiple sentences; one for
-    /// each satellite. There can also be multiple messages making up the total list
-    /// of satellites.
-    /// This class brings all of the messages together in a single message for the
-    /// consumer.
+    /// A GSV sequence consists of one or more sentences, each carrying up to four
+    /// satellites. This class accumulates all sentences in a sequence and raises
+    /// a single event with the complete satellite list once all have been received.
     /// </remarks>
     public class GsvDecoder : INmeaDecoder
     {
         /// <summary>
         /// Event raised when valid GSV data is received.
         /// </summary>
-        public event EventHandler<SatellitesInView> SatellitesInViewReceived = default!;
+        public event EventHandler<SatellitesInView>? SatellitesInViewReceived;
 
         /// <summary>
         /// Current sentence being processed, 0 indicates nothing being processed.
@@ -45,8 +43,8 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
         /// Get the prefix for the decoder.
         /// </summary>
         /// <remarks>
-        /// The lines of text from the GPS start with text such as $GPGGA, $GPGLL, $GPGSA etc.  The prefix
-        /// is the start of the line (i.e. $GPCGA).
+        /// The talker ID prefix (GP, GN, GL, etc.) is stripped by the sentence parser,
+        /// so this matches any constellation's GSV sentences.
         /// </remarks>
         public string Prefix => "GSV";
 
@@ -55,6 +53,20 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
         /// Get the friendly (human readable) name for the decoder.
         /// </summary>
         public string Name => "Satellites in view";
+
+        /// <summary>
+        /// Process a GPGSV sentence string
+        /// </summary>
+        /// <param name="sentence">The raw NMEA sentence string</param>
+        public void Process(string sentence)
+        {
+            if (!NmeaSentence.TryParse(sentence, out var s))
+            {
+                Resolver.Log.Debug($"Failure parsing {sentence}", Constants.LogGroup);
+                return;
+            }
+            Process(s!);
+        }
 
         /// <summary>
         /// Process the message from the GPS.
@@ -69,23 +81,21 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
                 return;
             }
 
-            if (_currentSentence == 0)
+            if (thisSentenceNumber == 1)
             {
-                if (thisSentenceNumber == 1)
+                // Start of a new sequence — reset any prior in-progress state
+                CleanUp();
+
+                if (!int.TryParse(sentence.DataElements[2], out int totalNumberOfSatellites))
                 {
-                    if (!int.TryParse(sentence.DataElements[2], out int totalNumberOfSatellites))
-                    {
-                        CleanUp();
-                        return;
-                    }
-                    _satellites = new Satellite[totalNumberOfSatellites];
-
-                    _currentSentence = 1;
-                    _totalSentences = int.Parse(sentence.DataElements[0]);
-
-                    _currentSatelliteIndex = 0;
+                    return;
                 }
+                _satellites = new Satellite[totalNumberOfSatellites];
+                _currentSentence = 1;
+                _totalSentences = int.Parse(sentence.DataElements[0]);
+                _currentSatelliteIndex = 0;
             }
+
             if (thisSentenceNumber == _currentSentence)
             {
                 _currentSentence++;
@@ -132,7 +142,7 @@ namespace Meadow.Foundation.Sensors.Location.Gnss
                 if (_currentSatelliteIndex == _satellites!.Length)
                 {
 
-                    SatellitesInViewReceived(this, new SatellitesInView(_satellites) { TalkerID = sentence.TalkerID });
+                    SatellitesInViewReceived?.Invoke(this, new SatellitesInView(_satellites) { TalkerID = sentence.TalkerID });
                     CleanUp();
                 }
             }

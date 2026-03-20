@@ -29,11 +29,6 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         public RotationType Rotation { get; protected set; } = RotationType.Normal;
 
-        /// <summary>
-        /// The display default color mode
-        /// </summary>
-        public abstract ColorMode DefaultColorMode { get; }
-
         /// <inheritdoc/>
         public bool IsColorInverted { get; protected set; } = false;
 
@@ -108,11 +103,6 @@ namespace Meadow.Foundation.Displays
         /// The off-screen image buffer
         /// </summary>
         protected IPixelBuffer imageBuffer = default!;
-
-        /// <summary>
-        /// The read buffer
-        /// </summary>
-        protected Memory<byte> readBuffer;
 
         /// <summary>
         /// Data convenience bool
@@ -238,7 +228,7 @@ namespace Meadow.Foundation.Displays
         /// <returns>true if supported</returns>
         public virtual bool IsColorTypeSupported(ColorMode colorType)
         {
-            return (SupportedColorModes | colorType) != 0;
+            return (SupportedColorModes & colorType) != 0;
         }
 
         /// <summary>
@@ -255,23 +245,13 @@ namespace Meadow.Foundation.Displays
                 throw new ArgumentException($"color mode {colorMode} not supported");
             }
 
-            if (colorMode == ColorMode.Format24bppRgb888)
+            imageBuffer = colorMode switch
             {
-                imageBuffer = new BufferRgb888(width, height);
-            }
-            else if (colorMode == ColorMode.Format18bppRgb666)
-            {
-                imageBuffer = new BufferRgb666(width, height);
-            }
-            else if (colorMode == ColorMode.Format16bppRgb565)
-            {
-                imageBuffer = new BufferRgb565(width, height);
-            }
-            else
-            {
-                imageBuffer = new BufferRgb444(width, height);
-            }
-            readBuffer = new byte[imageBuffer.ByteCount];
+                ColorMode.Format24bppRgb888 => new BufferRgb888(width, height),
+                ColorMode.Format18bppRgb666 => new BufferRgb666(width, height),
+                ColorMode.Format16bppRgb565 => new BufferRgb565(width, height),
+                _ => new BufferRgb444(width, height),
+            };
         }
 
         /// <summary>
@@ -311,7 +291,7 @@ namespace Meadow.Foundation.Displays
         }
 
         /// <summary>
-        /// Clear the display.
+        /// Clear the display
         /// </summary>
         /// <param name="updateDisplay">Update the display once the buffer has been cleared when true.</param>
         public void Clear(bool updateDisplay = false)
@@ -415,7 +395,7 @@ namespace Meadow.Foundation.Displays
 
             dataCommandPort.State = Data;
 
-            spiDisplay.Bus.Exchange(chipSelectPort, imageBuffer.Buffer, readBuffer.Span);
+            spiDisplay.Bus.Write(chipSelectPort, imageBuffer.Buffer);
         }
 
         /// <summary>
@@ -424,30 +404,29 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         public void Show(int left, int top, int right, int bottom)
         {
-            if (PixelBuffer.ColorMode != ColorMode.Format12bppRgb444 &&
-                PixelBuffer.ColorMode != ColorMode.Format16bppRgb565 &&
-                PixelBuffer.ColorMode != ColorMode.Format18bppRgb666 &&
-                PixelBuffer.ColorMode != ColorMode.Format24bppRgb888)
+            if (right <= left || bottom <= top)
+            {
+                return;
+            }
+
+            if (PixelBuffer.ColorMode is not (ColorMode.Format12bppRgb444 or
+                                              ColorMode.Format16bppRgb565 or
+                                              ColorMode.Format18bppRgb666 or
+                                              ColorMode.Format24bppRgb888))
             {
                 Show();
                 return;
             }
 
-            if (right < left || bottom < top)
-            {
-                return;
-            }
+            left = Math.Max(left, 0);
+            top = Math.Max(top, 0);
+            right = Math.Min(right, Width);
+            bottom = Math.Min(bottom, Height);
 
             if (PixelBuffer.ColorMode == ColorMode.Format12bppRgb444)
             {
-                if (left % 2 != 0)
-                {
-                    left--;
-                }
-                if (right % 2 != 0)
-                {
-                    right++;
-                }
+                left &= ~1;
+                right = (right + 1) & ~1;
             }
 
             float bytesPerPixel = PixelBuffer.BitDepth / 8f;
@@ -467,10 +446,9 @@ namespace Meadow.Foundation.Displays
             {
                 int sourceIndex = (int)((y * Width + left) * bytesPerPixel);
 
-                spiDisplay.Bus.Exchange(
+                spiDisplay.Bus.Write(
                     chipSelectPort,
-                    imageBuffer.Buffer[sourceIndex..(sourceIndex + len)],
-                    readBuffer.Span[0..len]);
+                    imageBuffer.Buffer[sourceIndex..(sourceIndex + len)]);
             }
         }
 

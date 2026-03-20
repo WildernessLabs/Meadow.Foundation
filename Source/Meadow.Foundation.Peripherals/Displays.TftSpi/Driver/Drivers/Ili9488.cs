@@ -9,11 +9,6 @@ namespace Meadow.Foundation.Displays
     public class Ili9488 : TftSpiBase, IRotatableDisplay
     {
         /// <summary>
-        /// The default display color mode
-        /// </summary>
-        public override ColorMode DefaultColorMode => ColorMode.Format24bppRgb888;
-
-        /// <summary>
         /// The color modes supported by the display
         /// </summary>
         public override ColorMode SupportedColorModes => ColorMode.Format24bppRgb888;

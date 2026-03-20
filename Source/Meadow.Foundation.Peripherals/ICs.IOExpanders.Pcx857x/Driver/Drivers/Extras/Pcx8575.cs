@@ -53,6 +53,10 @@ namespace Meadow.Foundation.ICs.IOExpanders
         protected Pcx8575(II2cBus i2cBus, byte address, IDigitalInterruptPort? interruptPort = null)
             : base(i2cBus, address, interruptPort)
         {
+            Pins = new PinDefinitions(this)
+            {
+                Controller = this
+            };
         }
 
         /// <summary>
@@ -103,7 +107,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         }
 
         /// <summary>
-        /// Sets the state of a pin
+        /// Drives the specified output pin high or low by updating the PCX8575's 16-bit output latch.
         /// </summary>
         /// <param name="pin">The pin to affect</param>
         /// <param name="state"><b>True</b> to set the pin state high, <b>False</b> to set it low</param>

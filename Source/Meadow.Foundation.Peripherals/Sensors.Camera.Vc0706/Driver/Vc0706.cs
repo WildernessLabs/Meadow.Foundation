@@ -11,7 +11,7 @@ namespace Meadow.Foundation.Sensors.Camera
     /// <summary>
     /// Class that represents a VC0706 serial VGA camera
     /// </summary>
-    public partial class Vc0706 : ICamera, IDisposable
+    public partial class Vc0706 : IPhotoCamera, IDisposable
     {
         /// <summary>
         /// The camera serial number
@@ -325,11 +325,11 @@ namespace Meadow.Foundation.Sensors.Camera
         {
             byte[] args = {0x08,
                             (byte)(horizontalZoom >> 8), (byte)horizontalZoom,
-                            (byte)(verticalZoom >> 8), (byte)horizontalZoom,
+                            (byte)(verticalZoom >> 8), (byte)verticalZoom,
                             (byte)(pan >> 8), (byte)pan,
                             (byte)(tilt >> 8), (byte)tilt};
 
-            return (!RunCommand(SET_ZOOM, args, (byte)args.Length, 5));
+            return RunCommand(SET_ZOOM, args, (byte)args.Length, 5);
         }
 
         /// <summary>
@@ -374,10 +374,12 @@ namespace Meadow.Foundation.Sensors.Camera
         /// Capture a new image
         /// </summary>
         /// <returns>true if successful</returns>
-        public bool CapturePhoto()
+        public Task<byte[]> CapturePhoto()
         {
             framePointer = 0;
-            return CameraFrameBuffCtrl(STOPCURRENTFRAME);
+            CameraFrameBuffCtrl(STOPCURRENTFRAME);
+
+            return GetPhotoData();
         }
 
         /// <summary>

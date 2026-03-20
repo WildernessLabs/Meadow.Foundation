@@ -1,0 +1,47 @@
+{
+  "ModbusDevices": [
+    {
+      "Driver": "CerusVfd",
+      "Address": 1,
+      "Description": "Pump1"
+    }
+  ],
+  "FrequencyInputs": [
+    {
+      "ChannelNumber": 0,
+      "UnitType": "VolumetricFlow",
+      "Scale": 1.0,
+      "Offset": 0,
+      "Description": "Pump1 Output"
+    }
+  ],
+  "Sensors": [
+
+  ],
+  "ChannelConfigurations": [
+      {
+        "ChannelNumber": 0,
+        "ChannelType": "Current_4_20",
+        "Scale": 3.4725,
+        "Offset": -31.67,
+        "UnitType": "Temperature",
+        "Description": "0-100F Temperature Sensor (4-20mA)"
+      },
+      {
+        "ChannelNumber": 1,
+        "ChannelType": "Current_4_20",
+        "Scale": 6.25,
+        "Offset": -65.0,
+        "UnitType": "Temperature",
+        "Description": "-40-140F Temperature Sensor (4-20mA)"
+      },
+      {
+        "ChannelNumber": 2,
+        "ChannelType": "Voltage_0_10",
+        "Scale": 0.2068,
+        "Offset": 0.0,
+        "UnitType": "Pressure",
+        "Description": "0-30psi Pressure Sensor (0-10V)"
+      }
+    ]
+}

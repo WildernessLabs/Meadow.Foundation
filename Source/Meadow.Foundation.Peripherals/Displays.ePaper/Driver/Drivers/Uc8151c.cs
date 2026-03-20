@@ -19,7 +19,7 @@ namespace Meadow.Foundation.Displays
         /// <param name="width">Width of display in pixels</param>
         /// <param name="height">Height of display in pixels</param>
         public Uc8151c(ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, IPin busyPin,
-            int width, int height) :
+            int width = 152, int height = 152) :
             base(spiBus, chipSelectPin, dcPin, resetPin, busyPin, width, height)
         { }
 

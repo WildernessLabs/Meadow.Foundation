@@ -65,11 +65,11 @@ public class GradientBox : ThemedControl
         {
             if (IsHorizontal)
             {
-                graphics.DrawHorizontalGradient(Left + (Parent?.Left ?? 0), Top + (Parent?.Top ?? 0), Width, Height, StartColor, EndColor);
+                graphics.DrawHorizontalGradient(ScreenLeft, ScreenTop, Width, Height, StartColor, EndColor);
             }
             else
             {
-                graphics.DrawVerticalGradient(Left + (Parent?.Left ?? 0), Top + (Parent?.Top ?? 0), Width, Height, StartColor, EndColor);
+                graphics.DrawVerticalGradient(ScreenLeft, ScreenTop, Width, Height, StartColor, EndColor);
             }
         }
     }

@@ -1,9 +1,11 @@
-﻿namespace Meadow.Foundation.Graphics.MicroLayout;
+﻿using System.Linq;
+
+namespace Meadow.Foundation.Graphics.MicroLayout;
 
 /// <summary>
 /// Represents an auto-scrolling text area
 /// </summary>
-public class ScrollingTextArea : MicroLayout
+public class ScrollingTextArea : LayoutBase
 {
     private readonly int _rowHeight;
     private readonly IFont _font;
@@ -16,12 +18,12 @@ public class ScrollingTextArea : MicroLayout
     public int ItemSpacing { get; } = 1;
 
     /// <summary>
-    /// Gets the number of rows shown
+    /// The number of text rows that fit within the visible height of the control, based on the font height and item spacing.
     /// </summary>
     public int RowCount { get; }
 
     /// <summary>
-    /// Gets or sets the default row text color
+    /// The text color applied to rows that have not been given an explicit color override.
     /// </summary>
     public Color DefaultRowColor { get; set; }
 
@@ -36,30 +38,44 @@ public class ScrollingTextArea : MicroLayout
 
         BackgroundColor = Color.Black;
         DefaultRowColor = Color.LightGray;
-        RowCount = this.Height / _rowHeight;
+        RowCount = Height / _rowHeight;
 
         _labels = new Label[RowCount];
 
         CreateRowLabels(RowCount);
     }
 
+    /// <inheritdoc/>
+    public override IControl? Parent
+    {
+        get => base.Parent;
+        set => base.Parent = value;
+    }
+
     private void CreateRowLabels(int rowCount)
     {
-        var y = 0;
+        var currentRelativeY = 0;
+
         for (var i = 0; i < rowCount; i++)
         {
-            _labels[i] =
-                new Label(Left, Top + y, this.Width, _rowHeight)
-                {
-                    Font = _font,
-                    TextColor = DefaultRowColor,
-                    BackColor = this.BackgroundColor ?? Color.Transparent,
-                    VerticalAlignment = VerticalAlignment.Center,
-                };
+            _labels[i] = new Label(
+                0,
+                currentRelativeY,
+                Width,
+                _rowHeight)
+            {
+                Font = _font,
+                TextColor = DefaultRowColor,
+                BackgroundColor = BackgroundColor ?? Color.Transparent,
+                VerticalAlignment = VerticalAlignment.Center,
+                Text = string.Empty
+            };
+
+            _labels[i].Parent = this;
 
             Controls.Add(_labels[i]);
 
-            y += _rowHeight;
+            currentRelativeY += _rowHeight;
         }
     }
 
@@ -82,8 +98,6 @@ public class ScrollingTextArea : MicroLayout
     /// <param name="color">The (optional) color for the row</param>
     public void Add(string message, Color? color = null)
     {
-        //_screen.BeginUpdate();
-
         while (_currentRow >= RowCount)
         {
             for (var r = 0; r < RowCount - 1; r++)
@@ -103,14 +117,34 @@ public class ScrollingTextArea : MicroLayout
     /// <inheritdoc/>
     public override void ApplyTheme(DisplayTheme theme)
     {
-        foreach (Label label in Controls)
+        foreach (Label label in Controls.Cast<Label>())
         {
             label.ApplyTheme(theme);
         }
     }
 
     /// <inheritdoc/>
+    internal override void PerformLayout()
+    {
+        var currentRelativeY = 0;
+
+        foreach (var label in _labels)
+        {
+            if (label == null)
+            {
+                continue;
+            }
+
+            label.Left = 0;
+            label.Top = currentRelativeY;
+            label.Width = Width;
+            label.Height = _rowHeight;
+            currentRelativeY += _rowHeight;
+        }
+    }
+
     protected override void OnDraw(MicroGraphics graphics)
     {
+        base.OnDraw(graphics);
     }
 }

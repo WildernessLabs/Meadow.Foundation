@@ -14,7 +14,7 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// <summary>
         /// AnalogInputPort connected to temperature sensor
         /// </summary>
-        protected IAnalogInputPort AnalogInputPort { get; }
+        protected IObservableAnalogInputPort AnalogInputPort { get; }
 
         /// <summary>
         /// Calibration of water level
@@ -40,7 +40,7 @@ namespace Meadow.Foundation.Sensors.Environmental
             TimeSpan? updateInterval = null)
                 : this(analogPin.CreateAnalogInputPort(5, TimeSpan.FromMilliseconds(40), new Voltage(3.3, Voltage.UnitType.Volts)), calibration)
         {
-            base.UpdateInterval = updateInterval ?? TimeSpan.FromSeconds(1000);
+            base.UpdateInterval = updateInterval ?? TimeSpan.FromSeconds(1);
         }
 
         /// <summary>
@@ -48,7 +48,7 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// </summary>
         /// <param name="analogInputPort">Analog port the sensor is connected to.</param>
         /// <param name="calibration">Calibration for the analog sensor.</param>
-        public AnalogWaterLevel(IAnalogInputPort analogInputPort,
+        public AnalogWaterLevel(IObservableAnalogInputPort analogInputPort,
                                  Calibration? calibration = null)
         {
             AnalogInputPort = analogInputPort;
@@ -61,7 +61,7 @@ namespace Meadow.Foundation.Sensors.Environmental
             // wire up our observable
             AnalogInputPort.Subscribe
             (
-                IAnalogInputPort.CreateObserver(
+                IObservableAnalogInputPort.CreateObserver(
                     h =>
                     {
                         // capture the old water level.

@@ -74,7 +74,7 @@ public partial class Mcp23xxx
                 switch (InterruptMode)
                 {
                     case InterruptMode.EdgeFalling:
-                        if (newState)
+                        if (!newState)
                         {
                             RaiseChangedAndNotify(new DigitalPortResult(new DigitalState(false, now), new DigitalState(true, lastUpdate)));
                         }

@@ -30,12 +30,12 @@ namespace Meadow.Foundation.Sensors.Temperature
     /// TMP37                   500                     20                
     /// TMP236                  887.5                   19.5                    
     /// </remarks>
-    public partial class AnalogTemperature : SamplingSensorBase<Units.Temperature>, ITemperatureSensor, IDisposable
+    public partial class AnalogTemperature : SamplingSensorBase<Units.Temperature>, ISamplingTemperatureSensor, IDisposable
     {
         ///<Summary>
         /// AnalogInputPort connected to temperature sensor
         ///</Summary>
-        protected IAnalogInputPort AnalogInputPort { get; }
+        protected IObservableAnalogInputPort AnalogInputPort { get; }
 
         /// <summary>
         /// Type of temperature sensor.
@@ -128,7 +128,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// <param name="analogInputPort">The `IAnalogInputPort` connected to the sensor.</param>
         /// <param name="sensorType">Type of sensor attached to the analog port.</param>
         /// <param name="calibration">Calibration for the analog temperature sensor. Only used if sensorType is set to Custom.</param>
-        public AnalogTemperature(IAnalogInputPort analogInputPort,
+        public AnalogTemperature(IObservableAnalogInputPort analogInputPort,
                                  KnownSensorType sensorType,
                                  Calibration? calibration = null)
         {
@@ -184,7 +184,7 @@ namespace Meadow.Foundation.Sensors.Temperature
             // pattern through the sensor driver
             AnalogInputPort.Subscribe
             (
-                IAnalogInputPort.CreateObserver(
+                IObservableAnalogInputPort.CreateObserver(
                     result =>
                     {
                         // create a new change result from the new value

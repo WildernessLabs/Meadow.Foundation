@@ -50,7 +50,7 @@ public partial class Pca9685
         /// <summary>
         /// Gets the overall PWM Frequency set for the PCA9685. Can't be changed per port.
         /// </summary>
-        public Units.Frequency Frequency
+        public Frequency Frequency
         {
             get => controller.Frequency;
             set => throw new Exception("Frequency is set for the controller and cannot be changed per port");
@@ -74,6 +74,11 @@ public partial class Pca9685
             get => dutyCycle;
             set
             {
+                if (value < 0 || value > 1)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(value), "Duty cycle must be between 0.0 and 1.0.");
+                }
+
                 dutyCycle = value;
                 Start();
             }
@@ -126,27 +131,50 @@ public partial class Pca9685
         /// </summary>
         public void Start()
         {
-            // DEV NOTE: according to the data sheetdiagrams (starting on page 17)
-            //           You tell it at what "tick" to turn on (from the start) and what tick to turn off
-            //           Since it's a repeated tick, we can just always turn on a 0 (start of the cycle)
-            //           and off at the end of the duty cycle.  There are 4096 (0-4095) "ticks"
-
-            var on = 0;
-            var off = (int)(4096d * DutyCycle);
-            if (Inverted)
-            {
-                off = 4095 - off;
-            }
+            // The PWM value is based on the duty cycle, from 0 to 4096
+            var pwmValue = (int)(4096 * DutyCycle);
+            int on = 0;
+            int off = 0;
 
             if (Inverted)
             {
-                controller.SetPwm(portNumber, off, on);
+                if (pwmValue == 0)
+                {
+                    on = 4096;
+                    off = 0;
+                }
+                else if (pwmValue >= 4096)
+                {
+                    on = 0;
+                    off = 4096;
+                }
+                else
+                {
+                    on = 0;
+                    off = 4096 - pwmValue;
+                }
+
             }
             else
             {
-                controller.SetPwm(portNumber, on, off);
+                if (pwmValue == 0)
+                {
+                    on = 0;
+                    off = 4096;
+                }
+                else if (pwmValue >= 4096)
+                {
+                    on = 4096;
+                    off = 0;
+                }
+                else
+                {
+                    on = 0;
+                    off = pwmValue;
+                }
             }
 
+            controller.SetPwm(portNumber, on, off);
             isRunning = true;
         }
 

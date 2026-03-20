@@ -24,6 +24,21 @@ namespace Meadow.Foundation.Sensors.Gnss
         /// <summary>
         /// Create a new NEOM8 object
         /// </summary>
+        public NeoM8(SerialPortName serialPortName, IPin? resetPin = null, IPin? ppsPin = null)
+            : this(
+                serialPortName.CreateSerialMessagePort(
+                    Encoding.ASCII.GetBytes("\r\n"),
+                    true,
+                    readBufferSize: 512),
+                resetPin?.CreateDigitalOutputPort() ?? null,
+                ppsPin?.CreateDigitalInterruptPort(InterruptMode.EdgeRising, ResistorMode.InternalPullDown) ?? null)
+        {
+            createdPorts = true;
+        }
+
+        /// <summary>
+        /// Create a new NEOM8 object
+        /// </summary>
         /// <param name="device">IMeadowDevice instance</param>
         /// <param name="serialPortName">The serial port name to create</param>
         /// <param name="resetPin">The reset pin</param>

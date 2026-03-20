@@ -6,14 +6,22 @@
 public abstract class ThemedControl : Control, IThemedControl
 {
     /// <summary>
-    /// Applies the specified display theme to the control.
+    /// Gets or sets the display theme for the application.
+    /// </summary>
+    protected DisplayTheme? Theme { get; set; }
+
+    /// <summary>
+    /// Applies the specified display theme to the label display control.
     /// </summary>
     /// <param name="theme">The display theme to apply.</param>
-    public abstract void ApplyTheme(DisplayTheme theme);
+    public virtual void ApplyTheme(DisplayTheme theme)
+    {
+        Theme = theme;
+        Invalidate();
+    }
 
     /// <inheritdoc/>
     public ThemedControl(int left, int top, int width, int height)
         : base(left, top, width, height)
-    {
-    }
+    { }
 }

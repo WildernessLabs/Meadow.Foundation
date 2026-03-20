@@ -38,12 +38,12 @@ namespace Meadow.Foundation.Leds
         bool isOn;
 
         /// <summary>
-        /// Gets the PwmPort
+        /// The PWM output port connected to and controlling the LED's brightness.
         /// </summary>
         protected IPwmPort Port { get; set; }
 
         /// <summary>
-        /// Gets the forward voltage value
+        /// The forward voltage drop of the LED, used to calculate safe drive current.
         /// </summary>
         public Voltage ForwardVoltage { get; protected set; }
 

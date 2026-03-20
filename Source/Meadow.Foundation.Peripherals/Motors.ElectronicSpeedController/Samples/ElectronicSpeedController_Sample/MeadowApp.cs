@@ -1,6 +1,5 @@
 ﻿using Meadow;
 using Meadow.Devices;
-using Meadow.Foundation;
 using Meadow.Foundation.Motors;
 using Meadow.Foundation.Sensors.Rotary;
 using Meadow.Peripherals;

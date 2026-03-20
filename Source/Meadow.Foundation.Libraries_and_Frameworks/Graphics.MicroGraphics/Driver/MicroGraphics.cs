@@ -2,6 +2,9 @@
 using Meadow.Peripherals.Displays;
 using Meadow.Units;
 using System;
+using System.Buffers;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Graphics
@@ -15,6 +18,11 @@ namespace Meadow.Foundation.Graphics
         /// Display object responsible for managing the buffer and rendering
         /// </summary>
         protected readonly IPixelDisplay? display;
+
+        /// <summary>
+        /// Cached result of whether the display implements IRotatableDisplay
+        /// </summary>
+        private readonly bool _isRotatableDisplay;
 
         /// <summary>
         /// PixelBuffer draw target
@@ -117,9 +125,9 @@ namespace Meadow.Foundation.Graphics
         {
             get
             {
-                if (display is IRotatableDisplay)
+                if (_isRotatableDisplay)
                 {
-                    return display.Height;
+                    return display!.Height;
                 }
                 return Rotation == RotationType.Default || Rotation == RotationType._180Degrees ? PixelBuffer.Height : PixelBuffer.Width;
             }
@@ -132,9 +140,9 @@ namespace Meadow.Foundation.Graphics
         {
             get
             {
-                if (display is IRotatableDisplay)
+                if (_isRotatableDisplay)
                 {
-                    return display.Width;
+                    return display!.Width;
                 }
                 return Rotation == RotationType.Default || Rotation == RotationType._180Degrees ? PixelBuffer.Width : PixelBuffer.Height;
             }
@@ -155,6 +163,12 @@ namespace Meadow.Foundation.Graphics
         private bool isUpdateRequested = false;
 
         /// <summary>
+        /// Cached ArrayPool buffer for text rendering to reduce GC pressure.
+        /// The buffer is rented from ArrayPool.Shared and returned when a larger buffer is needed.
+        /// </summary>
+        private byte[]? _textBitmapBuffer;
+
+        /// <summary>
         /// Time of last display update when calling ShowBuffered
         /// </summary>
         private DateTime lastUpdated;
@@ -166,6 +180,7 @@ namespace Meadow.Foundation.Graphics
         public MicroGraphics(IPixelDisplay display)
         {
             this.display = display;
+            _isRotatableDisplay = display is IRotatableDisplay;
         }
 
         /// <summary>
@@ -176,6 +191,7 @@ namespace Meadow.Foundation.Graphics
         public MicroGraphics(IPixelBuffer pixelBuffer, bool initializeBuffer)
         {
             memoryBuffer = pixelBuffer;
+            _isRotatableDisplay = false;
 
             if (initializeBuffer && pixelBuffer is PixelBufferBase buf)
             {
@@ -196,7 +212,7 @@ namespace Meadow.Foundation.Graphics
                 return;
             }
 
-            if (display is IRotatableDisplay)
+            if (_isRotatableDisplay)
             {
                 PixelBuffer.SetPixel(x, y, color);
             }
@@ -316,9 +332,91 @@ namespace Meadow.Foundation.Graphics
             DrawLine(x0, y0, x1, y1, PenColor);
         }
 
-        private bool IsTallerThanWide(int x0, int y0, int x1, int y1)
+        private void DrawThickLine(float x0, float y0, float x1, float y1, int thickness, Color color)
         {
-            return Math.Abs(x0 - x1) < Math.Abs(y0 - y1);
+            // Calculate the direction vector of the line
+            float dx = x1 - x0;
+            float dy = y1 - y0;
+            float length = MathF.Sqrt(dx * dx + dy * dy);
+
+            if (length == 0)
+            {
+                // Avoid division by zero
+                return;
+            }
+
+            // Normalize the direction vector
+            dx /= length;
+            dy /= length;
+
+            // Calculate the perpendicular vector
+            float px = -dy;
+            float py = dx;
+
+            // Scale the perpendicular vector by half the thickness
+            float halfThickness = thickness / 2.0f;
+            px *= halfThickness;
+            py *= halfThickness;
+
+            // Calculate the four corners of the thick line's quadrilateral
+            var p1 = new PointF(x0 + px, y0 + py);
+            var p2 = new PointF(x1 + px, y1 + py);
+            var p3 = new PointF(x1 - px, y1 - py);
+            var p4 = new PointF(x0 - px, y0 - py);
+
+            // Define the points of the polygon
+            var points = new PointF[] { p1, p2, p3, p4 };
+
+            // Draw and fill the polygon
+            DrawFilledPolygon(points, color);
+        }
+
+        private void DrawFilledPolygon(PointF[] points, Color color)
+        {
+            var integerPoints = new Point[points.Length];
+            for (int i = 0; i < points.Length; i++)
+                integerPoints[i] = new Point((int)Math.Round(points[i].X), (int)Math.Round(points[i].Y));
+
+            FillPolygon(integerPoints, color);
+        }
+
+        private void FillPolygon(Point[] points, Color color)
+        {
+            // Find the bounding box of the polygon
+            int minY = points[0].Y;
+            int maxY = points[0].Y;
+            for (int i = 1; i < points.Length; i++)
+            {
+                if (points[i].Y < minY) minY = points[i].Y;
+                if (points[i].Y > maxY) maxY = points[i].Y;
+            }
+
+            // Pre-allocate intersection buffer — reused every scanline
+            var nodeX = new int[points.Length];
+
+            for (int y = minY; y <= maxY; y++)
+            {
+                int nodeCount = 0;
+                int j = points.Length - 1;
+                for (int i = 0; i < points.Length; i++)
+                {
+                    if ((points[i].Y < y && points[j].Y >= y) || (points[j].Y < y && points[i].Y >= y))
+                    {
+                        nodeX[nodeCount++] = (int)(points[i].X + (float)(y - points[i].Y) / (points[j].Y - points[i].Y) * (points[j].X - points[i].X));
+                    }
+                    j = i;
+                }
+
+                Array.Sort(nodeX, 0, nodeCount);
+
+                for (int i = 0; i < nodeCount; i += 2)
+                {
+                    if (i + 1 < nodeCount)
+                    {
+                        DrawHorizontalLine(nodeX[i], y, nodeX[i + 1] - nodeX[i] + 1, color);
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -367,23 +465,9 @@ namespace Meadow.Foundation.Graphics
             {
                 DrawSingleWidthLine(x0, y0, x1, y1, color);
             }
-            else if (IsTallerThanWide(x0, y0, x1, y1))
-            {
-                int xOffset = Stroke >> 1;
-
-                for (int i = 0; i < Stroke; i++)
-                {
-                    DrawSingleWidthLine(x0 - xOffset + i, y0, x1 - xOffset + i, y1, color);
-                }
-            }
             else
             {
-                int yOffset = Stroke >> 1;
-
-                for (int i = 0; i < Stroke; i++)
-                {
-                    DrawSingleWidthLine(x0, y0 - yOffset + i, x1, y1 - yOffset + i, color);
-                }
+                DrawThickLine(x0, y0, x1, y1, Stroke, color);
             }
         }
 
@@ -504,16 +588,6 @@ namespace Meadow.Foundation.Graphics
         public void DrawVerticalLine(int x, int y, int length)
         {
             DrawVerticalLine(x, y, length, PenColor);
-
-            if (Stroke > 1)
-            {
-                int xOffset = Stroke >> 1;
-
-                for (int i = 0; i < Stroke; i++)
-                {
-                    DrawVerticalLine(x - xOffset + i, y, length);
-                }
-            }
         }
 
         /// <summary>
@@ -573,61 +647,65 @@ namespace Meadow.Foundation.Graphics
         /// <param name="centerBetweenPixels">If true, the center of the arc is between the assigned pixel and the next pixel, false it's directly on the center pixel</param>
         public void DrawArc(int centerX, int centerY, int radius, Angle startAngle, Angle endAngle, Color color, bool centerBetweenPixels = true)
         {
+            static float Normalize(float a) => a < 0 ? a + 2 * MathF.PI : a;
+
+            float s = (float)startAngle.Radians;
+            float e = (float)endAngle.Radians;
+            if (s < 0) s += 2 * MathF.PI;
+            if (e < 0) e += 2 * MathF.PI;
+            if (s > e) (e, s) = (s, e);
+
+            // Arc spans past 2π — split at the boundary and draw each half separately
+            if (e > 2 * MathF.PI)
+            {
+                DrawArc(centerX, centerY, radius, new Angle(s, Angle.UnitType.Radians), new Angle(2 * MathF.PI, Angle.UnitType.Radians), color, centerBetweenPixels);
+                DrawArc(centerX, centerY, radius, new Angle(0, Angle.UnitType.Radians), new Angle(e - 2 * MathF.PI, Angle.UnitType.Radians), color, centerBetweenPixels);
+                return;
+            }
+
+            // Precompute octant coverage to eliminate redundant Atan2 calls in the hot loop.
+            // Code-space angle ranges per octant (verified by tracing Bresenham Atan2 values):
+            //   o1:[π/2, 3π/4]   o2:[3π/4, π]    o3:[π, 5π/4]    o4:[5π/4, 3π/2]
+            //   o5:[3π/2, 7π/4]  o6:[7π/4, 2π]   o7:[0, π/4]     o8:[π/4, π/2]
+            // o6 spans the 0/2π boundary so it is handled separately.
+            float p4 = MathF.PI / 4;
+            bool OctIn(float lo, float hi)   => s <= hi && e >= lo;
+            bool OctFull(float lo, float hi) => s <= lo && e >= hi;
+            bool InRange(float a)            => a >= s && a <= e;
+
+            bool o1In = OctIn(p4*2, p4*3),  o1Full = OctFull(p4*2, p4*3);
+            bool o2In = OctIn(p4*3, p4*4),  o2Full = OctFull(p4*3, p4*4);
+            bool o3In = OctIn(p4*4, p4*5),  o3Full = OctFull(p4*4, p4*5);
+            bool o4In = OctIn(p4*5, p4*6),  o4Full = OctFull(p4*5, p4*6);
+            bool o5In = OctIn(p4*6, p4*7),  o5Full = OctFull(p4*6, p4*7);
+            bool o6In = e >= p4*7, o6Full = s <= p4*7 && e >= 2 * MathF.PI; // wraps through 0
+            bool o7In = OctIn(0,    p4  ),  o7Full = OctFull(0,    p4  );
+            bool o8In = OctIn(p4,   p4*2),  o8Full = OctFull(p4,   p4*2);
+
+            void DrawPoint(int px, int py)
+            {
+                if (Stroke == 1) DrawPixel(px, py, color);
+                else DrawCircleFilled(px, py, Stroke / 2, true, color);
+            }
+
             var d = 3 - (2 * radius);
             var x = 0;
             var y = radius;
-
             int offset = centerBetweenPixels ? 1 : 0;
-
-            float startAngleRadians = (float)startAngle.Radians;
-            float endAngleRadians = (float)endAngle.Radians;
-
-            if (startAngleRadians > endAngleRadians)
-            {
-                (endAngleRadians, startAngleRadians) = (startAngleRadians, endAngleRadians);
-            }
-
-            void DrawArcPoint(int x, int y, Color color)
-            {
-                if (Stroke == 1)
-                {
-                    DrawPixel(x, y, color);
-                }
-                else
-                {
-                    DrawCircleFilled(x, y, Stroke / 2, true, color);
-                }
-            }
 
             while (x <= y)
             {
-                float angle1 = MathF.Atan2(y, -x);
-                float angle2 = MathF.Atan2(x, -y);
-                float angle3 = MathF.Atan2(-x, -y);
-                float angle4 = MathF.Atan2(-y, -x);
-                float angle5 = MathF.Atan2(-y, x);
-                float angle6 = MathF.Atan2(-x, y);
-                float angle7 = MathF.Atan2(x, y);
-                float angle8 = MathF.Atan2(y, x);
+                if (o1In && (o1Full || InRange(Normalize(MathF.Atan2( y, -x))))) DrawPoint(centerX + y - offset, centerY - x);
+                if (o2In && (o2Full || InRange(Normalize(MathF.Atan2( x, -y))))) DrawPoint(centerX + x - offset, centerY - y);
+                if (o3In && (o3Full || InRange(Normalize(MathF.Atan2(-x, -y))))) DrawPoint(centerX - x,          centerY - y);
+                if (o4In && (o4Full || InRange(Normalize(MathF.Atan2(-y, -x))))) DrawPoint(centerX - y,          centerY - x);
+                if (o5In && (o5Full || InRange(Normalize(MathF.Atan2(-y,  x))))) DrawPoint(centerX - y,          centerY + x - offset);
+                if (o6In && (o6Full || InRange(Normalize(MathF.Atan2(-x,  y))))) DrawPoint(centerX - x,          centerY + y - offset);
+                if (o7In && (o7Full || InRange(Normalize(MathF.Atan2( x,  y))))) DrawPoint(centerX + x - offset, centerY + y - offset);
+                if (o8In && (o8Full || InRange(Normalize(MathF.Atan2( y,  x))))) DrawPoint(centerX + y - offset, centerY + x - offset);
 
-                if (angle1 >= startAngleRadians && angle1 <= endAngleRadians) { DrawArcPoint(centerX + y - offset, centerY - x, color); }
-                if (angle2 >= startAngleRadians && angle2 <= endAngleRadians) { DrawArcPoint(centerX + x - offset, centerY - y, color); }
-                if (angle3 >= startAngleRadians && angle3 <= endAngleRadians) { DrawArcPoint(centerX - x, centerY - y, color); }
-                if (angle4 >= startAngleRadians && angle4 <= endAngleRadians) { DrawArcPoint(centerX - y, centerY - x, color); }
-                if (angle5 >= startAngleRadians && angle5 <= endAngleRadians) { DrawArcPoint(centerX - y, centerY + x - offset, color); }
-                if (angle6 >= startAngleRadians && angle6 <= endAngleRadians) { DrawArcPoint(centerX - x, centerY + y - offset, color); }
-                if (angle7 >= startAngleRadians && angle7 <= endAngleRadians) { DrawArcPoint(centerX + x - offset, centerY + y - offset, color); }
-                if (angle8 >= startAngleRadians && angle8 <= endAngleRadians) { DrawArcPoint(centerX + y - offset, centerY + x - offset, color); }
-
-                if (d < 0)
-                {
-                    d += (2 * x) + 1;
-                }
-                else
-                {
-                    d += (2 * (x - y)) + 1;
-                    y--;
-                }
+                if (d < 0) d += 2 * x + 1;
+                else { d += 2 * (x - y) + 1; y--; }
                 x++;
             }
         }
@@ -893,13 +971,13 @@ namespace Meadow.Foundation.Graphics
         /// <summary>
         /// Draws a circle quadrant (quarter circle)
         /// </summary>
-        /// <param name="centerX"></param>
-        /// <param name="centerY"></param>
-        /// <param name="radius"></param>
-        /// <param name="quadrant"></param>
-        /// <param name="enabled"></param>
-        /// <param name="filled"></param>
-        /// <param name="centerBetweenPixels"></param>
+        /// <param name="centerX">Abscissa of the center point of the circle</param>
+        /// <param name="centerY">Ordinate of the center point of the circle</param>
+        /// <param name="radius">Radius of the circle</param>
+        /// <param name="quadrant">The quadrant to draw</param>
+        /// <param name="enabled">Is enabled (on or off)</param>
+        /// <param name="filled">Draw a filled quadrant?</param>
+        /// <param name="centerBetweenPixels">If true, the center of the circle is between the assigned pixel and the next pixel, false it's directly on the center pixel</param>
         public void DrawCircleQuadrant(int centerX, int centerY, int radius, int quadrant, bool enabled = true, bool filled = false, bool centerBetweenPixels = false)
         {
             DrawCircleQuadrant(centerX, centerY, radius, quadrant, enabled ? EnabledColor : DisabledColor, filled, centerBetweenPixels);
@@ -908,12 +986,12 @@ namespace Meadow.Foundation.Graphics
         /// <summary>
         /// Draws a circle quadrant (quarter circle)
         /// </summary>
-        /// <param name="centerX"></param>
-        /// <param name="centerY"></param>
-        /// <param name="radius"></param>
-        /// <param name="quadrant"></param>
-        /// <param name="filled"></param>
-        /// <param name="centerBetweenPixels"></param>
+        /// <param name="centerX">Abscissa of the center point of the circle</param>
+        /// <param name="centerY">Ordinate of the center point of the circle</param>
+        /// <param name="radius">Radius of the circle</param>
+        /// <param name="quadrant">The quadrant to draw</param>
+        /// <param name="filled">Draw a filled quadrant?</param>
+        /// <param name="centerBetweenPixels">If true, the center of the circle is between the assigned pixel and the next pixel, false it's directly on the center pixel</param>
         public void DrawCircleQuadrant(int centerX, int centerY, int radius, int quadrant, bool filled = false, bool centerBetweenPixels = false)
         {
             DrawCircleQuadrant(centerX, centerY, radius, quadrant, PenColor, filled, centerBetweenPixels);
@@ -922,13 +1000,13 @@ namespace Meadow.Foundation.Graphics
         /// <summary>
         /// Draws a circle quadrant (quarter circle)
         /// </summary>
-        /// <param name="centerX"></param>
-        /// <param name="centerY"></param>
-        /// <param name="radius"></param>
-        /// <param name="quadrant"></param>
-        /// <param name="color"></param>
-        /// <param name="filled"></param>
-        /// <param name="centerBetweenPixels"></param>
+        /// <param name="centerX">Abscissa of the center point of the circle</param>
+        /// <param name="centerY">Ordinate of the center point of the circle</param>
+        /// <param name="radius">Radius of the circle</param>
+        /// <param name="quadrant">The quadrant to draw</param>
+        /// <param name="color">Color of the quadrant</param>
+        /// <param name="filled">Draw a filled quadrant?</param>
+        /// <param name="centerBetweenPixels">If true, the center of the circle is between the assigned pixel and the next pixel, false it's directly on the center pixel</param>
         public void DrawCircleQuadrant(int centerX, int centerY, int radius, int quadrant, Color color, bool filled = false, bool centerBetweenPixels = false)
         {
             if (quadrant < 0 || quadrant > 3) { throw new ArgumentOutOfRangeException("DrawCircleQuadrant: quadrant must be between 0 & 3 inclusive"); }
@@ -1125,6 +1203,17 @@ namespace Meadow.Foundation.Graphics
         /// <summary>
         /// Draw a rectangle
         /// </summary>
+        /// <param name="rectangle">Rectangle to draw</param>
+        /// <param name="filled">Fill the rectangle (true) or draw the outline (false, default)</param>
+        public void DrawRectangle(Rect rectangle, bool filled = false)
+        {
+            DrawRectangle(rectangle.Left, rectangle.Top,
+                rectangle.Width, rectangle.Height, PenColor, filled);
+        }
+
+        /// <summary>
+        /// Draw a rectangle
+        /// </summary>
         /// <param name="x">Abscissa of the top left corner</param>
         /// <param name="y">Ordinate of the top left corner</param>
         /// <param name="width">Width of the rectangle</param>
@@ -1133,6 +1222,18 @@ namespace Meadow.Foundation.Graphics
         public void DrawRectangle(int x, int y, int width, int height, bool filled = false)
         {
             DrawRectangle(x, y, width, height, PenColor, filled);
+        }
+
+        /// <summary>
+        /// Draw a rectangle
+        /// </summary>
+        /// <param name="rectangle">Rectangle to draw</param>
+        /// <param name="color">The color of the rectangle</param>
+        /// <param name="filled">Fill the rectangle (true) or draw the outline (false, default)</param>
+        public void DrawRectangle(Rect rectangle, Color color, bool filled = false)
+        {
+            DrawRectangle(rectangle.Left, rectangle.Top,
+                rectangle.Width, rectangle.Height, color, filled);
         }
 
         /// <summary>
@@ -1304,7 +1405,7 @@ namespace Meadow.Foundation.Graphics
         /// <param name="text">The string to measure</param>
         /// <param name="font">The font used to calculate the text size</param>
         /// <param name="scaleFactor">Scale factor used to calculate the size</param>
-        public Size MeasureText(string text, IFont font, ScaleFactor scaleFactor = ScaleFactor.X1)
+        public static Size MeasureText(string text, IFont font, ScaleFactor scaleFactor = ScaleFactor.X1)
         {
             return new Size(text.Length * (int)scaleFactor * font.Width, (int)scaleFactor * font.Height);
         }
@@ -1330,12 +1431,24 @@ namespace Meadow.Foundation.Graphics
 
             var fontToDraw = (font ?? CurrentFont) ?? throw new Exception("CurrentFont must be set before calling DrawText.");
 
+            var textSize = MeasureText(text, fontToDraw, scaleFactor);
+
             byte[] bitMap = GetBytesForTextBitmap(text, fontToDraw);
 
-            x = GetXForAlignment(x, MeasureText(text, fontToDraw, scaleFactor).Width, alignmentH);
-            y = GetYForAlignment(y, MeasureText(text, fontToDraw, scaleFactor).Height, alignmentV);
+            x = GetXForAlignment(x, textSize.Width, alignmentH);
+            y = GetYForAlignment(y, textSize.Height, alignmentV);
 
-            DrawBitmap(x, y, bitMap.Length / fontToDraw.Height * 8, fontToDraw.Height, bitMap, color, scaleFactor);
+            // Calculate the byte width to match the stride used in GetBytesForTextBitmap
+            int byteWidth = fontToDraw.Width switch
+            {
+                8 => text.Length,
+                16 => text.Length * 2,
+                12 => ((text.Length + (text.Length % 2)) * 3) >> 1,
+                6 => (text.Length + 3) / 4 * 3,
+                _ => (text.Length * fontToDraw.Width + 7) / 8  // Round up for other widths
+            };
+
+            DrawBitmap(x, y, byteWidth * 8, fontToDraw.Height, bitMap, color, scaleFactor);
         }
 
         /// <summary>
@@ -1405,9 +1518,9 @@ namespace Meadow.Foundation.Graphics
             }
 
             //fast and happy path
-            if ((display is IRotatableDisplay || Rotation == RotationType.Default) && isInBounds)
+            if ((_isRotatableDisplay || Rotation == RotationType.Default) && isInBounds)
             {
-                PixelBuffer.WriteBuffer(x, y, buffer);
+                display!.WriteBuffer(x, y, buffer);
             }
             else  //loop over every pixel
             {
@@ -1491,7 +1604,7 @@ namespace Meadow.Foundation.Graphics
                 return Color.Black;
             }
 
-            if (display is IRotatableDisplay)
+            if (_isRotatableDisplay)
             {
                 return PixelBuffer.GetPixel(x, y);
             }
@@ -1583,13 +1696,34 @@ namespace Meadow.Foundation.Graphics
             DrawText(x, y, text, PenColor, scaleFactor, alignmentH, alignmentV);
         }
 
+        /// <summary>
+        /// Gets or resizes the text bitmap buffer from the ArrayPool
+        /// </summary>
+        /// <param name="requiredSize">The minimum required buffer size</param>
+        /// <returns>A byte array of at least the required size</returns>
+        private byte[] GetOrResizeTextBuffer(int requiredSize)
+        {
+            if (_textBitmapBuffer == null || _textBitmapBuffer.Length < requiredSize)
+            {
+                if (_textBitmapBuffer != null)
+                {
+                    ArrayPool<byte>.Shared.Return(_textBitmapBuffer);
+                }
+                _textBitmapBuffer = ArrayPool<byte>.Shared.Rent(requiredSize);
+            }
+            return _textBitmapBuffer;
+        }
+
         private byte[] GetBytesForTextBitmap(string text, IFont font)
         {
             byte[] bitmap;
+            int requiredSize;
 
             if (font.Width == 8)
             {
-                bitmap = new byte[text.Length * font.Height];
+                requiredSize = text.Length * font.Height;
+                bitmap = GetOrResizeTextBuffer(requiredSize);
+                Array.Clear(bitmap, 0, requiredSize);
 
                 for (int i = 0; i < text.Length; i++)
                 {   //copy data for 1 character at a time going top to bottom
@@ -1602,7 +1736,9 @@ namespace Meadow.Foundation.Graphics
             else if (font.Width == 16)
             {
                 int len = text.Length * 2; // Each character takes up 2 bytes per row
-                bitmap = new byte[len * font.Height];
+                requiredSize = len * font.Height;
+                bitmap = GetOrResizeTextBuffer(requiredSize);
+                Array.Clear(bitmap, 0, requiredSize);
                 int bitmapIndex;
 
                 for (int i = 0; i < text.Length; i++)
@@ -1620,7 +1756,9 @@ namespace Meadow.Foundation.Graphics
             else if (font.Width == 12)
             {
                 var len = ((text.Length + (text.Length % 2)) * 3) >> 1;
-                bitmap = new byte[len * font.Height];
+                requiredSize = len * font.Height;
+                bitmap = GetOrResizeTextBuffer(requiredSize);
+                Array.Clear(bitmap, 0, requiredSize);
 
                 byte[] charMap1, charMap2;
                 int index = 0;
@@ -1652,7 +1790,9 @@ namespace Meadow.Foundation.Graphics
             else if (font.Width == 6)
             {
                 int len = (text.Length + 3) / 4 * 3; // Adjusted to handle padding in one line.
-                bitmap = new byte[len * font.Height];
+                requiredSize = len * font.Height;
+                bitmap = GetOrResizeTextBuffer(requiredSize);
+                Array.Clear(bitmap, 0, requiredSize);
 
                 byte[] charMap1, charMap2, charMap3, charMap4;
                 int index = 0;
@@ -1695,7 +1835,9 @@ namespace Meadow.Foundation.Graphics
             else if (font.Width == 4)
             {
                 var len = (text.Length + (text.Length % 2)) >> 1;
-                bitmap = new byte[len * font.Height];
+                requiredSize = len * font.Height;
+                bitmap = GetOrResizeTextBuffer(requiredSize);
+                Array.Clear(bitmap, 0, requiredSize);
                 byte[] charMap1, charMap2;
 
                 for (int i = 0; i < len; i++)
@@ -1731,11 +1873,11 @@ namespace Meadow.Foundation.Graphics
                 }
 
                 isUpdating = true;
+
+                display?.Show();
+
+                isUpdating = false;
             }
-
-            display?.Show();
-
-            isUpdating = false;
         }
 
         /// <summary>
@@ -1811,8 +1953,50 @@ namespace Meadow.Foundation.Graphics
                 isUpdating = true;
             }
 
-            display?.Show(left, top, right, bottom);
+            // If the dirty region covers the entire screen (or close to it),
+            // do a full refresh for better performance
+            int regionWidth = right - left;
+            int regionHeight = bottom - top;
+            int totalArea = Width * Height;
+            int regionArea = regionWidth * regionHeight;
 
+            if (regionArea >= totalArea * 0.9) // 90% threshold
+            {
+                display?.Show();
+                isUpdating = false;
+                return;
+            }
+
+            if (_isRotatableDisplay)
+            {
+                display?.Show(left, top, right, bottom);
+            }
+            else
+            {
+                // Transform all four corners of the rectangle to handle rotation correctly
+                int x1 = GetXForRotation(left, top);
+                int y1 = GetYForRotation(left, top);
+                int x2 = GetXForRotation(right, top);
+                int y2 = GetYForRotation(right, top);
+                int x3 = GetXForRotation(left, bottom);
+                int y3 = GetYForRotation(left, bottom);
+                int x4 = GetXForRotation(right, bottom);
+                int y4 = GetYForRotation(right, bottom);
+
+                // Find the bounding box of the transformed rectangle
+                int l = Math.Min(Math.Min(x1, x2), Math.Min(x3, x4));
+                int r = Math.Max(Math.Max(x1, x2), Math.Max(x3, x4));
+                int t = Math.Min(Math.Min(y1, y2), Math.Min(y3, y4));
+                int b = Math.Max(Math.Max(y1, y2), Math.Max(y3, y4));
+
+                // Clamp to valid buffer bounds to handle edge cases
+                l = Math.Max(0, Math.Min(l, PixelBuffer.Width));
+                r = Math.Max(0, Math.Min(r, PixelBuffer.Width));
+                t = Math.Max(0, Math.Min(t, PixelBuffer.Height));
+                b = Math.Max(0, Math.Min(b, PixelBuffer.Height));
+
+                display?.Show(l, t, r, b);
+            }
             isUpdating = false;
         }
 
@@ -1871,7 +2055,7 @@ namespace Meadow.Foundation.Graphics
         /// <param name="color">Color to set display</param>
         public virtual void Clear(Color color, bool updateDisplay = false)
         {
-            DrawRectangle(0, 0, Width, Height, color, true);
+            PixelBuffer.Fill(color);
 
             if (updateDisplay) { Show(); }
         }
@@ -1890,25 +2074,47 @@ namespace Meadow.Foundation.Graphics
         {
             width /= 8;
 
-            if ((width * height) != bitmap.Length)
+            // Use > instead of != because ArrayPool may return buffers larger than requested
+            if ((width * height) > bitmap.Length)
             {
                 throw new ArgumentException("Width and height do not match the bitmap size.");
             }
 
-            int scale = (int)scaleFactor;
-
-            for (var ordinate = 0; ordinate < height; ordinate++)
+            if (scaleFactor == ScaleFactor.X1) //split into two paths for performance
             {
-                for (var abscissa = 0; abscissa < width; abscissa++)
+                for (var ordinate = 0; ordinate < height; ordinate++)
                 {
-                    var b = bitmap[(ordinate * width) + abscissa];
-                    byte mask = 0x01;
-
-                    for (var pixel = 0; pixel < 8; pixel++)
+                    for (var abscissa = 0; abscissa < width; abscissa++)
                     {
-                        if ((b & mask) > 0)
+                        var b = bitmap[(ordinate * width) + abscissa];
+
+                        if (b == 0) continue; //save a loop if a byte is empty
+
+                        for (var pixel = 0; pixel < 8; pixel++)
                         {
-                            if (scaleFactor != ScaleFactor.X1)
+                            if (((b >> pixel) & 1) == 1)
+                            {
+                                DrawPixel(x + (8 * abscissa) + pixel, y + ordinate, color);
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                int scale = (int)scaleFactor;
+
+                for (var ordinate = 0; ordinate < height; ordinate++)
+                {
+                    for (var abscissa = 0; abscissa < width; abscissa++)
+                    {
+                        var b = bitmap[(ordinate * width) + abscissa];
+
+                        if (b == 0) continue; //save a loop if a byte is empty
+
+                        for (var pixel = 0; pixel < 8; pixel++)
+                        {
+                            if (((b >> pixel) & 1) == 1)
                             {
                                 Fill(x: x + (8 * abscissa * scale) + (pixel * scale),
                                     y: y + (ordinate * scale),
@@ -1916,12 +2122,7 @@ namespace Meadow.Foundation.Graphics
                                     height: scale,
                                     color: color);
                             }
-                            else
-                            {   //1x
-                                DrawPixel(x + (8 * abscissa) + pixel, y + ordinate, color);
-                            }
                         }
-                        mask <<= 1;
                     }
                 }
             }
@@ -1947,9 +2148,9 @@ namespace Meadow.Foundation.Graphics
         /// <param name="x">The non-rotated x position</param>
         /// <param name="y">The non-rotated y position</param>
         /// <returns></returns>
-        public int GetXForRotation(int x, int y)
+        protected int GetXForRotation(int x, int y)
         {
-            if (display is IRotatableDisplay) { return x; }
+            if (_isRotatableDisplay) { return x; }
 
             return Rotation switch
             {
@@ -1966,9 +2167,9 @@ namespace Meadow.Foundation.Graphics
         /// <param name="x">The non-rotated x position</param>
         /// <param name="y">The non-rotated y position</param>
         /// <returns></returns>
-        public int GetYForRotation(int x, int y)
+        protected int GetYForRotation(int x, int y)
         {
-            if (display is IRotatableDisplay) { return y; }
+            if (_isRotatableDisplay) { return y; }
 
             return Rotation switch
             {
@@ -2006,7 +2207,7 @@ namespace Meadow.Foundation.Graphics
                 if (y + height >= Height) height = Height - y;
             }
 
-            if (display is IRotatableDisplay)
+            if (_isRotatableDisplay)
             {
                 PixelBuffer.Fill(x, y, width, height, color);
                 return;

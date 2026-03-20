@@ -2,8 +2,8 @@
 using Meadow.Foundation.Displays;
 using Meadow.Foundation.Graphics;
 using Meadow.Foundation.Graphics.MicroLayout;
-using Meadow.Foundation.ICs.IOExpanders;
-using Meadow.Peripherals.Displays;
+using Meadow.Foundation.Sensors.Buttons;
+using Meadow.Foundation.Sensors.Hid;
 
 namespace Charts_Sample;
 
@@ -11,89 +11,69 @@ public class MeadowApp : App<Desktop>
 {
     private DisplayScreen? screen;
 
-    public override Task Initialize()
-    {
-        var expander = FtdiExpanderCollection.Devices[0];
-
-        var display = new Ili9341
-        (
-            spiBus: expander.CreateSpiBus(),
-            chipSelectPin: expander.Pins.C0,
-            dcPin: expander.Pins.C2,
-            resetPin: expander.Pins.C1,
-            width: 240, height: 320,
-            colorMode: ColorMode.Format16bppRgb565
-        );
-
-        screen = new DisplayScreen(display, RotationType._270Degrees)
-        {
-            BackgroundColor = Color.Black
-        };
-
-        return base.Initialize();
-    }
-
-    public void Text()
-    {
-        var label = new Label(0, 0, screen!.Width, screen.Height);
-        label.Font = new Font12x20();
-        label.HorizontalAlignment = HorizontalAlignment.Center;
-        label.VerticalAlignment = VerticalAlignment.Center;
-        label.TextColor = Color.Red;
-        label.Text = "HELLO";
-
-        screen.Controls.Add(label);
-
-    }
-
-    public void TextOnBox()
-    {
-        var box = new Box(0, 0, screen!.Width / 4, screen.Height);
-        box.ForeColor = Color.Red;
-        var label = new Label(0, 0, screen.Width / 4, screen.Height);
-        label.HorizontalAlignment = HorizontalAlignment.Center;
-        label.VerticalAlignment = VerticalAlignment.Center;
-        label.TextColor = Color.Black;
-        label.Text = "Meadow";
-
-        screen.Controls.Add(box, label);
-
-        while (true)
-        {
-            Thread.Sleep(1000);
-            (box.ForeColor, label.TextColor) = (label.TextColor, box.ForeColor);
-        }
-    }
-
-    public void Sweep()
-    {
-        var box = new Box(0, 0, screen!.Width / 4, screen.Height);
-        box.ForeColor = Color.Red;
-
-        screen.Controls.Add(box);
-
-        var direction = 1;
-        var speed = 1;
-
-        while (true)
-        {
-            var left = box.Left + (speed * direction);
-
-            box.Left = left;
-
-            if ((box.Right >= screen.Width) || box.Left <= 0)
-            {
-                direction *= -1;
-            }
-
-            Thread.Sleep(50);
-        }
-    }
+    private int _currentLayoutIndex = 0;
+    private readonly List<ILayout> _layouts = new();
 
     public override Task Run()
     {
-        Text();
+        var labelFont = new Font12x20();
+
+        screen = new DisplayScreen(Device.Display!);
+        screen.BackgroundColor = Color.AntiqueWhite;
+
+        var keyboard = new Keyboard();
+
+        _layouts.Add(new LineChartLayout(screen.Width, screen.Height));
+
+        var right = new PushButton(keyboard.Pins.Right);
+        right.PressStarted += (s, e) =>
+        {
+            _currentLayoutIndex = (_currentLayoutIndex + 1) % _layouts.Count;
+            ShowCurrentLayout();
+        };
+        var left = new PushButton(keyboard.Pins.Left);
+        left.PressStarted += (s, e) =>
+        {
+            _currentLayoutIndex = (_currentLayoutIndex - 1 + _layouts.Count) % _layouts.Count;
+            ShowCurrentLayout();
+        };
+
+        foreach (var layout in _layouts)
+        {
+            screen.Controls.Add(layout);
+        }
+
+        ShowCurrentLayout();
+
+        // NOTE: this will not return until the display is closed
+        ExecutePlatformDisplayRunner();
 
         return base.Run();
+    }
+
+    private void ShowCurrentLayout()
+    {
+        for (var i = 0; i < _layouts.Count; i++)
+        {
+            if (i == _currentLayoutIndex)
+            {
+                _layouts[i].IsVisible = true;
+            }
+            else
+            {
+                _layouts[i].IsVisible = false;
+            }
+        }
+    }
+
+    private void ExecutePlatformDisplayRunner()
+    {
+        if (Device.Display is SilkDisplay sd)
+        {
+            sd.Resize(sd.Width, sd.Height, 3);
+            sd.Run();
+        }
+        MeadowOS.TerminateRun();
+        Environment.Exit(0);
     }
 }

@@ -8,9 +8,9 @@ namespace Meadow.Foundation.ICs.IOExpanders
     public class IOExpanderInputChangedEventArgs : EventArgs
     {
         /// <summary>
-        /// Which pins were interrupted
+        /// Which pins were interrupted (bit mask; bits 0-7 = Port A, bits 8-15 = Port B on 16-pin devices)
         /// </summary>
-        public byte InterruptPins { get; }
+        public ushort InterruptPins { get; }
 
         /// <summary>
         /// The values of pins that were interrupted
@@ -22,7 +22,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         /// </summary>
         /// <param name="interruptPins">The interrupt pins</param>
         /// <param name="inputState">The input state</param>
-        public IOExpanderInputChangedEventArgs(byte interruptPins, ushort inputState)
+        public IOExpanderInputChangedEventArgs(ushort interruptPins, ushort inputState)
         {
             InterruptPins = interruptPins;
             InputState = inputState;

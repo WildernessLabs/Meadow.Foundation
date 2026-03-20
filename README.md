@@ -58,7 +58,7 @@ All code changes are committed to the `develop` branch. At the time of release, 
 If you have a need for a driver that we don't yet support, you have a couple options:
 
 - Use an existing, similar driver as a template for your new driver.  We accept pull requests, but don't require them.
-- Open a new item on the [Issues Tab](https://github.com/WildernessLabs/Meadow.Foundation/issues) and request the driver so we can prioritize it.
+- Open a new item in the [Issues Repository](https://github.com/WildernessLabs/Meadow_Issues/issues) and request the driver so we can prioritize it.
 
 ## Documentation
 

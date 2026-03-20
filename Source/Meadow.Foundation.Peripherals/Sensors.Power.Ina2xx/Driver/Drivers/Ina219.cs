@@ -2,6 +2,7 @@
 using Meadow.Units;
 using System;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Power;
 
@@ -117,10 +118,10 @@ public class Ina219 : Ina2xx
     }
 
     /// <inheritdoc/>
-    public override Units.Current ReadCurrent()
+    public override ValueTask<Units.Current> ReadCurrent()
     {
         var rawRegister = ReadRegisterAsUShort(Registers.Current);
-        return new Current((short)rawRegister * _currentScale.Amps);
+        return new ValueTask<Current>(new Current((short)rawRegister * _currentScale.Amps));
     }
 
     /// <inheritdoc/>

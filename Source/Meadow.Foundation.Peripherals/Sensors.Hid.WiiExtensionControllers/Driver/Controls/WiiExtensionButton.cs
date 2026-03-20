@@ -61,10 +61,7 @@ namespace Meadow.Foundation.Sensors.Hid
                     RaiseClicked();
                 }
 
-                if (pressDuration.TotalMilliseconds > 0)
-                {
-                    RaisePressEnded();
-                }
+                RaisePressEnded();
             }
 
             State = state;

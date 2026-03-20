@@ -1,11 +1,10 @@
 ﻿using Meadow;
 using Meadow.Devices;
-using Meadow.Foundation;
 using Meadow.Foundation.Displays;
 using Meadow.Foundation.Graphics;
 using System.Threading.Tasks;
 
-namespace Displays.ePaper.EpdColor_Sample
+namespace Displays.ePaper.Epd5in65f_Sample
 {
     public class MeadowApp : App<F7FeatherV2>
     {

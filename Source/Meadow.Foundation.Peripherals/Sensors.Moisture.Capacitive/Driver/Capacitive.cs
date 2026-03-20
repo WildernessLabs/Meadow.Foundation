@@ -14,7 +14,7 @@ namespace Meadow.Foundation.Sensors.Moisture
         /// <summary>
         /// Returns the analog input port
         /// </summary>
-        protected IAnalogInputPort AnalogInputPort { get; }
+        protected IObservableAnalogInputPort AnalogInputPort { get; }
 
         /// <summary>
         /// Last value read from the moisture sensor
@@ -70,7 +70,7 @@ namespace Meadow.Foundation.Sensors.Moisture
         /// <param name="minimumVoltageCalibration">Minimum calibration voltage</param>
         /// <param name="maximumVoltageCalibration">Maximum calibration voltage</param>
         public Capacitive(
-            IAnalogInputPort analogInputPort,
+            IObservableAnalogInputPort analogInputPort,
             Voltage? minimumVoltageCalibration,
             Voltage? maximumVoltageCalibration)
         {
@@ -81,7 +81,7 @@ namespace Meadow.Foundation.Sensors.Moisture
 
             AnalogInputPort.Subscribe
             (
-                IAnalogInputPort.CreateObserver(
+                IObservableAnalogInputPort.CreateObserver(
                     result =>
                     {
                         ChangeResult<double> changeResult = new()

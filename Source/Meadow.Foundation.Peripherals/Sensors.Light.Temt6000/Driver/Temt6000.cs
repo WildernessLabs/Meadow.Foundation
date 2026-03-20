@@ -20,7 +20,7 @@ namespace Meadow.Foundation.Sensors.Light
         /// </summary>
         readonly bool createdPort = false;
 
-        readonly IAnalogInputPort analogInputPort;
+        readonly IObservableAnalogInputPort analogInputPort;
 
         /// <summary>
         /// Creates a new Temt6000 object
@@ -39,7 +39,7 @@ namespace Meadow.Foundation.Sensors.Light
         /// Creates a new Temt6000 driver
         /// </summary>
         /// <param name="port"></param>
-        public Temt6000(IAnalogInputPort port) : base(port)
+        public Temt6000(IObservableAnalogInputPort port) : base(port)
         {
             analogInputPort = port;
         }

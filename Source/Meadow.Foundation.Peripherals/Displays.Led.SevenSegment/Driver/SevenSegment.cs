@@ -227,6 +227,8 @@ namespace Meadow.Foundation.Displays.Led
                 charType = (CharacterType)(character - '0');
             else if (character >= 'a' && character <= 'f')
                 charType = (CharacterType)(character - 'a' + 10);
+            else if (character >= 'A' && character <= 'F')
+                charType = (CharacterType)(character - 'A' + 10);
             else
                 throw new ArgumentOutOfRangeException();
 

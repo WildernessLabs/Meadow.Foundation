@@ -14,7 +14,7 @@ public partial class Keyboard
         private readonly KeyboardIndicatorPin _pin;
 
         /// <summary>
-        /// Sets the state of the indicator
+        /// The current on/off state of the keyboard indicator LED (e.g., Caps Lock, Num Lock); assigning a value activates or deactivates the indicator.
         /// </summary>
         public override bool State
         {

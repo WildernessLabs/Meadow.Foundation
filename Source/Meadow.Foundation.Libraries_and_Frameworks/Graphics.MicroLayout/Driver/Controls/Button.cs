@@ -5,16 +5,28 @@
 /// </summary>
 public class Button : ClickableControl
 {
-    private const int ButtonDepth = 3; // TODO: make this settable?
+    private const int ButtonDepth = 2; // TODO: make this settable?
     private string _text = string.Empty;
     private Image? _image;
-    private Color _foreColor = Color.Gray;
+    private Color _foregroundColor = Color.Gray;
     private Color _pressedColor;
     private Color _highlightColor;
     private Color _shadowColor;
     private Color _textColor;
     private IFont? _font;
     private ScaleFactor _scaleFactor = ScaleFactor.X1;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Button"/> class with the specified dimensions.
+    /// </summary>
+    /// <param name="width">The width of the button.</param>
+    /// <param name="height">The height of the button.</param>
+    /// <param name="text">The initial Text for the control</param>
+    public Button(int width, int height, string text = nameof(Button))
+        : base(0, 0, width, height)
+    {
+        Text = text;
+    }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Button"/> class with the specified dimensions.
@@ -38,7 +50,7 @@ public class Button : ClickableControl
     {
         if (theme != null)
         {
-            if (theme.ForegroundColor != null) this.ForeColor = theme.ForegroundColor.Value;
+            if (theme.ForegroundColor != null) this.ForegroundColor = theme.ForegroundColor.Value;
             if (theme.PressedColor != null) this.PressedColor = theme.PressedColor.Value;
             if (theme.HighlightColor != null) this.HighlightColor = theme.HighlightColor.Value;
             if (theme.ShadowColor != null) this.ShadowColor = theme.ShadowColor.Value;
@@ -51,10 +63,10 @@ public class Button : ClickableControl
     /// <summary>
     /// Gets or sets the foreground color of the button when not pressed.
     /// </summary>
-    public Color ForeColor
+    public Color ForegroundColor
     {
-        get => _foreColor;
-        set => SetInvalidatingProperty(ref _foreColor, value);
+        get => _foregroundColor;
+        set => SetInvalidatingProperty(ref _foregroundColor, value);
     }
 
     /// <summary>
@@ -137,31 +149,28 @@ public class Button : ClickableControl
     {
         graphics.Stroke = ButtonDepth;
 
-        var parentOffsetX = Parent?.Left ?? 0;
-        var parentOffsetY = Parent?.Top ?? 0;
-
         if (Pressed)
         {
-            graphics.DrawRectangle(Left + parentOffsetX, Top + parentOffsetY, Width, Height, PressedColor, true);
+            graphics.DrawRectangle(ScreenLeft, ScreenTop, Width, Height, PressedColor, true);
 
-            graphics.DrawHorizontalLine(Left + parentOffsetX, Top + parentOffsetY, Width, ShadowColor);
-            graphics.DrawVerticalLine(Left + parentOffsetX, Top + parentOffsetY, Height, ShadowColor);
+            graphics.DrawHorizontalLine(ScreenLeft, ScreenTop, Width, ShadowColor);
+            graphics.DrawVerticalLine(ScreenLeft, ScreenTop, Height, ShadowColor);
 
-            graphics.DrawHorizontalLine(Left + parentOffsetX, Bottom + parentOffsetY, Width, HighlightColor);
-            graphics.DrawVerticalLine(Right + parentOffsetX, Top + parentOffsetY, Height, HighlightColor);
+            graphics.DrawHorizontalLine(ScreenLeft, ScreenBottom - 1, Width, HighlightColor);
+            graphics.DrawVerticalLine(ScreenRight - 1, ScreenTop, Height, HighlightColor);
 
             if (Image != null) // image always wins over text
             {
                 graphics.DrawImage(
-                    Left + ((this.Width - Image.Width) / 2) + ButtonDepth + parentOffsetX,
-                    Top + ((this.Height - Image.Height) / 2) + ButtonDepth + parentOffsetY,
+                    ScreenLeft + ((this.Width - Image.Width) / 2) + ButtonDepth,
+                    ScreenTop + ((this.Height - Image.Height) / 2) + ButtonDepth,
                     Image);
             }
             else if (!string.IsNullOrEmpty(Text))
             {
                 graphics.DrawText(
-                    Left + ButtonDepth + (this.Width / 2) + parentOffsetX,
-                    Top + ButtonDepth + (this.Height / 2) + parentOffsetY,
+                    ScreenLeft + ButtonDepth + (this.Width / 2),
+                    ScreenTop + ButtonDepth + (this.Height / 2),
                     Text,
                     TextColor,
                     scaleFactor: ScaleFactor,
@@ -172,26 +181,26 @@ public class Button : ClickableControl
         }
         else
         {
-            graphics.DrawRectangle(Left + parentOffsetX, Top + parentOffsetY, Width, Height, ForeColor, true);
+            graphics.DrawRectangle(ScreenLeft, ScreenTop, Width, Height, ForegroundColor, true);
 
-            graphics.DrawHorizontalLine(Left + parentOffsetX, Top + parentOffsetY, Width, HighlightColor);
-            graphics.DrawVerticalLine(Left + parentOffsetX, Top + parentOffsetY, Height, HighlightColor);
+            graphics.DrawHorizontalLine(ScreenLeft, ScreenTop, Width, HighlightColor);
+            graphics.DrawVerticalLine(ScreenLeft, ScreenTop, Height, HighlightColor);
 
-            graphics.DrawHorizontalLine(Left + parentOffsetX, Bottom + parentOffsetY, Width, ShadowColor);
-            graphics.DrawVerticalLine(Right + parentOffsetX, Top + parentOffsetY, Height, ShadowColor);
+            graphics.DrawHorizontalLine(ScreenLeft, ScreenBottom - 1, Width, ShadowColor);
+            graphics.DrawVerticalLine(ScreenRight - 1, ScreenTop, Height, ShadowColor);
 
             if (Image != null) // image always wins over text
             {
                 graphics.DrawImage(
-                    Left + ((this.Width - Image.Width) / 2) + parentOffsetX,
-                    Top + ((this.Height - Image.Height) / 2) + parentOffsetY,
+                    ScreenLeft + ((Width - Image.Width) / 2),
+                    ScreenTop + ((Height - Image.Height) / 2),
                     Image);
             }
             else if (!string.IsNullOrEmpty(Text))
             {
                 graphics.DrawText(
-                    Left + (this.Width / 2) + parentOffsetX,
-                    Top + (this.Height / 2) + parentOffsetY,
+                    ScreenLeft + (Width / 2),
+                    ScreenTop + (Height / 2),
                     Text,
                     TextColor,
                     scaleFactor: ScaleFactor,

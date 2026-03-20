@@ -3,7 +3,7 @@
     /// <summary>
     /// Represents a musical note, with a specific pitch, octave, and duration
     /// </summary>
-    public class Note
+    public struct Note
     {
         /// <summary>
         /// The pitch of the note

@@ -21,7 +21,7 @@ public class Program
 
     public static void Initialize()
     {
-        display = new SilkDisplay(640, 480, displayScale: 1f);
+        display = new SilkDisplay(640, 480, displayScale: 2f);
 
         graphics = new MicroGraphics(display)
         {

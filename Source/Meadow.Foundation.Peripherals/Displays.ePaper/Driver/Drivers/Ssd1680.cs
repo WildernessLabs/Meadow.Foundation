@@ -28,7 +28,7 @@ namespace Meadow.Foundation.Displays
         /// <param name="width">Width of display in pixels</param>
         /// <param name="height">Height of display in pixels</param>
         public Ssd1680(ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, IPin busyPin,
-            int width, int height) :
+            int width = 122, int height = 250) :
             base(spiBus, chipSelectPin, dcPin, resetPin, busyPin, width, height)
         { }
 

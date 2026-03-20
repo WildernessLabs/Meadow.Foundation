@@ -238,7 +238,6 @@ namespace Meadow.Foundation.Leds
         /// </summary>
         protected void ResetPwmPorts()
         {
-            RedPwm.Frequency = GreenPwm.Frequency = BluePwm.Frequency = DefaultFrequency;
             RedPwm.DutyCycle = GreenPwm.DutyCycle = BluePwm.DutyCycle = DEFAULT_DUTY_CYCLE;
 
             // invert the PWM signal if it common anode

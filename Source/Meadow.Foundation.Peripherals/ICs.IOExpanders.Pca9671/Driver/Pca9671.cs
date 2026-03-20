@@ -181,7 +181,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         }
 
         /// <summary>
-        /// Sets the state of a pin
+        /// Drives the specified output pin high or low by updating the output latch register on the PCA9671.
         /// </summary>
         /// <param name="pin">The pin to affect</param>
         /// <param name="state"><b>True</b> to set the pin state high, <b>False</b> to set it low</param>

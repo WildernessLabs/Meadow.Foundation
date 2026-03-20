@@ -10,19 +10,19 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         /// <summary>
         /// Analog port connected to Humidity pin
         /// </summary>
-        protected IAnalogInputPort? HumidityInputPort;
+        protected IObservableAnalogInputPort? HumidityInputPort;
 
         /// <summary>
         /// Analog port connected to Temperature pin
         /// </summary>
-        protected IAnalogInputPort? TemperatureInputPort;
+        protected IObservableAnalogInputPort? TemperatureInputPort;
 
         /// <summary>
         /// Creates a new HC2 Humidity Probe using analog inputs
         /// </summary>
         /// <param name="analogInputPortHumidity">The port for the humidity analog input pin</param>
         /// <param name="analogInputPortTemperature">The port for the temperature analog input pin</param>
-        public HC2(IAnalogInputPort analogInputPortHumidity, IAnalogInputPort analogInputPortTemperature)
+        public HC2(IObservableAnalogInputPort analogInputPortHumidity, IObservableAnalogInputPort analogInputPortTemperature)
         {
             HumidityInputPort = analogInputPortHumidity;
             TemperatureInputPort = analogInputPortTemperature;
@@ -52,7 +52,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
         {
             _ = HumidityInputPort?.Subscribe
             (
-                IAnalogInputPort.CreateObserver(
+                IObservableAnalogInputPort.CreateObserver(
                     async result =>
                     {
                         var oldConditions = Conditions;
@@ -78,7 +78,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
             );
             _ = TemperatureInputPort?.Subscribe
             (
-                IAnalogInputPort.CreateObserver(
+                IObservableAnalogInputPort.CreateObserver(
                     async result =>
                     {
                         var oldConditions = Conditions;

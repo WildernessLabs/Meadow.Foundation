@@ -17,7 +17,7 @@ public class TouchscreenCalibrationService
     /// <summary>
     /// Event that occurs when the calibration is complete.
     /// </summary>
-    public event EventHandler<CalibrationPoint[]> CalibrationComplete;
+    public event EventHandler<CalibrationPoint[]>? CalibrationComplete;
 
     private readonly DisplayScreen _screen;
     private readonly Crosshair[] _calibrationPoints;
@@ -80,8 +80,8 @@ public class TouchscreenCalibrationService
 
         _calibrationPoints = new Crosshair[]
         {
-            new (margin, margin) { ForeColor = CrosshairColor },
-            new (_screen.Width - margin, _screen.Height - margin) { ForeColor = CrosshairColor }
+            new (margin, margin) { ForegroundColor = CrosshairColor },
+            new (_screen.Width - margin, _screen.Height - margin) { ForegroundColor = CrosshairColor }
         };
         _calPoints = new CalibrationPoint[_calibrationPoints.Length];
     }

@@ -9,7 +9,7 @@ namespace Meadow.Foundation.Sensors.Temperature
     /// LM75 Temperature sensor object
     /// </summary>    
     public partial class Lm75 : ByteCommsSensorBase<Units.Temperature>,
-        ITemperatureSensor, II2cPeripheral
+        ISamplingTemperatureSensor, II2cPeripheral
     {
         /// <summary>
         /// The default I2C address for the peripheral

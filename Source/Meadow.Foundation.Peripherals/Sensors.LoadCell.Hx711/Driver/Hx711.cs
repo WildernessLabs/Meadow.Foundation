@@ -184,7 +184,7 @@ namespace Meadow.Foundation.Sensors.LoadCell
         }
 
         /// <summary>
-        /// Gets the current sensor weight
+        /// Performs an ADC conversion via the HX711 and converts the raw count into a calibrated mass measurement.
         /// </summary>
         /// <returns></returns>
         protected override Task<Mass> ReadSensor()

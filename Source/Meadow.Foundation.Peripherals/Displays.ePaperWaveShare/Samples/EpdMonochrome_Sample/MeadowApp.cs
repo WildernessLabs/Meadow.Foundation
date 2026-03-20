@@ -16,7 +16,7 @@ namespace Displays.ePaper.EpdMonochrome_Sample
             Epd1in54,
             Epd2in13,
             Epd2in9,
-            Epd4in2,
+            Epd4in2
         }
 
         EPaperMonoBase display;
@@ -26,7 +26,7 @@ namespace Displays.ePaper.EpdMonochrome_Sample
         {
             Resolver.Log.Info("Initialize ...");
 
-            var displayType = EpdMonochromeDisplay.Epd1in54;
+            var displayType = EpdMonochromeDisplay.Epd2in9;
 
             Resolver.Log.Info($"{displayType} selected - change displayType to select a different display");
 
@@ -45,6 +45,8 @@ namespace Displays.ePaper.EpdMonochrome_Sample
         {
             Resolver.Log.Info("Run");
 
+            graphics.Clear();
+
             for (int i = 0; i < 100; i++)
             {
                 graphics.DrawPixel(i, i, Color.Black);
@@ -53,6 +55,8 @@ namespace Displays.ePaper.EpdMonochrome_Sample
             graphics.DrawRectangle(10, 40, 100, 60, Color.Black, true);
             graphics.DrawRectangle(20, 80, 100, 90, Color.White, true);
             graphics.DrawRectangle(20, 80, 100, 90, Color.Black, false);
+
+            graphics.DrawRectangle(0, 0, graphics.Width, graphics.Height, false);
 
             graphics.CurrentFont = new Font12x16();
             graphics.DrawText(2, 20, "Meadow F7", Color.Black);

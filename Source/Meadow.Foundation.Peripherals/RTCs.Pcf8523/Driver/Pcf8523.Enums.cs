@@ -24,6 +24,25 @@ internal enum Registers : byte
     Tmr_B_reg = 0x13,
 }
 
+/// <summary>
+/// Represents the unit of delay time
+/// </summary>
+public enum DelayTimeUnit
+{
+    /// <summary>
+    /// Delay time in seconds
+    /// </summary>
+    Seconds,
+    /// <summary>
+    /// Delay time in minutes
+    /// </summary>
+    Minutes,
+    /// <summary>
+    /// Delay time in hours
+    /// </summary>
+    Hours
+}
+
 public partial class Pcf8523
 {
     /// <summary>

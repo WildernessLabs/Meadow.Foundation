@@ -33,7 +33,7 @@ public class MeadowApp<T> : App<T>
         );
         sensor.Subscribe(consumer);
 
-        (sensor as ITemperatureSensor).Updated += (sender, e) =>
+        (sensor as ISamplingTemperatureSensor).Updated += (sender, e) =>
         {
             Resolver.Log.Info($"Temperature Updated: {e.New.Celsius:n2}C");
         };

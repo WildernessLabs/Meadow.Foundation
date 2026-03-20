@@ -20,7 +20,7 @@ public partial class Keyboard : IDigitalInterruptController, IDigitalOutputContr
                 {
                     var state = InteropMac.CGEventSourceKeyState(
                         InteropMac.CGEventSourceStateID.hidSystemState,
-                        keycode.Value) != 0;
+                        keycode.Value) == 0;
 
                     key.Value.SetState(state);
                 }

@@ -5,9 +5,6 @@
 /// </summary>
 public class Box : ThemedControl
 {
-    private Color _foreColor;
-    private bool _isFilled = true;
-
     /// <summary>
     /// Gets or sets a value indicating whether the display box is filled with the foreground color.
     /// </summary>
@@ -18,6 +15,24 @@ public class Box : ThemedControl
     }
 
     /// <summary>
+    /// Gets or sets the foreground color of the display box.
+    /// </summary>
+    public Color ForegroundColor
+    {
+        get => _foregroundColor;
+        set => SetInvalidatingProperty(ref _foregroundColor, value);
+    }
+
+    private Color _foregroundColor;
+    private bool _isFilled = true;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Box"/> class with the specified dimensions.
+    /// </summary>
+    public Box() : base(0, 0, 0, 0)
+    { }
+
+    /// <summary>
     /// Initializes a new instance of the <see cref="Box"/> class with the specified dimensions.
     /// </summary>
     /// <param name="left">The left coordinate of the display box.</param>
@@ -26,8 +41,7 @@ public class Box : ThemedControl
     /// <param name="height">The height of the display box.</param>
     public Box(int left, int top, int width, int height)
         : base(left, top, width, height)
-    {
-    }
+    { }
 
     /// <summary>
     /// Applies the specified display theme to the display box.
@@ -37,17 +51,11 @@ public class Box : ThemedControl
     {
         if (theme != null)
         {
-            if (theme.ForegroundColor != null) this.ForeColor = theme.ForegroundColor.Value;
+            if (theme.ForegroundColor != null)
+            {
+                ForegroundColor = theme.ForegroundColor.Value;
+            }
         }
-    }
-
-    /// <summary>
-    /// Gets or sets the foreground color of the display box.
-    /// </summary>
-    public Color ForeColor
-    {
-        get => _foreColor;
-        set => SetInvalidatingProperty(ref _foreColor, value);
     }
 
     /// <summary>
@@ -56,9 +64,9 @@ public class Box : ThemedControl
     /// <param name="graphics">The <see cref="MicroGraphics"/> surface to draw the display box on.</param>
     protected override void OnDraw(MicroGraphics graphics)
     {
-        if (ForeColor != Color.Transparent)
+        if (ForegroundColor != Color.Transparent)
         {
-            graphics.DrawRectangle(Left + (Parent?.Left ?? 0), Top + (Parent?.Top ?? 0), Width, Height, ForeColor, IsFilled);
+            graphics.DrawRectangle(ScreenLeft, ScreenTop, Width, Height, ForegroundColor, IsFilled);
         }
     }
 }

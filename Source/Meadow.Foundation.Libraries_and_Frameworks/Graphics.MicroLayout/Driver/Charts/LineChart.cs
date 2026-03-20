@@ -12,11 +12,16 @@ public class LineChart : ChartControl
     /// </summary>
     public bool AlwaysShowYOrigin { get; set; } = true;
 
-    //    public bool ShowXAxisLabels { get; set; }
     /// <summary>
     /// When true, Y-axis labels will be shown
     /// </summary>
     public bool ShowYAxisLabels { get; set; }
+
+    /// <summary>
+    /// Use antialiased lines
+    /// </summary>
+    public bool UseAntialiasing { get; set; }
+
     /// <summary>
     /// The collection of data series to plot
     /// </summary>
@@ -39,15 +44,14 @@ public class LineChart : ChartControl
     /// <param name="height">The control's height</param>
     public LineChart(int left, int top, int width, int height)
         : base(left, top, width, height)
-    {
-    }
+    { }
 
     /// <inheritdoc/>
     protected override void OnDraw(MicroGraphics graphics)
     {
-        graphics.DrawRectangle(Left, Top, Width, Height, BackgroundColor, true);
+        graphics.DrawRectangle(ScreenLeft, ScreenTop, Width, Height, BackgroundColor, true);
 
-        ChartAreaTop = Top + DefaultMargin * 2 - AxisStroke;
+        ChartAreaTop = Top + DefaultMargin * 2;
         ChartAreaBottom = Bottom - DefaultMargin;
 
         if (Series.Count > 0)
@@ -113,28 +117,31 @@ public class LineChart : ChartControl
             if (XAxisYIntercept != YMinimumValue)
             {
                 graphics.DrawText(
-                    x: Left + DefaultMargin + ParentOffsetX,
+                    x: ChartAreaLeft - AxisStroke - 1,
                     y: XAxisScaledPosition - (font.Height / 2) + +ParentOffsetY, // centered on tick
                     color: AxisLabelColor,
-                     text: XAxisYIntercept.ToString("0.0"),
-                    font: font);
+                    text: XAxisYIntercept.ToString("0.0"),
+                    font: font,
+                    alignmentH: HorizontalAlignment.Right);
             }
 
             // max label
             graphics.DrawText(
-                x: Left + DefaultMargin + ParentOffsetX,
-                y: ChartAreaTop - font.Height + DefaultMargin,
+                x: ChartAreaLeft - AxisStroke - 1,
+                y: ChartAreaTop + DefaultMargin + 1,
                 color: AxisLabelColor,
                 text: YMaximumValue.ToString("0.0"),
-                font: font);
+                font: font,
+                alignmentH: HorizontalAlignment.Right);
 
             // min label
             graphics.DrawText(
-                x: Left + DefaultMargin + ParentOffsetX,
+                x: ChartAreaLeft - AxisStroke - 1,
                 y: ChartAreaBottom - font.Height + ParentOffsetY,
                 color: AxisLabelColor,
                 text: YMinimumValue.ToString("0.0"),
-                font: font);
+                font: font,
+                alignmentH: HorizontalAlignment.Right);
         }
     }
 
@@ -171,7 +178,7 @@ public class LineChart : ChartControl
         if (ShowYAxisLabels)
         {
             // TODO: this needs to be label-based
-            leftMargin += GetAxisFont().Width * YMaximumValue.ToString("0.0").Length;
+            leftMargin += GetAxisFont().Width * YMaximumValue.ToString("000.0").Length;
         }
 
         // TODO: deal with chart with negative values
@@ -213,12 +220,24 @@ public class LineChart : ChartControl
                 }
                 else
                 {
-                    graphics.DrawLine(
-                        lastX + ParentOffsetX,
-                        lastY + ParentOffsetY,
-                        scaledX,
-                        scaledY,
-                        series.LineColor);
+                    if (UseAntialiasing)
+                    {
+                        graphics.DrawLineAntialiased(
+                            lastX + ParentOffsetX,
+                            lastY + ParentOffsetY,
+                            scaledX,
+                            scaledY,
+                            series.LineColor);
+                    }
+                    else
+                    {
+                        graphics.DrawLine(
+                            lastX + ParentOffsetX,
+                            lastY + ParentOffsetY,
+                            scaledX,
+                            scaledY,
+                            series.LineColor);
+                    }
                 }
 
                 lastX = scaledX;

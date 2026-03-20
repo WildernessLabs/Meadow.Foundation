@@ -148,7 +148,7 @@ namespace Meadow.Foundation.Sensors.Camera
         public Mode GetMode() => (Mode)GetCurrentMode();
 
         /// <summary>
-        /// Sets the resolution
+        /// Configures the ADC resolution of the MLX90640 sensor to control measurement precision.
         /// </summary>
         /// <param name="res">Resolution type</param>
         public void SetResolution(Resolution res) => SetResolution((byte)res);
@@ -160,13 +160,13 @@ namespace Meadow.Foundation.Sensors.Camera
         public Resolution GetResolution() => (Resolution)GetCurrentResolution();
 
         /// <summary>
-        /// Gets the Refresh rate
+        /// Reads the current frame refresh rate setting from the sensor hardware.
         /// </summary>
         /// <returns>RefreshRate type</returns>
         public RefreshRate GetRefreshRate() => (RefreshRate)GetCurrentRefreshRate();
 
         /// <summary>
-        /// Sets the refresh rate
+        /// Configures how many frames per second the MLX90640 sensor captures and outputs.
         /// </summary>
         /// <param name="rate">RefreshRate type</param>
         public void SetRefreshRate(RefreshRate rate) => SetRefreshRate((byte)rate);

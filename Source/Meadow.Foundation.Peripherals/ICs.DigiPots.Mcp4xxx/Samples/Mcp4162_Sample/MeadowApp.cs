@@ -1,7 +1,6 @@
 ﻿using Meadow;
 using Meadow.Devices;
 using Meadow.Foundation.ICs.DigiPots;
-using Meadow.Hardware;
 using Meadow.Units;
 using System.Threading.Tasks;
 

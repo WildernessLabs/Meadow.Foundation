@@ -7,6 +7,9 @@ using static Meadow.Foundation.ICs.IOExpanders.Native.Ftd2xx;
 
 namespace Meadow.Foundation.ICs.IOExpanders;
 
+/// <summary>
+/// Represents a collection of FtdiExpander devices connected to the host machine.
+/// </summary>
 public class FtdiExpanderCollection : IEnumerable<FtdiExpander>
 {
     private static FtdiExpanderCollection? _instance;
@@ -28,10 +31,12 @@ public class FtdiExpanderCollection : IEnumerable<FtdiExpander>
     {
     }
 
+    /// <summary>
+    /// Refresh the collection of FtdiExpander devices connected to the host machine.
+    /// </summary>
     public void Refresh()
     {
-        Native.CheckStatus(
-            Native.Ftd2xx.FT_CreateDeviceInfoList(out uint count));
+        Native.CheckStatus(Native.Ftd2xx.FT_CreateDeviceInfoList(out uint count));
 
         _expanders.Clear();
 
@@ -56,6 +61,8 @@ public class FtdiExpanderCollection : IEnumerable<FtdiExpander>
                 case FtDeviceType.Ft2232:
                 case FtDeviceType.Ft2232H:
                 case FtDeviceType.Ft4232H:
+                case FtDeviceType.Ft232BOrFt245B: // Accept mis-identified FT232H on macOS
+                case FtDeviceType.UnknownDevice:  // Accept UnknownDevice (seen when VID/PID not explicit)
                     // valid, add to list
                     break;
                 default:
@@ -65,6 +72,9 @@ public class FtdiExpanderCollection : IEnumerable<FtdiExpander>
             // no idea why the buffer isn't all zeros after the null terminator - thanks FTDI!
             var serialNumber = Encoding.ASCII.GetString(serialNumberBuffer.ToArray(), 0, serialNumberBuffer.IndexOf((byte)0));
             var description = Encoding.ASCII.GetString(descriptionBuffer.ToArray(), 0, descriptionBuffer.IndexOf((byte)0));
+
+            // Debug output
+            Console.WriteLine($"[DEBUG] FTDI Device {index}: Type={deviceType} ({(int)deviceType}), Desc='{description}', Serial='{serialNumber}'");
 
             _expanders.Add(FtdiExpander.Create(index, flags, deviceType, id, locid, serialNumber, description, handle));
         }

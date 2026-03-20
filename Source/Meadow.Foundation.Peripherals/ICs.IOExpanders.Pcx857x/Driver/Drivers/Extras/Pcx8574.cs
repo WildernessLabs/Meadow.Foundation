@@ -107,7 +107,7 @@ namespace Meadow.Foundation.ICs.IOExpanders
         }
 
         /// <summary>
-        /// Sets the state of a pin
+        /// Drives the specified output pin high or low by updating the PCX8574's output latch byte.
         /// </summary>
         /// <param name="pin">The pin to affect</param>
         /// <param name="state"><b>True</b> to set the pin state high, <b>False</b> to set it low</param>

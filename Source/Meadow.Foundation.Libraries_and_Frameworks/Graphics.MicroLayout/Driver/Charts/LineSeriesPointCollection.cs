@@ -34,6 +34,11 @@ public class LineSeriesPointCollection : IEnumerable<LineSeriesPoint>
     public int Count => _points.Count;
 
     /// <summary>
+    /// The most recently added data point in the collection, or a default value if the collection is empty.
+    /// </summary>
+    public LineSeriesPoint Last => _points.LastOrDefault();
+
+    /// <summary>
     /// Adds a point to the collection
     /// </summary>
     /// <param name="x">The point's X value</param>
@@ -66,15 +71,12 @@ public class LineSeriesPointCollection : IEnumerable<LineSeriesPoint>
             }
 
             // do this now so we don't have to calculate during drawing
-            MinX = _points.Min(p => p.X);
-            MinY = _points.Min(p => p.Y);
-            MaxX = _points.Max(p => p.X);
-            MaxY = _points.Max(p => p.Y);
+            RecalculateMinMax();
         }
     }
 
     /// <summary>
-    /// Removes a point to the collection
+    /// Removes a point from the collection by object reference.
     /// </summary>
     /// <param name="point">The point to remove</param>
     public void Remove(LineSeriesPoint point)
@@ -83,7 +85,23 @@ public class LineSeriesPointCollection : IEnumerable<LineSeriesPoint>
     }
 
     /// <summary>
-    /// Removes a point to the collection
+    /// Removes a point from the collection at the specified index.
+    /// </summary>
+    /// <param name="index">The zero-based index of the element to remove.</param>
+    public void RemoveAt(int index)
+    {
+        lock (_points)
+        {
+            if (index >= 0 && index < _points.Count)
+            {
+                _points.RemoveAt(index);
+                RecalculateMinMax();
+            }
+        }
+    }
+
+    /// <summary>
+    /// Removes a series of points from the collection
     /// </summary>
     /// <param name="points">The points to remove</param>
     public void Remove(params LineSeriesPoint[] points)
@@ -95,22 +113,30 @@ public class LineSeriesPointCollection : IEnumerable<LineSeriesPoint>
                 _points.Remove(point);
             }
 
-            if (_points.Count > 0)
-            {
-                MinX = _points.Min(p => p.X);
-                MinY = _points.Min(p => p.Y);
-                MaxX = _points.Max(p => p.X);
-                MaxY = _points.Max(p => p.Y);
-            }
-            else
-            {
-                MinX = MaxX = MinY = MaxY = 0;
-            }
+            RecalculateMinMax();
         }
     }
 
     /// <summary>
-    /// Removes all points to the collection
+    /// Shifts all points in the collection by the specified X offset.
+    /// </summary>
+    /// <param name="offset">The value to add to the X coordinate of each point.</param>
+    public void PanX(double offset)
+    {
+        lock (_points)
+        {
+            for (int i = 0; i < _points.Count; i++)
+            {
+                var point = _points[i];
+                point.X += offset;
+                _points[i] = point;
+            }
+            RecalculateMinMax();
+        }
+    }
+
+    /// <summary>
+    /// Removes all points from the collection
     /// </summary>
     /// <param name="capacity">Sets the total number of elements the collection can contain without resizing</param>
     public void Clear(int capacity = 10)
@@ -121,6 +147,21 @@ public class LineSeriesPointCollection : IEnumerable<LineSeriesPoint>
 
             _points.Capacity = capacity;
 
+            MinX = MaxX = MinY = MaxY = 0;
+        }
+    }
+
+    private void RecalculateMinMax()
+    {
+        if (_points.Count > 0)
+        {
+            MinX = _points.Min(p => p.X);
+            MinY = _points.Min(p => p.Y);
+            MaxX = _points.Max(p => p.X);
+            MaxY = _points.Max(p => p.Y);
+        }
+        else
+        {
             MinX = MaxX = MinY = MaxY = 0;
         }
     }

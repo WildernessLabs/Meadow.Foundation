@@ -9,11 +9,6 @@ namespace Meadow.Foundation.Displays
     public class Ssd1351 : TftSpiBase
     {
         /// <summary>
-        /// The default display color mode
-        /// </summary>
-        public override ColorMode DefaultColorMode => ColorMode.Format16bppRgb565;
-
-        /// <summary>
         /// The color modes supported by the display
         /// </summary>
         public override ColorMode SupportedColorModes => ColorMode.Format16bppRgb565;
@@ -134,8 +129,8 @@ namespace Meadow.Foundation.Displays
         /// Set address window to update
         /// </summary>
         /// <param name="x0">Start x position in pixels</param>
-        /// <param name="y0">End x position in pixels</param>
-        /// <param name="x1">Start y position in pixels</param>
+        /// <param name="y0">Start y position in pixels</param>
+        /// <param name="x1">End x position in pixels</param>
         /// <param name="y1">End y position in pixels</param>
         protected override void SetAddressWindow(int x0, int y0, int x1, int y1)
         {

@@ -3,6 +3,7 @@ using Meadow.Units;
 using System;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Power;
 
@@ -71,12 +72,12 @@ public class Ina260 : Ina2xx
     }
 
     /// <inheritdoc/>
-    public override Units.Current ReadCurrent() => new Current((short)ReadRegisterAsUShort(Registers.Current) * _currentScale.Amps, Units.Current.UnitType.Amps);
+    public override ValueTask<Current> ReadCurrent() => new ValueTask<Current>(new Current((short)ReadRegisterAsUShort(Registers.Current) * _currentScale.Amps, Units.Current.UnitType.Amps));
     /// <inheritdoc/>
     public override Units.Voltage ReadBusVoltage() => new Voltage(ReadRegisterAsUShort(Registers.BusVoltage) * _voltageScale.Volts, Units.Voltage.UnitType.Volts);
     /// <inheritdoc/>
     /// <remarks> Ina260 doesn't directly have a register for this, so we compute from known values. </remarks>
-    public override Units.Voltage ReadShuntVoltage() => new((ReadCurrent().Amps * _shuntResistor.Ohms), Units.Voltage.UnitType.Volts);
+    public override Units.Voltage ReadShuntVoltage() => new((ReadCurrent().GetAwaiter().GetResult().Amps * _shuntResistor.Ohms), Units.Voltage.UnitType.Volts);
     /// <inheritdoc/>
     public override Units.Power ReadPower() => new Units.Power(ReadRegisterAsUShort(Registers.Power) * _powerScale.Watts, Units.Power.UnitType.Watts);
 

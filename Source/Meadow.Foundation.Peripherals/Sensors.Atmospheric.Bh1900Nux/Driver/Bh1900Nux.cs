@@ -8,7 +8,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric
     /// <summary>
     /// Represents a Bh1900Nux temperature sensor
     /// </summary>
-    public partial class Bh1900Nux : ByteCommsSensorBase<Units.Temperature>, ITemperatureSensor, II2cPeripheral
+    public partial class Bh1900Nux : ByteCommsSensorBase<Units.Temperature>, ISamplingTemperatureSensor, II2cPeripheral
     {
         /// <summary>
         /// The current temperature

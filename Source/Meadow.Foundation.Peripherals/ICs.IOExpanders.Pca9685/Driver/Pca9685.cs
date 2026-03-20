@@ -97,23 +97,6 @@ public partial class Pca9685 : II2cPeripheral, IDigitalOutputController, IPwmOut
         }
     }
 
-    /*
-    /// <summary>
-    /// Turns the specified pin On or Off
-    /// </summary>
-    /// <param name="pin">The pin to set</param>
-    /// <param name="on">true is on, false if off</param>
-    public virtual void SetPin(byte pin, bool on)
-    {
-        if (pin is < 0 or > 15)
-        {
-            throw new ArgumentException("PWM pin must be between 0 and 15");
-        }
-
-        SetPwm(pin, on ? 4096 : 0, 0);
-    }
-    */
-
     /// <summary>
     /// Set the values for specified output pin.
     /// </summary>
@@ -128,14 +111,24 @@ public partial class Pca9685 : II2cPeripheral, IDigitalOutputController, IPwmOut
             throw new ArgumentException("Value has to be between 0 and 15", nameof(pin));
         }
 
-        if (on is < 0 or > 4096)
+        // Special case for fully on
+        if (off == 4096)
         {
-            throw new ArgumentException("Value has to be between 0 and 4096", nameof(on));
+            on = 4096;  // Set the special "fully on" bit
+            off = 0;
         }
-
-        if (off is < 0 or > 4096)
+        else
         {
-            throw new ArgumentException("Value has to be between 0 and 4096", nameof(off));
+            // Normal validation for PWM operation
+            if (on is < 0 or > 4096)
+            {
+                throw new ArgumentException("Value has to be between 0 and 4096", nameof(on));
+            }
+
+            if (off is < 0 or > 4096)
+            {
+                throw new ArgumentException("Value has to be between 0 and 4096", nameof(off));
+            }
         }
 
         Write((byte)(Registers.Led0OnL + (4 * pin)), (byte)(on & 0xFF), (byte)(on >> 8), (byte)(off & 0xFF), (byte)(off >> 8));
@@ -207,6 +200,8 @@ public partial class Pca9685 : II2cPeripheral, IDigitalOutputController, IPwmOut
     public IPwmPort CreatePwmPort(IPin pin, Frequency frequency, float dutyCycle = 0.5F, bool invert = false)
     {
         var portNumber = (byte)pin.Key;
+
+        Resolver.Log.Trace($"CreatePwmPort on port {portNumber} at {frequency.Hertz:N0}Hz and DC {dutyCycle:N2}", "Pca9685");
 
         if (portNumber is < 0 or > 15)
         {

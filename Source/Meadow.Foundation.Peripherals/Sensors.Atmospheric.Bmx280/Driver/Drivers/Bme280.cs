@@ -17,7 +17,7 @@ namespace Meadow.Foundation.Sensors.Atmospheric;
 /// </remarks>
 public partial class Bme280 :
     PollingSensorBase<(Units.Temperature? Temperature, RelativeHumidity? Humidity, Pressure? Pressure)>,
-    ITemperatureSensor, IHumiditySensor, IBarometricPressureSensor, ISpiPeripheral, II2cPeripheral, IDisposable
+    ISamplingTemperatureSensor, IHumiditySensor, IBarometricPressureSensor, ISpiPeripheral, II2cPeripheral, IDisposable
 {
     private event EventHandler<IChangeResult<Units.Temperature>> _temperatureHandlers = default!;
     private event EventHandler<IChangeResult<RelativeHumidity>> _humidityHandlers = default!;
@@ -102,7 +102,7 @@ public partial class Bme280 :
     public Pressure? Pressure => Conditions.Pressure;
 
     /// <summary>
-    /// The realtive humidity from the last reading
+    /// The relative humidity from the last reading
     /// </summary>
     public RelativeHumidity? Humidity => Conditions.Humidity;
 
@@ -295,7 +295,7 @@ public partial class Bme280 :
     /// <summary>
     /// Start updating 
     /// </summary>
-    /// <param name="updateInterval">The update inverval</param>
+    /// <param name="updateInterval">The update interval</param>
     public override void StartUpdating(TimeSpan? updateInterval = null)
     {
         configuration.Mode = Modes.Normal;

@@ -119,7 +119,7 @@ namespace Meadow.Foundation.ICs.ADC
         }
 
         /// <summary>
-        /// Gets or sets the ADC Amplifier Gain
+        /// The programmable gain amplifier (PGA) setting that controls the ADC's full-scale input voltage range.
         /// </summary>
         public FsrGain Gain
         {

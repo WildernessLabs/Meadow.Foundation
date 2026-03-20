@@ -23,7 +23,8 @@ public class WinFormsDisplay : Form, IResizablePixelDisplay, ITouchScreen
     /// <inheritdoc/>
     public new int Height => virtualHeight;
 
-    private WinFormsPixelBuffer buffer;
+    /// <inheritdoc/>
+    public float DisplayScale => displayScale;
 
     /// <inheritdoc/>
     public RotationType Rotation => RotationType.Normal;
@@ -40,9 +41,10 @@ public class WinFormsDisplay : Form, IResizablePixelDisplay, ITouchScreen
     /// <inheritdoc/>
     public bool IsTouched { get; private set; }
 
+    private WinFormsPixelBuffer buffer;
+    private float displayScale;
     private int virtualWidth;
     private int virtualHeight;
-    private float displayScale;
 
     /// <summary>
     /// Create a new WinFormsDisplay

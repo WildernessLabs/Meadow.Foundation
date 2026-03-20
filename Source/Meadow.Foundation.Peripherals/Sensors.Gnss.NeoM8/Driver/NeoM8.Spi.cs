@@ -1,5 +1,6 @@
 ﻿using Meadow.Hardware;
 using Meadow.Units;
+using System;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -41,7 +42,7 @@ namespace Meadow.Foundation.Sensors.Gnss
         /// </summary>
         protected ISpiCommunications? spiComms;
 
-        IDigitalOutputPort? chipSelectPort;
+        private IDigitalOutputPort? chipSelectPort;
 
         private const byte NULL_VALUE = 0xFF;
 
@@ -92,47 +93,135 @@ namespace Meadow.Foundation.Sensors.Gnss
             InitDecoders();
 
             await Reset();
+
+            // Send initialization commands to configure NMEA output
+            await SendSpiInitializationCommands();
         }
 
         private async Task StartUpdatingSpi()
         {
             cts = new CancellationTokenSource();
 
-            byte[] data = new byte[BUFFER_SIZE];
-
-            static bool HasMoreData(byte[] data)
-            {
-                bool hasNullValue = false;
-                for (int i = 1; i < data.Length; i++)
-                {
-                    if (data[i] == NULL_VALUE) { hasNullValue = true; }
-                    if (data[i - 1] == NULL_VALUE && data[i] != NULL_VALUE)
-                    {
-                        return true;
-                    }
-                }
-                return !hasNullValue;
-            }
-
             var t = new Task(() =>
             {
-                while (cts.Token.IsCancellationRequested == false) { }
+                while (cts.Token.IsCancellationRequested == false)
                 {
-                    spiComms!.Read(data);
-                    messageProcessor!.Process(data);
-
-                    if (HasMoreData(data) == false)
+                    try
                     {
+                        // Check if data is available by reading the status registers first
+                        var availableBytesHigh = ReadRegister(Registers.BytesAvailableHigh);
+                        var availableBytesLow = ReadRegister(Registers.BytesAvailableLow);
+                        var availableBytes = (availableBytesHigh << 8) | availableBytesLow;
+
+                        if (availableBytes > 0)
+                        {
+                            // Read data from the data stream register
+                            var bytesToRead = Math.Min(availableBytes, BUFFER_SIZE);
+                            var readData = ReadDataStream(bytesToRead);
+
+                            if (readData[0] != 0xFF)
+                            {
+                                messageProcessor!.Process(readData);
+                            }
+                        }
+                        else
+                        {
+                            Thread.Sleep(COMMS_SLEEP_MS);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Resolver.Log.Error($"Error reading SPI data: {ex.Message}");
                         Thread.Sleep(COMMS_SLEEP_MS);
                     }
                 }
             }, TaskCreationOptions.LongRunning);
+            t.Start();
             await t;
         }
 
-        void StopUpdatingSpi()
+        private void StopUpdatingSpi()
         {
             cts?.Cancel();
+        }
+
+        /// <summary>
+        /// Read a single register from the NeoM8 via SPI
+        /// </summary>
+        /// <param name="register">The register to read</param>
+        /// <returns>The register value</returns>
+        private byte ReadRegister(Registers register)
+        {
+            var writeBuffer = new byte[] { (byte)register };
+            var readBuffer = new byte[1];
+
+            spiComms!.Exchange(writeBuffer, readBuffer);
+
+            return readBuffer[0];
+        }
+
+        /// <summary>
+        /// Read data from the data stream register
+        /// </summary>
+        /// <param name="length">Number of bytes to read</param>
+        /// <returns>The data read from the stream</returns>
+        private byte[] ReadDataStream(int length)
+        {
+            var writeBuffer = new byte[length + 1];
+            var readBuffer = new byte[length + 1];
+
+            // First byte is the register address for data stream
+            writeBuffer[0] = (byte)Registers.DataStream;
+
+            spiComms!.Exchange(writeBuffer, readBuffer);
+
+            // Skip the first byte (register address response) and return actual data
+            var data = new byte[length];
+            Array.Copy(readBuffer, 1, data, 0, length);
+
+            return data;
+        }
+
+        /// <summary>
+        /// Send initialization commands via SPI to configure NMEA output
+        /// </summary>
+        private async Task SendSpiInitializationCommands()
+        {
+            try
+            {
+                // Convert command strings to bytes and send via SPI
+                await SendSpiCommand(Commands.PMTK_SET_NMEA_OUTPUT_ALLDATA);
+                await Task.Delay(100); // Small delay between commands
+
+                await SendSpiCommand(Commands.PMTK_Q_RELEASE);
+                await Task.Delay(100);
+
+                await SendSpiCommand(Commands.PGCMD_ANTENNA);
+                await Task.Delay(100);
+            }
+            catch (Exception ex)
+            {
+                Resolver.Log.Error($"Error sending SPI initialization commands: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Send a command string via SPI
+        /// </summary>
+        /// <param name="command">The command string to send</param>
+        private async Task SendSpiCommand(string command)
+        {
+            var commandBytes = Encoding.ASCII.GetBytes(command + "\r\n");
+
+            // For NeoM8 SPI, we might need to write commands to a specific register or handle differently
+            // This is a basic implementation that may need adjustment based on the actual SPI protocol
+            var writeBuffer = new byte[commandBytes.Length + 1];
+            writeBuffer[0] = (byte)Registers.DataStream; // Assuming commands go to data stream
+            Array.Copy(commandBytes, 0, writeBuffer, 1, commandBytes.Length);
+
+            spiComms!.Write(writeBuffer);
+
+            await Task.Delay(10); // Small delay to ensure command is processed
         }
     }
 }

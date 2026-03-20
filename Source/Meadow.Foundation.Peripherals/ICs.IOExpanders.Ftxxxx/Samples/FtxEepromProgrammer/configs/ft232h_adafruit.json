@@ -1,0 +1,25 @@
+{
+    "deviceType": "FT232H",
+    "vendorId": "0x0403",
+    "productId": "0x6014",
+    "manufacturer": "FTDI",
+    "manufacturerId": "FT",
+    "description": "Adafruit FT232H",
+    "serialNumber": "ADAFT01",
+    "maxPower": 500,
+    "pnp": true,
+    "selfPowered": false,
+    "remoteWakeup": true,
+    "pullDownEnable": true,
+    "serNumEnable": true,
+    "usbVersionEnable": true,
+    "usbVersion": "0x0200",
+    "channelA": {
+        "isHighCurrent": false,
+        "isVCP": false,
+        "isFifo": false,
+        "isFifoTarget": false,
+        "isFastSer": false,
+        "driverType": "D2XX"
+    }
+}

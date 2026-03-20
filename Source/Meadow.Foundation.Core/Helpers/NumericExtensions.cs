@@ -8,7 +8,7 @@ namespace Meadow.Foundation
     public static class NumericExtensions
     {
         /// <summary>
-        /// Clamps a float (note: min and max are not currently used)
+        /// Clamps a float
         /// </summary>
         /// <param name="self"></param>
         /// <param name="min"></param>
@@ -16,7 +16,7 @@ namespace Meadow.Foundation
         /// <returns></returns>
         public static float Clamp(this float self, float min, float max)
         {
-            return (float)(((double)self).Clamp(0, 1));
+            return (float)(((double)self).Clamp(min, max));
         }
 
         /// <summary>

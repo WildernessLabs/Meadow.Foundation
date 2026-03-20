@@ -1,4 +1,5 @@
 ﻿using Meadow.Peripherals.Speakers;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Audio
@@ -65,9 +66,11 @@ namespace Meadow.Foundation.Audio
         /// Play the specified song
         /// </summary>
         /// <param name="song">The song object</param>
-        public Task PlaySong(Song song)
+        /// <param name="tempo">The tempo of the music, in beats per minute</param>
+        /// <param name="cancellationToken">An optional token to stop playback mid-song</param>
+        public Task PlaySong(Song song, int tempo = 120, CancellationToken cancellationToken = default)
         {
-            return song.Play(speaker);
+            return song.Play(speaker, tempo, cancellationToken);
         }
     }
 }

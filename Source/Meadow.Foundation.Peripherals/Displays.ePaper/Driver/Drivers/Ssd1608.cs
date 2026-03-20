@@ -2,7 +2,6 @@ using Meadow.Hardware;
 
 namespace Meadow.Foundation.Displays
 {
-    //WaveShare 1.54" BW
     /// <summary>
     /// Represents an Ssd1608 ePaper display
     /// </summary>

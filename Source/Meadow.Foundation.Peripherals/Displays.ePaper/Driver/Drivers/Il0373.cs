@@ -19,7 +19,7 @@ namespace Meadow.Foundation.Displays
         /// <param name="width">Width of display in pixels</param>
         /// <param name="height">Height of display in pixels</param>
         public Il0373(ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin, IPin busyPin,
-            int width, int height) :
+            int width = 104, int height = 212) :
             base(spiBus, chipSelectPin, dcPin, resetPin, busyPin, width, height)
         { }
 
@@ -220,7 +220,7 @@ namespace Meadow.Foundation.Displays
             }
 
             DelayMs(2);
-            SendData((byte)Command.PARTIAL_OUT);
+            SendCommand(Command.PARTIAL_OUT);
         }
 
         /// <summary>
@@ -233,7 +233,7 @@ namespace Meadow.Foundation.Displays
         public override void Show(int left, int top, int right, int bottom)
         {
             SetPartialWindow(imageBuffer.BlackBuffer, imageBuffer.ColorBuffer,
-                left, top, right - left, top - bottom);
+                left, top, right - left, bottom - top);
 
             DisplayFrame();
         }

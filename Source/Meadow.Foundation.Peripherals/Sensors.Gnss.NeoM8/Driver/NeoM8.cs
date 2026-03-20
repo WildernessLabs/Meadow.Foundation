@@ -18,7 +18,7 @@ namespace Meadow.Foundation.Sensors.Gnss
         /// <summary>
         /// Raised when GNSS data is received
         /// </summary>
-        public event EventHandler<IGnssResult> GnssDataReceived = default!;
+        public event EventHandler<IGnssResult>? GnssDataReceived = null;
 
         /// <summary>
         /// Supported GNSS result types

@@ -1,6 +1,7 @@
 ﻿using Meadow.Peripherals.Speakers;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Audio
@@ -36,16 +37,19 @@ namespace Meadow.Foundation.Audio
         /// </summary>
         /// <param name="speaker">The IToneGenerator object to play the song</param>
         /// <param name="tempo">The tempo of the music, in beats per minute</param>
+        /// <param name="cancellationToken">An optional token to stop playback mid-song</param>
         /// <returns>A Task representing the asynchronous playback operation</returns>
-        public async Task Play(IToneGenerator speaker, int tempo = 120)
+        public async Task Play(IToneGenerator speaker, int tempo = 120, CancellationToken cancellationToken = default)
         {
             foreach (var note in Notes)
             {
+                if (cancellationToken.IsCancellationRequested) break;
+
                 int duration = (int)(60.0 / tempo * (int)note.Duration);
 
                 if (note.Pitch == Pitch.Rest)
                 {
-                    await Task.Delay(TimeSpan.FromMilliseconds(duration));
+                    await Task.Delay(TimeSpan.FromMilliseconds(duration), cancellationToken);
                 }
                 else
                 {

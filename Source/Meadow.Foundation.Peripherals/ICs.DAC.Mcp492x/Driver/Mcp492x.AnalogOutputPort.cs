@@ -20,7 +20,7 @@ public abstract partial class Mcp492x
         public IPin Pin { get; }
 
         /// <summary>
-        /// Gets or sets the Gain for the port
+        /// The output gain setting for this DAC channel, selecting either 1x or 2x amplification relative to the reference voltage.
         /// </summary>
         public Gain Gain { get; set; }
 

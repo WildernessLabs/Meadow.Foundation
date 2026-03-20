@@ -9,9 +9,9 @@ namespace Sensors.Environmental.Y4000_Sample
     {
         //<!=SNIP=>
 
-        Y4000 sensor;
+        private Y4000 sensor;
 
-        public async override Task Initialize()
+        public override async Task Initialize()
         {
             Resolver.Log.Info("Initialize...");
             await Task.Delay(2000);
@@ -32,7 +32,7 @@ namespace Sensors.Environmental.Y4000_Sample
             var supplyVoltage = await sensor.GetSupplyVoltage();
             Resolver.Log.Info($"Supply voltage: {supplyVoltage}");
 
-            var measurements = await sensor.Read();
+            var measurements = await sensor.ReadSensor();
 
             Resolver.Log.Info($"Sensor data: {measurements}");
         }

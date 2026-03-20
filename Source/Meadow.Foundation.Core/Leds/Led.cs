@@ -24,7 +24,7 @@ namespace Meadow.Foundation.Leds
         bool isOn;
 
         /// <summary>
-        /// Gets the port that is driving the LED
+        /// The digital output port connected to and controlling the LED.
         /// </summary>
         protected IDigitalOutputPort Port { get; set; }
 

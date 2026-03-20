@@ -15,7 +15,7 @@ namespace Meadow.Foundation.Sensors.Light
         /// <summary>
         /// Analog port connected to sensor
         /// </summary>
-        protected IAnalogInputPort AnalogInputPort { get; }
+        protected IObservableAnalogInputPort AnalogInputPort { get; }
 
         /// <summary>
         /// Illuminance sensor calibration
@@ -51,7 +51,7 @@ namespace Meadow.Foundation.Sensors.Light
             IPin analogPin,
             Calibration? calibration = null,
             int sampleCount = 5, TimeSpan? sampleInterval = null)
-                : this(analogPin.CreateAnalogInputPort(sampleCount, sampleInterval ?? new TimeSpan(0, 0, 40), new Voltage(3.3)), calibration)
+                : this(analogPin.CreateAnalogInputPort(sampleCount, sampleInterval ?? TimeSpan.FromMilliseconds(40), new Voltage(3.3)), calibration)
         {
             createdPort = true;
         }
@@ -61,7 +61,7 @@ namespace Meadow.Foundation.Sensors.Light
         /// </summary>
         /// <param name="analogInputPort">Analog port the sensor is connected to.</param>
         /// <param name="calibration">Calibration for the analog sensor.</param> 
-        public AnalogLightSensor(IAnalogInputPort analogInputPort,
+        public AnalogLightSensor(IObservableAnalogInputPort analogInputPort,
                                  Calibration? calibration = null)
         {
             AnalogInputPort = analogInputPort;
@@ -70,7 +70,7 @@ namespace Meadow.Foundation.Sensors.Light
 
             AnalogInputPort.Subscribe
             (
-                IAnalogInputPort.CreateObserver(
+                IObservableAnalogInputPort.CreateObserver(
                     h =>
                     {
                         var oldLuminance = illuminance;

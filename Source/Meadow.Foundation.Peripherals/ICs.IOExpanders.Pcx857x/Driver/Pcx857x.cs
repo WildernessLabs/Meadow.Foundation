@@ -83,7 +83,18 @@ namespace Meadow.Foundation.ICs.IOExpanders
                     {
                         throw new PortInUseException($"{GetType().Name} pin {pin.Name} is already in use");
                     }
-                    var port = new DigitalOutputPort(this, pin, initialState);
+
+                    DigitalOutputPort port;
+
+                    try
+                    {
+                        port = new DigitalOutputPort(this, pin, initialState);
+                    }
+                    catch (Exception)
+                    {
+                        Resolver.Log.Error($"Unable to create DigitalOutputPort on pin {pin.Name}", this.GetType().Name);
+                        throw;
+                    }
 
                     pinsInUse.Add(pin);
 
@@ -280,13 +291,13 @@ namespace Meadow.Foundation.ICs.IOExpanders
         protected abstract bool GetPinState(IPin pin);
 
         /// <summary>
-        /// Sets the state of a pin
+        /// Drives the specified output pin high or low; implemented by subclasses to write to the device's output latch.
         /// </summary>
         /// <param name="pin">The pin to affect</param>
         /// <param name="state"><b>True</b> to set the pin state high, <b>False</b> to set it low</param>
         protected abstract void SetPinState(IPin pin, bool state);
 
-        void WriteUint16(ushort value)
+        private void WriteUint16(ushort value)
         {
             Span<byte> buffer = stackalloc byte[2];
             buffer[0] = (byte)value;
@@ -311,6 +322,12 @@ namespace Meadow.Foundation.ICs.IOExpanders
 
                 port.Value.Update(state);
             }
+        }
+
+        /// <inheritdoc/>
+        public IDigitalSignalAnalyzer CreateDigitalSignalAnalyzer(IPin pin, bool captureDutyCycle)
+        {
+            return new SoftDigitalSignalAnalyzer(pin, captureDutyCycle: captureDutyCycle);
         }
 
         /// <summary>

@@ -14,7 +14,7 @@ namespace Meadow.Foundation.Sensors.Motion
     /// </summary>
     public partial class Bmi270 :
         PollingSensorBase<(Acceleration3D? Acceleration3D, AngularVelocity3D? AngularVelocity3D, Units.Temperature? Temperature)>,
-        II2cPeripheral, IGyroscope, IAccelerometer, ITemperatureSensor, ISleepAwarePeripheral
+        II2cPeripheral, IGyroscope, IAccelerometer, ISamplingTemperatureSensor, ISleepAwarePeripheral
     {
         private event EventHandler<IChangeResult<AngularVelocity3D>> _angularVelocityHandlers = default!;
         private event EventHandler<IChangeResult<Acceleration3D>> _accelerationHandlers = default!;
@@ -140,7 +140,7 @@ namespace Meadow.Foundation.Sensors.Motion
                 Thread.Sleep(10);
                 byte status = i2cComms.ReadRegister(INTERNAL_STATUS);
 
-                if (status == 0x01) { break; }
+                if ((status & 0x0F) == 0x01) { break; }
             }
             //After initialization - power mode is set to "configuration mode"
             //Need to change power modes before you can sample data
@@ -161,8 +161,9 @@ namespace Meadow.Foundation.Sensors.Motion
         /// </summary>
         /// <param name="angRange">AngularAccelerationRange</param>
         public void SetAngularVelocityRange(AngularVelocityRange angRange)
-        {   //This register also sets the OIS range but it's not implemented so we can ignore it 
+        {   //This register also sets the OIS range but it's not implemented so we can ignore it
             i2cComms.WriteRegister(GYR_RANGE, (byte)angRange);
+            CurrentAngularVelocityRange = angRange;
         }
 
         /// <summary>
