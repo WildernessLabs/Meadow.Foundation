@@ -26,67 +26,28 @@ internal class Program
         // dev note: docs suggest PWEN is required, but my testing worked without it. YMMV.
 
         var spi = expander.CreateSpiBus(0, 1_000_000.Hertz());
-        var cs = expander.CreateDigitalOutputPort(expander.Pins.C0, initialState: true);   // CS inactive (HIGH) at start
-        var rst = expander.CreateDigitalOutputPort(expander.Pins.C1, initialState: false); // RST GPIO LOW = chip not in reset
-        var pwr = expander.CreateDigitalOutputPort(expander.Pins.C2, initialState: false); // power off until constructor enables it
+        var cs = expander.CreateDigitalOutputPort(expander.Pins.C0, initialState: true);
+        var rst = expander.CreateDigitalOutputPort(expander.Pins.C1, initialState: false);
+        var pwr = expander.CreateDigitalOutputPort(expander.Pins.C2, initialState: false);
         var modem = new Sx1303(spi, cs, rst, pwr);
 
-        // ---- Basic SPI verification ----
-        var version = modem.GetVersion();
-        Console.WriteLine($"VERSION: 0x{version:X2}");
+        Console.WriteLine($"VERSION: 0x{modem.GetVersion():X2}");
 
-        var (written, readBack) = modem.WriteVerify(0x42);
-        Console.WriteLine($"Write verify: wrote 0x{written:X2}, read back 0x{readBack:X2}  " +
-                          $"({(written == readBack ? "WRITES WORK" : "WRITES BROKEN")})");
-
-        if (version != 0x12)
+        // Start the concentrator with US915 sub-band 2 (TTN default)
+        var config = new GatewayConfig
         {
-            Console.WriteLine("ERROR: unexpected version — check wiring and power. Aborting.");
-            return;
-        }
-
-        // ---- Radio initialization ----
-        // US915 band: Radio A at 902.3 MHz, Radio B at 903.9 MHz
-        Console.WriteLine("\nInitializing radios...");
-        modem.InitializeRadios(
-            freqHzRadioA: 902_300_000,
-            freqHzRadioB: 903_900_000,
-            clockSource: Sx1303.ClockSource.RadioA);
-        Console.WriteLine("Radio init complete.");
-
-        // ---- OTP / Model ID ----
-        var model = modem.GetModelId();
-        Console.WriteLine($"Model ID: {model} (0x{(byte)model:X2})");
-
-        // ---- Channel configuration ----
-        // US915 uplink channels: 8 x 125 kHz channels spread across Radio A and Radio B
-        // Radio A center = 902.3 MHz, Radio B center = 903.9 MHz
-        Console.WriteLine("\nConfiguring channels...");
-        var channels = new Sx1303.ChannelConfig[]
-        {
-            new() { Enabled = true, Radio = 0, FreqOffsetHz = -400_000 },  // ch0: 901.9 MHz
-            new() { Enabled = true, Radio = 0, FreqOffsetHz = -200_000 },  // ch1: 902.1 MHz
-            new() { Enabled = true, Radio = 0, FreqOffsetHz =  000_000 },  // ch2: 902.3 MHz
-            new() { Enabled = true, Radio = 0, FreqOffsetHz =  200_000 },  // ch3: 902.5 MHz
-            new() { Enabled = true, Radio = 1, FreqOffsetHz = -400_000 },  // ch4: 903.5 MHz
-            new() { Enabled = true, Radio = 1, FreqOffsetHz = -200_000 },  // ch5: 903.7 MHz
-            new() { Enabled = true, Radio = 1, FreqOffsetHz =  000_000 },  // ch6: 903.9 MHz
-            new() { Enabled = true, Radio = 1, FreqOffsetHz =  200_000 },  // ch7: 904.1 MHz
-            new() { Enabled = false, Radio = 0, FreqOffsetHz = 0 },        // ch8: LoRa service (disabled)
-            new() { Enabled = false, Radio = 0, FreqOffsetHz = 0 },        // ch9: FSK (disabled)
+            ChannelPlan = Us915ChannelPlan.ForSubBand(2),
+            Syncword = Sx1303.SyncwordMode.Public,
         };
-        modem.ConfigureChannelizer(channels);
-        modem.ConfigureSyncword(Sx1303.SyncwordMode.Public);
-        Console.WriteLine("Channels configured.");
 
-        // ---- Start concentrator ----
-        Console.WriteLine("\nStarting concentrator (loading firmware, enabling modems)...");
-        modem.StartConcentrator();
-        Console.WriteLine("Concentrator running. Listening for packets...\n");
+        Console.WriteLine($"Starting: {config.ChannelPlan.Name}");
+        modem.Start(config);
 
-        // ---- RX loop ----
-        Console.CancelKeyPress += (s, e) => { e.Cancel = false; };
-        Console.WriteLine("Press Ctrl+C to stop.\n");
+        var eui = modem.GetEui();
+        Console.Write("Gateway EUI: ");
+        Console.WriteLine(string.Join(":", eui.Select(b => b.ToString("X2"))));
+        Console.WriteLine($"Model: {modem.GetModelId()}");
+        Console.WriteLine("Listening for packets... (Ctrl+C to stop)\n");
 
         int pktCount = 0;
         while (true)
@@ -94,14 +55,18 @@ internal class Program
             var packets = modem.Receive();
             foreach (var pkt in packets)
             {
+                if (pkt.CrcError) continue; // skip bad packets
+
                 pktCount++;
                 Console.WriteLine($"[{pktCount}] CH{pkt.Channel} SF{pkt.SpreadingFactor} " +
                                   $"RSSI:{pkt.RssiSignal}dBm SNR:{pkt.SnrDb:F1}dB " +
-                                  $"CRC:{(pkt.CrcError ? "ERR" : "OK")} " +
-                                  $"len={pkt.Payload.Length} ts={pkt.Timestamp}us");
-                Console.Write("  payload: ");
-                foreach (var b in pkt.Payload) Console.Write($"{b:X2} ");
-                Console.WriteLine();
+                                  $"len={pkt.Payload.Length}");
+                if (pkt.Payload.Length > 0)
+                {
+                    Console.Write("  ");
+                    foreach (var b in pkt.Payload) Console.Write($"{b:X2} ");
+                    Console.WriteLine();
+                }
             }
 
             await Task.Delay(100);

@@ -46,6 +46,41 @@ public partial class Sx1303
         Task.Delay(100).Wait();
     }
 
+    /// <summary>
+    /// Configures and starts the concentrator with the given gateway configuration.
+    /// This is the primary entry point — call this after construction to begin receiving.
+    /// </summary>
+    public void Start(GatewayConfig config)
+    {
+        var plan = config.ChannelPlan;
+
+        // 1. Initialize radios (reset, mode, clock, calibration, setup)
+        InitializeRadios(plan.RadioAFreqHz, plan.RadioBFreqHz, config.ClockSource);
+
+        // 2. Configure channelizer (IF frequencies, radio select, correlator, modem)
+        ConfigureChannelizer(plan.Channels);
+
+        // 3. Set syncword
+        ConfigureSyncword(config.Syncword);
+
+        // 4. Enable modems and load firmware
+        StartConcentrator();
+    }
+
+    /// <summary>
+    /// Reads the 8-byte concentrator EUI from OTP.
+    /// Must be called after Start() or InitializeRadios() (requires radio clock).
+    /// </summary>
+    public byte[] GetEui()
+    {
+        byte[] eui = new byte[8];
+        for (int i = 0; i < 8; i++)
+        {
+            eui[i] = OtpReadByte((byte)i, out _);
+        }
+        return eui;
+    }
+
     public byte GetVersion()
     {
         return ReadRegister(Registers.CommonVersion);
