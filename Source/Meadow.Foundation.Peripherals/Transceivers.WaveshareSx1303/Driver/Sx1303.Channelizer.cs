@@ -9,7 +9,9 @@ public partial class Sx1303
     /// </summary>
     public enum SyncwordMode
     {
+        /// <summary>Public LoRaWAN syncword (0x34).</summary>
         Public,
+        /// <summary>Private/application-specific syncword (0x12).</summary>
         Private,
     }
 
@@ -18,9 +20,12 @@ public partial class Sx1303
     /// </summary>
     public class ChannelConfig
     {
+        /// <summary>Whether this channel is enabled.</summary>
         public bool Enabled { get; set; }
-        public int Radio { get; set; }       // 0 = Radio A, 1 = Radio B
-        public int FreqOffsetHz { get; set; } // IF offset from radio center freq
+        /// <summary>Radio assignment: 0 = Radio A, 1 = Radio B.</summary>
+        public int Radio { get; set; }
+        /// <summary>IF frequency offset in Hz from the assigned radio's center frequency.</summary>
+        public int FreqOffsetHz { get; set; }
     }
 
     /// <summary>
@@ -35,6 +40,7 @@ public partial class Sx1303
     /// <summary>
     /// Configures the channelizer: sets IF frequencies and radio select for all channels.
     /// </summary>
+    /// <param name="channels">Array of 10 channel configurations (indices 0-7 multi-SF, 8 LoRa service, 9 FSK).</param>
     public void ConfigureChannelizer(ChannelConfig[] channels)
     {
         if (channels.Length < 8)
@@ -200,6 +206,7 @@ public partial class Sx1303
     /// <summary>
     /// Configures the LoRa syncword (public or private network).
     /// </summary>
+    /// <param name="mode">Public for LoRaWAN networks, Private for application-specific use.</param>
     public void ConfigureSyncword(SyncwordMode mode)
     {
         if (mode == SyncwordMode.Public)

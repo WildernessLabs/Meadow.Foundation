@@ -31,6 +31,8 @@ public static class Us915ChannelPlan
     /// ...
     /// Sub-band 8: channels 56-63 (913.5–914.9 MHz) + 500k ch7 (914.2 MHz)
     /// </summary>
+    /// <param name="subBand">Sub-band number (1-8).</param>
+    /// <returns>A configured channel plan for the requested sub-band.</returns>
     public static ChannelPlan ForSubBand(int subBand)
     {
         if (subBand < 1 || subBand > 8)

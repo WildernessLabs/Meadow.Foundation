@@ -10,7 +10,9 @@ public partial class Sx1303
     /// </summary>
     public enum ClockSource
     {
+        /// <summary>Use Radio A as the 32 MHz reference clock source.</summary>
         RadioA = 0,
+        /// <summary>Use Radio B as the 32 MHz reference clock source.</summary>
         RadioB = 1,
     }
 

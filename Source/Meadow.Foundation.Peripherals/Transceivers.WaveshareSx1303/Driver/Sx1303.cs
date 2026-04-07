@@ -16,6 +16,14 @@ public partial class Sx1303
     private readonly IDigitalOutputPort _cs;
     private readonly IDigitalOutputPort _reset;
 
+    /// <summary>
+    /// Creates a new SX1303 concentrator instance.
+    /// Powers the module (if powerEnable is provided) and performs a hardware reset.
+    /// </summary>
+    /// <param name="spi">The SPI bus connected to the SX1303.</param>
+    /// <param name="cs">Chip select output port (directly driven, not via SPI bus CS).</param>
+    /// <param name="reset">Reset GPIO — active HIGH asserts reset on the Waveshare HAT.</param>
+    /// <param name="powerEnable">Optional power-enable GPIO (pin 12 on the HAT). Driven HIGH to power the module.</param>
     public Sx1303(ISpiBus spi, IDigitalOutputPort cs, IDigitalOutputPort reset, IDigitalOutputPort? powerEnable = null)
     {
         _spi = spi;
@@ -33,6 +41,9 @@ public partial class Sx1303
         Reset();
     }
 
+    /// <summary>
+    /// Performs a hardware reset of the SX1303 via the reset GPIO.
+    /// </summary>
     public void Reset()
     {
         // Reset sequence.
@@ -81,11 +92,20 @@ public partial class Sx1303
         return eui;
     }
 
+    /// <summary>
+    /// Reads the silicon version register.
+    /// </summary>
+    /// <returns>Version byte (0x12 for SX1303).</returns>
     public byte GetVersion()
     {
         return ReadRegister(Registers.CommonVersion);
     }
 
+    /// <summary>
+    /// Reads the chip model ID from OTP memory.
+    /// Requires the radio clock to be running (call after <see cref="Start"/> or <see cref="InitializeRadios"/>).
+    /// </summary>
+    /// <returns>The chip model, or <see cref="ChipModel.Unknown"/> if OTP is not accessible.</returns>
     public ChipModel GetModelId()
     {
         // Per sx1302_get_model_id() in the reference library:

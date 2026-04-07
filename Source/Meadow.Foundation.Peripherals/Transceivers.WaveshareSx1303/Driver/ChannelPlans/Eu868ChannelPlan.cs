@@ -13,6 +13,7 @@ public static class Eu868ChannelPlan
     /// Radio A at 867.5 MHz covers 867.1-867.9 (5 channels).
     /// Radio B at 868.3 MHz covers 868.1-868.5 (3 channels).
     /// </summary>
+    /// <returns>A configured channel plan for the EU868 default 8-channel layout.</returns>
     public static ChannelPlan Default()
     {
         uint radioAFreq = 867_500_000;

@@ -14,26 +14,40 @@ public partial class Sx1303
     /// </summary>
     public class RxPacket
     {
+        /// <summary>IF channel index (0-7 multi-SF, 8 LoRa service, 9 FSK).</summary>
         public byte Channel { get; set; }
+        /// <summary>LoRa spreading factor (5-12).</summary>
         public byte SpreadingFactor { get; set; }
+        /// <summary>LoRa coding rate (1=4/5, 2=4/6, 3=4/7, 4=4/8).</summary>
         public byte CodingRate { get; set; }
+        /// <summary>Whether CRC was enabled for this packet.</summary>
         public bool CrcEnabled { get; set; }
+        /// <summary>Demodulator ID that received this packet (0-15 multi-SF, 16 service, 17 FSK).</summary>
         public byte ModemId { get; set; }
+        /// <summary>Measured frequency offset from the channel center, in Hz.</summary>
         public int FreqOffsetHz { get; set; }
+        /// <summary>Raw payload bytes.</summary>
         public byte[] Payload { get; set; } = Array.Empty<byte>();
+        /// <summary>True if the payload CRC check failed.</summary>
         public bool CrcError { get; set; }
+        /// <summary>True if the syncword was not detected correctly.</summary>
         public bool SyncError { get; set; }
+        /// <summary>True if the LoRa header could not be decoded.</summary>
         public bool HeaderError { get; set; }
-        public float SnrDb { get; set; }        // in dB (0.25 dB resolution)
-        public int RssiChannel { get; set; }     // dBm (negative)
-        public int RssiSignal { get; set; }      // dBm (negative)
-        public uint Timestamp { get; set; }       // microseconds, 32-bit counter
+        /// <summary>Signal-to-noise ratio in dB (0.25 dB resolution).</summary>
+        public float SnrDb { get; set; }
+        /// <summary>RSSI of the channel in dBm (negative value).</summary>
+        public int RssiChannel { get; set; }
+        /// <summary>RSSI of the signal in dBm (negative value).</summary>
+        public int RssiSignal { get; set; }
+        /// <summary>Internal concentrator timestamp in microseconds (32-bit counter).</summary>
+        public uint Timestamp { get; set; }
     }
 
     /// <summary>
     /// Fetches all available packets from the RX buffer.
-    /// Returns an empty list if no packets are available.
     /// </summary>
+    /// <returns>A list of received packets, or an empty list if none are available.</returns>
     public List<RxPacket> Receive()
     {
         var packets = new List<RxPacket>();
