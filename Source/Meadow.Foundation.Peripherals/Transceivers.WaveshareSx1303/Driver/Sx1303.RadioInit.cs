@@ -35,8 +35,8 @@ public partial class Sx1303
         // ---- Phase 3: Calibration (requires clock) ----
         // Disable PA/LNA during calibration
         WriteBitField(Registers.AgcMcuCtrl, 3, 1, 1);    // FORCE_HOST_FE_CTRL = 1
-        WriteBitField(Registers.AgcMcuRfEnA, 0, 1, 0);   // PA_EN = 0
-        WriteBitField(Registers.AgcMcuRfEnA, 1, 1, 0);   // LNA_EN = 0
+        WriteBitField(Registers.AgcMcuRfEnA, 0, 1, 0);   // LNA_EN = 0
+        WriteBitField(Registers.AgcMcuRfEnA, 1, 1, 0);   // PA_EN = 0
 
         Sx1250Calibrate(0, freqHzRadioA);
         Sx1250Calibrate(1, freqHzRadioB);
