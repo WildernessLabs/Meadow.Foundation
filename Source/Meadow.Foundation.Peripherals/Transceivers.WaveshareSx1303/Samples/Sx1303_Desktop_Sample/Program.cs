@@ -1,4 +1,4 @@
-﻿using Meadow.Foundation.ICs.IOExpanders;
+using Meadow.Foundation.ICs.IOExpanders;
 using Meadow.Foundation.Transceivers;
 using Meadow.Foundation.Transceivers.Waveshare;
 using Meadow.Hardware;
@@ -31,16 +31,39 @@ internal class Program
         var pwr = expander.CreateDigitalOutputPort(expander.Pins.C2, initialState: false); // power off until constructor enables it
         var modem = new Sx1303(spi, cs, rst, pwr);
 
+        // ---- Basic SPI verification ----
         var version = modem.GetVersion();
         Console.WriteLine($"VERSION: 0x{version:X2}");
 
         var (written, readBack) = modem.WriteVerify(0x42);
         Console.WriteLine($"Write verify: wrote 0x{written:X2}, read back 0x{readBack:X2}  " +
-                          $"({(written == readBack ? "WRITES WORK" : "WRITES BROKEN or reg not readback-capable")})");
+                          $"({(written == readBack ? "WRITES WORK" : "WRITES BROKEN")})");
 
+        if (version != 0x12)
+        {
+            Console.WriteLine("ERROR: unexpected version — check wiring and power. Aborting.");
+            return;
+        }
 
-        // OTP diagnostics — reads EUI bytes 0x00–0x07 and model-ID byte 0xD0,
-        // each with a FSM_READY poll so we can tell which addresses are accessible.
+        // ---- Radio initialization ----
+        // US915 band: Radio A at 902.3 MHz, Radio B at 903.9 MHz
+        Console.WriteLine("\nInitializing radios...");
+        try
+        {
+            modem.InitializeRadios(
+                freqHzRadioA: 902_300_000,
+                freqHzRadioB: 903_900_000,
+                clockSource: Sx1303.ClockSource.RadioA);
+            Console.WriteLine("Radio init complete.");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Radio init FAILED: {ex.Message}");
+            Console.WriteLine("Continuing to OTP read anyway (clock may not be running)...");
+        }
+
+        // ---- OTP reads (should work now that clock is running) ----
+        Console.WriteLine("\nReading OTP...");
         modem.ReadOtpDiagnostics(out var euiBytes, out var otpByteD0,
                                   out var byte00Ready, out var byteD0Ready);
 
@@ -52,6 +75,6 @@ internal class Program
         var model = modem.GetModelId();
         Console.WriteLine($"Model ID: {model} (0x{(byte)model:X2})");
 
-        Console.WriteLine("Done.");
+        Console.WriteLine("\nDone.");
     }
 }

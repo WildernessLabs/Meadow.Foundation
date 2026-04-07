@@ -189,4 +189,15 @@ public partial class Sx1303
 
         _spi.Write(_cs, tx);
     }
+
+    /// <summary>
+    /// Read-modify-write a bit field within an SX1302 register.
+    /// </summary>
+    private void WriteBitField(Registers reg, int bitOffset, int bitLength, byte value)
+    {
+        byte current = ReadRegister(reg);
+        byte mask = (byte)(((1 << bitLength) - 1) << bitOffset);
+        current = (byte)((current & ~mask) | ((value << bitOffset) & mask));
+        WriteRegister(reg, current);
+    }
 }
