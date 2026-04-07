@@ -227,16 +227,29 @@ public abstract partial class FtdiExpander
 
             try
             {
-                var commandBuffer = new byte[3 + writeBuffer.Length];
-                int idx = 0;
+                // MPSSE uses 2-byte length field, max 65535 bytes per command
+                // For larger buffers, we need to split into chunks
+                const int MaxChunkSize = 65535;
+                int offset = 0;
+                
+                while (offset < writeBuffer.Length)
+                {
+                    int chunkSize = Math.Min(MaxChunkSize, writeBuffer.Length - offset);
+                    var chunk = writeBuffer.Slice(offset, chunkSize);
+                    
+                    var commandBuffer = new byte[3 + chunkSize];
+                    int idx = 0;
 
-                commandBuffer[idx++] = GetSpiCommand(false, true);
-                int length = writeBuffer.Length - 1;
-                commandBuffer[idx++] = (byte)(length & 0xFF);
-                commandBuffer[idx++] = (byte)((length >> 8) & 0xFF);
+                    commandBuffer[idx++] = GetSpiCommand(false, true);
+                    int length = chunkSize - 1;
+                    commandBuffer[idx++] = (byte)(length & 0xFF);
+                    commandBuffer[idx++] = (byte)((length >> 8) & 0xFF);
 
-                writeBuffer.CopyTo(new Span<byte>(commandBuffer, idx, writeBuffer.Length));
-                _expander.Write(commandBuffer);
+                    chunk.CopyTo(new Span<byte>(commandBuffer, idx, chunkSize));
+                    _expander.Write(commandBuffer);
+                    
+                    offset += chunkSize;
+                }
             }
             finally
             {
