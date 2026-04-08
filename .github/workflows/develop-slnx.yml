@@ -61,10 +61,11 @@ jobs:
         path: Meadow.Foundation
         
     - name: Setup .NET SDK
-      uses: actions/setup-dotnet@v1
+      uses: actions/setup-dotnet@v4
       with:
-        dotnet-version:
-          9.0.200
+        dotnet-version: |
+          9.0.x
+          10.0.x
     
     - name: Build Meadow Foundation
       run: dotnet build -c Release Meadow.Foundation/Source/Meadow.Foundation.slnx
