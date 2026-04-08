@@ -412,3 +412,4 @@ OnBoardFlash.dat.*
 OnBoardFlash.dat
 
 .vscode/
+Source/Meadow.Foundation.Peripherals/Transceivers.WaveshareSx1303/Samples/Pi5_ref/

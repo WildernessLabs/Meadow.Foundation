@@ -1897,6 +1897,13 @@
       <Deploy />
     </Project>
   </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Transceivers/" />
+  <Folder Name="/Meadow.Foundation.Peripherals/Transceivers/Sx1303/">
+    <Project Path="Meadow.Foundation.Peripherals/Transceivers.WaveshareSx1303/Driver/Transceivers.WaveshareSx1303.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Peripherals/Transceivers/Sx1303/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Transceivers.WaveshareSx1303/Samples/Sx1303_Desktop_Sample/Sx1303_Desktop_Sample.csproj" Id="19a7c285-eaec-4096-96ab-cbdb013b48d4" />
+  </Folder>
   <Folder Name="/Meadow.Foundation.Peripherals/VFDs/" />
   <Folder Name="/Meadow.Foundation.Peripherals/VFDs/CerusXDrive/">
     <Project Path="Meadow.Foundation.Peripherals/VFDs.CerusXDrive/Driver/Motors.CerusXDrive.csproj" />
