@@ -1,0 +1,258 @@
+using Meadow.Hardware;
+using System;
+using System.Threading.Tasks;
+
+namespace Meadow.Foundation.Transceivers.Waveshare;
+
+public partial class Sx1303
+{
+    // SPI mux target selects which sub-device receives the transaction:
+    //   0x00 = SX1302/SX1303 core registers
+    //   0x01 = Radio A (SX1250/SX1257)
+    //   0x02 = Radio B
+    private const byte SPI_MUX_SX1302 = 0x00;
+
+    private readonly ISpiBus _spi;
+    private readonly IDigitalOutputPort _cs;
+    private readonly IDigitalOutputPort _reset;
+
+    /// <summary>
+    /// Creates a new SX1303 concentrator instance.
+    /// Powers the module (if powerEnable is provided) and performs a hardware reset.
+    /// </summary>
+    /// <param name="spi">The SPI bus connected to the SX1303.</param>
+    /// <param name="cs">Chip select output port (directly driven, not via SPI bus CS).</param>
+    /// <param name="reset">Reset GPIO — active HIGH asserts reset on the Waveshare HAT.</param>
+    /// <param name="powerEnable">Optional power-enable GPIO (pin 12 on the HAT). Driven HIGH to power the module.</param>
+    public Sx1303(ISpiBus spi, IDigitalOutputPort cs, IDigitalOutputPort reset, IDigitalOutputPort? powerEnable = null)
+    {
+        _spi = spi;
+        _cs = cs;
+        _reset = reset;
+
+        // The Waveshare SX1303 HAT requires a power-enable GPIO (GPIO18 / Pi pin 12).
+        // Without it the SX1303 core is unpowered and all SPI reads return 0x00.
+        if (powerEnable != null)
+        {
+            powerEnable.State = true;
+            Task.Delay(100).Wait();
+        }
+
+        Reset();
+    }
+
+    /// <summary>
+    /// Performs a hardware reset of the SX1303 via the reset GPIO.
+    /// </summary>
+    public void Reset()
+    {
+        // Reset sequence.
+        // The Waveshare HAT inverts the reset signal via a transistor:
+        //   GPIO HIGH → NRESET LOW → chip in reset
+        //   GPIO LOW  → NRESET HIGH → chip running
+        // So the correct sequence is HIGH (assert), then LOW (release).
+        _reset.State = true;   // assert reset
+        Task.Delay(100).Wait();
+        _reset.State = false;  // release reset — chip begins booting
+        Task.Delay(100).Wait();
+    }
+
+    /// <summary>
+    /// Configures and starts the concentrator with the given gateway configuration.
+    /// This is the primary entry point — call this after construction to begin receiving.
+    /// </summary>
+    public void Start(GatewayConfig config)
+    {
+        var plan = config.ChannelPlan;
+
+        // 1. Initialize radios (reset, mode, clock, calibration, setup)
+        InitializeRadios(plan.RadioAFreqHz, plan.RadioBFreqHz, config.ClockSource);
+
+        // 2. Configure channelizer (IF frequencies, radio select, correlator, modem)
+        ConfigureChannelizer(plan.Channels);
+
+        // 3. Set syncword
+        ConfigureSyncword(config.Syncword);
+
+        // 4. Enable modems and load firmware
+        StartConcentrator();
+    }
+
+    /// <summary>
+    /// Reads the 8-byte concentrator EUI from OTP.
+    /// Must be called after Start() or InitializeRadios() (requires radio clock).
+    /// </summary>
+    public byte[] GetEui()
+    {
+        byte[] eui = new byte[8];
+        for (int i = 0; i < 8; i++)
+        {
+            eui[i] = OtpReadByte((byte)i, out _);
+        }
+        return eui;
+    }
+
+    /// <summary>
+    /// Reads the silicon version register.
+    /// </summary>
+    /// <returns>Version byte (0x12 for SX1303).</returns>
+    public byte GetVersion()
+    {
+        return ReadRegister(Registers.CommonVersion);
+    }
+
+    /// <summary>
+    /// Reads the chip model ID from OTP memory.
+    /// Requires the radio clock to be running (call after <see cref="Start"/> or <see cref="InitializeRadios"/>).
+    /// </summary>
+    /// <returns>The chip model, or <see cref="ChipModel.Unknown"/> if OTP is not accessible.</returns>
+    public ChipModel GetModelId()
+    {
+        // Per sx1302_get_model_id() in the reference library:
+        // write OTP address 0xD0 to select the model ID cell, then poll FSM_READY,
+        // then read OTP data.
+        //
+        // NOTE: The OTP block FSM requires a free-running internal clock (normally
+        // provided by the radio after sx1302_radio_clock_select).  Without radio
+        // initialisation FSM_READY may never assert, in which case Unknown is returned.
+        WriteRegister(Registers.OtpByteAddr, 0xD0);
+
+        // OtpStatus (0x6182) bit 0 = FSM_READY.  Poll until ready or ~10 ms timeout.
+        bool ready = false;
+        for (int i = 0; i < 20; i++)
+        {
+            byte status = ReadRegister(Registers.OtpStatus);
+            if ((status & 0x01) != 0)
+            {
+                ready = true;
+                break;
+            }
+            Task.Delay(1).Wait();
+        }
+
+        if (!ready)
+        {
+            // OTP block is not ready — likely needs radio clock to be enabled first.
+            return ChipModel.Unknown;
+        }
+
+        byte raw = ReadRegister(Registers.OtpReadData);
+
+        return raw switch
+        {
+            0x02 => ChipModel.Sx1302,
+            0x03 => ChipModel.Sx1303,
+            _    => ChipModel.Unknown,
+        };
+    }
+
+    /// <summary>
+    /// Writes a test value to OTP_BYTE_ADDR (0x6180) and reads it back to verify
+    /// that SPI write transactions are actually reaching the chip.
+    /// OTP_BYTE_ADDR is readable/writable, so readBack should equal testValue if
+    /// writes work; a stuck value (e.g. 0x09) means writes are no-ops.
+    /// </summary>
+    public (byte written, byte readBack) WriteVerify(byte testValue = 0x42)
+    {
+        WriteRegister(Registers.OtpByteAddr, testValue);
+        byte readBack = ReadRegister(Registers.OtpByteAddr);
+        return (testValue, readBack);
+    }
+
+    /// <summary>
+    /// Reads OTP diagnostic bytes with per-address FSM_READY polling.
+    /// Returns whether the FSM became ready for each address, plus the raw byte values.
+    /// </summary>
+    /// <param name="euiBytes">8-byte concentrator EUI from OTP addresses 0x00–0x07.</param>
+    /// <param name="byteD0">Raw value at OTP address 0xD0 (model ID byte).</param>
+    /// <param name="byte00Ready">Whether FSM_READY asserted for address 0x00.</param>
+    /// <param name="byteD0Ready">Whether FSM_READY asserted for address 0xD0.</param>
+    public void ReadOtpDiagnostics(out byte[] euiBytes, out byte byteD0,
+                                    out bool byte00Ready, out bool byteD0Ready)
+    {
+        euiBytes = new byte[8];
+        for (int i = 0; i < 8; i++)
+        {
+            euiBytes[i] = OtpReadByte((byte)i, out _);
+        }
+
+        // Re-read byte 0 with ready flag for reporting
+        euiBytes[0] = OtpReadByte(0x00, out byte00Ready);
+
+        byteD0 = OtpReadByte(0xD0, out byteD0Ready);
+    }
+
+    // Writes BYTE_ADDR, waits up to ~10 ms for FSM_READY, then reads RD_DATA.
+    private byte OtpReadByte(byte addr, out bool fsmReady)
+    {
+        WriteRegister(Registers.OtpByteAddr, addr);
+
+        fsmReady = false;
+        for (int i = 0; i < 20; i++)
+        {
+            byte status = ReadRegister(Registers.OtpStatus);
+            if ((status & 0x01) != 0)
+            {
+                fsmReady = true;
+                break;
+            }
+            Task.Delay(1).Wait();
+        }
+
+        return ReadRegister(Registers.OtpReadData);
+    }
+
+    private byte ReadRegister(Registers reg) => ReadRegister((ushort)reg);
+
+    private byte ReadRegister(ushort addr)
+    {
+        // SX1302 SPI read frame (5 bytes):
+        //   [0] mux target (0x00 = core)
+        //   [1] address high byte, bit7=0 (read)
+        //   [2] address low byte
+        //   [3] dummy
+        //   [4] dummy  ← device clocks out the register value here
+        byte[] tx = new byte[5];
+        byte[] rx = new byte[5];
+
+        tx[0] = SPI_MUX_SX1302;
+        tx[1] = (byte)((addr >> 8) & 0x7F); // bit 7 = 0 → read
+        tx[2] = (byte)(addr & 0xFF);
+        tx[3] = 0x00;
+        tx[4] = 0x00;
+
+        _spi.Exchange(_cs, tx, rx);
+
+        return rx[4]; // data arrives in the final byte
+    }
+
+    private void WriteRegister(Registers reg, byte value) => WriteRegister((ushort)reg, value);
+
+    private void WriteRegister(ushort addr, byte value)
+    {
+        // SX1302 SPI write frame (4 bytes):
+        //   [0] mux target (0x00 = core)
+        //   [1] address high byte, bit7=1 (write)
+        //   [2] address low byte
+        //   [3] data byte
+        byte[] tx = new byte[4];
+
+        tx[0] = SPI_MUX_SX1302;
+        tx[1] = (byte)(((addr >> 8) & 0x7F) | 0x80); // bit 7 = 1 → write
+        tx[2] = (byte)(addr & 0xFF);
+        tx[3] = value;
+
+        _spi.Write(_cs, tx);
+    }
+
+    /// <summary>
+    /// Read-modify-write a bit field within an SX1302 register.
+    /// </summary>
+    private void WriteBitField(Registers reg, int bitOffset, int bitLength, byte value)
+    {
+        byte current = ReadRegister(reg);
+        byte mask = (byte)(((1 << bitLength) - 1) << bitOffset);
+        current = (byte)((current & ~mask) | ((value << bitOffset) & mask));
+        WriteRegister(reg, current);
+    }
+}
