@@ -1912,6 +1912,7 @@
   </Folder>
   <Folder Name="/Meadow.Foundation.Peripherals/Transceivers/Sx1303/Samples/">
     <Project Path="Meadow.Foundation.Peripherals/Transceivers.WaveshareSx1303/Samples/Sx1303_Desktop_Sample/Sx1303_Desktop_Sample.csproj" Id="19a7c285-eaec-4096-96ab-cbdb013b48d4" />
+    <Project Path="Meadow.Foundation.Peripherals/Transceivers.WaveshareSx1303/Samples/Sx1303_Sample/Sx1303_Sample.csproj" />
   </Folder>
   <Folder Name="/Meadow.Foundation.Peripherals/VFDs/" />
   <Folder Name="/Meadow.Foundation.Peripherals/VFDs/CerusXDrive/">
