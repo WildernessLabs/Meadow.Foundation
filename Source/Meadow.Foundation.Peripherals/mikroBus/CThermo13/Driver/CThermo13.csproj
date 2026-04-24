@@ -1,11 +1,11 @@
 ﻿<Project Sdk="Meadow.Sdk/1.1.0">
   <PropertyGroup>
-	<Version>0.1.0</Version>
-	<PackageReadmeFile>Readme.md</PackageReadmeFile>
-	<Nullable>enable</Nullable>
-	<LangVersion>10.0</LangVersion>
-	<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
-	<GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <Version>0.1.0</Version>
+    <PackageReadmeFile>Readme.md</PackageReadmeFile>
+    <Nullable>enable</Nullable>
+    <LangVersion>12.0</LangVersion>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageIcon>icon.png</PackageIcon>
     <Authors>Wilderness Labs, Inc</Authors>
     <TargetFramework>netstandard2.1</TargetFramework>
@@ -20,7 +20,7 @@
     <Description>MikroElectronika I2C Thermo 13 temperature click board</Description>
   </PropertyGroup>
   <ItemGroup>
-	<None Include=".\Readme.md" Pack="true" PackagePath="" />
+    <None Include=".\Readme.md" Pack="true" PackagePath="" />
     <None Include="..\..\..\..\icon.png" Pack="true" PackagePath="" />
   </ItemGroup>
   <ItemGroup>
