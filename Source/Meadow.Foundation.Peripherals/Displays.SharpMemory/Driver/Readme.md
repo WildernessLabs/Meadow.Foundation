@@ -2,7 +2,7 @@
 
 **Sharp Memory Display SPI monochrome driver (LS013B4DN04, LS027B7DH01, LS032B1L03)**
 
-The **SharpMemoryDisplay** library is included in the **Meadow.Foundation.Displays.SharpMemory** nuget package and is designed for the [Wilderness Labs](www.wildernesslabs.co) Meadow .NET IoT platform.
+The **SharpMemoryDisplay** library is included in the **Meadow.Foundation.Displays.SharpMemory** nuget package and is designed for the [Wilderness Labs](https://www.wildernesslabs.co) Meadow .NET IoT platform.
 
 This driver is part of the [Meadow.Foundation](https://developer.wildernesslabs.co/Meadow/Meadow.Foundation/) peripherals library, an open-source repository of drivers and libraries that streamline and simplify adding hardware to your C# .NET Meadow IoT applications.
 
@@ -15,7 +15,6 @@ To view all Wilderness Labs open-source projects, including samples, visit [gith
 You can install the library from within Visual Studio using the NuGet Package Manager or from the command line using the .NET CLI:
 
 `dotnet add package Meadow.Foundation.Displays.SharpMemory`
-
 ## Usage
 
 ```csharp
@@ -28,12 +27,13 @@ public override Task Initialize()
     var display = new SharpMemoryDisplay(
         spiBus: Device.CreateSpiBus(),
         chipSelectPin: Device.Pins.D00,
-        width: 96,
-        height: 96);
+        width: 144,
+        height: 168);
 
     graphics = new MicroGraphics(display)
     {
-        CurrentFont = new Font8x12()
+        CurrentFont = new Font8x12(),
+        PenColor = Color.Black
     };
 
     return base.Initialize();
@@ -43,21 +43,15 @@ public override Task Run()
 {
     graphics.Clear();
     graphics.DrawText(0, 0, "Sharp Memory");
-    graphics.DrawRectangle(0, 30, 96, 60);
+    graphics.DrawText(0, 14, "144x168");
+    graphics.DrawRectangle(0, 24, 108, 108);
+    graphics.DrawCircle(60, 100, 40);
     graphics.Show();
 
     return base.Run();
 }
+
 ```
-
-## Supported Displays
-
-| Part Number  | Resolution |
-|--------------|------------|
-| LS013B4DN04  |  96 x  96  |
-| LS027B7DH01  | 400 x 240  |
-| LS032B1L03   | 320 x 240  |
-
 ## How to Contribute
 
 - **Found a bug?** [Report an issue](https://github.com/WildernessLabs/Meadow_Issues/issues)
@@ -68,10 +62,9 @@ public override Task Run()
 ## Need Help?
 
 If you have questions or need assistance, please join the Wilderness Labs [community on Slack](http://slackinvite.wildernesslabs.co/).
-
 ## About Meadow
 
-Meadow is a complete, IoT platform with defense-grade security that runs full .NET applications on embeddable microcontrollers and Linux single-board computers including Raspberry Pi and NVIDIA Jetson.
+Meadow is a complete IoT platform with defense-grade security that runs full .NET applications on embeddable microcontrollers and Linux single-board computers including Raspberry Pi and NVIDIA Jetson.
 
 ### Build
 
@@ -83,4 +76,6 @@ Utilize native support for WiFi, Ethernet, and Cellular connectivity to send sen
 
 ### Deploy
 
-Instantly deploy and manage your fleet in the cloud for OtA, health-monitoring, logs, command + control, and enterprise backend integrations.
+Instantly deploy and manage your fleet in the cloud for OTA, health-monitoring, logs, command + control, and enterprise backend integrations.
+
+
