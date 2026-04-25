@@ -951,14 +951,13 @@
       <Deploy />
     </Project>
   </Folder>
-  <Folder Name="/Meadow.Foundation.Peripherals/Raspberry Pi Hats/" />
-  <Folder Name="/Meadow.Foundation.Peripherals/Raspberry Pi Hats/Waveshare Dual CAN/">
-    <Project Path="Meadow.Foundation.Peripherals/Raspberry Pi Hats/Waveshare Dual CAN/Driver/Waveshare.DualCan.csproj">
+  <Folder Name="/Meadow.Foundation.Peripherals/Hats.Waveshare.DualCan/">
+    <Project Path="Meadow.Foundation.Peripherals/Hats.Waveshare.DualCan/Driver/Waveshare.DualCan.csproj">
       <Deploy />
     </Project>
   </Folder>
-  <Folder Name="/Meadow.Foundation.Peripherals/Raspberry Pi Hats/Waveshare Dual CAN/Samples/">
-    <Project Path="Meadow.Foundation.Peripherals/Raspberry Pi Hats/Waveshare Dual CAN/Sample/Waveshare.DualCan_Sample/Waveshare.DualCan_Sample.csproj" />
+  <Folder Name="/Meadow.Foundation.Peripherals/Hats.Waveshare.DualCan/Samples/">
+    <Project Path="Meadow.Foundation.Peripherals/Hats.Waveshare.DualCan/Sample/Waveshare.DualCan_Sample/Waveshare.DualCan_Sample.csproj" />
   </Folder>
   <Folder Name="/Meadow.Foundation.Peripherals/RTCs/" />
   <Folder Name="/Meadow.Foundation.Peripherals/RTCs/Ab0805/">
