@@ -29,7 +29,7 @@ namespace Meadow.Foundation.Displays
         /// <param name="width">Width of display in pixels</param>
         /// <param name="height">Height of display in pixels</param>
         /// <param name="colorMode">The color mode to use for the display buffer</param>
-        public Ili9341(ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin resetPin,
+        public Ili9341(ISpiBus spiBus, IPin chipSelectPin, IPin dcPin, IPin? resetPin,
             int width, int height, ColorMode colorMode = ColorMode.Format12bppRgb444)
             : base(spiBus, chipSelectPin, dcPin, resetPin, width, height, colorMode)
         {
