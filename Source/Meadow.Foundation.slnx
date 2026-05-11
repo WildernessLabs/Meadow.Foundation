@@ -951,14 +951,6 @@
       <Deploy />
     </Project>
   </Folder>
-  <Folder Name="/Meadow.Foundation.Peripherals/Hats.Waveshare.DualCan/">
-    <Project Path="Meadow.Foundation.Peripherals/Hats.Waveshare.DualCan/Driver/Waveshare.DualCan.csproj">
-      <Deploy />
-    </Project>
-  </Folder>
-  <Folder Name="/Meadow.Foundation.Peripherals/Hats.Waveshare.DualCan/Samples/">
-    <Project Path="Meadow.Foundation.Peripherals/Hats.Waveshare.DualCan/Sample/Waveshare.DualCan_Sample/Waveshare.DualCan_Sample.csproj" />
-  </Folder>
   <Folder Name="/Meadow.Foundation.Peripherals/RTCs/" />
   <Folder Name="/Meadow.Foundation.Peripherals/RTCs/Ab0805/">
     <Project Path="Meadow.Foundation.Peripherals/RTCs.Ab0805/Driver/RTCs.Ab0805.csproj">
