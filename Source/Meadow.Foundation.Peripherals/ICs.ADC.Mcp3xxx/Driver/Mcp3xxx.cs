@@ -174,7 +174,7 @@ namespace Meadow.Foundation.ICs.ADC
 
             return channel == null
                 ? throw new NotSupportedException($"Pin {pin.Name} Does not support ADC")
-                : (IObservableAnalogInputPort)new AnalogInputPort(this, pin, channel, sampleCount, inputType);
+                : (IObservableAnalogInputPort)new AnalogInputPort(this, pin, channel, sampleCount, sampleInterval, voltageReference, inputType);
         }
 
         ///<inheritdoc/>
