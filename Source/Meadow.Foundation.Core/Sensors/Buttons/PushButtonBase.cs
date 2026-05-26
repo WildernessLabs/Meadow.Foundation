@@ -1,6 +1,7 @@
 ﻿using Meadow.Hardware;
 using Meadow.Peripherals.Sensors.Buttons;
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Meadow.Foundation.Sensors.Buttons;
@@ -10,10 +11,13 @@ namespace Meadow.Foundation.Sensors.Buttons;
 /// </summary>
 public abstract class PushButtonBase : IButton, IDisposable
 {
-    private object eventSyncRoot = new();
+    private readonly object eventSyncRoot = new();
+    private readonly object _stateLock = new();
     private EventHandler? pressStarted;
     private EventHandler? pressEnded;
     private EventHandler? clicked;
+    private bool _stablePressed;
+    private CancellationTokenSource? _confirmCts;
 
     /// <summary>
     /// Default threshold for LongClicked events
@@ -125,9 +129,17 @@ public abstract class PushButtonBase : IButton, IDisposable
     protected IDigitalInputPort DigitalIn { get; private set; }
 
     /// <summary>
-    /// The minimum duration for a long press. Defaults to 
+    /// The minimum duration for a long press. Defaults to 500ms.
     /// </summary>
     public TimeSpan LongClickedThreshold { get; set; } = DefaultLongClickThreshold;
+
+    /// <summary>
+    /// How long the signal must be stable on a new edge before a state transition is confirmed.
+    /// Applied symmetrically to both press and release edges. Any edge back toward the current
+    /// stable state within this window cancels the confirmation (treated as bounce).
+    /// Defaults to 10ms.
+    /// </summary>
+    public TimeSpan ConfirmationDelay { get; set; } = TimeSpan.FromMilliseconds(10);
 
     /// <summary>
     /// Initializes a new instance of the PushButtonBase class with the specified digital input port
@@ -158,36 +170,91 @@ public abstract class PushButtonBase : IButton, IDisposable
     }
 
     /// <summary>
-    /// Raises the proper button events based on current and previous states
+    /// Raises the proper button events based on current and previous states.
+    /// Both press and release transitions go through a confirmation window so that
+    /// noise on either edge produces exactly one PressStarted and one Clicked per
+    /// physical press, regardless of how many spurious edges occur during bounce.
     /// </summary>
-    /// <param name="state"></param>
     protected void UpdateEvents(bool state)
     {
-        if (state)
+        CancellationTokenSource? prevCts;
+        CancellationTokenSource? newCts = null;
+        bool confirmingPress = false;
+        var edgeTime = DateTime.UtcNow;
+
+        lock (_stateLock)
         {
-            ButtonPressStart = DateTime.UtcNow;
-            RaisePressStarted();
+            if (state != _stablePressed)
+            {
+                confirmingPress = state;
+                newCts = new CancellationTokenSource();
+                prevCts = _confirmCts;
+                _confirmCts = newCts;
+            }
+            else
+            {
+                prevCts = _confirmCts;
+                _confirmCts = null;
+            }
         }
-        else
+
+        prevCts?.Cancel();
+        prevCts?.Dispose();
+
+        if (newCts == null) return;
+
+        var token = newCts.Token;
+        _ = Task.Run(async () =>
         {
-            if (ButtonPressStart == DateTime.MaxValue)
+            try
+            {
+                await Task.Delay(ConfirmationDelay, token);
+            }
+            catch (OperationCanceledException)
             {
                 return;
             }
 
-            TimeSpan pressDuration = DateTime.UtcNow - ButtonPressStart;
-            ButtonPressStart = DateTime.MaxValue;
-
-            if (LongClickedThreshold > TimeSpan.Zero && pressDuration > LongClickedThreshold)
+            bool shouldFire;
+            lock (_stateLock)
             {
-                RaiseLongClicked();
+                shouldFire = ReferenceEquals(_confirmCts, newCts);
+                if (shouldFire)
+                {
+                    _stablePressed = confirmingPress;
+                    _confirmCts = null;
+                    if (confirmingPress)
+                    {
+                        ButtonPressStart = edgeTime;
+                    }
+                }
+            }
+
+            newCts.Dispose();
+
+            if (!shouldFire)
+            {
+                return;
+            }
+
+            if (confirmingPress)
+            {
+                RaisePressStarted();
             }
             else
             {
-                RaiseClicked();
+                var pressDuration = edgeTime - ButtonPressStart;
+                if (LongClickedThreshold > TimeSpan.Zero && pressDuration > LongClickedThreshold)
+                {
+                    RaiseLongClicked();
+                }
+                else
+                {
+                    RaiseClicked();
+                }
+                RaisePressEnded();
             }
-            RaisePressEnded();
-        }
+        });
     }
 
     /// <summary>
@@ -230,6 +297,15 @@ public abstract class PushButtonBase : IButton, IDisposable
     ///<inheritdoc/>
     public virtual void Dispose()
     {
+        CancellationTokenSource? cts;
+        lock (_stateLock)
+        {
+            cts = _confirmCts;
+            _confirmCts = null;
+        }
+        cts?.Cancel();
+        cts?.Dispose();
+
         if (ShouldDisposeInput)
         {
             DigitalIn.Dispose();

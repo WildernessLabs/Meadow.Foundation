@@ -97,8 +97,11 @@ public class Potentiometer : IPotentiometer, IDisposable
     private void OnInputPortUpdated(object sender, IChangeResult<Voltage> e)
     {
         var newValue = new Resistance(MaxResistance.Ohms * e.New.Volts / referenceVoltage.Volts);
-        changedEvent?.Invoke(this, new ChangeResult<Resistance>(newValue, oldValue));
-        oldValue = newValue;
+        if (newValue != oldValue)
+        {
+            changedEvent?.Invoke(this, new ChangeResult<Resistance>(newValue, oldValue));
+            oldValue = newValue;
+        }
     }
 
     /// <summary>
