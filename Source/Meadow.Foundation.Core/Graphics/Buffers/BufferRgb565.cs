@@ -109,7 +109,7 @@ namespace Meadow.Foundation.Graphics.Buffers
         /// <param name="height">Height in pixels</param>
         /// <param name="color">The fill color</param>
         /// <exception cref="ArgumentOutOfRangeException">Throws an exception if fill area is beyond the buffer bounds</exception>
-        public unsafe override void Fill(int x, int y, int width, int height, Color color)
+        public override void Fill(int x, int y, int width, int height, Color color)
         {
             if (x < 0 || x + width > Width ||
                 y < 0 || y + height > Height)
@@ -117,24 +117,38 @@ namespace Meadow.Foundation.Graphics.Buffers
                 throw new ArgumentOutOfRangeException();
             }
 
-            byte[] value = { (byte)(color.Color16bppRgb565 >> 8), (byte)color.Color16bppRgb565 };
-            int index = (y * Width + x) * 2 - 1;
+            ushort color565 = color.Color16bppRgb565;
+            byte hi = (byte)(color565 >> 8);
+            byte lo = (byte)color565;
+            int rowStride = Width * 2;
 
-            //fill the first line
-            for (int i = 0; i < width; i++)
+            if (width <= 2)
             {
-                Buffer[++index] = value[0];
-                Buffer[++index] = value[1];
+                for (int col = 0; col < width; col++)
+                {
+                    int index = (y * Width + x + col) * 2;
+                    for (int row = 0; row < height; row++)
+                    {
+                        Buffer[index] = hi;
+                        Buffer[index + 1] = lo;
+                        index += rowStride;
+                    }
+                }
+                return;
             }
 
-            //array copy the rest
-            for (int j = 0; j < height - 1; j++)
+            int firstRow = (y * Width + x) * 2;
+            for (int i = 0; i < width; i++)
             {
-                Array.Copy(Buffer,
-                    (y + j) * Width * 2 + x * 2,
-                    Buffer,
-                    (y + j + 1) * Width * 2 + x * 2,
-                    width * 2);
+                Buffer[firstRow + i * 2] = hi;
+                Buffer[firstRow + i * 2 + 1] = lo;
+            }
+
+            int rowBytes = width * 2;
+            var src = Buffer.AsSpan(firstRow, rowBytes);
+            for (int j = 1; j < height; j++)
+            {
+                src.CopyTo(Buffer.AsSpan((y + j) * rowStride + x * 2, rowBytes));
             }
         }
 
@@ -198,15 +212,12 @@ namespace Meadow.Foundation.Graphics.Buffers
         {
             if (buffer.ColorMode == ColorMode)
             {
-                int sourceIndex, destinationIndex;
                 int length = buffer.Width * 2;
+                var source = buffer.Buffer;
 
                 for (int i = 0; i < buffer.Height; i++)
                 {
-                    sourceIndex = length * i;
-                    destinationIndex = Width * (y + i) * 2 + x * 2;
-
-                    Array.Copy(buffer.Buffer, sourceIndex, Buffer, destinationIndex, length);
+                    source.AsSpan(length * i, length).CopyTo(Buffer.AsSpan(Width * (y + i) * 2 + x * 2, length));
                 }
             }
             else

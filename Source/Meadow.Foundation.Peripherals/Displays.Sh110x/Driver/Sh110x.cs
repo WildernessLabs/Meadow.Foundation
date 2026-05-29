@@ -324,14 +324,14 @@ namespace Meadow.Foundation.Displays
                 {
                     dataCommandPort!.State = Data;
 
-                    Array.Copy(imageBuffer.Buffer, Width * page, pageBuffer, 0, pageWidth);
+                    imageBuffer.Buffer.AsSpan(Width * page, pageWidth).CopyTo(pageBuffer.AsSpan(0, pageWidth));
                     spiComms?.Write(pageBuffer);
                 }
                 else // I2C
                 {
                     pageBuffer[0] = 0x40;
 
-                    Array.Copy(imageBuffer.Buffer, Width * page, pageBuffer, 1, pageWidth);
+                    imageBuffer.Buffer.AsSpan(Width * page, pageWidth).CopyTo(pageBuffer.AsSpan(1, pageWidth));
                     i2cComms?.Write(pageBuffer);
                 }
             }
@@ -365,14 +365,14 @@ namespace Meadow.Foundation.Displays
                 {
                     dataCommandPort!.State = Data;
 
-                    Array.Copy(imageBuffer.Buffer, Width * page, pageBuffer, 0, pageWidth);
+                    imageBuffer.Buffer.AsSpan(Width * page, pageWidth).CopyTo(pageBuffer.AsSpan(0, pageWidth));
                     spiComms?.Write(pageBuffer);
                 }
                 else // I2C
                 {
                     pageBuffer[0] = 0x40;
 
-                    Array.Copy(imageBuffer.Buffer, Width * page, pageBuffer, 1, pageWidth);
+                    imageBuffer.Buffer.AsSpan(Width * page, pageWidth).CopyTo(pageBuffer.AsSpan(1, pageWidth));
                     i2cComms?.Write(pageBuffer);
                 }
             }

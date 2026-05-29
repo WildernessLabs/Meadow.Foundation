@@ -153,10 +153,10 @@ namespace Meadow.Foundation.Graphics.Buffers
 
             for (copyLength = 3; copyLength < arrayMidPoint; copyLength <<= 1)
             {
-                Array.Copy(Buffer, 0, Buffer, copyLength, copyLength);
+                Buffer.AsSpan(0, copyLength).CopyTo(Buffer.AsSpan(copyLength, copyLength));
             }
 
-            Array.Copy(Buffer, 0, Buffer, copyLength, Buffer.Length - copyLength);
+            Buffer.AsSpan(0, Buffer.Length - copyLength).CopyTo(Buffer.AsSpan(copyLength, Buffer.Length - copyLength));
         }
 
         /// <summary>
@@ -176,15 +176,53 @@ namespace Meadow.Foundation.Graphics.Buffers
                 throw new ArgumentOutOfRangeException();
             }
 
-            //TODO optimize
-            var uColor = color.Color12bppRgb444;
-
-            for (int i = 0; i < width; i++)
+            if (width <= 0 || height <= 0)
             {
-                for (int j = 0; j < height; j++)
+                return;
+            }
+
+            ushort uColor = color.Color12bppRgb444;
+
+            bool hasLead = (x & 1) == 1;
+            int alignedX = hasLead ? x + 1 : x;
+            int alignedWidth = hasLead ? width - 1 : width;
+            if (alignedWidth < 0) alignedWidth = 0;
+
+            int pairs = alignedWidth / 2;
+            bool hasTrail = (alignedWidth & 1) == 1;
+            int trailX = alignedX + pairs * 2;
+
+            int rowStrideBytes = Width * 3 / 2;
+            int interiorBytes = pairs * 3;
+            int interiorStart = (alignedX + y * Width) * 3 / 2;
+
+            if (pairs > 0)
+            {
+                Buffer[interiorStart] = (byte)(uColor >> 4);
+                Buffer[interiorStart + 1] = (byte)(((uColor & 0x0F) << 4) | (uColor >> 8));
+                Buffer[interiorStart + 2] = (byte)uColor;
+
+                int filled = 3;
+                while (filled < interiorBytes)
                 {
-                    SetPixel(x + i, y + j, uColor);
+                    int copy = filled < interiorBytes - filled ? filled : interiorBytes - filled;
+                    Buffer.AsSpan(interiorStart, copy).CopyTo(Buffer.AsSpan(interiorStart + filled, copy));
+                    filled += copy;
                 }
+            }
+
+            if (hasLead) SetPixel(x, y, uColor);
+            if (hasTrail) SetPixel(trailX, y, uColor);
+
+            var interior = Buffer.AsSpan(interiorStart, interiorBytes);
+            for (int row = 1; row < height; row++)
+            {
+                if (pairs > 0)
+                {
+                    interior.CopyTo(Buffer.AsSpan(interiorStart + row * rowStrideBytes, interiorBytes));
+                }
+                if (hasLead) SetPixel(x, y + row, uColor);
+                if (hasTrail) SetPixel(trailX, y + row, uColor);
             }
         }
 
@@ -237,16 +275,12 @@ namespace Meadow.Foundation.Graphics.Buffers
                 buffer.Width % 2 == 0)
             {
                 //we have a happy path
-                int sourceIndex, destinationIndex;
                 int length = buffer.Width / 2 * 3;
+                var source = buffer.Buffer;
 
                 for (int i = 0; i < buffer.Height; i++)
                 {
-                    sourceIndex = length * i;
-
-                    destinationIndex = (Width * (y + i) + x) * 3 / 2;
-
-                    Array.Copy(buffer.Buffer, sourceIndex, Buffer, destinationIndex, length);
+                    source.AsSpan(length * i, length).CopyTo(Buffer.AsSpan((Width * (y + i) + x) * 3 / 2, length));
                 }
             }
             else

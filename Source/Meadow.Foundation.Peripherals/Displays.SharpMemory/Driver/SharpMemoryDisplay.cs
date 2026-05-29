@@ -238,7 +238,7 @@ namespace Meadow.Foundation.Displays
             {
                 int frameOffset = 1 + (row - 1) * (2 + bytesPerRow);
                 int bufferOffset = (row - 1) * bytesPerRow;
-                Array.Copy(imageBuffer.Buffer, bufferOffset, spiFrameBuffer, frameOffset + 1, bytesPerRow);
+                imageBuffer.Buffer.AsSpan(bufferOffset, bytesPerRow).CopyTo(spiFrameBuffer.AsSpan(frameOffset + 1, bytesPerRow));
             }
 
             chipSelectPort!.State = true;
@@ -271,7 +271,7 @@ namespace Meadow.Foundation.Displays
                 int row = top + i + 1; // Sharp row addresses are 1-indexed
                 int frameOffset = 1 + i * (2 + bytesPerRow);
                 frame[frameOffset] = ReverseBits((byte)row);
-                Array.Copy(imageBuffer.Buffer, (top + i) * bytesPerRow, frame, frameOffset + 1, bytesPerRow);
+                imageBuffer.Buffer.AsSpan((top + i) * bytesPerRow, bytesPerRow).CopyTo(frame.AsSpan(frameOffset + 1, bytesPerRow));
             }
 
             chipSelectPort!.State = true;

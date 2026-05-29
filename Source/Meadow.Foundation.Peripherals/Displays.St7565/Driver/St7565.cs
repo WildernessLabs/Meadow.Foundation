@@ -229,7 +229,7 @@ namespace Meadow.Foundation.Displays
 
                 dataCommandPort.State = Data;
 
-                Array.Copy(imageBuffer.Buffer, Width * page, pageBuffer, 0, PageSize);
+                imageBuffer.Buffer.AsSpan(Width * page, PageSize).CopyTo(pageBuffer.AsSpan(0, PageSize));
                 spiComms.Write(pageBuffer);
             }
         }
@@ -261,7 +261,7 @@ namespace Meadow.Foundation.Displays
 
                 dataCommandPort.State = Data;
 
-                Array.Copy(imageBuffer.Buffer, Width * page, pageBuffer, 0, PageSize);
+                imageBuffer.Buffer.AsSpan(Width * page, PageSize).CopyTo(pageBuffer.AsSpan(0, PageSize));
                 spiComms.Write(pageBuffer);
             }
         }

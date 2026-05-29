@@ -243,7 +243,7 @@ namespace Meadow.Foundation.Displays
                 {
                     if (imageBuffer.ByteCount - index < PAGE_SIZE) { break; }
 
-                    Array.Copy(imageBuffer.Buffer, index, pageBuffer, 1, PAGE_SIZE);
+                    imageBuffer.Buffer.AsSpan(index, PAGE_SIZE).CopyTo(pageBuffer.AsSpan(1, PAGE_SIZE));
                     i2cComms?.Write(pageBuffer);
                 }
             }
