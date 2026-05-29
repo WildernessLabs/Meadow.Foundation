@@ -1,2 +1,0 @@
-# Meadow.Foundation.Waveshare.DualCan
-

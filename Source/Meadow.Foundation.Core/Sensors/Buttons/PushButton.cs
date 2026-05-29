@@ -12,12 +12,12 @@ public class PushButton : PushButtonBase
     /// <summary>
     /// Default Debounce used on the PushButton Input if an InputPort is auto-created
     /// </summary>
-    public static readonly TimeSpan DefaultDebounceDuration = TimeSpan.FromMilliseconds(50);
+    public static readonly TimeSpan DefaultDebounceDuration = TimeSpan.FromMilliseconds(20);
 
     /// <summary>
     /// Default Glitch Filter used on the PushButton Input if an InputPort is auto-created
     /// </summary>
-    public static readonly TimeSpan DefaultGlitchDuration = TimeSpan.FromMilliseconds(50);
+    public static readonly TimeSpan DefaultGlitchDuration = TimeSpan.Zero;
 
     /// <summary>
     /// This duration controls the debounce filter. It also has the effect
@@ -74,7 +74,9 @@ public class PushButton : PushButtonBase
 
     private void DigitalInChanged(object sender, DigitalPortResult result)
     {
-        UpdateEvents(GetNormalizedState(result.New.State));
+        var pinState = DigitalIn.State;
+        var normalized = GetNormalizedState(pinState);
+        UpdateEvents(normalized);
     }
 
     /// <inheritdoc/>

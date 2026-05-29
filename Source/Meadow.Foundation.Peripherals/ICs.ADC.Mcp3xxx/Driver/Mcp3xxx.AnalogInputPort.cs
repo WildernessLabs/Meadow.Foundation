@@ -91,6 +91,7 @@ namespace Meadow.Foundation.ICs.ADC
                 IPin pin,
                 IAnalogChannelInfo channel,
                 int sampleCount,
+                TimeSpan updateInterval,
                 Voltage referenceVoltage,
                 InputType inputType = InputType.SingleEnded)
                 : base(pin, channel)
@@ -98,6 +99,7 @@ namespace Meadow.Foundation.ICs.ADC
                 this.controller = controller;
 
                 SampleCount = sampleCount;
+                UpdateInterval = updateInterval;
                 ChannelInputType = inputType;
 
                 ReferenceVoltage = referenceVoltage;

@@ -2,7 +2,7 @@
 
 **PCD8544 SPI monochrome display (Nokia 5110)**
 
-The **Pcd8544** library is included in the **Meadow.Foundation.Displays.Pcd8544** nuget package and is designed for the [Wilderness Labs](www.wildernesslabs.co) Meadow .NET IoT platform.
+The **Pcd8544** library is included in the **Meadow.Foundation.Displays.Pcd8544** nuget package and is designed for the [Wilderness Labs](https://www.wildernesslabs.co) Meadow .NET IoT platform.
 
 This driver is part of the [Meadow.Foundation](https://developer.wildernesslabs.co/Meadow/Meadow.Foundation/) peripherals library, an open-source repository of drivers and libraries that streamline and simplify adding hardware to your C# .NET Meadow IoT applications.
 
@@ -12,7 +12,7 @@ To view all Wilderness Labs open-source projects, including samples, visit [gith
 
 ## Installation
 
-You can install the library from within Visual studio using the the NuGet Package Manager or from the command line using the .NET CLI:
+You can install the library from within Visual Studio using the NuGet Package Manager or from the command line using the .NET CLI:
 
 `dotnet add package Meadow.Foundation.Displays.Pcd8544`
 ## Usage
@@ -62,7 +62,7 @@ public override Task Run()
 If you have questions or need assistance, please join the Wilderness Labs [community on Slack](http://slackinvite.wildernesslabs.co/).
 ## About Meadow
 
-Meadow is a complete, IoT platform with defense-grade security that runs full .NET applications on embeddable microcontrollers and Linux single-board computers including Raspberry Pi and NVIDIA Jetson.
+Meadow is a complete IoT platform with defense-grade security that runs full .NET applications on embeddable microcontrollers and Linux single-board computers including Raspberry Pi and NVIDIA Jetson.
 
 ### Build
 
@@ -74,6 +74,6 @@ Utilize native support for WiFi, Ethernet, and Cellular connectivity to send sen
 
 ### Deploy
 
-Instantly deploy and manage your fleet in the cloud for OtA, health-monitoring, logs, command + control, and enterprise backend integrations.
+Instantly deploy and manage your fleet in the cloud for OTA, health-monitoring, logs, command + control, and enterprise backend integrations.
 
 

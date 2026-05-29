@@ -1,36 +1,31 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <LangVersion>12.0</LangVersion>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <PackageReadmeFile>Readme.md</PackageReadmeFile>
+    <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-	<GenerateDocumentationFile>true</GenerateDocumentationFile>
-	<PackageIcon>icon.png</PackageIcon>
-	<AssemblyName>ICs.IOExpanders.PCanBasic</AssemblyName>
-	<Authors>Wilderness Labs, Inc</Authors>
-	<Company>Wilderness Labs, Inc</Company>
-	<PackageProjectUrl>http://developer.wildernesslabs.co/Meadow/Meadow.Foundation/</PackageProjectUrl>
-	<PackageId>Meadow.Foundation.ICs.CAN.PCanBasic</PackageId>
-	<RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
-	<PackageTags>Meadow.Foundation, CAN, PCanBasic</PackageTags>
-	<Version>0.1.0</Version>
-	<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-	<Description>PCAN-Basic USB CAN Controller for Windows</Description>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <PackageIcon>icon.png</PackageIcon>
+    <AssemblyName>Meadow.PCanBasic</AssemblyName>
+    <Authors>Wilderness Labs, Inc</Authors>
+    <Company>Wilderness Labs, Inc</Company>
+    <PackageProjectUrl>http://developer.wildernesslabs.co/Meadow/Meadow.Foundation/</PackageProjectUrl>
+    <PackageId>Meadow.Foundation.ICs.CAN.PCanBasic</PackageId>
+    <RepositoryUrl>https://github.com/WildernessLabs/Meadow.Foundation</RepositoryUrl>
+    <PackageTags>Meadow.Foundation, CAN, PCanBasic</PackageTags>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Description>PCAN-Basic USB CAN Controller for Windows</Description>
   </PropertyGroup>
-
   <ItemGroup>
-    <None Include="..\..\..\icon.png" Link="icon.png">
-      <PackagePath></PackagePath>
-      <Pack>true</Pack>
-    </None>
+    <None Include=".\Readme.md" Pack="true" PackagePath="" />
+    <None Include="..\..\..\icon.png" Pack="true" PackagePath="" />
   </ItemGroup>
-
   <ItemGroup>
     <PackageReference Include="Peak.PCANBasic.NET" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\..\Meadow.Contracts\Source\Meadow.Contracts\Meadow.Contracts.csproj" />
   </ItemGroup>
-
 </Project>

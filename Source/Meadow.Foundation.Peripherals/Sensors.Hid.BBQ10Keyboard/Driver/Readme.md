@@ -2,7 +2,7 @@
 
 **BB Q10 I2C Keyboard**
 
-The **Bbq10Keyboard** library is included in the **Meadow.Foundation.Sensors.Hid.Bbq10Keyboard** nuget package and is designed for the [Wilderness Labs](www.wildernesslabs.co) Meadow .NET IoT platform.
+The **Bbq10Keyboard** library is included in the **Meadow.Foundation.Sensors.Hid.Bbq10Keyboard** nuget package and is designed for the [Wilderness Labs](https://www.wildernesslabs.co) Meadow .NET IoT platform.
 
 This driver is part of the [Meadow.Foundation](https://developer.wildernesslabs.co/Meadow/Meadow.Foundation/) peripherals library, an open-source repository of drivers and libraries that streamline and simplify adding hardware to your C# .NET Meadow IoT applications.
 
@@ -12,9 +12,44 @@ To view all Wilderness Labs open-source projects, including samples, visit [gith
 
 ## Installation
 
-You can install the library from within Visual studio using the the NuGet Package Manager or from the command line using the .NET CLI:
+You can install the library from within Visual Studio using the NuGet Package Manager or from the command line using the .NET CLI:
 
 `dotnet add package Meadow.Foundation.Sensors.Hid.Bbq10Keyboard`
+## Usage
+
+```csharp
+public override Task Initialize()
+{
+    Resolver.Log.Info("Initialize...");
+
+    var i2cBus = Device.CreateI2cBus(0);
+
+    // Interrupt-driven mode: pass the interrupt pin and key events
+    // fire automatically via the OnKeyEvent event.
+    keyboard = new BBQ10Keyboard(i2cBus, Device.Pins.D10);
+
+    // Without an interrupt pin, use polling instead:
+    // keyboard = new BBQ10Keyboard(i2cBus);
+    // keyboard.StartPolling(intervalMs: 50);
+
+    keyboard.OnKeyEvent += Keyboard_OnKeyEvent;
+
+    return Task.CompletedTask;
+}
+
+private void Keyboard_OnKeyEvent(object? sender, BBQ10Keyboard.KeyEvent e)
+{
+    if (e.KeyState == BBQ10Keyboard.KeyState.StatePress)
+    {
+        Resolver.Log.Info($"Key pressed: '{e.AsciiValue}' (0x{(byte)e.AsciiValue:X2})");
+    }
+    else if (e.KeyState == BBQ10Keyboard.KeyState.StateRelease)
+    {
+        Resolver.Log.Info($"Key released: '{e.AsciiValue}'");
+    }
+}
+
+```
 ## How to Contribute
 
 - **Found a bug?** [Report an issue](https://github.com/WildernessLabs/Meadow_Issues/issues)
@@ -27,7 +62,7 @@ You can install the library from within Visual studio using the the NuGet Packag
 If you have questions or need assistance, please join the Wilderness Labs [community on Slack](http://slackinvite.wildernesslabs.co/).
 ## About Meadow
 
-Meadow is a complete, IoT platform with defense-grade security that runs full .NET applications on embeddable microcontrollers and Linux single-board computers including Raspberry Pi and NVIDIA Jetson.
+Meadow is a complete IoT platform with defense-grade security that runs full .NET applications on embeddable microcontrollers and Linux single-board computers including Raspberry Pi and NVIDIA Jetson.
 
 ### Build
 
@@ -39,6 +74,6 @@ Utilize native support for WiFi, Ethernet, and Cellular connectivity to send sen
 
 ### Deploy
 
-Instantly deploy and manage your fleet in the cloud for OtA, health-monitoring, logs, command + control, and enterprise backend integrations.
+Instantly deploy and manage your fleet in the cloud for OTA, health-monitoring, logs, command + control, and enterprise backend integrations.
 
 
