@@ -27,6 +27,12 @@ public class Potentiometer : IPotentiometer, IDisposable
     public Resistance MaxResistance { get; private set; }
 
     /// <summary>
+    /// Gets or sets how frequently the potentiometer is sampled and the Changed event raised.
+    /// Must be set before the first Changed handler is subscribed. Defaults to 1 second.
+    /// </summary>
+    public TimeSpan UpdateInterval { get; set; } = TimeSpan.FromSeconds(1);
+
+    /// <summary>
     /// Initializes a new instance of the Potentiometer class with default reference voltage.
     /// </summary>
     /// <param name="inputPort">The input port to read the potentiometer value from.</param>
@@ -72,7 +78,7 @@ public class Potentiometer : IPotentiometer, IDisposable
             if (changedEvent == null || changedEvent?.GetInvocationList().Length == 0)
             {
                 inputPort.Updated += OnInputPortUpdated;
-                inputPort.StartUpdating();
+                inputPort.StartUpdating(UpdateInterval);
             }
             changedEvent += value;
         }

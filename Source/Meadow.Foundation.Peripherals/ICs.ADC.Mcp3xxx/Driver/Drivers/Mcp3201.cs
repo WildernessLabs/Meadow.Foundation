@@ -61,7 +61,7 @@ namespace Meadow.Foundation.ICs.ADC
         {
             var channel = Pins.INPlus.SupportedChannels.OfType<IAnalogChannelInfo>().FirstOrDefault();
 
-            return new AnalogInputPort(this, Pins.INPlus, channel, sampleCount, voltageReference);
+            return new AnalogInputPort(this, Pins.INPlus, channel, sampleCount, sampleInterval, voltageReference);
         }
 
         /// <summary>
