@@ -1,5 +1,6 @@
 ﻿using Meadow.Hardware;
 using System;
+using System.Buffers.Binary;
 
 namespace Meadow.Foundation
 {
@@ -134,8 +135,12 @@ namespace Meadow.Foundation
         /// <param name="order">Indicate if the data should be written as big or little endian.</param>
         public virtual void WriteRegister(byte address, ushort value, ByteOrder order = ByteOrder.LittleEndian)
         {
-            var bytes = BitConverter.GetBytes(value);
-            WriteRegister(address, bytes, order);
+            Span<byte> bytes = stackalloc byte[2];
+            if (order == ByteOrder.BigEndian)
+                BinaryPrimitives.WriteUInt16BigEndian(bytes, value);
+            else
+                BinaryPrimitives.WriteUInt16LittleEndian(bytes, value);
+            WriteRegister(address, bytes, ByteOrder.LittleEndian);
         }
 
         /// <summary>
@@ -146,8 +151,12 @@ namespace Meadow.Foundation
         /// <param name="order">Indicate if the data should be written as big or little endian.</param>
         public virtual void WriteRegister(byte address, uint value, ByteOrder order = ByteOrder.LittleEndian)
         {
-            var bytes = BitConverter.GetBytes(value);
-            WriteRegister(address, bytes, order);
+            Span<byte> bytes = stackalloc byte[4];
+            if (order == ByteOrder.BigEndian)
+                BinaryPrimitives.WriteUInt32BigEndian(bytes, value);
+            else
+                BinaryPrimitives.WriteUInt32LittleEndian(bytes, value);
+            WriteRegister(address, bytes, ByteOrder.LittleEndian);
         }
 
         /// <summary>
@@ -158,8 +167,12 @@ namespace Meadow.Foundation
         /// <param name="order">Indicate if the data should be written as big or little endian.</param>
         public virtual void WriteRegister(byte address, ulong value, ByteOrder order = ByteOrder.LittleEndian)
         {
-            var bytes = BitConverter.GetBytes(value);
-            WriteRegister(address, bytes, order);
+            Span<byte> bytes = stackalloc byte[8];
+            if (order == ByteOrder.BigEndian)
+                BinaryPrimitives.WriteUInt64BigEndian(bytes, value);
+            else
+                BinaryPrimitives.WriteUInt64LittleEndian(bytes, value);
+            WriteRegister(address, bytes, ByteOrder.LittleEndian);
         }
 
         /// <summary>
