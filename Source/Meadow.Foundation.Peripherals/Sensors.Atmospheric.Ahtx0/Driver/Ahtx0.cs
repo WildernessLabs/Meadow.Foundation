@@ -103,13 +103,13 @@ public abstract partial class Ahtx0 :
     /// <summary>
     /// Reads the humidity and temperature.
     /// </summary>
+    private readonly byte[] triggerCommand = { (byte)Commands.TRIGGER_MEAS, 0x33, 0x00 };
+
     protected override async Task<(Units.RelativeHumidity?, Units.Temperature?)> ReadSensor()
     {
-        (Units.RelativeHumidity? Humidity, Units.Temperature? Temperature) conditions;
-
         await InitializeIfRequired();
 
-        BusComms.Write(new byte[] { (byte)Commands.TRIGGER_MEAS, 0x33, 0x00 });
+        BusComms.Write(triggerCommand);
         await Task.Delay(80);
 
         while (IsBusy())
@@ -119,15 +119,18 @@ public abstract partial class Ahtx0 :
 
         BusComms.Read(ReadBuffer.Span);
 
-        var data = ReadBuffer.ToArray();
+        return ParseConditions(ReadBuffer.Span);
+    }
 
+    private static (Units.RelativeHumidity?, Units.Temperature?) ParseConditions(ReadOnlySpan<byte> data)
+    {
         var humidity = (data[1] << 12) | (data[2] << 4) | (data[3] >> 4);
-        conditions.Humidity = new RelativeHumidity((humidity / (double)0x100000) * 100d, RelativeHumidity.UnitType.Percent);
+        var relativeHumidity = new RelativeHumidity((humidity / (double)0x100000) * 100d, RelativeHumidity.UnitType.Percent);
 
         var temp = ((data[3] & 0x0f) << 16) | (data[4] << 8) | data[5];
-        conditions.Temperature = new Units.Temperature((temp / (double)0x100000) * 200d - 50d, Units.Temperature.UnitType.Celsius);
+        var temperature = new Units.Temperature((temp / (double)0x100000) * 200d - 50d, Units.Temperature.UnitType.Celsius);
 
-        return conditions;
+        return (relativeHumidity, temperature);
     }
 
     async Task<Units.Temperature> ISensor<Units.Temperature>.Read()
