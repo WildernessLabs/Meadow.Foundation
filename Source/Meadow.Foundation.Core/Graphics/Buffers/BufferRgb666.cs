@@ -87,11 +87,11 @@ namespace Meadow.Foundation.Graphics.Buffers
             // Use Array.Copy to fill the buffer in larger chunks
             for (copyLength = 3; copyLength < arrayMidPoint; copyLength <<= 1)
             {
-                Array.Copy(Buffer, 0, Buffer, copyLength, copyLength);
+                Buffer.AsSpan(0, copyLength).CopyTo(Buffer.AsSpan(copyLength, copyLength));
             }
 
             // Copy whatever is remaining
-            Array.Copy(Buffer, 0, Buffer, copyLength, Buffer.Length - copyLength);
+            Buffer.AsSpan(0, Buffer.Length - copyLength).CopyTo(Buffer.AsSpan(copyLength, Buffer.Length - copyLength));
         }
 
         /// <summary>
@@ -122,14 +122,12 @@ namespace Meadow.Foundation.Graphics.Buffers
                 Buffer[++index] = value[2];
             }
 
-            //array copy the rest
-            for (int j = 0; j < height - 1; j++)
+            int rowBytes = width * 3;
+            int firstRow = (y * Width + x) * 3;
+            var src = Buffer.AsSpan(firstRow, rowBytes);
+            for (int j = 1; j < height; j++)
             {
-                Array.Copy(Buffer,
-                    (y + j) * Width * 3 + x * 3,
-                    Buffer,
-                    (y + j + 1) * Width * 3 + x * 3,
-                    width * 3);
+                src.CopyTo(Buffer.AsSpan((y + j) * Width * 3 + x * 3, rowBytes));
             }
         }
 
@@ -156,15 +154,12 @@ namespace Meadow.Foundation.Graphics.Buffers
         {
             if (buffer.ColorMode == ColorMode)
             {
-                int sourceIndex, destinationIndex;
                 int length = buffer.Width * 3;
+                var source = buffer.Buffer;
 
                 for (int i = 0; i < buffer.Height; i++)
                 {
-                    sourceIndex = length * i;
-                    destinationIndex = (Width * (y + i) + x) * 3;
-
-                    Array.Copy(buffer.Buffer, sourceIndex, Buffer, destinationIndex, length);
+                    source.AsSpan(length * i, length).CopyTo(Buffer.AsSpan((Width * (y + i) + x) * 3, length));
                 }
             }
             else

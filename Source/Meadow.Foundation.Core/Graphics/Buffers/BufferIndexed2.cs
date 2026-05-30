@@ -54,10 +54,10 @@ namespace Meadow.Foundation.Graphics.Buffers
 
             for (copyLength = 1; copyLength < arrayMidPoint; copyLength <<= 1)
             {
-                Array.Copy(Buffer, 0, Buffer, copyLength, copyLength);
+                Buffer.AsSpan(0, copyLength).CopyTo(Buffer.AsSpan(copyLength, copyLength));
             }
 
-            Array.Copy(Buffer, 0, Buffer, copyLength, Buffer.Length - copyLength);
+            Buffer.AsSpan(0, Buffer.Length - copyLength).CopyTo(Buffer.AsSpan(copyLength, Buffer.Length - copyLength));
         }
 
         /// <summary>
@@ -152,15 +152,12 @@ namespace Meadow.Foundation.Graphics.Buffers
                 buffer.Width % 4 == 0)
             {
                 // We can do a direct block copy row by row
-                int sourceIndex, destinationIndex;
                 int length = buffer.Width / 4;
+                var source = buffer.Buffer;
 
                 for (int i = 0; i < buffer.Height; i++)
                 {
-                    sourceIndex = length * i;
-                    destinationIndex = (Width * (y + i) + x) >> 2;
-
-                    Array.Copy(buffer.Buffer, sourceIndex, Buffer, destinationIndex, length);
+                    source.AsSpan(length * i, length).CopyTo(Buffer.AsSpan((Width * (y + i) + x) >> 2, length));
                 }
             }
             else

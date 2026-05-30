@@ -448,7 +448,7 @@ namespace Meadow.Foundation.Displays
 
                 spiDisplay.Bus.Write(
                     chipSelectPort,
-                    imageBuffer.Buffer[sourceIndex..(sourceIndex + len)]);
+                    imageBuffer.Buffer.AsSpan(sourceIndex, len));
             }
         }
 
