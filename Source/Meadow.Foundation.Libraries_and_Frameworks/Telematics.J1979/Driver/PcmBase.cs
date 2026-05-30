@@ -7,7 +7,8 @@ namespace Meadow.Foundation.Telematics.J1979;
 public abstract class PcmBase : ControllerBase
 {
     // PCMs should support 
-    protected PcmBase(ICanBus[] canBuses, short moduleAddress, IControlModuleStore? store = null) : base(canBuses, moduleAddress, store)
+    protected PcmBase(ICanBus[] canBuses, short moduleAddress, IControlModuleStore? store = null)
+        : base(canBuses, moduleAddress, store, handleVehicleIdentity: true)
     {
         RegisterPcmPids();
 

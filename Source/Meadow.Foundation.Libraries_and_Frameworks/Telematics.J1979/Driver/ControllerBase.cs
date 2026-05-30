@@ -40,9 +40,13 @@ public abstract class ControllerBase : IController
         return bytes;
     }
 
-    protected ControllerBase(ICanBus[] canBuses, short moduleAddress, IControlModuleStore? store = null)
+    private readonly bool _handleVehicleIdentity;
+
+    protected ControllerBase(ICanBus[] canBuses, short moduleAddress,
+        IControlModuleStore? store = null, bool handleVehicleIdentity = false)
     {
         ModuleAddress = moduleAddress;
+        _handleVehicleIdentity = handleVehicleIdentity;
         _store = store ?? new InMemoryControlModuleStore();
         RegisterPids();
         foreach (var canBus in canBuses)
@@ -244,6 +248,8 @@ public abstract class ControllerBase : IController
 
     private void HandleService09(ICanBus bus, Pid pid)
     {
+        if (!_handleVehicleIdentity) return;
+
         switch (pid)
         {
             case Pid.SupportedPids_01_20:
