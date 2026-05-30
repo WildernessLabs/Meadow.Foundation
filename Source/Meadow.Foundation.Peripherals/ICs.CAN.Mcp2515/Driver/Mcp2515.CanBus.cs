@@ -1,5 +1,6 @@
 using Meadow.Hardware;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Meadow.Foundation.ICs.CAN;
@@ -12,6 +13,10 @@ public partial class Mcp2515
     public class Mcp2515CanBus : ICanBus
     {
         private int _currentMask = 0;
+        // Serializes all SPI sequences. The interrupt handler holds this for the entire
+        // drain loop so WriteFrame responses cannot interleave mid-sequence and leave
+        // interrupt flags uncleaned (which would permanently assert INT low).
+        private readonly object _spiLock = new();
 
         /// <inheritdoc/>
         public event EventHandler<ICanFrame>? FrameReceived;
@@ -24,7 +29,13 @@ public partial class Mcp2515
         public CanBitrate BitRate
         {
             get => Controller.bitrate;
-            set => Controller.Initialize(value, Controller.oscillator);
+            set
+            {
+                lock (_spiLock)
+                {
+                    Controller.Initialize(value, Controller.oscillator);
+                }
+            }
         }
 
         /// <inheritdoc/>
@@ -106,73 +117,102 @@ public partial class Mcp2515
 
         /// <summary>
         /// Handles interrupt pin transitions, reads the interrupt cause from CANSTAT.ICOD,
-        /// and dispatches to <see cref="FrameReceived"/> or <see cref="BusError"/> as appropriate
+        /// and dispatches to <see cref="FrameReceived"/> or <see cref="BusError"/> as appropriate.
+        /// All SPI operations are performed inside _spiLock. Frames are collected first and
+        /// dispatched after the lock is released so that WriteFrame responses cannot race with
+        /// the interrupt-clearing SPI sequence and leave INT permanently asserted.
         /// </summary>
-                private void OnInterruptPortChanged(object sender, DigitalPortResult e)
+        private void OnInterruptPortChanged(object sender, DigitalPortResult e)
         {
-            while (true)
+            var pendingFrames = new List<ICanFrame>();
+
+            try
             {
-                var canstat = (InterruptCode)Controller.ReadRegister(Register.CANSTAT)[0] & InterruptCode.Mask;
-
-                if (canstat == InterruptCode.None)
+                lock (_spiLock)
                 {
-                    break;
+                    while (true)
+                    {
+                        var canstat = (InterruptCode)Controller.ReadRegister(Register.CANSTAT)[0] & InterruptCode.Mask;
+
+                        if (canstat == InterruptCode.None)
+                        {
+                            break;
+                        }
+
+                        switch (canstat)
+                        {
+                            case InterruptCode.RXB0:
+                            case InterruptCode.RXB1:
+                                // Always read the frame even if no subscriber â€” ReadDataFrame clears the
+                                // RX interrupt flag, which de-asserts INT. If we skip ReadFrame, INT stays
+                                // low permanently (edge-triggered: no new falling edge = no more interrupts).
+                                try
+                                {
+                                    var frame = ReadFrame();
+                                    if (frame != null) pendingFrames.Add(frame);
+                                }
+                                catch (Exception ex)
+                                {
+                                    // ReadDataFrame threw (e.g. DLC > 8 from a corrupted frame) before it
+                                    // could clear the interrupt flag â€” clear it here so INT de-asserts.
+                                    Resolver.Log?.Warn($"[MCP2515] Frame read failed: {ex.Message}");
+                                    Controller.ClearInterrupt(InterruptFlag.RX0IF | InterruptFlag.RX1IF);
+                                }
+                                break;
+                            case InterruptCode.Error:
+                                var eflg = Controller.ReadRegister(Register.EFLG)[0];
+                                if (BusError != null)
+                                {
+                                    var tec = Controller.ReadRegister(Register.TEC)[0];
+                                    var rec = Controller.ReadRegister(Register.REC)[0];
+                                    BusError.Invoke(this, new CanErrorInfo
+                                    {
+                                        ReceiveErrorCount = rec,
+                                        TransmitErrorCount = tec
+                                    });
+                                }
+                                Controller.ClearInterrupt(InterruptFlag.ERRIF | InterruptFlag.MERRF);
+
+                                // Clear the overflow flags in EFLG if they are set (bits 6 and 7).
+                                // Without this, ERRIF may remain set, keeping INT low.
+                                if ((eflg & 0xC0) != 0)
+                                {
+                                    Controller.ModifyRegister(Register.EFLG, 0xC0, 0);
+                                }
+
+                                // EFLG bit 5 (TXBO): TEC overflowed, controller entered bus-off and disconnected.
+                                // Reinitialize to recover â€” without this an app restart is required.
+                                if ((eflg & 0x20) != 0)
+                                {
+                                    Controller.Initialize(Controller.bitrate, Controller.oscillator);
+                                }
+                                break;
+                            default:
+                                // Unexpected interrupt code (Wake, TXB0-2) â€” clear all flags so INT
+                                // de-asserts. Without this, an unrecognised code leaves INT permanently low.
+                                Controller.ClearInterrupt((InterruptFlag)0xff);
+                                break;
+                        }
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                // Safety net: if any SPI call above throws, we must still de-assert INT.
+                // Without this, an unhandled exception would leave INT permanently low.
+                Resolver.Log?.Error($"[MCP2515] Interrupt handler failed: {ex.Message}");
+                try { Controller.ClearInterrupt((InterruptFlag)0xff); } catch { }
+            }
 
-                switch (canstat)
+            // Dispatch collected frames only after the SPI lock is released, so that
+            // WriteFrame (called by FrameReceived subscribers to send responses) can
+            // acquire the lock without deadlocking.
+            if (FrameReceived != null && pendingFrames.Count > 0)
+            {
+                foreach (var f in pendingFrames)
                 {
-                    case InterruptCode.RXB0:
-                    case InterruptCode.RXB1:
-                        // Always read the frame even if no subscriber — ReadDataFrame clears the
-                        // RX interrupt flag, which de-asserts INT. If we skip ReadFrame, INT stays
-                        // low permanently (edge-triggered: no new falling edge = no more interrupts).
-                        try
-                        {
-                            var frame = ReadFrame();
-                            if (frame != null && FrameReceived != null)
-                                Task.Run(() => FrameReceived.Invoke(this, frame));
-                        }
-                        catch (Exception ex)
-                        {
-                            // ReadDataFrame threw (e.g. DLC > 8 from a corrupted frame) before it
-                            // could clear the interrupt flag — clear it here so INT de-asserts.
-                            Resolver.Log?.Warn($"[MCP2515] Frame read failed: {ex.Message}");
-                            Controller.ClearInterrupt(InterruptFlag.RX0IF | InterruptFlag.RX1IF);
-                        }
-                        break;
-                    case InterruptCode.Error:
-                        var eflg = Controller.ReadRegister(Register.EFLG)[0];
-                        if (BusError != null)
-                        {
-                            var tec = Controller.ReadRegister(Register.TEC)[0];
-                            var rec = Controller.ReadRegister(Register.REC)[0];
-                            BusError.Invoke(this, new CanErrorInfo
-                            {
-                                ReceiveErrorCount = rec,
-                                TransmitErrorCount = tec
-                            });
-                        }
-                        Controller.ClearInterrupt(InterruptFlag.ERRIF | InterruptFlag.MERRF);
-
-                        // Clear the overflow flags in EFLG if they are set (bits 6 and 7).
-                        // Without this, ERRIF may remain set, keeping INT low.
-                        if ((eflg & 0xC0) != 0)
-                        {
-                            Controller.ModifyRegister(Register.EFLG, 0xC0, 0);
-                        }
-
-                        // EFLG bit 5 (TXBO): TEC overflowed, controller entered bus-off and disconnected.
-                        // Reinitialize to recover — without this an app restart is required.
-                        if ((eflg & 0x20) != 0)
-                        {
-                            Controller.Initialize(Controller.bitrate, Controller.oscillator);
-                        }
-                        break;
-                    default:
-                        // Unexpected interrupt code (Wake, TXB0-2) — clear all flags so INT
-                        // de-asserts. Without this, an unrecognised code leaves INT permanently low.
-                        Controller.ClearInterrupt((InterruptFlag)0xff);
-                        break;
+                    var captured = f;
+                    Task.Run(() => FrameReceived.Invoke(this, captured));
                 }
             }
         }
@@ -197,7 +237,10 @@ public partial class Mcp2515
         /// <inheritdoc/>
         public void WriteFrame(ICanFrame frame)
         {
-            Controller.WriteFrame(frame, 0);
+            lock (_spiLock)
+            {
+                Controller.WriteFrame(frame, 0);
+            }
         }
 
         /// <inheritdoc/>
