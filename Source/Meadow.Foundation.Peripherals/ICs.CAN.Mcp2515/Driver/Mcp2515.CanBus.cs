@@ -108,56 +108,72 @@ public partial class Mcp2515
         /// Handles interrupt pin transitions, reads the interrupt cause from CANSTAT.ICOD,
         /// and dispatches to <see cref="FrameReceived"/> or <see cref="BusError"/> as appropriate
         /// </summary>
-        private void OnInterruptPortChanged(object sender, DigitalPortResult e)
+                private void OnInterruptPortChanged(object sender, DigitalPortResult e)
         {
-            var canstat = (InterruptCode)Controller.ReadRegister(Register.CANSTAT)[0] & InterruptCode.Mask;
-
-            switch (canstat)
+            while (true)
             {
-                case InterruptCode.RXB0:
-                case InterruptCode.RXB1:
-                    // Always read the frame even if no subscriber â€” ReadDataFrame clears the
-                    // RX interrupt flag, which de-asserts INT. If we skip ReadFrame, INT stays
-                    // low permanently (edge-triggered: no new falling edge = no more interrupts).
-                    try
-                    {
-                        var frame = ReadFrame();
-                        if (frame != null && FrameReceived != null)
-                            Task.Run(() => FrameReceived.Invoke(this, frame));
-                    }
-                    catch (Exception ex)
-                    {
-                        // ReadDataFrame threw (e.g. DLC > 8 from a corrupted frame) before it
-                        // could clear the interrupt flag â€” clear it here so INT de-asserts.
-                        Resolver.Log?.Warn($"[MCP2515] Frame read failed: {ex.Message}");
-                        Controller.ClearInterrupt(InterruptFlag.RX0IF | InterruptFlag.RX1IF);
-                    }
+                var canstat = (InterruptCode)Controller.ReadRegister(Register.CANSTAT)[0] & InterruptCode.Mask;
+
+                if (canstat == InterruptCode.None)
+                {
                     break;
-                default:
-                    // Unexpected interrupt code (None, Wake, TXB0-2) â€” clear all flags so INT
-                    // de-asserts. Without this, an unrecognised code leaves INT permanently low.
-                    Controller.ClearInterrupt((InterruptFlag)0xff);
-                    break;
-                case InterruptCode.Error:
-                    var eflg = Controller.ReadRegister(Register.EFLG)[0];
-                    if (BusError != null)
-                    {
-                        var tec = Controller.ReadRegister(Register.TEC)[0];
-                        var rec = Controller.ReadRegister(Register.REC)[0];
-                        BusError.Invoke(this, new CanErrorInfo
+                }
+
+                switch (canstat)
+                {
+                    case InterruptCode.RXB0:
+                    case InterruptCode.RXB1:
+                        // Always read the frame even if no subscriber — ReadDataFrame clears the
+                        // RX interrupt flag, which de-asserts INT. If we skip ReadFrame, INT stays
+                        // low permanently (edge-triggered: no new falling edge = no more interrupts).
+                        try
                         {
-                            ReceiveErrorCount = rec,
-                            TransmitErrorCount = tec
-                        });
-                    }
-                    Controller.ClearInterrupt(InterruptFlag.ERRIF | InterruptFlag.MERRF);
-                    // EFLG bit 5 (TXBO): TEC overflowed, controller entered bus-off and disconnected.
-                    // Reinitialize to recover â€” without this an app restart is required.
-                    if ((eflg & 0x20) != 0)
-                    {
-                        Controller.Initialize(Controller.bitrate, Controller.oscillator);
-                    }
-                    break;
+                            var frame = ReadFrame();
+                            if (frame != null && FrameReceived != null)
+                                Task.Run(() => FrameReceived.Invoke(this, frame));
+                        }
+                        catch (Exception ex)
+                        {
+                            // ReadDataFrame threw (e.g. DLC > 8 from a corrupted frame) before it
+                            // could clear the interrupt flag — clear it here so INT de-asserts.
+                            Resolver.Log?.Warn($"[MCP2515] Frame read failed: {ex.Message}");
+                            Controller.ClearInterrupt(InterruptFlag.RX0IF | InterruptFlag.RX1IF);
+                        }
+                        break;
+                    case InterruptCode.Error:
+                        var eflg = Controller.ReadRegister(Register.EFLG)[0];
+                        if (BusError != null)
+                        {
+                            var tec = Controller.ReadRegister(Register.TEC)[0];
+                            var rec = Controller.ReadRegister(Register.REC)[0];
+                            BusError.Invoke(this, new CanErrorInfo
+                            {
+                                ReceiveErrorCount = rec,
+                                TransmitErrorCount = tec
+                            });
+                        }
+                        Controller.ClearInterrupt(InterruptFlag.ERRIF | InterruptFlag.MERRF);
+
+                        // Clear the overflow flags in EFLG if they are set (bits 6 and 7).
+                        // Without this, ERRIF may remain set, keeping INT low.
+                        if ((eflg & 0xC0) != 0)
+                        {
+                            Controller.ModifyRegister(Register.EFLG, 0xC0, 0);
+                        }
+
+                        // EFLG bit 5 (TXBO): TEC overflowed, controller entered bus-off and disconnected.
+                        // Reinitialize to recover — without this an app restart is required.
+                        if ((eflg & 0x20) != 0)
+                        {
+                            Controller.Initialize(Controller.bitrate, Controller.oscillator);
+                        }
+                        break;
+                    default:
+                        // Unexpected interrupt code (Wake, TXB0-2) — clear all flags so INT
+                        // de-asserts. Without this, an unrecognised code leaves INT permanently low.
+                        Controller.ClearInterrupt((InterruptFlag)0xff);
+                        break;
+                }
             }
         }
 
