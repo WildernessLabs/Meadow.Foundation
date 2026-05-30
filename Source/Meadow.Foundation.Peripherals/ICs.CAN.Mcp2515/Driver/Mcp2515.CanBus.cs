@@ -123,10 +123,9 @@ public partial class Mcp2515
                     }
                     break;
                 case InterruptCode.Error:
+                    var eflg = Controller.ReadRegister(Register.EFLG)[0];
                     if (BusError != null)
                     {
-                        var errors = Controller.ReadRegister(Register.EFLG)[0];
-                        // read the error counts
                         var tec = Controller.ReadRegister(Register.TEC)[0];
                         var rec = Controller.ReadRegister(Register.REC)[0];
                         BusError.Invoke(this, new CanErrorInfo
@@ -134,8 +133,13 @@ public partial class Mcp2515
                             ReceiveErrorCount = rec,
                             TransmitErrorCount = tec
                         });
-                        // clear the error interrupt
-                        Controller.ClearInterrupt(InterruptFlag.ERRIF | InterruptFlag.MERRF);
+                    }
+                    Controller.ClearInterrupt(InterruptFlag.ERRIF | InterruptFlag.MERRF);
+                    // EFLG bit 5 (TXBO): TEC overflowed, controller entered bus-off and disconnected.
+                    // Reinitialize to recover — without this an app restart is required.
+                    if ((eflg & 0x20) != 0)
+                    {
+                        Controller.Initialize(Controller.bitrate, Controller.oscillator);
                     }
                     break;
             }
