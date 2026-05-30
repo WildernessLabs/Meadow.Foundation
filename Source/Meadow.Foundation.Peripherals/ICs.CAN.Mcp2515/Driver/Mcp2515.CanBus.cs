@@ -129,7 +129,7 @@ public partial class Mcp2515
                     {
                         // ReadDataFrame threw (e.g. DLC > 8 from a corrupted frame) before it
                         // could clear the interrupt flag — clear it here so INT de-asserts.
-                        Debug.WriteLine($"[MCP2515] Frame read failed: {ex.Message}");
+                        Resolver.Log?.Warn($"[MCP2515] Frame read failed: {ex.Message}");
                         Controller.ClearInterrupt(InterruptFlag.RX0IF | InterruptFlag.RX1IF);
                     }
                     break;
