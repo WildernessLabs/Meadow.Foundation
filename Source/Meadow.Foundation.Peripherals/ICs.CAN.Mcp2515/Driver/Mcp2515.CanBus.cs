@@ -116,11 +116,27 @@ public partial class Mcp2515
             {
                 case InterruptCode.RXB0:
                 case InterruptCode.RXB1:
-                    if (FrameReceived != null)
+                    // Always read the frame even if no subscriber — ReadDataFrame clears the
+                    // RX interrupt flag, which de-asserts INT. If we skip ReadFrame, INT stays
+                    // low permanently (edge-triggered: no new falling edge = no more interrupts).
+                    try
                     {
                         var frame = ReadFrame();
-                        Task.Run(() => FrameReceived.Invoke(this, frame));
+                        if (frame != null && FrameReceived != null)
+                            Task.Run(() => FrameReceived.Invoke(this, frame));
                     }
+                    catch (Exception ex)
+                    {
+                        // ReadDataFrame threw (e.g. DLC > 8 from a corrupted frame) before it
+                        // could clear the interrupt flag — clear it here so INT de-asserts.
+                        Debug.WriteLine($"[MCP2515] Frame read failed: {ex.Message}");
+                        Controller.ClearInterrupt(InterruptFlag.RX0IF | InterruptFlag.RX1IF);
+                    }
+                    break;
+                default:
+                    // Unexpected interrupt code (None, Wake, TXB0-2) — clear all flags so INT
+                    // de-asserts. Without this, an unrecognised code leaves INT permanently low.
+                    Controller.ClearInterrupt((InterruptFlag)0xff);
                     break;
                 case InterruptCode.Error:
                     var eflg = Controller.ReadRegister(Register.EFLG)[0];
