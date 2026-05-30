@@ -14,11 +14,16 @@ internal class CanBusMonitor
     // Physical request address for this module: moduleAddress - 8
     // e.g. PCM at 0x7E8 listens on 0x7E0; TCU at 0x7E9 listens on 0x7E1
     private readonly short _physicalRequestId;
+    private readonly int _responseDelayMs;
 
     public CanBusMonitor(ICanBus bus, short moduleAddress)
     {
         Bus = bus;
         _physicalRequestId = (short)(moduleAddress - 8);
+        // Stagger responses by address offset so lower-addressed modules always respond first,
+        // matching real CAN bus arbitration behavior (lower ID wins). Without this, Task.Run
+        // scheduling is non-deterministic and scan tools that assume ascending-address order break.
+        _responseDelayMs = (moduleAddress - 0x7E8) * 5;
         bus.FrameReceived += OnFrameReceived;
     }
 
@@ -43,10 +48,12 @@ internal class CanBusMonitor
         }
 
         // Dispatch off the receive thread to avoid re-entrancy issues with the CAN driver
-        _ = Task.Run(() =>
+        _ = Task.Run(async () =>
         {
             try
             {
+                if (_responseDelayMs > 0)
+                    await Task.Delay(_responseDelayMs);
                 QueryReceived?.Invoke(this, query);
             }
             catch (Exception ex)
