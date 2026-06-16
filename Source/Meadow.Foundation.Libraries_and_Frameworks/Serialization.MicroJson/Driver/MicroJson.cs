@@ -168,6 +168,15 @@ public static partial class MicroJson
             case TypeCode.Single:
             case TypeCode.Double:
             case TypeCode.Decimal:
+                {
+                    var floatString = ((IFormattable)o).ToString(null, System.Globalization.CultureInfo.InvariantCulture);
+                    if (floatString.IndexOfAny(new[] { '.', 'e', 'E' }) < 0
+                        && char.IsDigit(floatString[floatString.Length - 1]))
+                    {
+                        floatString += ".0";
+                    }
+                    return floatString;
+                }
             case TypeCode.Byte:
             case TypeCode.SByte:
             case TypeCode.Int16:
@@ -202,10 +211,6 @@ public static partial class MicroJson
                 if (type == typeof(Guid) || type == typeof(TimeSpan))
                 {
                     return $"\"{o}\"";
-                }
-                else if (type == typeof(Single) || type == typeof(Double) || type == typeof(Decimal) || type == typeof(float))
-                {
-                    return o.ToString();
                 }
                 break;
         }
