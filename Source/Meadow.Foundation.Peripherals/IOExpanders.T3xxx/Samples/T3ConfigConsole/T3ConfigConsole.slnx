@@ -1,0 +1,17 @@
+<Solution>
+  <Project Path="../../../../../../Meadow.Contracts/Source/Meadow.Contracts/Meadow.Contracts.csproj">
+    <Deploy />
+  </Project>
+  <Project Path="../../../../../../Meadow.Logging/Source/Meadow.Logging/lib/Meadow.Logging.csproj" />
+  <Project Path="../../../../../../Meadow.Modbus/src/Meadow.Modbus/Meadow.Modbus.csproj" />
+  <Project Path="../../../../../../Meadow.Units/Source/Meadow.Units/Meadow.Units.csproj">
+    <Deploy />
+  </Project>
+  <Project Path="../../../../Meadow.Foundation.Core/Meadow.Foundation.Core.csproj">
+    <Deploy />
+  </Project>
+  <Project Path="../../Driver/IOExpanders.T3xxx.csproj">
+    <Deploy />
+  </Project>
+  <Project Path="T3ConfigConsole.csproj" />
+</Solution>

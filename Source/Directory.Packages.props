@@ -3,4 +3,8 @@
   <PropertyGroup>
     <MeadowContractsPackagePropsImported>true</MeadowContractsPackagePropsImported>
   </PropertyGroup>
+  <ItemGroup>
+    <PackageVersion Include="Spectre.Console" Version="0.54.0" />
+    <PackageVersion Include="Terminal.Gui" Version="1.19.0" />
+  </ItemGroup>
 </Project>
