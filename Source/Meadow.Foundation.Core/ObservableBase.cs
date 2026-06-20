@@ -24,7 +24,8 @@ namespace Meadow.Foundation
         /// <param name="changeResult"></param>
         protected void NotifyObservers(IChangeResult<UNIT> changeResult)
         {
-            observers.ForEach(x => x.OnNext(changeResult));
+            for (int i = 0; i < observers.Count; i++)
+                observers[i].OnNext(changeResult);
         }
 
         /// <summary>
