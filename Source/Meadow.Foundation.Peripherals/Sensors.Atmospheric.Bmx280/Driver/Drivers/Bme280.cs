@@ -299,6 +299,9 @@ public partial class Bme280 :
     public override void StartUpdating(TimeSpan? updateInterval = null)
     {
         configuration.Mode = Modes.Normal;
+        configuration.TemperatureOverSampling = TemperatureSampleCount;
+        configuration.PressureOversampling = PressureSampleCount;
+        configuration.HumidityOverSampling = HumiditySampleCount;
         UpdateConfiguration(configuration);
 
         base.StartUpdating(updateInterval);

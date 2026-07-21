@@ -278,6 +278,8 @@ public partial class Bmp280 :
     public override void StartUpdating(TimeSpan? updateInterval = null)
     {
         configuration.Mode = Modes.Normal;
+        configuration.TemperatureOverSampling = TemperatureSampleCount;
+        configuration.PressureOversampling = PressureSampleCount;
         UpdateConfiguration(configuration);
 
         base.StartUpdating(updateInterval);
