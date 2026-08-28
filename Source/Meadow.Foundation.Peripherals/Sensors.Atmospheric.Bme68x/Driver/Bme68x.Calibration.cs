@@ -63,18 +63,29 @@ namespace Meadow.Foundation.Sensors.Atmospheric
                 // ------------------------------------------------
                 // Parse Pressure Calibration: P1..P9, P10
                 // ------------------------------------------------
-                // P1 => registers 0x8E/0x8F => note overlap with T1, but per Bosch doc:
-                //        some references show T1 in 0x8A..0x8B instead.
-                P1 = (ushort)((calib1[9] << 8) | calib1[8]);
-                P2 = (short)((calib1[11] << 8) | calib1[10]);
-                P3 = (short)calib1[12];
-                P4 = (short)((calib1[14] << 8) | calib1[13]);
-                P5 = (short)((calib1[16] << 8) | calib1[15]);
-                P6 = (short)calib1[17];
-                P7 = (short)calib1[18];
-                P8 = (short)((calib1[20] << 8) | calib1[19]);
-                P9 = (short)((calib1[22] << 8) | calib1[21]);
-                P10 = calib1[23];
+                // calib1[] starts at register 0x88. Verified against Bosch's official
+                // BME68x-Sensor-API bme68x_defs.h (BME68X_REG_COEFF1 = 0x8A, BME68X_IDX_*
+                // offsets within that block) - the previous parsing here was misaligned for
+                // the entire P1..P10 block (not just P6/P7), off by 1-2 bytes throughout,
+                // which is what caused pressure readings to be wildly, consistently high.
+                // Register map (relative to calib1[0] = 0x88):
+                //   P1 0x8E/0x8F -> calib1[6]/[7]   P2 0x90/0x91 -> calib1[8]/[9]
+                //   P3 0x92      -> calib1[10]      P4 0x94/0x95 -> calib1[12]/[13]
+                //   P5 0x96/0x97 -> calib1[14]/[15] P7 0x98      -> calib1[16]
+                //   P6 0x99      -> calib1[17]      P8 0x9C/0x9D -> calib1[20]/[21]
+                //   P9 0x9E/0x9F -> calib1[22]/[23] P10 0xA0     -> calib1[24]
+                // P3, P6, P7 are signed 8-bit per the datasheet - sign-extend through sbyte,
+                // not a raw byte->short widen.
+                P1 = (ushort)((calib1[7] << 8) | calib1[6]);
+                P2 = (short)((calib1[9] << 8) | calib1[8]);
+                P3 = (short)(sbyte)calib1[10];
+                P4 = (short)((calib1[13] << 8) | calib1[12]);
+                P5 = (short)((calib1[15] << 8) | calib1[14]);
+                P7 = (short)(sbyte)calib1[16];
+                P6 = (short)(sbyte)calib1[17];
+                P8 = (short)((calib1[21] << 8) | calib1[20]);
+                P9 = (short)((calib1[23] << 8) | calib1[22]);
+                P10 = calib1[24];
 
                 // ------------------------------------------------
                 // Parse Humidity Calibration: H1..H7
