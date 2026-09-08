@@ -1,0 +1,418 @@
+using Meadow.Hardware;
+using Meadow.Units;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Meadow.Foundation.Telematics.J1979;
+
+public abstract class ControllerBase : IController
+{
+    public const short TesterAddress = 0x7E0;
+
+    private readonly List<CanBusMonitor> _busMonitors = new();
+    private readonly Dictionary<Pid, Func<byte[]?>> _pidHandlers = new();
+    private readonly IControlModuleStore _store;
+
+    public abstract string Vin { get; }
+    public virtual Pid[] SupportedPids => _pidHandlers.Keys.ToArray();
+    public short ModuleAddress { get; }
+
+    // Builds the 4-byte supported-PID mask for a given range base (0x00, 0x20, 0x40, ...).
+    // Bits 31-1 cover PIDs rangeBase+1 through rangeBase+0x1F.
+    // Bit 0 is set when any PID exists beyond this window, advertising the next range PID.
+    private byte[] BuildSupportedPidMask(byte rangeBase)
+    {
+        uint mask = 0;
+        foreach (var pid in SupportedPids)
+        {
+            byte p = (byte)pid;
+            if (p > rangeBase && p <= rangeBase + 0x1F)
+                mask |= 1u << (32 - (p - rangeBase));
+        }
+        if (SupportedPids.Any(p => (byte)p > rangeBase + 0x1F))
+            mask |= 1u; // advertise next range extension PID
+        var bytes = BitConverter.GetBytes(mask);
+        if (BitConverter.IsLittleEndian) Array.Reverse(bytes);
+        return bytes;
+    }
+
+    private readonly bool _handleVehicleIdentity;
+
+    protected ControllerBase(ICanBus[] canBuses, short moduleAddress,
+        IControlModuleStore? store = null, bool handleVehicleIdentity = false)
+    {
+        ModuleAddress = moduleAddress;
+        _handleVehicleIdentity = handleVehicleIdentity;
+        _store = store ?? new InMemoryControlModuleStore();
+        RegisterPids();
+        foreach (var canBus in canBuses)
+        {
+            var monitor = new CanBusMonitor(canBus, moduleAddress);
+            monitor.QueryReceived += (_, query) => OnQueryReceived(monitor.Bus, query);
+            _busMonitors.Add(monitor);
+        }
+    }
+
+    protected void RegisterPid(Pid pid, Func<byte[]?> liveData)
+    {
+        _pidHandlers[pid] = liveData;
+    }
+
+    protected virtual void RegisterPids()
+    {
+        RegisterPid(Pid.MonitorStatus,
+            () => GetEmissionsReadiness().ToBytes(GetStoredDtcs().Count > 0, (byte)GetStoredDtcs().Count));
+
+        RegisterPid(Pid.EngineCoolantTemperature,
+            () => { var t = GetEngineCoolantTemperature(); return t.HasValue ? [(byte)(t.Value.Celsius + 40)] : null; });
+
+        RegisterPid(Pid.EngineRpm,
+            () => { var r = GetEngineRpm(); if (!r.HasValue) return null; var raw = (ushort)(r.Value * 4); return [(byte)(raw >> 8), (byte)(raw & 0xFF)]; });
+
+        RegisterPid(Pid.VehicleSpeed,
+            () => { var s = GetVehicleSpeed(); return s.HasValue ? [(byte)s.Value.KilometersPerHour] : null; });
+
+        RegisterPid(Pid.ThrottlePosition,
+            () => { var t = GetThrottlePosition(); return t.HasValue ? [(byte)(t.Value * 255f / 100f)] : null; });
+
+        RegisterPid(Pid.EngineOilTemperature,
+            () => { var t = GetTransFluidTemp(); return t.HasValue ? [(byte)(t.Value.Celsius + 40)] : null; });
+    }
+
+    private void OnQueryReceived(ICanBus sourceBus, J1979QueryFrame queryFrame)
+    {
+        // TODO: raise an event
+        Debug.WriteLine($"[PCM] Query received: Service=0x{(byte)queryFrame.Service:X2}");
+
+        if (queryFrame is SaeStandardQueryFrame saeQuery)
+        {
+            HandleSaeQuery(sourceBus, saeQuery);
+        }
+        else if (queryFrame is ServiceOnlyQueryFrame serviceOnlyQuery)
+        {
+            HandleServiceOnlyQuery(sourceBus, serviceOnlyQuery);
+        }
+        else if (queryFrame is VehicleSpecificQueryFrame vehicleQuery)
+        {
+            HandleVehicleSpecificQuery(sourceBus, vehicleQuery);
+        }
+    }
+
+    private void HandleSaeQuery(ICanBus bus, SaeStandardQueryFrame query)
+    {
+        Debug.WriteLine($"[PCM]   SAE: Service=0x{(byte)query.Service:X2} PID=0x{(byte)query.Pid:X2}");
+
+        switch (query.Service)
+        {
+            case Service.Current:
+                HandleService01(bus, query.Pid);
+                break;
+            case Service.VehicleInfo:
+                HandleService09(bus, query.Pid);
+                break;
+        }
+    }
+
+    private void HandleVehicleSpecificQuery(ICanBus bus, VehicleSpecificQueryFrame query)
+    {
+        Debug.WriteLine($"[PCM]   Vehicle-specific: Service=0x{(byte)query.Service:X2} PID=0x{(byte)query.Pid:X2} Frame={query.FrameNumber}");
+
+        switch (query.Service)
+        {
+            case Service.FreezeFrame:
+                HandleService02(bus, query.Pid, query.FrameNumber);
+                break;
+            case Service.VehicleInfo:
+                // SAE J1979 sends Service 09 as a 3-byte frame (with frame number 0x01).
+                // Frame number is always 0x01 for single-message responses; ignore it.
+                HandleService09(bus, query.Pid);
+                break;
+        }
+    }
+
+    private void HandleService01(ICanBus bus, Pid pid)
+    {
+        // Range-extension PIDs are multiples of 0x20 (0x00, 0x20, 0x40, 0x60, ...).
+        // Each returns a 4-byte mask covering the next 32 PIDs in that window.
+        byte pidByte = (byte)pid;
+        if (pidByte % 0x20 == 0)
+        {
+            SendResponse(bus, new J1979ResponseFrame(Service.Current, pid, BuildSupportedPidMask(pidByte), ModuleAddress));
+            return;
+        }
+
+        if (_pidHandlers.TryGetValue(pid, out var handler))
+        {
+            var data = handler();
+            if (data != null)
+                SendResponse(bus, new J1979ResponseFrame(Service.Current, pid, data, ModuleAddress));
+        }
+    }
+
+    private void HandleService02(ICanBus bus, Pid pid, byte frameNumber)
+    {
+        var ff = _store.FreezeFrame;
+        if (ff is null) return;
+
+        if (pid == Pid.SupportedPids_01_20)
+        {
+            var ffMask = BuildFreezeFrameSupportedPidMask(ff);
+            SendResponse(bus, new J1979ResponseFrame(Service.FreezeFrame, pid, Prepend(frameNumber, ffMask), ModuleAddress));
+            return;
+        }
+
+        if (pid == Pid.FreezeDtc)
+        {
+            var dtcBytes = ff.TriggeringDtc.ToBytes();
+            SendResponse(bus, new J1979ResponseFrame(Service.FreezeFrame, pid, [frameNumber, dtcBytes[0], dtcBytes[1]], ModuleAddress));
+            return;
+        }
+
+        if (ff.Data.TryGetValue(pid, out var data))
+            SendResponse(bus, new J1979ResponseFrame(Service.FreezeFrame, pid, Prepend(frameNumber, data), ModuleAddress));
+    }
+
+    private static byte[] BuildFreezeFrameSupportedPidMask(FreezeFrameSnapshot ff)
+    {
+        uint mask = 0;
+        // PID 0x02 FreezeDtc - always present
+        mask |= 1u << (32 - 0x02);
+
+        foreach (var pid in ff.Data.Keys)
+        {
+            byte p = (byte)pid;
+            if (p >= 0x01 && p <= 0x1F)
+                mask |= 1u << (32 - p);
+        }
+
+        var bytes = BitConverter.GetBytes(mask);
+        if (BitConverter.IsLittleEndian) Array.Reverse(bytes);
+        return bytes;
+    }
+
+    private static byte[] Prepend(byte prefix, byte[] data)
+    {
+        var result = new byte[data.Length + 1];
+        result[0] = prefix;
+        Array.Copy(data, 0, result, 1, data.Length);
+        return result;
+    }
+
+    private void HandleServiceOnlyQuery(ICanBus bus, ServiceOnlyQueryFrame query)
+    {
+        Debug.WriteLine($"[PCM]   SAE: Service=0x{(byte)query.Service:X2} (no PID)");
+
+        switch (query.Service)
+        {
+            case Service.StoredDtcs:
+                HandleDtcResponse(bus, Service.StoredDtcs, GetStoredDtcs());
+                break;
+            case Service.ClearDtcs:
+                HandleService04(bus);
+                break;
+            case Service.PendingDtcs:
+                HandleDtcResponse(bus, Service.PendingDtcs, GetPendingDtcs());
+                break;
+            case Service.PermanentDtcs:
+                HandleDtcResponse(bus, Service.PermanentDtcs, GetPermanentDtcs());
+                break;
+        }
+    }
+
+    private void HandleDtcResponse(ICanBus bus, Service service, IReadOnlyList<Dtc> dtcs)
+    {
+        var payload = new byte[2 + dtcs.Count * 2];
+        payload[0] = (byte)((byte)service | 0x40);
+        payload[1] = (byte)dtcs.Count;
+        for (int i = 0; i < dtcs.Count; i++)
+        {
+            var bytes = dtcs[i].ToBytes();
+            payload[2 + i * 2] = bytes[0];
+            payload[2 + i * 2 + 1] = bytes[1];
+        }
+        _ = SendIsoTpResponse(bus, ModuleAddress, TesterAddress, payload);
+    }
+
+    private void HandleService04(ICanBus bus)
+    {
+        ClearAllDtcs();
+        OnDtcsCleared();
+        _ = SendIsoTpResponse(bus, ModuleAddress, TesterAddress, new byte[] { 0x44 });
+    }
+
+    protected virtual void OnDtcsCleared() { }
+
+    private void HandleService09(ICanBus bus, Pid pid)
+    {
+        if (!_handleVehicleIdentity) return;
+
+        switch (pid)
+        {
+            case Pid.SupportedPids_01_20:
+                uint mask = 0;
+                mask |= 1u << (32 - 0x02); // VIN always present
+                if (CalibrationId != null) mask |= 1u << (32 - 0x04);
+                if (CalibrationVerificationNumber != null) mask |= 1u << (32 - 0x06);
+                if (EcuName != null) mask |= 1u << (32 - 0x0A);
+                var maskBytes = BitConverter.GetBytes(mask);
+                if (BitConverter.IsLittleEndian) Array.Reverse(maskBytes);
+                SendResponse(bus, new J1979ResponseFrame(Service.VehicleInfo, pid, maskBytes, ModuleAddress));
+                break;
+
+            case (Pid)0x02: // VIN
+                var vinBytes = Encoding.ASCII.GetBytes(Vin.PadRight(17).Substring(0, 17));
+                var vinPayload = new byte[3 + vinBytes.Length];
+                vinPayload[0] = 0x49;
+                vinPayload[1] = 0x02;
+                vinPayload[2] = 0x01; // message count
+                Array.Copy(vinBytes, 0, vinPayload, 3, vinBytes.Length);
+                _ = SendIsoTpResponse(bus, ModuleAddress, TesterAddress, vinPayload);
+                break;
+
+            case (Pid)0x04: // Calibration ID — 16 ASCII bytes, null-padded
+                if (CalibrationId is { } calId)
+                {
+                    var calBytes = Encoding.ASCII.GetBytes(calId.PadRight(16).Substring(0, 16));
+                    var calPayload = new byte[3 + calBytes.Length];
+                    calPayload[0] = 0x49;
+                    calPayload[1] = 0x04;
+                    calPayload[2] = 0x01; // message count
+                    Array.Copy(calBytes, 0, calPayload, 3, calBytes.Length);
+                    _ = SendIsoTpResponse(bus, ModuleAddress, TesterAddress, calPayload);
+                }
+                break;
+
+            case (Pid)0x06: // CVN — 4 bytes, big-endian
+                if (CalibrationVerificationNumber is { } cvn)
+                {
+                    var cvnPayload = new byte[]
+                    {
+                        0x49, 0x06,
+                        0x01, // message count
+                        (byte)(cvn >> 24), (byte)(cvn >> 16), (byte)(cvn >> 8), (byte)cvn
+                    };
+                    _ = SendIsoTpResponse(bus, ModuleAddress, TesterAddress, cvnPayload);
+                }
+                break;
+
+            case (Pid)0x0A: // ECU Name — 20 ASCII bytes, null-padded
+                if (EcuName is { } name)
+                {
+                    var nameBytes = Encoding.ASCII.GetBytes(name.PadRight(20).Substring(0, 20));
+                    var namePayload = new byte[3 + nameBytes.Length];
+                    namePayload[0] = 0x49;
+                    namePayload[1] = 0x0A;
+                    namePayload[2] = 0x01; // message count
+                    Array.Copy(nameBytes, 0, namePayload, 3, nameBytes.Length);
+                    _ = SendIsoTpResponse(bus, ModuleAddress, TesterAddress, namePayload);
+                }
+                break;
+        }
+    }
+
+    public void SetDtc(Dtc dtc)
+    {
+        _store.AddStoredDtc(dtc);
+
+        if (_store.FreezeFrame is null)
+        {
+            var data = new Dictionary<Pid, byte[]>();
+            foreach (var (pid, handler) in _pidHandlers)
+            {
+                var bytes = handler();
+                if (bytes != null) data[pid] = bytes;
+            }
+            _store.SetFreezeFrame(new FreezeFrameSnapshot { TriggeringDtc = dtc, Data = data });
+        }
+    }
+
+    public void ClearDtc(Dtc dtc) => _store.RemoveStoredDtc(dtc);
+
+    public void SetPendingDtc(Dtc dtc) => _store.AddPendingDtc(dtc);
+    public void ClearPendingDtc(Dtc dtc) => _store.RemovePendingDtc(dtc);
+
+    public void SetPermanentDtc(Dtc dtc) => _store.AddPermanentDtc(dtc);
+    public void ClearPermanentDtc(Dtc dtc) => _store.RemovePermanentDtc(dtc);
+
+    public void ClearAllDtcs() => _store.ClearAllDtcs();
+
+    protected virtual IReadOnlyList<Dtc> GetStoredDtcs() => _store.StoredDtcs;
+    protected virtual IReadOnlyList<Dtc> GetPendingDtcs() => _store.PendingDtcs;
+    protected virtual IReadOnlyList<Dtc> GetPermanentDtcs() => _store.PermanentDtcs;
+
+    protected virtual EmissionsReadinessStatus GetEmissionsReadiness() => new EmissionsReadinessStatus();
+    protected virtual Temperature? GetEngineCoolantTemperature() => null;
+    protected virtual float? GetEngineRpm() => null;
+    protected virtual Speed? GetVehicleSpeed() => null;
+    protected virtual float? GetThrottlePosition() => null; // percent 0-100
+    protected virtual Temperature? GetTransFluidTemp() => null;
+
+    // Mode 09 vehicle info — override to advertise
+    public virtual string? CalibrationId => null;           // PID 0x04: up to 16 ASCII chars
+    public virtual uint? CalibrationVerificationNumber => null; // PID 0x06: 4-byte checksum
+    public virtual string? EcuName => null;                 // PID 0x0A: up to 20 ASCII chars
+
+    protected void SendResponse(ICanBus bus, J1979ResponseFrame response)
+    {
+        bus.WriteFrame(response);
+    }
+
+    protected async Task SendIsoTpResponse(ICanBus bus, short ecuAddress, short testerAddress, byte[] data)
+    {
+        var frames = IsoTp.Encode(data);
+
+        if (frames.Length == 1)
+        {
+            // Single frame — set address and send
+            if (frames[0] is StandardDataFrame sf)
+            {
+                sf.ID = ecuAddress;
+                bus.WriteFrame(sf);
+            }
+            return;
+        }
+
+        // Multi-frame: send First Frame, wait for Flow Control, send Consecutive Frames
+        if (frames[0] is not StandardDataFrame firstFrame) return;
+        firstFrame.ID = ecuAddress;
+        bus.WriteFrame(firstFrame);
+
+        // Wait for Flow Control (scanner sends to tester address, e.g. 0x7E0)
+        var tcs = new TaskCompletionSource<bool>();
+        EventHandler<ICanFrame>? fcHandler = null;
+        fcHandler = (_, frame) =>
+        {
+            if (frame is StandardDataFrame sdf &&
+                sdf.ID == testerAddress &&
+                (sdf.Payload[0] & 0xF0) == 0x30) // Flow Control frame type
+            {
+                bus.FrameReceived -= fcHandler;
+                tcs.TrySetResult(true);
+            }
+        };
+        bus.FrameReceived += fcHandler;
+
+        var completed = await Task.WhenAny(tcs.Task, Task.Delay(1000));
+        if (completed != tcs.Task)
+        {
+            bus.FrameReceived -= fcHandler;
+            Debug.WriteLine("[PCM] ISO-TP: timeout waiting for flow control");
+            return;
+        }
+
+        // Send Consecutive Frames
+        for (int i = 1; i < frames.Length; i++)
+        {
+            if (frames[i] is StandardDataFrame cf)
+            {
+                cf.ID = ecuAddress;
+                bus.WriteFrame(cf);
+                await Task.Delay(1);
+            }
+        }
+    }
+}

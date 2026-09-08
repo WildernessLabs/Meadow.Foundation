@@ -140,6 +140,12 @@
       <Deploy />
     </Project>
   </Folder>
+  <Folder Name="/Meadow.Foundation.Libraries_and_Frameworks/Telematics.J1979/">
+    <Project Path="Meadow.Foundation.Libraries_and_Frameworks/Telematics.J1979/Driver/Telematics.J1979.csproj" />
+  </Folder>
+  <Folder Name="/Meadow.Foundation.Libraries_and_Frameworks/Telematics.Uds/">
+    <Project Path="Meadow.Foundation.Libraries_and_Frameworks/Telematics.Uds/Driver/Telematics.Uds.csproj" />
+  </Folder>
   <Folder Name="/Meadow.Foundation.Peripherals/" />
   <Folder Name="/Meadow.Foundation.Peripherals/Audio/" />
   <Folder Name="/Meadow.Foundation.Peripherals/Audio/Mp3.Yx5300/">

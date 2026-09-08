@@ -119,7 +119,7 @@ public partial class Mcp2515 : ICanController, IDisposable
     /// </summary>
     /// <param name="bitrate">The desired CAN bus bitrate</param>
     /// <param name="oscillator">The oscillator frequency of the MCP2515 crystal</param>
-    private void Initialize(CanBitrate bitrate, CanOscillator oscillator)
+    public void Initialize(CanBitrate bitrate, CanOscillator oscillator)
     {
         Reset();
 
@@ -325,7 +325,7 @@ public partial class Mcp2515 : ICanController, IDisposable
     /// <summary>
     /// Resets the MCP2515 via the reset pin (if present) and the SPI reset command
     /// </summary>
-    private void Reset()
+    public void Reset()
     {
         if (ResetPort != null)
         {

@@ -1,10 +1,12 @@
 ﻿using Meadow.Hardware;
 using Peak.Can.Basic.BackwardCompatibility;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Meadow.Foundation.ICs.CAN;
 
 /// <summary>
-/// Represents a PCAN Basic 
+/// Represents a PCAN Basic
 /// </summary>
 public class PCanBasic : ICanBus
 {
@@ -17,6 +19,7 @@ public class PCanBasic : ICanBus
     public CanAcceptanceFilterCollection AcceptanceFilters { get; } = new(5);
 
     private PCanConfiguration configuration;
+    private readonly CancellationTokenSource _cts = new();
 
     internal PCanBasic(PCanConfiguration configuration)
     {
@@ -31,6 +34,24 @@ public class PCanBasic : ICanBus
 
         this.configuration = configuration;
         AcceptanceFilters.CollectionChanged += OnAcceptanceFiltersChanged;
+
+        Task.Run(() => ReceiveLoop(_cts.Token));
+    }
+
+    private void ReceiveLoop(CancellationToken ct)
+    {
+        while (!ct.IsCancellationRequested)
+        {
+            var frame = ReadFrame();
+            if (frame != null)
+            {
+                FrameReceived?.Invoke(this, frame);
+            }
+            else
+            {
+                Thread.Sleep(1);
+            }
+        }
     }
 
     private void OnAcceptanceFiltersChanged(object? sender, (System.ComponentModel.CollectionChangeAction Action, CanAcceptanceFilter Filter) e)
@@ -86,14 +107,15 @@ public class PCanBasic : ICanBus
     /// <inheritdoc/>
     public bool IsFrameAvailable()
     {
-        return false;
+        var status = PCANBasic.GetStatus(configuration.BusHandle);
+        return status == TPCANStatus.PCAN_ERROR_OK;
     }
 
     private void WriteStandard(StandardDataFrame frame)
     {
         var msgCanMessage = new TPCANMsg
         {
-            DATA = new byte[frame.Payload.Length],
+            DATA = new byte[8],
             ID = (uint)frame.ID,
             LEN = (byte)frame.Payload.Length,
             MSGTYPE = TPCANMessageType.PCAN_MESSAGE_STANDARD
@@ -110,7 +132,7 @@ public class PCanBasic : ICanBus
     {
         var msgCanMessage = new TPCANMsg
         {
-            DATA = new byte[frame.Payload.Length],
+            DATA = new byte[8],
             ID = (uint)frame.ID,
             LEN = (byte)frame.Payload.Length,
             MSGTYPE = TPCANMessageType.PCAN_MESSAGE_EXTENDED
