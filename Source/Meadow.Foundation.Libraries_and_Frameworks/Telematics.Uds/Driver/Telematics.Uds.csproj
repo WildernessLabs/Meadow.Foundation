@@ -22,7 +22,7 @@
     <None Include="..\..\..\icon.png" Pack="true" PackagePath="" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\Meadow.Contracts\Source\Meadow.Contracts\Meadow.Contracts.csproj" />
+    <PackageReference Include="Meadow.Contracts" />
     <ProjectReference Include="..\..\Telematics.J1979\Driver\Telematics.J1979.csproj" />
   </ItemGroup>
 </Project>

@@ -1,6 +1,22 @@
 <Project>
-  <Import Project="../../Meadow.Contracts/Source/Directory.Packages.props" Condition="'$(MeadowContractsPackagePropsImported)' != 'true'" />
+  <!-- The Contracts repo owns the shared version list. It is a sibling checkout, so it is
+       not always present — a CI job that only builds the Telematics drivers clones this
+       repo alone. Guard on Exists() rather than assuming the layout of a dev machine. -->
+  <Import Project="../../Meadow.Contracts/Source/Directory.Packages.props"
+          Condition="'$(MeadowContractsPackagePropsImported)' != 'true' AND Exists('../../Meadow.Contracts/Source/Directory.Packages.props')" />
   <PropertyGroup>
     <MeadowContractsPackagePropsImported>true</MeadowContractsPackagePropsImported>
+    <!-- Required for the floating Meadow.Contracts version below; CPM rejects
+         floating PackageVersion items without it (NU1011). -->
+    <CentralPackageFloatingVersionsEnabled>true</CentralPackageFloatingVersionsEnabled>
+    <!-- Set unconditionally: the import above turns this on when present, but the drivers
+         still need CPM active when it is not. -->
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
   </PropertyGroup>
+  <ItemGroup>
+    <!-- Meadow.Contracts is consumed here as a package (the Telematics drivers reference it
+         that way so consumers don't bind a second, source-built copy alongside the one they
+         already resolve from NuGet). The Contracts repo's own list cannot name itself. -->
+    <PackageVersion Include="Meadow.Contracts" Version="3.*-*" />
+  </ItemGroup>
 </Project>
