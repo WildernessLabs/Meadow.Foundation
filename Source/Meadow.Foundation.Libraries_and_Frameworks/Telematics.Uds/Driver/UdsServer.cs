@@ -19,11 +19,14 @@ namespace Meadow.Foundation.Telematics.Uds;
 /// </remarks>
 public class UdsServer : IDisposable
 {
+    /// <summary>The address pair this module serves, at whichever width it uses.</summary>
+    public UdsAddress Address { get; }
+
     /// <summary>Where a tester's flow control comes from — the module's own request address.</summary>
-    public short RequestAddress { get; }
+    public short RequestAddress => (short)Address.TxId;
 
     /// <summary>The address this module answers from, e.g. 0x7E8.</summary>
-    public short ResponseAddress { get; }
+    public short ResponseAddress => (short)Address.RxId;
 
     /// <summary>The session/keep-alive state, exposed so a host can serve DID $F186.</summary>
     public UdsSessionState Session { get; } = new();
@@ -41,15 +44,31 @@ public class UdsServer : IDisposable
     /// <param name="responseAddress">The module's response ID (e.g. 0x7E8); requests arrive at that minus 8.</param>
     /// <param name="source">Supplies the DTCs and DIDs this module reports.</param>
     public UdsServer(ICanBus[] canBuses, short responseAddress, IUdsDataSource source)
+        : this(canBuses,
+               UdsAddress.Standard(
+                   (uint)(responseAddress - Obd2Addresses.EcuPhysicalOffset), (uint)responseAddress),
+               source)
+    {
+    }
+
+    /// <summary>
+    /// Starts serving UDS for one module at either addressing width. A simulated body or chassis
+    /// controller on a 29-bit normal-fixed address is how the extended discovery tier gets tested
+    /// without a vehicle.
+    /// </summary>
+    public UdsServer(ICanBus[] canBuses, UdsAddress address, IUdsDataSource source)
     {
         _buses = canBuses;
         _source = source;
-        ResponseAddress = responseAddress;
-        RequestAddress = (short)(responseAddress - Obd2Addresses.EcuPhysicalOffset);
+        Address = address;
 
         // Stagger by address the way CanBusMonitor does, so lower-addressed modules answer a
         // functional request first and scan tools that assume ascending order keep working.
-        _responseDelayMs = (responseAddress - Obd2Addresses.EcuResponseBase) * 5;
+        _responseDelayMs = address.IsExtended
+            ? address.EcuAddress * 5
+            : (int)(address.RxId - Obd2Addresses.EcuResponseBase) * 5;
+
+        if (_responseDelayMs < 0) _responseDelayMs = 0;
 
         _handler = OnFrameReceived;
         foreach (var bus in _buses)
@@ -60,12 +79,31 @@ public class UdsServer : IDisposable
 
     private void OnFrameReceived(object? sender, ICanFrame frame)
     {
-        if (frame is not StandardDataFrame sdf) return;
+        uint id;
+        byte[]? payload;
 
-        bool functional = sdf.ID == Obd2Addresses.FunctionalRequest;
-        if (!functional && sdf.ID != RequestAddress) return;
+        switch (frame)
+        {
+            // A 29-bit module has to read 29-bit frames. Matching only StandardDataFrame is why
+            // an extended-addressed module would sit silent no matter what the tester sent.
+            case ExtendedDataFrame edf:
+                if (!Address.IsExtended) return;
+                id = (uint)edf.ID;
+                payload = edf.Payload;
+                break;
+            case StandardDataFrame sdf:
+                if (Address.IsExtended) return;
+                id = (uint)sdf.ID;
+                payload = sdf.Payload;
+                break;
+            default:
+                return;
+        }
 
-        var payload = sdf.Payload;
+        // The functional broadcast is an 11-bit concept; a 29-bit module is addressed physically.
+        bool functional = !Address.IsExtended && id == (uint)Obd2Addresses.FunctionalRequest;
+        if (!functional && id != Address.TxId) return;
+
         if (payload == null || payload.Length == 0) return;
 
         // UDS requests reach us as ISO-TP single frames: upper nibble 0, lower nibble = length.
@@ -275,7 +313,7 @@ public class UdsServer : IDisposable
         => (byte)(requestService + Obd2Addresses.ResponseOffset);
 
     private Task Send(ICanBus bus, byte[] payload)
-        => IsoTpResponder.SendAsync(bus, ResponseAddress, RequestAddress, payload);
+        => IsoTpResponder.SendAsync(bus, Address.RxId, Address.TxId, payload, Address.IsExtended);
 
     private Task SendNegative(ICanBus bus, byte requestService, UdsNrc nrc, bool functional)
     {

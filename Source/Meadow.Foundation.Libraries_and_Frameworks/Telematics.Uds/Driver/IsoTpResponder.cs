@@ -20,22 +20,28 @@ public static class IsoTpResponder
     public static TimeSpan FlowControlTimeout { get; set; } = TimeSpan.FromSeconds(1);
 
     /// <summary>Sends <paramref name="data"/> as an ISO-TP message from <paramref name="ecuAddress"/>.</summary>
-    public static async Task SendAsync(ICanBus bus, short ecuAddress, short testerAddress, byte[] data)
+    public static Task SendAsync(ICanBus bus, short ecuAddress, short testerAddress, byte[] data)
+        => SendAsync(bus, (uint)ecuAddress, (uint)testerAddress, data, extended: false);
+
+    /// <summary>
+    /// Sends an ISO-TP message at either addressing width. A module on a 29-bit normal-fixed
+    /// address answers with 29-bit frames, so the encoder's standard frames have to be rebuilt as
+    /// extended ones — assigning a 29-bit value to a <see cref="StandardDataFrame"/> would truncate
+    /// it and the tester would never see the reply.
+    /// </summary>
+    public static async Task SendAsync(
+        ICanBus bus, uint ecuAddress, uint testerAddress, byte[] data, bool extended)
     {
         var frames = IsoTp.Encode(data);
         if (frames.Length == 0) return;
 
         if (frames.Length == 1)
         {
-            if (frames[0] is StandardDataFrame single)
-            {
-                single.ID = ecuAddress;
-                bus.WriteFrame(single);
-            }
+            if (TryRetarget(frames[0], ecuAddress, extended) is { } single) bus.WriteFrame(single);
             return;
         }
 
-        if (frames[0] is not StandardDataFrame firstFrame) return;
+        if (TryRetarget(frames[0], ecuAddress, extended) is not { } firstFrame) return;
 
         // The tester answers a first frame with flow control sent to its own request address.
         // Subscribe before transmitting — a tester that replies immediately would otherwise beat
@@ -44,10 +50,9 @@ public static class IsoTpResponder
         EventHandler<ICanFrame>? fcHandler = null;
         fcHandler = (_, frame) =>
         {
-            if (frame is StandardDataFrame sdf &&
-                sdf.ID == testerAddress &&
-                sdf.Payload.Length > 0 &&
-                (sdf.Payload[0] & 0xF0) == 0x30)
+            if (!TryReadId(frame, out var id, out var payload)) return;
+
+            if (id == testerAddress && payload.Length > 0 && (payload[0] & 0xF0) == 0x30)
             {
                 bus.FrameReceived -= fcHandler;
                 tcs.TrySetResult(true);
@@ -55,25 +60,56 @@ public static class IsoTpResponder
         };
         bus.FrameReceived += fcHandler;
 
-        firstFrame.ID = ecuAddress;
         bus.WriteFrame(firstFrame);
 
         var completed = await Task.WhenAny(tcs.Task, Task.Delay(FlowControlTimeout));
         if (completed != tcs.Task)
         {
             bus.FrameReceived -= fcHandler;
-            Debug.WriteLine($"[UDS 0x{ecuAddress:X3}] ISO-TP: timeout waiting for flow control");
+            Debug.WriteLine($"[UDS 0x{ecuAddress:X}] ISO-TP: timeout waiting for flow control");
             return;
         }
 
         for (int i = 1; i < frames.Length; i++)
         {
-            if (frames[i] is StandardDataFrame cf)
+            if (TryRetarget(frames[i], ecuAddress, extended) is { } cf)
             {
-                cf.ID = ecuAddress;
                 bus.WriteFrame(cf);
                 await Task.Delay(1);
             }
+        }
+    }
+
+    /// <summary>Rewrites an encoded frame to the given identifier at the given width.</summary>
+    private static ICanFrame? TryRetarget(ICanFrame frame, uint id, bool extended)
+    {
+        if (frame is not StandardDataFrame sdf) return null;
+
+        if (!extended)
+        {
+            sdf.ID = (short)id;
+            return sdf;
+        }
+
+        return new ExtendedDataFrame { ID = (int)id, Payload = sdf.Payload };
+    }
+
+    private static bool TryReadId(ICanFrame frame, out uint id, out byte[] payload)
+    {
+        switch (frame)
+        {
+            case ExtendedDataFrame edf:
+                id = (uint)edf.ID;
+                payload = edf.Payload ?? [];
+                return true;
+            case StandardDataFrame sdf:
+                id = (uint)sdf.ID;
+                payload = sdf.Payload ?? [];
+                return true;
+            default:
+                id = 0;
+                payload = [];
+                return false;
         }
     }
 }
