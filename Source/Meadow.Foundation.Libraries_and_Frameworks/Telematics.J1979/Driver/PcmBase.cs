@@ -18,7 +18,7 @@ public abstract class PcmBase : ControllerBase
     {
         RegisterPid(Pid.RunTimeSinceEngineStart, () =>
         {
-            var secs = (ushort)Math.Min(GetTimeSinceEndineStarted().TotalSeconds, ushort.MaxValue);
+            var secs = (ushort)Math.Min(GetTimeSinceEngineStarted().TotalSeconds, ushort.MaxValue);
             return [(byte)(secs >> 8), (byte)(secs & 0xFF)];
         });
         RegisterPid(Pid.TimeRunWithMilOn, () =>
@@ -43,7 +43,7 @@ public abstract class PcmBase : ControllerBase
         });
     }
 
-    protected abstract TimeSpan GetTimeSinceEndineStarted();
+    protected abstract TimeSpan GetTimeSinceEngineStarted();
     protected abstract TimeSpan GetTimeWithMilOn();
     protected abstract TimeSpan GetTimeSinceDtcsCleared();
     protected abstract Length GetDistanceSinceDtcsCleared();

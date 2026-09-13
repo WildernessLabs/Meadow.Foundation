@@ -293,7 +293,7 @@ namespace Displays.Tft.ST7789_Sample
 
         void LineTest()
         {
-            Resolver.Log.Info("Horizonal lines");
+            Resolver.Log.Info("Horizontal lines");
 
             graphics.Clear();
 
@@ -306,7 +306,7 @@ namespace Displays.Tft.ST7789_Sample
             Thread.Sleep(1500);
 
             graphics.Clear();
-            Resolver.Log.Info("Horizonal lines (negative)");
+            Resolver.Log.Info("Horizontal lines (negative)");
             for (int i = 1; i < 10; i++)
             {
                 graphics.Stroke = i;

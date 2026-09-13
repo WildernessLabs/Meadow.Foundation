@@ -848,7 +848,7 @@
             /// <remarks>
             /// The register is in page 1.
             /// </remarks>
-            public static readonly byte GyrosscopeSleepConfiguration = 0x0d;
+            public static readonly byte GyroscopeSleepConfiguration = 0x0d;
 
             /// <summary>
             /// Determine which interrupts are enabled / disabled.

@@ -36,7 +36,7 @@ namespace Meadow.Foundation.Sensors.Hid
         /// <summary>
         /// Swap horizontal and vertical
         /// </summary>
-        public bool IsVerticalHorizonalSwapped { get; set; } = false;
+        public bool IsVerticalHorizontalSwapped { get; set; } = false;
 
         /// <summary>
         /// The joystick position
@@ -200,7 +200,7 @@ namespace Meadow.Foundation.Sensors.Hid
             float newX = xValue / 128.0f * (IsHorizontalInverted ? -1 : 1);
             float newY = yValue / 128.0f * (IsVerticalInverted ? -1 : 1);
 
-            if (IsVerticalHorizonalSwapped)
+            if (IsVerticalHorizontalSwapped)
             {
                 (newY, newX) = (newX, newY);
             }

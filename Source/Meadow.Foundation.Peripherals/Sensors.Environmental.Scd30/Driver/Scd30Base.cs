@@ -81,7 +81,7 @@ namespace Meadow.Foundation.Sensors.Environmental
         /// </summary>
         public Task PerformSoftReset()
         {
-            SendCommand(RegisterAddresses.SoftRest);
+            SendCommand(RegisterAddresses.SoftReset);
             return Task.Delay(30);
         }
 

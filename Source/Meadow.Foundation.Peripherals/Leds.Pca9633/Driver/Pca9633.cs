@@ -138,7 +138,7 @@ namespace Meadow.Foundation.Leds
         /// Set brightness of all leds
         /// </summary>
         /// <param name="brightness">brightness (0-255)</param>
-        public void SetGroupBrightess(byte brightness)
+        public void SetGroupBrightness(byte brightness)
         {
             i2cComms.WriteRegister((byte)Registers.GRPPWM, (byte)(255 - brightness));
         }

@@ -54,7 +54,7 @@ public partial class Ads7128
 
                 int raw = (buffer[0] << 8) | buffer[1];
 
-                if (Controller.CurrrentOversampling == Oversampling.Samples_1)
+                if (Controller.CurrentOversampling == Oversampling.Samples_1)
                 {
                     return Task.FromResult(((raw >> 4) * conversionFactor).Volts());
                 }

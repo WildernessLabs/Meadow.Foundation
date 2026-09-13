@@ -18,7 +18,7 @@ namespace Meadow.Foundation.Sensors.Environmental
             PotentialHydrogen, //pH
             Temperature,
             OxidationReductionPotential, //Orp
-            Chlorophyl, //Chl
+            Chlorophyll, //Chl
             BlueGreenAlgae, //BGA
         }
 
@@ -84,8 +84,8 @@ namespace Meadow.Foundation.Sensors.Environmental
                 value = Normalize(data[(int)Measurement.OxidationReductionPotential]);
                 OxidationReductionPotential = new Voltage(value, Voltage.UnitType.Volts);
 
-                value = Normalize(data[(int)Measurement.Chlorophyl]);
-                var chlorophyl = new ConcentrationInWater(value, ConcentrationInWater.UnitType.MicrogramsPerLiter);
+                value = Normalize(data[(int)Measurement.Chlorophyll]);
+                var chlorophyll = new ConcentrationInWater(value, ConcentrationInWater.UnitType.MicrogramsPerLiter);
 
                 value = Normalize(data[(int)Measurement.BlueGreenAlgae]);
                 var blueGreenAlgae = new ConcentrationInWater(value, ConcentrationInWater.UnitType.MilligramsPerLiter);
@@ -95,7 +95,7 @@ namespace Meadow.Foundation.Sensors.Environmental
 
                 Concentrations = new WaterQualityConcentrations
                 {
-                    Chlorophyl = chlorophyl,
+                    Chlorophyll = chlorophyll,
                     BlueGreenAlgae = blueGreenAlgae,
                     DissolvedOxygen = dissolvedOxygen
                 };
@@ -115,7 +115,7 @@ namespace Meadow.Foundation.Sensors.Environmental
                 sb.AppendLine($"ElectricalConductivity: {ElectricalConductivity.MilliSiemensPerCentimeter} mS/cm");
                 sb.AppendLine($"PH: {PH}");
                 sb.AppendLine($"OxidationReductionPotential: {OxidationReductionPotential.Millivolts} mV");
-                sb.AppendLine($"Chlorophyll: {Concentrations.Chlorophyl!.Value.MicrogramsPerLiter} ug/L");
+                sb.AppendLine($"Chlorophyll: {Concentrations.Chlorophyll!.Value.MicrogramsPerLiter} ug/L");
                 sb.AppendLine($"BlueGreenAlgae: {Concentrations!.BlueGreenAlgae!.Value.PartsPerMillion} ppm");
                 sb.AppendLine($"Temperature: {Temperature.Celsius} C");
 
