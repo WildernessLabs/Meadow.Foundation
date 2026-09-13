@@ -43,7 +43,7 @@ public partial class Dtc
 
     public override string ToString()
     {
-        return $"{Category}{Code:N4}";
+        return $"{Category}{Code:D4}";
     }
 
     public string ToReadableErrorCode()
