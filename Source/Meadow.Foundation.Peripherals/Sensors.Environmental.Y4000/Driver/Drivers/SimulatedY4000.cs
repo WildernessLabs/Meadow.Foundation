@@ -92,7 +92,7 @@ public class SimulatedY4000 :
             Concentrations = new WaterQualityConcentrations
             {
                 DissolvedOxygen = new ConcentrationInWater(0.2),
-                Chlorophyl = new ConcentrationInWater(0.3),
+                Chlorophyll = new ConcentrationInWater(0.3),
                 BlueGreenAlgae = new ConcentrationInWater(0.4)
             }
         };
@@ -141,7 +141,7 @@ public class SimulatedY4000 :
             Concentrations = new WaterQualityConcentrations
             {
                 DissolvedOxygen = new ConcentrationInWater(0.2),
-                Chlorophyl = new ConcentrationInWater(0.3),
+                Chlorophyll = new ConcentrationInWater(0.3),
                 BlueGreenAlgae = new ConcentrationInWater(0.4)
             }
         };

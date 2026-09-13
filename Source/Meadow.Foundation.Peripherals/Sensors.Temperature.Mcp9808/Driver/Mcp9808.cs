@@ -64,7 +64,7 @@ namespace Meadow.Foundation.Sensors.Temperature
         /// <summary>
 		/// Read the manufacture ID 
 		/// </summary>
-        public ushort GetManufactureId()
+        public ushort GetManufacturerId()
         {
             return BusComms?.ReadRegisterAsUShort(Registers.MANUFACTURER_ID, ByteOrder.BigEndian) ?? 0;
         }

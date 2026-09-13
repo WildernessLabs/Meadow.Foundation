@@ -39,7 +39,7 @@
             //Advanced features
             SetMeasurementInterval = 0x4600,
             IsDataReady = 0x0202,
-            SoftRest = 0xd304
+            SoftReset = 0xd304
         }
     }
 }

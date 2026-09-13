@@ -95,7 +95,7 @@
             /// <summary>
             /// BusComms initialization in progress.
             /// </summary>
-            PeripheralInitializationInProgess = 0x02,
+            PeripheralInitializationInProgress = 0x02,
 
             /// <summary>
             /// System is initializing.

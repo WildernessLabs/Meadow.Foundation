@@ -73,12 +73,12 @@ public partial class Ads7128 : IPinController, IAnalogInputController, IAnalogIn
     /// reducing noise in the analog readings. Higher oversampling values provide better noise reduction
     /// at the cost of increased conversion time.
     /// </remarks>
-    public Oversampling CurrrentOversampling
+    public Oversampling CurrentOversampling
     {
         get => _oversampling;
         set
         {
-            if (value == CurrrentOversampling) return;
+            if (value == CurrentOversampling) return;
             SetOversampling(value);
             _oversampling = GetOversampling();
         }

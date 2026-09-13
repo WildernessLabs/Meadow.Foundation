@@ -73,7 +73,7 @@
             /// <summary>
             /// Control1 - Altimeter or Barometer mode (Altimeter = 1, Barometer = 0);
             /// </summary>
-            public static readonly byte AlimeterMode = 0x80;
+            public static readonly byte AltimeterMode = 0x80;
         }
     }
 }

@@ -6,7 +6,7 @@ public enum Service : byte
     FreezeFrame = 0x02,
     StoredDtcs = 0x03,
     ClearDtcs = 0x04,
-    TestResusltsO2 = 0x05,
+    TestResultsO2 = 0x05,
     TestResultsOther = 0x06,
     PendingDtcs = 0x07,
     ControlOperations = 0x08,

@@ -14,7 +14,7 @@ public struct WaterQualityConcentrations
     /// <summary>
     /// Chlorophyll Concentration (CHL)
     /// </summary>
-    public ConcentrationInWater? Chlorophyl;
+    public ConcentrationInWater? Chlorophyll;
     /// <summary>
     /// Salination (SAL)
     /// </summary>
