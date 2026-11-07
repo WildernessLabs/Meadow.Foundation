@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -312,6 +313,12 @@ public static partial class MicroJson
                 }
                 else if (propType.IsGenericType && propType.GetGenericTypeDefinition() == typeof(List<>))
                 {
+                    if (values[v] is null)
+                    {
+                        prop.SetValue(instance, null);
+                        continue;
+                    }
+
                     var listType = propType.GetGenericArguments()[0];
                     var list = Activator.CreateInstance(propType);
                     var addMethod = propType.GetMethod("Add");
@@ -334,6 +341,12 @@ public static partial class MicroJson
                 }
                 else if (propType.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IDictionary<,>)))
                 {
+                    if (values[v] is null)
+                    {
+                        prop.SetValue(instance, null);
+                        continue;
+                    }
+
                     var dictionary = DeserializeHashtableToDictionary((Hashtable)values[v], propType)
                         ?? throw new NotSupportedException($"Type '{type.Name}' not supported");
                     prop.SetValue(instance, dictionary);
@@ -378,7 +391,11 @@ public static partial class MicroJson
                 {
                     if (values[v] != null && values[v] != DBNull.Value)
                     {
-                        if (propType.IsGenericType && propType.GetGenericTypeDefinition() == typeof(Nullable<>))
+                        if ((propType == typeof(DateTime) || propType == typeof(DateTime?)) && values[v] is string dateText)
+                        {
+                            prop.SetValue(instance, DateTime.Parse(dateText, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind));
+                        }
+                        else if (propType.IsGenericType && propType.GetGenericTypeDefinition() == typeof(Nullable<>))
                         {
                             prop.SetValue(instance, Convert.ChangeType(values[v], Nullable.GetUnderlyingType(propType)));
                         }
