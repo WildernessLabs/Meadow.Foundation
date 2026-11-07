@@ -18,7 +18,12 @@ public abstract class Control : IControl
     public virtual bool IsVisible
     {
         get => _isVisible && (_parent?.IsVisible ?? true);
-        set => SetInvalidatingProperty(ref _isVisible, value);
+        set
+        {
+            if (_isVisible == value) return;
+            SetInvalidatingProperty(ref _isVisible, value);
+            (_parent as LayoutBase)?.PerformLayout();
+        }
     }
 
     /// <summary>
