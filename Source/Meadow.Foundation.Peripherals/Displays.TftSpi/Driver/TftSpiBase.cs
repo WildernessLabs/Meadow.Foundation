@@ -104,6 +104,10 @@ namespace Meadow.Foundation.Displays
         /// </summary>
         protected IPixelBuffer imageBuffer = default!;
 
+        private const int MaxRegionChunkBytes = 16 * 1024;
+
+        private byte[]? regionBuffer;
+
         /// <summary>
         /// Data convenience bool
         /// </summary>
@@ -439,16 +443,37 @@ namespace Meadow.Foundation.Displays
             SetAddressWindow(left, top, right - 1, bottom - 1);
 
             int len = (int)((right - left) * bytesPerPixel);
+            int stride = (int)(Width * bytesPerPixel);
+            int start = (int)((top * Width + left) * bytesPerPixel);
+            int rows = bottom - top;
 
             dataCommandPort.State = Data;
 
-            for (int y = top; y < bottom; y++)
+            if (len == stride)
             {
-                int sourceIndex = (int)((y * Width + left) * bytesPerPixel);
+                spiDisplay.Bus.Write(chipSelectPort, imageBuffer.Buffer.AsSpan(start, len * rows));
+                return;
+            }
 
-                spiDisplay.Bus.Write(
-                    chipSelectPort,
-                    imageBuffer.Buffer.AsSpan(sourceIndex, len));
+            int rowsPerChunk = Math.Max(1, Math.Min(rows, MaxRegionChunkBytes / len));
+
+            if (regionBuffer == null || regionBuffer.Length < rowsPerChunk * len)
+            {
+                regionBuffer = new byte[rowsPerChunk * len];
+            }
+
+            for (int row = 0; row < rows; row += rowsPerChunk)
+            {
+                int chunkRows = Math.Min(rowsPerChunk, rows - row);
+
+                for (int y = 0; y < chunkRows; y++)
+                {
+                    imageBuffer.Buffer
+                        .AsSpan(start + stride * (row + y), len)
+                        .CopyTo(regionBuffer.AsSpan(len * y, len));
+                }
+
+                spiDisplay.Bus.Write(chipSelectPort, regionBuffer.AsSpan(0, len * chunkRows));
             }
         }
 
